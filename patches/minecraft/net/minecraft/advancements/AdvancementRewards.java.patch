@@ -1,0 +1,131 @@
+--- ../src-base/minecraft/net/minecraft/advancements/AdvancementRewards.java
++++ ../src-work/minecraft/net/minecraft/advancements/AdvancementRewards.java
+@@ -49,7 +49,7 @@
+     public void func_192113_a(final EntityPlayerMP p_192113_1_)
+     {
+         p_192113_1_.func_71023_q(this.field_192115_b);
+-        LootContext lootcontext = (new LootContext.Builder(p_192113_1_.func_71121_q())).func_186472_a(p_192113_1_).func_186471_a();
++        LootContext lootcontext = (new LootContext.Builder(p_192113_1_.func_71121_q())).func_186472_a(p_192113_1_).func_186470_a(p_192113_1_).func_186469_a(p_192113_1_.func_184817_da()).func_186471_a(); // Forge: add player & luck to LootContext
+         boolean flag = false;
+ 
+         for (ResourceLocation resourcelocation : this.field_192116_c)
+@@ -89,56 +89,73 @@
+ 
+         if (functionobject != null)
+         {
+-            ICommandSender icommandsender = new ICommandSender()
+-            {
+-                public String func_70005_c_()
+-                {
+-                    return p_192113_1_.func_70005_c_();
+-                }
+-                public ITextComponent func_145748_c_()
+-                {
+-                    return p_192113_1_.func_145748_c_();
+-                }
+-                public void func_145747_a(ITextComponent p_145747_1_)
+-                {
+-                }
+-                public boolean func_70003_b(int p_70003_1_, String p_70003_2_)
+-                {
+-                    return p_70003_1_ <= 2;
+-                }
+-                public BlockPos func_180425_c()
+-                {
+-                    return p_192113_1_.func_180425_c();
+-                }
+-                public Vec3d func_174791_d()
+-                {
+-                    return p_192113_1_.func_174791_d();
+-                }
+-                public World func_130014_f_()
+-                {
+-                    return p_192113_1_.field_70170_p;
+-                }
+-                public Entity func_174793_f()
+-                {
+-                    return p_192113_1_;
+-                }
+-                public boolean func_174792_t_()
+-                {
+-                    return minecraftserver.field_71305_c[0].func_82736_K().func_82766_b("commandBlockOutput");
+-                }
+-                public void func_174794_a(CommandResultStats.Type p_174794_1_, int p_174794_2_)
+-                {
+-                    p_192113_1_.func_174794_a(p_174794_1_, p_174794_2_);
+-                }
+-                public MinecraftServer func_184102_h()
+-                {
+-                    return p_192113_1_.func_184102_h();
+-                }
+-            };
++            // CraftBukkit start
++            ICommandSender icommandsender = new AdvancementCommandListener(p_192113_1_, minecraftserver);
++
+             minecraftserver.func_193030_aL().func_194019_a(functionobject, icommandsender);
+         }
++
+     }
+ 
++    public static class AdvancementCommandListener implements ICommandSender {
++
++        private final EntityPlayerMP player;
++        private final MinecraftServer minecraftserver;
++
++        public AdvancementCommandListener(EntityPlayerMP entityplayer, MinecraftServer minecraftserver) {
++            this.player = entityplayer;
++            this.minecraftserver = minecraftserver;
++        }
++
++        public String func_70005_c_() {
++            return player.func_70005_c_();
++        }
++
++        public ITextComponent func_145748_c_() {
++            return player.func_145748_c_();
++        }
++
++        public void func_145747_a(ITextComponent component) {
++        }
++
++        public boolean func_70003_b(int permLevel, String commandName) {
++            return permLevel <= 2;
++        }
++
++        public boolean canUseCommand(int permLevel, String commandName, String perm) {
++            return permLevel <= 2;
++        }
++
++        public BlockPos func_180425_c() {
++            return player.func_180425_c();
++        }
++
++        public Vec3d func_174791_d() {
++            return player.func_174791_d();
++        }
++
++        public World func_130014_f_() {
++            return player.field_70170_p;
++        }
++
++        public Entity func_174793_f() {
++            return player;
++        }
++
++        public boolean func_174792_t_() {
++            return minecraftserver.field_71305_c[0].func_82736_K().func_82766_b("commandBlockOutput");
++        }
++
++        public void func_174794_a(CommandResultStats.Type type, int amount) {
++            player.func_174794_a(type, amount);
++        }
++
++        public MinecraftServer func_184102_h() {
++            return player.func_184102_h();
++        }
++    }
++    // CraftBukkit end
++
+     public String toString()
+     {
+         return "AdvancementRewards{experience=" + this.field_192115_b + ", loot=" + Arrays.toString((Object[])this.field_192116_c) + ", recipes=" + Arrays.toString((Object[])this.field_192117_d) + ", function=" + this.field_193129_e + '}';

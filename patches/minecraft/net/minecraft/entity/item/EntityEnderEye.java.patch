@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityEnderEye.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityEnderEye.java
+@@ -14,11 +14,11 @@
+ 
+ public class EntityEnderEye extends Entity
+ {
+-    private double field_70224_b;
+-    private double field_70225_c;
+-    private double field_70222_d;
+-    private int field_70223_e;
+-    private boolean field_70221_f;
++    public double field_70224_b;
++    public double field_70225_c;
++    public double field_70222_d;
++    public int field_70223_e;
++    public boolean field_70221_f;
+ 
+     public EntityEnderEye(World p_i1757_1_)
+     {

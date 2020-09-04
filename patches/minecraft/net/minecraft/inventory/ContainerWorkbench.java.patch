@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -6,17 +6,28 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
+ 
+ public class ContainerWorkbench extends Container
+ {
+-    public InventoryCrafting field_75162_e = new InventoryCrafting(this, 3, 3);
+-    public InventoryCraftResult field_75160_f = new InventoryCraftResult();
++    public InventoryCrafting field_75162_e; // CraftBukkit - move initialization into constructor
++    public InventoryCraftResult field_75160_f; // CraftBukkit - move initialization into constructor
+     private final World field_75161_g;
+     private final BlockPos field_178145_h;
+     private final EntityPlayer field_192390_i;
+ 
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer playerInventory;
++
+     public ContainerWorkbench(InventoryPlayer p_i45800_1_, World p_i45800_2_, BlockPos p_i45800_3_)
+     {
++        // CraftBukkit start - Switched order of IInventory construction and stored player
++        this.field_75160_f = new InventoryCraftResult();
++        this.field_75162_e = new InventoryCrafting(this, 3, 3, p_i45800_1_.field_70458_d); // CraftBukkit - pass player
++        this.field_75162_e.resultInventory = this.field_75160_f;
++        this.playerInventory = p_i45800_1_;
++        // CraftBukkit end
+         this.field_75161_g = p_i45800_2_;
+         this.field_178145_h = p_i45800_3_;
+         this.field_192390_i = p_i45800_1_.field_70458_d;
+@@ -61,6 +72,7 @@
+ 
+     public boolean func_75145_c(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable) return true;
+         if (this.field_75161_g.func_180495_p(this.field_178145_h).func_177230_c() != Blocks.field_150462_ai)
+         {
+             return false;
+@@ -140,4 +152,15 @@
+     {
+         return p_94530_2_.field_75224_c != this.field_75160_f && super.func_94530_a(p_94530_1_, p_94530_2_);
+     }
++
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.field_75162_e, this.field_75160_f);
++        bukkitEntity = new CraftInventoryView(this.playerInventory.field_70458_d.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
+ }

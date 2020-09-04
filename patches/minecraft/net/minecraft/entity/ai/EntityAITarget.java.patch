@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAITarget.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAITarget.java
+@@ -13,6 +13,7 @@
+ import net.minecraft.scoreboard.Team;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public abstract class EntityAITarget extends EntityAIBase
+ {
+@@ -92,7 +93,7 @@
+                     }
+                     else
+                     {
+-                        this.field_75299_d.func_70624_b(entitylivingbase);
++                        this.field_75299_d.setGoalTarget(entitylivingbase, EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
+                         return true;
+                     }
+                 }
+@@ -115,7 +116,7 @@
+ 
+     public void func_75251_c()
+     {
+-        this.field_75299_d.func_70624_b((EntityLivingBase)null);
++        this.field_75299_d.setGoalTarget((EntityLivingBase)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
+         this.field_188509_g = null;
+     }
+ 

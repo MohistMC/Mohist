@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityStructure.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityStructure.java
+@@ -36,20 +36,20 @@
+ 
+ public class TileEntityStructure extends TileEntity
+ {
+-    private String field_184420_a = "";
+-    private String field_184421_f = "";
+-    private String field_184422_g = "";
+-    private BlockPos field_184423_h = new BlockPos(0, 1, 0);
+-    private BlockPos field_184424_i = BlockPos.field_177992_a;
+-    private Mirror field_184425_j = Mirror.NONE;
+-    private Rotation field_184426_k = Rotation.NONE;
+-    private TileEntityStructure.Mode field_184427_l = TileEntityStructure.Mode.DATA;
+-    private boolean field_184428_m = true;
+-    private boolean field_189727_n;
+-    private boolean field_189728_o;
+-    private boolean field_189729_p = true;
+-    private float field_189730_q = 1.0F;
+-    private long field_189731_r;
++    public String field_184420_a = "";
++    public String field_184421_f = "";
++    public String field_184422_g = "";
++    public BlockPos field_184423_h = new BlockPos(0, 1, 0);
++    public BlockPos field_184424_i = BlockPos.field_177992_a;
++    public Mirror field_184425_j = Mirror.NONE;
++    public Rotation field_184426_k = Rotation.NONE;
++    public Mode field_184427_l = Mode.DATA;
++    public boolean field_184428_m = true;
++    public boolean field_189727_n;
++    public boolean field_189728_o;
++    public boolean field_189729_p = true;
++    public float field_189730_q = 1.0F;
++    public long field_189731_r;
+ 
+     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
+     {

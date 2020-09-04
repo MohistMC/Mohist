@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandTP.java
++++ ../src-work/minecraft/net/minecraft/command/CommandTP.java
+@@ -59,7 +59,6 @@
+                 }
+                 else if (entity.field_70170_p != null)
+                 {
+-                    int j = 4096;
+                     int k = i + 1;
+                     CommandBase.CoordinateArg commandbase$coordinatearg = func_175770_a(entity.field_70165_t, p_184881_3_[i], true);
+                     CommandBase.CoordinateArg commandbase$coordinatearg1 = func_175767_a(entity.field_70163_u, p_184881_3_[k++], -4096, 4096, false);
+@@ -74,25 +73,12 @@
+             {
+                 Entity entity1 = func_184885_b(p_184881_1_, p_184881_2_, p_184881_3_[p_184881_3_.length - 1]);
+ 
+-                if (entity1.field_70170_p != entity.field_70170_p)
+-                {
+-                    throw new CommandException("commands.tp.notSameDimension", new Object[0]);
++                // CraftBukkit Start
++                // Use Bukkit teleport method in all cases. It has cross dimensional handling, events
++                if (entity.getBukkitEntity().teleport(entity1.getBukkitEntity(), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.COMMAND)) {
++                    func_152373_a(p_184881_2_, (ICommand) this, "commands.tp.success", new Object[] { entity.func_70005_c_(), entity1.func_70005_c_()});
++                    // CraftBukkit End
+                 }
+-                else
+-                {
+-                    entity.func_184210_p();
+-
+-                    if (entity instanceof EntityPlayerMP)
+-                    {
+-                        ((EntityPlayerMP)entity).field_71135_a.func_147364_a(entity1.field_70165_t, entity1.field_70163_u, entity1.field_70161_v, entity1.field_70177_z, entity1.field_70125_A);
+-                    }
+-                    else
+-                    {
+-                        entity.func_70012_b(entity1.field_70165_t, entity1.field_70163_u, entity1.field_70161_v, entity1.field_70177_z, entity1.field_70125_A);
+-                    }
+-
+-                    func_152373_a(p_184881_2_, this, "commands.tp.success", new Object[] {entity.func_70005_c_(), entity1.func_70005_c_()});
+-                }
+             }
+         }
+     }
+@@ -143,7 +129,7 @@
+             }
+ 
+             p_189863_0_.func_184210_p();
+-            ((EntityPlayerMP)p_189863_0_).field_71135_a.func_175089_a(p_189863_1_.func_179629_b(), p_189863_2_.func_179629_b(), p_189863_3_.func_179629_b(), f, f1, set);
++            ((EntityPlayerMP)p_189863_0_).field_71135_a.setPlayerLocation(p_189863_1_.func_179629_b(), p_189863_2_.func_179629_b(), p_189863_3_.func_179629_b(), f, f1, set, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.COMMAND);
+             p_189863_0_.func_70034_d(f);
+         }
+         else

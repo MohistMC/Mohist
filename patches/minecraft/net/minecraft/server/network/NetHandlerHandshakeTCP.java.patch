@@ -1,0 +1,144 @@
+--- ../src-base/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
++++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.server.network;
+ 
++import java.net.InetAddress;
++import java.util.HashMap;
+ import net.minecraft.network.EnumConnectionState;
+ import net.minecraft.network.NetworkManager;
+ import net.minecraft.network.handshake.INetHandlerHandshakeServer;
+@@ -8,12 +10,18 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TextComponentTranslation;
++import red.mohist.configuration.MohistConfig;
++import red.mohist.util.i18n.Message;
+ 
+ public class NetHandlerHandshakeTCP implements INetHandlerHandshakeServer
+ {
+     private final MinecraftServer field_147387_a;
+     private final NetworkManager field_147386_b;
+ 
++    private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
++    private static int throttleCounter = 0;
++    private static final com.google.gson.Gson gson = new com.google.gson.Gson(); // Spigot
++
+     public NetHandlerHandshakeTCP(MinecraftServer p_i45295_1_, NetworkManager p_i45295_2_)
+     {
+         this.field_147387_a = p_i45295_1_;
+@@ -22,26 +30,111 @@
+ 
+     public void func_147383_a(C00Handshake p_147383_1_)
+     {
++        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerHandshake(p_147383_1_, this.field_147386_b)) return;
++
+         switch (p_147383_1_.func_149594_c())
+         {
+             case LOGIN:
+                 this.field_147386_b.func_150723_a(EnumConnectionState.LOGIN);
+ 
++                // CraftBukkit start - Connection throttle
++                try
++                {
++                    long currentTime = System.currentTimeMillis();
++                    long connectionThrottle = MinecraftServer.getServerInst().server.getConnectionThrottle();
++                    InetAddress address = ((java.net.InetSocketAddress) this.field_147386_b.func_74430_c()).getAddress();
++
++                    synchronized (throttleTracker)
++                    {
++                        if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle)
++                        {
++                            throttleTracker.put(address, currentTime);
++                            ITextComponent chatmessage = new TextComponentTranslation("Connection throttled! Please wait before reconnecting.");
++                            this.field_147386_b.func_179290_a(new SPacketDisconnect(chatmessage));
++                            this.field_147386_b.func_150718_a(chatmessage);
++                            return;
++                        }
++
++                        throttleTracker.put(address, currentTime);
++                        throttleCounter++;
++                        if (throttleCounter > 200)
++                        {
++                            throttleCounter = 0;
++
++                            // Cleanup stale entries
++                            java.util.Iterator iter = throttleTracker.entrySet().iterator();
++                            while (iter.hasNext())
++                            {
++                                java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
++                                if (entry.getValue() > connectionThrottle)
++                                {
++                                    iter.remove();
++                                }
++                            }
++                        }
++                    }
++                }
++                catch (Throwable t)
++                {
++                    org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
++                }
++                // CraftBukkit end
++
+                 if (p_147383_1_.func_149595_d() > 340)
+                 {
+-                    ITextComponent itextcomponent = new TextComponentTranslation("multiplayer.disconnect.outdated_server", new Object[] {"1.12.2"});
++                    ITextComponent itextcomponent = new TextComponentTranslation(MohistConfig.instance.outdatedServerMessage.getValue().replaceAll("'", "''"), new Object[] {"1.12.2"}); // Spigot
+                     this.field_147386_b.func_179290_a(new SPacketDisconnect(itextcomponent));
+                     this.field_147386_b.func_150718_a(itextcomponent);
+                 }
+                 else if (p_147383_1_.func_149595_d() < 340)
+                 {
+-                    ITextComponent itextcomponent1 = new TextComponentTranslation("multiplayer.disconnect.outdated_client", new Object[] {"1.12.2"});
++                    ITextComponent itextcomponent1 = new TextComponentTranslation(MohistConfig.instance.outdatedClientMessage.getValue().replaceAll("'", "''"), new Object[] {"1.12.2"}); // Spigot
+                     this.field_147386_b.func_179290_a(new SPacketDisconnect(itextcomponent1));
+                     this.field_147386_b.func_150718_a(itextcomponent1);
+                 }
+                 else
+-                {
++                    {
+                     this.field_147386_b.func_150719_a(new NetHandlerLoginServer(this.field_147387_a, this.field_147386_b));
++                    // Paper start - handshake event
++                    boolean proxyLogicEnabled = org.spigotmc.SpigotConfig.bungee;
++                    boolean handledByEvent = false;
++                    // Try and handle the handshake through the event
++                    if (com.destroystokyo.paper.event.player.PlayerHandshakeEvent.getHandlerList().getRegisteredListeners().length != 0) { // Hello? Can you hear me?
++                        com.destroystokyo.paper.event.player.PlayerHandshakeEvent event = new com.destroystokyo.paper.event.player.PlayerHandshakeEvent(p_147383_1_.field_149598_b, !proxyLogicEnabled);
++                        if (event.callEvent()) {
++                            // If we've failed somehow, let the client know so and go no further.
++                            if (event.isFailed()) {
++                                ITextComponent itextcomponent1 = new TextComponentTranslation(event.getFailMessage());
++                                this.field_147386_b.func_179290_a(new SPacketDisconnect(itextcomponent1));
++                                this.field_147386_b.func_150718_a(itextcomponent1);
++                                return;
++                            }
++                            p_147383_1_.field_149598_b = event.getServerHostname();
++                            this.field_147386_b.field_150743_l = new java.net.InetSocketAddress(event.getSocketAddressHostname(), ((java.net.InetSocketAddress) this.field_147386_b.func_74430_c()).getPort());
++                            this.field_147386_b.spoofedUUID = event.getUniqueId();
++                            this.field_147386_b.spoofedProfile = gson.fromJson(event.getPropertiesJson(), com.mojang.authlib.properties.Property[].class);
++                            handledByEvent = true; // Hooray, we did it!
++                        }
++                    }
++                    // Don't try and handle default logic if it's been handled by the event.
++                    if (!handledByEvent && proxyLogicEnabled) {
++                        String[] split = p_147383_1_.field_149598_b.split("\00");
++                        if (split.length == 3 || split.length == 4) {
++                            p_147383_1_.field_149598_b = split[0];
++                            field_147386_b.field_150743_l = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) field_147386_b.func_74430_c()).getPort());
++                            field_147386_b.spoofedUUID = com.mojang.util.UUIDTypeAdapter.fromString(split[2]);
++                        } else {
++                            ITextComponent itextcomponent1 = new TextComponentTranslation(Message.getString("message.bungeecord"));
++                            this.field_147386_b.func_179290_a(new SPacketDisconnect(itextcomponent1));
++                            this.field_147386_b.func_150718_a(itextcomponent1);
++                            return;
++                        }
++                        if (split.length == 4) {
++                            field_147386_b.spoofedProfile = gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class);
++                        }
++                    }
++                    // Spigot End
++                    ((NetHandlerLoginServer) this.field_147386_b.func_150729_e()).hostname = p_147383_1_.field_149598_b + ":" + p_147383_1_.field_149599_c; // CraftBukkit - set hostname
+                 }
+ 
+                 break;

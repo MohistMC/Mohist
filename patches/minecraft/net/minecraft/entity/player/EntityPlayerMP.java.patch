@@ -1,0 +1,1060 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.player;
+ 
++import com.google.common.base.Preconditions;
+ import com.google.common.collect.Lists;
+ import com.mojang.authlib.GameProfile;
+ import io.netty.buffer.Unpooled;
+@@ -13,14 +14,15 @@
+ import net.minecraft.block.BlockFence;
+ import net.minecraft.block.BlockFenceGate;
+ import net.minecraft.block.BlockWall;
+-import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
++import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityList;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.IMerchant;
++import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.entity.passive.AbstractHorse;
+ import net.minecraft.entity.projectile.EntityArrow;
+ import net.minecraft.init.Items;
+@@ -72,10 +74,10 @@
+ import net.minecraft.scoreboard.Score;
+ import net.minecraft.scoreboard.ScoreObjective;
+ import net.minecraft.scoreboard.ScorePlayerTeam;
++import net.minecraft.scoreboard.Scoreboard;
+ import net.minecraft.scoreboard.Team;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.management.PlayerInteractionManager;
+-import net.minecraft.server.management.UserListOpsEntry;
+ import net.minecraft.stats.RecipeBookServer;
+ import net.minecraft.stats.StatBase;
+ import net.minecraft.stats.StatList;
+@@ -83,12 +85,14 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityCommandBlock;
+ import net.minecraft.tileentity.TileEntitySign;
++import net.minecraft.util.CombatTracker;
+ import net.minecraft.util.CooldownTracker;
+ import net.minecraft.util.CooldownTrackerServer;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EntityDamageSource;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.EnumHandSide;
++import net.minecraft.util.FoodStats;
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ReportedException;
+ import net.minecraft.util.ResourceLocation;
+@@ -109,21 +113,41 @@
+ import net.minecraft.world.GameType;
+ import net.minecraft.world.IInteractionObject;
+ import net.minecraft.world.ILockableContainer;
++import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+ import net.minecraft.world.storage.loot.ILootContainer;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.GameMode;
++import org.bukkit.WeatherType;
++import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
++import org.bukkit.event.inventory.InventoryType;
++import org.bukkit.event.player.PlayerChangedMainHandEvent;
++import org.bukkit.event.player.PlayerGameModeChangeEvent;
++import org.bukkit.event.player.PlayerLocaleChangeEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
++import org.bukkit.inventory.MainHand;
++import red.mohist.Mohist;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
+ 
++import net.minecraft.entity.player.EntityPlayer.EnumChatVisibility;
++
+ public class EntityPlayerMP extends EntityPlayer implements IContainerListener
+ {
+     private static final Logger field_147102_bM = LogManager.getLogger();
+-    private String field_71148_cg = "en_US";
++    public String field_71148_cg = "en_us"; // CraftBukkit - lowercase
++    public long lastSave = MinecraftServer.currentTick; // Paper
+     public NetHandlerPlayServer field_71135_a;
+     public final MinecraftServer field_71133_b;
+     public final PlayerInteractionManager field_71134_c;
+     public double field_71131_d;
+     public double field_71132_e;
+-    private final List<Integer> field_71130_g = Lists.<Integer>newLinkedList();
++    public final List<Integer> field_71130_g = Lists.<Integer>newLinkedList();
+     private final PlayerAdvancements field_192042_bX;
+     private final StatisticsManagerServer field_147103_bO;
+     private float field_130068_bO = Float.MIN_VALUE;
+@@ -135,13 +159,13 @@
+     private float field_71149_ch = -1.0E8F;
+     private int field_71146_ci = -99999999;
+     private boolean field_71147_cj = true;
+-    private int field_71144_ck = -99999999;
+-    private int field_147101_bU = 60;
++    public int field_71144_ck = -99999999;
++    public int field_147101_bU = 60;
+     private EntityPlayer.EnumChatVisibility field_71143_cn;
+     private boolean field_71140_co = true;
+     private long field_143005_bX = System.currentTimeMillis();
+     private Entity field_175401_bS;
+-    private boolean field_184851_cj;
++    public boolean field_184851_cj;
+     private boolean field_192040_cp;
+     private final RecipeBookServer field_192041_cq = new RecipeBookServer();
+     private Vec3d field_193107_ct;
+@@ -152,15 +176,36 @@
+     public boolean field_71137_h;
+     public int field_71138_i;
+     public boolean field_71136_j;
++    // CraftBukkit start
++    public String displayName;
++    public ITextComponent listName;
++    public org.bukkit.Location compassTarget;
++    public int newExp = 0;
++    public int newLevel = 0;
++    public int newTotalExp = 0;
++    public boolean keepLevel = false;
++    public double maxHealthCache;
++    public boolean joining = true;
++    public boolean sentListPacket = false;
++    // CraftBukkit end
++    // Paper start - Player view distance API
++    private int viewDistance = -1;
++    public int getViewDistance() {
++        return viewDistance == -1 ? ((WorldServer) field_70170_p).func_184164_w().getViewDistance() : viewDistance;
++    }
++    public void setViewDistance(int viewDistance) {
++        this.viewDistance = viewDistance;
++    }
++    // Paper end
+ 
+     public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
+     {
+         super(p_i45285_2_, p_i45285_3_);
+         p_i45285_4_.field_73090_b = this;
+         this.field_71134_c = p_i45285_4_;
+-        BlockPos blockpos = p_i45285_2_.func_175694_M();
++        BlockPos blockpos = p_i45285_2_.field_73011_w.getRandomizedSpawnPoint();
+ 
+-        if (p_i45285_2_.field_73011_w.func_191066_m() && p_i45285_2_.func_72912_H().func_76077_q() != GameType.ADVENTURE)
++        if (false && p_i45285_2_.field_73011_w.func_191066_m() && p_i45285_2_.func_72912_H().func_76077_q() != GameType.ADVENTURE)
+         {
+             int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
+             int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
+@@ -179,7 +224,7 @@
+         }
+ 
+         this.field_71133_b = p_i45285_1_;
+-        this.field_147103_bO = p_i45285_1_.func_184103_al().func_152602_a(this);
++        this.field_147103_bO = p_i45285_1_.func_184103_al().getPlayerStatsFile(this);
+         this.field_192042_bX = p_i45285_1_.func_184103_al().func_192054_h(this);
+         this.field_70138_W = 1.0F;
+         this.func_174828_a(blockpos, 0.0F, 0.0F);
+@@ -188,8 +233,33 @@
+         {
+             this.func_70107_b(this.field_70165_t, this.field_70163_u + 1.0D, this.field_70161_v);
+         }
++
++        this.displayName = this.func_70005_c_();
++        this.canPickUpLoot = true;
++        this.maxHealthCache = this.func_110138_aP();
+     }
+ 
++    public final BlockPos getSpawnPoint(MinecraftServer minecraftserver, WorldServer worldserver) {
++        BlockPos blockposition = worldserver.func_175694_M();
++
++        if (worldserver.field_73011_w.func_191066_m() && worldserver.func_72912_H().func_76077_q() != GameType.ADVENTURE) {
++            int i = Math.max(0, minecraftserver.func_184108_a(worldserver));
++            int j = MathHelper.func_76128_c(worldserver.func_175723_af().func_177729_b((double) blockposition.func_177958_n(), (double) blockposition.func_177952_p()));
++
++            if (j < i) {
++                i = j;
++            }
++
++            if (j <= 1) {
++                i = 1;
++            }
++
++            blockposition = worldserver.func_175672_r(blockposition.func_177982_a(this.field_70146_Z.nextInt(i * 2 + 1) - i, 0, this.field_70146_Z.nextInt(i * 2 + 1) - i));
++        }
++
++        return blockposition;
++    }
++
+     public void func_70037_a(NBTTagCompound p_70037_1_)
+     {
+         super.func_70037_a(p_70037_1_);
+@@ -218,6 +288,7 @@
+         {
+             this.field_192041_cq.func_192825_a(p_70037_1_.func_74775_l("recipeBook"));
+         }
++        this.getBukkitEntity().readExtraData(p_70037_1_);
+     }
+ 
+     public static void func_191522_a(DataFixer p_191522_0_)
+@@ -270,8 +341,34 @@
+         }
+ 
+         p_70014_1_.func_74782_a("recipeBook", this.field_192041_cq.func_192824_e());
++        this.getBukkitEntity().setExtraData(p_70014_1_);
+     }
+ 
++    // CraftBukkit start - World fallback code, either respawn location or global spawn
++    public void func_70029_a(World world) {
++        super.func_70029_a(world);
++        if (world == null) {
++            this.field_70729_aU = false;
++            BlockPos position = null;
++            if (this.spawnWorld != null && !this.spawnWorld.equals("")) {
++                CraftWorld cworld = (CraftWorld) Bukkit.getServer().getWorld(this.spawnWorld);
++                if (cworld != null && this.func_180470_cg() != null) {
++                    world = cworld.getHandle();
++                    position = EntityPlayer.func_180467_a(cworld.getHandle(), this.func_180470_cg(), false);
++                }
++            }
++            if (world == null || position == null) {
++                world = ((CraftWorld) Bukkit.getServer().getWorlds().get(0)).getHandle();
++                position = world.func_175694_M();
++            }
++            this.field_70170_p = world;
++            this.func_70107_b(position.func_177958_n() + 0.5, position.func_177956_o(), position.func_177952_p() + 0.5);
++        }
++        this.field_71093_bK = ((WorldServer) this.field_70170_p).dimension;
++        this.field_71134_c.func_73080_a((WorldServer) world);
++    }
++    // CraftBukkit end
++
+     public void func_82242_a(int p_82242_1_)
+     {
+         super.func_82242_a(p_82242_1_);
+@@ -313,6 +410,9 @@
+ 
+     public void func_70071_h_()
+     {
++        if (this.joining) {
++            this.joining = false;
++        }
+         this.field_71134_c.func_73075_a();
+         --this.field_147101_bU;
+ 
+@@ -323,7 +423,7 @@
+ 
+         this.field_71070_bA.func_75142_b();
+ 
+-        if (!this.field_70170_p.field_72995_K && !this.field_71070_bA.func_75145_c(this))
++        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && !this.field_71070_bA.func_75145_c(this))
+         {
+             this.func_71053_j();
+             this.field_71070_bA = this.field_71069_bz;
+@@ -398,7 +498,7 @@
+ 
+             if (this.func_110143_aJ() != this.field_71149_ch || this.field_71146_ci != this.field_71100_bB.func_75116_a() || this.field_71100_bB.func_75115_e() == 0.0F != this.field_71147_cj)
+             {
+-                this.field_71135_a.func_147359_a(new SPacketUpdateHealth(this.func_110143_aJ(), this.field_71100_bB.func_75116_a(), this.field_71100_bB.func_75115_e()));
++                this.field_71135_a.func_147359_a(new SPacketUpdateHealth(this.getBukkitEntity().getScaledHealth(), this.field_71100_bB.func_75116_a(), this.field_71100_bB.func_75115_e()));
+                 this.field_71149_ch = this.func_110143_aJ();
+                 this.field_71146_ci = this.field_71100_bB.func_75116_a();
+                 this.field_71147_cj = this.field_71100_bB.func_75115_e() == 0.0F;
+@@ -422,6 +522,12 @@
+                 this.func_184849_a(IScoreCriteria.field_186699_i, MathHelper.func_76123_f((float)this.field_184853_bW));
+             }
+ 
++            // CraftBukkit start - Force max health updates
++            if (this.maxHealthCache != this.func_110138_aP()) {
++                this.getBukkitEntity().updateScaledHealth();
++            }
++            // CraftBukkit end
++
+             if (this.func_70658_aO() != this.field_184854_bX)
+             {
+                 this.field_184854_bX = this.func_70658_aO();
+@@ -450,6 +556,16 @@
+             {
+                 CriteriaTriggers.field_192135_o.func_192215_a(this);
+             }
++            // CraftBukkit start - initialize oldLevel and fire PlayerLevelChangeEvent
++            if (this.oldLevel == -1) {
++                this.oldLevel = this.field_71068_ca;
++            }
++
++            if (this.oldLevel != this.field_71068_ca) {
++                CraftEventFactory.callPlayerLevelChangeEvent(this.field_70170_p.getServer().getPlayer(this), this.oldLevel, this.field_71068_ca);
++                this.oldLevel = this.field_71068_ca;
++            }
++            // CraftBukkit end
+         }
+         catch (Throwable throwable)
+         {
+@@ -462,50 +578,84 @@
+ 
+     private void func_184849_a(IScoreCriteria p_184849_1_, int p_184849_2_)
+     {
+-        for (ScoreObjective scoreobjective : this.func_96123_co().func_96520_a(p_184849_1_))
++        for (Score score : this.field_70170_p.getServer().getScoreboardManager().getScoreboardScores(p_184849_1_, this.func_70005_c_(), new java.util.ArrayList<Score>())) // CraftBukkit - Use our scores instead
+         {
+-            Score score = this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective);
++            // Score score = this.getWorldScoreboard().getOrCreateScore(this.getName(), scoreobjective);
+             score.func_96647_c(p_184849_2_);
+         }
+     }
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
+     {
++        // CraftBukkit start - fire PlayerDeathEvent // Mohist - call Forge hook
++        if (this.field_70729_aU || net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
+         this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
++        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<>(this.field_71071_by.func_70302_i_());
++        boolean keepInventory = this.field_70170_p.func_82736_K().func_82766_b("keepInventory") || this.func_175149_v();
+ 
+-        if (flag)
+-        {
+-            Team team = this.func_96124_cp();
++        if (!keepInventory) {
++            for (ItemStack item : this.field_71071_by.getContents()) {
++                if (!item.func_190926_b() && !EnchantmentHelper.func_190939_c(item)) {
++                    loot.add(CraftItemStack.asCraftMirror(item));
++                }
++            }
++        }
+ 
+-            if (team != null && team.func_178771_j() != Team.EnumVisible.ALWAYS)
+-            {
+-                if (team.func_178771_j() == Team.EnumVisible.HIDE_FOR_OTHER_TEAMS)
+-                {
+-                    this.field_71133_b.func_184103_al().func_177453_a(this, this.func_110142_aN().func_151521_b());
++        ITextComponent chatmessage = this.func_110142_aN().func_151521_b();
++
++        String deathmessage = chatmessage.func_150254_d();
++        captureDrops = true;
++        org.bukkit.event.entity.PlayerDeathEvent deathEvent = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
++        captureDrops = false;
++        String deathMessage = deathEvent.getDeathMessage();
++
++        if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
++            if (deathMessage.equals(deathmessage)) {
++                Team scoreboardteambase = this.func_96124_cp();
++
++                if (scoreboardteambase != null && scoreboardteambase.func_178771_j() != Team.EnumVisible.ALWAYS) {
++                    if (scoreboardteambase.func_178771_j() == Team.EnumVisible.HIDE_FOR_OTHER_TEAMS) {
++                        this.field_71133_b.func_184103_al().func_177453_a(this, chatmessage);
++                    } else if (scoreboardteambase.func_178771_j() == Team.EnumVisible.HIDE_FOR_OWN_TEAM) {
++                        this.field_71133_b.func_184103_al().func_177452_b(this, chatmessage);
++                    }
++                } else {
++                    this.field_71133_b.func_184103_al().func_148539_a(chatmessage);
+                 }
+-                else if (team.func_178771_j() == Team.EnumVisible.HIDE_FOR_OWN_TEAM)
+-                {
+-                    this.field_71133_b.func_184103_al().func_177452_b(this, this.func_110142_aN().func_151521_b());
+-                }
+             }
+             else
+             {
+-                this.field_71133_b.func_184103_al().func_148539_a(this.func_110142_aN().func_151521_b());
++                this.field_71133_b.func_184103_al().sendMessage(org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage.fromString(deathMessage));
+             }
+         }
+ 
+         this.func_192030_dh();
++        // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
++        if (!deathEvent.getKeepInventory()) {
++            this.field_71071_by.func_174888_l();
++        }
+ 
+         if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v())
+         {
+-            this.func_190776_cN();
+-            this.field_71071_by.func_70436_m();
++            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
++                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
++                {
++                    this.field_70170_p.func_72838_d(item);
++                }
++            }
+         }
+ 
+-        for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
++        this.func_71053_j();
++        this.func_175399_e(this); // Remove spectated target
++
++        // CraftBukkit - Get our scores instead
++        Collection<Score> collection = this.field_70170_p.getServer().getScoreboardManager().getScoreboardScores(IScoreCriteria.field_96642_c, this.func_70005_c_(), new java.util.ArrayList<Score>());
++        for (Score score : collection)
+         {
+-            Score score = this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective);
++            // Score score = this.getWorldScoreboard().getOrCreateScore(this.getName(), scoreobjective);
+             score.func_96648_a();
+         }
+ 
+@@ -536,23 +686,28 @@
+         {
+             super.func_191956_a(p_191956_1_, p_191956_2_, p_191956_3_);
+             this.func_85039_t(p_191956_2_);
+-            Collection<ScoreObjective> collection = this.func_96123_co().func_96520_a(IScoreCriteria.field_96640_e);
+-
++            // CraftBukkit - Get our scores instead
++            // Collection<ScoreObjective> collection = this.getWorldScoreboard().getObjectivesFromCriteria(IScoreCriteria.TOTAL_KILL_COUNT);
++            Collection<Score> collection = this.field_70170_p.getServer().getScoreboardManager().getScoreboardScores(IScoreCriteria.field_96640_e, this.func_70005_c_(), new java.util.ArrayList<Score>());
+             if (p_191956_1_ instanceof EntityPlayer)
+             {
+                 this.func_71029_a(StatList.field_75932_A);
+-                collection.addAll(this.func_96123_co().func_96520_a(IScoreCriteria.field_96639_d));
++                // CraftBukkit - Get our scores instead
++                // collection.addAll(this.getWorldScoreboard().getObjectivesFromCriteria(IScoreCriteria.PLAYER_KILL_COUNT));
++                this.field_70170_p.getServer().getScoreboardManager().getScoreboardScores(IScoreCriteria.field_96639_d, this.func_70005_c_(), collection);
++                // CraftBukkit end
+             }
+             else
+             {
+                 this.func_71029_a(StatList.field_188070_B);
+             }
+ 
+-            collection.addAll(this.func_192038_E(p_191956_1_));
++            collection.addAll(this.awardTeamKillScores_CB(p_191956_1_));
+ 
+-            for (ScoreObjective scoreobjective : collection)
++            for (Score score : collection)
+             {
+-                this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective).func_96648_a();
++                // this.getWorldScoreboard().getOrCreateScore(this.getName(), scoreobjective).incrementScore();
++                score.func_96648_a();
+             }
+ 
+             CriteriaTriggers.field_192122_b.func_192211_a(this, p_191956_1_, p_191956_3_);
+@@ -593,6 +748,43 @@
+         return Lists.<ScoreObjective>newArrayList();
+     }
+ 
++    private Collection<Score> awardTeamKillScores_CB(Entity p_192038_1_)
++    {
++        String s = p_192038_1_ instanceof EntityPlayer ? p_192038_1_.func_70005_c_() : p_192038_1_.func_189512_bd();
++        ScorePlayerTeam scoreplayerteam = this.func_96123_co().func_96509_i(this.func_70005_c_());
++
++        if (scoreplayerteam != null)
++        {
++            int i = scoreplayerteam.func_178775_l().func_175746_b();
++
++            if (i >= 0 && i < IScoreCriteria.field_178793_i.length)
++            {
++                for (ScoreObjective scoreobjective : this.func_96123_co().func_96520_a(IScoreCriteria.field_178793_i[i]))
++                {
++                    Score score = this.func_96123_co().func_96529_a(s, scoreobjective);
++                    score.func_96648_a();
++                }
++            }
++        }
++
++        ScorePlayerTeam scoreplayerteam1 = this.func_96123_co().func_96509_i(s);
++
++        if (scoreplayerteam1 != null)
++        {
++            int j = scoreplayerteam1.func_178775_l().func_175746_b();
++
++            if (j >= 0 && j < IScoreCriteria.field_178792_h.length)
++            {
++                // CraftBukkit - Get our scores instead
++                // return this.getWorldScoreboard().getObjectivesFromCriteria(IScoreCriteria.TEAM_KILL[j]);
++                return this.field_70170_p.getServer().getScoreboardManager().getScoreboardScores(IScoreCriteria.field_178792_h[j], this.func_70005_c_(), new java.util.ArrayList<Score>());
++                // CraftBukkit end
++            }
++        }
++
++        return Lists.<Score>newArrayList();
++    }
++
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
+     {
+         if (this.func_180431_b(p_70097_1_))
+@@ -641,13 +833,15 @@
+ 
+     private boolean func_175400_cq()
+     {
+-        return this.field_71133_b.func_71219_W();
++        // CraftBukkit - this.mcServer.isPVPEnabled() -> this.world.pvpMode
++        return this.field_70170_p.pvpMode;
+     }
+ 
+     @Nullable
+-    public Entity func_184204_a(int p_184204_1_)
++    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
+     {
+-        this.field_184851_cj = true;
++        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_) || this.func_70608_bn()) return this; // CraftBukkit - SPIGOT-3154
++        // this.invulnerableDimensionChange = true; // CraftBukkit - Moved down and into PlayerList#changeDimension
+ 
+         if (this.field_71093_bK == 0 && p_184204_1_ == -1)
+         {
+@@ -658,8 +852,9 @@
+             this.field_193110_cw = null;
+         }
+ 
+-        if (this.field_71093_bK == 1 && p_184204_1_ == 1)
++        if (this.field_71093_bK == 1 && p_184204_1_ == 1 && teleporter.isVanilla())
+         {
++            this.field_184851_cj = true; // CraftBukkit - Moved down from above
+             this.field_70170_p.func_72900_e(this);
+ 
+             if (!this.field_71136_j)
+@@ -678,7 +873,11 @@
+                 p_184204_1_ = 1;
+             }
+ 
+-            this.field_71133_b.func_184103_al().func_187242_a(this, p_184204_1_);
++            // this.mcServer.getPlayerList().transferPlayerToDimension(this, dimensionIn, teleporter);
++			// CraftBukkit start
++            PlayerTeleportEvent.TeleportCause cause = (this.field_71093_bK == 1 || p_184204_1_ == 1) ? PlayerTeleportEvent.TeleportCause.END_PORTAL : ((this.field_71093_bK == -1 || p_184204_1_ == -1) ? PlayerTeleportEvent.TeleportCause.NETHER_PORTAL : PlayerTeleportEvent.TeleportCause.MOD);
++            this.field_71133_b.func_184103_al().transferPlayerToDimension(this, p_184204_1_, teleporter,cause); // check all this // Cauldron
++			// CraftBukkit end
+             this.field_71135_a.func_147359_a(new SPacketEffect(1032, BlockPos.field_177992_a, 0, false));
+             this.field_71144_ck = -1;
+             this.field_71149_ch = -1.0F;
+@@ -737,6 +936,7 @@
+ 
+     public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
+     {
++        if (!this.field_71083_bS) return; // CraftBukkit - Can't leave bed if not in one!
+         if (this.func_70608_bn())
+         {
+             this.func_71121_q().func_73039_n().func_151248_b(this, new SPacketAnimation(this, 2));
+@@ -808,7 +1008,7 @@
+         BlockPos blockpos = new BlockPos(i, j, k);
+         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
+ 
+-        if (iblockstate.func_185904_a() == Material.field_151579_a)
++        if (iblockstate.func_177230_c().isAir(iblockstate, this.field_70170_p, blockpos))
+         {
+             BlockPos blockpos1 = blockpos.func_177977_b();
+             IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
+@@ -830,6 +1030,12 @@
+         this.field_71135_a.func_147359_a(new SPacketSignEditorOpen(p_175141_1_.func_174877_v()));
+     }
+ 
++    public int getNextWindowIdCB() // CraftBukkit - void -> int
++    {
++        this.field_71139_cq = this.field_71139_cq % 100 + 1;
++        return this.field_71139_cq;
++    }
++
+     public void func_71117_bO()
+     {
+         this.field_71139_cq = this.field_71139_cq % 100 + 1;
+@@ -837,22 +1043,53 @@
+ 
+     public void func_180468_a(IInteractionObject p_180468_1_)
+     {
+-        if (p_180468_1_ instanceof ILootContainer && ((ILootContainer)p_180468_1_).func_184276_b() != null && this.func_175149_v())
++        // CraftBukkit start - Inventory open hook
++        if (false && p_180468_1_ instanceof ILootContainer && ((ILootContainer)p_180468_1_).func_184276_b() != null && this.func_175149_v())
+         {
+             this.func_146105_b((new TextComponentTranslation("container.spectatorCantOpen", new Object[0])).func_150255_a((new Style()).func_150238_a(TextFormatting.RED)), true);
+         }
+         else
+         {
++            boolean cancelled = p_180468_1_ instanceof ILootContainer && ((ILootContainer) p_180468_1_).func_184276_b() != null && this.func_175149_v();
++            Container container = CraftEventFactory.callInventoryOpenEvent(this, p_180468_1_.func_174876_a(this.field_71071_by, this), cancelled);
++            if (container == null) {
++                return;
++            }
+             this.func_71117_bO();
++            this.field_71070_bA = container;
+             this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, p_180468_1_.func_174875_k(), p_180468_1_.func_145748_c_()));
+-            this.field_71070_bA = p_180468_1_.func_174876_a(this.field_71071_by, this);
++            // this.openContainer = guiOwner.createContainer(this.inventory, this);
+             this.field_71070_bA.field_75152_c = this.field_71139_cq;
+             this.field_71070_bA.func_75132_a(this);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+         }
+     }
+ 
+     public void func_71007_a(IInventory p_71007_1_)
+     {
++        // CraftBukkit start - Inventory open hook
++        // Copied from below
++        boolean cancelled = false;
++        if (p_71007_1_ instanceof ILockableContainer) {
++            ILockableContainer itileinventory = (ILockableContainer) p_71007_1_;
++            cancelled = itileinventory.func_174893_q_() && !this.func_175146_a(itileinventory.func_174891_i()) && !this.func_175149_v();
++        }
++
++        Container container;
++        if (p_71007_1_ instanceof IInteractionObject) {
++            if (p_71007_1_ instanceof TileEntity) {
++                Preconditions.checkArgument(((TileEntity) p_71007_1_).func_145831_w() != null, "Container must have world to be opened");
++            }
++            container = ((IInteractionObject) p_71007_1_).func_174876_a(this.field_71071_by, this);
++        } else {
++            container = new ContainerChest(this.field_71071_by, p_71007_1_, this);
++        }
++        container = CraftEventFactory.callInventoryOpenEvent(this, container, cancelled);
++        if (container == null && !cancelled) { // Let pre-cancelled events fall through
++            p_71007_1_.func_174886_c(this);
++            return;
++        }
++        // CraftBukkit end
+         if (p_71007_1_ instanceof ILootContainer && ((ILootContainer)p_71007_1_).func_184276_b() != null && this.func_175149_v())
+         {
+             this.func_146105_b((new TextComponentTranslation("container.spectatorCantOpen", new Object[0])).func_150255_a((new Style()).func_150238_a(TextFormatting.RED)), true);
+@@ -872,6 +1109,7 @@
+                 {
+                     this.field_71135_a.func_147359_a(new SPacketChat(new TextComponentTranslation("container.isLocked", new Object[] {p_71007_1_.func_145748_c_()}), ChatType.GAME_INFO));
+                     this.field_71135_a.func_147359_a(new SPacketSoundEffect(SoundEvents.field_187654_U, SoundCategory.BLOCKS, this.field_70165_t, this.field_70163_u, this.field_70161_v, 1.0F, 1.0F));
++                    ilockablecontainer.func_174886_c(this);
+                     return;
+                 }
+             }
+@@ -881,25 +1119,36 @@
+             if (p_71007_1_ instanceof IInteractionObject)
+             {
+                 this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, ((IInteractionObject)p_71007_1_).func_174875_k(), p_71007_1_.func_145748_c_(), p_71007_1_.func_70302_i_()));
+-                this.field_71070_bA = ((IInteractionObject)p_71007_1_).func_174876_a(this.field_71071_by, this);
++                // this.openContainer = ((IInteractionObject)chestInventory).createContainer(this.inventory, this);
++                this.field_71070_bA = container;
+             }
+             else
+             {
+                 this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:container", p_71007_1_.func_145748_c_(), p_71007_1_.func_70302_i_()));
+-                this.field_71070_bA = new ContainerChest(this.field_71071_by, p_71007_1_, this);
++                // this.openContainer = new ContainerChest(this.inventory, chestInventory, this);
++                this.field_71070_bA = container;
+             }
+ 
+             this.field_71070_bA.field_75152_c = this.field_71139_cq;
+             this.field_71070_bA.func_75132_a(this);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+         }
+     }
+ 
+     public void func_180472_a(IMerchant p_180472_1_)
+     {
++        // CraftBukkit start - Inventory open hook
++        Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p));
++        if (container == null) {
++            return;
++        }
++        // CraftBukkit end
+         this.func_71117_bO();
+-        this.field_71070_bA = new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p);
++        // this.openContainer = new ContainerMerchant(this.inventory, villager, this.world);
++        this.field_71070_bA = container;
+         this.field_71070_bA.field_75152_c = this.field_71139_cq;
+         this.field_71070_bA.func_75132_a(this);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+         IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
+         ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
+         this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
+@@ -916,6 +1165,13 @@
+ 
+     public void func_184826_a(AbstractHorse p_184826_1_, IInventory p_184826_2_)
+     {
++        // CraftBukkit start - Inventory open hook
++        Container container = CraftEventFactory.callInventoryOpenEvent(this, new ContainerHorseInventory(this.field_71071_by, p_184826_2_, p_184826_1_, this));
++        if (container == null) {
++            p_184826_2_.func_174886_c(this);
++            return;
++        }
++        // CraftBukkit end
+         if (this.field_71070_bA != this.field_71069_bz)
+         {
+             this.func_71053_j();
+@@ -923,7 +1179,8 @@
+ 
+         this.func_71117_bO();
+         this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "EntityHorse", p_184826_2_.func_145748_c_(), p_184826_2_.func_70302_i_(), p_184826_1_.func_145782_y()));
+-        this.field_71070_bA = new ContainerHorseInventory(this.field_71071_by, p_184826_2_, p_184826_1_, this);
++        // this.openContainer = new ContainerHorseInventory(this.inventory, inventoryIn, horse, this);
++        this.field_71070_bA = container; // CraftBukkit - Use container we passed to event
+         this.field_71070_bA.field_75152_c = this.field_71139_cq;
+         this.field_71070_bA.func_75132_a(this);
+     }
+@@ -971,6 +1228,12 @@
+     {
+         this.field_71135_a.func_147359_a(new SPacketWindowItems(p_71110_1_.field_75152_c, p_71110_2_));
+         this.field_71135_a.func_147359_a(new SPacketSetSlot(-1, -1, this.field_71071_by.func_70445_o()));
++        if (p_71110_1_.getBukkitView() == null) return; // Cauldron - allow vanilla mods to bypass
++        // CraftBukkit start - Send a Set Slot to update the crafting result slot
++        if (java.util.EnumSet.of(InventoryType.CRAFTING, InventoryType.WORKBENCH).contains(p_71110_1_.getBukkitView().getType())) {
++            this.field_71135_a.func_147359_a(new SPacketSetSlot(p_71110_1_.field_75152_c, 0, p_71110_1_.func_75139_a(0).func_75211_c()));
++        }
++        // CraftBukkit end
+     }
+ 
+     public void func_71112_a(Container p_71112_1_, int p_71112_2_, int p_71112_3_)
+@@ -988,6 +1251,7 @@
+ 
+     public void func_71053_j()
+     {
++        CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
+         this.field_71135_a.func_147359_a(new SPacketCloseWindow(this.field_71070_bA.field_75152_c));
+         this.func_71128_l();
+     }
+@@ -1003,6 +1267,7 @@
+     public void func_71128_l()
+     {
+         this.field_71070_bA.func_75134_a(this);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.field_71070_bA));
+         this.field_71070_bA = this.field_71069_bz;
+     }
+ 
+@@ -1062,6 +1327,10 @@
+ 
+         for (ResourceLocation resourcelocation : p_193102_1_)
+         {
++            if (CraftingManager.func_193373_a(resourcelocation) == null) {
++                Mohist.LOGGER.warn("Ignoring grant of non existent recipe " + resourcelocation);
++                continue;
++            }
+             list.add(CraftingManager.func_193373_a(resourcelocation));
+         }
+ 
+@@ -1092,8 +1361,16 @@
+     public void func_71118_n()
+     {
+         this.field_71149_ch = -1.0E8F;
++        this.field_71144_ck = -1; // CraftBukkit - Added to reset
+     }
+ 
++    // CraftBukkit start - Support multi-line messages
++    public void sendMessage(ITextComponent[] ichatbasecomponent) {
++        for (ITextComponent component : ichatbasecomponent) {
++            this.func_145747_a(component);
++        }
++    }
++
+     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_)
+     {
+         this.field_71135_a.func_147359_a(new SPacketChat(p_146105_1_, p_146105_2_ ? ChatType.GAME_INFO : ChatType.CHAT));
+@@ -1138,12 +1415,29 @@
+         this.field_71144_ck = -1;
+         this.field_71149_ch = -1.0F;
+         this.field_71146_ci = -1;
+-        this.field_192041_cq.func_193824_a(p_193104_1_.field_192041_cq);
++        // this.recipeBook.copyFrom(that.recipeBook); // CraftBukkit
+         this.field_71130_g.addAll(p_193104_1_.field_71130_g);
+         this.field_192040_cp = p_193104_1_.field_192040_cp;
+         this.field_193110_cw = p_193104_1_.field_193110_cw;
+         this.func_192029_h(p_193104_1_.func_192023_dk());
+         this.func_192031_i(p_193104_1_.func_192025_dl());
++
++        this.spawnChunkMap = p_193104_1_.spawnChunkMap;
++        this.spawnForcedMap = p_193104_1_.spawnForcedMap;
++        if(p_193104_1_.field_71093_bK != 0)
++        {
++            this.field_71077_c = p_193104_1_.field_71077_c;
++            this.field_82248_d = p_193104_1_.field_82248_d;
++        }
++
++        //Copy over a section of the Entity Data from the old player.
++        //Allows mods to specify data that persists after players respawn.
++        NBTTagCompound old = p_193104_1_.getEntityData();
++        if (old.func_74764_b(PERSISTED_NBT_TAG))
++        {
++            getEntityData().func_74782_a(PERSISTED_NBT_TAG, old.func_74775_l(PERSISTED_NBT_TAG));
++        }
++        net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_193104_1_, !p_193104_2_);
+     }
+ 
+     protected void func_70670_a(PotionEffect p_70670_1_)
+@@ -1211,6 +1505,15 @@
+ 
+     public void func_71033_a(GameType p_71033_1_)
+     {
++        if (p_71033_1_ == this.field_71134_c.func_73081_b()) {
++            return;
++        }
++
++        PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(getBukkitEntity(), GameMode.getByValue(p_71033_1_.func_77148_a()));
++        field_70170_p.getServer().getPluginManager().callEvent(event);
++        if (event.isCancelled()) {
++            return;
++        }
+         this.field_71134_c.func_73076_a(p_71033_1_);
+         this.field_71135_a.func_147359_a(new SPacketChangeGameState(3, (float)p_71033_1_.func_77148_a()));
+ 
+@@ -1245,36 +1548,28 @@
+ 
+     public boolean func_70003_b(int p_70003_1_, String p_70003_2_)
+     {
+-        if ("seed".equals(p_70003_2_) && !this.field_71133_b.func_71262_S())
+-        {
+-            return true;
++        if ("@".equals(p_70003_2_)) {
++            return getBukkitEntity().hasPermission("minecraft.command.selector");
+         }
+-        else if (!"tell".equals(p_70003_2_) && !"help".equals(p_70003_2_) && !"me".equals(p_70003_2_) && !"trigger".equals(p_70003_2_))
+-        {
+-            if (this.field_71133_b.func_184103_al().func_152596_g(this.func_146103_bH()))
+-            {
+-                UserListOpsEntry userlistopsentry = (UserListOpsEntry)this.field_71133_b.func_184103_al().func_152603_m().func_152683_b(this.func_146103_bH());
++        if ("".equals(p_70003_2_)) {
++            return getBukkitEntity().isOp();
++        }
++        return getBukkitEntity().hasPermission("minecraft.command." + p_70003_2_);
++        
++        // CraftBukkit end
++    }
+ 
+-                if (userlistopsentry != null)
+-                {
+-                    return userlistopsentry.func_152644_a() >= p_70003_1_;
+-                }
+-                else
+-                {
+-                    return this.field_71133_b.func_110455_j() >= p_70003_1_;
+-                }
+-            }
+-            else
+-            {
+-                return false;
+-            }
++    public boolean canUseCommand(int permLevel, String commandName, String perm) {
++        if ("@".equals(commandName)) {
++            return getBukkitEntity().hasPermission("minecraft.command.selector");
+         }
+-        else
+-        {
+-            return true;
++        if ("".equals(commandName)) {
++            return getBukkitEntity().isOp();
+         }
++        return getBukkitEntity().hasPermission(perm);
+     }
+ 
++
+     public String func_71114_r()
+     {
+         String s = this.field_71135_a.field_147371_a.func_74430_c().toString();
+@@ -1285,6 +1580,14 @@
+ 
+     public void func_147100_a(CPacketClientSettings p_147100_1_)
+     {
++        if (func_184591_cq() != p_147100_1_.func_186991_f()) {
++            PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent(getBukkitEntity(), func_184591_cq() == EnumHandSide.LEFT ? MainHand.LEFT : MainHand.RIGHT);
++            this.field_71133_b.server.getPluginManager().callEvent(event);
++        }
++        if (!this.field_71148_cg.equals(p_147100_1_.func_149524_c())) {
++            PlayerLocaleChangeEvent event = new PlayerLocaleChangeEvent(getBukkitEntity(), p_147100_1_.func_149524_c());
++            this.field_71133_b.server.getPluginManager().callEvent(event);
++        }
+         this.field_71148_cg = p_147100_1_.func_149524_c();
+         this.field_71143_cn = p_147100_1_.func_149523_e();
+         this.field_71140_co = p_147100_1_.func_149520_f();
+@@ -1292,7 +1595,7 @@
+         this.func_184212_Q().func_187227_b(field_184828_bq, Byte.valueOf((byte)(p_147100_1_.func_186991_f() == EnumHandSide.LEFT ? 0 : 1)));
+     }
+ 
+-    public EntityPlayer.EnumChatVisibility func_147096_v()
++    public EnumChatVisibility func_147096_v()
+     {
+         return this.field_71143_cn;
+     }
+@@ -1367,7 +1670,7 @@
+         if (entity != this.field_175401_bS)
+         {
+             this.field_71135_a.func_147359_a(new SPacketCamera(this.field_175401_bS));
+-            this.func_70634_a(this.field_175401_bS.field_70165_t, this.field_175401_bS.field_70163_u, this.field_175401_bS.field_70161_v);
++            this.field_71135_a.setPlayerLocation(this.field_175401_bS.field_70165_t, this.field_175401_bS.field_70163_u, this.field_175401_bS.field_70161_v, this.field_70177_z, this.field_70125_A, PlayerTeleportEvent.TeleportCause.SPECTATE);
+         }
+     }
+ 
+@@ -1375,7 +1678,12 @@
+     {
+         if (this.field_71088_bW > 0 && !this.field_184851_cj)
+         {
+-            --this.field_71088_bW;
++            if (MohistConfig.instance.RealTimeTicking()) {
++                int ticks = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks();
++                this.field_71088_bW = Math.max(0, this.field_71088_bW - ticks);
++            } else {
++                --this.field_71088_bW;
++            }
+         }
+     }
+ 
+@@ -1399,7 +1707,8 @@
+     @Nullable
+     public ITextComponent func_175396_E()
+     {
+-        return null;
++        // return null;
++        return listName;
+     }
+ 
+     public void func_184609_a(EnumHand p_184609_1_)
+@@ -1420,13 +1729,16 @@
+ 
+     public void func_184847_M()
+     {
+-        this.func_70052_a(7, true);
++        if (!CraftEventFactory.callToggleGlideEvent(this, true).isCancelled())
++            this.func_70052_a(7, true);
+     }
+ 
+     public void func_189103_N()
+     {
+-        this.func_70052_a(7, true);
+-        this.func_70052_a(7, false);
++        if (!CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++            this.func_70052_a(7, true);
++            this.func_70052_a(7, false);
++        }
+     }
+ 
+     public PlayerAdvancements func_192039_O()
+@@ -1439,4 +1751,144 @@
+     {
+         return this.field_193110_cw;
+     }
++
++    // CraftBukkit start - Add per-player time and weather.
++    public long timeOffset = 0;
++    public boolean relativeTime = true;
++
++    public long getPlayerTime() {
++        if (this.relativeTime) {
++            // Adds timeOffset to the current server time.
++            return this.field_70170_p.func_72820_D() + this.timeOffset;
++        } else {
++            // Adds timeOffset to the beginning of this day.
++            return this.field_70170_p.func_72820_D() - (this.field_70170_p.func_72820_D() % 24000) + this.timeOffset;
++        }
++    }
++
++    public WeatherType weather = null;
++
++    public WeatherType getPlayerWeather() {
++        return this.weather;
++    }
++
++    public void setPlayerWeather(WeatherType type, boolean plugin) {
++        if (!plugin && this.weather != null) {
++            return;
++        }
++
++        if (plugin) {
++            this.weather = type;
++        }
++
++        if (type == WeatherType.DOWNFALL) {
++            this.field_71135_a.func_147359_a(new SPacketChangeGameState(2, 0));
++        } else {
++            this.field_71135_a.func_147359_a(new SPacketChangeGameState(1, 0));
++        }
++    }
++
++    private float pluginRainPosition;
++    private float pluginRainPositionPrevious;
++
++    public void updateWeather(float oldRain, float newRain, float oldThunder, float newThunder) {
++        if (this.weather == null) {
++            // Vanilla
++            if (oldRain != newRain) {
++                this.field_71135_a.func_147359_a(new SPacketChangeGameState(7, newRain));
++            }
++        } else {
++            // Plugin
++            if (pluginRainPositionPrevious != pluginRainPosition) {
++                this.field_71135_a.func_147359_a(new SPacketChangeGameState(7, pluginRainPosition));
++            }
++        }
++
++        if (oldThunder != newThunder) {
++            if (weather == WeatherType.DOWNFALL || weather == null) {
++                this.field_71135_a.func_147359_a(new SPacketChangeGameState(8, newThunder));
++            } else {
++                this.field_71135_a.func_147359_a(new SPacketChangeGameState(8, 0));
++            }
++        }
++    }
++
++    public void tickWeather() {
++        if (this.weather == null) return;
++
++        pluginRainPositionPrevious = pluginRainPosition;
++        if (weather == WeatherType.DOWNFALL) {
++            pluginRainPosition += 0.01;
++        } else {
++            pluginRainPosition -= 0.01;
++        }
++
++        pluginRainPosition = MathHelper.func_76131_a(pluginRainPosition, 0.0F, 1.0F);
++    }
++
++    public void resetPlayerWeather() {
++        this.weather = null;
++        this.setPlayerWeather(this.field_70170_p.func_72912_H().func_76059_o() ? WeatherType.DOWNFALL : WeatherType.CLEAR, false);
++    }
++
++    @Override
++    public String toString() {
++        return super.toString() + "(" + this.func_70005_c_() + " at " + this.field_70165_t + "," + this.field_70163_u + "," + this.field_70161_v + ")";
++    }
++
++    // SPIGOT-1903, MC-98153
++    public void forceSetPositionRotation(double x, double y, double z, float yaw, float pitch) {
++        this.func_70012_b(x, y, z, yaw, pitch);
++        this.field_71135_a.func_184342_d();
++    }
++
++    @Override
++    public boolean func_70610_aX() {
++        return super.func_70610_aX() || !getBukkitEntity().isOnline();
++    }
++
++    @Override
++    public Scoreboard func_96123_co() {
++        return getBukkitEntity().getScoreboard().getHandle();
++    }
++
++    public void reset() {
++        float exp = 0;
++        boolean keepInventory = this.field_70170_p.func_82736_K().func_82766_b("keepInventory");
++
++        if (this.keepLevel || keepInventory) {
++            exp = this.field_71106_cc;
++            this.newTotalExp = this.field_71067_cb;
++            this.newLevel = this.field_71068_ca;
++        }
++
++        this.func_70606_j(this.func_110138_aP());
++        this.field_190534_ay = 0;
++        this.field_70143_R = 0;
++        this.field_71100_bB = new FoodStats(this);
++        this.field_71068_ca = this.newLevel;
++        this.field_71067_cb = this.newTotalExp;
++        this.field_71106_cc = 0;
++        this.field_70725_aQ = 0;
++        this.func_85034_r(0);
++        this.func_70674_bp();
++        this.field_70752_e = true;
++        this.field_71070_bA = this.field_71069_bz;
++        this.field_70717_bb = null;
++        this.field_70755_b = null;
++        this.field_94063_bt = new CombatTracker(this);
++        this.field_71144_ck = -1;
++        if (this.keepLevel || keepInventory) {
++            this.field_71106_cc = exp;
++        } else {
++            this.func_71023_q(this.newExp);
++        }
++        this.keepLevel = false;
++        getEntityData().func_150296_c().removeIf(tag -> !PERSISTED_NBT_TAG.equals(tag));
++    }
++
++    @Override
++    public CraftPlayer getBukkitEntity() {
++        return (CraftPlayer) super.getBukkitEntity();
++    }
+ }

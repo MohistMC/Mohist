@@ -1,0 +1,109 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockVine.java
++++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
+@@ -27,8 +27,9 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+-public class BlockVine extends Block
++public class BlockVine extends Block implements net.minecraftforge.common.IShearable
+ {
+     public static final PropertyBool field_176277_a = PropertyBool.func_177716_a("up");
+     public static final PropertyBool field_176273_b = PropertyBool.func_177716_a("north");
+@@ -185,7 +186,7 @@
+     {
+         if (!p_180650_1_.field_72995_K)
+         {
+-            if (p_180650_1_.field_73012_v.nextInt(4) == 0)
++            if (p_180650_1_.field_73012_v.nextInt(Math.max(1, (int)(100.0f / p_180650_1_.spigotConfig.vineModifier) * 4)) == 0 && p_180650_1_.func_175697_a(p_180650_2_, 4)) // Forge: check area to prevent loading unloaded chunks
+             {
+                 int i = 4;
+                 int j = 5;
+@@ -233,7 +234,11 @@
+ 
+                     if (((Boolean)iblockstate2.func_177229_b(field_176273_b)).booleanValue() || ((Boolean)iblockstate2.func_177229_b(field_176278_M)).booleanValue() || ((Boolean)iblockstate2.func_177229_b(field_176279_N)).booleanValue() || ((Boolean)iblockstate2.func_177229_b(field_176280_O)).booleanValue())
+                     {
+-                        p_180650_1_.func_180501_a(blockpos2, iblockstate2, 2);
++//                        worldIn.setBlockState(blockpos2, iblockstate2, 2);
++                        BlockPos target = blockpos2;
++                        org.bukkit.block.Block source = p_180650_1_.getWorld().getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p());
++                        org.bukkit.block.Block block = p_180650_1_.getWorld().getBlockAt(target.func_177958_n(), target.func_177956_o(), target.func_177952_p());
++                        CraftEventFactory.handleBlockSpreadEvent(block, source, this, func_176201_c(iblockstate2));
+                     }
+                 }
+                 else if (enumfacing1.func_176740_k().func_176722_c() && !((Boolean)p_180650_3_.func_177229_b(func_176267_a(enumfacing1))).booleanValue())
+@@ -244,7 +249,7 @@
+                         IBlockState iblockstate3 = p_180650_1_.func_180495_p(blockpos4);
+                         Block block1 = iblockstate3.func_177230_c();
+ 
+-                        if (block1.field_149764_J == Material.field_151579_a)
++                        if (block1.isAir(iblockstate3, p_180650_1_, blockpos4))
+                         {
+                             EnumFacing enumfacing3 = enumfacing1.func_176746_e();
+                             EnumFacing enumfacing4 = enumfacing1.func_176735_f();
+@@ -253,21 +258,30 @@
+                             BlockPos blockpos = blockpos4.func_177972_a(enumfacing3);
+                             BlockPos blockpos1 = blockpos4.func_177972_a(enumfacing4);
+ 
++                            org.bukkit.block.Block source = p_180650_1_.getWorld().getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p());
++                            org.bukkit.block.Block bukkitBlock = p_180650_1_.getWorld().getBlockAt(blockpos4.func_177958_n(), blockpos4.func_177956_o(), blockpos4.func_177952_p());
++
+                             if (flag1 && this.func_193395_a(p_180650_1_, blockpos.func_177972_a(enumfacing3), enumfacing3))
+                             {
+-                                p_180650_1_.func_180501_a(blockpos4, this.func_176223_P().func_177226_a(func_176267_a(enumfacing3), Boolean.valueOf(true)), 2);
++//                                worldIn.setBlockState(blockpos4, this.getDefaultState().withProperty(getPropertyFor(enumfacing3), Boolean.valueOf(true)), 2);
++                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, func_176201_c(this.func_176223_P().func_177226_a(func_176267_a(enumfacing3), true)));
+                             }
+                             else if (flag2 && this.func_193395_a(p_180650_1_, blockpos1.func_177972_a(enumfacing4), enumfacing4))
+                             {
+-                                p_180650_1_.func_180501_a(blockpos4, this.func_176223_P().func_177226_a(func_176267_a(enumfacing4), Boolean.valueOf(true)), 2);
++//                                worldIn.setBlockState(blockpos4, this.getDefaultState().withProperty(getPropertyFor(enumfacing4), Boolean.valueOf(true)), 2);
++                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, func_176201_c(this.func_176223_P().func_177226_a(func_176267_a(enumfacing4), true)));
+                             }
+                             else if (flag1 && p_180650_1_.func_175623_d(blockpos) && this.func_193395_a(p_180650_1_, blockpos, enumfacing1))
+                             {
+-                                p_180650_1_.func_180501_a(blockpos, this.func_176223_P().func_177226_a(func_176267_a(enumfacing1.func_176734_d()), Boolean.valueOf(true)), 2);
++//                                worldIn.setBlockState(blockpos, this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), Boolean.valueOf(true)), 2);
++                                bukkitBlock = p_180650_1_.getWorld().getBlockAt(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
++                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, func_176201_c(this.func_176223_P().func_177226_a(func_176267_a(enumfacing1.func_176734_d()), true)));
+                             }
+                             else if (flag2 && p_180650_1_.func_175623_d(blockpos1) && this.func_193395_a(p_180650_1_, blockpos1, enumfacing1))
+                             {
+-                                p_180650_1_.func_180501_a(blockpos1, this.func_176223_P().func_177226_a(func_176267_a(enumfacing1.func_176734_d()), Boolean.valueOf(true)), 2);
++//                                worldIn.setBlockState(blockpos1, this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), Boolean.valueOf(true)), 2);
++                                bukkitBlock = p_180650_1_.getWorld().getBlockAt(blockpos1.func_177958_n(), blockpos1.func_177956_o(), blockpos1.func_177952_p());
++                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, func_176201_c(this.func_176223_P().func_177226_a(func_176267_a(enumfacing1.func_176734_d()), true)));
+                             }
+                         }
+                         else if (iblockstate3.func_193401_d(p_180650_1_, blockpos4, enumfacing1) == BlockFaceShape.SOLID)
+@@ -298,7 +312,10 @@
+ 
+                             if (((Boolean)iblockstate1.func_177229_b(field_176273_b)).booleanValue() || ((Boolean)iblockstate1.func_177229_b(field_176278_M)).booleanValue() || ((Boolean)iblockstate1.func_177229_b(field_176279_N)).booleanValue() || ((Boolean)iblockstate1.func_177229_b(field_176280_O)).booleanValue())
+                             {
+-                                p_180650_1_.func_180501_a(blockpos3, iblockstate1, 2);
++//                                worldIn.setBlockState(blockpos3, iblockstate1, 2);
++                                org.bukkit.block.Block source = p_180650_1_.getWorld().getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p());
++                                org.bukkit.block.Block bukkitBlock = p_180650_1_.getWorld().getBlockAt(blockpos3.func_177958_n(), blockpos3.func_177956_o(), blockpos3.func_177952_p());
++                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, func_176201_c(iblockstate1));
+                             }
+                         }
+                         else if (block == this)
+@@ -459,7 +476,17 @@
+ 
+         return i;
+     }
++    /*************************FORGE START***********************************/
++    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity){ return true; }
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
++    @Override
++    public java.util.List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    {
++        return java.util.Arrays.asList(new ItemStack(this, 1));
++    }
++    /*************************FORGE END***********************************/
+ 
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return BlockFaceShape.UNDEFINED;

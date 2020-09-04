@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerHorseInventory.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerHorseInventory.java
+@@ -3,18 +3,25 @@
+ import net.minecraft.entity.passive.AbstractChestHorse;
+ import net.minecraft.entity.passive.AbstractHorse;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.init.Items;
+ import net.minecraft.item.ItemStack;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class ContainerHorseInventory extends Container
+ {
+     private final IInventory field_111243_a;
+     private final AbstractHorse field_111242_f;
+ 
++    org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView bukkitEntity;
++    InventoryPlayer player;
++
+     public ContainerHorseInventory(IInventory p_i45791_1_, IInventory p_i45791_2_, final AbstractHorse p_i45791_3_, EntityPlayer p_i45791_4_)
+     {
++        this.player = (InventoryPlayer) p_i45791_1_;
+         this.field_111243_a = p_i45791_2_;
+         this.field_111242_f = p_i45791_3_;
+         int i = 3;
+@@ -133,4 +140,14 @@
+         super.func_75134_a(p_75134_1_);
+         this.field_111243_a.func_174886_c(p_75134_1_);
+     }
++
++    @Override
++    public InventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++  		return bukkitEntity = (field_111243_a.getOwner() != null ? new CraftInventoryView(player.field_70458_d.getBukkitEntity(), field_111243_a.getOwner().getInventory(), this) : null);
++    }
++
+ }

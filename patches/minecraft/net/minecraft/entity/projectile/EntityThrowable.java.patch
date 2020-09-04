@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -31,8 +31,8 @@
+     private Block field_174853_f;
+     protected boolean field_174854_a;
+     public int field_70191_b;
+-    protected EntityLivingBase field_70192_c;
+-    private String field_85053_h;
++    public EntityLivingBase field_70192_c;
++    public String field_85053_h;
+     private int field_70194_h;
+     private int field_70195_i;
+     public Entity field_184539_c;
+@@ -57,6 +57,7 @@
+     {
+         this(p_i1777_1_, p_i1777_2_.field_70165_t, p_i1777_2_.field_70163_u + (double)p_i1777_2_.func_70047_e() - 0.10000000149011612D, p_i1777_2_.field_70161_v);
+         this.field_70192_c = p_i1777_2_;
++        this.projectileSource = (org.bukkit.entity.LivingEntity) p_i1777_2_.getBukkitEntity();
+     }
+ 
+     protected void func_70088_a()
+@@ -196,7 +197,7 @@
+                 {
+                     flag = true;
+                 }
+-                else if (this.field_70192_c != null && this.field_70173_aa < 2 && this.field_184539_c == null)
++                else if (this.field_70192_c != null && this.field_70173_aa < 2 && this.field_184539_c == null && this.field_70192_c == entity1) // CraftBukkit - MC-88491
+                 {
+                     this.field_184539_c = entity1;
+                     flag = true;
+@@ -244,9 +245,12 @@
+             {
+                 this.func_181015_d(raytraceresult.func_178782_a());
+             }
+-            else
++            else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+             {
+                 this.func_70184_a(raytraceresult);
++                if (this.field_70128_L) {
++                    org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
++                }
+             }
+         }
+ 

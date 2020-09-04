@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityLlama.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityLlama.java
+@@ -66,7 +66,7 @@
+         this.func_70105_a(0.9F, 1.87F);
+     }
+ 
+-    private void func_190706_p(int p_190706_1_)
++    public void func_190706_p(int p_190706_1_)
+     {
+         this.field_70180_af.func_187227_b(field_190720_bG, Integer.valueOf(Math.max(1, Math.min(5, p_190706_1_))));
+     }

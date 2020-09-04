@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandBase.java
++++ ../src-work/minecraft/net/minecraft/command/CommandBase.java
+@@ -40,6 +40,7 @@
+     private static ICommandListener field_71533_a;
+     private static final Splitter field_190796_b = Splitter.on(',');
+     private static final Splitter field_190797_c = Splitter.on('=').limit(2);
++    public String permissionNode = "minecraft";
+ 
+     protected static SyntaxErrorException func_184889_a(JsonParseException p_184889_0_)
+     {
+@@ -88,7 +89,7 @@
+ 
+     public boolean func_184882_a(MinecraftServer p_184882_1_, ICommandSender p_184882_2_)
+     {
+-        return p_184882_2_.func_70003_b(this.func_82362_a(), this.func_71517_b());
++        return p_184882_2_.func_70003_b(this.func_82362_a(), this.func_71517_b()) || p_184882_2_.canUseCommand(this.func_82362_a(), this.func_71517_b(), this.permissionNode);
+     }
+ 
+     public List<String> func_184883_a(MinecraftServer p_184883_1_, ICommandSender p_184883_2_, String[] p_184883_3_, @Nullable BlockPos p_184883_4_)
+@@ -393,7 +394,7 @@
+                 itextcomponent.func_150258_a(" ");
+             }
+ 
+-            ITextComponent itextcomponent1 = new TextComponentString(p_147176_1_[i]);
++            ITextComponent itextcomponent1 = net.minecraftforge.common.ForgeHooks.newChatWithLinks(p_147176_1_[i]); // Forge: links for messages
+ 
+             if (p_147176_3_)
+             {

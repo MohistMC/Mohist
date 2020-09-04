@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSilverfish.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSilverfish.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class BlockSilverfish extends Block
+ {
+@@ -63,7 +64,7 @@
+         {
+             EntitySilverfish entitysilverfish = new EntitySilverfish(p_180653_1_);
+             entitysilverfish.func_70012_b((double)p_180653_2_.func_177958_n() + 0.5D, (double)p_180653_2_.func_177956_o(), (double)p_180653_2_.func_177952_p() + 0.5D, 0.0F, 0.0F);
+-            p_180653_1_.func_72838_d(entitysilverfish);
++            p_180653_1_.addEntity(entitysilverfish, CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK); // CraftBukkit - add SpawnReason
+             entitysilverfish.func_70656_aK();
+         }
+     }

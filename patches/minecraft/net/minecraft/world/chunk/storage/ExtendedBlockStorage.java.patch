@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
+@@ -27,6 +27,22 @@
+         }
+     }
+ 
++    public ExtendedBlockStorage(int y, boolean flag, char[] blockIds) {
++        this.field_76684_a = y;
++        this.field_177488_d = new BlockStateContainer();
++        for (int i = 0; i < blockIds.length; i++) {
++            int xx = i & 15;
++            int yy = (i >> 8) & 15;
++            int zz = (i >> 4) & 15;
++            this.field_177488_d.func_186013_a(xx, yy, zz, Block.field_176229_d.func_148745_a(blockIds[i]));
++        }
++        this.field_76679_g = new NibbleArray();
++        if (flag) {
++            this.field_76685_h = new NibbleArray();
++        }
++        func_76672_e();
++    }
++
+     public IBlockState func_177485_a(int p_177485_1_, int p_177485_2_, int p_177485_3_)
+     {
+         return this.field_177488_d.func_186016_a(p_177485_1_, p_177485_2_, p_177485_3_);
+@@ -34,6 +50,8 @@
+ 
+     public void func_177484_a(int p_177484_1_, int p_177484_2_, int p_177484_3_, IBlockState p_177484_4_)
+     {
++        if (p_177484_4_ instanceof net.minecraftforge.common.property.IExtendedBlockState)
++            p_177484_4_ = ((net.minecraftforge.common.property.IExtendedBlockState) p_177484_4_).getClean();
+         IBlockState iblockstate = this.func_177485_a(p_177484_1_, p_177484_2_, p_177484_3_);
+         Block block = iblockstate.func_177230_c();
+         Block block1 = p_177484_4_.func_177230_c();
+@@ -63,7 +81,8 @@
+ 
+     public boolean func_76663_a()
+     {
+-        return this.field_76682_b == 0;
++        // return this.blockRefCount == 0;
++        return false; // CraftBukkit - MC-80966
+     }
+ 
+     public boolean func_76675_b()

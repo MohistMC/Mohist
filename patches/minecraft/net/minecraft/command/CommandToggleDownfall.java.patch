@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandToggleDownfall.java
++++ ../src-work/minecraft/net/minecraft/command/CommandToggleDownfall.java
+@@ -22,13 +22,13 @@
+ 
+     public void func_184881_a(MinecraftServer p_184881_1_, ICommandSender p_184881_2_, String[] p_184881_3_) throws CommandException
+     {
+-        this.func_184930_a(p_184881_1_);
++        this.toggleRainfall(p_184881_2_);
+         func_152373_a(p_184881_2_, this, "commands.downfall.success", new Object[0]);
+     }
+ 
+-    protected void func_184930_a(MinecraftServer p_184930_1_)
++    protected void toggleRainfall(ICommandSender sender)
+     {
+-        WorldInfo worldinfo = p_184930_1_.field_71305_c[0].func_72912_H();
++        WorldInfo worldinfo = sender.func_130014_f_().func_72912_H();
+         worldinfo.func_76084_b(!worldinfo.func_76059_o());
+     }
+ }

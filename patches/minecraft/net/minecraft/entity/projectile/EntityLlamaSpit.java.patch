@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityLlamaSpit.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityLlamaSpit.java
+@@ -5,6 +5,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.IProjectile;
+ import net.minecraft.entity.passive.EntityLlama;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -20,7 +21,7 @@
+ 
+ public class EntityLlamaSpit extends Entity implements IProjectile
+ {
+-    public EntityLlama field_190539_a;
++    public EntityLivingBase field_190539_a; // CraftBukkit - type EntityLlama -> EntityLivingBase
+     private NBTTagCompound field_190540_b;
+ 
+     public EntityLlamaSpit(World p_i47272_1_)
+@@ -80,7 +81,7 @@
+             raytraceresult = new RayTraceResult(entity);
+         }
+ 
+-        if (raytraceresult != null)
++        if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+         {
+             this.func_190536_a(raytraceresult);
+         }
+@@ -211,6 +212,7 @@
+ 
+     public void func_190536_a(RayTraceResult p_190536_1_)
+     {
++        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callProjectileHitEvent(this, p_190536_1_); // CraftBukkit
+         if (p_190536_1_.field_72308_g != null && this.field_190539_a != null)
+         {
+             p_190536_1_.field_72308_g.func_70097_a(DamageSource.func_188403_a(this, this.field_190539_a).func_76349_b(), 1.0F);

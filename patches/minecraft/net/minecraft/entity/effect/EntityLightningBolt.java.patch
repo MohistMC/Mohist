@@ -1,0 +1,128 @@
+--- ../src-base/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
++++ ../src-work/minecraft/net/minecraft/entity/effect/EntityLightningBolt.java
+@@ -4,14 +4,18 @@
+ import net.minecraft.block.material.Material;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.SoundEvents;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.network.play.server.SPacketSoundEffect;
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldServer;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public class EntityLightningBolt extends EntityWeatherEffect
+ {
+@@ -20,9 +24,13 @@
+     private int field_70263_c;
+     private final boolean field_184529_d;
+ 
++    public boolean isEffect;
++    public boolean isSilent = false; // Spigot
++
+     public EntityLightningBolt(World p_i46780_1_, double p_i46780_2_, double p_i46780_4_, double p_i46780_6_, boolean p_i46780_8_)
+     {
+         super(p_i46780_1_);
++        this.isEffect = p_i46780_8_;
+         this.func_70012_b(p_i46780_2_, p_i46780_4_, p_i46780_6_, 0.0F, 0.0F);
+         this.field_70262_b = 2;
+         this.field_70264_a = this.field_70146_Z.nextLong();
+@@ -34,7 +42,10 @@
+         {
+             if (p_i46780_1_.func_180495_p(blockpos).func_185904_a() == Material.field_151579_a && Blocks.field_150480_ab.func_176196_c(p_i46780_1_, blockpos))
+             {
+-                p_i46780_1_.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                // worldIn.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
++                if (!CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p(), this).isCancelled()) {
++                    field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                }
+             }
+ 
+             for (int i = 0; i < 4; ++i)
+@@ -43,12 +54,23 @@
+ 
+                 if (p_i46780_1_.func_180495_p(blockpos1).func_185904_a() == Material.field_151579_a && Blocks.field_150480_ab.func_176196_c(p_i46780_1_, blockpos1))
+                 {
+-                    p_i46780_1_.func_175656_a(blockpos1, Blocks.field_150480_ab.func_176223_P());
++                    // worldIn.setBlockState(blockpos1, Blocks.FIRE.getDefaultState());
++                    if (!CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos1.func_177958_n(), blockpos1.func_177956_o(), blockpos1.func_177952_p(), this).isCancelled()) {
++                        field_70170_p.func_175656_a(blockpos1, Blocks.field_150480_ab.func_176223_P());
++                    }
+                 }
+             }
+         }
+     }
+ 
++    // Spigot start
++    public EntityLightningBolt(World world, double d0, double d1, double d2, boolean isEffect, boolean isSilent)
++    {
++        this( world, d0, d1, d2, isEffect );
++        this.isSilent = isSilent;
++    }
++    // Spigot end
++
+     public SoundCategory func_184176_by()
+     {
+         return SoundCategory.WEATHER;
+@@ -58,9 +80,25 @@
+     {
+         super.func_70071_h_();
+ 
+-        if (this.field_70262_b == 2)
++        if (!isSilent && this.field_70262_b == 2) // Spigot
+         {
+-            this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, SoundEvents.field_187754_de, SoundCategory.WEATHER, 10000.0F, 0.8F + this.field_70146_Z.nextFloat() * 0.2F);
++            // CraftBukkit start - Use relative location for far away sounds
++            // this.world.playSound((EntityPlayer)null, this.posX, this.posY, this.posZ, SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.WEATHER, 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F);
++            float pitch = 0.8F + this.field_70146_Z.nextFloat() * 0.2F;
++            int viewDistance = ((WorldServer) this.field_70170_p).getServer().getViewDistance() * 16;
++            for (EntityPlayerMP player : (List<EntityPlayerMP>) (List) this.field_70170_p.field_73010_i) {
++                double deltaX = this.field_70165_t - player.field_70165_t;
++                double deltaZ = this.field_70161_v - player.field_70161_v;
++                double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
++                if (distanceSquared > viewDistance * viewDistance) {
++                    double deltaLength = Math.sqrt(distanceSquared);
++                    double relativeX = player.field_70165_t + (deltaX / deltaLength) * viewDistance;
++                    double relativeZ = player.field_70161_v + (deltaZ / deltaLength) * viewDistance;
++                    player.field_71135_a.func_147359_a(new SPacketSoundEffect(SoundEvents.field_187754_de, SoundCategory.WEATHER, relativeX, this.field_70163_u, relativeZ, 10000.0F, pitch));
++                } else {
++                    player.field_71135_a.func_147359_a(new SPacketSoundEffect(SoundEvents.field_187754_de, SoundCategory.WEATHER, this.field_70165_t, this.field_70163_u, this.field_70161_v, 10000.0F, pitch));
++                }
++            }
+             this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, SoundEvents.field_187752_dd, SoundCategory.WEATHER, 2.0F, 0.5F + this.field_70146_Z.nextFloat() * 0.2F);
+         }
+ 
+@@ -84,13 +122,15 @@
+ 
+                     if (this.field_70170_p.func_82736_K().func_82766_b("doFireTick") && this.field_70170_p.func_175697_a(blockpos, 10) && this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151579_a && Blocks.field_150480_ab.func_176196_c(this.field_70170_p, blockpos))
+                     {
+-                        this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                        if (!isEffect && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p(), this).isCancelled()) {
++                            this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                        }
+                     }
+                 }
+             }
+         }
+ 
+-        if (this.field_70262_b >= 0)
++        if (this.field_70262_b >= 0 && !this.isEffect) // CraftBukkit - add !this.isEffect
+         {
+             if (this.field_70170_p.field_72995_K)
+             {
+@@ -104,7 +144,8 @@
+                 for (int i = 0; i < list.size(); ++i)
+                 {
+                     Entity entity = list.get(i);
+-                    entity.func_70077_a(this);
++                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
++                        entity.func_70077_a(this);
+                 }
+             }
+         }

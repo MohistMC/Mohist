@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLilyPad.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLilyPad.java
+@@ -34,7 +34,7 @@
+     {
+         super.func_180634_a(p_180634_1_, p_180634_2_, p_180634_3_, p_180634_4_);
+ 
+-        if (p_180634_4_ instanceof EntityBoat)
++        if (p_180634_4_ instanceof EntityBoat && !org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_180634_4_, p_180634_2_, Blocks.field_150350_a, 0).isCancelled())
+         {
+             p_180634_1_.func_175655_b(new BlockPos(p_180634_2_), true);
+         }

@@ -1,0 +1,177 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
+@@ -51,11 +51,15 @@
+ import net.minecraft.world.storage.loot.LootTableList;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityCombustEvent;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class EntityZombie extends EntityMob
+ {
+     protected static final IAttribute field_110186_bp = (new RangedAttribute((IAttribute)null, "zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).func_111117_a("Spawn Reinforcements Chance");
+-    private static final UUID field_110187_bq = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
++	private static final UUID field_110187_bq = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
+     private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, 1);
+     private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
+     private static final DataParameter<Integer> field_184738_bw = EntityDataManager.<Integer>func_187226_a(EntityZombie.class, DataSerializers.field_187192_b);
+@@ -87,7 +91,9 @@
+         this.field_70714_bg.func_75776_a(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
+         this.field_70715_bh.func_75776_a(1, new EntityAIHurtByTarget(this, true, new Class[] {EntityPigZombie.class}));
+         this.field_70715_bh.func_75776_a(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+-        this.field_70715_bh.func_75776_a(3, new EntityAINearestAttackableTarget(this, EntityVillager.class, false));
++        if (this.field_70170_p.spigotConfig.zombieAggressiveTowardsVillager) {
++            this.field_70715_bh.func_75776_a(3, new EntityAINearestAttackableTarget(this, EntityVillager.class, false));
++        }
+         this.field_70715_bh.func_75776_a(3, new EntityAINearestAttackableTarget(this, EntityIronGolem.class, true));
+     }
+ 
+@@ -98,7 +104,7 @@
+         this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
+         this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
+         this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
+-        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * 0.10000000149011612D);
++        this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * net.minecraftforge.common.ForgeModContainer.zombieSummonBaseChance);
+     }
+ 
+     protected void func_70088_a()
+@@ -215,7 +221,13 @@
+ 
+                 if (flag)
+                 {
+-                    this.func_70015_d(8);
++                    // this.setFire(8);
++                    EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 8);
++                    this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled()) {
++                        this.func_70015_d(event.getDuration());
++                    }
+                 }
+             }
+         }
+@@ -239,12 +251,24 @@
+                 entitylivingbase = (EntityLivingBase)p_70097_1_.func_76346_g();
+             }
+ 
+-            if (entitylivingbase != null && this.field_70170_p.func_175659_aa() == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e() && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning"))
++            int i = MathHelper.func_76128_c(this.field_70165_t);
++            int j = MathHelper.func_76128_c(this.field_70163_u);
++            int k = MathHelper.func_76128_c(this.field_70161_v);
++            net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent summonAid = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, field_70170_p, i, j, k, entitylivingbase, this.func_110148_a(field_110186_bp).func_111126_e());
++            if (summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return true;
++
++            if (summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW  ||
++                entitylivingbase != null && this.field_70170_p.func_175659_aa() == EnumDifficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e() && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning"))
+             {
+-                int i = MathHelper.func_76128_c(this.field_70165_t);
+-                int j = MathHelper.func_76128_c(this.field_70163_u);
+-                int k = MathHelper.func_76128_c(this.field_70161_v);
+-                EntityZombie entityzombie = new EntityZombie(this.field_70170_p);
++                EntityZombie entityzombie;
++                if (summonAid.getCustomSummonedAid() != null && summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
++                {
++                    entityzombie = summonAid.getCustomSummonedAid();
++                }
++                else
++                {
++                    entityzombie = new EntityZombie(this.field_70170_p);
++                }
+ 
+                 for (int l = 0; l < 50; ++l)
+                 {
+@@ -252,14 +276,14 @@
+                     int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
+                     int k1 = k + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
+ 
+-                    if (this.field_70170_p.func_180495_p(new BlockPos(i1, j1 - 1, k1)).func_185896_q() && this.field_70170_p.func_175671_l(new BlockPos(i1, j1, k1)) < 10)
++                    if (this.field_70170_p.func_180495_p(new BlockPos(i1, j1 - 1, k1)).isSideSolid(this.field_70170_p, new BlockPos(i1, j1 - 1, k1), net.minecraft.util.EnumFacing.UP) && this.field_70170_p.func_175671_l(new BlockPos(i1, j1, k1)) < 10)
+                     {
+                         entityzombie.func_70107_b((double)i1, (double)j1, (double)k1);
+ 
+                         if (!this.field_70170_p.func_175636_b((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_72917_a(entityzombie.func_174813_aQ(), entityzombie) && this.field_70170_p.func_184144_a(entityzombie, entityzombie.func_174813_aQ()).isEmpty() && !this.field_70170_p.func_72953_d(entityzombie.func_174813_aQ()))
+                         {
+-                            this.field_70170_p.func_72838_d(entityzombie);
+-                            entityzombie.func_70624_b(entitylivingbase);
++                            this.field_70170_p.addEntity(entityzombie, CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
++                            if (entitylivingbase != null) entityzombie.setGoalTarget(entitylivingbase, EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true);
+                             entityzombie.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombie)), (IEntityLivingData)null);
+                             this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
+                             entityzombie.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
+@@ -287,7 +311,13 @@
+ 
+             if (this.func_184614_ca().func_190926_b() && this.func_70027_ad() && this.field_70146_Z.nextFloat() < f * 0.3F)
+             {
+-                p_70652_1_.func_70015_d(2 * (int)f);
++                // entityIn.setFire(2 * (int)f);
++                EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_70652_1_.getBukkitEntity(), 2 * (int) f); // PAIL: fixme
++                this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled()) {
++                    p_70652_1_.func_70015_d(event.getDuration());
++                }
+             }
+         }
+ 
+@@ -393,7 +423,7 @@
+             EntityZombieVillager entityzombievillager = new EntityZombieVillager(this.field_70170_p);
+             entityzombievillager.func_82149_j(entityvillager);
+             this.field_70170_p.func_72900_e(entityvillager);
+-            entityzombievillager.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombievillager)), new EntityZombie.GroupData(false));
++            entityzombievillager.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombievillager)), new GroupData(false));
+             entityzombievillager.func_190733_a(entityvillager.func_70946_n());
+             entityzombievillager.func_82227_f(entityvillager.func_70631_g_());
+             entityzombievillager.func_94061_f(entityvillager.func_175446_cd());
+@@ -404,7 +434,7 @@
+                 entityzombievillager.func_174805_g(entityvillager.func_174833_aM());
+             }
+ 
+-            this.field_70170_p.func_72838_d(entityzombievillager);
++            this.field_70170_p.addEntity(entityzombievillager, CreatureSpawnEvent.SpawnReason.INFECTION);
+             this.field_70170_p.func_180498_a((EntityPlayer)null, 1026, new BlockPos(this), 0);
+         }
+     }
+@@ -435,12 +465,12 @@
+ 
+         if (p_180482_2_ == null)
+         {
+-            p_180482_2_ = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < 0.05F);
++            p_180482_2_ = new GroupData(this.field_70170_p.field_73012_v.nextFloat() < net.minecraftforge.common.ForgeModContainer.zombieBabyChance);
+         }
+ 
+-        if (p_180482_2_ instanceof EntityZombie.GroupData)
++        if (p_180482_2_ instanceof GroupData)
+         {
+-            EntityZombie.GroupData entityzombie$groupdata = (EntityZombie.GroupData)p_180482_2_;
++            GroupData entityzombie$groupdata = (GroupData)p_180482_2_;
+ 
+             if (entityzombie$groupdata.field_142048_a)
+             {
+@@ -463,7 +493,7 @@
+                     entitychicken1.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, 0.0F);
+                     entitychicken1.func_180482_a(p_180482_1_, (IEntityLivingData)null);
+                     entitychicken1.func_152117_i(true);
+-                    this.field_70170_p.func_72838_d(entitychicken1);
++                    this.field_70170_p.addEntity(entitychicken1, CreatureSpawnEvent.SpawnReason.MOUNT);
+                     this.func_184220_m(entitychicken1);
+                 }
+             }
+@@ -531,7 +561,7 @@
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
+     {
+-        super.func_70645_a(p_70645_1_);
++        // super.onDeath(cause); // CraftBukkit - moved down
+ 
+         if (p_70645_1_.func_76346_g() instanceof EntityCreeper)
+         {
+@@ -548,6 +578,7 @@
+                 }
+             }
+         }
++        super.func_70645_a(p_70645_1_);
+     }
+ 
+     protected ItemStack func_190732_dj()

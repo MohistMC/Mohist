@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemWrittenBook.java
++++ ../src-work/minecraft/net/minecraft/item/ItemWrittenBook.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.nbt.NBTTagString;
+ import net.minecraft.network.play.server.SPacketSetSlot;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.stats.StatList;
+ import net.minecraft.util.ActionResult;
+ import net.minecraft.util.EnumActionResult;
+@@ -21,6 +22,7 @@
+ import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldServer;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -119,6 +121,24 @@
+                         String s = nbttaglist.func_150307_f(i);
+                         ITextComponent itextcomponent;
+ 
++                        // CraftBukkit start
++                        // Some commands use the worldserver variable but we leave it full of null values,
++                        // so we must temporarily populate it with the world of the commandsender
++                        WorldServer[] prev = MinecraftServer.getServerInst().field_71305_c;
++                        MinecraftServer server = MinecraftServer.getServerInst();
++                        server.field_71305_c = new WorldServer[server.worldServerList.size()];
++                        server.field_71305_c[0] = (WorldServer) p_179229_2_.func_130014_f_();
++                        int bpos = 0;
++                        for (int pos = 1; pos < server.field_71305_c.length; pos++) {
++                            WorldServer world = server.worldServerList.get(bpos++);
++                            if (server.field_71305_c[0] == world) {
++                                pos--;
++                                continue;
++                            }
++                            server.field_71305_c[pos] = world;
++                        }
++                        // CraftBukkit end
++
+                         try
+                         {
+                             itextcomponent = ITextComponent.Serializer.func_186877_b(s);
+@@ -128,6 +148,9 @@
+                         {
+                             itextcomponent = new TextComponentString(s);
+                         }
++                        finally {
++                            MinecraftServer.getServerInst().field_71305_c = prev;
++                        }
+ 
+                         nbttaglist.func_150304_a(i, new NBTTagString(ITextComponent.Serializer.func_150696_a(itextcomponent)));
+                     }

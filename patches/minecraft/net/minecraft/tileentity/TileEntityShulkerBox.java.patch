@@ -1,0 +1,61 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityShulkerBox.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityShulkerBox.java
+@@ -29,6 +29,8 @@
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class TileEntityShulkerBox extends TileEntityLockableLoot implements ITickable, ISidedInventory
+ {
+@@ -42,6 +44,30 @@
+     private EnumDyeColor field_190602_l;
+     private boolean field_190594_p;
+ 
++    // CraftBukkit start - add fields and methods
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++    
++    public List<ItemStack> getContents() {
++        return this.field_190596_f;
++    }
++        
++    public void onOpen(CraftHumanEntity who) {
++        transaction.add(who);
++    }
++    
++    public void onClose(CraftHumanEntity who) {
++        transaction.remove(who);
++    }
++        
++    public List<HumanEntity> getViewers() {
++        return transaction;
++    }
++        
++    public void setMaxStackSize(int size) {
++        maxStack = size;
++    }
++    // CraftBukkit end
+     public TileEntityShulkerBox()
+     {
+         this((EnumDyeColor)null);
+@@ -199,7 +225,7 @@
+ 
+     public int func_70297_j_()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     public boolean func_145842_c(int p_145842_1_, int p_145842_2_)
+@@ -422,4 +448,9 @@
+         OPENED,
+         CLOSING;
+     }
++
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler()
++    {
++        return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
++    }
+ }

@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
+@@ -2,6 +2,7 @@
+ 
+ import java.util.Random;
+ import net.minecraft.block.material.Material;
++import net.minecraft.block.material.MaterialLiquid;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.item.EntityFallingBlock;
+@@ -47,7 +48,7 @@
+ 
+     private void func_176503_e(World p_176503_1_, BlockPos p_176503_2_)
+     {
+-        if (func_185759_i(p_176503_1_.func_180495_p(p_176503_2_.func_177977_b())) && p_176503_2_.func_177956_o() >= 0)
++        if ((p_176503_1_.func_175623_d(p_176503_2_.func_177977_b()) || func_185759_i(p_176503_1_.func_180495_p(p_176503_2_.func_177977_b()))) && p_176503_2_.func_177956_o() >= 0)
+         {
+             int i = 32;
+ 
+@@ -62,17 +63,18 @@
+             }
+             else
+             {
++                IBlockState state = p_176503_1_.func_180495_p(p_176503_2_);
+                 p_176503_1_.func_175698_g(p_176503_2_);
+                 BlockPos blockpos;
+ 
+-                for (blockpos = p_176503_2_.func_177977_b(); func_185759_i(p_176503_1_.func_180495_p(blockpos)) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
++                for (blockpos = p_176503_2_.func_177977_b(); (p_176503_1_.func_175623_d(blockpos) || func_185759_i(p_176503_1_.func_180495_p(blockpos))) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
+                 {
+                     ;
+                 }
+ 
+                 if (blockpos.func_177956_o() > 0)
+                 {
+-                    p_176503_1_.func_175656_a(blockpos.func_177984_a(), this.func_176223_P());
++                    p_176503_1_.func_175656_a(blockpos.func_177984_a(), state); //Forge: Fix loss of state information during world gen.
+                 }
+             }
+         }
+@@ -91,7 +93,7 @@
+     {
+         Block block = p_185759_0_.func_177230_c();
+         Material material = p_185759_0_.func_185904_a();
+-        return block == Blocks.field_150480_ab || material == Material.field_151579_a || material == Material.field_151586_h || material == Material.field_151587_i;
++        return block == Blocks.field_150480_ab || material == Material.field_151579_a || material == Material.field_151586_h || material == Material.field_151587_i || material instanceof MaterialLiquid;
+     }
+ 
+     public void func_176502_a_(World p_176502_1_, BlockPos p_176502_2_, IBlockState p_176502_3_, IBlockState p_176502_4_)

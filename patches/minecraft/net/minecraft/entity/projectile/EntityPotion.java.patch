@@ -1,0 +1,128 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityPotion.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityPotion.java
+@@ -1,13 +1,16 @@
+ package net.minecraft.entity.projectile;
+ 
+ import com.google.common.base.Predicate;
++import java.util.HashMap;
+ import java.util.List;
++import java.util.Map;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.EntityAreaEffectCloud;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.monster.EntityBlaze;
+ import net.minecraft.entity.monster.EntityEnderman;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.init.PotionTypes;
+@@ -31,6 +34,8 @@
+ import net.minecraft.world.World;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
++import org.bukkit.entity.LivingEntity;
+ 
+ public class EntityPotion extends EntityThrowable
+ {
+@@ -124,7 +129,7 @@
+             {
+                 this.func_190545_n();
+             }
+-            else if (!list.isEmpty())
++            else if (true || !list.isEmpty()) // CraftBukkit - Call event even if no effects to apply
+             {
+                 if (this.func_184544_n())
+                 {
+@@ -166,6 +171,7 @@
+         AxisAlignedBB axisalignedbb = this.func_174813_aQ().func_72314_b(4.0D, 2.0D, 4.0D);
+         List<EntityLivingBase> list = this.field_70170_p.<EntityLivingBase>func_72872_a(EntityLivingBase.class, axisalignedbb);
+ 
++        Map<LivingEntity, Double> affected = new HashMap<LivingEntity, Double>(); // CraftBukkit
+         if (!list.isEmpty())
+         {
+             for (EntityLivingBase entitylivingbase : list)
+@@ -182,24 +188,49 @@
+                         {
+                             d1 = 1.0D;
+                         }
++                        affected.put((LivingEntity) entitylivingbase.getBukkitEntity(), d1);
++                    }
++                }
++            }
++        }
++        org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPotionSplashEvent(this, affected);
++        if (!event.isCancelled() && p_190543_2_ != null && !p_190543_2_.isEmpty()) { // do not process effects if there are no effects to process
++            for (LivingEntity victim : event.getAffectedEntities())
++            {
++                if (!(victim instanceof CraftLivingEntity))
++                {
++                    continue;
++                }
++                EntityLivingBase entityliving = ((CraftLivingEntity) victim).getHandle();
++                double d1 = event.getIntensity(victim);
++                // CraftBukkit end
+ 
+-                        for (PotionEffect potioneffect : p_190543_2_)
++                for (PotionEffect potioneffect : p_190543_2_)
++                {
++                    Potion potion = potioneffect.func_188419_a();
++                    // CraftBukkit start - Abide by PVP settings - for players only!
++                    if (!this.field_70170_p.pvpMode && this.func_85052_h() instanceof EntityPlayerMP && entityliving instanceof EntityPlayerMP && entityliving != this.func_85052_h())
++                    {
++                        int i = Potion.func_188409_a(potion);
++                        // Block SLOWER_MOVEMENT, SLOWER_DIG, HARM, BLINDNESS, HUNGER, WEAKNESS and POISON potions
++                        if (i == 2 || i == 4 || i == 7 || i == 15 || i == 17 || i == 18 || i == 19)
+                         {
+-                            Potion potion = potioneffect.func_188419_a();
++                            continue;
++                        }
++                    }
++                    // CraftBukkit end
+ 
+-                            if (potion.func_76403_b())
+-                            {
+-                                potion.func_180793_a(this, this.func_85052_h(), entitylivingbase, potioneffect.func_76458_c(), d1);
+-                            }
+-                            else
+-                            {
+-                                int i = (int)(d1 * (double)potioneffect.func_76459_b() + 0.5D);
++                    if (potion.func_76403_b())
++                    {
++                        potion.func_180793_a(this, this.func_85052_h(), entityliving, potioneffect.func_76458_c(), d1);
++                    }
++                    else
++                    {
++                        int i = (int) (d1 * (double) potioneffect.func_76459_b() + 0.5D);
+ 
+-                                if (i > 20)
+-                                {
+-                                    entitylivingbase.func_70690_d(new PotionEffect(potion, i, potioneffect.func_76458_c(), potioneffect.func_82720_e(), potioneffect.func_188418_e()));
+-                                }
+-                            }
++                        if (i > 20)
++                        {
++                            entityliving.func_70690_d(new PotionEffect(potion, i, potioneffect.func_76458_c(), potioneffect.func_82720_e(), potioneffect.func_188418_e()));
+                         }
+                     }
+                 }
+@@ -229,10 +260,16 @@
+             entityareaeffectcloud.func_184482_a(nbttagcompound.func_74762_e("CustomPotionColor"));
+         }
+ 
+-        this.field_70170_p.func_72838_d(entityareaeffectcloud);
++        // this.world.spawnEntity(entityareaeffectcloud);
++        org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callLingeringPotionSplashEvent(this, entityareaeffectcloud);
++        if (!(event.isCancelled() || entityareaeffectcloud.field_70128_L)) {
++            this.field_70170_p.func_72838_d(entityareaeffectcloud);
++        } else {
++            entityareaeffectcloud.field_70128_L = true;
++        }
+     }
+ 
+-    private boolean func_184544_n()
++    public boolean func_184544_n()
+     {
+         return this.func_184543_l().func_77973_b() == Items.field_185156_bI;
+     }

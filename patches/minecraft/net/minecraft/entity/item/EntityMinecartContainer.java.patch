@@ -1,0 +1,141 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.item;
+ 
++import java.util.List;
+ import java.util.Random;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.Entity;
+@@ -23,13 +24,55 @@
+ import net.minecraft.world.storage.loot.ILootContainer;
+ import net.minecraft.world.storage.loot.LootContext;
+ import net.minecraft.world.storage.loot.LootTable;
++import red.mohist.inventory.CraftCustomInventory;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public abstract class EntityMinecartContainer extends EntityMinecart implements ILockableContainer, ILootContainer
+ {
+-    private NonNullList<ItemStack> field_94113_a = NonNullList.<ItemStack>func_191197_a(36, ItemStack.field_190927_a);
++    private NonNullList<ItemStack> field_94113_a = NonNullList.<ItemStack>func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a); // CraftBukkit - SPIGOT-3513
+     public boolean field_94112_b = true;
+     private ResourceLocation field_184290_c;
+     private long field_184291_d;
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++    
++    public List<ItemStack> getContents() {
++        return this.field_94113_a;
++    }
++    
++    public void onOpen(CraftHumanEntity who) {
++        transaction.add(who);
++    }
++    
++    public void onClose(CraftHumanEntity who) {
++        transaction.remove(who);
++    }
++    
++    public List<HumanEntity> getViewers() {
++        return transaction;
++    }
++    
++    public InventoryHolder getOwner() {
++        org.bukkit.entity.Entity cart = getBukkitEntity();
++        if (cart instanceof InventoryHolder) {
++            return (InventoryHolder) cart;
++        }
++        return new CraftCustomInventory(this);
++    }
++    
++    public void setMaxStackSize(int size) {
++        maxStack = size;
++    }
++    
++    @Override
++    public Location getLocation() {
++        return getBukkitEntity().getLocation();
++    }
++    // CraftBukkit end
+ 
+     public EntityMinecartContainer(World p_i1716_1_)
+     {
+@@ -134,14 +177,14 @@
+ 
+     public int func_70297_j_()
+     {
+-        return 64;
++        return maxStack;
+     }
+ 
+     @Nullable
+-    public Entity func_184204_a(int p_184204_1_)
++    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
+     {
+         this.field_94112_b = false;
+-        return super.func_184204_a(p_184204_1_);
++        return super.changeDimension(p_184204_1_, teleporter);
+     }
+ 
+     public void func_70106_y()
+@@ -168,7 +211,7 @@
+     protected void func_70014_b(NBTTagCompound p_70014_1_)
+     {
+         super.func_70014_b(p_70014_1_);
+-
++		
+         if (this.field_184290_c != null)
+         {
+             p_70014_1_.func_74778_a("LootTable", this.field_184290_c.toString());
+@@ -202,6 +245,7 @@
+ 
+     public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_)
+     {
++        if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
+         if (!this.field_70170_p.field_72995_K)
+         {
+             p_184230_1_.func_71007_a(this);
+@@ -270,17 +314,37 @@
+                 random = new Random(this.field_184291_d);
+             }
+ 
+-            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.field_70170_p);
++            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.field_70170_p).func_186472_a(this); // Forge: add looted entity to LootContext
+ 
+             if (p_184288_1_ != null)
+             {
+-                lootcontext$builder.func_186469_a(p_184288_1_.func_184817_da());
++                lootcontext$builder.func_186469_a(p_184288_1_.func_184817_da()).func_186470_a(p_184288_1_); // Forge: add player to LootContext
+             }
+ 
+             loottable.func_186460_a(this, random, lootcontext$builder.func_186471_a());
+         }
+     }
+ 
++    public net.minecraftforge.items.IItemHandler itemHandler = new net.minecraftforge.items.wrapper.InvWrapper(this);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            return (T) itemHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
++
+     public void func_174888_l()
+     {
+         this.func_184288_f((EntityPlayer)null);

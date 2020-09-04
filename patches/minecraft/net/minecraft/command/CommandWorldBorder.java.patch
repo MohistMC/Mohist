@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandWorldBorder.java
++++ ../src-work/minecraft/net/minecraft/command/CommandWorldBorder.java
+@@ -3,6 +3,7 @@
+ import java.util.Collections;
+ import java.util.List;
+ import javax.annotation.Nullable;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+@@ -34,7 +35,7 @@
+         }
+         else
+         {
+-            WorldBorder worldborder = this.func_184931_a(p_184881_1_);
++            WorldBorder worldborder = p_184881_2_ instanceof EntityPlayerMP ? p_184881_2_.func_130014_f_().func_175723_af() : this.func_184931_a(p_184881_1_);
+ 
+             if ("set".equals(p_184881_3_[0]))
+             {

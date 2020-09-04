@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemBoat.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBoat.java
+@@ -84,6 +84,11 @@
+             }
+             else
+             {
++                org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerInteractEvent(p_77659_2_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, raytraceresult.func_178782_a(), raytraceresult.field_178784_b, itemstack, p_77659_3_);
++
++                if (event.isCancelled()) {
++                    return new ActionResult<>(EnumActionResult.PASS, itemstack);
++                }
+                 Block block = p_77659_1_.func_180495_p(raytraceresult.func_178782_a()).func_177230_c();
+                 boolean flag1 = block == Blocks.field_150355_j || block == Blocks.field_150358_i;
+                 EntityBoat entityboat = new EntityBoat(p_77659_1_, raytraceresult.field_72307_f.field_72450_a, flag1 ? raytraceresult.field_72307_f.field_72448_b - 0.12D : raytraceresult.field_72307_f.field_72448_b, raytraceresult.field_72307_f.field_72449_c);
+@@ -98,7 +103,9 @@
+                 {
+                     if (!p_77659_1_.field_72995_K)
+                     {
+-                        p_77659_1_.func_72838_d(entityboat);
++                        // worldIn.spawnEntity(entityboat);
++                        if (!p_77659_1_.func_72838_d(entityboat))
++                            return new ActionResult<>(EnumActionResult.PASS, itemstack);
+                     }
+ 
+                     if (!p_77659_2_.field_71075_bZ.field_75098_d)

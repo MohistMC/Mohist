@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/util/text/Style.java
++++ ../src-work/minecraft/net/minecraft/util/text/Style.java
+@@ -238,7 +238,6 @@
+         return this;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public String func_150218_j()
+     {
+         if (this.func_150229_g())
+@@ -362,15 +361,17 @@
+ 
+     public int hashCode()
+     {
+-        int i = this.field_150247_b.hashCode();
+-        i = 31 * i + this.field_150248_c.hashCode();
+-        i = 31 * i + this.field_150245_d.hashCode();
+-        i = 31 * i + this.field_150246_e.hashCode();
+-        i = 31 * i + this.field_150243_f.hashCode();
+-        i = 31 * i + this.field_150244_g.hashCode();
+-        i = 31 * i + this.field_150251_h.hashCode();
+-        i = 31 * i + this.field_150252_i.hashCode();
+-        i = 31 * i + this.field_179990_j.hashCode();
++        // CraftBukkit start - fix npe
++        int i = field_150247_b == null ? 0 : this.field_150247_b.hashCode();
++        i = 31 * i + (field_150248_c == null ? 0 : this.field_150248_c.hashCode());
++        i = 31 * i + (field_150245_d == null ? 0 : this.field_150245_d.hashCode());
++        i = 31 * i + (field_150246_e == null ? 0 : this.field_150246_e.hashCode());
++        i = 31 * i + (field_150243_f == null ? 0 : this.field_150243_f.hashCode());
++        i = 31 * i + (field_150244_g == null ? 0 : this.field_150244_g.hashCode());
++        i = 31 * i + (field_150251_h == null ? 0 : this.field_150251_h.hashCode());
++        i = 31 * i + (field_150252_i == null ? 0 : this.field_150252_i.hashCode());
++        i = 31 * i + (field_179990_j == null ? 0 : this.field_179990_j.hashCode());
++        // CraftBukkit end
+         return i;
+     }
+ 

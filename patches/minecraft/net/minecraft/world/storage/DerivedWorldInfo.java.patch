@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
+@@ -68,7 +68,8 @@
+ 
+     public String func_76065_j()
+     {
+-        return this.field_76115_a.func_76065_j();
++        String name = super.func_76065_j();
++        return name != null ? name : this.field_76115_a.func_76065_j();
+     }
+ 
+     public int func_76088_k()
+@@ -218,13 +219,33 @@
+     {
+     }
+ 
++    @Deprecated
+     public void func_186345_a(DimensionType p_186345_1_, NBTTagCompound p_186345_2_)
+     {
+         this.field_76115_a.func_186345_a(p_186345_1_, p_186345_2_);
+     }
+ 
++    @Deprecated
+     public NBTTagCompound func_186347_a(DimensionType p_186347_1_)
+     {
+         return this.field_76115_a.func_186347_a(p_186347_1_);
+     }
++
++    public void setDimensionData(int dimensionID, NBTTagCompound compound)
++    {
++        this.field_76115_a.setDimensionData(dimensionID, compound);
++    }
++
++    public NBTTagCompound getDimensionData(int dimensionID)
++    {
++        return this.field_76115_a.getDimensionData(dimensionID);
++    }
++
++    public int getDimension() {
++        return this.field_76115_a.getDimension();
++    }
++
++    public void setDimension(int dim) {
++        this.field_76115_a.setDimension(dim);
++    }
+ }

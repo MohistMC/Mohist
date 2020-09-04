@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityTameable.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityTameable.java
+@@ -27,6 +27,7 @@
+     protected static final DataParameter<Byte> field_184755_bv = EntityDataManager.<Byte>func_187226_a(EntityTameable.class, DataSerializers.field_187191_a);
+     protected static final DataParameter<Optional<UUID>> field_184756_bw = EntityDataManager.<Optional<UUID>>func_187226_a(EntityTameable.class, DataSerializers.field_187203_m);
+     protected EntityAISit field_70911_d;
++    @Nullable private Optional<UUID> cachedOwnerId;
+ 
+     public EntityTameable(World p_i1604_1_)
+     {
+@@ -180,12 +181,14 @@
+     @Nullable
+     public UUID func_184753_b()
+     {
+-        return (UUID)((Optional)this.field_70180_af.func_187225_a(field_184756_bw)).orNull();
++        if (cachedOwnerId == null) cachedOwnerId = field_70180_af.func_187225_a(field_184756_bw);
++        return cachedOwnerId.orNull();
+     }
+ 
+     public void func_184754_b(@Nullable UUID p_184754_1_)
+     {
+-        this.field_70180_af.func_187227_b(field_184756_bw, Optional.fromNullable(p_184754_1_));
++        cachedOwnerId = Optional.fromNullable(p_184754_1_);
++        field_70180_af.func_187227_b(field_184756_bw, cachedOwnerId);
+     }
+ 
+     public void func_193101_c(EntityPlayer p_193101_1_)
+@@ -223,6 +226,11 @@
+         return this.field_70911_d;
+     }
+ 
++    public void setAISit(EntityAISit aiSit)
++    {
++        this.field_70911_d = aiSit;
++    }
++
+     public boolean func_142018_a(EntityLivingBase p_142018_1_, EntityLivingBase p_142018_2_)
+     {
+         return true;

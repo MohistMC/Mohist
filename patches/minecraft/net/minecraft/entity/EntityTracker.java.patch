@@ -1,0 +1,112 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityTracker.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityTracker.java
+@@ -53,13 +53,13 @@
+     private static final Logger field_151249_a = LogManager.getLogger();
+     private final WorldServer field_72795_a;
+     private final Set<EntityTrackerEntry> field_72793_b = Sets.<EntityTrackerEntry>newHashSet();
+-    private final IntHashMap<EntityTrackerEntry> field_72794_c = new IntHashMap<EntityTrackerEntry>();
++    public final IntHashMap<EntityTrackerEntry> field_72794_c = new IntHashMap<EntityTrackerEntry>();
+     private int field_72792_d;
+ 
+     public EntityTracker(WorldServer p_i1516_1_)
+     {
+         this.field_72795_a = p_i1516_1_;
+-        this.field_72792_d = p_i1516_1_.func_73046_m().func_184103_al().func_72372_a();
++        this.field_72792_d = net.minecraft.server.management.PlayerChunkMap.func_72686_a(p_i1516_1_.spigotConfig.viewDistance); // Spigot
+     }
+ 
+     public static long func_187253_a(double p_187253_0_)
+@@ -77,6 +77,8 @@
+ 
+     public void func_72786_a(Entity p_72786_1_)
+     {
++        if (net.minecraftforge.fml.common.registry.EntityRegistry.instance().tryTrackingEntity(this, p_72786_1_)) return;
++
+         if (p_72786_1_ instanceof EntityPlayerMP)
+         {
+             this.func_72791_a(p_72786_1_, 512, 2);
+@@ -196,7 +198,7 @@
+         }
+         else if (p_72786_1_ instanceof EntityAreaEffectCloud)
+         {
+-            this.func_72785_a(p_72786_1_, 160, Integer.MAX_VALUE, true);
++            this.func_72785_a(p_72786_1_, 160, 10 /*Integer.MAX_VALUE*/, true); // CraftBukkit
+         }
+         else if (p_72786_1_ instanceof EntityEnderCrystal)
+         {
+@@ -215,11 +217,13 @@
+ 
+     public void func_72785_a(Entity p_72785_1_, int p_72785_2_, final int p_72785_3_, boolean p_72785_4_)
+     {
++        org.spigotmc.AsyncCatcher.catchOp("entity track"); // Spigot
++        p_72785_2_ = org.spigotmc.TrackingRange.getEntityTrackingRange(p_72785_1_, p_72785_2_); // Spigot
+         try
+         {
+             if (this.field_72794_c.func_76037_b(p_72785_1_.func_145782_y()))
+             {
+-                throw new IllegalStateException("Entity is already tracked!");
++                return;
+             }
+ 
+             EntityTrackerEntry entitytrackerentry = new EntityTrackerEntry(p_72785_1_, p_72785_2_, this.field_72792_d, p_72785_3_, p_72785_4_);
+@@ -262,6 +266,7 @@
+ 
+     public void func_72790_b(Entity p_72790_1_)
+     {
++        org.spigotmc.AsyncCatcher.catchOp("entity untrack"); // Spigot
+         if (p_72790_1_ instanceof EntityPlayerMP)
+         {
+             EntityPlayerMP entityplayermp = (EntityPlayerMP)p_72790_1_;
+@@ -284,7 +289,7 @@
+     public void func_72788_a()
+     {
+         List<EntityPlayerMP> list = Lists.<EntityPlayerMP>newArrayList();
+-
++        field_72795_a.timings.tracker1.startTiming(); // Spigot
+         for (EntityTrackerEntry entitytrackerentry : this.field_72793_b)
+         {
+             entitytrackerentry.func_73122_a(this.field_72795_a.field_73010_i);
+@@ -299,7 +304,9 @@
+                 }
+             }
+         }
++        field_72795_a.timings.tracker1.stopTiming(); // Spigot
+ 
++        field_72795_a.timings.tracker2.startTiming(); // Spigot
+         for (int i = 0; i < list.size(); ++i)
+         {
+             EntityPlayerMP entityplayermp = list.get(i);
+@@ -312,6 +319,7 @@
+                 }
+             }
+         }
++        field_72795_a.timings.tracker2.stopTiming(); // Spigot
+     }
+ 
+     public void func_180245_a(EntityPlayerMP p_180245_1_)
+@@ -339,6 +347,25 @@
+         }
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++
++    // don't expose the EntityTrackerEntry directly so mods can't mess with the data in there as easily
++    /**
++     * Get all players tracking the given Entity. The Entity must be part of the World that this Tracker belongs to.
++     * @param entity the Entity
++     * @return all players tracking the Entity
++     */
++    public Set<? extends net.minecraft.entity.player.EntityPlayer> getTrackingPlayers(Entity entity)
++    {
++        EntityTrackerEntry entry = (EntityTrackerEntry) field_72794_c.func_76041_a(entity.func_145782_y());
++        if (entry == null)
++            return java.util.Collections.emptySet();
++        else
++            return java.util.Collections.unmodifiableSet(entry.field_73134_o);
++    }
++
++    /* ======================================== FORGE END   =====================================*/
++
+     public void func_151248_b(Entity p_151248_1_, Packet<?> p_151248_2_)
+     {
+         EntityTrackerEntry entitytrackerentry = this.field_72794_c.func_76041_a(p_151248_1_.func_145782_y());

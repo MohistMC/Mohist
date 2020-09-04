@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneLight.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneLight.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public class BlockRedstoneLight extends Block
+ {
+@@ -30,10 +31,16 @@
+         {
+             if (this.field_150171_a && !p_176213_1_.func_175640_z(p_176213_2_))
+             {
++                if (CraftEventFactory.callRedstoneChange(p_176213_1_, p_176213_2_.func_177958_n(), p_176213_2_.func_177956_o(), p_176213_2_.func_177952_p(), 15, 0).getNewCurrent() != 0) {
++                    return;
++                }
+                 p_176213_1_.func_180501_a(p_176213_2_, Blocks.field_150379_bu.func_176223_P(), 2);
+             }
+             else if (!this.field_150171_a && p_176213_1_.func_175640_z(p_176213_2_))
+             {
++                if (CraftEventFactory.callRedstoneChange(p_176213_1_, p_176213_2_.func_177958_n(), p_176213_2_.func_177956_o(), p_176213_2_.func_177952_p(), 0, 15).getNewCurrent() != 15) {
++                    return;
++                }
+                 p_176213_1_.func_180501_a(p_176213_2_, Blocks.field_150374_bv.func_176223_P(), 2);
+             }
+         }
+@@ -49,6 +56,9 @@
+             }
+             else if (!this.field_150171_a && p_189540_2_.func_175640_z(p_189540_3_))
+             {
++                if (CraftEventFactory.callRedstoneChange(p_189540_2_, p_189540_3_.func_177958_n(), p_189540_3_.func_177956_o(), p_189540_3_.func_177952_p(), 0, 15).getNewCurrent() != 15) {
++                    return;
++                }
+                 p_189540_2_.func_180501_a(p_189540_3_, Blocks.field_150374_bv.func_176223_P(), 2);
+             }
+         }
+@@ -60,6 +70,9 @@
+         {
+             if (this.field_150171_a && !p_180650_1_.func_175640_z(p_180650_2_))
+             {
++                if (CraftEventFactory.callRedstoneChange(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), 15, 0).getNewCurrent() != 0) {
++                    return;
++                }
+                 p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_150379_bu.func_176223_P(), 2);
+             }
+         }

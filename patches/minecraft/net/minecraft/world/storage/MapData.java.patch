@@ -1,0 +1,202 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/MapData.java
++++ ../src-work/minecraft/net/minecraft/world/storage/MapData.java
+@@ -1,9 +1,11 @@
+ package net.minecraft.world.storage;
+ 
++import com.google.common.base.Charsets;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import java.util.List;
+ import java.util.Map;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.item.EntityItemFrame;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -15,23 +17,32 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_12_R1.map.CraftMapView;
+ 
+ public class MapData extends WorldSavedData
+ {
+     public int field_76201_a;
+     public int field_76199_b;
+-    public byte field_76200_c;
++    public int field_76200_c; //FML byte -> int
+     public boolean field_186210_e;
+     public boolean field_191096_f;
+     public byte field_76197_d;
+     public byte[] field_76198_e = new byte[16384];
+-    public List<MapData.MapInfo> field_76196_g = Lists.<MapData.MapInfo>newArrayList();
+-    private final Map<EntityPlayer, MapData.MapInfo> field_76202_j = Maps.<EntityPlayer, MapData.MapInfo>newHashMap();
++    public List<MapInfo> field_76196_g = Lists.<MapInfo>newArrayList();
++    private final Map<EntityPlayer, MapInfo> field_76202_j = Maps.<EntityPlayer, MapInfo>newHashMap();
+     public Map<String, MapDecoration> field_76203_h = Maps.<String, MapDecoration>newLinkedHashMap();
+ 
++    public final CraftMapView mapView;
++    private CraftServer server;
++    private UUID uniqueId = null;
++
+     public MapData(String p_i2140_1_)
+     {
+         super(p_i2140_1_);
++        mapView = new CraftMapView(this);
++        server = (CraftServer) org.bukkit.Bukkit.getServer();
+     }
+ 
+     public void func_176054_a(double p_176054_1_, double p_176054_3_, int p_176054_5_)
+@@ -45,7 +56,31 @@
+ 
+     public void func_76184_a(NBTTagCompound p_76184_1_)
+     {
+-        this.field_76200_c = p_76184_1_.func_74771_c("dimension");
++        // this.dimension = nbt.getInteger("dimension");
++        // CraftBukkit start
++        int dimension = p_76184_1_.func_74762_e("dimension");
++
++        if (dimension >= 10) {
++            long least = p_76184_1_.func_74763_f("UUIDLeast");
++            long most = p_76184_1_.func_74763_f("UUIDMost");
++
++            if (least != 0L && most != 0L) {
++                this.uniqueId = new UUID(most, least);
++
++                CraftWorld world = (CraftWorld) server.getWorld(this.uniqueId);
++                // Check if the stored world details are correct.
++                if (world == null) {
++                    /* All Maps which do not have their valid world loaded are set to a dimension which hopefully won't be reached.
++                       This is to prevent them being corrupted with the wrong map data. */
++                    dimension = 127;
++                } else {
++                    dimension = (byte) world.getHandle().dimension;
++                }
++            }
++        }
++
++        this.field_76200_c = dimension;
++        // CraftBukkit end
+         this.field_76201_a = p_76184_1_.func_74762_e("xCenter");
+         this.field_76199_b = p_76184_1_.func_74762_e("zCenter");
+         this.field_76197_d = p_76184_1_.func_74771_c("scale");
+@@ -97,7 +132,26 @@
+ 
+     public NBTTagCompound func_189551_b(NBTTagCompound p_189551_1_)
+     {
+-        p_189551_1_.func_74774_a("dimension", this.field_76200_c);
++        // CraftBukkit start
++        if (this.field_76200_c >= 10) {
++            if (this.uniqueId == null) {
++                for (org.bukkit.World world : server.getWorlds()) {
++                    CraftWorld cWorld = (CraftWorld) world;
++                    if (cWorld.getHandle().dimension == this.field_76200_c) {
++                        this.uniqueId = cWorld.getUID();
++                        break;
++                    }
++                }
++            }
++            /* Perform a second check to see if a matching world was found, this is a necessary
++               change incase Maps are forcefully unlinked from a World and lack a UID.*/
++            if (this.uniqueId != null) {
++                p_189551_1_.func_74772_a("UUIDLeast", this.uniqueId.getLeastSignificantBits());
++                p_189551_1_.func_74772_a("UUIDMost", this.uniqueId.getMostSignificantBits());
++            }
++        }
++        // CraftBukkit end
++        p_189551_1_.func_74768_a("dimension", this.field_76200_c);
+         p_189551_1_.func_74768_a("xCenter", this.field_76201_a);
+         p_189551_1_.func_74768_a("zCenter", this.field_76199_b);
+         p_189551_1_.func_74774_a("scale", this.field_76197_d);
+@@ -113,7 +167,7 @@
+     {
+         if (!this.field_76202_j.containsKey(p_76191_1_))
+         {
+-            MapData.MapInfo mapdata$mapinfo = new MapData.MapInfo(p_76191_1_);
++            MapInfo mapdata$mapinfo = new MapInfo(p_76191_1_);
+             this.field_76202_j.put(p_76191_1_, mapdata$mapinfo);
+             this.field_76196_g.add(mapdata$mapinfo);
+         }
+@@ -125,7 +179,7 @@
+ 
+         for (int i = 0; i < this.field_76196_g.size(); ++i)
+         {
+-            MapData.MapInfo mapdata$mapinfo1 = this.field_76196_g.get(i);
++            MapInfo mapdata$mapinfo1 = this.field_76196_g.get(i);
+ 
+             if (!mapdata$mapinfo1.field_76211_a.field_70128_L && (mapdata$mapinfo1.field_76211_a.field_71071_by.func_70431_c(p_76191_2_) || p_76191_2_.func_82839_y()))
+             {
+@@ -208,9 +262,9 @@
+             p_191095_8_ = p_191095_8_ + (p_191095_8_ < 0.0D ? -8.0D : 8.0D);
+             b2 = (byte)((int)(p_191095_8_ * 16.0D / 360.0D));
+ 
+-            if (this.field_76200_c < 0)
++            if (p_191095_2_.field_73011_w.shouldMapSpin(p_191095_3_, p_191095_4_, p_191095_6_, p_191095_8_))
+             {
+-                int l = (int)(p_191095_2_.func_72912_H().func_76073_f() / 10L);
++                int l = (int)(p_191095_2_.func_72820_D() / 10L);
+                 b2 = (byte)(l * l * 34187121 + l * 121 >> 15 & 15);
+             }
+         }
+@@ -268,7 +322,7 @@
+     @Nullable
+     public Packet<?> func_176052_a(ItemStack p_176052_1_, World p_176052_2_, EntityPlayer p_176052_3_)
+     {
+-        MapData.MapInfo mapdata$mapinfo = this.field_76202_j.get(p_176052_3_);
++        MapInfo mapdata$mapinfo = this.field_76202_j.get(p_176052_3_);
+         return mapdata$mapinfo == null ? null : mapdata$mapinfo.func_176101_a(p_176052_1_);
+     }
+ 
+@@ -276,19 +330,19 @@
+     {
+         super.func_76185_a();
+ 
+-        for (MapData.MapInfo mapdata$mapinfo : this.field_76196_g)
++        for (MapInfo mapdata$mapinfo : this.field_76196_g)
+         {
+             mapdata$mapinfo.func_176102_a(p_176053_1_, p_176053_2_);
+         }
+     }
+ 
+-    public MapData.MapInfo func_82568_a(EntityPlayer p_82568_1_)
++    public MapInfo func_82568_a(EntityPlayer p_82568_1_)
+     {
+-        MapData.MapInfo mapdata$mapinfo = this.field_76202_j.get(p_82568_1_);
++        MapInfo mapdata$mapinfo = this.field_76202_j.get(p_82568_1_);
+ 
+         if (mapdata$mapinfo == null)
+         {
+-            mapdata$mapinfo = new MapData.MapInfo(p_82568_1_);
++            mapdata$mapinfo = new MapInfo(p_82568_1_);
+             this.field_76202_j.put(p_82568_1_, mapdata$mapinfo);
+             this.field_76196_g.add(mapdata$mapinfo);
+         }
+@@ -315,14 +369,25 @@
+         @Nullable
+         public Packet<?> func_176101_a(ItemStack p_176101_1_)
+         {
++            org.bukkit.craftbukkit.v1_12_R1.map.RenderData render = MapData.this.mapView.render((org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer) this.field_76211_a.getBukkitEntity());
++
++            java.util.Collection<MapDecoration> icons = new java.util.ArrayList<>();
++
++            for ( org.bukkit.map.MapCursor cursor : render.cursors) {
++
++                if (cursor.isVisible()) {
++                    icons.add(new MapDecoration(MapDecoration.Type.func_191159_a(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection()));
++                }
++            }
++
+             if (this.field_176105_d)
+             {
+                 this.field_176105_d = false;
+-                return new SPacketMaps(p_176101_1_.func_77960_j(), MapData.this.field_76197_d, MapData.this.field_186210_e, MapData.this.field_76203_h.values(), MapData.this.field_76198_e, this.field_176106_e, this.field_176103_f, this.field_176104_g + 1 - this.field_176106_e, this.field_176108_h + 1 - this.field_176103_f);
++                return new SPacketMaps(p_176101_1_.func_77960_j(), MapData.this.field_76197_d, MapData.this.field_186210_e, icons, render.buffer, this.field_176106_e, this.field_176103_f, this.field_176104_g + 1 - this.field_176106_e, this.field_176108_h + 1 - this.field_176103_f);
+             }
+             else
+             {
+-                return this.field_176109_i++ % 5 == 0 ? new SPacketMaps(p_176101_1_.func_77960_j(), MapData.this.field_76197_d, MapData.this.field_186210_e, MapData.this.field_76203_h.values(), MapData.this.field_76198_e, 0, 0, 0, 0) : null;
++                return this.field_176109_i++ % 5 == 0 ? new SPacketMaps(p_176101_1_.func_77960_j(), MapData.this.field_76197_d, MapData.this.field_186210_e, icons, render.buffer, 0, 0, 0, 0) : null;
+             }
+         }
+ 

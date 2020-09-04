@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/command/FunctionObject.java
++++ ../src-work/minecraft/net/minecraft/command/FunctionObject.java
+@@ -5,6 +5,7 @@
+ import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.FunctionManager;
++import net.minecraft.tileentity.CommandBlockBaseLogic;
+ import net.minecraft.util.ResourceLocation;
+ 
+ public class FunctionObject
+@@ -108,7 +109,14 @@
+ 
+             public void func_194145_a(FunctionManager p_194145_1_, ICommandSender p_194145_2_, ArrayDeque<FunctionManager.QueuedCommand> p_194145_3_, int p_194145_4_)
+             {
+-                p_194145_1_.func_193062_a().func_71556_a(p_194145_2_, this.field_193525_a);
++                // functionManagerIn.getCommandManager().executeCommand(sender, this.command);
++                org.bukkit.command.CommandSender bukkitSender;
++                if (p_194145_2_ instanceof FunctionManager.CustomFunctionListener) {
++                    bukkitSender = ((FunctionManager.CustomFunctionListener) p_194145_2_).sender;
++                } else {
++                    bukkitSender = CommandBlockBaseLogic.unwrapSender(p_194145_2_);
++                }
++                CommandBlockBaseLogic.executeSafely(p_194145_2_, bukkitSender, this.field_193525_a);
+             }
+ 
+             public String toString()

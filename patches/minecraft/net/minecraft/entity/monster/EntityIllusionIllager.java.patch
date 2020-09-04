@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityIllusionIllager.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityIllusionIllager.java
+@@ -214,12 +214,14 @@
+     public void func_82196_d(EntityLivingBase p_82196_1_, float p_82196_2_)
+     {
+         EntityArrow entityarrow = this.func_193097_t(p_82196_2_);
++        if (this.func_184614_ca().func_77973_b() instanceof net.minecraft.item.ItemBow)
++            entityarrow = ((net.minecraft.item.ItemBow) this.func_184614_ca().func_77973_b()).customizeArrow(entityarrow);
+         double d0 = p_82196_1_.field_70165_t - this.field_70165_t;
+         double d1 = p_82196_1_.func_174813_aQ().field_72338_b + (double)(p_82196_1_.field_70131_O / 3.0F) - entityarrow.field_70163_u;
+         double d2 = p_82196_1_.field_70161_v - this.field_70161_v;
+         double d3 = (double)MathHelper.func_76133_a(d0 * d0 + d2 * d2);
+         entityarrow.func_70186_c(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(14 - this.field_70170_p.func_175659_aa().func_151525_a() * 4));
+-        this.func_184185_a(SoundEvents.field_187866_fi, 1.0F, 1.0F / (this.func_70681_au().nextFloat() * 0.4F + 0.8F));
++		this.func_184185_a(SoundEvents.field_187866_fi, 1.0F, 1.0F / (this.func_70681_au().nextFloat() * 0.4F + 0.8F));
+         this.field_70170_p.func_72838_d(entityarrow);
+     }
+ 
+@@ -260,6 +262,7 @@
+ 
+         private AIBlindnessSpell()
+         {
++            super();
+         }
+ 
+         public boolean func_75250_a()
+@@ -318,6 +321,7 @@
+     {
+         private AIMirriorSpell()
+         {
++            super();
+         }
+ 
+         public boolean func_75250_a()

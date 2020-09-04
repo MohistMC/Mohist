@@ -1,0 +1,56 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDragonEgg.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDragonEgg.java
+@@ -16,6 +16,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.block.BlockFromToEvent;
+ 
+ public class BlockDragonEgg extends Block
+ {
+@@ -48,7 +49,7 @@
+ 
+     private void func_180683_d(World p_180683_1_, BlockPos p_180683_2_)
+     {
+-        if (BlockFalling.func_185759_i(p_180683_1_.func_180495_p(p_180683_2_.func_177977_b())) && p_180683_2_.func_177956_o() >= 0)
++        if (p_180683_1_.func_175623_d(p_180683_2_.func_177977_b()) && BlockFalling.func_185759_i(p_180683_1_.func_180495_p(p_180683_2_.func_177977_b())) && p_180683_2_.func_177956_o() >= 0)
+         {
+             int i = 32;
+ 
+@@ -61,14 +62,14 @@
+                 p_180683_1_.func_175698_g(p_180683_2_);
+                 BlockPos blockpos;
+ 
+-                for (blockpos = p_180683_2_; BlockFalling.func_185759_i(p_180683_1_.func_180495_p(blockpos)) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
++                for (blockpos = p_180683_2_; p_180683_1_.func_175623_d(blockpos) && BlockFalling.func_185759_i(p_180683_1_.func_180495_p(blockpos)) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
+                 {
+                     ;
+                 }
+ 
+                 if (blockpos.func_177956_o() > 0)
+                 {
+-                    p_180683_1_.func_180501_a(blockpos, this.func_176223_P(), 2);
++                    p_180683_1_.func_180501_a(blockpos.func_177984_a(), this.func_176223_P(), 2); // Paper MC-94186 Fix dragon egg falling in lazy chunks
+                 }
+             }
+         }
+@@ -95,8 +96,18 @@
+             {
+                 BlockPos blockpos = p_180684_2_.func_177982_a(p_180684_1_.field_73012_v.nextInt(16) - p_180684_1_.field_73012_v.nextInt(16), p_180684_1_.field_73012_v.nextInt(8) - p_180684_1_.field_73012_v.nextInt(8), p_180684_1_.field_73012_v.nextInt(16) - p_180684_1_.field_73012_v.nextInt(16));
+ 
+-                if (p_180684_1_.func_180495_p(blockpos).func_177230_c().field_149764_J == Material.field_151579_a)
++                if (p_180684_1_.func_175623_d(blockpos))
+                 {
++                    org.bukkit.block.Block from = p_180684_1_.getWorld().getBlockAt(p_180684_2_.func_177958_n(), p_180684_2_.func_177956_o(), p_180684_2_.func_177952_p());
++                    org.bukkit.block.Block to = p_180684_1_.getWorld().getBlockAt(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
++                    BlockFromToEvent event = new BlockFromToEvent(from, to);
++                    org.bukkit.Bukkit.getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        return;
++                    }
++
++                    blockpos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
+                     if (p_180684_1_.field_72995_K)
+                     {
+                         for (int j = 0; j < 128; ++j)

@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandSenderWrapper.java
++++ ../src-work/minecraft/net/minecraft/command/CommandSenderWrapper.java
+@@ -11,7 +11,7 @@
+ 
+ public class CommandSenderWrapper implements ICommandSender
+ {
+-    private final ICommandSender field_193043_a;
++    public final ICommandSender field_193043_a;
+     @Nullable
+     private final Vec3d field_194002_b;
+     @Nullable
+@@ -81,6 +81,11 @@
+         return this.field_194004_d != null && this.field_194004_d.intValue() < p_70003_1_ ? false : this.field_193043_a.func_70003_b(p_70003_1_, p_70003_2_);
+     }
+ 
++    public boolean canUseCommand(int permLevel, String commandName, String perm)
++    {
++        return this.field_194004_d != null && this.field_194004_d.intValue() < permLevel ? false : this.field_193043_a.canUseCommand(permLevel, commandName, perm);
++    }
++
+     public BlockPos func_180425_c()
+     {
+         if (this.field_194003_c != null)

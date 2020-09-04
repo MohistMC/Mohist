@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockJukebox.java
++++ ../src-work/minecraft/net/minecraft/block/BlockJukebox.java
+@@ -66,7 +66,7 @@
+         }
+     }
+ 
+-    private void func_180678_e(World p_180678_1_, BlockPos p_180678_2_, IBlockState p_180678_3_)
++    public void func_180678_e(World p_180678_1_, BlockPos p_180678_2_, IBlockState p_180678_3_)
+     {
+         if (!p_180678_1_.field_72995_K)
+         {
+@@ -193,6 +193,11 @@
+ 
+             public void func_145857_a(ItemStack p_145857_1_)
+             {
++                // CraftBukkit start - There can only be one
++                if (!p_145857_1_.func_190926_b()) {
++                    p_145857_1_.func_190920_e(1);
++                }
++                // CraftBukkit end
+                 this.field_145858_a = p_145857_1_;
+                 this.func_70296_d();
+             }

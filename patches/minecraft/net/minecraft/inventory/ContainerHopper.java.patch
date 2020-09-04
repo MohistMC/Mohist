@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerHopper.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerHopper.java
+@@ -3,14 +3,20 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
+ 
+ public class ContainerHopper extends Container
+ {
+     private final IInventory field_94538_a;
+ 
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++
+     public ContainerHopper(InventoryPlayer p_i45792_1_, IInventory p_i45792_2_, EntityPlayer p_i45792_3_)
+     {
+         this.field_94538_a = p_i45792_2_;
++        this.player = p_i45792_1_;
+         p_i45792_2_.func_174889_b(p_i45792_3_);
+         int i = 51;
+ 
+@@ -35,6 +41,7 @@
+ 
+     public boolean func_75145_c(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable) return true;
+         return this.field_94538_a.func_70300_a(p_75145_1_);
+     }
+ 
+@@ -78,4 +85,15 @@
+         super.func_75134_a(p_75134_1_);
+         this.field_94538_a.func_174886_c(p_75134_1_);
+     }
++
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        CraftInventory inventory = new CraftInventory(this.field_94538_a);
++        bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
+ }

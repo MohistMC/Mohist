@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryEnderChest.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryEnderChest.java
+@@ -5,14 +5,23 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.tileentity.TileEntityEnderChest;
++import org.bukkit.Location;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class InventoryEnderChest extends InventoryBasic
+ {
+     private TileEntityEnderChest field_70488_a;
++    private final EntityPlayer owner;
+ 
+     public InventoryEnderChest()
+     {
++        this(null);
++    }
++
++    public InventoryEnderChest(EntityPlayer owner)
++    {
+         super("container.enderchest", false, 27);
++        this.owner = owner;
+     }
+ 
+     public void func_146031_a(TileEntityEnderChest p_146031_1_)
+@@ -84,4 +93,14 @@
+         super.func_174886_c(p_174886_1_);
+         this.field_70488_a = null;
+     }
++
++    public InventoryHolder getBukkitOwner() {
++        return owner != null ? owner.getBukkitEntity() : null;
++    }
++
++    @Override
++    public Location getLocation() {
++        return new Location(this.field_70488_a.func_145831_w().getWorld(), this.field_70488_a.func_174877_v().func_177958_n(), this.field_70488_a.func_174877_v().func_177956_o(), this.field_70488_a.func_174877_v().func_177952_p());
++    }
++
+ }

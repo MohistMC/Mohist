@@ -1,0 +1,168 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityArrow.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityArrow.java
+@@ -12,6 +12,7 @@
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.IProjectile;
+ import net.minecraft.entity.MoverType;
++import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.entity.monster.EntityEnderman;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+@@ -36,6 +37,10 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityCombustEvent;
++import org.bukkit.event.player.PlayerPickupArrowEvent;
+ 
+ public abstract class EntityArrow extends Entity implements IProjectile
+ {
+@@ -47,21 +52,39 @@
+         }
+     });
+     private static final DataParameter<Byte> field_184554_g = EntityDataManager.<Byte>func_187226_a(EntityArrow.class, DataSerializers.field_187191_a);
+-    private int field_145791_d;
+-    private int field_145792_e;
+-    private int field_145789_f;
++    public int field_145791_d;
++    public int field_145792_e;
++    public int field_145789_f;
+     private Block field_145790_g;
+     private int field_70253_h;
+-    protected boolean field_70254_i;
++    public boolean field_70254_i; // Spigot
+     protected int field_184552_b;
+-    public EntityArrow.PickupStatus field_70251_a;
++    public PickupStatus field_70251_a;
+     public int field_70249_b;
+     public Entity field_70250_c;
+     private int field_70252_j;
+     private int field_70257_an;
+     private double field_70255_ao;
+-    private int field_70256_ap;
++    public int field_70256_ap;
++    protected abstract ItemStack getItemStack();
+ 
++    public ItemStack getOriginalItemStack() {
++        return getItemStack();
++    }
++    // Paper - OBFHelper
++
++    // Spigot Start
++    @Override
++    public void inactiveTick()
++    {
++        if ( this.field_70254_i )
++        {
++            this.field_70252_j += 1; // Despawn counter. First int after shooter
++        }
++        super.inactiveTick();
++    }
++    // Spigot End
++
+     public EntityArrow(World p_i1753_1_)
+     {
+         super(p_i1753_1_);
+@@ -83,6 +106,7 @@
+     {
+         this(p_i46777_1_, p_i46777_2_.field_70165_t, p_i46777_2_.field_70163_u + (double)p_i46777_2_.func_70047_e() - 0.10000000149011612D, p_i46777_2_.field_70161_v);
+         this.field_70250_c = p_i46777_2_;
++        this.projectileSource = (LivingEntity) p_i46777_2_.getBukkitEntity();
+ 
+         if (p_i46777_2_ instanceof EntityPlayer)
+         {
+@@ -222,7 +246,7 @@
+             {
+                 ++this.field_70252_j;
+ 
+-                if (this.field_70252_j >= 1200)
++                if (this.field_70252_j >= field_70170_p.spigotConfig.arrowDespawnRate) // Spigot - First int after shooter
+                 {
+                     this.func_70106_y();
+                 }
+@@ -262,7 +286,7 @@
+                 }
+             }
+ 
+-            if (raytraceresult != null)
++            if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+             {
+                 this.func_184549_a(raytraceresult);
+             }
+@@ -339,7 +363,7 @@
+     protected void func_184549_a(RayTraceResult p_184549_1_)
+     {
+         Entity entity = p_184549_1_.field_72308_g;
+-
++        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callProjectileHitEvent(this, p_184549_1_);
+         if (entity != null)
+         {
+             float f = MathHelper.func_76133_a(this.field_70159_w * this.field_70159_w + this.field_70181_x * this.field_70181_x + this.field_70179_y * this.field_70179_y);
+@@ -363,7 +387,12 @@
+ 
+             if (this.func_70027_ad() && !(entity instanceof EntityEnderman))
+             {
+-                entity.func_70015_d(5);
++//                entity.setFire(5);
++                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++                org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++                if (!combustEvent.isCancelled()) {
++                    entity.func_70015_d(combustEvent.getDuration());
++                }
+             }
+ 
+             if (entity.func_70097_a(damagesource, (float)i))
+@@ -565,14 +594,24 @@
+ 
+         this.func_70243_d(p_70037_1_.func_74767_n("crit"));
+     }
+-
+-    public void func_70100_b_(EntityPlayer p_70100_1_)
++	public void func_70100_b_(EntityPlayer p_70100_1_)
+     {
+         if (!this.field_70170_p.field_72995_K && this.field_70254_i && this.field_70249_b <= 0)
+         {
+-            boolean flag = this.field_70251_a == EntityArrow.PickupStatus.ALLOWED || this.field_70251_a == EntityArrow.PickupStatus.CREATIVE_ONLY && p_70100_1_.field_71075_bZ.field_75098_d;
++            ItemStack itemstack = this.func_184550_j();
++            EntityItem item = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, itemstack);
++            if (this.field_70251_a == PickupStatus.ALLOWED && p_70100_1_.field_71071_by.canHold(itemstack) > 0) {
++                PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((org.bukkit.entity.Player) p_70100_1_.getBukkitEntity(), new org.bukkit.craftbukkit.v1_12_R1.entity.CraftItem(this.field_70170_p.getServer(), this, item), (org.bukkit.entity.Arrow) this.getBukkitEntity());
++                // event.setCancelled(!entityhuman.canPickUpLoot); TODO
++                this.field_70170_p.getServer().getPluginManager().callEvent(event);
+ 
+-            if (this.field_70251_a == EntityArrow.PickupStatus.ALLOWED && !p_70100_1_.field_71071_by.func_70441_a(this.func_184550_j()))
++                if (event.isCancelled()) {
++                    return;
++                }
++            }
++            boolean flag = this.field_70251_a == PickupStatus.ALLOWED || this.field_70251_a == PickupStatus.CREATIVE_ONLY && p_70100_1_.field_71075_bZ.field_75098_d;
++
++            if (this.field_70251_a == PickupStatus.ALLOWED && !p_70100_1_.field_71071_by.func_70441_a(item.func_92059_d()))
+             {
+                 flag = false;
+             }
+@@ -584,7 +623,6 @@
+             }
+         }
+     }
+-
+     protected abstract ItemStack func_184550_j();
+ 
+     protected boolean func_70041_e_()
+@@ -655,7 +693,13 @@
+ 
+         if (EnchantmentHelper.func_185284_a(Enchantments.field_185311_w, p_190547_1_) > 0)
+         {
+-            this.func_70015_d(100);
++//            this.setFire(100);
++            EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 100);
++            this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++                this.func_70015_d(event.getDuration());
++            }
+         }
+     }
+ 

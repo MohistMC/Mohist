@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockConcretePowder.java
++++ ../src-work/minecraft/net/minecraft/block/BlockConcretePowder.java
+@@ -29,9 +29,8 @@
+ 
+     public void func_176502_a_(World p_176502_1_, BlockPos p_176502_2_, IBlockState p_176502_3_, IBlockState p_176502_4_)
+     {
+-        if (p_176502_4_.func_185904_a().func_76224_d())
+-        {
+-            p_176502_1_.func_180501_a(p_176502_2_, Blocks.field_192443_dR.func_176223_P().func_177226_a(BlockColored.field_176581_a, p_176502_3_.func_177229_b(field_192426_a)), 3);
++        if (p_176502_4_.func_185904_a().func_76224_d() && p_176502_1_.func_180495_p(p_176502_2_).func_177230_c() != Blocks.field_192443_dR) { // CraftBukkit - don't double concrete
++            org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockFormEvent(p_176502_1_, p_176502_2_, Blocks.field_192443_dR.func_176223_P().func_177226_a(BlockColored.field_176581_a, p_176502_3_.func_177229_b(BlockConcretePowder.field_192426_a)), null); // CraftBukkit
+         }
+     }
+ 
+@@ -55,7 +54,7 @@
+ 
+         if (flag)
+         {
+-            p_192425_1_.func_180501_a(p_192425_2_, Blocks.field_192443_dR.func_176223_P().func_177226_a(BlockColored.field_176581_a, p_192425_3_.func_177229_b(field_192426_a)), 3);
++            org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockFormEvent(p_192425_1_, p_192425_2_, Blocks.field_192443_dR.func_176223_P().func_177226_a(BlockColored.field_176581_a, p_192425_3_.func_177229_b(BlockConcretePowder.field_192426_a)), null);
+         }
+ 
+         return flag;

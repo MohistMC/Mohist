@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/CPacketPlayerTryUseItemOnBlock.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketPlayerTryUseItemOnBlock.java
+@@ -18,6 +18,7 @@
+     private float field_149577_f;
+     private float field_149578_g;
+     private float field_149584_h;
++    public long timestamp;
+ 
+     public CPacketPlayerTryUseItemOnBlock()
+     {
+@@ -36,6 +37,7 @@
+ 
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
++        this.timestamp = System.currentTimeMillis(); // Spigot
+         this.field_179725_b = p_148837_1_.func_179259_c();
+         this.field_149579_d = (EnumFacing)p_148837_1_.func_179257_a(EnumFacing.class);
+         this.field_187027_c = (EnumHand)p_148837_1_.func_179257_a(EnumHand.class);

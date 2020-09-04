@@ -1,0 +1,94 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
+@@ -16,6 +16,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityInteractEvent;
+ 
+ public class BlockRedstoneOre extends Block
+ {
+@@ -40,19 +42,31 @@
+ 
+     public void func_180649_a(World p_180649_1_, BlockPos p_180649_2_, EntityPlayer p_180649_3_)
+     {
+-        this.func_176352_d(p_180649_1_, p_180649_2_);
++        this.activate(p_180649_1_, p_180649_2_, p_180649_3_); // CraftBukkit - add playerIn
+         super.func_180649_a(p_180649_1_, p_180649_2_, p_180649_3_);
+     }
+ 
+     public void func_176199_a(World p_176199_1_, BlockPos p_176199_2_, Entity p_176199_3_)
+     {
+-        this.func_176352_d(p_176199_1_, p_176199_2_);
+-        super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);
++        if (p_176199_3_ instanceof EntityPlayer) {
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) p_176199_3_, org.bukkit.event.block.Action.PHYSICAL, p_176199_2_, null, null, null);
++            if (!event.isCancelled()) {
++                this.activate(p_176199_1_, p_176199_2_, p_176199_3_); // add entity
++                super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);
++            }
++        } else {
++            EntityInteractEvent event = new EntityInteractEvent(p_176199_3_.getBukkitEntity(), p_176199_1_.getWorld().getBlockAt(p_176199_2_.func_177958_n(), p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p()));
++            p_176199_1_.getServer().getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++                this.activate(p_176199_1_, p_176199_2_, p_176199_3_); // add entity
++                super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);
++            }
++        }
+     }
+ 
+     public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
+     {
+-        this.func_176352_d(p_180639_1_, p_180639_2_);
++        this.activate(p_180639_1_, p_180639_2_, p_180639_4_); // CraftBukkit - add playerIn
+         return super.func_180639_a(p_180639_1_, p_180639_2_, p_180639_3_, p_180639_4_, p_180639_5_, p_180639_6_, p_180639_7_, p_180639_8_, p_180639_9_);
+     }
+ 
+@@ -66,10 +80,26 @@
+         }
+     }
+ 
++    private void activate(World worldIn, BlockPos pos, Entity entity)
++    {
++        this.func_180691_e(worldIn, pos);
++
++        if (this == Blocks.field_150450_ax)
++        {
++            if (CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.field_150439_ay, 0).isCancelled()) {
++                return;
++            }
++            worldIn.func_175656_a(pos, Blocks.field_150439_ay.func_176223_P());
++        }
++    }
++
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+     {
+         if (this == Blocks.field_150439_ay)
+         {
++            if (CraftEventFactory.callBlockFadeEvent(p_180650_1_.getWorld().getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p()), Blocks.field_150450_ax).isCancelled()) {
++                return;
++            }
+             p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150450_ax.func_176223_P());
+         }
+     }
+@@ -92,12 +122,16 @@
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
+     {
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
++    }
+ 
+-        if (this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_) != Item.func_150898_a(this))
++    @Override
++    public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    {
++        if (this.func_180660_a(state, RANDOM, fortune) != Item.func_150898_a(this))
+         {
+-            int i = 1 + p_180653_1_.field_73012_v.nextInt(5);
+-            this.func_180637_b(p_180653_1_, p_180653_2_, i);
++            return 1 + RANDOM.nextInt(5);
+         }
++        return 0;
+     }
+ 
+     @SideOnly(Side.CLIENT)

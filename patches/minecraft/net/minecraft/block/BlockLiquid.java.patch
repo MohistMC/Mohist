@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
+@@ -284,15 +284,17 @@
+ 
+                 if (integer.intValue() == 0)
+                 {
+-                    p_176365_1_.func_175656_a(p_176365_2_, Blocks.field_150343_Z.func_176223_P());
+-                    this.func_180688_d(p_176365_1_, p_176365_2_);
++                    if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockFormEvent(p_176365_1_, p_176365_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_176365_1_, p_176365_2_, p_176365_2_, Blocks.field_150343_Z.func_176223_P()), null)) {
++                        this.func_180688_d(p_176365_1_, p_176365_2_);
++                    }
+                     return true;
+                 }
+ 
+                 if (integer.intValue() <= 4)
+                 {
+-                    p_176365_1_.func_175656_a(p_176365_2_, Blocks.field_150347_e.func_176223_P());
+-                    this.func_180688_d(p_176365_1_, p_176365_2_);
++            		if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockFormEvent(p_176365_1_, p_176365_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_176365_1_, p_176365_2_, p_176365_2_, Blocks.field_150347_e.func_176223_P()), null)) {
++						this.func_180688_d(p_176365_1_, p_176365_2_);
++                    }
+                     return true;
+                 }
+             }
+@@ -448,8 +450,39 @@
+         return (float)p_190972_2_.func_177956_o() + func_190973_f(p_190972_0_, p_190972_1_, p_190972_2_);
+     }
+ 
++    @Override
++    public float getBlockLiquidHeight(World world, BlockPos pos, IBlockState state, Material material)
++    {
++        return BlockLiquid.func_190973_f(state, world, pos);
++    }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return BlockFaceShape.UNDEFINED;
+     }
++
++    @Override
++    @SideOnly (Side.CLIENT)
++    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
++    {
++        Vec3d viewport = net.minecraft.client.renderer.ActiveRenderInfo.func_178806_a(entity, partialTicks);
++
++        if (state.func_185904_a().func_76224_d())
++        {
++            float height = 0.0F;
++            if (state.func_177230_c() instanceof BlockLiquid)
++            {
++                height = func_149801_b(state.func_177229_b(field_176367_b)) - 0.11111111F;
++            }
++            float f1 = (float) (pos.func_177956_o() + 1) - height;
++            if (viewport.field_72448_b > (double)f1)
++            {
++                BlockPos upPos = pos.func_177984_a();
++                IBlockState upState = world.func_180495_p(upPos);
++                return upState.func_177230_c().getFogColor(world, upPos, upState, entity, originalColor, partialTicks);
++            }
++        }
++
++        return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
++    }
+ }

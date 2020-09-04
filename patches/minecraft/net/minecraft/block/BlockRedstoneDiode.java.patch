@@ -1,0 +1,92 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneDiode.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
+@@ -15,6 +15,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public abstract class BlockRedstoneDiode extends BlockHorizontal
+ {
+@@ -39,30 +40,44 @@
+ 
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
+     {
+-        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() ? super.func_176196_c(p_176196_1_, p_176196_2_) : false;
++        IBlockState downState = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
++        return (downState.func_185896_q() || downState.func_193401_d(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID) ? super.func_176196_c(p_176196_1_, p_176196_2_) : false;
+     }
+ 
+     public boolean func_176409_d(World p_176409_1_, BlockPos p_176409_2_)
+     {
+-        return p_176409_1_.func_180495_p(p_176409_2_.func_177977_b()).func_185896_q();
++        IBlockState downState = p_176409_1_.func_180495_p(p_176409_2_.func_177977_b());
++        return downState.func_185896_q() || downState.func_193401_d(p_176409_1_, p_176409_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID;
+     }
+ 
+     public void func_180645_a(World p_180645_1_, BlockPos p_180645_2_, IBlockState p_180645_3_, Random p_180645_4_)
+     {
+     }
+ 
++    private long last = 0L;
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+     {
++        if (System.currentTimeMillis() - last <= -1)
++        {
++            return;
++        }
++        last = System.currentTimeMillis();
+         if (!this.func_176405_b(p_180650_1_, p_180650_2_, p_180650_3_))
+         {
+             boolean flag = this.func_176404_e(p_180650_1_, p_180650_2_, p_180650_3_);
+ 
+             if (this.field_149914_a && !flag)
+             {
++                if (CraftEventFactory.callRedstoneChange(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), 15, 0).getNewCurrent() != 0) {
++                    return;
++                }
+                 p_180650_1_.func_180501_a(p_180650_2_, this.func_180675_k(p_180650_3_), 2);
+             }
+             else if (!this.field_149914_a)
+             {
++                if (CraftEventFactory.callRedstoneChange(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), 0, 15).getNewCurrent() != 15) {
++                    return;
++                }
+                 p_180650_1_.func_180501_a(p_180650_2_, this.func_180674_e(p_180650_3_), 2);
+ 
+                 if (!flag)
+@@ -227,6 +242,8 @@
+     {
+         EnumFacing enumfacing = (EnumFacing)p_176400_3_.func_177229_b(field_185512_D);
+         BlockPos blockpos = p_176400_2_.func_177972_a(enumfacing.func_176734_d());
++        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_176400_1_, p_176400_2_, p_176400_1_.func_180495_p(p_176400_2_), java.util.EnumSet.of(enumfacing.func_176734_d()), false).isCanceled())
++            return;
+         p_176400_1_.func_190524_a(blockpos, this, p_176400_2_);
+         p_176400_1_.func_175695_a(blockpos, this, enumfacing);
+     }
+@@ -307,6 +324,25 @@
+         return BlockRenderLayer.CUTOUT;
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    @Override
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    {
++        if (super.rotateBlock(world, pos, axis))
++        {
++            IBlockState state = world.func_180495_p(pos);
++            state = func_180675_k(state);
++            world.func_175656_a(pos, state);
++
++            if (func_176404_e(world, pos, state))
++            {
++                world.func_175684_a(pos, this, 1);
++            }
++            return true;
++        }
++        return false;
++    }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     {
+         return p_193383_4_ == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;

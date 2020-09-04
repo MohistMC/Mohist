@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandWhitelist.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandWhitelist.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.command.CommandException;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.command.WrongUsageException;
++import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.text.TextComponentString;
+@@ -61,7 +62,7 @@
+                     throw new WrongUsageException("commands.whitelist.add.usage", new Object[0]);
+                 }
+ 
+-                GameProfile gameprofile = p_184881_1_.func_152358_ax().func_152655_a(p_184881_3_[1]);
++                GameProfile gameprofile = p_184881_1_.func_71266_T() ? p_184881_1_.func_152358_ax().func_152655_a(p_184881_3_[1]) : new GameProfile(EntityPlayer.func_175147_b(p_184881_3_[1]), p_184881_3_[1]);
+ 
+                 if (gameprofile == null)
+                 {

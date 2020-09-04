@@ -1,0 +1,87 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySlime.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySlime.java
+@@ -35,6 +35,7 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.storage.loot.LootTableList;
++import org.bukkit.event.entity.SlimeSplitEvent;
+ 
+ public class EntitySlime extends EntityLiving implements IMob
+ {
+@@ -66,7 +67,7 @@
+         this.field_70180_af.func_187214_a(field_184711_bt, Integer.valueOf(1));
+     }
+ 
+-    protected void func_70799_a(int p_70799_1_, boolean p_70799_2_)
++    public void func_70799_a(int p_70799_1_, boolean p_70799_2_)
+     {
+         this.field_70180_af.func_187227_b(field_184711_bt, Integer.valueOf(p_70799_1_));
+         this.func_70105_a(0.51000005F * (float)p_70799_1_, 0.51000005F * (float)p_70799_1_);
+@@ -137,7 +138,7 @@
+         if (this.field_70122_E && !this.field_175452_bi)
+         {
+             int i = this.func_70809_q();
+-
++            if (spawnCustomParticles()) { i = 0; } // don't spawn particles if it's handled by the implementation itself
+             for (int j = 0; j < i * 8; ++j)
+             {
+                 float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
+@@ -204,6 +205,16 @@
+         {
+             int j = 2 + this.field_70146_Z.nextInt(3);
+ 
++            SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), j);
++            this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled() && event.getCount() > 0) {
++                j = event.getCount();
++            } else {
++                super.func_70106_y();
++                return;
++            }
++
+             for (int k = 0; k < j; ++k)
+             {
+                 float f = ((float)(k % 2) - 0.5F) * (float)i / 4.0F;
+@@ -222,7 +233,7 @@
+ 
+                 entityslime.func_70799_a(i / 2, true);
+                 entityslime.func_70012_b(this.field_70165_t + (double)f, this.field_70163_u + 0.5D, this.field_70161_v + (double)f1, this.field_70146_Z.nextFloat() * 360.0F, 0.0F);
+-                this.field_70170_p.func_72838_d(entityslime);
++                this.field_70170_p.addEntity(entityslime, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
+             }
+         }
+ 
+@@ -304,7 +315,7 @@
+         BlockPos blockpos = new BlockPos(MathHelper.func_76128_c(this.field_70165_t), 0, MathHelper.func_76128_c(this.field_70161_v));
+         Chunk chunk = this.field_70170_p.func_175726_f(blockpos);
+ 
+-        if (this.field_70170_p.func_72912_H().func_76067_t() == WorldType.field_77138_c && this.field_70146_Z.nextInt(4) != 1)
++        if (this.field_70170_p.func_72912_H().func_76067_t().handleSlimeSpawnReduction(field_70146_Z, field_70170_p))
+         {
+             return false;
+         }
+@@ -319,7 +330,7 @@
+                     return super.func_70601_bi();
+                 }
+ 
+-                if (this.field_70146_Z.nextInt(10) == 0 && chunk.func_76617_a(987234911L).nextInt(10) == 0 && this.field_70163_u < 40.0D)
++                if (this.field_70146_Z.nextInt(10) == 0 && chunk.func_76617_a(field_70170_p.spigotConfig.slimeSeed).nextInt(10) == 0 && this.field_70163_u < 40.0D)
+                 {
+                     return super.func_70601_bi();
+                 }
+@@ -370,6 +381,14 @@
+         return this.func_189101_db() ? SoundEvents.field_189110_fE : SoundEvents.field_187882_fq;
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Called when the slime spawns particles on landing, see onUpdate.
++     * Return true to prevent the spawning of the default particles.
++     */
++    protected boolean spawnCustomParticles() { return false; }
++    /* ======================================== FORGE END   =====================================*/
++
+     static class AISlimeAttack extends EntityAIBase
+         {
+             private final EntitySlime field_179466_a;

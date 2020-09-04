@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandPardonPlayer.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandPardonPlayer.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.command.server;
+ 
+ import com.mojang.authlib.GameProfile;
++import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
+ import javax.annotation.Nullable;
+@@ -13,6 +14,11 @@
+ 
+ public class CommandPardonPlayer extends CommandBase
+ {
++    public List<String> func_71514_a()
++    {
++        return Arrays.<String>asList("unban");
++    }
++
+     public String func_71517_b()
+     {
+         return "pardon";

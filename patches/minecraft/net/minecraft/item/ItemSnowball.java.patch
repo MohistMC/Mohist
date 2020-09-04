@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSnowball.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSnowball.java
+@@ -2,6 +2,7 @@
+ 
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.entity.projectile.EntitySnowball;
+ import net.minecraft.init.SoundEvents;
+ import net.minecraft.stats.StatList;
+@@ -23,18 +24,28 @@
+     {
+         ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
+ 
+-        if (!p_77659_2_.field_71075_bZ.field_75098_d)
++        // CraftBukkit start - moved down
++        /*
++        if (!playerIn.capabilities.isCreativeMode)
+         {
+-            itemstack.func_190918_g(1);
++            itemstack.shrink(1);
+         }
+ 
+-        p_77659_1_.func_184148_a((EntityPlayer)null, p_77659_2_.field_70165_t, p_77659_2_.field_70163_u, p_77659_2_.field_70161_v, SoundEvents.field_187797_fA, SoundCategory.NEUTRAL, 0.5F, 0.4F / (field_77697_d.nextFloat() * 0.4F + 0.8F));
+-
++        worldIn.playSound((EntityPlayer)null, playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
++        */
+         if (!p_77659_1_.field_72995_K)
+         {
+             EntitySnowball entitysnowball = new EntitySnowball(p_77659_1_, p_77659_2_);
+             entitysnowball.func_184538_a(p_77659_2_, p_77659_2_.field_70125_A, p_77659_2_.field_70177_z, 0.0F, 1.5F, 1.0F);
+-            p_77659_1_.func_72838_d(entitysnowball);
++            if (p_77659_1_.func_72838_d(entitysnowball)) {
++                if (!p_77659_2_.field_71075_bZ.field_75098_d) {
++                    itemstack.func_190918_g(1);
++                }
++
++                p_77659_1_.func_184148_a(null, p_77659_2_.field_70165_t, p_77659_2_.field_70163_u, p_77659_2_.field_70161_v, SoundEvents.field_187797_fA, SoundCategory.NEUTRAL, 0.5F, 0.4F / (ItemSnowball.field_77697_d.nextFloat() * 0.4F + 0.8F));
++            } else if (p_77659_2_ instanceof EntityPlayerMP) {
++                ((EntityPlayerMP) p_77659_2_).getBukkitEntity().updateInventory();
++            }
+         }
+ 
+         p_77659_2_.func_71029_a(StatList.func_188057_b(this));

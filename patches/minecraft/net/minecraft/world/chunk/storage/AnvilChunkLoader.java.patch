@@ -1,0 +1,380 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
+@@ -1,11 +1,10 @@
+ package net.minecraft.world.chunk.storage;
+ 
+ import com.google.common.collect.Maps;
+-import java.io.DataInputStream;
+-import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.Collections;
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+@@ -13,10 +12,10 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityList;
+-import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.tileentity.TileEntity;
++import net.minecraft.util.ClassInheritanceMultiMap;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.datafix.DataFixer;
+ import net.minecraft.util.datafix.FixTypes;
+@@ -31,6 +30,8 @@
+ import net.minecraft.world.chunk.NibbleArray;
+ import net.minecraft.world.storage.IThreadedFileIO;
+ import net.minecraft.world.storage.ThreadedFileIOBase;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.ChunkDataEvent;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -49,25 +50,48 @@
+         this.field_193416_e = p_i46673_2_;
+     }
+ 
++    @Deprecated // TODO: remove (1.13)
++    public boolean chunkExists(World world, int x, int z)
++    {
++        return func_191063_a(x, z);
++    }
++
+     @Nullable
+     public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
+     {
++        p_75815_1_.timings.syncChunkLoadDataTimer.startTiming(); // Spigot
++        Object[] data = this.loadChunk__Async(p_75815_1_, p_75815_2_, p_75815_3_);
++        p_75815_1_.timings.syncChunkLoadDataTimer.stopTiming(); // Spigot
++        if (data != null)
++        {
++            Chunk chunk = (Chunk) data[0];
++            NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
++            this.loadEntities(p_75815_1_, nbttagcompound.func_74775_l("Level"), chunk);
++            return chunk;
++        }
++
++        return null;
++    }
++
++    @Nullable
++    public Object[] loadChunk__Async(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
++    {
+         ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
+         NBTTagCompound nbttagcompound = this.field_75828_a.get(chunkpos);
+ 
+         if (nbttagcompound == null)
+         {
+-            DataInputStream datainputstream = RegionFileCache.func_76549_c(this.field_75825_d, p_75815_2_, p_75815_3_);
++            NBTTagCompound nbtTagCompound = RegionFileCache.getChunkInputStreamCB(this.field_75825_d, p_75815_2_, p_75815_3_);
+ 
+-            if (datainputstream == null)
++            if (nbtTagCompound == null)
+             {
+                 return null;
+             }
+ 
+-            nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
++            nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, nbtTagCompound);
+         }
+ 
+-        return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
++        return this.checkedReadChunkFromNBT__Async(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
+     }
+ 
+     public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
+@@ -80,6 +104,13 @@
+     @Nullable
+     protected Chunk func_75822_a(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
+     {
++        Object[] data = this.checkedReadChunkFromNBT__Async(p_75822_1_, p_75822_2_, p_75822_3_, p_75822_4_);
++        return data != null ? (Chunk)data[0] : null;
++    }
++
++    @Nullable
++    protected Object[] checkedReadChunkFromNBT__Async(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
++    {
+         if (!p_75822_4_.func_150297_b("Level", 10))
+         {
+             field_151505_a.error("Chunk file at {},{} is missing level data, skipping", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_));
+@@ -103,10 +134,29 @@
+                     field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h));
+                     nbttagcompound.func_74768_a("xPos", p_75822_2_);
+                     nbttagcompound.func_74768_a("zPos", p_75822_3_);
++
++                    // Have to move tile entities since we don't load them at this stage
++                    NBTTagList _tileEntities = nbttagcompound.func_150295_c("TileEntities", 10);
++
++                    if (_tileEntities != null)
++                    {
++                        for (int te = 0; te < _tileEntities.func_74745_c(); te++)
++                        {
++                            NBTTagCompound _nbt = (NBTTagCompound) _tileEntities.func_150305_b(te);
++                            _nbt.func_74768_a("x", p_75822_2_ * 16 + (_nbt.func_74762_e("x") - chunk.field_76635_g * 16));
++                            _nbt.func_74768_a("z", p_75822_3_ * 16 + (_nbt.func_74762_e("z") - chunk.field_76647_h * 16));
++                        }
++                    }
++
+                     chunk = this.func_75823_a(p_75822_1_, nbttagcompound);
+                 }
+ 
+-                return chunk;
++                Object[] data = new Object[2];
++                data[0] = chunk;
++                data[1] = p_75822_4_;
++                // event is fired in ChunkIOProvider.callStage2 since it must be fired after TE's load.
++                // MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, par4NBTTagCompound));
++                return data;
+             }
+         }
+     }
+@@ -121,7 +171,10 @@
+             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+             nbttagcompound.func_74782_a("Level", nbttagcompound1);
+             nbttagcompound.func_74768_a("DataVersion", 1343);
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(nbttagcompound);
+             this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
++            net.minecraftforge.common.ForgeChunkManager.storeChunkNBT(p_75816_2_, nbttagcompound1);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
+             this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
+         }
+         catch (Exception exception)
+@@ -153,32 +206,29 @@
+         }
+         else
+         {
+-            ChunkPos chunkpos = this.field_75828_a.keySet().iterator().next();
+-            boolean lvt_3_1_;
++            boolean lvt_3_1_ = false;
++            ChunkPos chunkpos = null;
++            Iterator ite = this.field_75828_a.keySet().iterator();
++            while(ite.hasNext()) {
++                chunkpos = (ChunkPos) ite.next();
+ 
+-            try
+-            {
+-                this.field_193415_c.add(chunkpos);
+-                NBTTagCompound nbttagcompound = this.field_75828_a.remove(chunkpos);
++                try {
++                    this.field_193415_c.add(chunkpos);
++                    NBTTagCompound nbttagcompound = this.field_75828_a.remove(chunkpos);
+ 
+-                if (nbttagcompound != null)
+-                {
+-                    try
+-                    {
+-                        this.func_183013_b(chunkpos, nbttagcompound);
++                    if (nbttagcompound != null) {
++                        try {
++                            this.func_183013_b(chunkpos, nbttagcompound);
++                        } catch (Exception exception) {
++                            field_151505_a.error("Failed to save chunk", (Throwable) exception);
++                        }
+                     }
+-                    catch (Exception exception)
+-                    {
+-                        field_151505_a.error("Failed to save chunk", (Throwable)exception);
+-                    }
+-                }
+ 
+-                lvt_3_1_ = true;
++                    lvt_3_1_ = true;
++                } finally {
++                    this.field_193415_c.remove(chunkpos);
++                }
+             }
+-            finally
+-            {
+-                this.field_193415_c.remove(chunkpos);
+-            }
+ 
+             return lvt_3_1_;
+         }
+@@ -186,9 +236,10 @@
+ 
+     private void func_183013_b(ChunkPos p_183013_1_, NBTTagCompound p_183013_2_) throws IOException
+     {
+-        DataOutputStream dataoutputstream = RegionFileCache.func_76552_d(this.field_75825_d, p_183013_1_.field_77276_a, p_183013_1_.field_77275_b);
+-        CompressedStreamTools.func_74800_a(p_183013_2_, dataoutputstream);
+-        dataoutputstream.close();
++        // DataOutputStream dataoutputstream = RegionFileCache.getChunkOutputStream(this.chunkSaveLocation, pos.x, pos.z);
++        // CompressedStreamTools.write(compound, dataoutputstream);
++        // dataoutputstream.close();
++        RegionFileCache.getChunkOutputStream(this.field_75825_d, p_183013_1_.field_77276_a, p_183013_1_.field_77275_b, p_183013_2_);
+     }
+ 
+     public void func_75819_b(World p_75819_1_, Chunk p_75819_2_) throws IOException
+@@ -305,11 +356,19 @@
+             {
+                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+ 
++                try
++                {
+                 if (entity.func_70039_c(nbttagcompound2))
+                 {
+                     p_75820_1_.func_177409_g(true);
+                     nbttaglist1.func_74742_a(nbttagcompound2);
+                 }
++                }
++                catch (Exception e)
++                {
++                    net.minecraftforge.fml.common.FMLLog.log.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                            entity.getClass().getName(), e);
++                }
+             }
+         }
+ 
+@@ -318,8 +377,16 @@
+ 
+         for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
+         {
++            try
++            {
+             NBTTagCompound nbttagcompound3 = tileentity.func_189515_b(new NBTTagCompound());
+             nbttaglist2.func_74742_a(nbttagcompound3);
++            }
++            catch (Exception e)
++            {
++                net.minecraftforge.fml.common.FMLLog.log.error("A TileEntity type {} has throw an exception trying to write state. It will not persist. Report this to the mod author",
++                        tileentity.getClass().getName(), e);
++            }
+         }
+ 
+         p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
+@@ -345,6 +412,18 @@
+ 
+             p_75820_3_.func_74782_a("TileTicks", nbttaglist3);
+         }
++
++        if (p_75820_1_.getCapabilities() != null)
++        {
++            try
++            {
++                p_75820_3_.func_74782_a("ForgeCaps", p_75820_1_.getCapabilities().serializeNBT());
++            }
++            catch (Exception exception)
++            {
++                net.minecraftforge.fml.common.FMLLog.log.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
++            }
++        }
+     }
+ 
+     private Chunk func_75823_a(World p_75823_1_, NBTTagCompound p_75823_2_)
+@@ -388,6 +467,17 @@
+             chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
+         }
+ 
++        if (chunk.getCapabilities() != null && p_75823_2_.func_74764_b("ForgeCaps")) {
++            chunk.getCapabilities().deserializeNBT(p_75823_2_.func_74775_l("ForgeCaps"));
++        }
++
++        // End this method here and split off entity loading to another method
++        return chunk;
++    }
++
++    public void loadEntities(World p_75823_1_, NBTTagCompound p_75823_2_, Chunk chunk)
++    {
++        p_75823_1_.timings.syncChunkLoadNBTTimer.startTiming(); // Spigot
+         NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
+ 
+         for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
+@@ -396,7 +486,6 @@
+             func_186050_a(nbttagcompound1, p_75823_1_, chunk);
+             chunk.func_177409_g(true);
+         }
+-
+         NBTTagList nbttaglist2 = p_75823_2_.func_150295_c("TileEntities", 10);
+ 
+         for (int k1 = 0; k1 < nbttaglist2.func_74745_c(); ++k1)
+@@ -409,7 +498,6 @@
+                 chunk.func_150813_a(tileentity);
+             }
+         }
+-
+         if (p_75823_2_.func_150297_b("TileTicks", 9))
+         {
+             NBTTagList nbttaglist3 = p_75823_2_.func_150295_c("TileTicks", 10);
+@@ -431,8 +519,7 @@
+                 p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
+             }
+         }
+-
+-        return chunk;
++        p_75823_1_.timings.syncChunkLoadNBTTimer.stopTiming(); // Spigot
+     }
+ 
+     @Nullable
+@@ -470,29 +557,34 @@
+     @Nullable
+     public static Entity func_186054_a(NBTTagCompound p_186054_0_, World p_186054_1_, double p_186054_2_, double p_186054_4_, double p_186054_6_, boolean p_186054_8_)
+     {
+-        Entity entity = func_186053_a(p_186054_0_, p_186054_1_);
++        return spawnEntity(p_186054_0_, p_186054_1_, p_186054_2_, p_186054_4_, p_186054_6_, p_186054_8_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++    }
+ 
++    public static Entity spawnEntity(NBTTagCompound compound, World worldIn, double x, double y, double z, boolean attemptSpawn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason)
++    {
++        Entity entity = func_186053_a(compound, worldIn);
++
+         if (entity == null)
+         {
+             return null;
+         }
+         else
+         {
+-            entity.func_70012_b(p_186054_2_, p_186054_4_, p_186054_6_, entity.field_70177_z, entity.field_70125_A);
++            entity.func_70012_b(x, y, z, entity.field_70177_z, entity.field_70125_A);
+ 
+-            if (p_186054_8_ && !p_186054_1_.func_72838_d(entity))
++            if (attemptSpawn && !worldIn.addEntity(entity, spawnReason))
+             {
+                 return null;
+             }
+             else
+             {
+-                if (p_186054_0_.func_150297_b("Passengers", 9))
++                if (compound.func_150297_b("Passengers", 9))
+                 {
+-                    NBTTagList nbttaglist = p_186054_0_.func_150295_c("Passengers", 10);
++                    NBTTagList nbttaglist = compound.func_150295_c("Passengers", 10);
+ 
+                     for (int i = 0; i < nbttaglist.func_74745_c(); ++i)
+                     {
+-                        Entity entity1 = func_186054_a(nbttaglist.func_150305_b(i), p_186054_1_, p_186054_2_, p_186054_4_, p_186054_6_, p_186054_8_);
++                        Entity entity1 = func_186054_a(nbttaglist.func_150305_b(i), worldIn, x, y, z, attemptSpawn);
+ 
+                         if (entity1 != null)
+                         {
+@@ -521,11 +613,14 @@
+ 
+     public static void func_186052_a(Entity p_186052_0_, World p_186052_1_)
+     {
+-        if (p_186052_1_.func_72838_d(p_186052_0_) && p_186052_0_.func_184207_aI())
+-        {
+-            for (Entity entity : p_186052_0_.func_184188_bt())
++        spawnEntity(p_186052_0_, p_186052_1_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++    }
++
++    public static void spawnEntity(Entity entityIn, World worldIn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++        if (worldIn.addEntity(entityIn, reason) && entityIn.func_184207_aI()) {
++            for (Entity entity : entityIn.func_184188_bt())
+             {
+-                func_186052_a(entity, p_186052_1_);
++                func_186052_a(entity, worldIn);
+             }
+         }
+     }
+@@ -563,4 +658,9 @@
+             return entity;
+         }
+     }
++
++    public int getPendingSaveCount()
++    {
++        return this.field_75828_a.size();
++    }
+ }

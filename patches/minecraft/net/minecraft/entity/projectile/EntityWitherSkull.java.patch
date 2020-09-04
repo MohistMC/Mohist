@@ -1,0 +1,60 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
+@@ -3,7 +3,6 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.EntityLivingBase;
+-import net.minecraft.entity.boss.EntityWither;
+ import net.minecraft.init.MobEffects;
+ import net.minecraft.network.datasync.DataParameter;
+ import net.minecraft.network.datasync.DataSerializers;
+@@ -18,6 +17,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
+ 
+ public class EntityWitherSkull extends EntityFireball
+ {
+@@ -62,7 +62,7 @@
+         float f = super.func_180428_a(p_180428_1_, p_180428_2_, p_180428_3_, p_180428_4_);
+         Block block = p_180428_4_.func_177230_c();
+ 
+-        if (this.func_82342_d() && EntityWither.func_181033_a(block))
++        if (this.func_82342_d() && block.canEntityDestroy(p_180428_4_, p_180428_2_, p_180428_3_, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.field_70235_a, p_180428_3_, p_180428_4_))
+         {
+             f = Math.min(0.8F, f);
+         }
+@@ -78,7 +78,7 @@
+             {
+                 if (this.field_70235_a != null)
+                 {
+-                    if (p_70227_1_.field_72308_g.func_70097_a(DamageSource.func_76358_a(this.field_70235_a), 8.0F))
++                    if (p_70227_1_.field_72308_g.func_70097_a(DamageSource.func_76356_a(this, this.field_70235_a), 8.0F))
+                     {
+                         if (p_70227_1_.field_72308_g.func_70089_S())
+                         {
+@@ -86,7 +86,7 @@
+                         }
+                         else
+                         {
+-                            this.field_70235_a.func_70691_i(5.0F);
++                            this.field_70235_a.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER);
+                         }
+                     }
+                 }
+@@ -115,7 +115,13 @@
+                 }
+             }
+ 
+-            this.field_70170_p.func_72885_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, 1.0F, false, this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"));
++            // this.world.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity));
++            ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
++            this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++                this.field_70170_p.func_72885_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, event.getRadius(), event.getFire(), net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a));
++            }
+             this.func_70106_y();
+         }
+     }

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureOceanMonument.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureOceanMonument.java
+@@ -72,7 +72,7 @@
+ 
+         int k = p_75047_1_ / this.field_175800_f;
+         int l = p_75047_2_ / this.field_175800_f;
+-        Random random = this.field_75039_c.func_72843_D(k, l, 10387313);
++        Random random = this.field_75039_c.func_72843_D(k, l, this.field_75039_c.spigotConfig.monumentSeed);
+         k = k * this.field_175800_f;
+         l = l * this.field_175800_f;
+         k = k + (random.nextInt(this.field_175800_f - this.field_175801_g) + random.nextInt(this.field_175800_f - this.field_175801_g)) / 2;

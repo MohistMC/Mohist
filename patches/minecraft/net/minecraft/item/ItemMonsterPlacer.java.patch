@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -220,23 +220,36 @@
+     @Nullable
+     public static Entity func_77840_a(World p_77840_0_, @Nullable ResourceLocation p_77840_1_, double p_77840_2_, double p_77840_4_, double p_77840_6_)
+     {
+-        if (p_77840_1_ != null && EntityList.field_75627_a.containsKey(p_77840_1_))
++        return spawnCreature(p_77840_0_, p_77840_1_, p_77840_2_, p_77840_4_, p_77840_6_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++    }
++
++    @Nullable
++    public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++        if (entityID != null && EntityList.field_75627_a.containsKey(entityID))
+         {
+             Entity entity = null;
+ 
+             for (int i = 0; i < 1; ++i)
+             {
+-                entity = EntityList.func_188429_b(p_77840_1_, p_77840_0_);
++                entity = EntityList.func_188429_b(entityID, worldIn);
+ 
+                 if (entity instanceof EntityLiving)
+                 {
+                     EntityLiving entityliving = (EntityLiving)entity;
+-                    entity.func_70012_b(p_77840_2_, p_77840_4_, p_77840_6_, MathHelper.func_76142_g(p_77840_0_.field_73012_v.nextFloat() * 360.0F), 0.0F);
++                    entity.func_70012_b(x, y, z, MathHelper.func_76142_g(worldIn.field_73012_v.nextFloat() * 360.0F), 0.0F);
+                     entityliving.field_70759_as = entityliving.field_70177_z;
+                     entityliving.field_70761_aq = entityliving.field_70177_z;
+-                    entityliving.func_180482_a(p_77840_0_.func_175649_E(new BlockPos(entityliving)), (IEntityLivingData)null);
+-                    p_77840_0_.func_72838_d(entity);
+-                    entityliving.func_70642_aH();
++                    if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, worldIn, (float) x, (float) y, (float) z, null)) return null;
++                    entityliving.func_180482_a(worldIn.func_175649_E(new BlockPos(entityliving)), (IEntityLivingData)null);
++                    // worldIn.spawnEntity(entity);
++                    // entityliving.playLivingSound();
++                    // CraftBukkit start - don't return an entity when CreatureSpawnEvent is canceled
++                    if (!worldIn.addEntity(entity, spawnReason)) {
++                        entity = null;
++                    } else {
++                        entityliving.func_70642_aH();
++                    }
++                    // CraftBukkit end
+                 }
+             }
+ 

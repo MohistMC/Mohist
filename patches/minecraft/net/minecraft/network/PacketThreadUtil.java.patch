@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/network/PacketThreadUtil.java
++++ ../src-work/minecraft/net/minecraft/network/PacketThreadUtil.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.network;
+ 
++import co.aikar.timings.MinecraftTimings;
++import co.aikar.timings.Timing;
+ import net.minecraft.util.IThreadListener;
+ 
+ public class PacketThreadUtil
+@@ -8,10 +10,9 @@
+     {
+         if (!p_180031_2_.func_152345_ab())
+         {
+-            p_180031_2_.func_152344_a(new Runnable()
+-            {
+-                public void run()
+-                {
++            Timing timing = MinecraftTimings.getPacketTiming(p_180031_0_);
++            p_180031_2_.func_152344_a(() -> {
++                try (Timing ignored = timing.startTiming()) {
+                     p_180031_0_.func_148833_a(p_180031_1_);
+                 }
+             });

@@ -1,0 +1,125 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityAgeable.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityAgeable.java
+@@ -12,6 +12,8 @@
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.EnumParticleTypes;
+ import net.minecraft.world.World;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
+ 
+ public abstract class EntityAgeable extends EntityCreature
+ {
+@@ -22,6 +24,33 @@
+     private float field_98056_d = -1.0F;
+     private float field_98057_e;
+ 
++    public boolean ageLocked;
++
++    // Spigot start
++    @Override
++    public void inactiveTick()
++    {
++        super.inactiveTick();
++        if ( this.field_70170_p.field_72995_K || this.ageLocked )
++        { // CraftBukkit
++            this.func_98054_a( this.func_70631_g_() );
++        } else
++        {
++            int i = this.func_70874_b();
++
++            if ( i < 0 )
++            {
++                ++i;
++                this.func_70873_a( i );
++            } else if ( i > 0 )
++            {
++                --i;
++                this.func_70873_a( i );
++            }
++        }
++    }
++    // Spigot end
++
+     public EntityAgeable(World p_i1578_1_)
+     {
+         super(p_i1578_1_);
+@@ -38,7 +67,7 @@
+         {
+             if (!this.field_70170_p.field_72995_K)
+             {
+-                Class <? extends Entity > oclass = (Class)EntityList.field_191308_b.func_82594_a(ItemMonsterPlacer.func_190908_h(itemstack));
++                Class <? extends Entity > oclass = EntityList.getClass(ItemMonsterPlacer.func_190908_h(itemstack));
+ 
+                 if (oclass != null && this.getClass() == oclass)
+                 {
+@@ -48,7 +77,7 @@
+                     {
+                         entityageable.func_70873_a(-24000);
+                         entityageable.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, 0.0F, 0.0F);
+-                        this.field_70170_p.func_72838_d(entityageable);
++                        this.field_70170_p.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
+ 
+                         if (itemstack.func_82837_s())
+                         {
+@@ -79,7 +108,7 @@
+         }
+         else
+         {
+-            Class <? extends Entity > oclass = (Class)EntityList.field_191308_b.func_82594_a(ItemMonsterPlacer.func_190908_h(p_190669_1_));
++            Class <? extends Entity > oclass = EntityList.getClass(ItemMonsterPlacer.func_190908_h(p_190669_1_));
+             return oclass != null && p_190669_2_ == oclass;
+         }
+     }
+@@ -154,6 +183,7 @@
+         super.func_70014_b(p_70014_1_);
+         p_70014_1_.func_74768_a("Age", this.func_70874_b());
+         p_70014_1_.func_74768_a("ForcedAge", this.field_175502_b);
++        p_70014_1_.func_74757_a("AgeLocked", this.ageLocked);
+     }
+ 
+     public void func_70037_a(NBTTagCompound p_70037_1_)
+@@ -161,6 +191,7 @@
+         super.func_70037_a(p_70037_1_);
+         this.func_70873_a(p_70037_1_.func_74762_e("Age"));
+         this.field_175502_b = p_70037_1_.func_74762_e("ForcedAge");
++        this.ageLocked = p_70037_1_.func_74767_n("AgeLocked");
+     }
+ 
+     public void func_184206_a(DataParameter<?> p_184206_1_)
+@@ -177,7 +208,7 @@
+     {
+         super.func_70636_d();
+ 
+-        if (this.field_70170_p.field_72995_K)
++        if (this.field_70170_p.field_72995_K || ageLocked)
+         {
+             if (this.field_175503_c > 0)
+             {
+@@ -196,7 +227,12 @@
+             if (i < 0)
+             {
+                 ++i;
+-                this.func_70873_a(i);
++                if (MohistConfig.instance.RealTimeTicking()) {
++                    int diff = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks() - 1;
++                    this.func_70873_a(Math.min(0, i + diff));
++                } else {
++                    this.func_70873_a(i);
++                }
+ 
+                 if (i == 0)
+                 {
+@@ -206,7 +242,12 @@
+             else if (i > 0)
+             {
+                 --i;
+-                this.func_70873_a(i);
++                if (MohistConfig.instance.RealTimeTicking()) {
++                    int diff = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks() - 1;
++                    this.func_70873_a(Math.min(0, i - diff));
++                } else {
++                    this.func_70873_a(i);
++                }
+             }
+         }
+     }

@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/inventory/SlotFurnaceOutput.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotFurnaceOutput.java
+@@ -4,7 +4,10 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.FurnaceRecipes;
++import net.minecraft.tileentity.TileEntityFurnace;
+ import net.minecraft.util.math.MathHelper;
++import org.bukkit.entity.Player;
++import org.bukkit.event.inventory.FurnaceExtractEvent;
+ 
+ public class SlotFurnaceOutput extends Slot
+ {
+@@ -70,6 +73,21 @@
+                 i = j;
+             }
+ 
++            // Cauldron start - validate inventory before attempting to cast it
++            if (this.field_75224_c instanceof TileEntityFurnace) {
++                // CraftBukkit - fire FurnaceExtractEvent
++                Player player = (Player) this.field_75229_a.getBukkitEntity();
++                TileEntityFurnace furnace = ((TileEntityFurnace) this.field_75224_c);
++                org.bukkit.block.Block block = this.field_75229_a.field_70170_p.getWorld().getBlockAt(furnace.func_174877_v().func_177958_n(), furnace.func_174877_v().func_177956_o(), furnace.func_174877_v().func_177952_p());
++    
++                if (field_75228_b != 0) {
++                    FurnaceExtractEvent event = new FurnaceExtractEvent(player, block, org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getMaterial(p_75208_1_.func_77973_b()), field_75228_b, i);
++                    this.field_75229_a.field_70170_p.getServer().getPluginManager().callEvent(event);
++                    i = event.getExpToDrop();
++                }
++            }
++            // Cauldron end
++
+             while (i > 0)
+             {
+                 int k = EntityXPOrb.func_70527_a(i);
+@@ -79,5 +97,6 @@
+         }
+ 
+         this.field_75228_b = 0;
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerSmeltedEvent(field_75229_a, p_75208_1_);
+     }
+ }

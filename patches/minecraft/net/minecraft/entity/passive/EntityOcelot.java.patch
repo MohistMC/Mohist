@@ -1,0 +1,76 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
+@@ -3,7 +3,6 @@
+ import com.google.common.base.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+-import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityAgeable;
+@@ -47,6 +46,7 @@
+     private static final DataParameter<Integer> field_184757_bz = EntityDataManager.<Integer>func_187226_a(EntityOcelot.class, DataSerializers.field_187192_b);
+     private EntityAIAvoidEntity<EntityPlayer> field_175545_bm;
+     private EntityAITempt field_70914_e;
++    public boolean spawnBonus = true; // Spigot
+ 
+     public EntityOcelot(World p_i1688_1_)
+     {
+@@ -106,9 +106,9 @@
+         }
+     }
+ 
+-    protected boolean func_70692_ba()
++    public boolean func_70692_ba()
+     {
+-        return !this.func_70909_n() && this.field_70173_aa > 2400;
++        return !this.func_70909_n() /*&& this.ticksExisted > 2400*/; // CraftBukkit (ticks lived)
+     }
+ 
+     protected void func_110147_ax()
+@@ -189,7 +189,8 @@
+         {
+             if (this.field_70911_d != null)
+             {
+-                this.field_70911_d.func_75270_a(false);
++                // CraftBukkit - moved into EntityLiving.damageEntity(DamageSource, float)
++                // this.aiSit.setSitting(false);
+             }
+ 
+             return super.func_70097_a(p_70097_1_, p_70097_2_);
+@@ -222,7 +223,8 @@
+ 
+             if (!this.field_70170_p.field_72995_K)
+             {
+-                if (this.field_70146_Z.nextInt(3) == 0)
++                // CraftBukkit - added event call and isCancelled check
++                if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_) && !org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityTameEvent(this, p_184645_1_).isCancelled())
+                 {
+                     this.func_193101_c(p_184645_1_);
+                     this.func_70912_b(1 + this.field_70170_p.field_73012_v.nextInt(3));
+@@ -320,7 +322,7 @@
+             IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos.func_177977_b());
+             Block block = iblockstate.func_177230_c();
+ 
+-            if (block == Blocks.field_150349_c || iblockstate.func_185904_a() == Material.field_151584_j)
++            if (block == Blocks.field_150349_c || block.isLeaves(iblockstate, this.field_70170_p, blockpos.func_177977_b()))
+             {
+                 return true;
+             }
+@@ -361,14 +363,14 @@
+     {
+         p_180482_2_ = super.func_180482_a(p_180482_1_, p_180482_2_);
+ 
+-        if (this.func_70913_u() == 0 && this.field_70170_p.field_73012_v.nextInt(7) == 0)
++        if (spawnBonus && this.func_70913_u() == 0 && this.field_70170_p.field_73012_v.nextInt(7) == 0) // Spigot
+         {
+             for (int i = 0; i < 2; ++i)
+             {
+                 EntityOcelot entityocelot = new EntityOcelot(this.field_70170_p);
+                 entityocelot.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, 0.0F);
+                 entityocelot.func_70873_a(-24000);
+-                this.field_70170_p.func_72838_d(entityocelot);
++                this.field_70170_p.addEntity(entityocelot, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.OCELOT_BABY);
+             }
+         }
+ 

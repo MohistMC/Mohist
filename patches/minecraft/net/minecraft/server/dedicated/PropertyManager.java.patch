@@ -1,0 +1,166 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/PropertyManager.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/PropertyManager.java
+@@ -3,10 +3,14 @@
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+-import java.io.IOException;
++import java.io.InputStreamReader;
++import java.io.OutputStream;
++import java.io.OutputStreamWriter;
+ import java.util.Properties;
++import joptsimple.OptionSet;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.apache.commons.io.IOUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -14,8 +18,9 @@
+ public class PropertyManager
+ {
+     private static final Logger field_164440_a = LogManager.getLogger();
+-    private final Properties field_73672_b = new Properties();
++    public final Properties field_73672_b = new Properties();
+     private final File field_73673_c;
++    private OptionSet options = null;
+ 
+     public PropertyManager(File p_i46372_1_)
+     {
+@@ -28,7 +33,7 @@
+             try
+             {
+                 fileinputstream = new FileInputStream(p_i46372_1_);
+-                this.field_73672_b.load(fileinputstream);
++                this.field_73672_b.load(new InputStreamReader(fileinputstream, "utf-8"));
+             }
+             catch (Exception exception)
+             {
+@@ -37,17 +42,7 @@
+             }
+             finally
+             {
+-                if (fileinputstream != null)
+-                {
+-                    try
+-                    {
+-                        fileinputstream.close();
+-                    }
+-                    catch (IOException var11)
+-                    {
+-                        ;
+-                    }
+-                }
++                IOUtils.closeQuietly(fileinputstream);
+             }
+         }
+         else
+@@ -57,6 +52,18 @@
+         }
+     }
+ 
++    public PropertyManager(final OptionSet options) {
++        this((File) options.valueOf("config"));
++        this.options = options;
++    }
++
++    private <T> T getOverride(String name, T value) {
++        if ((this.options != null) && (this.options.has(name)) && !name.equals( "online-mode")) { // Spigot
++            return (T) this.options.valueOf(name);
++        }
++        return value;
++    }
++
+     public void func_73666_a()
+     {
+         field_164440_a.info("Generating new properties file");
+@@ -69,8 +76,13 @@
+ 
+         try
+         {
++            // CraftBukkit start - Don't attempt writing to file if it's read only
++            if (this.field_73673_c.exists() && !this.field_73673_c.canWrite()) {
++                return;
++            }
++            // CraftBukkit end
+             fileoutputstream = new FileOutputStream(this.field_73673_c);
+-            this.field_73672_b.store(fileoutputstream, "Minecraft server properties");
++            this.field_73672_b.store(new OutputStreamWriter(fileoutputstream, "utf-8"), "Minecraft server properties");
+         }
+         catch (Exception exception)
+         {
+@@ -79,17 +91,7 @@
+         }
+         finally
+         {
+-            if (fileoutputstream != null)
+-            {
+-                try
+-                {
+-                    fileoutputstream.close();
+-                }
+-                catch (IOException var10)
+-                {
+-                    ;
+-                }
+-            }
++            IOUtils.closeQuietly((OutputStream)fileoutputstream);
+         }
+     }
+ 
+@@ -107,20 +109,20 @@
+             this.func_73668_b();
+         }
+ 
+-        return this.field_73672_b.getProperty(p_73671_1_, p_73671_2_);
++        return getOverride(p_73671_1_, this.field_73672_b.getProperty(p_73671_1_, p_73671_2_));
+     }
+ 
+     public int func_73669_a(String p_73669_1_, int p_73669_2_)
+     {
+         try
+         {
+-            return Integer.parseInt(this.func_73671_a(p_73669_1_, "" + p_73669_2_));
++            return getOverride(p_73669_1_, Integer.parseInt(this.func_73671_a(p_73669_1_, "" + p_73669_2_)));
+         }
+         catch (Exception var4)
+         {
+             this.field_73672_b.setProperty(p_73669_1_, "" + p_73669_2_);
+             this.func_73668_b();
+-            return p_73669_2_;
++            return getOverride(p_73669_1_, p_73669_2_);
+         }
+     }
+ 
+@@ -128,13 +130,13 @@
+     {
+         try
+         {
+-            return Long.parseLong(this.func_73671_a(p_179885_1_, "" + p_179885_2_));
++            return getOverride(p_179885_1_, Long.parseLong(this.func_73671_a(p_179885_1_, "" + p_179885_2_)));
+         }
+         catch (Exception var5)
+         {
+             this.field_73672_b.setProperty(p_179885_1_, "" + p_179885_2_);
+             this.func_73668_b();
+-            return p_179885_2_;
++            return getOverride(p_179885_1_, p_179885_2_);
+         }
+     }
+ 
+@@ -142,13 +144,13 @@
+     {
+         try
+         {
+-            return Boolean.parseBoolean(this.func_73671_a(p_73670_1_, "" + p_73670_2_));
++            return getOverride(p_73670_1_, Boolean.parseBoolean(this.func_73671_a(p_73670_1_, "" + p_73670_2_)));
+         }
+         catch (Exception var4)
+         {
+             this.field_73672_b.setProperty(p_73670_1_, "" + p_73670_2_);
+             this.func_73668_b();
+-            return p_73670_2_;
++            return getOverride(p_73670_1_, p_73670_2_);
+         }
+     }
+ 

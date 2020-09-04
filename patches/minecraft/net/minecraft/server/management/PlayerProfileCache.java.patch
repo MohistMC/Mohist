@@ -1,0 +1,158 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerProfileCache.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerProfileCache.java
+@@ -23,7 +23,6 @@
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.io.Reader;
+-import java.io.Writer;
+ import java.lang.reflect.ParameterizedType;
+ import java.lang.reflect.Type;
+ import java.nio.charset.StandardCharsets;
+@@ -40,6 +39,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.util.JsonUtils;
+ import org.apache.commons.io.IOUtils;
++import red.mohist.common.async.MohistThreadBox;
+ 
+ public class PlayerProfileCache
+ {
+@@ -47,7 +47,7 @@
+     private static boolean field_187322_c;
+     private final Map<String, PlayerProfileCache.ProfileEntry> field_152661_c = Maps.<String, PlayerProfileCache.ProfileEntry>newHashMap();
+     private final Map<UUID, PlayerProfileCache.ProfileEntry> field_152662_d = Maps.<UUID, PlayerProfileCache.ProfileEntry>newHashMap();
+-    private final Deque<GameProfile> field_152663_e = Lists.<GameProfile>newLinkedList();
++    private final Deque<GameProfile> field_152663_e = new java.util.concurrent.LinkedBlockingDeque<>();
+     private final GameProfileRepository field_187323_g;
+     protected final Gson field_152660_b;
+     private final File field_152665_g;
+@@ -118,7 +118,7 @@
+         this.func_152651_a(p_152649_1_, (Date)null);
+     }
+ 
+-    private void func_152651_a(GameProfile p_152651_1_, Date p_152651_2_)
++    private synchronized void func_152651_a(GameProfile p_152651_1_, Date p_152651_2_)
+     {
+         UUID uuid = p_152651_1_.getId();
+ 
+@@ -133,9 +133,9 @@
+         String s = p_152651_1_.getName().toLowerCase(Locale.ROOT);
+         PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = new PlayerProfileCache.ProfileEntry(p_152651_1_, p_152651_2_);
+ 
+-        if (this.field_152662_d.containsKey(uuid))
++        PlayerProfileCache.ProfileEntry playerprofilecache$profileentry1 = this.field_152662_d.get(uuid);
++        if (playerprofilecache$profileentry1 != null)
+         {
+-            PlayerProfileCache.ProfileEntry playerprofilecache$profileentry1 = this.field_152662_d.get(uuid);
+             this.field_152661_c.remove(playerprofilecache$profileentry1.func_152668_a().getName().toLowerCase(Locale.ROOT));
+             this.field_152663_e.remove(p_152651_1_);
+         }
+@@ -143,11 +143,11 @@
+         this.field_152661_c.put(p_152651_1_.getName().toLowerCase(Locale.ROOT), playerprofilecache$profileentry);
+         this.field_152662_d.put(uuid, playerprofilecache$profileentry);
+         this.field_152663_e.addFirst(p_152651_1_);
+-        this.func_152658_c();
++        if(!org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) this.func_152658_c(); // Spigot - skip saving if disabled
+     }
+ 
+     @Nullable
+-    public GameProfile func_152655_a(String p_152655_1_)
++    public synchronized GameProfile func_152655_a(String p_152655_1_)
+     {
+         String s = p_152655_1_.toLowerCase(Locale.ROOT);
+         PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = this.field_152661_c.get(s);
+@@ -168,7 +168,7 @@
+         }
+         else
+         {
+-            GameProfile gameprofile1 = func_187319_a(this.field_187323_g, s);
++            GameProfile gameprofile1 = func_187319_a(this.field_187323_g, p_152655_1_); // Spigot - use correct case for offline players
+ 
+             if (gameprofile1 != null)
+             {
+@@ -177,18 +177,26 @@
+             }
+         }
+ 
+-        this.func_152658_c();
++        if(!org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) this.func_152658_c(); // Spigot - skip saving if disabled
+         return playerprofilecache$profileentry == null ? null : playerprofilecache$profileentry.func_152668_a();
+     }
+ 
+-    public String[] func_152654_a()
++    public synchronized String[] func_152654_a()
+     {
+         List<String> list = Lists.newArrayList(this.field_152661_c.keySet());
+         return (String[])list.toArray(new String[list.size()]);
+     }
+ 
++    // Paper start
++    @Nullable public GameProfile getProfileIfCached(String name) {
++        PlayerProfileCache.ProfileEntry entry = this.field_152661_c.get(name.toLowerCase(Locale.ROOT));
++        return entry == null ? null : entry.field_152672_b;
++    }
++    // Paper end
++
++    @Nullable public GameProfile getProfile(UUID uuid) { return func_152652_a(uuid);  } // Paper - OBFHELPER
+     @Nullable
+-    public GameProfile func_152652_a(UUID p_152652_1_)
++    public synchronized GameProfile func_152652_a(UUID p_152652_1_)
+     {
+         PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = this.field_152662_d.get(p_152652_1_);
+         return playerprofilecache$profileentry == null ? null : playerprofilecache$profileentry.func_152668_a();
+@@ -245,29 +253,35 @@
+         }
+     }
+ 
+-    public void func_152658_c()
+-    {
+-        String s = this.field_152660_b.toJson(this.func_152656_a(1000));
+-        BufferedWriter bufferedwriter = null;
++    // Paper start
++    public void func_152658_c() {
++        save(true);
++    }
+ 
+-        try
+-        {
+-            bufferedwriter = Files.newWriter(this.field_152665_g, StandardCharsets.UTF_8);
+-            bufferedwriter.write(s);
+-            return;
++    public void save(boolean asyncSave) {
++        // Paper end
++        String s = this.field_152660_b.toJson(this.func_152656_a(org.spigotmc.SpigotConfig.userCacheCap)); // Spigot
++        Runnable save = () -> {
++            BufferedWriter bufferedwriter = null;
++            try {
++                bufferedwriter = Files.newWriter(field_152665_g, StandardCharsets.UTF_8);
++                bufferedwriter.write(s);
++                return;
++            } catch (FileNotFoundException ex) {
++                return;
++            } catch (IOException ex2) {
++                ;
++            } finally {
++                IOUtils.closeQuietly(bufferedwriter);
++            }
++            // Paper start
++        };
++        if (asyncSave) {
++            MohistThreadBox.ASYNCEXECUTOR.execute(save);
++        } else {
++            save.run();
+         }
+-        catch (FileNotFoundException var8)
+-        {
+-            ;
+-        }
+-        catch (IOException var9)
+-        {
+-            return;
+-        }
+-        finally
+-        {
+-            IOUtils.closeQuietly((Writer)bufferedwriter);
+-        }
++        // Paper end
+     }
+ 
+     private List<PlayerProfileCache.ProfileEntry> func_152656_a(int p_152656_1_)

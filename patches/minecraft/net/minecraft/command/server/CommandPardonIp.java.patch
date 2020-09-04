@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandPardonIp.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandPardonIp.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.command.server;
+ 
++import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.regex.Matcher;
+@@ -14,6 +15,11 @@
+ 
+ public class CommandPardonIp extends CommandBase
+ {
++    public List<String> func_71514_a()
++    {
++        return Arrays.<String>asList("unban-ip");
++    }
++
+     public String func_71517_b()
+     {
+         return "pardon-ip";

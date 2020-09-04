@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/ISaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/ISaveHandler.java
+@@ -30,4 +30,6 @@
+     File func_75758_b(String p_75758_1_);
+ 
+     TemplateManager func_186340_h();
++
++    java.util.UUID getUUID(); // CraftBukkit
+ }

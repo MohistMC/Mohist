@@ -1,0 +1,87 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFireball.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFireball.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public abstract class EntityFireball extends Entity
+ {
+@@ -24,6 +25,9 @@
+     public double field_70233_c;
+     public double field_70230_d;
+ 
++    public float bukkitYield = 1;
++    public boolean isIncendiary = true;
++
+     public EntityFireball(World p_i1759_1_)
+     {
+         super(p_i1759_1_);
+@@ -64,21 +68,27 @@
+     {
+         super(p_i1761_1_);
+         this.field_70235_a = p_i1761_2_;
++        this.projectileSource = (org.bukkit.entity.LivingEntity) p_i1761_2_.getBukkitEntity();
+         this.func_70105_a(1.0F, 1.0F);
+         this.func_70012_b(p_i1761_2_.field_70165_t, p_i1761_2_.field_70163_u, p_i1761_2_.field_70161_v, p_i1761_2_.field_70177_z, p_i1761_2_.field_70125_A);
+         this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+         this.field_70159_w = 0.0D;
+         this.field_70181_x = 0.0D;
+         this.field_70179_y = 0.0D;
+-        p_i1761_3_ = p_i1761_3_ + this.field_70146_Z.nextGaussian() * 0.4D;
+-        p_i1761_5_ = p_i1761_5_ + this.field_70146_Z.nextGaussian() * 0.4D;
+-        p_i1761_7_ = p_i1761_7_ + this.field_70146_Z.nextGaussian() * 0.4D;
+-        double d0 = (double)MathHelper.func_76133_a(p_i1761_3_ * p_i1761_3_ + p_i1761_5_ * p_i1761_5_ + p_i1761_7_ * p_i1761_7_);
+-        this.field_70232_b = p_i1761_3_ / d0 * 0.1D;
+-        this.field_70233_c = p_i1761_5_ / d0 * 0.1D;
+-        this.field_70230_d = p_i1761_7_ / d0 * 0.1D;
++        // CraftBukkit start - Added setDirection method
++        this.setDirection(p_i1761_3_, p_i1761_5_, p_i1761_7_);
+     }
+ 
++    public void setDirection(double accelX, double accelY, double accelZ) {
++        accelX = accelX + this.field_70146_Z.nextGaussian() * 0.4D;
++        accelY = accelY + this.field_70146_Z.nextGaussian() * 0.4D;
++        accelZ = accelZ + this.field_70146_Z.nextGaussian() * 0.4D;
++        double d0 = (double)MathHelper.func_76133_a(accelX * accelX + accelY * accelY + accelZ * accelZ);
++        this.field_70232_b = accelX / d0 * 0.1D;
++        this.field_70233_c = accelY / d0 * 0.1D;
++        this.field_70230_d = accelZ / d0 * 0.1D;
++    }
++
+     public void func_70071_h_()
+     {
+         if (this.field_70170_p.field_72995_K || (this.field_70235_a == null || !this.field_70235_a.field_70128_L) && this.field_70170_p.func_175667_e(new BlockPos(this)))
+@@ -93,9 +103,12 @@
+             ++this.field_70234_an;
+             RayTraceResult raytraceresult = ProjectileHelper.func_188802_a(this, true, this.field_70234_an >= 25, this.field_70235_a);
+ 
+-            if (raytraceresult != null)
++            if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+             {
+                 this.func_70227_a(raytraceresult);
++                if (this.field_70128_L) {
++                    CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
++                }
+             }
+ 
+             this.field_70165_t += this.field_70159_w;
+@@ -209,6 +222,9 @@
+ 
+             if (p_70097_1_.func_76346_g() != null)
+             {
++                if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_)) {
++                    return false;
++                }
+                 Vec3d vec3d = p_70097_1_.func_76346_g().func_70040_Z();
+ 
+                 if (vec3d != null)
+@@ -224,6 +240,7 @@
+                 if (p_70097_1_.func_76346_g() instanceof EntityLivingBase)
+                 {
+                     this.field_70235_a = (EntityLivingBase)p_70097_1_.func_76346_g();
++                    this.projectileSource = (org.bukkit.projectiles.ProjectileSource) this.field_70235_a.getBukkitEntity();
+                 }
+ 
+                 return true;

@@ -1,0 +1,127 @@
+--- ../src-base/minecraft/net/minecraft/scoreboard/ServerScoreboard.java
++++ ../src-work/minecraft/net/minecraft/scoreboard/ServerScoreboard.java
+@@ -30,7 +30,7 @@
+ 
+         if (this.field_96553_b.contains(p_96536_1_.func_96645_d()))
+         {
+-            this.field_96555_a.func_184103_al().func_148540_a(new SPacketUpdateScore(p_96536_1_));
++            this.sendAll(new SPacketUpdateScore(p_96536_1_));
+         }
+ 
+         this.func_96551_b();
+@@ -39,14 +39,14 @@
+     public void func_96516_a(String p_96516_1_)
+     {
+         super.func_96516_a(p_96516_1_);
+-        this.field_96555_a.func_184103_al().func_148540_a(new SPacketUpdateScore(p_96516_1_));
++        this.sendAll(new SPacketUpdateScore(p_96516_1_));
+         this.func_96551_b();
+     }
+ 
+     public void func_178820_a(String p_178820_1_, ScoreObjective p_178820_2_)
+     {
+         super.func_178820_a(p_178820_1_, p_178820_2_);
+-        this.field_96555_a.func_184103_al().func_148540_a(new SPacketUpdateScore(p_178820_1_, p_178820_2_));
++        this.sendAll(new SPacketUpdateScore(p_178820_1_, p_178820_2_));
+         this.func_96551_b();
+     }
+ 
+@@ -59,7 +59,7 @@
+         {
+             if (this.func_96552_h(scoreobjective) > 0)
+             {
+-                this.field_96555_a.func_184103_al().func_148540_a(new SPacketDisplayObjective(p_96530_1_, p_96530_2_));
++                this.sendAll(new SPacketDisplayObjective(p_96530_1_, p_96530_2_));
+             }
+             else
+             {
+@@ -71,7 +71,7 @@
+         {
+             if (this.field_96553_b.contains(p_96530_2_))
+             {
+-                this.field_96555_a.func_184103_al().func_148540_a(new SPacketDisplayObjective(p_96530_1_, p_96530_2_));
++                this.sendAll(new SPacketDisplayObjective(p_96530_1_, p_96530_2_));
+             }
+             else
+             {
+@@ -87,7 +87,7 @@
+         if (super.func_151392_a(p_151392_1_, p_151392_2_))
+         {
+             ScorePlayerTeam scoreplayerteam = this.func_96508_e(p_151392_2_);
+-            this.field_96555_a.func_184103_al().func_148540_a(new SPacketTeams(scoreplayerteam, Arrays.asList(p_151392_1_), 3));
++            this.sendAll(new SPacketTeams(scoreplayerteam, Arrays.asList(p_151392_1_), 3));
+             this.func_96551_b();
+             return true;
+         }
+@@ -100,7 +100,7 @@
+     public void func_96512_b(String p_96512_1_, ScorePlayerTeam p_96512_2_)
+     {
+         super.func_96512_b(p_96512_1_, p_96512_2_);
+-        this.field_96555_a.func_184103_al().func_148540_a(new SPacketTeams(p_96512_2_, Arrays.asList(p_96512_1_), 4));
++        this.sendAll(new SPacketTeams(p_96512_2_, Arrays.asList(p_96512_1_), 4));
+         this.func_96551_b();
+     }
+ 
+@@ -116,7 +116,7 @@
+ 
+         if (this.field_96553_b.contains(p_96532_1_))
+         {
+-            this.field_96555_a.func_184103_al().func_148540_a(new SPacketScoreboardObjective(p_96532_1_, 2));
++            this.sendAll(new SPacketScoreboardObjective(p_96532_1_, 2));
+         }
+ 
+         this.func_96551_b();
+@@ -137,21 +137,21 @@
+     public void func_96523_a(ScorePlayerTeam p_96523_1_)
+     {
+         super.func_96523_a(p_96523_1_);
+-        this.field_96555_a.func_184103_al().func_148540_a(new SPacketTeams(p_96523_1_, 0));
++        this.sendAll(new SPacketTeams(p_96523_1_, 0));
+         this.func_96551_b();
+     }
+ 
+     public void func_96538_b(ScorePlayerTeam p_96538_1_)
+     {
+         super.func_96538_b(p_96538_1_);
+-        this.field_96555_a.func_184103_al().func_148540_a(new SPacketTeams(p_96538_1_, 2));
++        this.sendAll(new SPacketTeams(p_96538_1_, 2));
+         this.func_96551_b();
+     }
+ 
+     public void func_96513_c(ScorePlayerTeam p_96513_1_)
+     {
+         super.func_96513_c(p_96513_1_);
+-        this.field_96555_a.func_184103_al().func_148540_a(new SPacketTeams(p_96513_1_, 1));
++        this.sendAll(new SPacketTeams(p_96513_1_, 1));
+         this.func_96551_b();
+     }
+ 
+@@ -196,6 +196,7 @@
+ 
+         for (EntityPlayerMP entityplayermp : this.field_96555_a.func_184103_al().func_181057_v())
+         {
++            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this) continue; // CraftBukkit - Only players on this board
+             for (Packet<?> packet : list)
+             {
+                 entityplayermp.field_71135_a.func_147359_a(packet);
+@@ -227,6 +228,7 @@
+ 
+         for (EntityPlayerMP entityplayermp : this.field_96555_a.func_184103_al().func_181057_v())
+         {
++            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this) continue; // CraftBukkit - Only players on this board
+             for (Packet<?> packet : list)
+             {
+                 entityplayermp.field_71135_a.func_147359_a(packet);
+@@ -250,4 +252,12 @@
+ 
+         return i;
+     }
++
++    private void sendAll(Packet packet) {
++        for (EntityPlayerMP entityplayer : this.field_96555_a.func_184103_al().func_181057_v()) {
++            if (entityplayer.getBukkitEntity().getScoreboard().getHandle() == this) {
++                entityplayer.field_71135_a.func_147359_a(packet);
++            }
++        }
++    }
+ }

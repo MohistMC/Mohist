@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSnowBlock.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSnowBlock.java
+@@ -4,6 +4,7 @@
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
++import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+ import net.minecraft.util.math.BlockPos;
+@@ -33,8 +34,11 @@
+     {
+         if (p_180650_1_.func_175642_b(EnumSkyBlock.BLOCK, p_180650_2_) > 11)
+         {
++            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockFadeEvent(p_180650_1_.getWorld().getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p()), Blocks.field_150350_a).isCancelled()) {
++                return;
++            }
+             this.func_176226_b(p_180650_1_, p_180650_2_, p_180650_1_.func_180495_p(p_180650_2_), 0);
+             p_180650_1_.func_175698_g(p_180650_2_);
+         }
+-    }
++	}
+ }

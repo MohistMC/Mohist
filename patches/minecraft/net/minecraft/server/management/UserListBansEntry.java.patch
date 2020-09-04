@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListBansEntry.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListBansEntry.java
+@@ -14,7 +14,7 @@
+ 
+     public UserListBansEntry(GameProfile p_i1135_1_, Date p_i1135_2_, String p_i1135_3_, Date p_i1135_4_, String p_i1135_5_)
+     {
+-        super(p_i1135_1_, p_i1135_4_, p_i1135_3_, p_i1135_4_, p_i1135_5_);
++        super(p_i1135_1_, p_i1135_2_, p_i1135_3_, p_i1135_4_, p_i1135_5_);
+     }
+ 
+     public UserListBansEntry(JsonObject p_i1136_1_)
+@@ -34,10 +34,13 @@
+ 
+     private static GameProfile func_152648_b(JsonObject p_152648_0_)
+     {
+-        if (p_152648_0_.has("uuid") && p_152648_0_.has("name"))
++        // Spigot start
++        // this whole method has to be reworked to account for the fact Bukkit only accepts UUID bans and gives no way for usernames to be stored!
++        UUID uuid = null;
++        String name = null;
++        if (p_152648_0_.has("uuid"))
+         {
+             String s = p_152648_0_.get("uuid").getAsString();
+-            UUID uuid;
+ 
+             try
+             {
+@@ -45,14 +48,20 @@
+             }
+             catch (Throwable var4)
+             {
+-                return null;
+             }
+-
+-            return new GameProfile(uuid, p_152648_0_.get("name").getAsString());
+         }
++        if (p_152648_0_.has("name"))
++        {
++            name = p_152648_0_.get("name").getAsString();
++        }
++        if (uuid != null || name != null)
++        {
++            return new GameProfile(uuid, name);
++        }
+         else
+         {
+             return null;
+         }
++        // Spigot End
+     }
+ }

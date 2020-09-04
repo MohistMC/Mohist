@@ -1,0 +1,66 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntitySmallFireball.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntitySmallFireball.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
+ 
+ public class EntitySmallFireball extends EntityFireball
+ {
+@@ -21,6 +22,10 @@
+     {
+         super(p_i1771_1_, p_i1771_2_, p_i1771_3_, p_i1771_5_, p_i1771_7_);
+         this.func_70105_a(0.3125F, 0.3125F);
++        if (this.field_70235_a != null && this.field_70235_a instanceof EntityLiving) {
++            // TODO: Maybe we should use net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent instead of this?{
++            isIncendiary = this.field_70170_p.func_82736_K().func_82766_b("mobGriefing");
++        }
+     }
+ 
+     public EntitySmallFireball(World p_i1772_1_, double p_i1772_2_, double p_i1772_4_, double p_i1772_6_, double p_i1772_8_, double p_i1772_10_, double p_i1772_12_)
+@@ -42,12 +47,17 @@
+             {
+                 if (!p_70227_1_.field_72308_g.func_70045_F())
+                 {
+-                    boolean flag = p_70227_1_.field_72308_g.func_70097_a(DamageSource.func_76362_a(this, this.field_70235_a), 5.0F);
+-
+-                    if (flag)
+-                    {
++                    // CraftBukkit start - Entity damage by entity event + combust event
++                    isIncendiary = p_70227_1_.field_72308_g.func_70097_a(DamageSource.func_76362_a(this, this.field_70235_a), 5.0F);
++                    if (isIncendiary) {
+                         this.func_174815_a(this.field_70235_a, p_70227_1_.field_72308_g);
+-                        p_70227_1_.field_72308_g.func_70015_d(5);
++                        // result.entityHit.setFire(5);
++                        EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_70227_1_.field_72308_g.getBukkitEntity(), 5);
++                        p_70227_1_.field_72308_g.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++                        if (!event.isCancelled()) {
++                            p_70227_1_.field_72308_g.func_70015_d(event.getDuration());
++                        }
+                     }
+                 }
+             }
+@@ -57,16 +67,18 @@
+ 
+                 if (this.field_70235_a != null && this.field_70235_a instanceof EntityLiving)
+                 {
+-                    flag1 = this.field_70170_p.func_82736_K().func_82766_b("mobGriefing");
++                    flag1 = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a);
+                 }
+ 
+-                if (flag1)
++                if (isIncendiary)
+                 {
+                     BlockPos blockpos = p_70227_1_.func_178782_a().func_177972_a(p_70227_1_.field_178784_b);
+ 
+                     if (this.field_70170_p.func_175623_d(blockpos))
+                     {
+-                        this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                        if (!org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p(), this).isCancelled()) {
++                            this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                        }
+                     }
+                 }
+             }

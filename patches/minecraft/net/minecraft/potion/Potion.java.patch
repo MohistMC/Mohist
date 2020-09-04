@@ -1,0 +1,212 @@
+--- ../src-base/minecraft/net/minecraft/potion/Potion.java
++++ ../src-work/minecraft/net/minecraft/potion/Potion.java
+@@ -13,7 +13,9 @@
+ import net.minecraft.entity.ai.attributes.IAttribute;
+ import net.minecraft.entity.ai.attributes.IAttributeInstance;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.MobEffects;
++import net.minecraft.network.play.server.SPacketUpdateHealth;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.StringUtils;
+@@ -21,16 +23,18 @@
+ import net.minecraft.util.registry.RegistryNamespaced;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+ 
+-public class Potion
++public class Potion extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Potion>
+ {
+-    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced<ResourceLocation, Potion>();
++    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.registries.GameData.getWrapper(Potion.class);
+     private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
+     private final boolean field_76418_K;
+     private final int field_76414_N;
+     private String field_76416_I = "";
+     private int field_76417_J = -1;
+-    private double field_76412_L;
++    public double field_76412_L;
+     private boolean field_188415_h;
+ 
+     @Nullable
+@@ -78,14 +82,14 @@
+         {
+             if (p_76394_1_.func_110143_aJ() < p_76394_1_.func_110138_aP())
+             {
+-                p_76394_1_.func_70691_i(1.0F);
++                p_76394_1_.heal(1.0F, RegainReason.MAGIC_REGEN);
+             }
+         }
+         else if (this == MobEffects.field_76436_u)
+         {
+             if (p_76394_1_.func_110143_aJ() > 1.0F)
+             {
+-                p_76394_1_.func_70097_a(DamageSource.field_76376_m, 1.0F);
++                p_76394_1_.func_70097_a(CraftEventFactory.POISON, 1.0F); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
+             }
+         }
+         else if (this == MobEffects.field_82731_v)
+@@ -100,7 +104,19 @@
+         {
+             if (!p_76394_1_.field_70170_p.field_72995_K)
+             {
+-                ((EntityPlayer)p_76394_1_).func_71024_bL().func_75122_a(p_76394_2_ + 1, 1.0F);
++                // ((EntityPlayer)entityLivingBaseIn).getFoodStats().addStats(amplifier + 1, 1.0F);
++                // CraftBukkit start
++                EntityPlayer entityhuman = (EntityPlayer) p_76394_1_;
++                int oldFoodLevel = entityhuman.func_71024_bL().field_75127_a;
++
++                org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, p_76394_2_ + 1 + oldFoodLevel);
++
++                if (!event.isCancelled()) {
++                    entityhuman.func_71024_bL().func_75122_a(event.getFoodLevel() - oldFoodLevel, 1.0F);
++                }
++
++                ((EntityPlayerMP) entityhuman).field_71135_a.func_147359_a(new SPacketUpdateHealth(((EntityPlayerMP) entityhuman).getBukkitEntity().getScaledHealth(), entityhuman.func_71024_bL().field_75127_a, entityhuman.func_71024_bL().field_75125_b));
++                // CraftBukkit end
+             }
+         }
+         else if ((this != MobEffects.field_76432_h || p_76394_1_.func_70662_br()) && (this != MobEffects.field_76433_i || !p_76394_1_.func_70662_br()))
+@@ -112,7 +128,7 @@
+         }
+         else
+         {
+-            p_76394_1_.func_70691_i((float)Math.max(4 << p_76394_2_, 0));
++            p_76394_1_.heal((float)Math.max(4 << p_76394_2_, 0), RegainReason.MAGIC);
+         }
+     }
+ 
+@@ -222,7 +238,6 @@
+         return this.field_76417_J;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public boolean func_76398_f()
+     {
+         return this.field_76418_K;
+@@ -293,7 +308,122 @@
+         return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++
++    /**
++     * If the Potion effect should be displayed in the players inventory
++     * @param effect the active PotionEffect
++     * @return true to display it (default), false to hide it.
++     */
++    public boolean shouldRender(PotionEffect effect) { return true; }
++
++    /**
++     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
++     * @param effect the active PotionEffect
++     * @return true to draw the standard text
++     */
++    public boolean shouldRenderInvText(PotionEffect effect)
++    {
++        return true;
++    }
++
++    /**
++     * If the Potion effect should be displayed in the player's ingame HUD
++     * @param effect the active PotionEffect
++     * @return true to display it (default), false to hide it.
++     */
++    public boolean shouldRenderHUD(PotionEffect effect)
++    {
++        return true;
++    }
++
++    /**
++     * Called to draw the this Potion onto the player's inventory when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param effect the active PotionEffect
++     * @param mc the Minecraft instance, for convenience
++     * @deprecated use {@link #renderInventoryEffect(PotionEffect, net.minecraft.client.gui.Gui, int, int, float)}
++     */
+     @SideOnly(Side.CLIENT)
++    @Deprecated // TODO: remove
++    public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) { }
++
++    /**
++     * Called to draw the this Potion onto the player's inventory when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     *
++     * @param effect the active PotionEffect
++     * @param gui the gui instance
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param z the z level
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderInventoryEffect(PotionEffect effect, net.minecraft.client.gui.Gui gui, int x, int y, float z)
++    {
++        renderInventoryEffect(x, y, effect, net.minecraft.client.Minecraft.func_71410_x());
++    }
++
++    /**
++     * Called to draw the this Potion onto the player's ingame HUD when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param effect the active PotionEffect
++     * @param mc the Minecraft instance, for convenience
++     * @param alpha the alpha value, blinks when the potion is about to run out
++     * @deprecated use {@link #renderHUDEffect(PotionEffect, net.minecraft.client.gui.Gui, int, int, float, float)}
++     */
++    @SideOnly(Side.CLIENT)
++    @Deprecated // TODO: remove
++    public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha) { }
++
++    /**
++     * Called to draw the this Potion onto the player's ingame HUD when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     *
++     * @param effect the active PotionEffect
++     * @param gui the gui instance
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param z the z level
++     * @param alpha the alpha value, blinks when the potion is about to run out
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderHUDEffect(PotionEffect effect, net.minecraft.client.gui.Gui gui, int x, int y, float z, float alpha)
++    {
++        renderHUDEffect(x, y, effect, net.minecraft.client.Minecraft.func_71410_x(), alpha);
++    }
++
++    /**
++     * Get a fresh list of items that can cure this Potion.
++     * All new PotionEffects created from this Potion will call this to initialize the default curative items
++     * @see PotionEffect#getCurativeItems
++     * @return A list of items that can cure this Potion
++     */
++    public java.util.List<net.minecraft.item.ItemStack> getCurativeItems()
++    {
++        java.util.ArrayList<net.minecraft.item.ItemStack> ret = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++        ret.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.field_151117_aB));
++        return ret;
++    }
++    
++    /**
++     * Used for determining {@code PotionEffect} sort order in GUIs.
++     * Defaults to the {@code PotionEffect}'s liquid color.
++     * @param potionEffect the {@code PotionEffect} instance containing the potion
++     * @return a value used to sort {@code PotionEffect}s in GUIs 
++     */
++    public int getGuiSortColor(PotionEffect potionEffect)
++    {
++        return this.func_76401_j();
++    }
++
++    /* ======================================== FORGE END =====================================*/
++
++    @SideOnly(Side.CLIENT)
+     public boolean func_188408_i()
+     {
+         return this.field_188415_h;

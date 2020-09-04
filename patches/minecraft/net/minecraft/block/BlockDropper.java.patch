@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDropper.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDropper.java
+@@ -26,7 +26,7 @@
+         return new TileEntityDropper();
+     }
+ 
+-    protected void func_176439_d(World p_176439_1_, BlockPos p_176439_2_)
++    public void func_176439_d(World p_176439_1_, BlockPos p_176439_2_)
+     {
+         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_176439_1_, p_176439_2_);
+         TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.func_150835_j();
+@@ -43,7 +43,7 @@
+             {
+                 ItemStack itemstack = tileentitydispenser.func_70301_a(i);
+ 
+-                if (!itemstack.func_190926_b())
++                if (!itemstack.func_190926_b() && net.minecraftforge.items.VanillaInventoryCodeHooks.dropperInsertHook(p_176439_1_, p_176439_2_, tileentitydispenser, i, itemstack))
+                 {
+                     EnumFacing enumfacing = (EnumFacing)p_176439_1_.func_180495_p(p_176439_2_).func_177229_b(field_176441_a);
+                     BlockPos blockpos = p_176439_2_.func_177972_a(enumfacing);
+@@ -57,9 +57,9 @@
+                     else
+                     {
+                         itemstack1 = TileEntityHopper.func_174918_a(tileentitydispenser, iinventory, itemstack.func_77946_l().func_77979_a(1), enumfacing.func_176734_d());
+-
++                        
+                         if (itemstack1.func_190926_b())
+-                        {
++						{
+                             itemstack1 = itemstack.func_77946_l();
+                             itemstack1.func_190918_g(1);
+                         }

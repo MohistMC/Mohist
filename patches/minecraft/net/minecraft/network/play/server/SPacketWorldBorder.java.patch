@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketWorldBorder.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketWorldBorder.java
+@@ -4,13 +4,14 @@
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.INetHandlerPlayClient;
++import net.minecraft.world.WorldProviderHell;
+ import net.minecraft.world.border.WorldBorder;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ public class SPacketWorldBorder implements Packet<INetHandlerPlayClient>
+ {
+-    private SPacketWorldBorder.Action field_179795_a;
++    private Action field_179795_a;
+     private int field_179793_b;
+     private double field_179794_c;
+     private double field_179791_d;
+@@ -24,11 +25,15 @@
+     {
+     }
+ 
+-    public SPacketWorldBorder(WorldBorder p_i46921_1_, SPacketWorldBorder.Action p_i46921_2_)
++    public SPacketWorldBorder(WorldBorder p_i46921_1_, Action p_i46921_2_)
+     {
+         this.field_179795_a = p_i46921_2_;
+-        this.field_179794_c = p_i46921_1_.func_177731_f();
+-        this.field_179791_d = p_i46921_1_.func_177721_g();
++        // CraftBukkit start - multiply out nether border
++        // this.centerX = border.getCenterX();
++        // this.centerZ = border.getCenterZ();
++        this.field_179794_c = p_i46921_1_.func_177731_f() * (p_i46921_1_.world != null ? (p_i46921_1_.world.field_73011_w instanceof WorldProviderHell ? 8 : 1) : 1);
++        this.field_179791_d = p_i46921_1_.func_177721_g() * (p_i46921_1_.world != null ? (p_i46921_1_.world.field_73011_w instanceof WorldProviderHell ? 8 : 1) : 1);
++        // CraftBukkit end
+         this.field_179789_f = p_i46921_1_.func_177741_h();
+         this.field_179792_e = p_i46921_1_.func_177751_j();
+         this.field_179790_g = p_i46921_1_.func_177732_i();
+@@ -39,7 +44,7 @@
+ 
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
+-        this.field_179795_a = (SPacketWorldBorder.Action)p_148837_1_.func_179257_a(SPacketWorldBorder.Action.class);
++        this.field_179795_a = (Action)p_148837_1_.func_179257_a(Action.class);
+ 
+         switch (this.field_179795_a)
+         {

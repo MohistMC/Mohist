@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
+@@ -29,11 +29,19 @@
+ 
+         for (Biome biome : Biome.field_185377_q)
+         {
+-            if (biome != null && biome.func_185355_j() > 0.0F)
++            if (biome != null && biome.func_185355_j() > 0.0F && !net.minecraftforge.common.BiomeManager.strongHoldBiomesBlackList.contains(biome))
+             {
+                 this.field_151546_e.add(biome);
+             }
+         }
++
++        for (Biome biome : net.minecraftforge.common.BiomeManager.strongHoldBiomes)
++        {
++            if (!this.field_151546_e.contains(biome))
++            {
++                this.field_151546_e.add(biome);
++            }
++        }
+     }
+ 
+     public MapGenStronghold(Map<String, String> p_i2068_1_)
+@@ -143,8 +151,16 @@
+                 double d0 = 4.0D * this.field_82671_h + this.field_82671_h * (double)j * 6.0D + (random.nextDouble() - 0.5D) * this.field_82671_h * 2.5D;
+                 int j1 = (int)Math.round(Math.cos(d1) * d0);
+                 int k1 = (int)Math.round(Math.sin(d1) * d0);
+-                BlockPos blockpos = this.field_75039_c.func_72959_q().func_180630_a((j1 << 4) + 8, (k1 << 4) + 8, 112, this.field_151546_e, random);
+-
++                // Cauldron start - catch invalid positions
++                BlockPos blockpos = null;
++                try {
++                    blockpos = this.field_75039_c.func_72959_q().func_180630_a((j1 << 4) + 8, (k1 << 4) + 8, 112, this.field_151546_e, random);
++                }
++                catch (ArrayIndexOutOfBoundsException e)
++                {
++                    // ignore
++                }
++                // Cauldron end
+                 if (blockpos != null)
+                 {
+                     j1 = blockpos.func_177958_n() >> 4;

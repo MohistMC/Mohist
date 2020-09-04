@@ -1,0 +1,305 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.tileentity;
+ 
++import java.util.List;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockFurnace;
+ import net.minecraft.block.material.Material;
+@@ -22,6 +23,7 @@
+ import net.minecraft.item.ItemTool;
+ import net.minecraft.item.crafting.FurnaceRecipes;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.ITickable;
+ import net.minecraft.util.NonNullList;
+@@ -31,6 +33,14 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.FurnaceBurnEvent;
++import org.bukkit.event.inventory.FurnaceSmeltEvent;
++import red.mohist.command.MohistCommand;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
+ 
+ public class TileEntityFurnace extends TileEntityLockable implements ITickable, ISidedInventory
+ {
+@@ -44,6 +54,31 @@
+     private int field_174905_l;
+     private String field_145958_o;
+ 
++    // CraftBukkit start - add fields and methods
++    private int lastTick = MinecraftServer.currentTick;
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++    
++    public List<ItemStack> getContents() {
++        return this.field_145957_n;
++    }
++        
++    public void onOpen(CraftHumanEntity who) {
++        transaction.add(who);
++    }
++    
++    public void onClose(CraftHumanEntity who) {
++        transaction.remove(who);
++    }
++        
++    public List<HumanEntity> getViewers() {
++        return transaction;
++    }
++        
++    public void setMaxStackSize(int size) {
++        maxStack = size;
++    }
++    // CraftBukkit end
+     public int func_70302_i_()
+     {
+         return this.field_145957_n.size();
+@@ -121,9 +156,9 @@
+         super.func_145839_a(p_145839_1_);
+         this.field_145957_n = NonNullList.<ItemStack>func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
+         ItemStackHelper.func_191283_b(p_145839_1_, this.field_145957_n);
+-        this.field_145956_a = p_145839_1_.func_74765_d("BurnTime");
+-        this.field_174906_k = p_145839_1_.func_74765_d("CookTime");
+-        this.field_174905_l = p_145839_1_.func_74765_d("CookTimeTotal");
++        this.field_145956_a = p_145839_1_.func_74762_e("BurnTime");
++        this.field_174906_k = p_145839_1_.func_74762_e("CookTime");
++        this.field_174905_l = p_145839_1_.func_74762_e("CookTimeTotal");
+         this.field_145963_i = func_145952_a(this.field_145957_n.get(1));
+ 
+         if (p_145839_1_.func_150297_b("CustomName", 8))
+@@ -135,9 +170,9 @@
+     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
+     {
+         super.func_189515_b(p_189515_1_);
+-        p_189515_1_.func_74777_a("BurnTime", (short)this.field_145956_a);
+-        p_189515_1_.func_74777_a("CookTime", (short)this.field_174906_k);
+-        p_189515_1_.func_74777_a("CookTimeTotal", (short)this.field_174905_l);
++        p_189515_1_.func_74768_a("BurnTime", (short)this.field_145956_a);
++        p_189515_1_.func_74768_a("CookTime", (short)this.field_174906_k);
++        p_189515_1_.func_74768_a("CookTimeTotal", (short)this.field_174905_l);
+         ItemStackHelper.func_191282_a(p_189515_1_, this.field_145957_n);
+ 
+         if (this.func_145818_k_())
+@@ -166,12 +201,40 @@
+ 
+     public void func_73660_a()
+     {
+-        boolean flag = this.func_145950_i();
++        boolean flag = (this.func_145838_q() == Blocks.field_150470_am); // CraftBukkit - SPIGOT-844 - Check if furnace block is lit using the block instead of burn time
+         boolean flag1 = false;
+ 
++        // CraftBukkit start - Use wall time instead of ticks for cooking
++        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++        this.lastTick = MinecraftServer.currentTick;
++
++        // CraftBukkit - moved from below - edited for wall time
++        if (this.func_145950_i() && this.func_145948_k()) {
++            if(MohistConfig.instance.RealTimeTicking()){
++                int ticks = (int) ((RealTimeTicking) this.func_145831_w()).getRealTimeTicks();
++                this.field_174906_k = Math.min(this.field_174905_l, this.field_174906_k + ticks);
++            } else {
++                this.field_174906_k += elapsedTicks;
++            }
++            if (this.field_174906_k >= this.field_174905_l) {
++                this.field_174906_k = 0;
++                this.field_174905_l = this.func_174904_a((ItemStack) this.field_145957_n.get(0));
++                this.func_145949_j();
++                flag1 = true;
++            }
++        } else {
++            this.field_174906_k = 0;
++        }
++        // CraftBukkit end
++
+         if (this.func_145950_i())
+         {
+-            --this.field_145956_a;
++            if(MohistConfig.instance.RealTimeTicking()){
++                int ticks = (int) ((RealTimeTicking) this.func_145831_w()).getRealTimeTicks();
++                this.field_145956_a = Math.max(0, this.field_145956_a - ticks);
++            } else {
++                this.field_145956_a -= elapsedTicks; // CraftBukkit - use elapsedTicks in place of constant
++            }
+         }
+ 
+         if (!this.field_145850_b.field_72995_K)
+@@ -180,13 +243,21 @@
+ 
+             if (this.func_145950_i() || !itemstack.func_190926_b() && !((ItemStack)this.field_145957_n.get(0)).func_190926_b())
+             {
+-                if (!this.func_145950_i() && this.func_145948_k())
+-                {
+-                    this.field_145956_a = func_145952_a(itemstack);
+-                    this.field_145963_i = this.field_145956_a;
++                // CraftBukkit start - Handle multiple elapsed ticks
++                if (this.field_145956_a <= 0 && this.func_145948_k()) { // CraftBukkit - == to <=
++                    CraftItemStack fuel = CraftItemStack.asCraftMirror(itemstack);
+ 
+-                    if (this.func_145950_i())
+-                    {
++                    FurnaceBurnEvent furnaceBurnEvent = new FurnaceBurnEvent(this.field_145850_b.getWorld().getBlockAt(field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p()), fuel, func_145952_a(itemstack));
++                    this.field_145850_b.getServer().getPluginManager().callEvent(furnaceBurnEvent);
++
++                    if (furnaceBurnEvent.isCancelled()) {
++                        return;
++                    }
++
++                    this.field_145963_i = furnaceBurnEvent.getBurnTime();
++                    this.field_145956_a += this.field_145963_i;
++                    if (this.field_145956_a > 0 && furnaceBurnEvent.isBurning()) {
++                        // CraftBukkit end
+                         flag1 = true;
+ 
+                         if (!itemstack.func_190926_b())
+@@ -196,39 +267,28 @@
+ 
+                             if (itemstack.func_190926_b())
+                             {
+-                                Item item1 = item.func_77668_q();
+-                                this.field_145957_n.set(1, item1 == null ? ItemStack.field_190927_a : new ItemStack(item1));
++                                ItemStack item1 = item.getContainerItem(itemstack);
++                                this.field_145957_n.set(1, item1);
+                             }
+                         }
+                     }
+                 }
+-
+-                if (this.func_145950_i() && this.func_145948_k())
+-                {
+-                    ++this.field_174906_k;
+-
+-                    if (this.field_174906_k == this.field_174905_l)
+-                    {
+-                        this.field_174906_k = 0;
+-                        this.field_174905_l = this.func_174904_a(this.field_145957_n.get(0));
+-                        this.func_145949_j();
+-                        flag1 = true;
+-                    }
+-                }
+-                else
+-                {
+-                    this.field_174906_k = 0;
+-                }
+             }
+             else if (!this.func_145950_i() && this.field_174906_k > 0)
+             {
+-                this.field_174906_k = MathHelper.func_76125_a(this.field_174906_k - 2, 0, this.field_174905_l);
++                if(MohistConfig.instance.RealTimeTicking()) {
++                    int ticks = (int) ((RealTimeTicking) this.func_145831_w()).getRealTimeTicks();
++                    this.field_174906_k = MathHelper.func_76125_a(this.field_174906_k - (2 * ticks), 0, this.field_174905_l);
++                } else {
++                    this.field_174906_k = MathHelper.func_76125_a(this.field_174906_k - 2, 0, this.field_174905_l);
++                }
+             }
+ 
+             if (flag != this.func_145950_i())
+             {
+                 flag1 = true;
+                 BlockFurnace.func_176446_a(this.func_145950_i(), this.field_145850_b, this.field_174879_c);
++                this.func_145836_u(); // CraftBukkit - Invalidate tile entity's cached block type
+             }
+         }
+ 
+@@ -269,13 +329,13 @@
+                 {
+                     return false;
+                 }
+-                else if (itemstack1.func_190916_E() < this.func_70297_j_() && itemstack1.func_190916_E() < itemstack1.func_77976_d())
++                else if (itemstack1.func_190916_E() + itemstack.func_190916_E() <= this.func_70297_j_() && itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack1.func_77976_d())  // Forge fix: make furnace respect stack sizes in furnace recipes
+                 {
+                     return true;
+                 }
+                 else
+                 {
+-                    return itemstack1.func_190916_E() < itemstack.func_77976_d();
++                    return itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack.func_77976_d(); // Forge fix: make furnace respect stack sizes in furnace recipes
+                 }
+             }
+         }
+@@ -289,14 +349,41 @@
+             ItemStack itemstack1 = FurnaceRecipes.func_77602_a().func_151395_a(itemstack);
+             ItemStack itemstack2 = this.field_145957_n.get(2);
+ 
+-            if (itemstack2.func_190926_b())
++            // CraftBukkit start - fire FurnaceSmeltEvent
++            CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
++            org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
++
++            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(this.field_145850_b.getWorld().getBlockAt(field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p()), source, result);
++            this.field_145850_b.getServer().getPluginManager().callEvent(furnaceSmeltEvent);
++
++            if (furnaceSmeltEvent.isCancelled()) {
++                return;
++            }
++
++            result = furnaceSmeltEvent.getResult();
++            itemstack1 = CraftItemStack.asNMSCopy(result);
++
++            if (!itemstack1.func_190926_b()) {
++                if (itemstack2.func_190926_b()) {
++                    this.field_145957_n.set(2, itemstack1.func_77946_l());
++                } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
++                    itemstack2.func_190917_f(itemstack1.func_190916_E());
++                } else {
++                    return;
++                }
++            }
++
++            /*
++            if (itemstack2.isEmpty())
+             {
+-                this.field_145957_n.set(2, itemstack1.func_77946_l());
++                this.furnaceItemStacks.set(2, itemstack1.copy());
+             }
+-            else if (itemstack2.func_77973_b() == itemstack1.func_77973_b())
++            else if (itemstack2.getItem() == itemstack1.getItem())
+             {
+-                itemstack2.func_190917_f(1);
++                itemstack2.grow(itemstack1.getCount());
+             }
++            */
++            // CraftBukkit end
+ 
+             if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && itemstack.func_77960_j() == 1 && !((ItemStack)this.field_145957_n.get(1)).func_190926_b() && ((ItemStack)this.field_145957_n.get(1)).func_77973_b() == Items.field_151133_ar)
+             {
+@@ -315,6 +402,8 @@
+         }
+         else
+         {
++            int burnTime = net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(p_145952_0_);
++            if (burnTime >= 0) return burnTime;
+             Item item = p_145952_0_.func_77973_b();
+ 
+             if (item == Item.func_150898_a(Blocks.field_150376_bx))
+@@ -530,4 +619,23 @@
+     {
+         this.field_145957_n.clear();
+     }
++
++    net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
++    net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.DOWN);
++    net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.WEST);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @javax.annotation.Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable EnumFacing facing)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++            if (facing == EnumFacing.DOWN)
++                return (T) handlerBottom;
++            else if (facing == EnumFacing.UP)
++                return (T) handlerTop;
++            else
++                return (T) handlerSide;
++        return super.getCapability(capability, facing);
++    }
+ }

@@ -1,0 +1,196 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -6,8 +6,11 @@
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.io.InputStream;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.server.MinecraftServer;
+@@ -19,6 +22,11 @@
+ import net.minecraft.world.gen.structure.template.TemplateManager;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
++import org.bukkit.plugin.PluginLoadOrder;
++import red.mohist.forge.ForgeInjectBukkit;
+ 
+ public class SaveHandler implements ISaveHandler, IPlayerFileData
+ {
+@@ -31,6 +39,9 @@
+     private final TemplateManager field_186342_h;
+     protected final DataFixer field_186341_a;
+ 
++    private UUID uuid = null; // CraftBukkit
++    private static boolean initializedBukkit = false; // Cauldron
++
+     public SaveHandler(File p_i46648_1_, String p_i46648_2_, boolean p_i46648_3_, DataFixer p_i46648_4_)
+     {
+         this.field_186341_a = p_i46648_4_;
+@@ -116,10 +127,9 @@
+     public WorldInfo func_75757_d()
+     {
+         File file1 = new File(this.field_75770_b, "level.dat");
+-
+         if (file1.exists())
+         {
+-            WorldInfo worldinfo = SaveFormatOld.func_186353_a(file1, this.field_186341_a);
++            WorldInfo worldinfo = SaveFormatOld.loadAndFix(file1, this.field_186341_a, this);
+ 
+             if (worldinfo != null)
+             {
+@@ -127,8 +137,9 @@
+             }
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
+         file1 = new File(this.field_75770_b, "level.dat_old");
+-        return file1.exists() ? SaveFormatOld.func_186353_a(file1, this.field_186341_a) : null;
++        return file1.exists() ? SaveFormatOld.loadAndFix(file1, this.field_186341_a, this) : null;
+     }
+ 
+     public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_)
+@@ -137,6 +148,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.func_74782_a("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.field_75770_b, "level.dat_new");
+@@ -189,6 +202,7 @@
+             }
+ 
+             file1.renameTo(file2);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_75753_1_, this.field_75771_c, p_75753_1_.func_110124_au().toString());
+         }
+         catch (Exception var5)
+         {
+@@ -217,12 +231,39 @@
+ 
+         if (nbttagcompound != null)
+         {
++            // CraftBukkit start
++            if (p_75752_1_ instanceof EntityPlayerMP) {
++                CraftPlayer playerCB = (CraftPlayer) p_75752_1_.getBukkitEntity();
++                // Only update first played if it is older than the one we have
++                long modified = new File(this.field_75771_c, p_75752_1_.func_110124_au().toString() + ".dat").lastModified();
++                if (modified < playerCB.getFirstPlayed()) {
++                    playerCB.setFirstPlayed(modified);
++                }
++            }
++            // CraftBukkit end
+             p_75752_1_.func_70020_e(this.field_186341_a.func_188257_a(FixTypes.PLAYER, nbttagcompound));
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_75752_1_, field_75771_c, p_75752_1_.func_110124_au().toString());
+         return nbttagcompound;
+     }
+ 
++    // CraftBukkit start
++    public NBTTagCompound getPlayerData(String s) {
++        try {
++            File file1 = new File(this.field_75771_c, s + ".dat");
++
++            if (file1.exists()) {
++                return CompressedStreamTools.func_74796_a((InputStream) (new FileInputStream(file1)));
++            }
++        } catch (Exception exception) {
++            field_151478_a.warn("Failed to load player data for " + s);
++        }
++
++        return null;
++    }
++    // CraftBukkit end
++
+     public IPlayerFileData func_75756_e()
+     {
+         return this;
+@@ -261,4 +302,79 @@
+     {
+         return this.field_186342_h;
+     }
++
++    public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
++    {
++        try
++        {
++            File file1 = new File(this.field_75771_c, player.func_110124_au().toString() + ".dat");
++
++            if (file1.exists() && file1.isFile())
++            {
++                return CompressedStreamTools.func_74796_a(new FileInputStream(file1));
++            }
++        }
++        catch (Exception exception)
++        {
++            field_151478_a.warn("Failed to load player data for " + player.func_70005_c_());
++        }
++        return null;
++    }
++
++    // CraftBukkit start
++    public UUID getUUID() {
++        if (uuid != null) return uuid;
++        File file1 = new File(this.field_75770_b, "uid.dat");
++        if (file1.exists()) {
++            DataInputStream dis = null;
++            try {
++                dis = new DataInputStream(new FileInputStream(file1));
++                return uuid = new UUID(dis.readLong(), dis.readLong());
++            } catch (IOException ex) {
++                field_151478_a.warn("Failed to read " + file1 + ", generating new random UUID", ex);
++            } finally {
++                if (dis != null) {
++                    try {
++                        dis.close();
++                    } catch (IOException ex) {
++                        // NOOP
++                    }
++                }
++            }
++        }
++        uuid = UUID.randomUUID();
++        DataOutputStream dos = null;
++        try {
++            dos = new DataOutputStream(new FileOutputStream(file1));
++            dos.writeLong(uuid.getMostSignificantBits());
++            dos.writeLong(uuid.getLeastSignificantBits());
++        } catch (IOException ex) {
++            field_151478_a.warn("Failed to write " + file1, ex);
++        } finally {
++            if (dos != null) {
++                try {
++                    dos.close();
++                } catch (IOException ex) {
++                    // NOOP
++                }
++            }
++        }
++        return uuid;
++    }
++
++    public File getPlayerDir() {
++        return field_75771_c;
++    }
++    // CraftBukkit end
++
++    // Mohist start
++    public static void initBukkitData() {
++        // inject bukkit materials before plugins load
++        if (!initializedBukkit)
++        {
++            ForgeInjectBukkit.init();
++            initializedBukkit = true;
++        }
++    }
++    // Mohist end
+ }

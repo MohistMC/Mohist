@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/stats/StatisticsManagerServer.java
++++ ../src-work/minecraft/net/minecraft/stats/StatisticsManagerServer.java
+@@ -34,6 +34,14 @@
+     {
+         this.field_150890_c = p_i45306_1_;
+         this.field_150887_d = p_i45306_2_;
++        // Spigot start
++        for (String name : org.spigotmc.SpigotConfig.forcedStats.keySet())
++        {
++            TupleIntJsonSerializable wrapper = new TupleIntJsonSerializable();
++            wrapper.func_151188_a(org.spigotmc.SpigotConfig.forcedStats.get(name));
++            field_150875_a.put(StatList.func_151177_a(name), wrapper);
++        }
++        // Spigot end
+     }
+ 
+     public void func_150882_a()
+@@ -58,6 +66,7 @@
+ 
+     public void func_150883_b()
+     {
++        if (org.spigotmc.SpigotConfig.disableStatSaving) return; // Spigot
+         try
+         {
+             FileUtils.writeStringToFile(this.field_150887_d, func_150880_a(this.field_150875_a));

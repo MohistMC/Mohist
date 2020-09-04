@@ -1,0 +1,257 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLever.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLever.java
+@@ -22,10 +22,11 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public class BlockLever extends Block
+ {
+-    public static final PropertyEnum<BlockLever.EnumOrientation> field_176360_a = PropertyEnum.<BlockLever.EnumOrientation>func_177709_a("facing", BlockLever.EnumOrientation.class);
++    public static final PropertyEnum<EnumOrientation> field_176360_a = PropertyEnum.<EnumOrientation>func_177709_a("facing", EnumOrientation.class);
+     public static final PropertyBool field_176359_b = PropertyBool.func_177716_a("powered");
+     protected static final AxisAlignedBB field_185692_c = new AxisAlignedBB(0.3125D, 0.20000000298023224D, 0.625D, 0.6875D, 0.800000011920929D, 1.0D);
+     protected static final AxisAlignedBB field_185693_d = new AxisAlignedBB(0.3125D, 0.20000000298023224D, 0.0D, 0.6875D, 0.800000011920929D, 0.375D);
+@@ -37,7 +38,7 @@
+     protected BlockLever()
+     {
+         super(Material.field_151594_q);
+-        this.func_180632_j(this.field_176227_L.func_177621_b().func_177226_a(field_176360_a, BlockLever.EnumOrientation.NORTH).func_177226_a(field_176359_b, Boolean.valueOf(false)));
++        this.func_180632_j(this.field_176227_L.func_177621_b().func_177226_a(field_176360_a, EnumOrientation.NORTH).func_177226_a(field_176359_b, Boolean.valueOf(false)));
+         this.func_149647_a(CreativeTabs.field_78028_d);
+     }
+ 
+@@ -86,7 +87,7 @@
+ 
+         if (func_181090_a(p_180642_1_, p_180642_2_, p_180642_3_))
+         {
+-            return iblockstate.func_177226_a(field_176360_a, BlockLever.EnumOrientation.func_176856_a(p_180642_3_, p_180642_8_.func_174811_aO()));
++            return iblockstate.func_177226_a(field_176360_a, EnumOrientation.func_176856_a(p_180642_3_, p_180642_8_.func_174811_aO()));
+         }
+         else
+         {
+@@ -94,13 +95,13 @@
+             {
+                 if (enumfacing != p_180642_3_ && func_181090_a(p_180642_1_, p_180642_2_, enumfacing))
+                 {
+-                    return iblockstate.func_177226_a(field_176360_a, BlockLever.EnumOrientation.func_176856_a(enumfacing, p_180642_8_.func_174811_aO()));
++                    return iblockstate.func_177226_a(field_176360_a, EnumOrientation.func_176856_a(enumfacing, p_180642_8_.func_174811_aO()));
+                 }
+             }
+ 
+             if (p_180642_1_.func_180495_p(p_180642_2_.func_177977_b()).func_185896_q())
+             {
+-                return iblockstate.func_177226_a(field_176360_a, BlockLever.EnumOrientation.func_176856_a(EnumFacing.UP, p_180642_8_.func_174811_aO()));
++                return iblockstate.func_177226_a(field_176360_a, EnumOrientation.func_176856_a(EnumFacing.UP, p_180642_8_.func_174811_aO()));
+             }
+             else
+             {
+@@ -111,7 +112,7 @@
+ 
+     public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_)
+     {
+-        if (this.func_181091_e(p_189540_2_, p_189540_3_, p_189540_1_) && !func_181090_a(p_189540_2_, p_189540_3_, ((BlockLever.EnumOrientation)p_189540_1_.func_177229_b(field_176360_a)).func_176852_c()))
++        if (this.func_181091_e(p_189540_2_, p_189540_3_, p_189540_1_) && !func_181090_a(p_189540_2_, p_189540_3_, ((EnumOrientation)p_189540_1_.func_177229_b(field_176360_a)).func_176852_c()))
+         {
+             this.func_176226_b(p_189540_2_, p_189540_3_, p_189540_1_, 0);
+             p_189540_2_.func_175698_g(p_189540_3_);
+@@ -134,7 +135,7 @@
+ 
+     public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
+     {
+-        switch ((BlockLever.EnumOrientation)p_185496_1_.func_177229_b(field_176360_a))
++        switch ((EnumOrientation)p_185496_1_.func_177229_b(field_176360_a))
+         {
+             case EAST:
+             default:
+@@ -162,12 +163,23 @@
+         }
+         else
+         {
++            boolean powered = p_180639_3_.func_177229_b(field_176359_b);
++            org.bukkit.block.Block block = p_180639_1_.getWorld().getBlockAt(p_180639_2_.func_177958_n(), p_180639_2_.func_177956_o(), p_180639_2_.func_177952_p());
++            int old = (powered) ? 15 : 0;
++            int current = (!powered) ? 15 : 0;
++
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++            p_180639_1_.getServer().getPluginManager().callEvent(eventRedstone);
++
++            if ((eventRedstone.getNewCurrent() > 0) == powered) {
++                return true;
++            }
+             p_180639_3_ = p_180639_3_.func_177231_a(field_176359_b);
+             p_180639_1_.func_180501_a(p_180639_2_, p_180639_3_, 3);
+             float f = ((Boolean)p_180639_3_.func_177229_b(field_176359_b)).booleanValue() ? 0.6F : 0.5F;
+             p_180639_1_.func_184133_a((EntityPlayer)null, p_180639_2_, SoundEvents.field_187750_dc, SoundCategory.BLOCKS, 0.3F, f);
+             p_180639_1_.func_175685_c(p_180639_2_, this, false);
+-            EnumFacing enumfacing = ((BlockLever.EnumOrientation)p_180639_3_.func_177229_b(field_176360_a)).func_176852_c();
++            EnumFacing enumfacing = ((EnumOrientation)p_180639_3_.func_177229_b(field_176360_a)).func_176852_c();
+             p_180639_1_.func_175685_c(p_180639_2_.func_177972_a(enumfacing.func_176734_d()), this, false);
+             return true;
+         }
+@@ -178,7 +190,7 @@
+         if (((Boolean)p_180663_3_.func_177229_b(field_176359_b)).booleanValue())
+         {
+             p_180663_1_.func_175685_c(p_180663_2_, this, false);
+-            EnumFacing enumfacing = ((BlockLever.EnumOrientation)p_180663_3_.func_177229_b(field_176360_a)).func_176852_c();
++            EnumFacing enumfacing = ((EnumOrientation)p_180663_3_.func_177229_b(field_176360_a)).func_176852_c();
+             p_180663_1_.func_175685_c(p_180663_2_.func_177972_a(enumfacing.func_176734_d()), this, false);
+         }
+ 
+@@ -198,7 +210,7 @@
+         }
+         else
+         {
+-            return ((BlockLever.EnumOrientation)p_176211_1_.func_177229_b(field_176360_a)).func_176852_c() == p_176211_4_ ? 15 : 0;
++            return ((EnumOrientation)p_176211_1_.func_177229_b(field_176360_a)).func_176852_c() == p_176211_4_ ? 15 : 0;
+         }
+     }
+ 
+@@ -209,13 +221,13 @@
+ 
+     public IBlockState func_176203_a(int p_176203_1_)
+     {
+-        return this.func_176223_P().func_177226_a(field_176360_a, BlockLever.EnumOrientation.func_176853_a(p_176203_1_ & 7)).func_177226_a(field_176359_b, Boolean.valueOf((p_176203_1_ & 8) > 0));
++        return this.func_176223_P().func_177226_a(field_176360_a, EnumOrientation.func_176853_a(p_176203_1_ & 7)).func_177226_a(field_176359_b, Boolean.valueOf((p_176203_1_ & 8) > 0));
+     }
+ 
+     public int func_176201_c(IBlockState p_176201_1_)
+     {
+         int i = 0;
+-        i = i | ((BlockLever.EnumOrientation)p_176201_1_.func_177229_b(field_176360_a)).func_176855_a();
++        i = i | ((EnumOrientation)p_176201_1_.func_177229_b(field_176360_a)).func_176855_a();
+ 
+         if (((Boolean)p_176201_1_.func_177229_b(field_176359_b)).booleanValue())
+         {
+@@ -231,62 +243,62 @@
+         {
+             case CLOCKWISE_180:
+ 
+-                switch ((BlockLever.EnumOrientation)p_185499_1_.func_177229_b(field_176360_a))
++                switch ((EnumOrientation)p_185499_1_.func_177229_b(field_176360_a))
+                 {
+                     case EAST:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.WEST);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.WEST);
+                     case WEST:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.EAST);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.EAST);
+                     case SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.NORTH);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.NORTH);
+                     case NORTH:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.SOUTH);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.SOUTH);
+                     default:
+                         return p_185499_1_;
+                 }
+ 
+             case COUNTERCLOCKWISE_90:
+ 
+-                switch ((BlockLever.EnumOrientation)p_185499_1_.func_177229_b(field_176360_a))
++                switch ((EnumOrientation)p_185499_1_.func_177229_b(field_176360_a))
+                 {
+                     case EAST:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.NORTH);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.NORTH);
+                     case WEST:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.SOUTH);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.SOUTH);
+                     case SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.EAST);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.EAST);
+                     case NORTH:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.WEST);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.WEST);
+                     case UP_Z:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.UP_X);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.UP_X);
+                     case UP_X:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.UP_Z);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.UP_Z);
+                     case DOWN_X:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.DOWN_Z);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.DOWN_Z);
+                     case DOWN_Z:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.DOWN_X);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.DOWN_X);
+                 }
+ 
+             case CLOCKWISE_90:
+ 
+-                switch ((BlockLever.EnumOrientation)p_185499_1_.func_177229_b(field_176360_a))
++                switch ((EnumOrientation)p_185499_1_.func_177229_b(field_176360_a))
+                 {
+                     case EAST:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.SOUTH);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.SOUTH);
+                     case WEST:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.NORTH);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.NORTH);
+                     case SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.WEST);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.WEST);
+                     case NORTH:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.EAST);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.EAST);
+                     case UP_Z:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.UP_X);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.UP_X);
+                     case UP_X:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.UP_Z);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.UP_Z);
+                     case DOWN_X:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.DOWN_Z);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.DOWN_Z);
+                     case DOWN_Z:
+-                        return p_185499_1_.func_177226_a(field_176360_a, BlockLever.EnumOrientation.DOWN_X);
++                        return p_185499_1_.func_177226_a(field_176360_a, EnumOrientation.DOWN_X);
+                 }
+ 
+             default:
+@@ -296,7 +308,7 @@
+ 
+     public IBlockState func_185471_a(IBlockState p_185471_1_, Mirror p_185471_2_)
+     {
+-        return p_185471_1_.func_185907_a(p_185471_2_.func_185800_a(((BlockLever.EnumOrientation)p_185471_1_.func_177229_b(field_176360_a)).func_176852_c()));
++        return p_185471_1_.func_185907_a(p_185471_2_.func_185800_a(((EnumOrientation)p_185471_1_.func_177229_b(field_176360_a)).func_176852_c()));
+     }
+ 
+     protected BlockStateContainer func_180661_e()
+@@ -320,7 +332,7 @@
+         UP_X(6, "up_x", EnumFacing.UP),
+         DOWN_Z(7, "down_z", EnumFacing.DOWN);
+ 
+-        private static final BlockLever.EnumOrientation[] field_176869_i = new BlockLever.EnumOrientation[values().length];
++        private static final EnumOrientation[] field_176869_i = new EnumOrientation[values().length];
+         private final int field_176866_j;
+         private final String field_176867_k;
+         private final EnumFacing field_176864_l;
+@@ -347,7 +359,7 @@
+             return this.field_176867_k;
+         }
+ 
+-        public static BlockLever.EnumOrientation func_176853_a(int p_176853_0_)
++        public static EnumOrientation func_176853_a(int p_176853_0_)
+         {
+             if (p_176853_0_ < 0 || p_176853_0_ >= field_176869_i.length)
+             {
+@@ -357,7 +369,7 @@
+             return field_176869_i[p_176853_0_];
+         }
+ 
+-        public static BlockLever.EnumOrientation func_176856_a(EnumFacing p_176856_0_, EnumFacing p_176856_1_)
++        public static EnumOrientation func_176856_a(EnumFacing p_176856_0_, EnumFacing p_176856_1_)
+         {
+             switch (p_176856_0_)
+             {
+@@ -405,7 +417,7 @@
+ 
+         static
+         {
+-            for (BlockLever.EnumOrientation blocklever$enumorientation : values())
++            for (EnumOrientation blocklever$enumorientation : values())
+             {
+                 field_176869_i[blocklever$enumorientation.func_176855_a()] = blocklever$enumorientation;
+             }

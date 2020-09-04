@@ -1,0 +1,145 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
+@@ -45,6 +45,8 @@
+ import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.Marker;
+ import org.apache.logging.log4j.MarkerManager;
++import red.mohist.Mohist;
++import red.mohist.util.i18n.Message;
+ 
+ public class NetworkManager extends SimpleChannelInboundHandler < Packet<? >>
+ {
+@@ -76,23 +78,39 @@
+     private final EnumPacketDirection field_179294_g;
+     private final Queue<NetworkManager.InboundHandlerTuplePacketListener> field_150745_j = Queues.<NetworkManager.InboundHandlerTuplePacketListener>newConcurrentLinkedQueue();
+     private final ReentrantReadWriteLock field_181680_j = new ReentrantReadWriteLock();
+-    private Channel field_150746_k;
+-    private SocketAddress field_150743_l;
++    public Channel field_150746_k;
++    // Spigot Start // PAIL
++    public SocketAddress field_150743_l;
++    public java.util.UUID spoofedUUID;
++    public com.mojang.authlib.properties.Property[] spoofedProfile;
++    public boolean preparing = true;
++    // Spigot End
+     private INetHandler field_150744_m;
+     private ITextComponent field_150742_o;
+     private boolean field_152463_r;
+     private boolean field_179297_n;
+ 
++    // Paper start - NetworkClient implementation
++    public int protocolVersion;
++    public java.net.InetSocketAddress virtualHost;
++    // Paper end
++
+     public NetworkManager(EnumPacketDirection p_i46004_1_)
+     {
+         this.field_179294_g = p_i46004_1_;
+     }
+ 
++    public EnumPacketDirection getDirection()
++    {
++        return this.field_179294_g;
++    }
++
+     public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
+     {
+         super.channelActive(p_channelActive_1_);
+         this.field_150746_k = p_channelActive_1_.channel();
+         this.field_150743_l = this.field_150746_k.remoteAddress();
++        this.preparing = false; // Spigot
+ 
+         try
+         {
+@@ -204,7 +222,7 @@
+         final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
+         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
+ 
+-        if (enumconnectionstate1 != enumconnectionstate)
++        if (enumconnectionstate1 != enumconnectionstate && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+         {
+             field_150735_g.debug("Disabled auto read");
+             this.field_150746_k.config().setAutoRead(false);
+@@ -212,7 +230,7 @@
+ 
+         if (this.field_150746_k.eventLoop().inEventLoop())
+         {
+-            if (enumconnectionstate != enumconnectionstate1)
++            if (enumconnectionstate != enumconnectionstate1 && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+             {
+                 this.func_150723_a(enumconnectionstate);
+             }
+@@ -232,7 +250,7 @@
+             {
+                 public void run()
+                 {
+-                    if (enumconnectionstate != enumconnectionstate1)
++                    if (enumconnectionstate != enumconnectionstate1  && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+                     {
+                         NetworkManager.this.func_150723_a(enumconnectionstate);
+                     }
+@@ -293,9 +311,12 @@
+ 
+     public void func_150718_a(ITextComponent p_150718_1_)
+     {
++        this.preparing = false; // Spigot
+         if (this.field_150746_k.isOpen())
+         {
+-            this.field_150746_k.close().awaitUninterruptibly();
++            // We can't wait as this may be called from an event loop.
++            // this.channel.close().awaitUninterruptibly();
++            this.field_150746_k.close();
+             this.field_150742_o = p_150718_1_;
+         }
+     }
+@@ -308,6 +329,7 @@
+     @SideOnly(Side.CLIENT)
+     public static NetworkManager func_181124_a(InetAddress p_181124_0_, int p_181124_1_, boolean p_181124_2_)
+     {
++        if (p_181124_0_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+         final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
+         Class <? extends SocketChannel > oclass;
+         LazyLoadBase <? extends EventLoopGroup > lazyloadbase;
+@@ -404,7 +426,7 @@
+             }
+             else
+             {
+-                this.field_150746_k.pipeline().addBefore("decoder", "decompress", new NettyCompressionDecoder(p_179289_1_));
++                this.field_150746_k.pipeline().addAfter("splitter", "decompress", new NettyCompressionDecoder(p_179289_1_));
+             }
+ 
+             if (this.field_150746_k.pipeline().get("compress") instanceof NettyCompressionEncoder)
+@@ -436,7 +458,7 @@
+         {
+             if (this.field_179297_n)
+             {
+-                field_150735_g.warn("handleDisconnection() called twice");
++                Mohist.LOGGER.warn(Message.getString("server.connect.handler_disconnection"));
+             }
+             else
+             {
+@@ -454,6 +476,11 @@
+         }
+     }
+ 
++    public Channel channel()
++    {
++        return field_150746_k;
++    }
++
+     static class InboundHandlerTuplePacketListener
+         {
+             private final Packet<?> field_150774_a;
+@@ -465,4 +492,12 @@
+                 this.field_150773_b = p_i45146_2_;
+             }
+         }
++
++    // Spigot Start
++    public SocketAddress getRawAddress()
++    {
++        return this.field_150746_k.remoteAddress();
++    }
++    // Spigot End
++
+ }

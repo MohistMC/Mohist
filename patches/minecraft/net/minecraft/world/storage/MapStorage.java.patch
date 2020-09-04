@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/MapStorage.java
++++ ../src-work/minecraft/net/minecraft/world/storage/MapStorage.java
+@@ -19,7 +19,7 @@
+ {
+     private final ISaveHandler field_75751_a;
+     protected Map<String, WorldSavedData> field_75749_b = Maps.<String, WorldSavedData>newHashMap();
+-    private final List<WorldSavedData> field_75750_c = Lists.<WorldSavedData>newArrayList();
++    public final List<WorldSavedData> field_75750_c = Lists.<WorldSavedData>newArrayList();
+     private final Map<String, Short> field_75748_d = Maps.<String, Short>newHashMap();
+ 
+     public MapStorage(ISaveHandler p_i2162_1_)

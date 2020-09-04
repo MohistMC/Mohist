@@ -1,0 +1,229 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityBoat.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityBoat.java
+@@ -36,6 +36,12 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.Location;
++import org.bukkit.entity.Vehicle;
++import org.bukkit.event.vehicle.VehicleDamageEvent;
++import org.bukkit.event.vehicle.VehicleDestroyEvent;
++import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
++import org.bukkit.event.vehicle.VehicleMoveEvent;
+ 
+ public class EntityBoat extends Entity
+ {
+@@ -64,6 +70,12 @@
+     private EntityBoat.Status field_184471_aG;
+     private double field_184473_aH;
+ 
++    // Some of these haven't worked since a few updates, and since 1.9 they are less and less applicable.
++    public double maxSpeed = 0.4D;
++    public double occupiedDeceleration = 0.2D;
++    public double unoccupiedDeceleration = -1;
++    public boolean landBoats = false;
++
+     public EntityBoat(World p_i1704_1_)
+     {
+         super(p_i1704_1_);
+@@ -138,6 +150,16 @@
+             }
+             else
+             {
++                Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++                org.bukkit.entity.Entity attacker = (p_70097_1_.func_76346_g() == null) ? null : p_70097_1_.func_76346_g().getBukkitEntity();
++
++                VehicleDamageEvent event = new VehicleDamageEvent(vehicle, attacker, (double) p_70097_2_);
++                this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled()) {
++                    return true;
++                }
++                // amount = event.getDamage(); // TODO Why don't we do this?
+                 this.func_70269_c(-this.func_70267_i());
+                 this.func_70265_b(10);
+                 this.func_70266_a(this.func_70271_g() + p_70097_2_ * 10.0F);
+@@ -146,6 +168,13 @@
+ 
+                 if (flag || this.func_70271_g() > 40.0F)
+                 {
++                    VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
++                    this.field_70170_p.getServer().getPluginManager().callEvent(destroyEvent);
++
++                    if (destroyEvent.isCancelled()) {
++                        this.func_70266_a(40F); // Maximize damage so this doesn't get triggered again right away
++                        return true;
++                    }
+                     if (!flag && this.field_70170_p.func_82736_K().func_82766_b("doEntityDrops"))
+                     {
+                         this.func_145778_a(this.func_184455_j(), 1, 0.0F);
+@@ -169,11 +198,23 @@
+         {
+             if (p_70108_1_.func_174813_aQ().field_72338_b < this.func_174813_aQ().field_72337_e)
+             {
++                VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_70108_1_.getBukkitEntity());
++                this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled()) {
++                    return;
++                }
+                 super.func_70108_f(p_70108_1_);
+             }
+         }
+         else if (p_70108_1_.func_174813_aQ().field_72338_b <= this.func_174813_aQ().field_72338_b)
+         {
++            VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_70108_1_.getBukkitEntity());
++            this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++                return;
++            }
+             super.func_70108_f(p_70108_1_);
+         }
+     }
+@@ -227,12 +268,13 @@
+         return this.func_174811_aO().func_176746_e();
+     }
+ 
++    private Location lastLocation;
+     public void func_70071_h_()
+     {
+         this.field_184471_aG = this.field_184469_aF;
+         this.field_184469_aF = this.func_184449_t();
+ 
+-        if (this.field_184469_aF != EntityBoat.Status.UNDER_WATER && this.field_184469_aF != EntityBoat.Status.UNDER_FLOWING_WATER)
++        if (this.field_184469_aF != Status.UNDER_WATER && this.field_184469_aF != Status.UNDER_FLOWING_WATER)
+         {
+             this.field_184474_h = 0.0F;
+         }
+@@ -286,6 +328,20 @@
+             this.field_70179_y = 0.0D;
+         }
+ 
++        org.bukkit.Server server = this.field_70170_p.getServer();
++        org.bukkit.World bworld = this.field_70170_p.getWorld();
++
++        Location to = new Location(bworld, this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, this.field_70125_A);
++        Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++
++        server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
++
++        if (lastLocation != null && !lastLocation.equals(to)) {
++            VehicleMoveEvent event = new VehicleMoveEvent(vehicle, lastLocation, to);
++            server.getPluginManager().callEvent(event);
++        }
++        lastLocation = vehicle.getLocation();
++
+         for (int i = 0; i <= 1; ++i)
+         {
+             if (this.func_184457_a(i))
+@@ -449,6 +505,12 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(l1, k1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
++                        Boolean result = iblockstate.func_177230_c().isAABBInsideMaterial(field_70170_p, blockpos$pooledmutableblockpos, new AxisAlignedBB(blockpos$pooledmutableblockpos), Material.field_151586_h);
++                        if (result != null) {
++                            if (!result) continue;
++                            f = Math.max(f, iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) + blockpos$pooledmutableblockpos.func_177956_o());
++                        }
++
+                         if (iblockstate.func_185904_a() == Material.field_151586_h)
+                         {
+                             f = Math.max(f, BlockLiquid.func_190973_f(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos));
+@@ -508,7 +570,7 @@
+ 
+                                 if (!list.isEmpty())
+                                 {
+-                                    f += iblockstate.func_177230_c().field_149765_K;
++                                    f += iblockstate.func_177230_c().getSlipperiness(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos, this);
+                                     ++k1;
+                                 }
+ 
+@@ -551,6 +613,15 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
++                        Boolean result = iblockstate.func_177230_c().isAABBInsideMaterial(field_70170_p, blockpos$pooledmutableblockpos, axisalignedbb, Material.field_151586_h);
++                        if (result != null) {
++                            if (!result) continue;
++                            
++                            float f = iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) + blockpos$pooledmutableblockpos.func_177956_o();
++                            this.field_184465_aD = Math.max((double)f, this.field_184465_aD);
++                            flag |= axisalignedbb.field_72338_b < (double)f;
++                        }
++
+                         if (iblockstate.func_185904_a() == Material.field_151586_h)
+                         {
+                             float f = BlockLiquid.func_190972_g(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos);
+@@ -594,6 +665,18 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
++                        Boolean result = iblockstate.func_177230_c().isAABBInsideMaterial(field_70170_p, blockpos$pooledmutableblockpos, axisalignedbb, Material.field_151586_h);
++                        if (result != null) {
++                            if (!result) continue;
++                            
++                            if(iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) > 0)
++                            {   
++                                blockpos$pooledmutableblockpos.func_185344_t();
++                                return EntityBoat.Status.UNDER_FLOWING_WATER;
++                            } else
++                                continue;
++                        }
++
+                         if (iblockstate.func_185904_a() == Material.field_151586_h && d0 < (double)BlockLiquid.func_190972_g(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos))
+                         {
+                             if (((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() != 0)
+@@ -823,19 +906,20 @@
+ 
+                     if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
+                     {
+-                        this.func_70106_y();
++                        Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++                        VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, null);
++                        this.field_70170_p.getServer().getPluginManager().callEvent(destroyEvent);
++                        if (!destroyEvent.isCancelled()) {
++                            this.func_70106_y();
++                            if (this.field_70170_p.func_82736_K().func_82766_b("doEntityDrops")) {
++                                for (int i = 0; i < 3; ++i) {
++                                    this.func_70099_a(new ItemStack(Item.func_150898_a(Blocks.field_150344_f), 1, this.func_184453_r().func_184982_b()), 0.0F);
++                                }
+ 
+-                        if (this.field_70170_p.func_82736_K().func_82766_b("doEntityDrops"))
+-                        {
+-                            for (int i = 0; i < 3; ++i)
+-                            {
+-                                this.func_70099_a(new ItemStack(Item.func_150898_a(Blocks.field_150344_f), 1, this.func_184453_r().func_184982_b()), 0.0F);
++                                for (int j = 0; j < 2; ++j) {
++                                    this.func_145778_a(Items.field_151055_y, 1, 0.0F);
++                                }
+                             }
+-
+-                            for (int j = 0; j < 2; ++j)
+-                            {
+-                                this.func_145778_a(Items.field_151055_y, 1, 0.0F);
+-                            }
+                         }
+                     }
+                 }
+@@ -980,4 +1064,20 @@
+             return values()[0];
+         }
+     }
++
++    // Forge: Fix MC-119811 by instantly completing lerp on board
++    @Override
++    protected void func_184200_o(Entity passenger)
++    {
++        super.func_184200_o(passenger);
++        if(this.func_184186_bw() && this.field_184476_at > 0)
++        {
++            this.field_184476_at = 0;
++            this.field_70165_t = this.field_70281_h;
++            this.field_70163_u = this.field_184477_av;
++            this.field_70161_v = this.field_184478_aw;
++            this.field_70177_z = (float)this.field_70273_g;
++            this.field_70125_A = (float)this.field_184479_ay;
++        }
++    }
+ }

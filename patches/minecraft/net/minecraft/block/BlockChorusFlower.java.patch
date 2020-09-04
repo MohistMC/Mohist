@@ -1,0 +1,96 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockChorusFlower.java
++++ ../src-work/minecraft/net/minecraft/block/BlockChorusFlower.java
+@@ -23,6 +23,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public class BlockChorusFlower extends Block
+ {
+@@ -55,7 +56,7 @@
+             {
+                 int i = ((Integer)p_180650_3_.func_177229_b(field_185607_a)).intValue();
+ 
+-                if (i < 5 && p_180650_4_.nextInt(1) == 0)
++                if (i < 5 &&  net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, blockpos, p_180650_3_, p_180650_4_.nextInt(1) == 0))
+                 {
+                     boolean flag = false;
+                     boolean flag1 = false;
+@@ -106,8 +107,18 @@
+ 
+                     if (flag && func_185604_a(p_180650_1_, blockpos, (EnumFacing)null) && p_180650_1_.func_175623_d(p_180650_2_.func_177981_b(2)))
+                     {
+-                        p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_185765_cR.func_176223_P(), 2);
+-                        this.func_185602_a(p_180650_1_, blockpos, i);
++//                        worldIn.setBlockState(pos, Blocks.CHORUS_PLANT.getDefaultState(), 2);
++//                        this.placeGrownFlower(worldIn, blockpos, i);
++                        BlockPos target = blockpos;
++                        if (CraftEventFactory.handleBlockSpreadEvent(
++                                p_180650_1_.getWorld().getBlockAt(target.func_177958_n(), target.func_177956_o(), target.func_177952_p()),
++                                p_180650_1_.getWorld().getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p()),
++                                this,
++                                func_176201_c(this.func_176223_P().func_177226_a(BlockChorusFlower.field_185607_a, Integer.valueOf(i)))
++                        )) {
++                            p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_185765_cR.func_176223_P(), 2);
++                            p_180650_1_.func_175718_b(1033, p_180650_2_, 0);
++                        }
+                     }
+                     else if (i < 4)
+                     {
+@@ -126,7 +137,17 @@
+ 
+                             if (p_180650_1_.func_175623_d(blockpos1) && p_180650_1_.func_175623_d(blockpos1.func_177977_b()) && func_185604_a(p_180650_1_, blockpos1, enumfacing.func_176734_d()))
+                             {
+-                                this.func_185602_a(p_180650_1_, blockpos1, i + 1);
++//                                this.placeGrownFlower(worldIn, blockpos1, i + 1);
++                                BlockPos target = blockpos1;
++                                if (CraftEventFactory.handleBlockSpreadEvent(
++                                        p_180650_1_.getWorld().getBlockAt(target.func_177958_n(), target.func_177956_o(), target.func_177952_p()),
++                                        p_180650_1_.getWorld().getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p()),
++                                        this,
++                                        func_176201_c(this.func_176223_P().func_177226_a(BlockChorusFlower.field_185607_a, Integer.valueOf(i + 1)))
++                                )) {
++                                    p_180650_1_.func_175718_b(1033, p_180650_2_, 0);
++                                    flag2 = true;
++                                }
+                                 flag2 = true;
+                             }
+                         }
+@@ -137,13 +158,34 @@
+                         }
+                         else
+                         {
+-                            this.func_185605_c(p_180650_1_, p_180650_2_);
++//                            this.placeDeadFlower(worldIn, pos);
++                            if (CraftEventFactory.handleBlockGrowEvent(
++                                    p_180650_1_,
++                                    p_180650_2_.func_177958_n(),
++                                    p_180650_2_.func_177956_o(),
++                                    p_180650_2_.func_177952_p(),
++                                    this,
++                                    func_176201_c(p_180650_3_.func_177226_a(BlockChorusFlower.field_185607_a, Integer.valueOf(5)))
++                            )) {
++                                p_180650_1_.func_175718_b(1034, p_180650_2_, 0);
++                            }
+                         }
+                     }
+                     else if (i == 4)
+                     {
+-                        this.func_185605_c(p_180650_1_, p_180650_2_);
++//                        this.placeDeadFlower(worldIn, pos);
++                        if (CraftEventFactory.handleBlockGrowEvent(
++                                p_180650_1_,
++                                p_180650_2_.func_177958_n(),
++                                p_180650_2_.func_177956_o(),
++                                p_180650_2_.func_177952_p(),
++                                this,
++                                func_176201_c(p_180650_3_.func_177226_a(BlockChorusFlower.field_185607_a, Integer.valueOf(5)))
++                        )) {
++                            p_180650_1_.func_175718_b(1034, p_180650_2_, 0);
++                        }
+                     }
++                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_));
+                 }
+             }
+         }

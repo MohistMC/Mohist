@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockMagma.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMagma.java
+@@ -40,7 +40,9 @@
+     {
+         if (!p_176199_3_.func_70045_F() && p_176199_3_ instanceof EntityLivingBase && !EnchantmentHelper.func_189869_j((EntityLivingBase)p_176199_3_))
+         {
++            org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.blockDamage = p_176199_1_.getWorld().getBlockAt(p_176199_2_.func_177958_n(), p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p());
+             p_176199_3_.func_70097_a(DamageSource.field_190095_e, 1.0F);
++            org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.blockDamage = null;
+         }
+ 
+         super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);

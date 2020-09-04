@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerHorseChest.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerHorseChest.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.inventory;
+ 
++import net.minecraft.entity.passive.AbstractHorse;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -11,6 +12,11 @@
+         super(p_i47268_1_, false, p_i47268_2_);
+     }
+ 
++    public ContainerHorseChest(String inventoryTitle, int slotCount, AbstractHorse owner)
++    {
++        super(inventoryTitle, false, slotCount, (org.bukkit.entity.AbstractHorse) owner.getBukkitEntity());
++    }
++
+     @SideOnly(Side.CLIENT)
+     public ContainerHorseChest(ITextComponent p_i47269_1_, int p_i47269_2_)
+     {

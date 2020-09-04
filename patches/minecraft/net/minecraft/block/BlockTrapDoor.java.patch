@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
+@@ -24,6 +24,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public class BlockTrapDoor extends Block
+ {
+@@ -130,6 +131,18 @@
+ 
+             if (flag || p_189540_4_.func_176223_P().func_185897_m())
+             {
++                org.bukkit.World bworld = p_189540_2_.getWorld();
++                org.bukkit.block.Block bblock = bworld.getBlockAt(p_189540_3_.func_177958_n(), p_189540_3_.func_177956_o(), p_189540_3_.func_177952_p());
++
++                int power = bblock.getBlockPower();
++                int oldPower = p_189540_1_.func_177229_b(field_176283_b) ? 15 : 0;
++
++                if (oldPower == 0 ^ power == 0 || p_189540_4_.func_176223_P().func_185912_n()) {
++                    BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bblock, oldPower, power);
++                    p_189540_2_.getServer().getPluginManager().callEvent(eventRedstone);
++                    flag = eventRedstone.getNewCurrent() > 0;
++                }
++
+                 boolean flag1 = ((Boolean)p_189540_1_.func_177229_b(field_176283_b)).booleanValue();
+ 
+                 if (flag1 != flag)
+@@ -250,6 +263,18 @@
+         return (p_193383_4_ == EnumFacing.UP && p_193383_2_.func_177229_b(field_176285_M) == BlockTrapDoor.DoorHalf.TOP || p_193383_4_ == EnumFacing.DOWN && p_193383_2_.func_177229_b(field_176285_M) == BlockTrapDoor.DoorHalf.BOTTOM) && !((Boolean)p_193383_2_.func_177229_b(field_176283_b)).booleanValue() ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+     }
+ 
++    @Override
++    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
++    {
++        if (state.func_177229_b(field_176283_b))
++        {
++            IBlockState down = world.func_180495_p(pos.func_177977_b());
++            if (down.func_177230_c() == net.minecraft.init.Blocks.field_150468_ap)
++                return down.func_177229_b(BlockLadder.field_176382_a) == state.func_177229_b(field_176284_a);
++        }
++        return false;
++    }
++
+     public static enum DoorHalf implements IStringSerializable
+     {
+         TOP("top"),

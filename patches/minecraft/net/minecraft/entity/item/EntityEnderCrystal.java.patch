@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityEnderCrystal.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityEnderCrystal.java
+@@ -17,6 +17,8 @@
+ import net.minecraft.world.end.DragonFightManager;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
+ 
+ public class EntityEnderCrystal extends Entity
+ {
+@@ -62,7 +64,10 @@
+ 
+             if (this.field_70170_p.field_73011_w instanceof WorldProviderEnd && this.field_70170_p.func_180495_p(blockpos).func_177230_c() != Blocks.field_150480_ab)
+             {
+-                this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++//                this.world.setBlockState(blockpos, Blocks.FIRE.getDefaultState());
++                if (!CraftEventFactory.callBlockIgniteEvent(this.field_70170_p, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p(), this).isCancelled()) {
++                    this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                }
+             }
+         }
+     }
+@@ -109,13 +114,23 @@
+         {
+             if (!this.field_70128_L && !this.field_70170_p.field_72995_K)
+             {
++                if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_)) {
++                    return false;
++                }
+                 this.func_70106_y();
+ 
+                 if (!this.field_70170_p.field_72995_K)
+                 {
+                     if (!p_70097_1_.func_94541_c())
+                     {
+-                        this.field_70170_p.func_72876_a((Entity)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, 6.0F, true);
++//                        this.world.createExplosion((Entity)null, this.posX, this.posY, this.posZ, 6.0F, true);
++                        ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 6.0F, true);
++                        this.field_70170_p.getServer().getPluginManager().callEvent(event);
++                        if (event.isCancelled()) {
++                            this.field_70128_L = false;
++                            return false;
++                        }
++                        this.field_70170_p.func_72876_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, event.getRadius(), event.getFire());
+                     }
+ 
+                     this.func_184519_a(p_70097_1_);

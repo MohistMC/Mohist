@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartCommandBlock.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartCommandBlock.java
+@@ -29,10 +29,13 @@
+ 
+ public class EntityMinecartCommandBlock extends EntityMinecart
+ {
+-    private static final DataParameter<String> field_184273_a = EntityDataManager.<String>func_187226_a(EntityMinecartCommandBlock.class, DataSerializers.field_187194_d);
++    public static final DataParameter<String> field_184273_a = EntityDataManager.<String>func_187226_a(EntityMinecartCommandBlock.class, DataSerializers.field_187194_d);
+     private static final DataParameter<ITextComponent> field_184274_b = EntityDataManager.<ITextComponent>func_187226_a(EntityMinecartCommandBlock.class, DataSerializers.field_187195_e);
+     private final CommandBlockBaseLogic field_145824_a = new CommandBlockBaseLogic()
+     {
++        {
++            this.sender = EntityMinecartCommandBlock.this.getBukkitEntity(); // CraftBukkit - Set the sender
++        }
+         public void func_145756_e()
+         {
+             EntityMinecartCommandBlock.this.func_184212_Q().func_187227_b(EntityMinecartCommandBlock.field_184273_a, this.func_145753_i());
+@@ -147,6 +150,7 @@
+ 
+     public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_)
+     {
++        if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
+         this.field_145824_a.func_175574_a(p_184230_1_);
+         return false;
+     }

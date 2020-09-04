@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandOp.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandOp.java
+@@ -9,8 +9,10 @@
+ import net.minecraft.command.CommandException;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.command.WrongUsageException;
++import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
++import red.mohist.configuration.MohistConfig;
+ 
+ public class CommandOp extends CommandBase
+ {
+@@ -33,8 +35,9 @@
+     {
+         if (p_184881_3_.length == 1 && p_184881_3_[0].length() > 0)
+         {
+-            GameProfile gameprofile = p_184881_1_.func_152358_ax().func_152655_a(p_184881_3_[0]);
++            GameProfile gameprofile = p_184881_1_.func_71266_T() || MohistConfig.isProxyOnlineMode() ? p_184881_1_.func_152358_ax().func_152655_a(p_184881_3_[0]) : new GameProfile(EntityPlayer.func_175147_b(p_184881_3_[0]), p_184881_3_[0]);
+ 
++
+             if (gameprofile == null)
+             {
+                 throw new CommandException("commands.op.failed", new Object[] {p_184881_3_[0]});

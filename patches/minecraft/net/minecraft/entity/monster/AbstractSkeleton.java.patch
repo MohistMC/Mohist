@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/AbstractSkeleton.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/AbstractSkeleton.java
+@@ -42,6 +42,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.EntityCombustEvent;
+ 
+ public abstract class AbstractSkeleton extends EntityMob implements IRangedAttackMob
+ {
+@@ -136,7 +137,13 @@
+ 
+                 if (flag)
+                 {
+-                    this.func_70015_d(8);
++                    // this.setFire(8);
++                    EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 8);
++                    this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled()) {
++                        this.func_70015_d(event.getDuration());
++                    }
+                 }
+             }
+         }
+@@ -192,7 +199,7 @@
+             this.field_70714_bg.func_85156_a(this.field_85037_d);
+             ItemStack itemstack = this.func_184614_ca();
+ 
+-            if (itemstack.func_77973_b() == Items.field_151031_f)
++            if (itemstack.func_77973_b() instanceof net.minecraft.item.ItemBow)
+             {
+                 int i = 20;
+ 
+@@ -214,13 +221,23 @@
+     public void func_82196_d(EntityLivingBase p_82196_1_, float p_82196_2_)
+     {
+         EntityArrow entityarrow = this.func_190726_a(p_82196_2_);
++        if (this.func_184614_ca().func_77973_b() instanceof net.minecraft.item.ItemBow)
++            entityarrow = ((net.minecraft.item.ItemBow) this.func_184614_ca().func_77973_b()).customizeArrow(entityarrow);
+         double d0 = p_82196_1_.field_70165_t - this.field_70165_t;
+         double d1 = p_82196_1_.func_174813_aQ().field_72338_b + (double)(p_82196_1_.field_70131_O / 3.0F) - entityarrow.field_70163_u;
+         double d2 = p_82196_1_.field_70161_v - this.field_70161_v;
+         double d3 = (double)MathHelper.func_76133_a(d0 * d0 + d2 * d2);
+         entityarrow.func_70186_c(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(14 - this.field_70170_p.func_175659_aa().func_151525_a() * 4));
++        org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityShootBowEvent(this, this.func_184614_ca(), entityarrow, 0.8F);
++        if (event.isCancelled()) {
++            event.getProjectile().remove();
++            return;
++        }
++
++        if (event.getProjectile() == entityarrow.getBukkitEntity()) {
++            field_70170_p.func_72838_d(entityarrow);
++        }
+         this.func_184185_a(SoundEvents.field_187866_fi, 1.0F, 1.0F / (this.func_70681_au().nextFloat() * 0.4F + 0.8F));
+-        this.field_70170_p.func_72838_d(entityarrow);
+     }
+ 
+     protected EntityArrow func_190726_a(float p_190726_1_)

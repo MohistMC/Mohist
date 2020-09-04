@@ -1,0 +1,52 @@
+--- ../src-base/minecraft/net/minecraft/network/PacketBuffer.java
++++ ../src-work/minecraft/net/minecraft/network/PacketBuffer.java
+@@ -30,6 +30,7 @@
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+ 
+ public class PacketBuffer extends ByteBuf
+ {
+@@ -287,9 +288,9 @@
+             {
+                 CompressedStreamTools.func_74800_a(p_150786_1_, new ByteBufOutputStream(this));
+             }
+-            catch (IOException ioexception)
++            catch (Exception exception) // CraftBukkit - IOException -> Exception
+             {
+-                throw new EncoderException(ioexception);
++                throw new EncoderException(exception);
+             }
+         }
+ 
+@@ -323,7 +324,7 @@
+ 
+     public PacketBuffer func_150788_a(ItemStack p_150788_1_)
+     {
+-        if (p_150788_1_.func_190926_b())
++        if (p_150788_1_.func_190926_b() || p_150788_1_.func_77973_b() == null) // CraftBukkit - NPE fix itemstack.getItem()
+         {
+             this.writeShort(-1);
+         }
+@@ -336,7 +337,7 @@
+ 
+             if (p_150788_1_.func_77973_b().func_77645_m() || p_150788_1_.func_77973_b().func_77651_p())
+             {
+-                nbttagcompound = p_150788_1_.func_77978_p();
++                nbttagcompound = p_150788_1_.func_77973_b().getNBTShareTag(p_150788_1_);
+             }
+ 
+             this.func_150786_a(nbttagcompound);
+@@ -358,7 +359,10 @@
+             int j = this.readByte();
+             int k = this.readShort();
+             ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j, k);
+-            itemstack.func_77982_d(this.func_150793_b());
++            itemstack.func_77973_b().readNBTShareTag(itemstack, this.func_150793_b());
++            if (itemstack.func_77978_p() != null) {
++                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++            }
+             return itemstack;
+         }
+     }

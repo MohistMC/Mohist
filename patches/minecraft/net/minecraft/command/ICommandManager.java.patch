@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/net/minecraft/command/ICommandManager.java
++++ ../src-work/minecraft/net/minecraft/command/ICommandManager.java
+@@ -14,4 +14,6 @@
+     List<ICommand> func_71557_a(ICommandSender p_71557_1_);
+ 
+     Map<String, ICommand> func_71555_a();
++    
++    Map<String, ICommand> getCommandMod();
+ }

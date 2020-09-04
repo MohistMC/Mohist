@@ -1,0 +1,85 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
+@@ -5,11 +5,16 @@
+ import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.IOException;
++import java.util.Iterator;
++import java.util.LinkedHashMap;
+ import java.util.Map;
++import javax.annotation.Nullable;
++import net.minecraft.nbt.CompressedStreamTools;
++import net.minecraft.nbt.NBTTagCompound;
+ 
+ public class RegionFileCache
+ {
+-    private static final Map<File, RegionFile> field_76553_a = Maps.<File, RegionFile>newHashMap();
++    public static final Map<File, RegionFile> field_76553_a = new LinkedHashMap(256, 0.75f, true); // Spigot - private -> public, Paper - HashMap -> LinkedHashMap
+ 
+     public static synchronized RegionFile func_76550_a(File p_76550_0_, int p_76550_1_, int p_76550_2_)
+     {
+@@ -30,7 +35,7 @@
+ 
+             if (field_76553_a.size() >= 256)
+             {
+-                func_76551_a();
++                trimCache(); // Paper
+             }
+ 
+             RegionFile regionfile1 = new RegionFile(file2);
+@@ -39,6 +44,21 @@
+         }
+     }
+ 
++    // Paper Start
++    private static synchronized void trimCache() {
++        Iterator<Map.Entry<File, RegionFile>> itr = RegionFileCache.field_76553_a.entrySet().iterator();
++        int count = RegionFileCache.field_76553_a.size() - 256;
++        while (count-- >= 0 && itr.hasNext()) {
++            try {
++                itr.next().getValue().func_76708_c();
++            } catch (IOException ioexception) {
++                ioexception.printStackTrace();
++            }
++            itr.remove();
++        }
++    }
++    // Paper End
++
+     public static synchronized RegionFile func_191065_b(File p_191065_0_, int p_191065_1_, int p_191065_2_)
+     {
+         File file1 = new File(p_191065_0_, "region");
+@@ -92,12 +112,33 @@
+         return regionfile.func_76704_a(p_76549_1_ & 31, p_76549_2_ & 31);
+     }
+ 
++    @Nullable
++    public static synchronized NBTTagCompound getChunkInputStreamCB(File worldDir, int chunkX, int chunkZ) throws IOException
++    {
++        RegionFile regionfile = func_76550_a(worldDir, chunkX, chunkZ);
++        DataInputStream datainputstream = regionfile.func_76704_a(chunkX & 31, chunkZ & 31);
++
++        if (datainputstream == null) {
++            return null;
++        }
++
++        return CompressedStreamTools.func_74794_a(datainputstream);
++    }
++
+     public static DataOutputStream func_76552_d(File p_76552_0_, int p_76552_1_, int p_76552_2_)
+     {
+         RegionFile regionfile = func_76550_a(p_76552_0_, p_76552_1_, p_76552_2_);
+         return regionfile.func_76710_b(p_76552_1_ & 31, p_76552_2_ & 31);
+     }
+ 
++    public static synchronized void getChunkOutputStream(File worldDir, int chunkX, int chunkZ, NBTTagCompound nbttagcompound) throws IOException
++    {
++        RegionFile regionfile = func_76550_a(worldDir, chunkX, chunkZ);
++        DataOutputStream dataoutputstream = regionfile.func_76710_b(chunkX & 31, chunkZ & 31);
++        CompressedStreamTools.func_74800_a(nbttagcompound, dataoutputstream);
++        dataoutputstream.close();
++    }
++
+     public static boolean func_191064_f(File p_191064_0_, int p_191064_1_, int p_191064_2_)
+     {
+         RegionFile regionfile = func_191065_b(p_191064_0_, p_191064_1_, p_191064_2_);

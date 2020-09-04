@@ -1,0 +1,120 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPumpkin.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPumpkin.java
+@@ -25,6 +25,8 @@
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.util.BlockStateListPopulator;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class BlockPumpkin extends BlockHorizontal
+ {
+@@ -62,34 +64,35 @@
+     private void func_180673_e(World p_180673_1_, BlockPos p_180673_2_)
+     {
+         BlockPattern.PatternHelper blockpattern$patternhelper = this.func_176391_l().func_177681_a(p_180673_1_, p_180673_2_);
+-
++        BlockStateListPopulator blockList = new BlockStateListPopulator(p_180673_1_.getWorld());
+         if (blockpattern$patternhelper != null)
+         {
+             for (int i = 0; i < this.func_176391_l().func_177685_b(); ++i)
+             {
+                 BlockWorldState blockworldstate = blockpattern$patternhelper.func_177670_a(0, i, 0);
+-                p_180673_1_.func_180501_a(blockworldstate.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2);
++//                worldIn.setBlockState(blockworldstate.getPos(), Blocks.AIR.getDefaultState(), 2);
++                BlockPos pos1 = blockworldstate.func_177508_d();
++                blockList.setTypeId(pos1.func_177958_n(), pos1.func_177956_o(), pos1.func_177952_p(), 0);
+             }
+ 
+             EntitySnowman entitysnowman = new EntitySnowman(p_180673_1_);
+             BlockPos blockpos1 = blockpattern$patternhelper.func_177670_a(0, 2, 0).func_177508_d();
+             entitysnowman.func_70012_b((double)blockpos1.func_177958_n() + 0.5D, (double)blockpos1.func_177956_o() + 0.05D, (double)blockpos1.func_177952_p() + 0.5D, 0.0F, 0.0F);
+-            p_180673_1_.func_72838_d(entitysnowman);
++            if (p_180673_1_.addEntity(entitysnowman, CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN)) {
++                blockList.updateList();
+ 
+-            for (EntityPlayerMP entityplayermp : p_180673_1_.func_72872_a(EntityPlayerMP.class, entitysnowman.func_174813_aQ().func_186662_g(5.0D)))
+-            {
+-                CriteriaTriggers.field_192133_m.func_192229_a(entityplayermp, entitysnowman);
+-            }
++                for (EntityPlayerMP entityplayermp : p_180673_1_.func_72872_a(EntityPlayerMP.class, entitysnowman.func_174813_aQ().func_186662_g(5.0D))) {
++                    CriteriaTriggers.field_192133_m.func_192229_a(entityplayermp, entitysnowman);
++                }
+ 
+-            for (int l = 0; l < 120; ++l)
+-            {
+-                p_180673_1_.func_175688_a(EnumParticleTypes.SNOW_SHOVEL, (double)blockpos1.func_177958_n() + p_180673_1_.field_73012_v.nextDouble(), (double)blockpos1.func_177956_o() + p_180673_1_.field_73012_v.nextDouble() * 2.5D, (double)blockpos1.func_177952_p() + p_180673_1_.field_73012_v.nextDouble(), 0.0D, 0.0D, 0.0D);
+-            }
++                for (int l = 0; l < 120; ++l) {
++                    p_180673_1_.func_175688_a(EnumParticleTypes.SNOW_SHOVEL, (double) blockpos1.func_177958_n() + p_180673_1_.field_73012_v.nextDouble(), (double) blockpos1.func_177956_o() + p_180673_1_.field_73012_v.nextDouble() * 2.5D, (double) blockpos1.func_177952_p() + p_180673_1_.field_73012_v.nextDouble(), 0.0D, 0.0D, 0.0D);
++                }
+ 
+-            for (int i1 = 0; i1 < this.func_176391_l().func_177685_b(); ++i1)
+-            {
+-                BlockWorldState blockworldstate2 = blockpattern$patternhelper.func_177670_a(0, i1, 0);
+-                p_180673_1_.func_175722_b(blockworldstate2.func_177508_d(), Blocks.field_150350_a, false);
++                for (int i1 = 0; i1 < this.func_176391_l().func_177685_b(); ++i1) {
++                    BlockWorldState blockworldstate2 = blockpattern$patternhelper.func_177670_a(0, i1, 0);
++                    p_180673_1_.func_175722_b(blockworldstate2.func_177508_d(), Blocks.field_150350_a, false);
++                }
+             }
+         }
+         else
+@@ -102,7 +105,9 @@
+                 {
+                     for (int k = 0; k < this.func_176388_T().func_177685_b(); ++k)
+                     {
+-                        p_180673_1_.func_180501_a(blockpattern$patternhelper.func_177670_a(j, k, 0).func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2);
++//                        worldIn.setBlockState(blockpattern$patternhelper.translateOffset(j, k, 0).getPos(), Blocks.AIR.getDefaultState(), 2);
++                        BlockPos pos2 = blockpattern$patternhelper.func_177670_a(j, k, 0).func_177508_d();
++                        blockList.setTypeId(pos2.func_177958_n(), pos2.func_177956_o(), pos2.func_177952_p(), 0);
+                     }
+                 }
+ 
+@@ -110,24 +115,22 @@
+                 EntityIronGolem entityirongolem = new EntityIronGolem(p_180673_1_);
+                 entityirongolem.func_70849_f(true);
+                 entityirongolem.func_70012_b((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.05D, (double)blockpos.func_177952_p() + 0.5D, 0.0F, 0.0F);
+-                p_180673_1_.func_72838_d(entityirongolem);
++                if (p_180673_1_.addEntity(entityirongolem, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
++                    blockList.updateList();
+ 
+-                for (EntityPlayerMP entityplayermp1 : p_180673_1_.func_72872_a(EntityPlayerMP.class, entityirongolem.func_174813_aQ().func_186662_g(5.0D)))
+-                {
+-                    CriteriaTriggers.field_192133_m.func_192229_a(entityplayermp1, entityirongolem);
+-                }
++                    for (EntityPlayerMP entityplayermp1 : p_180673_1_.func_72872_a(EntityPlayerMP.class, entityirongolem.func_174813_aQ().func_186662_g(5.0D))) {
++                        CriteriaTriggers.field_192133_m.func_192229_a(entityplayermp1, entityirongolem);
++                    }
+ 
+-                for (int j1 = 0; j1 < 120; ++j1)
+-                {
+-                    p_180673_1_.func_175688_a(EnumParticleTypes.SNOWBALL, (double)blockpos.func_177958_n() + p_180673_1_.field_73012_v.nextDouble(), (double)blockpos.func_177956_o() + p_180673_1_.field_73012_v.nextDouble() * 3.9D, (double)blockpos.func_177952_p() + p_180673_1_.field_73012_v.nextDouble(), 0.0D, 0.0D, 0.0D);
+-                }
++                    for (int j1 = 0; j1 < 120; ++j1) {
++                        p_180673_1_.func_175688_a(EnumParticleTypes.SNOWBALL, (double) blockpos.func_177958_n() + p_180673_1_.field_73012_v.nextDouble(), (double) blockpos.func_177956_o() + p_180673_1_.field_73012_v.nextDouble() * 3.9D, (double) blockpos.func_177952_p() + p_180673_1_.field_73012_v.nextDouble(), 0.0D, 0.0D, 0.0D);
++                    }
+ 
+-                for (int k1 = 0; k1 < this.func_176388_T().func_177684_c(); ++k1)
+-                {
+-                    for (int l1 = 0; l1 < this.func_176388_T().func_177685_b(); ++l1)
+-                    {
+-                        BlockWorldState blockworldstate1 = blockpattern$patternhelper.func_177670_a(k1, l1, 0);
+-                        p_180673_1_.func_175722_b(blockworldstate1.func_177508_d(), Blocks.field_150350_a, false);
++                    for (int k1 = 0; k1 < this.func_176388_T().func_177684_c(); ++k1) {
++                        for (int l1 = 0; l1 < this.func_176388_T().func_177685_b(); ++l1) {
++                            BlockWorldState blockworldstate1 = blockpattern$patternhelper.func_177670_a(k1, l1, 0);
++                            p_180673_1_.func_175722_b(blockworldstate1.func_177508_d(), Blocks.field_150350_a, false);
++                        }
+                     }
+                 }
+             }
+@@ -136,7 +139,7 @@
+ 
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
+     {
+-        return p_176196_1_.func_180495_p(p_176196_2_).func_177230_c().field_149764_J.func_76222_j() && p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q();
++        return p_176196_1_.func_180495_p(p_176196_2_).func_177230_c().func_176200_f(p_176196_1_, p_176196_2_) && p_176196_1_.isSideSolid(p_176196_2_.func_177977_b(), EnumFacing.UP);
+     }
+ 
+     public IBlockState func_185499_a(IBlockState p_185499_1_, Rotation p_185499_2_)

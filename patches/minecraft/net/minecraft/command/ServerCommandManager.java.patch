@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/command/ServerCommandManager.java
++++ ../src-work/minecraft/net/minecraft/command/ServerCommandManager.java
+@@ -40,6 +40,10 @@
+     public ServerCommandManager(MinecraftServer p_i46985_1_)
+     {
+         this.field_184880_a = p_i46985_1_;
++        CommandBase.func_71529_a(this);
++    }
++
++    public void registerVanillaCommands() {
+         this.func_71560_a(new CommandTime());
+         this.func_71560_a(new CommandGameMode());
+         this.func_71560_a(new CommandDifficulty());
+@@ -89,8 +93,7 @@
+         this.func_71560_a(new CommandLocate());
+         this.func_71560_a(new CommandReload());
+         this.func_71560_a(new CommandFunction());
+-
+-        if (p_i46985_1_.func_71262_S())
++        if (field_184880_a.func_71262_S())
+         {
+             this.func_71560_a(new CommandOp());
+             this.func_71560_a(new CommandDeOp());
+@@ -147,7 +150,7 @@
+             }
+         }
+ 
+-        if (p_152372_1_ != minecraftserver && minecraftserver.field_71305_c[0].func_82736_K().func_82766_b("logAdminCommands"))
++        if (p_152372_1_ != minecraftserver && minecraftserver.field_71305_c[0].func_82736_K().func_82766_b("logAdminCommands") && !org.spigotmc.SpigotConfig.silentCommandBlocks) // Spigot
+         {
+             minecraftserver.func_145747_a(itextcomponent);
+         }

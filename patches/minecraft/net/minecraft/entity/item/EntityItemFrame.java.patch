@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityItemFrame.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityItemFrame.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.entity.item;
+ 
++import com.google.common.base.Charsets;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityHanging;
+@@ -63,6 +65,9 @@
+         {
+             if (!this.field_70170_p.field_72995_K)
+             {
++                if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false) || this.field_70128_L) {
++                    return true;
++                }
+                 this.func_146065_b(p_70097_1_.func_76346_g(), false);
+                 this.func_184185_a(SoundEvents.field_187629_cO, 1.0F, 1.0F);
+                 this.func_82334_a(ItemStack.field_190927_a);
+@@ -140,13 +145,14 @@
+     {
+         if (!p_110131_1_.func_190926_b())
+         {
+-            if (p_110131_1_.func_77973_b() == Items.field_151098_aY)
++            if (p_110131_1_.func_77973_b() instanceof net.minecraft.item.ItemMap)
+             {
+                 MapData mapdata = ((ItemMap)p_110131_1_.func_77973_b()).func_77873_a(p_110131_1_, this.field_70170_p);
+                 mapdata.field_76203_h.remove("frame-" + this.func_145782_y());
+             }
+ 
+             p_110131_1_.func_82842_a((EntityItemFrame)null);
++            this.func_82334_a(ItemStack.field_190927_a); //Forge: Fix MC-124833 Pistons duplicating Items.
+         }
+     }
+ 

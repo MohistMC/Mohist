@@ -1,0 +1,260 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
+@@ -23,18 +23,25 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+ import net.minecraft.world.chunk.storage.IChunkLoader;
++import net.minecraftforge.common.DimensionManager;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_12_R1.chunkio.ChunkIOExecutor;
++import org.bukkit.event.world.ChunkUnloadEvent;
++import red.mohist.api.ServerAPI;
++import red.mohist.configuration.MohistConfig;
+ 
+ public class ChunkProviderServer implements IChunkProvider
+ {
+     private static final Logger field_147417_b = LogManager.getLogger();
+-    private final Set<Long> field_73248_b = Sets.<Long>newHashSet();
++    public final Set<Long> field_73248_b = Sets.<Long>newHashSet();
+     public final IChunkGenerator field_186029_c;
+     public final IChunkLoader field_73247_e;
+     public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
+     public final WorldServer field_73251_h;
++    private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
+ 
+     public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
+     {
+@@ -82,43 +89,89 @@
+         return chunk;
+     }
+ 
++    // Is it copy of method above?
++    public Chunk getChunkIfLoaded(int x, int z) {
++        return field_73244_f.get(ChunkPos.func_77272_a(x, z));
++    }
++
+     @Nullable
+     public Chunk func_186028_c(int p_186028_1_, int p_186028_2_)
+     {
+-        Chunk chunk = this.func_186026_b(p_186028_1_, p_186028_2_);
++        return loadChunk(p_186028_1_, p_186028_2_, null);
++    }
+ 
++    @Nullable
++    public Chunk loadChunk(int p_186028_1_, int p_186028_2_, @Nullable Runnable runnable)
++    {
++        Chunk chunk = this.func_186026_b(p_186028_1_, p_186028_2_);
+         if (chunk == null)
+         {
+-            chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
+-
+-            if (chunk != null)
++            long pos = ChunkPos.func_77272_a(p_186028_1_, p_186028_2_);
++            chunk = net.minecraftforge.common.ForgeChunkManager.fetchDormantChunk(pos, this.field_73251_h);
++            if (chunk != null || !(this.field_73247_e instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader))
+             {
++                if (!loadingChunks.add(pos)) net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk ({},{}) in dimension {} that is already being loaded. This will cause weird chunk breakages.", p_186028_1_, p_186028_2_, this.field_73251_h.field_73011_w.getDimension());
++                if (chunk == null) chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
++
++                if (chunk != null)
++                {
+                 this.field_73244_f.put(ChunkPos.func_77272_a(p_186028_1_, p_186028_2_), chunk);
+                 chunk.func_76631_c();
+-                chunk.func_186030_a(this, this.field_186029_c);
++                chunk.populateCB(this, this.field_186029_c, false);
++                }
++
++                loadingChunks.remove(pos);
+             }
++            else
++            {
++                net.minecraft.world.chunk.storage.AnvilChunkLoader loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.field_73247_e;
++                if (runnable == null || !net.minecraftforge.common.ForgeChunkManager.asyncChunkLoading)
++                    chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.field_73251_h, loader, this, p_186028_1_, p_186028_2_);
++                else if (loader.func_191063_a(p_186028_1_, p_186028_2_))
++                {
++                    // We can only use the async queue for already generated chunks
++                    net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.field_73251_h, loader, this, p_186028_1_, p_186028_2_, runnable);
++                    return null;
++                }
++            }
+         }
+ 
++        // If we didn't load the chunk async and have a callback run it now
++        if (runnable != null) runnable.run();
+         return chunk;
+     }
+ 
+     public Chunk func_186025_d(int p_186025_1_, int p_186025_2_)
+     {
+-        Chunk chunk = this.func_186028_c(p_186025_1_, p_186025_2_);
++        return getChunkAt(p_186025_1_, p_186025_2_, null);
++    }
+ 
++    public Chunk getChunkAt(int i, int j, Runnable runnable) {
++        return getChunkAt(i, j, runnable, true);
++    }
++
++    public Chunk getChunkAt(int i, int j, Runnable runnable, boolean generate) {
++        Chunk chunk = originalGetChunkAt(i, j);
++        return chunk;
++    }
++
++    public Chunk originalGetChunkAt(int x, int z) {
++        Chunk chunk = this.func_186028_c(x, z);
++
+         if (chunk == null)
+         {
+-            long i = ChunkPos.func_77272_a(p_186025_1_, p_186025_2_);
++            field_73251_h.timings.syncChunkLoadTimer.startTiming(); // Spigot
++            long i = ChunkPos.func_77272_a(x, z);
+ 
+             try
+             {
+-                chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
++                chunk = this.field_186029_c.func_185932_a(x, z);
+             }
+             catch (Throwable throwable)
+             {
+                 CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception generating new chunk");
+                 CrashReportCategory crashreportcategory = crashreport.func_85058_a("Chunk to be generated");
+-                crashreportcategory.func_71507_a("Location", String.format("%d,%d", p_186025_1_, p_186025_2_));
++                crashreportcategory.func_71507_a("Location", String.format("%d,%d", x, z));
+                 crashreportcategory.func_71507_a("Position hash", Long.valueOf(i));
+                 crashreportcategory.func_71507_a("Generator", this.field_186029_c);
+                 throw new ReportedException(crashreport);
+@@ -126,7 +179,8 @@
+ 
+             this.field_73244_f.put(i, chunk);
+             chunk.func_76631_c();
+-            chunk.func_186030_a(this, this.field_186029_c);
++            chunk.populateCB(this, this.field_186029_c, true);
++            field_73251_h.timings.syncChunkLoadTimer.stopTiming(); // Spigot
+         }
+ 
+         return chunk;
+@@ -149,7 +203,7 @@
+         }
+         catch (Exception exception)
+         {
+-            field_147417_b.error("Couldn't load chunk", (Throwable)exception);
++			field_147417_b.error("Couldn't load chunk", (Throwable)exception);
+             return null;
+         }
+     }
+@@ -162,25 +216,25 @@
+         }
+         catch (Exception exception)
+         {
+-            field_147417_b.error("Couldn't save entities", (Throwable)exception);
++			field_147417_b.error("Couldn't save entities", (Throwable)exception);
+         }
+     }
+ 
+     private void func_73242_b(Chunk p_73242_1_)
+     {
+-        try
++        try (co.aikar.timings.Timing timed = field_73251_h.timings.chunkSaveData.startTiming())
+         {
+             p_73242_1_.func_177432_b(this.field_73251_h.func_82737_E());
+             this.field_73247_e.func_75816_a(this.field_73251_h, p_73242_1_);
+         }
+         catch (IOException ioexception)
+         {
+-            field_147417_b.error("Couldn't save chunk", (Throwable)ioexception);
++ 			field_147417_b.error("Couldn't save chunk", (Throwable)ioexception);
+         }
+         catch (MinecraftException minecraftexception)
+         {
+-            field_147417_b.error("Couldn't save chunk; already in use by another instance of Minecraft?", (Throwable)minecraftexception);
+-        }
++			field_147417_b.error("Couldn't save chunk; already in use by another instance of Minecraft?", (Throwable)minecraftexception);
++		}
+     }
+ 
+     public boolean func_186027_a(boolean p_186027_1_)
+@@ -205,7 +259,7 @@
+ 
+                 if (i == 24 && !p_186027_1_)
+                 {
+-                    return false;
++                        return false;
+                 }
+             }
+         }
+@@ -224,6 +278,11 @@
+         {
+             if (!this.field_73248_b.isEmpty())
+             {
++                for (ChunkPos forced : this.field_73251_h.getPersistentChunks().keySet())
++                {
++                    this.field_73248_b.remove(ChunkPos.func_77272_a(forced.field_77276_a, forced.field_77275_b));
++                }
++
+                 Iterator<Long> iterator = this.field_73248_b.iterator();
+ 
+                 for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
+@@ -233,21 +292,56 @@
+ 
+                     if (chunk != null && chunk.field_189550_d)
+                     {
+-                        chunk.func_76623_d();
+-                        this.func_73242_b(chunk);
+-                        this.func_73243_a(chunk);
+-                        this.field_73244_f.remove(olong);
++                        if (!unloadChunk(chunk, true)) {
++                            continue;
++                        }
+                         ++i;
+                     }
+                 }
+             }
+ 
++            int dim = this.field_73251_h.field_73011_w.getDimension();
++            if (this.field_73244_f.isEmpty() && !DimensionManager.isBukkitDimension(dim)) DimensionManager.unloadWorld(dim);
++
+             this.field_73247_e.func_75817_a();
+         }
+ 
+         return false;
+     }
+ 
++    // CraftBukkit start
++    public boolean unloadChunk(Chunk chunk, boolean save) {
++        ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk, save);
++        this.field_73251_h.getServer().getPluginManager().callEvent(event);
++        if (event.isCancelled()) {
++            return false;
++        }
++        save = event.isSaveChunk();
++
++        // Update neighbor counts
++        for (int x = -2; x < 3; x++) {
++            for (int z = -2; z < 3; z++) {
++                if (x == 0 && z == 0) {
++                    continue;
++                }
++
++                Chunk neighbor = this.getChunkIfLoaded(chunk.field_76635_g + x, chunk.field_76647_h + z);
++                if (neighbor != null) {
++                    neighbor.setNeighborUnloaded(-x, -z);
++                    chunk.setNeighborUnloaded(x, z);
++                }
++            }
++        }
++        // Moved from unloadChunks above
++        chunk.func_76623_d();
++        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
++        this.func_73242_b(chunk);
++        this.func_73243_a(chunk);
++        this.field_73244_f.remove(chunk.chunkKey);
++        return true;
++    }
++    // CraftBukkit end
++
+     public boolean func_73157_c()
+     {
+         return !this.field_73251_h.field_73058_d;

@@ -1,0 +1,1481 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerList.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerList.java
+@@ -1,5 +1,9 @@
+ package net.minecraft.server.management;
+ 
++import co.aikar.timings.MinecraftTimings;
++import com.destroystokyo.paper.MCUtil;
++import com.google.common.base.Predicate;
++import com.google.common.collect.Iterables;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
+@@ -8,6 +12,8 @@
+ import java.io.File;
+ import java.net.SocketAddress;
+ import java.text.SimpleDateFormat;
++import java.util.ArrayList;
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+@@ -27,6 +33,7 @@
+ import net.minecraft.network.play.server.SPacketChat;
+ import net.minecraft.network.play.server.SPacketCustomPayload;
+ import net.minecraft.network.play.server.SPacketEntityEffect;
++import net.minecraft.network.play.server.SPacketEntityMetadata;
+ import net.minecraft.network.play.server.SPacketEntityStatus;
+ import net.minecraft.network.play.server.SPacketHeldItemChange;
+ import net.minecraft.network.play.server.SPacketJoinGame;
+@@ -45,6 +52,7 @@
+ import net.minecraft.scoreboard.ServerScoreboard;
+ import net.minecraft.scoreboard.Team;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.network.NetHandlerLoginServer;
+ import net.minecraft.stats.StatList;
+ import net.minecraft.stats.StatisticsManagerServer;
+ import net.minecraft.util.math.BlockPos;
+@@ -52,7 +60,7 @@
+ import net.minecraft.util.text.ChatType;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TextComponentTranslation;
+-import net.minecraft.util.text.TextFormatting;
++import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.DimensionType;
+ import net.minecraft.world.GameType;
+ import net.minecraft.world.World;
+@@ -62,10 +70,36 @@
+ import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+ import net.minecraft.world.storage.IPlayerFileData;
+ import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.network.ForgeMessage;
++import net.minecraftforge.common.network.ForgeNetworkHandler;
++import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
++import net.minecraftforge.fml.common.network.FMLOutboundHandler;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.TravelAgent;
++import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_12_R1.chunkio.ChunkIOExecutor;
++import org.bukkit.craftbukkit.v1_12_R1.command.ConsoleCommandCompleter;
++import org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage;
++import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerChangedWorldEvent;
++import org.bukkit.event.player.PlayerJoinEvent;
++import org.bukkit.event.player.PlayerLoginEvent;
++import org.bukkit.event.player.PlayerPortalEvent;
++import org.bukkit.event.player.PlayerQuitEvent;
++import org.bukkit.event.player.PlayerRespawnEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
++import org.bukkit.util.Vector;
++import org.spigotmc.event.player.PlayerSpawnLocationEvent;
++import red.mohist.api.PlayerAPI;
++import red.mohist.forge.ModCompatibleFixUtils;
++import red.mohist.util.i18n.Message;
+ 
+ public abstract class PlayerList
+ {
+@@ -76,15 +110,15 @@
+     private static final Logger field_148546_d = LogManager.getLogger();
+     private static final SimpleDateFormat field_72403_e = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+     private final MinecraftServer field_72400_f;
+-    private final List<EntityPlayerMP> field_72404_b = Lists.<EntityPlayerMP>newArrayList();
++    public final List<EntityPlayerMP> field_72404_b = new java.util.concurrent.CopyOnWriteArrayList<>(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
+     private final Map<UUID, EntityPlayerMP> field_177454_f = Maps.<UUID, EntityPlayerMP>newHashMap();
+     private final UserListBans field_72401_g;
+     private final UserListIPBans field_72413_h;
+     private final UserListOps field_72414_i;
+     private final UserListWhitelist field_72411_j;
+-    private final Map<UUID, StatisticsManagerServer> field_148547_k;
+-    private final Map<UUID, PlayerAdvancements> field_192055_p;
+-    private IPlayerFileData field_72412_k;
++    // private final Map<UUID, StatisticsManagerServer> playerStatFiles;
++    // private final Map<UUID, PlayerAdvancements> advancements;
++    public IPlayerFileData field_72412_k;
+     private boolean field_72409_l;
+     protected int field_72405_c;
+     private int field_72402_d;
+@@ -92,21 +126,29 @@
+     private boolean field_72407_n;
+     private int field_72408_o;
+ 
++    private CraftServer cserver;
++    private String quitMessage;
++
+     public PlayerList(MinecraftServer p_i1500_1_)
+     {
++        if(Bukkit.getServer() == null) {
++            this.cserver = p_i1500_1_.server = new CraftServer(p_i1500_1_, this);
++        }
++        p_i1500_1_.console = org.bukkit.craftbukkit.v1_12_R1.command.ColouredConsoleSender.getInstance();
++        p_i1500_1_.reader.addCompleter(new ConsoleCommandCompleter(p_i1500_1_.server));
+         this.field_72401_g = new UserListBans(field_152613_a);
+         this.field_72413_h = new UserListIPBans(field_152614_b);
+         this.field_72414_i = new UserListOps(field_152615_c);
+         this.field_72411_j = new UserListWhitelist(field_152616_d);
+-        this.field_148547_k = Maps.<UUID, StatisticsManagerServer>newHashMap();
+-        this.field_192055_p = Maps.<UUID, PlayerAdvancements>newHashMap();
++        // this.playerStatFiles = Maps.<UUID, StatisticsManagerServer>newHashMap();
++        // this.advancements = Maps.<UUID, PlayerAdvancements>newHashMap();
+         this.field_72400_f = p_i1500_1_;
+         this.field_72401_g.func_152686_a(false);
+         this.field_72413_h.func_152686_a(false);
+         this.field_72405_c = 8;
+     }
+ 
+-    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_)
++    public void initializeConnectionToPlayer(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_, NetHandlerPlayServer nethandlerplayserver)
+     {
+         GameProfile gameprofile = p_72355_2_.func_146103_bH();
+         PlayerProfileCache playerprofilecache = this.field_72400_f.func_152358_ax();
+@@ -115,6 +157,24 @@
+         playerprofilecache.func_152649_a(gameprofile);
+         NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
+         p_72355_2_.func_70029_a(this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK));
++
++        World playerWorld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
++        if (playerWorld == null)
++        {
++            p_72355_2_.field_71093_bK = 0;
++            playerWorld = this.field_72400_f.func_71218_a(0);
++            BlockPos spawnPoint = playerWorld.field_73011_w.getRandomizedSpawnPoint();
++            p_72355_2_.func_70107_b(spawnPoint.func_177958_n(), spawnPoint.func_177956_o(), spawnPoint.func_177952_p());
++        }
++
++        // CraftBukkit start - Better rename detection
++        if (nbttagcompound != null && nbttagcompound.func_74764_b("bukkit")) {
++            NBTTagCompound bukkit = nbttagcompound.func_74775_l("bukkit");
++            s = bukkit.func_150297_b("lastKnownName", 8) ? bukkit.func_74779_i("lastKnownName") : s;
++        }
++        // CraftBukkit end
++
++        p_72355_2_.func_70029_a(playerWorld);
+         p_72355_2_.field_71134_c.func_73080_a((WorldServer)p_72355_2_.field_70170_p);
+         String s1 = "local";
+ 
+@@ -123,35 +183,66 @@
+             s1 = p_72355_1_.func_74430_c().toString();
+         }
+ 
+-        field_148546_d.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_72355_2_.func_70005_c_(), s1, Integer.valueOf(p_72355_2_.func_145782_y()), Double.valueOf(p_72355_2_.field_70165_t), Double.valueOf(p_72355_2_.field_70163_u), Double.valueOf(p_72355_2_.field_70161_v));
++        // Returns the world's default spawn point
++        if (!(Math.abs(p_72355_2_.field_70159_w) <= Double.MAX_VALUE) || !(Math.abs(p_72355_2_.field_70159_w) <= Double.MAX_VALUE) || !(Math.abs(p_72355_2_.field_70159_w) <= Double.MAX_VALUE)) {
++            BlockPos pos = p_72355_2_.func_130014_f_().func_175694_M();
++            p_72355_2_.func_70107_b(pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
++        }
++        // Spigot start - spawn location event
++        Player bukkitPlayer = p_72355_2_.getBukkitEntity();
++        PlayerSpawnLocationEvent ev = new PlayerSpawnLocationEvent(bukkitPlayer, bukkitPlayer.getLocation());
++        Bukkit.getPluginManager().callEvent(ev);
++
++        Location loc = ev.getSpawnLocation();
++        WorldServer world = ((CraftWorld) loc.getWorld()).getHandle();
++
++        p_72355_2_.func_70029_a(world);
++        p_72355_2_.func_70080_a(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
++        // Spigot end
++
++        // CraftBukkit - Moved message to after join
++        // LOGGER.info("{}[{}] logged in with entity id {} at ({}, {}, {})", playerIn.getName(), s1, Integer.valueOf(playerIn.getEntityId()), Double.valueOf(playerIn.posX), Double.valueOf(playerIn.posY), Double.valueOf(playerIn.posZ));
+         WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
+         WorldInfo worldinfo = worldserver.func_72912_H();
+         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
+-        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_);
+-        nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
++        p_72355_2_.field_71135_a = nethandlerplayserver;
++        if (DimensionManager.isBukkitDimension(p_72355_2_.field_71093_bK))
++        {
++            FMLEmbeddedChannel serverChannel = ForgeNetworkHandler.getServerChannel();
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(p_72355_2_);
++            serverChannel.writeOutbound(new ForgeMessage.DimensionRegisterMessage(p_72355_2_.field_71093_bK, DimensionManager.getProviderType(p_72355_2_.field_71093_bK).name()));
++        }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().fireServerConnectionEvent(p_72355_1_);
++        nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.getDimension(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
++        p_72355_2_.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
+         nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
+         nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+         nethandlerplayserver.func_147359_a(new SPacketPlayerAbilities(p_72355_2_.field_71075_bZ));
+         nethandlerplayserver.func_147359_a(new SPacketHeldItemChange(p_72355_2_.field_71071_by.field_70461_c));
++        nethandlerplayserver.func_147359_a(new SPacketEntityStatus(p_72355_2_, (byte) (worldserver.func_82736_K().func_82766_b("reducedDebugInfo") ? 22 : 23))); // Paper - fix this rule not being initialized on the client
+         this.func_187243_f(p_72355_2_);
+         p_72355_2_.func_147099_x().func_150877_d();
+         p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
+         this.func_96456_a((ServerScoreboard)worldserver.func_96441_U(), p_72355_2_);
+         this.field_72400_f.func_147132_au();
+-        TextComponentTranslation textcomponenttranslation;
+-
++        // CraftBukkit start - login message is handled in the event
++        // TextComponentTranslation textcomponenttranslation;
++        String joinMessage;
+         if (p_72355_2_.func_70005_c_().equalsIgnoreCase(s))
+         {
+-            textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined", new Object[] {p_72355_2_.func_145748_c_()});
++            // textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined", new Object[] {playerIn.getDisplayName()});
++            joinMessage = "\u00A7e" + I18n.func_74837_a("multiplayer.player.joined", p_72355_2_.func_70005_c_());
+         }
+         else
+         {
+-            textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined.renamed", new Object[] {p_72355_2_.func_145748_c_(), s});
++            // textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined.renamed", new Object[] {playerIn.getDisplayName(), s});
++            joinMessage = "\u00A7e" + I18n.func_74837_a("multiplayer.player.joined.renamed", p_72355_2_.func_70005_c_(), s);
+         }
+ 
+-        textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.YELLOW);
+-        this.func_148539_a(textcomponenttranslation);
+-        this.func_72377_c(p_72355_2_);
++        // textcomponenttranslation.getStyle().setColor(TextFormatting.YELLOW);
++        // this.sendMessage(textcomponenttranslation);
++        this.playerLoggedIn(p_72355_2_, joinMessage);
+         nethandlerplayserver.func_147364_a(p_72355_2_.field_70165_t, p_72355_2_.field_70163_u, p_72355_2_.field_70161_v, p_72355_2_.field_70177_z, p_72355_2_.field_70125_A);
+         this.func_72354_b(p_72355_2_, worldserver);
+ 
+@@ -204,9 +295,12 @@
+         }
+ 
+         p_72355_2_.func_71116_b();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(p_72355_2_);
++        // CraftBukkit - Moved from above, added world
++        PlayerList.field_148546_d.info(p_72355_2_.func_70005_c_() + "[" + s1 + "] logged in with entity id " + p_72355_2_.func_145782_y() + " at ([" + p_72355_2_.field_70170_p.field_72986_A.func_76065_j() + "]" + p_72355_2_.field_70165_t + ", " + p_72355_2_.field_70163_u + ", " + p_72355_2_.field_70161_v + ")");
+     }
+ 
+-    protected void func_96456_a(ServerScoreboard p_96456_1_, EntityPlayerMP p_96456_2_)
++    public void func_96456_a(ServerScoreboard p_96456_1_, EntityPlayerMP p_96456_2_)
+     {
+         Set<ScoreObjective> set = Sets.<ScoreObjective>newHashSet();
+ 
+@@ -233,28 +327,29 @@
+ 
+     public void func_72364_a(WorldServer[] p_72364_1_)
+     {
++        if (field_72412_k != null) return;
+         this.field_72412_k = p_72364_1_[0].func_72860_G().func_75756_e();
+         p_72364_1_[0].func_175723_af().func_177737_a(new IBorderListener()
+         {
+             public void func_177694_a(WorldBorder p_177694_1_, double p_177694_2_)
+             {
+-                PlayerList.this.func_148540_a(new SPacketWorldBorder(p_177694_1_, SPacketWorldBorder.Action.SET_SIZE));
++                PlayerList.this.sendAll(new SPacketWorldBorder(p_177694_1_, SPacketWorldBorder.Action.SET_SIZE), p_177694_1_.world);
+             }
+             public void func_177692_a(WorldBorder p_177692_1_, double p_177692_2_, double p_177692_4_, long p_177692_6_)
+             {
+-                PlayerList.this.func_148540_a(new SPacketWorldBorder(p_177692_1_, SPacketWorldBorder.Action.LERP_SIZE));
++                PlayerList.this.sendAll(new SPacketWorldBorder(p_177692_1_, SPacketWorldBorder.Action.LERP_SIZE), p_177692_1_.world);
+             }
+             public void func_177693_a(WorldBorder p_177693_1_, double p_177693_2_, double p_177693_4_)
+             {
+-                PlayerList.this.func_148540_a(new SPacketWorldBorder(p_177693_1_, SPacketWorldBorder.Action.SET_CENTER));
++                PlayerList.this.sendAll(new SPacketWorldBorder(p_177693_1_, SPacketWorldBorder.Action.SET_CENTER), p_177693_1_.world);
+             }
+             public void func_177691_a(WorldBorder p_177691_1_, int p_177691_2_)
+             {
+-                PlayerList.this.func_148540_a(new SPacketWorldBorder(p_177691_1_, SPacketWorldBorder.Action.SET_WARNING_TIME));
++                PlayerList.this.sendAll(new SPacketWorldBorder(p_177691_1_, SPacketWorldBorder.Action.SET_WARNING_TIME), p_177691_1_.world);
+             }
+             public void func_177690_b(WorldBorder p_177690_1_, int p_177690_2_)
+             {
+-                PlayerList.this.func_148540_a(new SPacketWorldBorder(p_177690_1_, SPacketWorldBorder.Action.SET_WARNING_BLOCKS));
++                PlayerList.this.sendAll(new SPacketWorldBorder(p_177690_1_, SPacketWorldBorder.Action.SET_WARNING_BLOCKS), p_177690_1_.world);
+             }
+             public void func_177696_b(WorldBorder p_177696_1_, double p_177696_2_)
+             {
+@@ -304,6 +399,7 @@
+             nbttagcompound1 = nbttagcompound;
+             p_72380_1_.func_70020_e(nbttagcompound);
+             field_148546_d.debug("loading single player");
++            net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_72380_1_, this.field_72412_k, p_72380_1_.func_110124_au().toString());
+         }
+         else
+         {
+@@ -313,17 +409,33 @@
+         return nbttagcompound1;
+     }
+ 
++    public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
++    {
++        // Hacky method to allow loading the NBT for a player prior to login
++        NBTTagCompound nbttagcompound = this.field_72400_f.field_71305_c[0].func_72912_H().func_76072_h();
++        if (player.func_70005_c_().equals(this.field_72400_f.func_71214_G()) && nbttagcompound != null)
++        {
++            return nbttagcompound;
++        }
++        else
++        {
++            return ((net.minecraft.world.storage.SaveHandler)this.field_72412_k).getPlayerNBT(player);
++        }
++    }
++
+     protected void func_72391_b(EntityPlayerMP p_72391_1_)
+     {
++        if (p_72391_1_.field_71135_a == null) return;
++        p_72391_1_.lastSave = MinecraftServer.currentTick; // Paper
+         this.field_72412_k.func_75753_a(p_72391_1_);
+-        StatisticsManagerServer statisticsmanagerserver = this.field_148547_k.get(p_72391_1_.func_110124_au());
++        StatisticsManagerServer statisticsmanagerserver = p_72391_1_.func_147099_x();
+ 
+         if (statisticsmanagerserver != null)
+         {
+             statisticsmanagerserver.func_150883_b();
+         }
+ 
+-        PlayerAdvancements playeradvancements = this.field_192055_p.get(p_72391_1_.func_110124_au());
++        PlayerAdvancements playeradvancements = p_72391_1_.func_192039_O();
+ 
+         if (playeradvancements != null)
+         {
+@@ -343,19 +455,93 @@
+             p_72377_1_.field_71135_a.func_147359_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {this.field_72404_b.get(i)}));
+         }
+ 
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
+         worldserver.func_72838_d(p_72377_1_);
+         this.func_72375_a(p_72377_1_, (WorldServer)null);
+     }
+ 
++    public void playerLoggedIn(EntityPlayerMP playerIn, String joinMessage)
++    {
++        this.field_72404_b.add(playerIn);
++        this.field_177454_f.put(playerIn.func_110124_au(), playerIn);
++        // this.sendPacketToAllPlayers(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {playerIn})); // CraftBukkit - replaced with loop below
++        WorldServer worldserver = this.field_72400_f.func_71218_a(playerIn.field_71093_bK);
++
++        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(cserver.getPlayer(playerIn), joinMessage);
++        cserver.getPluginManager().callEvent(playerJoinEvent);
++
++        if (!playerIn.field_71135_a.field_147371_a.func_150724_d()) {
++            return;
++        }
++
++        joinMessage = playerJoinEvent.getJoinMessage();
++
++        if (joinMessage != null && joinMessage.length() > 0) {
++            for (ITextComponent line : org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage.fromString(joinMessage)) {
++                field_72400_f.func_184103_al().func_148540_a(new SPacketChat(line));
++            }
++        }
++
++        ChunkIOExecutor.adjustPoolSize(func_72394_k());
++
++        // CraftBukkit start - sendAll above replaced with this loop
++        SPacketPlayerListItem packet = new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, playerIn);
++        for (int i = 0; i < this.field_72404_b.size(); ++i)
++        {
++            EntityPlayerMP entityplayer1 = (EntityPlayerMP)this.field_72404_b.get(i);
++
++            if (entityplayer1.getBukkitEntity().canSee(playerIn.getBukkitEntity())) {
++                entityplayer1.field_71135_a.func_147359_a(packet);
++            }
++
++            if (!playerIn.getBukkitEntity().canSee(entityplayer1.getBukkitEntity())) {
++                continue;
++            }
++
++            playerIn.field_71135_a.func_147359_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] { entityplayer1}));
++        }
++        playerIn.sentListPacket = true;
++        // CraftBukkit end
++
++        playerIn.field_71135_a.func_147359_a(new SPacketEntityMetadata(playerIn.func_145782_y(), playerIn.func_184212_Q(), true)); // CraftBukkit - BungeeCord#2321, send complete data to self on spawn
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
++        // CraftBukkit start - Only add if the player wasn't moved in the event
++        if (playerIn.field_70170_p == worldserver && !worldserver.field_73010_i.contains(playerIn)) {
++            worldserver.func_72838_d(playerIn);
++            this.func_72375_a(playerIn, (WorldServer) null);
++        }
++        // CraftBukkit end
++    }
++
+     public void func_72358_d(EntityPlayerMP p_72358_1_)
+     {
+         p_72358_1_.func_71121_q().func_184164_w().func_72685_d(p_72358_1_);
+     }
+ 
+-    public void func_72367_e(EntityPlayerMP p_72367_1_)
++    public String disconnect(EntityPlayerMP playerIn)
+     {
++        func_72367_e(playerIn);
++        return quitMessage;
++    }
++
++    public void func_72367_e(EntityPlayerMP p_72367_1_) // CraftBukkit - return string
++    {
++        String quitMessage = null;
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedOut(p_72367_1_);
+         WorldServer worldserver = p_72367_1_.func_71121_q();
+         p_72367_1_.func_71029_a(StatList.field_75947_j);
++
++        // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
++        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleInventoryCloseEvent(p_72367_1_);
++        if(p_72367_1_.field_71135_a != null) {
++            PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(p_72367_1_), "\u00A7e" + p_72367_1_.func_70005_c_() + " left the game");
++            cserver.getPluginManager().callEvent(playerQuitEvent);
++            p_72367_1_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
++    
++            p_72367_1_.func_71127_g();// SPIGOT-924
++            quitMessage = playerQuitEvent.getQuitMessage();
++        }
++        // CraftBukkit end
+         this.func_72391_b(p_72367_1_);
+ 
+         if (p_72367_1_.func_184218_aH())
+@@ -376,6 +562,7 @@
+                 worldserver.func_72964_e(p_72367_1_.field_70176_ah, p_72367_1_.field_70164_aj).func_76630_e();
+             }
+         }
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
+ 
+         worldserver.func_72900_e(p_72367_1_);
+         worldserver.func_184164_w().func_72695_c(p_72367_1_);
+@@ -387,11 +574,32 @@
+         if (entityplayermp == p_72367_1_)
+         {
+             this.field_177454_f.remove(uuid);
+-            this.field_148547_k.remove(uuid);
+-            this.field_192055_p.remove(uuid);
++            // this.playerStatFiles.remove(uuid);
++            // this.advancements.remove(uuid);
+         }
+ 
+-        this.func_148540_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {p_72367_1_}));
++        // this.sendPacketToAllPlayers(new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {playerIn}));
++        SPacketPlayerListItem packet = new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER, p_72367_1_);
++        for (int i = 0; i < field_72404_b.size(); i++) {
++            EntityPlayerMP entityplayer2 = (EntityPlayerMP) this.field_72404_b.get(i);
++
++            if (entityplayer2.getBukkitEntity().canSee(p_72367_1_.getBukkitEntity())) {
++                entityplayer2.field_71135_a.func_147359_a(packet);
++            } else {
++                entityplayer2.getBukkitEntity().removeDisconnectingPlayer(p_72367_1_.getBukkitEntity());
++            }
++        }
++        // This removes the scoreboard (and player reference) for the specific player in the manager
++        if (p_72367_1_.field_71135_a != null && cserver != null) { //TODO Fix NullPointerException #99
++            cserver.getScoreboardManager().removePlayer(p_72367_1_.getBukkitEntity());
++        }
++
++        ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
++        //untrack player
++        p_72367_1_.func_71121_q().func_73039_n().func_72787_a(p_72367_1_);
++        this.quitMessage = quitMessage;
++        PlayerAPI.modlist.remove(p_72367_1_);
++        PlayerAPI.mods.remove(p_72367_1_);
+     }
+ 
+     public String func_148542_a(SocketAddress p_148542_1_, GameProfile p_148542_2_)
+@@ -430,6 +638,86 @@
+         }
+     }
+ 
++    @Nullable
++    public EntityPlayerMP allowUserToConnect(NetHandlerLoginServer loginServer, GameProfile profile, String hostname)
++    {
++        // Moved from processLogin
++        UUID uuid = EntityPlayer.func_146094_a(profile);
++        ArrayList arraylist = Lists.newArrayList();
++
++        EntityPlayerMP entityplayer;
++
++        for (int i = 0; i < this.field_72404_b.size(); ++i) {
++            entityplayer = (EntityPlayerMP) this.field_72404_b.get(i);
++            if (entityplayer.func_110124_au().equals(uuid)) {
++                arraylist.add(entityplayer);
++            }
++        }
++
++        Iterator iterator = arraylist.iterator();
++
++        while (iterator.hasNext()) {
++            entityplayer = (EntityPlayerMP) iterator.next();
++            func_72391_b(entityplayer); // CraftBukkit - Force the player's inventory to be saved
++            entityplayer.field_71135_a.disconnect(Message.getString("disconnect.duplicate_login"));
++        }
++
++        // Instead of kicking then returning, we need to store the kick reason
++        // in the event, check with plugins to see if it's ok, and THEN kick
++        // depending on the outcome.
++        SocketAddress socketaddress = loginServer.field_147333_a.func_74430_c();
++
++        EntityPlayerMP entity = new EntityPlayerMP(field_72400_f, field_72400_f.getWorldServer(0), profile, new PlayerInteractionManager(field_72400_f.getWorldServer(0)));
++        Player player = entity.getBukkitEntity();
++        //Spigot Start
++        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), ((java.net.InetSocketAddress) loginServer.field_147333_a.getRawAddress()).getAddress());
++        //Spigot End
++        if (func_152608_h().func_152702_a(profile) && !func_152608_h().func_152683_b(profile).func_73682_e())
++        {
++            UserListBansEntry userlistbansentry = (UserListBansEntry)this.field_72401_g.func_152683_b(profile);
++            String s1 = "You are banned from this server!\nReason: " + userlistbansentry.func_73686_f();
++
++            if (userlistbansentry.func_73680_d() != null)
++            {
++                s1 = s1 + "\nYour ban will be removed on " + field_72403_e.format(userlistbansentry.func_73680_d());
++            }
++
++            // return s1;
++            if (!userlistbansentry.func_73682_e()) event.disallow(PlayerLoginEvent.Result.KICK_BANNED, s1); // Spigot
++        }
++        else if (!this.func_152607_e(profile))
++        {
++            // return "You are not white-listed on this server!";
++            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, Message.getString("message.whitelist")); // Spigot
++        }
++        else if (func_72363_f().func_152708_a(socketaddress) && !func_72363_f().func_152709_b(socketaddress).func_73682_e())
++        {
++            UserListIPBansEntry userlistipbansentry = this.field_72413_h.func_152709_b(socketaddress);
++            String s = "Your IP address is banned from this server!\nReason: " + userlistipbansentry.func_73686_f();
++
++            if (userlistipbansentry.func_73680_d() != null)
++            {
++                s = s + "\nYour ban will be removed on " + field_72403_e.format(userlistipbansentry.func_73680_d());
++            }
++
++            // return s;
++            if (!userlistipbansentry.func_73682_e()) event.disallow(PlayerLoginEvent.Result.KICK_BANNED, s);
++        }
++        else
++        {
++            if (this.field_72404_b.size() >= this.field_72405_c && !this.func_183023_f(profile)) {
++                event.disallow(PlayerLoginEvent.Result.KICK_FULL, Message.getString("message.serverfull")); // Spigot
++            }
++        }
++
++        cserver.getPluginManager().callEvent(event);
++        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
++            loginServer.func_194026_b(new TextComponentTranslation(event.getKickMessage()));
++            return null;
++        }
++        return entity;
++    }
++
+     public EntityPlayerMP func_148545_a(GameProfile p_148545_1_)
+     {
+         UUID uuid = EntityPlayer.func_146094_a(p_148545_1_);
+@@ -454,7 +742,7 @@
+ 
+         for (EntityPlayerMP entityplayermp1 : list)
+         {
+-            entityplayermp1.field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.duplicate_login", new Object[0]));
++            entityplayermp1.field_71135_a.disconnect(Message.getString("disconnect.duplicate_login"));
+         }
+ 
+         PlayerInteractionManager playerinteractionmanager;
+@@ -471,30 +759,63 @@
+         return new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(0), p_148545_1_, playerinteractionmanager);
+     }
+ 
++    public EntityPlayerMP createPlayerForUser(GameProfile profile, EntityPlayerMP entityPlayerMP)
++    {
++        return entityPlayerMP;
++    }
++
+     public EntityPlayerMP func_72368_a(EntityPlayerMP p_72368_1_, int p_72368_2_, boolean p_72368_3_)
+     {
++        Location location = null;
++        p_72368_1_.func_184210_p(); // CraftBukkit
++        World world = field_72400_f.func_71218_a(p_72368_2_);
++        if (world == null)
++        {
++            p_72368_2_ = p_72368_1_.getSpawnDimension();
++        }
++        else if (location == null && !world.field_73011_w.func_76567_e())
++        {
++            p_72368_2_ = world.field_73011_w.getRespawnDimension(p_72368_1_);
++        }
++        if (field_72400_f.func_71218_a(p_72368_2_) == null) p_72368_2_ = 0;
++
++        // handle return from End
++        if (p_72368_3_ && location == null)
++        {
++            WorldServer exitWorld = this.field_72400_f.func_71218_a(p_72368_2_);
++            Location enter = p_72368_1_.getBukkitEntity().getLocation();
++            Location exit = null;
++            // THE_END -> NORMAL; use bed if available, otherwise default spawn
++            exit = p_72368_1_.getBukkitEntity().getBedSpawnLocation();
++
++            if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0)
++            {
++                exit = exitWorld.getWorld().getSpawnLocation();
++            }
++            PlayerPortalEvent event = new PlayerPortalEvent(p_72368_1_.getBukkitEntity(), enter, exit, org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT, PlayerPortalEvent.TeleportCause.END_PORTAL);
++            event.useTravelAgent(false);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            if (event.isCancelled() || event.getTo() == null)
++            {
++                return null;
++            }
++            location = event.getTo();
++        }
++
+         p_72368_1_.func_71121_q().func_73039_n().func_72787_a(p_72368_1_);
+-        p_72368_1_.func_71121_q().func_73039_n().func_72790_b(p_72368_1_);
+         p_72368_1_.func_71121_q().func_184164_w().func_72695_c(p_72368_1_);
+         this.field_72404_b.remove(p_72368_1_);
+         this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK).func_72973_f(p_72368_1_);
+-        BlockPos blockpos = p_72368_1_.func_180470_cg();
+-        boolean flag = p_72368_1_.func_82245_bX();
+-        p_72368_1_.field_71093_bK = p_72368_2_;
+-        PlayerInteractionManager playerinteractionmanager;
++        BlockPos blockpos = p_72368_1_.getBedLocation(p_72368_2_);
++        boolean flag1 = p_72368_1_.isSpawnForced(p_72368_2_);
+ 
+-        if (this.field_72400_f.func_71242_L())
+-        {
+-            playerinteractionmanager = new DemoPlayerInteractionManager(this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK));
+-        }
+-        else
+-        {
+-            playerinteractionmanager = new PlayerInteractionManager(this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK));
+-        }
++        EntityPlayerMP entityplayermp = p_72368_1_;
++        org.bukkit.World fromWorld = p_72368_1_.getBukkitEntity().getWorld();
++        p_72368_1_.field_71136_j = false;
+ 
+-        EntityPlayerMP entityplayermp = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
+         entityplayermp.field_71135_a = p_72368_1_.field_71135_a;
+         entityplayermp.func_193104_a(p_72368_1_, p_72368_3_);
++        entityplayermp.field_71093_bK = p_72368_2_;
+         entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
+         entityplayermp.func_174817_o(p_72368_1_);
+         entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
+@@ -504,44 +825,278 @@
+             entityplayermp.func_184211_a(s);
+         }
+ 
+-        WorldServer worldserver = this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK);
+-        this.func_72381_a(entityplayermp, p_72368_1_, worldserver);
++        // WorldServer worldserver = this.mcServer.getWorld(playerIn.dimension); // CraftBukkit - handled later
++        // this.setPlayerGameTypeBasedOnOther(entityplayermp, playerIn, worldserver);
++        BlockPos blockposition1;
++        // CraftBukkit start - fire PlayerRespawnEvent
++        if (location == null) {
++            boolean isBedSpawn = false;
++            CraftWorld cworld = (CraftWorld) this.field_72400_f.server.getWorld(p_72368_1_.spawnWorld);
++            if (cworld != null && blockpos != null) {
++                blockposition1 = EntityPlayer.func_180467_a(cworld.getHandle(), blockpos, flag1);
++                if (blockposition1 != null) {
++                    isBedSpawn = true;
++                    location = new Location(cworld, (double) ((float) blockposition1.func_177958_n() + 0.5F), (double) ((float) blockposition1.func_177956_o() + 0.1F), (double) ((float) blockposition1.func_177952_p() + 0.5F));
++                } else {
++                    entityplayermp.func_180473_a(null, true);
++                    entityplayermp.field_71135_a.func_147359_a(new SPacketChangeGameState(0, 0.0F));
++                }
++            }
+ 
+-        if (blockpos != null)
++            if (location == null) {
++                cworld = (CraftWorld) this.field_72400_f.server.getWorlds().get(0);
++                blockpos = entityplayermp.getSpawnPoint(this.field_72400_f, cworld.getHandle());
++                location = new Location(cworld, (double) ((float) blockpos.func_177958_n() + 0.5F), (double) ((float) blockpos.func_177956_o() + 0.1F), (double) ((float) blockpos.func_177952_p() + 0.5F));
++            }
++            Player respawnPlayer = cserver.getPlayer(entityplayermp);
++            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
++            cserver.getPluginManager().callEvent(respawnEvent);
++            // Spigot Start
++            if (p_72368_1_.field_71135_a.isDisconnected()) {
++                return p_72368_1_;
++            }
++            // Spigot End
++
++
++            location = respawnEvent.getRespawnLocation();
++            p_72368_1_.reset();
++        } else {
++            location.setWorld(field_72400_f.func_71218_a(p_72368_2_).getWorld());
++        }
++
++        WorldServer worldserver = ((CraftWorld) location.getWorld()).getHandle();
++        entityplayermp.forceSetPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
++
++        worldserver.func_72863_F().func_186025_d((int)entityplayermp.field_70165_t >> 4, (int)entityplayermp.field_70161_v >> 4);
++
++        while (true && !worldserver.func_184144_a(entityplayermp, entityplayermp.func_174813_aQ()).isEmpty() && entityplayermp.field_70163_u < 256.0D)
+         {
+-            BlockPos blockpos1 = EntityPlayer.func_180467_a(this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), blockpos, flag);
++            entityplayermp.func_70107_b(entityplayermp.field_70165_t, entityplayermp.field_70163_u + 1.0D, entityplayermp.field_70161_v);
++        }
+ 
+-            if (blockpos1 != null)
++        int actualDimension = worldserver.field_73011_w.getDimension();
++        // Mohist - change dim for bukkit added dimensions
++        if (DimensionManager.isBukkitDimension(actualDimension))
++        {
++            FMLEmbeddedChannel serverChannel = ForgeNetworkHandler.getServerChannel();
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityplayermp);
++            serverChannel.writeOutbound(new ForgeMessage.DimensionRegisterMessage(actualDimension, DimensionManager.getProviderType(actualDimension).name()));
++        }
++        // Mohist end
++        // entityplayermp.connection.sendPacket(new SPacketRespawn(entityplayermp.dimension, entityplayermp.world.getDifficulty(), entityplayermp.world.getWorldInfo().getTerrainType(), entityplayermp.interactionManager.getGameType()));
++        entityplayermp.field_71135_a.func_147359_a(new SPacketRespawn(actualDimension, worldserver.func_175659_aa(), worldserver.func_72912_H().func_76067_t(), entityplayermp.field_71134_c.func_73081_b()));
++        entityplayermp.func_70029_a(worldserver);
++        entityplayermp.field_70128_L = false;
++        entityplayermp.field_71135_a.teleport(new Location(worldserver.getWorld(), entityplayermp.field_70165_t, entityplayermp.field_70163_u, entityplayermp.field_70161_v, entityplayermp.field_70177_z, entityplayermp.field_70125_A));
++        entityplayermp.func_70095_a(false);
++        BlockPos blockpos2 = worldserver.func_175694_M();
++        // entityplayermp.connection.setPlayerLocation(entityplayermp.posX, entityplayermp.posY, entityplayermp.posZ, entityplayermp.rotationYaw, entityplayermp.rotationPitch);
++        entityplayermp.field_71135_a.func_147359_a(new SPacketSpawnPosition(blockpos2));
++        entityplayermp.field_71135_a.func_147359_a(new SPacketSetExperience(entityplayermp.field_71106_cc, entityplayermp.field_71067_cb, entityplayermp.field_71068_ca));
++        this.func_72354_b(entityplayermp, worldserver);
++        this.func_187243_f(entityplayermp);
++        if (!p_72368_1_.field_71135_a.isDisconnected()) {
++            worldserver.func_184164_w().func_72683_a(entityplayermp);
++            worldserver.func_72838_d(entityplayermp);
++            this.field_72404_b.add(entityplayermp);
++            this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
++        }
++        // entityplayermp.addSelfToInternalCraftingInventory();
++        entityplayermp.func_70606_j(entityplayermp.func_110143_aJ());
++        // Added from changeDimension
++        func_72385_f(p_72368_1_); // Update health, etc...
++        p_72368_1_.func_71016_p();
++        for (Object o1 : p_72368_1_.func_70651_bq()) {
++            PotionEffect mobEffect = (PotionEffect) o1;
++            p_72368_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_72368_1_.func_145782_y(), mobEffect));
++        }
++
++        // Fire advancement trigger
++        CriteriaTriggers.field_193134_u.func_193143_a(p_72368_1_, ((CraftWorld) fromWorld).getHandle().field_73011_w.func_186058_p(), worldserver.field_73011_w.func_186058_p());
++        if (((CraftWorld) fromWorld).getHandle().field_73011_w.func_186058_p() == DimensionType.NETHER && worldserver.field_73011_w.func_186058_p() == DimensionType.OVERWORLD && p_72368_1_.func_193106_Q() != null) {
++            CriteriaTriggers.field_193131_B.func_193168_a(p_72368_1_, p_72368_1_.func_193106_Q());
++        }
++
++        // Don't fire on respawn
++        if (fromWorld != location.getWorld()) {
++            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(p_72368_1_.getBukkitEntity(), fromWorld);
++            field_72400_f.server.getPluginManager().callEvent(event);
++        }
++
++        // Save player file again if they were disconnected
++        if (p_72368_1_.field_71135_a.isDisconnected()) {
++            this.func_72391_b(p_72368_1_);
++        }
++        // CraftBukkit end
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp, p_72368_3_);
++        return entityplayermp;
++    }
++
++    public EntityPlayerMP moveToWorld(EntityPlayerMP playerIn, int dimension, boolean conqueredEnd, Location location, boolean avoidSuffocation) {
++        playerIn.func_184210_p(); // CraftBukkit
++        World world = field_72400_f.func_71218_a(dimension);
++        if (world == null)
++        {
++            dimension = playerIn.getSpawnDimension();
++        }
++        else if (location == null && !world.field_73011_w.func_76567_e())
++        {
++            dimension = world.field_73011_w.getRespawnDimension(playerIn);
++        }
++        if (field_72400_f.func_71218_a(dimension) == null) dimension = 0;
++
++        // handle return from End
++        if (conqueredEnd && location == null)
++        {
++            WorldServer exitWorld = this.field_72400_f.func_71218_a(dimension);
++            Location enter = playerIn.getBukkitEntity().getLocation();
++            Location exit = null;
++            // THE_END -> NORMAL; use bed if available, otherwise default spawn
++            exit = playerIn.getBukkitEntity().getBedSpawnLocation();
++
++            if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0)
+             {
+-                entityplayermp.func_70012_b((double)((float)blockpos1.func_177958_n() + 0.5F), (double)((float)blockpos1.func_177956_o() + 0.1F), (double)((float)blockpos1.func_177952_p() + 0.5F), 0.0F, 0.0F);
+-                entityplayermp.func_180473_a(blockpos, flag);
++                exit = exitWorld.getWorld().getSpawnLocation();
+             }
+-            else
++            PlayerPortalEvent event = new PlayerPortalEvent(playerIn.getBukkitEntity(), enter, exit, org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT, PlayerPortalEvent.TeleportCause.END_PORTAL);
++            event.useTravelAgent(false);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            if (event.isCancelled() || event.getTo() == null)
+             {
+-                entityplayermp.field_71135_a.func_147359_a(new SPacketChangeGameState(0, 0.0F));
++                return null;
+             }
++            location = event.getTo();
+         }
+ 
++        playerIn.func_71121_q().func_73039_n().func_72787_a(playerIn);
++        playerIn.func_71121_q().func_184164_w().func_72695_c(playerIn);
++        this.field_72404_b.remove(playerIn);
++        this.field_72400_f.func_71218_a(playerIn.field_71093_bK).func_72973_f(playerIn);
++        BlockPos blockpos = playerIn.getBedLocation(dimension);
++        boolean flag1 = playerIn.isSpawnForced(dimension);
++
++        EntityPlayerMP entityplayermp = playerIn;
++        org.bukkit.World fromWorld = playerIn.getBukkitEntity().getWorld();
++        playerIn.field_71136_j = false;
++
++        entityplayermp.field_71135_a = playerIn.field_71135_a;
++        entityplayermp.func_193104_a(playerIn, conqueredEnd);
++        entityplayermp.field_71093_bK = dimension;
++        entityplayermp.func_145769_d(playerIn.func_145782_y());
++        entityplayermp.func_174817_o(playerIn);
++        entityplayermp.func_184819_a(playerIn.func_184591_cq());
++
++        for (String s : playerIn.func_184216_O())
++        {
++            entityplayermp.func_184211_a(s);
++        }
++
++        // WorldServer worldserver = this.mcServer.getWorld(playerIn.dimension); // CraftBukkit - handled later
++        // this.setPlayerGameTypeBasedOnOther(entityplayermp, playerIn, worldserver);
++        BlockPos blockposition1;
++        // CraftBukkit start - fire PlayerRespawnEvent
++        if (location == null) {
++            boolean isBedSpawn = false;
++            CraftWorld cworld = (CraftWorld) this.field_72400_f.server.getWorld(playerIn.spawnWorld);
++            if (cworld != null && blockpos != null) {
++                blockposition1 = EntityPlayer.func_180467_a(cworld.getHandle(), blockpos, flag1);
++                if (blockposition1 != null) {
++                    isBedSpawn = true;
++                    location = new Location(cworld, (double) ((float) blockposition1.func_177958_n() + 0.5F), (double) ((float) blockposition1.func_177956_o() + 0.1F), (double) ((float) blockposition1.func_177952_p() + 0.5F));
++                } else {
++                    entityplayermp.func_180473_a(null, true);
++                    entityplayermp.field_71135_a.func_147359_a(new SPacketChangeGameState(0, 0.0F));
++                }
++            }
++
++            if (location == null) {
++                cworld = (CraftWorld) this.field_72400_f.server.getWorlds().get(0);
++                blockpos = entityplayermp.getSpawnPoint(this.field_72400_f, cworld.getHandle());
++                location = new Location(cworld, (double) ((float) blockpos.func_177958_n() + 0.5F), (double) ((float) blockpos.func_177956_o() + 0.1F), (double) ((float) blockpos.func_177952_p() + 0.5F));
++            }
++            Player respawnPlayer = cserver.getPlayer(entityplayermp);
++            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
++            cserver.getPluginManager().callEvent(respawnEvent);
++            // Spigot Start
++            if (playerIn.field_71135_a.isDisconnected()) {
++                return playerIn;
++            }
++            // Spigot End
++
++
++            location = respawnEvent.getRespawnLocation();
++            playerIn.reset();
++        } else {
++            location.setWorld(field_72400_f.func_71218_a(dimension).getWorld());
++        }
++
++        WorldServer worldserver = ((CraftWorld) location.getWorld()).getHandle();
++        entityplayermp.forceSetPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
++
+         worldserver.func_72863_F().func_186025_d((int)entityplayermp.field_70165_t >> 4, (int)entityplayermp.field_70161_v >> 4);
+ 
+-        while (!worldserver.func_184144_a(entityplayermp, entityplayermp.func_174813_aQ()).isEmpty() && entityplayermp.field_70163_u < 256.0D)
++        while (avoidSuffocation && !worldserver.func_184144_a(entityplayermp, entityplayermp.func_174813_aQ()).isEmpty() && entityplayermp.field_70163_u < 256.0D)
+         {
+             entityplayermp.func_70107_b(entityplayermp.field_70165_t, entityplayermp.field_70163_u + 1.0D, entityplayermp.field_70161_v);
+         }
+ 
+-        entityplayermp.field_71135_a.func_147359_a(new SPacketRespawn(entityplayermp.field_71093_bK, entityplayermp.field_70170_p.func_175659_aa(), entityplayermp.field_70170_p.func_72912_H().func_76067_t(), entityplayermp.field_71134_c.func_73081_b()));
++        int actualDimension = worldserver.field_73011_w.getDimension();
++        // Mohist - change dim for bukkit added dimensions
++        if (DimensionManager.isBukkitDimension(actualDimension))
++        {
++            FMLEmbeddedChannel serverChannel = ForgeNetworkHandler.getServerChannel();
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityplayermp);
++            serverChannel.writeOutbound(new ForgeMessage.DimensionRegisterMessage(actualDimension, DimensionManager.getProviderType(actualDimension).name()));
++        }
++        // Mohist end
++        // entityplayermp.connection.sendPacket(new SPacketRespawn(entityplayermp.dimension, entityplayermp.world.getDifficulty(), entityplayermp.world.getWorldInfo().getTerrainType(), entityplayermp.interactionManager.getGameType()));
++        entityplayermp.field_71135_a.func_147359_a(new SPacketRespawn(actualDimension, worldserver.func_175659_aa(), worldserver.func_72912_H().func_76067_t(), entityplayermp.field_71134_c.func_73081_b()));
++        entityplayermp.func_70029_a(worldserver);
++        entityplayermp.field_70128_L = false;
++        entityplayermp.field_71135_a.teleport(new Location(worldserver.getWorld(), entityplayermp.field_70165_t, entityplayermp.field_70163_u, entityplayermp.field_70161_v, entityplayermp.field_70177_z, entityplayermp.field_70125_A));
++        entityplayermp.func_70095_a(false);
+         BlockPos blockpos2 = worldserver.func_175694_M();
+-        entityplayermp.field_71135_a.func_147364_a(entityplayermp.field_70165_t, entityplayermp.field_70163_u, entityplayermp.field_70161_v, entityplayermp.field_70177_z, entityplayermp.field_70125_A);
++        // entityplayermp.connection.setPlayerLocation(entityplayermp.posX, entityplayermp.posY, entityplayermp.posZ, entityplayermp.rotationYaw, entityplayermp.rotationPitch);
+         entityplayermp.field_71135_a.func_147359_a(new SPacketSpawnPosition(blockpos2));
+         entityplayermp.field_71135_a.func_147359_a(new SPacketSetExperience(entityplayermp.field_71106_cc, entityplayermp.field_71067_cb, entityplayermp.field_71068_ca));
+         this.func_72354_b(entityplayermp, worldserver);
+         this.func_187243_f(entityplayermp);
+-        worldserver.func_184164_w().func_72683_a(entityplayermp);
+-        worldserver.func_72838_d(entityplayermp);
+-        this.field_72404_b.add(entityplayermp);
+-        this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
+-        entityplayermp.func_71116_b();
++        if (!playerIn.field_71135_a.isDisconnected()) {
++            worldserver.func_184164_w().func_72683_a(entityplayermp);
++            worldserver.func_72838_d(entityplayermp);
++            this.field_72404_b.add(entityplayermp);
++            this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
++        }
++        // entityplayermp.addSelfToInternalCraftingInventory();
+         entityplayermp.func_70606_j(entityplayermp.func_110143_aJ());
++        // Added from changeDimension
++        func_72385_f(playerIn); // Update health, etc...
++        playerIn.func_71016_p();
++        for (Object o1 : playerIn.func_70651_bq()) {
++            PotionEffect mobEffect = (PotionEffect) o1;
++            playerIn.field_71135_a.func_147359_a(new SPacketEntityEffect(playerIn.func_145782_y(), mobEffect));
++        }
++
++        // Fire advancement trigger
++        CriteriaTriggers.field_193134_u.func_193143_a(playerIn, ((CraftWorld) fromWorld).getHandle().field_73011_w.func_186058_p(), worldserver.field_73011_w.func_186058_p());
++        if (((CraftWorld) fromWorld).getHandle().field_73011_w.func_186058_p() == DimensionType.NETHER && worldserver.field_73011_w.func_186058_p() == DimensionType.OVERWORLD && playerIn.func_193106_Q() != null) {
++            CriteriaTriggers.field_193131_B.func_193168_a(playerIn, playerIn.func_193106_Q());
++        }
++
++        // Don't fire on respawn
++        if (fromWorld != location.getWorld()) {
++            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(playerIn.getBukkitEntity(), fromWorld);
++            field_72400_f.server.getPluginManager().callEvent(event);
++        }
++
++        // Save player file again if they were disconnected
++        if (playerIn.field_71135_a.isDisconnected()) {
++            this.func_72391_b(playerIn);
++        }
++        // CraftBukkit end
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp, conqueredEnd);
+         return entityplayermp;
+     }
+ 
+@@ -556,37 +1111,148 @@
+ 
+     public void func_187242_a(EntityPlayerMP p_187242_1_, int p_187242_2_)
+     {
+-        int i = p_187242_1_.field_71093_bK;
+-        WorldServer worldserver = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
+-        p_187242_1_.field_71093_bK = p_187242_2_;
+-        WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
+-        p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
+-        this.func_187243_f(p_187242_1_);
+-        worldserver.func_72973_f(p_187242_1_);
+-        p_187242_1_.field_70128_L = false;
+-        this.func_82448_a(p_187242_1_, i, worldserver, worldserver1);
+-        this.func_72375_a(p_187242_1_, worldserver);
+-        p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
+-        p_187242_1_.field_71134_c.func_73080_a(worldserver1);
+-        p_187242_1_.field_71135_a.func_147359_a(new SPacketPlayerAbilities(p_187242_1_.field_71075_bZ));
+-        this.func_72354_b(p_187242_1_, worldserver1);
+-        this.func_72385_f(p_187242_1_);
++        transferPlayerToDimension(p_187242_1_, p_187242_2_, field_72400_f.func_71218_a(p_187242_2_).func_85176_s());
++    }
+ 
+-        for (PotionEffect potioneffect : p_187242_1_.func_70651_bq())
++    // TODO: Remove (1.13)
++    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraft.world.Teleporter teleporter)
++    {
++        transferPlayerToDimension(p_187242_1_, p_187242_2_, (net.minecraftforge.common.util.ITeleporter) teleporter);
++    }
++
++    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraftforge.common.util.ITeleporter teleporter) { // mods such as Twilight Forest call this method directly
++        transferPlayerToDimension(p_187242_1_, p_187242_2_, teleporter, PlayerTeleportEvent.TeleportCause.MOD); // use our mod cause
++    }
++
++    public void transferPlayerToDimension(EntityPlayerMP player, int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter, PlayerTeleportEvent.TeleportCause cause) // Cauldron - add TeleportCause
++    {
++        // Allow Forge hotloading on teleport
++        WorldServer fromWorld = this.field_72400_f.func_71218_a(player.field_71093_bK);
++        WorldServer exitWorld = this.field_72400_f.func_71218_a(dimensionIn);
++
++        // CraftBukkit start - Replaced the standard handling of portals with a more customised method.
++        Location enter = player.getBukkitEntity().getLocation();
++        Location exit = null;
++        boolean useTravelAgent = false;
++        if (exitWorld != null) {
++            exit = this.calculateTarget(enter, exitWorld);
++            if (cause != cause.MOD) // don't use travel agent for custom dimensions
++            {
++                useTravelAgent = true;
++            }
++        }
++
++        // allow forge mods to be the teleporter
++        TravelAgent agent = null;
++        if (exit != null && teleporter == null)
+         {
+-            p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
++            teleporter = ((CraftWorld) exit.getWorld()).getHandle().func_85176_s();
++            if (teleporter instanceof TravelAgent)
++            {
++                agent = (TravelAgent) teleporter;
++            }
+         }
++        else
++        {
++            if (teleporter instanceof TravelAgent)
++            {
++                agent = (TravelAgent) teleporter;
++            }
++        }
++        if (agent == null) // mod teleporter such as Twilight Forest
++        {
++            agent = org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
++        }
++        PlayerPortalEvent event = new PlayerPortalEvent(player.getBukkitEntity(), enter, exit, agent, cause);
++        event.useTravelAgent(useTravelAgent);
++        Bukkit.getServer().getPluginManager().callEvent(event);
++        if (event.isCancelled() || event.getTo() == null) {
++            return;
++        }
++
++        exit = event.useTravelAgent() && cause != cause.MOD ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
++        if (exit == null) {
++            return;
++        }
++        exitWorld = ((CraftWorld) exit.getWorld()).getHandle();
++
++        org.bukkit.event.player.PlayerTeleportEvent tpEvent = new org.bukkit.event.player.PlayerTeleportEvent(player.getBukkitEntity(), enter, exit, cause);
++        Bukkit.getServer().getPluginManager().callEvent(tpEvent);
++        if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
++            return;
++        }
++
++        Vector velocity = player.getBukkitEntity().getVelocity();
++        exitWorld.func_85176_s().adjustExit(player, exit, velocity);
++
++        player.field_184851_cj = true; // CraftBukkit - Set teleport invulnerability only if player changing worlds
++
++        int fromDimension = player.field_71093_bK;
++        player.field_71093_bK = dimensionIn;
++
++        // Mohist - change dim for bukkit added dimensions
++        if (DimensionManager.isBukkitDimension(fromDimension))
++        {
++            FMLEmbeddedChannel serverChannel = ForgeNetworkHandler.getServerChannel();
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
++            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
++            serverChannel.writeOutbound(new ForgeMessage.DimensionRegisterMessage(fromDimension, DimensionManager.getProviderType(fromDimension).name()));
++        }
++        // Mohist end
++        player.field_71135_a.func_147359_a(new SPacketRespawn(player.field_71093_bK, exitWorld.func_175659_aa(), exitWorld.func_72912_H().func_76067_t(), player.field_71134_c.func_73081_b()));
++        this.func_187243_f(player);
++        fromWorld.func_72973_f(player);
++        player.field_70128_L = false;
++        this.transferEntityToWorld(player, fromDimension, fromWorld, exitWorld, teleporter);
++        this.func_72375_a(player, fromWorld);
++        player.field_71135_a.func_147364_a(player.field_70165_t, player.field_70163_u, player.field_70161_v, player.field_70177_z, player.field_70125_A);
++        player.field_71134_c.func_73080_a(exitWorld);
++        player.field_71135_a.func_147359_a(new SPacketPlayerAbilities(player.field_71075_bZ));
++        this.func_72354_b(player, exitWorld);
++        this.func_72385_f(player);
++
++        for (PotionEffect potioneffect : player.func_70651_bq())
++        {
++            player.field_71135_a.func_147359_a(new SPacketEntityEffect(player.func_145782_y(), potioneffect));
++        }
++        // Fix MC-88179: on non-death SPacketRespawn, also resend attributes
++        net.minecraft.entity.ai.attributes.AttributeMap attributemap = (net.minecraft.entity.ai.attributes.AttributeMap) player.func_110140_aT();
++        java.util.Collection<net.minecraft.entity.ai.attributes.IAttributeInstance> watchedAttribs = attributemap.func_111160_c();
++        if (!watchedAttribs.isEmpty()) player.field_71135_a.func_147359_a(new net.minecraft.network.play.server.SPacketEntityProperties(player.func_145782_y(), watchedAttribs));
++
++        if (fromWorld.getWorld() != exitWorld.getWorld()) {
++            field_72400_f.server.getPluginManager().callEvent(new PlayerChangedWorldEvent(player.getBukkitEntity(), fromWorld.getWorld()));
++        }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(player, fromDimension, dimensionIn);
+     }
+ 
++    public void changeDimension(EntityPlayerMP player, int dimensionIn, PlayerTeleportEvent.TeleportCause cause) {
++        transferPlayerToDimension(player, dimensionIn, field_72400_f.func_71218_a(dimensionIn).func_85176_s(), cause);
++    }
++
+     public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
+     {
+-        double d0 = p_82448_1_.field_70165_t;
+-        double d1 = p_82448_1_.field_70161_v;
++        // transferEntityToWorld(entityIn, lastDimension, oldWorldIn, toWorldIn, toWorldIn.getDefaultTeleporter());
++        Location exit = this.calculateTarget(p_82448_1_.getBukkitEntity().getLocation(), p_82448_4_);
++        this.repositionEntity(p_82448_1_, exit, true);
++    }
++
++    // TODO: Remove (1.13)
++    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraft.world.Teleporter teleporter)
++    {
++        transferEntityToWorld(p_82448_1_, p_82448_2_, p_82448_3_, p_82448_4_, (net.minecraftforge.common.util.ITeleporter) teleporter);
++    }
++
++    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraftforge.common.util.ITeleporter teleporter)
++    {
++        double moveFactor = p_82448_3_.field_73011_w.getMovementFactor() / p_82448_4_.field_73011_w.getMovementFactor();
++        double d0 = MathHelper.func_151237_a(p_82448_1_.field_70165_t * moveFactor, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
++        double d1 = MathHelper.func_151237_a(p_82448_1_.field_70161_v * moveFactor, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
+         double d2 = 8.0D;
+         float f = p_82448_1_.field_70177_z;
+         p_82448_3_.field_72984_F.func_76320_a("moving");
+ 
+-        if (p_82448_1_.field_71093_bK == -1)
++        if (false && p_82448_1_.field_71093_bK == -1)
+         {
+             d0 = MathHelper.func_151237_a(d0 / 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
+             d1 = MathHelper.func_151237_a(d1 / 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
+@@ -597,7 +1263,7 @@
+                 p_82448_3_.func_72866_a(p_82448_1_, false);
+             }
+         }
+-        else if (p_82448_1_.field_71093_bK == 0)
++        else if (false && p_82448_1_.field_71093_bK == 0)
+         {
+             d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
+             d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
+@@ -608,7 +1274,7 @@
+                 p_82448_3_.func_72866_a(p_82448_1_, false);
+             }
+         }
+-        else
++        if (p_82448_1_.field_71093_bK == 1 && teleporter.isVanilla())
+         {
+             BlockPos blockpos;
+ 
+@@ -634,7 +1300,7 @@
+ 
+         p_82448_3_.field_72984_F.func_76319_b();
+ 
+-        if (p_82448_2_ != 1)
++        if (p_82448_2_ != 1 || !teleporter.isVanilla())
+         {
+             p_82448_3_.field_72984_F.func_76320_a("placing");
+             d0 = (double)MathHelper.func_76125_a((int)d0, -29999872, 29999872);
+@@ -643,7 +1309,8 @@
+             if (p_82448_1_.func_70089_S())
+             {
+                 p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
+-                p_82448_4_.func_85176_s().func_180266_a(p_82448_1_, f);
++                p_82448_3_.func_72866_a(p_82448_1_, false);
++                teleporter.placeEntity(p_82448_4_, p_82448_1_, f);
+                 p_82448_4_.func_72838_d(p_82448_1_);
+                 p_82448_4_.func_72866_a(p_82448_1_, false);
+             }
+@@ -654,11 +1321,106 @@
+         p_82448_1_.func_70029_a(p_82448_4_);
+     }
+ 
++    // Copy of original transferEntityToWorld(Entity, int, WorldServer, WorldServer) method with only location calculation logic
++    public Location calculateTarget(Location enter, World target) {
++        WorldServer worldserver = ((CraftWorld) enter.getWorld()).getHandle();
++        WorldServer worldserver1 = ((CraftWorld) target.getWorld()).getHandle();
++        int i = worldserver.dimension;
++
++        double y = enter.getY();
++        float yaw = enter.getYaw();
++        float pitch = enter.getPitch();
++        double d0 = enter.getX();
++        double d1 = enter.getZ();
++        double d2 = 8.0D;
++
++        worldserver.field_72984_F.func_76320_a("moving");
++        if (worldserver1.dimension == -1) {
++            d0 = MathHelper.func_151237_a(d0 / d2, worldserver1.func_175723_af().func_177726_b()+ 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
++            d1 = MathHelper.func_151237_a(d1 / d2, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
++        } else if (worldserver1.dimension == 0) {
++            d0 = MathHelper.func_151237_a(d0 * d2, worldserver1.func_175723_af().func_177726_b() + 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
++            d1 = MathHelper.func_151237_a(d1 * d2, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
++        } else {
++            BlockPos blockposition;
++
++            if (i == 1) {
++                // use default NORMAL world spawn instead of target
++                worldserver1 = this.field_72400_f.field_71305_c[0];
++                blockposition = worldserver1.func_175694_M();
++            } else {
++                blockposition = worldserver1.func_180504_m();
++            }
++
++            // Mohist start - check null
++            if (blockposition != null)
++            {
++                d0 = (double) blockposition.func_177958_n();
++                y = (double) blockposition.func_177956_o();
++                d1 = (double) blockposition.func_177952_p();
++            }
++            // Mohist end
++        }
++
++        worldserver.field_72984_F.func_76319_b();
++        if (i != 1) {
++            worldserver.field_72984_F.func_76320_a("placing");
++            d0 = (double) MathHelper.func_76125_a((int) d0, -29999872, 29999872);
++            d1 = (double) MathHelper.func_76125_a((int) d1, -29999872, 29999872);
++            worldserver.field_72984_F.func_76319_b();
++        }
++
++        return new Location(worldserver1.getWorld(), d0, y, d1, yaw, pitch);
++    }
++
++    // copy of original transferEntityToWorld(Entity, int, WorldServer, WorldServer) method with only entity repositioning logic
++    public void repositionEntity(Entity entity, Location exit, boolean portal) {
++        WorldServer worldserver = (WorldServer) entity.field_70170_p;
++        WorldServer worldserver1 = ((CraftWorld) exit.getWorld()).getHandle();
++        int i = worldserver.dimension;
++
++        worldserver.field_72984_F.func_76320_a("moving");
++        entity.func_70012_b(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
++        if (entity.func_70089_S()) {
++            worldserver.func_72866_a(entity, false);
++        }
++
++        worldserver.field_72984_F.func_76319_b();
++        if (i != 1) {
++            worldserver.field_72984_F.func_76320_a("placing");
++            if (entity.func_70089_S()) {
++                if (portal) {
++                    Vector velocity = entity.getBukkitEntity().getVelocity();
++                    worldserver1.func_85176_s().adjustExit(entity, exit, velocity);
++                    entity.func_70012_b(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
++                    if (entity.field_70159_w != velocity.getX() || entity.field_70181_x != velocity.getY() || entity.field_70179_y != velocity.getZ()) {
++                        entity.getBukkitEntity().setVelocity(velocity);
++                    }
++                }
++                worldserver1.func_72866_a(entity, false);
++            }
++
++            worldserver.field_72984_F.func_76319_b();
++        }
++
++        entity.func_70029_a(worldserver1);
++    }
++
+     public void func_72374_b()
+     {
+         if (++this.field_72408_o > 600)
+         {
+-            this.func_148540_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.UPDATE_LATENCY, this.field_72404_b));
++            // this.sendPacketToAllPlayers(new SPacketPlayerListItem(SPacketPlayerListItem.Action.UPDATE_LATENCY, this.playerEntityList));
++            for (int i = 0; i < this.field_72404_b.size(); ++i) {
++                final EntityPlayerMP target = this.field_72404_b.get(i);
++
++                target.field_71135_a.func_147359_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.UPDATE_LATENCY, Iterables.filter(this.field_72404_b, new Predicate<EntityPlayerMP>() {
++                    @Override
++                    public boolean apply(EntityPlayerMP input) {
++                        return target.getBukkitEntity().canSee(input.getBukkitEntity());
++                    }
++                })));
++            }
+             this.field_72408_o = 0;
+         }
+     }
+@@ -671,6 +1433,24 @@
+         }
+     }
+ 
++    // CraftBukkit start - add a world/entity limited version
++    public void sendAll(Packet packet, EntityPlayer entityhuman) {
++        for (int i = 0; i < this.field_72404_b.size(); ++i) {
++            EntityPlayerMP entityplayer =  this.field_72404_b.get(i);
++            if (entityhuman != null && entityhuman instanceof EntityPlayerMP && !entityplayer.getBukkitEntity().canSee(((EntityPlayerMP) entityhuman).getBukkitEntity())) {
++                continue;
++            }
++            ((EntityPlayerMP) this.field_72404_b.get(i)).field_71135_a.func_147359_a(packet);
++        }
++    }
++
++    public void sendAll(Packet packet, World world) {
++        for (int i = 0; i < world.field_73010_i.size(); ++i) {
++            ((EntityPlayerMP) world.field_73010_i.get(i)).field_71135_a.func_147359_a(packet);
++        }
++    }
++    // CraftBukkit end
++
+     public void func_148537_a(Packet<?> p_148537_1_, int p_148537_2_)
+     {
+         for (int i = 0; i < this.field_72404_b.size(); ++i)
+@@ -786,12 +1566,20 @@
+         int i = this.field_72400_f.func_110455_j();
+         this.field_72414_i.func_152687_a(new UserListOpsEntry(p_152605_1_, this.field_72400_f.func_110455_j(), this.field_72414_i.func_183026_b(p_152605_1_)));
+         this.func_187245_a(this.func_177451_a(p_152605_1_.getId()), i);
++        Player player = field_72400_f.server.getPlayer(p_152605_1_.getId());
++        if (player != null) {
++            player.recalculatePermissions();
++        }
+     }
+ 
+     public void func_152610_b(GameProfile p_152610_1_)
+     {
+         this.field_72414_i.func_152684_c(p_152610_1_);
+         this.func_187245_a(this.func_177451_a(p_152610_1_.getId()), 0);
++        Player player = field_72400_f.server.getPlayer(p_152610_1_.getId());
++        if (player != null) {
++            player.recalculatePermissions();
++        }
+     }
+ 
+     private void func_187245_a(EntityPlayerMP p_187245_1_, int p_187245_2_)
+@@ -847,6 +1635,12 @@
+         {
+             EntityPlayerMP entityplayermp = this.field_72404_b.get(i);
+ 
++            // CraftBukkit start - Test if player receiving packet can see the source of the packet
++            if (p_148543_1_ != null && p_148543_1_ instanceof EntityPlayerMP && !entityplayermp.getBukkitEntity().canSee(((EntityPlayerMP) p_148543_1_).getBukkitEntity())) {
++                continue;
++            }
++            // CraftBukkit end
++
+             if (entityplayermp != p_148543_1_ && entityplayermp.field_71093_bK == p_148543_10_)
+             {
+                 double d0 = p_148543_2_ - entityplayermp.field_70165_t;
+@@ -863,12 +1657,26 @@
+ 
+     public void func_72389_g()
+     {
+-        for (int i = 0; i < this.field_72404_b.size(); ++i)
+-        {
+-            this.func_72391_b(this.field_72404_b.get(i));
+-        }
++        saveAllPlayerData(null);
+     }
+ 
++    public void saveAllPlayerData(Integer interval) {
++        MCUtil.ensureMain("Save Players", () -> { // Paper - ensure main
++            long now = MinecraftServer.currentTick;
++            int numSaved = 0; // Paper
++            MinecraftTimings.savePlayers.startTiming(); // Paper
++            for (int i = 0; i < this.field_72404_b.size(); ++i) {
++                EntityPlayerMP entityplayer = this.field_72404_b.get(i);
++                if (interval == null || now - entityplayer.lastSave >= interval) {
++                    this.func_72391_b(entityplayer);
++                    if (interval != null && ++numSaved <= 10) { break; } // Paper
++                }
++            }
++            MinecraftTimings.savePlayers.stopTiming(); // Paper
++            return null; }); // Paper - ensure main
++    }
++    // Paper end
++
+     public void func_152601_d(GameProfile p_152601_1_)
+     {
+         this.field_72411_j.func_152687_a(new UserListWhitelistEntry(p_152601_1_));
+@@ -913,16 +1721,21 @@
+ 
+         if (p_72354_2_.func_72896_J())
+         {
+-            p_72354_1_.field_71135_a.func_147359_a(new SPacketChangeGameState(1, 0.0F));
+-            p_72354_1_.field_71135_a.func_147359_a(new SPacketChangeGameState(7, p_72354_2_.func_72867_j(1.0F)));
+-            p_72354_1_.field_71135_a.func_147359_a(new SPacketChangeGameState(8, p_72354_2_.func_72819_i(1.0F)));
++            // CraftBukkit start - handle player weather
++            // playerIn.connection.sendPacket(new SPacketChangeGameState(1, 0.0F));
++            // playerIn.connection.sendPacket(new SPacketChangeGameState(7, worldIn.getRainStrength(1.0F)));
++            // playerIn.connection.sendPacket(new SPacketChangeGameState(8, worldIn.getThunderStrength(1.0F)));
++            p_72354_1_.setPlayerWeather(org.bukkit.WeatherType.DOWNFALL, false);
++            p_72354_1_.updateWeather(-p_72354_2_.field_73004_o, p_72354_2_.field_73004_o, -p_72354_2_.field_73017_q, p_72354_2_.field_73017_q);
++            // CraftBukkit end
+         }
+     }
+ 
+     public void func_72385_f(EntityPlayerMP p_72385_1_)
+     {
+         p_72385_1_.func_71120_a(p_72385_1_.field_71069_bz);
+-        p_72385_1_.func_71118_n();
++        // playerIn.setPlayerHealthUpdated();
++        p_72385_1_.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
+         p_72385_1_.field_71135_a.func_147359_a(new SPacketHeldItemChange(p_72385_1_.field_71071_by.field_70461_c));
+     }
+ 
+@@ -1004,17 +1817,26 @@
+ 
+     public void func_72392_r()
+     {
+-        for (int i = 0; i < this.field_72404_b.size(); ++i)
+-        {
+-            (this.field_72404_b.get(i)).field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.server_shutdown", new Object[0]));
++        // CraftBukkit start - disconnect safely
++        for (EntityPlayerMP player : this.field_72404_b) {
++            player.field_71135_a.disconnect(this.field_72400_f.server.getShutdownMessage()); // CraftBukkit - add custom shutdown message
+         }
+     }
+ 
++    public void sendMessage(ITextComponent[] iChatBaseComponents) {
++        for (ITextComponent component : iChatBaseComponents) {
++            func_148544_a(component, true);
++        }
++    }
++
+     public void func_148544_a(ITextComponent p_148544_1_, boolean p_148544_2_)
+     {
+         this.field_72400_f.func_145747_a(p_148544_1_);
+         ChatType chattype = p_148544_2_ ? ChatType.SYSTEM : ChatType.CHAT;
+-        this.func_148540_a(new SPacketChat(p_148544_1_, chattype));
++        // this.sendPacketToAllPlayers(new SPacketChat(component, chattype));
++        // CraftBukkit start - we run this through our processor first so we can get web links etc
++        this.func_148540_a(new SPacketChat(CraftChatMessage.fixComponent(p_148544_1_), chattype));
++        // CraftBukkit end
+     }
+ 
+     public void func_148539_a(ITextComponent p_148539_1_)
+@@ -1022,10 +1844,19 @@
+         this.func_148544_a(p_148539_1_, true);
+     }
+ 
+-    public StatisticsManagerServer func_152602_a(EntityPlayer p_152602_1_)
++    @Nullable
++    public StatisticsManagerServer func_152602_a(EntityPlayer p_152602_1_) {
++        if (p_152602_1_ instanceof EntityPlayerMP) {
++            return this.getPlayerStatsFile((EntityPlayerMP) p_152602_1_);
++        } else {
++            return null;
++        }
++    }
++
++    public StatisticsManagerServer getPlayerStatsFile(EntityPlayerMP playerIn)
+     {
+-        UUID uuid = p_152602_1_.func_110124_au();
+-        StatisticsManagerServer statisticsmanagerserver = uuid == null ? null : (StatisticsManagerServer)this.field_148547_k.get(uuid);
++        UUID uuid = playerIn.func_110124_au();
++        StatisticsManagerServer statisticsmanagerserver = uuid == null ? null : (StatisticsManagerServer)playerIn.func_147099_x();
+ 
+         if (statisticsmanagerserver == null)
+         {
+@@ -1034,7 +1865,7 @@
+ 
+             if (!file2.exists())
+             {
+-                File file3 = new File(file1, p_152602_1_.func_70005_c_() + ".json");
++                File file3 = new File(file1, playerIn.func_70005_c_() + ".json");
+ 
+                 if (file3.exists() && file3.isFile())
+                 {
+@@ -1044,7 +1875,7 @@
+ 
+             statisticsmanagerserver = new StatisticsManagerServer(this.field_72400_f, file2);
+             statisticsmanagerserver.func_150882_a();
+-            this.field_148547_k.put(uuid, statisticsmanagerserver);
++            // this.playerStatFiles.put(uuid, statisticsmanagerserver);
+         }
+ 
+         return statisticsmanagerserver;
+@@ -1053,14 +1884,14 @@
+     public PlayerAdvancements func_192054_h(EntityPlayerMP p_192054_1_)
+     {
+         UUID uuid = p_192054_1_.func_110124_au();
+-        PlayerAdvancements playeradvancements = this.field_192055_p.get(uuid);
++        PlayerAdvancements playeradvancements = p_192054_1_.func_192039_O();
+ 
+         if (playeradvancements == null)
+         {
+             File file1 = new File(this.field_72400_f.func_71218_a(0).func_72860_G().func_75765_b(), "advancements");
+             File file2 = new File(file1, uuid + ".json");
+             playeradvancements = new PlayerAdvancements(this.field_72400_f, file2, p_192054_1_);
+-            this.field_192055_p.put(uuid, playeradvancements);
++            // this.advancements.put(uuid, playeradvancements);
+         }
+ 
+         playeradvancements.func_192739_a(p_192054_1_);
+@@ -1073,7 +1904,7 @@
+ 
+         if (this.field_72400_f.field_71305_c != null)
+         {
+-            for (WorldServer worldserver : this.field_72400_f.field_71305_c)
++            for (WorldServer worldserver : this.field_72400_f.worldServerList)
+             {
+                 if (worldserver != null)
+                 {
+@@ -1101,9 +1932,10 @@
+ 
+     public void func_193244_w()
+     {
+-        for (PlayerAdvancements playeradvancements : this.field_192055_p.values())
++        for (EntityPlayerMP entityPlayerMP : this.field_72404_b)
+         {
+-            playeradvancements.func_193766_b();
++            entityPlayerMP.func_192039_O().func_193766_b();
++            entityPlayerMP.func_192039_O().func_192741_b(entityPlayerMP); // CraftBukkit - trigger immediate flush of advancements
+         }
+     }
+ 

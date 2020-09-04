@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserList.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserList.java
+@@ -59,7 +59,7 @@
+     {
+         this.field_152695_c = p_i1144_1_;
+         GsonBuilder gsonbuilder = (new GsonBuilder()).setPrettyPrinting();
+-        gsonbuilder.registerTypeHierarchyAdapter(UserListEntry.class, new UserList.Serializer());
++        gsonbuilder.registerTypeHierarchyAdapter(UserListEntry.class, new Serializer());
+         this.field_152694_b = gsonbuilder.create();
+     }
+ 
+@@ -129,6 +129,7 @@
+     }
+ 
+     private void func_152680_h()
++
+     {
+         List<K> list = Lists.<K>newArrayList();
+ 
+@@ -156,6 +157,10 @@
+         return this.field_152696_d;
+     }
+ 
++    public Collection<V> getValuesCB() {
++        return this.field_152696_d.values();
++    }
++
+     public void func_152678_f() throws IOException
+     {
+         Collection<V> collection = this.field_152696_d.values();

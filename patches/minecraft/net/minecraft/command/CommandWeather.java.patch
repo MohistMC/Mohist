@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandWeather.java
++++ ../src-work/minecraft/net/minecraft/command/CommandWeather.java
+@@ -4,6 +4,7 @@
+ import java.util.List;
+ import java.util.Random;
+ import javax.annotation.Nullable;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+@@ -38,7 +39,7 @@
+             }
+ 
+             World world = p_184881_1_.field_71305_c[0];
+-            WorldInfo worldinfo = world.func_72912_H();
++            WorldInfo worldinfo = p_184881_2_ instanceof EntityPlayerMP ? p_184881_2_.func_130014_f_().func_72912_H() : world.func_72912_H();
+ 
+             if ("clear".equalsIgnoreCase(p_184881_3_[0]))
+             {

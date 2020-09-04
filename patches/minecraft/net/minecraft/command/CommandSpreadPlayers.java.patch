@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandSpreadPlayers.java
++++ ../src-work/minecraft/net/minecraft/command/CommandSpreadPlayers.java
+@@ -10,6 +10,7 @@
+ import java.util.Set;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.material.Material;
++import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.scoreboard.Team;
+@@ -18,6 +19,7 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.text.TextComponentTranslation;
+ import net.minecraft.world.World;
++import net.minecraft.world.gen.ChunkProviderServer;
+ 
+ public class CommandSpreadPlayers extends CommandBase
+ {
+@@ -356,7 +358,7 @@
+                 {
+                     blockpos = blockpos.func_177977_b();
+ 
+-                    if (p_111092_1_.func_180495_p(blockpos).func_185904_a() != Material.field_151579_a)
++                    if (getBlockState(p_111092_1_, blockpos).func_185904_a() != Material.field_151579_a)
+                     {
+                         return blockpos.func_177956_o() + 1;
+                     }
+@@ -372,7 +374,7 @@
+                 while (blockpos.func_177956_o() > 0)
+                 {
+                     blockpos = blockpos.func_177977_b();
+-                    Material material = p_111098_1_.func_180495_p(blockpos).func_185904_a();
++                    Material material = getBlockState(p_111098_1_, blockpos).func_185904_a();
+ 
+                     if (material != Material.field_151579_a)
+                     {
+@@ -388,5 +390,12 @@
+                 this.field_111101_a = MathHelper.func_82716_a(p_111097_1_, p_111097_2_, p_111097_6_);
+                 this.field_111100_b = MathHelper.func_82716_a(p_111097_1_, p_111097_4_, p_111097_8_);
+             }
++
++            // CraftBukkit start - add a version of getBlockState which force loads chunks
++            private static IBlockState getBlockState(World world, BlockPos position) {
++                ((ChunkProviderServer) world.func_72863_F()).func_186028_c(position.func_177958_n() >> 4, position.func_177952_p() >> 4);
++                return world.func_180495_p(position);
++            }
++            // CraftBukkit end
+         }
+ }

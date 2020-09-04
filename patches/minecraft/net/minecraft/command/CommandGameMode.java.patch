@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandGameMode.java
++++ ../src-work/minecraft/net/minecraft/command/CommandGameMode.java
+@@ -4,9 +4,11 @@
+ import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.TextComponentString;
+ import net.minecraft.util.text.TextComponentTranslation;
+ import net.minecraft.world.GameType;
+ import net.minecraft.world.WorldSettings;
+@@ -39,6 +41,12 @@
+             GameType gametype = this.func_71539_b(p_184881_2_, p_184881_3_[0]);
+             EntityPlayer entityplayer = p_184881_3_.length >= 2 ? func_184888_a(p_184881_1_, p_184881_2_, p_184881_3_[1]) : func_71521_c(p_184881_2_);
+             entityplayer.func_71033_a(gametype);
++            // CraftBukkit start - handle event cancelling the change
++            if (((EntityPlayerMP) entityplayer).field_71134_c.func_73081_b() != gametype) {
++                p_184881_2_.func_145747_a(new TextComponentString("Failed to set the gamemode of '" + entityplayer.func_70005_c_() + "'"));
++                return;
++            }
++            // CraftBukkit end
+             ITextComponent itextcomponent = new TextComponentTranslation("gameMode." + gametype.func_77149_b(), new Object[0]);
+ 
+             if (p_184881_2_.func_130014_f_().func_82736_K().func_82766_b("sendCommandFeedback"))

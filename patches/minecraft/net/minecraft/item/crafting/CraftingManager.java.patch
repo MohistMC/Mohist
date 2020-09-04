@@ -1,0 +1,118 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
+@@ -36,12 +36,13 @@
+ {
+     private static final Logger field_192422_a = LogManager.getLogger();
+     private static int field_193381_c;
+-    public static final RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = new RegistryNamespaced<ResourceLocation, IRecipe>();
++    public static RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = net.minecraftforge.registries.GameData.getWrapper(IRecipe.class);
+ 
+     public static boolean func_193377_a()
+     {
+         try
+         {
++            CraftingManager.field_193381_c = 0; // Reset recipe ID count
+             func_193379_a("armordye", new RecipesArmorDyes());
+             func_193379_a("bookcloning", new RecipeBookCloning());
+             func_193379_a("mapcloning", new RecipesMapCloning());
+@@ -84,7 +85,7 @@
+                 {
+                     if (!"jar".equals(uri.getScheme()))
+                     {
+-                        field_192422_a.error("Unsupported scheme " + uri + " trying to list all recipes");
++                        field_192422_a.debug("Unsupported scheme " + uri + " trying to list all recipes");
+                         boolean flag2 = false;
+                         return flag2;
+                     }
+@@ -117,13 +118,13 @@
+                             }
+                             catch (JsonParseException jsonparseexception)
+                             {
+-                                field_192422_a.error("Parsing error loading recipe " + resourcelocation, (Throwable)jsonparseexception);
++                                field_192422_a.debug("Parsing error loading recipe " + resourcelocation, (Throwable)jsonparseexception);
+                                 flag = false;
+                                 return flag;
+                             }
+                             catch (IOException ioexception)
+                             {
+-                                field_192422_a.error("Couldn't read recipe " + resourcelocation + " from " + path1, (Throwable)ioexception);
++                                field_192422_a.debug("Couldn't read recipe " + resourcelocation + " from " + path1, (Throwable)ioexception);
+                                 flag = false;
+                                 return flag;
+                             }
+@@ -138,12 +139,12 @@
+                 return true;
+             }
+ 
+-            field_192422_a.error("Couldn't find .mcassetsroot");
++            field_192422_a.debug("Couldn't find .mcassetsroot");
+             flag1 = false;
+         }
+         catch (IOException | URISyntaxException urisyntaxexception)
+         {
+-            field_192422_a.error("Couldn't get a list of all recipe files", (Throwable)urisyntaxexception);
++            field_192422_a.debug("Couldn't get a list of all recipe files", (Throwable)urisyntaxexception);
+             flag1 = false;
+             return flag1;
+         }
+@@ -173,12 +174,14 @@
+         }
+     }
+ 
+-    public static void func_193379_a(String p_193379_0_, IRecipe p_193379_1_)
++    //Forge: Made private use GameData/Registry events!
++    private static void func_193379_a(String p_193379_0_, IRecipe p_193379_1_)
+     {
+         func_193372_a(new ResourceLocation(p_193379_0_), p_193379_1_);
+     }
+ 
+-    public static void func_193372_a(ResourceLocation p_193372_0_, IRecipe p_193372_1_)
++    //Forge: Made private use GameData/Registry events!
++    private static void func_193372_a(ResourceLocation p_193372_0_, IRecipe p_193372_1_)
+     {
+         if (field_193380_a.func_148741_d(p_193372_0_))
+         {
+@@ -186,6 +189,7 @@
+         }
+         else
+         {
++            p_193372_1_.setKey(p_193372_0_);
+             field_193380_a.func_177775_a(field_193381_c++, p_193372_0_, p_193372_1_);
+         }
+     }
+@@ -199,7 +203,7 @@
+                 return irecipe.func_77572_b(p_82787_0_);
+             }
+         }
+-
++        p_82787_0_.currentRecipe = null; // CraftBukkit - Clear recipe when no recipe is found
+         return ItemStack.field_190927_a;
+     }
+ 
+@@ -210,10 +214,12 @@
+         {
+             if (irecipe.func_77569_a(p_192413_0_, p_192413_1_))
+             {
++                p_192413_0_.currentRecipe = irecipe; // CraftBukkit
+                 return irecipe;
+             }
+         }
+ 
++        p_192413_0_.currentRecipe = null; // CraftBukkit - Clear recipe when no recipe is found
+         return null;
+     }
+ 
+@@ -243,11 +249,13 @@
+         return field_193380_a.func_82594_a(p_193373_0_);
+     }
+ 
++    @Deprecated //DO NOT USE THIS
+     public static int func_193375_a(IRecipe p_193375_0_)
+     {
+         return field_193380_a.func_148757_b(p_193375_0_);
+     }
+ 
++    @Deprecated //DO NOT USE THIS
+     @Nullable
+     public static IRecipe func_193374_a(int p_193374_0_)
+     {

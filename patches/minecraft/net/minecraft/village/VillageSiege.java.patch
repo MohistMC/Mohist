@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/village/VillageSiege.java
++++ ../src-work/minecraft/net/minecraft/village/VillageSiege.java
+@@ -146,6 +146,7 @@
+ 
+                     if (vec3d != null)
+                     {
++                        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, field_75537_a, entityplayer, field_75531_f, vec3d))) return false;
+                         break;
+                     }
+                 }
+@@ -181,7 +182,7 @@
+             }
+ 
+             entityzombie.func_70012_b(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c, this.field_75537_a.field_73012_v.nextFloat() * 360.0F, 0.0F);
+-            this.field_75537_a.func_72838_d(entityzombie);
++            this.field_75537_a.addEntity(entityzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION);
+             BlockPos blockpos = this.field_75531_f.func_180608_a();
+             entityzombie.func_175449_a(blockpos, this.field_75531_f.func_75568_b());
+             return true;

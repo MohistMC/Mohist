@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
+@@ -30,6 +30,10 @@
+ 
+     private void func_186012_b(int p_186012_1_)
+     {
++        setBits(p_186012_1_, false);
++    }
++    private void setBits(int p_186012_1_, boolean forceBits)
++    {
+         if (p_186012_1_ != this.field_186024_e)
+         {
+             this.field_186024_e = p_186012_1_;
+@@ -47,6 +51,8 @@
+             {
+                 this.field_186022_c = field_186023_d;
+                 this.field_186024_e = MathHelper.func_151241_e(Block.field_176229_d.func_186804_a());
++                if (forceBits)
++                    this.field_186024_e = p_186012_1_;
+             }
+ 
+             this.field_186022_c.func_186041_a(field_186020_a);
+@@ -102,11 +108,15 @@
+ 
+         if (this.field_186024_e != i)
+         {
+-            this.func_186012_b(i);
++            this.setBits(i, true); //Forge, Force bit density to fix network issues, resize below if needed.
+         }
+ 
+         this.field_186022_c.func_186038_a(p_186010_1_);
+         p_186010_1_.func_186873_b(this.field_186021_b.func_188143_a());
++
++        int regSize = MathHelper.func_151241_e(Block.field_176229_d.func_186804_a());
++        if (this.field_186022_c == field_186023_d && this.field_186024_e != regSize) // Resize bits to fit registry.
++            this.func_186008_a(regSize, field_186020_a);
+     }
+ 
+     public void func_186009_b(PacketBuffer p_186009_1_)
+@@ -154,7 +164,18 @@
+             int l = i >> 4 & 15;
+             int i1 = p_186019_3_ == null ? 0 : p_186019_3_.func_76582_a(j, k, l);
+             int j1 = i1 << 12 | (p_186019_1_[i] & 255) << 4 | p_186019_2_.func_76582_a(j, k, l);
+-            this.func_186014_b(i, Block.field_176229_d.func_148745_a(j1));
++            IBlockState state = Block.field_176229_d.func_148745_a(j1);
++            if (state == null) {
++                Block block = Block.func_149729_e(j1 >> 4);
++                if (block != null) {
++                    try {
++                        state = block.func_176223_P();
++                    } catch (Exception ignored) {
++                        state = block.func_176223_P();
++                    }
++                }
++            }
++            this.func_186014_b(i, state);
+         }
+     }
+ 

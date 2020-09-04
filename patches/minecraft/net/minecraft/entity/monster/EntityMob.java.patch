@@ -1,0 +1,61 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityMob.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMob.java
+@@ -6,9 +6,7 @@
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.SharedMonsterAttributes;
+ import net.minecraft.entity.player.EntityPlayer;
+-import net.minecraft.init.Items;
+ import net.minecraft.init.SoundEvents;
+-import net.minecraft.item.ItemAxe;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.SoundCategory;
+@@ -18,6 +16,7 @@
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
+ 
+ public abstract class EntityMob extends EntityCreature implements IMob
+ {
+@@ -111,7 +110,15 @@
+ 
+             if (j > 0)
+             {
+-                p_70652_1_.func_70015_d(j * 4);
++                // entityIn.setFire(j * 4);
++                // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
++                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_70652_1_.getBukkitEntity(), j * 4);
++                org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++
++                if (!combustEvent.isCancelled()) {
++                    p_70652_1_.func_70015_d(combustEvent.getDuration());
++                }
++                // CraftBukkit end
+             }
+ 
+             if (p_70652_1_ instanceof EntityPlayer)
+@@ -120,13 +127,13 @@
+                 ItemStack itemstack = this.func_184614_ca();
+                 ItemStack itemstack1 = entityplayer.func_184587_cr() ? entityplayer.func_184607_cu() : ItemStack.field_190927_a;
+ 
+-                if (!itemstack.func_190926_b() && !itemstack1.func_190926_b() && itemstack.func_77973_b() instanceof ItemAxe && itemstack1.func_77973_b() == Items.field_185159_cQ)
++                if (!itemstack.func_190926_b() && !itemstack1.func_190926_b() && itemstack.func_77973_b().canDisableShield(itemstack, itemstack1, entityplayer, this) && itemstack1.func_77973_b().isShield(itemstack1, entityplayer))
+                 {
+                     float f1 = 0.25F + (float)EnchantmentHelper.func_185293_e(this) * 0.05F;
+ 
+                     if (this.field_70146_Z.nextFloat() < f1)
+                     {
+-                        entityplayer.func_184811_cZ().func_185145_a(Items.field_185159_cQ, 100);
++                        entityplayer.func_184811_cZ().func_185145_a(itemstack1.func_77973_b(), 100);
+                         this.field_70170_p.func_72960_a(entityplayer, (byte)30);
+                     }
+                 }
+@@ -161,6 +168,7 @@
+                 this.field_70170_p.func_175692_b(10);
+                 i = this.field_70170_p.func_175671_l(blockpos);
+                 this.field_70170_p.func_175692_b(j);
++
+             }
+ 
+             return i <= this.field_70146_Z.nextInt(8);

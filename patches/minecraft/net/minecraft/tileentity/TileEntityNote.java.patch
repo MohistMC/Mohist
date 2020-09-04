@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityNote.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityNote.java
+@@ -32,7 +32,9 @@
+ 
+     public void func_145877_a()
+     {
++        byte old = field_145879_a;
+         this.field_145879_a = (byte)((this.field_145879_a + 1) % 25);
++        if (!net.minecraftforge.common.ForgeHooks.onNoteChange(this, old)) return;
+         this.func_70296_d();
+     }
+ 
+@@ -42,7 +44,7 @@
+         {
+             IBlockState iblockstate = p_175108_1_.func_180495_p(p_175108_2_.func_177977_b());
+             Material material = iblockstate.func_185904_a();
+-            int i = 0;
++            byte i = 0;
+ 
+             if (material == Material.field_151576_e)
+             {
+@@ -91,7 +93,12 @@
+                 i = 9;
+             }
+ 
+-            p_175108_1_.func_175641_c(p_175108_2_, Blocks.field_150323_B, i, this.field_145879_a);
++            // CraftBukkit start
++            org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callNotePlayEvent(this.field_145850_b, p_175108_2_.func_177958_n(), p_175108_2_.func_177956_o(), p_175108_2_.func_177952_p(), i, this.field_145879_a);
++            if (!event.isCancelled()) {
++                p_175108_1_.func_175641_c(p_175108_2_, Blocks.field_150323_B, event.getInstrument().getType(), event.getNote().getId());
++            }
++            // CraftBukkit end
+         }
+     }
+ }

@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/network/NettyPacketEncoder.java
++++ ../src-work/minecraft/net/minecraft/network/NettyPacketEncoder.java
+@@ -36,7 +36,10 @@
+             {
+                 field_150798_a.debug(field_150797_b, "OUT: [{}:{}] {}", p_encode_1_.channel().attr(NetworkManager.field_150739_c).get(), integer, p_encode_2_.getClass().getName());
+             }
+-
++            if (integer == null && (integer = EnumConnectionState.LOGIN.func_179246_a(this.field_152500_c, p_encode_2_)) != null)
++            {
++                field_150798_a.debug("current state is {}, but send packet {}", enumconnectionstate, p_encode_2_.getClass().getSimpleName());
++            }
+             if (integer == null)
+             {
+                 throw new IOException("Can't serialize unregistered packet");
+@@ -52,7 +55,7 @@
+                 }
+                 catch (Throwable throwable)
+                 {
+-                    field_150798_a.error(throwable);
++                    throw throwable; // Forge: throw this instead of logging it, to prevent corrupt packets from being sent to the client where they are much harder to debug.
+                 }
+             }
+         }

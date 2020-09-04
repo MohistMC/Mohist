@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFlintAndSteel.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFlintAndSteel.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.item;
+ 
+ import net.minecraft.advancements.CriteriaTriggers;
+-import net.minecraft.block.material.Material;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+@@ -34,8 +33,14 @@
+         }
+         else
+         {
+-            if (p_180614_2_.func_180495_p(p_180614_3_).func_185904_a() == Material.field_151579_a)
++            if (p_180614_2_.func_175623_d(p_180614_3_))
+             {
++                // CraftBukkit start - Store the clicked block
++                if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockIgniteEvent(p_180614_2_, p_180614_3_.func_177958_n(), p_180614_3_.func_177956_o(), p_180614_3_.func_177952_p(), org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, p_180614_1_).isCancelled()) {
++                    itemstack.func_77972_a(1, p_180614_1_);
++                    return EnumActionResult.PASS;
++                }
++                // CraftBukkit end
+                 p_180614_2_.func_184133_a(p_180614_1_, p_180614_3_, SoundEvents.field_187649_bu, SoundCategory.BLOCKS, 1.0F, field_77697_d.nextFloat() * 0.4F + 0.8F);
+                 p_180614_2_.func_180501_a(p_180614_3_, Blocks.field_150480_ab.func_176223_P(), 11);
+             }

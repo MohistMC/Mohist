@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTNT.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTNT.java
+@@ -115,6 +115,9 @@
+ 
+             if (entityarrow.func_70027_ad())
+             {
++                if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityChangeBlockEvent(entityarrow, p_180634_2_, Blocks.field_150350_a, 0).isCancelled()) {
++                    return;
++                }
+                 this.func_180692_a(p_180634_1_, p_180634_2_, p_180634_1_.func_180495_p(p_180634_2_).func_177226_a(field_176246_a, Boolean.valueOf(true)), entityarrow.field_70250_c instanceof EntityLivingBase ? (EntityLivingBase)entityarrow.field_70250_c : null);
+                 p_180634_1_.func_175698_g(p_180634_2_);
+             }

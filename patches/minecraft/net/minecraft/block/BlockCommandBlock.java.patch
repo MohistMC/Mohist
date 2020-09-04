@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCommandBlock.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCommandBlock.java
+@@ -27,6 +27,7 @@
+ import net.minecraft.world.World;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public class BlockCommandBlock extends BlockContainer
+ {
+@@ -58,6 +59,13 @@
+                 TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)tileentity;
+                 boolean flag = p_189540_2_.func_175640_z(p_189540_3_);
+                 boolean flag1 = tileentitycommandblock.func_184255_d();
++                org.bukkit.block.Block bukkitBlock = p_189540_2_.getWorld().getBlockAt(p_189540_3_.func_177958_n(), p_189540_3_.func_177956_o(), p_189540_3_.func_177952_p());
++                int old = flag1 ? 15 : 0;
++                int current = flag ? 15 : 0;
++
++                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
++                p_189540_2_.getServer().getPluginManager().callEvent(eventRedstone);
++                flag = eventRedstone.getNewCurrent() > 0;
+                 tileentitycommandblock.func_184250_a(flag);
+ 
+                 if (!flag1 && !tileentitycommandblock.func_184254_e() && tileentitycommandblock.func_184251_i() != TileEntityCommandBlock.Mode.SEQUENCE)

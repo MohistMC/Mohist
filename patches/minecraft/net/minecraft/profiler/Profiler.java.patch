@@ -1,0 +1,83 @@
+--- ../src-base/minecraft/net/minecraft/profiler/Profiler.java
++++ ../src-work/minecraft/net/minecraft/profiler/Profiler.java
+@@ -13,6 +13,7 @@
+ 
+ public class Profiler
+ {
++    public static final boolean ENABLED = Boolean.getBoolean("enableDebugMethodProfiler"); // CraftBukkit - disable unless specified in JVM arguments
+     private static final Logger field_151234_b = LogManager.getLogger();
+     private final List<String> field_76325_b = Lists.<String>newArrayList();
+     private final List<Long> field_76326_c = Lists.<Long>newArrayList();
+@@ -22,6 +23,7 @@
+ 
+     public void func_76317_a()
+     {
++        if (!ENABLED) return;
+         this.field_76324_e.clear();
+         this.field_76323_d = "";
+         this.field_76325_b.clear();
+@@ -29,6 +31,7 @@
+ 
+     public void func_76320_a(String p_76320_1_)
+     {
++        if (!ENABLED) return;
+         if (this.field_76327_a)
+         {
+             if (!this.field_76323_d.isEmpty())
+@@ -44,6 +47,7 @@
+ 
+     public void func_194340_a(Supplier<String> p_194340_1_)
+     {
++        if (!ENABLED) return;
+         if (this.field_76327_a)
+         {
+             this.func_76320_a(p_194340_1_.get());
+@@ -52,6 +56,7 @@
+ 
+     public void func_76319_b()
+     {
++        if (!ENABLED) return;
+         if (this.field_76327_a)
+         {
+             long i = System.nanoTime();
+@@ -79,7 +84,7 @@
+ 
+     public List<Profiler.Result> func_76321_b(String p_76321_1_)
+     {
+-        if (!this.field_76327_a)
++        if (!ENABLED || !this.field_76327_a)
+         {
+             return Collections.<Profiler.Result>emptyList();
+         }
+@@ -146,12 +151,14 @@
+ 
+     public void func_76318_c(String p_76318_1_)
+     {
++        if (!ENABLED) return;
+         this.func_76319_b();
+         this.func_76320_a(p_76318_1_);
+     }
+ 
+     public String func_76322_c()
+     {
++        if (!ENABLED) return "[DISABLED]";
+         return this.field_76325_b.isEmpty() ? "[UNKNOWN]" : (String)this.field_76325_b.get(this.field_76325_b.size() - 1);
+     }
+ 
+@@ -193,4 +200,16 @@
+                 return (this.field_76331_c.hashCode() & 11184810) + 4473924;
+             }
+         }
++
++    /**
++     * Forge: Fix for MC-117087, World.updateEntities is wasting time calling Class.getSimpleName() when the profiler is not active
++     */
++    @Deprecated // TODO: remove (1.13)
++    public void startSection(Class<?> profiledClass)
++    {
++        if (this.field_76327_a)
++        {
++            func_76320_a(profiledClass.getSimpleName());
++        }
++    }
+ }

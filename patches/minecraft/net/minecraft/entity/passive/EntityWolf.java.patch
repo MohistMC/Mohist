@@ -1,0 +1,81 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityWolf.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWolf.java
+@@ -51,6 +51,8 @@
+ import net.minecraft.world.storage.loot.LootTableList;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class EntityWolf extends EntityTameable
+ {
+@@ -115,6 +117,22 @@
+         this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e).func_111128_a(2.0D);
+     }
+ 
++    // CraftBukkit - add overriden version
++    @Override
++    public boolean setGoalTarget(@Nullable EntityLivingBase entityliving, EntityTargetEvent.TargetReason reason, boolean fire) {
++        if (!super.setGoalTarget(entityliving, reason, fire)) {
++            return false;
++        }
++        entityliving = func_70638_az();
++        if (entityliving == null) {
++            this.func_70916_h(false);
++        } else if (!this.func_70909_n()) {
++            this.func_70916_h(true);
++        }
++        return true;
++    }
++    // CraftBukkit end
++
+     public void func_70624_b(@Nullable EntityLivingBase p_70624_1_)
+     {
+         super.func_70624_b(p_70624_1_);
+@@ -336,7 +354,8 @@
+ 
+             if (this.field_70911_d != null)
+             {
+-                this.field_70911_d.func_75270_a(false);
++                // CraftBukkit - moved into EntityLiving.damageEntity_CB(DamageSource, float)
++                // this.aiSit.setSitting(false);
+             }
+ 
+             if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
+@@ -395,7 +414,7 @@
+                             itemstack.func_190918_g(1);
+                         }
+ 
+-                        this.func_70691_i((float)itemfood.func_150905_g(itemstack));
++                        this.heal((float)itemfood.func_150905_g(itemstack), org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING);
+                         return true;
+                     }
+                 }
+@@ -422,7 +441,7 @@
+                 this.field_70911_d.func_75270_a(!this.func_70906_o());
+                 this.field_70703_bu = false;
+                 this.field_70699_by.func_75499_g();
+-                this.func_70624_b((EntityLivingBase)null);
++                this.setGoalTarget((EntityLivingBase)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
+             }
+         }
+         else if (itemstack.func_77973_b() == Items.field_151103_aS && !this.func_70919_bu())
+@@ -434,13 +453,16 @@
+ 
+             if (!this.field_70170_p.field_72995_K)
+             {
+-                if (this.field_70146_Z.nextInt(3) == 0)
++                // CraftBukkit - added event call and isCancelled check.
++                if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_) && !CraftEventFactory.callEntityTameEvent(this, p_184645_1_).isCancelled())
+                 {
+                     this.func_193101_c(p_184645_1_);
+                     this.field_70699_by.func_75499_g();
+                     this.func_70624_b((EntityLivingBase)null);
+                     this.field_70911_d.func_75270_a(true);
+-                    this.func_70606_j(20.0F);
++                    // CraftBukkit - 20.0 -> getMaxHealth()
++                    // this.setHealth(20.0F);
++                    this.func_70606_j(this.func_110138_aP());
+                     this.func_70908_e(true);
+                     this.field_70170_p.func_72960_a(this, (byte)7);
+                 }

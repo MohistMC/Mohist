@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
+@@ -44,7 +44,7 @@
+         return this.field_70170_p.func_72917_a(this.func_174813_aQ(), this) && this.field_70170_p.func_184144_a(this, this.func_174813_aQ()).isEmpty() && !this.field_70170_p.func_72953_d(this.func_174813_aQ());
+     }
+ 
+-    protected void func_70799_a(int p_70799_1_, boolean p_70799_2_)
++    public void func_70799_a(int p_70799_1_, boolean p_70799_2_)
+     {
+         super.func_70799_a(p_70799_1_, p_70799_2_);
+         this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a((double)(p_70799_1_ * 3));
+@@ -96,6 +96,7 @@
+     {
+         this.field_70181_x = (double)(0.42F + (float)this.func_70809_q() * 0.1F);
+         this.field_70160_al = true;
++        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+     }
+ 
+     protected void func_180466_bG()

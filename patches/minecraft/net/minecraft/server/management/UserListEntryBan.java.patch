@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListEntryBan.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListEntryBan.java
+@@ -24,7 +24,7 @@
+ 
+     protected UserListEntryBan(T p_i1174_1_, JsonObject p_i1174_2_)
+     {
+-        super(p_i1174_1_, p_i1174_2_);
++        super(checkExpiry(p_i1174_1_, p_i1174_2_), p_i1174_2_);
+         Date date;
+ 
+         try
+@@ -75,4 +75,28 @@
+         p_152641_1_.addProperty("expires", this.field_73692_f == null ? "forever" : field_73698_a.format(this.field_73692_f));
+         p_152641_1_.addProperty("reason", this.field_73693_g);
+     }
++
++    public String getSource() {
++        return this.field_73695_e;
++    }
++
++    public Date getCreated() {
++        return this.field_73694_d;
++    }
++
++    private static <T> T checkExpiry(T object, JsonObject jsonobject) {
++        Date expires = null;
++
++        try {
++            expires = jsonobject.has("expires") ? field_73698_a.parse(jsonobject.get("expires").getAsString()) : null;
++        } catch (ParseException ex) {
++            // Guess we don't have a date
++        }
++
++        if (expires == null || expires.after(new Date())) {
++            return object;
++        } else {
++            return null;
++        }
++    }
+ }

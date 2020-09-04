@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/CPacketChatMessage.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketChatMessage.java
+@@ -4,6 +4,7 @@
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.INetHandlerPlayServer;
++import red.mohist.common.async.MohistThreadBox;
+ 
+ public class CPacketChatMessage implements Packet<INetHandlerPlayServer>
+ {
+@@ -33,8 +34,15 @@
+         p_148840_1_.func_180714_a(this.field_149440_a);
+     }
+ 
++    // Spigot Start
+     public void func_148833_a(INetHandlerPlayServer p_148833_1_)
+-    {
++	{
++        if ( !field_149440_a.startsWith("/") )
++        {
++            MohistThreadBox.ASYNCCHAT.submit(() -> p_148833_1_.func_147354_a(CPacketChatMessage.this));
++            return;
++        }
++        // Spigot End
+         p_148833_1_.func_147354_a(this);
+     }
+ 

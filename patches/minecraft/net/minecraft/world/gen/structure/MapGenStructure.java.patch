@@ -1,0 +1,60 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.world.gen.structure;
+ 
++import co.aikar.timings.MinecraftTimings;
++import co.aikar.timings.Timing;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.ObjectIterator;
+@@ -20,9 +22,11 @@
+ 
+ public abstract class MapGenStructure extends MapGenBase
+ {
++    private final Timing timing = MinecraftTimings.getStructureTiming(this); // Paper
+     private MapGenStructureData field_143029_e;
+     protected Long2ObjectMap<StructureStart> field_75053_d = new Long2ObjectOpenHashMap<StructureStart>(1024);
+ 
++    public String getName() { return func_143025_a(); } // Paper // OBFHELPER
+     public abstract String func_143025_a();
+ 
+     protected final synchronized void func_180701_a(World p_180701_1_, final int p_180701_2_, final int p_180701_3_, int p_180701_4_, int p_180701_5_, ChunkPrimer p_180701_6_)
+@@ -79,6 +83,7 @@
+ 
+     public synchronized boolean func_175794_a(World p_175794_1_, Random p_175794_2_, ChunkPos p_175794_3_)
+     {
++        timing.startTiming(); // Paper
+         this.func_143027_a(p_175794_1_);
+         int i = (p_175794_3_.field_77276_a << 4) + 8;
+         int j = (p_175794_3_.field_77275_b << 4) + 8;
+@@ -97,7 +102,7 @@
+                 this.func_143026_a(structurestart.func_143019_e(), structurestart.func_143018_f(), structurestart);
+             }
+         }
+-
++        timing.stopTiming(); // Paper
+         return flag;
+     }
+ 
+@@ -175,12 +180,17 @@
+     {
+         if (this.field_143029_e == null && p_143027_1_ != null)
+         {
+-            this.field_143029_e = (MapGenStructureData)p_143027_1_.func_72943_a(MapGenStructureData.class, this.func_143025_a());
+-
++            // Spigot Start
++            if (p_143027_1_.spigotConfig.saveStructureInfo && !this.func_143025_a().equals("Mineshaft")) {
++                this.field_143029_e = (MapGenStructureData)p_143027_1_.getPerWorldStorage().func_75742_a(MapGenStructureData.class, this.func_143025_a());
++            } else {
++                this.field_143029_e = new MapGenStructureData(this.func_143025_a());
++            }
++            // Spigot End
+             if (this.field_143029_e == null)
+             {
+                 this.field_143029_e = new MapGenStructureData(this.func_143025_a());
+-                p_143027_1_.func_72823_a(this.func_143025_a(), this.field_143029_e);
++                p_143027_1_.getPerWorldStorage().func_75745_a(this.func_143025_a(), this.field_143029_e);
+             }
+             else
+             {

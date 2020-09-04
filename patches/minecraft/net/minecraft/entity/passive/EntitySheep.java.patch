@@ -1,0 +1,97 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntitySheep.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntitySheep.java
+@@ -24,6 +24,7 @@
+ import net.minecraft.init.Items;
+ import net.minecraft.init.SoundEvents;
+ import net.minecraft.inventory.Container;
++import net.minecraft.inventory.InventoryCraftResult;
+ import net.minecraft.inventory.InventoryCrafting;
+ import net.minecraft.item.EnumDyeColor;
+ import net.minecraft.item.Item;
+@@ -45,8 +46,10 @@
+ import net.minecraft.world.storage.loot.LootTableList;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.SheepRegrowWoolEvent;
++import org.bukkit.inventory.InventoryView;
+ 
+-public class EntitySheep extends EntityAnimal
++public class EntitySheep extends EntityAnimal implements net.minecraftforge.common.IShearable
+ {
+     private static final DataParameter<Byte> field_184774_bv = EntityDataManager.<Byte>func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
+     private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container()
+@@ -55,6 +58,11 @@
+         {
+             return false;
+         }
++
++        @Override
++        public InventoryView getBukkitView() {
++            return null; // TODO: O.O
++        }
+     }, 2, 1);
+     private static final Map<EnumDyeColor, float[]> field_175514_bm = Maps.newEnumMap(EnumDyeColor.class);
+     private int field_70899_e;
+@@ -79,6 +87,7 @@
+         this.func_70105_a(0.9F, 1.3F);
+         this.field_90016_e.func_70299_a(0, new ItemStack(Items.field_151100_aR));
+         this.field_90016_e.func_70299_a(1, new ItemStack(Items.field_151100_aR));
++        this.field_90016_e.resultInventory = new InventoryCraftResult(); // CraftBukkit - add result slot for event
+     }
+ 
+     protected void func_184651_r()
+@@ -189,7 +198,7 @@
+     {
+         ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
+ 
+-        if (itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_())
++        if (false && itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_())   //Forge: Moved to onSheared
+         {
+             if (!this.field_70170_p.field_72995_K)
+             {
+@@ -198,7 +207,9 @@
+ 
+                 for (int j = 0; j < i; ++j)
+                 {
++                    this.forceDrops = true;
+                     EntityItem entityitem = this.func_70099_a(new ItemStack(Item.func_150898_a(Blocks.field_150325_L), 1, this.func_175509_cj().func_176765_a()), 1.0F);
++                    this.forceDrops = false;
+                     entityitem.field_70181_x += (double)(this.field_70146_Z.nextFloat() * 0.05F);
+                     entityitem.field_70159_w += (double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F);
+                     entityitem.field_70179_y += (double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F);
+@@ -348,6 +359,13 @@
+ 
+     public void func_70615_aA()
+     {
++        // CraftBukkit start
++        SheepRegrowWoolEvent event = new SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
++        this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled()) return;
++        // CraftBukkit end
++
+         this.func_70893_e(false);
+ 
+         if (this.func_70631_g_())
+@@ -364,6 +382,21 @@
+         return p_180482_2_;
+     }
+ 
++    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos){ return !this.func_70892_o() && !this.func_70631_g_(); }
++    @Override
++    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    {
++        this.func_70893_e(true);
++        int i = 1 + this.field_70146_Z.nextInt(3);
++
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        for (int j = 0; j < i; ++j)
++            ret.add(new ItemStack(Item.func_150898_a(Blocks.field_150325_L), 1, this.func_175509_cj().func_176765_a()));
++
++        this.func_184185_a(SoundEvents.field_187763_eJ, 1.0F, 1.0F);
++        return ret;
++    }
++
+     private EnumDyeColor func_175511_a(EntityAnimal p_175511_1_, EntityAnimal p_175511_2_)
+     {
+         int i = ((EntitySheep)p_175511_1_).func_175509_cj().func_176767_b();

@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemDoor.java
++++ ../src-work/minecraft/net/minecraft/item/ItemDoor.java
+@@ -48,7 +48,7 @@
+                 int j = enumfacing.func_82599_e();
+                 boolean flag = i < 0 && p_180614_8_ < 0.5F || i > 0 && p_180614_8_ > 0.5F || j < 0 && p_180614_6_ > 0.5F || j > 0 && p_180614_6_ < 0.5F;
+                 func_179235_a(p_180614_2_, p_180614_3_, enumfacing, this.field_179236_a, flag);
+-                SoundType soundtype = this.field_179236_a.func_185467_w();
++                SoundType soundtype = p_180614_2_.func_180495_p(p_180614_3_).func_177230_c().getSoundType(p_180614_2_.func_180495_p(p_180614_3_), p_180614_2_, p_180614_3_, p_180614_1_);
+                 p_180614_2_.func_184133_a(p_180614_1_, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                 itemstack.func_190918_g(1);
+                 return EnumActionResult.SUCCESS;
+@@ -84,9 +84,11 @@
+         BlockPos blockpos2 = p_179235_1_.func_177984_a();
+         boolean flag2 = p_179235_0_.func_175640_z(p_179235_1_) || p_179235_0_.func_175640_z(blockpos2);
+         IBlockState iblockstate = p_179235_3_.func_176223_P().func_177226_a(BlockDoor.field_176520_a, p_179235_2_).func_177226_a(BlockDoor.field_176521_M, p_179235_4_ ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).func_177226_a(BlockDoor.field_176522_N, Boolean.valueOf(flag2)).func_177226_a(BlockDoor.field_176519_b, Boolean.valueOf(flag2));
+-        p_179235_0_.func_180501_a(p_179235_1_, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.LOWER), 2);
+-        p_179235_0_.func_180501_a(blockpos2, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.UPPER), 2);
+-        p_179235_0_.func_175685_c(p_179235_1_, p_179235_3_, false);
+-        p_179235_0_.func_175685_c(blockpos2, p_179235_3_, false);
++        // Spigot start - update physics after the block multi place event
++        p_179235_0_.func_180501_a(p_179235_1_, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.LOWER), 3);
++        p_179235_0_.func_180501_a(blockpos2, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.UPPER), 3);
++        // worldIn.notifyNeighborsOfStateChange(pos, door, false);
++        // worldIn.notifyNeighborsOfStateChange(blockpos2, door, false);
++        // Spigot end
+     }
+ }

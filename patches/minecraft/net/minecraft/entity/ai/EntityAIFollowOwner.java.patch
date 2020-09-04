@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIFollowOwner.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIFollowOwner.java
+@@ -13,6 +13,9 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
++import org.bukkit.event.entity.EntityTeleportEvent;
+ 
+ public class EntityAIFollowOwner extends EntityAIBase
+ {
+@@ -114,7 +117,17 @@
+                                 {
+                                     if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && this.func_192381_a(i, j, k, l, i1))
+                                     {
+-                                        this.field_75338_d.func_70012_b((double)((float)(i + l) + 0.5F), (double)k, (double)((float)(j + i1) + 0.5F), this.field_75338_d.field_70177_z, this.field_75338_d.field_70125_A);
++                                        // this.tameable.setLocationAndAngles((double)((float)(i + l) + 0.5F), (double)k, (double)((float)(j + i1) + 0.5F), this.tameable.rotationYaw, this.tameable.rotationPitch);
++                                        CraftEntity entity = this.field_75338_d.getBukkitEntity();
++                                        Location to = new Location(entity.getWorld(), (double) ((float) (i + l) + 0.5F), (double) k, (double) ((float) (j + i1) + 0.5F), this.field_75338_d.field_70177_z, this.field_75338_d.field_70125_A);
++                                        EntityTeleportEvent event = new EntityTeleportEvent(entity, entity.getLocation(), to);
++                                        this.field_75338_d.field_70170_p.getServer().getPluginManager().callEvent(event);
++                                        if (event.isCancelled()) {
++                                            return;
++                                        }
++                                        to = event.getTo();
++
++                                        this.field_75338_d.func_70012_b(to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
+                                         this.field_75337_g.func_75499_g();
+                                         return;
+                                     }

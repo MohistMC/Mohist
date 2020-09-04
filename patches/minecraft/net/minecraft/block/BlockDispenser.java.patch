@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDispenser.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDispenser.java
+@@ -38,6 +38,7 @@
+     public static final PropertyBool field_176440_b = PropertyBool.func_177716_a("triggered");
+     public static final RegistryDefaulted<Item, IBehaviorDispenseItem> field_149943_a = new RegistryDefaulted<Item, IBehaviorDispenseItem>(new BehaviorDefaultDispenseItem());
+     protected Random field_149942_b = new Random();
++    public static boolean eventFired = false; // CraftBukkit
+ 
+     protected BlockDispenser()
+     {
+@@ -50,8 +51,8 @@
+     {
+         return 4;
+     }
+-
+-    public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
++	
++	public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
+     {
+         super.func_176213_c(p_176213_1_, p_176213_2_, p_176213_3_);
+         this.func_176438_e(p_176213_1_, p_176213_2_, p_176213_3_);
+@@ -115,12 +116,11 @@
+                     p_180639_4_.func_71029_a(StatList.field_188085_S);
+                 }
+             }
+-
+             return true;
+         }
+     }
+ 
+-    protected void func_176439_d(World p_176439_1_, BlockPos p_176439_2_)
++    public void func_176439_d(World p_176439_1_, BlockPos p_176439_2_)
+     {
+         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_176439_1_, p_176439_2_);
+         TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.func_150835_j();
+@@ -140,6 +140,7 @@
+ 
+                 if (ibehaviordispenseitem != IBehaviorDispenseItem.field_82483_a)
+                 {
++                    eventFired = false; // CraftBukkit - reset event status
+                     tileentitydispenser.func_70299_a(i, ibehaviordispenseitem.func_82482_a(blocksourceimpl, itemstack));
+                 }
+             }

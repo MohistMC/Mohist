@@ -1,0 +1,542 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
+@@ -5,8 +5,8 @@
+ import com.google.common.collect.Multimap;
+ import java.text.DecimalFormat;
+ import java.util.List;
+-import java.util.Random;
+ import java.util.Map.Entry;
++import java.util.Random;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Block;
+@@ -49,14 +49,15 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
+ 
+-public final class ItemStack
++public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     public static final ItemStack field_190927_a = new ItemStack((Item)null);
+     public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
+-    private int field_77994_a;
++    public int field_77994_a;
+     private int field_77992_b;
+-    private final Item field_151002_e;
++    public Item field_151002_e;
+     private NBTTagCompound field_77990_d;
+     private boolean field_190928_g;
+     int field_77991_e;
+@@ -66,6 +67,10 @@
+     private Block field_179550_j;
+     private boolean field_179551_k;
+ 
++    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
++    public net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private NBTTagCompound capNBT;
++
+     public ItemStack(Block p_i1876_1_)
+     {
+         this(p_i1876_1_, 1);
+@@ -91,8 +96,10 @@
+         this(p_i1880_1_, p_i1880_2_, 0);
+     }
+ 
+-    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
++    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_){ this(p_i1881_1_, p_i1881_2_, p_i1881_3_, null); }
++    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_, @Nullable NBTTagCompound capNBT)
+     {
++        this.capNBT = capNBT;
+         this.field_151002_e = p_i1881_1_;
+         this.field_77991_e = p_i1881_3_;
+         this.field_77994_a = p_i1881_2_;
+@@ -103,6 +110,7 @@
+         }
+ 
+         this.func_190923_F();
++        this.forgeInit();
+     }
+ 
+     private void func_190923_F()
+@@ -112,45 +120,57 @@
+ 
+     public ItemStack(NBTTagCompound p_i47263_1_)
+     {
+-        this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
+-        this.field_77994_a = p_i47263_1_.func_74771_c("Count");
+-        this.field_77991_e = Math.max(0, p_i47263_1_.func_74765_d("Damage"));
++        this.load(p_i47263_1_);
+ 
+-        if (p_i47263_1_.func_150297_b("tag", 10))
+-        {
+-            this.field_77990_d = p_i47263_1_.func_74775_l("tag");
++        this.func_190923_F();
++        this.forgeInit();
++    }
+ 
++    public void load(NBTTagCompound compound)
++    {
++        this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
++        this.field_151002_e = compound.func_150297_b("id", 8) ? Item.func_111206_d(compound.func_74779_i("id")) : Items.field_190931_a; //Forge fix tons of NumberFormatExceptions that are caused by deserializing EMPTY ItemStacks.
++        this.field_77994_a = compound.func_74771_c("Count");
++        // CraftBukkit start - Route through setData for filtering
++        // this.itemDamage = Math.max(0, compound.getShort("Damage"));
++        this.func_77964_b(compound.func_74765_d("Damage"));
++
++        if (compound.func_150297_b("tag", 10))
++        {
++            // CraftBukkit start - make defensive copy as this data may be coming from the save thread
++            // this.stackTagCompound = compound.getCompoundTag("tag");
++            this.field_77990_d = compound.func_74775_l("tag").func_74737_b();
+             if (this.field_151002_e != null)
+             {
+-                this.field_151002_e.func_179215_a(p_i47263_1_);
++                // this.item.updateItemStackNBT(compound);
++                this.field_151002_e.func_179215_a(this.field_77990_d);
+             }
+         }
+-
+-        this.func_190923_F();
+     }
+ 
+     public boolean func_190926_b()
+     {
+         if (this == field_190927_a)
+-        {
++		{
+             return true;
+         }
+-        else if (this.field_151002_e != null && this.field_151002_e != Item.func_150898_a(Blocks.field_150350_a))
+-        {
++		else if (this.getItemRaw() != null && this.getItemRaw() != Items.field_190931_a)
++		{
+             if (this.field_77994_a <= 0)
+-            {
++			{
+                 return true;
+             }
+-            else
+-            {
++			else
++			{
+                 return this.field_77991_e < -32768 || this.field_77991_e > 65535;
+             }
+         }
+-        else
+-        {
++		else
++		{
+             return true;
+         }
+     }
++    // Paper end
+ 
+     public static void func_189868_a(DataFixer p_189868_0_)
+     {
+@@ -169,16 +189,29 @@
+ 
+     public Item func_77973_b()
+     {
+-        return this.field_190928_g ? Item.func_150898_a(Blocks.field_150350_a) : this.field_151002_e;
++        return this.field_190928_g || this.delegate == null ? Items.field_190931_a : this.delegate.get();
+     }
+ 
+     public EnumActionResult func_179546_a(EntityPlayer p_179546_1_, World p_179546_2_, BlockPos p_179546_3_, EnumHand p_179546_4_, EnumFacing p_179546_5_, float p_179546_6_, float p_179546_7_, float p_179546_8_)
+     {
++        if (!p_179546_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_, p_179546_4_);
+         EnumActionResult enumactionresult = this.func_77973_b().func_180614_a(p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_);
++		if (enumactionresult == EnumActionResult.SUCCESS)
++        {
++        	p_179546_1_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
++        }
+ 
++        return enumactionresult;
++    }
++
++    public EnumActionResult onItemUseFirst(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
++    {
++        // copy of onitemuse but for onitemusefirst
++        EnumActionResult enumactionresult = this.func_77973_b().onItemUseFirst(playerIn, worldIn, pos, side, hitX, hitY, hitZ, hand);
++
+         if (enumactionresult == EnumActionResult.SUCCESS)
+         {
+-            p_179546_1_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
++            playerIn.func_71029_a(StatList.func_188057_b(this.field_151002_e));
+         }
+ 
+         return enumactionresult;
+@@ -208,15 +241,22 @@
+ 
+         if (this.field_77990_d != null)
+         {
+-            p_77955_1_.func_74782_a("tag", this.field_77990_d);
++            // nbt.setTag("tag", this.stackTagCompound);
++            p_77955_1_.func_74782_a("tag", this.field_77990_d.func_74737_b()); // CraftBukkit - make defensive copy, data is going to another thread
+         }
+ 
++        if (this.capabilities != null)
++        {
++            NBTTagCompound cnbt = this.capabilities.serializeNBT();
++            if (!cnbt.func_82582_d()) p_77955_1_.func_74782_a("ForgeCaps", cnbt);
++        }
++
+         return p_77955_1_;
+     }
+ 
+     public int func_77976_d()
+     {
+-        return this.func_77973_b().func_77639_j();
++        return this.func_77973_b().getItemStackLimit(this);
+     }
+ 
+     public boolean func_77985_e()
+@@ -230,7 +270,7 @@
+         {
+             return false;
+         }
+-        else if (this.field_151002_e.func_77612_l() <= 0)
++        else if (this.field_151002_e.getMaxDamage(this) <= 0)
+         {
+             return false;
+         }
+@@ -247,32 +287,47 @@
+ 
+     public boolean func_77951_h()
+     {
+-        return this.func_77984_f() && this.field_77991_e > 0;
++        return this.func_77984_f() && func_77973_b().isDamaged(this);
+     }
+ 
+     public int func_77952_i()
+     {
+-        return this.field_77991_e;
++        return func_77973_b().getDamage(this);
+     }
+ 
+     public int func_77960_j()
+     {
+-        return this.field_77991_e;
++        return func_77973_b().getMetadata(this);
+     }
+ 
+     public void func_77964_b(int p_77964_1_)
+     {
+-        this.field_77991_e = p_77964_1_;
++        // CraftBukkit start - Filter out data for items that shouldn't have it
++        // The crafting system uses this value for a special purpose so we have to allow it
++        if (p_77964_1_ == 32767) {
++            func_77973_b().setDamage(this, p_77964_1_);
++            return;
++        }
+ 
+-        if (this.field_77991_e < 0)
+-        {
+-            this.field_77991_e = 0;
++        // Is this a block?
++        if (CraftMagicNumbers.getBlock(CraftMagicNumbers.getId(this.func_77973_b())) != Blocks.field_150350_a) {
++            // If vanilla doesn't use data on it don't allow any
++            if (!(this.func_77981_g() || this.func_77973_b().func_77645_m())) {
++                p_77964_1_ = 0;
++            }
+         }
++
++        // Filter invalid plant data
++        if (CraftMagicNumbers.getBlock(CraftMagicNumbers.getId(this.func_77973_b())) == Blocks.field_150398_cm && (p_77964_1_ > 5 || p_77964_1_ < 0)) {
++            p_77964_1_ = 0;
++        }
++        // CraftBukkit end
++        func_77973_b().setDamage(this, p_77964_1_);
+     }
+ 
+     public int func_77958_k()
+     {
+-        return this.func_77973_b().func_77612_l();
++        return this.func_77973_b().getMaxDamage(this);
+     }
+ 
+     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable EntityPlayerMP p_96631_3_)
+@@ -298,6 +353,18 @@
+ 
+                 p_96631_1_ -= j;
+ 
++                // Spigot start
++                if (p_96631_3_ != null) {
++                    org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack item = org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asCraftMirror(this);
++                    org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent(p_96631_3_.getBukkitEntity(), item, p_96631_1_);
++                    org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
++                    if (p_96631_1_ != event.getDamage() || event.isCancelled()) {
++                        event.getPlayer().updateInventory();
++                    }
++                    if (event.isCancelled()) return false;
++                    p_96631_1_ = event.getDamage();
++                }
++                // Spigot end
+                 if (p_96631_1_ <= 0)
+                 {
+                     return false;
+@@ -309,8 +376,8 @@
+                 CriteriaTriggers.field_193132_s.func_193158_a(p_96631_3_, this, this.field_77991_e + p_96631_1_);
+             }
+ 
+-            this.field_77991_e += p_96631_1_;
+-            return this.field_77991_e > this.func_77958_k();
++            func_77964_b(func_77952_i() + p_96631_1_); //Redirect through Item's callback if applicable.
++            return func_77952_i() > func_77958_k();
+         }
+     }
+ 
+@@ -323,6 +390,11 @@
+                 if (this.func_96631_a(p_77972_1_, p_77972_2_.func_70681_au(), p_77972_2_ instanceof EntityPlayerMP ? (EntityPlayerMP)p_77972_2_ : null))
+                 {
+                     p_77972_2_.func_70669_a(this);
++                    // CraftBukkit start - Check for item breaking
++                    if (this.field_77994_a == 1 && p_77972_2_ instanceof EntityPlayer) {
++                        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerItemBreakEvent((EntityPlayer) p_77972_2_, this);
++                    }
++                    // CraftBukkit end
+                     this.func_190918_g(1);
+ 
+                     if (p_77972_2_ instanceof EntityPlayer)
+@@ -359,7 +431,7 @@
+ 
+     public boolean func_150998_b(IBlockState p_150998_1_)
+     {
+-        return this.func_77973_b().func_150897_b(p_150998_1_);
++        return this.func_77973_b().canHarvestBlock(p_150998_1_, this);
+     }
+ 
+     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
+@@ -369,7 +441,7 @@
+ 
+     public ItemStack func_77946_l()
+     {
+-        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e);
++        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+         itemstack.func_190915_d(this.func_190921_D());
+ 
+         if (this.field_77990_d != null)
+@@ -394,7 +466,7 @@
+             }
+             else
+             {
+-                return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
++                return (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_);
+             }
+         }
+         else
+@@ -435,7 +507,7 @@
+         }
+         else
+         {
+-            return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
++            return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
+         }
+     }
+ 
+@@ -862,6 +934,7 @@
+             }
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
+         return list;
+     }
+ 
+@@ -871,6 +944,7 @@
+         return this.func_77973_b().func_77636_d(this);
+     }
+ 
++    @Deprecated // use Forge version on item
+     public EnumRarity func_77953_t()
+     {
+         return this.func_77973_b().func_77613_e(this);
+@@ -957,6 +1031,14 @@
+ 
+     public void func_82841_c(int p_82841_1_)
+     {
++        // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
++        if (p_82841_1_ == 0) {
++            if (this.func_77942_o()) {
++                this.field_77990_d.func_82580_o("RepairCost");
++            }
++            return;
++        }
++        // CraftBukkit end
+         if (!this.func_77942_o())
+         {
+             this.field_77990_d = new NBTTagCompound();
+@@ -987,7 +1069,7 @@
+         }
+         else
+         {
+-            multimap = this.func_77973_b().func_111205_h(p_111283_1_);
++            multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
+         }
+ 
+         return multimap;
+@@ -1017,6 +1099,14 @@
+         nbttaglist.func_74742_a(nbttagcompound);
+     }
+ 
++    @Deprecated
++    public void setItem(Item item) {
++        this.field_151002_e = item;
++        // Update delegate as well
++        this.delegate = item.delegate;
++        this.func_77964_b(this.func_77952_i()); // CraftBukkit - Set data again to ensure it is filtered properly
++    }
++
+     public ITextComponent func_151000_E()
+     {
+         TextComponentString textcomponentstring = new TextComponentString(this.func_82833_r());
+@@ -1032,7 +1122,7 @@
+         {
+             NBTTagCompound nbttagcompound = this.func_77955_b(new NBTTagCompound());
+             itextcomponent.func_150256_b().func_150209_a(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new TextComponentString(nbttagcompound.toString())));
+-            itextcomponent.func_150256_b().func_150238_a(this.func_77953_t().field_77937_e);
++            itextcomponent.func_150256_b().func_150238_a(this.func_77973_b().getForgeRarity(this).getColor());
+         }
+ 
+         return itextcomponent;
+@@ -1130,4 +1220,140 @@
+     {
+         this.func_190917_f(-p_190918_1_);
+     }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return this.field_190928_g  || this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
++    }
++
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return this.field_190928_g  || this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        // TODO do this better while respecting new rules
++        final ItemStack itemStack = new ItemStack(nbt);
++        this.field_77990_d = itemStack.field_77990_d;
++        this.capNBT = itemStack.capNBT;
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        this.func_77955_b(ret);
++        return ret;
++    }
++
++    public boolean areCapsCompatible(ItemStack other)
++    {
++        if (this.capabilities == null)
++        {
++            if (other.capabilities == null)
++            {
++                return true;
++            }
++            else
++            {
++                return other.capabilities.areCompatible(null);
++            }
++        }
++        else
++        {
++            return this.capabilities.areCompatible(other.capabilities);
++        }
++    }
++
++    /**
++     * Set up forge's ItemStack additions.
++     */
++    private void forgeInit()
++    {
++        Item item = getItemRaw();
++        if (item != null)
++        {
++            this.delegate = item.delegate;
++            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, provider);
++            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
++        }
++    }
++
++    /**
++     * Internal call to get the actual item, not the delegate.
++     * In all other methods, FML replaces calls to this.item with the item delegate.
++     */
++    @Nullable
++    private Item getItemRaw()
++    {
++        return this.field_151002_e;
++    }
++
++    /**
++     * Modeled after ItemStack.areItemStacksEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    public static boolean areItemStacksEqualUsingNBTShareTag(ItemStack stackA, ItemStack stackB)
++    {
++        if (stackA.func_190926_b())
++            return stackB.func_190926_b();
++        else
++            return !stackB.func_190926_b() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
++    }
++
++    /**
++     * Modeled after ItemStack.isItemStackEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    private boolean isItemStackEqualUsingNBTShareTag(ItemStack other)
++    {
++        return this.field_77994_a == other.field_77994_a && this.func_77973_b() == other.func_77973_b() && this.field_77991_e == other.field_77991_e && areItemStackShareTagsEqual(this, other);
++    }
++
++    /**
++     * Modeled after ItemStack.areItemStackTagsEqual
++     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++     */
++    public static boolean areItemStackShareTagsEqual(ItemStack stackA, ItemStack stackB)
++    {
++        NBTTagCompound shareTagA = stackA.func_77973_b().getNBTShareTag(stackA);
++        NBTTagCompound shareTagB = stackB.func_77973_b().getNBTShareTag(stackB);
++        if (shareTagA == null)
++            return shareTagB == null;
++        else
++            return shareTagB != null && shareTagA.equals(shareTagB);
++    }
++
++    /**
++     *
++     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param player The Player that is wielding the item
++     * @return
++     */
++    public boolean doesSneakBypassUse(net.minecraft.world.IBlockAccess world, BlockPos pos, EntityPlayer player)
++    {
++        return this.func_190926_b() || this.func_77973_b().doesSneakBypassUse(this, world, pos, player);
++    }
++
++    // Spigot start
++    public static boolean fastMatches(ItemStack itemstack, ItemStack itemstack1) {
++        if (itemstack == null && itemstack1 == null) {
++            return true;
++        }
++        if (itemstack != null && itemstack1 != null) {
++            return itemstack.field_77994_a == itemstack1.field_77994_a && itemstack.field_151002_e == itemstack1.field_151002_e && itemstack.field_77991_e == itemstack1.field_77991_e;
++        }
++        return false;
++    }
++    // Spigot end
+ }

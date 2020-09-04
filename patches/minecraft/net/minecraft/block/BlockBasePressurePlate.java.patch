@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBasePressurePlate.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBasePressurePlate.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public abstract class BlockBasePressurePlate extends Block
+ {
+@@ -124,7 +125,18 @@
+         int i = this.func_180669_e(p_180666_1_, p_180666_2_);
+         boolean flag = p_180666_4_ > 0;
+         boolean flag1 = i > 0;
++        // CraftBukkit start - Interact Pressure Plate
++        org.bukkit.World bworld = p_180666_1_.getWorld();
++        org.bukkit.plugin.PluginManager manager = p_180666_1_.getServer().getPluginManager();
+ 
++        if (flag != flag1) {
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(p_180666_2_.func_177958_n(), p_180666_2_.func_177956_o(), p_180666_2_.func_177952_p()), p_180666_4_, i);
++            manager.callEvent(eventRedstone);
++
++            flag1 = eventRedstone.getNewCurrent() > 0;
++            i = eventRedstone.getNewCurrent();
++        }
++        // CraftBukkit end
+         if (p_180666_4_ != i)
+         {
+             p_180666_3_ = this.func_176575_a(p_180666_3_, i);

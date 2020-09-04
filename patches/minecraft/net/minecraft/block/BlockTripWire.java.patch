@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTripWire.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTripWire.java
+@@ -25,6 +25,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.EntityInteractEvent;
+ 
+ public class BlockTripWire extends Block
+ {
+@@ -181,6 +182,40 @@
+             }
+         }
+ 
++        // CraftBukkit start - Call interact even when triggering connected tripwire
++        if (flag != flag1 && flag1 && iblockstate.func_177229_b(field_176294_M)) {
++            org.bukkit.World bworld = p_176288_1_.getWorld();
++            org.bukkit.plugin.PluginManager manager = p_176288_1_.getServer().getPluginManager();
++            org.bukkit.block.Block block = bworld.getBlockAt(p_176288_2_.func_177958_n(), p_176288_2_.func_177956_o(), p_176288_2_.func_177952_p());
++            boolean allowed = false;
++
++            // If all of the events are cancelled block the tripwire trigger, else allow
++            for (Object object : list) {
++                if (object != null) {
++                    org.bukkit.event.Cancellable cancellable;
++
++                    if (object instanceof EntityPlayer) {
++                        cancellable = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) object, org.bukkit.event.block.Action.PHYSICAL, p_176288_2_, null, null, null);
++                    } else if (object instanceof Entity) {
++                        cancellable = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
++                        manager.callEvent((EntityInteractEvent) cancellable);
++                    } else {
++                        continue;
++                    }
++
++                    if (!cancellable.isCancelled()) {
++                        allowed = true;
++                        break;
++                    }
++                }
++            }
++
++            if (!allowed) {
++                return;
++            }
++        }
++        // CraftBukkit end
++
+         if (flag1 != flag)
+         {
+             iblockstate = iblockstate.func_177226_a(field_176293_a, Boolean.valueOf(flag1));

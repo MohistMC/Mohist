@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/rcon/RConThreadMain.java
++++ ../src-work/minecraft/net/minecraft/network/rcon/RConThreadMain.java
+@@ -28,7 +28,7 @@
+         super(p_i1538_1_, "RCON Listener");
+         this.field_72647_g = p_i1538_1_.func_71327_a("rcon.port", 0);
+         this.field_72650_k = p_i1538_1_.func_71330_a("rcon.password", "");
+-        this.field_72652_i = p_i1538_1_.func_71277_t();
++        this.field_72652_i = p_i1538_1_.func_71330_a("rcon.ip", p_i1538_1_.func_71277_t()); // Paper
+         this.field_72651_h = p_i1538_1_.func_71234_u();
+ 
+         if (0 == this.field_72647_g)

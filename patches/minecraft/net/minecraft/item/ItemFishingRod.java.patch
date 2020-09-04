@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFishingRod.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFishingRod.java
+@@ -16,6 +16,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.player.PlayerFishEvent;
+ 
+ public class ItemFishingRod extends Item
+ {
+@@ -74,7 +75,7 @@
+         }
+         else
+         {
+-            p_77659_1_.func_184148_a((EntityPlayer)null, p_77659_2_.field_70165_t, p_77659_2_.field_70163_u, p_77659_2_.field_70161_v, SoundEvents.field_187612_G, SoundCategory.NEUTRAL, 0.5F, 0.4F / (field_77697_d.nextFloat() * 0.4F + 0.8F));
++            // worldIn.playSound((EntityPlayer)null, playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.ENTITY_BOBBER_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F)); // CraftBukkit - moved down
+ 
+             if (!p_77659_1_.field_72995_K)
+             {
+@@ -93,6 +94,15 @@
+                     entityfishhook.func_191517_b(k);
+                 }
+ 
++                PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) p_77659_2_.getBukkitEntity(), null, (org.bukkit.entity.Fish) entityfishhook.getBukkitEntity(), PlayerFishEvent.State.FISHING);
++                p_77659_1_.getServer().getPluginManager().callEvent(playerFishEvent);
++
++                if (playerFishEvent.isCancelled()) {
++                    p_77659_2_.field_71104_cf = null;
++                    return new ActionResult<>(EnumActionResult.PASS, itemstack);
++                }
++                p_77659_1_.func_184148_a(null, p_77659_2_.field_70165_t, p_77659_2_.field_70163_u, p_77659_2_.field_70161_v, SoundEvents.field_187612_G, SoundCategory.NEUTRAL, 0.5F, 0.4F / (field_77697_d.nextFloat() * 0.4F + 0.8F));
++
+                 p_77659_1_.func_72838_d(entityfishhook);
+             }
+ 

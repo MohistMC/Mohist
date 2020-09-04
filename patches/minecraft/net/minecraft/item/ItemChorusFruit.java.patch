@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemChorusFruit.java
++++ ../src-work/minecraft/net/minecraft/item/ItemChorusFruit.java
+@@ -2,10 +2,14 @@
+ 
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.SoundEvents;
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.Location;
++import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerTeleportEvent;
+ 
+ public class ItemChorusFruit extends ItemFood
+ {
+@@ -30,6 +34,18 @@
+                 double d4 = MathHelper.func_151237_a(p_77654_3_.field_70163_u + (double)(p_77654_3_.func_70681_au().nextInt(16) - 8), 0.0D, (double)(p_77654_2_.func_72940_L() - 1));
+                 double d5 = p_77654_3_.field_70161_v + (p_77654_3_.func_70681_au().nextDouble() - 0.5D) * 16.0D;
+ 
++                if (p_77654_3_ instanceof EntityPlayerMP) {
++                    Player player = ((EntityPlayerMP) p_77654_3_).getBukkitEntity();
++                    PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), new Location(player.getWorld(), d3, d4, d5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
++                    p_77654_2_.getServer().getPluginManager().callEvent(teleEvent);
++                    if (teleEvent.isCancelled()) {
++                        break;
++                    }
++                    d3 = teleEvent.getTo().getX();
++                    d4 = teleEvent.getTo().getY();
++                    d5 = teleEvent.getTo().getZ();
++                }
++
+                 if (p_77654_3_.func_184218_aH())
+                 {
+                     p_77654_3_.func_184210_p();

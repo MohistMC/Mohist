@@ -1,0 +1,125 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySign.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySign.java
+@@ -24,9 +24,11 @@
+ {
+     public final ITextComponent[] field_145915_a = new ITextComponent[] {new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")};
+     public int field_145918_i = -1;
+-    private boolean field_145916_j = true;
++    public boolean field_145916_j = true;
+     private EntityPlayer field_145917_k;
+     private final CommandResultStats field_174883_i = new CommandResultStats();
++    private static final boolean CONVERT_LEGACY_SIGNS = Boolean.getBoolean("convertLegacySigns");
++    public java.util.UUID signEditor; // Paper
+ 
+     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
+     {
+@@ -38,6 +40,10 @@
+             p_189515_1_.func_74778_a("Text" + (i + 1), s);
+         }
+ 
++        if (CONVERT_LEGACY_SIGNS) { // Paper
++            p_189515_1_.func_74757_a("Bukkit.isConverted", true);
++        }
++
+         this.field_174883_i.func_179670_b(p_189515_1_);
+         return p_189515_1_;
+     }
+@@ -59,8 +65,12 @@
+             }
+             public boolean func_70003_b(int p_70003_1_, String p_70003_2_)
+             {
+-                return true;
++                return p_70003_1_ <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
+             }
++            public boolean canUseCommand(int permLevel, String commandName, String perm)
++            {
++                return permLevel <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
++            }
+             public BlockPos func_180425_c()
+             {
+                 return TileEntitySign.this.field_174879_c;
+@@ -79,19 +89,38 @@
+             }
+         };
+ 
++        // CraftBukkit start - Add an option to convert signs correctly
++        // This is done with a flag instead of all the time because
++        // we have no way to tell whether a sign is from 1.7.10 or 1.8
++
++        boolean oldSign = Boolean.getBoolean("convertLegacySigns") && !p_145839_1_.func_74767_n("Bukkit.isConverted");
++
+         for (int i = 0; i < 4; ++i)
+         {
+             String s = p_145839_1_.func_74779_i("Text" + (i + 1));
+-            ITextComponent itextcomponent = ITextComponent.Serializer.func_150699_a(s);
++            // ITextComponent itextcomponent = ITextComponent.Serializer.jsonToComponent(s);
++            if (s != null && s.length() > 2048) {
++                s = "\"\"";
++            }
+ 
+             try
+             {
+-                this.field_145915_a[i] = TextComponentUtils.func_179985_a(icommandsender, itextcomponent, (Entity)null);
++                ITextComponent ichatbasecomponent = ITextComponent.Serializer.func_150699_a(s);
++
++                if (oldSign) {
++                    field_145915_a[i] = org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage.fromString(s)[0];
++                    continue;
++                }
++                // CraftBukkit end
++
++                try {
++                    this.field_145915_a[i] = TextComponentUtils.func_179985_a(icommandsender, ichatbasecomponent, (Entity) null);
++                } catch (CommandException commandexception) {
++                    this.field_145915_a[i] = ichatbasecomponent;
++                }
++            } catch (com.google.gson.JsonParseException jsonparseexception) {
++                this.field_145915_a[i] = new TextComponentString(s);
+             }
+-            catch (CommandException var7)
+-            {
+-                this.field_145915_a[i] = itextcomponent;
+-            }
+         }
+ 
+         this.field_174883_i.func_179668_a(p_145839_1_);
+@@ -131,7 +160,10 @@
+ 
+     public void func_145912_a(EntityPlayer p_145912_1_)
+     {
+-        this.field_145917_k = p_145912_1_;
++        // Paper start
++        //this.player = playerIn;
++        signEditor = p_145912_1_ != null ? p_145912_1_.func_110124_au() : null;
++        // Paper end
+     }
+ 
+     public EntityPlayer func_145911_b()
+@@ -158,6 +190,11 @@
+             {
+                 return p_70003_1_ <= 2;
+             }
++
++            public boolean canUseCommand(int permLevel, String commandName, String perm)
++            {
++                return permLevel <= 2;
++            }
+             public BlockPos func_180425_c()
+             {
+                 return TileEntitySign.this.field_174879_c;
+@@ -201,7 +238,14 @@
+ 
+                 if (clickevent.func_150669_a() == ClickEvent.Action.RUN_COMMAND)
+                 {
+-                    p_174882_1_.func_184102_h().func_71187_D().func_71556_a(icommandsender, clickevent.func_150668_b());
++                    // CraftBukkit start
++                    // playerIn.getServer().getCommandManager().executeCommand(icommandsender, clickevent.getValue());
++                    CommandBlockBaseLogic.executeSafely(icommandsender, new org.bukkit.craftbukkit.v1_12_R1.command.ProxiedNativeCommandSender(
++                            icommandsender,
++                            new org.bukkit.craftbukkit.v1_12_R1.command.CraftBlockCommandSender(icommandsender),
++                            p_174882_1_.getBukkitEntity()
++                    ), clickevent.func_150668_b());
++                    // CraftBukkit end
+                 }
+             }
+         }

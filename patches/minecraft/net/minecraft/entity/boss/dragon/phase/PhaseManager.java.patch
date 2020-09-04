@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/entity/boss/dragon/phase/PhaseManager.java
++++ ../src-work/minecraft/net/minecraft/entity/boss/dragon/phase/PhaseManager.java
+@@ -3,6 +3,8 @@
+ import net.minecraft.entity.boss.EntityDragon;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEnderDragon;
++import org.bukkit.event.entity.EnderDragonChangePhaseEvent;
+ 
+ public class PhaseManager
+ {
+@@ -26,6 +28,17 @@
+                 this.field_188762_d.func_188658_e();
+             }
+ 
++            EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
++                    (CraftEnderDragon) this.field_188760_b.getBukkitEntity(),
++                    (this.field_188762_d == null) ? null : CraftEnderDragon.getBukkitPhase(this.field_188762_d.func_188652_i()),
++                    CraftEnderDragon.getBukkitPhase(p_188758_1_)
++            );
++            this.field_188760_b.field_70170_p.getServer().getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                return;
++            }
++            p_188758_1_ = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
++
+             this.field_188762_d = this.func_188757_b(p_188758_1_);
+ 
+             if (!this.field_188760_b.field_70170_p.field_72995_K)

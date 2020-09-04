@@ -1,0 +1,89 @@
+--- ../src-base/minecraft/net/minecraft/dispenser/BehaviorDefaultDispenseItem.java
++++ ../src-work/minecraft/net/minecraft/dispenser/BehaviorDefaultDispenseItem.java
+@@ -5,6 +5,8 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
+ 
+ public class BehaviorDefaultDispenseItem implements IBehaviorDispenseItem
+ {
+@@ -21,7 +23,9 @@
+         EnumFacing enumfacing = (EnumFacing)p_82487_1_.func_189992_e().func_177229_b(BlockDispenser.field_176441_a);
+         IPosition iposition = BlockDispenser.func_149939_a(p_82487_1_);
+         ItemStack itemstack = p_82487_2_.func_77979_a(1);
+-        func_82486_a(p_82487_1_.func_82618_k(), itemstack, 6, enumfacing, iposition);
++        if (!doDispense(p_82487_1_.func_82618_k(), itemstack, 6, enumfacing, p_82487_1_)) {
++            itemstack.func_190917_f(1);
++        }
+         return p_82487_2_;
+     }
+ 
+@@ -51,6 +55,66 @@
+         p_82486_0_.func_72838_d(entityitem);
+     }
+ 
++    // CraftBukkit start - void -> boolean return, IPosition -> ISourceBlock last argument
++    public static boolean doDispense(World worldIn, ItemStack stack, int speed, EnumFacing facing, IBlockSource source)
++    {
++        IPosition position = BlockDispenser.func_149939_a(source);
++        double d0 = position.func_82615_a();
++        double d1 = position.func_82617_b();
++        double d2 = position.func_82616_c();
++
++        if (facing.func_176740_k() == EnumFacing.Axis.Y)
++        {
++            d1 = d1 - 0.125D;
++        }
++        else
++        {
++            d1 = d1 - 0.15625D;
++        }
++
++        EntityItem entityitem = new EntityItem(worldIn, d0, d1, d2, stack);
++        double d3 = worldIn.field_73012_v.nextDouble() * 0.1D + 0.2D;
++        entityitem.field_70159_w = (double)facing.func_82601_c() * d3;
++        entityitem.field_70181_x = 0.20000000298023224D;
++        entityitem.field_70179_y = (double)facing.func_82599_e() * d3;
++        entityitem.field_70159_w += worldIn.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)speed;
++        entityitem.field_70181_x += worldIn.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)speed;
++        entityitem.field_70179_y += worldIn.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)speed;
++        // CraftBukkit start
++        org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(source.func_180699_d().func_177958_n(), source.func_180699_d().func_177956_o(), source.func_180699_d().func_177952_p());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
++
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(entityitem.field_70159_w, entityitem.field_70181_x, entityitem.field_70179_y));
++
++        if (!BlockDispenser.eventFired) {
++            worldIn.getServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled()) {
++            return false;
++        }
++
++        entityitem.func_92058_a(CraftItemStack.asNMSCopy(event.getItem()));
++        entityitem.field_70159_w = event.getVelocity().getX();
++        entityitem.field_70181_x = event.getVelocity().getY();
++        entityitem.field_70179_y = event.getVelocity().getZ();
++
++        if (!event.getItem().getType().equals(craftItem.getType())) {
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IBehaviorDispenseItem idispensebehavior = (IBehaviorDispenseItem) BlockDispenser.field_149943_a.func_82594_a(eventStack.func_77973_b());
++            if (idispensebehavior != IBehaviorDispenseItem.field_82483_a && idispensebehavior.getClass() != BehaviorDefaultDispenseItem.class) {
++                idispensebehavior.func_82482_a(source, eventStack);
++            } else {
++                worldIn.func_72838_d(entityitem);
++            }
++            return false;
++        }
++        worldIn.func_72838_d(entityitem);
++        return true;
++        // CraftBukkit end
++    }
++
+     protected void func_82485_a(IBlockSource p_82485_1_)
+     {
+         p_82485_1_.func_82618_k().func_175718_b(1000, p_82485_1_.func_180699_d(), 0);

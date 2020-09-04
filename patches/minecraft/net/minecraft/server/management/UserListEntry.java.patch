@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListEntry.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListEntry.java
+@@ -16,7 +16,7 @@
+         this.field_152642_a = p_i1147_1_;
+     }
+ 
+-    T func_152640_f()
++    public T func_152640_f()
+     {
+         return this.field_152642_a;
+     }

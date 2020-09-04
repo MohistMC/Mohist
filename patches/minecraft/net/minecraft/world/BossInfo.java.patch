@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/world/BossInfo.java
++++ ../src-work/minecraft/net/minecraft/world/BossInfo.java
+@@ -2,16 +2,14 @@
+ 
+ import java.util.UUID;
+ import net.minecraft.util.text.ITextComponent;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ public abstract class BossInfo
+ {
+     private final UUID field_186756_h;
+-    protected ITextComponent field_186749_a;
+-    protected float field_186750_b;
+-    protected BossInfo.Color field_186751_c;
+-    protected BossInfo.Overlay field_186752_d;
++    public ITextComponent field_186749_a;
++    public float field_186750_b;
++    public Color field_186751_c;
++    public Overlay field_186752_d;
+     protected boolean field_186753_e;
+     protected boolean field_186754_f;
+     protected boolean field_186755_g;
+@@ -55,7 +53,6 @@
+         return this.field_186751_c;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_186745_a(BossInfo.Color p_186745_1_)
+     {
+         this.field_186751_c = p_186745_1_;
+@@ -66,7 +63,6 @@
+         return this.field_186752_d;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_186746_a(BossInfo.Overlay p_186746_1_)
+     {
+         this.field_186752_d = p_186746_1_;

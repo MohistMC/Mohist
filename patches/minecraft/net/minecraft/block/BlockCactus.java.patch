@@ -1,0 +1,88 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
+@@ -9,7 +9,6 @@
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.util.BlockRenderLayer;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EnumFacing;
+@@ -19,8 +18,9 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+-public class BlockCactus extends Block
++public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
+ {
+     public static final PropertyInteger field_176587_a = PropertyInteger.func_177719_a("age", 0, 15);
+     protected static final AxisAlignedBB field_185593_b = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.9375D, 0.9375D);
+@@ -36,6 +36,7 @@
+ 
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+     {
++        if (!p_180650_1_.func_175697_a(p_180650_2_, 1)) return; // Forge: prevent growing cactus from loading unloaded chunks with block update
+         BlockPos blockpos = p_180650_2_.func_177984_a();
+ 
+         if (p_180650_1_.func_175623_d(blockpos))
+@@ -47,13 +48,16 @@
+                 ;
+             }
+ 
+-            if (i < 3)
++            if (i < p_180650_1_.spigotConfig.cactusMaxHeight) // Paper - Configurable growth height
+             {
+                 int j = ((Integer)p_180650_3_.func_177229_b(field_176587_a)).intValue();
+ 
+-                if (j == 15)
++                if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_180650_1_, blockpos, p_180650_3_, true))
+                 {
+-                    p_180650_1_.func_175656_a(blockpos, this.func_176223_P());
++                    if (j >= (byte)Block.range(3.0f, ((100.0f / p_180650_1_.spigotConfig.cactusModifier) * 15.0f) + 0.5f, 15.0f))
++                    {
++                    // worldIn.setBlockState(blockpos, this.getDefaultState());
++                    CraftEventFactory.handleBlockGrowEvent(p_180650_1_, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p(), this, 0);
+                     IBlockState iblockstate = p_180650_3_.func_177226_a(field_176587_a, Integer.valueOf(0));
+                     p_180650_1_.func_180501_a(p_180650_2_, iblockstate, 4);
+                     iblockstate.func_189546_a(p_180650_1_, blockpos, this, p_180650_2_);
+@@ -62,6 +66,8 @@
+                 {
+                     p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_176587_a, Integer.valueOf(j + 1)), 4);
+                 }
++                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_));
++                }
+             }
+         }
+     }
+@@ -112,8 +118,8 @@
+             }
+         }
+ 
+-        Block block = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b()).func_177230_c();
+-        return block == Blocks.field_150434_aF || block == Blocks.field_150354_m && !p_176586_1_.func_180495_p(p_176586_2_.func_177984_a()).func_185904_a().func_76224_d();
++        IBlockState state = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b());
++        return state.func_177230_c().canSustainPlant(state, p_176586_1_, p_176586_2_.func_177977_b(), EnumFacing.UP, this) && !p_176586_1_.func_180495_p(p_176586_2_.func_177984_a()).func_185904_a().func_76224_d();
+     }
+ 
+     public void func_180634_a(World p_180634_1_, BlockPos p_180634_2_, IBlockState p_180634_3_, Entity p_180634_4_)
+@@ -137,6 +143,18 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176587_a)).intValue();
+     }
+ 
++    @Override
++    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return net.minecraftforge.common.EnumPlantType.Desert;
++    }
++
++    @Override
++    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return func_176223_P();
++    }
++
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176587_a});

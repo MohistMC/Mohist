@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
++++ ../src-work/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
+@@ -22,6 +22,10 @@
+         return "Rcon";
+     }
+ 
++    public void sendMessage(String message) {
++        this.field_70009_b.append(message);
++    }
++
+     public void func_145747_a(ITextComponent p_145747_1_)
+     {
+         this.field_70009_b.append(p_145747_1_.func_150260_c());
+@@ -32,6 +36,11 @@
+         return true;
+     }
+ 
++    public boolean canUseCommand(int permLevel, String commandName, String perm)
++    {
++        return true;
++    }
++
+     public World func_130014_f_()
+     {
+         return this.field_184171_b.func_130014_f_();

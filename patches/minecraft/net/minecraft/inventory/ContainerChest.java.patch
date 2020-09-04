@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerChest.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerChest.java
+@@ -1,13 +1,19 @@
+ package net.minecraft.inventory;
+ 
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
+ 
+ public class ContainerChest extends Container
+ {
+     private final IInventory field_75155_e;
+     private final int field_75154_f;
+ 
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++
+     public ContainerChest(IInventory p_i45801_1_, IInventory p_i45801_2_, EntityPlayer p_i45801_3_)
+     {
+         this.field_75155_e = p_i45801_2_;
+@@ -15,6 +21,9 @@
+         p_i45801_2_.func_174889_b(p_i45801_3_);
+         int i = (this.field_75154_f - 4) * 18;
+ 
++        // TODO: Should we check to make sure it really is an InventoryPlayer?
++        this.player = (InventoryPlayer) p_i45801_1_;
++
+         for (int j = 0; j < this.field_75154_f; ++j)
+         {
+             for (int k = 0; k < 9; ++k)
+@@ -39,6 +48,7 @@
+ 
+     public boolean func_75145_c(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable) return true;
+         return this.field_75155_e.func_70300_a(p_75145_1_);
+     }
+ 
+@@ -87,4 +97,23 @@
+     {
+         return this.field_75155_e;
+     }
++
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        CraftInventory inventory;
++        if (this.field_75155_e instanceof InventoryPlayer) {
++            inventory = new org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryPlayer((InventoryPlayer) this.field_75155_e);
++        } else if (this.field_75155_e instanceof InventoryLargeChest) {
++            inventory = new org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryDoubleChest((InventoryLargeChest) this.field_75155_e);
++        } else {
++            inventory = new CraftInventory(this.field_75155_e);
++        }
++
++        bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
+ }

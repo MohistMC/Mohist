@@ -1,0 +1,164 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSkull.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSkull.java
+@@ -40,6 +40,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.util.BlockStateListPopulator;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class BlockSkull extends BlockContainer
+ {
+@@ -128,9 +130,29 @@
+         return new ItemStack(Items.field_151144_bL, 1, i);
+     }
+ 
+-    public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
+-    {
++    // CraftBukkit start - Special case dropping so we can get info from the tile entity
++    @Override
++    public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_) {
++        if (p_180653_1_.field_73012_v.nextFloat() < p_180653_4_) {
++            TileEntity tileentity = p_180653_1_.func_175625_s(p_180653_2_);
++
++            if (tileentity instanceof TileEntitySkull) {
++                TileEntitySkull tileentityskull = (TileEntitySkull) tileentity;
++                ItemStack itemstack = this.func_185473_a(p_180653_1_, p_180653_2_, p_180653_3_);
++
++                if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null) {
++                    itemstack.func_77982_d(new NBTTagCompound());
++                    NBTTagCompound nbttagcompound = new NBTTagCompound();
++
++                    NBTUtil.func_180708_a(nbttagcompound, tileentityskull.func_152108_a());
++                    itemstack.func_77978_p().func_74782_a("SkullOwner", nbttagcompound);
++                }
++
++                func_180635_a(p_180653_1_, p_180653_2_, itemstack);
++            }
++        }
+     }
++    // CraftBukkit end
+ 
+     public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, IBlockState p_176208_3_, EntityPlayer p_176208_4_)
+     {
+@@ -139,22 +161,28 @@
+             p_176208_3_ = p_176208_3_.func_177226_a(field_176417_b, Boolean.valueOf(true));
+             p_176208_1_.func_180501_a(p_176208_2_, p_176208_3_, 4);
+         }
++        this.func_176226_b(p_176208_1_, p_176208_2_, p_176208_3_, 0);
+ 
+         super.func_176208_a(p_176208_1_, p_176208_2_, p_176208_3_, p_176208_4_);
+     }
+ 
+     public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
+     {
+-        if (!p_180663_1_.field_72995_K)
++        super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
++    }
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_, int fortune)
++    {
+         {
+-            if (!((Boolean)p_180663_3_.func_177229_b(field_176417_b)).booleanValue())
++            // CraftBukkit start - Drop item in code above, not here
++            // if (!((Boolean)state.getValue(NODROP)).booleanValue())
++            if (false)
+             {
+                 TileEntity tileentity = p_180663_1_.func_175625_s(p_180663_2_);
+ 
+                 if (tileentity instanceof TileEntitySkull)
+                 {
+                     TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
+-                    ItemStack itemstack = this.func_185473_a(p_180663_1_, p_180663_2_, p_180663_3_);
++                    ItemStack itemstack = new ItemStack(Items.field_151144_bL, 1, tileentityskull.func_145904_a());
+ 
+                     if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null)
+                     {
+@@ -164,11 +192,9 @@
+                         itemstack.func_77978_p().func_74782_a("SkullOwner", nbttagcompound);
+                     }
+ 
+-                    func_180635_a(p_180663_1_, p_180663_2_, itemstack);
++                    drops.add(itemstack);
+                 }
+             }
+-
+-            super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
+         }
+     }
+ 
+@@ -191,6 +217,7 @@
+ 
+     public void func_180679_a(World p_180679_1_, BlockPos p_180679_2_, TileEntitySkull p_180679_3_)
+     {
++        if (p_180679_1_.captureBlockSnapshots) return;
+         if (p_180679_3_.func_145904_a() == 1 && p_180679_2_.func_177956_o() >= 2 && p_180679_1_.func_175659_aa() != EnumDifficulty.PEACEFUL && !p_180679_1_.field_72995_K)
+         {
+             BlockPattern blockpattern = this.func_176416_l();
+@@ -198,10 +225,14 @@
+ 
+             if (blockpattern$patternhelper != null)
+             {
++                BlockStateListPopulator blockList = new BlockStateListPopulator(p_180679_1_.getWorld());
+                 for (int i = 0; i < 3; ++i)
+                 {
+                     BlockWorldState blockworldstate = blockpattern$patternhelper.func_177670_a(i, 0, 0);
+-                    p_180679_1_.func_180501_a(blockworldstate.func_177508_d(), blockworldstate.func_177509_a().func_177226_a(field_176417_b, Boolean.valueOf(true)), 2);
++                    BlockPos pos1 = blockworldstate.func_177508_d();
++                    IBlockState data = blockworldstate.func_177509_a().func_177226_a(BlockSkull.field_176417_b, true);
++                    blockList.setTypeAndData(pos1.func_177958_n(), pos1.func_177956_o(), pos1.func_177952_p(), data.func_177230_c(), data.func_177230_c().func_176201_c(data), 2);
++//                    worldIn.setBlockState(blockworldstate.getPos(), blockworldstate.getBlockState().withProperty(NODROP, Boolean.valueOf(true)), 2);
+                 }
+ 
+                 for (int j = 0; j < blockpattern.func_177684_c(); ++j)
+@@ -209,7 +240,10 @@
+                     for (int k = 0; k < blockpattern.func_177685_b(); ++k)
+                     {
+                         BlockWorldState blockworldstate1 = blockpattern$patternhelper.func_177670_a(j, k, 0);
+-                        p_180679_1_.func_180501_a(blockworldstate1.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2);
++                        BlockPos pos1 = blockworldstate1.func_177508_d();
++                        blockList.setTypeAndData(pos1.func_177958_n(), pos1.func_177956_o(), pos1.func_177952_p(), Blocks.field_150350_a, 0, 2);
++//                        worldIn.setBlockState(blockworldstate1.getPos(), Blocks.AIR.getDefaultState(), 2);
++
+                     }
+                 }
+ 
+@@ -219,25 +253,24 @@
+                 entitywither.func_70012_b((double)blockpos1.func_177958_n() + 0.5D, (double)blockpos1.func_177956_o() + 0.55D, (double)blockpos1.func_177952_p() + 0.5D, blockpattern$patternhelper.func_177669_b().func_176740_k() == EnumFacing.Axis.X ? 0.0F : 90.0F, 0.0F);
+                 entitywither.field_70761_aq = blockpattern$patternhelper.func_177669_b().func_176740_k() == EnumFacing.Axis.X ? 0.0F : 90.0F;
+                 entitywither.func_82206_m();
++                if (p_180679_1_.addEntity(entitywither, CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
++                    blockList.updateList();
+ 
+-                for (EntityPlayerMP entityplayermp : p_180679_1_.func_72872_a(EntityPlayerMP.class, entitywither.func_174813_aQ().func_186662_g(50.0D)))
+-                {
+-                    CriteriaTriggers.field_192133_m.func_192229_a(entityplayermp, entitywither);
+-                }
++                    for (EntityPlayerMP entityplayermp : p_180679_1_.func_72872_a(EntityPlayerMP.class, entitywither.func_174813_aQ().func_186662_g(50.0D))) {
++                        CriteriaTriggers.field_192133_m.func_192229_a(entityplayermp, entitywither);
++                    }
+ 
+-                p_180679_1_.func_72838_d(entitywither);
++//                worldIn.spawnEntity(entitywither);
+ 
+-                for (int l = 0; l < 120; ++l)
+-                {
+-                    p_180679_1_.func_175688_a(EnumParticleTypes.SNOWBALL, (double)blockpos.func_177958_n() + p_180679_1_.field_73012_v.nextDouble(), (double)(blockpos.func_177956_o() - 2) + p_180679_1_.field_73012_v.nextDouble() * 3.9D, (double)blockpos.func_177952_p() + p_180679_1_.field_73012_v.nextDouble(), 0.0D, 0.0D, 0.0D);
+-                }
++                    for (int l = 0; l < 120; ++l) {
++                        p_180679_1_.func_175688_a(EnumParticleTypes.SNOWBALL, (double) blockpos.func_177958_n() + p_180679_1_.field_73012_v.nextDouble(), (double) (blockpos.func_177956_o() - 2) + p_180679_1_.field_73012_v.nextDouble() * 3.9D, (double) blockpos.func_177952_p() + p_180679_1_.field_73012_v.nextDouble(), 0.0D, 0.0D, 0.0D);
++                    }
+ 
+-                for (int i1 = 0; i1 < blockpattern.func_177684_c(); ++i1)
+-                {
+-                    for (int j1 = 0; j1 < blockpattern.func_177685_b(); ++j1)
+-                    {
+-                        BlockWorldState blockworldstate2 = blockpattern$patternhelper.func_177670_a(i1, j1, 0);
+-                        p_180679_1_.func_175722_b(blockworldstate2.func_177508_d(), Blocks.field_150350_a, false);
++                    for (int i1 = 0; i1 < blockpattern.func_177684_c(); ++i1) {
++                        for (int j1 = 0; j1 < blockpattern.func_177685_b(); ++j1) {
++                            BlockWorldState blockworldstate2 = blockpattern$patternhelper.func_177670_a(i1, j1, 0);
++                            p_180679_1_.func_175722_b(blockworldstate2.func_177508_d(), Blocks.field_150350_a, false);
++                        }
+                     }
+                 }
+             }

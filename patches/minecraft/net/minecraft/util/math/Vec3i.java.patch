@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/util/math/Vec3i.java
++++ ../src-work/minecraft/net/minecraft/util/math/Vec3i.java
+@@ -7,10 +7,19 @@
+ public class Vec3i implements Comparable<Vec3i>
+ {
+     public static final Vec3i field_177959_e = new Vec3i(0, 0, 0);
++    // Paper start - Make mutable and protected for MutableBlockPos and PooledBlockPos
+     private final int field_177962_a;
+     private final int field_177960_b;
+     private final int field_177961_c;
+ 
++    public final boolean isValidLocation() {
++        return field_177962_a >= -30000000 && field_177961_c >= -30000000 && field_177962_a < 30000000 && field_177961_c < 30000000 && field_177960_b >= 0 && field_177960_b < 256;
++    }
++    public boolean isInvalidYLocation() {
++        return field_177960_b < 0 || field_177960_b >= 256;
++    }
++    // Paper end
++
+     public Vec3i(int p_i46007_1_, int p_i46007_2_, int p_i46007_3_)
+     {
+         this.field_177962_a = p_i46007_1_;

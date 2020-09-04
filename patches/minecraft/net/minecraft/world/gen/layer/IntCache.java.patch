@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/layer/IntCache.java
++++ ../src-work/minecraft/net/minecraft/world/gen/layer/IntCache.java
+@@ -18,13 +18,13 @@
+             if (field_76449_b.isEmpty())
+             {
+                 int[] aint4 = new int[256];
+-                field_76450_c.add(aint4);
++                if (field_76450_c.size() < org.spigotmc.SpigotConfig.intCacheLimit) field_76450_c.add(aint4);
+                 return aint4;
+             }
+             else
+             {
+                 int[] aint3 = field_76449_b.remove(field_76449_b.size() - 1);
+-                field_76450_c.add(aint3);
++                if (field_76450_c.size() < org.spigotmc.SpigotConfig.intCacheLimit) field_76450_c.add(aint3);
+                 return aint3;
+             }
+         }
+@@ -34,19 +34,19 @@
+             field_76447_d.clear();
+             field_76448_e.clear();
+             int[] aint2 = new int[field_76451_a];
+-            field_76448_e.add(aint2);
++            if (field_76448_e.size() < org.spigotmc.SpigotConfig.intCacheLimit) field_76448_e.add(aint2);
+             return aint2;
+         }
+         else if (field_76447_d.isEmpty())
+         {
+             int[] aint1 = new int[field_76451_a];
+-            field_76448_e.add(aint1);
++            if (field_76448_e.size() < org.spigotmc.SpigotConfig.intCacheLimit) field_76448_e.add(aint1);
+             return aint1;
+         }
+         else
+         {
+             int[] aint = field_76447_d.remove(field_76447_d.size() - 1);
+-            field_76448_e.add(aint);
++            if (field_76448_e.size() < org.spigotmc.SpigotConfig.intCacheLimit) field_76448_e.add(aint);
+             return aint;
+         }
+     }

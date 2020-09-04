@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryCraftResult.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryCraftResult.java
+@@ -8,12 +8,41 @@
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TextComponentString;
+ import net.minecraft.util.text.TextComponentTranslation;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class InventoryCraftResult implements IInventory
+ {
+     private final NonNullList<ItemStack> field_70467_a = NonNullList.<ItemStack>func_191197_a(1, ItemStack.field_190927_a);
+     private IRecipe field_193057_b;
+ 
++    private int maxStack = MAX_STACK;
++
++    public java.util.List<ItemStack> getContents() {
++        return this.field_70467_a;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner() {
++        return null; // Result slots don't get an owner
++    }
++
++    // Don't need a transaction; the InventoryCrafting keeps track of it for us
++    public void onOpen(CraftHumanEntity who) {}
++    public void onClose(CraftHumanEntity who) {}
++    public java.util.List<HumanEntity> getViewers() {
++        return new java.util.ArrayList<HumanEntity>();
++    }
++
++    public void setMaxStackSize(int size) {
++        maxStack = size;
++    }
++
++    @Override
++    public Location getLocation() {
++        return null;
++    }
++
+     public int func_70302_i_()
+     {
+         return 1;
+@@ -69,7 +98,7 @@
+ 
+     public int func_70297_j_()
+     {
+-        return 64;
++        return maxStack;
+     }
+ 
+     public void func_70296_d()

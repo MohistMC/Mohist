@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathNavigate.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathNavigate.java
+@@ -22,11 +22,11 @@
+     @Nullable
+     protected Path field_75514_c;
+     protected double field_75511_d;
+-    private final IAttributeInstance field_75512_e;
++    public final IAttributeInstance field_75512_e;
+     protected int field_75510_g;
+     private int field_75520_h;
+-    private Vec3d field_75521_i = Vec3d.field_186680_a;
+-    private Vec3d field_188557_k = Vec3d.field_186680_a;
++    public Vec3d field_75521_i = Vec3d.field_186680_a;
++    public Vec3d field_188557_k = Vec3d.field_186680_a;
+     private long field_188558_l;
+     private long field_188559_m;
+     private double field_188560_n;

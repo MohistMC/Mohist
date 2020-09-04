@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
+@@ -9,19 +9,30 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
+ 
+ public class ContainerPlayer extends Container
+ {
+     private static final EntityEquipmentSlot[] field_185003_h = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
+-    public InventoryCrafting field_75181_e = new InventoryCrafting(this, 2, 2);
+-    public InventoryCraftResult field_75179_f = new InventoryCraftResult();
++    public InventoryCrafting field_75181_e; // CraftBukkit - move initialization into constructor
++    public InventoryCraftResult field_75179_f; // CraftBukkit - move initialization into constructor
+     public boolean field_75180_g;
+     private final EntityPlayer field_82862_h;
+ 
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer playerInventory;
++
+     public ContainerPlayer(InventoryPlayer p_i1819_1_, boolean p_i1819_2_, EntityPlayer p_i1819_3_)
+     {
+         this.field_75180_g = p_i1819_2_;
+         this.field_82862_h = p_i1819_3_;
++        // CraftBukkit start
++        this.field_75179_f = new InventoryCraftResult(); // CraftBukkit - moved to before InventoryCrafting construction
++        this.field_75181_e = new InventoryCrafting(this, 2, 2, p_i1819_1_.field_70458_d); // CraftBukkit - pass player
++        this.field_75181_e.resultInventory = this.field_75179_f; // CraftBukkit - let InventoryCrafting know about its result slot
++        this.playerInventory = p_i1819_1_; // CraftBukkit - save player
++        // CraftBukkit end
+         this.func_75146_a(new SlotCrafting(p_i1819_1_.field_70458_d, this.field_75181_e, this.field_75179_f, 0, 154, 28));
+ 
+         for (int i = 0; i < 2; ++i)
+@@ -43,7 +54,7 @@
+                 }
+                 public boolean func_75214_a(ItemStack p_75214_1_)
+                 {
+-                    return entityequipmentslot == EntityLiving.func_184640_d(p_75214_1_);
++                    return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, entityequipmentslot, field_82862_h);
+                 }
+                 public boolean func_82869_a(EntityPlayer p_82869_1_)
+                 {
+@@ -202,4 +213,17 @@
+     {
+         return p_94530_2_.field_75224_c != this.field_75179_f && super.func_94530_a(p_94530_1_, p_94530_2_);
+     }
++
++    // CraftBukkit start
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.field_75181_e, this.field_75179_f);
++        bukkitEntity = new CraftInventoryView(this.playerInventory.field_70458_d.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

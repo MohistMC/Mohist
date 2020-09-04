@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIBreakDoor.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIBreakDoor.java
+@@ -21,7 +21,7 @@
+         {
+             return false;
+         }
+-        else if (!this.field_75356_a.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++        else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_75356_a.field_70170_p, this.field_75356_a) || !this.field_75356_a.field_70170_p.func_180495_p(this.field_179507_b).func_177230_c().canEntityDestroy(this.field_75356_a.field_70170_p.func_180495_p(this.field_179507_b), this.field_75356_a.field_70170_p, this.field_179507_b, this.field_75356_a) || !net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.field_75356_a, this.field_179507_b, this.field_75356_a.field_70170_p.func_180495_p(this.field_179507_b)))
+         {
+             return false;
+         }
+@@ -84,6 +84,10 @@
+ 
+         if (this.field_75359_i == 240 && this.field_75356_a.field_70170_p.func_175659_aa() == EnumDifficulty.HARD)
+         {
++            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityBreakDoorEvent(this.field_75356_a, this.field_179507_b.func_177958_n(), this.field_179507_b.func_177956_o(), this.field_179507_b.func_177952_p()).isCancelled()) {
++                this.func_75249_e();
++                return;
++            }
+             this.field_75356_a.field_70170_p.func_175698_g(this.field_179507_b);
+             this.field_75356_a.field_70170_p.func_175718_b(1021, this.field_179507_b, 0);
+             this.field_75356_a.field_70170_p.func_175718_b(2001, this.field_179507_b, Block.func_149682_b(this.field_151504_e));

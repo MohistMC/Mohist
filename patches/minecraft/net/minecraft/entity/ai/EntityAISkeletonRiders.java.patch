@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAISkeletonRiders.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAISkeletonRiders.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.ai;
+ 
++import javax.annotation.Nullable;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.IEntityLivingData;
+ import net.minecraft.entity.effect.EntityLightningBolt;
+@@ -34,17 +35,19 @@
+         this.field_188516_a.func_70873_a(0);
+         this.field_188516_a.field_70170_p.func_72942_c(new EntityLightningBolt(this.field_188516_a.field_70170_p, this.field_188516_a.field_70165_t, this.field_188516_a.field_70163_u, this.field_188516_a.field_70161_v, true));
+         EntitySkeleton entityskeleton = this.func_188514_a(difficultyinstance, this.field_188516_a);
+-        entityskeleton.func_184220_m(this.field_188516_a);
++        if (entityskeleton != null) entityskeleton.func_184220_m(this.field_188516_a);
+ 
+         for (int i = 0; i < 3; ++i)
+         {
+             AbstractHorse abstracthorse = this.func_188515_a(difficultyinstance);
++            if (abstracthorse == null) continue; // CraftBukkit
+             EntitySkeleton entityskeleton1 = this.func_188514_a(difficultyinstance, abstracthorse);
+-            entityskeleton1.func_184220_m(abstracthorse);
++            if (entityskeleton1 != null) entityskeleton1.func_184220_m(abstracthorse);
+             abstracthorse.func_70024_g(this.field_188516_a.func_70681_au().nextGaussian() * 0.5D, 0.0D, this.field_188516_a.func_70681_au().nextGaussian() * 0.5D);
+         }
+     }
+ 
++    @Nullable
+     private AbstractHorse func_188515_a(DifficultyInstance p_188515_1_)
+     {
+         EntitySkeletonHorse entityskeletonhorse = new EntitySkeletonHorse(this.field_188516_a.field_70170_p);
+@@ -54,10 +57,11 @@
+         entityskeletonhorse.func_110163_bv();
+         entityskeletonhorse.func_110234_j(true);
+         entityskeletonhorse.func_70873_a(0);
+-        entityskeletonhorse.field_70170_p.func_72838_d(entityskeletonhorse);
++        if (!entityskeletonhorse.field_70170_p.addEntity(entityskeletonhorse, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.TRAP)) return null; // CraftBukkit
+         return entityskeletonhorse;
+     }
+ 
++    @Nullable
+     private EntitySkeleton func_188514_a(DifficultyInstance p_188514_1_, AbstractHorse p_188514_2_)
+     {
+         EntitySkeleton entityskeleton = new EntitySkeleton(p_188514_2_.field_70170_p);
+@@ -73,7 +77,7 @@
+ 
+         entityskeleton.func_184201_a(EntityEquipmentSlot.MAINHAND, EnchantmentHelper.func_77504_a(entityskeleton.func_70681_au(), entityskeleton.func_184614_ca(), (int)(5.0F + p_188514_1_.func_180170_c() * (float)entityskeleton.func_70681_au().nextInt(18)), false));
+         entityskeleton.func_184201_a(EntityEquipmentSlot.HEAD, EnchantmentHelper.func_77504_a(entityskeleton.func_70681_au(), entityskeleton.func_184582_a(EntityEquipmentSlot.HEAD), (int)(5.0F + p_188514_1_.func_180170_c() * (float)entityskeleton.func_70681_au().nextInt(18)), false));
+-        entityskeleton.field_70170_p.func_72838_d(entityskeleton);
++        if (!entityskeleton.field_70170_p.addEntity(entityskeleton, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY)) return null; // CraftBukkit
+         return entityskeleton;
+     }
+ }

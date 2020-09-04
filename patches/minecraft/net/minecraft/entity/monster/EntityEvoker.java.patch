@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityEvoker.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEvoker.java
+@@ -168,6 +168,7 @@
+     {
+         private AIAttackSpell()
+         {
++            super();
+         }
+ 
+         protected int func_190869_f()
+@@ -267,6 +268,7 @@
+     {
+         private AICastingSpell()
+         {
++            super();
+         }
+ 
+         public void func_75246_d()
+@@ -286,6 +288,7 @@
+     {
+         private AISummonSpell()
+         {
++            super();
+         }
+ 
+         public boolean func_75250_a()
+@@ -349,6 +352,7 @@
+ 
+         public AIWololoSpell()
+         {
++            super();
+         }
+ 
+         public boolean func_75250_a()
+@@ -365,7 +369,7 @@
+             {
+                 return false;
+             }
+-            else if (!EntityEvoker.this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++            else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(EntityEvoker.this.field_70170_p, EntityEvoker.this))
+             {
+                 return false;
+             }

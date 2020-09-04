@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/world/border/WorldBorder.java
++++ ../src-work/minecraft/net/minecraft/world/border/WorldBorder.java
+@@ -6,6 +6,7 @@
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.ChunkPos;
++import net.minecraft.world.WorldServer;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -24,6 +25,9 @@
+     private int field_177761_k;
+     private int field_177759_l;
+ 
++    // TODO: Check if it's initialized properly
++    public WorldServer world;
++
+     public WorldBorder()
+     {
+         this.field_177755_e = this.field_177754_d;
+@@ -206,6 +210,7 @@
+ 
+     public void func_177737_a(IBorderListener p_177737_1_)
+     {
++        if (field_177758_a.contains(p_177737_1_)) return;
+         this.field_177758_a.add(p_177737_1_);
+     }
+ 
+@@ -284,4 +289,9 @@
+             iborderlistener.func_177690_b(this, p_177747_1_);
+         }
+     }
++
++    public void removeListener(IBorderListener listener)
++    {
++        this.field_177758_a.remove(listener);
++    }
+ }

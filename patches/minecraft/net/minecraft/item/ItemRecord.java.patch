@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
++++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
+@@ -44,6 +44,7 @@
+         {
+             if (!p_180614_2_.field_72995_K)
+             {
++                if (true) return EnumActionResult.SUCCESS; // CraftBukkit - handled in ItemStack
+                 ItemStack itemstack = p_180614_1_.func_184586_b(p_180614_4_);
+                 ((BlockJukebox)Blocks.field_150421_aI).func_176431_a(p_180614_2_, p_180614_3_, iblockstate, itemstack);
+                 p_180614_2_.func_180498_a((EntityPlayer)null, 1010, p_180614_3_, Item.func_150891_b(this));

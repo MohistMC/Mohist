@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/world/BossInfoServer.java
++++ ../src-work/minecraft/net/minecraft/world/BossInfoServer.java
+@@ -9,14 +9,12 @@
+ import net.minecraft.network.play.server.SPacketUpdateBossInfo;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.text.ITextComponent;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ public class BossInfoServer extends BossInfo
+ {
+     private final Set<EntityPlayerMP> field_186762_h = Sets.<EntityPlayerMP>newHashSet();
+     private final Set<EntityPlayerMP> field_186763_i;
+-    private boolean field_186764_j;
++    public boolean field_186764_j;
+ 
+     public BossInfoServer(ITextComponent p_i46839_1_, BossInfo.Color p_i46839_2_, BossInfo.Overlay p_i46839_3_)
+     {
+@@ -34,7 +32,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_186745_a(BossInfo.Color p_186745_1_)
+     {
+         if (p_186745_1_ != this.field_186751_c)
+@@ -44,7 +41,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_186746_a(BossInfo.Overlay p_186746_1_)
+     {
+         if (p_186746_1_ != this.field_186752_d)
+@@ -96,7 +92,7 @@
+         }
+     }
+ 
+-    private void func_186759_a(SPacketUpdateBossInfo.Operation p_186759_1_)
++    public void func_186759_a(SPacketUpdateBossInfo.Operation p_186759_1_)
+     {
+         if (this.field_186764_j)
+         {

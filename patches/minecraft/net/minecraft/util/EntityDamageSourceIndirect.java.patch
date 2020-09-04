@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
++++ ../src-work/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
+@@ -16,6 +16,8 @@
+     {
+         super(p_i1568_1_, p_i1568_2_);
+         this.field_76387_p = p_i1568_3_;
++        if (field_76386_o != null && field_76386_o.getBukkitEntity() instanceof org.bukkit.entity.Projectile && field_76387_p != null && field_76387_p.getBukkitEntity() instanceof org.bukkit.projectiles.ProjectileSource)
++            ((org.bukkit.entity.Projectile) field_76386_o.getBukkitEntity()).setShooter((org.bukkit.projectiles.ProjectileSource) field_76387_p.getBukkitEntity());
+     }
+ 
+     @Nullable
+@@ -38,4 +40,9 @@
+         String s1 = s + ".item";
+         return !itemstack.func_190926_b() && itemstack.func_82837_s() && I18n.func_94522_b(s1) ? new TextComponentTranslation(s1, new Object[] {p_151519_1_.func_145748_c_(), itextcomponent, itemstack.func_151000_E()}) : new TextComponentTranslation(s, new Object[] {p_151519_1_.func_145748_c_(), itextcomponent});
+     }
++
++    @Nullable
++    public Entity getProximateDamageSource() {
++        return super.func_76346_g();
++    }
+ }

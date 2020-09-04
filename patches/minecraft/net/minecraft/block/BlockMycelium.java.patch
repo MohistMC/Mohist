@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockMycelium.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMycelium.java
+@@ -16,6 +16,10 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.block.BlockState;
++import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
++import org.bukkit.event.block.BlockFadeEvent;
++import org.bukkit.event.block.BlockSpreadEvent;
+ 
+ public class BlockMycelium extends Block
+ {
+@@ -39,9 +43,20 @@
+     {
+         if (!p_180650_1_.field_72995_K)
+         {
+-            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_185891_c() > 2)
++            if (!p_180650_1_.func_175697_a(p_180650_2_, 2)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
++            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
+             {
+-                p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P().func_177226_a(BlockDirt.field_176386_a, BlockDirt.DirtType.DIRT));
++//                worldIn.setBlockState(pos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
++                org.bukkit.World bworld = p_180650_1_.getWorld();
++                BlockState blockState = bworld.getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p()).getState();
++                blockState.setType(CraftMagicNumbers.getMaterial(Blocks.field_150346_d));
++
++                BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
++                p_180650_1_.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled()) {
++                    blockState.update(true);
++                }
+             }
+             else
+             {
+@@ -53,9 +68,19 @@
+                         IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos);
+                         IBlockState iblockstate1 = p_180650_1_.func_180495_p(blockpos.func_177984_a());
+ 
+-                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate1.func_185891_c() <= 2)
++                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate1.getLightOpacity(p_180650_1_, blockpos.func_177984_a()) <= 2)
+                         {
+-                            p_180650_1_.func_175656_a(blockpos, this.func_176223_P());
++//                            worldIn.setBlockState(blockpos, this.getDefaultState());
++                            org.bukkit.World bworld = p_180650_1_.getWorld();
++                            BlockState blockState = bworld.getBlockAt(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p()).getState();
++                            blockState.setType(CraftMagicNumbers.getMaterial(this));
++
++                            BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p()), blockState);
++                            p_180650_1_.getServer().getPluginManager().callEvent(event);
++
++                            if (!event.isCancelled()) {
++                                blockState.update(true);
++                            }
+                         }
+                     }
+                 }

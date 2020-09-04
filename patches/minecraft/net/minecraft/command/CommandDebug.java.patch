@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandDebug.java
++++ ../src-work/minecraft/net/minecraft/command/CommandDebug.java
+@@ -13,6 +13,7 @@
+ import net.minecraft.profiler.Profiler;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
++import net.minecraft.util.text.TextComponentString;
+ import org.apache.commons.io.IOUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -40,6 +41,14 @@
+ 
+     public void func_184881_a(MinecraftServer p_184881_1_, ICommandSender p_184881_2_, String[] p_184881_3_) throws CommandException
+     {
++        // CraftBukkit start - only allow use when enabled (so that no blank profile results occur)
++        if (!p_184881_1_.field_71304_b.ENABLED) {
++            p_184881_2_.func_145747_a(new TextComponentString("Vanilla debug profiling is disabled."));
++            p_184881_2_.func_145747_a(new TextComponentString("To enable, restart the server with `-DenableDebugMethodProfiler=true' before `-jar'."));
++            p_184881_2_.func_145747_a(new TextComponentString("Use `/timings' for plugin timings."));
++            return;
++        }
++        // CraftBukkit end
+         if (p_184881_3_.length < 1)
+         {
+             throw new WrongUsageException("commands.debug.usage", new Object[0]);

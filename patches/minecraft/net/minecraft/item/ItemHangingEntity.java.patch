@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemHangingEntity.java
++++ ../src-work/minecraft/net/minecraft/item/ItemHangingEntity.java
+@@ -11,6 +11,8 @@
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.entity.Player;
++import org.bukkit.event.hanging.HangingPlaceEvent;
+ 
+ public class ItemHangingEntity extends Item
+ {
+@@ -35,6 +37,16 @@
+             {
+                 if (!p_180614_2_.field_72995_K)
+                 {
++                    Player who = (p_180614_1_ == null) ? null : (Player) p_180614_1_.getBukkitEntity();
++                    org.bukkit.block.Block blockClicked = p_180614_2_.getWorld().getBlockAt(p_180614_3_.func_177958_n(), p_180614_3_.func_177956_o(), p_180614_3_.func_177952_p());
++                    org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock.notchToBlockFace(p_180614_5_);
++
++                    HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) entityhanging.getBukkitEntity(), who, blockClicked, blockFace);
++                    p_180614_2_.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        return EnumActionResult.FAIL;
++                    }
+                     entityhanging.func_184523_o();
+                     p_180614_2_.func_72838_d(entityhanging);
+                 }

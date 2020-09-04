@@ -1,0 +1,321 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRailPowered.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRailPowered.java
+@@ -11,22 +11,33 @@
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
++import net.minecraft.block.BlockRailBase.EnumRailDirection;
++
+ public class BlockRailPowered extends BlockRailBase
+ {
+-    public static final PropertyEnum<BlockRailBase.EnumRailDirection> field_176568_b = PropertyEnum.<BlockRailBase.EnumRailDirection>func_177708_a("shape", BlockRailBase.EnumRailDirection.class, new Predicate<BlockRailBase.EnumRailDirection>()
++    public static final PropertyEnum<EnumRailDirection> field_176568_b = PropertyEnum.<EnumRailDirection>func_177708_a("shape", EnumRailDirection.class, new Predicate<EnumRailDirection>()
+     {
+-        public boolean apply(@Nullable BlockRailBase.EnumRailDirection p_apply_1_)
++        public boolean apply(@Nullable EnumRailDirection p_apply_1_)
+         {
+-            return p_apply_1_ != BlockRailBase.EnumRailDirection.NORTH_EAST && p_apply_1_ != BlockRailBase.EnumRailDirection.NORTH_WEST && p_apply_1_ != BlockRailBase.EnumRailDirection.SOUTH_EAST && p_apply_1_ != BlockRailBase.EnumRailDirection.SOUTH_WEST;
++            return p_apply_1_ != EnumRailDirection.NORTH_EAST && p_apply_1_ != EnumRailDirection.NORTH_WEST && p_apply_1_ != EnumRailDirection.SOUTH_EAST && p_apply_1_ != EnumRailDirection.SOUTH_WEST;
+         }
+     });
+     public static final PropertyBool field_176569_M = PropertyBool.func_177716_a("powered");
+ 
++    private final boolean isActivator;
++
+     protected BlockRailPowered()
+     {
++        this(false);
++    }
++
++    protected BlockRailPowered(boolean isActivator)
++    {
+         super(true);
+-        this.func_180632_j(this.field_176227_L.func_177621_b().func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_SOUTH).func_177226_a(field_176569_M, Boolean.valueOf(false)));
++        this.isActivator = isActivator;
++        this.func_180632_j(this.field_176227_L.func_177621_b().func_177226_a(field_176568_b, EnumRailDirection.NORTH_SOUTH).func_177226_a(field_176569_M, Boolean.valueOf(false)));
+     }
+ 
+     @SuppressWarnings("incomplete-switch")
+@@ -42,7 +53,7 @@
+             int j = p_176566_2_.func_177956_o();
+             int k = p_176566_2_.func_177952_p();
+             boolean flag = true;
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_176566_3_.func_177229_b(field_176568_b);
++            EnumRailDirection blockrailbase$enumraildirection = (EnumRailDirection)p_176566_3_.func_177229_b(field_176568_b);
+ 
+             switch (blockrailbase$enumraildirection)
+             {
+@@ -83,7 +94,7 @@
+                         flag = false;
+                     }
+ 
+-                    blockrailbase$enumraildirection = BlockRailBase.EnumRailDirection.EAST_WEST;
++                    blockrailbase$enumraildirection = EnumRailDirection.EAST_WEST;
+                     break;
+                 case ASCENDING_WEST:
+ 
+@@ -98,7 +109,7 @@
+                         ++i;
+                     }
+ 
+-                    blockrailbase$enumraildirection = BlockRailBase.EnumRailDirection.EAST_WEST;
++                    blockrailbase$enumraildirection = EnumRailDirection.EAST_WEST;
+                     break;
+                 case ASCENDING_NORTH:
+ 
+@@ -113,7 +124,7 @@
+                         flag = false;
+                     }
+ 
+-                    blockrailbase$enumraildirection = BlockRailBase.EnumRailDirection.NORTH_SOUTH;
++                    blockrailbase$enumraildirection = EnumRailDirection.NORTH_SOUTH;
+                     break;
+                 case ASCENDING_SOUTH:
+ 
+@@ -128,7 +139,7 @@
+                         --k;
+                     }
+ 
+-                    blockrailbase$enumraildirection = BlockRailBase.EnumRailDirection.NORTH_SOUTH;
++                    blockrailbase$enumraildirection = EnumRailDirection.NORTH_SOUTH;
+             }
+ 
+             if (this.func_176567_a(p_176566_1_, new BlockPos(i, j, k), p_176566_4_, p_176566_5_, blockrailbase$enumraildirection))
+@@ -142,21 +153,21 @@
+         }
+     }
+ 
+-    protected boolean func_176567_a(World p_176567_1_, BlockPos p_176567_2_, boolean p_176567_3_, int p_176567_4_, BlockRailBase.EnumRailDirection p_176567_5_)
++    protected boolean func_176567_a(World p_176567_1_, BlockPos p_176567_2_, boolean p_176567_3_, int p_176567_4_, EnumRailDirection p_176567_5_)
+     {
+         IBlockState iblockstate = p_176567_1_.func_180495_p(p_176567_2_);
+ 
+-        if (iblockstate.func_177230_c() != this)
++        if (!(iblockstate.func_177230_c() instanceof BlockRailPowered) || isActivator != ((BlockRailPowered)iblockstate.func_177230_c()).isActivator)
+         {
+             return false;
+         }
+         else
+         {
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.func_177229_b(field_176568_b);
++            EnumRailDirection blockrailbase$enumraildirection = (EnumRailDirection)iblockstate.func_177229_b(field_176568_b);
+ 
+-            if (p_176567_5_ != BlockRailBase.EnumRailDirection.EAST_WEST || blockrailbase$enumraildirection != BlockRailBase.EnumRailDirection.NORTH_SOUTH && blockrailbase$enumraildirection != BlockRailBase.EnumRailDirection.ASCENDING_NORTH && blockrailbase$enumraildirection != BlockRailBase.EnumRailDirection.ASCENDING_SOUTH)
++            if (p_176567_5_ != EnumRailDirection.EAST_WEST || blockrailbase$enumraildirection != EnumRailDirection.NORTH_SOUTH && blockrailbase$enumraildirection != EnumRailDirection.ASCENDING_NORTH && blockrailbase$enumraildirection != EnumRailDirection.ASCENDING_SOUTH)
+             {
+-                if (p_176567_5_ != BlockRailBase.EnumRailDirection.NORTH_SOUTH || blockrailbase$enumraildirection != BlockRailBase.EnumRailDirection.EAST_WEST && blockrailbase$enumraildirection != BlockRailBase.EnumRailDirection.ASCENDING_EAST && blockrailbase$enumraildirection != BlockRailBase.EnumRailDirection.ASCENDING_WEST)
++                if (p_176567_5_ != EnumRailDirection.NORTH_SOUTH || blockrailbase$enumraildirection != EnumRailDirection.EAST_WEST && blockrailbase$enumraildirection != EnumRailDirection.ASCENDING_EAST && blockrailbase$enumraildirection != EnumRailDirection.ASCENDING_WEST)
+                 {
+                     if (((Boolean)iblockstate.func_177229_b(field_176569_M)).booleanValue())
+                     {
+@@ -186,30 +197,35 @@
+ 
+         if (flag1 != flag)
+         {
++            int power = p_189541_1_.func_177229_b(field_176569_M) ? 15 : 0;
++            int newPower = CraftEventFactory.callRedstoneChange(p_189541_2_, p_189541_3_.func_177958_n(), p_189541_3_.func_177956_o(), p_189541_3_.func_177952_p(), power, 15 - power).getNewCurrent();
++            if (newPower == power) {
++                return;
++            }
+             p_189541_2_.func_180501_a(p_189541_3_, p_189541_1_.func_177226_a(field_176569_M, Boolean.valueOf(flag1)), 3);
+             p_189541_2_.func_175685_c(p_189541_3_.func_177977_b(), this, false);
+ 
+-            if (((BlockRailBase.EnumRailDirection)p_189541_1_.func_177229_b(field_176568_b)).func_177018_c())
++            if (((EnumRailDirection)p_189541_1_.func_177229_b(field_176568_b)).func_177018_c())
+             {
+                 p_189541_2_.func_175685_c(p_189541_3_.func_177984_a(), this, false);
+             }
+         }
+     }
+ 
+-    public IProperty<BlockRailBase.EnumRailDirection> func_176560_l()
++    public IProperty<EnumRailDirection> func_176560_l()
+     {
+         return field_176568_b;
+     }
+ 
+     public IBlockState func_176203_a(int p_176203_1_)
+     {
+-        return this.func_176223_P().func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.func_177016_a(p_176203_1_ & 7)).func_177226_a(field_176569_M, Boolean.valueOf((p_176203_1_ & 8) > 0));
++        return this.func_176223_P().func_177226_a(field_176568_b, EnumRailDirection.func_177016_a(p_176203_1_ & 7)).func_177226_a(field_176569_M, Boolean.valueOf((p_176203_1_ & 8) > 0));
+     }
+ 
+     public int func_176201_c(IBlockState p_176201_1_)
+     {
+         int i = 0;
+-        i = i | ((BlockRailBase.EnumRailDirection)p_176201_1_.func_177229_b(field_176568_b)).func_177015_a();
++        i = i | ((EnumRailDirection)p_176201_1_.func_177229_b(field_176568_b)).func_177015_a();
+ 
+         if (((Boolean)p_176201_1_.func_177229_b(field_176569_M)).booleanValue())
+         {
+@@ -226,76 +242,76 @@
+         {
+             case CLOCKWISE_180:
+ 
+-                switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
++                switch ((EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
+                 {
+                     case ASCENDING_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_WEST);
+                     case ASCENDING_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_EAST);
+                     case ASCENDING_NORTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_SOUTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_SOUTH);
+                     case ASCENDING_SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_NORTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_NORTH);
+                     case SOUTH_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_WEST);
+                     case SOUTH_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_EAST);
+                     case NORTH_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_EAST);
+                     case NORTH_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_WEST);
+                 }
+ 
+             case COUNTERCLOCKWISE_90:
+ 
+-                switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
++                switch ((EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
+                 {
+                     case NORTH_SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.EAST_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.EAST_WEST);
+                     case EAST_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_SOUTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_SOUTH);
+                     case ASCENDING_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_NORTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_NORTH);
+                     case ASCENDING_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_SOUTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_SOUTH);
+                     case ASCENDING_NORTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_WEST);
+                     case ASCENDING_SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_EAST);
+                     case SOUTH_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_EAST);
+                     case SOUTH_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_EAST);
+                     case NORTH_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_WEST);
+                     case NORTH_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_WEST);
+                 }
+ 
+             case CLOCKWISE_90:
+ 
+-                switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
++                switch ((EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
+                 {
+                     case NORTH_SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.EAST_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.EAST_WEST);
+                     case EAST_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_SOUTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_SOUTH);
+                     case ASCENDING_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_SOUTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_SOUTH);
+                     case ASCENDING_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_NORTH);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_NORTH);
+                     case ASCENDING_NORTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_EAST);
+                     case ASCENDING_SOUTH:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_WEST);
+                     case SOUTH_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_WEST);
+                     case SOUTH_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_WEST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_WEST);
+                     case NORTH_WEST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_EAST);
+                     case NORTH_EAST:
+-                        return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_EAST);
++                        return p_185499_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_EAST);
+                 }
+ 
+             default:
+@@ -306,7 +322,7 @@
+     @SuppressWarnings("incomplete-switch")
+     public IBlockState func_185471_a(IBlockState p_185471_1_, Mirror p_185471_2_)
+     {
+-        BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_185471_1_.func_177229_b(field_176568_b);
++        EnumRailDirection blockrailbase$enumraildirection = (EnumRailDirection)p_185471_1_.func_177229_b(field_176568_b);
+ 
+         switch (p_185471_2_)
+         {
+@@ -315,17 +331,17 @@
+                 switch (blockrailbase$enumraildirection)
+                 {
+                     case ASCENDING_NORTH:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_SOUTH);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_SOUTH);
+                     case ASCENDING_SOUTH:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_NORTH);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_NORTH);
+                     case SOUTH_EAST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_EAST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_EAST);
+                     case SOUTH_WEST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_WEST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_WEST);
+                     case NORTH_WEST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_WEST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_WEST);
+                     case NORTH_EAST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_EAST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_EAST);
+                     default:
+                         return super.func_185471_a(p_185471_1_, p_185471_2_);
+                 }
+@@ -335,21 +351,21 @@
+                 switch (blockrailbase$enumraildirection)
+                 {
+                     case ASCENDING_EAST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_WEST);
+                     case ASCENDING_WEST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_EAST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.ASCENDING_EAST);
+                     case ASCENDING_NORTH:
+                     case ASCENDING_SOUTH:
+                     default:
+                         break;
+                     case SOUTH_EAST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_WEST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_WEST);
+                     case SOUTH_WEST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.SOUTH_EAST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.SOUTH_EAST);
+                     case NORTH_WEST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_EAST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_EAST);
+                     case NORTH_EAST:
+-                        return p_185471_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.NORTH_WEST);
++                        return p_185471_1_.func_177226_a(field_176568_b, EnumRailDirection.NORTH_WEST);
+                 }
+         }
+ 

@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFireball.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFireball.java
+@@ -38,6 +38,12 @@
+             {
+                 if (p_180614_2_.func_180495_p(p_180614_3_).func_185904_a() == Material.field_151579_a)
+                 {
++                    if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockIgniteEvent(p_180614_2_, p_180614_3_.func_177958_n(), p_180614_3_.func_177956_o(), p_180614_3_.func_177952_p(), org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_180614_1_).isCancelled()) {
++                        if (!p_180614_1_.field_71075_bZ.field_75098_d) {
++                            itemstack.func_190918_g(1);
++                        }
++                        return EnumActionResult.PASS;
++                    }
+                     p_180614_2_.func_184133_a((EntityPlayer)null, p_180614_3_, SoundEvents.field_187616_bj, SoundCategory.BLOCKS, 1.0F, (field_77697_d.nextFloat() - field_77697_d.nextFloat()) * 0.2F + 1.0F);
+                     p_180614_2_.func_175656_a(p_180614_3_, Blocks.field_150480_ab.func_176223_P());
+                 }

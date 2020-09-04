@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/dispenser/BehaviorProjectileDispense.java
++++ ../src-work/minecraft/net/minecraft/dispenser/BehaviorProjectileDispense.java
+@@ -4,8 +4,11 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.IProjectile;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.tileentity.TileEntityDispenser;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
+ 
+ public abstract class BehaviorProjectileDispense extends BehaviorDefaultDispenseItem
+ {
+@@ -15,9 +18,36 @@
+         IPosition iposition = BlockDispenser.func_149939_a(p_82487_1_);
+         EnumFacing enumfacing = (EnumFacing)p_82487_1_.func_189992_e().func_177229_b(BlockDispenser.field_176441_a);
+         IProjectile iprojectile = this.func_82499_a(world, iposition, p_82487_2_);
+-        iprojectile.func_70186_c((double)enumfacing.func_82601_c(), (double)((float)enumfacing.func_96559_d() + 0.1F), (double)enumfacing.func_82599_e(), this.func_82500_b(), this.func_82498_a());
++        //iprojectile.shoot((double)enumfacing.getFrontOffsetX(), (double)((float)enumfacing.getFrontOffsetY() + 0.1F), (double)enumfacing.getFrontOffsetZ(), this.getProjectileVelocity(), this.getProjectileInaccuracy());
++        ItemStack itemstack1 = p_82487_2_.func_77979_a(1);
++        org.bukkit.block.Block block = world.getWorld().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) enumfacing.func_82601_c(), (double) ((float) enumfacing.func_96559_d() + 0.1F), (double) enumfacing.func_82599_e()));
++        if (!BlockDispenser.eventFired) {
++            world.getServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled()) {
++            p_82487_2_.func_190917_f(1);
++            return p_82487_2_;
++        }
++
++        if (!event.getItem().equals(craftItem)) {
++            p_82487_2_.func_190917_f(1);
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IBehaviorDispenseItem idispensebehavior = (IBehaviorDispenseItem) BlockDispenser.field_149943_a.func_82594_a(eventStack.func_77973_b());
++            if (idispensebehavior != IBehaviorDispenseItem.field_82483_a && idispensebehavior != this) {
++                idispensebehavior.func_82482_a(p_82487_1_, eventStack);
++                return p_82487_2_;
++            }
++        }
++
++        iprojectile.func_70186_c(event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), this.func_82500_b(), this.func_82498_a());
++        ((Entity) iprojectile).projectileSource = new org.bukkit.craftbukkit.v1_12_R1.projectiles.CraftBlockProjectileSource((TileEntityDispenser) p_82487_1_.func_150835_j());
+         world.func_72838_d((Entity)iprojectile);
+-        p_82487_2_.func_190918_g(1);
++        // stack.shrink(1); // CraftBukkit - Handled during event processing
+         return p_82487_2_;
+     }
+ 

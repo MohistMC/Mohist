@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityVex.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityVex.java
+@@ -35,6 +35,7 @@
+ import net.minecraft.world.storage.loot.LootTableList;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class EntityVex extends EntityMob
+ {
+@@ -316,7 +317,8 @@
+ 
+         public void func_75249_e()
+         {
+-            EntityVex.this.func_70624_b(EntityVex.this.field_190665_b.func_70638_az());
++            // EntityVex.this.setAttackTarget(EntityVex.this.owner.getAttackTarget());
++            EntityVex.this.setGoalTarget(EntityVex.this.field_190665_b.func_70638_az(), EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true);
+             super.func_75249_e();
+         }
+     }

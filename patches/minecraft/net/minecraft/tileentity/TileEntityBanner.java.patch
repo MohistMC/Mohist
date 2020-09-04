@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBanner.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBanner.java
+@@ -19,8 +19,8 @@
+ public class TileEntityBanner extends TileEntity implements IWorldNameable
+ {
+     private String field_190617_a;
+-    private EnumDyeColor field_175120_a = EnumDyeColor.BLACK;
+-    private NBTTagList field_175118_f;
++    public EnumDyeColor field_175120_a = EnumDyeColor.BLACK;
++    public NBTTagList field_175118_f;
+     private boolean field_175119_g;
+     private List<BannerPattern> field_175122_h;
+     private List<EnumDyeColor> field_175123_i;
+@@ -34,6 +34,11 @@
+         if (nbttagcompound != null && nbttagcompound.func_150297_b("Patterns", 9))
+         {
+             this.field_175118_f = nbttagcompound.func_150295_c("Patterns", 10).func_74737_b();
++            // CraftBukkit start
++            while (this.field_175118_f.func_74745_c() > 20) {
++                this.field_175118_f.func_74744_a(20);
++            }
++            // CraftBukkit end
+         }
+ 
+         this.field_175120_a = p_175112_2_ ? func_190616_d(p_175112_1_) : ItemBanner.func_179225_h(p_175112_1_);
+@@ -88,6 +93,11 @@
+ 
+         this.field_175120_a = EnumDyeColor.func_176766_a(p_145839_1_.func_74762_e("Base"));
+         this.field_175118_f = p_145839_1_.func_150295_c("Patterns", 10);
++        // CraftBukkit start
++        while (this.field_175118_f.func_74745_c() > 20) {
++            this.field_175118_f.func_74744_a(20);
++        }
++        // CraftBukkit end
+         this.field_175122_h = null;
+         this.field_175123_i = null;
+         this.field_175121_j = null;

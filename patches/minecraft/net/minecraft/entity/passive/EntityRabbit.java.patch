@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityRabbit.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityRabbit.java
+@@ -68,8 +68,14 @@
+         this.func_70105_a(0.4F, 0.5F);
+         this.field_70767_i = new EntityRabbit.RabbitJumpHelper(this);
+         this.field_70765_h = new EntityRabbit.RabbitMoveHelper(this);
++        this.initializePathFinderGoals(); // CraftBukkit - moved code
++    }
++
++    // CraftBukkit start - code from constructor
++    public void initializePathFinderGoals(){
+         this.func_175515_b(0.0D);
+     }
++    // CraftBukkit end
+ 
+     protected void func_184651_r()
+     {
+@@ -551,7 +557,7 @@
+             {
+                 if (this.field_179496_a <= 0)
+                 {
+-                    if (!this.field_179500_c.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++                    if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179500_c.field_70170_p, this.field_179500_c))
+                     {
+                         return false;
+                     }
+@@ -587,11 +593,23 @@
+ 
+                         if (integer.intValue() == 0)
+                         {
++                            // CraftBukkit start
++                            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179500_c, blockpos, Blocks.field_150350_a, 0).isCancelled()) {
++                                return;
++                            }
++                            // CraftBukkit end
+                             world.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 2);
+                             world.func_175655_b(blockpos, true);
+                         }
+                         else
+                         {
++                            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityChangeBlockEvent(
++                                    this.field_179500_c,
++                                    blockpos,
++                                    block, block.func_176201_c(iblockstate.func_177226_a(BlockCarrot.field_176488_a, Integer.valueOf(integer.intValue() - 1)))
++                            ).isCancelled()) {
++                                return;
++                            }
+                             world.func_180501_a(blockpos, iblockstate.func_177226_a(BlockCarrot.field_176488_a, Integer.valueOf(integer.intValue() - 1)), 2);
+                             world.func_175718_b(2001, blockpos, Block.func_176210_f(iblockstate));
+                         }

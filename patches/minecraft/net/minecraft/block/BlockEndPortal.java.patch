@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockEndPortal.java
++++ ../src-work/minecraft/net/minecraft/block/BlockEndPortal.java
+@@ -19,6 +19,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.EntityPortalEnterEvent;
+ 
+ public class BlockEndPortal extends BlockContainer
+ {
+@@ -69,6 +70,8 @@
+     {
+         if (!p_180634_1_.field_72995_K && !p_180634_4_.func_184218_aH() && !p_180634_4_.func_184207_aI() && p_180634_4_.func_184222_aU() && p_180634_4_.func_174813_aQ().func_72326_a(p_180634_3_.func_185900_c(p_180634_1_, p_180634_2_).func_186670_a(p_180634_2_)))
+         {
++            EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_180634_4_.getBukkitEntity(), new org.bukkit.Location(p_180634_1_.getWorld(), p_180634_2_.func_177958_n(), p_180634_2_.func_177956_o(), p_180634_2_.func_177952_p()));
++            p_180634_1_.getServer().getPluginManager().callEvent(event);
+             p_180634_4_.func_184204_a(1);
+         }
+     }

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketPlayerListItem.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketPlayerListItem.java
+@@ -223,7 +223,7 @@
+         private final GameProfile field_179964_d;
+         private final ITextComponent field_179965_e;
+ 
+-        public AddPlayerData(GameProfile p_i46663_2_, int p_i46663_3_, @Nullable GameType p_i46663_4_, @Nullable ITextComponent p_i46663_5_)
++        public AddPlayerData(GameProfile p_i46663_2_, int p_i46663_3_, GameType p_i46663_4_, @Nullable ITextComponent p_i46663_5_)
+         {
+             this.field_179964_d = p_i46663_2_;
+             this.field_179966_b = p_i46663_3_;

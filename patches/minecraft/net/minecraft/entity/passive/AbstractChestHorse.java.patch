@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/AbstractChestHorse.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/AbstractChestHorse.java
+@@ -72,7 +72,7 @@
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
+     {
+-        super.func_70645_a(p_70645_1_);
++        // super.onDeath(cause); // CraftBukkit - moved down
+ 
+         if (this.func_190695_dh())
+         {
+@@ -81,8 +81,10 @@
+                 this.func_145779_a(Item.func_150898_a(Blocks.field_150486_ae), 1);
+             }
+ 
+-            this.func_110207_m(false);
++            // this.setChested(false); // CraftBukkit - moved down
+         }
++        super.func_70645_a(p_70645_1_);
++        this.func_110207_m(false);
+     }
+ 
+     public static void func_190694_b(DataFixer p_190694_0_, Class<?> p_190694_1_)

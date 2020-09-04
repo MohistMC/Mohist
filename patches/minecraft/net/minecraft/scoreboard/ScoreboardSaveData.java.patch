@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/scoreboard/ScoreboardSaveData.java
++++ ../src-work/minecraft/net/minecraft/scoreboard/ScoreboardSaveData.java
+@@ -222,6 +222,7 @@
+         for (ScorePlayerTeam scoreplayerteam : this.field_96507_a.func_96525_g())
+         {
+             NBTTagCompound nbttagcompound = new NBTTagCompound();
++            if (scoreplayerteam.func_96669_c().isEmpty()) continue; // Paper
+             nbttagcompound.func_74778_a("Name", scoreplayerteam.func_96661_b());
+             nbttagcompound.func_74778_a("DisplayName", scoreplayerteam.func_96669_c());
+ 

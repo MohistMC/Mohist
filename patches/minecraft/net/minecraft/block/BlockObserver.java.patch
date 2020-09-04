@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockObserver.java
++++ ../src-work/minecraft/net/minecraft/block/BlockObserver.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public class BlockObserver extends BlockDirectional
+ {
+@@ -45,10 +46,20 @@
+     {
+         if (((Boolean)p_180650_3_.func_177229_b(field_190963_a)).booleanValue())
+         {
++            // Paper start
++            if (CraftEventFactory.callRedstoneChange(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), 15, 0).getNewCurrent() != 0) {
++                return;
++            }
++            // Paper end
+             p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_190963_a, Boolean.valueOf(false)), 2);
+         }
+         else
+         {
++            // Paper start
++            if (CraftEventFactory.callRedstoneChange(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), 0, 15).getNewCurrent() != 15) {
++                return;
++            }
++            // Paper end
+             p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_.func_177226_a(field_190963_a, Boolean.valueOf(true)), 2);
+             p_180650_1_.func_175684_a(p_180650_2_, this, 2);
+         }
+@@ -145,4 +156,12 @@
+     {
+         return this.func_176223_P().func_177226_a(field_176387_N, EnumFacing.func_82600_a(p_176203_1_ & 7));
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    @Override
++    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos)
++    {
++        func_190962_b(observerState, world, observerPos, changedBlock, changedBlockPos);
++    }
++    /* ========================================= FORGE END ======================================*/
+ }

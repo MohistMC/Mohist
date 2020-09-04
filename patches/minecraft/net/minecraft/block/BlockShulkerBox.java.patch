@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockShulkerBox.java
++++ ../src-work/minecraft/net/minecraft/block/BlockShulkerBox.java
+@@ -44,7 +44,7 @@
+ public class BlockShulkerBox extends BlockContainer
+ {
+     public static final PropertyEnum<EnumFacing> field_190957_a = PropertyDirection.func_177714_a("facing");
+-    private final EnumDyeColor field_190958_b;
++    public final EnumDyeColor field_190958_b;
+ 
+     public BlockShulkerBox(EnumDyeColor p_i47248_1_)
+     {
+@@ -201,8 +201,8 @@
+ 
+                 func_180635_a(p_180663_1_, p_180663_2_, itemstack);
+             }
+-
+             p_180663_1_.func_175666_e(p_180663_2_, p_180663_3_.func_177230_c());
++            tileentityshulkerbox.func_174888_l(); // Paper - This was intended to be called in Vanilla (is checked in the if statement above if has been called) - Fixes dupe issues
+         }
+ 
+         super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);

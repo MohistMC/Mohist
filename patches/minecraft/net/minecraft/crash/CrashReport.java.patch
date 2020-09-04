@@ -1,0 +1,134 @@
+--- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
++++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
+@@ -21,13 +21,15 @@
+ import org.apache.commons.lang3.ArrayUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import red.mohist.Mohist;
++import red.mohist.util.i18n.Message;
+ 
+ public class CrashReport
+ {
+     private static final Logger field_147150_a = LogManager.getLogger();
+     private final String field_71513_a;
+     private final Throwable field_71511_b;
+-    private final CrashReportCategory field_85061_c = new CrashReportCategory(this, "System Details");
++    private final CrashReportCategory field_85061_c = new CrashReportCategory(this, Message.getString("minecraft.crashreport"));
+     private final List<CrashReportCategory> field_71512_c = Lists.<CrashReportCategory>newArrayList();
+     private File field_71510_d;
+     private boolean field_85059_f = true;
+@@ -42,35 +44,35 @@
+ 
+     private void func_71504_g()
+     {
+-        this.field_85061_c.func_189529_a("Minecraft Version", new ICrashReportDetail<String>()
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport1"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+-                return "1.12.2";
++                return Mohist.getVersion();
+             }
+         });
+-        this.field_85061_c.func_189529_a("Operating System", new ICrashReportDetail<String>()
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport2"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+-                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version");
++                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") " + Message.getString("minecraft.crashreport3") + " " + System.getProperty("os.version");
+             }
+         });
+-        this.field_85061_c.func_189529_a("Java Version", new ICrashReportDetail<String>()
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport4"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+                 return System.getProperty("java.version") + ", " + System.getProperty("java.vendor");
+             }
+         });
+-        this.field_85061_c.func_189529_a("Java VM Version", new ICrashReportDetail<String>()
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport5"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+                 return System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor");
+             }
+         });
+-        this.field_85061_c.func_189529_a("Memory", new ICrashReportDetail<String>()
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport6"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+@@ -84,7 +86,7 @@
+                 return k + " bytes (" + j1 + " MB) / " + j + " bytes (" + i1 + " MB) up to " + i + " bytes (" + l + " MB)";
+             }
+         });
+-        this.field_85061_c.func_189529_a("JVM Flags", new ICrashReportDetail<String>()
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport7"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+@@ -109,13 +111,15 @@
+                 return String.format("%d total; %s", i, stringbuilder.toString());
+             }
+         });
+-        this.field_85061_c.func_189529_a("IntCache", new ICrashReportDetail<String>()
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport8"), new ICrashReportDetail<String>()
+         {
+             public String call() throws Exception
+             {
+                 return IntCache.func_85144_b();
+             }
+         });
++        this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport9"), (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
+     }
+ 
+     public String func_71501_a()
+@@ -137,9 +141,9 @@
+ 
+         if (this.field_85060_g != null && this.field_85060_g.length > 0)
+         {
+-            p_71506_1_.append("-- Head --\n");
+-            p_71506_1_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
+-            p_71506_1_.append("Stacktrace:\n");
++            p_71506_1_.append("-- " + Message.getString("minecraft.crashreport10") + " --\n");
++            p_71506_1_.append(Message.getString("minecraft.crashreport11") + ": ").append(Thread.currentThread().getName()).append("\n");
++            p_71506_1_.append(Message.getString("minecraft.crashreport12") + ":\n");
+ 
+             for (StackTraceElement stacktraceelement : this.field_85060_g)
+             {
+@@ -204,18 +208,17 @@
+     public String func_71502_e()
+     {
+         StringBuilder stringbuilder = new StringBuilder();
+-        stringbuilder.append("---- Minecraft Crash Report ----\n");
+-        stringbuilder.append("// ");
+-        stringbuilder.append(func_71503_h());
++        stringbuilder.append(Message.getString("minecraft.crashreport13") + "\n");
++        net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
+         stringbuilder.append("\n\n");
+-        stringbuilder.append("Time: ");
++        stringbuilder.append(Message.getString("minecraft.crashreport14") + ": ");
+         stringbuilder.append((new SimpleDateFormat()).format(new Date()));
+         stringbuilder.append("\n");
+-        stringbuilder.append("Description: ");
++        stringbuilder.append(Message.getString("minecraft.crashreport15") + ": ");
+         stringbuilder.append(this.field_71513_a);
+         stringbuilder.append("\n\n");
+         stringbuilder.append(this.func_71498_d());
+-        stringbuilder.append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
++        stringbuilder.append("\n\n" + Message.getString("minecraft.crashreport16") + ":\n");
+ 
+         for (int i = 0; i < 87; ++i)
+         {
+@@ -259,7 +262,7 @@
+             }
+             catch (Throwable throwable)
+             {
+-                field_147150_a.error("Could not save crash report to {}", p_147149_1_, throwable);
++                field_147150_a.error(Message.getFormatString("minecraft.crashreport17", new Object[] {p_147149_1_}), throwable);
+                 flag1 = false;
+             }
+             finally

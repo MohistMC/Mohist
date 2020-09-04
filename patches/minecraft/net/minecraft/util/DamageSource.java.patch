@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/util/DamageSource.java
++++ ../src-work/minecraft/net/minecraft/util/DamageSource.java
+@@ -45,6 +45,17 @@
+     private boolean field_76378_k;
+     public String field_76373_n;
+ 
++    private boolean sweep;
++
++    public boolean isSweep() {
++        return sweep;
++    }
++
++    public DamageSource sweep() {
++        this.sweep = true;
++        return this;
++    }
++
+     public static DamageSource func_76358_a(EntityLivingBase p_76358_0_)
+     {
+         return new EntityDamageSource("mob", p_76358_0_);

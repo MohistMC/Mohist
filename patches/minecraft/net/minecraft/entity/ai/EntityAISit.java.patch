@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAISit.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAISit.java
+@@ -18,7 +18,8 @@
+     {
+         if (!this.field_75272_a.func_70909_n())
+         {
+-            return false;
++            // return false;
++            return this.field_75271_b && this.field_75272_a.func_70638_az() == null; // CraftBukkit - Allow sitting for wild animals
+         }
+         else if (this.field_75272_a.func_70090_H())
+         {

@@ -1,0 +1,79 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryLargeChest.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryLargeChest.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.inventory;
+ 
++import java.util.ArrayList;
++import java.util.List;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+@@ -8,13 +10,56 @@
+ import net.minecraft.util.text.TextComponentTranslation;
+ import net.minecraft.world.ILockableContainer;
+ import net.minecraft.world.LockCode;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class InventoryLargeChest implements ILockableContainer
+ {
+     private final String field_70479_a;
+-    private final ILockableContainer field_70477_b;
+-    private final ILockableContainer field_70478_c;
++    public final ILockableContainer field_70477_b;
++    public final ILockableContainer field_70478_c;
+ 
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++
++    public List<ItemStack> getContents() {
++        List<ItemStack> result = new ArrayList<ItemStack>(this.func_70302_i_());
++        for (int i = 0; i < this.func_70302_i_(); i++) {
++            result.add(this.func_70301_a(i));
++        }
++        return result;
++    }
++
++    public void onOpen(CraftHumanEntity who) {
++        this.field_70477_b.onOpen(who);
++        this.field_70478_c.onOpen(who);
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who) {
++        this.field_70477_b.onClose(who);
++        this.field_70478_c.onClose(who);
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers() {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner() {
++        return null; // This method won't be called since CraftInventoryDoubleChest doesn't defer to here
++    }
++
++    public void setMaxStackSize(int size) {
++        this.field_70477_b.setMaxStackSize(size);
++        this.field_70478_c.setMaxStackSize(size);
++    }
++
++    @Override
++    public Location getLocation() {
++        return field_70477_b.getLocation(); // TODO: right?
++    }
++
+     public InventoryLargeChest(String p_i45905_1_, ILockableContainer p_i45905_2_, ILockableContainer p_i45905_3_)
+     {
+         this.field_70479_a = p_i45905_1_;
+@@ -108,7 +153,8 @@
+ 
+     public int func_70297_j_()
+     {
+-        return this.field_70477_b.func_70297_j_();
++        // return this.upperChest.getInventoryStackLimit();
++        return Math.min(this.field_70477_b.func_70297_j_(), this.field_70478_c.func_70297_j_()); // CraftBukkit - check both sides
+     }
+ 
+     public void func_70296_d()
