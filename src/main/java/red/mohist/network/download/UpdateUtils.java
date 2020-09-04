@@ -33,12 +33,13 @@ public class UpdateUtils {
     System.out.println(Message.getString("update.stopcheck"));
 
     try {
-      JsonElement root = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").getContent()));
+      JsonElement root = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/api/json").getContent()));
+      JsonElement root0 = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").getContent()));
 
       jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
-      String[] ci_sha_date = root.getAsJsonObject().get("artifacts").getAsJsonArray().get(0).getAsJsonObject().get("displayPath").toString().split("-");
-      ci_sha = "1.12.2-" + ci_sha_date[2];
-      String timestamp = root.getAsJsonObject().get("timestamp").toString();
+      String ci_sha_date = root.getAsJsonObject().get("builds").getAsJsonArray().get(0).getAsJsonObject().get("number").toString();
+      ci_sha = ci_sha_date;
+      String timestamp = root0.getAsJsonObject().get("timestamp").toString();
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       time = sdf.format(new Date(Long.parseLong(timestamp)));
 
