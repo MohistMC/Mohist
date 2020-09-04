@@ -32,12 +32,11 @@ public class UpdateUtils {
     System.out.println(Message.getString("update.stopcheck"));
 
     try {
-      JsonElement root = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/api/json").getContent()));
-      JsonElement root0 = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").getContent()));
+      JsonElement root = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").getContent()));
 
       String jar_sha = Mohist.getVersion();
-      String build_number = root.getAsJsonObject().get("builds").getAsJsonArray().get(0).getAsJsonObject().get("number").toString();
-      String timestamp = root0.getAsJsonObject().get("timestamp").toString();
+      String build_number = root.getAsJsonObject().get("number").toString();
+      String timestamp = root.getAsJsonObject().get("timestamp").toString();
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       String time = sdf.format(new Date(Long.parseLong(timestamp)));
 
