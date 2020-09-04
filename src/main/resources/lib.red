@@ -17,7 +17,7 @@ libraries/net/sf/trove4j/trove4j/3.0.3/trove4j-3.0.3.jar|8fc4d4e0129244f9fd39650
 libraries/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar|780b5a8b72eebe6d0dbff1c11b5658fa
 libraries/org/apache/maven/maven-artifact/3.5.3/maven-artifact-3.5.3.jar|7741ebf29690ee7d9dde9cf4376347fc
 libraries/org/jline/jline/3.5.1/jline-3.5.1.jar|4c20d2879ed2bd75a0771ce29e89f6b0
-libraries/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar|f5ad16c7f0338b541978b0430d51dc83
+libraries/org/ow2/asm/asm-debug-all/5.2/asm-debug-all-5.2.jar|fe5f20404ccdee9769ef05dc4b47ba98
 libraries/org/scala-lang/plugins/scala-continuations-library_2.11/1.0.2/scala-continuations-library_2.11-1.0.2.jar|f2a6b8fb8451839efb670d03dfd79ebd
 libraries/org/scala-lang/plugins/scala-continuations-plugin_2.11.1/1.0.2/scala-continuations-plugin_2.11.1-1.0.2.jar|40e725b6f9da3a52e6adffd94abb8290
 libraries/org/scala-lang/scala-actors-migration_2.11/1.1.0/scala-actors-migration_2.11-1.1.0.jar|7f7b169667d14b3092a285badf9487f7
