@@ -178,7 +178,7 @@ project(':mohist') {
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': grgit.head().abbreviatedId,
-                'Git-Branch': grgit.branch.current().getName()
+                'Git-Branch': '1.12.2'
             ] as LinkedHashMap,
             'red/mohist/': [
                 'Specification-Title':      'Mohist',

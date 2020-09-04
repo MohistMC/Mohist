@@ -26,7 +26,6 @@ import static red.mohist.network.download.NetworkUtil.getConnLength;
 import static red.mohist.network.download.NetworkUtil.getInput;
 
 public class UpdateUtils {
-  static String ci_sha, jar_sha, time;
 
   public static void versionCheck() {
     System.out.println(Message.getString("update.check"));
@@ -36,19 +35,18 @@ public class UpdateUtils {
       JsonElement root = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/api/json").getContent()));
       JsonElement root0 = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").getContent()));
 
-      jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
-      String ci_sha_date = root.getAsJsonObject().get("builds").getAsJsonArray().get(0).getAsJsonObject().get("number").toString();
-      ci_sha = ci_sha_date;
+      String jar_sha = Mohist.getVersion();
+      String build_number = root.getAsJsonObject().get("builds").getAsJsonArray().get(0).getAsJsonObject().get("number").toString();
       String timestamp = root0.getAsJsonObject().get("timestamp").toString();
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      time = sdf.format(new Date(Long.parseLong(timestamp)));
+      String time = sdf.format(new Date(Long.parseLong(timestamp)));
 
-      if(jar_sha.equals(ci_sha))
-        System.out.println(Message.getFormatString("update.latest", new Object[]{"1.9", jar_sha, ci_sha}));
+      if(jar_sha.equals(build_number))
+        System.out.println(Message.getFormatString("update.latest", new Object[]{"1.9", jar_sha, build_number}));
       else {
-        System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time}));
+        System.out.println(Message.getFormatString("update.detect", new Object[]{build_number, jar_sha, time}));
         if(bMohist("check_update_auto_download"))
-          downloadFile("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/build/distributions/Mohist-" + ci_sha + "-server.jar", new File(new File(Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName()));
+          downloadFile("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/build/distributions/Mohist-" + build_number + "-server.jar", new File(new File(Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName()));
       }
     } catch (Throwable e) {
       System.out.println(Message.getString("check.update.noci"));
