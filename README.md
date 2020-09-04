@@ -11,7 +11,7 @@
 [![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2854-brightgreen.svg?colorB=26303d&style=for-the-badge&logo=Conda-Forge)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340&style=for-the-badge)](https://papermc.io/downloads#Paper-1.12)
 [![](https://img.shields.io/badge/AdoptOpenJDK-8u252-brightgreen.svg?colorB=469C00&style=for-the-badge&logo=java)](https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot)
-[![](https://img.shields.io/badge/Gradle-5.6.4-brightgreen.svg?colorB=469C00&style=for-the-badge&logo=gradle)](https://docs.gradle.org/5.6.4/release-notes.html)
+[![](https://img.shields.io/badge/Gradle-4.9-brightgreen.svg?colorB=469C00&style=for-the-badge&logo=gradle)](https://docs.gradle.org/4.9/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats&style=for-the-badge)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 
@@ -53,25 +53,13 @@ Building
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * Build Mohist
   * Build with Linux:
-  `bash gradlew launch4j`
+  `bash gradlew setup installerJar`
   * Build with Windows:
-  `gradlew.bat launch4j`
+  `gradlew.bat setup installerJar`
 
-All builds will be in `.\build\distributions\`
-
-The Mohist server jar file is located at `.\build\distributions\Mohist-xxxxx-server.jar`
+The Mohist server jar file is located at `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
 
 This is the jarfile that you should run.
-
-Plugin development
-------
-* Building
-   * Build with Linux:
-   `bash gradlew reobfToSRG`
-   * Build with Windows:
-   `gradlew.bat reobfToSRG`
-
-`.\build\mohist_srg.jar` Is the development frontend you need
 
 Thanks to the following projects
 ------

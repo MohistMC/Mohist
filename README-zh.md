@@ -54,13 +54,13 @@ java -jar yourJar.jar
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * 构建Mohist源码
   * Linux下构建:
-  `bash gradlew launch4j`
+  `bash gradlew setup installerJar`
   * Windows下构建:
-  `gradlew.bat launch4j`
+  `gradlew.bat setup installerJar`
 
 所有构建出的版本都会该目录 `.\build\distributions\`
 
-Mohist服务端核心文件应在这里 `.\build\distributions\Mohist-xxxxx-server.jar`
+Mohist服务端核心文件应在这里 `.\projects\mohist\build\libs\mohist-xxxxx-server.jar``
 
 这就是你可以运行的服务端核心本体.
 
