@@ -9,6 +9,7 @@
  
 -                    if (block == Blocks.field_150359_w || block == Blocks.field_150399_cn)
 +                    if (state.func_193401_d(p_178270_1_, blockpos, EnumFacing.field_82609_l[i1+2].func_176734_d()) == net.minecraft.block.state.BlockFaceShape.SOLID)
+\ No newline at end of file
                      {
                          textureatlassprite1 = this.field_187501_d;
                      }

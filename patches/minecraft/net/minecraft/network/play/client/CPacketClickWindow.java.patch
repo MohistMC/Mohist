@@ -6,6 +6,7 @@
          p_148840_1_.func_179249_a(this.field_149549_f);
 -        p_148840_1_.func_150788_a(this.field_149551_e);
 +        net.minecraftforge.common.util.PacketUtil.writeItemStackFromClientToServer(p_148840_1_, this.field_149551_e);
+\ No newline at end of file
      }
  
      public int func_149548_c()

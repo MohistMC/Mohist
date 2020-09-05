@@ -74,6 +74,7 @@
 -        return this.field_70477_b.func_70297_j_();
 +        // return this.upperChest.getInventoryStackLimit();
 +        return Math.min(this.field_70477_b.func_70297_j_(), this.field_70478_c.func_70297_j_()); // CraftBukkit - check both sides
+\ No newline at end of file
      }
  
      public void func_70296_d()

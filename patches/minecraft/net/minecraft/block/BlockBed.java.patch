@@ -9,6 +9,7 @@
 +            if (sleepResult != net.minecraft.world.WorldProvider.WorldSleepResult.BED_EXPLODES)
              {
 +                if (sleepResult == net.minecraft.world.WorldProvider.WorldSleepResult.DENY) return true;
+\ No newline at end of file
                  if (((Boolean)p_180639_3_.func_177229_b(field_176471_b)).booleanValue())
                  {
                      EntityPlayer entityplayer = this.func_176470_e(p_180639_1_, p_180639_2_);

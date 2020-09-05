@@ -8,6 +8,7 @@
 -                            BufferedImage bufferedimage2 = TextureUtil.func_177053_a(iresource1.func_110527_b());
 -
 +                            BufferedImage bufferedimage2 = net.minecraftforge.client.MinecraftForgeClient.getImageLayer(new ResourceLocation(s), p_110551_1_);
+\ No newline at end of file
                              if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6)
                              {
                                  for (int l = 0; l < bufferedimage2.getHeight(); ++l)

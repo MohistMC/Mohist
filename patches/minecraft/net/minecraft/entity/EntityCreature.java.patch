@@ -21,6 +21,7 @@
              if (f > 10.0F)
              {
 +                this.field_70170_p.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE));
+\ No newline at end of file
                  this.func_110160_i(true, true);
                  this.field_70714_bg.func_188526_c(1);
              }

@@ -6,6 +6,7 @@
      {
 -        this.field_75305_a.func_70624_b(this.field_75304_b);
 +        this.field_75305_a.setGoalTarget(this.field_75304_b, org.bukkit.event.entity.EntityTargetEvent.TargetReason.DEFEND_VILLAGE, true);
+\ No newline at end of file
          super.func_75249_e();
      }
  }

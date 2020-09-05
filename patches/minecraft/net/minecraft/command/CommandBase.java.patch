@@ -23,6 +23,7 @@
  
 -            ITextComponent itextcomponent1 = new TextComponentString(p_147176_1_[i]);
 +            ITextComponent itextcomponent1 = net.minecraftforge.common.ForgeHooks.newChatWithLinks(p_147176_1_[i]); // Forge: links for messages
+\ No newline at end of file
  
              if (p_147176_3_)
              {

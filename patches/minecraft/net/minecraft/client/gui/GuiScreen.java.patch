@@ -114,6 +114,7 @@
      {
          this.func_146270_b(0);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+\ No newline at end of file
      }
  
      public void func_146270_b(int p_146270_1_)

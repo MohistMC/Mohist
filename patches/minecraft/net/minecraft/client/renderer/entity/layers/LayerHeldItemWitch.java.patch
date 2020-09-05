@@ -6,6 +6,7 @@
              }
 -            else if (item == Items.field_151031_f)
 +            else if (item instanceof net.minecraft.item.ItemBow)
+\ No newline at end of file
              {
                  GlStateManager.func_179109_b(0.0F, 0.125F, -0.125F);
                  GlStateManager.func_179114_b(-45.0F, 0.0F, 1.0F, 0.0F);

@@ -21,6 +21,7 @@
          entityvillager.func_70012_b(this.field_75450_b.field_70165_t, this.field_75450_b.field_70163_u, this.field_75450_b.field_70161_v, 0.0F, 0.0F);
 -        this.field_75448_d.func_72838_d(entityvillager);
 +        this.field_75448_d.addEntity(entityvillager, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
+\ No newline at end of file
          this.field_75448_d.func_72960_a(entityvillager, (byte)12);
      }
  }

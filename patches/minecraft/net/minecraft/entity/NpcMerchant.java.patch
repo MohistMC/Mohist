@@ -6,6 +6,7 @@
      {
 -        return this.field_70936_c;
 +        return net.minecraftforge.event.ForgeEventFactory.listTradeOffers(this, p_70934_1_, this.field_70936_c);
+\ No newline at end of file
      }
  
      public void func_70930_a(@Nullable MerchantRecipeList p_70930_1_)

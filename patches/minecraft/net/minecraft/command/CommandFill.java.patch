@@ -15,6 +15,7 @@
                                      }
 -                                    else if ("replace".equals(p_184881_3_[8]) && !block.func_149716_u() && p_184881_3_.length > 9)
 +                                    else if ("replace".equals(p_184881_3_[8]) && !block.hasTileEntity(iblockstate) && p_184881_3_.length > 9)
+\ No newline at end of file
                                      {
                                          Block block1 = CommandBase.func_147180_g(p_184881_2_, p_184881_3_[9]);
  

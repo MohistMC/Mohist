@@ -12,6 +12,7 @@
              itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.OPEN_FILE, file2.getAbsolutePath()));
              itextcomponent.func_150256_b().func_150228_d(Boolean.valueOf(true));
 +            if (event.getResultMessage() != null) return event.getResultMessage();
+\ No newline at end of file
              return new TextComponentTranslation("screenshot.success", new Object[] {itextcomponent});
          }
          catch (Exception exception)

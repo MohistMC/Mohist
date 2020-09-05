@@ -5,6 +5,7 @@
      public void func_74372_a()
      {
 +        if (Boolean.parseBoolean(System.getProperty("fml.noGrab","false"))) return;
+\ No newline at end of file
          Mouse.setGrabbed(true);
          this.field_74377_a = 0;
          this.field_74375_b = 0;

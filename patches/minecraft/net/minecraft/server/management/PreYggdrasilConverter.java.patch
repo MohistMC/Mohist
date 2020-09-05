@@ -241,6 +241,7 @@
          String s = p_152725_0_.func_73671_a("level-name", "world");
 -        File file1 = new File(s);
 +        File file1 = new File(MinecraftServer.getServerInst().server.getWorldContainer(), s); // CraftBukkit - Respect container setting
+\ No newline at end of file
          return new File(file1, "players");
      }
  

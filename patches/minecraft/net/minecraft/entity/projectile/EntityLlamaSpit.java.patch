@@ -31,6 +31,7 @@
      public void func_190536_a(RayTraceResult p_190536_1_)
      {
 +        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callProjectileHitEvent(this, p_190536_1_); // CraftBukkit
+\ No newline at end of file
          if (p_190536_1_.field_72308_g != null && this.field_190539_a != null)
          {
              p_190536_1_.field_72308_g.func_70097_a(DamageSource.func_188403_a(this, this.field_190539_a).func_76349_b(), 1.0F);

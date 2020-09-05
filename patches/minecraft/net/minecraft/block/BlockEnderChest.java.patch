@@ -6,6 +6,7 @@
          {
 -            if (p_180639_1_.func_180495_p(p_180639_2_.func_177984_a()).func_185915_l())
 +            if (p_180639_1_.func_180495_p(p_180639_2_.func_177984_a()).doesSideBlockChestOpening(p_180639_1_, p_180639_2_.func_177984_a(), EnumFacing.DOWN))
+\ No newline at end of file
              {
                  return true;
              }

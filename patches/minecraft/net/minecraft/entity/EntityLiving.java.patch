@@ -321,5 +321,6 @@
 +        {
 +            return this.spawnPredicate != null ? this.spawnPredicate.test(world, pos) : net.minecraft.world.WorldEntitySpawner.canCreatureTypeSpawnBody(this, world, pos);
 +        }
+\ No newline at end of file
      }
  }

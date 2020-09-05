@@ -14,6 +14,7 @@
          }
  
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_189552_1_); //Moved up for MC updating reasons.
+\ No newline at end of file
          p_189552_1_.func_74782_a("palette", nbttaglist2);
          p_189552_1_.func_74782_a("blocks", nbttaglist);
          p_189552_1_.func_74782_a("entities", nbttaglist1);

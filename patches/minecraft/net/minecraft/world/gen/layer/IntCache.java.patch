@@ -36,6 +36,7 @@
              int[] aint = field_76447_d.remove(field_76447_d.size() - 1);
 -            field_76448_e.add(aint);
 +            if (field_76448_e.size() < org.spigotmc.SpigotConfig.intCacheLimit) field_76448_e.add(aint);
+\ No newline at end of file
              return aint;
          }
      }

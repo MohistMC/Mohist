@@ -5,6 +5,7 @@
      static
      {
 +        if (System.getProperty("io.netty.leakDetection.level") == null) // Forge: allow level to be manually specified
+\ No newline at end of file
          ResourceLeakDetector.setLevel(field_184877_a);
      }
  }

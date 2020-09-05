@@ -28,6 +28,7 @@
              this.field_183008_d = true;
 -            this.field_147313_b.func_179290_a(new SPacketServerInfo(this.field_147314_a.func_147134_at()));
 +            com.destroystokyo.paper.network.StandardPaperServerListPingEventImpl.processRequest(this.field_147314_a, this.field_147313_b);
+\ No newline at end of file
          }
      }
  

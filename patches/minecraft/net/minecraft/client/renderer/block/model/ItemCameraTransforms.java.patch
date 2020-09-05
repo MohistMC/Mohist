@@ -40,6 +40,7 @@
      @SideOnly(Side.CLIENT)
 -    public static enum TransformType
 +    public static enum TransformType implements net.minecraftforge.common.model.IModelPart
+\ No newline at end of file
      {
          NONE,
          THIRD_PERSON_LEFT_HAND,

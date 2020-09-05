@@ -42,6 +42,7 @@
  
 -                    if (p_180709_1_.func_175623_d(blockpos4) && p_180709_1_.func_180495_p(blockpos4.func_177977_b()).func_185896_q())
 +                    if (p_180709_1_.func_175623_d(blockpos4) && p_180709_1_.func_180495_p(blockpos4.func_177977_b()).isSideSolid(p_180709_1_, blockpos4.func_177977_b(), net.minecraft.util.EnumFacing.UP))
+\ No newline at end of file
                      {
                          p_180709_1_.func_180501_a(blockpos4, Blocks.field_150478_aa.func_176223_P(), 2);
                      }

@@ -11,6 +11,7 @@
 +                 if (map.containsKey(rl)) return map.get(rl).apply(jsonobject);
 +                 else throw new JsonSyntaxException("There is no ItemPredicate of type "+rl);
 +            }
+\ No newline at end of file
              MinMaxBounds minmaxbounds = MinMaxBounds.func_192515_a(jsonobject.get("count"));
              MinMaxBounds minmaxbounds1 = MinMaxBounds.func_192515_a(jsonobject.get("durability"));
              Integer integer = jsonobject.has("data") ? JsonUtils.func_151203_m(jsonobject, "data") : null;

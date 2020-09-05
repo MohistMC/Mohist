@@ -123,6 +123,7 @@
 -                    entity.func_70077_a(this);
 +                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
 +                        entity.func_70077_a(this);
+\ No newline at end of file
                  }
              }
          }

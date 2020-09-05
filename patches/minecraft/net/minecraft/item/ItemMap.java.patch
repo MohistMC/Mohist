@@ -126,6 +126,7 @@
              p_185064_1_.func_72823_a("map_" + p_185064_0_.func_77960_j(), mapdata1);
 +            MapInitializeEvent event = new MapInitializeEvent(mapdata1.mapView);
 +            Bukkit.getServer().getPluginManager().callEvent(event);
+\ No newline at end of file
          }
      }
  

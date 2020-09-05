@@ -6,6 +6,7 @@
                              entitywitch.func_180482_a(p_74875_1_.func_175649_E(new BlockPos(l, i1, k)), (IEntityLivingData)null);
 -                            p_74875_1_.func_72838_d(entitywitch);
 +                            p_74875_1_.addEntity(entitywitch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
+\ No newline at end of file
                          }
                      }
  

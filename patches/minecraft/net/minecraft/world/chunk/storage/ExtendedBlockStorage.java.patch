@@ -39,6 +39,7 @@
 -        return this.field_76682_b == 0;
 +        // return this.blockRefCount == 0;
 +        return false; // CraftBukkit - MC-80966
+\ No newline at end of file
      }
  
      public boolean func_76675_b()

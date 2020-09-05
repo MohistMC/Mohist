@@ -15,6 +15,7 @@
 +        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_190901_1_);
          NonNullList<ItemStack> nonnulllist = CraftingManager.func_180303_b(this.field_75239_a, p_190901_1_.field_70170_p);
 +        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
+\ No newline at end of file
  
          for (int i = 0; i < nonnulllist.size(); ++i)
          {

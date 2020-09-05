@@ -62,6 +62,7 @@
 +                        CraftEventFactory.entityDamage = this;
                          entitylivingbase.func_70097_a(DamageSource.field_191552_t, f1);
 +                        CraftEventFactory.entityDamage = null;
+\ No newline at end of file
                      }
                  }
              }

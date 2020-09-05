@@ -6,6 +6,7 @@
  
 -                if (j > 0 && this.field_111180_a.func_70681_au().nextInt(j) < i)
 +                if (j > 0 && this.field_111180_a.func_70681_au().nextInt(j) < i && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(field_111180_a, (EntityPlayer)entity) && !org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityTameEvent(this.field_111180_a, ((org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity) this.field_111180_a.getBukkitEntity().getPassenger()).getHandle()).isCancelled())
+\ No newline at end of file
                  {
                      this.field_111180_a.func_110263_g((EntityPlayer)entity);
                      return;

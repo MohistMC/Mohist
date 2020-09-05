@@ -15,6 +15,7 @@
                  {
 -                    return (LootTable)JsonUtils.func_188178_a(LootTableManager.field_186526_b, s, LootTable.class);
 +                    return net.minecraftforge.common.ForgeHooks.loadLootTable(LootTableManager.field_186526_b, p_186518_1_, s, false, LootTableManager.this);
+\ No newline at end of file
                  }
                  catch (JsonParseException jsonparseexception)
                  {

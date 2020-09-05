@@ -5,6 +5,7 @@
          {
              NBTTagCompound nbttagcompound = new NBTTagCompound();
 +            if (scoreplayerteam.func_96669_c().isEmpty()) continue; // Paper
+\ No newline at end of file
              nbttagcompound.func_74778_a("Name", scoreplayerteam.func_96661_b());
              nbttagcompound.func_74778_a("DisplayName", scoreplayerteam.func_96669_c());
  

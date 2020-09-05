@@ -7,6 +7,7 @@
 -        ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_i45087_2_ + ".json");
 +        String[] rl = ResourceLocation.func_177516_a(p_i45087_2_);
 +        ResourceLocation resourcelocation = new ResourceLocation(rl[0], "shaders/program/" + rl[1] + ".json");
+\ No newline at end of file
          this.field_148007_m = p_i45087_2_;
          IResource iresource = null;
  

@@ -14,6 +14,7 @@
              int i = func_194113_b(p_194112_1_);
 -            int j = p_194112_1_.func_190916_E();
 +            int j = forceCount == -1 ? p_194112_1_.func_190916_E() : forceCount;
+\ No newline at end of file
              this.func_194117_b(i, j);
          }
      }

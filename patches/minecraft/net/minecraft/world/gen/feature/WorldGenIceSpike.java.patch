@@ -24,6 +24,7 @@
  
 -                        if (iblockstate1.func_185904_a() != Material.field_151579_a && block1 != Blocks.field_150346_d && block1 != Blocks.field_150433_aE && block1 != Blocks.field_150432_aD && block1 != Blocks.field_150403_cj)
 +                        if (!iblockstate1.func_177230_c().isAir(iblockstate1, p_180709_1_, blockpos) && block1 != Blocks.field_150346_d && block1 != Blocks.field_150433_aE && block1 != Blocks.field_150432_aD && block1 != Blocks.field_150403_cj)
+\ No newline at end of file
                          {
                              break;
                          }

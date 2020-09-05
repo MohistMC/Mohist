@@ -89,6 +89,7 @@
 +            return 1 + RANDOM.nextInt(5);
          }
 +        return 0;
+\ No newline at end of file
      }
  
      @SideOnly(Side.CLIENT)

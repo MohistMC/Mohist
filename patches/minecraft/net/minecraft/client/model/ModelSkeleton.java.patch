@@ -15,6 +15,7 @@
  
 -        if (abstractskeleton.func_184725_db() && (itemstack.func_190926_b() || itemstack.func_77973_b() != Items.field_151031_f))
 +        if (abstractskeleton.func_184725_db() && (itemstack.func_190926_b() || !(itemstack.func_77973_b() instanceof net.minecraft.item.ItemBow)))
+\ No newline at end of file
          {
              float f = MathHelper.func_76126_a(this.field_78095_p * (float)Math.PI);
              float f1 = MathHelper.func_76126_a((1.0F - (1.0F - this.field_78095_p) * (1.0F - this.field_78095_p)) * (float)Math.PI);

@@ -53,6 +53,7 @@
                  }
 -                else
 +                else if (net.minecraftforge.event.terraingen.TerrainGen.decorate(p_185379_1_, p_185379_2_, new net.minecraft.util.math.ChunkPos(p_185379_3_), blockpos, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE))
+\ No newline at end of file
                  {
                      WorldGenAbstractTree worldgenabstracttree = this.func_150567_a(p_185379_2_);
                      worldgenabstracttree.func_175904_e();

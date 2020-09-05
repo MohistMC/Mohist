@@ -19,6 +19,7 @@
 +                BlockPos underPos = new BlockPos(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) - 1, MathHelper.func_76128_c(this.field_70161_v));
 +                IBlockState underState = this.field_70170_p.func_180495_p(underPos);
 +                f = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, underPos, this) * 0.91F;
+\ No newline at end of file
              }
  
              this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);

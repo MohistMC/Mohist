@@ -21,6 +21,7 @@
  
 -        field_192091_a.info("Loaded " + this.field_192092_b.size() + " advancements");
 +       // LOGGER.info("Loaded " + this.advancements.size() + " advancements"); // CraftBukkit - moved to AdvancementDataWorld#reload
+\ No newline at end of file
      }
  
      public void func_192087_a()

@@ -61,6 +61,7 @@
  
 -                        if (material1 == Material.field_151579_a || material1 == Material.field_151584_j)
 +                        if (state.func_177230_c().isAir(state, p_180709_1_, upN) || state.func_177230_c().isLeaves(state, p_180709_1_, upN))
+\ No newline at end of file
                          {
                              this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(k4), field_181645_a);
                          }

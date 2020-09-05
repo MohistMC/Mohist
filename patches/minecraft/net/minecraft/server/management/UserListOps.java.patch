@@ -5,6 +5,7 @@
      protected String func_152681_a(GameProfile p_152681_1_)
      {
 +        if (p_152681_1_ == null || p_152681_1_.getId() == null) return "invalid"; // Cauldron - handle GameProfiles with no ID
+\ No newline at end of file
          return p_152681_1_.getId().toString();
      }
  

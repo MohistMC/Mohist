@@ -116,6 +116,7 @@
  
 -                if (!ArrayUtils.isEmpty((Object[])p_serialize_1_.field_186454_b))
 +                if (!p_serialize_1_.field_186454_b.isEmpty())
+\ No newline at end of file
                  {
                      jsonobject.add("conditions", p_serialize_3_.serialize(p_serialize_1_.field_186454_b));
                  }

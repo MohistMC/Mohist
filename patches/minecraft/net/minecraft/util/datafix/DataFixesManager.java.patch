@@ -5,6 +5,7 @@
      {
          DataFixer datafixer = new DataFixer(1343);
 +        datafixer = new net.minecraftforge.common.util.CompoundDataFixer(datafixer);
+\ No newline at end of file
          WorldInfo.func_189967_a(datafixer);
          EntityPlayerMP.func_191522_a(datafixer);
          EntityPlayer.func_189806_a(datafixer);

@@ -61,6 +61,7 @@
  
 +    @Override public int quantityDropped(IBlockState state, int fortune, Random random){ return ((Integer)state.func_177229_b(field_176315_a)) + 1; }
 +
+\ No newline at end of file
      protected BlockStateContainer func_180661_e()
      {
          return new BlockStateContainer(this, new IProperty[] {field_176315_a});

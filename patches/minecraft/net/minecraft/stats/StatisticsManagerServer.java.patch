@@ -20,6 +20,7 @@
      public void func_150883_b()
      {
 +        if (org.spigotmc.SpigotConfig.disableStatSaving) return; // Spigot
+\ No newline at end of file
          try
          {
              FileUtils.writeStringToFile(this.field_150887_d, func_150880_a(this.field_150875_a));

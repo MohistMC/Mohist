@@ -15,6 +15,7 @@
      {
 -        return this.field_70163_u > 45.0D && this.field_70163_u < (double)this.field_70170_p.func_181545_F() && super.func_70601_bi();
 +        return this.field_70163_u > this.field_70170_p.spigotConfig.squidSpawnRangeMin && this.field_70163_u < (double)this.field_70170_p.func_181545_F() && super.func_70601_bi();
+\ No newline at end of file
      }
  
      @SideOnly(Side.CLIENT)

@@ -47,6 +47,7 @@
  
 -        if (block != Blocks.field_150346_d && block != Blocks.field_150349_c && block != Blocks.field_150458_ak)
 +        if (!isSoil)
+\ No newline at end of file
          {
              return false;
          }

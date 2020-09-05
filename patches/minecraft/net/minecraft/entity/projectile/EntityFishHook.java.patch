@@ -239,6 +239,7 @@
              this.func_70106_y();
 -            return i;
 +            return event == null ? i : event.getRodDamage();
+\ No newline at end of file
          }
          else
          {

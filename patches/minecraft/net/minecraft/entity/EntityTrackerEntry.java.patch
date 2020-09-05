@@ -255,6 +255,7 @@
      public void func_73123_c(EntityPlayerMP p_73123_1_)
      {
 +		org.spigotmc.AsyncCatcher.catchOp( "player tracker clear"); // Spigot
+\ No newline at end of file
          if (this.field_73134_o.contains(p_73123_1_))
          {
              this.field_73134_o.remove(p_73123_1_);

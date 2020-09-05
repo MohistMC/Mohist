@@ -27,6 +27,7 @@
  
 -        if (p_152372_1_ != minecraftserver && minecraftserver.field_71305_c[0].func_82736_K().func_82766_b("logAdminCommands"))
 +        if (p_152372_1_ != minecraftserver && minecraftserver.field_71305_c[0].func_82736_K().func_82766_b("logAdminCommands") && !org.spigotmc.SpigotConfig.silentCommandBlocks) // Spigot
+\ No newline at end of file
          {
              minecraftserver.func_145747_a(itextcomponent);
          }

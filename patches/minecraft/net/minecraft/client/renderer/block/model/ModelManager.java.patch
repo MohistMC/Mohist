@@ -9,6 +9,7 @@
          this.field_174958_a = modelbakery.func_177570_a();
          this.field_174955_d = this.field_174958_a.func_82594_a(ModelBakery.field_177604_a);
 +        net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.field_174958_a, modelbakery);
+\ No newline at end of file
          this.field_174957_c.func_178124_c();
      }
  

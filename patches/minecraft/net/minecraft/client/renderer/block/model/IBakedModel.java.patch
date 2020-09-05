@@ -19,4 +19,5 @@
 +    default org.apache.commons.lang3.tuple.Pair<? extends IBakedModel, javax.vecmath.Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
 +        return net.minecraftforge.client.ForgeHooksClient.handlePerspective(this, cameraTransformType);
 +    }
+\ No newline at end of file
  }

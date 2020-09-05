@@ -45,6 +45,7 @@
  
 -            this.field_70170_p.func_72838_d(entitypigzombie);
 +            this.field_70170_p.addEntity(entitypigzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+\ No newline at end of file
              this.func_70106_y();
          }
      }

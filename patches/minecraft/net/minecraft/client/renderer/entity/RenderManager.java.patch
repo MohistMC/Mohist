@@ -32,6 +32,7 @@
              {
 -                int i = ((EnumFacing)iblockstate.func_177229_b(BlockBed.field_185512_D)).func_176736_b();
 +                int i = block.getBedDirection(iblockstate, p_180597_1_, new BlockPos(p_180597_3_)).func_176736_b();
+\ No newline at end of file
                  this.field_78735_i = (float)(i * 90 + 180);
                  this.field_78732_j = 0.0F;
              }

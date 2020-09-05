@@ -211,7 +211,7 @@
          this.field_193036_D = new FunctionManager(new File(new File(this.field_73019_z.func_75765_b(), "data"), "functions"), this.field_73061_a);
          this.func_175723_af().func_177739_c(this.field_72986_A.func_176120_C(), this.field_72986_A.func_176126_D());
          this.func_175723_af().func_177744_c(this.field_72986_A.func_176140_I());
-@@ -161,9 +248,146 @@
+@@ -161,9 +248,38 @@
              this.func_175723_af().func_177750_a(this.field_72986_A.func_176137_E());
          }
  
@@ -221,115 +221,7 @@
  
 +    @Override
 +    public TileEntity func_175625_s(BlockPos pos) {
-+        TileEntity result = super.func_175625_s(pos);
-+        Block type = func_180495_p(pos).func_177230_c();
-+
-+        if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR) {
-+            if (!(result instanceof TileEntityChest)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150460_al) {
-+            if (!(result instanceof TileEntityFurnace)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150409_cd) {
-+            if (!(result instanceof TileEntityDropper)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150367_z) {
-+            if (!(result instanceof TileEntityDispenser)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150421_aI) {
-+            if (!(result instanceof BlockJukebox.TileEntityJukebox)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150323_B) {
-+            if (!(result instanceof TileEntityNote)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150474_ac) {
-+            if (!(result instanceof TileEntityMobSpawner)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if ((type == Blocks.field_150472_an) || (type == Blocks.field_150444_as)) {
-+            if (!(result instanceof TileEntitySign)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150477_bB) {
-+            if (!(result instanceof TileEntityEnderChest)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150382_bo) {
-+            if (!(result instanceof TileEntityBrewingStand)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150461_bJ) {
-+            if (!(result instanceof TileEntityBeacon)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150438_bZ) {
-+            if (!(result instanceof TileEntityHopper)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150381_bn) {
-+            if (!(result instanceof TileEntityEnchantmentTable)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150384_bq) {
-+            if (!(result instanceof TileEntityEndPortal)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150465_bP) {
-+            if (!(result instanceof TileEntitySkull)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150453_bW || type == Blocks.field_180402_cm) {
-+            if (!(result instanceof TileEntityDaylightDetector)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150455_bV || type == Blocks.field_150441_bU) {
-+            if (!(result instanceof TileEntityComparator)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150457_bL) {
-+            if (!(result instanceof TileEntityFlowerPot)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_180393_cK || type == Blocks.field_180394_cL) {
-+            if (!(result instanceof TileEntityBanner)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_185779_df) {
-+            if (!(result instanceof TileEntityStructure)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_185775_db) {
-+            if (!(result instanceof TileEntityEndGateway)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150483_bI) {
-+            if (!(result instanceof TileEntityCommandBlock)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_185779_df) {
-+            if (!(result instanceof TileEntityStructure)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        } else if (type == Blocks.field_150324_C) {
-+            if (!(result instanceof TileEntityBed)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        }
-+        // Paper Start - add TE fix checks for shulkers, see nms.BlockShulkerBox
-+        else if (type instanceof BlockShulkerBox) {
-+            if (!(result instanceof TileEntityShulkerBox)) {
-+                result = fixTileEntity(pos, type, result);
-+            }
-+        }
-+        // Paper end
-+
-+        return result;
++        return super.func_175625_s(pos);
 +    }
 +
 +    private TileEntity fixTileEntity(BlockPos pos, Block type, TileEntity found) {
@@ -358,7 +250,7 @@
      public void func_72835_b()
      {
          super.func_72835_b();
-@@ -188,11 +412,17 @@
+@@ -188,11 +304,17 @@
  
          this.field_72984_F.func_76320_a("mobSpawner");
  
@@ -378,7 +270,7 @@
          this.field_72984_F.func_76318_c("chunkSource");
          this.field_73020_y.func_73156_b();
          int j = this.func_72967_a(1.0F);
-@@ -206,34 +436,57 @@
+@@ -206,34 +328,57 @@
  
          if (this.func_82736_K().func_82766_b("doDaylightCycle"))
          {
@@ -437,7 +329,7 @@
          return list != null && !list.isEmpty() ? list.contains(p_175732_2_) : false;
      }
  
-@@ -252,7 +505,7 @@
+@@ -252,7 +397,7 @@
                  {
                      ++i;
                  }
@@ -446,7 +338,7 @@
                  {
                      ++j;
                  }
-@@ -279,25 +532,28 @@
+@@ -279,25 +424,28 @@
  
      private void func_73051_P()
      {
@@ -481,7 +373,7 @@
          }
          else
          {
-@@ -333,7 +589,7 @@
+@@ -333,7 +481,7 @@
          this.field_72986_A.func_76087_c(j);
      }
  
@@ -490,7 +382,7 @@
      {
          return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
      }
-@@ -342,7 +598,7 @@
+@@ -342,7 +490,7 @@
      {
          this.field_72984_F.func_76320_a("playerCheckLight");
  
@@ -499,7 +391,7 @@
          {
              int i = this.field_73012_v.nextInt(this.field_73010_i.size());
              EntityPlayer entityplayer = this.field_73010_i.get(i);
-@@ -375,99 +631,89 @@
+@@ -375,99 +523,89 @@
              boolean flag1 = this.func_72911_I();
              this.field_72984_F.func_76320_a("pollingChunks");
  
@@ -660,7 +552,7 @@
  
              this.field_72984_F.func_76319_b();
          }
-@@ -525,7 +771,10 @@
+@@ -525,7 +663,10 @@
          {
              if (p_175654_2_.func_149698_L())
              {
@@ -672,7 +564,7 @@
                  {
                      IBlockState iblockstate = this.func_180495_p(p_175654_1_);
  
-@@ -561,6 +810,7 @@
+@@ -561,6 +702,7 @@
  
      public void func_180497_b(BlockPos p_180497_1_, Block p_180497_2_, int p_180497_3_, int p_180497_4_)
      {
@@ -680,7 +572,7 @@
          NextTickListEntry nextticklistentry = new NextTickListEntry(p_180497_1_, p_180497_2_);
          nextticklistentry.func_82753_a(p_180497_4_);
          Material material = p_180497_2_.func_176223_P().func_185904_a();
-@@ -579,9 +829,9 @@
+@@ -579,9 +721,9 @@
  
      public void func_72939_s()
      {
@@ -692,7 +584,7 @@
              {
                  return;
              }
-@@ -593,6 +843,7 @@
+@@ -593,6 +735,7 @@
  
          this.field_73011_w.func_186059_r();
          super.func_72939_s();
@@ -700,7 +592,7 @@
      }
  
      protected void func_184147_l()
-@@ -668,19 +919,21 @@
+@@ -668,19 +811,21 @@
          {
              int i = this.field_73065_O.size();
  
@@ -730,7 +622,7 @@
                  for (int j = 0; j < i; ++j)
                  {
                      NextTickListEntry nextticklistentry = this.field_73065_O.first();
-@@ -694,21 +947,26 @@
+@@ -694,21 +839,26 @@
                      this.field_73064_N.remove(nextticklistentry);
                      this.field_94579_S.add(nextticklistentry);
                  }
@@ -759,7 +651,7 @@
                          if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
                          {
                              try
-@@ -723,17 +981,17 @@
+@@ -723,17 +873,17 @@
                                  throw new ReportedException(crashreport);
                              }
                          }
@@ -780,7 +672,7 @@
          }
      }
  
-@@ -796,21 +1054,6 @@
+@@ -796,21 +946,6 @@
          return list;
      }
  
@@ -802,7 +694,7 @@
      private boolean func_175738_ah()
      {
          return this.field_73061_a.func_71220_V();
-@@ -824,11 +1067,59 @@
+@@ -824,11 +959,59 @@
      protected IChunkProvider func_72970_h()
      {
          IChunkLoader ichunkloader = this.field_73019_z.func_75763_a(this.field_73011_w);
@@ -863,7 +755,7 @@
          return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
      }
  
-@@ -894,7 +1185,24 @@
+@@ -894,7 +1077,24 @@
          }
          else
          {
@@ -888,7 +780,7 @@
              BiomeProvider biomeprovider = this.field_73011_w.func_177499_m();
              List<Biome> list = biomeprovider.func_76932_a();
              Random random = new Random(this.func_72905_C());
-@@ -915,7 +1223,7 @@
+@@ -915,7 +1115,7 @@
  
              int l = 0;
  
@@ -897,7 +789,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -966,6 +1274,8 @@
+@@ -966,6 +1166,8 @@
  
          if (chunkproviderserver.func_73157_c())
          {
@@ -906,7 +798,7 @@
              if (p_73044_2_ != null)
              {
                  p_73044_2_.func_73720_a("Saving level");
-@@ -978,15 +1288,11 @@
+@@ -978,15 +1180,11 @@
                  p_73044_2_.func_73719_c("Saving chunks");
              }
  
@@ -926,7 +818,7 @@
          }
      }
  
-@@ -1002,6 +1308,7 @@
+@@ -1002,6 +1200,7 @@
  
      protected void func_73042_a() throws MinecraftException
      {
@@ -934,7 +826,7 @@
          this.func_72906_B();
  
          for (WorldServer worldserver : this.field_73061_a.field_71305_c)
-@@ -1012,6 +1319,12 @@
+@@ -1012,6 +1211,12 @@
              }
          }
  
@@ -947,7 +839,7 @@
          this.field_72986_A.func_176145_a(this.func_175723_af().func_177741_h());
          this.field_72986_A.func_176124_d(this.func_175723_af().func_177731_f());
          this.field_72986_A.func_176141_c(this.func_175723_af().func_177721_g());
-@@ -1023,18 +1336,27 @@
+@@ -1023,18 +1228,27 @@
          this.field_72986_A.func_176135_e(this.func_175723_af().func_177732_i());
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_184103_al().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -977,7 +869,7 @@
              {
                  this.field_72996_f.add(entity);
                  this.func_72923_a(entity);
-@@ -1046,7 +1368,6 @@
+@@ -1046,7 +1260,6 @@
      {
          if (p_184165_1_.field_70128_L)
          {
@@ -985,7 +877,7 @@
              return false;
          }
          else
-@@ -1057,7 +1378,7 @@
+@@ -1057,7 +1270,7 @@
              {
                  Entity entity = this.field_175741_N.get(uuid);
  
@@ -994,7 +886,7 @@
                  {
                      this.field_72997_g.remove(entity);
                  }
-@@ -1065,7 +1386,6 @@
+@@ -1065,7 +1278,6 @@
                  {
                      if (!(p_184165_1_ instanceof EntityPlayer))
                      {
@@ -1002,7 +894,7 @@
                          return false;
                      }
  
-@@ -1113,9 +1433,17 @@
+@@ -1113,9 +1325,17 @@
  
      public boolean func_72942_c(Entity p_72942_1_)
      {
@@ -1021,7 +913,7 @@
              return true;
          }
          else
-@@ -1136,10 +1464,15 @@
+@@ -1136,10 +1356,15 @@
  
      public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
@@ -1041,7 +933,7 @@
          if (!p_72885_10_)
          {
              explosion.func_180342_d();
-@@ -1182,7 +1515,8 @@
+@@ -1182,7 +1407,8 @@
              {
                  if (this.func_147485_a(blockeventdata))
                  {
@@ -1051,7 +943,7 @@
                  }
              }
  
-@@ -1208,27 +1542,31 @@
+@@ -1208,27 +1434,31 @@
  
          if (this.field_73003_n != this.field_73004_o)
          {
@@ -1089,7 +981,7 @@
          }
      }
  
-@@ -1265,12 +1603,20 @@
+@@ -1265,12 +1495,20 @@
  
      public void func_180505_a(EnumParticleTypes p_180505_1_, boolean p_180505_2_, double p_180505_3_, double p_180505_5_, double p_180505_7_, int p_180505_9_, double p_180505_10_, double p_180505_12_, double p_180505_14_, double p_180505_16_, int... p_180505_18_)
      {
@@ -1112,7 +1004,7 @@
          }
      }
  
-@@ -1323,6 +1669,11 @@
+@@ -1323,6 +1561,11 @@
          return this.field_193036_D;
      }
  

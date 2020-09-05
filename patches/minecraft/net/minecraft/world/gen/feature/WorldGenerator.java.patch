@@ -7,6 +7,7 @@
 -            p_175903_1_.func_180501_a(p_175903_2_, p_175903_3_, 2);
 +            int flag = net.minecraftforge.common.ForgeModContainer.fixVanillaCascading ? 2| 16 : 2; //Forge: With bit 5 unset, it will notify neighbors and load adjacent chunks.
 +            p_175903_1_.func_180501_a(p_175903_2_, p_175903_3_, flag);
+\ No newline at end of file
          }
      }
  }

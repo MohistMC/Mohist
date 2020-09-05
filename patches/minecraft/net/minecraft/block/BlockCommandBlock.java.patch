@@ -19,6 +19,7 @@
 +                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
 +                p_189540_2_.getServer().getPluginManager().callEvent(eventRedstone);
 +                flag = eventRedstone.getNewCurrent() > 0;
+\ No newline at end of file
                  tileentitycommandblock.func_184250_a(flag);
  
                  if (!flag1 && !tileentitycommandblock.func_184254_e() && tileentitycommandblock.func_184251_i() != TileEntityCommandBlock.Mode.SEQUENCE)
