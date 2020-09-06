@@ -1,4 +1,4 @@
-<img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
+<img src="https://i.loli.net/2020/09/06/7gE8OhsDdnCmtwI.png">
 
 ## Mohist-1.12.2
 #### [English](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md) | [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) 

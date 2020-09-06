@@ -1,4 +1,4 @@
-<img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
+<img src="https://i.loli.net/2020/09/06/7gE8OhsDdnCmtwI.png">
 
 <div align="center">
   <h1>Mohist 1.12.2</h1>
