@@ -35,7 +35,7 @@ public class UpdateUtils {
       JsonElement root = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").getContent()));
 
       String jar_sha = Mohist.getVersion();
-      String build_number = root.getAsJsonObject().get("number").toString();
+      String build_number = "1.12.2-" + root.getAsJsonObject().get("number").toString();
       String timestamp = root.getAsJsonObject().get("timestamp").toString();
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       String time = sdf.format(new Date(Long.parseLong(timestamp)));

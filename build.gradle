@@ -144,7 +144,7 @@ project(':mohist') {
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
     }
 
-    version = JenkinsNumber()
+    version = '1.12.2-' + JenkinsNumber()
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
