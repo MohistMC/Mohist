@@ -8,15 +8,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.init.Blocks;
-@@ -19,7 +18,6 @@
- import net.minecraft.util.EnumFacing;
- import net.minecraft.util.EnumHand;
- import net.minecraft.util.NonNullList;
--import net.minecraft.util.SoundCategory;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
-@@ -46,28 +44,16 @@
+@@ -46,27 +45,15 @@
  
          ItemStack itemstack = p_180614_1_.func_184586_b(p_180614_4_);
  
@@ -44,13 +36,11 @@
 -                }
 -
 -                SoundType soundtype = this.field_150939_a.func_185467_w();
--                p_180614_2_.func_184133_a(p_180614_1_, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
 +                SoundType soundtype = iblockstate1.func_177230_c().getSoundType(iblockstate1, p_180614_2_, p_180614_3_, p_180614_1_);
-+                // worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F); // CraftBukkit - SPIGOT-1288
+                 p_180614_2_.func_184133_a(p_180614_1_, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                  itemstack.func_190918_g(1);
              }
- 
-@@ -127,7 +113,7 @@
+@@ -127,7 +114,7 @@
      {
          Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
  
@@ -59,7 +49,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -136,7 +122,7 @@
+@@ -136,7 +123,7 @@
              p_179222_2_ = p_179222_2_.func_177972_a(p_179222_3_);
          }
  
@@ -68,7 +58,7 @@
      }
  
      public String func_77667_c(ItemStack p_77667_1_)
-@@ -171,6 +157,36 @@
+@@ -171,6 +158,36 @@
  
      public Block func_179223_d()
      {
