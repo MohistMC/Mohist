@@ -21,10 +21,10 @@ public class Mohist {
     }
 
     public static void main(String[] args) throws Throwable {
+        MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run(args);
 
-        MohistConfigUtil.copyMohistConfig();
         System.out.println("\n" + "\n" +
                 " __    __   ______   __  __   __   ______   ______  \n" +
                 "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
