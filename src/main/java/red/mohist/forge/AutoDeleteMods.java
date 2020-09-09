@@ -19,7 +19,8 @@ public class AutoDeleteMods {
             "com.performant.coremod.Performant" /*Performant*/,
             "shadows.fastbench.proxy.BenchServerProxy" /*FastWorkbench*/,
             "optifine.Differ" /*OptiFine*/,
-            "ichttt.mods.firstaid.FirstAid" /*FirstAid*/);
+            "ichttt.mods.firstaid.FirstAid" /*FirstAid*/,
+            "guichaguri.betterfps.BetterFps" /*BetterFps*/);
   }
 
   public static void jar() throws Exception {

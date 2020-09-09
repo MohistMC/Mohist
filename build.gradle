@@ -648,21 +648,6 @@ project(':mohist') {
         }
     }
     
-    license {
-        header = file("$rootDir/LICENSE-header.txt")
-
-        include 'red/mohist/'
-
-        tasks {
-            main {
-                files = files("$rootDir/src/main/java")
-            }
-            test {
-                files = files("$rootDir/src/test/java")
-            }
-        }
-    }
-    
     tasks.eclipse.dependsOn('genEclipseRuns')
     
     if (project.hasProperty('UPDATE_MAPPINGS')) {
