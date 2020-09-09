@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 import red.mohist.configuration.MohistConfigUtil;
 
 public class Message {
@@ -42,6 +43,7 @@ public class Message {
     }
 
     public static boolean isCN(){
-        return Message.getLocale().contains("CN") || Message.getCountry().contains("CN");
+        TimeZone timeZone = TimeZone.getDefault();
+        return timeZone.getID().equals("Asia/Shanghai") || Message.getLocale().contains("CN") || Message.getCountry().contains("CN");
     }
 }
