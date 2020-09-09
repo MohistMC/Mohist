@@ -28,7 +28,7 @@
  import net.minecraft.command.ICommandSender;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.ICrashReportDetail;
-@@ -43,29 +43,48 @@
+@@ -43,25 +43,44 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
@@ -75,14 +75,8 @@
 +    private boolean field_71335_s = false;
 +    public static boolean allowPlayerLogins = false;
  
--    public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
-+    public DedicatedServer(joptsimple.OptionSet options, DataFixer dataFixerIn, YggdrasilAuthenticationService authServiceIn, MinecraftSessionService sessionServiceIn, GameProfileRepository profileRepoIn, PlayerProfileCache profileCacheIn)
+     public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
      {
--        super(p_i47086_1_, Proxy.NO_PROXY, p_i47086_2_, p_i47086_3_, p_i47086_4_, p_i47086_5_, p_i47086_6_);
-+        super(options, Proxy.NO_PROXY, dataFixerIn, authServiceIn, sessionServiceIn, profileRepoIn, profileCacheIn);
-         Thread thread = new Thread("Server Infinisleeper")
-         {
-             {
 @@ -95,14 +114,22 @@
          {
              public void run()
@@ -216,17 +210,16 @@
              if (this.func_152368_aE())
              {
                  this.func_152358_ax().func_152658_c();
-@@ -212,7 +266,8 @@
+@@ -212,7 +266,7 @@
              }
              else
              {
 -                this.func_184105_a(new DedicatedPlayerList(this));
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
-+                this.field_71310_m = new AnvilSaveConverter(server.getWorldContainer(), this.field_184112_s); // CraftBukkit - moved from MinecraftServer constructor
                  long j = System.nanoTime();
  
                  if (this.func_71270_I() == null)
-@@ -260,12 +315,22 @@
+@@ -260,12 +314,22 @@
                  TileEntitySkull.func_184293_a(this.func_152358_ax());
                  TileEntitySkull.func_184294_a(this.func_147130_as());
                  PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -251,7 +244,7 @@
                  if (this.field_71340_o.func_187239_a("announce-player-achievements"))
                  {
                      this.field_71305_c[0].func_82736_K().func_82764_b("announceAdvancements", this.field_71340_o.func_73670_a("announce-player-achievements", true) ? "true" : "false");
-@@ -285,18 +350,35 @@
+@@ -285,18 +349,35 @@
                      field_155771_h.info("Starting remote control listener");
                      this.field_71339_n = new RConThreadMain(this);
                      this.field_71339_n.func_72602_a();
@@ -294,7 +287,7 @@
              }
          }
      }
-@@ -419,11 +501,20 @@
+@@ -419,11 +500,20 @@
  
      public void func_71333_ah()
      {
@@ -319,7 +312,7 @@
      }
  
      public boolean func_71262_S()
-@@ -515,7 +606,7 @@
+@@ -515,7 +605,7 @@
  
      public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
      {
@@ -328,7 +321,7 @@
          {
              return false;
          }
-@@ -584,6 +675,9 @@
+@@ -584,6 +674,9 @@
          return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
      }
  
@@ -338,7 +331,7 @@
      protected boolean func_152368_aE() throws IOException
      {
          boolean flag = false;
-@@ -673,13 +767,79 @@
+@@ -673,13 +766,79 @@
  
      public String func_71258_A()
      {

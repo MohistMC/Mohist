@@ -53,11 +53,10 @@
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.IProgressUpdate;
-@@ -78,34 +85,48 @@
- import net.minecraft.world.WorldServerMulti;
+@@ -79,33 +86,48 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
--import net.minecraft.world.chunk.storage.AnvilSaveConverter;
+ import net.minecraft.world.chunk.storage.AnvilSaveConverter;
 +import net.minecraft.world.chunk.storage.AnvilSaveHandler;
  import net.minecraft.world.storage.ISaveFormat;
  import net.minecraft.world.storage.ISaveHandler;
@@ -109,7 +108,7 @@
      private PlayerList field_71318_t;
      private boolean field_71317_u = true;
      private boolean field_71316_v;
-@@ -123,11 +144,11 @@
+@@ -123,11 +145,11 @@
      private int field_71280_D;
      private int field_143008_E;
      public final long[] field_71311_j = new long[100];
@@ -123,7 +122,7 @@
      private String field_71287_L;
      private boolean field_71288_M;
      private boolean field_71289_N;
-@@ -143,26 +164,82 @@
+@@ -143,12 +165,39 @@
      private final GameProfileRepository field_152365_W;
      private final PlayerProfileCache field_152366_X;
      private long field_147142_T;
@@ -137,7 +136,7 @@
 +    // CraftBukkit start
 +    public List<WorldServer> worldServerList = new ArrayList<>();
 +    public org.bukkit.craftbukkit.v1_12_R1.CraftServer server;
-+    public OptionSet options;
++    public static OptionSet options;
 +    public org.bukkit.command.ConsoleCommandSender console;
 +    public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
 +	public ConsoleReader reader;
@@ -154,7 +153,6 @@
 +    public final SlackActivityAccountant slackActivityAccountant = new SlackActivityAccountant();
 +    // Spigot end
  
--    public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
 +    // Mohist start
 +    public static MohistConfig mohistConfig;
 +    public static EntityConfig entityConfig;
@@ -163,30 +161,16 @@
 +    private static long realTimeTicks = 1;
 +    // Mohist end
 +
-+    public MinecraftServer(OptionSet options, Proxy proxyIn, DataFixer dataFixerIn, YggdrasilAuthenticationService authServiceIn, MinecraftSessionService sessionServiceIn, GameProfileRepository profileRepoIn, PlayerProfileCache profileCacheIn)
+     public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
--        this.field_110456_c = p_i47054_2_;
--        this.field_152364_T = p_i47054_4_;
--        this.field_147143_S = p_i47054_5_;
--        this.field_152365_W = p_i47054_6_;
--        this.field_152366_X = p_i47054_7_;
--        this.field_71308_o = p_i47054_1_;
-+        this.field_110456_c = proxyIn;
-+        this.field_152364_T = authServiceIn;
-+        this.field_147143_S = sessionServiceIn;
-+        this.field_152365_W = profileRepoIn;
-+        this.field_152366_X = profileCacheIn;
-+        // this.anvilFile = anvilFileIn;
-         this.field_147144_o = new NetworkSystem(this);
+         this.field_110456_c = p_i47054_2_;
+@@ -161,8 +210,36 @@
          this.field_71321_q = this.func_175582_h();
--        this.field_71310_m = new AnvilSaveConverter(p_i47054_1_, p_i47054_3_);
--        this.field_184112_s = p_i47054_3_;
-+        // this.anvilConverterForAnvilFile = new AnvilSaveConverter(anvilFileIn, dataFixerIn); // CraftBukkit - moved to DedicatedServer.init
-+        this.field_184112_s = dataFixerIn;
+         this.field_71310_m = new AnvilSaveConverter(p_i47054_1_, p_i47054_3_);
+         this.field_184112_s = p_i47054_3_;
 +        mohistConfig = new MohistConfig();
 +        entityConfig = new EntityConfig();
 +        tileEntityConfig = new TileEntityConfig();
-+        this.options = options;
 +        // Try to see if we're actually running in a terminal, disable jline if not
 +        if (System.console() == null && System.getProperty("jline.terminal") == null) {
 +            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
@@ -1112,15 +1096,15 @@
          }
          else
          {
-@@ -1409,124 +1618,41 @@
+@@ -1409,124 +1618,42 @@
      }
  
      @SideOnly(Side.SERVER)
 -    public static void main(String[] p_main_0_)
 +    public static void main(String[] args)
      {
-+        OptionSet options = Main.main(args);
-+        if (options == null)
++        OptionSet cboptions = Main.main(args);
++        if (cboptions == null)
 +            return;
          Bootstrap.func_151354_b();
 -
@@ -1195,14 +1179,14 @@
              MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
              GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
              PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s1, field_152367_a.getName()));
--            final DedicatedServer dedicatedserver = new DedicatedServer(new File(s1), DataFixesManager.func_188279_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
-+            final DedicatedServer dedicatedserver = new DedicatedServer(options, DataFixesManager.func_188279_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
++            options = cboptions;
+             final DedicatedServer dedicatedserver = new DedicatedServer(new File(s1), DataFixesManager.func_188279_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
  
 -            if (s != null)
 -            {
 -                dedicatedserver.func_71224_l(s);
-+            if (options.has("port")) {
-+                int port = (Integer) options.valueOf("port");
++            if (cboptions.has("port")) {
++                int port = (Integer) cboptions.valueOf("port");
 +                if (port > 0) {
 +                    dedicatedserver.func_71208_b(port);
 +                }
@@ -1211,15 +1195,15 @@
 -            if (s2 != null)
 -            {
 -                dedicatedserver.func_71261_m(s2);
-+            if (options.has("universe")) {
-+                dedicatedserver.field_71308_o = (File) options.valueOf("universe");
++            if (cboptions.has("universe")) {
++                dedicatedserver.field_71308_o = (File) cboptions.valueOf("universe");
              }
  
 -            if (l >= 0)
 -            {
 -                dedicatedserver.func_71208_b(l);
-+            if (options.has("world")) {
-+                dedicatedserver.func_71246_n((String) options.valueOf("world"));
++            if (cboptions.has("world")) {
++                dedicatedserver.func_71246_n((String) cboptions.valueOf("world"));
              }
  
 -            if (flag1)
@@ -1254,7 +1238,7 @@
          }
      }
  
-@@ -1539,7 +1665,8 @@
+@@ -1539,7 +1666,8 @@
      @SideOnly(Side.SERVER)
      public boolean func_71239_B()
      {
@@ -1264,7 +1248,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1598,4 +1725,14 @@
+@@ -1598,4 +1726,14 @@
      {
          return this.field_175590_aa;
      }

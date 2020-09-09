@@ -58,7 +58,6 @@ public class ServerLaunchWrapper {
         try {
             launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, Mohist.class.getClassLoader());
             Class.forName("org.objectweb.asm.Type", true, Mohist.class.getClassLoader());
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//set date format
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
             Mohist.LOGGER = LogManager.getLogger("Mohist");

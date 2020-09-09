@@ -20,7 +20,7 @@ public class AutoDeleteMods {
             "shadows.fastbench.proxy.BenchServerProxy" /*FastWorkbench*/,
             "optifine.Differ" /*OptiFine*/,
             "ichttt.mods.firstaid.FirstAid" /*FirstAid*/,
-            "guichaguri.betterfps.BetterFps" /*BetterFps*/);
+            "guichaguri.betterfps.patches.misc.ServerPatch" /*BetterFps*/);
   }
 
   public static void jar() throws Exception {
