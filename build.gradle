@@ -1,9 +1,6 @@
 buildscript {
     repositories {
         mavenLocal()
-        //maven { url = 'https://mirror.yahai.top/' }
-        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
-        maven { url = 'https://mirror.yahai.top/' }
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven {
             name 'maven_central'
