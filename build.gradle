@@ -54,8 +54,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20200514-1.16'
-    MC_VERSION = '1.16.2'
-    MCP_VERSION = '20200812.004259'
+    MC_VERSION = '1.16.3'
+    MCP_VERSION = '20200910.110331'
 }
 
 project(':mcp') {
@@ -197,7 +197,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '33.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '34.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -854,36 +854,6 @@ project(':forge') {
         t.finalizedBy(tasks.getByName("sign${t.name.capitalize()}"))
     }
     
-    task makeMdk(type: Zip) {
-        baseName = project.name
-        classifier = 'mdk'
-        version = project.version
-        destinationDir = file('build/libs')
-
-        from rootProject.file('gradlew')
-        from rootProject.file('gradlew.bat')
-        from extraTxts
-        from(rootProject.file('gradle/')){
-            into('gradle/')
-        }
-        from(rootProject.file('mdk/')){
-            rootProject.file('mdk/gitignore.txt').eachLine{
-                if (!it.trim().isEmpty() && !it.trim().startsWith('#'))
-                    exclude it
-            }
-            filter(ReplaceTokens, tokens: [
-                FORGE_VERSION: project.version,
-                FORGE_GROUP: project.group,
-                FORGE_NAME: project.name,
-                MC_VERSION: MC_VERSION,
-                MAPPING_CHANNEL: MAPPING_CHANNEL,
-                MAPPING_VERSION: MAPPING_VERSION
-            ])
-            rename 'gitignore\\.txt', '.gitignore'
-            rename 'gitattributes\\.txt', '.gitattributes'
-        }
-    }
-    
     userdevConfig {
         def artifacts = getArtifacts(project, project.configurations.installer, true)
         artifacts.each { key, lib ->
@@ -1010,7 +980,6 @@ project(':forge') {
                 }
                 artifact installerJar
                 //TODO: installer-win
-                artifact makeMdk
                 artifact userdevJar
                 artifact sourcesJar
                 artifact launcherJar
