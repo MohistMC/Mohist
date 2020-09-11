@@ -17,19 +17,15 @@ buildscript {
 }
 
 import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
 
 import java.nio.file.Files
-import java.util.Date
-import java.util.LinkedHashMap
-import net.minecraftforge.forge.tasks.*
-import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.ExtractInheritance
 import net.minecraftforge.gradle.common.task.SignJar
 import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
-import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
@@ -151,22 +147,6 @@ project(':forge') {
                 ]
             }
         }
-        test {
-            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
-            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
-            java {
-                srcDirs = [
-                    "$rootDir/src/test/java", 
-                    "$rootDir/src/fmllaunchertest/java"
-                ]
-            }
-            resources {
-                srcDirs = [
-                    "$rootDir/src/test/resources",
-                    "$rootDir/src/generated_test/resources"
-                ]
-            }
-        }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath
@@ -176,12 +156,6 @@ project(':forge') {
             resources {
                 srcDirs = ["$rootDir/src/userdev/resources"]
             }
-        }
-        userdev_test {
-            compileClasspath += sourceSets.userdev.runtimeClasspath
-            runtimeClasspath += sourceSets.userdev.runtimeClasspath
-            compileClasspath += sourceSets.test.runtimeClasspath
-            runtimeClasspath += sourceSets.test.runtimeClasspath
         }
     }
     //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
@@ -208,23 +182,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    def getVersion = {
-        //TAG-offset-hash
-        def raw = grgit.describe(longDescr: true, tags:true)
-        def desc = (raw == null ? '0.0-0-unknown' : grgit.describe(longDescr: true, tags:true)).split('-') as List
-        def hash = desc.remove(desc.size() - 1)
-        def offset = desc.remove(desc.size() - 1)
-        def tag = desc.join('-')
-        def branch = grgit.branch.current().name
-        if (branch in ['master', 'HEAD', MC_VERSION, MC_VERSION + '.0'])
-            branch = null
-        if (branch != null && branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() - 2))) //1.13.x
-            branch = null
-        SPEC_VERSION = tag
-        return "${MC_VERSION}-${tag}.${offset}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
-    }
-
-    version = getVersion()
+    version = '1.16.3-34.0.0-' + JenkinsNumber()
     println('Forge Version: ' + version)
 
     patcher {
@@ -263,19 +221,6 @@ project(':forge') {
                 source sourceSets.userdev
             }
 
-            forge_test_client {
-                parent runs.forge_client
-                taskName 'forge_test_client'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.userdev_test"
-
-                mods {
-                    TestMods { sources sourceSets.test }
-                }
-            }
-
             forge_server {
                 taskName 'forge_server'
 
@@ -296,19 +241,6 @@ project(':forge') {
 
                 source sourceSets.main
                 source sourceSets.userdev
-            }
-
-            forge_test_server {
-                parent runs.forge_server
-                taskName 'forge_test_server'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.userdev_test"
-
-                mods {
-                    TestMods { sources sourceSets.test }
-                }
             }
 
             forge_data {
@@ -333,28 +265,6 @@ project(':forge') {
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
                         '--existing', sourceSets.main.resources.srcDirs[0]
-            }
-
-            forge_test_data {
-                parent runs.forge_data
-                taskName 'forge_test_data'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.userdev_test"
-
-                mods {
-                    tests { sources  sourceSets.test }
-                }
-                
-                args '--flat', '--all', '--validate',
-                    '--mod', 'data_gen_test', 
-                    '--mod', 'piston_event_test',
-                    '--mod', 'global_loot_test',
-                    '--mod', 'scaffolding_test',
-                    '--mod', 'custom_tag_types_test',
-                    '--output', rootProject.file('src/generated_test/resources/'),
-                    '--existing', sourceSets.main.resources.srcDirs[0]
             }
         }
     }
@@ -1032,4 +942,14 @@ task setup() {
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
+def JenkinsNumber() {
+    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-InternalTest/api/json").openConnection();
+    conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
+    conn.connect()
+    def root = conn.content.text
+    def jsonSluper = new JsonSlurper()
 
+    String data = jsonSluper.parseText(root)
+    def number = data.substring(data.indexOf("number")).split(",")
+    return Integer.valueOf(number[0].replace("number=", "")).intValue()
+}
