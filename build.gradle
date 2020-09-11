@@ -1,9 +1,10 @@
 buildscript {
     repositories {
         mavenLocal()
+        //maven { url = 'https://mirror.yahai.top/' }
+        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
+        maven { url = 'https://mirror.yahai.top/' }
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
-        mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -20,6 +21,8 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
 import java.nio.file.Files
+import net.minecraftforge.forge.tasks.*
+import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.ExtractInheritance
 import net.minecraftforge.gradle.common.task.SignJar
@@ -58,6 +61,7 @@ project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
     repositories {
         mavenLocal()
+        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
     }
     mcp {
         config = MC_VERSION + '-' + MCP_VERSION
@@ -74,6 +78,7 @@ project(':clean') {
     repositories {
         mavenLocal()
         //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -117,7 +122,6 @@ project(':clean') {
 project(':forge') {    
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
-    apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'net.minecrell.licenser'
@@ -164,6 +168,7 @@ project(':forge') {
     repositories {
         mavenLocal()
         //mavenCentral() //TODO: Update Gradle to use HTTPS by default
+        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -877,62 +882,6 @@ project(':forge') {
             sources sourceSets.test.java.srcDirs
         }
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
-    }
-    
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact universalJar
-                if (changelog.exists()) {
-                    artifact(changelog) {
-                        classifier = 'changelog'
-                    }
-                }
-                artifact installerJar
-                //TODO: installer-win
-                artifact userdevJar
-                artifact sourcesJar
-                artifact launcherJar
-
-                pom {
-                    name = 'forge'
-                    description = 'Modifactions to Minecraft to enable mod developers.'
-                    url = 'https://github.com/MinecraftForge/MinecraftForge'
-
-                    scm {
-                        url = 'https://github.com/MinecraftForge/MinecraftForge'
-                        connection = 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
-                        developerConnection = 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
-                    }
-
-                    issueManagement {
-                        system = 'github'
-                        url = 'https://github.com/MinecraftForge/MinecraftForge/issues'
-                    }
-
-                    licenses {
-                        license {
-                            name = 'LGPL 2.1'
-                            url = 'https://github.com/MinecraftForge/MinecraftForge/blob/1.13-pre/LICENSE.txt'
-                            distribution = 'repo'
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
-            maven {
-                if (project.hasProperty('forgeMavenPassword')) {
-                    credentials {
-                        username project.properties.forgeMavenUser
-                        password project.properties.forgeMavenPassword
-                    }
-                    url 'https://files.minecraftforge.net/maven/manage/upload'
-                } else {
-                    url 'file://' + rootProject.file('repo').getAbsolutePath()
-                }
-            }
-        }
     }
 }
 
