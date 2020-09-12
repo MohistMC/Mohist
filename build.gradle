@@ -170,6 +170,7 @@ project(':forge') {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
         }
+        maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     }
 
     ext {
@@ -184,7 +185,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.3-34.0.0-' + JenkinsNumber()
+    version = '1.16.3-34.0.1-' + JenkinsNumber()
     println('Forge Version: ' + version)
 
     patcher {
@@ -364,6 +365,21 @@ project(':forge') {
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         installer 'org.spongepowered:mixin:0.8'
+
+        // mohist
+        installer 'mysql:mysql-connector-java:8.0.19'
+        // bukkit
+        installer 'commons-lang:commons-lang:2.6'
+        installer 'org.yaml:snakeyaml:1.26'
+        compile 'org.jetbrains:annotations-java5:19.0.0'
+        // craftbukkit
+        installer 'jline:jline:2.12.1'
+        installer 'com.googlecode.json-simple:json-simple:1.1.1'
+        installer 'org.xerial:sqlite-jdbc:3.32.3'
+        installer 'mysql:mysql-connector-java:5.1.49'
+        // spigot
+        // paper
+
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         fmllauncherImplementation 'org.lwjgl:lwjgl:3.2.2'
@@ -664,16 +680,15 @@ project(':forge') {
     
     universalJar {
         from extraTxts
-        
-        // add crowdin locales
-        from { crowdin.output.exists() ? zipTree(crowdin.output) : null}
-        dependsOn crowdin
+
 		duplicatesStrategy = 'exclude'
 
         doFirst {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
-                    manifest.attributes(values)
+                    manifest.attributes(values += [
+                            'Manifest-Version': JenkinsNumber()
+                    ])
                 } else {
                     manifest.attributes(values, pkg)
                 }
