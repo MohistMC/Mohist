@@ -34,6 +34,13 @@ import java.util.jar.Manifest;
 
 public class ServerMain {
     public static void main(String[] args) {
+        System.out.println("\n" + "\n" +
+                " __    __   ______   __  __   __   ______   ______  \n" +
+                "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
+                "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
+                " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
+                "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
+                "                                                    \n" + "\n");
         try {
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
