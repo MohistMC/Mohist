@@ -142,7 +142,7 @@ public class ForgeInjectBukkit {
 
         for (Map.Entry<String, Class<? extends Entity>> entity : EntityRegistry.entityClassMap.entrySet()) {
             String name = entity.getKey();
-            String entityType = name.replace("-", "_").toUpperCase();
+            String entityType = name.toUpperCase();
             int typeId = GameData.getEntityRegistry().getID(EntityRegistry.getEntry(entity.getValue()));
             EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, name, CraftCustomEntity.class, typeId, false);
 
