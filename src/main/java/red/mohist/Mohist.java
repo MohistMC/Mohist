@@ -50,8 +50,8 @@ public class Mohist {
         }
 
         if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
-        if (!MohistConfigUtil.bMohist("disable_plugins_blacklist")) AutoDeletePlugins.jar();
-        if (!MohistConfigUtil.bMohist("disable_mods_blacklist")) AutoDeleteMods.jar();
+        if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) AutoDeletePlugins.jar();
+        if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) AutoDeleteMods.jar();
 
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }

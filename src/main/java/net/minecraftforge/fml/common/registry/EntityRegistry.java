@@ -178,6 +178,7 @@ public class EntityRegistry
     public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
+        registerBukkitType(entityClass, entityName);
     }
 
     /**
@@ -198,6 +199,7 @@ public class EntityRegistry
     {
         instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
         EntityRegistry.registerEgg(registryName, eggPrimary, eggSecondary);
+        registerBukkitType(entityClass, entityName);
     }
 
     private void doModEntityRegistration(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
@@ -224,7 +226,6 @@ public class EntityRegistry
             return;
         }
         entityRegistrations.put(mc, er);
-        registerBukkitType(entityClass, entityName);
     }
 
     /**

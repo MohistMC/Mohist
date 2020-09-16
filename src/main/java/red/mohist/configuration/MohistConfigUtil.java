@@ -58,6 +58,6 @@ public class MohistConfigUtil {
     }
 
     public static boolean bMohist(String key, String defaultReturn) {
-        return getBoolean(mohistyml, key, defaultReturn);
+        return getBoolean(mohistyml, key + ":", defaultReturn);
     }
 }
