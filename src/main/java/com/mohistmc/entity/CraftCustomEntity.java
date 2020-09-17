@@ -33,7 +33,7 @@ public class CraftCustomEntity extends CraftEntity {
         if (type != null) {
             return type;
         } else {
-            return EntityType.FORGE_MOD;
+            return EntityType.UNKNOWN;
         }
     }
 

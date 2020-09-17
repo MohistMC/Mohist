@@ -457,7 +457,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.entity.IProjectile) {
                 return new CustomProjectileEntity(server, entity);
         }else if (entity instanceof net.minecraft.entity.Entity) {
-            return new CraftCustomEntity(server, (net.minecraft.entity.Entity) entity);
+            return new CraftCustomEntity(server, entity);
         }
         throw new AssertionError("Unknown entity " + (entity == null ? " is null" : entity.getClass() + ": " + entity));
     }
