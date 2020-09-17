@@ -47,14 +47,14 @@ public class DumpCommand extends Command {
             switch (args.length) {
                 case 2:
                     for (String param : tab_cmd) {
-                        if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
+                        if (param.toLowerCase().startsWith(args[1].toLowerCase())) {
                             list.add(param);
                         }
                     }
                     break;
                 case 1:
                     for (String param : tab_mode) {
-                        if (param.toLowerCase().startsWith(args[1].toLowerCase())) {
+                        if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
                             list.add(param);
                         }
                     }
@@ -232,7 +232,7 @@ public class DumpCommand extends Command {
                     String url = HasteUtils.paste(sb.toString());
                     if (sender instanceof Player) {
                         Player p = (Player) sender;
-                        ChatComponentAPI.sendClickOpenURLChat(p, url, url, url);
+                        ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
                     } else {
                         dumpmsg(sender, HasteUtils.paste(sb.toString()), type);
                     }
