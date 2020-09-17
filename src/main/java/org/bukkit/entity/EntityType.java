@@ -269,7 +269,6 @@ public enum EntityType {
      * An unknown entity without an Entity Class
      */
     UNKNOWN(null, null, -1, false),
-    FORGE_MOD("forge_mod", CraftCustomEntity.class, -1, false),
     FORGE_MOD_PROJECTILE("forge_mod_projectile", CustomProjectileEntity.class, -1, false),
     FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", CraftCustomChestHorse.class, -1, false),
     FORGE_MOD_HORSE("forge_mod_horse", CraftCustomAbstractHorse.class, -1, false);

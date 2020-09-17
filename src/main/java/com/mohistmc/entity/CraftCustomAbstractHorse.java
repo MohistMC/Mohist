@@ -23,7 +23,7 @@ public class CraftCustomAbstractHorse extends CraftAbstractHorse {
         if (type != null) {
             return type;
         } else {
-            return EntityType.FORGE_MOD;
+            return EntityType.UNKNOWN;
         }
     }
 
