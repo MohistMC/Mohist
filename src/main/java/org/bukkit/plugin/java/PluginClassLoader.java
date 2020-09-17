@@ -16,12 +16,11 @@ import java.util.jar.Manifest;
 import net.md_5.specialsource.repo.RuntimeRepo;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.server.MinecraftServer;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import red.mohist.bukkit.nms.ClassLoaderContext;
-import red.mohist.bukkit.nms.utils.RemapUtils;
+import com.mohistmc.bukkit.nms.ClassLoaderContext;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins

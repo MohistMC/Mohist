@@ -135,10 +135,10 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.permissions.ServerOperator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import red.mohist.entity.CraftCustomAbstractHorse;
-import red.mohist.entity.CraftCustomChestHorse;
-import red.mohist.entity.CraftCustomEntity;
-import red.mohist.entity.CustomProjectileEntity;
+import com.mohistmc.entity.CraftCustomAbstractHorse;
+import com.mohistmc.entity.CraftCustomChestHorse;
+import com.mohistmc.entity.CraftCustomEntity;
+import com.mohistmc.entity.CustomProjectileEntity;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     private static PermissibleBase perm;

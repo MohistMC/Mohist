@@ -33,7 +33,7 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftStatistic;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 public final class CraftMagicNumbers implements UnsafeValues {
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
@@ -165,7 +165,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 try {
                     Files.write(advancement, file, Charsets.UTF_8);
                 } catch (IOException ex) {
-                    Mohist.LOGGER.error("Error saving advancement " + key, ex);
+                    MohistMC.LOGGER.error("Error saving advancement " + key, ex);
                 }
 
                 MinecraftServer.getServerInst().getPlayerList().reloadResources();

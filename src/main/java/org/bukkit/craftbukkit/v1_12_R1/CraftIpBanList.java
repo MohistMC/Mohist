@@ -9,7 +9,7 @@ import net.minecraft.server.management.UserListIPBans;
 import net.minecraft.server.management.UserListIPBansEntry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 public class CraftIpBanList implements org.bukkit.BanList {
     private final UserListIPBans list;
@@ -43,7 +43,7 @@ public class CraftIpBanList implements org.bukkit.BanList {
         try {
             list.writeChanges();
         } catch (IOException ex) {
-            Mohist.LOGGER.error("Failed to save banned-ips.json, {0}", ex.getMessage());
+            MohistMC.LOGGER.error("Failed to save banned-ips.json, {0}", ex.getMessage());
         }
 
         return new CraftIpBanEntry(target, entry, list);

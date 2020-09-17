@@ -73,12 +73,12 @@
 +import org.bukkit.craftbukkit.Main;
 +import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 +import org.spigotmc.SlackActivityAccountant;
-+import red.mohist.WatchMohist;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.EntityConfig;
-+import red.mohist.configuration.MohistConfig;
-+import red.mohist.configuration.TileEntityConfig;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.WatchMohist;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.EntityConfig;
++import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.configuration.TileEntityConfig;
++import com.mohistmc.util.i18n.Message;
  
 -public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
 +public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo, RealTimeTicking

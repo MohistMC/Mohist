@@ -108,9 +108,9 @@
 +import org.bukkit.inventory.EquipmentSlot;
 +import org.bukkit.inventory.InventoryView;
 +import org.bukkit.util.NumberConversions;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.MohistConfig;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.util.i18n.Message;
  
  public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
  {

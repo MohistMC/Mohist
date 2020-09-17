@@ -35,7 +35,7 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.PluginClassLoader;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 public final class TimingsManager {
     static final Map<TimingIdentifier, TimingHandler> TIMING_MAP = LoadingMap.of(

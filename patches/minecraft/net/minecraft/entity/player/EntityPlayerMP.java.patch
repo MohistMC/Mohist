@@ -73,9 +73,9 @@
 +import org.bukkit.event.player.PlayerLocaleChangeEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.inventory.MainHand;
-+import red.mohist.Mohist;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.MohistConfig;
++import com.mohistmc.Mohist;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
  
 +import net.minecraft.entity.player.EntityPlayer.EnumChatVisibility;
 +
@@ -713,7 +713,7 @@
          for (ResourceLocation resourcelocation : p_193102_1_)
          {
 +            if (CraftingManager.func_193373_a(resourcelocation) == null) {
-+                Mohist.LOGGER.warn("Ignoring grant of non existent recipe " + resourcelocation);
++                MohistMC.LOGGER.warn("Ignoring grant of non existent recipe " + resourcelocation);
 +                continue;
 +            }
              list.add(CraftingManager.func_193373_a(resourcelocation));

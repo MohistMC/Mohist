@@ -15,7 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.bukkit.entity.Entity;
-import red.mohist.Mohist;
 
 public class CraftChunk implements Chunk {
     private static final byte[] emptyData = new byte[2048];

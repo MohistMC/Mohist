@@ -16,8 +16,8 @@
  import org.apache.commons.io.IOUtils;
 -import org.apache.logging.log4j.LogManager;
 -import org.apache.logging.log4j.Logger;
-+import red.mohist.util.i18n.Message;
-+import red.mohist.util.i18n.UTF8Properties;
++import com.mohistmc.util.i18n.Message;
++import com.mohistmc.util.i18n.UTF8Properties;
  
 -@SideOnly(Side.SERVER)
  public class ServerEula

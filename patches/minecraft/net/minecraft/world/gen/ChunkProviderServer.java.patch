@@ -11,8 +11,8 @@
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.v1_12_R1.chunkio.ChunkIOExecutor;
 +import org.bukkit.event.world.ChunkUnloadEvent;
-+import red.mohist.api.ServerAPI;
-+import red.mohist.configuration.MohistConfig;
++import com.mohistmc.api.ServerAPI;
++import com.mohistmc.configuration.MohistConfig;
  
  public class ChunkProviderServer implements IChunkProvider
  {

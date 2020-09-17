@@ -45,7 +45,7 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.bukkit.inventory.Recipe;
-import red.mohist.recipe.CustomModRecipe;
+import com.mohistmc.recipe.CustomModRecipe;
 
 public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe
 {

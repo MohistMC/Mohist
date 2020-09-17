@@ -4,8 +4,8 @@
  import org.apache.logging.log4j.Logger;
  import org.apache.logging.log4j.Marker;
  import org.apache.logging.log4j.MarkerManager;
-+import red.mohist.Mohist;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.Mohist;
++import com.mohistmc.util.i18n.Message;
  
  public class NetworkManager extends SimpleChannelInboundHandler < Packet<? >>
  {
@@ -114,7 +114,7 @@
              if (this.field_179297_n)
              {
 -                field_150735_g.warn("handleDisconnection() called twice");
-+                Mohist.LOGGER.warn(Message.getString("server.connect.handler_disconnection"));
++                MohistMC.LOGGER.warn(Message.getString("server.connect.handler_disconnection"));
              }
              else
              {

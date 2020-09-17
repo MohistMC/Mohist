@@ -75,8 +75,8 @@
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.*;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.*;
  
 -public class WorldServer extends World implements IThreadListener
 +public class WorldServer extends World implements IThreadListener, RealTimeTicking

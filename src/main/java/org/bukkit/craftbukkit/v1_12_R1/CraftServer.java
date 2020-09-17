@@ -168,11 +168,11 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
-import red.mohist.Mohist;
-import red.mohist.bukkit.nms.utils.RemapUtils;
-import red.mohist.configuration.MohistConfig;
-import red.mohist.forge.MohistForgeUtils;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.MohistMC;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
+import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.forge.MohistForgeUtils;
+import com.mohistmc.util.i18n.Message;
 
 public final class CraftServer implements Server {
     static {
@@ -182,7 +182,7 @@ public final class CraftServer implements Server {
 
     protected final MinecraftServer console;
     protected final DedicatedPlayerList playerList;
-    private final String serverName = Mohist.NAME;
+    private final String serverName = MohistMC.NAME;
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
     private final Logger logger = Logger.getLogger("Minecraft");
@@ -269,7 +269,7 @@ public final class CraftServer implements Server {
         this.console = console;
         this.playerList = (DedicatedPlayerList) playerList;
         this.playerView = Collections.unmodifiableList(Lists.transform(playerList.getPlayers(), EntityPlayerMP::getBukkitEntity));
-        this.serverVersion = "git-Mohist-" + Mohist.getVersion();
+        this.serverVersion = "git-Mohist-" + MohistMC.getVersion();
         online.value = console.getPropertyManager().getBooleanProperty("online-mode", true);
         Bukkit.setServer(this);
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
@@ -393,7 +393,7 @@ public final class CraftServer implements Server {
             for (Plugin plugin : plugins) {
                 try {
                     String message = String.format(Message.getString("mohist.start.plugin_loaded_info"), plugin.getDescription().getFullName());
-                    Mohist.LOGGER.info(message);
+                    MohistMC.LOGGER.info(message);
                     plugin.onLoad();
                 } catch (Throwable ex) {
                     LogManager.getLogger(CraftServer.class.getName()).error(ex.getMessage() + " initializing " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
@@ -469,7 +469,7 @@ public final class CraftServer implements Server {
                 try {
                     pluginManager.addPermission(perm, false);
                 } catch (IllegalArgumentException ex) {
-                    Mohist.LOGGER.warn("Plugin " + plugin.getDescription().getFullName() + " tried to register permission '" + perm.getName() + "' but it's already registered", ex);
+                    MohistMC.LOGGER.warn("Plugin " + plugin.getDescription().getFullName() + " tried to register permission '" + perm.getName() + "' but it's already registered", ex);
                 }
             }
             pluginManager.dirtyPermissibles();
@@ -737,7 +737,7 @@ public final class CraftServer implements Server {
             this.playerCommandState = true;
             return this.dispatchCommand(sender, serverCommand.command);
         } catch (Exception ex) {
-            Mohist.LOGGER.warn("Unexpected exception while parsing console command \"" + serverCommand.command + '"', ex);
+            MohistMC.LOGGER.warn("Unexpected exception while parsing console command \"" + serverCommand.command + '"', ex);
             return false;
         } finally {
             this.playerCommandState = false;
@@ -887,7 +887,7 @@ public final class CraftServer implements Server {
                 icon = loadServerIcon0(file);
             }
         } catch (Exception ex) {
-            Mohist.LOGGER.warn("Couldn't load server icon", ex);
+            MohistMC.LOGGER.warn("Couldn't load server icon", ex);
         }
     }
 
@@ -911,10 +911,10 @@ public final class CraftServer implements Server {
         try {
             perms = (Map<String, Map<String, Object>>) yaml.load(stream);
         } catch (MarkedYAMLException ex) {
-            Mohist.LOGGER.warn("Server permissions file " + file + " is not valid YAML: " + ex.toString());
+            MohistMC.LOGGER.warn("Server permissions file " + file + " is not valid YAML: " + ex.toString());
             return;
         } catch (Throwable ex) {
-            Mohist.LOGGER.warn("Server permissions file " + file + " is not valid YAML.", ex);
+            MohistMC.LOGGER.warn("Server permissions file " + file + " is not valid YAML.", ex);
             return;
         } finally {
             try {
@@ -925,7 +925,7 @@ public final class CraftServer implements Server {
         }
 
         if (perms == null) {
-            Mohist.LOGGER.debug(Message.getFormatString("craftbukkit.craftserver.1", new Object[]{(file)}));
+            MohistMC.LOGGER.debug(Message.getFormatString("craftbukkit.craftserver.1", new Object[]{(file)}));
 
             return;
         }
@@ -936,7 +936,7 @@ public final class CraftServer implements Server {
             try {
                 pluginManager.addPermission(perm);
             } catch (IllegalArgumentException ex) {
-                Mohist.LOGGER.error("Permission in " + file + " was already defined", ex);
+                MohistMC.LOGGER.error("Permission in " + file + " was already defined", ex);
             }
         }
     }
@@ -1056,7 +1056,7 @@ public final class CraftServer implements Server {
                 handle.saveAllChunks(true, null);
                 handle.flush();
             } catch (MinecraftException ex) {
-                Mohist.LOGGER.error(ex);
+                MohistMC.LOGGER.error(ex);
             }
         }
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle)); // fire unload event before removing world
@@ -1100,7 +1100,7 @@ public final class CraftServer implements Server {
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
         if (getWorld(world.getUID()) != null) {
-            Mohist.LOGGER.info(Message.getFormatString("craftserver.addworld", new Object[]{world.getName()}));
+            MohistMC.LOGGER.info(Message.getFormatString("craftserver.addworld", new Object[]{world.getName()}));
             return;
         }
         worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);
@@ -1271,17 +1271,17 @@ public final class CraftServer implements Server {
                     Plugin plugin = pluginManager.getPlugin(split[0]);
 
                     if (plugin == null) {
-                        Mohist.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + split[0] + "' does not exist");
+                        MohistMC.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + split[0] + "' does not exist");
                     } else if (!plugin.isEnabled()) {
-                        Mohist.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' is not enabled yet (is it load:STARTUP?)");
+                        MohistMC.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' is not enabled yet (is it load:STARTUP?)");
                     } else {
                         try {
                             result = plugin.getDefaultWorldGenerator(world, id);
                             if (result == null) {
-                                Mohist.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' lacks a default world generator");
+                                MohistMC.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' lacks a default world generator");
                             }
                         } catch (Throwable t) {
-                            Mohist.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName(), t);
+                            MohistMC.LOGGER.error("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName(), t);
                         }
                     }
                 }
@@ -1700,7 +1700,7 @@ public final class CraftServer implements Server {
             }
         } catch (CommandException ex) {
             player.sendMessage(ChatColor.RED + "An internal error occurred while attempting to tab-complete this command");
-            Mohist.LOGGER.error("Exception when " + player.getName() + " attempted to tab complete " + message, ex);
+            MohistMC.LOGGER.error("Exception when " + player.getName() + " attempted to tab complete " + message, ex);
         }
 
         return completions == null ? ImmutableList.<String>of() : completions;
@@ -1738,7 +1738,7 @@ public final class CraftServer implements Server {
             return;
         }
         this.printSaveWarning = true;
-        Mohist.LOGGER.warn("A manual (plugin-induced) save has been detected while server is configured to auto-save. This may affect performance.", warningState == WarningState.ON ? new Throwable() : null);
+        MohistMC.LOGGER.warn("A manual (plugin-induced) save has been detected while server is configured to auto-save. This may affect performance.", warningState == WarningState.ON ? new Throwable() : null);
     }
 
     @Override

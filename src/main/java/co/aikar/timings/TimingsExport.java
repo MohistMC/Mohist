@@ -56,7 +56,7 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.EntityType;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 @SuppressWarnings({"rawtypes", "SuppressionAnnotation"})
 class TimingsExport extends Thread {

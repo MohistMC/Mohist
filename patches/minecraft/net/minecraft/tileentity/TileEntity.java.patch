@@ -13,7 +13,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.inventory.InventoryHolder;
-+import red.mohist.inventory.InventoryOwner;
++import com.mohistmc.inventory.InventoryOwner;
  
 -public abstract class TileEntity
 +public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>

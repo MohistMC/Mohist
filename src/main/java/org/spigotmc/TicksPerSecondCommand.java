@@ -7,7 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 public class TicksPerSecondCommand extends Command {
 

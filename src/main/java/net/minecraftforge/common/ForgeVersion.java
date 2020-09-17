@@ -54,13 +54,13 @@ public class ForgeVersion
     // This is Forge's Mod Id, used for the ForgeModContainer and resource locations
     public static final String MOD_ID = "forge";
     //This number is incremented every time we remove deprecated code/major API changes, never reset
-    public static final int majorVersion    = red.mohist.forge.ForgeVersion.major;
+    public static final int majorVersion    = com.mohistmc.forge.ForgeVersion.major;
     //This number is incremented every minecraft release, never reset
-    public static final int minorVersion    = red.mohist.forge.ForgeVersion.minor;
+    public static final int minorVersion    = com.mohistmc.forge.ForgeVersion.minor;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = red.mohist.forge.ForgeVersion.revision;
+    public static final int revisionVersion = com.mohistmc.forge.ForgeVersion.revision;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
-    public static final int buildVersion    = red.mohist.forge.ForgeVersion.build;
+    public static final int buildVersion    = com.mohistmc.forge.ForgeVersion.build;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
     public static final String mcVersion = "1.12.2";
     // This is the MCP data version we're using

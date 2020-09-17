@@ -119,7 +119,7 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import org.spigotmc.AsyncCatcher;
 import org.spigotmc.SpigotConfig;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -1635,7 +1635,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         double healthMod = scaledHealth ? healthScale : getMaxHealth();
         if (healthMod >= Float.MAX_VALUE || healthMod <= 0) {
             healthMod = 20; // Reset health
-            Mohist.LOGGER.warn(getName() + " tried to crash the server with a large health attribute");
+            MohistMC.LOGGER.warn(getName() + " tried to crash the server with a large health attribute");
         }
         collection.add(new ModifiableAttributeInstance(getHandle().getAttributeMap(), (new RangedAttribute(null, "generic.maxHealth", healthMod, 0.0D, Float.MAX_VALUE)).setDescription("Max Health").setShouldWatch(true)));
         // Spigot end

@@ -9,7 +9,7 @@
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.Recipe;
-+import red.mohist.recipe.CustomModRecipe;
++import com.mohistmc.recipe.CustomModRecipe;
  
 -public class ShapedRecipes implements IRecipe
 +public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements net.minecraftforge.common.crafting.IShapedRecipe

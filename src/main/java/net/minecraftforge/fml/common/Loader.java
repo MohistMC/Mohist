@@ -95,9 +95,9 @@ import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
-import red.mohist.api.ServerAPI;
-import red.mohist.forge.MohistMod;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.api.ServerAPI;
+import com.mohistmc.forge.MohistMod;
+import com.mohistmc.util.i18n.Message;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.

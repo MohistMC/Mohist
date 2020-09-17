@@ -11,8 +11,8 @@
 +import org.bukkit.craftbukkit.v1_12_R1.command.CraftSimpleCommandMap;
 +import org.bukkit.craftbukkit.v1_12_R1.command.ModCustomCommand;
 +import org.bukkit.help.GenericCommandHelpTopic;
-+import red.mohist.api.ServerAPI;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.api.ServerAPI;
++import com.mohistmc.util.i18n.Message;
  
  public abstract class CommandHandler implements ICommandManager
  {

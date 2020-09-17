@@ -25,7 +25,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState.ModState;
-import red.mohist.api.ServerAPI;
+import com.mohistmc.api.ServerAPI;
 
 /**
  * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.

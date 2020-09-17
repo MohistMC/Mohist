@@ -37,7 +37,7 @@ import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationException;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
-import red.mohist.configuration.MohistConfig;
+import com.mohistmc.configuration.MohistConfig;
 
 public class NetworkModHolder
 {

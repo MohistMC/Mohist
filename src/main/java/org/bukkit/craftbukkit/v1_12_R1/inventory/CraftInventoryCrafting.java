@@ -8,7 +8,7 @@ import net.minecraft.item.crafting.IRecipe;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import red.mohist.recipe.RecipeUtils;
+import com.mohistmc.recipe.RecipeUtils;
 
 public class CraftInventoryCrafting extends CraftInventory implements CraftingInventory {
     private final IInventory resultInventory;

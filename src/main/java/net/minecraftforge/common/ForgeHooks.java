@@ -173,7 +173,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.world.StructureGrowEvent;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 public class ForgeHooks {
     //TODO: Loot tables?
@@ -1140,10 +1140,10 @@ public class ForgeHooks {
                             Advancement.Builder builder = JsonUtils.gsonDeserialize(AdvancementManager.GSON, contents, Advancement.Builder.class);
                             map.put(key, builder);
                         } catch (JsonParseException jsonparseexception) {
-                            Mohist.LOGGER.debug("Parsing error loading built-in advancement " + key, (Throwable) jsonparseexception);
+                            MohistMC.LOGGER.debug("Parsing error loading built-in advancement " + key, (Throwable) jsonparseexception);
                             return false;
                         } catch (IOException ioexception) {
-                            Mohist.LOGGER.debug("Couldn't read advancement " + key + " from " + file, (Throwable) ioexception);
+                            MohistMC.LOGGER.debug("Couldn't read advancement " + key + " from " + file, (Throwable) ioexception);
                             return false;
                         } finally {
                             IOUtils.closeQuietly(reader);

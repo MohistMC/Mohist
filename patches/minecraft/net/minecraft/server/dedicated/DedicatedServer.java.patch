@@ -47,13 +47,13 @@
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.spigotmc.SpigotConfig;
-+import red.mohist.Metrics;
-+import red.mohist.Mohist;
-+import red.mohist.WatchMohist;
-+import red.mohist.common.async.MohistThreadBox;
-+import red.mohist.configuration.MohistConfig;
-+import red.mohist.api.event.server.BukkitServerStartDoneEvent;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.Metrics;
++import com.mohistmc.Mohist;
++import com.mohistmc.WatchMohist;
++import com.mohistmc.common.async.MohistThreadBox;
++import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.api.event.server.BukkitServerStartDoneEvent;
++import com.mohistmc.util.i18n.Message;
  
  @SideOnly(Side.SERVER)
  public class DedicatedServer extends MinecraftServer implements IServer
@@ -134,7 +134,7 @@
          thread.setDaemon(true);
          thread.start();
 -        field_155771_h.info("Starting minecraft server version 1.12.2");
-+        Mohist.LOGGER.info(Message.getString("mohist.server.start"));
++        MohistMC.LOGGER.info(Message.getString("mohist.server.start"));
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
          {
@@ -164,7 +164,7 @@
              int i = this.field_71340_o.func_73669_a("gamemode", GameType.SURVIVAL.func_77148_a());
              this.field_71337_q = WorldSettings.func_77161_a(i);
 -            field_155771_h.info("Default game type: {}", (Object)this.field_71337_q);
-+            Mohist.LOGGER.info(Message.getString("game.gametype") + "{}", (Object)this.field_71337_q);
++            MohistMC.LOGGER.info(Message.getString("game.gametype") + "{}", (Object)this.field_71337_q);
              InetAddress inetaddress = null;
  
              if (!this.func_71211_k().isEmpty())
@@ -187,7 +187,7 @@
              this.func_71253_a(CryptManager.func_75891_b());
 -            field_155771_h.info("Starting Minecraft server on {}:{}", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), Integer.valueOf(this.func_71215_F()));
 +            Object[] p = {this.func_71211_k().isEmpty() ? "0.0.0.0" : this.func_71211_k(), String.valueOf(this.func_71215_F())};
-+            Mohist.LOGGER.info(Message.getFormatString("server.ip", p));
++            MohistMC.LOGGER.info(Message.getFormatString("server.ip", p));
  
 +		if(!SpigotConfig.lateBind) {
              try
@@ -231,14 +231,14 @@
                  String s3 = String.format("%.3fs", (double)i1 / 1.0E9D);
 -                field_155771_h.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
 +                if (MohistConfig.instance.support_nocmd.getValue()) {
-+                    Mohist.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", s3);
++                    MohistMC.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", s3);
 +                } else {
-+                    Mohist.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
++                    MohistMC.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
 +                }
  
 +                Bukkit.getPluginManager().callEvent(new BukkitServerStartDoneEvent());//Mohist
 +                Object[] p1 = {this.func_71211_k().isEmpty() ? "0.0.0.0" : this.func_71211_k(), String.valueOf(this.func_71215_F())};
-+                Mohist.LOGGER.info(Message.getFormatString("server.ip", p1));
++                MohistMC.LOGGER.info(Message.getFormatString("server.ip", p1));
 +                Metrics.MohistMetrics.startMetrics();
 +                WatchMohist.start();
                  if (this.field_71340_o.func_187239_a("announce-player-achievements"))

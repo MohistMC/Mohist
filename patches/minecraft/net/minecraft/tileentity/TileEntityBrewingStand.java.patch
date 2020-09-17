@@ -26,8 +26,8 @@
 +import org.bukkit.event.inventory.BrewEvent;
 +import org.bukkit.event.inventory.BrewingStandFuelEvent;
 +import org.bukkit.inventory.InventoryHolder;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.MohistConfig;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
  
  public class TileEntityBrewingStand extends TileEntityLockable implements ITickable, ISidedInventory
  {

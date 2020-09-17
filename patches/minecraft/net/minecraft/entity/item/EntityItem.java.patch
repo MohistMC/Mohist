@@ -14,8 +14,8 @@
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.event.entity.EntityPickupItemEvent;
 +import org.bukkit.event.player.PlayerPickupItemEvent;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.MohistConfig;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
  
  public class EntityItem extends Entity
  {

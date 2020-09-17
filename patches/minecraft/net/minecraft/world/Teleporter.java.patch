@@ -16,7 +16,7 @@
 +import org.bukkit.event.entity.EntityPortalExitEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 +import org.bukkit.util.Vector;
-+import red.mohist.Mohist;
++import com.mohistmc.Mohist;
  
 -public class Teleporter
 +public class Teleporter implements net.minecraftforge.common.util.ITeleporter

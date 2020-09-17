@@ -101,7 +101,7 @@ project(':mohist') {
     apply plugin: 'de.undercouch.download'
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-    group = 'red.mohist'
+    group = 'com.mohistmc'
 
     sourceSets {
         main {
@@ -160,7 +160,7 @@ project(':mohist') {
         runs {
             forge_server {
                 taskName 'forge_server'
-                main 'red.mohist.Mohist'
+                main 'com.mohistmc.MohistMC'
 
                 environment 'tweakClass',       'net.minecraftforge.fml.common.launcher.FMLServerTweaker'
                 environment 'mainClass',        'net.minecraft.launchwrapper.Launch'
@@ -184,7 +184,7 @@ project(':mohist') {
                 'Specification-Title':      'Mohist',
                 'Specification-Vendor':     'Mohist-Community',
                 'Specification-Version':    SPEC_VERSION,
-                'Implementation-Title':     'red.mohist',
+                'Implementation-Title':     'com.mohistmc',
                 'Implementation-Version':   project.version,
                 'Implementation-Vendor':    'Mohist-Community'
             ] as LinkedHashMap
@@ -570,7 +570,7 @@ project(':mohist') {
                 if (pkg == '/') {
                     manifest.attributes(values += [
                         'Manifest-Version': '1.9',
-                        'Main-Class': 'red.mohist.Mohist',
+                        'Main-Class': 'com.mohistmc.MohistMC',
                         'Class-Path': classpath.toString(),
                         'Tweak-Class': 'net.minecraftforge.fml.common.launcher.FMLTweaker'
                     ])

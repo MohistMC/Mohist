@@ -37,8 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockVector;
-import red.mohist.Mohist;
-import red.mohist.block.CraftCustomContainer;
+import com.mohistmc.block.CraftCustomContainer;
 
 public class CraftBlock implements Block {
     private final CraftChunk chunk;

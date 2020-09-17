@@ -34,7 +34,7 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references

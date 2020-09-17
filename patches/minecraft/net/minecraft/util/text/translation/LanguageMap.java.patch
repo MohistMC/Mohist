@@ -4,8 +4,8 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.commons.io.IOUtils;
-+import red.mohist.Mohist;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.Mohist;
++import com.mohistmc.util.i18n.Message;
  
  public class LanguageMap
  {
@@ -14,8 +14,8 @@
      public LanguageMap()
      {
 +        String lang = Message.getLocale().toLowerCase();
-+        InputStream inputstream1 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
-+        InputStream inputstream2 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
++        InputStream inputstream1 = MohistMC.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
++        InputStream inputstream2 = MohistMC.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
 +        InputStream inputstream = (inputstream1 == null ? inputstream2 : inputstream1);
          try
          {

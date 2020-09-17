@@ -12,8 +12,8 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextComponentTranslation;
-+import red.mohist.configuration.MohistConfig;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.util.i18n.Message;
  
  public class NetHandlerHandshakeTCP implements INetHandlerHandshakeServer
  {

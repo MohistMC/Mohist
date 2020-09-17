@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.plugin.Plugin;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 public class PluginCommandYamlParser {
 
@@ -20,7 +20,7 @@ public class PluginCommandYamlParser {
 
         for (Entry<String, Map<String, Object>> entry : map.entrySet()) {
             if (entry.getKey().contains(":")) {
-                Mohist.LOGGER.error("Could not load command " + entry.getKey() + " for plugin " + plugin.getName() + ": Illegal Characters");
+                MohistMC.LOGGER.error("Could not load command " + entry.getKey() + " for plugin " + plugin.getName() + ": Illegal Characters");
                 continue;
             }
             Command newCmd = new PluginCommand(entry.getKey(), plugin);
@@ -44,14 +44,14 @@ public class PluginCommandYamlParser {
                 if (aliases instanceof List) {
                     for (Object o : (List<?>) aliases) {
                         if (o.toString().contains(":")) {
-                            Mohist.LOGGER.error("Could not load alias " + o.toString() + " for plugin " + plugin.getName() + ": Illegal Characters");
+                            MohistMC.LOGGER.error("Could not load alias " + o.toString() + " for plugin " + plugin.getName() + ": Illegal Characters");
                             continue;
                         }
                         aliasList.add(o.toString());
                     }
                 } else {
                     if (aliases.toString().contains(":")) {
-                        Mohist.LOGGER.error("Could not load alias " + aliases.toString() + " for plugin " + plugin.getName() + ": Illegal Characters");
+                        MohistMC.LOGGER.error("Could not load alias " + aliases.toString() + " for plugin " + plugin.getName() + ": Illegal Characters");
                     } else {
                         aliasList.add(aliases.toString());
                     }

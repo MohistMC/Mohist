@@ -37,7 +37,7 @@
 +import org.bukkit.craftbukkit.v1_12_R1.command.CraftRemoteConsoleCommandSender;
 +import org.bukkit.craftbukkit.v1_12_R1.command.VanillaCommandWrapper;
 +import org.bukkit.event.server.ServerCommandEvent;
-+import red.mohist.Mohist;
++import com.mohistmc.Mohist;
  
  public abstract class CommandBlockBaseLogic implements ICommandSender
  {
@@ -185,12 +185,12 @@
 +                }
 +            } catch (Throwable exception) {
 +                if (sender.func_174793_f() instanceof EntityMinecartCommandBlock) {
-+                    Mohist.LOGGER.warn(String.format("MinecartCommandBlock at (%d,%d,%d) failed to handle command", sender.func_180425_c().func_177958_n(), sender.func_180425_c().func_177956_o(), sender.func_180425_c().func_177952_p()), exception);
++                    MohistMC.LOGGER.warn(String.format("MinecartCommandBlock at (%d,%d,%d) failed to handle command", sender.func_180425_c().func_177958_n(), sender.func_180425_c().func_177956_o(), sender.func_180425_c().func_177952_p()), exception);
 +                } else if (sender instanceof CommandBlockBaseLogic) {
 +                    CommandBlockBaseLogic listener = (CommandBlockBaseLogic) sender;
-+                    Mohist.LOGGER.warn(String.format("CommandBlock at (%d,%d,%d) failed to handle command", listener.func_180425_c().func_177958_n(), listener.func_180425_c().func_177956_o(), listener.func_180425_c().func_177952_p()), exception);
++                    MohistMC.LOGGER.warn(String.format("CommandBlock at (%d,%d,%d) failed to handle command", listener.func_180425_c().func_177958_n(), listener.func_180425_c().func_177956_o(), listener.func_180425_c().func_177952_p()), exception);
 +                } else {
-+                    Mohist.LOGGER.warn(String.format("Unknown CommandBlock failed to handle command"), exception);
++                    MohistMC.LOGGER.warn(String.format("Unknown CommandBlock failed to handle command"), exception);
 +                }
 +            }
 +        }

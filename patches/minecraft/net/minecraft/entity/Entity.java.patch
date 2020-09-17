@@ -55,9 +55,9 @@
 +import org.bukkit.event.vehicle.VehicleEnterEvent;
 +import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
-+import red.mohist.Mohist;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.MohistConfig;
++import com.mohistmc.Mohist;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
  
 -public abstract class Entity implements ICommandSender
 +public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
@@ -211,7 +211,7 @@
 +
 +        if (p_70101_1_ == Float.POSITIVE_INFINITY || p_70101_1_ == Float.NEGATIVE_INFINITY) {
 +            if (this instanceof EntityPlayerMP) {
-+                Mohist.LOGGER.warn(this.func_70005_c_() + " was caught trying to crash the server with an invalid yaw");
++                MohistMC.LOGGER.warn(this.func_70005_c_() + " was caught trying to crash the server with an invalid yaw");
 +                ((CraftPlayer) this.getBukkitEntity()).kickPlayer("Nope");
 +            }
 +            p_70101_1_ = 0;
@@ -224,7 +224,7 @@
 +
 +        if (p_70101_2_ == Float.POSITIVE_INFINITY || p_70101_2_ == Float.NEGATIVE_INFINITY) {
 +            if (this instanceof EntityPlayerMP) {
-+                Mohist.LOGGER.warn(this.func_70005_c_() + " was caught trying to crash the server with an invalid pitch");
++                MohistMC.LOGGER.warn(this.func_70005_c_() + " was caught trying to crash the server with an invalid pitch");
 +                ((CraftPlayer) this.getBukkitEntity()).kickPlayer("Nope");
 +            }
 +            p_70101_2_ = 0;

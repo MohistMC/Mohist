@@ -15,8 +15,7 @@ import javax.annotation.Nullable;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.spigotmc.SpigotConfig;
-import red.mohist.configuration.MohistConfig;
+import com.mohistmc.configuration.MohistConfig;
 
 public class CraftPlayerProfile implements PlayerProfile {
 

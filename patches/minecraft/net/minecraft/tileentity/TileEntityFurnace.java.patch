@@ -24,9 +24,9 @@
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
 +import org.bukkit.event.inventory.FurnaceSmeltEvent;
-+import red.mohist.command.MohistCommand;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.configuration.MohistConfig;
++import com.mohistmc.command.MohistCommand;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
  
  public class TileEntityFurnace extends TileEntityLockable implements ITickable, ISidedInventory
  {

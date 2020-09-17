@@ -20,7 +20,7 @@
 +import org.bukkit.craftbukkit.v1_12_R1.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
-+import red.mohist.util.i18n.Message;
++import com.mohistmc.util.i18n.Message;
  
  public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
  {

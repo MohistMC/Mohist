@@ -72,12 +72,12 @@
 +import org.bukkit.event.block.BlockPhysicsEvent;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.generator.ChunkGenerator;
-+import red.mohist.common.RealTimeTicking;
-+import red.mohist.common.cache.WorldCache;
-+import red.mohist.configuration.EntityWorldConfig;
-+import red.mohist.configuration.MohistConfig;
-+import red.mohist.configuration.MohistWorldConfig;
-+import red.mohist.configuration.TileEntityWorldConfig;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.common.cache.WorldCache;
++import com.mohistmc.configuration.EntityWorldConfig;
++import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.configuration.MohistWorldConfig;
++import com.mohistmc.configuration.TileEntityWorldConfig;
  
 -public abstract class World implements IBlockAccess
 +public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider
@@ -1024,7 +1024,7 @@
 +                    entity2.tickTimer.startTiming(); // Paper
 +                    net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(entity2);
 +
-+                    if (red.mohist.util.Entity.canEntityTick(entity2, this)) {
++                    if (com.mohistmc.util.Entity.canEntityTick(entity2, this)) {
 +                        this.func_72870_g(entity2);
 +                    }
 +
@@ -1102,7 +1102,7 @@
 +                        tileentity.tickTimer.startTiming(); // Spigot
 +                        net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackStart(tileentity);
 +
-+                        if (red.mohist.util.TileEntity.canTileEntityTick(tileentity, this)) {
++                        if (com.mohistmc.util.TileEntity.canTileEntityTick(tileentity, this)) {
 +                            ((ITickable)tileentity).func_73660_a();
 +                        }
 +

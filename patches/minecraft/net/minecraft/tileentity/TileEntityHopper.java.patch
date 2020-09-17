@@ -19,7 +19,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
-+import red.mohist.inventory.CraftCustomInventory;
++import com.mohistmc.inventory.CraftCustomInventory;
 +import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
@@ -27,7 +27,7 @@
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
 +import org.bukkit.inventory.Inventory;
 +import org.bukkit.inventory.InventoryHolder;
-+import red.mohist.inventory.InventoryOwner;
++import com.mohistmc.inventory.InventoryOwner;
  
  public class TileEntityHopper extends TileEntityLockableLoot implements IHopper, ITickable
  {

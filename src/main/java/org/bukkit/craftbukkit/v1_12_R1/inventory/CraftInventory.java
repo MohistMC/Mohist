@@ -24,7 +24,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import red.mohist.inventory.InventoryOwner;
+import com.mohistmc.inventory.InventoryOwner;
 
 public class CraftInventory implements Inventory {
     protected final IInventory inventory;
