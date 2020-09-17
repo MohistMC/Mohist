@@ -27,7 +27,7 @@
              public String call()
              {
 -                return "1.12.2";
-+                return Mohist.getVersion();
++                return MohistMC.getVersion();
              }
          });
 -        this.field_85061_c.func_189529_a("Operating System", new ICrashReportDetail<String>()
