@@ -48,13 +48,19 @@ public class ForgeInjectBukkit {
 
     public static void addEnumMaterialInItems(){
         for (Map.Entry<ResourceLocation, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
-            if(!entry.getKey().getResourceDomain().equals("minecraft")) {
+            ResourceLocation key = entry.getKey();
+            if(!key.getResourceDomain().equals("minecraft")) {
                 // inject item materials into Bukkit for FML
+                String[] res = key.toString().split(":");
+                String modid = Material.normalizeName(res[0]);
                 Item item = entry.getValue();
                 int id = Item.getIdFromItem(item);
                 Material material = Material.addMaterial(id, false);
                 if (material != null) {
-                    ServerAPI.injectmaterials.put(material.name().toLowerCase(java.util.Locale.ENGLISH), material.getId());
+                    // <bukkit_name, modid>
+                    ItemAPI.MODNAME_MAP.put(material.name(), modid);
+                    // <bukkit_id, modid>
+                    ItemAPI.MODID_MAP.put(id, modid);
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
                 }
             }
@@ -63,13 +69,19 @@ public class ForgeInjectBukkit {
 
     public static void addEnumMaterialsInBlocks(){
         for (Map.Entry<ResourceLocation, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
-            if(!entry.getKey().getResourceDomain().equals("minecraft")) {
+            ResourceLocation key = entry.getKey();
+            if(!key.getResourceDomain().equals("minecraft")) {
                 // inject block materials into Bukkit for FML
+                String[] res = key.toString().split(":");
+                String modid = Material.normalizeName(res[0]);
                 Block block = entry.getValue();
                 int id = Block.getIdFromBlock(block);
                 Material material = Material.addMaterial(id, true);
                 if (material != null) {
-                    ServerAPI.injectblock.put(material.name().toLowerCase(java.util.Locale.ENGLISH), material.getId());
+                    // <bukkit_name, modid>
+                    ItemAPI.MODNAME_MAP.put(material.name(), modid);
+                    // <bukkit_id, modid>
+                    ItemAPI.MODID_MAP.put(id, modid);
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.block", new Object[]{material.name(), String.valueOf(material.getId())}));
                 }
             }

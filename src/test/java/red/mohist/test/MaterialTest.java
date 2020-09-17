@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import red.mohist.api.ItemAPI;
 
 public class MaterialTest {
 
@@ -22,6 +23,10 @@ public class MaterialTest {
 
     public boolean debug1 (Location location) {
         return location.getBlock().getType().isForgeBlock();
+    }
+
+    public boolean debug2 (Material material) {
+        return ItemAPI.getModid(material.name()).equals("IC2");
     }
 
 }

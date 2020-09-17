@@ -7,6 +7,8 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -20,6 +22,9 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 public class ItemAPI {
+
+    public static Map<String, String> MODNAME_MAP = new ConcurrentHashMap();
+    public static Map<Integer, String> MODID_MAP = new ConcurrentHashMap();
 
     public static net.minecraft.item.ItemStack toNMSItem(Material materialcb) {
         ItemStack itemStackcb = new ItemStack(materialcb);
@@ -181,5 +186,13 @@ public class ItemAPI {
 
     public static Material getBlockMaterial(final int id) {
         return Material.getBlockMaterial(id);
+    }
+
+    public static String getModid(String name){
+        return MODNAME_MAP.containsKey(name) ? MODNAME_MAP.get(name) : "unknown";
+    }
+
+    public static String getModid(int id){
+        return MODNAME_MAP.containsKey(id) ? MODNAME_MAP.get(id) : "unknown";
     }
 }
