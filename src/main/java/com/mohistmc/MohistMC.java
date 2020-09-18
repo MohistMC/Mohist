@@ -17,7 +17,7 @@ public class MohistMC {
     public static Logger LOGGER;
 
     public static String getVersion() {
-        return (MohistMC.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown";
+        return (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
     }
 
     public static void main(String[] args) throws Throwable {
