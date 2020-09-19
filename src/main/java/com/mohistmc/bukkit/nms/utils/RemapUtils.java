@@ -46,7 +46,8 @@ public class RemapUtils {
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/joptsimple/", "joptsimple/");
-        jarMapping.packages.put("red/mohist", "com/mohistmc");
+        jarMapping.packages.put("red/mohist/api", "com/mohistmc/api");
+        jarMapping.packages.put("red/mohist/bukkit/nms", "com/mohistmc/bukkit/nms");
         jarMapping.classes.put("red/mohist/Mohist", "com/mohistmc/MohistMC");
         jarMapping.classes.put("catserver/api/bukkit/event/ForgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent");
         jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
