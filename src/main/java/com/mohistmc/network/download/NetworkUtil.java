@@ -16,7 +16,6 @@ public class NetworkUtil {
     return conn;
   }
 
-  public static int getConnLength(String URL) { return getConn(URL).getContentLength(); }
   public static InputStream getInput(String URL) throws IOException { return getConn(URL).getInputStream(); }
 
 }

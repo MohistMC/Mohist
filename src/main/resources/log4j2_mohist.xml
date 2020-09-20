@@ -6,7 +6,7 @@
             <PatternLayout pattern="[%hTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
             <DefaultRolloverStrategy max="20" fileIndex="min"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>

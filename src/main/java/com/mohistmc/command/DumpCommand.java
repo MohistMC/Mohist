@@ -220,28 +220,33 @@ public class DumpCommand extends Command {
         sender.sendMessage("Successfully dump " + type + ", output path: " + web);
     }
 
-    private void dump(CommandSender sender, String type, StringBuilder sb, String mode){
-        switch (mode) {
-            case "file":
-                File file = new File("dump", type + ".red");
-                writeByteArrayToFile(file, sb);
-                dumpmsg(sender, file, type);
-                break;
-            case "web":
-                try {
-                    String url = HasteUtils.paste(sb.toString());
-                    if (sender instanceof Player) {
-                        Player p = (Player) sender;
-                        ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
-                    } else {
-                        dumpmsg(sender, HasteUtils.paste(sb.toString()), type);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
+  private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
+    switch (mode) {
+      case "file":
+        saveToF("dump", type + "red", sb, sender);
+        break;
+      case "web":
+        try {
+          String url = HasteUtils.paste(sb.toString());
+          if(sender instanceof Player) {
+            Player p = (Player) sender;
+            ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
+          } else {
+            dumpmsg(sender, HasteUtils.paste(sb.toString()), type);
+          }
+        } catch (IOException e) {
+          sender.sendMessage("Failed to upload to hastebin.");
+          saveToF("dump", type + "red", sb, sender);
         }
+        break;
     }
+  }
+
+  private void saveToF(String parent, String child, StringBuilder sb, CommandSender sender) {
+    File file = new File(parent, child);
+    writeByteArrayToFile(file, sb);
+    dumpmsg(sender, file, child.replace(".red", ""));
+  }
 
     protected void writeByteArrayToFile(File file, StringBuilder sb){
         try {
