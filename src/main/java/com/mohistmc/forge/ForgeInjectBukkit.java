@@ -52,9 +52,10 @@ public class ForgeInjectBukkit {
                 // inject item materials into Bukkit for FML
                 String[] res = key.toString().split(":");
                 String modid = Material.normalizeName(res[0]);
+                String materialName = "ITAM_" + Material.normalizeName(key.toString());
                 Item item = entry.getValue();
                 int id = Item.getIdFromItem(item);
-                Material material = Material.addMaterial(id, false);
+                Material material = Material.addMaterial(materialName, id, false);
                 if (material != null) {
                     // <bukkit_name, modid>
                     ItemAPI.MODNAME_MAP.put(material.name(), modid);
@@ -73,9 +74,10 @@ public class ForgeInjectBukkit {
                 // inject block materials into Bukkit for FML
                 String[] res = key.toString().split(":");
                 String modid = Material.normalizeName(res[0]);
+                String materialName = "BLOCK" + Material.normalizeName(key.toString());
                 Block block = entry.getValue();
                 int id = Block.getIdFromBlock(block);
-                Material material = Material.addMaterial(id, true);
+                Material material = Material.addMaterial(materialName, id, true);
                 if (material != null) {
                     // <bukkit_name, modid>
                     ItemAPI.MODNAME_MAP.put(material.name(), modid);

@@ -184,7 +184,7 @@ public class ItemAPI {
         return null;
     }
 
-    public static Material getBlockMaterial(final int id) {
+    public static Material getBlockMaterial(int id) {
         return Material.getBlockMaterial(id);
     }
 

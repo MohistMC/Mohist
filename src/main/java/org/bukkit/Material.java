@@ -543,11 +543,20 @@ public enum Material {
 
     static {
         for (Material material : values()) {
-            if (byId.length > material.id) {
-                byId[material.id] = material;
+            if (material.isForgeBlock()) {
+                if (blockById.length > material.id) {
+                    blockById[material.id] = material;
+                } else {
+                    blockById = Arrays.copyOfRange(blockById, 0, material.id + 2);
+                    blockById[material.id] = material;
+                }
             } else {
-                byId = Arrays.copyOfRange(byId, 0, material.id + 2);
-                byId[material.id] = material;
+                if (byId.length > material.id) {
+                    byId[material.id] = material;
+                } else {
+                    byId = Arrays.copyOfRange(byId, 0, material.id + 2);
+                    byId[material.id] = material;
+                }
             }
             BY_NAME.put(material.name(), material);
         }
@@ -672,19 +681,21 @@ public enum Material {
         return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
     }
 
-    public static Material addMaterial(int id, boolean isBlock) {
+    public static Material addMaterial(String materialName, int id, boolean isBlock) {
         // Forge Blocks
         if (isBlock && blockById[id] == null) {
-            String materialName = normalizeName("X" + String.valueOf(id));
+            String materialName_block = normalizeName("X" + String.valueOf(id));
             Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), true});
             blockById[id] = material;
             BY_NAME.put(materialName, material);
+            BY_NAME.put(materialName_block, material);
             return material;
         } else if (byId[id] == null) { // Forge Items
-            String materialName = normalizeName("X" + String.valueOf(id));
+            String materialName_item = normalizeName("X" + String.valueOf(id));
             Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), false});
             byId[id] = material;
             BY_NAME.put(materialName, material);
+            BY_NAME.put(materialName_item, material);
             return material;
         }
         return null;
