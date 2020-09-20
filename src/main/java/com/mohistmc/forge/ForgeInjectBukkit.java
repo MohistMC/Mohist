@@ -52,7 +52,7 @@ public class ForgeInjectBukkit {
                 // inject item materials into Bukkit for FML
                 String[] res = key.toString().split(":");
                 String modid = Material.normalizeName(res[0]);
-                String materialName = "ITAM_" + Material.normalizeName(key.toString());
+                String materialName = Material.normalizeName(key.toString());
                 Item item = entry.getValue();
                 int id = Item.getIdFromItem(item);
                 Material material = Material.addMaterial(materialName, id, false);
