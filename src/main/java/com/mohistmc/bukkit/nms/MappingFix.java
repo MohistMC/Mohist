@@ -43,7 +43,7 @@ public class MappingFix {
         @Override
         public void run() {
           if(percentage != Math.round((float)lib.length()/4000000*100))
-            System.out.println(Message.getString("mapping.decoding.progress") + percentage + "%");
+            System.out.println(Message.getString("mapping.decoding.progress") + " - " + percentage + "%");
           percentage = Math.round((float)lib.length()/4000000*100);
         }
       }, 3000, 3000);
