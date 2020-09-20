@@ -60,7 +60,7 @@ public class CraftBlockState implements BlockState {
 
     public CraftBlockState(Material material) {
         world = null;
-        type = material.getId();
+        type = material.getBlockID();
         chunk = null;
         x = y = z = 0;
         this.nbt = null;
@@ -130,7 +130,7 @@ public class CraftBlockState implements BlockState {
     }
 
     public void setType(final Material type) {
-        setTypeId(type.getId());
+        setTypeId(type.getBlockID());
     }
 
     public boolean setTypeId(final int type) {

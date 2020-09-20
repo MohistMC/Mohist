@@ -602,7 +602,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendBlockChange(Location loc, Material material, byte data) {
-        sendBlockChange(loc, material.getId(), data);
+        sendBlockChange(loc, material.getBlockID(), data);
     }
 
     @Override

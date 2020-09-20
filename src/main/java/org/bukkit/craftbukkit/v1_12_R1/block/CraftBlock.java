@@ -188,7 +188,7 @@ public class CraftBlock implements Block {
 
     @Override
     public void setType(Material type, boolean applyPhysics) {
-        setTypeId(type.getId(), applyPhysics);
+        setTypeId(type.getBlockID(), applyPhysics);
     }
 
     public boolean setTypeId(final int type) {

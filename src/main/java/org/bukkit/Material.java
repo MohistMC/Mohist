@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Map;
-import javax.annotation.Nullable;
+
 import net.minecraftforge.common.util.EnumHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.map.MapView;
@@ -563,6 +563,7 @@ public enum Material {
     }
 
     private final int id;
+    private int blockID;
     private final Constructor<? extends MaterialData> ctor;
     private final int maxStack;
     private final short durability;
@@ -596,6 +597,7 @@ public enum Material {
 
     Material(final int id, final int stack, final int durability, final Class<? extends MaterialData> data) {
         this.id = id;
+        this.blockID = id;
         this.durability = (short) durability;
         this.maxStack = stack;
         // try to cache the constructor for this material
@@ -685,7 +687,13 @@ public enum Material {
         // Forge Blocks
         if (isBlock && blockById[id] == null) {
             String materialName_block = normalizeName("X" + String.valueOf(id));
-            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), true});
+            Material material = BY_NAME.get(materialName);
+            if (material != null){
+                material.blockID = id;
+                material.isForgeBlock = true;
+            }else {
+                material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), true});
+            }
             blockById[id] = material;
             BY_NAME.put(materialName, material);
             BY_NAME.put(materialName_block, material);
@@ -710,6 +718,16 @@ public enum Material {
 
     public int getId() {
         return id;
+    }
+
+    /**
+     * Gets the ForgeBlock ID of this Material
+     *
+     * @return ID of this material's Block
+     */
+
+    public int getBlockID() {
+        return blockID;
     }
 
     /**
