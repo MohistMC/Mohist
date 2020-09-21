@@ -87,7 +87,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         material = material == null ? Material.AIR : material;
 
         // TODO: Don't use ID
-        Block block = Block.getBlockById(material.getId());
+        Block block = Block.getBlockById(material.getBlockID());
 
         if (block == null) {
             return Blocks.AIR;

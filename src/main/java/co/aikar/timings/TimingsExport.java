@@ -180,7 +180,7 @@ class TimingsExport extends Thread {
             pair("handlers", handlers),
             pair("worlds", toObjectMapper(TimingHistory.worldMap.entrySet(), input -> pair(input.getValue(), input.getKey()))),
             pair("tileentity",
-                toObjectMapper(tileEntityTypeSet, input -> pair(input.getId(), input.name()))),
+                toObjectMapper(tileEntityTypeSet, input -> pair(input.getBlockID(), input.name()))),
             pair("entity",
                 toObjectMapper(entityTypeSet, input -> pair(input.getTypeId(), input.name())))
         ));

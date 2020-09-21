@@ -153,7 +153,7 @@ public class TimingHistory {
                                         public JSONPair apply(Map.Entry<Material, Counter> entry) {
                                             tileEntityTypeSet.add(entry.getKey());
                                             return pair(
-                                                    String.valueOf(entry.getKey().getId()),
+                                                    String.valueOf(entry.getKey().getBlockID()),
                                                     entry.getValue().count()
                                             );
                                         }
