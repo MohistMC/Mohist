@@ -1,13 +1,7 @@
 package org.bukkit.command;
 
 import co.aikar.timings.Timing;
-import com.mohistmc.command.DumpCommand;
-import com.mohistmc.command.EntityCommand;
-import com.mohistmc.command.GetModListCommand;
-import com.mohistmc.command.GetPluginListCommand;
-import com.mohistmc.command.MohistCommand;
-import com.mohistmc.command.TileEntityCommand;
-import com.mohistmc.command.WhitelistModsCommand;
+import com.mohistmc.command.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -39,6 +33,7 @@ public class SimpleCommandMap implements CommandMap {
         register("getpluginlist", new GetPluginListCommand("getpluginlist"));
         register("getmodlist", new GetModListCommand("getmodlist"));
         register("whitelistmods", new WhitelistModsCommand("whitelistmods"));
+        register("downloadfile", new DownloadFileCommand("downloadfile"));
         register("dump", new DumpCommand("dump"));
         register("entity", new EntityCommand("entity"));
         register("tileentity", new TileEntityCommand("tileentity"));
