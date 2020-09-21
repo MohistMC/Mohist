@@ -41,7 +41,7 @@ public class UpdateUtils {
       else {
         System.out.println(Message.getFormatString("update.detect", new Object[]{build_number, jar_sha, time}));
         if(bMohist("check_update_auto_download"))
-          downloadFile("mhttps://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-1.12.2" + build_number + "-server.jar", new File(getMohistJar().getName()));
+          downloadFile("mhttps://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
       }
     } catch (Throwable e) {
       System.out.println(Message.getString("check.update.noci"));
