@@ -83,8 +83,7 @@ public class UpdateUtils {
     HashMap<String, String> mavenList = new HashMap<>();
     List<String> allLibsLines;
     try {
-      allLibsLines = Files
-        .readAllLines(new File("libraries\\mohist_libraries.json").toPath());
+      allLibsLines = Files.readAllLines(new File("libraries", "mohist_libraries.json").toPath());
     } catch (IOException e) { return null; }
     String[] joined = String.join(" ", allLibsLines).split("}");
     for (int i = 0; i < joined.length-1; i++) {

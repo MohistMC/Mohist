@@ -20,7 +20,7 @@ import static com.mohistmc.network.download.UpdateUtils.getLibs;
 public class DownloadLibraries {
   static int retry = 0;
   static HashMap<String, String> fail = new HashMap<>();
-  static File libF = new File("libraries/mohist_libraries.json");
+  static File libF = new File("libraries", "mohist_libraries.json");
 
   public static void run() throws Exception {
     System.out.println(Message.getString("libraries.checking.start"));
