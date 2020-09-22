@@ -99,6 +99,7 @@ project(':mohist') {
     apply plugin: 'de.undercouch.download'
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+    compileJava.options.encoding = 'UTF-8'
     group = 'com.mohistmc'
 
     sourceSets {

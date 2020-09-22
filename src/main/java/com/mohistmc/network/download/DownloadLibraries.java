@@ -41,7 +41,7 @@ public class DownloadLibraries {
         lib.getParentFile().mkdirs();
         if(Message.isCN() && u.contains("https://www.mgazul.cn/"))
           u = u.replace("https://www.mgazul.cn/", "https://mohist-community.gitee.io/mohistdown/"); //Gitee Mirror
-        System.out.println("Global percentage » " + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File("libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
+        System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File("libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
 
         try {
           downloadFile(u, lib);
