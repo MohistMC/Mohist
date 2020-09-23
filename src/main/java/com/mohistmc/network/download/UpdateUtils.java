@@ -75,7 +75,7 @@ public class UpdateUtils {
   }
 
   public static File getMohistJar() {
-    return new File(UpdateUtils.class.getProtectionDomain().getCodeSource().getLocation().getFile().replaceFirst("file:/", "").split("server.jar!/red/mohist/")[0]+"server.jar");
+    return new File(UpdateUtils.class.getProtectionDomain().getCodeSource().getLocation().getFile().replaceFirst("file:/", "").split("server.jar!/com/mohistmc/")[0]+"server.jar");
   }
 
   public static HashMap<String, String> getLibs() {
