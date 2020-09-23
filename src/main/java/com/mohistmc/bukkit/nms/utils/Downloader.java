@@ -22,8 +22,15 @@ public class Downloader {
     File mcptool = new File("mcp.zip");
     File partz = new File("joined.tsrg");
     String u = "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12.2-20200226.224830/mcp_config-1.12.2-20200226.224830.zip";
+    String mu = "https://gitee.com/Mohist-Community/MohistDown/raw/master/dl/de/oceanlabs/mcp/mcp_config/1.12.2-20200226.224830/mcp_config-1.12.2-20200226.224830.zip"; //Gitee Mirror
     try {
-      UpdateUtils.downloadFile(u, mcptool);
+      if (Message.isCN()) {
+        System.out.println(Message.getString("mcp.download.gitee"));
+        UpdateUtils.downloadFile(mu, mcptool);
+      } else {
+        System.out.println(Message.getString("mcp.download.forge"));
+        UpdateUtils.downloadFile(u, mcptool);
+      }
       System.out.println(Message.getString("mcp.extract"));
       ZipFile mcp = new ZipFile(mcptool);
       Files.copy(mcp.getInputStream(mcp.getEntry("config/joined.tsrg")), partz.toPath());
