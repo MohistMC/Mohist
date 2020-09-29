@@ -1306,7 +1306,7 @@ public final class CraftServer implements Server {
     public CraftMapView createMap(World world) {
         Validate.notNull(world, "World cannot be null");
 
-        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(Items.MAP, 1, -1);
+        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(Items.MAP, 1, -1, true);
         MapData worldmap = Items.FILLED_MAP.getMapData(stack, ((CraftWorld) world).getHandle());
         return worldmap.mapView;
     }
@@ -1315,7 +1315,6 @@ public final class CraftServer implements Server {
     public void shutdown() {
         console.initiateShutdown();
     }
-    // Paper end
 
     @Override
     public int broadcast(String message, String permission) {

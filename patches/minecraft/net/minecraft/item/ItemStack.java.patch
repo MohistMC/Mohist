@@ -52,15 +52,27 @@
          this.field_151002_e = p_i1881_1_;
          this.field_77991_e = p_i1881_3_;
          this.field_77994_a = p_i1881_2_;
-@@ -103,6 +110,7 @@
+@@ -103,8 +110,19 @@
          }
  
          this.func_190923_F();
 +        this.forgeInit();
      }
  
++    public ItemStack(Item itemIn, int amount, int meta, boolean convert)
++    {
++        this.field_151002_e = itemIn;
++        this.field_77991_e = meta;
++        this.field_77994_a = amount;
++
++        this.func_190923_F();
++        this.forgeInit();
++    }
++
      private void func_190923_F()
-@@ -112,45 +120,57 @@
+     {
+         this.field_190928_g = this.func_190926_b();
+@@ -112,45 +130,57 @@
  
      public ItemStack(NBTTagCompound p_i47263_1_)
      {
@@ -135,7 +147,7 @@
  
      public static void func_189868_a(DataFixer p_189868_0_)
      {
-@@ -169,16 +189,29 @@
+@@ -169,16 +199,29 @@
  
      public Item func_77973_b()
      {
@@ -167,7 +179,7 @@
          }
  
          return enumactionresult;
-@@ -208,15 +241,22 @@
+@@ -208,15 +251,22 @@
  
          if (this.field_77990_d != null)
          {
@@ -192,7 +204,7 @@
      }
  
      public boolean func_77985_e()
-@@ -230,7 +270,7 @@
+@@ -230,7 +280,7 @@
          {
              return false;
          }
@@ -201,7 +213,7 @@
          {
              return false;
          }
-@@ -247,32 +287,47 @@
+@@ -247,32 +297,47 @@
  
      public boolean func_77951_h()
      {
@@ -257,7 +269,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable EntityPlayerMP p_96631_3_)
-@@ -298,6 +353,18 @@
+@@ -298,6 +363,18 @@
  
                  p_96631_1_ -= j;
  
@@ -276,7 +288,7 @@
                  if (p_96631_1_ <= 0)
                  {
                      return false;
-@@ -309,8 +376,8 @@
+@@ -309,8 +386,8 @@
                  CriteriaTriggers.field_193132_s.func_193158_a(p_96631_3_, this, this.field_77991_e + p_96631_1_);
              }
  
@@ -287,7 +299,7 @@
          }
      }
  
-@@ -323,6 +390,11 @@
+@@ -323,6 +400,11 @@
                  if (this.func_96631_a(p_77972_1_, p_77972_2_.func_70681_au(), p_77972_2_ instanceof EntityPlayerMP ? (EntityPlayerMP)p_77972_2_ : null))
                  {
                      p_77972_2_.func_70669_a(this);
@@ -299,7 +311,7 @@
                      this.func_190918_g(1);
  
                      if (p_77972_2_ instanceof EntityPlayer)
-@@ -359,7 +431,7 @@
+@@ -359,7 +441,7 @@
  
      public boolean func_150998_b(IBlockState p_150998_1_)
      {
@@ -308,7 +320,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
-@@ -369,7 +441,7 @@
+@@ -369,7 +451,7 @@
  
      public ItemStack func_77946_l()
      {
@@ -317,7 +329,7 @@
          itemstack.func_190915_d(this.func_190921_D());
  
          if (this.field_77990_d != null)
-@@ -394,7 +466,7 @@
+@@ -394,7 +476,7 @@
              }
              else
              {
@@ -326,7 +338,7 @@
              }
          }
          else
-@@ -435,7 +507,7 @@
+@@ -435,7 +517,7 @@
          }
          else
          {
@@ -335,7 +347,7 @@
          }
      }
  
-@@ -862,6 +934,7 @@
+@@ -862,6 +944,7 @@
              }
          }
  
@@ -343,7 +355,7 @@
          return list;
      }
  
-@@ -871,6 +944,7 @@
+@@ -871,6 +954,7 @@
          return this.func_77973_b().func_77636_d(this);
      }
  
@@ -351,7 +363,7 @@
      public EnumRarity func_77953_t()
      {
          return this.func_77973_b().func_77613_e(this);
-@@ -957,6 +1031,14 @@
+@@ -957,6 +1041,14 @@
  
      public void func_82841_c(int p_82841_1_)
      {
@@ -366,7 +378,7 @@
          if (!this.func_77942_o())
          {
              this.field_77990_d = new NBTTagCompound();
-@@ -987,7 +1069,7 @@
+@@ -987,7 +1079,7 @@
          }
          else
          {
@@ -375,7 +387,7 @@
          }
  
          return multimap;
-@@ -1017,6 +1099,14 @@
+@@ -1017,6 +1109,14 @@
          nbttaglist.func_74742_a(nbttagcompound);
      }
  
@@ -390,7 +402,7 @@
      public ITextComponent func_151000_E()
      {
          TextComponentString textcomponentstring = new TextComponentString(this.func_82833_r());
-@@ -1032,7 +1122,7 @@
+@@ -1032,7 +1132,7 @@
          {
              NBTTagCompound nbttagcompound = this.func_77955_b(new NBTTagCompound());
              itextcomponent.func_150256_b().func_150209_a(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new TextComponentString(nbttagcompound.toString())));
@@ -399,7 +411,7 @@
          }
  
          return itextcomponent;
-@@ -1130,4 +1220,140 @@
+@@ -1130,4 +1230,140 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
