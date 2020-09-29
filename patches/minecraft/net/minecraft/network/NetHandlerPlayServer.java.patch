@@ -131,7 +131,7 @@
          this.field_147369_b = p_i1530_3_;
          p_i1530_3_.field_71135_a = this;
 +        // CraftBukkit start - add fields and methods
-+        this.server = field_147367_d.server;
++        this.server = (p_i1530_1_ == null ? null : p_i1530_1_.server);
      }
  
 +    private final org.bukkit.craftbukkit.v1_12_R1.CraftServer server;
