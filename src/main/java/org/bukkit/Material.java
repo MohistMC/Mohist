@@ -536,7 +536,7 @@ public enum Material {
     RECORD_11(2266, 1),
     RECORD_12(2267, 1),;
 
-    private static Material[] byId = new Material[32676];
+    public static Material[] byId = new Material[32676];
     public static Material[] blockById = new Material[32676];
     private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
     private boolean isForgeBlock = false;
