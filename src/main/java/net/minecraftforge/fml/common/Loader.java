@@ -44,6 +44,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mohistmc.forge.BukkitPermissionsHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -93,6 +94,7 @@ import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
 import net.minecraftforge.fml.relauncher.libraries.Repository;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
+import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import com.mohistmc.api.ServerAPI;
@@ -634,6 +636,7 @@ public class Loader
         FMLCommonHandler.instance().fireSidedRegistryEvents();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();
+        PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
         modController.transition(LoaderState.INITIALIZATION, false);
         progressBar.step("Initializing Minecraft Engine");
     }
