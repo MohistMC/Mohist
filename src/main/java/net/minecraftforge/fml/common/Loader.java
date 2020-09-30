@@ -637,6 +637,7 @@ public class Loader
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();
         PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
+        FMLLog.log.info("Registered Forge API Permission Handler(Bukkit)");
         modController.transition(LoaderState.INITIALIZATION, false);
         progressBar.step("Initializing Minecraft Engine");
     }

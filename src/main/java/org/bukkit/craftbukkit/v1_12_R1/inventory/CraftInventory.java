@@ -114,7 +114,7 @@ public class CraftInventory implements Inventory {
 
     public boolean contains(Material material) {
         Validate.notNull(material, "Material cannot be null");
-        return contains(material.getId());
+        return material.isForgeBlock() ? contains(material.getBlockID()) : contains(material.getId());
     }
 
     public boolean contains(ItemStack item) {
