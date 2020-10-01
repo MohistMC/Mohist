@@ -1,5 +1,6 @@
 package org.spigotmc;
 
+import com.mohistmc.configuration.MohistConfig;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
@@ -36,7 +37,9 @@ public class WatchdogThread extends Thread
 
     public static void tick()
     {
-        instance.lastTick = System.currentTimeMillis();
+        if (MohistConfig.instance.getBoolean("mohist.watchdog_spigot")) {
+            instance.lastTick = System.currentTimeMillis();
+        }
     }
 
     public static void doStop()

@@ -45,7 +45,9 @@ public class WatchMohist implements Runnable {
     }
 
     public static void update() {
-        Time = System.currentTimeMillis();
+        if (isEnable()) {
+            Time = System.currentTimeMillis();
+        }
     }
 
     public static void stop() {
