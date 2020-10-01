@@ -97,6 +97,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting hideJoinModsList = new BoolSetting(this, "hidejoinmodslist", false, Message.getString("mohistsettings.hideJoinModsList"));
     public final BoolSetting watchdog_spigot = new BoolSetting(this, "mohist.watchdog_spigot", true, "Open watchdog_spigot");
     public final BoolSetting watchdog_mohist = new BoolSetting(this, "mohist.watchdog_mohist", false, "Open watchdog_mohist");
+    public final BoolSetting watchdog_mohist = new BoolSetting(this, "mohist.showlogo", true, "Show logo");
 
     public List<Integer> dimensionsNotLoaded =new ArrayList();
     /* ======================================================================== */
