@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class TitleAPI {
 
-    public static void sendPlayerAbar(Player p, String text) {
+    public static void sendPlayerActionbar(Player p, String text) {
         ITextComponent icbc = ITextComponent.Serializer.fromJsonLenient("{\"text\": \"" + text + "\"}");
         SPacketChat ppoc = new SPacketChat(icbc, ChatType.GAME_INFO);
         ((CraftPlayer) p).getHandle().connection.sendPacket(ppoc);
