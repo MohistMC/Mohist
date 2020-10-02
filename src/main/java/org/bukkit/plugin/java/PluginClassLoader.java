@@ -76,6 +76,13 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
+    protected Object getClassLoadingLock(String className) {
+        if (launchClassLoader != null)
+            return launchClassLoader;
+        return super.getClassLoadingLock(className);
+    }
+
+    @Override
     public Class<?> findClass(String name) throws ClassNotFoundException {
         return findClass(name, true);
     }
