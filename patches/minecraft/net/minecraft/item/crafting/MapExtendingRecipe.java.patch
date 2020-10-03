@@ -1,0 +1,16 @@
+--- a/net/minecraft/item/crafting/MapExtendingRecipe.java
++++ b/net/minecraft/item/crafting/MapExtendingRecipe.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.storage.MapData;
+ import net.minecraft.world.storage.MapDecoration;
++import org.bukkit.inventory.Recipe;
+ 
+ public class MapExtendingRecipe extends ShapedRecipe {
+    public MapExtendingRecipe(ResourceLocation p_i48164_1_) {
+@@ -78,4 +79,5 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222162_f;
+    }
++
+ }

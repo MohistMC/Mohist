@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/SuspiciousStewRecipe.java
++++ b/net/minecraft/item/crafting/SuspiciousStewRecipe.java
+@@ -11,6 +11,7 @@
+ import net.minecraft.tags.ItemTags;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class SuspiciousStewRecipe extends SpecialRecipe {
+    public SuspiciousStewRecipe(ResourceLocation p_i50020_1_) {
+@@ -73,4 +74,9 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222170_n;
+    }
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        return null;
++    }
+ }

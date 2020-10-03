@@ -1,0 +1,31 @@
+--- a/net/minecraft/command/ICommandSource.java
++++ b/net/minecraft/command/ICommandSource.java
+@@ -2,6 +2,7 @@
+ 
+ import java.util.UUID;
+ import net.minecraft.util.text.ITextComponent;
++import org.bukkit.command.CommandSender;
+ 
+ public interface ICommandSource {
+    ICommandSource field_213139_a_ = new ICommandSource() {
+@@ -19,6 +20,13 @@
+       public boolean func_195041_r_() {
+          return false;
+       }
++
++      // CraftBukkit start
++      @Override
++      public org.bukkit.command.CommandSender getBukkitSender(CommandSource wrapper) {
++         throw new UnsupportedOperationException("Not supported yet.");
++      }
++      // CraftBukkit end
+    };
+ 
+    void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_);
+@@ -28,4 +36,6 @@
+    boolean func_195040_b();
+ 
+    boolean func_195041_r_();
++
++   CommandSender getBukkitSender(CommandSource p0);
+ }

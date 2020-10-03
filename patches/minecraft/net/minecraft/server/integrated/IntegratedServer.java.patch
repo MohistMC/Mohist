@@ -1,18 +1,56 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -58,9 +58,10 @@
+@@ -13,6 +13,7 @@
+ import net.minecraft.client.ClientBrandRetriever;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.multiplayer.LanServerPingThread;
++import net.minecraft.command.CommandSource;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.profiler.IProfiler;
+@@ -32,6 +33,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.command.CommandSender;
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class IntegratedServer extends MinecraftServer {
+@@ -43,7 +45,7 @@
+    private UUID field_211528_n;
+ 
+    public IntegratedServer(Thread p_i232494_1_, Minecraft p_i232494_2_, DynamicRegistries.Impl p_i232494_3_, SaveFormat.LevelSave p_i232494_4_, ResourcePackList p_i232494_5_, DataPackRegistries p_i232494_6_, IServerConfiguration p_i232494_7_, MinecraftSessionService p_i232494_8_, GameProfileRepository p_i232494_9_, PlayerProfileCache p_i232494_10_, IChunkStatusListenerFactory p_i232494_11_) {
+-      super(p_i232494_1_, p_i232494_3_, p_i232494_4_, p_i232494_7_, p_i232494_5_, p_i232494_2_.func_110437_J(), p_i232494_2_.func_184126_aj(), p_i232494_6_, p_i232494_8_, p_i232494_9_, p_i232494_10_, p_i232494_11_);
++      super(null,null,p_i232494_1_, p_i232494_3_, p_i232494_4_, p_i232494_7_, p_i232494_5_, p_i232494_2_.func_110437_J(), p_i232494_2_.func_184126_aj(), p_i232494_6_, p_i232494_8_, p_i232494_9_, p_i232494_10_, p_i232494_11_);
+       this.func_71224_l(p_i232494_2_.func_110432_I().func_111285_a());
+       this.func_71204_b(p_i232494_2_.func_71355_q());
+       this.func_71191_d(256);
+@@ -58,9 +60,10 @@
        this.func_71245_h(true);
        field_147148_h.info("Generating keypair");
        this.func_71253_a(CryptManager.func_75891_b());
+-      this.func_240800_l__();
 +      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-       this.func_240800_l__();
++//      this.loadWorld();
        this.func_71205_p(this.func_71214_G() + " - " + this.func_240793_aU_().func_76065_j());
 -      return true;
 +      return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
-@@ -174,6 +175,7 @@
+@@ -94,6 +97,11 @@
+       return true;
+    }
+ 
++    @Override
++    public CommandSender getBukkitSender(CommandSource p0) {
++        return null;
++    }
++
+    public File func_71238_n() {
+       return this.field_71349_l.field_71412_D;
+    }
+@@ -174,10 +182,11 @@
     }
  
     public void func_71263_m(boolean p_71263_1_) {
@@ -20,3 +58,8 @@
        this.func_213167_f(() -> {
           for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(this.func_184103_al().func_181057_v())) {
              if (!serverplayerentity.func_110124_au().equals(this.field_211528_n)) {
+-               this.func_184103_al().func_72367_e(serverplayerentity);
++               this.func_184103_al().playerLoggedOut(serverplayerentity);
+             }
+          }
+ 

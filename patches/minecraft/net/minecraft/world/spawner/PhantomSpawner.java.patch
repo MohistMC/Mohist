@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/spawner/PhantomSpawner.java
++++ b/net/minecraft/world/spawner/PhantomSpawner.java
+@@ -59,7 +59,7 @@
+                                     PhantomEntity phantomentity = EntityType.field_203097_aH.func_200721_a(p_230253_1_);
+                                     phantomentity.func_174828_a(blockpos1, 0.0F, 0.0F);
+                                     ilivingentitydata = phantomentity.func_213386_a(p_230253_1_, difficultyinstance, SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
+-                                    p_230253_1_.func_242417_l(phantomentity);
++                                    p_230253_1_.addAllEntities(phantomentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit
+                                  }
+ 
+                                  i += l;

@@ -1,6 +1,80 @@
 --- a/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
 +++ b/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
-@@ -91,6 +91,7 @@
+@@ -2,8 +2,8 @@
+ 
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
++import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import java.util.List;
+ import java.util.Map;
+ import javax.annotation.Nullable;
+@@ -36,16 +36,24 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.vector.Vector3d;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.entity.Player;
++import org.bukkit.event.inventory.FurnaceBurnEvent;
++import org.bukkit.event.inventory.FurnaceExtractEvent;
++import org.bukkit.event.inventory.FurnaceSmeltEvent;
+ 
+ public abstract class AbstractFurnaceTileEntity extends LockableTileEntity implements ISidedInventory, IRecipeHolder, IRecipeHelperPopulator, ITickableTileEntity {
+    private static final int[] field_214015_g = new int[]{0};
+    private static final int[] field_214016_h = new int[]{2, 1};
+    private static final int[] field_214017_i = new int[]{1};
+    protected NonNullList<ItemStack> field_214012_a = NonNullList.func_191197_a(3, ItemStack.field_190927_a);
+-   private int field_214018_j;
++   public int field_214018_j; // private->public CraftBukkit
+    private int field_214019_k;
+-   private int field_214020_l;
+-   private int field_214021_m;
++   public int field_214020_l; // private->public CraftBukkit
++   public int field_214021_m; // private->public CraftBukkit
+    protected final IIntArray field_214013_b = new IIntArray() {
+       public int func_221476_a(int p_221476_1_) {
+          switch(p_221476_1_) {
+@@ -86,11 +94,43 @@
+    private final Object2IntOpenHashMap<ResourceLocation> field_214022_n = new Object2IntOpenHashMap<>();
+    protected final IRecipeType<? extends AbstractCookingRecipe> field_214014_c;
+ 
++   // CraftBukkit start - add fields and methods
++   private int maxStack = MAX_STACK;
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++
++   public List<ItemStack> getContents() {
++      return this.field_214012_a;
++   }
++
++   public void onOpen(CraftHumanEntity who) {
++      transaction.add(who);
++   }
++
++   public void onClose(CraftHumanEntity who) {
++      transaction.remove(who);
++   }
++
++   public List<HumanEntity> getViewers() {
++      return transaction;
++   }
++
++   @Override
++   public int func_70297_j_() {
++      return maxStack;
++   }
++
++   public void setMaxStackSize(int size) {
++      maxStack = size;
++   }
++   // CraftBukkit end
++
++
+    protected AbstractFurnaceTileEntity(TileEntityType<?> p_i49964_1_, IRecipeType<? extends AbstractCookingRecipe> p_i49964_2_) {
+       super(p_i49964_1_);
        this.field_214014_c = p_i49964_2_;
     }
  
@@ -8,7 +82,7 @@
     public static Map<Item, Integer> func_214001_f() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        func_213996_a(map, Items.field_151129_at, 20000);
-@@ -184,13 +185,13 @@
+@@ -184,13 +224,13 @@
        return this.field_214018_j > 0;
     }
  
@@ -26,7 +100,7 @@
        this.field_214019_k = this.func_213997_a(this.field_214012_a.get(1));
        CompoundNBT compoundnbt = p_230337_2_.func_74775_l("RecipesUsed");
  
-@@ -202,9 +203,9 @@
+@@ -202,9 +242,9 @@
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
        super.func_189515_b(p_189515_1_);
@@ -39,9 +113,24 @@
        ItemStackHelper.func_191282_a(p_189515_1_, this.field_214012_a);
        CompoundNBT compoundnbt = new CompoundNBT();
        this.field_214022_n.forEach((p_235643_1_, p_235643_2_) -> {
-@@ -230,12 +231,14 @@
+@@ -226,16 +266,27 @@
+          if (this.func_214006_r() || !itemstack.func_190926_b() && !this.field_214012_a.get(0).func_190926_b()) {
+             IRecipe<?> irecipe = this.field_145850_b.func_199532_z().func_215371_a((IRecipeType<AbstractCookingRecipe>)this.field_214014_c, this, this.field_145850_b).orElse(null);
+             if (!this.func_214006_r() && this.func_214008_b(irecipe)) {
+-               this.field_214018_j = this.func_213997_a(itemstack);
++               // CraftBukkit start
++               CraftItemStack fuel = CraftItemStack.asCraftMirror(itemstack);
++               FurnaceBurnEvent furnaceBurnEvent = new FurnaceBurnEvent(CraftBlock.at(this.field_145850_b, this.field_174879_c), fuel, func_213997_a(itemstack));
++               this.field_145850_b.getCBServer().getPluginManager().callEvent(furnaceBurnEvent);
++               if (furnaceBurnEvent.isCancelled()) {
++                  return;
++               }
++               this.field_214018_j = furnaceBurnEvent.getBurnTime();
++
                 this.field_214019_k = this.field_214018_j;
-                if (this.func_214006_r()) {
+-               if (this.func_214006_r()) {
++               if (this.func_214006_r() && furnaceBurnEvent.isBurning()) {
++                  // CraftBukkit end
                    flag1 = true;
 +                  if (itemstack.hasContainerItem())
 +                      this.field_214012_a.set(1, itemstack.getContainerItem());
@@ -56,7 +145,7 @@
                       }
                    }
                 }
-@@ -279,10 +282,10 @@
+@@ -279,10 +330,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
@@ -69,16 +158,48 @@
              }
           }
        } else {
-@@ -298,7 +301,7 @@
-          if (itemstack2.func_190926_b()) {
-             this.field_214012_a.set(2, itemstack1.func_77946_l());
-          } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
+@@ -295,12 +346,36 @@
+          ItemStack itemstack = this.field_214012_a.get(0);
+          ItemStack itemstack1 = p_214007_1_.func_77571_b();
+          ItemStack itemstack2 = this.field_214012_a.get(2);
+-         if (itemstack2.func_190926_b()) {
+-            this.field_214012_a.set(2, itemstack1.func_77946_l());
+-         } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
 -            itemstack2.func_190917_f(1);
-+            itemstack2.func_190917_f(itemstack1.func_190916_E());
++
++         // CraftBukkit start - fire FurnaceSmeltEvent
++         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
++         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(this.field_145850_b.getCBWorld().getBlockAt(field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p()), source, result);
++         this.field_145850_b.getCBServer().getPluginManager().callEvent(furnaceSmeltEvent);
++         if (furnaceSmeltEvent.isCancelled()) {
++            return;
           }
++         result = furnaceSmeltEvent.getResult();
++         itemstack1 = CraftItemStack.asNMSCopy(result);
++         if (!itemstack1.func_190926_b()) {
++            if (itemstack2.func_190926_b()) {
++               this.field_214012_a.set(2, itemstack1.func_77946_l());
++            } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
++               itemstack2.func_190917_f(itemstack1.func_190916_E());
++            } else {
++               return;
++            }
++         }
  
++         /*
++         if (itemstack2.isEmpty()) {
++            this.items.set(2, itemstack1.copy());
++         } else if (itemstack2.getItem() == itemstack1.getItem()) {
++            itemstack2.grow(itemstack1.getCount());
++         }
++          */
++         // CraftBukkit end
++
           if (!this.field_145850_b.field_72995_K) {
-@@ -318,7 +321,7 @@
+             this.func_193056_a(p_214007_1_);
+          }
+@@ -318,7 +393,7 @@
           return 0;
        } else {
           Item item = p_213997_1_.func_77973_b();
@@ -87,7 +208,7 @@
        }
     }
  
-@@ -327,7 +330,7 @@
+@@ -327,7 +402,7 @@
     }
  
     public static boolean func_213991_b(ItemStack p_213991_0_) {
@@ -96,7 +217,58 @@
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
-@@ -474,4 +477,27 @@
+@@ -434,32 +509,46 @@
+    public void func_201560_d(PlayerEntity p_201560_1_) {
+    }
+ 
+-   public void func_235645_d_(PlayerEntity p_235645_1_) {
+-      List<IRecipe<?>> list = this.func_235640_a_(p_235645_1_.field_70170_p, p_235645_1_.func_213303_ch());
++   public void func_235645_d_(PlayerEntity p_235645_1_, ItemStack itemStack, int ammount) { // CraftBukkit
++      List<IRecipe<?>> list = this.func_235640_a_(p_235645_1_.field_70170_p, p_235645_1_.func_213303_ch(), p_235645_1_, itemStack, ammount); // CraftBukkit
+       p_235645_1_.func_195065_a(list);
+       this.field_214022_n.clear();
+    }
+ 
+    public List<IRecipe<?>> func_235640_a_(World p_235640_1_, Vector3d p_235640_2_) {
++      // CraftBukkit start
++      return func_235640_a_(p_235640_1_, p_235640_2_, null, null, 0);
++   }
++
++   public List<IRecipe<?>> func_235640_a_(World p_235640_1_, Vector3d p_235640_2_, PlayerEntity playerEntity, ItemStack itemStack, int ammount) { // CraftBukkit
++      // CraftBukkit end
+       List<IRecipe<?>> list = Lists.newArrayList();
+ 
+       for(Entry<ResourceLocation> entry : this.field_214022_n.object2IntEntrySet()) {
+          p_235640_1_.func_199532_z().func_215367_a(entry.getKey()).ifPresent((p_235642_4_) -> {
+             list.add(p_235642_4_);
+-            func_235641_a_(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)p_235642_4_).func_222138_b());
++            func_235641_a_(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)p_235642_4_).func_222138_b(), playerEntity, itemStack, ammount); // CraftBukkit
+          });
+       }
+ 
+       return list;
+    }
+ 
+-   private static void func_235641_a_(World p_235641_0_, Vector3d p_235641_1_, int p_235641_2_, float p_235641_3_) {
++   private static void func_235641_a_(World p_235641_0_, Vector3d p_235641_1_, int p_235641_2_, float p_235641_3_, PlayerEntity entityhuman, ItemStack itemstack, int amount) { // CraftBukkit
+       int i = MathHelper.func_76141_d((float)p_235641_2_ * p_235641_3_);
+       float f = MathHelper.func_226164_h_((float)p_235641_2_ * p_235641_3_);
+       if (f != 0.0F && Math.random() < (double)f) {
+          ++i;
+       }
+ 
++      // CraftBukkit start - fire FurnaceExtractEvent
++      if (amount != 0) {
++         FurnaceExtractEvent event = new FurnaceExtractEvent((Player) entityhuman.getBukkitEntity(), CraftBlock.at(p_235641_0_,field_174879_c), org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(itemstack.func_77973_b()), amount, i);
++         p_235641_0_.getCBServer().getPluginManager().callEvent(event);
++         i = event.getExpToDrop();
++      }
++      // CraftBukkit end
++
+       while(i > 0) {
+          int j = ExperienceOrbEntity.func_70527_a(i);
+          i -= j;
+@@ -474,4 +563,27 @@
        }
  
     }

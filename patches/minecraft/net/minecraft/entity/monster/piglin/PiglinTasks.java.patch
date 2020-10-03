@@ -1,6 +1,36 @@
 --- a/net/minecraft/entity/monster/piglin/PiglinTasks.java
 +++ b/net/minecraft/entity/monster/piglin/PiglinTasks.java
-@@ -232,7 +232,7 @@
+@@ -184,14 +184,18 @@
+    protected static void func_234470_a_(PiglinEntity p_234470_0_, ItemEntity p_234470_1_) {
+       func_234531_r_(p_234470_0_);
+       ItemStack itemstack;
+-      if (p_234470_1_.func_92059_d().func_77973_b() == Items.field_151074_bl) {
++      // CraftBukkit start
++      if (p_234470_1_.func_92059_d().func_77973_b() == Items.field_151074_bl && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(p_234470_0_, p_234470_1_, 0, false).isCancelled()) {
+          p_234470_0_.func_71001_a(p_234470_1_, p_234470_1_.func_92059_d().func_190916_E());
+          itemstack = p_234470_1_.func_92059_d();
+          p_234470_1_.func_70106_y();
+-      } else {
++      } else if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(p_234470_0_, p_234470_1_, p_234470_1_.func_92059_d().func_190916_E() - 1, false).isCancelled()) {
+          p_234470_0_.func_71001_a(p_234470_1_, 1);
+          itemstack = func_234465_a_(p_234470_1_);
++      } else {
++         return;
+       }
++      // CraftBukkit end
+ 
+       Item item = itemstack.func_77973_b();
+       if (func_234480_a_(item)) {
+@@ -201,7 +205,7 @@
+       } else if (func_234499_c_(item) && !func_234538_z_(p_234470_0_)) {
+          func_234536_x_(p_234470_0_);
+       } else {
+-         boolean flag = p_234470_0_.func_233665_g_(itemstack);
++         boolean flag = p_234470_0_.func_233665_g_(itemstack, p_234470_1_); // CraftBukkit
+          if (!flag) {
+             func_234498_c_(p_234470_0_, itemstack);
+          }
+@@ -232,7 +236,7 @@
        ItemStack itemstack = p_234477_0_.func_184586_b(Hand.OFF_HAND);
        p_234477_0_.func_184611_a(Hand.OFF_HAND, ItemStack.field_190927_a);
        if (p_234477_0_.func_242337_eM()) {
@@ -9,7 +39,7 @@
           if (p_234477_1_ && flag) {
              func_234475_a_(p_234477_0_, func_234524_k_(p_234477_0_));
           } else if (!flag) {
-@@ -318,7 +318,7 @@
+@@ -318,7 +322,7 @@
           return false;
        } else if (func_234453_C_(p_234474_0_) && p_234474_0_.func_213375_cj().func_218191_a(MemoryModuleType.field_234103_o_)) {
           return false;
@@ -18,7 +48,7 @@
           return func_234455_E_(p_234474_0_);
        } else {
           boolean flag = p_234474_0_.func_234437_l_(p_234474_1_);
-@@ -418,7 +418,7 @@
+@@ -418,7 +422,7 @@
     }
  
     protected static boolean func_234489_b_(PiglinEntity p_234489_0_, ItemStack p_234489_1_) {
@@ -27,7 +57,7 @@
     }
  
     protected static void func_234468_a_(PiglinEntity p_234468_0_, LivingEntity p_234468_1_) {
-@@ -519,7 +519,7 @@
+@@ -519,7 +523,7 @@
     public static boolean func_234460_a_(LivingEntity p_234460_0_) {
        for(ItemStack itemstack : p_234460_0_.func_184193_aE()) {
           Item item = itemstack.func_77973_b();

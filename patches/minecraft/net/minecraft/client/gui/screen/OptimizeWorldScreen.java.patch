@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/screen/OptimizeWorldScreen.java
++++ b/net/minecraft/client/gui/screen/OptimizeWorldScreen.java
+@@ -16,6 +16,7 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.registry.DynamicRegistries;
+ import net.minecraft.util.text.TranslationTextComponent;
++import net.minecraft.world.DimensionType;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldSettings;
+ import net.minecraft.world.storage.IServerConfiguration;

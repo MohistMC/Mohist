@@ -1,20 +1,185 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -76,6 +76,7 @@
+@@ -6,12 +6,10 @@
+ import com.mojang.authlib.GameProfileRepository;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.datafixers.DataFixer;
+-import java.io.BufferedReader;
+ import java.io.IOException;
+-import java.io.InputStreamReader;
++import java.io.PrintStream;
+ import java.net.InetAddress;
+ import java.net.Proxy;
+-import java.nio.charset.StandardCharsets;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Locale;
+@@ -34,6 +32,7 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.ServerPropertiesProvider;
+ import net.minecraft.server.gui.MinecraftServerGui;
++import net.minecraft.server.management.PlayerList;
+ import net.minecraft.server.management.PlayerProfileCache;
+ import net.minecraft.server.management.PreYggdrasilConverter;
+ import net.minecraft.tileentity.SkullTileEntity;
+@@ -43,6 +42,7 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.Util;
++import net.minecraft.util.datafix.codec.DatapackCodec;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.registry.DynamicRegistries;
+@@ -53,22 +53,31 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.storage.IServerConfiguration;
+ import net.minecraft.world.storage.SaveFormat;
++import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.apache.logging.log4j.io.IoBuilder;
++import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.Main;
++import org.bukkit.event.server.RemoteServerCommandEvent;
++import org.bukkit.event.server.ServerCommandEvent;
++import org.bukkit.plugin.Plugin;
+ 
+ public class DedicatedServer extends MinecraftServer implements IServer {
+    private static final Logger field_155771_h = LogManager.getLogger();
+    private static final Pattern field_189647_l = Pattern.compile("^[a-fA-F0-9]{40}$");
+    public final List<PendingCommand> field_71341_l = Collections.synchronizedList(Lists.newArrayList());
+    private QueryThread field_71342_m;
+-   private final RConConsoleSource field_184115_n;
++   public final RConConsoleSource field_184115_n; // private->public CraftBukkit
+    private MainThread field_71339_n;
+-   private final ServerPropertiesProvider field_71340_o;
++   public ServerPropertiesProvider field_71340_o; // private->public CraftBukkit
+    @Nullable
+    private MinecraftServerGui field_213225_q;
+ 
+-   public DedicatedServer(Thread p_i232601_1_, DynamicRegistries.Impl p_i232601_2_, SaveFormat.LevelSave p_i232601_3_, ResourcePackList p_i232601_4_, DataPackRegistries p_i232601_5_, IServerConfiguration p_i232601_6_, ServerPropertiesProvider p_i232601_7_, DataFixer p_i232601_8_, MinecraftSessionService p_i232601_9_, GameProfileRepository p_i232601_10_, PlayerProfileCache p_i232601_11_, IChunkStatusListenerFactory p_i232601_12_) {
+-      super(p_i232601_1_, p_i232601_2_, p_i232601_3_, p_i232601_6_, p_i232601_4_, Proxy.NO_PROXY, p_i232601_8_, p_i232601_5_, p_i232601_9_, p_i232601_10_, p_i232601_11_, p_i232601_12_);
++   // CraftBukkit start - Signature changed
++   public DedicatedServer(joptsimple.OptionSet options, DatapackCodec datapackconfiguration, Thread p_i232601_1_, DynamicRegistries.Impl p_i232601_2_, SaveFormat.LevelSave p_i232601_3_, ResourcePackList p_i232601_4_, DataPackRegistries p_i232601_5_, IServerConfiguration p_i232601_6_, ServerPropertiesProvider p_i232601_7_, DataFixer p_i232601_8_, MinecraftSessionService p_i232601_9_, GameProfileRepository p_i232601_10_, PlayerProfileCache p_i232601_11_, IChunkStatusListenerFactory p_i232601_12_) {
++      super(options, datapackconfiguration, p_i232601_1_, p_i232601_2_, p_i232601_3_, p_i232601_6_, p_i232601_4_, Proxy.NO_PROXY, p_i232601_8_, p_i232601_5_, p_i232601_9_, p_i232601_10_, p_i232601_11_, p_i232601_12_);
++      // CraftBukkit end
+       this.field_71340_o = p_i232601_7_;
+       this.field_184115_n = new RConConsoleSource(this);
+    }
+@@ -76,12 +85,43 @@
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
+-            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.Main.useConsole) {
++               return;
++            }
++            jline.console.ConsoleReader bufferedreader = reader;
++            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
++            try {
++               System.in.available();
++            } catch (IOException ex) {
++               return;
++            }
++            // CraftBukkit end
  
-             String s1;
-@@ -158,11 +159,13 @@
+-            String s1;
++            String s3;
+             try {
+-               while(!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l() && (s1 = bufferedreader.readLine()) != null) {
+-                  DedicatedServer.this.func_195581_a(s1, DedicatedServer.this.func_195573_aM());
++               // CraftBukkit start - JLine disabling compatibility
++               while (!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l()) {
++                  if (Main.useJline) {
++                     s3 = bufferedreader.readLine(">", null);
++                  } else {
++                     s3 = bufferedreader.readLine();
++                  }
++
++                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
++                  if (s3 == null) {
++                     try {
++                        Thread.sleep(50L);
++                     } catch (InterruptedException ex) {
++                        Thread.currentThread().interrupt();
++                     }
++                     continue;
++                  }
++                  if (s3.trim().length() > 0) { // Trim to filter lines which are just spaces
++                     DedicatedServer.this.func_195581_a(s3, DedicatedServer.this.func_195573_aM());
++                  }
++                  // CraftBukkit end
+                }
+             } catch (IOException ioexception1) {
+                DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
+@@ -89,6 +129,28 @@
+ 
+          }
+       };
++
++      // CraftBukkit start - TODO: handle command-line logging arguments
++      java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
++      global.setUseParentHandlers(false);
++      for (java.util.logging.Handler handler : global.getHandlers()) {
++         global.removeHandler(handler);
++      }
++      global.addHandler(new org.bukkit.craftbukkit.util.ForwardLogHandler());
++
++      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
++      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
++         if (appender instanceof org.apache.logging.log4j.core.appender.ConsoleAppender) {
++            logger.removeAppender(appender);
++         }
++      }
++
++      new org.bukkit.craftbukkit.util.TerminalConsoleWriterThread(System.out, this.reader).start();
++
++      System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
++      System.setErr(IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
++      // CraftBukkit end
++
+       thread.setDaemon(true);
+       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
+       thread.start();
+@@ -114,7 +176,7 @@
+       this.func_104055_i(serverproperties.field_219016_j);
+       super.func_143006_e(serverproperties.field_219005_R.get());
+       this.func_205741_k(serverproperties.field_219017_k);
+-      this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
++//      this.field_240768_i_.func_230392_a_(serverproperties.gamemode); // CraftBukkit - moved to world loading
+       field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
+       InetAddress inetaddress = null;
+       if (!this.func_71211_k().isEmpty()) {
+@@ -138,6 +200,12 @@
+          return false;
+       }
+ 
++      // CraftBukkit start
++      this.func_184105_a((PlayerList) (new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_)));
++      server.loadPlugins();
++      server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++      // CraftBukkit end
++
+       if (!this.func_71266_T()) {
+          field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+          field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
+@@ -152,17 +220,19 @@
+       if (!PreYggdrasilConverter.func_219587_e(this)) {
+          return false;
+       } else {
+-         this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
++         // this.setPlayerList(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_)); // CraftBukkit - moved up
+          long i = Util.func_211178_c();
+          this.func_71191_d(serverproperties.field_219026_t);
           SkullTileEntity.func_184293_a(this.func_152358_ax());
           SkullTileEntity.func_184294_a(this.func_147130_as());
           PlayerProfileCache.func_187320_a(this.func_71266_T());
 +         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
-          this.func_240800_l__();
+-         this.func_240800_l__();
++         this.loadWorld(field_71310_m.func_237282_a_()); // CraftBukkit
           long j = Util.func_211178_c() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
@@ -22,7 +187,15 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -186,11 +189,12 @@
+@@ -175,6 +245,7 @@
+          if (serverproperties.field_219030_x) {
+             field_155771_h.info("Starting remote control listener");
+             this.field_71339_n = MainThread.func_242130_a(this);
++            this.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
+          }
+ 
+          if (this.func_175593_aQ() > 0L) {
+@@ -186,12 +257,14 @@
           }
  
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
@@ -34,9 +207,88 @@
 -         return true;
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
        }
++
     }
  
-@@ -507,6 +511,11 @@
+    public boolean func_230537_U_() {
+@@ -272,7 +345,7 @@
+       if (this.field_71342_m != null) {
+          this.field_71342_m.func_219591_b();
+       }
+-
++      System.exit(0); // CraftBukkit
+    }
+ 
+    public void func_71190_q(BooleanSupplier p_71190_1_) {
+@@ -297,7 +370,15 @@
+    public void func_71333_ah() {
+       while(!this.field_71341_l.isEmpty()) {
+          PendingCommand pendingcommand = this.field_71341_l.remove(0);
+-         this.func_195571_aL().func_197059_a(pendingcommand.field_73701_b, pendingcommand.field_73702_a);
++         // CraftBukkit start - ServerCommand for preprocessing
++         ServerCommandEvent event = new ServerCommandEvent(this.console, pendingcommand.field_73702_a);
++         this.server.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            continue;
++         }
++         pendingcommand = new PendingCommand(event.getCommand(), pendingcommand.field_73701_b);
++         this.server.dispatchServerCommand(this.console, pendingcommand);
++         // CraftBukkit end
+       }
+ 
+    }
+@@ -402,7 +483,7 @@
+       return this.func_213221_d_().field_219003_P;
+    }
+ 
+-   public int func_175580_aG() {
++    public int func_175580_aG() {
+       return this.func_213221_d_().field_219004_Q;
+    }
+ 
+@@ -481,13 +562,39 @@
+    }
+ 
+    public String func_71258_A() {
+-      return "";
++      // CraftBukkit start - Whole method
++      StringBuilder result = new StringBuilder();
++      Plugin[] plugins = this.server.getPluginManager().getPlugins();
++      result.append(this.server.getName());
++      result.append(" on Bukkit ");
++      result.append(this.server.getBukkitVersion());
++      if (plugins.length > 0 && this.server.getQueryPlugins()) {
++         result.append(": ");
++         for (int i = 0; i < plugins.length; ++i) {
++            if (i > 0) {
++               result.append("; ");
++            }
++            result.append(plugins[i].getDescription().getName());
++            result.append(" ");
++            result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
++         }
++      }
++      return result.toString();
++      // CraftBukkit end
+    }
+ 
+    public String func_71252_i(String p_71252_1_) {
+       this.field_184115_n.func_70007_b();
+       this.func_213167_f(() -> {
+-         this.func_195571_aL().func_197059_a(this.field_184115_n.func_195540_f(), p_71252_1_);
++         // CraftBukkit start - fire RemoteServerCommandEvent
++         RemoteServerCommandEvent event = new RemoteServerCommandEvent(this.remoteConsole, p_71252_1_);
++         this.server.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return;
++         }
++         PendingCommand serverCommand = new PendingCommand(event.getCommand(), this.field_184115_n.func_195540_f());
++         this.server.dispatchServerCommand(this.remoteConsole, serverCommand);
++         // CraftBukkit end
+       });
+       return this.field_184115_n.func_70008_c();
+    }
+@@ -507,6 +614,11 @@
        return false;
     }
  
@@ -48,3 +300,19 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
+@@ -518,4 +630,15 @@
+    public boolean func_230540_aS_() {
+       return this.field_71340_o.func_219034_a().field_241078_O_;
+    }
++
++   // CraftBukkit start
++   public boolean isDebuggingEnabled() {
++      return this.func_213221_d_().debug;
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSource wrapper) {
++      return console;
++   }
++   // CraftBukkit end
+ }

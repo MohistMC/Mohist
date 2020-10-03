@@ -1,0 +1,128 @@
+--- a/net/minecraft/world/server/ServerChunkProvider.java
++++ b/net/minecraft/world/server/ServerChunkProvider.java
+@@ -57,8 +57,8 @@
+    public final ChunkManager field_217237_a;
+    private final DimensionSavedDataManager field_217244_j;
+    private long field_217245_k;
+-   private boolean field_217246_l = true;
+-   private boolean field_217247_m = true;
++   public boolean field_217246_l = true;
++   public boolean field_217247_m = true;
+    private final long[] field_222875_n = new long[4];
+    private final ChunkStatus[] field_222876_o = new ChunkStatus[4];
+    private final IChunk[] field_222877_p = new IChunk[4];
+@@ -80,6 +80,16 @@
+       this.func_222869_l();
+    }
+ 
++   // CraftBukkit start - properly implement isChunkLoaded
++   public boolean isChunkLoaded(int chunkX, int chunkZ) {
++      ChunkHolder chunk = this.field_217237_a.func_219220_a(ChunkPos.func_77272_a(chunkX, chunkZ));
++      if (chunk == null) {
++         return false;
++      }
++      return chunk.getFullChunk() != null;
++   }
++   // CraftBukkit end
++
+    public ServerWorldLightManager func_212863_j_() {
+       return this.field_217242_h;
+    }
+@@ -119,7 +129,7 @@
+          for(int j = 0; j < 4; ++j) {
+             if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
+                IChunk ichunk = this.field_222877_p[j];
+-               if (ichunk != null || !p_212849_4_) {
++               if (ichunk != null) { // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
+                   return ichunk;
+                }
+             }
+@@ -208,7 +218,15 @@
+       long i = chunkpos.func_201841_a();
+       int j = 33 + ChunkStatus.func_222599_a(p_217233_3_);
+       ChunkHolder chunkholder = this.func_217213_a(i);
+-      if (p_217233_4_) {
++      // CraftBukkit start - don't add new ticket for currently unloading chunk
++      boolean currentlyUnloading = false;
++      if (chunkholder != null) {
++         ChunkHolder.LocationType oldChunkState = ChunkHolder.func_219286_c(chunkholder.field_219316_k);
++         ChunkHolder.LocationType currentChunkState = ChunkHolder.func_219286_c(chunkholder.func_219299_i());
++         currentlyUnloading = (oldChunkState.func_219065_a(ChunkHolder.LocationType.BORDER) && !currentChunkState.func_219065_a(ChunkHolder.LocationType.BORDER));
++      }
++      if (p_217233_4_ && !currentlyUnloading) {
++         // CraftBukkit end
+          this.field_217240_d.func_219356_a(TicketType.field_219494_g, chunkpos, j, chunkpos);
+          if (this.func_217224_a(chunkholder, j)) {
+             IProfiler iprofiler = this.field_73251_h.func_217381_Z();
+@@ -226,7 +244,7 @@
+    }
+ 
+    private boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
+-      return p_217224_1_ == null || p_217224_1_.func_219299_i() > p_217224_2_;
++      return p_217224_1_ == null || p_217224_1_.field_219316_k > p_217224_2_; // CraftBukkit using oldTicketLevel for isLoaded checks
+    }
+ 
+    public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
+@@ -292,7 +310,7 @@
+       return this.func_222872_a(i, ChunkHolder::func_219296_a);
+    }
+ 
+-   private boolean func_222872_a(long p_222872_1_, Function<ChunkHolder, CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>>> p_222872_3_) {
++   public boolean func_222872_a(long p_222872_1_, Function<ChunkHolder, CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>>> p_222872_3_) {
+       ChunkHolder chunkholder = this.func_217213_a(p_222872_1_);
+       if (chunkholder == null) {
+          return false;
+@@ -308,11 +326,31 @@
+    }
+ 
+    public void close() throws IOException {
++      // CraftBukkit start
+       this.func_217210_a(true);
++   }
++
++   public void close(boolean save) throws IOException {
++      if (save) {
++         this.func_217210_a(true);
++      }
++      // CraftBukkit end
+       this.field_217242_h.close();
+       this.field_217237_a.close();
+    }
+ 
++   // CraftBukkit start - modelled on below
++   public void purgeUnload() {
++      this.field_73251_h.func_217381_Z().func_76320_a("purge");
++      this.field_217240_d.func_219340_a();
++      this.func_217235_l();
++      this.field_73251_h.func_217381_Z().func_219895_b("unload");
++      this.field_217237_a.func_219204_a(() -> true);
++      this.field_73251_h.func_217381_Z().func_76319_b();
++      this.func_222869_l();
++   }
++   // CraftBukkit end
++
+    public void func_217207_a(BooleanSupplier p_217207_1_) {
+       this.field_73251_h.func_217381_Z().func_76320_a("purge");
+       this.field_217240_d.func_219340_a();
+@@ -507,11 +545,16 @@
+       }
+ 
+       protected boolean func_213168_p() {
+-         if (ServerChunkProvider.this.func_217235_l()) {
+-            return true;
+-         } else {
+-            ServerChunkProvider.this.field_217242_h.func_215588_z_();
+-            return super.func_213168_p();
++         // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
++         try {
++            if (ServerChunkProvider.this.func_217235_l()) {
++               return true;
++            } else {
++               ServerChunkProvider.this.field_217242_h.func_215588_z_();
++               return super.func_213168_p();
++            }
++         } finally {
++            field_217237_a.callbackExecutor.run();
+          }
+       }
+    }

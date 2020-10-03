@@ -1,0 +1,39 @@
+--- a/net/minecraft/tileentity/CampfireTileEntity.java
++++ b/net/minecraft/tileentity/CampfireTileEntity.java
+@@ -21,11 +21,14 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockCookEvent;
+ 
+ public class CampfireTileEntity extends TileEntity implements IClearable, ITickableTileEntity {
+    private final NonNullList<ItemStack> field_213987_a = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
+-   private final int[] field_213988_b = new int[4];
+-   private final int[] field_213989_c = new int[4];
++   public final int[] field_213988_b = new int[4];
++   public final int[] field_213989_c = new int[4];
+ 
+    public CampfireTileEntity() {
+       super(TileEntityType.field_222488_F);
+@@ -64,6 +67,19 @@
+                   return p_213979_1_.func_77572_b(iinventory);
+                }).orElse(itemstack);
+                BlockPos blockpos = this.func_174877_v();
++
++               // CraftBukkit start - fire BlockCookEvent
++               CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
++               org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
++               BlockCookEvent blockCookEvent = new BlockCookEvent(CraftBlock.at(this.field_145850_b, this.field_174879_c), source, result);
++               this.field_145850_b.getCBServer().getPluginManager().callEvent(blockCookEvent);
++               if (blockCookEvent.isCancelled()) {
++                  return;
++               }
++               result = blockCookEvent.getResult();
++               itemstack1 = CraftItemStack.asNMSCopy(result);
++               // CraftBukkit end
++
+                InventoryHelper.func_180173_a(this.field_145850_b, (double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p(), itemstack1);
+                this.field_213987_a.set(i, ItemStack.field_190927_a);
+                this.func_213981_s();

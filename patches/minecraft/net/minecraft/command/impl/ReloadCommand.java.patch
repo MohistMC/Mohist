@@ -1,0 +1,19 @@
+--- a/net/minecraft/command/impl/ReloadCommand.java
++++ b/net/minecraft/command/impl/ReloadCommand.java
+@@ -37,6 +37,16 @@
+       return collection;
+    }
+ 
++   // CraftBukkit start
++   public static void reload(MinecraftServer minecraftserver) {
++      ResourcePackList resourcepackrepository = minecraftserver.func_195561_aH();
++      IServerConfiguration savedata = minecraftserver.func_240793_aU_();
++      Collection<String> collection = resourcepackrepository.func_232621_d_();
++      Collection<String> collection1 = func_241058_a_(resourcepackrepository, savedata, collection);
++      minecraftserver.func_240780_a_(collection1);
++   }
++   // CraftBukkit end
++
+    public static void func_198597_a(CommandDispatcher<CommandSource> p_198597_0_) {
+       p_198597_0_.register(Commands.func_197057_a("reload").requires((p_198599_0_) -> {
+          return p_198599_0_.func_197034_c(2);

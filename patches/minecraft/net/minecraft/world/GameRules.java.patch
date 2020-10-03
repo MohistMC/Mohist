@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/GameRules.java
++++ b/net/minecraft/world/GameRules.java
+@@ -196,7 +196,7 @@
+          return Boolean.toString(this.field_223575_a);
+       }
+ 
+-      protected void func_223553_a(String p_223553_1_) {
++      public void func_223553_a(String p_223553_1_) {
+          this.field_223575_a = Boolean.parseBoolean(p_223553_1_);
+       }
+ 
+@@ -286,7 +286,7 @@
+          return Integer.toString(this.field_223566_a);
+       }
+ 
+-      protected void func_223553_a(String p_223553_1_) {
++      public void func_223553_a(String p_223553_1_) {
+          this.field_223566_a = func_223563_b(p_223553_1_);
+       }
+ 
+@@ -410,14 +410,14 @@
+          this.func_223556_a(p_223554_1_.getSource().func_197028_i());
+       }
+ 
+-      protected void func_223556_a(@Nullable MinecraftServer p_223556_1_) {
++      public void func_223556_a(@Nullable MinecraftServer p_223556_1_) {
+          if (p_223556_1_ != null) {
+             this.field_223558_a.field_223584_c.accept(p_223556_1_, this.func_223213_e_());
+          }
+ 
+       }
+ 
+-      protected abstract void func_223553_a(String p_223553_1_);
++      public abstract void func_223553_a(String p_223553_1_);
+ 
+       public abstract String func_223552_b();
+ 

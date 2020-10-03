@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/MapCloningRecipe.java
++++ b/net/minecraft/item/crafting/MapCloningRecipe.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.item.Items;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class MapCloningRecipe extends SpecialRecipe {
+    public MapCloningRecipe(ResourceLocation p_i48165_1_) {
+@@ -76,4 +77,9 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222161_e;
+    }
++
++   @Override
++   public Recipe toBukkitRecipe() {
++      return null;
++   }
+ }

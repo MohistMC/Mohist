@@ -1,6 +1,33 @@
 --- a/net/minecraft/block/ComparatorBlock.java
 +++ b/net/minecraft/block/ComparatorBlock.java
-@@ -154,4 +154,16 @@
+@@ -23,6 +23,7 @@
+ import net.minecraft.world.TickPriority;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
+ 
+ public class ComparatorBlock extends RedstoneDiodeBlock implements ITileEntityProvider {
+    public static final EnumProperty<ComparatorMode> field_176463_b = BlockStateProperties.field_208141_ap;
+@@ -127,8 +128,18 @@
+          boolean flag1 = this.func_176404_e(p_176462_1_, p_176462_2_, p_176462_3_);
+          boolean flag = p_176462_3_.func_177229_b(field_196348_c);
+          if (flag && !flag1) {
++            // CraftBukkit start
++            if (CraftEventFactory.callRedstoneChange(p_176462_1_, p_176462_2_, 15, 0).getNewCurrent() != 0) {
++               return;
++            }
++            // CraftBukkit end
+             p_176462_1_.func_180501_a(p_176462_2_, p_176462_3_.func_206870_a(field_196348_c, Boolean.valueOf(false)), 2);
+          } else if (!flag && flag1) {
++            // CraftBukkit start
++            if (CraftEventFactory.callRedstoneChange(p_176462_1_, p_176462_2_, 0, 15).getNewCurrent() != 15) {
++               return;
++            }
++            // CraftBukkit end
+             p_176462_1_.func_180501_a(p_176462_2_, p_176462_3_.func_206870_a(field_196348_c, Boolean.valueOf(true)), 2);
+          }
+ 
+@@ -154,4 +165,16 @@
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_185512_D, field_176463_b, field_196348_c);
     }

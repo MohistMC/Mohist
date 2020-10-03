@@ -1,0 +1,15 @@
+--- a/net/minecraft/item/EnderEyeItem.java
++++ b/net/minecraft/item/EnderEyeItem.java
+@@ -75,7 +75,11 @@
+                EyeOfEnderEntity eyeofenderentity = new EyeOfEnderEntity(p_77659_1_, p_77659_2_.func_226277_ct_(), p_77659_2_.func_226283_e_(0.5D), p_77659_2_.func_226281_cx_());
+                eyeofenderentity.func_213863_b(itemstack);
+                eyeofenderentity.func_180465_a(blockpos);
+-               p_77659_1_.func_217376_c(eyeofenderentity);
++               // CraftBukkit start
++               if (!p_77659_1_.func_217376_c(eyeofenderentity)) {
++                  return new ActionResult<>(ActionResultType.FAIL, itemstack);
++               }
++               // CraftBukkit end
+                if (p_77659_2_ instanceof ServerPlayerEntity) {
+                   CriteriaTriggers.field_192132_l.func_192239_a((ServerPlayerEntity)p_77659_2_, blockpos);
+                }

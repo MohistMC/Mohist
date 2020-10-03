@@ -1,0 +1,18 @@
+--- a/net/minecraft/item/crafting/ICraftingRecipe.java
++++ b/net/minecraft/item/crafting/ICraftingRecipe.java
+@@ -1,9 +1,15 @@
+ package net.minecraft.item.crafting;
+ 
+ import net.minecraft.inventory.CraftingInventory;
++import org.bukkit.inventory.Recipe;
+ 
+ public interface ICraftingRecipe extends IRecipe<CraftingInventory> {
+    default IRecipeType<?> func_222127_g() {
+       return IRecipeType.field_222149_a;
+    }
++
++    @Override
++    default Recipe toBukkitRecipe() {
++        return null;
++    }
+ }

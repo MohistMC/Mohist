@@ -1,6 +1,24 @@
 --- a/net/minecraft/block/MushroomBlock.java
 +++ b/net/minecraft/block/MushroomBlock.java
-@@ -64,7 +64,7 @@
+@@ -11,6 +11,8 @@
+ import net.minecraft.world.gen.feature.ConfiguredFeature;
+ import net.minecraft.world.gen.feature.Features;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.TreeType;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
+ 
+ public class MushroomBlock extends BushBlock implements IGrowable {
+    protected static final VoxelShape field_196385_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
+@@ -48,7 +50,7 @@
+          }
+ 
+          if (p_225542_2_.func_175623_d(blockpos1) && p_225542_1_.func_196955_c(p_225542_2_, blockpos1)) {
+-            p_225542_2_.func_180501_a(blockpos1, p_225542_1_, 2);
++            CraftEventFactory.handleBlockSpreadEvent(p_225542_2_, p_225542_3_, blockpos1, p_225542_1_, 2); // CraftBukkit
+          }
+       }
+ 
+@@ -64,7 +66,7 @@
        if (blockstate.func_235714_a_(BlockTags.field_242171_aD)) {
           return true;
        } else {
@@ -8,4 +26,20 @@
 +         return p_196260_2_.func_226659_b_(p_196260_3_, 0) < 13 && blockstate.canSustainPlant(p_196260_2_, blockpos, net.minecraft.util.Direction.UP, this);
        }
     }
+ 
+@@ -72,6 +74,7 @@
+       p_226940_1_.func_217377_a(p_226940_2_, false);
+       ConfiguredFeature<?, ?> configuredfeature;
+       if (this == Blocks.field_150338_P) {
++         SaplingBlock.treeType = TreeType.BROWN_MUSHROOM; // CraftBukkit
+          configuredfeature = Features.field_243860_bF;
+       } else {
+          if (this != Blocks.field_150337_Q) {
+@@ -79,6 +82,7 @@
+             return false;
+          }
+ 
++         SaplingBlock.treeType = TreeType.RED_MUSHROOM; // CraftBukkit
+          configuredfeature = Features.field_243861_bG;
+       }
  

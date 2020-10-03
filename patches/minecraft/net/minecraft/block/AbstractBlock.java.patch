@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/AbstractBlock.java
 +++ b/net/minecraft/block/AbstractBlock.java
-@@ -60,7 +60,8 @@
+@@ -60,13 +60,14 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -10,6 +10,13 @@
     protected static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     protected final Material field_149764_J;
     protected final boolean field_235688_at_;
+    protected final float field_235689_au_;
+    protected final boolean field_149789_z;
+-   protected final SoundType field_149762_H;
++   public final SoundType field_149762_H; // protected->public CraftBukkit
+    protected final float field_149765_K;
+    protected final float field_226886_f_;
+    protected final float field_226887_g_;
 @@ -87,6 +88,8 @@
        this.field_226887_g_ = p_i241196_1_.field_226894_k_;
        this.field_208621_p = p_i241196_1_.field_208772_j;

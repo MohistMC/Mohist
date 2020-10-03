@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/ArmorDyeRecipe.java
++++ b/net/minecraft/item/crafting/ArmorDyeRecipe.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class ArmorDyeRecipe extends SpecialRecipe {
+    public ArmorDyeRecipe(ResourceLocation p_i48173_1_) {
+@@ -75,4 +76,9 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222159_c;
+    }
++
++   @Override
++   public Recipe toBukkitRecipe() {
++      return null;
++   }
+ }

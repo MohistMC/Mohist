@@ -1,35 +1,62 @@
 --- a/net/minecraft/entity/item/EnderPearlEntity.java
 +++ b/net/minecraft/entity/item/EnderPearlEntity.java
-@@ -55,6 +55,8 @@
+@@ -19,6 +19,10 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.player.PlayerTeleportEvent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+ 
+ public class EnderPearlEntity extends ProjectileItemEntity {
+    public EnderPearlEntity(EntityType<? extends EnderPearlEntity> p_i50153_1_, World p_i50153_2_) {
+@@ -55,6 +59,18 @@
           if (entity instanceof ServerPlayerEntity) {
              ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
              if (serverplayerentity.field_71135_a.func_147298_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
 +               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 5.0F);
 +               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size
++                  // CraftBukkit start - Fire PlayerTeleportEvent
++                  org.bukkit.craftbukkit.entity.CraftPlayer player = serverplayerentity.getBukkitEntity();
++                  org.bukkit.Location location = getBukkitEntity().getLocation();
++                  location.setPitch(player.getLocation().getPitch());
++                  location.setYaw(player.getLocation().getYaw());
++
++                  PlayerTeleportEvent teleportEvent = new PlayerTeleportEvent(player, player.getLocation(), location, TeleportCause.ENDER_PEARL);
++                  Bukkit.getPluginManager().callEvent(teleportEvent);
++
++                  if (!teleportEvent.isAsynchronous() && !serverplayerentity.field_71135_a.isDisconnected()) {
                 if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
                    EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
                    endermiteentity.func_175496_a(true);
-@@ -66,9 +68,10 @@
+@@ -66,9 +82,14 @@
                    entity.func_184210_p();
                 }
  
 -               entity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
-+               entity.func_70634_a(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-                entity.field_70143_R = 0.0F;
+-               entity.field_70143_R = 0.0F;
 -               entity.func_70097_a(DamageSource.field_76379_h, 5.0F);
-+               entity.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
++                     serverplayerentity.field_71135_a.teleport(teleportEvent.getTo());
++                     entity.field_70143_R = 0.0f;
++                     CraftEventFactory.entityDamage = this;
++                     entity.func_70097_a(DamageSource.field_76379_h, 5);
++                     CraftEventFactory.entityDamage = null;
++                  }
++                  // CraftBukkit end
 +               } //Forge: End
              }
           } else if (entity != null) {
              entity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
-@@ -91,12 +94,12 @@
+@@ -91,12 +112,12 @@
     }
  
     @Nullable
 -   public Entity func_241206_a_(ServerWorld p_241206_1_) {
 +   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
        Entity entity = this.func_234616_v_();
-       if (entity != null && entity.field_70170_p.func_234923_W_() != p_241206_1_.func_234923_W_()) {
+-      if (entity != null && entity.field_70170_p.func_234923_W_() != p_241206_1_.func_234923_W_()) {
++      if (entity != null && p_241206_1_ != null && entity.field_70170_p.func_234923_W_() != p_241206_1_.func_234923_W_()) { // CraftBukkit - SPIGOT-6113
           this.func_212361_a((Entity)null);
        }
  

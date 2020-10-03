@@ -1,6 +1,73 @@
 --- a/net/minecraft/world/server/ChunkManager.java
 +++ b/net/minecraft/world/server/ChunkManager.java
-@@ -400,6 +400,7 @@
+@@ -12,6 +12,7 @@
+ import it.unimi.dsi.fastutil.longs.Long2ByteMap;
+ import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
++import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
+ import it.unimi.dsi.fastutil.longs.LongIterator;
+ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+ import it.unimi.dsi.fastutil.longs.LongSet;
+@@ -91,12 +92,14 @@
+ import org.apache.commons.lang3.mutable.MutableBoolean;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.entity.NPC;
++import org.bukkit.entity.Player;
+ 
+ public class ChunkManager extends ChunkLoader implements ChunkHolder.IPlayerProvider {
+    private static final Logger field_219250_d = LogManager.getLogger();
+    public static final int field_219249_a = 33 + ChunkStatus.func_222600_b();
+    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219251_e = new Long2ObjectLinkedOpenHashMap<>();
+-   private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
++   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
+    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219253_g = new Long2ObjectLinkedOpenHashMap<>();
+    private final LongSet field_219254_h = new LongOpenHashSet();
+    private final ServerWorld field_219255_i;
+@@ -110,17 +113,39 @@
+    private final ChunkTaskPriorityQueueSorter field_219263_q;
+    private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219264_r;
+    private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219265_s;
+-   private final IChunkStatusListener field_219266_t;
+-   private final ChunkManager.ProxyTicketManager field_219267_u;
++   public final IChunkStatusListener field_219266_t;
++   public final ChunkManager.ProxyTicketManager field_219267_u;
+    private final AtomicInteger field_219268_v = new AtomicInteger();
+    private final TemplateManager field_219269_w;
+    private final File field_219270_x;
+    private final PlayerGenerationTracker field_219271_y = new PlayerGenerationTracker();
+-   private final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
++   public final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
+    private final Long2ByteMap field_241087_z_ = new Long2ByteOpenHashMap();
+    private final Queue<Runnable> field_223181_A = Queues.newConcurrentLinkedQueue();
+    private int field_219247_A;
+ 
++   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
++   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
++   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
++      private Runnable queued;
++      @Override
++      public void execute(Runnable runnable) {
++         if (queued != null) {
++            throw new IllegalStateException("Already queued");
++         }
++         queued = runnable;
++      }
++      @Override
++      public void run() {
++         Runnable task = queued;
++         queued = null;
++         if (task != null) {
++            task.run();
++         }
++      }
++   };
++   // CraftBukkit end
++
+    public ChunkManager(ServerWorld p_i232602_1_, SaveFormat.LevelSave p_i232602_2_, DataFixer p_i232602_3_, TemplateManager p_i232602_4_, Executor p_i232602_5_, ThreadTaskExecutor<Runnable> p_i232602_6_, IChunkLightProvider p_i232602_7_, ChunkGenerator p_i232602_8_, IChunkStatusListener p_i232602_9_, Supplier<DimensionSavedDataManager> p_i232602_10_, int p_i232602_11_, boolean p_i232602_12_) {
+       super(new File(p_i232602_2_.func_237291_a_(p_i232602_1_.func_234923_W_()), "region"), p_i232602_3_, p_i232602_12_);
+       this.field_219269_w = p_i232602_4_;
+@@ -400,6 +425,7 @@
              if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
                 if (p_219185_5_ instanceof Chunk) {
                    ((Chunk)p_219185_5_).func_177417_c(false);
@@ -8,7 +75,23 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
-@@ -601,6 +602,7 @@
+@@ -588,7 +614,14 @@
+ 
+                for(int j = 0; j < i; ++j) {
+                   for(Entity entity : aclassinheritancemultimap[j]) {
+-                     if (!(entity instanceof PlayerEntity) && !this.field_219255_i.func_217440_f(entity)) {
++                     // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
++                     boolean needsRemoval = false;
++                     if (chunk.needsDecoration && !this.field_219255_i.func_73046_m().getServer().func_230538_V_() && entity instanceof NPC) {
++                        entity.func_70106_y();
++                        needsRemoval = true;
++                     }
++                     if (!(entity instanceof PlayerEntity) && (needsRemoval || !this.field_219255_i.func_217440_f(entity))) {
++                        // CraftBukkit end
+                         if (list == null) {
+                            list = Lists.newArrayList(entity);
+                         } else {
+@@ -601,6 +634,7 @@
                 if (list != null) {
                    list.forEach(chunk::func_76622_b);
                 }
@@ -16,7 +99,7 @@
              }
  
              return chunk;
-@@ -678,6 +680,7 @@
+@@ -678,6 +712,7 @@
  
              this.field_219255_i.func_217381_Z().func_230035_c_("chunkSave");
              CompoundNBT compoundnbt = ChunkSerializer.func_222645_a(this.field_219255_i, p_219229_1_);
@@ -24,7 +107,7 @@
              this.func_219100_a(chunkpos, compoundnbt);
              this.func_241088_a_(chunkpos, chunkstatus.func_202129_d());
              return true;
-@@ -734,6 +737,7 @@
+@@ -734,6 +769,7 @@
  
     protected void func_219199_a(ServerPlayerEntity p_219199_1_, ChunkPos p_219199_2_, IPacket<?>[] p_219199_3_, boolean p_219199_4_, boolean p_219199_5_) {
        if (p_219199_1_.field_70170_p == this.field_219255_i) {
@@ -32,3 +115,57 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
+@@ -802,7 +838,7 @@
+    @Nullable
+    private CompoundNBT func_219178_f(ChunkPos p_219178_1_) throws IOException {
+       CompoundNBT compoundnbt = this.func_227078_e_(p_219178_1_);
+-      return compoundnbt == null ? null : this.func_235968_a_(this.field_219255_i.func_234923_W_(), this.field_219259_m, compoundnbt);
++      return compoundnbt == null ? null : this.func_235968_a_(this.field_219255_i.getTypeKey(), this.field_219259_m, compoundnbt, p_219178_1_, field_219255_i); // CraftBukkit
+    }
+ 
+    boolean func_219243_d(ChunkPos p_219243_1_) {
+@@ -1077,15 +1113,15 @@
+       });
+    }
+ 
+-   class EntityTracker {
++   public class EntityTracker {
+       private final TrackedEntity field_219402_b;
+       private final Entity field_219403_c;
+       private final int field_219404_d;
+       private SectionPos field_219405_e;
+-      private final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
++      public final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
+ 
+       public EntityTracker(Entity p_i50468_2_, int p_i50468_3_, int p_i50468_4_, boolean p_i50468_5_) {
+-         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
++         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a, field_219406_f); // CraftBukkit
+          this.field_219403_c = p_i50468_2_;
+          this.field_219404_d = p_i50468_3_;
+          this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);
+@@ -1134,7 +1170,7 @@
+ 
+       public void func_219400_b(ServerPlayerEntity p_219400_1_) {
+          if (p_219400_1_ != this.field_219403_c) {
+-            Vector3d vector3d = p_219400_1_.func_213303_ch().func_178788_d(this.field_219402_b.func_219456_b());
++            Vector3d vector3d = p_219400_1_.func_213303_ch().func_178788_d(this.field_219403_c.func_213303_ch());  // MC-155077, SPIGOT-5113
+             int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
+             boolean flag = vector3d.field_72450_a >= (double)(-i) && vector3d.field_72450_a <= (double)i && vector3d.field_72449_c >= (double)(-i) && vector3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
+             if (flag) {
+@@ -1147,6 +1183,16 @@
+                   }
+                }
+ 
++               // CraftBukkit start - respect vanish API
++               if (this.field_219403_c instanceof ServerPlayerEntity) {
++                  Player player = ((ServerPlayerEntity) this.field_219403_c).getBukkitEntity();
++                  if (!p_219400_1_.getBukkitEntity().canSee(player)) {
++                     flag1 = false;
++                  }
++               }
++               p_219400_1_.field_71130_g.remove(Integer.valueOf(this.field_219403_c.func_145782_y()));
++               // CraftBukkit end
++
+                if (flag1 && this.field_219406_f.add(p_219400_1_)) {
+                   this.field_219402_b.func_219455_b(p_219400_1_);
+                }

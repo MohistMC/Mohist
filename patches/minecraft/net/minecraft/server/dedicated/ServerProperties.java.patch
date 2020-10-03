@@ -1,0 +1,32 @@
+--- a/net/minecraft/server/dedicated/ServerProperties.java
++++ b/net/minecraft/server/dedicated/ServerProperties.java
+@@ -3,6 +3,7 @@
+ import java.nio.file.Path;
+ import java.util.Properties;
+ import java.util.concurrent.TimeUnit;
++import joptsimple.OptionSet;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.registry.DynamicRegistries;
+ import net.minecraft.world.Difficulty;
+@@ -10,6 +11,7 @@
+ import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+ 
+ public class ServerProperties extends PropertyManager<ServerProperties> {
++   public final boolean debug = this.func_218982_a("debug", false); // CraftBukkit
+    public final boolean field_219007_a = this.func_218982_a("online-mode", true);
+    public final boolean field_219008_b = this.func_218982_a("prevent-proxy-connections", false);
+    public final String field_219009_c = this.func_218973_a("server-ip", "");
+@@ -93,11 +95,13 @@
+       this.field_241082_U_ = DimensionGeneratorSettings.func_242753_a(p_i242099_2_, p_i242099_1_);
+    }
+ 
++   // CraftBukkit start
+    public static ServerProperties func_244380_a(DynamicRegistries p_244380_0_, Path p_244380_1_) {
+       return new ServerProperties(func_218969_b(p_244380_1_), p_244380_0_);
+    }
+ 
+    protected ServerProperties func_241881_b(DynamicRegistries p_241881_1_, Properties p_241881_2_) {
+       return new ServerProperties(p_241881_2_, p_241881_1_);
++      // CraftBukkit end
+    }
+ }

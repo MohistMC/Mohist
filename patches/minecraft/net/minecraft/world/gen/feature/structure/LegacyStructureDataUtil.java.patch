@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/gen/feature/structure/LegacyStructureDataUtil.java
++++ b/net/minecraft/world/gen/feature/structure/LegacyStructureDataUtil.java
+@@ -16,6 +16,7 @@
+ import net.minecraft.util.RegistryKey;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.math.ChunkPos;
++import net.minecraft.world.DimensionType;
+ import net.minecraft.world.World;
+ import net.minecraft.world.storage.DimensionSavedDataManager;
+ 
+@@ -202,17 +203,20 @@
+       }
+    }
+ 
+-   public static LegacyStructureDataUtil func_236992_a_(RegistryKey<World> p_236992_0_, @Nullable DimensionSavedDataManager p_236992_1_) {
+-      if (p_236992_0_ == World.field_234918_g_) {
++   public static LegacyStructureDataUtil func_236992_a_(RegistryKey<World> p_236992_0_, @Nullable DimensionSavedDataManager p_236992_1_) {  // CraftBukkit
++      /*
++      if (p_236992_0_ == DimensionType.field_235999_c_) { // CraftBukkit
+          return new LegacyStructureDataUtil(p_236992_1_, ImmutableList.of("Monument", "Stronghold", "Village", "Mineshaft", "Temple", "Mansion"), ImmutableList.of("Village", "Mineshaft", "Mansion", "Igloo", "Desert_Pyramid", "Jungle_Pyramid", "Swamp_Hut", "Stronghold", "Monument"));
+-      } else if (p_236992_0_ == World.field_234919_h_) {
++      } else if (p_236992_0_ == DimensionType.field_236000_d_) { // CraftBukkit
+          List<String> list1 = ImmutableList.of("Fortress");
+          return new LegacyStructureDataUtil(p_236992_1_, list1, list1);
+-      } else if (p_236992_0_ == World.field_234920_i_) {
++      } else if (p_236992_0_ == DimensionType.field_236001_e_) { // CraftBukkit
+          List<String> list = ImmutableList.of("EndCity");
+          return new LegacyStructureDataUtil(p_236992_1_, list, list);
+       } else {
+          throw new RuntimeException(String.format("Unknown dimension type : %s", p_236992_0_));
+       }
++       */
++      throw new RuntimeException(String.format("Unknown dimension type : %s", p_236992_0_));
+    }
+ }

@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/IServerWorld.java
++++ b/net/minecraft/world/IServerWorld.java
+@@ -7,6 +7,13 @@
+    ServerWorld func_201672_e();
+ 
+    default void func_242417_l(Entity p_242417_1_) {
+-      p_242417_1_.func_226276_cg_().forEach(this::func_217376_c);
++      this.addAllEntities(p_242417_1_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++      // CraftBukkit start
+    }
++
++   default boolean addAllEntities(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      entity.func_226276_cg_().forEach((e) -> this.addEntity(e, reason));
++      return !entity.field_70128_L;
++   }
++   // CraftBukkit end
+ }

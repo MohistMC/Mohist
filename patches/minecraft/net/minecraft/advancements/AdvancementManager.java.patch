@@ -1,5 +1,16 @@
 --- a/net/minecraft/advancements/AdvancementManager.java
 +++ b/net/minecraft/advancements/AdvancementManager.java
+@@ -21,8 +21,8 @@
+ 
+ public class AdvancementManager extends JsonReloadListener {
+    private static final Logger field_192782_a = LogManager.getLogger();
+-   private static final Gson field_192783_b = (new GsonBuilder()).create();
+-   private AdvancementList field_223388_c = new AdvancementList();
++   public static final Gson field_192783_b = (new GsonBuilder()).create(); // private->public CraftBukkit
++   public AdvancementList field_223388_c = new AdvancementList(); // private->public CraftBukkit
+    private final LootPredicateManager field_240922_d_;
+ 
+    public AdvancementManager(LootPredicateManager p_i232595_1_) {
 @@ -36,6 +36,10 @@
           try {
              JsonObject jsonobject = JSONUtils.func_151210_l(p_240923_3_, "advancement");

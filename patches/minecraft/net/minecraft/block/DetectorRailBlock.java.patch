@@ -1,6 +1,29 @@
 --- a/net/minecraft/block/DetectorRailBlock.java
 +++ b/net/minecraft/block/DetectorRailBlock.java
-@@ -131,6 +131,8 @@
+@@ -24,6 +24,7 @@
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public class DetectorRailBlock extends AbstractRailBlock {
+    public static final EnumProperty<RailShape> field_176573_b = BlockStateProperties.field_208166_S;
+@@ -72,6 +73,14 @@
+          if (!list.isEmpty()) {
+             flag1 = true;
+          }
++      // CraftBukkit start
++      if (flag != flag1) {
++         org.bukkit.block.Block block = p_176570_1_.getCBWorld().getBlockAt(p_176570_2_.func_177958_n(), p_176570_2_.func_177956_o(), p_176570_2_.func_177952_p());
++         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
++         p_176570_1_.getCBServer().getPluginManager().callEvent(eventRedstone);
++         flag1 = eventRedstone.getNewCurrent() > 0;
++      }
++      // CraftBukkit end
+ 
+          if (flag1 && !flag) {
+             BlockState blockstate = p_176570_3_.func_206870_a(field_176574_M, Boolean.valueOf(true));
+@@ -131,6 +140,8 @@
           }
  
           List<AbstractMinecartEntity> list1 = this.func_200878_a(p_180641_2_, p_180641_3_, AbstractMinecartEntity.class, EntityPredicates.field_96566_b);

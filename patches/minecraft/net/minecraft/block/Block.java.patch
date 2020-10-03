@@ -22,7 +22,7 @@
        this.field_176227_L = builder.func_235882_a_(Block::func_176223_P, BlockState::new);
        this.func_180632_j(this.field_176227_L.func_177621_b());
     }
-@@ -261,7 +264,7 @@
+@@ -261,19 +264,32 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -31,16 +31,34 @@
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -273,7 +276,7 @@
+          double d2 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
+          ItemEntity itementity = new ItemEntity(p_180635_0_, (double)p_180635_1_.func_177958_n() + d0, (double)p_180635_1_.func_177956_o() + d1, (double)p_180635_1_.func_177952_p() + d2, p_180635_2_);
+          itementity.func_174869_p();
+-         p_180635_0_.func_217376_c(itementity);
++         // CraftBukkit start
++         if(p_180635_0_.captureDrops != null) {
++            p_180635_0_.captureDrops.add(itementity);
++         } else {
++            p_180635_0_.func_217376_c(itementity);
++         }
++         // CraftBukkit end
+       }
     }
  
++   // CraftBukkit start
++   public int getExpDrop(BlockState iblockdata, ServerWorld worldserver, BlockPos blockposition, ItemStack itemstack) {
++      return 0;
++   }
++   // CraftBukkit end
++
++
     public void func_180637_b(ServerWorld p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
 -      if (p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
 +      if (p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180637_1_.restoringBlockSnapshots) {
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -283,6 +286,7 @@
+@@ -283,6 +299,7 @@
  
     }
  
@@ -48,7 +66,7 @@
     public float func_149638_a() {
        return this.field_235689_au_;
     }
-@@ -332,6 +336,7 @@
+@@ -332,6 +349,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -56,7 +74,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -363,6 +368,7 @@
+@@ -363,6 +381,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -64,7 +82,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -382,6 +388,7 @@
+@@ -382,6 +401,7 @@
        return this.field_196275_y;
     }
  
@@ -72,7 +90,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -391,7 +398,7 @@
+@@ -391,7 +411,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -81,7 +99,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -399,7 +406,7 @@
+@@ -399,7 +419,7 @@
     }
  
     public String toString() {
@@ -90,7 +108,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -410,6 +417,83 @@
+@@ -410,6 +430,83 @@
        return this;
     }
  

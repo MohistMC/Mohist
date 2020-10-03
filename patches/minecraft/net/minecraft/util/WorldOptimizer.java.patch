@@ -1,0 +1,42 @@
+--- a/net/minecraft/util/WorldOptimizer.java
++++ b/net/minecraft/util/WorldOptimizer.java
+@@ -22,6 +22,8 @@
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
++import net.minecraft.world.Dimension;
++import net.minecraft.world.DimensionType;
+ import net.minecraft.world.World;
+ import net.minecraft.world.chunk.storage.ChunkLoader;
+ import net.minecraft.world.chunk.storage.RegionFile;
+@@ -93,8 +95,8 @@
+          ImmutableMap<RegistryKey<World>, ListIterator<ChunkPos>> immutablemap = builder.build();
+          Builder<RegistryKey<World>, ChunkLoader> builder1 = ImmutableMap.builder();
+ 
+-         for(RegistryKey<World> registrykey1 : this.field_233529_c_) {
+-            File file1 = this.field_212221_c.func_237291_a_(registrykey1);
++         for(RegistryKey<World> registrykey1 : this.field_233529_c_) { // CraftBukkit
++            File file1 = this.field_212221_c.func_237291_a_(null); // CraftBukkit
+             builder1.put(registrykey1, new ChunkLoader(new File(file1, "region"), this.field_233530_g_, true));
+          }
+ 
+@@ -119,7 +121,7 @@
+                         int j = ChunkLoader.func_219165_a(compoundnbt);
+                         CompoundNBT compoundnbt1 = chunkloader.func_235968_a_(registrykey2, () -> {
+                            return this.field_219960_q;
+-                        }, compoundnbt);
++                        }, compoundnbt, chunkpos, null); // CraftBukkit
+                         CompoundNBT compoundnbt2 = compoundnbt1.func_74775_l("Level");
+                         ChunkPos chunkpos1 = new ChunkPos(compoundnbt2.func_74762_e("xPos"), compoundnbt2.func_74762_e("zPos"));
+                         if (!chunkpos1.equals(chunkpos)) {
+@@ -187,8 +189,8 @@
+       }
+    }
+ 
+-   private List<ChunkPos> func_233532_b_(RegistryKey<World> p_233532_1_) {
+-      File file1 = this.field_212221_c.func_237291_a_(p_233532_1_);
++   private List<ChunkPos> func_233532_b_(RegistryKey<World> p_233532_1_) { // CraftBukkit
++      File file1 = this.field_212221_c.func_237291_a_(null); // CraftBukkit
+       File file2 = new File(file1, "region");
+       File[] afile = file2.listFiles((p_219954_0_, p_219954_1_) -> {
+          return p_219954_1_.endsWith(".mca");

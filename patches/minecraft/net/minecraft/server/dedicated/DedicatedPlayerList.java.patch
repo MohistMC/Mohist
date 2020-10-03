@@ -1,0 +1,18 @@
+--- a/net/minecraft/server/dedicated/DedicatedPlayerList.java
++++ b/net/minecraft/server/dedicated/DedicatedPlayerList.java
+@@ -2,11 +2,15 @@
+ 
+ import com.mojang.authlib.GameProfile;
+ import java.io.IOException;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.server.management.PlayerList;
+ import net.minecraft.util.registry.DynamicRegistries;
++import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.storage.PlayerData;
++import org.apache.commons.lang.NotImplementedException;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Location;
+ 
+ public class DedicatedPlayerList extends PlayerList {
+    private static final Logger field_164439_d = LogManager.getLogger();

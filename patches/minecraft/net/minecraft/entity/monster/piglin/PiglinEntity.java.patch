@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/monster/piglin/PiglinEntity.java
 +++ b/net/minecraft/entity/monster/piglin/PiglinEntity.java
+@@ -59,7 +59,7 @@
+    private static final UUID field_234411_bx_ = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
+    private static final AttributeModifier field_234412_by_ = new AttributeModifier(field_234411_bx_, "Baby speed boost", (double)0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
+    private final Inventory field_234406_bA_ = new Inventory(8);
+-   private boolean field_234407_bB_ = false;
++   public boolean field_234407_bB_ = false;
+    protected static final ImmutableList<SensorType<? extends Sensor<? super PiglinEntity>>> field_234405_b_ = ImmutableList.of(SensorType.field_220998_b, SensorType.field_220999_c, SensorType.field_234129_b_, SensorType.field_221002_f, SensorType.field_234130_l_);
+    protected static final ImmutableList<MemoryModuleType<?>> field_234414_c_ = ImmutableList.of(MemoryModuleType.field_220951_l, MemoryModuleType.field_225462_q, MemoryModuleType.field_220945_f, MemoryModuleType.field_220946_g, MemoryModuleType.field_220949_j, MemoryModuleType.field_234102_l_, MemoryModuleType.field_234090_X_, MemoryModuleType.field_234089_W_, MemoryModuleType.field_234076_J_, MemoryModuleType.field_220957_r, MemoryModuleType.field_220958_s, MemoryModuleType.field_220950_k, MemoryModuleType.field_223021_x, MemoryModuleType.field_234103_o_, MemoryModuleType.field_234104_p_, MemoryModuleType.field_220952_m, MemoryModuleType.field_220954_o, MemoryModuleType.field_234078_L_, MemoryModuleType.field_234079_M_, MemoryModuleType.field_234106_z_, MemoryModuleType.field_234080_N_, MemoryModuleType.field_242310_O, MemoryModuleType.field_234081_O_, MemoryModuleType.field_242311_P, MemoryModuleType.field_234083_Q_, MemoryModuleType.field_234084_R_, MemoryModuleType.field_234082_P_, MemoryModuleType.field_234086_T_, MemoryModuleType.field_234077_K_, MemoryModuleType.field_234093_aa_, MemoryModuleType.field_234105_s_, MemoryModuleType.field_234094_ab_, MemoryModuleType.field_234095_ac_, MemoryModuleType.field_234085_S_, MemoryModuleType.field_234088_V_, MemoryModuleType.field_234096_ad_, MemoryModuleType.field_234097_ae_, MemoryModuleType.field_234098_af_);
+ 
 @@ -307,7 +307,7 @@
     }
  

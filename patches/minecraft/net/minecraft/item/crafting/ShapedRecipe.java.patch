@@ -1,8 +1,14 @@
 --- a/net/minecraft/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/item/crafting/ShapedRecipe.java
-@@ -21,7 +21,20 @@
+@@ -20,8 +20,26 @@
+ import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
++import org.bukkit.inventory.Recipe;
++import org.bukkit.inventory.RecipeChoice;
  
 -public class ShapedRecipe implements ICraftingRecipe {
 +public class ShapedRecipe implements ICraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingInventory> {
@@ -22,7 +28,95 @@
     private final int field_77576_b;
     private final int field_77577_c;
     private final NonNullList<Ingredient> field_77574_d;
-@@ -109,10 +122,20 @@
+@@ -38,6 +56,78 @@
+       this.field_77575_e = p_i48162_6_;
+    }
+ 
++   // CraftBukkit start
++   public org.bukkit.inventory.ShapedRecipe toBukkitRecipe() {
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77575_e);
++      CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
++      recipe.setGroup(this.field_194137_e);
++      Label_0342: {
++         switch (this.field_77577_c) {
++            case 1: {
++               switch (this.field_77576_b) {
++                  case 1: {
++                     recipe.shape("a");
++                     break;
++                  }
++                  case 2: {
++                     recipe.shape("ab");
++                     break;
++                  }
++                  case 3: {
++                     recipe.shape("abc");
++                     break;
++                  }
++               }
++               break;
++            }
++            case 2: {
++               switch (this.field_77576_b) {
++                  case 1: {
++                     recipe.shape("a", "b");
++                     break;
++                  }
++                  case 2: {
++                     recipe.shape("ab", "cd");
++                     break;
++                  }
++                  case 3: {
++                     recipe.shape("abc", "def");
++                     break;
++                  }
++               }
++               break;
++            }
++            case 3: {
++               switch (this.field_77576_b) {
++                  case 1: {
++                     recipe.shape("a", "b", "c");
++                     break Label_0342;
++                  }
++                  case 2: {
++                     recipe.shape("ab", "cd", "ef");
++                     break Label_0342;
++                  }
++                  case 3: {
++                     recipe.shape("abc", "def", "ghi");
++                     break Label_0342;
++                  }
++               }
++               break;
++            }
++         }
++      }
++      char c = 'a';
++      for (final Ingredient list : this.field_77574_d) {
++         RecipeChoice choice = CraftRecipe.toBukkit(list);
++         if (choice != null) {
++            recipe.setIngredient(c, choice);
++         }
++         ++c;
++      }
++      return recipe;
++   }
++   // CraftBukkit end
++
+    public ResourceLocation func_199560_c() {
+       return this.field_199561_e;
+    }
+@@ -46,7 +136,7 @@
+       return IRecipeSerializer.field_222157_a;
+    }
+ 
+-   public String func_193358_e() {
++    public String func_193358_e() {
+       return this.field_194137_e;
+    }
+ 
+@@ -109,10 +199,20 @@
        return this.field_77576_b;
     }
  
@@ -43,7 +137,7 @@
     private static NonNullList<Ingredient> func_192402_a(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
        Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
-@@ -192,15 +215,15 @@
+@@ -192,15 +292,15 @@
  
     private static String[] func_192407_a(JsonArray p_192407_0_) {
        String[] astring = new String[p_192407_0_.size()];
@@ -63,7 +157,7 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -242,11 +265,12 @@
+@@ -242,11 +342,12 @@
           throw new JsonParseException("Disallowed data tag found");
        } else {
           int i = JSONUtils.func_151208_a(p_199798_0_, "count", 1);

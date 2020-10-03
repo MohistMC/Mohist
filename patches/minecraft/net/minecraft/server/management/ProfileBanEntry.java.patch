@@ -1,0 +1,33 @@
+--- a/net/minecraft/server/management/ProfileBanEntry.java
++++ b/net/minecraft/server/management/ProfileBanEntry.java
+@@ -2,6 +2,7 @@
+ 
+ import com.google.gson.JsonObject;
+ import com.mojang.authlib.GameProfile;
++import java.text.ParseException;
+ import java.util.Date;
+ import java.util.Objects;
+ import java.util.UUID;
+@@ -51,4 +52,22 @@
+          return null;
+       }
+    }
++
++   // CraftBukkit start
++   public Date getCreated() {
++      return this.field_73694_d;
++   }
++
++   private static <T> T checkExpiry(final T object, final JsonObject jsonobject) {
++      Date expires = null;
++      try {
++         expires = (jsonobject.has("expires") ? BanEntry.field_73698_a.parse(jsonobject.get("expires").getAsString()) : null);
++      } catch (ParseException ex) {
++      }
++      if (expires == null || expires.after(new Date())) {
++         return object;
++      }
++      return null;
++   }
++   // CraftBukkit end
+ }

@@ -1,24 +1,83 @@
 --- a/net/minecraft/entity/passive/SheepEntity.java
 +++ b/net/minecraft/entity/passive/SheepEntity.java
-@@ -61,7 +61,7 @@
+@@ -29,6 +29,7 @@
+ import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+ import net.minecraft.entity.item.ItemEntity;
+ import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.inventory.CraftResultInventory;
+ import net.minecraft.inventory.CraftingInventory;
+ import net.minecraft.inventory.container.Container;
+ import net.minecraft.inventory.container.ContainerType;
+@@ -60,8 +61,11 @@
+ import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.SheepRegrowWoolEvent;
++import org.bukkit.inventory.InventoryView;
  
 -public class SheepEntity extends AnimalEntity implements IShearable {
 +public class SheepEntity extends AnimalEntity implements IShearable, net.minecraftforge.common.IForgeShearable {
     private static final DataParameter<Byte> field_184774_bv = EntityDataManager.func_187226_a(SheepEntity.class, DataSerializers.field_187191_a);
     private static final Map<DyeColor, IItemProvider> field_200206_bz = Util.func_200696_a(Maps.newEnumMap(DyeColor.class), (p_203402_0_) -> {
        p_203402_0_.put(DyeColor.WHITE, Blocks.field_196556_aL);
-@@ -216,7 +216,7 @@
+@@ -216,7 +220,12 @@
  
     public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
 -      if (itemstack.func_77973_b() == Items.field_151097_aZ) {
 +      if (false && itemstack.func_77973_b() == Items.field_151097_aZ) { //Forge: Moved to onSheared
++         // CraftBukkit start
++         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_230254_1_, this, itemstack, p_230254_2_)) {
++            return ActionResultType.PASS;
++         }
++         // CraftBukkit end
           if (!this.field_70170_p.field_72995_K && this.func_230262_K__()) {
              this.func_230263_a_(SoundCategory.PLAYERS);
              itemstack.func_222118_a(1, p_230254_1_, (p_213613_1_) -> {
-@@ -361,4 +361,26 @@
+@@ -237,7 +246,9 @@
+       int i = 1 + this.field_70146_Z.nextInt(3);
+ 
+       for(int j = 0; j < i; ++j) {
++         this.forceDrops = true; // CraftBukkit
+          ItemEntity itementity = this.func_199702_a(field_200206_bz.get(this.func_175509_cj()), 1);
++         this.forceDrops = false; // CraftBukkit
+          if (itementity != null) {
+             itementity.func_213317_d(itementity.func_213322_ci().func_72441_c((double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F), (double)(this.field_70146_Z.nextFloat() * 0.05F), (double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F)));
+          }
+@@ -323,6 +334,11 @@
+    }
+ 
+    public void func_70615_aA() {
++      // CraftBukkit start
++      SheepRegrowWoolEvent event = new SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
++      this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++      if (event.isCancelled()) return;
++      // CraftBukkit end
+       this.func_70893_e(false);
+       if (this.func_70631_g_()) {
+          this.func_110195_a(60);
+@@ -349,16 +365,46 @@
+ 
+    private static CraftingInventory func_213611_a(DyeColor p_213611_0_, DyeColor p_213611_1_) {
+       CraftingInventory craftinginventory = new CraftingInventory(new Container((ContainerType)null, -1) {
++         // CraftBukkit start
++         @Override
++         public InventoryView getBukkitView() {
++            return null; // TODO: O.0
++         }
++         // CraftBukkit end
++
+          public boolean func_75145_c(PlayerEntity p_75145_1_) {
+             return false;
+          }
+       }, 2, 1);
+       craftinginventory.func_70299_a(0, new ItemStack(DyeItem.func_195961_a(p_213611_0_)));
+       craftinginventory.func_70299_a(1, new ItemStack(DyeItem.func_195961_a(p_213611_1_)));
++      craftinginventory.resultInventory = new CraftResultInventory(); // CraftBukkit - add result slot for event
+       return craftinginventory;
+    }
+ 
     protected float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
        return 0.95F * p_213348_2_.field_220316_b;
     }

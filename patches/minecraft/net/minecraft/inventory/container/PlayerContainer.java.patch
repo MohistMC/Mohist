@@ -1,6 +1,52 @@
 --- a/net/minecraft/inventory/container/PlayerContainer.java
 +++ b/net/minecraft/inventory/container/PlayerContainer.java
-@@ -51,7 +51,7 @@
+@@ -14,8 +14,12 @@
+ import net.minecraft.item.crafting.RecipeBookCategory;
+ import net.minecraft.item.crafting.RecipeItemHelper;
+ import net.minecraft.util.ResourceLocation;
++import net.minecraft.util.text.StringTextComponent;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class PlayerContainer extends RecipeBookContainer<CraftingInventory> {
+    public static final ResourceLocation field_226615_c_ = new ResourceLocation("textures/atlas/blocks.png");
+@@ -26,15 +30,30 @@
+    public static final ResourceLocation field_226620_h_ = new ResourceLocation("item/empty_armor_slot_shield");
+    private static final ResourceLocation[] field_200829_h = new ResourceLocation[]{field_226619_g_, field_226618_f_, field_226617_e_, field_226616_d_};
+    private static final EquipmentSlotType[] field_185003_h = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
+-   private final CraftingInventory field_75181_e = new CraftingInventory(this, 2, 2);
+-   private final CraftResultInventory field_75179_f = new CraftResultInventory();
++   // private final CraftingInventory craftMatrix = new CraftingInventory(this, 2, 2);
++   // private final CraftResultInventory craftResult = new CraftResultInventory();
++   // CraftBukkit start
++   private final CraftingInventory field_75181_e;
++   private final CraftResultInventory field_75179_f;
++   // CraftBukkit end
+    public final boolean field_75180_g;
+    private final PlayerEntity field_82862_h;
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private PlayerInventory playerCB;
++   // CraftBukkit end
+ 
+    public PlayerContainer(PlayerInventory p_i1819_1_, boolean p_i1819_2_, PlayerEntity p_i1819_3_) {
+       super((ContainerType<?>)null, 0);
+       this.field_75180_g = p_i1819_2_;
+       this.field_82862_h = p_i1819_3_;
++      // CraftBukkit start
++      this.field_75179_f = new CraftResultInventory(); // CraftBukkit - moved to before InventoryCrafting construction
++      this.field_75181_e = new CraftingInventory(this, 2, 2, p_i1819_1_.field_70458_d); // CraftBukkit - pass player
++      this.field_75181_e.resultInventory = this.field_75179_f; // CraftBukkit - let InventoryCrafting know about its result slo
++      this.playerCB = p_i1819_1_; // CraftBukkit - save player
++      setTitle(new StringTextComponent("container.crafting")); // SPIGOT-4722: Allocate title for player inventory
++      // CraftBukkit end
+       this.func_75146_a(new CraftingResultSlot(p_i1819_1_.field_70458_d, this.field_75181_e, this.field_75179_f, 0, 154, 28));
+ 
+       for(int i = 0; i < 2; ++i) {
+@@ -51,7 +70,7 @@
              }
  
              public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -9,3 +55,29 @@
              }
  
              public boolean func_82869_a(PlayerEntity p_82869_1_) {
+@@ -98,7 +117,7 @@
+    }
+ 
+    public void func_75130_a(IInventory p_75130_1_) {
+-      WorkbenchContainer.func_217066_a(this.field_75152_c, this.field_82862_h.field_70170_p, this.field_82862_h, this.field_75181_e, this.field_75179_f);
++      WorkbenchContainer.func_217066_a(this.field_75152_c, this.field_82862_h.field_70170_p, this.field_82862_h, this.field_75181_e, this.field_75179_f, this);  // CraftBukkit
+    }
+ 
+    public void func_75134_a(PlayerEntity p_75134_1_) {
+@@ -203,4 +222,16 @@
+    public RecipeBookCategory func_241850_m() {
+       return RecipeBookCategory.CRAFTING;
+    }
++
++   // CraftBukkit start
++   @Override
++   public InventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.field_75181_e, this.field_75179_f);
++      bukkitEntity = new CraftInventoryView(this.playerCB.field_70458_d.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ }

@@ -1,15 +1,43 @@
 --- a/net/minecraft/block/NoteBlock.java
 +++ b/net/minecraft/block/NoteBlock.java
-@@ -50,7 +50,7 @@
+@@ -18,6 +18,8 @@
+ import net.minecraft.util.math.BlockRayTraceResult;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.block.NotePlayEvent;
+ 
+ public class NoteBlock extends Block {
+    public static final EnumProperty<NoteBlockInstrument> field_196483_a = BlockStateProperties.field_208143_ar;
+@@ -41,7 +43,8 @@
+       boolean flag = p_220069_2_.func_175640_z(p_220069_3_);
+       if (flag != p_220069_1_.func_177229_b(field_196484_b)) {
+          if (flag) {
+-            this.func_196482_a(p_220069_2_, p_220069_3_);
++            this.triggerNote(p_220069_2_, p_220069_3_, p_220069_1_); // CraftBukkit
++            p_220069_1_ = p_220069_2_.func_180495_p(p_220069_3_); // CraftBukkit - SPIGOT-5617: update in case changed in event
+          }
+ 
+          p_220069_2_.func_180501_a(p_220069_3_, p_220069_1_.func_206870_a(field_196484_b, Boolean.valueOf(flag)), 3);
+@@ -49,9 +52,14 @@
+ 
     }
  
-    private void func_196482_a(World p_196482_1_, BlockPos p_196482_2_) {
+-   private void func_196482_a(World p_196482_1_, BlockPos p_196482_2_) {
 -      if (p_196482_1_.func_180495_p(p_196482_2_.func_177984_a()).func_196958_f()) {
-+      if (p_196482_1_.func_175623_d(p_196482_2_.func_177984_a())) {
-          p_196482_1_.func_175641_c(p_196482_2_, this, 0, 0);
+-         p_196482_1_.func_175641_c(p_196482_2_, this, 0, 0);
++   private void triggerNote(World worldIn, BlockPos pos, BlockState blockState) { // CraftBukkit
++      if (worldIn.func_175623_d(pos.func_177984_a())) {
++         // CraftBukkit start
++         NotePlayEvent event = CraftEventFactory.callNotePlayEvent(worldIn, pos, blockState.func_177229_b(field_196483_a), blockState.func_177229_b(field_196485_c));
++         if (!event.isCancelled()) {
++            worldIn.func_175641_c(pos, this, 0, 0);
++         }
++         // CraftBukkit end
        }
  
-@@ -60,7 +60,9 @@
+    }
+@@ -60,9 +68,11 @@
        if (p_225533_2_.field_72995_K) {
           return ActionResultType.SUCCESS;
        } else {
@@ -18,9 +46,19 @@
 +         if (_new == -1) return ActionResultType.FAIL;
 +         p_225533_1_ = p_225533_1_.func_206870_a(field_196485_c, _new);
           p_225533_2_.func_180501_a(p_225533_3_, p_225533_1_, 3);
-          this.func_196482_a(p_225533_2_, p_225533_3_);
+-         this.func_196482_a(p_225533_2_, p_225533_3_);
++         this.triggerNote(p_225533_2_, p_225533_3_, p_225533_1_); // CraftBukkit
           p_225533_4_.func_195066_a(Stats.field_188087_U);
-@@ -76,6 +78,9 @@
+          return ActionResultType.CONSUME;
+       }
+@@ -70,12 +80,15 @@
+ 
+    public void func_196270_a(BlockState p_196270_1_, World p_196270_2_, BlockPos p_196270_3_, PlayerEntity p_196270_4_) {
+       if (!p_196270_2_.field_72995_K) {
+-         this.func_196482_a(p_196270_2_, p_196270_3_);
++         this.triggerNote(p_196270_2_, p_196270_3_, p_196270_1_); // CraftBukkit
+          p_196270_4_.func_195066_a(Stats.field_188086_T);
+       }
     }
  
     public boolean func_189539_a(BlockState p_189539_1_, World p_189539_2_, BlockPos p_189539_3_, int p_189539_4_, int p_189539_5_) {

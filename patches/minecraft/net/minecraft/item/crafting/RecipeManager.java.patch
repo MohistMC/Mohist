@@ -1,6 +1,28 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -51,9 +51,18 @@
+@@ -2,7 +2,6 @@
+ 
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Maps;
+-import com.google.common.collect.ImmutableMap.Builder;
+ import com.google.gson.Gson;
+ import com.google.gson.GsonBuilder;
+ import com.google.gson.JsonElement;
+@@ -38,7 +37,7 @@
+ public class RecipeManager extends JsonReloadListener {
+    private static final Gson field_223401_a = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Logger field_199521_c = LogManager.getLogger();
+-   private Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> field_199522_d = ImmutableMap.of();
++   public Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> field_199522_d = ImmutableMap.of(); // private->public CraftBukkit
+    private boolean field_199523_e;
+ 
+    public RecipeManager() {
+@@ -47,13 +46,22 @@
+ 
+    protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
+       this.field_199523_e = false;
+-      Map<IRecipeType<?>, Builder<ResourceLocation, IRecipe<?>>> map = Maps.newHashMap();
++      Map<IRecipeType<?>, ImmutableMap.Builder<ResourceLocation, IRecipe<?>>> map = Maps.newHashMap();
  
        for(Entry<ResourceLocation, JsonElement> entry : p_212853_1_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -19,3 +41,44 @@
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, irecipe);
+@@ -68,10 +76,24 @@
+       field_199521_c.info("Loaded {} recipes", (int)map.size());
+    }
+ 
++   // CraftBukkit start
++   public void addRecipe(final IRecipe<?> irecipe) {
++      final Map<ResourceLocation, IRecipe<?>> map = this.field_199522_d.get(irecipe.func_222127_g());
++      if (map.containsKey(irecipe.func_199560_c())) {
++         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.func_199560_c());
++      }
++      map.put(irecipe.func_199560_c(), irecipe);
++   }
++   // CraftBukkit end
++
+    public <C extends IInventory, T extends IRecipe<C>> Optional<T> func_215371_a(IRecipeType<T> p_215371_1_, C p_215371_2_, World p_215371_3_) {
+-      return this.func_215366_a(p_215371_1_).values().stream().flatMap((p_215372_3_) -> {
++      // CraftBukkit start
++      Optional<T> recipe = this.func_215366_a(p_215371_1_).values().stream().flatMap((p_215372_3_) -> {
+          return Util.func_215081_a(p_215371_1_.func_222148_a(p_215372_3_, p_215371_3_, p_215371_2_));
+       }).findFirst();
++      p_215371_2_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
++      // CraftBukkit end
++      return recipe;
+    }
+ 
+    public <C extends IInventory, T extends IRecipe<C>> List<T> func_241447_a_(IRecipeType<T> p_241447_1_) {
+@@ -147,4 +169,14 @@
+       });
+       this.field_199522_d = ImmutableMap.copyOf(map);
+    }
++
++   // CraftBukkit start
++   public void clearRecipes() {
++      this.field_199522_d = Maps.newHashMap();
++      for (IRecipeType<?> recipeType : Registry.field_218367_H) {
++         this.field_199522_d.put(recipeType, Collections.emptyMap());
++      }
++   }
++   // CraftBukkit end
++
+ }

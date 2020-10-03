@@ -1,22 +1,44 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -98,7 +98,6 @@
+@@ -56,6 +56,8 @@
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+ 
+ public class EndermanEntity extends MonsterEntity implements IAngerable {
+    private static final UUID field_110192_bp = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
+@@ -98,9 +100,18 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
 -      super.func_70624_b(p_70624_1_);
++      // CraftBukkit start - fire event
++      setAttackTarget(p_70624_1_, TargetReason.UNKNOWN, true);
++   }
++
++   public boolean setAttackTarget(@Nullable LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
++      if(!super.setAttackTarget(entitylivingbaseIn, reason, fireEvent)){
++         return false;
++      }
++      entitylivingbaseIn = func_70638_az();
++      // CraftBukkit end
        ModifiableAttributeInstance modifiableattributeinstance = this.func_110148_a(Attributes.field_233821_d_);
-       if (p_70624_1_ == null) {
+-      if (p_70624_1_ == null) {
++      if (entitylivingbaseIn == null) {
           this.field_184721_by = 0;
-@@ -113,6 +112,7 @@
+          this.field_70180_af.func_187227_b(field_184719_bw, false);
+          this.field_70180_af.func_187227_b(field_226535_bx_, false);
+@@ -113,6 +124,7 @@
           }
        }
  
-+      super.func_70624_b(p_70624_1_); //Forge: Moved down to allow event handlers to write data manager values.
++      return true; // CraftBukkit
     }
  
     protected void func_70088_a() {
-@@ -186,7 +186,7 @@
+@@ -186,7 +198,7 @@
  
     private boolean func_70821_d(PlayerEntity p_70821_1_) {
        ItemStack itemstack = p_70821_1_.field_71071_by.field_70460_b.get(3);
@@ -25,7 +47,7 @@
           return false;
        } else {
           Vector3d vector3d = p_70821_1_.func_70676_i(1.0F).func_72432_b();
-@@ -265,7 +265,9 @@
+@@ -265,7 +277,9 @@
        boolean flag = blockstate.func_185904_a().func_76230_c();
        boolean flag1 = blockstate.func_204520_s().func_206884_a(FluidTags.field_206959_a);
        if (flag && !flag1) {
@@ -36,7 +58,7 @@
           if (flag2 && !this.func_174814_R()) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);
-@@ -429,7 +431,7 @@
+@@ -429,7 +443,7 @@
        public boolean func_75250_a() {
           if (this.field_179475_a.func_195405_dq() == null) {
              return false;
@@ -45,16 +67,21 @@
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
-@@ -449,7 +451,7 @@
+@@ -449,16 +463,19 @@
           BlockState blockstate2 = this.field_179475_a.func_195405_dq();
           if (blockstate2 != null) {
              blockstate2 = Block.func_199770_b(blockstate2, this.field_179475_a.field_70170_p, blockpos);
 -            if (this.func_220836_a(world, blockpos, blockstate2, blockstate, blockstate1, blockpos1)) {
 +            if (this.func_220836_a(world, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(field_179475_a, net.minecraftforge.common.util.BlockSnapshot.create(world.func_234923_W_(), world, blockpos1), net.minecraft.util.Direction.UP)) {
++               // CraftBukkit start - Place event
++               if (!CraftEventFactory.callEntityChangeBlockEvent(this.field_179475_a, blockpos, blockstate).isCancelled()) {
                 world.func_180501_a(blockpos, blockstate2, 3);
                 this.field_179475_a.func_195406_b((BlockState)null);
              }
-@@ -458,7 +460,7 @@
+-
++               // CraftBukkit end
++            }
+          }
        }
  
        private boolean func_220836_a(World p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
@@ -63,7 +90,7 @@
        }
     }
  
-@@ -500,7 +502,7 @@
+@@ -500,7 +517,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
              return false;

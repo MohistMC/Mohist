@@ -1,6 +1,23 @@
 --- a/net/minecraft/entity/passive/IronGolemEntity.java
 +++ b/net/minecraft/entity/passive/IronGolemEntity.java
-@@ -120,9 +120,10 @@
+@@ -54,6 +54,7 @@
+ import net.minecraft.world.spawner.WorldEntitySpawner;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+ 
+ public class IronGolemEntity extends GolemEntity implements IAngerable {
+    protected static final DataParameter<Byte> field_184750_a = EntityDataManager.func_187226_a(IronGolemEntity.class, DataSerializers.field_187191_a);
+@@ -100,7 +101,7 @@
+ 
+    protected void func_82167_n(Entity p_82167_1_) {
+       if (p_82167_1_ instanceof IMob && !(p_82167_1_ instanceof CreeperEntity) && this.func_70681_au().nextInt(20) == 0) {
+-         this.func_70624_b((LivingEntity)p_82167_1_);
++         this.setAttackTarget((LivingEntity)p_82167_1_, TargetReason.COLLISION, true); // CraftBukkit - set reason
+       }
+ 
+       super.func_82167_n(p_82167_1_);
+@@ -120,9 +121,10 @@
           int i = MathHelper.func_76128_c(this.func_226277_ct_());
           int j = MathHelper.func_76128_c(this.func_226278_cu_() - (double)0.2F);
           int k = MathHelper.func_76128_c(this.func_226281_cx_());

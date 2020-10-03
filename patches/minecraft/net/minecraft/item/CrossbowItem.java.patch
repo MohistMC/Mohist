@@ -1,0 +1,42 @@
+--- a/net/minecraft/item/CrossbowItem.java
++++ b/net/minecraft/item/CrossbowItem.java
+@@ -99,6 +99,12 @@
+             itemstack1 = itemstack.func_77946_l();
+          }
+ 
++         // CraftBukkit start - SPIGOT-4870, MC-150847
++         else if (itemstack1.func_190926_b()) {
++            return false;
++         }
++         // CraftBukkit end
++
+          if (!func_220023_a(p_220021_0_, p_220021_1_, itemstack, k > 0, flag)) {
+             return false;
+          }
+@@ -209,10 +215,25 @@
+             projectileentity.func_70186_c((double)vector3f.func_195899_a(), (double)vector3f.func_195900_b(), (double)vector3f.func_195902_c(), p_220016_7_, p_220016_8_);
+          }
+ 
++         // CraftBukkit start
++         org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(p_220016_1_, p_220016_3_, p_220016_4_, projectileentity, p_220016_1_.func_184600_cs(), p_220016_5_, true);
++         if (event.isCancelled()) {
++            event.getProjectile().remove();
++            return;
++         }
++         // CraftBukkit end
++
+          p_220016_3_.func_222118_a(flag ? 3 : 1, p_220016_1_, (p_220017_1_) -> {
+             p_220017_1_.func_213334_d(p_220016_2_);
+          });
+-         p_220016_0_.func_217376_c(projectileentity);
++         // CraftBukkit start
++         if (event.getProjectile() == projectileentity.getBukkitEntity() && !p_220016_0_.func_217376_c((net.minecraft.entity.Entity) projectileentity)) {
++            if (p_220016_1_ instanceof ServerPlayerEntity) {
++               ((ServerPlayerEntity) p_220016_1_).getBukkitEntity().updateInventory();
++            }
++            return;
++         }
++         // CraftBukkit end
+          p_220016_0_.func_184148_a((PlayerEntity)null, p_220016_1_.func_226277_ct_(), p_220016_1_.func_226278_cu_(), p_220016_1_.func_226281_cx_(), SoundEvents.field_219616_bH, SoundCategory.PLAYERS, 1.0F, p_220016_5_);
+       }
+    }

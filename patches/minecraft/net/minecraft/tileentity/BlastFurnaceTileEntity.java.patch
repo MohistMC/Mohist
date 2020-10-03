@@ -1,0 +1,65 @@
+--- a/net/minecraft/tileentity/BlastFurnaceTileEntity.java
++++ b/net/minecraft/tileentity/BlastFurnaceTileEntity.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.tileentity;
+ 
++import java.util.List;
+ import net.minecraft.entity.player.PlayerInventory;
+ import net.minecraft.inventory.container.BlastFurnaceContainer;
+ import net.minecraft.inventory.container.Container;
+@@ -7,6 +8,10 @@
+ import net.minecraft.item.crafting.IRecipeType;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class BlastFurnaceTileEntity extends AbstractFurnaceTileEntity {
+    public BlastFurnaceTileEntity() {
+@@ -24,4 +29,44 @@
+    protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
+       return new BlastFurnaceContainer(p_213906_1_, p_213906_2_, this, this.field_214013_b);
+    }
++
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
++   }
+ }

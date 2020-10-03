@@ -16,3 +16,17 @@
              }
           } catch (ClassNotFoundException classnotfoundexception) {
           }
+@@ -126,6 +128,13 @@
+ 
+    }
+ 
++   // CraftBukkit start - add method from above
++   public <T> void markDirty(DataParameter<T> datawatcherobject) {
++      this.func_187219_c(datawatcherobject).func_187208_a(true);
++      this.field_187237_f = true;
++   }
++   // CraftBukkit end
++
+    public boolean func_187223_a() {
+       return this.field_187237_f;
+    }

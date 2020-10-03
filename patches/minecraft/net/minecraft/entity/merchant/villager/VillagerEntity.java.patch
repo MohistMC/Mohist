@@ -1,6 +1,29 @@
 --- a/net/minecraft/entity/merchant/villager/VillagerEntity.java
 +++ b/net/minecraft/entity/merchant/villager/VillagerEntity.java
-@@ -241,7 +241,7 @@
+@@ -87,6 +87,13 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.entity.Villager;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
++import org.bukkit.event.entity.VillagerReplenishTradeEvent;
+ 
+ public class VillagerEntity extends AbstractVillagerEntity implements IReputationTracking, IVillagerDataHolder {
+    private static final DataParameter<VillagerData> field_213775_bC = EntityDataManager.func_187226_a(VillagerEntity.class, DataSerializers.field_218813_q);
+@@ -206,7 +213,7 @@
+                this.field_213777_bF = false;
+             }
+ 
+-            this.func_195064_c(new EffectInstance(Effects.field_76428_l, 200, 0));
++            this.addPotionEffect(new EffectInstance(Effects.field_76428_l, 200, 0), EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
+          }
+       }
+ 
+@@ -241,7 +248,7 @@
  
     public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
@@ -9,7 +32,23 @@
           if (this.func_70631_g_()) {
              this.func_213756_es();
              return ActionResultType.func_233537_a_(this.field_70170_p.field_72995_K);
-@@ -634,7 +634,8 @@
+@@ -379,7 +386,14 @@
+       int i = this.func_223107_f(p_213762_1_);
+       if (i != 0) {
+          for(MerchantOffer merchantoffer : this.func_213706_dY()) {
+-            merchantoffer.func_222207_a(-MathHelper.func_76141_d((float)i * merchantoffer.func_222211_m()));
++            // CraftBukkit start
++            int bonus = -MathHelper.func_76141_d((float)i * merchantoffer.func_222211_m());
++            VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((Villager) this.getBukkitEntity(), merchantoffer.asBukkit(), bonus);
++            Bukkit.getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++               merchantoffer.func_222207_a(event.getBonus());
++            }
++            // CraftBukkit end
+          }
+       }
+ 
+@@ -634,7 +648,8 @@
     }
  
     protected ITextComponent func_225513_by_() {
@@ -19,3 +58,26 @@
     }
  
     @OnlyIn(Dist.CLIENT)
+@@ -699,7 +714,12 @@
+          }
+ 
+          witchentity.func_110163_bv();
+-         p_241841_1_.func_242417_l(witchentity);
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, witchentity, EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
++            return;
++         }
++         this.field_70170_p.addEntity(witchentity, CreatureSpawnEvent.SpawnReason.LIGHTNING);
++         // CraftBukkit end
+          this.func_242369_fq();
+          this.func_70106_y();
+       } else {
+@@ -820,7 +840,7 @@
+             IronGolemEntity irongolementity = EntityType.field_200757_aw.func_220349_b(p_213759_1_, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos1, SpawnReason.MOB_SUMMONED, false, false);
+             if (irongolementity != null) {
+                if (irongolementity.func_213380_a(p_213759_1_, SpawnReason.MOB_SUMMONED) && irongolementity.func_205019_a(p_213759_1_)) {
+-                  p_213759_1_.func_242417_l(irongolementity);
++                  this.field_70170_p.addEntity(irongolementity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE); // CraftBukkit
+                   return irongolementity;
+                }
+ 

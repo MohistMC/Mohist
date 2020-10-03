@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/server/Ticket.java
++++ b/net/minecraft/world/server/Ticket.java
+@@ -5,7 +5,7 @@
+ public final class Ticket<T> implements Comparable<Ticket<?>> {
+    private final TicketType<T> field_219480_a;
+    private final int field_219481_b;
+-   private final T field_219482_c;
++   public final T field_219482_c;
+    private long field_219483_d;
+ 
+    protected Ticket(TicketType<T> p_i226095_1_, int p_i226095_2_, T p_i226095_3_) {

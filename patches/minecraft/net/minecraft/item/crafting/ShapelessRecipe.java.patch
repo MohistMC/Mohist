@@ -1,6 +1,15 @@
 --- a/net/minecraft/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/item/crafting/ShapelessRecipe.java
-@@ -17,12 +17,14 @@
+@@ -11,20 +11,38 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
+ 
+ public class ShapelessRecipe implements ICraftingRecipe {
+    private final ResourceLocation field_199562_a;
     private final String field_194138_c;
     private final ItemStack field_77580_a;
     private final NonNullList<Ingredient> field_77579_b;
@@ -14,8 +23,32 @@
 +      this.isSimple = p_i48161_4_.stream().allMatch(Ingredient::isSimple);
     }
  
++   // CraftBukkit start
++   @Override
++   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
++      final CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77580_a);
++      final CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
++      recipe.setGroup(this.field_194138_c);
++      for (final Ingredient list : this.field_77579_b) {
++         recipe.addIngredient(CraftRecipe.toBukkit(list));
++      }
++      return recipe;
++   }
++   // CraftBukkit end
++
     public ResourceLocation func_199560_c() {
-@@ -47,17 +49,20 @@
+       return this.field_199562_a;
+    }
+@@ -33,7 +51,7 @@
+       return IRecipeSerializer.field_222158_b;
+    }
+ 
+-   public String func_193358_e() {
++    public String func_193358_e() {
+       return this.field_194138_c;
+    }
+ 
+@@ -47,17 +65,20 @@
  
     public boolean func_77569_a(CraftingInventory p_77569_1_, World p_77569_2_) {
        RecipeItemHelper recipeitemhelper = new RecipeItemHelper();
@@ -37,7 +70,7 @@
     }
  
     public ItemStack func_77572_b(CraftingInventory p_77572_1_) {
-@@ -68,14 +73,15 @@
+@@ -68,14 +89,15 @@
        return p_194133_1_ * p_194133_2_ >= this.field_77579_b.size();
     }
  

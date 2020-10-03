@@ -1,6 +1,24 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -33,6 +33,10 @@
+@@ -8,9 +8,16 @@
+ import net.minecraft.item.crafting.ServerRecipePlacer;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
+ public abstract class RecipeBookContainer<C extends IInventory> extends Container {
+-   public RecipeBookContainer(ContainerType<?> p_i50067_1_, int p_i50067_2_) {
++
++    @Override
++    public InventoryView getBukkitView() {
++        return null;
++    }
++
++    public RecipeBookContainer(ContainerType<?> p_i50067_1_, int p_i50067_2_) {
+       super(p_i50067_1_, p_i50067_2_);
+    }
+ 
+@@ -33,6 +40,10 @@
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
  

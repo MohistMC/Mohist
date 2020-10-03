@@ -1,6 +1,19 @@
 --- a/net/minecraft/world/gen/NoiseChunkGenerator.java
 +++ b/net/minecraft/world/gen/NoiseChunkGenerator.java
-@@ -525,8 +525,8 @@
+@@ -215,6 +215,12 @@
+                   f7 = f5;
+                }
+ 
++               // CraftBukkit start - fix MC-54738
++               if (f6 < -1.8F) {
++                  f6 = -1.8F;
++               }
++               // CraftBukkit end
++
+                float f8 = f4 > f3 ? 0.5F : 1.0F;
+                float f9 = f8 * field_236081_j_[k + 2 + (l + 2) * 5] / (f6 + 2.0F);
+                f += f7 * f9;
+@@ -525,8 +531,8 @@
                          objectlistiterator1.back(objectlist1.size());
                          BlockState blockstate = this.func_236086_a_(d18, i2);
                          if (blockstate != field_222562_i) {

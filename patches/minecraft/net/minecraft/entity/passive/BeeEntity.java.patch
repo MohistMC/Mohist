@@ -1,6 +1,42 @@
 --- a/net/minecraft/entity/passive/BeeEntity.java
 +++ b/net/minecraft/entity/passive/BeeEntity.java
-@@ -425,7 +425,7 @@
+@@ -84,6 +84,9 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
++import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+ 
+ public class BeeEntity extends AnimalEntity implements IAngerable, IFlyingAnimal {
+    private static final DataParameter<Byte> field_226374_bw_ = EntityDataManager.func_187226_a(BeeEntity.class, DataSerializers.field_187191_a);
+@@ -94,14 +97,14 @@
+    private float field_226361_bA_;
+    private int field_226362_bB_;
+    private int field_226363_bC_;
+-   private int field_226364_bD_;
++   public int field_226364_bD_; // private->public CraftBukkit
+    private int field_226365_bE_;
+    private int field_226366_bF_ = 0;
+    private int field_226367_bG_ = 0;
+    @Nullable
+    private BlockPos field_226368_bH_ = null;
+    @Nullable
+-   private BlockPos field_226369_bI_ = null;
++   public BlockPos field_226369_bI_ = null; // private->public CraftBukkit
+    private BeeEntity.PollinateGoal field_226370_bJ_;
+    private BeeEntity.FindBeehiveGoal field_226371_bK_;
+    private BeeEntity.FindFlowerGoal field_226372_bL_;
+@@ -201,7 +204,7 @@
+             }
+ 
+             if (i > 0) {
+-               ((LivingEntity)p_70652_1_).func_195064_c(new EffectInstance(Effects.field_76436_u, i * 20, 0));
++               ((LivingEntity)p_70652_1_).addPotionEffect(new EffectInstance(Effects.field_76436_u, i * 20, 0), Cause.ATTACK); // CraftBukkit
+             }
+          }
+ 
+@@ -425,7 +428,7 @@
           return false;
        } else {
           TileEntity tileentity = this.field_70170_p.func_175625_s(this.field_226369_bI_);
@@ -9,3 +45,56 @@
        }
     }
  
+@@ -433,7 +436,7 @@
+       return this.func_226456_v_(8);
+    }
+ 
+-   private void func_226447_r_(boolean p_226447_1_) {
++   public void func_226447_r_(boolean p_226447_1_) { // private->public CraftBukkit
+       if (p_226447_1_) {
+          this.func_226426_eu_();
+       }
+@@ -445,7 +448,7 @@
+       return this.func_226456_v_(4);
+    }
+ 
+-   private void func_226449_s_(boolean p_226449_1_) {
++   public void func_226449_s_(boolean p_226449_1_) { // private->public CraftBukkit
+       this.func_226404_d_(4, p_226449_1_);
+    }
+ 
+@@ -552,11 +555,14 @@
+          return false;
+       } else {
+          Entity entity = p_70097_1_.func_76346_g();
+-         if (!this.field_70170_p.field_72995_K) {
++         // CraftBukkit Start
++         boolean result = super.damageEntityCB(p_70097_1_, p_70097_2_);
++         if (result && !this.field_70170_p.field_72995_K) {
+             this.field_226370_bJ_.func_226504_l_();
+          }
+ 
+-         return super.func_70097_a(p_70097_1_, p_70097_2_);
++         return result;
++         // CraftBukkit end
+       }
+    }
+ 
+@@ -588,7 +594,7 @@
+ 
+       protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
+          if (p_220793_1_ instanceof BeeEntity && this.field_75299_d.func_70685_l(p_220793_2_)) {
+-            p_220793_1_.func_70624_b(p_220793_2_);
++            p_220793_1_.setAttackTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
+          }
+ 
+       }
+@@ -871,7 +877,7 @@
+                      }
+                   }
+ 
+-                  if (flag) {
++                  if (flag && !CraftEventFactory.callEntityChangeBlockEvent(BeeEntity.this, blockpos, blockstate.func_206870_a(integerproperty, (Integer) blockstate.func_177229_b(integerproperty) + 1)).isCancelled()) { // Spigot
+                      BeeEntity.this.field_70170_p.func_217379_c(2005, blockpos, 0);
+                      BeeEntity.this.field_70170_p.func_175656_a(blockpos, blockstate.func_206870_a(integerproperty, Integer.valueOf(blockstate.func_177229_b(integerproperty) + 1)));
+                      BeeEntity.this.func_226421_eO_();

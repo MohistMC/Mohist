@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/ai/attributes/RangedAttribute.java
++++ b/net/minecraft/entity/ai/attributes/RangedAttribute.java
+@@ -20,6 +20,7 @@
+    }
+ 
+    public double func_111109_a(double p_111109_1_) {
++      if (p_111109_1_ != p_111109_1_) return func_111110_b(); // CraftBukkit
+       return MathHelper.func_151237_a(p_111109_1_, this.field_111120_a, this.field_111118_b);
+    }
+ }

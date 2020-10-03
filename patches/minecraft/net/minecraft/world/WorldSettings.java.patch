@@ -1,5 +1,17 @@
 --- a/net/minecraft/world/WorldSettings.java
 +++ b/net/minecraft/world/WorldSettings.java
+@@ -4,9 +4,9 @@
+ import net.minecraft.util.datafix.codec.DatapackCodec;
+ 
+ public final class WorldSettings {
+-   private final String field_234943_a_;
++   public String field_234943_a_;
+    private final GameType field_77172_b;
+-   private final boolean field_77170_d;
++   public boolean field_77170_d;
+    private final Difficulty field_234944_d_;
+    private final boolean field_77168_f;
+    private final GameRules field_234945_f_;
 @@ -62,6 +62,7 @@
     }
  

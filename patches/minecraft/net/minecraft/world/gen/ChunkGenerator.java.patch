@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/gen/ChunkGenerator.java
++++ b/net/minecraft/world/gen/ChunkGenerator.java
+@@ -228,7 +228,16 @@
+       this.func_242705_a(StructureFeatures.field_244145_k, p_242707_1_, p_242707_2_, p_242707_3_, p_242707_4_, p_242707_5_, chunkpos, biome);
+ 
+       for(Supplier<StructureFeature<?, ?>> supplier : biome.func_242440_e().func_242487_a()) {
+-         this.func_242705_a(supplier.get(), p_242707_1_, p_242707_2_, p_242707_3_, p_242707_4_, p_242707_5_, chunkpos, biome);
++         // CraftBukkit start
++         StructureFeature<?, ?> structurefeature = (StructureFeature) supplier.get();
++         if (structurefeature.field_236269_c_ == Structure.field_236375_k_) {
++            synchronized (structurefeature) {
++               this.func_242705_a(structurefeature, p_242707_1_, p_242707_2_, p_242707_3_, p_242707_4_, p_242707_5_, chunkpos, biome);
++            }
++         } else {
++            this.func_242705_a(structurefeature, p_242707_1_, p_242707_2_, p_242707_3_, p_242707_4_, p_242707_5_, chunkpos, biome);
++         }
++         // CraftBukkit end
+       }
+ 
+    }

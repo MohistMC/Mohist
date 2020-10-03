@@ -1,0 +1,49 @@
+--- a/net/minecraft/entity/ai/goal/TemptGoal.java
++++ b/net/minecraft/entity/ai/goal/TemptGoal.java
+@@ -3,11 +3,15 @@
+ import java.util.EnumSet;
+ import net.minecraft.entity.CreatureEntity;
+ import net.minecraft.entity.EntityPredicate;
+-import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.entity.LivingEntity;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.Ingredient;
+ import net.minecraft.pathfinding.FlyingPathNavigator;
+ import net.minecraft.pathfinding.GroundPathNavigator;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+ 
+ public class TemptGoal extends Goal {
+    private static final EntityPredicate field_220762_c = (new EntityPredicate()).func_221013_a(10.0D).func_221008_a().func_221011_b().func_221009_d().func_221014_c();
+@@ -18,7 +22,7 @@
+    private double field_75281_e;
+    private double field_75278_f;
+    private double field_75279_g;
+-   protected PlayerEntity field_75289_h;
++   protected LivingEntity field_75289_h; // CraftBukkit
+    private int field_75290_i;
+    private boolean field_75287_j;
+    private final Ingredient field_151484_k;
+@@ -45,11 +49,17 @@
+          return false;
+       } else {
+          this.field_75289_h = this.field_75284_a.field_70170_p.func_217370_a(field_220762_c, this.field_75284_a);
+-         if (this.field_75289_h == null) {
++         // CraftBukkit start
++         boolean tempt = this.field_75289_h != null && (this.func_188508_a(this.field_75289_h.func_184614_ca()) || this.func_188508_a(this.field_75289_h.func_184592_cb()));
++         if (tempt) {
++            EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this.field_75284_a, this.field_75289_h, EntityTargetEvent.TargetReason.TEMPT);
++            if (event.isCancelled()) {
+             return false;
+-         } else {
+-            return this.func_188508_a(this.field_75289_h.func_184614_ca()) || this.func_188508_a(this.field_75289_h.func_184592_cb());
+          }
++            this.field_75289_h = ((event.getTarget() == null) ? null : ((CraftLivingEntity) event.getTarget()).getHandle());
++         }
++         return tempt;
++         // CraftBukkit end
+       }
+    }
+ 

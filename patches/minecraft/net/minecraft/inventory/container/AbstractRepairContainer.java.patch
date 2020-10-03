@@ -1,0 +1,30 @@
+--- a/net/minecraft/inventory/container/AbstractRepairContainer.java
++++ b/net/minecraft/inventory/container/AbstractRepairContainer.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.inventory.Inventory;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.IWorldPosCallable;
++import org.bukkit.inventory.InventoryView;
+ 
+ public abstract class AbstractRepairContainer extends Container {
+    protected final CraftResultInventory field_234642_c_ = new CraftResultInventory();
+@@ -77,6 +78,7 @@
+    }
+ 
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.field_234644_e_.func_221485_a((p_234646_2_, p_234646_3_) -> {
+          return !this.func_230302_a_(p_234646_2_.func_180495_p(p_234646_3_)) ? false : p_75145_1_.func_70092_e((double)p_234646_3_.func_177958_n() + 0.5D, (double)p_234646_3_.func_177956_o() + 0.5D, (double)p_234646_3_.func_177952_p() + 0.5D) <= 64.0D;
+       }, true);
+@@ -86,6 +88,11 @@
+       return false;
+    }
+ 
++    @Override
++    public InventoryView getBukkitView() {
++        return null;
++    }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);

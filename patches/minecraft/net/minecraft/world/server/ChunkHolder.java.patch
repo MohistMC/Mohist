@@ -1,6 +1,49 @@
 --- a/net/minecraft/world/server/ChunkHolder.java
 +++ b/net/minecraft/world/server/ChunkHolder.java
-@@ -204,7 +204,7 @@
+@@ -18,6 +18,7 @@
+ import net.minecraft.network.play.server.SMultiBlockChangePacket;
+ import net.minecraft.network.play.server.SUpdateLightPacket;
+ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.math.BlockPos;
+@@ -48,7 +49,7 @@
+    private volatile CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>> field_219313_h = field_219309_d;
+    private volatile CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>> field_219314_i = field_219309_d;
+    private CompletableFuture<IChunk> field_219315_j = CompletableFuture.completedFuture((IChunk)null);
+-   private int field_219316_k;
++   public int field_219316_k;
+    private int field_219317_l;
+    private int field_219318_m;
+    private final ChunkPos field_219319_n;
+@@ -73,6 +74,17 @@
+       this.func_219292_a(p_i50716_2_);
+    }
+ 
++   // CraftBukkit start
++   public Chunk getFullChunk() {
++      if (!func_219286_c(this.field_219316_k).func_219065_a(LocationType.BORDER)) {
++         return null; // note: using oldTicketLevel for isLoaded checks
++      }
++      CompletableFuture<Either<IChunk, IChunkLoadingError>> statusFuture = this.func_219301_a(ChunkStatus.field_222617_m);
++      Either<IChunk, IChunkLoadingError> either = (Either<IChunk, IChunkLoadingError>) statusFuture.getNow(null);
++      return either == null ? null : (Chunk) either.left().orElse(null);
++   }
++   // CraftBukkit end
++
+    public CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_219301_a(ChunkStatus p_219301_1_) {
+       CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.field_219312_g.get(p_219301_1_.func_222584_c());
+       return completablefuture == null ? field_219307_b : completablefuture;
+@@ -139,6 +151,7 @@
+       Chunk chunk = this.func_219298_c();
+       if (chunk != null) {
+          byte b0 = (byte)SectionPos.func_218159_a(p_244386_1_.func_177956_o());
++         if (b0 >= this.field_244383_q.length) return; // CraftBukkit - SPIGOT-6086
+          if (this.field_244383_q[b0] == null) {
+             this.field_244382_p = true;
+             this.field_244383_q[b0] = new ShortArraySet();
+@@ -204,7 +217,7 @@
     }
  
     private void func_244385_a(World p_244385_1_, BlockPos p_244385_2_, BlockState p_244385_3_) {
@@ -9,3 +52,60 @@
           this.func_219305_a(p_244385_1_, p_244385_2_);
        }
  
+@@ -289,6 +302,31 @@
+       boolean flag1 = this.field_219317_l <= ChunkManager.field_219249_a;
+       ChunkHolder.LocationType chunkholder$locationtype = func_219286_c(this.field_219316_k);
+       ChunkHolder.LocationType chunkholder$locationtype1 = func_219286_c(this.field_219317_l);
++      // CraftBukkit start
++      // ChunkUnloadEvent: Called before the chunk is unloaded: isChunkLoaded is still true and chunk can still be modified by plugins.
++      if (chunkholder$locationtype.func_219065_a(LocationType.BORDER) && !chunkholder$locationtype1.func_219065_a(LocationType.BORDER)) {
++         this.func_219301_a(ChunkStatus.field_222617_m).thenAccept(either -> {
++            Chunk chunk = (Chunk)either.left().orElse(null);
++            if (chunk != null) {
++               p_219291_1_.callbackExecutor.execute(() -> {
++                  // Minecraft will apply the chunks tick lists to the world once the chunk got loaded, and then store the tick
++                  // lists again inside the chunk once the chunk becomes inaccessible and set the chunk's needsSaving flag.
++                  // These actions may however happen deferred, so we manually set the needsSaving flag already here.
++                  chunk.func_177427_f(true);
++                  chunk.unloadCallback();
++               });
++            }
++            return;
++         }).exceptionally(throwable -> {
++            // ensure exceptions are printed, by default this is not the case
++            MinecraftServer.field_147145_h.fatal("Failed to schedule unload callback for chunk " + this.field_219319_n, throwable);
++            return null;
++         });
++
++         // Run callback right away if the future was already done
++         p_219291_1_.callbackExecutor.run();
++      }
++      // CraftBukkit end
+       if (flag) {
+          Either<IChunk, ChunkHolder.IChunkLoadingError> either = Either.right(new ChunkHolder.IChunkLoadingError() {
+             public String toString() {
+@@ -352,6 +390,24 @@
+ 
+       this.field_219327_v.func_219066_a(this.field_219319_n, this::func_219281_j, this.field_219317_l, this::func_219275_d);
+       this.field_219316_k = this.field_219317_l;
++      // CraftBukkit start
++      // ChunkLoadEvent: Called after the chunk is loaded: isChunkLoaded returns true and chunk is ready to be modified by plugins.
++      if (!chunkholder$locationtype.func_219065_a(LocationType.BORDER) && chunkholder$locationtype1.func_219065_a(LocationType.BORDER)) {
++         this.func_219301_a(ChunkStatus.field_222617_m).thenAccept(either -> {
++            Chunk chunk = (Chunk) either.left().orElse(null);
++            if (chunk != null) {
++               p_219291_1_.callbackExecutor.execute(() -> chunk.loadCallback());
++            }
++            return;
++         }).exceptionally(throwable -> {
++            // ensure exceptions are printed, by default this is not the case
++            MinecraftServer.field_147145_h.fatal("Failed to schedule load callback for chunk " + this.field_219319_n, throwable);
++            return null;
++         });
++         // Run callback right away if the future was already done
++         p_219291_1_.callbackExecutor.run();
++      }
++      // CraftBukkit end
+    }
+ 
+    public static ChunkStatus func_219278_b(int p_219278_0_) {

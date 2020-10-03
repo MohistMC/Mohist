@@ -29,7 +29,6 @@ import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
-    id 'net.minecrell.licenser' version '0.4'
     id 'org.ajoberstar.grgit' version '3.1.1'
     id 'com.github.ben-manes.versions' version '0.22.0'
 }
@@ -121,7 +120,6 @@ project(':forge') {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    apply plugin: 'net.minecrell.licenser'
 
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     group = 'net.minecraftforge'
@@ -377,6 +375,7 @@ project(':forge') {
         installer 'com.googlecode.json-simple:json-simple:1.1.1'
         installer 'org.xerial:sqlite-jdbc:3.32.3'
         installer 'mysql:mysql-connector-java:5.1.49'
+        installer 'org.apache.logging.log4j:log4j-iostreams:2.11.2'
         // spigot
         // paper
 
@@ -454,17 +453,6 @@ project(':forge') {
     }
 	
 	task checkAll(dependsOn: [checkATs, checkSAS, checkExcs]){}
-
-    task checkPatchesAndFix(type: CheckPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
-    task checkPatches(type: CheckPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
-    }
-    project(':forge').getTasks().getByName('genPatches').finalizedBy(checkPatches)
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
@@ -828,27 +816,6 @@ project(':forge') {
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
                 environment 'FORGE_VERSION', "${project.version.substring(MC_VERSION.length() + 1)}"
-            }
-        }
-    }
-    
-    license {
-        header = file("$rootDir/LICENSE-header.txt")
-
-        include 'net/minecraftforge/'
-        exclude 'net/minecraftforge/server/terminalconsole/'
-        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
-        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
-        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
-        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
-        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
-
-        tasks {
-            main {
-                files = files("$rootDir/src/main/java")
-            }
-            test {
-                files = files("$rootDir/src/test/java")
             }
         }
     }

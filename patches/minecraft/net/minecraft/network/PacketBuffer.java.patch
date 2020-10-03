@@ -1,18 +1,30 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
-@@ -39,7 +39,7 @@
+@@ -38,8 +38,9 @@
+ import net.minecraft.util.text.ITextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
  
 -public class PacketBuffer extends ByteBuf {
 +public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -292,6 +292,15 @@
+@@ -256,7 +257,7 @@
+       } else {
+          try {
+             CompressedStreamTools.func_74800_a(p_150786_1_, new ByteBufOutputStream(this));
+-         } catch (IOException ioexception) {
++         } catch (Exception ioexception) { // CraftBukkit - IOException -> Exception
+             throw new EncoderException(ioexception);
+          }
+       }
+@@ -292,7 +293,16 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
+-      if (p_150788_1_.func_190926_b()) {
 +      return writeItemStack(p_150788_1_, true);
 +   }
 +
@@ -22,10 +34,11 @@
 +    * If you want to send the FULL tag set limitedTag to false
 +    */
 +   public PacketBuffer writeItemStack(ItemStack p_150788_1_, boolean limitedTag) {
-       if (p_150788_1_.func_190926_b()) {
++      if (p_150788_1_.func_190926_b() || p_150788_1_.func_77973_b() == null) { // CraftBukkit - NPE fix itemstack.getItem()
           this.writeBoolean(false);
        } else {
-@@ -300,8 +309,8 @@
+          this.writeBoolean(true);
+@@ -300,8 +310,8 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
@@ -36,12 +49,17 @@
           }
  
           this.func_150786_a(compoundnbt);
-@@ -317,7 +326,7 @@
+@@ -317,7 +327,12 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);
 -         itemstack.func_77982_d(this.func_150793_b());
 +         itemstack.readShareTag(this.func_150793_b());
++         // CraftBukkit start
++         if (itemstack.func_77978_p() != null) {
++            CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++         }
++         // CraftBukkit end
           return itemstack;
        }
     }

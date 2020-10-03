@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/management/UserList.java
++++ b/net/minecraft/server/management/UserList.java
+@@ -72,6 +72,12 @@
+       return this.field_152696_d.keySet().toArray(new String[this.field_152696_d.size()]);
+    }
+ 
++   // CraftBukkit start
++   public Collection<V> getValues() {
++      return this.field_152696_d.values();
++   }
++   // CraftBukkit end
++
+    public boolean func_152690_d() {
+       return this.field_152696_d.size() < 1;
+    }

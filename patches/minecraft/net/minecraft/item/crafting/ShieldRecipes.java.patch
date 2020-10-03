@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/ShieldRecipes.java
++++ b/net/minecraft/item/crafting/ShieldRecipes.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class ShieldRecipes extends SpecialRecipe {
+    public ShieldRecipes(ResourceLocation p_i48160_1_) {
+@@ -80,4 +81,9 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222168_l;
+    }
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        return null;
++    }
+ }

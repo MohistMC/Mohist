@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
-@@ -170,11 +170,11 @@
+@@ -32,6 +32,7 @@
+ import net.minecraft.world.DimensionType;
+ import net.minecraft.world.ISeedReader;
+ import net.minecraft.world.ITickList;
++import net.minecraft.world.IWorld;
+ import net.minecraft.world.WorldGenTickList;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.biome.BiomeManager;
+@@ -170,11 +171,11 @@
  
     public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
        BlockState blockstate = this.func_180495_p(p_241212_1_);
@@ -14,7 +22,7 @@
              Block.func_220054_a(blockstate, this.field_201689_f, p_241212_1_, tileentity, p_241212_3_, ItemStack.field_190927_a);
           }
  
-@@ -194,11 +194,11 @@
+@@ -194,11 +195,11 @@
           if (compoundnbt != null) {
              if ("DUMMY".equals(compoundnbt.func_74779_i("id"))) {
                 Block block = blockstate.func_177230_c();
@@ -28,7 +36,7 @@
              } else {
                 tileentity = TileEntity.func_235657_b_(blockstate, compoundnbt);
              }
-@@ -209,7 +209,7 @@
+@@ -209,7 +210,7 @@
              }
           }
  
@@ -37,7 +45,7 @@
              field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
           }
  
-@@ -225,9 +225,9 @@
+@@ -225,9 +226,9 @@
        }
  
        Block block = p_241211_2_.func_177230_c();
@@ -49,7 +57,7 @@
           } else {
              CompoundNBT compoundnbt = new CompoundNBT();
              compoundnbt.func_74768_a("x", p_241211_1_.func_177958_n());
-@@ -236,7 +236,7 @@
+@@ -236,7 +237,7 @@
              compoundnbt.func_74778_a("id", "DUMMY");
              ichunk.func_201591_a(compoundnbt);
           }
@@ -58,3 +66,35 @@
           ichunk.func_177425_e(p_241211_1_);
        }
  
+@@ -252,9 +253,16 @@
+    }
+ 
+    public boolean func_217376_c(Entity p_217376_1_) {
+-      int i = MathHelper.func_76128_c(p_217376_1_.func_226277_ct_() / 16.0D);
+-      int j = MathHelper.func_76128_c(p_217376_1_.func_226281_cx_() / 16.0D);
+-      this.func_212866_a_(i, j).func_76612_a(p_217376_1_);
++      // CraftBukkit start
++      return addEntity(p_217376_1_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   @Override
++   public boolean addEntity(Entity entityIn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      // CraftBukkit end
++      int i = MathHelper.func_76128_c(entityIn.func_226277_ct_() / 16.0D);
++      int j = MathHelper.func_76128_c(entityIn.func_226281_cx_() / 16.0D);
++      this.func_212866_a_(i, j).func_76612_a(entityIn);
+       return true;
+    }
+ 
+@@ -328,6 +336,11 @@
+    public void func_217378_a(@Nullable PlayerEntity p_217378_1_, int p_217378_2_, BlockPos p_217378_3_, int p_217378_4_) {
+    }
+ 
++   @Override
++   public ServerWorld getMinecraftWorld() {
++      return null;
++   }
++
+    public DimensionType func_230315_m_() {
+       return this.field_241159_j_;
+    }

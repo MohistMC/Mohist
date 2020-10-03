@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/FireworkStarRecipe.java
++++ b/net/minecraft/item/crafting/FireworkStarRecipe.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Util;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class FireworkStarRecipe extends SpecialRecipe {
+    private static final Ingredient field_196212_a = Ingredient.func_199804_a(Items.field_151059_bz, Items.field_151008_G, Items.field_151074_bl, Items.field_196182_dv, Items.field_196183_dw, Items.field_196185_dy, Items.field_196184_dx, Items.field_196151_dA, Items.field_196186_dz);
+@@ -120,4 +121,9 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222164_h;
+    }
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        return null;
++    }
+ }

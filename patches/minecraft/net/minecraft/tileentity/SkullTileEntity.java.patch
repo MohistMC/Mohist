@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/SkullTileEntity.java
++++ b/net/minecraft/tileentity/SkullTileEntity.java
+@@ -22,7 +22,7 @@
+    @Nullable
+    private static MinecraftSessionService field_184299_k;
+    @Nullable
+-   private GameProfile field_152110_j;
++   public GameProfile field_152110_j;
+    private int field_184296_h;
+    private boolean field_184297_i;
+ 

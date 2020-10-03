@@ -1,0 +1,85 @@
+--- a/net/minecraft/inventory/container/LoomContainer.java
++++ b/net/minecraft/inventory/container/LoomContainer.java
+@@ -19,8 +19,29 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.inventory.CraftInventoryLoom;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.entity.Player;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class LoomContainer extends Container {
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Player player;
++
++   @Override
++   public InventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      CraftInventoryLoom inventory = new CraftInventoryLoom(this.field_217040_j, this.field_217041_k);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit stop
++
+    private final IWorldPosCallable field_217033_c;
+    private final IntReferenceHolder field_217034_d = IntReferenceHolder.func_221492_a();
+    private Runnable field_217035_e = () -> {
+@@ -36,12 +57,24 @@
+          LoomContainer.this.func_75130_a(this);
+          LoomContainer.this.field_217035_e.run();
+       }
++      // CraftBukkit start
++      @Override
++      public Location getLocation() {
++         return field_217040_j.getLocation();
++      }
++      // CraftBukkit end
+    };
+    private final IInventory field_217041_k = new Inventory(1) {
+       public void func_70296_d() {
+          super.func_70296_d();
+          LoomContainer.this.field_217035_e.run();
+       }
++      // CraftBukkit start
++      @Override
++      public Location getLocation() {
++         return field_217041_k.getLocation();
++      }
++      // CraftBukkit end
+    };
+ 
+    public LoomContainer(int p_i50073_1_, PlayerInventory p_i50073_2_) {
+@@ -101,6 +134,7 @@
+       }
+ 
+       this.func_216958_a(this.field_217034_d);
++      player = (Player) p_i50074_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -109,6 +143,7 @@
+    }
+ 
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return func_216963_a(this.field_217033_c, p_75145_1_, Blocks.field_222421_lJ);
+    }
+ 
+@@ -224,6 +259,11 @@
+             ListNBT listnbt;
+             if (compoundnbt.func_150297_b("Patterns", 9)) {
+                listnbt = compoundnbt.func_150295_c("Patterns", 10);
++               // CraftBukkit start
++               while (listnbt.size() > 20) {
++                  listnbt.remove(20);
++               }
++               // CraftBukkit end
+             } else {
+                listnbt = new ListNBT();
+                compoundnbt.func_218657_a("Patterns", listnbt);

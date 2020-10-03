@@ -1,10 +1,27 @@
 --- a/net/minecraft/enchantment/Enchantments.java
 +++ b/net/minecraft/enchantment/Enchantments.java
-@@ -3,6 +3,7 @@
+@@ -2,7 +2,9 @@
+ 
  import net.minecraft.inventory.EquipmentSlotType;
  import net.minecraft.util.registry.Registry;
++import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class Enchantments {
     private static final EquipmentSlotType[] field_222195_L = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
     public static final Enchantment field_180310_c = func_222191_a("protection", new ProtectionEnchantment(Enchantment.Rarity.COMMON, ProtectionEnchantment.Type.ALL, field_222195_L));
+@@ -44,6 +46,14 @@
+    public static final Enchantment field_185296_A = func_222191_a("mending", new MendingEnchantment(Enchantment.Rarity.RARE, EquipmentSlotType.values()));
+    public static final Enchantment field_190940_C = func_222191_a("vanishing_curse", new VanishingCurseEnchantment(Enchantment.Rarity.VERY_RARE, EquipmentSlotType.values()));
+ 
++   // CraftBukkit start
++   static {
++      for (final Object enchantment : Registry.field_212628_q) {
++         org.bukkit.enchantments.Enchantment.registerEnchantment(new CraftEnchantment((Enchantment) enchantment));
++      }
++   }
++   // CraftBukkit end
++
+    private static Enchantment func_222191_a(String p_222191_0_, Enchantment p_222191_1_) {
+       return Registry.func_218325_a(Registry.field_212628_q, p_222191_0_, p_222191_1_);
+    }

@@ -1,9 +1,28 @@
 --- a/net/minecraft/tileentity/LockableTileEntity.java
 +++ b/net/minecraft/tileentity/LockableTileEntity.java
-@@ -81,4 +81,22 @@
+@@ -16,8 +16,8 @@
+ import net.minecraft.world.LockCode;
+ 
+ public abstract class LockableTileEntity extends TileEntity implements IInventory, INamedContainerProvider, INameable {
+-   private LockCode field_174901_a = LockCode.field_180162_a;
+-   private ITextComponent field_213909_b;
++   public LockCode field_174901_a = LockCode.field_180162_a;
++   public ITextComponent field_213909_b;
+ 
+    protected LockableTileEntity(TileEntityType<?> p_i48285_1_) {
+       super(p_i48285_1_);
+@@ -81,4 +81,30 @@
     }
  
     protected abstract Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_);
++
++   // CraftBukkit start
++   @Override
++   public org.bukkit.Location getLocation() {
++      if (field_145850_b == null) return null;
++      return new org.bukkit.Location(field_145850_b.getCBWorld(), field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p());
++   }
++   // CraftBukkit end
 +
 +   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
 +   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {

@@ -1,6 +1,22 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -309,6 +309,7 @@
+@@ -28,6 +28,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.commons.lang3.ArrayUtils;
++import org.bukkit.craftbukkit.advancement.CraftAdvancement;
+ 
+ public class Advancement {
+    private final Advancement field_192076_a;
+@@ -38,6 +39,7 @@
+    private final String[][] field_192081_f;
+    private final Set<Advancement> field_192082_g = Sets.newLinkedHashSet();
+    private final ITextComponent field_193125_h;
++   public final org.bukkit.advancement.Advancement bukkit = new CraftAdvancement(this); // CraftBukkit
+ 
+    public Advancement(ResourceLocation p_i47472_1_, @Nullable Advancement p_i47472_2_, @Nullable DisplayInfo p_i47472_3_, AdvancementRewards p_i47472_4_, Map<String, Criterion> p_i47472_5_, String[][] p_i47472_6_) {
+       this.field_192079_d = p_i47472_1_;
+@@ -309,6 +311,7 @@
        }
  
        public static Advancement.Builder func_241043_a_(JsonObject p_241043_0_, ConditionArrayParser p_241043_1_) {

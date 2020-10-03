@@ -1,6 +1,14 @@
 --- a/net/minecraft/block/StemBlock.java
 +++ b/net/minecraft/block/StemBlock.java
-@@ -37,22 +37,24 @@
+@@ -16,6 +16,7 @@
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
+ 
+ public class StemBlock extends BushBlock implements IGrowable {
+    public static final IntegerProperty field_176484_a = BlockStateProperties.field_208170_W;
+@@ -37,22 +38,28 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -13,15 +21,20 @@
              if (i < 7) {
 -               p_225542_1_ = p_225542_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1));
 -               p_225542_2_.func_180501_a(p_225542_3_, p_225542_1_, 2);
-+               p_225542_2_.func_180501_a(p_225542_3_, p_225542_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1)), 2);
++               CraftEventFactory.handleBlockGrowEvent(p_225542_2_, p_225542_3_, p_225542_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1)), 2); // CraftBukkit
              } else {
                 Direction direction = Direction.Plane.HORIZONTAL.func_179518_a(p_225542_4_);
                 BlockPos blockpos = p_225542_3_.func_177972_a(direction);
                 BlockState blockstate = p_225542_2_.func_180495_p(blockpos.func_177977_b());
 -               if (p_225542_2_.func_180495_p(blockpos).func_196958_f() && (blockstate.func_203425_a(Blocks.field_150458_ak) || blockstate.func_203425_a(Blocks.field_150346_d) || blockstate.func_203425_a(Blocks.field_196660_k) || blockstate.func_203425_a(Blocks.field_196661_l) || blockstate.func_203425_a(Blocks.field_196658_i))) {
+-                  p_225542_2_.func_175656_a(blockpos, this.field_149877_a.func_176223_P());
 +               Block block = blockstate.func_177230_c();
 +               if (p_225542_2_.func_175623_d(blockpos) && (blockstate.canSustainPlant(p_225542_2_, blockpos.func_177977_b(), Direction.UP, this) || block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_196658_i)) {
-                   p_225542_2_.func_175656_a(blockpos, this.field_149877_a.func_176223_P());
++                  // CraftBukkit start
++                  if (!CraftEventFactory.handleBlockGrowEvent(p_225542_2_, blockpos, this.field_149877_a.func_176223_P())) {
++                     return;
++                  }
++                  // CraftBukkit end
                    p_225542_2_.func_175656_a(p_225542_3_, this.field_149877_a.func_196523_e().func_176223_P().func_206870_a(HorizontalBlock.field_185512_D, direction));
                 }
              }
@@ -29,7 +42,17 @@
           }
  
        }
-@@ -97,4 +99,10 @@
+@@ -83,7 +90,8 @@
+    public void func_225535_a_(ServerWorld p_225535_1_, Random p_225535_2_, BlockPos p_225535_3_, BlockState p_225535_4_) {
+       int i = Math.min(7, p_225535_4_.func_177229_b(field_176484_a) + MathHelper.func_76136_a(p_225535_1_.field_73012_v, 2, 5));
+       BlockState blockstate = p_225535_4_.func_206870_a(field_176484_a, Integer.valueOf(i));
+-      p_225535_1_.func_180501_a(p_225535_3_, blockstate, 2);
++      CraftEventFactory.handleBlockGrowEvent(p_225535_1_, p_225535_3_, blockstate, 2); // CraftBukkit
++
+       if (i == 7) {
+          blockstate.func_227034_b_(p_225535_1_, p_225535_3_, p_225535_1_.field_73012_v);
+       }
+@@ -97,4 +105,10 @@
     public StemGrownBlock func_208486_d() {
        return this.field_149877_a;
     }

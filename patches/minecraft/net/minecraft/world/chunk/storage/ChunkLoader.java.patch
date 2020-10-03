@@ -1,0 +1,74 @@
+--- a/net/minecraft/world/chunk/storage/ChunkLoader.java
++++ b/net/minecraft/world/chunk/storage/ChunkLoader.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.world.chunk.storage;
+ 
++import com.google.common.base.Preconditions;
+ import com.mojang.datafixers.DataFixer;
+ import java.io.File;
+ import java.io.IOException;
+@@ -11,9 +12,16 @@
+ import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.datafix.DefaultTypeReferences;
+ import net.minecraft.util.math.ChunkPos;
++import net.minecraft.world.Dimension;
++import net.minecraft.world.DimensionType;
++import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
++import net.minecraft.world.chunk.ChunkStatus;
+ import net.minecraft.world.gen.feature.structure.LegacyStructureDataUtil;
++import net.minecraft.world.server.ServerChunkProvider;
++import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.storage.DimensionSavedDataManager;
++import org.bukkit.Bukkit;
+ 
+ public class ChunkLoader implements AutoCloseable {
+    private final IOWorker field_227077_a_;
+@@ -26,9 +34,46 @@
+       this.field_227077_a_ = new IOWorker(p_i231889_1_, p_i231889_3_, "chunk");
+    }
+ 
+-   public CompoundNBT func_235968_a_(RegistryKey<World> p_235968_1_, Supplier<DimensionSavedDataManager> p_235968_2_, CompoundNBT p_235968_3_) {
++   // CraftBukkit start
++   private boolean check(ServerChunkProvider cps, int x, int z) throws IOException {
++      ChunkPos pos = new ChunkPos(x, z);
++      if (cps != null) {
++         Preconditions.checkState(Bukkit.isPrimaryThread(), "primary thread");
++         if (cps.func_73149_a(x, z)) {
++            return true;
++         }
++      }
++      CompoundNBT nbt = this.func_227078_e_(pos);
++      if (nbt != null) {
++         CompoundNBT level = nbt.func_74775_l("Level");
++         if (level.func_74767_n("TerrainPopulated")) {
++            return true;
++         }
++         ChunkStatus status = ChunkStatus.func_222591_a(level.func_74779_i("Status"));
++         if (status != null && status.func_209003_a(ChunkStatus.field_222613_i)) {
++            return true;
++         }
++      }
++      return false;
++   }
++
++   public CompoundNBT func_235968_a_(RegistryKey<World> p_235968_1_, Supplier<DimensionSavedDataManager> p_235968_2_, CompoundNBT p_235968_3_, ChunkPos pos, @Nullable IWorld generatoraccess) throws IOException {
++      // CraftBukkit end
+       int i = func_219165_a(p_235968_3_);
+       int j = 1493;
++
++      // CraftBukkit start
++      if (i < 1466) {
++         CompoundNBT level = p_235968_3_.func_74775_l("Level");
++         if (level.func_74767_n("TerrainPopulated") && !level.func_74767_n("LightPopulated")) {
++            ServerChunkProvider cps = (generatoraccess == null) ? null : ((ServerWorld)generatoraccess).func_72863_F();
++            if (this.check(cps, pos.field_77276_a - 1, pos.field_77275_b) && this.check(cps, pos.field_77276_a - 1, pos.field_77275_b - 1) && this.check(cps, pos.field_77276_a, pos.field_77275_b - 1)) {
++               level.func_74757_a("LightPopulated", true);
++            }
++         }
++      }
++      // CraftBukkit end
++
+       if (i < 1493) {
+          p_235968_3_ = NBTUtil.func_210821_a(this.field_219168_b, DefaultTypeReferences.CHUNK, p_235968_3_, i, 1493);
+          if (p_235968_3_.func_74775_l("Level").func_74767_n("hasLegacyStructureData")) {

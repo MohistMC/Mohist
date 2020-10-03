@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/AbstractCookingRecipe.java
++++ b/net/minecraft/item/crafting/AbstractCookingRecipe.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public abstract class AbstractCookingRecipe implements IRecipe<IInventory> {
+    protected final IRecipeType<?> field_222139_a;
+@@ -66,4 +67,9 @@
+    public IRecipeType<?> func_222127_g() {
+       return this.field_222139_a;
+    }
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        return null;
++    }
+ }

@@ -8,3 +8,18 @@
  public class Effects {
     public static final Effect field_76424_c = func_220308_a(1, "speed", (new Effect(EffectType.BENEFICIAL, 8171462)).func_220304_a(Attributes.field_233821_d_, "91AEAA56-376B-4498-935B-2F7F68070635", (double)0.2F, AttributeModifier.Operation.MULTIPLY_TOTAL));
     public static final Effect field_76421_d = func_220308_a(2, "slowness", (new Effect(EffectType.HARMFUL, 5926017)).func_220304_a(Attributes.field_233821_d_, "7107DE5E-7CE8-4030-940E-514C1F160890", (double)-0.15F, AttributeModifier.Operation.MULTIPLY_TOTAL));
+@@ -61,6 +62,14 @@
+    });
+    public static final Effect field_220310_F = func_220308_a(32, "hero_of_the_village", new Effect(EffectType.BENEFICIAL, 4521796));
+ 
++   // CraftBukkit start
++   static {
++      for (Object effect : Registry.field_212631_t) {
++         org.bukkit.potion.PotionEffectType.registerPotionEffectType(new org.bukkit.craftbukkit.potion.CraftPotionEffectType((Effect) effect));
++      }
++   }
++   // CraftBukkit end
++
+    private static Effect func_220308_a(int p_220308_0_, String p_220308_1_, Effect p_220308_2_) {
+       return Registry.func_218343_a(Registry.field_212631_t, p_220308_0_, p_220308_1_, p_220308_2_);
+    }

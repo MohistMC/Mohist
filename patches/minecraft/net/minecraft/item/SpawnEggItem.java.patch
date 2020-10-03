@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/SpawnEggItem.java
++++ b/net/minecraft/item/SpawnEggItem.java
+@@ -164,7 +164,7 @@
+                return Optional.empty();
+             } else {
+                mobentity.func_70012_b(p_234809_5_.func_82615_a(), p_234809_5_.func_82617_b(), p_234809_5_.func_82616_c(), 0.0F, 0.0F);
+-               p_234809_4_.func_242417_l(mobentity);
++               p_234809_4_.addAllEntities(mobentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+                if (p_234809_6_.func_82837_s()) {
+                   mobentity.func_200203_b(p_234809_6_.func_200301_q());
+                }

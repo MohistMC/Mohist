@@ -23,7 +23,7 @@
        synchronized(this.field_151274_e) {
           Class<? extends ServerSocketChannel> oclass;
           LazyValue<? extends EventLoopGroup> lazyvalue;
-@@ -78,7 +80,7 @@
+@@ -78,14 +80,14 @@
                 } catch (ChannelException channelexception) {
                 }
  
@@ -32,3 +32,27 @@
                 int i = NetworkSystem.this.field_151273_d.func_241871_k();
                 NetworkManager networkmanager = (NetworkManager)(i > 0 ? new RateLimitedNetworkManager(i) : new NetworkManager(PacketDirection.SERVERBOUND));
                 NetworkSystem.this.field_151272_f.add(networkmanager);
+                p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
+                networkmanager.func_150719_a(new ServerHandshakeNetHandler(NetworkSystem.this.field_151273_d, networkmanager));
+             }
+-         }).group(lazyvalue.func_179281_c()).localAddress(p_151265_1_, p_151265_2_).bind().syncUninterruptibly());
++         }).group(lazyvalue.func_179281_c()).localAddress(p_151265_1_, p_151265_2_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
+       }
+    }
+ 
+@@ -155,4 +157,15 @@
+    public MinecraftServer func_151267_d() {
+       return this.field_151273_d;
+    }
++
++   // CraftBukkit start
++   public void acceptConnections() {
++      synchronized (this.field_151274_e) {
++         for (final ChannelFuture future : this.field_151274_e) {
++            future.channel().config().setAutoRead(true);
++         }
++      }
++   }
++   // CraftBukkit end
++
+ }

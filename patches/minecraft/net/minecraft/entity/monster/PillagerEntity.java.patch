@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/PillagerEntity.java
++++ b/net/minecraft/entity/monster/PillagerEntity.java
+@@ -56,7 +56,7 @@
+ 
+ public class PillagerEntity extends AbstractIllagerEntity implements ICrossbowUser {
+    private static final DataParameter<Boolean> field_213676_b = EntityDataManager.func_187226_a(PillagerEntity.class, DataSerializers.field_187198_h);
+-   private final Inventory field_213677_bz = new Inventory(5);
++   public final Inventory field_213677_bz = new Inventory(5);
+ 
+    public PillagerEntity(EntityType<? extends PillagerEntity> p_i50198_1_, World p_i50198_2_) {
+       super(p_i50198_1_, p_i50198_2_);

@@ -101,3 +101,22 @@
                    ((MobEntity)p_242927_6_).func_213386_a(p_237143_1_, p_237143_1_.func_175649_E(new BlockPos(vector3d1)), SpawnReason.STRUCTURE, (ILivingEntityData)null, compoundnbt);
                 }
  
+@@ -406,11 +432,13 @@
+    }
+ 
+    private static Optional<Entity> func_215382_a(IServerWorld p_215382_0_, CompoundNBT p_215382_1_) {
+-      try {
+-         return EntityType.func_220330_a(p_215382_1_, p_215382_0_.func_201672_e());
+-      } catch (Exception exception) {
+-         return Optional.empty();
+-      }
++      // CraftBukkit start
++      //      try {
++      return EntityType.func_220330_a(p_215382_1_, p_215382_0_.func_201672_e());
++      //      } catch (Exception exception) {
++      //         return Optional.empty();
++      //      }
++      // CraftBukkit end
+    }
+ 
+    public BlockPos func_186257_a(Rotation p_186257_1_) {

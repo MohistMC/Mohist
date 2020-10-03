@@ -9,3 +9,12 @@
     private static final EnumSet<Heightmap.Type> field_222618_n = EnumSet.of(Heightmap.Type.OCEAN_FLOOR_WG, Heightmap.Type.WORLD_SURFACE_WG);
     private static final EnumSet<Heightmap.Type> field_222619_o = EnumSet.of(Heightmap.Type.OCEAN_FLOOR, Heightmap.Type.WORLD_SURFACE, Heightmap.Type.MOTION_BLOCKING, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES);
     private static final ChunkStatus.ILoadingWorker field_223211_p = (p_222588_0_, p_222588_1_, p_222588_2_, p_222588_3_, p_222588_4_, p_222588_5_) -> {
+@@ -37,7 +37,7 @@
+    });
+    public static final ChunkStatus field_222606_b = func_223207_a("structure_starts", field_223226_a_, 0, field_222618_n, ChunkStatus.Type.PROTOCHUNK, (p_222586_0_, p_222586_1_, p_222586_2_, p_222586_3_, p_222586_4_, p_222586_5_, p_222586_6_, p_222586_7_) -> {
+       if (!p_222586_7_.func_201589_g().func_209003_a(p_222586_0_)) {
+-         if (p_222586_1_.func_73046_m().func_240793_aU_().func_230418_z_().func_236222_c_()) {
++         if (p_222586_1_.field_241103_E_.func_230418_z_().func_236222_c_()) { // CraftBukkit
+             p_222586_2_.func_242707_a(p_222586_1_.func_241828_r(), p_222586_1_.func_241112_a_(), p_222586_7_, p_222586_3_, p_222586_1_.func_72905_C());
+          }
+ 

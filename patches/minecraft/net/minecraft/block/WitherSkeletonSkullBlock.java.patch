@@ -1,0 +1,58 @@
+--- a/net/minecraft/block/WitherSkeletonSkullBlock.java
++++ b/net/minecraft/block/WitherSkeletonSkullBlock.java
+@@ -21,6 +21,8 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+ 
+ public class WitherSkeletonSkullBlock extends SkullBlock {
+    @Nullable
+@@ -42,6 +44,7 @@
+    }
+ 
+    public static void func_196298_a(World p_196298_0_, BlockPos p_196298_1_, SkullTileEntity p_196298_2_) {
++      if (p_196298_0_.captureBlockStates) return; // CraftBukkit
+       if (!p_196298_0_.field_72995_K) {
+          BlockState blockstate = p_196298_2_.func_195044_w();
+          boolean flag = blockstate.func_203425_a(Blocks.field_196705_eO) || blockstate.func_203425_a(Blocks.field_196704_eN);
+@@ -49,11 +52,13 @@
+             BlockPattern blockpattern = func_196296_d();
+             BlockPattern.PatternHelper blockpattern$patternhelper = blockpattern.func_177681_a(p_196298_0_, p_196298_1_);
+             if (blockpattern$patternhelper != null) {
++               // CraftBukkit start - Use BlockStateListPopulator
++               BlockStateListPopulator blockList = new BlockStateListPopulator(p_196298_0_);
+                for(int i = 0; i < blockpattern.func_177684_c(); ++i) {
+                   for(int j = 0; j < blockpattern.func_177685_b(); ++j) {
+                      CachedBlockInfo cachedblockinfo = blockpattern$patternhelper.func_177670_a(i, j, 0);
+-                     p_196298_0_.func_180501_a(cachedblockinfo.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2);
+-                     p_196298_0_.func_217379_c(2001, cachedblockinfo.func_177508_d(), Block.func_196246_j(cachedblockinfo.func_177509_a()));
++                     blockList.func_180501_a(cachedblockinfo.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2); // CraftBukkit
++                      p_196298_0_.func_217379_c(2001, cachedblockinfo.func_177508_d(), Block.func_196246_j(cachedblockinfo.func_177509_a())); // CraftBukkit
+                   }
+                }
+ 
+@@ -63,11 +68,21 @@
+                witherentity.field_70761_aq = blockpattern$patternhelper.func_177669_b().func_176740_k() == Direction.Axis.X ? 0.0F : 90.0F;
+                witherentity.func_82206_m();
+ 
++               // CraftBukkit start
++               if (!p_196298_0_.addEntity(witherentity, SpawnReason.BUILD_WITHER)) {
++                  return;
++               }
++               for (BlockPos blockPos : blockList.getBlocks()) {
++                  p_196298_0_.func_217379_c(2001, blockPos, Block.func_196246_j(p_196298_0_.func_180495_p(p_196298_1_)));
++               }
++               blockList.updateList();
++               // CraftBukkit end
++
+                for(ServerPlayerEntity serverplayerentity : p_196298_0_.func_217357_a(ServerPlayerEntity.class, witherentity.func_174813_aQ().func_186662_g(50.0D))) {
+                   CriteriaTriggers.field_192133_m.func_192229_a(serverplayerentity, witherentity);
+                }
+ 
+-               p_196298_0_.func_217376_c(witherentity);
++               // worldIn.addEntity(witherentity);  // CraftBukkit - moved up
+ 
+                for(int k = 0; k < blockpattern.func_177684_c(); ++k) {
+                   for(int l = 0; l < blockpattern.func_177685_b(); ++l) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/StriderEntity.java
++++ b/net/minecraft/entity/passive/StriderEntity.java
+@@ -75,7 +75,7 @@
+    private static final DataParameter<Integer> field_234310_bw_ = EntityDataManager.func_187226_a(StriderEntity.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Boolean> field_234311_bx_ = EntityDataManager.func_187226_a(StriderEntity.class, DataSerializers.field_187198_h);
+    private static final DataParameter<Boolean> field_234312_by_ = EntityDataManager.func_187226_a(StriderEntity.class, DataSerializers.field_187198_h);
+-   private final BoostHelper field_234313_bz_ = new BoostHelper(this.field_70180_af, field_234310_bw_, field_234312_by_);
++   public final BoostHelper field_234313_bz_ = new BoostHelper(this.field_70180_af, field_234310_bw_, field_234312_by_);
+    private TemptGoal field_234306_bA_;
+    private PanicGoal field_234307_bB_;
+ 

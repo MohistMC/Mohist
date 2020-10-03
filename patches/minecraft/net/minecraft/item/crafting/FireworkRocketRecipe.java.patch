@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/FireworkRocketRecipe.java
++++ b/net/minecraft/item/crafting/FireworkRocketRecipe.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.nbt.ListNBT;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class FireworkRocketRecipe extends SpecialRecipe {
+    private static final Ingredient field_196209_a = Ingredient.func_199804_a(Items.field_151121_aF);
+@@ -83,4 +84,9 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222163_g;
+    }
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        return null;
++    }
+ }

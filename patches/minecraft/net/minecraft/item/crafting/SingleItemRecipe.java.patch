@@ -1,6 +1,28 @@
 --- a/net/minecraft/item/crafting/SingleItemRecipe.java
 +++ b/net/minecraft/item/crafting/SingleItemRecipe.java
-@@ -60,7 +60,7 @@
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.Registry;
++import org.bukkit.inventory.Recipe;
+ 
+ public abstract class SingleItemRecipe implements IRecipe<IInventory> {
+    protected final Ingredient field_222131_a;
+@@ -30,7 +31,12 @@
+       return this.field_222135_e;
+    }
+ 
+-   public IRecipeSerializer<?> func_199559_b() {
++    @Override
++    public Recipe toBukkitRecipe() {
++        return null;
++    }
++
++    public IRecipeSerializer<?> func_199559_b() {
+       return this.field_222136_f;
+    }
+ 
+@@ -60,7 +66,7 @@
        return this.field_222132_b.func_77946_l();
     }
  

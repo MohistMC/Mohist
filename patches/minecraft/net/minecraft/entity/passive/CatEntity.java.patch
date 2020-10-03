@@ -1,11 +1,28 @@
 --- a/net/minecraft/entity/passive/CatEntity.java
 +++ b/net/minecraft/entity/passive/CatEntity.java
-@@ -402,7 +402,7 @@
+@@ -67,6 +67,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
+ 
+ public class CatEntity extends TameableEntity {
+    private static final Ingredient field_213426_bE = Ingredient.func_199804_a(Items.field_196086_aW, Items.field_196087_aX);
+@@ -402,7 +403,7 @@
              }
           } else if (this.func_70877_b(itemstack)) {
              this.func_175505_a(p_230254_1_, itemstack);
 -            if (this.field_70146_Z.nextInt(3) == 0) {
-+            if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_230254_1_)) {
++            if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_230254_1_) && !CraftEventFactory.callEntityTameEvent(this, p_230254_1_).isCancelled()) { // CraftBukkit
                 this.func_193101_c(p_230254_1_);
                 this.func_233687_w_(true);
                 this.field_70170_p.func_72960_a(this, (byte)7);
+@@ -579,7 +580,7 @@
+ 
+    static class TemptGoal extends net.minecraft.entity.ai.goal.TemptGoal {
+       @Nullable
+-      private PlayerEntity field_220763_c;
++      private LivingEntity field_220763_c; // CraftBukkit
+       private final CatEntity field_220764_d;
+ 
+       public TemptGoal(CatEntity p_i50438_1_, double p_i50438_2_, Ingredient p_i50438_4_, boolean p_i50438_5_) {

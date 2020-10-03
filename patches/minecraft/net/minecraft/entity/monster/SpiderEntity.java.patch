@@ -1,6 +1,14 @@
 --- a/net/minecraft/entity/monster/SpiderEntity.java
 +++ b/net/minecraft/entity/monster/SpiderEntity.java
-@@ -118,7 +118,12 @@
+@@ -41,6 +41,7 @@
+ import net.minecraft.world.DifficultyInstance;
+ import net.minecraft.world.IServerWorld;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
+ 
+ public class SpiderEntity extends MonsterEntity {
+    private static final DataParameter<Byte> field_184729_a = EntityDataManager.func_187226_a(SpiderEntity.class, DataSerializers.field_187191_a);
+@@ -118,7 +119,12 @@
     }
  
     public boolean func_70687_e(EffectInstance p_70687_1_) {
@@ -14,3 +22,12 @@
     }
  
     public boolean func_70841_p() {
+@@ -156,7 +162,7 @@
+       if (p_213386_4_ instanceof SpiderEntity.GroupData) {
+          Effect effect = ((SpiderEntity.GroupData)p_213386_4_).field_188478_a;
+          if (effect != null) {
+-            this.func_195064_c(new EffectInstance(effect, Integer.MAX_VALUE));
++            this.addPotionEffect(new EffectInstance(effect, Integer.MAX_VALUE), Cause.SPIDER_SPAWN); // CraftBukkit
+          }
+       }
+ 

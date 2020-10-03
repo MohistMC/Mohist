@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/monster/piglin/AbstractPiglinEntity.java
++++ b/net/minecraft/entity/monster/piglin/AbstractPiglinEntity.java
+@@ -24,7 +24,7 @@
+ 
+ public abstract class AbstractPiglinEntity extends MonsterEntity {
+    protected static final DataParameter<Boolean> field_242333_b = EntityDataManager.func_187226_a(AbstractPiglinEntity.class, DataSerializers.field_187198_h);
+-   protected int field_242334_c = 0;
++   public int field_242334_c = 0;
+ 
+    public AbstractPiglinEntity(EntityType<? extends AbstractPiglinEntity> p_i241915_1_, World p_i241915_2_) {
+       super(p_i241915_1_, p_i241915_2_);
+@@ -47,7 +47,7 @@
+       this.func_184212_Q().func_187227_b(field_242333_b, p_242340_1_);
+    }
+ 
+-   protected boolean func_242335_eK() {
++   public boolean func_242335_eK() {
+       return this.func_184212_Q().func_187225_a(field_242333_b);
+    }
+ 

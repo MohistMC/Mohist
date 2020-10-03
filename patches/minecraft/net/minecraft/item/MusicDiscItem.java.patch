@@ -41,7 +41,15 @@
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
        World world = p_195939_1_.func_195991_k();
        BlockPos blockpos = p_195939_1_.func_195995_a();
-@@ -77,6 +100,6 @@
+@@ -40,6 +63,7 @@
+       if (blockstate.func_203425_a(Blocks.field_150421_aI) && !blockstate.func_177229_b(JukeboxBlock.field_176432_a)) {
+          ItemStack itemstack = p_195939_1_.func_195996_i();
+          if (!world.field_72995_K) {
++            if (true) return ActionResultType.SUCCESS; // CraftBukkit - handled in ItemStack
+             ((JukeboxBlock)Blocks.field_150421_aI).func_176431_a(world, blockpos, blockstate, itemstack);
+             world.func_217378_a((PlayerEntity)null, 1010, blockpos, Item.func_150891_b(this));
+             itemstack.func_190918_g(1);
+@@ -77,6 +101,6 @@
  
     @OnlyIn(Dist.CLIENT)
     public SoundEvent func_185075_h() {

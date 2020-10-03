@@ -1,6 +1,24 @@
 --- a/net/minecraft/entity/passive/PandaEntity.java
 +++ b/net/minecraft/entity/passive/PandaEntity.java
-@@ -586,7 +586,7 @@
+@@ -61,6 +61,8 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+ 
+ public class PandaEntity extends AnimalEntity {
+    private static final DataParameter<Integer> field_213609_bA = EntityDataManager.func_187226_a(PandaEntity.class, DataSerializers.field_187192_b);
+@@ -492,7 +494,7 @@
+    }
+ 
+    protected void func_175445_a(ItemEntity p_175445_1_) {
+-      if (this.func_184582_a(EquipmentSlotType.MAINHAND).func_190926_b() && field_213607_bQ.test(p_175445_1_)) {
++      if(!CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, 0, !(this.func_184582_a(EquipmentSlotType.MAINHAND).func_190926_b() && field_213607_bQ.test(p_175445_1_))).isCancelled()) {  // CraftBukkit
+          this.func_233630_a_(p_175445_1_);
+          ItemStack itemstack = p_175445_1_.func_92059_d();
+          this.func_184201_a(EquipmentSlotType.MAINHAND, itemstack);
+@@ -586,7 +588,7 @@
           if (this.func_70631_g_()) {
              this.func_175505_a(p_230254_1_, itemstack);
              this.func_175501_a((int)((float)(-this.func_70874_b() / 20) * 0.1F), true);
@@ -9,3 +27,12 @@
              this.func_175505_a(p_230254_1_, itemstack);
              this.func_146082_f(p_230254_1_);
           } else {
+@@ -928,7 +930,7 @@
+ 
+       protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
+          if (p_220793_1_ instanceof PandaEntity && ((PandaEntity)p_220793_1_).func_213398_dR()) {
+-            p_220793_1_.func_70624_b(p_220793_2_);
++            p_220793_1_.setAttackTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit
+          }
+ 
+       }

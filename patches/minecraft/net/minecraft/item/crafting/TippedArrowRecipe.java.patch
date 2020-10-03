@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/crafting/TippedArrowRecipe.java
++++ b/net/minecraft/item/crafting/TippedArrowRecipe.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.potion.PotionUtils;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class TippedArrowRecipe extends SpecialRecipe {
+    public TippedArrowRecipe(ResourceLocation p_i48184_1_) {
+@@ -58,4 +59,9 @@
+    public IRecipeSerializer<?> func_199559_b() {
+       return IRecipeSerializer.field_222166_j;
+    }
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        return null;
++    }
+ }

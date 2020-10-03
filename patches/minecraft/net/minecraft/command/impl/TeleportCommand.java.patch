@@ -1,6 +1,39 @@
 --- a/net/minecraft/command/impl/TeleportCommand.java
 +++ b/net/minecraft/command/impl/TeleportCommand.java
-@@ -159,7 +159,6 @@
+@@ -31,6 +31,9 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.server.TicketType;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.event.entity.EntityTeleportEvent;
+ 
+ public class TeleportCommand {
+    private static final SimpleCommandExceptionType field_241077_a_ = new SimpleCommandExceptionType(new TranslationTextComponent("commands.teleport.invalidPosition"));
+@@ -144,6 +147,22 @@
+             float f1 = MathHelper.func_76142_g(p_201127_10_);
+             float f = MathHelper.func_76142_g(p_201127_11_);
+             f = MathHelper.func_76131_a(f, -90.0F, 90.0F);
++
++            // CraftBukkit start - Teleport event
++            Location to = new Location(p_201127_2_.getCBWorld(), p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
++            EntityTeleportEvent event = new EntityTeleportEvent(p_201127_1_.getBukkitEntity(), p_201127_1_.getBukkitEntity().getLocation(), to);
++            p_201127_2_.getCBServer().getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               return;
++            }
++            p_201127_3_ = to.getX();
++            p_201127_5_ = to.getY();
++            p_201127_7_ = to.getZ();
++            f1 = to.getYaw();
++            f = to.getPitch();
++            p_201127_2_ = ((CraftWorld) to.getWorld()).getHandle();
++            // CraftBukkit end
++
+             if (p_201127_2_ == p_201127_1_.field_70170_p) {
+                p_201127_1_.func_70012_b(p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
+                p_201127_1_.func_70034_d(f1);
+@@ -159,7 +178,6 @@
                 p_201127_1_.func_70012_b(p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
                 p_201127_1_.func_70034_d(f1);
                 p_201127_2_.func_217460_e(p_201127_1_);

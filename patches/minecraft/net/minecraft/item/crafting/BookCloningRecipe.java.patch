@@ -1,6 +1,14 @@
 --- a/net/minecraft/item/crafting/BookCloningRecipe.java
 +++ b/net/minecraft/item/crafting/BookCloningRecipe.java
-@@ -79,8 +79,8 @@
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.Recipe;
+ 
+ public class BookCloningRecipe extends SpecialRecipe {
+    public BookCloningRecipe(ResourceLocation p_i48170_1_) {
+@@ -79,8 +80,8 @@
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
           ItemStack itemstack = p_179532_1_.func_70301_a(i);
@@ -11,3 +19,15 @@
           } else if (itemstack.func_77973_b() instanceof WrittenBookItem) {
              ItemStack itemstack1 = itemstack.func_77946_l();
              itemstack1.func_190920_e(1);
+@@ -96,6 +97,11 @@
+       return IRecipeSerializer.field_222160_d;
+    }
+ 
++   @Override
++   public Recipe toBukkitRecipe() {
++      return null;
++   }
++
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ >= 3 && p_194133_2_ >= 3;
+    }

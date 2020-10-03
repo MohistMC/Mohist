@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/ItemUseContext.java
++++ b/net/minecraft/item/ItemUseContext.java
+@@ -21,7 +21,7 @@
+       this(p_i50033_1_.field_70170_p, p_i50033_1_, p_i50033_2_, p_i50033_1_.func_184586_b(p_i50033_2_), p_i50033_3_);
+    }
+ 
+-   protected ItemUseContext(World p_i50034_1_, @Nullable PlayerEntity p_i50034_2_, Hand p_i50034_3_, ItemStack p_i50034_4_, BlockRayTraceResult p_i50034_5_) {
++   public ItemUseContext(World p_i50034_1_, @Nullable PlayerEntity p_i50034_2_, Hand p_i50034_3_, ItemStack p_i50034_4_, BlockRayTraceResult p_i50034_5_) {
+       this.field_196001_b = p_i50034_2_;
+       this.field_221534_c = p_i50034_3_;
+       this.field_221535_d = p_i50034_5_;

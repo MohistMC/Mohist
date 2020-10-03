@@ -1,0 +1,122 @@
+--- a/net/minecraft/network/status/ServerStatusNetHandler.java
++++ b/net/minecraft/network/status/ServerStatusNetHandler.java
+@@ -1,13 +1,26 @@
+ package net.minecraft.network.status;
+ 
++import com.mojang.authlib.GameProfile;
++import java.net.InetSocketAddress;
++import java.util.ArrayList;
++import java.util.Iterator;
++import java.util.List;
++import java.util.NoSuchElementException;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.network.NetworkManager;
++import net.minecraft.network.ServerStatusResponse;
+ import net.minecraft.network.status.client.CPingPacket;
+ import net.minecraft.network.status.client.CServerQueryPacket;
+ import net.minecraft.network.status.server.SPongPacket;
+ import net.minecraft.network.status.server.SServerInfoPacket;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.StringTextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.util.CraftIconCache;
++import org.bukkit.entity.Player;
+ 
+ public class ServerStatusNetHandler implements IServerStatusNetHandler {
+    private static final ITextComponent field_183007_a = new TranslationTextComponent("multiplayer.status.request_handled");
+@@ -32,7 +45,91 @@
+          this.field_147313_b.func_150718_a(field_183007_a);
+       } else {
+          this.field_183008_d = true;
+-         this.field_147313_b.func_179290_a(new SServerInfoPacket(this.field_147314_a.func_147134_at()));
++         // CraftBukkit start
++         // this.networkManager.sendPacket(new SServerInfoPacket(this.server.getServerStatusResponse()));
++         Object[] players = field_147314_a.func_184103_al().field_72404_b.toArray();
++         class ServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
++
++            CraftIconCache icon = field_147314_a.server.getServerIcon();
++
++            ServerListPingEvent() {
++               super(((InetSocketAddress) ServerStatusNetHandler.this.field_147313_b.func_74430_c()).getAddress(), ServerStatusNetHandler.this.field_147314_a.func_71273_Y(), ServerStatusNetHandler.this.field_147314_a.func_184103_al().func_72352_l());
++               this.icon = ServerStatusNetHandler.this.field_147314_a.server.getServerIcon();
++            }
++
++            @Override
++            public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
++               if (!(icon instanceof CraftIconCache)) {
++                  throw new IllegalArgumentException(icon + " was not created by " + CraftServer.class);
++               }
++               this.icon = (CraftIconCache) icon;
++            }
++
++            @Override
++            public Iterator<Player> iterator() throws UnsupportedOperationException {
++               return new Iterator<Player>() {
++                  int i;
++                  int ret = Integer.MIN_VALUE;
++                  ServerPlayerEntity player;
++
++                  @Override
++                  public boolean hasNext() {
++                     if (this.player != null) {
++                        return true;
++                     }
++                     final Object[] currentPlayers = players;
++                     for (int length = currentPlayers.length, i = this.i; i < length; ++i) {
++                        final ServerPlayerEntity player = (ServerPlayerEntity) currentPlayers[i];
++                        if (player != null) {
++                           this.i = i + 1;
++                           this.player = player;
++                           return true;
++                        }
++                     }
++                     return false;
++                  }
++
++                  @Override
++                  public Player next() {
++                     if (!this.hasNext()) {
++                        throw new NoSuchElementException();
++                     }
++                     final ServerPlayerEntity player = this.player;
++                     this.player = null;
++                     this.ret = this.i - 1;
++                     return player.getBukkitEntity();
++                  }
++
++                  @Override
++                  public void remove() {
++                     final Object[] currentPlayers = players;
++                     final int i = this.ret;
++                     if (i < 0 || currentPlayers[i] == null) {
++                        throw new IllegalStateException();
++                     }
++                     currentPlayers[i] = null;
++                  }
++               };
++            }
++         }
++         ServerListPingEvent event = new ServerListPingEvent();
++         this.field_147314_a.server.getPluginManager().callEvent(event);
++         List<GameProfile> profiles = new ArrayList<GameProfile>(players.length);
++         for (Object player : players) {
++            if (player != null) {
++               profiles.add(((ServerPlayerEntity) player).func_146103_bH());
++            }
++         }
++         ServerStatusResponse.Players playerSample = new ServerStatusResponse.Players(event.getMaxPlayers(), profiles.size());
++         playerSample.func_151330_a(profiles.toArray(new GameProfile[profiles.size()]));
++
++         ServerStatusResponse ping = new ServerStatusResponse();
++         ping.func_151320_a(event.icon.value);
++         ping.func_151315_a(new StringTextComponent(event.getMotd()));
++         ping.func_151319_a(playerSample);
++         int version = SharedConstants.func_215069_a().getProtocolVersion();
++         ping.func_151321_a(new ServerStatusResponse.Version(String.valueOf(this.field_147314_a.getServerModName()) + " " + this.field_147314_a.func_71249_w(), version));
++         this.field_147313_b.func_179290_a(new SServerInfoPacket(ping));
+       }
+    }
+ 

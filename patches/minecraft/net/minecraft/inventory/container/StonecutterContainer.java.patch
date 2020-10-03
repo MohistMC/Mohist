@@ -1,0 +1,62 @@
+--- a/net/minecraft/inventory/container/StonecutterContainer.java
++++ b/net/minecraft/inventory/container/StonecutterContainer.java
+@@ -19,6 +19,11 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.inventory.CraftInventoryStonecutter;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.entity.Player;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class StonecutterContainer extends Container {
+    private final IWorldPosCallable field_217088_g;
+@@ -37,9 +42,31 @@
+          StonecutterContainer.this.func_75130_a(this);
+          StonecutterContainer.this.field_217094_m.run();
+       }
++
++      // CraftBukkit start
++      @Override
++      public Location getLocation() {
++         return field_217088_g.getLocation();
++      }
++      // CraftBukkit end
+    };
+    private final CraftResultInventory field_217095_n = new CraftResultInventory();
+ 
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Player player;
++
++   @Override
++   public InventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.field_217087_f, this.field_217095_n);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
++
+    public StonecutterContainer(int p_i50059_1_, PlayerInventory p_i50059_2_) {
+       this(p_i50059_1_, p_i50059_2_, IWorldPosCallable.field_221489_a);
+    }
+@@ -85,6 +112,7 @@
+       }
+ 
+       this.func_216958_a(this.field_217089_h);
++      player = (Player) p_i50060_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -108,6 +136,7 @@
+    }
+ 
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return func_216963_a(this.field_217088_g, p_75145_1_, Blocks.field_222430_lS);
+    }
+ 

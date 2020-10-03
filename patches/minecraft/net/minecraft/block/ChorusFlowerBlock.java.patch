@@ -1,6 +1,14 @@
 --- a/net/minecraft/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/block/ChorusFlowerBlock.java
-@@ -40,7 +40,7 @@
+@@ -14,6 +14,7 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public class ChorusFlowerBlock extends Block {
+    public static final IntegerProperty field_185607_a = BlockStateProperties.field_208169_V;
+@@ -40,7 +41,7 @@
        BlockPos blockpos = p_225542_3_.func_177984_a();
        if (p_225542_2_.func_175623_d(blockpos) && blockpos.func_177956_o() < 256) {
           int i = p_225542_1_.func_177229_b(field_185607_a);
@@ -9,7 +17,7 @@
              boolean flag = false;
              boolean flag1 = false;
              BlockState blockstate = p_225542_2_.func_180495_p(p_225542_3_.func_177977_b());
-@@ -65,7 +65,7 @@
+@@ -65,13 +66,17 @@
                 if (j < 2 || j <= p_225542_4_.nextInt(flag1 ? 5 : 4)) {
                    flag = true;
                 }
@@ -18,16 +26,58 @@
                 flag = true;
              }
  
-@@ -97,7 +97,7 @@
+             if (flag && func_185604_a(p_225542_2_, blockpos, (Direction)null) && p_225542_2_.func_175623_d(p_225542_3_.func_177981_b(2))) {
+-               p_225542_2_.func_180501_a(p_225542_3_, this.field_196405_b.func_196497_a(p_225542_2_, p_225542_3_), 2);
+-               this.func_185602_a(p_225542_2_, blockpos, i);
++               // CraftBukkit start - add event
++               if (CraftEventFactory.handleBlockSpreadEvent(p_225542_2_, p_225542_3_, blockpos, this.func_176223_P().func_206870_a(ChorusFlowerBlock.field_185607_a, Integer.valueOf(i)), 2)) {
++                  p_225542_2_.func_180501_a(p_225542_3_, this.field_196405_b.func_196497_a(p_225542_2_, p_225542_3_), 2);
++                  this.func_185602_a(p_225542_2_, blockpos, i);
++               }
++               // CraftBukkit end
+             } else if (i < 4) {
+                int l = p_225542_4_.nextInt(4);
+                if (flag1) {
+@@ -84,20 +89,33 @@
+                   Direction direction = Direction.Plane.HORIZONTAL.func_179518_a(p_225542_4_);
+                   BlockPos blockpos1 = p_225542_3_.func_177972_a(direction);
+                   if (p_225542_2_.func_175623_d(blockpos1) && p_225542_2_.func_175623_d(blockpos1.func_177977_b()) && func_185604_a(p_225542_2_, blockpos1, direction.func_176734_d())) {
+-                     this.func_185602_a(p_225542_2_, blockpos1, i + 1);
+-                     flag2 = true;
++                     // CraftBukkit start - add event
++                     if (CraftEventFactory.handleBlockSpreadEvent(p_225542_2_, p_225542_3_, blockpos, this.func_176223_P().func_206870_a(ChorusFlowerBlock.field_185607_a, Integer.valueOf(i + 1)), 2)) {
++                        this.func_185602_a(p_225542_2_, blockpos, i + 1);
++                        flag2 = true;
++                     }
++                     // CraftBukkit end
+                   }
+                }
+ 
+                if (flag2) {
+                   p_225542_2_.func_180501_a(p_225542_3_, this.field_196405_b.func_196497_a(p_225542_2_, p_225542_3_), 2);
+                } else {
+-                  this.func_185605_c(p_225542_2_, p_225542_3_);
++                  // CraftBukkit - add event
++                  if (CraftEventFactory.handleBlockGrowEvent(p_225542_2_, p_225542_3_, this.func_176223_P().func_206870_a(ChorusFlowerBlock.field_185607_a, Integer.valueOf(5)), 2)) {
++                     this.func_185605_c(p_225542_2_, p_225542_3_);
++                  }
++                  // CraftBukkit end
+                }
              } else {
-                this.func_185605_c(p_225542_2_, p_225542_3_);
-             }
--
+-               this.func_185605_c(p_225542_2_, p_225542_3_);
+-            }
++               // CraftBukkit - add event
++               if (CraftEventFactory.handleBlockGrowEvent(p_225542_2_, p_225542_3_, this.func_176223_P().func_206870_a(ChorusFlowerBlock.field_185607_a, Integer.valueOf(5)), 2)) {
++                  this.func_185605_c(p_225542_2_, p_225542_3_);
+ 
++               }
++               // CraftBukkit end
++            }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
           }
        }
     }
-@@ -133,7 +133,7 @@
+@@ -133,7 +151,7 @@
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
        if (blockstate.func_177230_c() != this.field_196405_b && !blockstate.func_203425_a(Blocks.field_150377_bs)) {
@@ -36,7 +86,7 @@
              return false;
           } else {
              boolean flag = false;
-@@ -146,7 +146,7 @@
+@@ -146,7 +164,7 @@
                    }
  
                    flag = true;

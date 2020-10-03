@@ -1,6 +1,72 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
-@@ -268,12 +268,16 @@
+@@ -47,6 +47,7 @@
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
+ import net.minecraft.pathfinding.GroundPathNavigator;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.tags.FluidTags;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EntityPredicates;
+@@ -64,20 +65,24 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.spawner.WorldEntitySpawner;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
+ 
+ public class ZombieEntity extends MonsterEntity {
+    private static final UUID field_110187_bq = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
+    private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
+    private static final DataParameter<Integer> field_184738_bw = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187192_b);
+-   private static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
++   public static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h); // private->public CraftBukkit
+    private static final Predicate<Difficulty> field_213699_bC = (p_213697_0_) -> {
+       return p_213697_0_ == Difficulty.HARD;
+    };
+    private final BreakDoorGoal field_146075_bs = new BreakDoorGoal(this, field_213699_bC);
+    private boolean field_146076_bu;
+    private int field_204707_bD;
+-   private int field_204708_bE;
++   public int field_204708_bE; // private->public CraftBukkit
++   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
+ 
+    public ZombieEntity(EntityType<? extends ZombieEntity> p_i48549_1_, World p_i48549_2_) {
+       super(p_i48549_1_, p_i48549_2_);
+@@ -185,7 +190,11 @@
+    public void func_70071_h_() {
+       if (!this.field_70170_p.field_72995_K && this.func_70089_S() && !this.func_175446_cd()) {
+          if (this.func_204706_dD()) {
+-            --this.field_204708_bE;
++            // CraftBukkit start - Use wall time instead of ticks for conversion
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++            this.lastTick = MinecraftServer.currentTick;
++            this.field_204708_bE -= elapsedTicks;
++            // CraftBukkit end
+             if (this.field_204708_bE < 0) {
+                this.func_207302_dI();
+             }
+@@ -202,6 +211,7 @@
+       }
+ 
+       super.func_70071_h_();
++      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
+    }
+ 
+    public void func_70636_d() {
+@@ -230,7 +240,8 @@
+       super.func_70636_d();
+    }
+ 
+-   private void func_204704_a(int p_204704_1_) {
++   public void func_204704_a(int p_204704_1_) { // private->public CraftBukkit
++      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
+       this.field_204708_bE = p_204704_1_;
+       this.func_184212_Q().func_187227_b(field_204709_bA, true);
+    }
+@@ -268,12 +279,16 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }
  
@@ -19,15 +85,54 @@
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                 int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-@@ -284,6 +288,7 @@
+@@ -284,6 +299,8 @@
                 if (WorldEntitySpawner.func_209382_a(entityspawnplacementregistry$placementtype, this.field_70170_p, blockpos, entitytype) && EntitySpawnPlacementRegistry.func_223515_a(entitytype, serverworld, SpawnReason.REINFORCEMENT, blockpos, this.field_70170_p.field_73012_v)) {
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_226668_i_(zombieentity) && this.field_70170_p.func_226669_j_(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
++                     this.field_70170_p.addEntity(zombieentity, CreatureSpawnEvent.SpawnReason.REINFORCEMENTS); // CraftBukkit
 +                     if (livingentity != null)
                       zombieentity.func_70624_b(livingentity);
                       zombieentity.func_213386_a(serverworld, this.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
                       serverworld.func_242417_l(zombieentity);
-@@ -448,7 +453,7 @@
+@@ -304,7 +321,13 @@
+       if (flag) {
+          float f = this.field_70170_p.func_175649_E(this.func_233580_cy_()).func_180168_b();
+          if (this.func_184614_ca().func_190926_b() && this.func_70027_ad() && this.field_70146_Z.nextFloat() < f * 0.3F) {
+-            p_70652_1_.func_70015_d(2 * (int)f);
++            // CraftBukkit start
++            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_70652_1_.getBukkitEntity(), 2 * (int) f); // PAIL: fixme
++            this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++               p_70652_1_.setFire(event.getDuration(), false);
++            }
++            // CraftBukkit end
+          }
+       }
+ 
+@@ -375,7 +398,12 @@
+          }
+ 
+          VillagerEntity villagerentity = (VillagerEntity)p_241847_2_;
+-         ZombieVillagerEntity zombievillagerentity = villagerentity.func_233656_b_(EntityType.field_200727_aF, false);
++         // CraftBukkit start
++         ZombieVillagerEntity zombievillagerentity = villagerentity.func_233656_b_(EntityType.field_200727_aF, false, EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION);
++         if (zombievillagerentity == null) {
++            return;
++         }
++         // CraftBukkit end
+          zombievillagerentity.func_213386_a(p_241847_1_, p_241847_1_.func_175649_E(zombievillagerentity.func_233580_cy_()), SpawnReason.CONVERSION, new ZombieEntity.GroupData(false, true), (CompoundNBT)null);
+          zombievillagerentity.func_213792_a(villagerentity.func_213700_eh());
+          zombievillagerentity.func_223727_a(villagerentity.func_223722_es().func_234058_a_(NBTDynamicOps.field_210820_a).getValue());
+@@ -423,7 +451,7 @@
+                   chickenentity1.func_213386_a(p_213386_1_, p_213386_2_, SpawnReason.JOCKEY, (ILivingEntityData)null, (CompoundNBT)null);
+                   chickenentity1.func_152117_i(true);
+                   this.func_184220_m(chickenentity1);
+-                  p_213386_1_.func_217376_c(chickenentity1);
++                  p_213386_1_.addEntity(chickenentity1, CreatureSpawnEvent.SpawnReason.MOUNT); // CraftBukkit
+                }
+             }
+          }
+@@ -448,7 +476,7 @@
     }
  
     public static boolean func_241399_a_(Random p_241399_0_) {
@@ -36,7 +141,7 @@
     }
  
     protected void func_207304_a(float p_207304_1_) {
-@@ -468,7 +473,7 @@
+@@ -468,7 +496,7 @@
     }
  
     protected void func_230291_eT_() {

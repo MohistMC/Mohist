@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/ServerPropertiesProvider.java
++++ b/net/minecraft/server/ServerPropertiesProvider.java
+@@ -11,7 +11,7 @@
+ 
+    public ServerPropertiesProvider(DynamicRegistries p_i242100_1_, Path p_i242100_2_) {
+       this.field_219036_a = p_i242100_2_;
+-      this.field_219037_b = ServerProperties.func_244380_a(p_i242100_1_, p_i242100_2_);
++      this.field_219037_b = ServerProperties.func_244380_a(p_i242100_1_, field_219036_a);
+    }
+ 
+    public ServerProperties func_219034_a() {

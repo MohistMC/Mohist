@@ -1,8 +1,13 @@
 --- a/net/minecraft/network/handshake/client/CHandshakePacket.java
 +++ b/net/minecraft/network/handshake/client/CHandshakePacket.java
-@@ -14,6 +14,7 @@
-    private String field_149598_b;
-    private int field_149599_c;
+@@ -11,9 +11,10 @@
+ 
+ public class CHandshakePacket implements IPacket<IHandshakeNetHandler> {
+    private int field_149600_a;
+-   private String field_149598_b;
+-   private int field_149599_c;
++   public String field_149598_b;
++   public int field_149599_c;
     private ProtocolType field_149597_d;
 +   private String fmlVersion = net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION;
  

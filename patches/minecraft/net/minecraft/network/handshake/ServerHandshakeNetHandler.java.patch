@@ -1,6 +1,29 @@
 --- a/net/minecraft/network/handshake/ServerHandshakeNetHandler.java
 +++ b/net/minecraft/network/handshake/ServerHandshakeNetHandler.java
-@@ -23,6 +23,7 @@
+@@ -1,5 +1,10 @@
+ package net.minecraft.network.handshake;
+ 
++import java.net.InetAddress;
++import java.net.InetSocketAddress;
++import java.util.HashMap;
++import java.util.Iterator;
++import java.util.Map;
+ import net.minecraft.network.NetworkManager;
+ import net.minecraft.network.ProtocolType;
+ import net.minecraft.network.handshake.client.CHandshakePacket;
+@@ -13,6 +18,11 @@
+ import net.minecraft.util.text.TranslationTextComponent;
+ 
+ public class ServerHandshakeNetHandler implements IHandshakeNetHandler {
++
++   // CraftBukkit start - add fields
++   private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
++   private static int throttleCounter = 0;
++   // CraftBukkit end
+    private static final ITextComponent field_241169_a_ = new StringTextComponent("Ignoring status request");
+    private final MinecraftServer field_147387_a;
+    private final NetworkManager field_147386_b;
+@@ -23,9 +33,42 @@
     }
  
     public void func_147383_a(CHandshakePacket p_147383_1_) {
@@ -8,3 +31,47 @@
        switch(p_147383_1_.func_149594_c()) {
        case LOGIN:
           this.field_147386_b.func_150723_a(ProtocolType.LOGIN);
++         // CraftBukkit start - Connection throttle
++         try {
++            long currentTime = System.currentTimeMillis();
++            long connectionThrottle = MinecraftServer.getServer().server.getConnectionThrottle();
++            InetAddress address = ((InetSocketAddress)this.field_147386_b.func_74430_c()).getAddress();
++            synchronized (ServerHandshakeNetHandler.throttleTracker) {
++               if (ServerHandshakeNetHandler.throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - ServerHandshakeNetHandler.throttleTracker.get(address) < connectionThrottle) {
++                  ServerHandshakeNetHandler.throttleTracker.put(address, currentTime);
++                  TranslationTextComponent chatmessage = new TranslationTextComponent("Connection throttled! Please wait before reconnecting.", new Object[0]);
++                  this.field_147386_b.func_179290_a(new SDisconnectLoginPacket(chatmessage));
++                  this.field_147386_b.func_150718_a(chatmessage);
++                  return;
++               }
++               ServerHandshakeNetHandler.throttleTracker.put(address, currentTime);
++               ++ServerHandshakeNetHandler.throttleCounter;
++               if (ServerHandshakeNetHandler.throttleCounter > 200) {
++                  ServerHandshakeNetHandler.throttleCounter = 0;
++                  Iterator iter = ServerHandshakeNetHandler.throttleTracker.entrySet().iterator();
++                  while (iter.hasNext()) {
++                     Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
++                     if (entry.getValue() > connectionThrottle) {
++                        iter.remove();
++                     }
++                  }
++               }
++            }
++         }
++         catch (Throwable t) {
++            org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
++         }
++         // CraftBukkit
++
+          if (p_147383_1_.func_149595_d() > SharedConstants.func_215069_a().getProtocolVersion()) {
+             ITextComponent itextcomponent = new TranslationTextComponent("multiplayer.disconnect.outdated_server", SharedConstants.func_215069_a().getName());
+             this.field_147386_b.func_179290_a(new SDisconnectLoginPacket(itextcomponent));
+@@ -36,6 +79,8 @@
+             this.field_147386_b.func_150718_a(itextcomponent1);
+          } else {
+             this.field_147386_b.func_150719_a(new ServerLoginNetHandler(this.field_147387_a, this.field_147386_b));
++            ((ServerLoginNetHandler) this.field_147386_b.func_150729_e()).hostname = p_147383_1_.field_149598_b + ":" + p_147383_1_.field_149599_c; // CraftBukkit - set hostname
++
+          }
+          break;
+       case STATUS:

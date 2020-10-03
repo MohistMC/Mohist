@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/Ingredient.java
 +++ b/net/minecraft/item/crafting/Ingredient.java
-@@ -28,15 +28,24 @@
+@@ -28,15 +28,26 @@
  import net.minecraft.util.registry.Registry;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -12,20 +12,48 @@
 +
     public static final Ingredient field_193370_a = new Ingredient(Stream.empty());
     private final Ingredient.IItemList[] field_199807_b;
-    private ItemStack[] field_193371_b;
+-   private ItemStack[] field_193371_b;
++   public ItemStack[] field_193371_b; // private->public CraftBukkit
     private IntList field_194140_c;
 +   private final boolean isSimple;
  
-    protected Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {
+-   protected Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {
++   public boolean exact; // Bukkit
++
++   public Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) { // protected->public CraftBukkit
        this.field_199807_b = p_i49381_1_.toArray((p_209360_0_) -> {
           return new Ingredient.IItemList[p_209360_0_];
        });
-+      this.isSimple = !net.minecraftforge.fml.DatagenModLoader.isRunningDataGen() && !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.func_77973_b().isDamageable(stack)));
++      this.isSimple = !net.minecraftforge.fml.ModLoader.isDataGenRunning() && !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.func_77973_b().func_77645_m()));
 +      Ingredient.INSTANCES.add(this);
     }
  
     public ItemStack[] func_193365_a() {
-@@ -91,6 +100,10 @@
+@@ -44,7 +55,7 @@
+       return this.field_193371_b;
+    }
+ 
+-   private void func_199806_d() {
++   public void func_199806_d() { // private->public CraftBukkit
+       if (this.field_193371_b == null) {
+          this.field_193371_b = Arrays.stream(this.field_199807_b).flatMap((p_209359_0_) -> {
+             return p_209359_0_.func_199799_a().stream();
+@@ -64,6 +75,14 @@
+             return p_test_1_.func_190926_b();
+          } else {
+             for(ItemStack itemstack : this.field_193371_b) {
++               // CraftBukkit start
++               if (exact) {
++                  if (itemstack.func_77973_b() == itemstack.func_77973_b() && ItemStack.func_77970_a(itemstack, itemstack)) {
++                     return true;
++                  }
++                  continue;
++               }
++               // CraftBukkit end
+                if (itemstack.func_77973_b() == p_test_1_.func_77973_b()) {
+                   return true;
+                }
+@@ -91,6 +110,10 @@
  
     public final void func_199564_a(PacketBuffer p_199564_1_) {
        this.func_199806_d();
@@ -36,7 +64,7 @@
        p_199564_1_.func_150787_b(this.field_193371_b.length);
  
        for(int i = 0; i < this.field_193371_b.length; ++i) {
-@@ -117,6 +130,25 @@
+@@ -117,6 +140,25 @@
        return this.field_199807_b.length == 0 && (this.field_193371_b == null || this.field_193371_b.length == 0) && (this.field_194140_c == null || this.field_194140_c.isEmpty());
     }
  
@@ -62,7 +90,7 @@
     public static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
        Ingredient ingredient = new Ingredient(p_209357_0_);
        return ingredient.field_199807_b.length == 0 ? field_193370_a : ingredient;
-@@ -144,6 +176,9 @@
+@@ -144,6 +186,9 @@
  
     public static Ingredient func_199566_b(PacketBuffer p_199566_0_) {
        int i = p_199566_0_.func_150792_a();
@@ -72,7 +100,7 @@
        return func_209357_a(Stream.generate(() -> {
           return new Ingredient.SingleItemList(p_199566_0_.func_150791_c());
        }).limit((long)i));
-@@ -151,6 +186,8 @@
+@@ -151,6 +196,8 @@
  
     public static Ingredient func_199802_a(@Nullable JsonElement p_199802_0_) {
        if (p_199802_0_ != null && !p_199802_0_.isJsonNull()) {
@@ -81,7 +109,7 @@
           if (p_199802_0_.isJsonObject()) {
              return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
-@@ -192,6 +229,12 @@
+@@ -192,6 +239,12 @@
        }
     }
  
@@ -94,7 +122,7 @@
     public interface IItemList {
        Collection<ItemStack> func_199799_a();
  
-@@ -230,6 +273,9 @@
+@@ -230,6 +283,9 @@
              list.add(new ItemStack(item));
           }
  

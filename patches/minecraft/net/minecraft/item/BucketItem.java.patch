@@ -1,6 +1,29 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -32,14 +32,28 @@
+@@ -12,10 +12,12 @@
+ import net.minecraft.fluid.FlowingFluid;
+ import net.minecraft.fluid.Fluid;
+ import net.minecraft.fluid.Fluids;
++import net.minecraft.network.play.server.SChangeBlockPacket;
+ import net.minecraft.particles.ParticleTypes;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.tags.FluidTags;
+ import net.minecraft.util.ActionResult;
++import net.minecraft.util.ActionResultType;
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.DrinkHelper;
+ import net.minecraft.util.Hand;
+@@ -28,18 +30,38 @@
+ import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
++import net.minecraft.world.server.ServerWorld;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.util.DummyGeneratorAccess;
++import org.bukkit.event.player.PlayerBucketEmptyEvent;
++import org.bukkit.event.player.PlayerBucketFillEvent;
+ 
  public class BucketItem extends Item {
     private final Fluid field_77876_a;
  
@@ -29,37 +52,116 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -56,7 +70,10 @@
+@@ -53,11 +75,23 @@
+             if (this.field_77876_a == Fluids.field_204541_a) {
+                BlockState blockstate1 = p_77659_1_.func_180495_p(blockpos);
+                if (blockstate1.func_177230_c() instanceof IBucketPickupHandler) {
++                  // CraftBukkit start
++                  Fluid dummyFluid = ((IBucketPickupHandler) blockstate1.func_177230_c()).func_204508_a(DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
++                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerWorld) p_77659_1_, p_77659_2_, blockpos, blockpos, ((BlockRayTraceResult) raytraceresult).func_216354_b(), itemstack, dummyFluid.func_204524_b());
++                  if (event.isCancelled()) {
++                     ((ServerPlayerEntity) p_77659_2_).field_71135_a.func_147359_a(new SChangeBlockPacket(p_77659_1_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
++                     ((ServerPlayerEntity) p_77659_2_).getBukkitEntity().updateInventory(); // SPIGOT-4541
++                     return new ActionResult<>(ActionResultType.FAIL, itemstack);
++                  }
++                  // CraftBukkit end
                    Fluid fluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(p_77659_1_, blockpos, blockstate1);
                    if (fluid != Fluids.field_204541_a) {
                       p_77659_2_.func_71029_a(Stats.field_75929_E.func_199076_b(this));
 -                     p_77659_2_.func_184185_a(fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M, 1.0F, 1.0F);
+-                     ItemStack itemstack1 = DrinkHelper.func_242398_a(itemstack, p_77659_2_, new ItemStack(fluid.func_204524_b()));
 +
 +                     SoundEvent soundevent = this.field_77876_a.getAttributes().getEmptySound();
 +                     if (soundevent == null) soundevent = fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M;
 +                     p_77659_2_.func_184185_a(soundevent, 1.0F, 1.0F);
-                      ItemStack itemstack1 = DrinkHelper.func_242398_a(itemstack, p_77659_2_, new ItemStack(fluid.func_204524_b()));
++                     ItemStack itemstack1 = DrinkHelper.func_242398_a(itemstack, p_77659_2_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
-@@ -69,7 +86,7 @@
+                      }
+@@ -69,8 +103,8 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
                 BlockState blockstate = p_77659_1_.func_180495_p(blockpos);
 -               BlockPos blockpos2 = blockstate.func_177230_c() instanceof ILiquidContainer && this.field_77876_a == Fluids.field_204546_a ? blockpos : blockpos1;
+-               if (this.func_180616_a(p_77659_2_, p_77659_1_, blockpos2, blockraytraceresult)) {
 +               BlockPos blockpos2 = canBlockContainFluid(p_77659_1_, blockpos, blockstate) ? blockpos : blockpos1;
-                if (this.func_180616_a(p_77659_2_, p_77659_1_, blockpos2, blockraytraceresult)) {
++               if (this.tryPlaceContainedLiquid(p_77659_2_, p_77659_1_, blockpos2, blockraytraceresult, blockraytraceresult.func_216354_b(), blockpos, itemstack)) { // CraftBukkit
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
-@@ -117,7 +134,7 @@
+                      CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)p_77659_2_, blockpos2, itemstack);
+@@ -96,40 +130,55 @@
+    }
+ 
+    public boolean func_180616_a(@Nullable PlayerEntity p_180616_1_, World p_180616_2_, BlockPos p_180616_3_, @Nullable BlockRayTraceResult p_180616_4_) {
++      return tryPlaceContainedLiquid(p_180616_1_, p_180616_2_, p_180616_3_, p_180616_4_, null, null, null);
++   }
++
++   public boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, World worldIn, BlockPos posIn, @Nullable BlockRayTraceResult p_180616_4_, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
++      // CraftBukkit end
+       if (!(this.field_77876_a instanceof FlowingFluid)) {
+          return false;
+       } else {
+-         BlockState blockstate = p_180616_2_.func_180495_p(p_180616_3_);
++         BlockState blockstate = worldIn.func_180495_p(posIn);
+          Block block = blockstate.func_177230_c();
+          Material material = blockstate.func_185904_a();
+          boolean flag = blockstate.func_227032_a_(this.field_77876_a);
+-         boolean flag1 = blockstate.func_196958_f() || flag || block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(p_180616_2_, p_180616_3_, blockstate, this.field_77876_a);
++         boolean flag1 = blockstate.func_196958_f() || flag || block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(worldIn, posIn, blockstate, this.field_77876_a);
++         // CraftBukkit start
++         if(player != null){
++            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent((ServerWorld) worldIn, player, posIn, clicked, enumdirection, itemstack);
++            if(event.isCancelled()){
++               ((ServerPlayerEntity) player).field_71135_a.func_147359_a(new SChangeBlockPacket(worldIn, posIn)); // SPIGOT-4238: needed when looking through entity
++               ((ServerPlayerEntity) player).getBukkitEntity().updateInventory(); // SPIGOT-4541
++               return false;
++            }
++         }
++         // CraftBukkit end
+          if (!flag1) {
+-            return p_180616_4_ != null && this.func_180616_a(p_180616_1_, p_180616_2_, p_180616_4_.func_216350_a().func_177972_a(p_180616_4_.func_216354_b()), (BlockRayTraceResult)null);
+-         } else if (p_180616_2_.func_230315_m_().func_236040_e_() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
+-            int i = p_180616_3_.func_177958_n();
+-            int j = p_180616_3_.func_177956_o();
+-            int k = p_180616_3_.func_177952_p();
+-            p_180616_2_.func_184133_a(p_180616_1_, p_180616_3_, SoundEvents.field_187646_bt, SoundCategory.BLOCKS, 0.5F, 2.6F + (p_180616_2_.field_73012_v.nextFloat() - p_180616_2_.field_73012_v.nextFloat()) * 0.8F);
++            return p_180616_4_ != null && this.tryPlaceContainedLiquid(player, worldIn, p_180616_4_.func_216350_a().func_177972_a(p_180616_4_.func_216354_b()), (BlockRayTraceResult)null, enumdirection, clicked, itemstack); // CraftBukkit
++         } else if (worldIn.func_230315_m_().func_236040_e_() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
++            int i = posIn.func_177958_n();
++            int j = posIn.func_177956_o();
++            int k = posIn.func_177952_p();
++            worldIn.func_184133_a(player, posIn, SoundEvents.field_187646_bt, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.field_73012_v.nextFloat() - worldIn.field_73012_v.nextFloat()) * 0.8F);
+ 
+             for(int l = 0; l < 8; ++l) {
+-               p_180616_2_.func_195594_a(ParticleTypes.field_197594_E, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
++               worldIn.func_195594_a(ParticleTypes.field_197594_E, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
              }
  
              return true;
 -         } else if (block instanceof ILiquidContainer && this.field_77876_a == Fluids.field_204546_a) {
-+         } else if (block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(p_180616_2_,p_180616_3_,blockstate,field_77876_a)) {
-             ((ILiquidContainer)block).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
-             this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
+-            ((ILiquidContainer)block).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
+-            this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
++         } else if (block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(worldIn,posIn,blockstate,field_77876_a)) {
++            ((ILiquidContainer)block).func_204509_a(worldIn, posIn, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
++            this.func_203791_b(player, worldIn, posIn);
              return true;
-@@ -137,7 +154,24 @@
+          } else {
+-            if (!p_180616_2_.field_72995_K && flag && !material.func_76224_d()) {
+-               p_180616_2_.func_175655_b(p_180616_3_, true);
++            if (!worldIn.field_72995_K && flag && !material.func_76224_d()) {
++               worldIn.func_175655_b(posIn, true);
+             }
+ 
+-            if (!p_180616_2_.func_180501_a(p_180616_3_, this.field_77876_a.func_207188_f().func_206883_i(), 11) && !blockstate.func_204520_s().func_206889_d()) {
++            if (!worldIn.func_180501_a(posIn, this.field_77876_a.func_207188_f().func_206883_i(), 11) && !blockstate.func_204520_s().func_206889_d()) {
+                return false;
+             } else {
+-               this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
++               this.func_203791_b(player, worldIn, posIn);
+                return true;
+             }
+          }
+@@ -137,7 +186,24 @@
     }
  
     protected void func_203791_b(@Nullable PlayerEntity p_203791_1_, IWorld p_203791_2_, BlockPos p_203791_3_) {

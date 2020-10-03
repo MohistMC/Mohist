@@ -1,0 +1,44 @@
+--- a/net/minecraft/inventory/container/AbstractFurnaceContainer.java
++++ b/net/minecraft/inventory/container/AbstractFurnaceContainer.java
+@@ -19,6 +19,9 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
+ 
+ public abstract class AbstractFurnaceContainer extends RecipeBookContainer<IInventory> {
+    private final IInventory field_217063_d;
+@@ -27,6 +30,23 @@
+    private final IRecipeType<? extends AbstractCookingRecipe> field_217065_f;
+    private final RecipeBookCategory field_242384_g;
+ 
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private PlayerInventory player;
++   // CraftBukkit stop
++
++   // CraftBukkit start
++   @Override
++   public InventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      CraftInventoryFurnace inventory = new CraftInventoryFurnace((AbstractFurnaceTileEntity) this.field_217063_d);
++      bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
++
+    protected AbstractFurnaceContainer(ContainerType<?> p_i241921_1_, IRecipeType<? extends AbstractCookingRecipe> p_i241921_2_, RecipeBookCategory p_i241921_3_, int p_i241921_4_, PlayerInventory p_i241921_5_) {
+       this(p_i241921_1_, p_i241921_2_, p_i241921_3_, p_i241921_4_, p_i241921_5_, new Inventory(3), new IntArray(4));
+    }
+@@ -94,6 +114,7 @@
+    }
+ 
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.field_217063_d.func_70300_a(p_75145_1_);
+    }
+ 

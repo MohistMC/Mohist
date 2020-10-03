@@ -57,6 +57,9 @@ public class Util {
 			def url = "https://libraries.minecraft.net/${path}"
 			if (!checkExists(url)) {
 				url = "https://files.minecraftforge.net/maven/${path}"
+				if (!checkExists(url)) {
+					url = "https://hub.spigotmc.org/nexus/content/groups/public/${path}"
+				}
 			}
 			//TODO remove when Mojang launcher is updated
 			if (!classifiers && art.classifier != null) { //Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'

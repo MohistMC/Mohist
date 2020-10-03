@@ -1,6 +1,19 @@
 --- a/net/minecraft/advancements/PlayerAdvancements.java
 +++ b/net/minecraft/advancements/PlayerAdvancements.java
-@@ -159,6 +159,10 @@
+@@ -146,7 +146,11 @@
+             for(Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
+                Advancement advancement = p_240921_1_.func_192778_a(entry.getKey());
+                if (advancement == null) {
+-                  field_192753_a.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.field_192757_e);
++                  // CraftBukkit start
++                  if (entry.getKey().func_110624_b().equals("minecraft")) {
++                     field_192753_a.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.field_192757_e);
++                  }
++                  // CraftBukkit end
+                } else {
+                   this.func_192743_a(advancement, entry.getValue());
+                }
+@@ -159,6 +163,10 @@
        }
  
        this.func_240920_c_(p_240921_1_);
@@ -11,7 +24,7 @@
        this.func_192752_d();
        this.func_240919_b_(p_240921_1_);
     }
-@@ -192,6 +196,8 @@
+@@ -192,6 +200,8 @@
     }
  
     public boolean func_192750_a(Advancement p_192750_1_, String p_192750_2_) {
@@ -20,7 +33,12 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
        boolean flag1 = advancementprogress.func_192105_a();
-@@ -204,6 +210,7 @@
+@@ -200,10 +210,12 @@
+          this.field_192761_i.add(p_192750_1_);
+          flag = true;
+          if (!flag1 && advancementprogress.func_192105_a()) {
++            this.field_192762_j.field_70170_p.getCBServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.field_192762_j.getBukkitEntity(), p_192750_1_.bukkit)); // CraftBukkit
+             p_192750_1_.func_192072_d().func_192113_a(this.field_192762_j);
              if (p_192750_1_.func_192068_c() != null && p_192750_1_.func_192068_c().func_193220_i() && this.field_192762_j.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223620_w)) {
                 this.field_240917_e_.func_232641_a_(new TranslationTextComponent("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()), ChatType.SYSTEM, Util.field_240973_b_);
              }

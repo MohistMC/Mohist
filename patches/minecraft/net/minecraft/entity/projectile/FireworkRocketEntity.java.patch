@@ -1,16 +1,91 @@
 --- a/net/minecraft/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/entity/projectile/FireworkRocketEntity.java
-@@ -155,6 +155,13 @@
+@@ -30,17 +30,18 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
-    }
+ @OnlyIn(
+    value = Dist.CLIENT,
+    _interface = IRendersAsItem.class
+ )
+ public class FireworkRocketEntity extends ProjectileEntity implements IRendersAsItem {
+-   private static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
++   public static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
+    private static final DataParameter<OptionalInt> field_191512_b = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_218814_r);
+-   private static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
++   public static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
+    private int field_92056_a;
+-   private int field_92055_b;
++   public int field_92055_b;
+    private LivingEntity field_191513_e;
+ 
+    public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_i50164_1_, World p_i50164_2_) {
+@@ -150,9 +151,19 @@
+       }
+ 
+       if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
+-         this.func_213893_k();
++         // CraftBukkit start
++         if (!CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.func_213893_k();
++         }
+       }
++         // CraftBukkit end
++   }
  
 +   @Override
 +   protected void func_70227_a(RayTraceResult result) {
 +      if (result.func_216346_c() == RayTraceResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, result)) {
 +         super.func_70227_a(result);
 +      }
-+   }
-+
+    }
+ 
     private void func_213893_k() {
-       this.field_70170_p.func_72960_a(this, (byte)17);
-       this.func_191510_k();
+@@ -164,7 +175,11 @@
+    protected void func_213868_a(EntityRayTraceResult p_213868_1_) {
+       super.func_213868_a(p_213868_1_);
+       if (!this.field_70170_p.field_72995_K) {
+-         this.func_213893_k();
++         // CraftBukkit start
++         if (!CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.func_213893_k();
++         }
++         // CraftBukkit end
+       }
+    }
+ 
+@@ -172,7 +187,11 @@
+       BlockPos blockpos = new BlockPos(p_230299_1_.func_216350_a());
+       this.field_70170_p.func_180495_p(blockpos).func_196950_a(this.field_70170_p, blockpos, this);
+       if (!this.field_70170_p.func_201670_d() && this.func_213894_l()) {
+-         this.func_213893_k();
++         // CraftBukkit start
++         if (!CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.func_213893_k();
++         }
++         // CraftBukkit end
+       }
+ 
+       super.func_230299_a_(p_230299_1_);
+@@ -196,7 +215,9 @@
+ 
+       if (f > 0.0F) {
+          if (this.field_191513_e != null) {
++            CraftEventFactory.entityDamage = this; // CraftBukkit
+             this.field_191513_e.func_70097_a(DamageSource.func_233548_a_(this, this.func_234616_v_()), 5.0F + (float)(listnbt.size() * 2));
++            CraftEventFactory.entityDamage = null; // CraftBukkit
+          }
+ 
+          double d0 = 5.0D;
+@@ -217,7 +238,9 @@
+ 
+                if (flag) {
+                   float f1 = f * (float)Math.sqrt((5.0D - (double)this.func_70032_d(livingentity)) / 5.0D);
++                  CraftEventFactory.entityDamage = this; // CraftBukkit
+                   livingentity.func_70097_a(DamageSource.func_233548_a_(this, this.func_234616_v_()), f1);
++                  CraftEventFactory.entityDamage = null; // CraftBukkit
+                }
+             }
+          }

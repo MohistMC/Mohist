@@ -1,6 +1,73 @@
 --- a/net/minecraft/tileentity/HopperTileEntity.java
 +++ b/net/minecraft/tileentity/HopperTileEntity.java
-@@ -133,6 +133,7 @@
+@@ -11,8 +11,10 @@
+ import net.minecraft.block.HopperBlock;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.item.ItemEntity;
++import net.minecraft.entity.item.minecart.HopperMinecartEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.entity.player.PlayerInventory;
++import net.minecraft.inventory.DoubleSidedInventory;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.inventory.ISidedInventory;
+ import net.minecraft.inventory.ISidedInventoryProvider;
+@@ -31,12 +33,55 @@
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.world.World;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.InventoryMoveItemEvent;
++import org.bukkit.event.inventory.InventoryPickupItemEvent;
++import org.bukkit.inventory.Inventory;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class HopperTileEntity extends LockableLootTileEntity implements IHopper, ITickableTileEntity {
+    private NonNullList<ItemStack> field_145900_a = NonNullList.func_191197_a(5, ItemStack.field_190927_a);
+    private int field_145901_j = -1;
+    private long field_190578_g;
+ 
++   // CraftBukkit start - add fields and methods
++   private int maxStack = MAX_STACK;
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++
++   @Override
++   public int func_70297_j_() {
++      return maxStack;
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      return field_145900_a;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++      this.transaction.add(who);
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++      this.transaction.remove(who);
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return this.transaction;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++      this.maxStack = size;
++   }
++   // CraftBukkit end
++
+    public HopperTileEntity() {
+       super(TileEntityType.field_200987_r);
+    }
+@@ -133,6 +178,7 @@
     }
  
     private boolean func_145883_k() {
@@ -8,7 +75,36 @@
        IInventory iinventory = this.func_145895_l();
        if (iinventory == null) {
           return false;
-@@ -177,6 +178,8 @@
+@@ -144,7 +190,27 @@
+             for(int i = 0; i < this.func_70302_i_(); ++i) {
+                if (!this.func_70301_a(i).func_190926_b()) {
+                   ItemStack itemstack = this.func_70301_a(i).func_77946_l();
+-                  ItemStack itemstack1 = func_174918_a(this, iinventory, this.func_70298_a(i, 1), direction);
++
++                  // CraftBukkit start - Call event when pushing items into other inventories
++                  CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.func_70298_a(i, 1));
++                  Inventory destinationInventory;
++                  // Have to special case large chests as they work oddly
++                  if (iinventory instanceof DoubleSidedInventory) {
++                     destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
++                  } else {
++                     destinationInventory = iinventory.getOwner().getInventory();
++                  }
++                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++                  this.func_145831_w().getCBServer().getPluginManager().callEvent(event);
++                  if (event.isCancelled()) {
++                     this.func_70299_a(i, itemstack);
++                     this.func_145896_c(8); // Delay hopper checks
++                     return false;
++                  }
++                  int orignCount = event.getItem().getAmount();
++                  ItemStack itemstack1 = func_174918_a(this, iinventory, CraftItemStack.asNMSCopy(event.getItem()), direction);
++                  // CraftBukkit end
++
+                   if (itemstack1.func_190926_b()) {
+                      iinventory.func_70296_d();
+                      return true;
+@@ -177,6 +243,8 @@
     }
  
     public static boolean func_145891_a(IHopper p_145891_0_) {
@@ -17,7 +113,53 @@
        IInventory iinventory = func_145884_b(p_145891_0_);
        if (iinventory != null) {
           Direction direction = Direction.DOWN;
-@@ -325,7 +328,7 @@
+@@ -198,7 +266,30 @@
+       ItemStack itemstack = p_174915_1_.func_70301_a(p_174915_2_);
+       if (!itemstack.func_190926_b() && func_174921_b(p_174915_1_, itemstack, p_174915_2_, p_174915_3_)) {
+          ItemStack itemstack1 = itemstack.func_77946_l();
+-         ItemStack itemstack2 = func_174918_a(p_174915_1_, p_174915_0_, p_174915_1_.func_70298_a(p_174915_2_, 1), (Direction)null);
++
++         // CraftBukkit start - Call event on collection of items from inventories into the hopper
++         CraftItemStack oitemstack = CraftItemStack.asCraftMirror(p_174915_1_.func_70298_a(p_174915_2_, 1));
++         Inventory sourceInventory;
++         // Have to special case large chests as they work oddly
++         if (p_174915_1_ instanceof DoubleSidedInventory) {
++            sourceInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) p_174915_1_);
++         } else {
++            sourceInventory = p_174915_1_.getOwner().getInventory();
++         }
++         InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), p_174915_0_.getOwner().getInventory(), false);
++         p_174915_0_.func_145831_w().getCBServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            p_174915_1_.func_70299_a(p_174915_2_, itemstack1);
++            if (p_174915_0_ instanceof HopperTileEntity) {
++               ((HopperTileEntity) p_174915_0_).func_145896_c(8); // Delay hopper checks
++            } else if (p_174915_0_ instanceof HopperMinecartEntity) {
++               ((HopperMinecartEntity) p_174915_0_).func_98042_n(4); // Delay hopper minecart checks
++            }
++            return false;
++         }
++         ItemStack itemstack2 = func_174918_a(p_174915_1_, p_174915_0_, CraftItemStack.asNMSCopy(event.getItem()), null);
++         // CraftBukkit end
++
+          if (itemstack2.func_190926_b()) {
+             p_174915_1_.func_70296_d();
+             return true;
+@@ -212,6 +303,13 @@
+ 
+    public static boolean func_200114_a(IInventory p_200114_0_, ItemEntity p_200114_1_) {
+       boolean flag = false;
++      // CraftBukkit start
++      InventoryPickupItemEvent event = new InventoryPickupItemEvent(p_200114_0_.getOwner().getInventory(), (org.bukkit.entity.Item) p_200114_1_.getBukkitEntity());
++      p_200114_1_.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return false;
++      }
++      // CraftBukkit end
+       ItemStack itemstack = p_200114_1_.func_92059_d().func_77946_l();
+       ItemStack itemstack1 = func_174918_a((IInventory)null, p_200114_0_, itemstack, (Direction)null);
+       if (itemstack1.func_190926_b()) {
+@@ -325,7 +423,7 @@
        Block block = blockstate.func_177230_c();
        if (block instanceof ISidedInventoryProvider) {
           iinventory = ((ISidedInventoryProvider)block).func_219966_a(blockstate, p_145893_0_, blockpos);
@@ -26,7 +168,7 @@
           TileEntity tileentity = p_145893_0_.func_175625_s(blockpos);
           if (tileentity instanceof IInventory) {
              iinventory = (IInventory)tileentity;
-@@ -404,4 +407,13 @@
+@@ -404,4 +502,13 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new HopperContainer(p_213906_1_, p_213906_2_, this);
     }
