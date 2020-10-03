@@ -1,5 +1,6 @@
 package com.mohistmc;
 
+import com.mohistmc.configuration.MohistConfig;
 import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
 import com.mohistmc.bukkit.AutoDeletePlugins;
@@ -26,17 +27,17 @@ public class MohistMC {
         MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run(args);
-        if(MohistConfigUtil.bMohist("mohist.showlogo")){
-        System.out.println("\n" + "\n" +
-                " __    __   ______   __  __   __   ______   ______  \n" +
-                "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                "                                                    \n" + "\n");}
-        System.out.println("                                      " +
-                Message.getString("forge.serverlanunchwrapper.1"));
-
+        if(MohistConfigUtil.bMohist("showlogo")) {
+            System.out.println("\n" + "\n" +
+                    " __    __   ______   __  __   __   ______   ______  \n" +
+                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
+                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
+                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
+                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
+                    "                                                    \n" + "\n");
+            System.out.println("                                      " +
+                    Message.getString("forge.serverlanunchwrapper.1"));
+        }
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
