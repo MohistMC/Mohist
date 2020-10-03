@@ -223,12 +223,12 @@ public class DumpCommand extends Command {
         break;
       case "web":
         try {
-          String url = HasteUtils.paste(sb.toString());
+          String url = HasteUtils.pasteUbuntu(sb.toString());
           if(sender instanceof Player) {
             Player p = (Player) sender;
             ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
           } else {
-            dumpmsg(sender, HasteUtils.paste(sb.toString()), type);
+            dumpmsg(sender, url, type);
           }
         } catch (IOException e) {
           sender.sendMessage("Failed to upload to hastebin.");

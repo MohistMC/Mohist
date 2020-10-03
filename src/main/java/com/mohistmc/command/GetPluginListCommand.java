@@ -23,7 +23,7 @@ public class GetPluginListCommand extends Command {
                 for (Plugin p : Bukkit.getServer().getPluginManager().getPlugins())
                     sendToHaste = sendToHaste + "\nName : " + p.getName() + "\nVersion : " + p.getDescription().getVersion() + "\n---------";
                 try {
-                    sender.sendMessage("Link of the list of your plugins : "+ HasteUtils.paste(sendToHaste));
+                    sender.sendMessage("Link of the list of your plugins : "+ HasteUtils.pasteUbuntu(sendToHaste));
                 } catch (IOException e) {
                     System.out.println("Unable to paste the list of your plugins.");
                 }
