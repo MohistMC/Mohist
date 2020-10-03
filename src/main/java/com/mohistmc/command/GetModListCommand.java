@@ -23,7 +23,7 @@ public class GetModListCommand extends Command {
                 for (ModContainer mod : Loader.instance().getModList())
                     sendToHaste = sendToHaste + "\nName : " + mod.getName() + "\nModID : " + mod.getModId() + "\nVersion : " + mod.getVersion()+"\n---------";
                 try {
-                    sender.sendMessage("Link of the list of your mods : "+ HasteUtils.pasteUbuntu(sendToHaste));
+                    sender.sendMessage("Link of the list of your mods : "+ HasteUtils.pasteMohist(sendToHaste));
                 } catch (IOException e) {
                     System.out.println("Unable to paste the list of your mods.");
                 }

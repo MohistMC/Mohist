@@ -223,7 +223,7 @@ public class DumpCommand extends Command {
         break;
       case "web":
         try {
-          String url = HasteUtils.pasteUbuntu(sb.toString());
+          String url = HasteUtils.pasteMohist(sb.toString());
           if(sender instanceof Player) {
             Player p = (Player) sender;
             ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
