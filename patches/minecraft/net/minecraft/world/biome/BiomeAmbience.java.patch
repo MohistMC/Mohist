@@ -1,0 +1,65 @@
+--- a/net/minecraft/world/biome/BiomeAmbience.java
++++ b/net/minecraft/world/biome/BiomeAmbience.java
+@@ -69,50 +69,62 @@
+       this.field_235212_i_ = p_i241938_12_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public int func_235213_a_() {
+       return this.field_235205_b_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public int func_235216_b_() {
+       return this.field_235206_c_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public int func_235218_c_() {
+       return this.field_235207_d_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public int func_242527_d() {
+       return this.field_242523_e;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public Optional<Integer> func_242528_e() {
+       return this.field_242524_f;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public Optional<Integer> func_242529_f() {
+       return this.field_242525_g;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public BiomeAmbience.GrassColorModifier func_242531_g() {
+       return this.field_242526_h;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public Optional<ParticleEffectAmbience> func_235220_d_() {
+       return this.field_235208_e_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public Optional<SoundEvent> func_235222_e_() {
+       return this.field_235209_f_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public Optional<MoodSoundAmbience> func_235224_f_() {
+       return this.field_235210_g_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public Optional<SoundAdditionsAmbience> func_235226_g_() {
+       return this.field_235211_h_;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    public Optional<BackgroundMusicSelector> func_235228_h_() {
+       return this.field_235212_i_;
+    }

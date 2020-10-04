@@ -105,7 +105,7 @@
 +               }
 +               return 1;
 +            }
-+            return this.field_197062_b.execute(stringreader, source);
++            return this.field_197062_b.execute(event.getParseResults());
           } catch (CommandException commandexception) {
 -            p_197059_1_.func_197021_a(commandexception.func_197003_a());
 +            source.func_197021_a(commandexception.func_197003_a());

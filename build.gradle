@@ -172,7 +172,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '34.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '34.1' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -183,7 +183,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.3-34.0.1-' + JenkinsNumber()
+    version = '1.16.3-34.1.0-' + JenkinsNumber()
     println('Forge Version: ' + version)
 
     patcher {
@@ -362,7 +362,7 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
-        installer 'org.spongepowered:mixin:0.8'
+        installer 'org.spongepowered:mixin:0.8.1'
 
         // mohist
         installer 'mysql:mysql-connector-java:8.0.19'
