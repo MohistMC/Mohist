@@ -483,7 +483,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.SkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftSkull::new);
         register(net.minecraft.block.SkullPlayerBlock.class, org.bukkit.craftbukkit.block.impl.CraftSkullPlayer::new);
         register(net.minecraft.block.SkullWallPlayerBlock.class, org.bukkit.craftbukkit.block.impl.CraftSkullPlayerWall::new);
-        register(net.minecraft.block.SkullPlayerBlock.class, org.bukkit.craftbukkit.block.impl.CraftSkullWall::new);
+        register(net.minecraft.block.WallSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftSkullWall::new);
         register(net.minecraft.block.SmokerBlock.class, org.bukkit.craftbukkit.block.impl.CraftSmoker::new);
         register(net.minecraft.block.SnowBlock.class, org.bukkit.craftbukkit.block.impl.CraftSnow::new);
         register(net.minecraft.block.FarmlandBlock.class, org.bukkit.craftbukkit.block.impl.CraftSoil::new);
