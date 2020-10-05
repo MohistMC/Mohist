@@ -28,7 +28,7 @@
 +      }
 +      CompletableFuture<Either<IChunk, IChunkLoadingError>> statusFuture = this.func_219301_a(ChunkStatus.field_222617_m);
 +      Either<IChunk, IChunkLoadingError> either = (Either<IChunk, IChunkLoadingError>) statusFuture.getNow(null);
-+      return either == null ? null : (Chunk) either.left().orElse(null);
++      return (either == null) ? null : (Chunk) either.left().orElse(null);
 +   }
 +   // CraftBukkit end
 +

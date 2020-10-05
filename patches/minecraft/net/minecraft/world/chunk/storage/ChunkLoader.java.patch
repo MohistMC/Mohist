@@ -52,7 +52,7 @@
 +      return false;
 +   }
 +
-+   public CompoundNBT func_235968_a_(RegistryKey<World> p_235968_1_, Supplier<DimensionSavedDataManager> p_235968_2_, CompoundNBT p_235968_3_, ChunkPos pos, @Nullable IWorld generatoraccess) throws IOException {
++   public CompoundNBT func_235968_a_(RegistryKey<DimensionType> p_235968_1_, Supplier<DimensionSavedDataManager> p_235968_2_, CompoundNBT p_235968_3_, ChunkPos pos, @Nullable IWorld generatoraccess) throws IOException {
 +      // CraftBukkit end
        int i = func_219165_a(p_235968_3_);
        int j = 1493;

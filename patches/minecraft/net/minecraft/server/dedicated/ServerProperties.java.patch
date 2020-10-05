@@ -16,17 +16,34 @@
     public final boolean field_219007_a = this.func_218982_a("online-mode", true);
     public final boolean field_219008_b = this.func_218982_a("prevent-proxy-connections", false);
     public final String field_219009_c = this.func_218973_a("server-ip", "");
-@@ -93,11 +95,13 @@
+@@ -61,8 +63,10 @@
+    public final PropertyManager<ServerProperties>.Property<Boolean> field_219006_S;
+    public final DimensionGeneratorSettings field_241082_U_;
+ 
+-   public ServerProperties(Properties p_i242099_1_, DynamicRegistries p_i242099_2_) {
+-      super(p_i242099_1_);
++   // CraftBukkit start
++   public ServerProperties(Properties p_i242099_1_, DynamicRegistries p_i242099_2_, OptionSet optionSet) {
++      super(p_i242099_1_, optionSet);
++      // CraftBukkit end
+       if (this.func_218982_a("snooper-enabled", true)) {
+       }
+ 
+@@ -93,11 +97,13 @@
        this.field_241082_U_ = DimensionGeneratorSettings.func_242753_a(p_i242099_2_, p_i242099_1_);
     }
  
+-   public static ServerProperties func_244380_a(DynamicRegistries p_244380_0_, Path p_244380_1_) {
+-      return new ServerProperties(func_218969_b(p_244380_1_), p_244380_0_);
 +   // CraftBukkit start
-    public static ServerProperties func_244380_a(DynamicRegistries p_244380_0_, Path p_244380_1_) {
-       return new ServerProperties(func_218969_b(p_244380_1_), p_244380_0_);
++   public static ServerProperties func_244380_a(DynamicRegistries p_244380_0_, Path p_244380_1_, OptionSet optionset) {
++      return new ServerProperties(func_218969_b(p_244380_1_), p_244380_0_, optionset);
     }
  
-    protected ServerProperties func_241881_b(DynamicRegistries p_241881_1_, Properties p_241881_2_) {
-       return new ServerProperties(p_241881_2_, p_241881_1_);
+-   protected ServerProperties func_241881_b(DynamicRegistries p_241881_1_, Properties p_241881_2_) {
+-      return new ServerProperties(p_241881_2_, p_241881_1_);
++   protected ServerProperties func_241881_b(DynamicRegistries p_241881_1_, Properties p_241881_2_, OptionSet optionset) {
++      return new ServerProperties(p_241881_2_, p_241881_1_,optionset);
 +      // CraftBukkit end
     }
  }

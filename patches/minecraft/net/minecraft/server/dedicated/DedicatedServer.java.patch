@@ -187,17 +187,21 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,6 +245,7 @@
+@@ -175,23 +245,18 @@
           if (serverproperties.field_219030_x) {
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = MainThread.func_242130_a(this);
 +            this.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
           }
  
-          if (this.func_175593_aQ() > 0L) {
-@@ -186,12 +257,14 @@
-          }
- 
+-         if (this.func_175593_aQ() > 0L) {
+-            Thread thread1 = new Thread(new ServerHangWatchdog(this));
+-            thread1.setUncaughtExceptionHandler(new DefaultWithNameUncaughtExceptionHandler(field_155771_h));
+-            thread1.setName("Server Watchdog");
+-            thread1.setDaemon(true);
+-            thread1.start();
+-         }
+-
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
 +         // <3 you Grum for this, saves us ~30 patch files! --^
           if (serverproperties.field_241079_P_) {
@@ -211,7 +215,7 @@
     }
  
     public boolean func_230537_U_() {
-@@ -272,7 +345,7 @@
+@@ -272,7 +337,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -220,7 +224,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -297,7 +370,15 @@
+@@ -297,7 +362,15 @@
     public void func_71333_ah() {
        while(!this.field_71341_l.isEmpty()) {
           PendingCommand pendingcommand = this.field_71341_l.remove(0);
@@ -237,7 +241,7 @@
        }
  
     }
-@@ -402,7 +483,7 @@
+@@ -402,7 +475,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -246,7 +250,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -481,13 +562,39 @@
+@@ -481,13 +554,39 @@
     }
  
     public String func_71258_A() {
@@ -288,7 +292,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -507,6 +614,11 @@
+@@ -507,6 +606,11 @@
        return false;
     }
  
@@ -300,7 +304,7 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -518,4 +630,15 @@
+@@ -518,4 +622,15 @@
     public boolean func_230540_aS_() {
        return this.field_71340_o.func_219034_a().field_241078_O_;
     }

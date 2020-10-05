@@ -34,9 +34,14 @@
           return chunkprimer1;
        }
     }
-@@ -295,12 +299,22 @@
-          for(int k = 0; k < chunk.func_177429_s().length; ++k) {
-             for(Entity entity : chunk.func_177429_s()[k]) {
+@@ -292,15 +296,25 @@
+          Chunk chunk = (Chunk)p_222645_1_;
+          chunk.func_177409_g(false);
+ 
+-         for(int k = 0; k < chunk.func_177429_s().length; ++k) {
+-            for(Entity entity : chunk.func_177429_s()[k]) {
++         for(int k = 0; k < chunk.getEntityLists().length; ++k) {
++            for(Entity entity : chunk.getEntityLists()[k]) {
                 CompoundNBT compoundnbt3 = new CompoundNBT();
 +               try {
                 if (entity.func_70039_c(compoundnbt3)) {

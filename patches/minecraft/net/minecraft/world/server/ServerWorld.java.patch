@@ -60,7 +60,7 @@
     public boolean field_73058_d;
     private boolean field_73068_P;
     private int field_80004_Q;
-@@ -168,16 +181,37 @@
+@@ -168,16 +181,38 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -90,6 +90,7 @@
 -      this.field_241103_E_ = p_i241885_4_;
 +      // CraftBukkit start
 +      this.field_241103_E_ = (ServerWorldInfo) p_i241885_4_;
++      field_241103_E_.world = this;
 +      if (gen != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(this, p_i241885_8_, gen);
 +      }
@@ -101,7 +102,7 @@
        this.field_85177_Q = new Teleporter(this);
        this.func_72966_v();
        this.func_72947_a();
-@@ -189,15 +223,43 @@
+@@ -189,15 +224,43 @@
           p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
        }
  
@@ -147,7 +148,7 @@
     public void func_241113_a_(int p_241113_1_, int p_241113_2_, boolean p_241113_3_, boolean p_241113_4_) {
        this.field_241103_E_.func_230391_a_(p_241113_1_);
        this.field_241103_E_.func_76080_g(p_241113_2_);
-@@ -206,6 +268,11 @@
+@@ -206,6 +269,11 @@
        this.field_241103_E_.func_76069_a(p_241113_4_);
     }
  
@@ -159,7 +160,7 @@
     public Biome func_225604_a_(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
        return this.func_72863_F().func_201711_g().func_202090_b().func_225526_b_(p_225604_1_, p_225604_2_, p_225604_3_);
     }
-@@ -283,35 +350,70 @@
+@@ -283,35 +351,70 @@
           this.field_73004_o = MathHelper.func_76131_a(this.field_73004_o, 0.0F, 1.0F);
        }
  
@@ -244,7 +245,7 @@
           if (this.func_82736_K().func_223586_b(GameRules.field_223617_t)) {
              this.func_73051_P();
           }
-@@ -333,7 +435,7 @@
+@@ -333,7 +436,7 @@
        this.func_147488_Z();
        this.field_211159_Q = false;
        iprofiler.func_219895_b("entities");
@@ -253,7 +254,7 @@
        if (flag3) {
           this.func_82742_i();
        }
-@@ -365,13 +467,15 @@
+@@ -365,13 +468,15 @@
                 Entry<Entity> entry = objectiterator.next();
                 entity1 = entry.getValue();
                 Entity entity2 = entity1.func_184187_bx();
@@ -273,7 +274,7 @@
  
                 iprofiler.func_76320_a("checkDespawn");
                 if (!entity1.field_70128_L) {
-@@ -399,7 +503,7 @@
+@@ -399,7 +504,7 @@
              if (entity1.field_70128_L) {
                 this.func_217454_n(entity1);
                 objectiterator.remove();
@@ -282,7 +283,7 @@
              }
  
              iprofiler.func_76319_b();
-@@ -455,13 +559,13 @@
+@@ -455,13 +560,13 @@
                 skeletonhorseentity.func_190691_p(true);
                 skeletonhorseentity.func_70873_a(0);
                 skeletonhorseentity.func_70107_b((double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p());
@@ -298,7 +299,7 @@
           }
        }
  
-@@ -470,12 +574,13 @@
+@@ -470,12 +575,13 @@
           BlockPos blockpos2 = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, this.func_217383_a(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.func_177977_b();
           Biome biome = this.func_226691_t_(blockpos2);
@@ -314,7 +315,7 @@
           }
  
           if (flag && this.func_226691_t_(blockpos3).func_201851_b() == Biome.RainType.RAIN) {
-@@ -539,7 +644,7 @@
+@@ -539,7 +645,7 @@
           int j = 0;
  
           for(ServerPlayerEntity serverplayerentity : this.field_217491_A) {
@@ -323,7 +324,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -556,10 +661,22 @@
+@@ -556,10 +662,22 @@
     }
  
     private void func_73051_P() {
@@ -348,7 +349,7 @@
     }
  
     public void func_82742_i() {
-@@ -593,10 +710,12 @@
+@@ -593,10 +711,12 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
@@ -362,7 +363,7 @@
              iprofiler.func_76319_b();
           }
  
-@@ -673,6 +792,7 @@
+@@ -673,6 +793,7 @@
     public void func_217445_a(@Nullable IProgressUpdate p_217445_1_, boolean p_217445_2_, boolean p_217445_3_) {
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
        if (!p_217445_3_) {
@@ -370,7 +371,7 @@
           if (p_217445_1_ != null) {
              p_217445_1_.func_200210_a(new TranslationTextComponent("menu.savingLevel"));
           }
-@@ -682,13 +802,21 @@
+@@ -682,13 +803,21 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
@@ -393,7 +394,7 @@
        }
  
        this.func_72863_F().func_217227_h().func_212775_b();
-@@ -737,14 +865,28 @@
+@@ -737,14 +866,28 @@
        return list.isEmpty() ? null : list.get(this.field_73012_v.nextInt(list.size()));
     }
  
@@ -424,7 +425,7 @@
     public void func_217460_e(Entity p_217460_1_) {
        boolean flag = p_217460_1_.field_98038_p;
        p_217460_1_.field_98038_p = true;
-@@ -772,6 +914,7 @@
+@@ -772,6 +915,7 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -432,7 +433,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -790,18 +933,24 @@
+@@ -790,18 +934,24 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
@@ -463,7 +464,7 @@
              return true;
           }
        }
-@@ -811,6 +960,7 @@
+@@ -811,6 +961,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -471,7 +472,16 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -874,12 +1024,17 @@
+@@ -856,7 +1007,7 @@
+ 
+    public void func_217466_a(Chunk p_217466_1_) {
+       this.field_147483_b.addAll(p_217466_1_.func_177434_r().values());
+-      ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = p_217466_1_.func_177429_s();
++      List<Entity>[] aclassinheritancemultimap = p_217466_1_.getEntityLists();
+       int i = aclassinheritancemultimap.length;
+ 
+       for(int j = 0; j < i; ++j) {
+@@ -874,12 +1025,17 @@
  
     }
  
@@ -490,7 +500,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -889,10 +1044,19 @@
+@@ -889,10 +1045,19 @@
        }
  
        this.func_96441_U().func_181140_a(p_217484_1_);
@@ -510,7 +520,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -908,20 +1072,31 @@
+@@ -908,20 +1073,31 @@
  
           this.field_175741_N.put(p_217465_1_.func_110124_au(), p_217465_1_);
           this.func_72863_F().func_217230_c(p_217465_1_);
@@ -543,7 +553,7 @@
        }
     }
  
-@@ -934,17 +1109,47 @@
+@@ -934,17 +1110,47 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -593,7 +603,7 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayerentity.field_71135_a.func_147359_a(new SAnimateBlockBreakPacket(p_175715_1_, p_175715_2_, p_175715_3_));
              }
-@@ -954,10 +1159,20 @@
+@@ -954,10 +1160,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -614,7 +624,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.func_234923_W_(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -992,9 +1207,17 @@
+@@ -992,9 +1208,17 @@
     }
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
@@ -634,7 +644,7 @@
        if (p_230546_12_ == Explosion.Mode.NONE) {
           explosion.func_180342_d();
        }
-@@ -1049,12 +1272,18 @@
+@@ -1049,12 +1273,18 @@
     }
  
     public <T extends IParticleData> int func_195598_a(T p_195598_1_, double p_195598_2_, double p_195598_4_, double p_195598_6_, int p_195598_8_, double p_195598_9_, double p_195598_11_, double p_195598_13_, double p_195598_15_) {
@@ -655,7 +665,7 @@
              ++i;
           }
        }
-@@ -1093,7 +1322,7 @@
+@@ -1093,7 +1323,7 @@
  
     @Nullable
     public BlockPos func_241117_a_(Structure<?> p_241117_1_, BlockPos p_241117_2_, int p_241117_3_, boolean p_241117_4_) {
@@ -664,7 +674,7 @@
     }
  
     @Nullable
-@@ -1126,7 +1355,13 @@
+@@ -1126,7 +1356,13 @@
     @Nullable
     public MapData func_217406_a(String p_217406_1_) {
        return this.func_73046_m().func_241755_D_().func_217481_x().func_215753_b(() -> {
@@ -679,7 +689,7 @@
        }, p_217406_1_);
     }
  
-@@ -1328,6 +1563,11 @@
+@@ -1328,6 +1564,11 @@
  
     public void func_230547_a_(BlockPos p_230547_1_, Block p_230547_2_) {
        if (!this.func_234925_Z_()) {
@@ -691,7 +701,7 @@
           this.func_195593_d(p_230547_1_, p_230547_2_);
        }
  
-@@ -1347,11 +1587,11 @@
+@@ -1347,11 +1588,11 @@
     }
  
     public boolean func_241109_A_() {
@@ -705,7 +715,7 @@
     }
  
     @Nullable
-@@ -1368,15 +1608,40 @@
+@@ -1368,15 +1609,40 @@
     }
  
     public static void func_241121_a_(ServerWorld p_241121_0_) {

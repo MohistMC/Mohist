@@ -1,10 +1,10 @@
 package com.mohistmc.configuration;
 
+import com.mohistmc.MohistMC;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import com.mohistmc.Mohist;
 import com.mohistmc.util.FileUtil;
 import com.mohistmc.util.NumberUtils;
 
@@ -46,7 +46,7 @@ public class MohistConfigUtil {
         try {
             if (!mohistyml.exists()) {
                 mohistyml.mkdirs();
-                Files.copy(Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(MohistMC.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             System.out.println("File copy exception!");

@@ -89,7 +89,7 @@
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
  
 +   // CraftBukkit start Added the following
-+   private final RegistryKey<World> typeKey;
++   private final RegistryKey<DimensionType> typeKey;
 +   private final CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
@@ -114,7 +114,7 @@
 +      return (CraftServer) Bukkit.getServer();
 +   }
 +
-+   public RegistryKey<World> getTypeKey() {
++   public RegistryKey<DimensionType> getTypeKey() {
 +      return typeKey;
 +   }
 +

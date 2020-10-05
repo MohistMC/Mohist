@@ -1,14 +1,16 @@
 --- a/net/minecraft/block/AbstractFireBlock.java
 +++ b/net/minecraft/block/AbstractFireBlock.java
-@@ -14,6 +14,7 @@
+@@ -13,7 +13,9 @@
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.shapes.ISelectionContext;
  import net.minecraft.util.math.shapes.VoxelShape;
++import net.minecraft.world.DimensionType;
  import net.minecraft.world.IBlockReader;
 +import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-@@ -111,7 +112,13 @@
+@@ -111,7 +113,13 @@
        if (!p_196262_4_.func_230279_az_()) {
           p_196262_4_.func_241209_g_(p_196262_4_.func_223314_ad() + 1);
           if (p_196262_4_.func_223314_ad() == 0) {
@@ -23,7 +25,7 @@
           }
  
           p_196262_4_.func_70097_a(DamageSource.field_76372_a, this.field_235325_g_);
-@@ -124,14 +131,15 @@
+@@ -124,21 +132,22 @@
        if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c())) {
           if (func_242649_a(p_220082_2_)) {
              Optional<PortalSize> optional = PortalSize.func_242964_a(p_220082_2_, p_220082_3_, Direction.Axis.X);
@@ -41,7 +43,15 @@
           }
  
        }
-@@ -174,4 +182,13 @@
+    }
+ 
+    private static boolean func_242649_a(World p_242649_0_) {
+-      return p_242649_0_.func_234923_W_() == World.field_234918_g_ || p_242649_0_.func_234923_W_() == World.field_234919_h_;
++      return p_242649_0_.getTypeKey() == DimensionType.field_235999_c_ || p_242649_0_.getTypeKey() == DimensionType.field_236000_d_; // CraftBukkit - getTypeKey()
+    }
+ 
+    public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, BlockState p_176208_3_, PlayerEntity p_176208_4_) {
+@@ -174,4 +183,13 @@
           return flag && PortalSize.func_242964_a(p_241466_0_, p_241466_1_, p_241466_2_.func_176735_f().func_176740_k()).isPresent();
        }
     }

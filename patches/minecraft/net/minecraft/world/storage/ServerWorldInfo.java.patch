@@ -42,7 +42,7 @@
           p_237370_2_.func_186854_a("WanderingTraderId", this.field_237337_A_);
        }
  
-+      // p_237370_2_.putString("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
++      p_237370_2_.func_74778_a("Bukkit.Version", "Mohist/1.16.3/1.16.3"); // CraftBukkit
     }
  
     public int func_76079_c() {
@@ -92,7 +92,7 @@
        this.field_237342_b_ = this.field_237342_b_.func_234948_a_(p_230409_1_);
 +      // CraftBukkit start
 +      SServerDifficultyPacket packet = new SServerDifficultyPacket(this.func_176130_y(), this.func_176123_z());
-+      for (ServerPlayerEntity player : (java.util.List<ServerPlayerEntity>) (java.util.List) world.func_217369_A()) {
++      for (ServerPlayerEntity player : world.func_217369_A()) {
 +         player.field_71135_a.func_147359_a(packet);
 +      }
 +      // CraftBukkit end

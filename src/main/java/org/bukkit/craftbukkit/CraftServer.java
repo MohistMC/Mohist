@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistMC;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -26,8 +27,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -225,7 +224,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
 
 public final class CraftServer implements Server {
-    private final String serverName = "CraftBukkit";
+    private final String serverName = "Mohist";
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
     private final Logger logger = Logger.getLogger("Minecraft");
@@ -276,7 +275,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
+        this.serverVersion = MohistMC.getVersion();
 
         Bukkit.setServer(this);
 
@@ -753,8 +752,7 @@ public final class CraftServer implements Server {
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
 
-        Path path = Paths.get("server.properties");
-        console.settings = new ServerPropertiesProvider(console.func_244267_aX(), path);
+        console.settings = new ServerPropertiesProvider(console.func_244267_aX(), console.options);
         ServerProperties config = console.settings.getProperties();
 
         console.setAllowPvp(config.allowPvp);
@@ -1009,7 +1007,7 @@ public final class CraftServer implements Server {
             net.minecraft.server.Main.func_240761_a_(worldSession, DataFixesManager.getDataFixer(), console.options.has("eraseCache"), () -> {
                 return true;
             }, worlddata.func_230418_z_().func_236224_e_().func_239659_c_().stream().map((entry) -> {
-                return RegistryKey.func_240903_a_(Registry.field_239699_ae_, ((RegistryKey) entry.getKey()).func_240901_a_());
+                return RegistryKey.func_240903_a_(Registry.field_239698_ad_, ((RegistryKey) entry.getKey()).func_240901_a_());
             }).collect(ImmutableSet.toImmutableSet()));
         }
 
