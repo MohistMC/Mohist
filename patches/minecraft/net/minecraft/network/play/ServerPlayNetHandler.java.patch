@@ -1669,7 +1669,7 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
-@@ -1330,4 +2391,52 @@
+@@ -1330,4 +2391,56 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
@@ -1687,7 +1687,9 @@
 +            String channels = p_147349_1_.field_149561_c.toString(com.google.common.base.Charsets.UTF_8);
 +            field_147370_c.error("processCustomPayload: channels: "  + channels);
 +            for (String channel : channels.split("\0")) {
-+               getPlayer().addChannel(channel);
++               if (!StringUtils.func_151246_b(channel)) {
++                  getPlayer().addChannel(channel);
++               }
 +            }
 +         } catch (Exception ex) {
 +            ServerPlayNetHandler.field_147370_c.error("Couldn't register custom payload", ex);
@@ -1698,7 +1700,9 @@
 +         try {
 +            String channels = p_147349_1_.field_149561_c.toString(com.google.common.base.Charsets.UTF_8);
 +            for (String channel : channels.split("\0")) {
-+               getPlayer().removeChannel(channel);
++               if (!StringUtils.func_151246_b(channel)) {
++                  getPlayer().removeChannel(channel);
++               }
 +            }
 +         } catch (Exception ex) {
 +            ServerPlayNetHandler.field_147370_c.error("Couldn't unregister custom payload", ex);
