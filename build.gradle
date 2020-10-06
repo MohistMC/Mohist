@@ -1,15 +1,11 @@
 buildscript {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
-       // maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
-
-       // mavenLocal()
-       // maven { url = 'https://files.minecraftforge.net/maven' }
-       // maven {
-        //    name 'maven_central'
-         //   url 'https://repo.maven.apache.org/maven2/'
-        //}
+        mavenLocal()
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.179'
@@ -42,18 +38,6 @@ Util.init() //Init all our extension methods!
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
-repositories {
-    maven { url 'https://maven.aliyun.com/repository/public' }
-    maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
-    // maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
-
-    // mavenLocal()
-    // maven { url = 'https://files.minecraftforge.net/maven' }
-    // maven {
-    //    name 'maven_central'
-    //   url 'https://repo.maven.apache.org/maven2/'
-    //}
-}
 ext {
     JAR_SIGNER = null
     if (project.hasProperty('keystore')) {
@@ -88,8 +72,13 @@ project(':clean') {
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
+        mavenLocal()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
     }
     
     dependencies {
@@ -172,8 +161,13 @@ project(':forge') {
     eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
 
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
+        mavenLocal()
+        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
+        maven {
+            name 'maven_central'
+            url 'https://repo.maven.apache.org/maven2/'
+        }
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     }
 
