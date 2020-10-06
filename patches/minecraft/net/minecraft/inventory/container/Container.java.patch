@@ -1,18 +1,21 @@
 --- a/net/minecraft/inventory/container/Container.java
 +++ b/net/minecraft/inventory/container/Container.java
-@@ -1,8 +1,11 @@
+@@ -1,8 +1,14 @@
  package net.minecraft.inventory.container;
  
 +import com.google.common.base.Preconditions;
  import com.google.common.collect.Lists;
  import com.google.common.collect.Sets;
++import java.util.ArrayList;
 +import java.util.HashMap;
++import java.util.HashSet;
++import java.util.Iterator;
  import java.util.List;
 +import java.util.Map;
  import java.util.Set;
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
-@@ -14,6 +17,7 @@
+@@ -14,6 +20,7 @@
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.inventory.IInventory;
  import net.minecraft.item.ItemStack;
@@ -20,7 +23,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.IIntArray;
  import net.minecraft.util.IWorldPosCallable;
-@@ -21,13 +25,21 @@
+@@ -21,13 +28,25 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Registry;
@@ -28,12 +31,16 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.event.Event.Result;
 +import org.bukkit.event.inventory.InventoryDragEvent;
 +import org.bukkit.event.inventory.InventoryType;
++import org.bukkit.inventory.Inventory;
 +import org.bukkit.inventory.InventoryView;
  
  public abstract class Container {
@@ -44,7 +51,7 @@
     private final List<IntReferenceHolder> field_216964_d = Lists.newArrayList();
     @Nullable
     private final ContainerType<?> field_216965_e;
-@@ -40,6 +52,36 @@
+@@ -40,6 +59,99 @@
     private final List<IContainerListener> field_75149_d = Lists.newArrayList();
     private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
  
@@ -52,18 +59,81 @@
 +   public boolean checkReachable;
 +   private ITextComponent title;
 +
-+   public abstract InventoryView getBukkitView();
++   private InventoryView bukkitView;
++   private boolean isBukkitViewCreated;
++
++   @Nullable
++   public InventoryView getBukkitView() {
++      if(!isBukkitViewCreated) {
++         isBukkitViewCreated = true;
++         bukkitView = computeBukkitView();
++         return bukkitView;
++      }
++      return bukkitView;
++   }
++
++   public void setBukkitView(InventoryView bukkitView) {
++      this.bukkitView = bukkitView;
++      isBukkitViewCreated = true;
++   }
++
++   @Nullable
++   private InventoryView computeBukkitView() {
++      Set<IInventory> uniqueInventorySet = new HashSet<>();
++      for(Slot slot : field_75151_b) {
++         if (slot.field_75224_c != null) uniqueInventorySet.add(slot.field_75224_c);
++      }
++      List<IInventory> inventories = new ArrayList<>(uniqueInventorySet);
++      PlayerInventory playerInv = null;
++
++      for(Iterator<IInventory> it = inventories.iterator(); it.hasNext();) {
++         IInventory inv = it.next();
++         if(inv instanceof PlayerInventory) {
++            playerInv = (PlayerInventory) inv;
++            it.remove();
++            break;
++         }
++      }
++      if(playerInv == null) {
++         return null;
++      }
++      CraftPlayer bukkitPlayer = (CraftPlayer) playerInv.field_70458_d.getBukkitEntity();
++      Inventory craftInv;
++      if(inventories.size() != 1) {
++         craftInv = Bukkit.getServer().createInventory(bukkitPlayer, InventoryType.CHEST);
++      } else {
++         craftInv = new CraftInventory(inventories.get(0));
++      }
++      return new CraftInventoryView(bukkitPlayer, craftInv, this);
++   }
 +
 +   public void transferTo(Container other, CraftHumanEntity player) {
-+      InventoryView source = this.getBukkitView();
++      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
 +      if (source != null) {
-+         ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-+         ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++         try {
++            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
 +      }
-+      InventoryView destination = other.getBukkitView();
 +      if (destination != null) {
-+         ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-+         ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++         try {
++            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
 +      }
 +   }
 +
@@ -81,7 +151,7 @@
     protected Container(@Nullable ContainerType<?> p_i50105_1_, int p_i50105_2_) {
        this.field_216965_e = p_i50105_1_;
        this.field_75152_c = p_i50105_2_;
-@@ -120,9 +162,11 @@
+@@ -120,9 +232,11 @@
           ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -93,7 +163,7 @@
              for(IContainerListener icontainerlistener : this.field_75149_d) {
                 icontainerlistener.func_71111_a(this, i, itemstack2);
              }
-@@ -202,6 +246,7 @@
+@@ -202,6 +316,7 @@
                 ItemStack itemstack10 = playerinventory.func_70445_o().func_77946_l();
                 int k1 = playerinventory.func_70445_o().func_190916_E();
  
@@ -101,7 +171,7 @@
                 for(Slot slot8 : this.field_94537_h) {
                    ItemStack itemstack13 = playerinventory.func_70445_o();
                    if (slot8 != null && func_94527_a(slot8, itemstack13, true) && slot8.func_75214_a(itemstack13) && (this.field_94535_f == 2 || itemstack13.func_190916_E() >= this.field_94537_h.size()) && this.func_94531_b(slot8)) {
-@@ -214,12 +259,45 @@
+@@ -214,12 +329,45 @@
                       }
  
                       k1 -= itemstack14.func_190916_E() - j3;
@@ -150,7 +220,7 @@
              }
  
              this.func_94533_d();
-@@ -232,8 +310,11 @@
+@@ -232,8 +380,11 @@
           if (p_241440_1_ == -999) {
              if (!playerinventory.func_70445_o().func_190926_b()) {
                 if (p_241440_2_ == 0) {
@@ -163,7 +233,7 @@
                 }
  
                 if (p_241440_2_ == 1) {
-@@ -321,6 +402,15 @@
+@@ -321,6 +472,15 @@
                 }
  
                 slot6.func_75218_e();
@@ -179,7 +249,7 @@
              }
           }
        } else if (p_241440_3_ == ClickType.SWAP) {
-@@ -418,8 +508,11 @@
+@@ -418,8 +578,11 @@
     public void func_75134_a(PlayerEntity p_75134_1_) {
        PlayerInventory playerinventory = p_75134_1_.field_71071_by;
        if (!playerinventory.func_70445_o().func_190926_b()) {
@@ -192,7 +262,7 @@
        }
  
     }
-@@ -500,14 +593,15 @@
+@@ -500,14 +663,15 @@
              ItemStack itemstack = slot.func_75211_c();
              if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
                 int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -212,7 +282,7 @@
                    slot.func_75218_e();
                    flag = true;
                 }
-@@ -608,7 +702,7 @@
+@@ -608,7 +772,7 @@
           p_94525_2_.func_190920_e(1);
           break;
        case 2:
