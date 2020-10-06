@@ -25,7 +25,7 @@
                     <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}%n%tEx"/>
                     <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}%n%tEx"/>
                     <PatternMatch key="net.minecraftforge.common.ForgeConfigSpec"  pattern="%highlight{[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%tEx}{ERROR=normal}"/>
-                    <PatternMatch key="net.minecraft.command.arguments.ArgumentTypes"  pattern="%highlight{[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%tEx}{ERROR=normal}"/>
+                    <PatternMatch key="com.mojang.brigadier.arguments.StringArgumentType"  pattern="%highlight{[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%tEx}{ERROR=normal}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
