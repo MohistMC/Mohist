@@ -204,20 +204,20 @@
 +         if (!p_72355_2_.getBukkitEntity().canSee(entityplayer1.getBukkitEntity())) {
 +            continue;
 +         }
-+         p_72355_2_.field_71135_a.func_147359_a(new SPlayerListItemPacket(Action.ADD_PLAYER, entityplayer1));
++         p_72355_2_.field_71135_a.func_147359_a(new SPlayerListItemPacket(Action.ADD_PLAYER, new ServerPlayerEntity[] { entityplayer1}));
        }
--
--      serverworld1.func_217435_c(p_72355_2_);
 +      p_72355_2_.sentListPacket = true;
 +      // CraftBukkit end
 +      p_72355_2_.field_71135_a.func_147359_a(new SEntityMetadataPacket(p_72355_2_.func_145782_y(), p_72355_2_.func_184212_Q(), true)); // CraftBukkit - BungeeCord#2321, send complete data to self on spawn
 +      // CraftBukkit start - Only add if the player wasn't moved in the event
 +      if (p_72355_2_.field_70170_p == serverworld && !serverworld.func_217369_A().contains(p_72355_2_)) {
 +         serverworld.func_217435_c(p_72355_2_);
-       this.field_72400_f.func_201300_aS().func_201383_a(p_72355_2_);
--      this.func_72354_b(p_72355_2_, serverworld1);
++         this.field_72400_f.func_201300_aS().func_201383_a(p_72355_2_);
 +      }
-+
+ 
+-      serverworld1.func_217435_c(p_72355_2_);
+-      this.field_72400_f.func_201300_aS().func_201383_a(p_72355_2_);
+-      this.func_72354_b(p_72355_2_, serverworld1);
 +      serverworld = p_72355_2_.func_71121_q(); // CraftBukkit - Update in case join event changed it
 +      // CraftBukkit end
 +
@@ -232,9 +232,9 @@
 -         Entity entity1 = EntityType.func_220335_a(compoundnbt1.func_74775_l("Entity"), serverworld1, (p_217885_1_) -> {
 -            return !serverworld1.func_217470_d(p_217885_1_) ? null : p_217885_1_;
 +         // CraftBukkit start
-+         final ServerWorld worldf = serverworld;
-+         Entity entity1 = EntityType.func_220335_a(compoundnbt1.func_74775_l("Entity"), serverworld, (p_217885_1_) -> {
-+            return !worldf.func_217470_d(p_217885_1_) ? null : p_217885_1_;
++         ServerWorld finalWorldServer = serverworld;
++         Entity entity1 = EntityType.func_220335_a(compoundnbt1.func_74775_l("Entity"), finalWorldServer, (p_217885_1_) -> {
++            return !finalWorldServer.func_217470_d(p_217885_1_) ? null : p_217885_1_;
 +            // CraftBukkit end
           });
           if (entity1 != null) {
