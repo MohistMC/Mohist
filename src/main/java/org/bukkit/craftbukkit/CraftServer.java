@@ -739,9 +739,7 @@ public final class CraftServer implements Server {
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
         }
-
-        sender.sendMessage(Message.get("use.unknow.command"));
-
+        sender.sendMessage(Message.get("use.unknow.command", (sender instanceof Player) ? "/" : ""));
         return false;
     }
 
@@ -772,12 +770,12 @@ public final class CraftServer implements Server {
         try {
             playerList.getBannedIPs().readSavedFile();
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to load banned-ips.json, " + ex.getMessage());
+            logger.log(Level.WARNING, Message.get("pluginscommand.notload", "banned-ips.json, " + ex.getMessage()));
         }
         try {
             playerList.getBannedPlayers().readSavedFile();
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
+            logger.log(Level.WARNING, Message.get("pluginscommand.notload", "banned-players.json, " + ex.getMessage()));
         }
 
         for (ServerWorld world : console.getWorlds()) {
@@ -839,11 +837,10 @@ public final class CraftServer implements Server {
             if (plugin.getDescription().getAuthors().size() > 0) {
                 author = plugin.getDescription().getAuthors().get(0);
             }
-            getLogger().log(Level.SEVERE, String.format(
-                    "Nag author: '%s' of '%s' about the following: %s",
+            getLogger().log(Level.SEVERE, Message.get(
+                    "bukkit.plugin.nag.author",
                     author,
-                    plugin.getDescription().getName(),
-                    "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+                    plugin.getDescription().getName()
             ));
         }
         loadPlugins();
