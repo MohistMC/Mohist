@@ -10,13 +10,11 @@
  import net.minecraft.util.text.LanguageMap;
  import net.minecraft.world.GameRules;
  import org.apache.logging.log4j.LogManager;
-@@ -46,9 +49,69 @@
-                PotionBrewing.func_185207_a();
-                EntityOptions.func_197445_a();
+@@ -48,7 +51,67 @@
                 IDispenseItemBehavior.func_218401_c();
-+               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
                 ArgumentTypes.func_197483_a();
                 TagRegistryManager.func_242197_b();
++               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
                 func_179868_d();
 +               // CraftBukkit start - easier than fixing the decompile
 +               BlockStateFlatteningMap.func_199194_a(1008, "{Name:'minecraft:oak_sign',Properties:{rotation:'0'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'0'}}");
