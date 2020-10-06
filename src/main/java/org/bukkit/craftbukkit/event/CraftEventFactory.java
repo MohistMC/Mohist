@@ -82,6 +82,7 @@ import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.BookMeta;
+import org.jetbrains.annotations.NotNull;
 import org.bukkit.potion.PotionEffect;
 
 public class CraftEventFactory {
