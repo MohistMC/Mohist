@@ -1,0 +1,37 @@
+From 5bcf58ccedd78c9aca1db6c2f376211f35d7eb2c Mon Sep 17 00:00:00 2001
+From: drXor <mcyoungsota@gmail.com>
+Date: Fri, 25 Apr 2014 18:17:30 -0400
+Subject: [PATCH] Configurable UserCache cap
+
+
+diff --git a/src/main/java/net/minecraft/server/UserCache.java b/src/main/java/net/minecraft/server/UserCache.java
+index 464f12db5..3963e6003 100644
+--- a/src/main/java/net/minecraft/server/UserCache.java
++++ b/src/main/java/net/minecraft/server/UserCache.java
+@@ -230,7 +230,7 @@ public class UserCache {
+         JsonArray jsonarray = new JsonArray();
+         DateFormat dateformat = e();
+ 
+-        this.a(1000).forEach((usercache_usercacheentry) -> {
++        this.a(org.spigotmc.SpigotConfig.userCacheCap).forEach((usercache_usercacheentry) -> { // Spigot
+             jsonarray.add(a(usercache_usercacheentry, dateformat));
+         });
+         String s = this.f.toJson(jsonarray);
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index de35b3907..7411fa731 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -314,4 +314,10 @@ public class SpigotConfig
+         replaceCommands = new HashSet<String>( (List<String>) getList( "commands.replace-commands",
+                 Arrays.asList( "setblock", "summon", "testforblock", "tellraw" ) ) );
+     }
++
++    public static int userCacheCap;
++    private static void userCacheCap()
++    {
++        userCacheCap = getInt( "settings.user-cache-size", 1000 );
++    }
+ }
+-- 
+2.25.1
+

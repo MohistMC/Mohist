@@ -1,0 +1,74 @@
+From f71270251feb0104dadcfc5fdc0369730ff25ee6 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Mon, 28 Jul 2014 16:55:51 +1000
+Subject: [PATCH] Allow Attribute Capping.
+
+Apply some sensible defaults and allow server owners to customize the maximum values of selected common attributes.
+
+diff --git a/src/main/java/net/minecraft/server/AttributeRanged.java b/src/main/java/net/minecraft/server/AttributeRanged.java
+index 13d9bb19b..b1ffe01b4 100644
+--- a/src/main/java/net/minecraft/server/AttributeRanged.java
++++ b/src/main/java/net/minecraft/server/AttributeRanged.java
+@@ -3,7 +3,7 @@ package net.minecraft.server;
+ public class AttributeRanged extends AttributeBase {
+ 
+     private final double a;
+-    public final double maximum;
++    public double maximum; // Spigot
+ 
+     public AttributeRanged(String s, double d0, double d1, double d2) {
+         super(s, d0);
+diff --git a/src/main/java/net/minecraft/server/GenericAttributes.java b/src/main/java/net/minecraft/server/GenericAttributes.java
+index 67365b99f..9913fb4fa 100644
+--- a/src/main/java/net/minecraft/server/GenericAttributes.java
++++ b/src/main/java/net/minecraft/server/GenericAttributes.java
+@@ -2,12 +2,12 @@ package net.minecraft.server;
+ 
+ public class GenericAttributes {
+ 
+-    public static final AttributeBase MAX_HEALTH = a("generic.max_health", (new AttributeRanged("attribute.name.generic.max_health", 20.0D, 1.0D, 1024.0D)).a(true));
++    public static final AttributeBase MAX_HEALTH = a("generic.max_health", (new AttributeRanged("attribute.name.generic.max_health", 20.0D, 1.0D, org.spigotmc.SpigotConfig.maxHealth)).a(true));
+     public static final AttributeBase FOLLOW_RANGE = a("generic.follow_range", new AttributeRanged("attribute.name.generic.follow_range", 32.0D, 0.0D, 2048.0D));
+     public static final AttributeBase KNOCKBACK_RESISTANCE = a("generic.knockback_resistance", new AttributeRanged("attribute.name.generic.knockback_resistance", 0.0D, 0.0D, 1.0D));
+-    public static final AttributeBase MOVEMENT_SPEED = a("generic.movement_speed", (new AttributeRanged("attribute.name.generic.movement_speed", 0.699999988079071D, 0.0D, 1024.0D)).a(true));
++    public static final AttributeBase MOVEMENT_SPEED = a("generic.movement_speed", (new AttributeRanged("attribute.name.generic.movement_speed", 0.699999988079071D, 0.0D, org.spigotmc.SpigotConfig.movementSpeed)).a(true));
+     public static final AttributeBase FLYING_SPEED = a("generic.flying_speed", (new AttributeRanged("attribute.name.generic.flying_speed", 0.4000000059604645D, 0.0D, 1024.0D)).a(true));
+-    public static final AttributeBase ATTACK_DAMAGE = a("generic.attack_damage", new AttributeRanged("attribute.name.generic.attack_damage", 2.0D, 0.0D, 2048.0D));
++    public static final AttributeBase ATTACK_DAMAGE = a("generic.attack_damage", new AttributeRanged("attribute.name.generic.attack_damage", 2.0D, 0.0D, org.spigotmc.SpigotConfig.attackDamage));
+     public static final AttributeBase ATTACK_KNOCKBACK = a("generic.attack_knockback", new AttributeRanged("attribute.name.generic.attack_knockback", 0.0D, 0.0D, 5.0D));
+     public static final AttributeBase ATTACK_SPEED = a("generic.attack_speed", (new AttributeRanged("attribute.name.generic.attack_speed", 4.0D, 0.0D, 1024.0D)).a(true));
+     public static final AttributeBase ARMOR = a("generic.armor", (new AttributeRanged("attribute.name.generic.armor", 0.0D, 0.0D, 30.0D)).a(true));
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 5d37f976d..eb975a3c9 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -13,6 +13,8 @@ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.logging.Level;
++import net.minecraft.server.AttributeRanged;
++import net.minecraft.server.GenericAttributes;
+ import net.minecraft.server.IRegistry;
+ import net.minecraft.server.MinecraftKey;
+ import net.minecraft.server.MinecraftServer;
+@@ -338,4 +340,17 @@ public class SpigotConfig
+     {
+         movedTooQuicklyMultiplier = getDouble( "settings.moved-too-quickly-multiplier", 10.0D );
+     }
++
++    public static double maxHealth = 2048;
++    public static double movementSpeed = 2048;
++    public static double attackDamage = 2048;
++    private static void attributeMaxes()
++    {
++        maxHealth = getDouble( "settings.attribute.maxHealth.max", maxHealth );
++        ( (AttributeRanged) GenericAttributes.MAX_HEALTH ).maximum = maxHealth;
++        movementSpeed = getDouble( "settings.attribute.movementSpeed.max", movementSpeed );
++        ( (AttributeRanged) GenericAttributes.MOVEMENT_SPEED ).maximum = movementSpeed;
++        attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );
++        ( (AttributeRanged) GenericAttributes.ATTACK_DAMAGE ).maximum = attackDamage;
++    }
+ }
+-- 
+2.25.1
+

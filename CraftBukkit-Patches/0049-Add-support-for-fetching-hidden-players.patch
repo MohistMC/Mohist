@@ -1,0 +1,32 @@
+From 4fdc67327e93bec1233331bfe80fa2e551dc8325 Mon Sep 17 00:00:00 2001
+From: Tux <write@imaginarycode.com>
+Date: Sun, 9 Feb 2014 14:03:03 -0500
+Subject: [PATCH] Add support for fetching hidden players
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 73603c84a..862d85e32 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1724,6 +1724,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+                 server.getServer().getPlayerList().moveToWorld( getHandle(), false );
+             }
+         }
++
++        @Override
++        public Set<Player> getHiddenPlayers()
++        {
++            Set<Player> ret = new HashSet<Player>();
++            for ( UUID u : hiddenPlayers.keySet() )
++            {
++                ret.add( getServer().getPlayer( u ) );
++            }
++
++            return java.util.Collections.unmodifiableSet( ret );
++        }
+     };
+ 
+     public Player.Spigot spigot()
+-- 
+2.25.1
+

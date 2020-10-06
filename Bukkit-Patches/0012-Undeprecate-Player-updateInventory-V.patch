@@ -1,0 +1,25 @@
+From 30b9b536c3dacc0db10c6d0a0f2bbb9f77de9b64 Mon Sep 17 00:00:00 2001
+From: drXor <mcyoung@mit.edu>
+Date: Wed, 23 Jul 2014 15:50:36 -0400
+Subject: [PATCH] Undeprecate Player#updateInventory()V
+
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index b11e81e3..a00880dd 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -484,10 +484,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     /**
+      * Forces an update of the player's entire inventory.
+      *
+-     * @deprecated This method should not be relied upon as it is a temporary
+-     *     work-around for a larger, more complicated issue.
+      */
+-    @Deprecated
++    //@Deprecated // Spigot - undeprecate
+     public void updateInventory();
+ 
+     /**
+-- 
+2.25.1
+

@@ -1,0 +1,40 @@
+From 2b33d82d71f177b70b61864bc5d083c862daf276 Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Mon, 14 Oct 2013 19:20:10 +1100
+Subject: [PATCH] Arrow Despawn Rate
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityArrow.java b/src/main/java/net/minecraft/server/EntityArrow.java
+index fc7730617..17be0b56f 100644
+--- a/src/main/java/net/minecraft/server/EntityArrow.java
++++ b/src/main/java/net/minecraft/server/EntityArrow.java
+@@ -245,7 +245,7 @@ public abstract class EntityArrow extends IProjectile {
+ 
+     protected void h() {
+         ++this.despawnCounter;
+-        if (this.despawnCounter >= 1200) {
++        if (this.despawnCounter >= ((this instanceof EntityThrownTrident) ? world.spigotConfig.tridentDespawnRate : world.spigotConfig.arrowDespawnRate)) { // Spigot
+             this.die();
+         }
+ 
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 5b5eacb38..3ecd5c3d7 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -221,4 +221,13 @@ public class SpigotWorldConfig
+         hopperAmount = getInt( "hopper-amount", 1 );
+         log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount );
+     }
++
++    public int arrowDespawnRate;
++    public int tridentDespawnRate;
++    private void arrowDespawnRate()
++    {
++        arrowDespawnRate = getInt( "arrow-despawn-rate", 1200  );
++        tridentDespawnRate = getInt( "trident-despawn-rate", arrowDespawnRate  );
++        log( "Arrow Despawn Rate: " + arrowDespawnRate + " Trident Respawn Rate:" + tridentDespawnRate );
++    }
+ }
+-- 
+2.25.1
+

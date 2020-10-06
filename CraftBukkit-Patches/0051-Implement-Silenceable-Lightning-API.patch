@@ -1,0 +1,77 @@
+From d797d1fa52a14cea346a2c576500445b7c760734 Mon Sep 17 00:00:00 2001
+From: drXor <mcyoungsota@gmail.com>
+Date: Sun, 23 Feb 2014 16:16:59 -0400
+Subject: [PATCH] Implement Silenceable Lightning API
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLightning.java b/src/main/java/net/minecraft/server/EntityLightning.java
+index 44cdcaba7..7d9e3b636 100644
+--- a/src/main/java/net/minecraft/server/EntityLightning.java
++++ b/src/main/java/net/minecraft/server/EntityLightning.java
+@@ -15,6 +15,7 @@ public class EntityLightning extends Entity {
+     public boolean isEffect;
+     @Nullable
+     private EntityPlayer f;
++    public boolean isSilent = false; // Spigot
+ 
+     public EntityLightning(EntityTypes<? extends EntityLightning> entitytypes, World world) {
+         super(entitytypes, world);
+@@ -40,7 +41,7 @@ public class EntityLightning extends Entity {
+     @Override
+     public void tick() {
+         super.tick();
+-        if (this.lifeTicks == 2) {
++        if (!isSilent && this.lifeTicks == 2) { // Spigot
+             EnumDifficulty enumdifficulty = this.world.getDifficulty();
+ 
+             if (enumdifficulty == EnumDifficulty.NORMAL || enumdifficulty == EnumDifficulty.HARD) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index fb22f0b21..e38b1a725 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -2328,6 +2328,26 @@ public class CraftWorld implements World {
+     // Spigot start
+     private final Spigot spigot = new Spigot()
+     {
++
++        @Override
++        public LightningStrike strikeLightning(Location loc, boolean isSilent)
++        {
++            EntityLightning lightning = EntityTypes.LIGHTNING_BOLT.a( world );
++            lightning.teleportAndSync( loc.getX(), loc.getY(), loc.getZ() );
++            lightning.isSilent = isSilent;
++            world.strikeLightning( lightning );
++            return (LightningStrike) lightning.getBukkitEntity();
++        }
++
++        @Override
++        public LightningStrike strikeLightningEffect(Location loc, boolean isSilent)
++        {
++            EntityLightning lightning = EntityTypes.LIGHTNING_BOLT.a( world );
++            lightning.teleportAndSync( loc.getX(), loc.getY(), loc.getZ() );
++            lightning.isEffect = true;
++            lightning.isSilent = isSilent;
++            return (LightningStrike) lightning.getBukkitEntity();
++        }
+     };
+ 
+     public Spigot spigot()
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java
+index e7e7d738e..988386a9a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLightningStrike.java
+@@ -33,6 +33,11 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
+     // Spigot start
+     private final LightningStrike.Spigot spigot = new LightningStrike.Spigot() {
+ 
++        @Override
++        public boolean isSilent()
++        {
++            return getHandle().isSilent;
++        }
+     };
+ 
+     @Override
+-- 
+2.25.1
+

@@ -1,0 +1,42 @@
+From ad7a42d2ab366329a4f3727841b5b4bcddb0d191 Mon Sep 17 00:00:00 2001
+From: ninja <xninja@openmailbox.org>
+Date: Tue, 8 Apr 2014 14:05:19 +0200
+Subject: [PATCH] Implement PlayerSpawnLocationEvent.
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 63f92228c..4ff3f6309 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -40,6 +40,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
+ import org.bukkit.event.player.PlayerRespawnEvent;
+ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+ import org.bukkit.util.Vector;
++import org.spigotmc.event.player.PlayerSpawnLocationEvent;
+ // CraftBukkit end
+ 
+ public abstract class PlayerList {
+@@ -138,6 +139,20 @@ public abstract class PlayerList {
+             s1 = networkmanager.getSocketAddress().toString();
+         }
+ 
++        // Spigot start - spawn location event
++        Player bukkitPlayer = entityplayer.getBukkitEntity();
++        PlayerSpawnLocationEvent ev = new PlayerSpawnLocationEvent(bukkitPlayer, bukkitPlayer.getLocation());
++        Bukkit.getPluginManager().callEvent(ev);
++
++        Location loc = ev.getSpawnLocation();
++        worldserver1 = ((CraftWorld) loc.getWorld()).getHandle();
++
++        entityplayer.spawnIn(worldserver1);
++        entityplayer.playerInteractManager.a((WorldServer) entityplayer.world);
++        entityplayer.setPosition(loc.getX(), loc.getY(), loc.getZ());
++        entityplayer.setYawPitch(loc.getYaw(), loc.getPitch());
++        // Spigot end
++
+         // CraftBukkit - Moved message to after join
+         // PlayerList.LOGGER.info("{}[{}] logged in with entity id {} at ({}, {}, {})", entityplayer.getDisplayName().getString(), s1, entityplayer.getId(), entityplayer.locX(), entityplayer.locY(), entityplayer.locZ());
+         WorldData worlddata = worldserver1.getWorldData();
+-- 
+2.25.1
+

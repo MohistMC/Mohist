@@ -294,7 +294,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,28 +382,42 @@
+@@ -293,28 +382,45 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -321,12 +321,14 @@
 -      if (p_72367_1_.func_184218_aH()) {
 -         Entity entity = p_72367_1_.func_184208_bv();
 +   public String playerLoggedOut(ServerPlayerEntity playerIn) { // CraftBukkit - return string
++      String quitMessage = null;
 +      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedOut(playerIn);
 +      ServerWorld serverworld = playerIn.func_71121_q();
 +      playerIn.func_195066_a(Stats.field_75947_j);
 +
 +      // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
 +      // See SPIGOT-5799, SPIGOT-6145
++      org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(playerIn);
 +      if (playerIn.field_71070_bA != playerIn.field_71069_bz) {
 +         playerIn.func_71053_j();
 +      }
@@ -334,6 +336,7 @@
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      playerIn.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +      playerIn.func_71127_g(); // SPIGOT-924
++      quitMessage = playerQuitEvent.getQuitMessage();
 +      // CraftBukkit end
 +
 +      this.func_72391_b(playerIn);
@@ -346,7 +349,7 @@
              serverworld.func_217467_h(entity);
              entity.field_70128_L = true;
  
-@@ -323,107 +426,179 @@
+@@ -323,107 +429,179 @@
                 entity1.field_70128_L = true;
              }
  
@@ -567,7 +570,7 @@
        serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
  
-@@ -431,48 +606,107 @@
+@@ -431,48 +609,107 @@
           serverplayerentity.func_184211_a(s);
        }
  
@@ -702,7 +705,7 @@
        return serverplayerentity;
     }
  
-@@ -484,12 +718,36 @@
+@@ -484,12 +721,36 @@
  
     public void func_72374_b() {
        if (++this.field_72408_o > 600) {
@@ -740,7 +743,7 @@
     public void func_148540_a(IPacket<?> p_148540_1_) {
        for(int i = 0; i < this.field_72404_b.size(); ++i) {
           (this.field_72404_b.get(i)).field_71135_a.func_147359_a(p_148540_1_);
-@@ -585,6 +843,7 @@
+@@ -585,6 +846,7 @@
           p_187245_1_.field_71135_a.func_147359_a(new SEntityStatusPacket(p_187245_1_, b0));
        }
  
@@ -748,7 +751,7 @@
        this.field_72400_f.func_195571_aL().func_197051_a(p_187245_1_);
     }
  
-@@ -610,6 +869,13 @@
+@@ -610,6 +872,13 @@
     public void func_148543_a(@Nullable PlayerEntity p_148543_1_, double p_148543_2_, double p_148543_4_, double p_148543_6_, double p_148543_8_, RegistryKey<World> p_148543_10_, IPacket<?> p_148543_11_) {
        for(int i = 0; i < this.field_72404_b.size(); ++i) {
           ServerPlayerEntity serverplayerentity = this.field_72404_b.get(i);
@@ -762,7 +765,7 @@
           if (serverplayerentity != p_148543_1_ && serverplayerentity.field_70170_p.func_234923_W_() == p_148543_10_) {
              double d0 = p_148543_2_ - serverplayerentity.func_226277_ct_();
              double d1 = p_148543_4_ - serverplayerentity.func_226278_cu_();
-@@ -649,22 +915,32 @@
+@@ -649,22 +918,32 @@
     }
  
     public void func_72354_b(ServerPlayerEntity p_72354_1_, ServerWorld p_72354_2_) {
@@ -797,7 +800,7 @@
     }
  
     public int func_72394_k() {
-@@ -719,7 +995,7 @@
+@@ -719,7 +998,7 @@
           p_72381_1_.field_71134_c.func_241820_a(this.field_72410_m, GameType.NOT_SET);
        }
  
@@ -806,7 +809,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -728,32 +1004,46 @@
+@@ -728,32 +1007,46 @@
     }
  
     public void func_72392_r() {
@@ -862,7 +865,7 @@
        }
  
        return serverstatisticsmanager;
-@@ -761,12 +1051,12 @@
+@@ -761,12 +1054,12 @@
  
     public PlayerAdvancements func_192054_h(ServerPlayerEntity p_192054_1_) {
        UUID uuid = p_192054_1_.func_110124_au();
@@ -877,7 +880,7 @@
        }
  
        playeradvancements.func_192739_a(p_192054_1_);
-@@ -786,7 +1076,7 @@
+@@ -786,7 +1079,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -886,7 +889,7 @@
     }
  
     @Nullable
-@@ -799,11 +1089,14 @@
+@@ -799,11 +1092,14 @@
     }
  
     public void func_193244_w() {
@@ -903,7 +906,7 @@
        SUpdateRecipesPacket supdaterecipespacket = new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b());
  
        for(ServerPlayerEntity serverplayerentity : this.field_72404_b) {
-@@ -816,4 +1109,12 @@
+@@ -816,4 +1112,12 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }

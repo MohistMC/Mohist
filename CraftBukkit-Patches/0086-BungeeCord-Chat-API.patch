@@ -1,0 +1,245 @@
+From 4c05b17ac3586e4f1e25614fde7923a4e1814fe0 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sat, 13 Dec 2014 03:06:05 +0100
+Subject: [PATCH] BungeeCord Chat API
+
+
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutChat.java b/src/main/java/net/minecraft/server/PacketPlayOutChat.java
+index 40e0ea5bc..9ae419f9a 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutChat.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutChat.java
+@@ -6,6 +6,7 @@ import java.util.UUID;
+ public class PacketPlayOutChat implements Packet<PacketListenerPlayOut> {
+ 
+     private IChatBaseComponent a;
++    public net.md_5.bungee.api.chat.BaseComponent[] components; // Spigot
+     private ChatMessageType b;
+     private UUID c;
+ 
+@@ -26,7 +27,13 @@ public class PacketPlayOutChat implements Packet<PacketListenerPlayOut> {
+ 
+     @Override
+     public void b(PacketDataSerializer packetdataserializer) throws IOException {
+-        packetdataserializer.a(this.a);
++        // Spigot start
++        if (components != null) {
++            packetdataserializer.a(net.md_5.bungee.chat.ComponentSerializer.toString(components));
++        } else {
++            packetdataserializer.a(this.a);
++        }
++        // Spigot end
+         packetdataserializer.writeByte(this.b.a());
+         packetdataserializer.a(this.c);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index f3c95cc62..0986d666b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -224,6 +224,8 @@ import org.yaml.snakeyaml.Yaml;
+ import org.yaml.snakeyaml.constructor.SafeConstructor;
+ import org.yaml.snakeyaml.error.MarkedYAMLException;
+ 
++import net.md_5.bungee.api.chat.BaseComponent; // Spigot
++
+ public final class CraftServer implements Server {
+     private final String serverName = "CraftBukkit";
+     private final String serverVersion;
+@@ -2069,6 +2071,20 @@ public final class CraftServer implements Server {
+         public void restart() {
+             org.spigotmc.RestartCommand.restart();
+         }
++
++        @Override
++        public void broadcast(BaseComponent component) {
++            for (Player player : getOnlinePlayers()) {
++                player.spigot().sendMessage(component);
++            }
++        }
++
++        @Override
++        public void broadcast(BaseComponent... components) {
++            for (Player player : getOnlinePlayers()) {
++                player.spigot().sendMessage(components);
++            }
++        }
+     };
+ 
+     public Spigot spigot()
+diff --git a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+index c914c027f..9776746a0 100644
+--- a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
++++ b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+@@ -92,6 +92,17 @@ public abstract class ServerCommandSender implements CommandSender {
+     // Spigot start
+     private final Spigot spigot = new Spigot()
+     {
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent component)
++        {
++            ServerCommandSender.this.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(component));
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components)
++        {
++            ServerCommandSender.this.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(components));
++        }
+     };
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index e0eb45f72..fc23f2c4d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -998,6 +998,16 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+     // Spigot start
+     private final Spigot spigot = new Spigot()
+     {
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent component)
++        {
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components)
++        {
++        }
+     };
+ 
+     public Spigot spigot()
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index d67d99bc0..1bde861af 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -122,6 +122,8 @@ import org.bukkit.plugin.Plugin;
+ import org.bukkit.plugin.messaging.StandardMessenger;
+ import org.bukkit.scoreboard.Scoreboard;
+ 
++import net.md_5.bungee.api.chat.BaseComponent; // Spigot
++
+ @DelegateDeserialization(CraftOfflinePlayer.class)
+ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private long firstPlayed = 0;
+@@ -1744,6 +1746,34 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+ 
+             return java.util.Collections.unmodifiableSet( ret );
+         }
++
++        @Override
++        public void sendMessage(BaseComponent component) {
++          sendMessage( new BaseComponent[] { component } );
++        }
++
++        @Override
++        public void sendMessage(BaseComponent... components) {
++           if ( getHandle().playerConnection == null ) return;
++
++            PacketPlayOutChat packet = new PacketPlayOutChat(null, net.minecraft.server.ChatMessageType.SYSTEM, SystemUtils.b);
++            packet.components = components;
++            getHandle().playerConnection.sendPacket(packet);
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent component) {
++            sendMessage( position, new BaseComponent[] { component } );
++        }
++
++        @Override
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent... components) {
++            if ( getHandle().playerConnection == null ) return;
++
++            PacketPlayOutChat packet = new PacketPlayOutChat(null, net.minecraft.server.ChatMessageType.a((byte) position.ordinal()), SystemUtils.b);
++            packet.components = components;
++            getHandle().playerConnection.sendPacket(packet);
++        }
+     };
+ 
+     public Player.Spigot spigot()
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+index 48ae99e14..adc926f25 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+@@ -20,6 +20,9 @@ import org.bukkit.inventory.meta.BookMeta;
+ 
+ // Spigot start
+ import static org.spigotmc.ValidateUtils.*;
++import java.util.AbstractList;
++import net.md_5.bungee.api.chat.BaseComponent;
++import net.md_5.bungee.chat.ComponentSerializer;
+ // Spigot end
+ 
+ @DelegateDeserialization(SerializableMeta.class)
+@@ -362,6 +365,69 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
+     // Spigot start
+     private BookMeta.Spigot spigot = new SpigotMeta();
+     private class SpigotMeta extends BookMeta.Spigot {
++
++        @Override
++        public BaseComponent[] getPage(final int page) {
++            Validate.isTrue(isValidPage(page), "Invalid page number");
++            return ComponentSerializer.parse(IChatBaseComponent.ChatSerializer.a(pages.get(page - 1)));
++        }
++
++        @Override
++        public void setPage(final int page, final BaseComponent... text) {
++            if (!isValidPage(page)) {
++                throw new IllegalArgumentException("Invalid page number " + page + "/" + pages.size());
++            }
++
++            BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
++            CraftMetaBook.this.pages.set(page - 1, IChatBaseComponent.ChatSerializer.a(ComponentSerializer.toString(newText)));
++        }
++
++        @Override
++        public void setPages(final BaseComponent[]... pages) {
++            CraftMetaBook.this.pages.clear();
++
++            addPage(pages);
++        }
++
++        @Override
++        public void addPage(final BaseComponent[]... pages) {
++            for (BaseComponent[] page : pages) {
++                if (CraftMetaBook.this.pages.size() >= MAX_PAGES) {
++                    return;
++                }
++
++                if (page == null) {
++                    page = new BaseComponent[0];
++                }
++
++                CraftMetaBook.this.pages.add(IChatBaseComponent.ChatSerializer.a(ComponentSerializer.toString(page)));
++            }
++        }
++
++        @Override
++        public List<BaseComponent[]> getPages() {
++            final List<IChatBaseComponent> copy = ImmutableList.copyOf(CraftMetaBook.this.pages);
++            return new AbstractList<BaseComponent[]>() {
++
++                @Override
++                public BaseComponent[] get(int index) {
++                    return ComponentSerializer.parse(IChatBaseComponent.ChatSerializer.a(copy.get(index)));
++                }
++
++                @Override
++                public int size() {
++                    return copy.size();
++                }
++            };
++        }
++
++        @Override
++        public void setPages(List<BaseComponent[]> pages) {
++            CraftMetaBook.this.pages.clear();
++            for (BaseComponent[] page : pages) {
++                addPage(page);
++            }
++        }
+     };
+ 
+     @Override
+-- 
+2.25.1
+

@@ -1,0 +1,30 @@
+From d2e711083569902f717dddbb3f239a6de3cbd88e Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sun, 27 Mar 2016 20:35:09 +1100
+Subject: [PATCH] Player Collision API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 164678fa9..78a318e56 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1699,6 +1699,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     // Spigot start
+     private final Player.Spigot spigot = new Player.Spigot()
+     {
++
++        @Override
++        public boolean getCollidesWithEntities() {
++            return CraftPlayer.this.isCollidable();
++        }
++
++        @Override
++        public void setCollidesWithEntities(boolean collides) {
++            CraftPlayer.this.setCollidable(collides);
++        }
+     };
+ 
+     public Player.Spigot spigot()
+-- 
+2.25.1
+

@@ -1,0 +1,44 @@
+From 617a17af612929eb02c65a815a09dc27b3beae8b Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Thu, 27 Jun 2013 17:26:09 +1000
+Subject: [PATCH] Properly Close Inventories
+
+Properly close inventories when unloading and switching worlds.
+
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index de206cede..1f98635d0 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -983,6 +983,15 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+     }
+ 
+     public void unloadChunk(Chunk chunk) {
++        // Spigot Start
++        for (TileEntity tileentity : chunk.getTileEntities().values()) {
++            if (tileentity instanceof IInventory) {
++                for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((IInventory) tileentity).getViewers())) {
++                    h.closeInventory();
++                }
++            }
++        }
++        // Spigot End
+         this.tileEntityListUnload.addAll(chunk.getTileEntities().values());
+         EntitySlice[] aentityslice = chunk.getEntitySlices();
+         int i = aentityslice.length;
+@@ -1009,6 +1018,13 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+ 
+     public void unregisterEntity(Entity entity) {
+         org.spigotmc.AsyncCatcher.catchOp("entity unregister"); // Spigot
++        // Spigot Start
++        if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder) {
++            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) entity.getBukkitEntity()).getInventory().getViewers())) {
++                h.closeInventory();
++            }
++        }
++        // Spigot End
+         if (entity instanceof EntityEnderDragon) {
+             EntityComplexPart[] aentitycomplexpart = ((EntityEnderDragon) entity).eJ();
+             int i = aentitycomplexpart.length;
+-- 
+2.25.1
+
