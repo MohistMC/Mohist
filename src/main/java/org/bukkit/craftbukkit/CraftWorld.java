@@ -88,22 +88,7 @@ import net.minecraft.world.server.TicketManager;
 import net.minecraft.world.server.TicketType;
 import net.minecraft.world.storage.FolderName;
 import org.apache.commons.lang.Validate;
-import org.bukkit.BlockChangeDelegate;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Difficulty;
-import org.bukkit.Effect;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.GameRule;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Raid;
-import org.bukkit.Sound;
-import org.bukkit.StructureType;
-import org.bukkit.TreeType;
-import org.bukkit.World;
-import org.bukkit.WorldBorder;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -2308,4 +2293,16 @@ public class CraftWorld implements World {
     public DragonBattle getEnderDragonBattle() {
         return (getHandle().func_241110_C_() == null) ? null : new CraftDragonBattle(getHandle().func_241110_C_());
     }
+
+    // Spigot start
+    private final Spigot spigot = new Spigot()
+    {
+
+    };
+
+    public Spigot spigot()
+    {
+        return spigot;
+    }
+    // Spigot end
 }

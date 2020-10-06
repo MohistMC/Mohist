@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.command;
 
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -9,6 +8,8 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Set;
 
 public abstract class ServerCommandSender implements CommandSender {
     private final PermissibleBase perm = new PermissibleBase(this);
@@ -79,4 +80,15 @@ public abstract class ServerCommandSender implements CommandSender {
     public Server getServer() {
         return Bukkit.getServer();
     }
+
+    // Spigot start
+    private final Spigot spigot = new Spigot() {
+    };
+
+    @Override
+    public Spigot spigot()
+    {
+        return spigot;
+    }
+    // Spigot end
 }

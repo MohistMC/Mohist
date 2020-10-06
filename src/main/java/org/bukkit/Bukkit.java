@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+
 import org.bukkit.Warning.WarningState;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
@@ -1573,5 +1574,10 @@ public final class Bukkit {
     @NotNull
     public static UnsafeValues getUnsafe() {
         return server.getUnsafe();
+    }
+
+    @NotNull
+    public static Server.Spigot spigot() {
+        return server.spigot();
     }
 }

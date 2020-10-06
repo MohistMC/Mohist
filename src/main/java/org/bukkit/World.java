@@ -2302,6 +2302,15 @@ public interface World extends PluginMessageRecipient, Metadatable {
     @Nullable
     public Location locateNearestStructure(@NotNull Location origin, @NotNull StructureType structureType, int radius, boolean findUnexplored);
 
+    // Spigot start
+    public class Spigot {
+
+    }
+
+    @NotNull
+    Spigot spigot();
+    // Spigot end
+
     /**
      * Finds the nearest raid close to the given location.
      *
