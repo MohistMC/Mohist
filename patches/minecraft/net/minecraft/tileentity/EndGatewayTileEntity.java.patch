@@ -36,7 +36,7 @@
        if (this.field_145850_b instanceof ServerWorld && !this.func_195500_d()) {
           this.field_195505_g = 100;
 -         if (this.field_195506_h == null && this.field_145850_b.func_234923_W_() == World.field_234920_i_) {
-+         if (this.field_195506_h == null ) {
++         if (this.field_195506_h == null && this.field_145850_b.getTypeKey() == DimensionType.field_236001_e_) { // CraftBukkit - work in alternate worlds
              this.func_227015_a_((ServerWorld)this.field_145850_b);
           }
  

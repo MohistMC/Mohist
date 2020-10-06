@@ -324,6 +324,14 @@ project(':forge') {
                 'Implementation-Title':     project.group,
                 'Implementation-Version':   project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Vendor':    'Forge Development LLC'
+            ] as LinkedHashMap,
+            'com/mohistmc/'                : [
+                'Specification-Title'   : 'Mohist-Community',
+                'Specification-Vendor'  : 'Mohist-Community',
+                'Specification-Version':  SPEC_VERSION,
+                'Implementation-Title'  : "Mohist",
+                'Implementation-Version': JenkinsNumber(),
+                'Implementation-Vendor' : 'Mohist-Community'
             ] as LinkedHashMap
         ]
     }

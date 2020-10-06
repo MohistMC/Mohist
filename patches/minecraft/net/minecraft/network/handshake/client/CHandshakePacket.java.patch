@@ -13,8 +13,12 @@
  
     public CHandshakePacket() {
     }
-@@ -31,11 +32,13 @@
-       this.field_149598_b = p_148837_1_.func_150789_c(255);
+@@ -28,14 +29,16 @@
+ 
+    public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
+       this.field_149600_a = p_148837_1_.func_150792_a();
+-      this.field_149598_b = p_148837_1_.func_150789_c(255);
++      this.field_149598_b = p_148837_1_.func_150789_c(Short.MAX_VALUE);
        this.field_149599_c = p_148837_1_.readUnsignedShort();
        this.field_149597_d = ProtocolType.func_150760_a(p_148837_1_.func_150792_a());
 +      this.fmlVersion = net.minecraftforge.fml.network.NetworkHooks.getFMLVersion(this.field_149598_b);
