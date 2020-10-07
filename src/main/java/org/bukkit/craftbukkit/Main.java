@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.mohistmc.util.i18n.Message;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.fusesource.jansi.AnsiConsole;
@@ -149,13 +151,13 @@ public class Main {
             // Do you love Java using + and ! as string based identifiers? I sure do!
             String path = new File(".").getAbsolutePath();
             if (path.contains("!") || path.contains("+")) {
-                System.err.println("Cannot run server in a directory with ! or + in the pathname. Please rename the affected folders and try again.");
+                System.err.println(Message.get("error.start.directory"));
                 return null;
             }
 
             float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
             if (javaVersion > 59.0) {
-                System.err.println("Unsupported Java detected (" + javaVersion + "). Only up to Java 15 is supported.");
+                System.err.println(Message.get("unsupport.java", javaVersion));
                 return null;
             }
 
@@ -182,7 +184,7 @@ public class Main {
                     useConsole = false;
                 }
 
-                System.out.println("Loading libraries, please wait...");
+                System.out.println(Message.get("load.libraries"));
                 // net.minecraft.server.Main.main(options);
             } catch (Throwable t) {
                 t.printStackTrace();
