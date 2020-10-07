@@ -55,7 +55,7 @@ Building
   * Build with Windows:
   `gradlew.bat setup installerJar`
 
-The Mohist server jar file is located at `.\projects\forge\build\libs\*.jar`
+The Mohist server jar file is located at `.\projects\mohist\build\libs\*.jar`
 
 This is the jarfile that you should run.
 
