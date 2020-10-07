@@ -53,91 +53,22 @@
     private final List<IntReferenceHolder> field_216964_d = Lists.newArrayList();
     @Nullable
     private final ContainerType<?> field_216965_e;
-@@ -40,6 +61,100 @@
+@@ -40,6 +61,31 @@
     private final List<IContainerListener> field_75149_d = Lists.newArrayList();
     private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
  
 +   // CraftBukkit start
 +   public boolean checkReachable;
 +   private ITextComponent title;
-+
-+   private InventoryView bukkitView;
-+   private boolean isBukkitViewCreated;
-+
-+   @Nullable
-+   public InventoryView getBukkitView() {
-+      if(!isBukkitViewCreated) {
-+         isBukkitViewCreated = true;
-+         bukkitView = computeBukkitView();
-+         return bukkitView;
-+      }
-+      return bukkitView;
-+   }
-+
-+   public void setBukkitView(InventoryView bukkitView) {
-+      this.bukkitView = bukkitView;
-+      isBukkitViewCreated = true;
-+   }
-+
-+   @Nullable
-+   private InventoryView computeBukkitView() {
-+      Set<IInventory> uniqueInventorySet = new HashSet<>();
-+      for(Slot slot : field_75151_b) {
-+         if (slot.field_75224_c != null) uniqueInventorySet.add(slot.field_75224_c);
-+      }
-+      List<IInventory> inventories = new ArrayList<>(uniqueInventorySet);
-+      PlayerInventory playerInv = null;
-+
-+      for(Iterator<IInventory> it = inventories.iterator(); it.hasNext();) {
-+         IInventory inv = it.next();
-+         if(inv instanceof PlayerInventory) {
-+            playerInv = (PlayerInventory) inv;
-+            it.remove();
-+            break;
-+         }
-+      }
-+      if(playerInv == null) {
-+         return null;
-+      }
-+      CraftPlayer bukkitPlayer = (CraftPlayer) playerInv.field_70458_d.getBukkitEntity();
-+      Inventory craftInv;
-+      if(inventories.size() != 1) {
-+         craftInv = Bukkit.getServer().createInventory(bukkitPlayer, InventoryType.CHEST);
-+      } else {
-+         craftInv = new CraftInventory(inventories.get(0));
-+      }
-+      return new CraftInventoryView(bukkitPlayer, craftInv, this);
-+   }
++   public abstract InventoryView getBukkitView();
 +
 +   public void transferTo(Container other, CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView();
 +      InventoryView destination = other.getBukkitView();
-+      if (source != null) {
-+         try {
-+            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+
-+         try {
-+            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+      }
-+      if (destination != null) {
-+         try {
-+            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+
-+         try {
-+            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+      }
++      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++      ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++      ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++      ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
 +   }
 +
 +   public final ITextComponent getTitle() {
@@ -154,7 +85,7 @@
     protected Container(@Nullable ContainerType<?> p_i50105_1_, int p_i50105_2_) {
        this.field_216965_e = p_i50105_1_;
        this.field_75152_c = p_i50105_2_;
-@@ -120,9 +235,11 @@
+@@ -120,9 +166,11 @@
           ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -166,7 +97,7 @@
              for(IContainerListener icontainerlistener : this.field_75149_d) {
                 icontainerlistener.func_71111_a(this, i, itemstack2);
              }
-@@ -202,6 +319,7 @@
+@@ -202,6 +250,7 @@
                 ItemStack itemstack10 = playerinventory.func_70445_o().func_77946_l();
                 int k1 = playerinventory.func_70445_o().func_190916_E();
  
@@ -174,7 +105,7 @@
                 for(Slot slot8 : this.field_94537_h) {
                    ItemStack itemstack13 = playerinventory.func_70445_o();
                    if (slot8 != null && func_94527_a(slot8, itemstack13, true) && slot8.func_75214_a(itemstack13) && (this.field_94535_f == 2 || itemstack13.func_190916_E() >= this.field_94537_h.size()) && this.func_94531_b(slot8)) {
-@@ -214,12 +332,45 @@
+@@ -214,12 +263,45 @@
                       }
  
                       k1 -= itemstack14.func_190916_E() - j3;
@@ -223,7 +154,7 @@
              }
  
              this.func_94533_d();
-@@ -232,8 +383,11 @@
+@@ -232,8 +314,11 @@
           if (p_241440_1_ == -999) {
              if (!playerinventory.func_70445_o().func_190926_b()) {
                 if (p_241440_2_ == 0) {
@@ -236,7 +167,7 @@
                 }
  
                 if (p_241440_2_ == 1) {
-@@ -321,6 +475,15 @@
+@@ -321,6 +406,15 @@
                 }
  
                 slot6.func_75218_e();
@@ -252,7 +183,7 @@
              }
           }
        } else if (p_241440_3_ == ClickType.SWAP) {
-@@ -418,8 +581,11 @@
+@@ -418,8 +512,11 @@
     public void func_75134_a(PlayerEntity p_75134_1_) {
        PlayerInventory playerinventory = p_75134_1_.field_71071_by;
        if (!playerinventory.func_70445_o().func_190926_b()) {
@@ -265,7 +196,7 @@
        }
  
     }
-@@ -500,14 +666,15 @@
+@@ -500,14 +597,15 @@
              ItemStack itemstack = slot.func_75211_c();
              if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
                 int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -285,7 +216,7 @@
                    slot.func_75218_e();
                    flag = true;
                 }
-@@ -608,7 +775,7 @@
+@@ -608,7 +706,7 @@
           p_94525_2_.func_190920_e(1);
           break;
        case 2:
