@@ -1,0 +1,31 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: 1.16.3 CI with Gradle
+
+on:
+  push:
+    branches: [ 1.16.3 ]
+  pull_request:
+    branches: [ 1.16.3 ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Build with Gradle
+      run: |
+        chmod +x ./gradlew
+        ./gradlew setup
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.0.1
+      with:
+        name: Mohist-1.16.3-server
+        path: projects/mohist/build/libs
