@@ -27,8 +27,9 @@
     private long field_223730_e;
     public final PlayerInventory field_71071_by = new PlayerInventory(this);
 -   protected EnderChestInventory field_71078_a = new EnderChestInventory();
+-   public final PlayerContainer field_71069_bz;
 +   protected EnderChestInventory field_71078_a = new EnderChestInventory(this); // CraftBukkit - add "this" to constructor
-    public final PlayerContainer field_71069_bz;
++   public PlayerContainer field_71069_bz;
     public Container field_71070_bA;
 -   protected FoodStats field_71100_bB = new FoodStats();
 +   protected FoodStats field_71100_bB = new FoodStats(this); // CraftBukkit - add "this" to constructor

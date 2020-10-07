@@ -330,7 +330,7 @@
 +      if (playerIn.field_71070_bA != playerIn.field_71069_bz) {
 +         playerIn.func_71053_j();
 +      }
-+      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(playerIn), "\u00A7e" + playerIn.func_200200_C_() + " left the game");
++      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(playerIn), "\u00A7e" + playerIn.func_195047_I_() + " left the game");
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      playerIn.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +      playerIn.func_71127_g(); // SPIGOT-924

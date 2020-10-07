@@ -58,6 +58,7 @@ import net.minecraft.entity.projectile.SnowballEntity;
 import net.minecraft.network.play.server.SPlaySoundEventPacket;
 import net.minecraft.network.play.server.SPlaySoundPacket;
 import net.minecraft.network.play.server.SUpdateTimePacket;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SortedArraySet;
@@ -2308,4 +2309,11 @@ public class CraftWorld implements World {
     public DragonBattle getEnderDragonBattle() {
         return (getHandle().func_241110_C_() == null) ? null : new CraftDragonBattle(getHandle().func_241110_C_());
     }
+
+    // Mohist - start
+    public TileEntity getTileEntityAt(int x, int y, int z) {
+        return world.getTileEntity(new BlockPos(x, y, z));
+    }
+
+    // Mohist - end
 }

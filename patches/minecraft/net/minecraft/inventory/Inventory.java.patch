@@ -31,7 +31,7 @@
 +
 +   @Override
 +   public void onClose(CraftHumanEntity who) {
-+      transaction.add(who);
++      transaction.remove(who);
 +   }
 +
 +   @Override

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.items.wrapper;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -32,6 +33,11 @@ import javax.annotation.Nullable;
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
     protected final ISidedInventory inv;
+    // Mohist - start
+    public IInventory getInv() {
+        return this.inv;
+    }
+    // Mohist - end
     @Nullable
     protected final Direction side;
 

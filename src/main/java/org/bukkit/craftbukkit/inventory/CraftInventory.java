@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.mohistmc.inventory.InventoryOwner;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -503,7 +504,7 @@ public class CraftInventory implements Inventory {
 
     @Override
     public InventoryHolder getHolder() {
-        return inventory.getOwner();
+        return InventoryOwner.get(inventory);
     }
 
     @Override

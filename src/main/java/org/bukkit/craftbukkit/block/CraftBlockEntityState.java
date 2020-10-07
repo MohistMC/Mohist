@@ -64,7 +64,7 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
     }
 
     // gets the wrapped TileEntity
-    protected T getTileEntity() {
+    public T getTileEntity() { // Mohist - protected -> public
         return tileEntity;
     }
 

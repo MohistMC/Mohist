@@ -1112,14 +1112,24 @@ public class CraftEventFactory {
 
         CraftServer server = player.world.getCBServer();
         CraftPlayer craftPlayer = player.getBukkitEntity();
-        player.openContainer.transferTo(container, craftPlayer);
+        try {
+            player.openContainer.transferTo(container, craftPlayer);
+        } catch (AbstractMethodError e) {
+        }
 
         InventoryOpenEvent event = new InventoryOpenEvent(container.getBukkitView());
         event.setCancelled(cancelled);
-        server.getPluginManager().callEvent(event);
+        if (container.getBukkitView() != null) {
+            server.getPluginManager().callEvent(event);
+        }
 
         if (event.isCancelled()) {
             container.transferTo(player.openContainer, craftPlayer);
+            if (!cancelled) { // fire INVENTORY_CLOSE if one already open
+                player.openContainer = container; // make sure the right container is processed
+                player.closeScreen();
+                player.openContainer = player.container;
+            }
             return null;
         }
 
@@ -1264,7 +1274,9 @@ public class CraftEventFactory {
 
     public static void handleInventoryCloseEvent(PlayerEntity human) {
         InventoryCloseEvent event = new InventoryCloseEvent(human.openContainer.getBukkitView());
-        human.world.getCBServer().getPluginManager().callEvent(event);
+        if (human.openContainer.getBukkitView() != null) {
+            human.world.getCBServer().getPluginManager().callEvent(event);
+        }
         human.openContainer.transferTo(human.container, human.getBukkitEntity());
     }
 

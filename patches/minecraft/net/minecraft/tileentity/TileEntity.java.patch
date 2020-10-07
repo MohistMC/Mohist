@@ -1,6 +1,13 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -15,20 +15,30 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.tileentity;
+ 
++import com.mohistmc.inventory.InventoryOwner;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -15,20 +16,30 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -34,7 +41,7 @@
     }
  
     @Nullable
-@@ -47,6 +57,15 @@
+@@ -47,6 +58,15 @@
  
     public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
        this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
@@ -50,7 +57,7 @@
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -62,6 +81,13 @@
+@@ -62,6 +82,13 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -64,7 +71,7 @@
           return p_189516_1_;
        }
     }
-@@ -94,7 +120,7 @@
+@@ -94,7 +121,7 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
@@ -73,7 +80,7 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -133,6 +159,8 @@
+@@ -133,6 +160,8 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -82,7 +89,7 @@
     }
  
     public void func_145829_t() {
-@@ -175,6 +203,13 @@
+@@ -175,6 +204,13 @@
        return this.field_200663_e;
     }
  
@@ -96,21 +103,14 @@
     public void func_222814_r() {
        if (!this.field_222816_g) {
           this.field_222816_g = true;
-@@ -183,4 +218,17 @@
+@@ -183,4 +219,10 @@
           }, this::func_174877_v);
        }
     }
 +
 +   // CraftBukkit start
 +   public InventoryHolder getOwner() {
-+      if (this.field_145850_b == null) {
-+         return null;
-+      }
-+      org.bukkit.block.BlockState state = field_145850_b.getCBWorld().getBlockAt(field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p()).getState();
-+      if (state instanceof InventoryHolder) {
-+         return (InventoryHolder) state;
-+      }
-+      return null;
++      return InventoryOwner.get(field_145850_b, field_174879_c);
 +   }
 +   // CraftBukkit start
  }

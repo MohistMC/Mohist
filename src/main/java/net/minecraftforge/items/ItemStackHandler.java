@@ -32,6 +32,12 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 {
     protected NonNullList<ItemStack> stacks;
 
+    // Mohist - start
+    public NonNullList<ItemStack> getStacks() {
+        return this.stacks;
+    }
+    // Mohist - end
+
     public ItemStackHandler()
     {
         this(1);
