@@ -877,7 +877,7 @@ task setup() {
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
-def JenkinsNumber() {
+def JenkinsNumber() {/*
     def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-InternalTest/api/json").openConnection();
     conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
     conn.connect()
@@ -886,5 +886,6 @@ def JenkinsNumber() {
 
     String data = jsonSluper.parseText(root)
     def number = data.substring(data.indexOf("number")).split(",")
-    return Integer.valueOf(number[0].replace("number=", "")).intValue()
+    */
+    return 1
 }
