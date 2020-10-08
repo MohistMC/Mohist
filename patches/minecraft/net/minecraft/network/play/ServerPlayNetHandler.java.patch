@@ -1671,7 +1671,7 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
-@@ -1330,4 +2393,56 @@
+@@ -1330,4 +2393,54 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
@@ -1683,11 +1683,9 @@
 +   public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
 +      PacketThreadUtil.func_218796_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
 +      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
-+      field_147370_c.error("processCustomPayload: packetIn.channel: "  + p_147349_1_.field_149562_a);
 +      if (p_147349_1_.field_149562_a.equals(ServerPlayNetHandler.CUSTOM_REGISTER)) {
 +         try {
 +            String channels = p_147349_1_.field_149561_c.toString(com.google.common.base.Charsets.UTF_8);
-+            field_147370_c.error("processCustomPayload: channels: "  + channels);
 +            for (String channel : channels.split("\0")) {
 +               if (!StringUtils.func_151246_b(channel)) {
 +                  getPlayer().addChannel(channel);

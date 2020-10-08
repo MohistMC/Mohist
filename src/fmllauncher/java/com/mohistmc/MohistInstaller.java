@@ -18,8 +18,8 @@ public class MohistInstaller {
                 "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
                 "                                                    \n" + "\n");
         afterSetup();
-        MohistRuns.delete();
         MohistRuns.runs(args);
+        MohistRuns.delete();
     }
 
     protected static void afterSetup() throws Throwable {

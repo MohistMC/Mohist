@@ -20,6 +20,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
+import com.mohistmc.api.ServerAPI;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -189,6 +190,8 @@ public class ModLoader
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);
+        ServerAPI.mods.put("mods", modList.size());
+        modList.getMods().forEach(modInfo -> ServerAPI.modlists.add(modInfo.getModId()));
         statusConsumer.ifPresent(c->c.accept(String.format("Constructing %d mods", modList.size())));
         dispatchAndHandleError(ModLoadingStage.CONSTRUCT, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Creating registries"));

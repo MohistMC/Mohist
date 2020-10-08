@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.network;
 
+import com.mohistmc.api.PlayerAPI;
 import net.minecraft.network.login.ServerLoginNetHandler;
 import com.google.common.collect.Multimap;
 import net.minecraft.network.NetworkManager;
@@ -208,6 +209,10 @@ public class FMLHandshakeHandler {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
             c.get().getNetworkManager().closeChannel(new StringTextComponent("Connection closed - mismatched mod channel list"));
             return;
+        }
+        if(!clientModList.getModList().isEmpty()) {
+            PlayerAPI.mods.put(c.get().getSender(), clientModList.getModList().size());
+            PlayerAPI.modlist.put(c.get().getSender(), String.join(", ", clientModList.getModList()));
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
     }

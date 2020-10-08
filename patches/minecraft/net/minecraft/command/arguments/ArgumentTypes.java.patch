@@ -1,0 +1,11 @@
+--- a/net/minecraft/command/arguments/ArgumentTypes.java
++++ b/net/minecraft/command/arguments/ArgumentTypes.java
+@@ -101,7 +101,7 @@
+    public static <T extends ArgumentType<?>> void func_197484_a(PacketBuffer p_197484_0_, T p_197484_1_) {
+       ArgumentTypes.Entry<T> entry = (Entry<T>) func_201040_a(p_197484_1_);
+       if (entry == null) {
+-         field_197488_a.error("Could not serialize {} ({}) - will not be sent to client!", p_197484_1_, p_197484_1_.getClass());
++         field_197488_a.debug("Could not serialize {} ({}) - will not be sent to client!", p_197484_1_, p_197484_1_.getClass());
+          p_197484_0_.func_192572_a(new ResourceLocation(""));
+       } else {
+          p_197484_0_.func_192572_a(entry.field_197481_c);
