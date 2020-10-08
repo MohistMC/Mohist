@@ -650,7 +650,7 @@ public class CraftWorld implements World {
     public LightningStrike strikeLightning(Location loc) {
         LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
         lightning.teleportKeepLoaded(loc.getX(), loc.getY(), loc.getZ());
-        world.addLightningBolt(lightning);
+        world.strikeLightning(lightning);
         return (LightningStrike) lightning.getBukkitEntity();
     }
 
@@ -659,7 +659,7 @@ public class CraftWorld implements World {
         LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
         lightning.teleportKeepLoaded(loc.getX(), loc.getY(), loc.getZ());
         lightning.func_233623_a_(true);
-        world.addLightningBolt(lightning);
+        world.strikeLightning(lightning);
         return (LightningStrike) lightning.getBukkitEntity();
     }
 
@@ -746,7 +746,7 @@ public class CraftWorld implements World {
                 int flag = ((CraftBlockState) blockstate).getFlag();
                 delegate.setBlockData(blockstate.getX(), blockstate.getY(), blockstate.getZ(), blockstate.getBlockData());
                 net.minecraft.block.BlockState newBlock = world.getBlockState(position);
-                world.notifyAndUpdatePhysics(position, null, oldBlock, newBlock, newBlock, flag, 512);
+                world.markAndNotifyBlock(position, null, oldBlock, newBlock, flag, 512);
             }
             world.capturedBlockStates.clear();
             return true;

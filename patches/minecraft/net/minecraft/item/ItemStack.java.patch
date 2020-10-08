@@ -306,7 +306,7 @@
 +                  if (!(block.func_177230_c() instanceof ContainerBlock)) { // Containers get placed automatically
 +                     block.func_177230_c().func_220082_b(block, world, newblockposition, oldBlock, true);
 +                  }
-+                  world.notifyAndUpdatePhysics(newblockposition, null, oldBlock, block, world.func_180495_p(newblockposition), updateFlag, 512); // send null chunk as chunk.k() returns false by this point
++                  world.markAndNotifyBlock(newblockposition, null, oldBlock, block, updateFlag, 512); // send null chunk as chunk.k() returns false by this point
 +               }
 +               // Special case juke boxes as they update their tile entity. Copied from ItemRecord.
 +               // PAIL: checkme on updates.
