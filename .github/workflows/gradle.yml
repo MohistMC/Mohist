@@ -22,8 +22,7 @@ jobs:
         java-version: 1.8
     - name: Build with Gradle
       run: |
-        chmod +x ./gradlew
-        ./gradlew setup installerJar
+        chmod +x ./gradlew setup installerJar
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.0.1
       with:
