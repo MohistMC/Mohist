@@ -712,7 +712,7 @@
 -               this.func_241206_a_(serverworld1);
 +               // CraftBukkit start
 +               if (this instanceof ServerPlayerEntity) {
-+                  ((ServerPlayerEntity) this).func_241206_a_(serverworld1, serverworld.func_85176_s(), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
++                  ((ServerPlayerEntity) this).changeDimension(serverworld1, serverworld.func_85176_s(), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
 +               } else {
 +                  this.func_241206_a_(serverworld1);
 +               }
