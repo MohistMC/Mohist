@@ -26,22 +26,38 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-@@ -208,7 +209,13 @@
+@@ -208,7 +209,15 @@
  
     private void func_235547_a_(World p_235547_1_, BlockPos p_235547_2_, BlockState p_235547_3_) {
        int i = this.func_235546_a_(p_235547_1_, p_235547_2_);
 -      if (p_235547_3_.func_177229_b(field_176351_O) != i) {
 +      // CraftBukkit start
-+      int oldPower = (Integer) p_235547_3_.func_177229_b(RedstoneWireBlock.field_176351_O);
++      int oldPower = p_235547_3_.func_177229_b(field_176351_O).intValue();
 +      if (oldPower != i) {
 +         BlockRedstoneEvent event = new BlockRedstoneEvent(p_235547_1_.getCBWorld().getBlockAt(p_235547_2_.func_177958_n(), p_235547_2_.func_177956_o(), p_235547_2_.func_177952_p()), oldPower, i);
 +         p_235547_1_.getCBServer().getPluginManager().callEvent(event);
 +         i = event.getNewCurrent();
 +         // CraftBukkit end
++      }
++      if (oldPower != i) {
           if (p_235547_1_.func_180495_p(p_235547_2_) == p_235547_3_) {
              p_235547_1_.func_180501_a(p_235547_2_, p_235547_3_.func_206870_a(field_176351_O, Integer.valueOf(i)), 2);
           }
-@@ -335,11 +342,7 @@
+@@ -216,11 +225,11 @@
+          Set<BlockPos> set = Sets.newHashSet();
+          set.add(p_235547_2_);
+ 
+-         for(Direction direction : Direction.values()) {
++         for (Direction direction : Direction.values()) {
+             set.add(p_235547_2_.func_177972_a(direction));
+          }
+ 
+-         for(BlockPos blockpos : set) {
++         for (BlockPos blockpos : set) {
+             p_235547_1_.func_195593_d(blockpos, this);
+          }
+       }
+@@ -335,11 +344,7 @@
        }
     }
  
@@ -54,7 +70,7 @@
        if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
           return true;
        } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
-@@ -348,7 +351,7 @@
+@@ -348,7 +353,7 @@
        } else if (p_176343_0_.func_203425_a(Blocks.field_190976_dk)) {
           return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
        } else {

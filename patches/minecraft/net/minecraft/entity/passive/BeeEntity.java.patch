@@ -15,7 +15,7 @@
     private int field_226362_bB_;
     private int field_226363_bC_;
 -   private int field_226364_bD_;
-+   public int field_226364_bD_; // private->public CraftBukkit
++   public int field_226364_bD_;
     private int field_226365_bE_;
     private int field_226366_bF_ = 0;
     private int field_226367_bG_ = 0;
@@ -23,7 +23,7 @@
     private BlockPos field_226368_bH_ = null;
     @Nullable
 -   private BlockPos field_226369_bI_ = null;
-+   public BlockPos field_226369_bI_ = null; // private->public CraftBukkit
++   public BlockPos field_226369_bI_ = null;
     private BeeEntity.PollinateGoal field_226370_bJ_;
     private BeeEntity.FindBeehiveGoal field_226371_bK_;
     private BeeEntity.FindFlowerGoal field_226372_bL_;
@@ -50,7 +50,7 @@
     }
  
 -   private void func_226447_r_(boolean p_226447_1_) {
-+   public void func_226447_r_(boolean p_226447_1_) { // private->public CraftBukkit
++   public void func_226447_r_(boolean p_226447_1_) {
        if (p_226447_1_) {
           this.func_226426_eu_();
        }
@@ -59,28 +59,11 @@
     }
  
 -   private void func_226449_s_(boolean p_226449_1_) {
-+   public void func_226449_s_(boolean p_226449_1_) { // private->public CraftBukkit
++   public void func_226449_s_(boolean p_226449_1_) {
        this.func_226404_d_(4, p_226449_1_);
     }
  
-@@ -552,11 +555,14 @@
-          return false;
-       } else {
-          Entity entity = p_70097_1_.func_76346_g();
--         if (!this.field_70170_p.field_72995_K) {
-+         // CraftBukkit Start
-+         boolean result = super.damageEntityCB(p_70097_1_, p_70097_2_);
-+         if (result && !this.field_70170_p.field_72995_K) {
-             this.field_226370_bJ_.func_226504_l_();
-          }
- 
--         return super.func_70097_a(p_70097_1_, p_70097_2_);
-+         return result;
-+         // CraftBukkit end
-       }
-    }
- 
-@@ -588,7 +594,7 @@
+@@ -588,7 +591,7 @@
  
        protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
           if (p_220793_1_ instanceof BeeEntity && this.field_75299_d.func_70685_l(p_220793_2_)) {
@@ -89,7 +72,7 @@
           }
  
        }
-@@ -871,7 +877,7 @@
+@@ -871,7 +874,7 @@
                       }
                    }
  
