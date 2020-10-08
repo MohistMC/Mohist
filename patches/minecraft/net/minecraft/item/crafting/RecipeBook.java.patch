@@ -5,7 +5,7 @@
  
  public class RecipeBook {
 -   protected final Set<ResourceLocation> field_194077_a = Sets.newHashSet();
-+   public final Set<ResourceLocation> field_194077_a = Sets.newHashSet(); // protected->public CraftBukkit
++   public final Set<ResourceLocation> field_194077_a = Sets.newHashSet();
     protected final Set<ResourceLocation> field_194078_b = Sets.newHashSet();
     private final RecipeBookStatus field_242138_c = new RecipeBookStatus();
  

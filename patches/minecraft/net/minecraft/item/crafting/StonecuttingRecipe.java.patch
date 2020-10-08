@@ -20,8 +20,8 @@
 +    // CraftBukkit start
 +    @Override
 +    public Recipe toBukkitRecipe() {
-+        final CraftItemStack result = CraftItemStack.asCraftMirror(this.field_222132_b);
-+        final CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(CraftNamespacedKey.fromMinecraft(this.field_222133_c), result, CraftRecipe.toBukkit(this.field_222131_a));
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.field_222132_b);
++        CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(CraftNamespacedKey.fromMinecraft(this.field_222133_c), result, CraftRecipe.toBukkit(this.field_222131_a));
 +        recipe.setGroup(this.field_222134_d);
 +        return recipe;
 +    }

@@ -26,10 +26,10 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
-+      final CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77580_a);
-+      final CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77580_a);
++      CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
 +      recipe.setGroup(this.field_194138_c);
-+      for (final Ingredient list : this.field_77579_b) {
++      for (Ingredient list : this.field_77579_b) {
 +         recipe.addIngredient(CraftRecipe.toBukkit(list));
 +      }
 +      return recipe;

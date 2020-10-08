@@ -1,14 +1,6 @@
 --- a/net/minecraft/item/crafting/RepairItemRecipe.java
 +++ b/net/minecraft/item/crafting/RepairItemRecipe.java
-@@ -12,6 +12,7 @@
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.registry.Registry;
- import net.minecraft.world.World;
-+import org.bukkit.inventory.Recipe;
- 
- public class RepairItemRecipe extends SpecialRecipe {
-    public RepairItemRecipe(ResourceLocation p_i51524_1_) {
-@@ -27,7 +28,7 @@
+@@ -27,7 +27,7 @@
              list.add(itemstack);
              if (list.size() > 1) {
                 ItemStack itemstack1 = list.get(0);
@@ -17,7 +9,7 @@
                    return false;
                 }
              }
-@@ -46,7 +47,7 @@
+@@ -46,7 +46,7 @@
              list.add(itemstack);
              if (list.size() > 1) {
                 ItemStack itemstack1 = list.get(0);
@@ -26,7 +18,7 @@
                    return ItemStack.field_190927_a;
                 }
              }
-@@ -56,12 +57,12 @@
+@@ -56,12 +56,12 @@
        if (list.size() == 2) {
           ItemStack itemstack3 = list.get(0);
           ItemStack itemstack4 = list.get(1);
@@ -44,13 +36,3 @@
              if (i1 < 0) {
                 i1 = 0;
              }
-@@ -96,4 +97,9 @@
-    public IRecipeSerializer<?> func_199559_b() {
-       return IRecipeSerializer.field_223550_o;
-    }
-+
-+    @Override
-+    public Recipe toBukkitRecipe() {
-+        return null;
-+    }
- }
