@@ -336,7 +336,7 @@
              this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
              this.field_147369_b.func_71000_j(this.field_147369_b.func_226277_ct_() - d0, this.field_147369_b.func_226278_cu_() - d1, this.field_147369_b.func_226281_cx_() - d2);
              this.field_184345_D = d7 >= -0.03125D && !this.field_147367_d.func_71231_X() && this.func_241162_a_(entity);
-@@ -367,12 +559,12 @@
+@@ -367,7 +559,7 @@
     }
  
     private boolean func_241162_a_(Entity p_241162_1_) {
@@ -345,21 +345,7 @@
     }
  
     public void func_184339_a(CConfirmTeleportPacket p_184339_1_) {
-       PacketThreadUtil.func_218796_a(p_184339_1_, this, this.field_147369_b.func_71121_q());
--      if (p_184339_1_.func_186987_a() == this.field_184363_z) {
-+      if (p_184339_1_.func_186987_a() == this.field_184363_z && this.field_184362_y != null) { // CraftBukkit
-          this.field_147369_b.func_70080_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
-          this.field_184352_o = this.field_184362_y.field_72450_a;
-          this.field_184353_p = this.field_184362_y.field_72448_b;
-@@ -382,6 +574,7 @@
-          }
- 
-          this.field_184362_y = null;
-+         this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b); // CraftBukkit
-       }
- 
-    }
-@@ -410,6 +603,12 @@
+@@ -410,6 +602,12 @@
  
     public void func_195518_a(CTabCompletePacket p_195518_1_) {
        PacketThreadUtil.func_218796_a(p_195518_1_, this, this.field_147369_b.func_71121_q());
@@ -372,7 +358,7 @@
        StringReader stringreader = new StringReader(p_195518_1_.func_197707_b());
        if (stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
-@@ -417,6 +616,7 @@
+@@ -417,6 +615,7 @@
  
        ParseResults<CommandSource> parseresults = this.field_147367_d.func_195571_aL().func_197054_a().parse(stringreader, this.field_147369_b.func_195051_bN());
        this.field_147367_d.func_195571_aL().func_197054_a().getCompletionSuggestions(parseresults).thenAccept((p_195519_2_) -> {
@@ -380,7 +366,7 @@
           this.field_147371_a.func_179290_a(new STabCompletePacket(p_195518_1_.func_197709_a(), p_195519_2_));
        });
     }
-@@ -622,6 +822,7 @@
+@@ -622,6 +821,7 @@
        Container container = this.field_147369_b.field_71070_bA;
        if (container instanceof MerchantContainer) {
           MerchantContainer merchantcontainer = (MerchantContainer)container;
@@ -388,7 +374,7 @@
           merchantcontainer.func_75175_c(i);
           merchantcontainer.func_217046_g(i);
        }
-@@ -630,6 +831,14 @@
+@@ -630,6 +830,14 @@
  
     public void func_210156_a(CEditBookPacket p_210156_1_) {
        PacketThreadUtil.func_218796_a(p_210156_1_, this, this.field_147369_b.func_71121_q());
@@ -403,7 +389,7 @@
        ItemStack itemstack = p_210156_1_.func_210346_a();
        if (!itemstack.func_190926_b()) {
           if (WritableBookItem.func_150930_a(itemstack.func_77978_p())) {
-@@ -654,9 +863,11 @@
+@@ -654,9 +862,11 @@
                    }
  
                    itemstack2.func_77983_a("pages", listnbt);
@@ -416,148 +402,7 @@
                 }
              }
  
-@@ -691,7 +902,7 @@
-          this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_player_movement"));
-       } else {
-          ServerWorld serverworld = this.field_147369_b.func_71121_q();
--         if (!this.field_147369_b.field_71136_j) {
-+         if (!this.field_147369_b.field_71136_j && !this.field_147369_b.func_70610_aX()) { // CraftBukkit
-             if (this.field_147368_e == 0) {
-                this.func_184342_d();
-             }
-@@ -702,12 +913,21 @@
-                   this.func_147364_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
-                }
- 
-+               this.allowedPlayerTicks = 20; // CraftBukkit
-             } else {
-                this.field_184343_A = this.field_147368_e;
-                if (this.field_147369_b.func_184218_aH()) {
-                   this.field_147369_b.func_70080_a(this.field_147369_b.func_226277_ct_(), this.field_147369_b.func_226278_cu_(), this.field_147369_b.func_226281_cx_(), p_147347_1_.func_186999_a(this.field_147369_b.field_70177_z), p_147347_1_.func_186998_b(this.field_147369_b.field_70125_A));
-                   this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
-+                  this.allowedPlayerTicks = 20; // CraftBukkit
-                } else {
-+                  // CraftBukkit - Make sure the move is valid but then reset it for plugins to modify
-+                  double prevX = field_147369_b.func_226277_ct_();
-+                  double prevY = field_147369_b.func_226278_cu_();
-+                  double prevZ = field_147369_b.func_226281_cx_();
-+                  float prevYaw = field_147369_b.field_70177_z;
-+                  float prevPitch = field_147369_b.field_70125_A;
-+                  // CraftBukkit end
-                   double d0 = this.field_147369_b.func_226277_ct_();
-                   double d1 = this.field_147369_b.func_226278_cu_();
-                   double d2 = this.field_147369_b.func_226281_cx_();
-@@ -730,14 +950,31 @@
-                   } else {
-                      ++this.field_184347_F;
-                      int i = this.field_184347_F - this.field_184348_G;
--                     if (i > 5) {
-+                     // CraftBukkit start - handle custom speeds and skipped ticks
-+                     this.allowedPlayerTicks += (System.currentTimeMillis() / 50) - this.lastTick;
-+                     this.allowedPlayerTicks = Math.max(this.allowedPlayerTicks, 1);
-+                     this.lastTick = (int) (System.currentTimeMillis() / 50);
-+                     if (i > Math.max(this.allowedPlayerTicks, 5)) {
-                         field_147370_c.debug("{} is sending move packets too frequently ({} packets since last tick)", this.field_147369_b.func_200200_C_().getString(), i);
-                         i = 1;
-                      }
- 
-+                     if (p_147347_1_.field_149481_i || d11 > 0) {
-+                        allowedPlayerTicks -= 1;
-+                     } else {
-+                        allowedPlayerTicks = 20;
-+                     }
-+                     double speed;
-+                     if (field_147369_b.field_71075_bZ.field_75100_b) {
-+                        speed = field_147369_b.field_71075_bZ.field_75096_f * 20f;
-+                     } else {
-+                        speed = field_147369_b.field_71075_bZ.field_75097_g * 10f;
-+                     }
-+
-                      if (!this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_223586_b(GameRules.field_223615_r) || !this.field_147369_b.func_184613_cA())) {
-                         float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
--                        if (d11 - d10 > (double)(f2 * (float)i) && !this.func_217264_d()) {
-+                        if (d11 - d10 > Math.max(f2, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.func_217264_d()) {
-+                           // CraftBukkit end
-                            field_147370_c.warn("{} moved too quickly! {},{},{}", this.field_147369_b.func_200200_C_().getString(), d7, d8, d9);
-                            this.func_147364_a(this.field_147369_b.func_226277_ct_(), this.field_147369_b.func_226278_cu_(), this.field_147369_b.func_226281_cx_(), this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
-                            return;
-@@ -754,6 +991,7 @@
-                      }
- 
-                      this.field_147369_b.func_213315_a(MoverType.PLAYER, new Vector3d(d7, d8, d9));
-+                     this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();  // CraftBukkit - SPIGOT-5810, SPIGOT-5835: reset by this.player.move
-                      d7 = d4 - this.field_147369_b.func_226277_ct_();
-                      d8 = d5 - this.field_147369_b.func_226278_cu_();
-                      if (d8 > -0.5D || d8 < 0.5D) {
-@@ -770,10 +1008,65 @@
- 
-                      this.field_147369_b.func_70080_a(d4, d5, d6, f, f1);
-                      if (this.field_147369_b.field_70145_X || this.field_147369_b.func_70608_bn() || (!flag1 || !serverworld.func_226665_a__(this.field_147369_b, axisalignedbb)) && !this.func_241163_a_(serverworld, axisalignedbb)) {
--                        this.field_184344_B = d8 >= -0.03125D && this.field_147369_b.field_71134_c.func_73081_b() != GameType.SPECTATOR && !this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !this.field_147369_b.func_70644_a(Effects.field_188424_y) && !this.field_147369_b.func_184613_cA() && this.func_241162_a_(this.field_147369_b);
-+
-+                        // CraftBukkit start - fire PlayerMoveEvent
-+                        // Rest to old location first
-+                        this.field_147369_b.func_70080_a(prevX, prevY, prevZ, prevYaw, prevPitch);
-+                        Player player = this.getPlayer();
-+                        Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
-+                        Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
-+                        // If the packet contains movement information then we update the To location with the correct XYZ.
-+                        if (p_147347_1_.field_149480_h) {
-+                           to.setX(p_147347_1_.field_149479_a);
-+                           to.setY(p_147347_1_.field_149477_b);
-+                           to.setZ(p_147347_1_.field_149478_c);
-+                        }
-+                        // If the packet contains look information then we update the To location with the correct Yaw & Pitch.
-+                        if (p_147347_1_.field_149480_h) {
-+                           to.setYaw(p_147347_1_.field_149476_e);
-+                           to.setPitch(p_147347_1_.field_149473_f);
-+                        }
-+                        // Prevent 40 event-calls for less than a single pixel of movement >.>
-+                        double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
-+                        float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
-+                        if ((delta > 1f / 256 || deltaAngle > 10f) && !this.field_147369_b.func_70610_aX()) {
-+                           this.lastPosX = to.getX();
-+                           this.lastPosY = to.getY();
-+                           this.lastPosZ = to.getZ();
-+                           this.lastYaw = to.getYaw();
-+                           this.lastPitch = to.getPitch();
-+                           // Skip the first time we do this
-+                           if (from.getX() != Double.MAX_VALUE) {
-+                              Location oldTo = to.clone();
-+                              PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-+                              this.craftServer.getPluginManager().callEvent(event);
-+                              // If the event is cancelled we move the player back to their old location.
-+                              if (event.isCancelled()) {
-+                                 teleport(from);
-+                                 return;
-+                              }
-+                              // If a Plugin has changed the To destination then we teleport the Player
-+                              // there to avoid any 'Moved wrongly' or 'Moved too quickly' errors.
-+                              // We only do this if the Event was not cancelled.
-+                              if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
-+                                 this.field_147369_b.getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-+                                 return;
-+                              }
-+                              // Check to see if the Players Location has some how changed during the call of the event.
-+                              // This can happen due to a plugin teleporting the player instead of using .setTo()
-+                              if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
-+                                 this.justTeleported = false;
-+                                 return;
-+                              }
-+                           }
-+                        }
-+                        this.field_147369_b.func_70080_a(d4, d5, d6, f, f1); // Copied from above
-+                        // MC-135989, SPIGOT-5564: isRiptiding
-+                        this.field_184344_B = d8 >= -0.03125D && this.field_147369_b.field_71134_c.func_73081_b() != GameType.SPECTATOR && !this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !this.field_147369_b.func_70644_a(Effects.field_188424_y) && !this.field_147369_b.func_184613_cA() && this.func_241162_a_(this.field_147369_b) && !this.field_147369_b.func_204805_cN();;
-+                        // CraftBukkit end
-                         this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
-                         this.field_147369_b.func_71122_b(this.field_147369_b.func_226278_cu_() - d3, p_147347_1_.func_149465_i());
--                        this.field_147369_b.func_230245_c_(p_147347_1_.func_149465_i());
-+                        // this.player.func_230245_c_(packetIn.isOnGround()); Moved up
-                         if (flag) {
-                            this.field_147369_b.field_70143_R = 0.0F;
-                         }
-@@ -806,24 +1099,83 @@
+@@ -806,24 +1016,83 @@
        this.func_175089_a(p_147364_1_, p_147364_3_, p_147364_5_, p_147364_7_, p_147364_8_, Collections.emptySet());
     }
  
@@ -649,7 +494,7 @@
        BlockPos blockpos = p_147345_1_.func_179715_a();
        this.field_147369_b.func_143004_u();
        CPlayerDiggingPacket.Action cplayerdiggingpacket$action = p_147345_1_.func_180762_c();
-@@ -831,14 +1183,45 @@
+@@ -831,14 +1100,45 @@
        case SWAP_ITEM_WITH_OFFHAND:
           if (!this.field_147369_b.func_175149_v()) {
              ItemStack itemstack = this.field_147369_b.func_184586_b(Hand.OFF_HAND);
@@ -696,7 +541,7 @@
              this.field_147369_b.func_225609_n_(false);
           }
  
-@@ -873,6 +1256,7 @@
+@@ -873,6 +1173,7 @@
  
     public void func_184337_a(CPlayerTryUseItemOnBlockPacket p_184337_1_) {
        PacketThreadUtil.func_218796_a(p_184337_1_, this, this.field_147369_b.func_71121_q());
@@ -704,7 +549,7 @@
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        Hand hand = p_184337_1_.func_187022_c();
        ItemStack itemstack = this.field_147369_b.func_184586_b(hand);
-@@ -881,7 +1265,17 @@
+@@ -881,7 +1182,17 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -723,7 +568,7 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (direction == Direction.UP && !actionresulttype.func_226246_a_() && blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z() - 1 && func_241166_a_(this.field_147369_b, itemstack)) {
                 ITextComponent itextcomponent = (new TranslationTextComponent("build.tooHigh", this.field_147367_d.func_71207_Z())).func_240699_a_(TextFormatting.RED);
-@@ -901,11 +1295,42 @@
+@@ -901,11 +1212,42 @@
  
     public void func_147346_a(CPlayerTryUseItemPacket p_147346_1_) {
        PacketThreadUtil.func_218796_a(p_147346_1_, this, this.field_147369_b.func_71121_q());
@@ -766,7 +611,7 @@
           ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, serverworld, itemstack, hand);
           if (actionresulttype.func_226247_b_()) {
              this.field_147369_b.func_226292_a_(hand, true);
-@@ -920,7 +1345,7 @@
+@@ -920,7 +1262,7 @@
           for(ServerWorld serverworld : this.field_147367_d.func_212370_w()) {
              Entity entity = p_175088_1_.func_179727_a(serverworld);
              if (entity != null) {
@@ -775,7 +620,7 @@
                 return;
              }
           }
-@@ -928,8 +1353,12 @@
+@@ -928,8 +1270,12 @@
  
     }
  
@@ -788,7 +633,7 @@
  
     public void func_184340_a(CSteerBoatPacket p_184340_1_) {
        PacketThreadUtil.func_218796_a(p_184340_1_, this, this.field_147369_b.func_71121_q());
-@@ -941,11 +1370,26 @@
+@@ -941,11 +1287,26 @@
     }
  
     public void func_147231_a(ITextComponent p_147231_1_) {
@@ -819,7 +664,7 @@
        if (this.func_217264_d()) {
           field_147370_c.info("Stopping singleplayer server as player logged out");
           this.field_147367_d.func_71263_m(false);
-@@ -970,6 +1414,15 @@
+@@ -970,6 +1331,15 @@
           }
        }
  
@@ -835,7 +680,7 @@
        try {
           this.field_147371_a.func_201058_a(p_211148_1_, p_211148_2_);
        } catch (Throwable throwable) {
-@@ -984,7 +1437,16 @@
+@@ -984,7 +1354,16 @@
  
     public void func_147355_a(CHeldItemChangePacket p_147355_1_) {
        PacketThreadUtil.func_218796_a(p_147355_1_, this, this.field_147369_b.func_71121_q());
@@ -852,7 +697,7 @@
           if (this.field_147369_b.field_71071_by.field_70461_c != p_147355_1_.func_149614_c() && this.field_147369_b.func_184600_cs() == Hand.MAIN_HAND) {
              this.field_147369_b.func_184602_cy();
           }
-@@ -993,12 +1455,24 @@
+@@ -993,12 +1372,24 @@
           this.field_147369_b.func_143004_u();
        } else {
           field_147370_c.warn("{} tried to set an invalid carried item", (Object)this.field_147369_b.func_200200_C_().getString());
@@ -879,7 +724,7 @@
           this.func_147359_a(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
        } else {
           this.field_147369_b.func_143004_u();
-@@ -1006,38 +1480,243 @@
+@@ -1006,38 +1397,243 @@
  
           for(int i = 0; i < s.length(); ++i) {
              if (!SharedConstants.func_71566_a(s.charAt(i))) {
@@ -1053,7 +898,7 @@
     private void func_147361_d(String p_147361_1_) {
 -      this.field_147367_d.func_195571_aL().func_197059_a(this.field_147369_b.func_195051_bN(), p_147361_1_);
 +      // CraftBukkit start - whole method
-+      this.field_147370_c.info(this.field_147369_b.func_200200_C_() + " issued server command: " + p_147361_1_);
++      this.field_147370_c.info(this.field_147369_b.func_195047_I_() + " issued server command: " + p_147361_1_);
 +
 +      CraftPlayer player = this.getPlayer();
 +      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, p_147361_1_, new LazyPlayerSet(field_147367_d));
@@ -1130,7 +975,7 @@
        this.field_147369_b.func_143004_u();
        switch(p_147357_1_.func_180764_b()) {
        case PRESS_SHIFT_KEY:
-@@ -1091,6 +1770,8 @@
+@@ -1091,6 +1687,8 @@
  
     public void func_147340_a(CUseEntityPacket p_147340_1_) {
        PacketThreadUtil.func_218796_a(p_147340_1_, this, this.field_147369_b.func_71121_q());
@@ -1139,7 +984,7 @@
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        Entity entity = p_147340_1_.func_149564_a(serverworld);
        this.field_147369_b.func_143004_u();
-@@ -1101,19 +1782,70 @@
+@@ -1101,19 +1699,70 @@
              Hand hand = p_147340_1_.func_186994_b();
              ItemStack itemstack = hand != null ? this.field_147369_b.func_184586_b(hand).func_77946_l() : ItemStack.field_190927_a;
              Optional<ActionResultType> optional = Optional.empty();
@@ -1220,7 +1065,7 @@
  
              if (optional.isPresent() && optional.get().func_226246_a_()) {
                 CriteriaTriggers.field_241276_P_.func_241476_a_(this.field_147369_b, itemstack, entity);
-@@ -1124,6 +1856,8 @@
+@@ -1124,6 +1773,8 @@
           }
        }
  
@@ -1229,7 +1074,7 @@
     }
  
     public void func_147342_a(CClientStatusPacket p_147342_1_) {
-@@ -1156,14 +1890,20 @@
+@@ -1156,14 +1807,20 @@
  
     public void func_147356_a(CCloseWindowPacket p_147356_1_) {
        PacketThreadUtil.func_218796_a(p_147356_1_, this, this.field_147369_b.func_71121_q());
@@ -1252,7 +1097,7 @@
              NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
              for(int i = 0; i < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++i) {
-@@ -1172,8 +1912,268 @@
+@@ -1172,8 +1829,268 @@
  
              this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist);
           } else {
@@ -1523,7 +1368,7 @@
                 this.field_147369_b.field_71135_a.func_147359_a(new SConfirmTransactionPacket(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
                 this.field_147369_b.field_71137_h = true;
                 this.field_147369_b.field_71070_bA.func_75142_b();
-@@ -1186,8 +2186,8 @@
+@@ -1186,8 +2103,8 @@
                 NonNullList<ItemStack> nonnulllist1 = NonNullList.func_191196_a();
  
                 for(int j = 0; j < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++j) {
@@ -1534,7 +1379,7 @@
                 }
  
                 this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist1);
-@@ -1209,6 +2209,7 @@
+@@ -1209,6 +2126,7 @@
  
     public void func_147338_a(CEnchantItemPacket p_147338_1_) {
        PacketThreadUtil.func_218796_a(p_147338_1_, this, this.field_147369_b.func_71121_q());
@@ -1542,7 +1387,7 @@
        this.field_147369_b.func_143004_u();
        if (this.field_147369_b.field_71070_bA.field_75152_c == p_147338_1_.func_149539_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75140_a(this.field_147369_b, p_147338_1_.func_149537_d());
-@@ -1237,6 +2238,42 @@
+@@ -1237,6 +2155,42 @@
  
           boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() <= 45;
           boolean flag2 = itemstack.func_190926_b() || itemstack.func_77952_i() >= 0 && itemstack.func_190916_E() <= 64 && !itemstack.func_190926_b();
@@ -1585,7 +1430,7 @@
           if (flag1 && flag2) {
              if (itemstack.func_190926_b()) {
                 this.field_147369_b.field_71069_bz.func_75141_a(p_147344_1_.func_149627_c(), ItemStack.field_190927_a);
-@@ -1256,6 +2293,7 @@
+@@ -1256,6 +2210,7 @@
  
     public void func_147339_a(CConfirmTransactionPacket p_147339_1_) {
        PacketThreadUtil.func_218796_a(p_147339_1_, this, this.field_147369_b.func_71121_q());
@@ -1593,7 +1438,7 @@
        int i = this.field_147369_b.field_71070_bA.field_75152_c;
        if (i == p_147339_1_.func_149532_c() && this.field_147372_n.getOrDefault(i, (short)(p_147339_1_.func_149533_d() + 1)) == p_147339_1_.func_149533_d() && !this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75128_a(this.field_147369_b, true);
-@@ -1265,6 +2303,7 @@
+@@ -1265,6 +2220,7 @@
  
     public void func_147343_a(CUpdateSignPacket p_147343_1_) {
        PacketThreadUtil.func_218796_a(p_147343_1_, this, this.field_147369_b.func_71121_q());
@@ -1601,7 +1446,7 @@
        this.field_147369_b.func_143004_u();
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        BlockPos blockpos = p_147343_1_.func_179722_a();
-@@ -1278,15 +2317,31 @@
+@@ -1278,15 +2234,31 @@
           SignTileEntity signtileentity = (SignTileEntity)tileentity;
           if (!signtileentity.func_145914_a() || signtileentity.func_145911_b() != this.field_147369_b) {
              field_147370_c.warn("Player {} just tried to change non-editable sign", (Object)this.field_147369_b.func_200200_C_().getString());
@@ -1634,7 +1479,7 @@
           signtileentity.func_70296_d();
           serverworld.func_184138_a(blockpos, blockstate, blockstate, 3);
        }
-@@ -1294,6 +2349,7 @@
+@@ -1294,6 +2266,7 @@
     }
  
     public void func_147353_a(CKeepAlivePacket p_147353_1_) {
@@ -1642,7 +1487,7 @@
        if (this.field_194403_g && p_147353_1_.func_149460_c() == this.field_194404_h) {
           int i = (int)(Util.func_211177_b() - this.field_194402_f);
           this.field_147369_b.field_71138_i = (this.field_147369_b.field_71138_i * 3 + i) / 4;
-@@ -1306,7 +2362,17 @@
+@@ -1306,7 +2279,17 @@
  
     public void func_147348_a(CPlayerAbilitiesPacket p_147348_1_) {
        PacketThreadUtil.func_218796_a(p_147348_1_, this, this.field_147369_b.func_71121_q());
@@ -1661,7 +1506,7 @@
     }
  
     public void func_147352_a(CClientSettingsPacket p_147352_1_) {
-@@ -1314,9 +2380,6 @@
+@@ -1314,9 +2297,6 @@
        this.field_147369_b.func_147100_a(p_147352_1_);
     }
  
@@ -1671,7 +1516,7 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
-@@ -1330,4 +2393,54 @@
+@@ -1330,4 +2310,54 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
