@@ -77,9 +77,7 @@ public final class PluginClassLoader extends URLClassLoader {
 
     @Override
     protected Object getClassLoadingLock(String className) {
-        if (launchClassLoader != null)
-            return launchClassLoader;
-        return super.getClassLoadingLock(className);
+        return launchClassLoader;
     }
 
     @Override
