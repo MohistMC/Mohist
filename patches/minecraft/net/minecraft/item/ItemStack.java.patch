@@ -411,9 +411,9 @@
              p_96631_1_ -= j;
 +            // CraftBukkit start
 +            if (p_96631_3_ != null) {
-+               PlayerItemDamageEvent event = new PlayerItemDamageEvent(p_96631_3_.getBukkitEntity(), CraftItemStack.asCraftMirror(this), i);
++               PlayerItemDamageEvent event = new PlayerItemDamageEvent(p_96631_3_.getBukkitEntity(), CraftItemStack.asCraftMirror(this), p_96631_1_);
 +               event.getPlayer().getServer().getPluginManager().callEvent(event);
-+               if (i != event.getDamage() || event.isCancelled()) {
++               if (p_96631_1_ != event.getDamage() || event.isCancelled()) {
 +                  event.getPlayer().updateInventory();
 +               }
 +               if (event.isCancelled()) {

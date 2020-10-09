@@ -38,7 +38,7 @@
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return field_75168_e.getLocation();
++         return field_217006_g.getLocation();
 +      }
 +      // CraftBukkit end
     };
@@ -132,7 +132,7 @@
 +                  org.bukkit.enchantments.Enchantment enchantment = (this.field_185001_h[j] >= 0) ? org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(Registry.field_212628_q.func_177774_c(Registry.field_212628_q.func_148745_a(this.field_185001_h[j])))) : null;
 +                  offers[j] = (enchantment != null) ? new EnchantmentOffer(enchantment, this.field_185002_i[j], this.field_75167_g[j]) : null;
 +               }
-+               PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player, this.getBukkitView(), p_75130_1_.getLocation().getBlock(), item, offers, (int) power);
++               PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player, this.getBukkitView(), field_217006_g.getLocation().getBlock(), item, offers, power);
 +               event.setCancelled(!itemstack.func_77956_u());
 +               p_217002_2_.getCBServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {
@@ -188,7 +188,7 @@
 +                  enchants.put(org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(Registry.field_212628_q.func_177774_c(instance.field_76302_b))), instance.field_76303_c);
 +               }
 +               CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
-+               EnchantItemEvent event = new EnchantItemEvent((Player) p_75140_1_.getBukkitEntity(), this.getBukkitView(), field_75168_e.getLocation().getBlock(), item, this.field_75167_g[i], enchants, i);
++               EnchantItemEvent event = new EnchantItemEvent((Player) p_75140_1_.getBukkitEntity(), this.getBukkitView(), field_217006_g.getLocation().getBlock(), item, this.field_75167_g[i], enchants, i);
 +               p_217003_6_.getCBServer().getPluginManager().callEvent(event);
 +               int level = event.getExpLevelCost();
 +               if (event.isCancelled() || (level > p_75140_1_.field_71068_ca && !p_75140_1_.field_71075_bZ.field_75098_d) || event.getEnchantsToAdd().isEmpty()) {

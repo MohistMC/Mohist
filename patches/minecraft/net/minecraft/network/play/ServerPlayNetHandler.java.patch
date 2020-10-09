@@ -984,7 +984,7 @@
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        Entity entity = p_147340_1_.func_149564_a(serverworld);
        this.field_147369_b.func_143004_u();
-@@ -1101,19 +1699,70 @@
+@@ -1101,19 +1699,71 @@
              Hand hand = p_147340_1_.func_186994_b();
              ItemStack itemstack = hand != null ? this.field_147369_b.func_184586_b(hand).func_77946_l() : ItemStack.field_190927_a;
              Optional<ActionResultType> optional = Optional.empty();
@@ -1030,6 +1030,7 @@
                    return;
                 }
 +               // CraftBukkit end
++			   }
 +               if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT) {
 +                  optional = Optional.of(this.field_147369_b.func_190775_a(entity, hand));
 +                  // CraftBukkit start
@@ -1065,9 +1066,11 @@
  
              if (optional.isPresent() && optional.get().func_226246_a_()) {
                 CriteriaTriggers.field_241276_P_.func_241476_a_(this.field_147369_b, itemstack, entity);
-@@ -1124,6 +1773,8 @@
+@@ -1122,8 +1772,9 @@
+                }
+             }
           }
-       }
+-      }
  
 +
 +      }
