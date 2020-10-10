@@ -37,7 +37,7 @@
 +         world.func_217377_a(pos1, false);
 +      }
 +
-+      world.func_217398_a((Entity)null, (double)pos.func_177958_n() + 0.5D, (double)pos.func_177956_o() + 0.5D, (double)pos.func_177952_p() + 0.5D, 5.0F, true, Explosion.Mode.DESTROY);
++      world.func_230546_a_((Entity)null, DamageSource.func_233546_a_(), (ExplosionContext) null, (double)pos.func_177958_n() + 0.5D, (double)pos.func_177956_o() + 0.5D, (double)pos.func_177952_p() + 0.5D, 5.0F, true, Explosion.Mode.DESTROY);
 +
 +      return ActionResultType.SUCCESS;
 +   }
