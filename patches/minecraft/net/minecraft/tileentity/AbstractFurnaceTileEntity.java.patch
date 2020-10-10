@@ -14,9 +14,9 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_16_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -259,7 +259,7 @@
  
 +      // CraftBukkit start - fire FurnaceExtractEvent
 +      if (amount != 0) {
-+         FurnaceExtractEvent event = new FurnaceExtractEvent((Player) entityhuman.getBukkitEntity(), CraftBlock.at(p_235641_0_, field_174879_c), org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(itemstack.func_77973_b()), amount, i);
++         FurnaceExtractEvent event = new FurnaceExtractEvent((Player) entityhuman.getBukkitEntity(), CraftBlock.at(p_235641_0_, field_174879_c), org.bukkit.craftbukkit.v1_16_R2.util.CraftMagicNumbers.getMaterial(itemstack.func_77973_b()), amount, i);
 +         p_235641_0_.getCBServer().getPluginManager().callEvent(event);
 +         i = event.getExpToDrop();
 +      }

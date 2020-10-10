@@ -4,8 +4,8 @@
  import net.minecraft.entity.merchant.villager.VillagerEntity;
  import net.minecraft.entity.merchant.villager.VillagerProfession;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.entity.CraftVillager;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.entity.CraftVillager;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.VillagerCareerChangeEvent;
  
  public class ChangeJobTask extends Task<VillagerEntity> {

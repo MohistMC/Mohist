@@ -12,8 +12,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftBlockInventoryHolder;
-+import org.bukkit.craftbukkit.util.DummyGeneratorAccess;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftBlockInventoryHolder;
++import org.bukkit.craftbukkit.v1_16_R2.util.DummyGeneratorAccess;
  
  public class ComposterBlock extends Block implements ISidedInventoryProvider {
     public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
@@ -37,7 +37,7 @@
 +         // CraftBukkit start
 +         double rand = p_235486_1_.func_201674_k().nextDouble();
 +         BlockState blockstate = func_235487_b_(p_235486_0_, DummyGeneratorAccess.INSTANCE, p_235486_3_, p_235486_2_, rand);
-+         if (p_235486_0_ == blockstate || org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_235486_3_, blockstate).isCancelled()) {
++         if (p_235486_0_ == blockstate || org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_235486_3_, blockstate).isCancelled()) {
 +            return p_235486_0_;
 +         }
 +         blockstate = func_235487_b_(p_235486_0_, (IWorld) p_235486_1_, p_235486_3_, p_235486_2_, rand);
@@ -55,7 +55,7 @@
 +   public static BlockState func_235489_d_(BlockState p_235489_0_, World p_235489_1_, BlockPos p_235489_2_, Entity entity) {
 +      if (entity != null) {
 +         BlockState iblockdata1 = func_235490_d_(p_235489_0_, DummyGeneratorAccess.INSTANCE, p_235489_2_);
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_235489_2_, iblockdata1).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_235489_2_, iblockdata1).isCancelled()) {
 +            return p_235489_0_;
 +         }
 +      }

@@ -5,7 +5,7 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
 +import net.minecraft.item.crafting.IRecipe;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_16_R2.entity.CraftHumanEntity;
  
  public interface IInventory extends IClearable {
     int func_70302_i_();

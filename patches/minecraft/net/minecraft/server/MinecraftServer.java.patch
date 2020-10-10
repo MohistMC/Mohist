@@ -103,8 +103,8 @@
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.Main;
++import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
++import org.bukkit.craftbukkit.v1_16_R2.Main;
 +import org.bukkit.event.server.ServerLoadEvent;
  
  public abstract class MinecraftServer extends RecursiveEventLoop<TickDelayedTask> implements ISnooperInfo, ICommandSource, AutoCloseable {
@@ -219,7 +219,7 @@
 +            field_147145_h.warn((String) null, ex);
 +         }
 +      }
-+      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));
++      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_16_R2.util.ServerShutdownThread(this));
     }
 +   // CraftBukkit end
  
@@ -371,7 +371,7 @@
 +            world = new ServerWorld(this, this.field_213217_au, worldSession, iworlddataserver, worldKey, dimensionmanager, worldloadlistener, chunkgenerator, flag, j, list, true, org.bukkit.World.Environment.getEnvironment(dimension), gen);
 +            DimensionSavedDataManager worldpersistentdata = world.func_217481_x();
 +            this.func_213204_a(worldpersistentdata);
-+            this.server.scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(this, world.func_96441_U());
++            this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_16_R2.scoreboard.CraftScoreboardManager(this, world.func_96441_U());
 +            this.field_229733_al_ = new CommandStorage(worldpersistentdata);
 +         } else {
 +            IChunkStatusListener worldloadlistener = this.field_213220_d.create(11);

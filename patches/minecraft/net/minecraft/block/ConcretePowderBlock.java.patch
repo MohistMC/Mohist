@@ -4,7 +4,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlockState;
 +import org.bukkit.event.block.BlockFormEvent;
  
  public class ConcretePowderBlock extends FallingBlock {
@@ -14,7 +14,7 @@
     public void func_176502_a_(World p_176502_1_, BlockPos p_176502_2_, BlockState p_176502_3_, BlockState p_176502_4_, FallingBlockEntity p_176502_5_) {
        if (func_230137_b_(p_176502_1_, p_176502_2_, p_176502_4_)) {
 -         p_176502_1_.func_180501_a(p_176502_2_, this.field_200294_a, 3);
-+         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_176502_1_, p_176502_2_, this.field_200294_a, 3); // CraftBukkit
++         org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.handleBlockFormEvent(p_176502_1_, p_176502_2_, this.field_200294_a, 3); // CraftBukkit
        }
  
     }

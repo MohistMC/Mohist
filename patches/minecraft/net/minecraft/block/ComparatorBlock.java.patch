@@ -4,7 +4,7 @@
  import net.minecraft.world.TickPriority;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public class ComparatorBlock extends RedstoneDiodeBlock implements ITileEntityProvider {
     public static final EnumProperty<ComparatorMode> field_176463_b = BlockStateProperties.field_208141_ap;

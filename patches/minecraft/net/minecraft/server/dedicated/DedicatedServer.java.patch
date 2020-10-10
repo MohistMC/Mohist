@@ -45,7 +45,7 @@
  import org.apache.logging.log4j.Logger;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.Main;
++import org.bukkit.craftbukkit.v1_16_R2.Main;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.bukkit.plugin.Plugin;
@@ -79,7 +79,7 @@
 -            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.Main.useConsole) {
++            if (!org.bukkit.craftbukkit.v1_16_R2.Main.useConsole) {
 +               return;
 +            }
 +            jline.console.ConsoleReader bufferedreader = reader;
@@ -131,7 +131,7 @@
 +      for (java.util.logging.Handler handler : global.getHandlers()) {
 +         global.removeHandler(handler);
 +      }
-+      global.addHandler(new org.bukkit.craftbukkit.util.ForwardLogHandler());
++      global.addHandler(new org.bukkit.craftbukkit.v1_16_R2.util.ForwardLogHandler());
 +
 +      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
 +      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
@@ -140,7 +140,7 @@
 +         }
 +      }
 +
-+      new org.bukkit.craftbukkit.util.TerminalConsoleWriterThread(System.out, this.reader).start();
++      new org.bukkit.craftbukkit.v1_16_R2.util.TerminalConsoleWriterThread(System.out, this.reader).start();
 +
 +      System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
 +      System.setErr(IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
@@ -198,7 +198,7 @@
           if (serverproperties.field_219030_x) {
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = MainThread.func_242130_a(this);
-+            this.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
++            this.remoteConsole = new org.bukkit.craftbukkit.v1_16_R2.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
           }
  
 -         if (this.func_175593_aQ() > 0L) {

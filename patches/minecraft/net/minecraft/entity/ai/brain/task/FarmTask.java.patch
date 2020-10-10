@@ -1,6 +1,14 @@
 --- a/net/minecraft/entity/ai/brain/task/FarmTask.java
 +++ b/net/minecraft/entity/ai/brain/task/FarmTask.java
-@@ -37,7 +37,7 @@
+@@ -22,7 +22,6 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.BlockPosWrapper;
+-import net.minecraft.world.GameRules;
+ import net.minecraft.world.server.ServerWorld;
+ 
+ public class FarmTask extends Task<VillagerEntity> {
+@@ -37,7 +36,7 @@
     }
  
     protected boolean func_212832_a_(ServerWorld p_212832_1_, VillagerEntity p_212832_2_) {
@@ -9,20 +17,20 @@
           return false;
        } else if (p_212832_2_.func_213700_eh().func_221130_b() != VillagerProfession.field_221156_f) {
           return false;
-@@ -95,7 +95,11 @@
+@@ -95,7 +94,11 @@
              Block block = blockstate.func_177230_c();
              Block block1 = p_212833_1_.func_180495_p(this.field_220422_a.func_177977_b()).func_177230_c();
              if (block instanceof CropsBlock && ((CropsBlock)block).func_185525_y(blockstate)) {
 -               p_212833_1_.func_225521_a_(this.field_220422_a, true, p_212833_2_);
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
 +                  p_212833_1_.func_225521_a_(this.field_220422_a, true, p_212833_2_);
 +               }
 +               // CraftBukkit end
              }
  
              if (blockstate.func_196958_f() && block1 instanceof FarmlandBlock && p_212833_2_.func_175556_cs()) {
-@@ -105,19 +109,33 @@
+@@ -105,19 +108,33 @@
                    ItemStack itemstack = inventory.func_70301_a(i);
                    boolean flag = false;
                    if (!itemstack.func_190926_b()) {
@@ -51,7 +59,7 @@
 +                        }
                       }
 +
-+                     if (planted != null && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, planted.func_176223_P()).isCancelled()) {
++                     if (planted != null && !org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, planted.func_176223_P()).isCancelled()) {
 +                        p_212833_1_.func_180501_a(this.field_220422_a, planted.func_176223_P(), 3);
 +                     } else {
 +                        flag = false;

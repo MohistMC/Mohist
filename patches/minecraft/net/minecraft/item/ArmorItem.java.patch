@@ -4,7 +4,7 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
  
  public class ArmorItem extends Item implements IArmorVanishable {
@@ -17,7 +17,7 @@
 +         World world = p_226626_0_.func_197524_h();
 +         org.bukkit.block.Block block = world.getCBWorld().getBlockAt(p_226626_0_.func_180699_d().func_177958_n(), p_226626_0_.func_180699_d().func_177956_o(), p_226626_0_.func_180699_d().func_177952_p());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_226626_1_);
-+         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.entity.CraftLivingEntity) livingentity.getBukkitEntity());
++         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_16_R2.entity.CraftLivingEntity) livingentity.getBukkitEntity());
 +         if (!DispenserBlock.eventFired) {
 +            world.getCBServer().getPluginManager().callEvent(event);
 +         }

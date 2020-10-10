@@ -5,7 +5,7 @@
                 armorstandentity.func_70012_b(armorstandentity.func_226277_ct_(), armorstandentity.func_226278_cu_(), armorstandentity.func_226281_cx_(), f, 0.0F);
                 this.func_179221_a(armorstandentity, world.field_73012_v);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, armorstandentity).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, armorstandentity).isCancelled()) {
 +                  return ActionResultType.FAIL;
 +               }
 +               // CraftBukkit end

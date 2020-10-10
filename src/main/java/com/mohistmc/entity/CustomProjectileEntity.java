@@ -3,7 +3,7 @@ package com.mohistmc.entity;
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.minecraft.entity.Entity;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;

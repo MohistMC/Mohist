@@ -1,14 +1,10 @@
 --- a/net/minecraft/entity/item/ItemFrameEntity.java
 +++ b/net/minecraft/entity/item/ItemFrameEntity.java
-@@ -32,16 +32,18 @@
- import net.minecraft.world.storage.MapData;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.apache.commons.lang.NotImplementedException;
+@@ -35,13 +35,14 @@
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public class ItemFrameEntity extends HangingEntity {
     private static final Logger field_195052_c = LogManager.getLogger();
@@ -20,7 +16,7 @@
  
     public ItemFrameEntity(EntityType<? extends ItemFrameEntity> p_i50224_1_, World p_i50224_2_) {
        super(p_i50224_1_, p_i50224_2_);
-@@ -52,7 +54,7 @@
+@@ -52,7 +53,7 @@
        this.func_174859_a(p_i45852_3_);
     }
  
@@ -29,7 +25,7 @@
        return 0.0F;
     }
  
-@@ -61,7 +63,7 @@
+@@ -61,7 +62,7 @@
        this.func_184212_Q().func_187214_a(field_184526_d, 0);
     }
  
@@ -38,7 +34,7 @@
        Validate.notNull(p_174859_1_);
        this.field_174860_b = p_174859_1_;
        if (p_174859_1_.func_176740_k().func_176722_c()) {
-@@ -79,15 +81,24 @@
+@@ -79,15 +80,24 @@
  
     protected void func_174856_o() {
        if (this.field_174860_b != null) {
@@ -72,7 +68,7 @@
           switch(direction$axis) {
           case X:
              d4 = 1.0D;
-@@ -102,9 +113,9 @@
+@@ -102,9 +112,9 @@
           d4 = d4 / 32.0D;
           d5 = d5 / 32.0D;
           d6 = d6 / 32.0D;
@@ -84,7 +80,7 @@
  
     public boolean func_70518_d() {
        if (this.field_234259_an_) {
-@@ -147,6 +158,11 @@
+@@ -147,6 +157,11 @@
           return false;
        } else if (!p_70097_1_.func_94541_c() && !this.func_82335_i().func_190926_b()) {
           if (!this.field_70170_p.field_72995_K) {
@@ -96,7 +92,7 @@
              this.func_146065_b(p_70097_1_.func_76346_g(), false);
              this.func_184185_a(SoundEvents.field_187629_cO, 1.0F, 1.0F);
           }
-@@ -216,7 +232,7 @@
+@@ -216,7 +231,7 @@
     }
  
     private void func_110131_b(ItemStack p_110131_1_) {
@@ -105,7 +101,7 @@
           MapData mapdata = FilledMapItem.func_195950_a(p_110131_1_, this.field_70170_p);
           mapdata.func_212441_a(this.field_174861_a, this.func_145782_y());
           mapdata.func_76186_a(true);
-@@ -234,14 +250,24 @@
+@@ -234,14 +249,24 @@
     }
  
     public void func_174864_a(ItemStack p_174864_1_, boolean p_174864_2_) {

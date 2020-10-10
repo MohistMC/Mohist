@@ -4,7 +4,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftMerchant;
  
  public interface IMerchant {
     void func_70932_a_(@Nullable PlayerEntity p_70932_1_);

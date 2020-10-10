@@ -1,11 +1,10 @@
 --- a/net/minecraft/entity/projectile/DamagingProjectileEntity.java
 +++ b/net/minecraft/entity/projectile/DamagingProjectileEntity.java
-@@ -16,11 +16,15 @@
+@@ -16,11 +16,14 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.apache.commons.lang.NotImplementedException;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public abstract class DamagingProjectileEntity extends ProjectileEntity {
     public double field_70232_b;
@@ -16,7 +15,7 @@
  
     protected DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> p_i50173_1_, World p_i50173_2_) {
        super(p_i50173_1_, p_i50173_2_);
-@@ -37,8 +41,23 @@
+@@ -37,8 +40,23 @@
           this.field_70230_d = p_i50174_12_ / d0 * 0.1D;
        }
  
@@ -40,7 +39,7 @@
     public DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> p_i50175_1_, LivingEntity p_i50175_2_, double p_i50175_3_, double p_i50175_5_, double p_i50175_7_, World p_i50175_9_) {
        this(p_i50175_1_, p_i50175_2_.func_226277_ct_(), p_i50175_2_.func_226278_cu_(), p_i50175_2_.func_226281_cx_(), p_i50175_3_, p_i50175_5_, p_i50175_7_, p_i50175_9_);
        this.func_212361_a(p_i50175_2_);
-@@ -68,8 +87,14 @@
+@@ -68,8 +86,14 @@
           }
  
           RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
@@ -56,7 +55,7 @@
           }
  
           this.func_145775_I();
-@@ -145,6 +170,11 @@
+@@ -145,6 +169,11 @@
           this.func_70018_K();
           Entity entity = p_70097_1_.func_76346_g();
           if (entity != null) {

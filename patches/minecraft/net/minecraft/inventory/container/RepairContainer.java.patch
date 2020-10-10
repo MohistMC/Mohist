@@ -4,9 +4,9 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryAnvil;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryAnvil;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class RepairContainer extends AbstractRepairContainer {
@@ -48,7 +48,7 @@
        int k = 0;
        if (itemstack.func_190926_b()) {
 -         this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+         org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++         org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
           this.field_82854_e.func_221494_a(0);
        } else {
           ItemStack itemstack1 = itemstack.func_77946_l();
@@ -66,7 +66,7 @@
                 int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);
                 if (l2 <= 0) {
 -                  this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
@@ -75,7 +75,7 @@
              } else {
                 if (!flag && (itemstack1.func_77973_b() != itemstack2.func_77973_b() || !itemstack1.func_77984_f())) {
 -                  this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
@@ -84,7 +84,7 @@
  
                 if (flag3 && !flag2) {
 -                  this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }

@@ -4,7 +4,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public class ScaffoldingBlock extends Block implements IWaterLoggable {
     private static final VoxelShape field_220121_d;

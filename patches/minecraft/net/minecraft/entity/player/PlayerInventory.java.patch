@@ -8,19 +8,18 @@
  import java.util.List;
  import java.util.function.Predicate;
  import net.minecraft.block.BlockState;
-@@ -26,6 +27,11 @@
+@@ -26,6 +27,10 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.apache.commons.lang3.NotImplementedException;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_16_R2.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
  
  public class PlayerInventory implements IInventory, INameable {
     public final NonNullList<ItemStack> field_70462_a = NonNullList.func_191197_a(36, ItemStack.field_190927_a);
-@@ -37,6 +43,57 @@
+@@ -37,6 +42,57 @@
     private ItemStack field_70457_g = ItemStack.field_190927_a;
     private int field_194017_h;
  
@@ -78,7 +77,7 @@
     public PlayerInventory(PlayerEntity p_i1750_1_) {
        this.field_70458_d = p_i1750_1_;
     }
-@@ -57,6 +114,33 @@
+@@ -57,6 +113,33 @@
        return p_184431_1_.func_77973_b() == p_184431_2_.func_77973_b() && ItemStack.func_77970_a(p_184431_1_, p_184431_2_);
     }
  
@@ -112,7 +111,7 @@
     public int func_70447_i() {
        for(int i = 0; i < this.field_70462_a.size(); ++i) {
           if (this.field_70462_a.get(i).func_190926_b()) {
-@@ -187,7 +271,8 @@
+@@ -187,7 +270,8 @@
        int i = p_191973_2_.func_190916_E();
        ItemStack itemstack = this.func_70301_a(p_191973_1_);
        if (itemstack.func_190926_b()) {
@@ -122,7 +121,7 @@
           if (p_191973_2_.func_77942_o()) {
              itemstack.func_77982_d(p_191973_2_.func_77978_p().func_74737_b());
           }
-@@ -238,7 +323,7 @@
+@@ -238,7 +322,7 @@
              }
           }
        }
@@ -131,7 +130,7 @@
     }
  
     public boolean func_70441_a(ItemStack p_70441_1_) {
-@@ -287,6 +372,8 @@
+@@ -287,6 +371,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.func_85055_a(throwable, "Adding item to inventory");
              CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");
@@ -140,7 +139,7 @@
              crashreportcategory.func_71507_a("Item ID", Item.func_150891_b(p_191971_2_.func_77973_b()));
              crashreportcategory.func_71507_a("Item data", p_191971_2_.func_77952_i());
              crashreportcategory.func_189529_a("Item name", () -> {
-@@ -539,6 +626,11 @@
+@@ -539,6 +625,11 @@
     }
  
     public ItemStack func_70445_o() {

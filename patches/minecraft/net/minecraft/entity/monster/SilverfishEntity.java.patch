@@ -8,15 +8,19 @@
  import net.minecraft.block.SilverfishBlock;
  import net.minecraft.entity.CreatureAttribute;
  import net.minecraft.entity.EntitySize;
-@@ -29,6 +30,7 @@
+@@ -25,10 +26,10 @@
+ import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.math.BlockPos;
+-import net.minecraft.world.GameRules;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public class SilverfishEntity extends MonsterEntity {
     private SilverfishEntity.SummonSilverfishGoal field_175460_b;
-@@ -134,7 +136,7 @@
+@@ -134,7 +135,7 @@
              return false;
           } else {
              Random random = this.field_75457_a.func_70681_au();
@@ -25,7 +29,7 @@
                 this.field_179483_b = Direction.func_239631_a_(random);
                 BlockPos blockpos = (new BlockPos(this.field_75457_a.func_226277_ct_(), this.field_75457_a.func_226278_cu_() + 0.5D, this.field_75457_a.func_226281_cx_())).func_177972_a(this.field_179483_b);
                 BlockState blockstate = this.field_75457_a.field_70170_p.func_180495_p(blockpos);
-@@ -161,6 +163,11 @@
+@@ -161,6 +162,11 @@
              BlockPos blockpos = (new BlockPos(this.field_75457_a.func_226277_ct_(), this.field_75457_a.func_226278_cu_() + 0.5D, this.field_75457_a.func_226281_cx_())).func_177972_a(this.field_179483_b);
              BlockState blockstate = iworld.func_180495_p(blockpos);
              if (SilverfishBlock.func_196466_i(blockstate)) {
@@ -37,7 +41,7 @@
                 iworld.func_180501_a(blockpos, SilverfishBlock.func_196467_h(blockstate.func_177230_c()), 3);
                 this.field_75457_a.func_70656_aK();
                 this.field_75457_a.func_70106_y();
-@@ -203,7 +210,12 @@
+@@ -203,7 +209,12 @@
                       BlockState blockstate = world.func_180495_p(blockpos1);
                       Block block = blockstate.func_177230_c();
                       if (block instanceof SilverfishBlock) {

@@ -1,8 +1,8 @@
 package com.mohistmc.entity;
 
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftAbstractHorse;
+import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftAbstractHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 

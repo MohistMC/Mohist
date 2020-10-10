@@ -1,38 +1,44 @@
 --- a/net/minecraft/item/BlockItem.java
 +++ b/net/minecraft/item/BlockItem.java
-@@ -23,8 +23,12 @@
+@@ -17,14 +17,17 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.ActionResultType;
+ import net.minecraft.util.NonNullList;
+-import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.shapes.ISelectionContext;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.World;
 +import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_16_R2.block.data.CraftBlockData;
 +import org.bukkit.event.block.BlockCanBuildEvent;
  
  public class BlockItem extends Item {
     @Deprecated
-@@ -49,6 +53,12 @@
+@@ -49,6 +52,12 @@
              return ActionResultType.FAIL;
           } else {
              BlockState blockstate = this.func_195945_b(blockitemusecontext);
 +            // CraftBukkit start - special case for handling block placement with water lilies
 +            org.bukkit.block.BlockState cbblockstate = null;
 +            if (this instanceof LilyPadItem) {
-+               cbblockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(blockitemusecontext.func_195991_k(), blockitemusecontext.func_195995_a());
++               cbblockstate = org.bukkit.craftbukkit.v1_16_R2.block.CraftBlockState.getBlockState(blockitemusecontext.func_195991_k(), blockitemusecontext.func_195995_a());
 +            }
 +            // CraftBukkit end
              if (blockstate == null) {
                 return ActionResultType.FAIL;
              } else if (!this.func_195941_b(blockitemusecontext, blockstate)) {
-@@ -64,14 +74,23 @@
+@@ -64,14 +73,23 @@
                    blockstate1 = this.func_219985_a(blockpos, world, itemstack, blockstate1);
                    this.func_195943_a(blockpos, world, playerentity, itemstack, blockstate1);
                    block.func_180633_a(world, blockpos, blockstate1, playerentity, itemstack);
 +                  // CraftBukkit start
 +                  if (cbblockstate != null) {
-+                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent((ServerWorld) world, playerentity, blockitemusecontext.func_221531_n(), cbblockstate, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
++                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callBlockPlaceEvent((ServerWorld) world, playerentity, blockitemusecontext.func_221531_n(), cbblockstate, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
 +                     if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
 +                        cbblockstate.update(true, false);
 +                        return ActionResultType.FAIL;
@@ -53,7 +59,7 @@
                    itemstack.func_190918_g(1);
                 }
  
-@@ -81,10 +100,16 @@
+@@ -81,10 +99,16 @@
        }
     }
  
@@ -70,7 +76,7 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -105,15 +130,8 @@
+@@ -105,15 +129,8 @@
        CompoundNBT compoundnbt = p_219985_3_.func_77978_p();
        if (compoundnbt != null) {
           CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("BlockStateTag");
@@ -88,7 +94,7 @@
        }
  
        if (blockstate != p_219985_4_) {
-@@ -123,6 +141,22 @@
+@@ -123,6 +140,22 @@
        return blockstate;
     }
  
@@ -111,7 +117,7 @@
     private static <T extends Comparable<T>> BlockState func_219988_a(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
        return p_219988_1_.func_185929_b(p_219988_2_).map((p_219986_2_) -> {
           return p_219988_0_.func_206870_a(p_219988_1_, p_219986_2_);
-@@ -132,7 +166,13 @@
+@@ -132,7 +165,13 @@
     protected boolean func_195944_a(BlockItemUseContext p_195944_1_, BlockState p_195944_2_) {
        PlayerEntity playerentity = p_195944_1_.func_195999_j();
        ISelectionContext iselectioncontext = playerentity == null ? ISelectionContext.func_216377_a() : ISelectionContext.func_216374_a(playerentity);
@@ -126,7 +132,7 @@
     }
  
     protected boolean func_219987_d() {
-@@ -192,10 +232,18 @@
+@@ -192,10 +231,18 @@
     }
  
     public Block func_179223_d() {

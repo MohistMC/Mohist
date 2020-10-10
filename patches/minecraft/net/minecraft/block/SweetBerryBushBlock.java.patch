@@ -11,9 +11,9 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerHarvestBlockEvent;
  
  public class SweetBerryBushBlock extends BushBlock implements IGrowable {

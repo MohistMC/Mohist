@@ -11,18 +11,16 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.ISidedInventory;
  import net.minecraft.inventory.ISidedInventoryProvider;
-@@ -31,12 +33,55 @@
+@@ -31,12 +33,53 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.World;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
 +import org.bukkit.inventory.Inventory;
-+import org.bukkit.inventory.InventoryHolder;
  
  public class HopperTileEntity extends LockableLootTileEntity implements IHopper, ITickableTileEntity {
     private NonNullList<ItemStack> field_145900_a = NonNullList.func_191197_a(5, ItemStack.field_190927_a);
@@ -67,7 +65,7 @@
     public HopperTileEntity() {
        super(TileEntityType.field_200987_r);
     }
-@@ -133,6 +178,7 @@
+@@ -133,6 +176,7 @@
     }
  
     private boolean func_145883_k() {
@@ -75,7 +73,7 @@
        IInventory iinventory = this.func_145895_l();
        if (iinventory == null) {
           return false;
-@@ -144,7 +190,27 @@
+@@ -144,7 +188,27 @@
              for(int i = 0; i < this.func_70302_i_(); ++i) {
                 if (!this.func_70301_a(i).func_190926_b()) {
                    ItemStack itemstack = this.func_70301_a(i).func_77946_l();
@@ -86,7 +84,7 @@
 +                  Inventory destinationInventory;
 +                  // Have to special case large chests as they work oddly
 +                  if (iinventory instanceof DoubleSidedInventory) {
-+                     destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
++                     destinationInventory = new org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
 +                  } else {
 +                     destinationInventory = iinventory.getOwner().getInventory();
 +                  }
@@ -104,7 +102,7 @@
                    if (itemstack1.func_190926_b()) {
                       iinventory.func_70296_d();
                       return true;
-@@ -177,6 +243,8 @@
+@@ -177,6 +241,8 @@
     }
  
     public static boolean func_145891_a(IHopper p_145891_0_) {
@@ -113,7 +111,7 @@
        IInventory iinventory = func_145884_b(p_145891_0_);
        if (iinventory != null) {
           Direction direction = Direction.DOWN;
-@@ -198,7 +266,30 @@
+@@ -198,7 +264,30 @@
        ItemStack itemstack = p_174915_1_.func_70301_a(p_174915_2_);
        if (!itemstack.func_190926_b() && func_174921_b(p_174915_1_, itemstack, p_174915_2_, p_174915_3_)) {
           ItemStack itemstack1 = itemstack.func_77946_l();
@@ -124,7 +122,7 @@
 +         Inventory sourceInventory;
 +         // Have to special case large chests as they work oddly
 +         if (p_174915_1_ instanceof DoubleSidedInventory) {
-+            sourceInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) p_174915_1_);
++            sourceInventory = new org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) p_174915_1_);
 +         } else {
 +            sourceInventory = p_174915_1_.getOwner().getInventory();
 +         }
@@ -145,7 +143,7 @@
           if (itemstack2.func_190926_b()) {
              p_174915_1_.func_70296_d();
              return true;
-@@ -212,6 +303,13 @@
+@@ -212,6 +301,13 @@
  
     public static boolean func_200114_a(IInventory p_200114_0_, ItemEntity p_200114_1_) {
        boolean flag = false;
@@ -159,7 +157,7 @@
        ItemStack itemstack = p_200114_1_.func_92059_d().func_77946_l();
        ItemStack itemstack1 = func_174918_a((IInventory)null, p_200114_0_, itemstack, (Direction)null);
        if (itemstack1.func_190926_b()) {
-@@ -325,7 +423,7 @@
+@@ -325,7 +421,7 @@
        Block block = blockstate.func_177230_c();
        if (block instanceof ISidedInventoryProvider) {
           iinventory = ((ISidedInventoryProvider)block).func_219966_a(blockstate, p_145893_0_, blockpos);
@@ -168,7 +166,7 @@
           TileEntity tileentity = p_145893_0_.func_175625_s(blockpos);
           if (tileentity instanceof IInventory) {
              iinventory = (IInventory)tileentity;
-@@ -404,4 +502,13 @@
+@@ -404,4 +500,13 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new HopperContainer(p_213906_1_, p_213906_2_, this);
     }

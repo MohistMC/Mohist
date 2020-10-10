@@ -4,7 +4,7 @@
  import net.minecraft.world.gen.feature.ConfiguredFeature;
  import net.minecraft.world.gen.feature.FlowersFeature;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public class GrassBlock extends SpreadableSnowyDirtBlock implements IGrowable {
     public GrassBlock(AbstractBlock.Properties p_i48388_1_) {

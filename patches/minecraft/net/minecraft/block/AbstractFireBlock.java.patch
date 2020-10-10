@@ -16,7 +16,7 @@
           if (p_196262_4_.func_223314_ad() == 0) {
 -            p_196262_4_.func_70015_d(8);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_196262_2_, p_196262_3_), p_196262_4_.getBukkitEntity(), 8);
++            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock.at(p_196262_2_, p_196262_3_), p_196262_4_.getBukkitEntity(), 8);
 +            p_196262_2_.getCBServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
 +               p_196262_4_.setFire(event.getDuration(), false);
@@ -58,7 +58,7 @@
 +
 +   // CraftBukkit start
 +   protected void fireExtinguished(IWorld world, BlockPos position) {
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
 +         world.func_217377_a(position, false);
 +      }
 +   }

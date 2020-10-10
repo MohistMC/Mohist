@@ -1,21 +1,20 @@
 --- a/net/minecraft/tileentity/EndGatewayTileEntity.java
 +++ b/net/minecraft/tileentity/EndGatewayTileEntity.java
-@@ -20,6 +20,8 @@
+@@ -20,6 +20,7 @@
  import net.minecraft.util.math.ChunkPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
-+import net.minecraft.world.Dimension;
 +import net.minecraft.world.DimensionType;
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.Chunk;
-@@ -31,14 +33,18 @@
+@@ -31,14 +32,18 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class EndGatewayTileEntity extends EndPortalTileEntity implements ITickableTileEntity {
@@ -31,7 +30,7 @@
  
     public EndGatewayTileEntity() {
        super(TileEntityType.field_200991_v);
-@@ -148,7 +154,7 @@
+@@ -148,7 +153,7 @@
     public void func_195496_a(Entity p_195496_1_) {
        if (this.field_145850_b instanceof ServerWorld && !this.func_195500_d()) {
           this.field_195505_g = 100;
@@ -40,14 +39,14 @@
              this.func_227015_a_((ServerWorld)this.field_145850_b);
           }
  
-@@ -171,6 +177,24 @@
+@@ -171,6 +176,24 @@
                 entity = p_195496_1_.func_184208_bv();
              }
  
 +
 +            // CraftBukkit start - Fire PlayerTeleportEvent
 +            if (p_195496_1_ instanceof ServerPlayerEntity) {
-+               org.bukkit.craftbukkit.entity.CraftPlayer player = (CraftPlayer) p_195496_1_.getBukkitEntity();
++               org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer player = (CraftPlayer) p_195496_1_.getBukkitEntity();
 +               org.bukkit.Location location = new Location(field_145850_b.getCBWorld(), (double) blockpos.func_177958_n() + 0.5D, (double) blockpos.func_177956_o() + 0.5D, (double) blockpos.func_177952_p() + 0.5D);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());

@@ -17,10 +17,10 @@
  import net.minecraft.world.World;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.map.CraftMapView;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
++import org.bukkit.craftbukkit.v1_16_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_16_R2.map.CraftMapView;
++import org.bukkit.craftbukkit.v1_16_R2.util.CraftChatMessage;
  
  public class MapData extends WorldSavedData {
     private static final Logger field_237240_k_ = LogManager.getLogger();
@@ -104,7 +104,7 @@
        @Nullable
        public IPacket<?> func_176101_a(ItemStack p_176101_1_) {
 +         // CraftBukkit start
-+         org.bukkit.craftbukkit.map.RenderData render = MapData.this.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) this.field_76211_a.getBukkitEntity()); // CraftBukkit
++         org.bukkit.craftbukkit.v1_16_R2.map.RenderData render = MapData.this.mapView.render((org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer) this.field_76211_a.getBukkitEntity()); // CraftBukkit
 +         java.util.Collection<MapDecoration> icons = new java.util.ArrayList<MapDecoration>();
 +         for ( org.bukkit.map.MapCursor cursor : render.cursors) {
 +            if (cursor.isVisible()) {

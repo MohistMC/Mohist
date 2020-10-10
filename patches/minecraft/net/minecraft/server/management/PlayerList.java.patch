@@ -36,14 +36,7 @@
  import net.minecraft.network.play.server.SRespawnPacket;
  import net.minecraft.network.play.server.SServerDifficultyPacket;
  import net.minecraft.network.play.server.SSetExperiencePacket;
-@@ -48,15 +54,18 @@
- import net.minecraft.network.play.server.SUpdateViewDistancePacket;
- import net.minecraft.network.play.server.SWorldBorderPacket;
- import net.minecraft.network.play.server.SWorldSpawnChangedPacket;
-+import net.minecraft.potion.Effect;
- import net.minecraft.potion.EffectInstance;
- import net.minecraft.scoreboard.ScoreObjective;
- import net.minecraft.scoreboard.ScorePlayerTeam;
+@@ -54,9 +60,11 @@
  import net.minecraft.scoreboard.ServerScoreboard;
  import net.minecraft.scoreboard.Team;
  import net.minecraft.server.MinecraftServer;
@@ -55,7 +48,7 @@
  import net.minecraft.util.RegistryKey;
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
-@@ -64,6 +73,7 @@
+@@ -64,6 +72,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
@@ -63,16 +56,16 @@
  import net.minecraft.util.registry.DynamicRegistries;
  import net.minecraft.util.text.ChatType;
  import net.minecraft.util.text.IFormattableTextComponent;
-@@ -85,6 +95,18 @@
+@@ -85,6 +94,18 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.command.ColouredConsoleSender;
-+import org.bukkit.craftbukkit.command.ConsoleCommandCompleter;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
++import org.bukkit.craftbukkit.v1_16_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_16_R2.command.ColouredConsoleSender;
++import org.bukkit.craftbukkit.v1_16_R2.command.ConsoleCommandCompleter;
++import org.bukkit.craftbukkit.v1_16_R2.util.CraftChatMessage;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
 +import org.bukkit.event.player.PlayerJoinEvent;
@@ -82,7 +75,7 @@
  
  public abstract class PlayerList {
     public static final File field_152613_a = new File("banned-players.json");
-@@ -94,15 +116,17 @@
+@@ -94,15 +115,17 @@
     private static final Logger field_148546_d = LogManager.getLogger();
     private static final SimpleDateFormat field_72403_e = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     private final MinecraftServer field_72400_f;
@@ -104,7 +97,7 @@
     private boolean field_72409_l;
     private final DynamicRegistries.Impl field_232639_s_;
     protected final int field_72405_c;
-@@ -110,8 +134,17 @@
+@@ -110,8 +133,17 @@
     private GameType field_72410_m;
     private boolean field_72407_n;
     private int field_72408_o;
@@ -122,7 +115,7 @@
        this.field_72400_f = p_i231425_1_;
        this.field_232639_s_ = p_i231425_2_;
        this.field_72405_c = p_i231425_4_;
-@@ -125,6 +158,14 @@
+@@ -125,6 +157,14 @@
        String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
        playerprofilecache.func_152649_a(gameprofile);
        CompoundNBT compoundnbt = this.func_72380_a(p_72355_2_);
@@ -137,7 +130,7 @@
        RegistryKey<World> registrykey = compoundnbt != null ? DimensionType.func_236025_a_(new Dynamic<>(NBTDynamicOps.field_210820_a, compoundnbt.func_74781_a("Dimension"))).resultOrPartial(field_148546_d::error).orElse(World.field_234918_g_) : World.field_234918_g_;
        ServerWorld serverworld = this.field_72400_f.func_71218_a(registrykey);
        ServerWorld serverworld1;
-@@ -142,20 +183,24 @@
+@@ -142,20 +182,24 @@
           s1 = p_72355_1_.func_74430_c().toString();
        }
  
@@ -163,7 +156,7 @@
        this.func_187243_f(p_72355_2_);
        p_72355_2_.func_147099_x().func_150877_d();
        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
-@@ -167,20 +212,55 @@
+@@ -167,20 +211,55 @@
        } else {
           iformattabletextcomponent = new TranslationTextComponent("multiplayer.player.joined.renamed", p_72355_2_.func_145748_c_(), s);
        }
@@ -187,7 +180,7 @@
 +      }
 +      joinMessage = playerJoinEvent.getJoinMessage();
 +      if (joinMessage != null && joinMessage.length() > 0) {
-+         for (ITextComponent line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage)) {
++         for (ITextComponent line : org.bukkit.craftbukkit.v1_16_R2.util.CraftChatMessage.fromString(joinMessage)) {
 +            field_72400_f.func_184103_al().func_148540_a(new SChatPacket(line, ChatType.SYSTEM, Util.field_240973_b_));
 +         }
 +      }
@@ -225,7 +218,7 @@
        if (!this.field_72400_f.func_147133_T().isEmpty()) {
           p_72355_2_.func_175397_a(this.field_72400_f.func_147133_T(), this.field_72400_f.func_175581_ab());
        }
-@@ -225,9 +305,12 @@
+@@ -225,9 +304,12 @@
        }
  
        p_72355_2_.func_71116_b();
@@ -239,7 +232,7 @@
        Set<ScoreObjective> set = Sets.newHashSet();
  
        for(ScorePlayerTeam scoreplayerteam : p_96456_1_.func_96525_g()) {
-@@ -248,25 +331,27 @@
+@@ -248,25 +330,27 @@
     }
  
     public void func_212504_a(ServerWorld p_212504_1_) {
@@ -272,7 +265,7 @@
           }
  
           public void func_177696_b(WorldBorder p_177696_1_, double p_177696_2_) {
-@@ -285,6 +370,7 @@
+@@ -285,6 +369,7 @@
           compoundnbt1 = compoundnbt;
           p_72380_1_.func_70020_e(compoundnbt);
           field_148546_d.debug("loading single player");
@@ -280,7 +273,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,28 +379,42 @@
+@@ -293,28 +378,42 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -332,7 +325,7 @@
              serverworld.func_217467_h(entity);
              entity.field_70128_L = true;
  
-@@ -323,107 +423,179 @@
+@@ -323,107 +422,179 @@
                 entity1.field_70128_L = true;
              }
  
@@ -553,7 +546,7 @@
        serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
  
-@@ -431,48 +603,107 @@
+@@ -431,48 +602,107 @@
           serverplayerentity.func_184211_a(s);
        }
  
@@ -688,7 +681,7 @@
        return serverplayerentity;
     }
  
-@@ -484,12 +715,36 @@
+@@ -484,12 +714,36 @@
  
     public void func_72374_b() {
        if (++this.field_72408_o > 600) {
@@ -726,7 +719,7 @@
     public void func_148540_a(IPacket<?> p_148540_1_) {
        for(int i = 0; i < this.field_72404_b.size(); ++i) {
           (this.field_72404_b.get(i)).field_71135_a.func_147359_a(p_148540_1_);
-@@ -585,6 +840,7 @@
+@@ -585,6 +839,7 @@
           p_187245_1_.field_71135_a.func_147359_a(new SEntityStatusPacket(p_187245_1_, b0));
        }
  
@@ -734,7 +727,7 @@
        this.field_72400_f.func_195571_aL().func_197051_a(p_187245_1_);
     }
  
-@@ -610,6 +866,13 @@
+@@ -610,6 +865,13 @@
     public void func_148543_a(@Nullable PlayerEntity p_148543_1_, double p_148543_2_, double p_148543_4_, double p_148543_6_, double p_148543_8_, RegistryKey<World> p_148543_10_, IPacket<?> p_148543_11_) {
        for(int i = 0; i < this.field_72404_b.size(); ++i) {
           ServerPlayerEntity serverplayerentity = this.field_72404_b.get(i);
@@ -748,7 +741,7 @@
           if (serverplayerentity != p_148543_1_ && serverplayerentity.field_70170_p.func_234923_W_() == p_148543_10_) {
              double d0 = p_148543_2_ - serverplayerentity.func_226277_ct_();
              double d1 = p_148543_4_ - serverplayerentity.func_226278_cu_();
-@@ -649,22 +912,32 @@
+@@ -649,22 +911,32 @@
     }
  
     public void func_72354_b(ServerPlayerEntity p_72354_1_, ServerWorld p_72354_2_) {
@@ -783,7 +776,7 @@
     }
  
     public int func_72394_k() {
-@@ -719,7 +992,7 @@
+@@ -719,7 +991,7 @@
           p_72381_1_.field_71134_c.func_241820_a(this.field_72410_m, GameType.NOT_SET);
        }
  
@@ -792,7 +785,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -728,32 +1001,46 @@
+@@ -728,32 +1000,46 @@
     }
  
     public void func_72392_r() {
@@ -848,7 +841,7 @@
        }
  
        return serverstatisticsmanager;
-@@ -761,12 +1048,12 @@
+@@ -761,12 +1047,12 @@
  
     public PlayerAdvancements func_192054_h(ServerPlayerEntity p_192054_1_) {
        UUID uuid = p_192054_1_.func_110124_au();
@@ -863,7 +856,7 @@
        }
  
        playeradvancements.func_192739_a(p_192054_1_);
-@@ -786,7 +1073,7 @@
+@@ -786,7 +1072,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -872,7 +865,7 @@
     }
  
     @Nullable
-@@ -799,11 +1086,14 @@
+@@ -799,11 +1085,14 @@
     }
  
     public void func_193244_w() {
@@ -889,7 +882,7 @@
        SUpdateRecipesPacket supdaterecipespacket = new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b());
  
        for(ServerPlayerEntity serverplayerentity : this.field_72404_b) {
-@@ -816,4 +1106,12 @@
+@@ -816,4 +1105,12 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }

@@ -11,8 +11,8 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
  
  public class AreaEffectCloudEntity extends Entity {

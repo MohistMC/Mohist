@@ -1,10 +1,18 @@
 --- a/net/minecraft/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/entity/item/FallingBlockEntity.java
-@@ -40,13 +40,14 @@
+@@ -8,7 +8,6 @@
+ import net.minecraft.block.Blocks;
+ import net.minecraft.block.ConcretePowderBlock;
+ import net.minecraft.block.FallingBlock;
+-import net.minecraft.block.ITileEntityProvider;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityType;
+@@ -40,13 +39,14 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public class FallingBlockEntity extends Entity {
     private BlockState field_175132_d = Blocks.field_150354_m.func_176223_P();
@@ -16,7 +24,7 @@
     private int field_145815_h = 40;
     private float field_145816_i = 2.0F;
     public CompoundNBT field_145810_d;
-@@ -100,7 +101,7 @@
+@@ -100,7 +100,7 @@
           Block block = this.field_175132_d.func_177230_c();
           if (this.field_145812_b++ == 0) {
              BlockPos blockpos = this.func_233580_cy_();
@@ -25,7 +33,7 @@
                 this.field_70170_p.func_217377_a(blockpos, false);
              } else if (!this.field_70170_p.field_72995_K) {
                 this.func_70106_y();
-@@ -148,12 +149,18 @@
+@@ -148,12 +148,18 @@
                             this.field_175132_d = this.field_175132_d.func_206870_a(BlockStateProperties.field_208198_y, Boolean.valueOf(true));
                          }
  
@@ -45,7 +53,7 @@
                                TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
                                if (tileentity != null) {
                                   CompoundNBT compoundnbt = tileentity.func_189515_b(new CompoundNBT());
-@@ -195,7 +202,9 @@
+@@ -195,7 +201,9 @@
              DamageSource damagesource = flag ? DamageSource.field_82728_o : DamageSource.field_82729_p;
  
              for(Entity entity : list) {

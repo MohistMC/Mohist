@@ -1,17 +1,21 @@
 --- a/net/minecraft/entity/passive/SnowGolemEntity.java
 +++ b/net/minecraft/entity/passive/SnowGolemEntity.java
-@@ -39,8 +39,9 @@
+@@ -35,12 +35,12 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.vector.Vector3d;
+-import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
 -public class SnowGolemEntity extends GolemEntity implements IShearable, IRangedAttackMob {
 +public class SnowGolemEntity extends GolemEntity implements IShearable, IRangedAttackMob, net.minecraftforge.common.IForgeShearable {
     private static final DataParameter<Byte> field_184749_a = EntityDataManager.func_187226_a(SnowGolemEntity.class, DataSerializers.field_187191_a);
  
     public SnowGolemEntity(EntityType<? extends SnowGolemEntity> p_i50244_1_, World p_i50244_2_) {
-@@ -90,10 +91,10 @@
+@@ -90,10 +90,10 @@
           int j = MathHelper.func_76128_c(this.func_226278_cu_());
           int k = MathHelper.func_76128_c(this.func_226281_cx_());
           if (this.field_70170_p.func_226691_t_(new BlockPos(i, 0, k)).func_225486_c(new BlockPos(i, j, k)) > 1.0F) {
@@ -24,7 +28,7 @@
              return;
           }
  
-@@ -104,8 +105,8 @@
+@@ -104,8 +104,8 @@
              j = MathHelper.func_76128_c(this.func_226278_cu_());
              k = MathHelper.func_76128_c(this.func_226281_cx_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(i, j, k);
@@ -35,7 +39,7 @@
              }
           }
        }
-@@ -130,7 +131,12 @@
+@@ -130,7 +130,12 @@
  
     protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
@@ -49,7 +53,7 @@
           this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_230254_1_, (p_213622_1_) -> {
-@@ -190,4 +196,20 @@
+@@ -190,4 +195,20 @@
     public Vector3d func_241205_ce_() {
        return new Vector3d(0.0D, (double)(0.75F * this.func_70047_e()), (double)(this.func_213311_cf() * 0.4F));
     }

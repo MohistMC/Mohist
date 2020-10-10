@@ -11,8 +11,8 @@
  import net.minecraft.item.ItemStack;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class ChestContainer extends Container {
@@ -30,9 +30,9 @@
 +      }
 +      CraftInventory inventory;
 +      if (this.field_75155_e instanceof PlayerInventory) {
-+         inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryPlayer((PlayerInventory) this.field_75155_e);
++         inventory = new org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryPlayer((PlayerInventory) this.field_75155_e);
 +      } else if (this.field_75155_e instanceof DoubleInventory) {
-+         inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((DoubleInventory) this.field_75155_e);
++         inventory = new org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryDoubleChest((DoubleInventory) this.field_75155_e);
 +      } else {
 +         inventory = new CraftInventory(this.field_75155_e);
 +      }

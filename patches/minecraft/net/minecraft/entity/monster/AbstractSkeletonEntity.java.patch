@@ -12,7 +12,7 @@
  import net.minecraft.world.DifficultyInstance;
  import net.minecraft.world.IServerWorld;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
  
  public abstract class AbstractSkeletonEntity extends MonsterEntity implements IRangedAttackMob {
     private final RangedBowAttackGoal<AbstractSkeletonEntity> field_85037_d = new RangedBowAttackGoal<>(this, 1.0D, 20, 15.0F);

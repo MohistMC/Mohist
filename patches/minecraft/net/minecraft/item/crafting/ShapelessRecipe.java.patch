@@ -4,9 +4,9 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftShapelessRecipe;
  
  public class ShapelessRecipe implements ICraftingRecipe {
     private final ResourceLocation field_199562_a;

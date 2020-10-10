@@ -1,15 +1,23 @@
 --- a/net/minecraft/entity/ai/goal/BreakBlockGoal.java
 +++ b/net/minecraft/entity/ai/goal/BreakBlockGoal.java
-@@ -19,6 +19,8 @@
+@@ -11,7 +11,6 @@
+ import net.minecraft.particles.ParticleTypes;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.vector.Vector3d;
+-import net.minecraft.world.GameRules;
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.IWorldReader;
+@@ -19,6 +18,8 @@
  import net.minecraft.world.chunk.ChunkStatus;
  import net.minecraft.world.chunk.IChunk;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class BreakBlockGoal extends MoveToBlockGoal {
     private final Block field_203117_f;
-@@ -32,7 +34,7 @@
+@@ -32,7 +33,7 @@
     }
  
     public boolean func_75250_a() {
@@ -18,7 +26,7 @@
           return false;
        } else if (this.field_179496_a > 0) {
           --this.field_179496_a;
-@@ -91,6 +93,13 @@
+@@ -91,6 +92,13 @@
           }
  
           if (this.field_203119_h > 60) {
