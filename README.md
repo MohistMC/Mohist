@@ -36,7 +36,7 @@ Getting Help
 Download
 ------
 
-Take a moment you will find it
+You can download the latest version from [**Jenkins**](https://ci.codemc.io/job/Mohist-Community/job/debug/).
 
 Install
 ------
