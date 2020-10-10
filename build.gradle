@@ -59,7 +59,6 @@ project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
     repositories {
         mavenLocal()
-        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
     }
     mcp {
         config = MC_VERSION + '-' + MCP_VERSION
@@ -75,8 +74,7 @@ project(':clean') {
     
     repositories {
         mavenLocal()
-        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
-        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
+        mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -330,8 +328,8 @@ project(':forge') {
                 'Specification-Title'   : 'Mohist-Community',
                 'Specification-Vendor'  : 'Mohist-Community',
                 'Specification-Version':  project.version.substring(MC_VERSION.length() + 1),
-                'Implementation-Title'  : "Mohist",
-                'Implementation-Version': JenkinsNumber(),
+                'Implementation-Title'  : 'Mohist',
+                'Implementation-Version': 'debug-' + JenkinsNumber(),
                 'Implementation-Vendor' : 'Mohist-Community'
             ] as LinkedHashMap
         ]

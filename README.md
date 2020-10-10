@@ -5,9 +5,10 @@
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API(1.12.2/1.16), formerly known as Thermos/Kettle/Cauldron/MCPC+
 
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohist-Community%2Fjob%2Fdebug&style=for-the-badge)](https://ci.codemc.io/job/Mohist-Community/job/debug)
 [![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars&style=for-the-badge&logo=github)](https://github.com/Mohist-Community/Mohist/stargazers)
-[![](https://img.shields.io/github/license/Mohist-Community/Mohist?style=for-the-badge)](https://github.com/Mohist-Community/Mohist/blob/1.12.2/LICENSE)
-[![](https://img.shields.io/badge/Forge-1.16.3-34.0.0-brightgreen.svg?colorB=26303d&style=for-the-badge&logo=Conda-Forge)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.16.3.html)
+[![](https://img.shields.io/github/license/Mohist-Community/Mohist?style=for-the-badge)](https://github.com/Mohist-Community/Mohist/blob/1.16.3/LICENSE)
+[![](https://img.shields.io/badge/Forge-1.16.3-brightgreen.svg?colorB=26303d&style=for-the-badge&logo=Conda-Forge)](http://files.minecraftforge.net/)
 [![](https://img.shields.io/badge/Paper-1.16.3-brightgreen.svg?colorB=DC3340&style=for-the-badge)](https://papermc.io/downloads#Paper-1.16.3)
 [![](https://img.shields.io/badge/AdoptOpenJDK-8u252-brightgreen.svg?colorB=469C00&style=for-the-badge&logo=java)](https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot)
 [![](https://img.shields.io/badge/Gradle-4.10.3-brightgreen.svg?colorB=469C00&style=for-the-badge&logo=gradle)](https://docs.gradle.org/4.10.3/release-notes.html)
@@ -27,11 +28,7 @@ Progress
 
 Getting Help
 ------
-   [**Home**](https://mohistmc.com/)
-   
-   [**Discord**](https://discord.gg/ZgXjHGd)
-   
-   [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
+   [**Home**](https://mohistmc.com/) [**Discord**](https://discord.gg/ZgXjHGd) [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
 Download
 ------
@@ -50,10 +47,12 @@ Building
   `git clone https://github.com/Mohist-Community/Mohist.git`  
   `git checkout 1.16.3`
 * Build Mohist
-  * Build with Linux:
-  `bash gradlew setup installerJar`
-  * Build with Windows:
-  `gradlew.bat setup installerJar`
+  * Build with Linux:  
+  `bash gradlew setup`  
+  `bash gradlew installerJar`  
+  * Build with Windows:  
+  `gradlew.bat setup`  
+  `gradlew.bat installerJar`
 
 The Mohist server jar file is located at `.\projects\mohist\build\libs\*.jar`
 
@@ -66,9 +65,7 @@ Thanks to the following projects
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
 * [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
-* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
 
 A Special Thanks To:
 -------------
