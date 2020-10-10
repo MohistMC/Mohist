@@ -22,7 +22,7 @@
        if (this.field_70516_a <= 0) {
 -         this.func_70106_y();
 +         // CraftBukkit start - Need to reverse the order of the explosion and the entity death so we have a location for the event
-+//         this.remove();
++    //    this.remove();
           if (!this.field_70170_p.field_72995_K) {
              this.func_70515_d();
           }

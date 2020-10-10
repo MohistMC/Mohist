@@ -59,6 +59,9 @@ public class Util {
 				url = "https://files.minecraftforge.net/maven/${path}"
 				if (!checkExists(url)) {
 					url = "https://hub.spigotmc.org/nexus/content/groups/public/${path}"
+					if (!checkExists(url)) {
+						url = "https://repository.raincubic.com/repository/maven_public/${path}"
+					}
 				}
 			}
 			//TODO remove when Mojang launcher is updated

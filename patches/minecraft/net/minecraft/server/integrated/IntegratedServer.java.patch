@@ -31,7 +31,7 @@
        this.func_71253_a(CryptManager.func_75891_b());
 -      this.func_240800_l__();
 +      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-+//      this.loadWorld();
++    // this.loadWorld();
        this.func_71205_p(this.func_71214_G() + " - " + this.func_240793_aU_().func_76065_j());
 -      return true;
 +      return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);

@@ -706,8 +706,8 @@
     public void func_147354_a(CChatMessagePacket p_147354_1_) {
 -      PacketThreadUtil.func_218796_a(p_147354_1_, this, this.field_147369_b.func_71121_q());
 -      if (this.field_147369_b.func_147096_v() == ChatVisibility.HIDDEN) {
-+//      PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
-+//      if (this.player.getChatVisibility() == ChatVisibility.HIDDEN) {
++    // PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
++    // if (this.player.getChatVisibility() == ChatVisibility.HIDDEN) {
 +      // CraftBukkit start - async chat
 +      // SPIGOT-3638
 +      if (this.field_147367_d.func_71241_aa()) {
@@ -755,8 +755,8 @@
           }
  
 -         if (s.startsWith("/")) {
-+//         if (s.startsWith("/")) {
-+//            this.handleSlashCommand(s);
++    //    if (s.startsWith("/")) {
++    //       this.handleSlashCommand(s);
 +         // CraftBukkit start
 +         if (isSync) {
 +            try {
@@ -793,10 +793,10 @@
 -         this.field_147374_l += 20;
 -         if (this.field_147374_l > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
 -            this.func_194028_b(new TranslationTextComponent("disconnect.spam"));
-+//         this.chatSpamThresholdCount += 20;
-+//         if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile())) {
-+//            this.disconnect(new TranslationTextComponent("disconnect.spam"));
-+//         }
++    //    this.chatSpamThresholdCount += 20;
++    //    if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile())) {
++    //       this.disconnect(new TranslationTextComponent("disconnect.spam"));
++    //    }
 +
 +         // CraftBukkit start - replaced with thread safe throttle
 +         if (chatSpamField.addAndGet(this, 20) > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {

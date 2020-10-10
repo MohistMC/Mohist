@@ -351,7 +351,7 @@
        }
  
 -      this.func_96123_co().func_197893_a(ScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
-+      //      this.getWorldScoreboard().forAllObjectives(ScoreCriteria.DEATH_COUNT, this.getScoreboardName(), Score::incrementScore);
++          // this.getWorldScoreboard().forAllObjectives(ScoreCriteria.DEATH_COUNT, this.getScoreboardName(), Score::incrementScore);
 +      this.func_175399_e(this); // Remove spectated target
 +      // CraftBukkit end
 +
@@ -581,7 +581,7 @@
                 }
  
 -               Either<PlayerEntity.SleepResult, Unit> either = super.func_213819_a(p_213819_1_).ifRight((p_241144_1_) -> {
-+               //               Either<PlayerEntity.SleepResult, Unit> either = super.trySleep(at).ifRight((p_241144_1_) -> {
++                   //          Either<PlayerEntity.SleepResult, Unit> either = super.trySleep(at).ifRight((p_241144_1_) -> {
 +               return Either.right(Unit.INSTANCE);
 +            }
 +         }

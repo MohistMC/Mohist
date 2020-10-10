@@ -657,10 +657,10 @@
     protected void func_192030_dh() {
        if (this.field_223730_e + 20L < this.field_70170_p.func_82737_E()) {
 -         this.func_192026_k(this.func_192023_dk());
-+//         this.spawnShoulderEntity(this.getLeftShoulderEntity());
-+//         this.setLeftShoulderEntity(new CompoundNBT());
-+//         this.spawnShoulderEntity(this.getRightShoulderEntity());
-+//         this.setRightShoulderEntity(new CompoundNBT());
++    //    this.spawnShoulderEntity(this.getLeftShoulderEntity());
++    //    this.setLeftShoulderEntity(new CompoundNBT());
++    //    this.spawnShoulderEntity(this.getRightShoulderEntity());
++    //    this.setRightShoulderEntity(new CompoundNBT());
 +         // CraftBukkit start
 +         if (this.spawnShoulderEntity(this.func_192023_dk())) {
           this.func_192029_h(new CompoundNBT());
