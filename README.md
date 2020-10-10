@@ -48,7 +48,7 @@ Building
 * Checkout project
   * Clone Mohist:  
   `git clone https://github.com/Mohist-Community/Mohist.git`  
-  `git checkout 1.16.x`
+  `git checkout 1.16.3`
 * Build Mohist
   * Build with Linux:
   `bash gradlew setup installerJar`
