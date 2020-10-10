@@ -221,11 +221,11 @@ public class NetworkHooks
             if (tileEntity instanceof IInventory)
             {
                 CraftInventory inventory = new CraftInventory((IInventory)tileEntity);
-                c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), inventory, c));
+                //c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), inventory, c));
             }
             else
             {
-                c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), Bukkit.createInventory(player.getBukkitEntity(), InventoryType.CHEST), c));
+                //c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), Bukkit.createInventory(player.getBukkitEntity(), InventoryType.CHEST), c));
             }
         }
         c = CraftEventFactory.callInventoryOpenEvent(player, c, false);
