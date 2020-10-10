@@ -678,7 +678,7 @@ project(':forge') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
-                        'Main-Class': 'com.mohistmc.MohistInstaller',
+                        'Main-Class': 'net.minecraftforge.server.ServerMain',
                         'Class-Path': classpath.toString(),
                         'ServerLaunchArgs': [
                             '--gameDir',          '.',
