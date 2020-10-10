@@ -76,7 +76,7 @@
                    BlockState blockstate2 = this.func_196544_a(p_225542_1_, blockstate1, p_225542_4_);
                    if (blockstate1 != blockstate2 && this.func_196540_x(blockstate2)) {
 -                     p_225542_2_.func_180501_a(blockpos1, blockstate2, 2);
-+                     CraftEventFactory.handleBlockSpreadEvent(p_225542_2_, p_225542_3_, blockpos, blockstate2, 2); // CraftBukkit
++                     CraftEventFactory.handleBlockSpreadEvent(p_225542_2_, p_225542_3_, blockpos1, blockstate2, 2); // CraftBukkit
                    }
                 }
              }
