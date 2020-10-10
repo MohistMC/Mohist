@@ -52,8 +52,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryView;
+import org.bukkit.event.inventory.InventoryType;
 
 public class NetworkHooks
 {
@@ -218,11 +221,11 @@ public class NetworkHooks
             if (tileEntity instanceof IInventory)
             {
                 CraftInventory inventory = new CraftInventory((IInventory)tileEntity);
-                //c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), inventory, c));
+                c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), inventory, c));
             }
             else
             {
-                //c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), Bukkit.createInventory(player.getBukkitEntity(), InventoryType.CHEST), c));
+                c.setBukkitView(new CraftInventoryView(player.getBukkitEntity(), Bukkit.createInventory(player.getBukkitEntity(), InventoryType.CHEST), c));
             }
         }
         c = CraftEventFactory.callInventoryOpenEvent(player, c, false);

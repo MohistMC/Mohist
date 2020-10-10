@@ -30,14 +30,23 @@
     private final List<IntReferenceHolder> field_216964_d = Lists.newArrayList();
     @Nullable
     private final ContainerType<?> field_216965_e;
-@@ -40,6 +46,35 @@
+@@ -40,6 +46,44 @@
     private final List<IContainerListener> field_75149_d = Lists.newArrayList();
     private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
  
 +   // CraftBukkit start
 +   public boolean checkReachable;
 +   private ITextComponent title;
-+   public abstract InventoryView getBukkitView();
++   // Mohist start
++   public InventoryView bukkitView = null;
++   public InventoryView getBukkitView(){
++      return bukkitView;
++   }
++
++   public void setBukkitView(InventoryView iv) {
++      bukkitView = iv;
++   }
++   // Mohist end
 +
 +   public void transferTo(Container other, CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView();
@@ -66,7 +75,7 @@
     protected Container(@Nullable ContainerType<?> p_i50105_1_, int p_i50105_2_) {
        this.field_216965_e = p_i50105_1_;
        this.field_75152_c = p_i50105_2_;
-@@ -120,9 +155,11 @@
+@@ -120,9 +164,11 @@
           ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -78,7 +87,7 @@
              for(IContainerListener icontainerlistener : this.field_75149_d) {
                 icontainerlistener.func_71111_a(this, i, itemstack2);
              }
-@@ -500,14 +537,15 @@
+@@ -500,14 +546,15 @@
              ItemStack itemstack = slot.func_75211_c();
              if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
                 int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -98,7 +107,7 @@
                    slot.func_75218_e();
                    flag = true;
                 }
-@@ -608,7 +646,7 @@
+@@ -608,7 +655,7 @@
           p_94525_2_.func_190920_e(1);
           break;
        case 2:
