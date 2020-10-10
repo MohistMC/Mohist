@@ -117,7 +117,7 @@
        ITextComponent itextcomponent = (ITextComponent)(p_195539_1_ == null ? new StringTextComponent("Sign") : p_195539_1_.func_145748_c_());
 -      return new CommandSource(ICommandSource.field_213139_a_, Vector3d.func_237489_a_(this.field_174879_c), Vector2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_195539_1_);
 +      // CraftBukkit - this
-+      return new CommandSource(this, new Vector3d((double)this.field_174879_c.func_177958_n() + 0.5D, (double)this.field_174879_c.func_177956_o() + 0.5D, (double)this.field_174879_c.func_177952_p() + 0.5D), Vector2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_195539_1_);
++      return new CommandSource(this, Vector3d.func_237489_a_(this.field_174879_c), Vector2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_195539_1_);
     }
  
     public DyeColor func_214066_f() {

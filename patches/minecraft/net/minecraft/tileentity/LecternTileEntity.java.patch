@@ -204,15 +204,13 @@
     private CommandSource func_214039_a(@Nullable PlayerEntity p_214039_1_) {
        String s;
        ITextComponent itextcomponent;
-@@ -178,8 +267,9 @@
-          itextcomponent = p_214039_1_.func_145748_c_();
+@@ -179,7 +268,8 @@
        }
  
--      Vector3d vector3d = Vector3d.func_237489_a_(this.field_174879_c);
+       Vector3d vector3d = Vector3d.func_237489_a_(this.field_174879_c);
 -      return new CommandSource(ICommandSource.field_213139_a_, vector3d, Vector2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_214039_1_);
-+      Vector3d vec3d = new Vector3d((double)this.field_174879_c.func_177958_n() + 0.5D, (double)this.field_174879_c.func_177956_o() + 0.5D, (double)this.field_174879_c.func_177952_p() + 0.5D);
 +      // CraftBukkit - this
-+      return new CommandSource(this, vec3d, Vector2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_214039_1_);
++      return new CommandSource(this, vector3d, Vector2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_214039_1_);
     }
  
     public boolean func_183000_F() {

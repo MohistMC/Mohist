@@ -83,13 +83,7 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
-@@ -583,12 +610,19 @@
-                chunk.func_177417_c(true);
-                this.field_219255_i.func_147448_a(chunk.func_177434_r().values());
-                List<Entity> list = null;
--               ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = chunk.func_177429_s();
-+               List<Entity>[] aclassinheritancemultimap = chunk.getEntityLists();
-                int i = aclassinheritancemultimap.length;
+@@ -588,7 +615,14 @@
  
                 for(int j = 0; j < i; ++j) {
                    for(Entity entity : aclassinheritancemultimap[j]) {
@@ -129,15 +123,6 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
-@@ -776,7 +813,7 @@
-             return p_225407_0_ instanceof Chunk ? Optional.of((Chunk)p_225407_0_) : Optional.empty();
-          });
-          csvwriter.func_225426_a(chunkpos.field_77276_a, chunkpos.field_77275_b, chunkholder.func_219299_i(), optional.isPresent(), optional.map(IChunk::func_201589_g).orElse((ChunkStatus)null), optional1.map(Chunk::func_217321_u).orElse((ChunkHolder.LocationType)null), func_225402_a(chunkholder.func_223492_c()), func_225402_a(chunkholder.func_219296_a()), func_225402_a(chunkholder.func_219297_b()), this.field_219267_u.func_225413_c(entry.getLongKey()), !this.func_219243_d(chunkpos), optional1.map((p_225401_0_) -> {
--            return Stream.of(p_225401_0_.func_177429_s()).mapToInt(ClassInheritanceMultiMap::size).sum();
-+            return Stream.of(p_225401_0_.getEntityLists()).mapToInt(List::size).sum();
-          }).orElse(0), optional1.map((p_225405_0_) -> {
-             return p_225405_0_.func_177434_r().size();
-          }).orElse(0));
 @@ -802,7 +839,7 @@
     @Nullable
     private CompoundNBT func_219178_f(ChunkPos p_219178_1_) throws IOException {
