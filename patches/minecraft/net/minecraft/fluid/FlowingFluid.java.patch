@@ -18,7 +18,7 @@
           FluidState fluidstate = this.func_205576_a(p_205575_1_, blockpos, blockstate1);
           if (this.func_205570_b(p_205575_1_, p_205575_2_, blockstate, Direction.DOWN, blockpos, blockstate1, p_205575_1_.func_204610_c(blockpos), fluidstate.func_206886_c())) {
 +            // CraftBukkit start
-+            org.bukkit.block.Block source = CraftBlock.at(p_205575_1_, blockpos);
++            org.bukkit.block.Block source = CraftBlock.at(p_205575_1_, p_205575_2_);
 +            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
 +            p_205575_1_.getMinecraftWorld().getCBServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {

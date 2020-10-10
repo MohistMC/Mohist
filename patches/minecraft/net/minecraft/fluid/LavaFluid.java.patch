@@ -42,14 +42,13 @@
                 }
              }
           }
-@@ -164,7 +179,12 @@
+@@ -164,7 +179,11 @@
           FluidState fluidstate = p_205574_1_.func_204610_c(p_205574_2_);
           if (this.func_207185_a(FluidTags.field_206960_b) && fluidstate.func_206884_a(FluidTags.field_206959_a)) {
              if (p_205574_3_.func_177230_c() instanceof FlowingFluidBlock) {
 -               p_205574_1_.func_180501_a(p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3);
-+               net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_205574_1_, p_205574_2_, p_205574_2_, Blocks.field_150348_b.func_176223_P());
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.handleBlockFormEvent(p_205574_1_.getMinecraftWorld(), p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3)) {
++               if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.handleBlockFormEvent(p_205574_1_.getMinecraftWorld(), p_205574_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_205574_1_, p_205574_2_, p_205574_2_, Blocks.field_150348_b.func_176223_P()), 3)) {
 +                  return;
 +               }
 +               // CraftBukkit end
