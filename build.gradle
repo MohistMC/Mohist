@@ -2,6 +2,8 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -162,8 +164,7 @@ project(':forge') {
 
     repositories {
         mavenLocal()
-        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
-        maven { url = 'http://lss233.littleservice.cn/repositories/minecraft' }
+        mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -183,7 +184,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.3-34.1.0-' + JenkinsNumber()
+    version = '1.16.3-34.1.0'
     println('Forge Version: ' + version)
 
     patcher {
@@ -372,7 +373,6 @@ project(':forge') {
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         installer 'org.spongepowered:mixin:0.8.2'
 
-        // mohist
         // bukkit
         installer 'commons-lang:commons-lang:2.6'
         installer 'org.yaml:snakeyaml:1.26'
@@ -383,8 +383,6 @@ project(':forge') {
         installer 'org.xerial:sqlite-jdbc:3.32.3'
         installer 'mysql:mysql-connector-java:5.1.49'
         installer 'org.apache.logging.log4j:log4j-iostreams:2.11.2'
-        // spigot
-        // paper
 
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
@@ -397,20 +395,6 @@ project(':forge') {
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
-    
-    def extraTxts = [
-        rootProject.file('CREDITS.txt'),
-        rootProject.file('LICENSE.txt')
-    ]
-    
-    def changelog = rootProject.file('build/changelog.txt')
-    if (changelog.exists())
-        extraTxts += changelog
-    
-	task crowdin(type: CrowdinTask) {
-		key = project.hasProperty('crowdinKey') ? project.crowdinKey : null
-		//TODO: Merge our english.json?
-	}
     
     // We apply the bin patches we just created to make a jar that is JUST our changes
 	['Client', 'Server', 'Joined'].each { side ->
@@ -558,7 +542,7 @@ project(':forge') {
                 path: "${project.group}:${project.name}:${project.version}",
                 logo: '/big_logo.png',
                 minecraft: MC_VERSION,
-                welcome: "Welcome to the simple ${project.name.capitalize()} installer.",
+                welcome: "Welcome to the simple mohist installer.",
                 data: [
                     MAPPINGS: [
                         client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@txt]",
@@ -588,10 +572,6 @@ project(':forge') {
                         client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:srg]",
                         server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:srg]"
                     ],
-                    /*MC_SRG_SHA: [
-                        client: "'${createClientSRG.output.sha1()}'",
-                        server: "'${createServerSRG.output.sha1()}'"
-                    ],*/
                     PATCHED: [
                         client: "[${project.group}:${project.name}:${project.version}:client]",
                         server: "[${project.group}:${project.name}:${project.version}:server]"
@@ -636,11 +616,7 @@ project(':forge') {
                             '--in-jar', '{MC_SLIM}',
                             '--out-jar', '{MC_SRG}',
                             '--srg-in', '{MAPPINGS}'
-                        ]/*,
-                        outputs: [
-                            '{MC_SRG}': '{MC_SRG_SHA}'
                         ]
-                        */
                     ], [
                         jar: BIN_PATCHER,
                         classpath: getClasspath(project, libs, BIN_PATCHER),
@@ -674,7 +650,6 @@ project(':forge') {
     }
     
     universalJar {
-        from extraTxts
 
 		duplicatesStrategy = 'exclude'
 
@@ -732,7 +707,6 @@ project(':forge') {
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
-        from(extraTxts)
         from(rootProject.file('/installer_logo.png')) {
             rename{'big_logo.png'}
         }
@@ -871,14 +845,13 @@ project(':forge') {
     }
 }
 
-//evaluationDependsOnChildren()
 task setup() {
     dependsOn ':clean:extractMapped'
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
 def JenkinsNumber() {/*
-    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-InternalTest/api/json").openConnection();
+    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/debug/api/json").openConnection();
     conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
     conn.connect()
     def root = conn.content.text
