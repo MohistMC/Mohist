@@ -283,9 +283,9 @@
 -               if (blockstate != blockstate1) {
 -                  this.func_225319_b(p_241211_1_, blockstate, blockstate1);
 +            // CraftBukkit start
-+            if (!this.captureBlockStates) {// Don't notify clients or update physics while capturing blockstates
++            if (blockSnapshot == null || !this.captureBlockStates) {// Don't notify clients or update physics while capturing blockstates
 +               // Modularize client and physic updates
-+               markAndNotifyBlock(p_241211_1_, chunk, blockstate, blockstate, p_241211_3_, p_241211_4_);
++               this.markAndNotifyBlock(p_241211_1_, chunk, blockstate, p_241211_2_, p_241211_3_, p_241211_4_);
 +            }
 +            return true;
 +         }
