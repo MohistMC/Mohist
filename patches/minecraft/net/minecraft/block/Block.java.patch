@@ -1,6 +1,15 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -54,9 +54,10 @@
+@@ -9,6 +9,8 @@
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+ import net.minecraft.client.util.ITooltipFlag;
++import net.minecraft.enchantment.EnchantmentHelper;
++import net.minecraft.enchantment.Enchantments;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.item.ExperienceOrbEntity;
+@@ -54,9 +56,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,7 +22,7 @@
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
           return !VoxelShapes.func_197879_c(VoxelShapes.func_197868_b(), p_load_1_, IBooleanFunction.field_223236_g_);
-@@ -151,6 +152,8 @@
+@@ -151,6 +154,8 @@
        super(p_i48440_1_);
        StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
        this.func_206840_a(builder);
@@ -22,7 +31,7 @@
        this.field_176227_L = builder.func_235882_a_(Block::func_176223_P, BlockState::new);
        this.func_180632_j(this.field_176227_L.func_177621_b());
     }
-@@ -261,19 +264,32 @@
+@@ -261,19 +266,34 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -47,7 +56,9 @@
  
 +   // CraftBukkit start
 +   public int getExpDrop(BlockState iblockdata, ServerWorld worldserver, BlockPos blockposition, ItemStack itemstack) {
-+      return 0;
++      int bonusLevel = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, itemstack);
++      int silklevel = EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, itemstack);
++      return iblockdata.getExpDrop(worldserver, blockposition, bonusLevel, silklevel);
 +   }
 +   // CraftBukkit end
 +
@@ -58,7 +69,7 @@
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -283,6 +299,7 @@
+@@ -283,6 +303,7 @@
  
     }
  
@@ -66,7 +77,7 @@
     public float func_149638_a() {
        return this.field_235689_au_;
     }
-@@ -332,6 +349,7 @@
+@@ -332,6 +353,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -74,7 +85,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -363,6 +381,7 @@
+@@ -363,6 +385,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -82,7 +93,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -382,6 +401,7 @@
+@@ -382,6 +405,7 @@
        return this.field_196275_y;
     }
  
@@ -90,7 +101,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -391,7 +411,7 @@
+@@ -391,7 +415,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -99,7 +110,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -399,7 +419,7 @@
+@@ -399,7 +423,7 @@
     }
  
     public String toString() {
@@ -108,7 +119,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -410,6 +430,83 @@
+@@ -410,6 +434,83 @@
        return this;
     }
  
