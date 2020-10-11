@@ -91,15 +91,6 @@
        if (this.func_70496_j() > 0) {
           this.func_70497_h(this.func_70496_j() - 1);
        }
-@@ -276,7 +320,7 @@
-          this.func_70076_C();
-       }
- 
--      this.func_213284_aV();
-+    // this.updatePortal();  // CraftBukkit - handled in postTick
-       if (this.field_70170_p.field_72995_K) {
-          if (this.field_70510_h > 0) {
-             double d4 = this.func_226277_ct_() + (this.field_70511_i - this.func_226277_ct_()) / (double)this.field_70510_h;
 @@ -307,9 +351,9 @@
  
           BlockPos blockpos = new BlockPos(i, j, k);
@@ -353,9 +344,9 @@
 +   private boolean canUseRail = true;
 +   @Override public boolean canUseRail() { return canUseRail; }
 +   @Override public void setCanUseRail(boolean value) { this.canUseRail = value; }
-+   private float currentSpeedOnRail;
-+   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedOnRail; }
-+   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
++   private float currentSpeedCapOnRail = getMaxCartSpeedOnRail();
++   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedCapOnRail; }
++   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedCapOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
 +   private float maxSpeedAirLateral = DEFAULT_MAX_SPEED_AIR_LATERAL;
 +   @Override public float getMaxSpeedAirLateral() { return maxSpeedAirLateral; }
 +   @Override public void setMaxSpeedAirLateral(float value) { maxSpeedAirLateral = value; }

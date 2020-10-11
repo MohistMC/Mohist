@@ -506,15 +506,6 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (this.field_70170_p.field_72995_K) {
-@@ -937,7 +1148,7 @@
-             p_70097_2_ *= 0.75F;
-          }
- 
--         boolean flag = false;
-+         boolean flag = p_70097_2_ > 0.0F && this.func_184583_d(p_70097_1_); // Copied from below
-          float f1 = 0.0F;
-          if (p_70097_2_ > 0.0F && this.func_184583_d(p_70097_1_)) {
-             this.func_184590_k(p_70097_2_);
 @@ -971,6 +1182,15 @@
              this.field_70737_aN = this.field_70738_aO;
           }
@@ -896,15 +887,7 @@
        }
  
     }
-@@ -2579,6 +2861,7 @@
-    }
- 
-    public boolean func_70685_l(Entity p_70685_1_) {
-+      if (this.field_70170_p != p_70685_1_.field_70170_p) return false; // CraftBukkit - SPIGOT-5675, SPIGOT-5798, MC-149563
-       Vector3d vector3d = new Vector3d(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
-       Vector3d vector3d1 = new Vector3d(p_70685_1_.func_226277_ct_(), p_70685_1_.func_226280_cw_(), p_70685_1_.func_226281_cx_());
-       return this.field_70170_p.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this)).func_216346_c() == RayTraceResult.Type.MISS;
-@@ -2603,13 +2886,20 @@
+@@ -2603,13 +2885,20 @@
     }
  
     public boolean func_70067_L() {
@@ -927,7 +910,7 @@
     protected void func_70018_K() {
        this.field_70133_I = this.field_70146_Z.nextDouble() >= this.func_233637_b_(Attributes.field_233820_c_);
     }
-@@ -2668,8 +2958,16 @@
+@@ -2668,8 +2957,16 @@
  
     private void func_184608_ct() {
        if (this.func_184587_cr()) {
@@ -946,7 +929,7 @@
              this.field_184627_bm.func_222121_b(this.field_70170_p, this, this.func_184605_cv());
              if (this.func_226299_p_()) {
                 this.func_226293_b_(this.field_184627_bm, 5);
-@@ -2717,8 +3015,10 @@
+@@ -2717,8 +3014,10 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
        if (!itemstack.func_190926_b() && !this.func_184587_cr()) {
@@ -958,7 +941,7 @@
           if (!this.field_70170_p.field_72995_K) {
              this.func_204802_c(1, true);
              this.func_204802_c(2, p_184598_1_ == Hand.OFF_HAND);
-@@ -2778,6 +3078,9 @@
+@@ -2778,6 +3077,9 @@
           vector3d1 = vector3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_72441_c(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
@@ -968,7 +951,7 @@
           this.field_70170_p.func_195594_a(new ItemParticleData(ParticleTypes.field_197591_B, p_195062_1_), vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c, vector3d.field_72450_a, vector3d.field_72448_b + 0.05D, vector3d.field_72449_c);
        }
  
-@@ -2790,10 +3093,26 @@
+@@ -2790,10 +3092,26 @@
        } else {
           if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr()) {
              this.func_226293_b_(this.field_184627_bm, 16);
@@ -998,7 +981,7 @@
  
              this.func_184602_cy();
           }
-@@ -2815,7 +3134,11 @@
+@@ -2815,7 +3133,11 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {
@@ -1010,7 +993,7 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
-@@ -2964,8 +3287,8 @@
+@@ -2964,8 +3286,8 @@
        }
  
        BlockState blockstate = this.field_70170_p.func_180495_p(p_213342_1_);
@@ -1021,7 +1004,7 @@
        }
  
        this.func_213301_b(Pose.SLEEPING);
-@@ -2981,15 +3304,15 @@
+@@ -2981,15 +3303,15 @@
  
     private boolean func_213359_p() {
        return this.func_213374_dv().map((p_241350_1_) -> {
@@ -1040,7 +1023,7 @@
              Vector3d vector3d1 = BedBlock.func_242652_a(this.func_200600_R(), this.field_70170_p, p_241348_1_, this.field_70177_z).orElseGet(() -> {
                 BlockPos blockpos = p_241348_1_.func_177984_a();
                 return new Vector3d((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.1D, (double)blockpos.func_177952_p() + 0.5D);
-@@ -3012,7 +3335,9 @@
+@@ -3012,7 +3334,9 @@
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
        BlockPos blockpos = this.func_213374_dv().orElse((BlockPos)null);
@@ -1051,7 +1034,7 @@
     }
  
     public boolean func_70094_T() {
-@@ -3048,7 +3373,7 @@
+@@ -3048,7 +3372,7 @@
        if (item.func_219971_r()) {
           for(Pair<EffectInstance, Float> pair : item.func_219967_s().func_221464_f()) {
              if (!p_213349_2_.field_72995_K && pair.getFirst() != null && p_213349_2_.field_73012_v.nextFloat() < pair.getSecond()) {
@@ -1060,7 +1043,7 @@
              }
           }
        }
-@@ -3082,6 +3407,60 @@
+@@ -3082,6 +3406,60 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }
  
@@ -1121,7 +1104,7 @@
     @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB func_184177_bl() {
        if (this.func_184582_a(EquipmentSlotType.HEAD).func_77973_b() == Items.field_196151_dA) {
-@@ -3091,4 +3470,5 @@
+@@ -3091,4 +3469,5 @@
           return super.func_184177_bl();
        }
     }
