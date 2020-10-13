@@ -45,7 +45,7 @@
  import org.apache.logging.log4j.Logger;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_16_R2.Main;
++import org.bukkit.craftbukkit.Main;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.bukkit.plugin.Plugin;
@@ -79,7 +79,7 @@
 -            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_16_R2.Main.useConsole) {
++            if (!org.bukkit.craftbukkit.Main.useConsole) {
 +               return;
 +            }
 +            jline.console.ConsoleReader bufferedreader = reader;

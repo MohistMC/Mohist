@@ -83,7 +83,7 @@
 -      OptionSpec<String> optionspec13 = optionparser.nonOptions();
 +    public static void main(String[] p_main_0_) {
 +        try {
-+            OptionSet optionset = org.bukkit.craftbukkit.v1_16_R2.Main.main(p_main_0_);
++            OptionSet optionset = org.bukkit.craftbukkit.Main.main(p_main_0_);
 +            if (optionset == null) {
 +                return;
 +            }
