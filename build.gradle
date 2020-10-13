@@ -856,5 +856,5 @@ def JenkinsNumber() {
 
     String data = jsonSluper.parseText(root)
     def number = data.substring(data.indexOf("number")).split(",")
-    return number
+    return Integer.valueOf(number[0].replace("number=", "")).intValue()
 }
