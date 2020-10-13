@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util,cpw.mods.modlauncher.log" shutdownHook="disable">
+<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mohistmc.console.log4j,com.mojang.util,cpw.mods.modlauncher.log" shutdownHook="disable">
     <filters>
         <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="NETWORK_PACKETS" onMatch="${sys:forge.logging.marker.networking:-DENY}" onMismatch="NEUTRAL"/>
@@ -20,22 +20,13 @@
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}%n%tEx}">
+                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%minecraftFormatting{%msg}%n%tEx}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}%n%tEx}"/>
-                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}%n%tEx}"/>
+                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%minecraftFormatting{%msg}%n%tEx}"/>
+                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%minecraftFormatting{%msg}%n%tEx}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
-        <Queue name="ServerGuiConsole" ignoreExceptions="true">
-            <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}{strip}%n">
-                    <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}{strip}%n"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}{strip}%n"/>
-                </LoggerNamePatternSelector>
-            </PatternLayout>
-        </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
             <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx"/>
             <Policies>
@@ -60,7 +51,6 @@
         <Logger level="${sys:forge.logging.classtransformer.level:-info}" name="cpw.mods.modlauncher.ClassTransformer"/>
         <Root level="all">
             <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
-            <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
             <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-debug}"/>
         </Root>
