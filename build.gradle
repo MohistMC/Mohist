@@ -3,7 +3,6 @@ buildscript {
         mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        mavenCentral()
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -74,7 +73,6 @@ project(':clean') {
     
     repositories {
         mavenLocal()
-        mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -162,7 +160,6 @@ project(':forge') {
 
     repositories {
         mavenLocal()
-        mavenCentral() //TODO: Update Gradle to use HTTPS by default
         maven {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
@@ -376,7 +373,8 @@ project(':forge') {
         installer 'org.yaml:snakeyaml:1.26'
         compile 'org.jetbrains:annotations-java5:19.0.0'
         // craftbukkit
-        installer 'jline:jline:2.12.1'
+        installer 'org.fusesource.jansi:jansi:1.18'
+        installer 'jline:jline:2.14.6'
         installer 'com.googlecode.json-simple:json-simple:1.1.1'
         installer 'org.xerial:sqlite-jdbc:3.32.3'
         installer 'mysql:mysql-connector-java:5.1.49'
