@@ -138,6 +138,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.craftbukkit.Main;
 import org.bukkit.craftbukkit.v1_16_R2.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R2.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_16_R2.boss.CraftKeyedBossbar;
