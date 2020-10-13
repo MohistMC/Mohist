@@ -182,7 +182,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.3-34.1.16'
+    version = '1.16.3-34.1.19'
     println('Forge Version: ' + version)
 
     patcher {
@@ -381,6 +381,7 @@ project(':forge') {
         installer 'org.xerial:sqlite-jdbc:3.32.3'
         installer 'mysql:mysql-connector-java:5.1.49'
         installer 'org.apache.logging.log4j:log4j-iostreams:2.11.2'
+        installer 'net.md-5:SpecialSource:1.8.5'
 
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
