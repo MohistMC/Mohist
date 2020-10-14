@@ -176,7 +176,7 @@ public class DummyGeneratorAccess implements IWorld {
 
     @Override
     public boolean func_241211_a_(BlockPos blockposition, BlockState iblockdata, int i, int j) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return false;
     }
 
     @Override
