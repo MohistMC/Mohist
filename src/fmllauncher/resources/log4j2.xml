@@ -20,15 +20,15 @@
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%minecraftFormatting{%msg}%n%tEx}">
+                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%minecraftFormatting{%msg}%n%tEx}"/>
-                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%minecraftFormatting{%msg}%n%tEx}"/>
+                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}"/>
+                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
-            <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx" charset="UTF-8"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
                 <OnStartupTriggeringPolicy/>
@@ -36,7 +36,7 @@
             <DefaultRolloverStrategy max="99" fileIndex="min"/>
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.zip">
-            <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx" charset="UTF-8"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="200MB"/>
