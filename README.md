@@ -23,7 +23,7 @@ Progress
 ------
 
 - [ ] Rectify Forge (5f292895c)
-- [ ] Start patch craftbukkit(2a3ca137) bukkit(ccb9614e)
+- [ ] Start patch craftbukkit(055870c4) bukkit(e461dcfe)
 - [ ] Beta release
 
 Getting Help
