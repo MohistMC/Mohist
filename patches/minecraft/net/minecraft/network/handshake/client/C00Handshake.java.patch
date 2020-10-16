@@ -13,7 +13,7 @@
  
      public C00Handshake()
      {
-@@ -28,18 +29,32 @@
+@@ -28,18 +29,38 @@
          this.field_149597_d = p_i47613_3_;
      }
  
@@ -33,10 +33,16 @@
 +        this.hasFMLMarker = this.field_149598_b.contains("\0FML\0");
 +        if (this.hasFMLMarker) {
 +            this.field_149598_b = this.field_149598_b.replace("\0FML\0", "");
-+        }
-+        String[] split = this.field_149598_b.split("\0");
-+        if (split.length > 2) {
-+            this.hasFMLMarker = true;
++        } else {
++            String[] split = this.field_149598_b.split("\0");
++            if (split.length == 4) { // Bungee IP forwarding with extra properties
++                for (com.mojang.authlib.properties.Property property : net.minecraft.server.network.NetHandlerHandshakeTCP.gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class)) {
++                    if ("forgeClient".equals(property.getName())) {
++                        this.hasFMLMarker = Boolean.parseBoolean(property.getValue());
++                        return;
++                    }
++                }
++            }
 +        }
      }
  
@@ -48,7 +54,7 @@
          p_148840_1_.writeShort(this.field_149599_c);
          p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
      }
-@@ -58,4 +73,9 @@
+@@ -58,4 +79,9 @@
      {
          return this.field_149600_a;
      }
