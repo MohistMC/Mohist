@@ -57,7 +57,12 @@
     };
  
     public CartographyContainer(int p_i50093_1_, PlayerInventory p_i50093_2_) {
-@@ -83,6 +118,7 @@
+@@ -80,9 +115,12 @@
+          this.func_75146_a(new Slot(p_i50094_2_, k, 8 + k * 18, 142));
+       }
+ 
++      player = (Player) p_i50094_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
++
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
