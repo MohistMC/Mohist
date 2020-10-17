@@ -840,7 +840,7 @@
 +         // CraftBukkit end
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
-+         PortalInfo portalinfo = (location == null) ? this.func_241829_a(p_241206_1_) : new PortalInfo(new Vector3d(location.func_177958_n(), location.func_177956_o(), location.func_177952_p()), Vector3d.field_186680_a, this.field_70177_z, this.field_70125_A, p_241206_1_, null);
++         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, p_241206_1_, this::func_241829_a) : new PortalInfo(new Vector3d(location.func_177958_n(), location.func_177956_o(), location.func_177952_p()), Vector3d.field_186680_a, this.field_70177_z, this.field_70125_A, p_241206_1_, null);
 +
           if (portalinfo == null) {
              return null;
