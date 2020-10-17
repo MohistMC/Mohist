@@ -157,6 +157,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
 public class ForgeHooks
 {
@@ -795,7 +798,14 @@ public class ForgeHooks
         {
             PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
             MinecraftForge.EVENT_BUS.post(evt);
-            return !evt.isCanceled();
+            boolean bukkit = false;
+            if (player instanceof ServerPlayerEntity) {
+                ServerPlayerEntity spe = (ServerPlayerEntity) player;
+                PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(spe.getBukkitEntity(), GameMode.getByValue(newGameMode.getID()));
+                player.world.getCBServer().getPluginManager().callEvent(event);
+                bukkit = event.isCancelled();
+            }
+            return !evt.isCanceled() || !bukkit;
         }
         return true;
     }
