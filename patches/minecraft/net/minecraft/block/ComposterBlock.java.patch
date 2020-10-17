@@ -68,7 +68,7 @@
  
     private static BlockState func_235487_b_(BlockState p_235487_0_, IWorld p_235487_1_, BlockPos p_235487_2_, ItemStack p_235487_3_) {
 +      // CraftBukkit start
-+      return func_235487_b_(p_235487_0_, p_235487_1_, p_235487_2_, p_235487_3_);
++      return func_235487_b_(p_235487_0_, p_235487_1_, p_235487_2_, p_235487_3_, p_235487_1_.func_201674_k().nextDouble());
 +   }
 +
 +   private static BlockState func_235487_b_(BlockState p_235487_0_, IWorld p_235487_1_, BlockPos p_235487_2_, ItemStack p_235487_3_, double rand) {
@@ -86,7 +86,7 @@
        } else {
 -         return (ISidedInventory)(i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory());
 +         // CraftBukkit - empty iworld, blockposition
-+         return (ISidedInventory)(i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory( p_219966_2_, p_219966_3_));
++         return (ISidedInventory)(i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory(p_219966_2_, p_219966_3_));
        }
     }
  
@@ -98,14 +98,14 @@
        }
  
        public int[] func_180463_a(Direction p_180463_1_) {
-@@ -312,6 +339,7 @@
- 
-       public FullInventory(BlockState p_i50463_1_, IWorld p_i50463_2_, BlockPos p_i50463_3_, ItemStack p_i50463_4_) {
-          super(p_i50463_4_);
-+         this.bukkitOwner = new CraftBlockInventoryHolder(p_i50463_2_, p_i50463_3_, this); // CraftBukkit
+@@ -315,6 +342,7 @@
           this.field_213920_a = p_i50463_1_;
           this.field_213921_b = p_i50463_2_;
           this.field_213922_c = p_i50463_3_;
++         this.bukkitOwner = new CraftBlockInventoryHolder(p_i50463_2_, p_i50463_3_, this); // CraftBukkit
+       }
+ 
+       public int func_70297_j_() {
 @@ -334,8 +362,15 @@
        }
  
