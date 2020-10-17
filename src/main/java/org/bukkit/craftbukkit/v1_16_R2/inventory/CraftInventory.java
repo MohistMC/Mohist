@@ -445,7 +445,11 @@ public class CraftInventory implements Inventory {
 
     @Override
     public List<HumanEntity> getViewers() {
-        return this.inventory.getViewers();
+        try {
+            return this.inventory.getViewers();
+        } catch (AbstractMethodError e) {
+            return new java.util.ArrayList<>();
+        }
     }
 
     @Override
