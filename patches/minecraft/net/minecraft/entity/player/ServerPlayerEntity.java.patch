@@ -789,7 +789,14 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
        this.field_71135_a.func_147359_a(new SChatPacket(p_146105_1_, p_146105_2_ ? ChatType.GAME_INFO : ChatType.CHAT, Util.field_240973_b_));
     }
-@@ -1081,6 +1388,13 @@
+@@ -1075,12 +1382,19 @@
+       this.field_71144_ck = -1;
+       this.field_71149_ch = -1.0F;
+       this.field_71146_ci = -1;
+-      this.field_192041_cq.func_193824_a(p_193104_1_.field_192041_cq);
++      //this.recipeBook.copyFrom(that.recipeBook); // CraftBukkit
+       this.field_71130_g.addAll(p_193104_1_.field_71130_g);
+       this.field_192040_cp = p_193104_1_.field_192040_cp;
        this.field_193110_cw = p_193104_1_.field_193110_cw;
        this.func_192029_h(p_193104_1_.func_192023_dk());
        this.func_192031_i(p_193104_1_.func_192025_dl());
