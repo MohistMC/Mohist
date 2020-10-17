@@ -15,7 +15,7 @@ public final class CraftWeepingVines extends org.bukkit.craftbukkit.v1_16_R2.blo
 
     // org.bukkit.craftbukkit.v1_16_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.state.IntegerProperty AGE = getInteger(net.minecraft.block.WeepingVinesBlock.class, "age");
+    private static final net.minecraft.state.IntegerProperty AGE = getInteger(net.minecraft.block.WeepingVinesTopBlock.class, "age");
 
     @Override
     public int getAge() {
