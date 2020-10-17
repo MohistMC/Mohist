@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/CartographyContainer.java
 +++ b/net/minecraft/inventory/container/CartographyContainer.java
-@@ -14,8 +14,30 @@
+@@ -14,8 +14,29 @@
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
  import net.minecraft.world.storage.MapData;
@@ -17,7 +17,7 @@
 +   private Player player;
 +
 +   @Override
-+   public InventoryView getBukkitView() {
++   public CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
@@ -25,13 +25,12 @@
 +      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
-+
 +   // CraftBukkit end
 +
     private final IWorldPosCallable field_216999_d;
     private long field_226605_f_;
     public final IInventory field_216998_c = new Inventory(2) {
-@@ -23,12 +45,26 @@
+@@ -23,12 +44,26 @@
           CartographyContainer.this.func_75130_a(this);
           super.func_70296_d();
        }
@@ -39,7 +38,7 @@
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return field_216998_c.getLocation();
++         return field_216999_d.getLocation();
 +      }
 +      // CraftBukkit end
     };
@@ -52,13 +51,13 @@
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return field_216998_c.getLocation();
++         return field_216999_d.getLocation();
 +      }
 +      // CraftBukkit end
     };
  
     public CartographyContainer(int p_i50093_1_, PlayerInventory p_i50093_2_) {
-@@ -83,6 +119,7 @@
+@@ -83,6 +118,7 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {

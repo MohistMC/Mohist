@@ -656,10 +656,11 @@
     public OptionalInt func_213829_a(@Nullable INamedContainerProvider p_213829_1_) {
        if (p_213829_1_ == null) {
           return OptionalInt.empty();
-@@ -872,16 +1130,37 @@
+@@ -872,16 +1130,38 @@
  
           this.func_71117_bO();
           Container container = p_213829_1_.createMenu(this.field_71139_cq, this.field_71071_by, this);
++
 +         // CraftBukkit start - Inventory open hook
 +         if (container != null) {
 +            container.setTitle(p_213829_1_.func_145748_c_());
@@ -697,7 +698,7 @@
              return OptionalInt.of(this.field_71139_cq);
           }
        }
-@@ -892,14 +1171,26 @@
+@@ -892,14 +1172,26 @@
     }
  
     public void func_184826_a(AbstractHorseEntity p_184826_1_, IInventory p_184826_2_) {
@@ -726,7 +727,7 @@
     }
  
     public void func_184814_a(ItemStack p_184814_1_, Hand p_184814_2_) {
-@@ -938,6 +1229,11 @@
+@@ -938,6 +1230,11 @@
     public void func_71110_a(Container p_71110_1_, NonNullList<ItemStack> p_71110_2_) {
        this.field_71135_a.func_147359_a(new SWindowItemsPacket(p_71110_1_.field_75152_c, p_71110_2_));
        this.field_71135_a.func_147359_a(new SSetSlotPacket(-1, -1, this.field_71071_by.func_70445_o()));
@@ -738,7 +739,7 @@
     }
  
     public void func_71112_a(Container p_71112_1_, int p_71112_2_, int p_71112_3_) {
-@@ -945,6 +1241,7 @@
+@@ -945,6 +1242,7 @@
     }
  
     public void func_71053_j() {
@@ -746,7 +747,7 @@
        this.field_71135_a.func_147359_a(new SCloseWindowPacket(this.field_71070_bA.field_75152_c));
        this.func_71128_l();
     }
-@@ -957,6 +1254,7 @@
+@@ -957,6 +1255,7 @@
  
     public void func_71128_l() {
        this.field_71070_bA.func_75134_a(this);
@@ -754,7 +755,7 @@
        this.field_71070_bA = this.field_71069_bz;
     }
  
-@@ -978,14 +1276,14 @@
+@@ -978,14 +1277,14 @@
  
     public void func_71064_a(Stat<?> p_71064_1_, int p_71064_2_) {
        this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
@@ -771,7 +772,7 @@
     }
  
     public int func_195065_a(Collection<IRecipe<?>> p_195065_1_) {
-@@ -1026,8 +1324,17 @@
+@@ -1026,8 +1325,17 @@
  
     public void func_71118_n() {
        this.field_71149_ch = -1.0E8F;
@@ -789,7 +790,7 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
        this.field_71135_a.func_147359_a(new SChatPacket(p_146105_1_, p_146105_2_ ? ChatType.GAME_INFO : ChatType.CHAT, Util.field_240973_b_));
     }
-@@ -1081,6 +1388,13 @@
+@@ -1081,6 +1389,13 @@
        this.field_193110_cw = p_193104_1_.field_193110_cw;
        this.func_192029_h(p_193104_1_.func_192023_dk());
        this.func_192031_i(p_193104_1_.func_192025_dl());
@@ -803,7 +804,7 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1139,6 +1453,8 @@
+@@ -1139,6 +1454,8 @@
     }
  
     public void func_71033_a(GameType p_71033_1_) {
@@ -812,7 +813,7 @@
        this.field_71134_c.func_73076_a(p_71033_1_);
        this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241767_d_, (float)p_71033_1_.func_77148_a()));
        if (p_71033_1_ == GameType.SPECTATOR) {
-@@ -1183,10 +1499,22 @@
+@@ -1183,10 +1500,22 @@
     }
  
     public void func_147100_a(CClientSettingsPacket p_147100_1_) {
@@ -835,7 +836,7 @@
     }
  
     public ChatVisibility func_147096_v() {
-@@ -1245,7 +1573,7 @@
+@@ -1245,7 +1574,7 @@
        this.field_175401_bS = (Entity)(p_175399_1_ == null ? this : p_175399_1_);
        if (entity != this.field_175401_bS) {
           this.field_71135_a.func_147359_a(new SCameraPacket(this.field_175401_bS));
@@ -844,7 +845,7 @@
        }
  
     }
-@@ -1272,7 +1600,7 @@
+@@ -1272,7 +1601,7 @@
  
     @Nullable
     public ITextComponent func_175396_E() {
@@ -853,7 +854,7 @@
     }
  
     public void func_184609_a(Hand p_184609_1_) {
-@@ -1292,27 +1620,34 @@
+@@ -1292,27 +1621,34 @@
        return this.field_192042_bX;
     }
  
@@ -901,7 +902,7 @@
        }
  
     }
-@@ -1335,6 +1670,7 @@
+@@ -1335,6 +1671,7 @@
     }
  
     public void func_242111_a(RegistryKey<World> p_242111_1_, @Nullable BlockPos p_242111_2_, float p_242111_3_, boolean p_242111_4_, boolean p_242111_5_) {
@@ -909,7 +910,7 @@
        if (p_242111_2_ != null) {
           boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
           if (p_242111_5_ && !flag) {
-@@ -1387,6 +1723,8 @@
+@@ -1387,6 +1724,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -918,7 +919,7 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1400,4 +1738,132 @@
+@@ -1400,4 +1739,132 @@
           return itementity;
        }
     }

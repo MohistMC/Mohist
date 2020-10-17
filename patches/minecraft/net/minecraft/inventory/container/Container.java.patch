@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/Container.java
 +++ b/net/minecraft/inventory/container/Container.java
-@@ -1,7 +1,9 @@
+@@ -1,10 +1,14 @@
  package net.minecraft.inventory.container;
  
 +import com.google.common.base.Preconditions;
@@ -10,7 +10,12 @@
  import java.util.List;
  import java.util.Set;
  import javax.annotation.Nullable;
-@@ -21,13 +23,17 @@
++
++import com.mohistmc.MohistMC;
+ import net.minecraft.block.Block;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -21,13 +25,17 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Registry;
@@ -30,7 +35,7 @@
     private final List<IntReferenceHolder> field_216964_d = Lists.newArrayList();
     @Nullable
     private final ContainerType<?> field_216965_e;
-@@ -40,6 +46,44 @@
+@@ -40,6 +48,62 @@
     private final List<IContainerListener> field_75149_d = Lists.newArrayList();
     private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
  
@@ -51,13 +56,31 @@
 +   public void transferTo(Container other, CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView();
 +      InventoryView destination = other.getBukkitView();
-+      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-+      if (((CraftInventory) source.getBottomInventory()).getInventory() != null) {
-+         ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++      if (source != null) {
++         try {
++            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
 +      }
-+      ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-+      if (((CraftInventory) destination.getBottomInventory()).getInventory() != null) {
-+         ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++      if (destination != null) {
++         try {
++            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
 +      }
 +   }
 +
@@ -75,7 +98,7 @@
     protected Container(@Nullable ContainerType<?> p_i50105_1_, int p_i50105_2_) {
        this.field_216965_e = p_i50105_1_;
        this.field_75152_c = p_i50105_2_;
-@@ -120,9 +164,11 @@
+@@ -120,9 +184,11 @@
           ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -87,7 +110,7 @@
              for(IContainerListener icontainerlistener : this.field_75149_d) {
                 icontainerlistener.func_71111_a(this, i, itemstack2);
              }
-@@ -500,14 +546,15 @@
+@@ -500,14 +566,15 @@
              ItemStack itemstack = slot.func_75211_c();
              if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
                 int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -107,7 +130,7 @@
                    slot.func_75218_e();
                    flag = true;
                 }
-@@ -608,7 +655,7 @@
+@@ -608,7 +675,7 @@
           p_94525_2_.func_190920_e(1);
           break;
        case 2:
