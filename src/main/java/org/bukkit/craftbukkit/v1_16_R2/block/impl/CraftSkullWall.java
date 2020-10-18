@@ -15,7 +15,7 @@ public final class CraftSkullWall extends org.bukkit.craftbukkit.v1_16_R2.block.
 
     // org.bukkit.craftbukkit.v1_16_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.state.EnumProperty<?> FACING = getEnum(net.minecraft.block.SkullPlayerBlock.class, "facing");
+    private static final net.minecraft.state.EnumProperty<?> FACING = getEnum(net.minecraft.block.WallSkullBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
