@@ -21,21 +21,16 @@
     private static final DataParameter<Byte> field_184774_bv = EntityDataManager.func_187226_a(SheepEntity.class, DataSerializers.field_187191_a);
     private static final Map<DyeColor, IItemProvider> field_200206_bz = Util.func_200696_a(Maps.newEnumMap(DyeColor.class), (p_203402_0_) -> {
        p_203402_0_.put(DyeColor.WHITE, Blocks.field_196556_aL);
-@@ -216,7 +220,12 @@
+@@ -216,7 +220,7 @@
  
     public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
 -      if (itemstack.func_77973_b() == Items.field_151097_aZ) {
 +      if (false && itemstack.func_77973_b() == Items.field_151097_aZ) { //Forge: Moved to onSheared
-+         // CraftBukkit start
-+         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_230254_1_, this, itemstack, p_230254_2_)) {
-+            return ActionResultType.PASS;
-+         }
-+         // CraftBukkit end
           if (!this.field_70170_p.field_72995_K && this.func_230262_K__()) {
              this.func_230263_a_(SoundCategory.PLAYERS);
              itemstack.func_222118_a(1, p_230254_1_, (p_213613_1_) -> {
-@@ -237,7 +246,9 @@
+@@ -237,7 +241,9 @@
        int i = 1 + this.field_70146_Z.nextInt(3);
  
        for(int j = 0; j < i; ++j) {
@@ -45,7 +40,7 @@
           if (itementity != null) {
              itementity.func_213317_d(itementity.func_213322_ci().func_72441_c((double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F), (double)(this.field_70146_Z.nextFloat() * 0.05F), (double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F)));
           }
-@@ -323,6 +334,11 @@
+@@ -323,6 +329,11 @@
     }
  
     public void func_70615_aA() {
@@ -57,7 +52,7 @@
        this.func_70893_e(false);
        if (this.func_70631_g_()) {
           this.func_110195_a(60);
-@@ -349,16 +365,46 @@
+@@ -349,16 +360,46 @@
  
     private static CraftingInventory func_213611_a(DyeColor p_213611_0_, DyeColor p_213611_1_) {
        CraftingInventory craftinginventory = new CraftingInventory(new Container((ContainerType)null, -1) {
