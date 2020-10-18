@@ -234,6 +234,15 @@
     public void func_70030_z() {
        this.field_70170_p.func_217381_Z().func_76320_a("entityBaseTick");
        if (this.func_184218_aH() && this.func_184187_bx().field_70128_L) {
+@@ -386,7 +497,7 @@
+       this.field_70141_P = this.field_70140_Q;
+       this.field_70127_C = this.field_70125_A;
+       this.field_70126_B = this.field_70177_z;
+-      this.func_213284_aV();
++      if (this instanceof ServerPlayerEntity) this.func_213284_aV(); // CraftBukkit - // Moved up to postTick
+       if (this.func_230269_aK_()) {
+          this.func_233569_aL_();
+       }
 @@ -449,13 +560,42 @@
  
     protected void func_70044_A() {
