@@ -334,7 +334,7 @@
              this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
              this.field_147369_b.func_71000_j(this.field_147369_b.func_226277_ct_() - d0, this.field_147369_b.func_226278_cu_() - d1, this.field_147369_b.func_226281_cx_() - d2);
              this.field_184345_D = d7 >= -0.03125D && !this.field_147367_d.func_71231_X() && this.func_241162_a_(entity);
-@@ -367,7 +553,7 @@
+@@ -367,12 +553,12 @@
     }
  
     private boolean func_241162_a_(Entity p_241162_1_) {
@@ -343,7 +343,21 @@
     }
  
     public void func_184339_a(CConfirmTeleportPacket p_184339_1_) {
-@@ -410,6 +596,12 @@
+       PacketThreadUtil.func_218796_a(p_184339_1_, this, this.field_147369_b.func_71121_q());
+-      if (p_184339_1_.func_186987_a() == this.field_184363_z) {
++      if (p_184339_1_.func_186987_a() == this.field_184363_z && this.field_184362_y != null) { // CraftBukkit
+          this.field_147369_b.func_70080_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
+          this.field_184352_o = this.field_184362_y.field_72450_a;
+          this.field_184353_p = this.field_184362_y.field_72448_b;
+@@ -382,6 +568,7 @@
+          }
+ 
+          this.field_184362_y = null;
++         this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b); // CraftBukkit
+       }
+ 
+    }
+@@ -410,6 +597,12 @@
  
     public void func_195518_a(CTabCompletePacket p_195518_1_) {
        PacketThreadUtil.func_218796_a(p_195518_1_, this, this.field_147369_b.func_71121_q());
@@ -356,7 +370,7 @@
        StringReader stringreader = new StringReader(p_195518_1_.func_197707_b());
        if (stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
-@@ -417,6 +609,7 @@
+@@ -417,6 +610,7 @@
  
        ParseResults<CommandSource> parseresults = this.field_147367_d.func_195571_aL().func_197054_a().parse(stringreader, this.field_147369_b.func_195051_bN());
        this.field_147367_d.func_195571_aL().func_197054_a().getCompletionSuggestions(parseresults).thenAccept((p_195519_2_) -> {
@@ -364,7 +378,7 @@
           this.field_147371_a.func_179290_a(new STabCompletePacket(p_195518_1_.func_197709_a(), p_195519_2_));
        });
     }
-@@ -622,6 +815,7 @@
+@@ -622,6 +816,7 @@
        Container container = this.field_147369_b.field_71070_bA;
        if (container instanceof MerchantContainer) {
           MerchantContainer merchantcontainer = (MerchantContainer)container;
@@ -372,7 +386,7 @@
           merchantcontainer.func_75175_c(i);
           merchantcontainer.func_217046_g(i);
        }
-@@ -630,6 +824,14 @@
+@@ -630,6 +825,14 @@
  
     public void func_210156_a(CEditBookPacket p_210156_1_) {
        PacketThreadUtil.func_218796_a(p_210156_1_, this, this.field_147369_b.func_71121_q());
@@ -387,7 +401,7 @@
        ItemStack itemstack = p_210156_1_.func_210346_a();
        if (!itemstack.func_190926_b()) {
           if (WritableBookItem.func_150930_a(itemstack.func_77978_p())) {
-@@ -654,9 +856,11 @@
+@@ -654,9 +857,11 @@
                    }
  
                    itemstack2.func_77983_a("pages", listnbt);
@@ -400,7 +414,7 @@
                 }
              }
  
-@@ -691,7 +895,7 @@
+@@ -691,7 +896,7 @@
           this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_player_movement"));
        } else {
           ServerWorld serverworld = this.field_147369_b.func_71121_q();
@@ -409,7 +423,7 @@
              if (this.field_147368_e == 0) {
                 this.func_184342_d();
              }
-@@ -702,12 +906,21 @@
+@@ -702,12 +907,21 @@
                    this.func_147364_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
                 }
  
@@ -431,7 +445,7 @@
                    double d0 = this.field_147369_b.func_226277_ct_();
                    double d1 = this.field_147369_b.func_226278_cu_();
                    double d2 = this.field_147369_b.func_226281_cx_();
-@@ -730,14 +943,32 @@
+@@ -730,14 +944,31 @@
                    } else {
                       ++this.field_184347_F;
                       int i = this.field_184347_F - this.field_184348_G;
@@ -457,7 +471,6 @@
 +                     } else {
 +                        speed = field_147369_b.field_71075_bZ.field_75097_g * 10f;
 +                     }
-+
                       if (!this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_223586_b(GameRules.field_223615_r) || !this.field_147369_b.func_184613_cA())) {
                          float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
 -                        if (d11 - d10 > (double)(f2 * (float)i) && !this.func_217264_d()) {
@@ -470,7 +483,7 @@
                       }
  
                       this.field_147369_b.func_213315_a(MoverType.PLAYER, new Vector3d(d7, d8, d9));
-+                     this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();  // CraftBukkit - SPIGOT-5810, SPIGOT-5835: reset by this.player.move
++                     this.field_147369_b.func_230245_c_(p_147347_1_.func_149465_i());  // CraftBukkit - SPIGOT-5810, SPIGOT-5835: reset by this.player.move
                       d7 = d4 - this.field_147369_b.func_226277_ct_();
                       d8 = d5 - this.field_147369_b.func_226278_cu_();
                       if (d8 > -0.5D || d8 < 0.5D) {
@@ -595,7 +608,7 @@
 +         f = to.getYaw();
 +         f1 = to.getPitch();
 +      }
-+      this.internalTeleport(x, y, z, yaw, pitch, relativeSet);
++      this.internalTeleport(d0, d1, d2, f, f1, relativeSet);
 +   }
 +
 +   public void teleport(Location dest) {
@@ -647,6 +660,9 @@
        case SWAP_ITEM_WITH_OFFHAND:
           if (!this.field_147369_b.func_175149_v()) {
              ItemStack itemstack = this.field_147369_b.func_184586_b(Hand.OFF_HAND);
+-            this.field_147369_b.func_184611_a(Hand.OFF_HAND, this.field_147369_b.func_184586_b(Hand.MAIN_HAND));
+-            this.field_147369_b.func_184611_a(Hand.MAIN_HAND, itemstack);
+-            this.field_147369_b.func_184602_cy();
 +            // CraftBukkit start - inspiration taken from DispenserRegistry (See SpigotCraft#394)
 +            CraftItemStack mainHand = CraftItemStack.asCraftMirror(itemstack);
 +            CraftItemStack offHand = CraftItemStack.asCraftMirror(this.field_147369_b.func_184586_b(Hand.MAIN_HAND));
@@ -656,13 +672,12 @@
 +               return;
 +            }
 +            if (swapItemsEvent.getOffHandItem().equals(offHand)) {
-             this.field_147369_b.func_184611_a(Hand.OFF_HAND, this.field_147369_b.func_184586_b(Hand.MAIN_HAND));
++               this.field_147369_b.func_184611_a(Hand.OFF_HAND, this.field_147369_b.func_184586_b(Hand.MAIN_HAND));
 +            } else {
 +               this.field_147369_b.func_184611_a(Hand.OFF_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getOffHandItem()));
 +            }
 +            if (swapItemsEvent.getMainHandItem().equals(mainHand)) {
-             this.field_147369_b.func_184611_a(Hand.MAIN_HAND, itemstack);
--            this.field_147369_b.func_184602_cy();
++               this.field_147369_b.func_184611_a(Hand.MAIN_HAND, itemstack);
 +            } else {
 +               this.field_147369_b.func_184611_a(Hand.MAIN_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getMainHandItem()));
 +            }
