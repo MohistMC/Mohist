@@ -35,8 +35,7 @@ public class MohistMC {
                     " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
                     "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
                     "                                                    \n" + "\n");
-            System.out.println("                                      " +
-                    Message.getString("forge.serverlanunchwrapper.1"));
+            System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
         }
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
