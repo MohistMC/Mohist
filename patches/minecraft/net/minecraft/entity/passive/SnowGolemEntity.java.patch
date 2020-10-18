@@ -39,21 +39,16 @@
              }
           }
        }
-@@ -130,7 +130,12 @@
+@@ -130,7 +130,7 @@
  
     protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
 -      if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) {
 +      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) { //Forge: Moved to onSheared
-+         // CraftBukkit start
-+         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_230254_1_, this, itemstack, p_230254_2_)) {
-+            return ActionResultType.PASS;
-+         }
-+         // CraftBukkit end
           this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_230254_1_, (p_213622_1_) -> {
-@@ -190,4 +195,20 @@
+@@ -190,4 +190,20 @@
     public Vector3d func_241205_ce_() {
        return new Vector3d(0.0D, (double)(0.75F * this.func_70047_e()), (double)(this.func_213311_cf() * 0.4F));
     }
