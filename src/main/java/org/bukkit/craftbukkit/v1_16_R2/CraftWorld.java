@@ -314,7 +314,7 @@ public class CraftWorld implements World {
     public boolean setSpawnLocation(int x, int y, int z, float angle) {
         try {
             Location previousLocation = getSpawnLocation();
-            world.field_241103_E_.setSpawn(new BlockPos(x, y, z), angle);
+            world.worldInfo.setSpawn(new BlockPos(x, y, z), angle);
 
             // Notify anyone who's listening.
             SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
