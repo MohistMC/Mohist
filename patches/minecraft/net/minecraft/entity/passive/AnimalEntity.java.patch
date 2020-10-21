@@ -47,22 +47,7 @@
  
     public float func_205022_a(BlockPos p_205022_1_, IWorldReader p_205022_2_) {
        return p_205022_2_.func_180495_p(p_205022_1_.func_177977_b()).func_203425_a(Blocks.field_196658_i) ? 10.0F : p_205022_2_.func_205052_D(p_205022_1_) - 0.5F;
-@@ -121,7 +127,7 @@
-       ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
-       if (this.func_70877_b(itemstack)) {
-          int i = this.func_70874_b();
--         if (!this.field_70170_p.field_72995_K && i == 0 && this.func_204701_dC()) {
-+         if (!this.field_70170_p.field_72995_K && i == 0 && this.func_213743_em()) {
-             this.func_175505_a(p_230254_1_, itemstack);
-             this.func_146082_f(p_230254_1_);
-             return ActionResultType.SUCCESS;
-@@ -148,15 +154,23 @@
- 
-    }
- 
--   public boolean func_204701_dC() {
-+   public boolean func_213743_em() {
-       return this.field_70881_d <= 0;
+@@ -153,10 +159,18 @@
     }
  
     public void func_146082_f(@Nullable PlayerEntity p_146082_1_) {

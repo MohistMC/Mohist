@@ -8,17 +8,6 @@
  
  public class TurtleEntity extends AnimalEntity {
     private static final DataParameter<BlockPos> field_203030_by = EntityDataManager.func_187226_a(TurtleEntity.class, DataSerializers.field_187200_j);
-@@ -235,8 +236,8 @@
-       this.func_184185_a(soundevent, 0.15F, 1.0F);
-    }
- 
--   public boolean func_204701_dC() {
--      return super.func_204701_dC() && !this.func_203020_dx();
-+   public boolean func_213743_em() {
-+      return super.func_213743_em() && !this.func_203020_dx();
-    }
- 
-    protected float func_203009_ad() {
 @@ -282,7 +283,9 @@
     protected void func_175500_n() {
        super.func_175500_n();
