@@ -12,10 +12,12 @@ forge:
   enable_mods_whitelist: false
   whitelist_mods_number: 0
   disablechunkforcesystem: false
-  autounloadWorld_whitelist:
-    - 0
-    - 1
-    - -1
+  autounloadworld:
+    enable: false
+    whitelist:
+      - 0
+      - 1
+      - -1
   modsblacklist:
     list: []
     kickmessage: Use of unauthorized mods

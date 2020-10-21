@@ -40,7 +40,6 @@ public class PaperMCConfig {
     static Map<String, Command> commands;
     private static boolean verbose;
     /*========================================================================*/
-    private static boolean metricsStarted;
 
     public static void init(File configFile) {
         CONFIG_FILE = configFile;

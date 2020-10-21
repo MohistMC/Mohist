@@ -78,9 +78,10 @@ public class MohistConfig extends ConfigBase {
     public final IntSetting forgeversionminor = new IntSetting(this, "forge.version.minor", 23, "forge.version.minor");
     public final IntSetting forgeversionrevision = new IntSetting(this, "forge.version.revision", 5, "forge.version.revision");
     public final IntSetting forgeversionbuild = new IntSetting(this, "forge.version.build", 2854, "forge.version.build");
+    public final BoolSetting autounloadworldenable = new BoolSetting(this, "forge.autounloadworld.enable", false, "forge.autounloadworld.enable");
 
 
-    public List<String> autounloadWorld_whitelist = new ArrayList();
+    public List<String> autounloadworld_whitelist = new ArrayList();
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, Message.getString("mohistsettings.fakePlayerLogin"));
 
     public final BoolSetting pluginCheckBug = new BoolSetting(this, "plugin.promptBug", false, Message.getString("mohistsettings.pluginCheckBug"));// by lliioollcn
@@ -155,8 +156,8 @@ public class MohistConfig extends ConfigBase {
 
             version = getInt("config-version", 2);
             set("config-version", 2);
-            config.addDefault("forge.autounloadWorld_whitelist", new String[]{"0", "1", "-1"});
-            this.autounloadWorld_whitelist = config.getStringList("forge.autounloadWorld_whitelist");
+            config.addDefault("forge.autounloadworld.whitelist", new String[]{"0", "1", "-1"});
+            this.autounloadworld_whitelist = config.getStringList("forge.autounloadworld.whitelist");
             config.addDefault("world.dimensionsNotLoaded", new String[]{"1111111111111"});
             this.dimensionsNotLoaded = config.getIntegerList("world.dimensionsNotLoaded");
             config.options().header(header.toString());
