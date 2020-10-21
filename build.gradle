@@ -49,7 +49,7 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20200514-1.16'
+    MAPPING_VERSION = '20200514-1.16.3'
     MC_VERSION = '1.16.3'
     MCP_VERSION = '20200911.084530'
 }
@@ -179,7 +179,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.3-34.1.23'
+    version = '1.16.3-34.1.25'
     println('Forge Version: ' + version)
 
     patcher {
