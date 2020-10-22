@@ -20,10 +20,15 @@ public class PluginsModsDelete {
 
     private static boolean fileExists(File f, String fName) throws Exception {
         if (!f.exists()) return false;
-        JarFile jf = new JarFile(f);
-        if (jf.getJarEntry(fName) != null) {
-            jf.close();
-            return true;
+        try {
+            JarFile jf = new JarFile(f);
+            if (jf.getJarEntry(fName) != null) {
+                jf.close();
+                return true;
+            }
+        } catch(Exception e) {
+            System.out.println("[Mohist | ALERT] - The jar file "+f.getName()+" (at "+f.getAbsolutePath()+") is maybe corrupted or empty.");
+            return false;
         }
         return false;
     }
