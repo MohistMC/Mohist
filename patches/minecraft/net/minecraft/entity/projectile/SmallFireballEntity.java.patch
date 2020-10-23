@@ -20,24 +20,23 @@
     }
  
     public SmallFireballEntity(World p_i1772_1_, double p_i1772_2_, double p_i1772_4_, double p_i1772_6_, double p_i1772_8_, double p_i1772_10_, double p_i1772_12_) {
-@@ -33,7 +39,15 @@
+@@ -33,7 +39,14 @@
           if (!entity.func_230279_az_()) {
              Entity entity1 = this.func_234616_v_();
              int i = entity.func_223314_ad();
 -            entity.func_70015_d(5);
 +            // CraftBukkit start - Entity damage by entity event + combust event
-+            if (isIncendiary) {
-+               EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
-+               entity.field_70170_p.getCBServer().getPluginManager().callEvent(event);
-+               if (!event.isCancelled()) {
-+                  entity.setFire(event.getDuration(), false);
-+               }
++            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++            entity.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++               entity.setFire(event.getDuration(), false);
 +            }
++
 +            // CraftBukkit end
              boolean flag = entity.func_70097_a(DamageSource.func_233547_a_(this, entity1), 5.0F);
              if (!flag) {
                 entity.func_241209_g_(i);
-@@ -49,9 +63,9 @@
+@@ -49,9 +62,9 @@
        super.func_230299_a_(p_230299_1_);
        if (!this.field_70170_p.field_72995_K) {
           Entity entity = this.func_234616_v_();

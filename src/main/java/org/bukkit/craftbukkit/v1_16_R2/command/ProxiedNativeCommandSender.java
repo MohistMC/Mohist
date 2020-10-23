@@ -2,6 +2,8 @@
 package org.bukkit.craftbukkit.v1_16_R2.command;
 
 import java.util.Set;
+import java.util.UUID;
+
 import net.minecraft.command.CommandSource;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -45,6 +47,16 @@ public class ProxiedNativeCommandSender implements ProxiedCommandSender {
     @Override
     public void sendMessage(String[] messages) {
         getCaller().sendMessage(messages);
+    }
+
+    @Override
+    public void sendMessage(UUID sender, String message) {
+        getCaller().sendMessage(sender, message);
+    }
+
+    @Override
+    public void sendMessage(UUID sender, String[] messages) {
+        getCaller().sendMessage(sender, messages);
     }
 
     @Override
