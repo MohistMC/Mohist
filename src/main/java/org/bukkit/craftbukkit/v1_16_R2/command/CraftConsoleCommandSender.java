@@ -7,6 +7,8 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
 import org.bukkit.craftbukkit.v1_16_R2.conversations.ConversationTracker;
 
+import java.util.UUID;
+
 /**
  * Represents CLI input from a console
  */
@@ -26,6 +28,11 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
     @Override
     public void sendRawMessage(String message) {
         System.out.println(ChatColor.stripColor(message));
+    }
+
+    @Override
+    public void sendRawMessage(UUID sender, String message) {
+        this.sendRawMessage(message); // Console doesn't know of senders
     }
 
     @Override

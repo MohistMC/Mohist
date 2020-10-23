@@ -197,6 +197,15 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R2.entity.CraftHum
     }
 
     @Override
+    public void sendRawMessage(UUID sender, String message) {
+        if (getHandle().connection == null) return;
+
+        for (ITextComponent component : CraftChatMessage.fromString(message)) {
+            getHandle().connection.sendPacket(new SChatPacket(component, ChatType.CHAT, (sender == null) ? Util.field_240973_b_ : sender));
+        }
+    }
+
+    @Override
     public void sendMessage(String message) {
         if (!conversationTracker.isConversingModaly()) {
             this.sendRawMessage(message);
@@ -207,6 +216,20 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R2.entity.CraftHum
     public void sendMessage(String[] messages) {
         for (String message : messages) {
             sendMessage(message);
+        }
+    }
+
+    @Override
+    public void sendMessage(UUID sender, String message) {
+        if (!conversationTracker.isConversingModaly()) {
+            this.sendRawMessage(sender, message);
+        }
+    }
+
+    @Override
+    public void sendMessage(UUID sender, String[] messages) {
+        for (String message : messages) {
+            sendMessage(sender, message);
         }
     }
 

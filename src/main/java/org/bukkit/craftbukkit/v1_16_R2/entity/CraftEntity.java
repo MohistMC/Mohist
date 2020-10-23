@@ -139,6 +139,7 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
@@ -794,6 +795,16 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     @Override
+    public void sendMessage(UUID sender, String message) {
+        this.sendMessage(message); // Most entities don't know about senders
+    }
+
+    @Override
+    public void sendMessage(UUID sender, String[] messages) {
+        this.sendMessage(messages); // Most entities don't know about senders
+    }
+
+    @Override
     public String getName() {
         return CraftChatMessage.fromComponent(getHandle().getDisplayName());
     }
@@ -960,9 +971,9 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     public void readBukkitValues(CompoundNBT c) {
-        CompoundNBT base = c.getCompound("BukkitValues");
+        INBT base = c.get("BukkitValues");
         if (base != null) {
-            this.persistentDataContainer.putAll(base);
+            this.persistentDataContainer.putAll((CompoundNBT) base);
         }
     }
 
