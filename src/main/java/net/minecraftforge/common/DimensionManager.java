@@ -412,11 +412,10 @@ public class DimensionManager
     {
         WorldServer world = worlds.get(id);
         if (world == null || !canUnloadWorld(world)) return;
-        if (MohistConfig.instance.autounloadworldenable.getValue()) {
-            for (String dim1 : MohistConfig.instance.autounloadworld_whitelist) {
-                if (dim1.equals("*") || (NumberUtils.isInteger(dim1) && Integer.valueOf(dim1).intValue() == id)) {
-                    return;
-                }
+        if (!MohistConfig.instance.autounloadworldenable.getValue()) return;
+        for (String dim1 : MohistConfig.instance.autounloadworld_whitelist) {
+            if (dim1.equals("*") || (NumberUtils.isInteger(dim1) && Integer.valueOf(dim1).intValue() == id)) {
+                return;
             }
         }
 
