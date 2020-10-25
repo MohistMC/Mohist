@@ -71,7 +71,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 /**
  * Manages chunkloading for mods.

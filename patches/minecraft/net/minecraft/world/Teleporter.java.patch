@@ -1,0 +1,604 @@
+--- ../src-base/minecraft/net/minecraft/world/Teleporter.java
++++ ../src-work/minecraft/net/minecraft/world/Teleporter.java
+@@ -4,6 +4,7 @@
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.ObjectIterator;
+ import java.util.Random;
++import javax.annotation.Nullable;
+ import net.minecraft.block.BlockPortal;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.block.state.pattern.BlockPattern;
+@@ -14,8 +15,13 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MathHelper;
++import org.bukkit.Location;
++import org.bukkit.event.entity.EntityPortalExitEvent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
++import org.bukkit.util.Vector;
++import com.mohistmc.MohistMC;
+ 
+-public class Teleporter
++public class Teleporter implements net.minecraftforge.common.util.ITeleporter
+ {
+     protected final WorldServer field_85192_a;
+     protected final Random field_77187_a;
+@@ -33,61 +39,93 @@
+         {
+             if (!this.func_180620_b(p_180266_1_, p_180266_2_))
+             {
+-                this.func_85188_a(p_180266_1_);
++                this.isTheEnd(p_180266_1_);
+                 this.func_180620_b(p_180266_1_, p_180266_2_);
+             }
+         }
+         else
+         {
+-            int i = MathHelper.func_76128_c(p_180266_1_.field_70165_t);
+-            int j = MathHelper.func_76128_c(p_180266_1_.field_70163_u) - 1;
+-            int k = MathHelper.func_76128_c(p_180266_1_.field_70161_v);
+-            int l = 1;
+-            int i1 = 0;
++            // CraftBukkit start - Modularize end portal creation
++            BlockPos created = this.createEndPortal(p_180266_1_.field_70165_t, p_180266_1_.field_70163_u, p_180266_1_.field_70161_v);
++            p_180266_1_.func_70012_b((double) created.func_177958_n(), (double) created.func_177956_o(), (double) created.func_177952_p(), p_180266_1_.field_70177_z, 0.0F);
++            p_180266_1_.field_70159_w = p_180266_1_.field_70181_x = p_180266_1_.field_70179_y = 0.0D;
++        }
++    }
+ 
+-            for (int j1 = -2; j1 <= 2; ++j1)
++    // Split out from original a(Entity, double, double, double, float) method in order to enable being called from createPortal
++    private BlockPos createEndPortal(double x, double y, double z) {
++        int i = MathHelper.func_76128_c(x);
++        int j = MathHelper.func_76128_c(y) - 1;
++        int k = MathHelper.func_76128_c(z);
++        // CraftBukkit end
++
++        for (int j1 = -2; j1 <= 2; ++j1)
++        {
++            for (int k1 = -2; k1 <= 2; ++k1)
+             {
+-                for (int k1 = -2; k1 <= 2; ++k1)
++                for (int l1 = -1; l1 < 3; ++l1)
+                 {
+-                    for (int l1 = -1; l1 < 3; ++l1)
+-                    {
+-                        int i2 = i + k1 * 1 + j1 * 0;
+-                        int j2 = j + l1;
+-                        int k2 = k + k1 * 0 - j1 * 1;
+-                        boolean flag = l1 < 0;
+-                        this.field_85192_a.func_175656_a(new BlockPos(i2, j2, k2), flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P());
+-                    }
++                    int i2 = i + k1 * 1 + j1 * 0;
++                    int j2 = j + l1;
++                    int k2 = k + k1 * 0 - j1 * 1;
++                    boolean flag = l1 < 0;
++                    this.field_85192_a.func_175656_a(new BlockPos(i2, j2, k2), flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P());
+                 }
+             }
++        }
++		// CraftBukkit start
++        return new BlockPos(i, j, k);
++    }
+ 
+-            p_180266_1_.func_70012_b((double)i, (double)j, (double)k, p_180266_1_.field_70177_z, 0.0F);
+-            p_180266_1_.field_70159_w = 0.0D;
+-            p_180266_1_.field_70181_x = 0.0D;
+-            p_180266_1_.field_70179_y = 0.0D;
++    // use logic based on creation to verify end portal
++    @Nullable
++    private BlockPos findEndPortal(BlockPos portal) {
++        int i = portal.func_177958_n();
++        int j = portal.func_177956_o() - 1;
++        int k = portal.func_177952_p();
++        byte b0 = 1;
++        byte b1 = 0;
++
++        for (int l = -2; l <= 2; ++l) {
++            for (int i1 = -2; i1 <= 2; ++i1) {
++                for (int j1 = -1; j1 < 3; ++j1) {
++                    int k1 = i + i1 * b0 + l * b1;
++                    int l1 = j + j1;
++                    int i2 = k + i1 * b1 - l * b0;
++                    boolean flag = j1 < 0;
++
++                    if (this.field_85192_a.func_180495_p(new BlockPos(k1, l1, i2)).func_177230_c() != (flag ? Blocks.field_150343_Z : Blocks.field_150350_a)) {
++                        return null;
++                    }
++                }
++            }
+         }
++        return new BlockPos(i, j, k);
+     }
+ 
+     public boolean func_180620_b(Entity p_180620_1_, float p_180620_2_)
+     {
+-        int i = 128;
++        BlockPos found;
++        // CraftBukkit start - Modularize portal search process and entity teleportation
++        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
++            found = this.findEndPortal(this.field_85192_a.field_73011_w.func_177496_h());
++        }
++        // CraftBukkit end
+         double d0 = -1.0D;
+-        int j = MathHelper.func_76128_c(p_180620_1_.field_70165_t);
+-        int k = MathHelper.func_76128_c(p_180620_1_.field_70161_v);
++        int i = MathHelper.func_76128_c(p_180620_1_.field_70165_t);
++        int j = MathHelper.func_76128_c(p_180620_1_.field_70161_v);
+         boolean flag = true;
+         BlockPos blockpos = BlockPos.field_177992_a;
+-        long l = ChunkPos.func_77272_a(j, k);
++        long l = ChunkPos.func_77272_a(i, j);
+ 
+-        if (this.field_85191_c.containsKey(l))
+-        {
+-            Teleporter.PortalPosition teleporter$portalposition = (Teleporter.PortalPosition)this.field_85191_c.get(l);
++        if (this.field_85191_c.containsKey(l)) {
++            PortalPosition teleporter$portalposition = (PortalPosition) this.field_85191_c.get(l);
+             d0 = 0.0D;
+             blockpos = teleporter$portalposition;
+             teleporter$portalposition.field_85087_d = this.field_85192_a.func_82737_E();
+             flag = false;
+-        }
+-        else
+-        {
+-            BlockPos blockpos3 = new BlockPos(p_180620_1_);
++        } else {
++            BlockPos blockpos3 = new BlockPos(p_180620_1_.field_70165_t, p_180620_1_.field_70163_u, p_180620_1_.field_70161_v);
+ 
+             for (int i1 = -128; i1 <= 128; ++i1)
+             {
+@@ -108,8 +146,7 @@
+ 
+                             double d1 = blockpos1.func_177951_i(blockpos3);
+ 
+-                            if (d0 < 0.0D || d1 < d0)
+-                            {
++                            if (d0 < 0.0D || d1 < d0) {
+                                 d0 = d1;
+                                 blockpos = blockpos1;
+                             }
+@@ -119,19 +156,107 @@
+             }
+         }
+ 
+-        if (d0 >= 0.0D)
+-        {
+-            if (flag)
+-            {
+-                this.field_85191_c.put(l, new Teleporter.PortalPosition(blockpos, this.field_85192_a.func_82737_E()));
++        if (d0 >= 0.0D) {
++            if (flag) {
++                this.field_85191_c.put(l, new PortalPosition(blockpos, this.field_85192_a.func_82737_E()));
+             }
++            // CraftBukkit start - Move entity teleportation logic into exit
++            found =  blockpos;
++        } else {
++            found =  null;
++        }
++        if (found == null) {
++            return false;
++        }
+ 
+-            double d5 = (double)blockpos.func_177958_n() + 0.5D;
+-            double d7 = (double)blockpos.func_177952_p() + 0.5D;
+-            BlockPattern.PatternHelper blockpattern$patternhelper = Blocks.field_150427_aO.func_181089_f(this.field_85192_a, blockpos);
++        Location exit = new Location(this.field_85192_a.getWorld(), found.func_177958_n(), found.func_177956_o(), found.func_177952_p(), p_180620_2_, p_180620_1_.field_70125_A);
++        Vector velocity = p_180620_1_.getBukkitEntity().getVelocity();
++        this.adjustExit(p_180620_1_, exit, velocity);
++        p_180620_1_.func_70012_b(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch());
++        if (p_180620_1_.field_70159_w != velocity.getX() || p_180620_1_.field_70181_x != velocity.getY() || p_180620_1_.field_70179_y != velocity.getZ()) {
++            p_180620_1_.getBukkitEntity().setVelocity(velocity);
++        }
++        return true;
++    }
++
++    @Nullable
++    public BlockPos findPortal(double x, double y, double z, int radius) {
++        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
++            return this.findEndPortal(this.field_85192_a.field_73011_w.func_177496_h());
++        }
++        // CraftBukkit end
++        double d0 = -1.0D;
++        int i = MathHelper.func_76128_c(x);
++        int j = MathHelper.func_76128_c(z);
++        boolean flag = true;
++        BlockPos blockpos = BlockPos.field_177992_a;
++        long l = ChunkPos.func_77272_a(i, j);
++
++        if (this.field_85191_c.containsKey(l)) {
++            PortalPosition teleporter$portalposition = (PortalPosition) this.field_85191_c.get(l);
++            d0 = 0.0D;
++            blockpos = teleporter$portalposition;
++            teleporter$portalposition.field_85087_d = this.field_85192_a.func_82737_E();
++            flag = false;
++        } else {
++            BlockPos blockpos3 = new BlockPos(x, y, z);
++
++            for (int i1 = -radius; i1 <= radius; ++i1) {
++                BlockPos blockpos2;
++
++                for (int j1 = -radius; j1 <= radius; ++j1) {
++                    for (BlockPos blockpos1 = blockpos3.func_177982_a(i1, this.field_85192_a.func_72940_L() - 1 - blockpos3.func_177956_o(), j1); blockpos1.func_177956_o() >= 0; blockpos1 = blockpos2) {
++                        blockpos2 = blockpos1.func_177977_b();
++
++                        if (this.field_85192_a.func_180495_p(blockpos1).func_177230_c() == Blocks.field_150427_aO) {
++                            for (blockpos2 = blockpos1.func_177977_b(); this.field_85192_a.func_180495_p(blockpos2).func_177230_c() == Blocks.field_150427_aO; blockpos2 = blockpos2.func_177977_b()) {
++                                blockpos1 = blockpos2;
++                            }
++
++                            double d1 = blockpos1.func_177951_i(blockpos3);
++
++                            if (d0 < 0.0D || d1 < d0) {
++                                d0 = d1;
++                                blockpos = blockpos1;
++                            }
++                        }
++                    }
++                }
++            }
++        }
++
++        if (d0 >= 0.0D) {
++            if (flag) {
++                this.field_85191_c.put(l, new PortalPosition(blockpos, this.field_85192_a.func_82737_E()));
++            }
++            // CraftBukkit start - Move entity teleportation logic into exit
++            return blockpos;
++        } else {
++            return null;
++        }
++    }
++
++    // Entity repositioning logic split out from original b method and combined with repositioning logic for The End from original a method
++    public void adjustExit(Entity entityIn, Location position, Vector velocity) {
++        Location from = position.clone();
++        Vector before = velocity.clone();
++        BlockPos object = new BlockPos(position.getBlockX(), position.getBlockY(), position.getBlockZ());
++        float f33 = position.getYaw();
++
++        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END || entityIn.getBukkitEntity().getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END || entityIn.func_181014_aG() == null) {
++            // entity.setPositionRotation((double) i, (double) j, (double) k, entity.yaw, 0.0F);
++            // entity.motX = entity.motY = entity.motZ = 0.0D;
++            position.setPitch(0.0F);
++            velocity.setX(0);
++            velocity.setY(0);
++            velocity.setZ(0);
++        } else {
++            double d5 = (double)object.func_177958_n() + 0.5D;
++            double d7 = (double)object.func_177952_p() + 0.5D;
++            BlockPattern.PatternHelper blockpattern$patternhelper = Blocks.field_150427_aO.func_181089_f(this.field_85192_a, object);
+             boolean flag1 = blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c() == EnumFacing.AxisDirection.NEGATIVE;
+             double d2 = blockpattern$patternhelper.func_177669_b().func_176740_k() == EnumFacing.Axis.X ? (double)blockpattern$patternhelper.func_181117_a().func_177952_p() : (double)blockpattern$patternhelper.func_181117_a().func_177958_n();
+-            double d6 = (double)(blockpattern$patternhelper.func_181117_a().func_177956_o() + 1) - p_180620_1_.func_181014_aG().field_72448_b * (double)blockpattern$patternhelper.func_181119_e();
++            double d6 = (double)(blockpattern$patternhelper.func_181117_a().func_177956_o() + 1) - entityIn.func_181014_aG().field_72448_b * (double)blockpattern$patternhelper.func_181119_e();
+ 
+             if (flag1)
+             {
+@@ -140,11 +265,11 @@
+ 
+             if (blockpattern$patternhelper.func_177669_b().func_176740_k() == EnumFacing.Axis.X)
+             {
+-                d7 = d2 + (1.0D - p_180620_1_.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
++                d7 = d2 + (1.0D - entityIn.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
+             }
+             else
+             {
+-                d5 = d2 + (1.0D - p_180620_1_.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
++                d5 = d2 + (1.0D - entityIn.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
+             }
+ 
+             float f = 0.0F;
+@@ -152,17 +277,17 @@
+             float f2 = 0.0F;
+             float f3 = 0.0F;
+ 
+-            if (blockpattern$patternhelper.func_177669_b().func_176734_d() == p_180620_1_.func_181012_aH())
++            if (blockpattern$patternhelper.func_177669_b().func_176734_d() == entityIn.func_181012_aH())
+             {
+                 f = 1.0F;
+                 f1 = 1.0F;
+             }
+-            else if (blockpattern$patternhelper.func_177669_b().func_176734_d() == p_180620_1_.func_181012_aH().func_176734_d())
++            else if (blockpattern$patternhelper.func_177669_b().func_176734_d() == entityIn.func_181012_aH().func_176734_d())
+             {
+                 f = -1.0F;
+                 f1 = -1.0F;
+             }
+-            else if (blockpattern$patternhelper.func_177669_b().func_176734_d() == p_180620_1_.func_181012_aH().func_176746_e())
++            else if (blockpattern$patternhelper.func_177669_b().func_176734_d() == entityIn.func_181012_aH().func_176746_e())
+             {
+                 f2 = 1.0F;
+                 f3 = -1.0F;
+@@ -173,27 +298,250 @@
+                 f3 = 1.0F;
+             }
+ 
+-            double d3 = p_180620_1_.field_70159_w;
+-            double d4 = p_180620_1_.field_70179_y;
+-            p_180620_1_.field_70159_w = d3 * (double)f + d4 * (double)f3;
+-            p_180620_1_.field_70179_y = d3 * (double)f2 + d4 * (double)f1;
+-            p_180620_1_.field_70177_z = p_180620_2_ - (float)(p_180620_1_.func_181012_aH().func_176734_d().func_176736_b() * 90) + (float)(blockpattern$patternhelper.func_177669_b().func_176736_b() * 90);
++            // CraftBukkit start - Adjust position and velocity instances instead of entity
++            velocity.setX(velocity.getX() * (double) f + velocity.getZ() * (double) f3);
++            velocity.setZ(velocity.getX() * (double) f2 + velocity.getZ() * (double) f1);
++            f33 = f33 - (float) (entityIn.func_181012_aH().func_176734_d().func_176736_b() * 90) + (float) (blockpattern$patternhelper.func_177669_b().func_176736_b() * 90);
++            // entity.setPositionRotation(d2, d5, d3, entity.yaw, entity.pitch);
++            position.setX(d5);
++            position.setY(d6);
++            position.setZ(d7);
++            position.setYaw(f33);
++        }
++        EntityPortalExitEvent event = new EntityPortalExitEvent(entityIn.getBukkitEntity(), from, position, before, velocity);
++        this.field_85192_a.getServer().getPluginManager().callEvent(event);
++        Location to = event.getTo();
++        if (event.isCancelled() || to == null || !entityIn.func_70089_S()) {
++            position.setX(from.getX());
++            position.setY(from.getY());
++            position.setZ(from.getZ());
++            position.setYaw(from.getYaw());
++            position.setPitch(from.getPitch());
++            velocity.copy(before);
++        }
++        else
++        {
++            position.setX(to.getX());
++            position.setY(to.getY());
++            position.setZ(to.getZ());
++            position.setYaw(to.getYaw());
++            position.setPitch(to.getPitch());
++            velocity.copy(event.getAfter()); // event.getAfter() will never be null, as setAfter() will cause an NPE if null is passed in
++        }
++    }
+ 
+-            if (p_180620_1_ instanceof EntityPlayerMP)
++    public boolean isTheEnd(Entity entityIn){
++        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
++            createEndPortal(entityIn.field_70165_t, entityIn.field_70163_u, entityIn.field_70161_v);
++            return true;
++        }
++        return func_85188_a(entityIn);
++    }
++
++    public boolean createPortal(double x, double y, double z, int b0) {
++        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
++            createEndPortal(x, y, z);
++            return true;
++        }
++        int i = 16;
++        double d0 = -1.0D;
++        int j = MathHelper.func_76128_c(x);
++        int k = MathHelper.func_76128_c(y);
++        int l = MathHelper.func_76128_c(z);
++        int i1 = j;
++        int j1 = k;
++        int k1 = l;
++        int l1 = 0;
++        int i2 = this.field_77187_a.nextInt(4);
++        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
++
++        for (int j2 = j - 16; j2 <= j + 16; ++j2)
++        {
++            double d1 = (double)j2 + 0.5D - x;
++
++            for (int l2 = l - 16; l2 <= l + 16; ++l2)
+             {
+-                ((EntityPlayerMP)p_180620_1_).field_71135_a.func_147364_a(d5, d6, d7, p_180620_1_.field_70177_z, p_180620_1_.field_70125_A);
++                double d2 = (double)l2 + 0.5D - z;
++                label293:
++
++                for (int j3 = this.field_85192_a.func_72940_L() - 1; j3 >= 0; --j3)
++                {
++                    if (this.field_85192_a.func_175623_d(blockpos$mutableblockpos.func_181079_c(j2, j3, l2)))
++                    {
++                        while (j3 > 0 && this.field_85192_a.func_175623_d(blockpos$mutableblockpos.func_181079_c(j2, j3 - 1, l2)))
++                        {
++                            --j3;
++                        }
++
++                        for (int k3 = i2; k3 < i2 + 4; ++k3)
++                        {
++                            int l3 = k3 % 2;
++                            int i4 = 1 - l3;
++
++                            if (k3 % 4 >= 2)
++                            {
++                                l3 = -l3;
++                                i4 = -i4;
++                            }
++
++                            for (int j4 = 0; j4 < 3; ++j4)
++                            {
++                                for (int k4 = 0; k4 < 4; ++k4)
++                                {
++                                    for (int l4 = -1; l4 < 4; ++l4)
++                                    {
++                                        int i5 = j2 + (k4 - 1) * l3 + j4 * i4;
++                                        int j5 = j3 + l4;
++                                        int k5 = l2 + (k4 - 1) * i4 - j4 * l3;
++                                        blockpos$mutableblockpos.func_181079_c(i5, j5, k5);
++
++                                        if (l4 < 0 && !this.field_85192_a.func_180495_p(blockpos$mutableblockpos).func_185904_a().func_76220_a() || l4 >= 0 && !this.field_85192_a.func_175623_d(blockpos$mutableblockpos))
++                                        {
++                                            continue label293;
++                                        }
++                                    }
++                                }
++                            }
++
++                            double d5 = (double)j3 + 0.5D - y;
++                            double d7 = d1 * d1 + d5 * d5 + d2 * d2;
++
++                            if (d0 < 0.0D || d7 < d0)
++                            {
++                                d0 = d7;
++                                i1 = j2;
++                                j1 = j3;
++                                k1 = l2;
++                                l1 = k3 % 4;
++                            }
++                        }
++                    }
++                }
+             }
+-            else
++        }
++
++        if (d0 < 0.0D)
++        {
++            for (int l5 = j - 16; l5 <= j + 16; ++l5)
+             {
+-                p_180620_1_.func_70012_b(d5, d6, d7, p_180620_1_.field_70177_z, p_180620_1_.field_70125_A);
++                double d3 = (double)l5 + 0.5D - x;
++
++                for (int j6 = l - 16; j6 <= l + 16; ++j6)
++                {
++                    double d4 = (double)j6 + 0.5D - z;
++                    label231:
++
++                    for (int i7 = this.field_85192_a.func_72940_L() - 1; i7 >= 0; --i7)
++                    {
++                        if (this.field_85192_a.func_175623_d(blockpos$mutableblockpos.func_181079_c(l5, i7, j6)))
++                        {
++                            while (i7 > 0 && this.field_85192_a.func_175623_d(blockpos$mutableblockpos.func_181079_c(l5, i7 - 1, j6)))
++                            {
++                                --i7;
++                            }
++
++                            for (int k7 = i2; k7 < i2 + 2; ++k7)
++                            {
++                                int j8 = k7 % 2;
++                                int j9 = 1 - j8;
++
++                                for (int j10 = 0; j10 < 4; ++j10)
++                                {
++                                    for (int j11 = -1; j11 < 4; ++j11)
++                                    {
++                                        int j12 = l5 + (j10 - 1) * j8;
++                                        int i13 = i7 + j11;
++                                        int j13 = j6 + (j10 - 1) * j9;
++                                        blockpos$mutableblockpos.func_181079_c(j12, i13, j13);
++
++                                        if (j11 < 0 && !this.field_85192_a.func_180495_p(blockpos$mutableblockpos).func_185904_a().func_76220_a() || j11 >= 0 && !this.field_85192_a.func_175623_d(blockpos$mutableblockpos))
++                                        {
++                                            continue label231;
++                                        }
++                                    }
++                                }
++
++                                double d6 = (double)i7 + 0.5D - y;
++                                double d8 = d3 * d3 + d6 * d6 + d4 * d4;
++
++                                if (d0 < 0.0D || d8 < d0)
++                                {
++                                    d0 = d8;
++                                    i1 = l5;
++                                    j1 = i7;
++                                    k1 = j6;
++                                    l1 = k7 % 2;
++                                }
++                            }
++                        }
++                    }
++                }
+             }
++        }
+ 
+-            return true;
++        int i6 = i1;
++        int k2 = j1;
++        int k6 = k1;
++        int l6 = l1 % 2;
++        int i3 = 1 - l6;
++
++        if (l1 % 4 >= 2)
++        {
++            l6 = -l6;
++            i3 = -i3;
+         }
+-        else
++
++        if (d0 < 0.0D)
+         {
+-            return false;
++            j1 = MathHelper.func_76125_a(j1, 70, this.field_85192_a.func_72940_L() - 10);
++            k2 = j1;
++
++            for (int j7 = -1; j7 <= 1; ++j7)
++            {
++                for (int l7 = 1; l7 < 3; ++l7)
++                {
++                    for (int k8 = -1; k8 < 3; ++k8)
++                    {
++                        int k9 = i6 + (l7 - 1) * l6 + j7 * i3;
++                        int k10 = k2 + k8;
++                        int k11 = k6 + (l7 - 1) * i3 - j7 * l6;
++                        boolean flag = k8 < 0;
++                        this.field_85192_a.func_175656_a(new BlockPos(k9, k10, k11), flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P());
++                    }
++                }
++            }
+         }
++
++        IBlockState iblockstate = Blocks.field_150427_aO.func_176223_P().func_177226_a(BlockPortal.field_176550_a, l6 == 0 ? EnumFacing.Axis.Z : EnumFacing.Axis.X);
++
++        for (int i8 = 0; i8 < 4; ++i8)
++        {
++            for (int l8 = 0; l8 < 4; ++l8)
++            {
++                for (int l9 = -1; l9 < 4; ++l9)
++                {
++                    int l10 = i6 + (l8 - 1) * l6;
++                    int l11 = k2 + l9;
++                    int k12 = k6 + (l8 - 1) * i3;
++                    boolean flag1 = l8 == 0 || l8 == 3 || l9 == -1 || l9 == 3;
++                    this.field_85192_a.func_180501_a(new BlockPos(l10, l11, k12), flag1 ? Blocks.field_150343_Z.func_176223_P() : iblockstate, 2);
++                }
++            }
++
++            for (int i9 = 0; i9 < 4; ++i9)
++            {
++                for (int i10 = -1; i10 < 4; ++i10)
++                {
++                    int i11 = i6 + (i9 - 1) * l6;
++                    int i12 = k2 + i10;
++                    int l12 = k6 + (i9 - 1) * i3;
++                    BlockPos blockpos = new BlockPos(i11, i12, l12);
++                    this.field_85192_a.func_175685_c(blockpos, this.field_85192_a.func_180495_p(blockpos).func_177230_c(), false);
++                }
++            }
++        }
++
++        return true;
+     }
+ 
+     public boolean func_85188_a(Entity p_85188_1_)
+@@ -404,11 +752,11 @@
+         if (p_85189_1_ % 100L == 0L)
+         {
+             long i = p_85189_1_ - 300L;
+-            ObjectIterator<Teleporter.PortalPosition> objectiterator = this.field_85191_c.values().iterator();
++            ObjectIterator<PortalPosition> objectiterator = this.field_85191_c.values().iterator();
+ 
+             while (objectiterator.hasNext())
+             {
+-                Teleporter.PortalPosition teleporter$portalposition = (Teleporter.PortalPosition)objectiterator.next();
++                PortalPosition teleporter$portalposition = (PortalPosition)objectiterator.next();
+ 
+                 if (teleporter$portalposition == null || teleporter$portalposition.field_85087_d < i)
+                 {
+@@ -428,4 +776,13 @@
+             this.field_85087_d = p_i45747_3_;
+         }
+     }
++
++    @Override
++    public void placeEntity(World world, Entity entity, float yaw)
++    {
++        if (entity instanceof EntityPlayerMP)
++            func_180266_a(entity, yaw);
++        else
++            func_180620_b(entity, yaw);
++    }
+\ No newline at end of file
+ }

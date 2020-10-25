@@ -1,14 +1,14 @@
 package org.bukkit.command;
 
 import co.aikar.timings.Timing;
+import com.mohistmc.command.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.defaults.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import red.mohist.Mohist;
-import red.mohist.command.*;
+import com.mohistmc.MohistMC;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -33,6 +33,7 @@ public class SimpleCommandMap implements CommandMap {
         register("getpluginlist", new GetPluginListCommand("getpluginlist"));
         register("getmodlist", new GetModListCommand("getmodlist"));
         register("whitelistmods", new WhitelistModsCommand("whitelistmods"));
+        register("downloadfile", new DownloadFileCommand("downloadfile"));
         register("dump", new DumpCommand("dump"));
         register("entity", new EntityCommand("entity"));
         register("tileentity", new TileEntityCommand("tileentity"));
@@ -239,7 +240,7 @@ public class SimpleCommandMap implements CommandMap {
         for (Map.Entry<String, String[]> entry : values.entrySet()) {
             String alias = entry.getKey();
             if (alias.contains(" ")) {
-                Mohist.LOGGER.warn("Could not register alias " + alias + " because it contains illegal characters");
+                MohistMC.LOGGER.warn("Could not register alias " + alias + " because it contains illegal characters");
                 continue;
             }
 
@@ -262,7 +263,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (bad.length() > 0) {
-                Mohist.LOGGER.warn("Could not register alias " + alias + " because it contains commands that do not exist: " + bad);
+                MohistMC.LOGGER.warn("Could not register alias " + alias + " because it contains commands that do not exist: " + bad);
                 continue;
             }
 

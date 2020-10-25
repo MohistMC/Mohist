@@ -1,2 +1,0 @@
-gradlew idea
-pause

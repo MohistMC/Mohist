@@ -1,0 +1,420 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -1,21 +1,21 @@
+ package net.minecraft.server.dedicated;
+ 
+-import com.google.common.collect.Lists;
++import co.aikar.timings.MinecraftTimings;
++import com.destroystokyo.paper.PaperMCConfig;
+ import com.mojang.authlib.GameProfileRepository;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+-import java.io.BufferedReader;
+ import java.io.File;
+ import java.io.IOException;
+-import java.io.InputStreamReader;
++import java.io.PrintStream;
+ import java.net.InetAddress;
+ import java.net.Proxy;
+-import java.nio.charset.StandardCharsets;
+-import java.util.Collections;
+-import java.util.List;
++import java.util.Locale;
+ import java.util.Random;
+ import java.util.concurrent.TimeUnit;
+ import java.util.regex.Pattern;
++
++import net.minecraft.client.resources.Language;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.ICrashReportDetail;
+@@ -43,25 +43,44 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldSettings;
+ import net.minecraft.world.WorldType;
++import net.minecraft.world.chunk.storage.AnvilSaveConverter;
++import net.minecraftforge.common.util.FakePlayer;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.Main;
++import org.bukkit.craftbukkit.v1_12_R1.LoggerOutputStream;
++import org.bukkit.craftbukkit.v1_12_R1.util.TerminalConsoleWriterThread;
++import org.bukkit.craftbukkit.v1_12_R1.util.Waitable;
++import org.bukkit.event.server.RemoteServerCommandEvent;
++import org.bukkit.event.server.ServerCommandEvent;
++import org.spigotmc.SpigotConfig;
++import com.mohistmc.Metrics;
++import com.mohistmc.MohistMC;
++import com.mohistmc.WatchMohist;
++import com.mohistmc.common.async.MohistThreadBox;
++import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.api.event.server.BukkitServerStartDoneEvent;
++import com.mohistmc.util.i18n.Message;
+ 
+ @SideOnly(Side.SERVER)
+ public class DedicatedServer extends MinecraftServer implements IServer
+ {
+     private static final Logger field_155771_h = LogManager.getLogger();
+     private static final Pattern field_189647_l = Pattern.compile("^[a-fA-F0-9]{40}$");
+-    public final List<PendingCommand> field_71341_l = Collections.<PendingCommand>synchronizedList(Lists.newArrayList());
++    public final java.util.Queue<PendingCommand> field_71341_l = new java.util.concurrent.ConcurrentLinkedQueue<>(); // Paper - use a proper queue
+     private RConThreadQuery field_71342_m;
+-    private final RConConsoleSource field_184115_n = new RConConsoleSource(this);
++    public final RConConsoleSource field_184115_n = new RConConsoleSource(this);
+     private RConThreadMain field_71339_n;
+-    private PropertyManager field_71340_o;
++    public PropertyManager field_71340_o;
+     private ServerEula field_154332_n;
+     private boolean field_71338_p;
+     private GameType field_71337_q;
+-    private boolean field_71335_s;
++    private boolean field_71335_s = false;
++    public static boolean allowPlayerLogins = false;
+ 
+     public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
+     {
+@@ -95,14 +114,22 @@
+         {
+             public void run()
+             {
+-                BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
++                if (!Main.useConsole) {
++                    return;
++                }
++                jline.console.ConsoleReader bufferedreader = reader;
+                 String s4;
+ 
+-                try
+-                {
+-                    while (!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l() && (s4 = bufferedreader.readLine()) != null)
+-                    {
+-                        DedicatedServer.this.func_71331_a(s4, DedicatedServer.this);
++                try {
++                    while (!func_71241_aa() && func_71278_l()) {
++                        if (Main.useJline) {
++                            s4 = bufferedreader.readLine(">", null);
++                        } else {
++                            s4 = bufferedreader.readLine();
++                        }
++                        if (s4 != null && s4.trim().length() > 0) { // Trim to filter lines which are just spaces
++                            func_71331_a(s4, DedicatedServer.this);
++                        }
+                     }
+                 }
+                 catch (IOException ioexception1)
+@@ -111,17 +138,40 @@
+                 }
+             }
+         };
++
++		// CraftBukkit start - TODO: handle command-line logging arguments
++        java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
++        global.setUseParentHandlers(false);
++        for (java.util.logging.Handler handler : global.getHandlers()) {
++            global.removeHandler(handler);
++        }
++        global.addHandler(new org.bukkit.craftbukkit.v1_12_R1.util.ForwardLogHandler());
++
++        final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
++        for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
++            if (appender instanceof org.apache.logging.log4j.core.appender.ConsoleAppender) {
++                logger.removeAppender(appender);
++            }
++        }
++
++        MohistThreadBox.TCW.execute(new TerminalConsoleWriterThread(System.out, this.reader));
++
++        System.setOut(new PrintStream(new LoggerOutputStream(logger, Level.INFO), true));
++        System.setErr(new PrintStream(new LoggerOutputStream(logger, Level.WARN), true));
++        // CraftBukkit end
+         thread.setDaemon(true);
+         thread.start();
+-        field_155771_h.info("Starting minecraft server version 1.12.2");
++        MohistMC.LOGGER.info(Message.getString("mohist.server.start"));
+ 
+         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
+         {
+             field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
+ 
+-        field_155771_h.info("Loading properties");
+-        this.field_71340_o = new PropertyManager(new File("server.properties"));
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
++
++        field_155771_h.info(Message.getString("mohist.start.loading_properties"));
++        this.field_71340_o = new PropertyManager(this.options); // CraftBukkit - CLI argument support
+         this.field_154332_n = new ServerEula(new File("eula.txt"));
+ 
+         if (!this.field_154332_n.func_154346_a())
+@@ -140,7 +190,7 @@
+             {
+                 this.func_71229_d(this.field_71340_o.func_73670_a("online-mode", true));
+                 this.func_190517_e(this.field_71340_o.func_73670_a("prevent-proxy-connections", false));
+-                this.func_71189_e(this.field_71340_o.func_73671_a("server-ip", ""));
++                this.func_71189_e(this.field_71340_o.func_73671_a("server-ip", "0.0.0.0"));
+             }
+ 
+             this.func_71251_e(this.field_71340_o.func_73670_a("spawn-animals", true));
+@@ -164,7 +214,7 @@
+             this.field_71338_p = this.field_71340_o.func_73670_a("generate-structures", true);
+             int i = this.field_71340_o.func_73669_a("gamemode", GameType.SURVIVAL.func_77148_a());
+             this.field_71337_q = WorldSettings.func_77161_a(i);
+-            field_155771_h.info("Default game type: {}", (Object)this.field_71337_q);
++            MohistMC.LOGGER.info(Message.getString("game.gametype") + "{}", (Object)this.field_71337_q);
+             InetAddress inetaddress = null;
+ 
+             if (!this.func_71211_k().isEmpty())
+@@ -177,10 +227,22 @@
+                 this.func_71208_b(this.field_71340_o.func_73669_a("server-port", 25565));
+             }
+ 
+-            field_155771_h.info("Generating keypair");
++            // Spigot start
++            this.func_184105_a(new DedicatedPlayerList(this));
++            SpigotConfig.init((File) options.valueOf("spigot-settings"));
++            SpigotConfig.registerCommands();
++            // Spigot end
++
++            // Paper start
++            PaperMCConfig.init((File) options.valueOf("paper-settings"));
++            // Paper end
++
++            field_155771_h.info(Message.getString("mohist.start.gen_key"));
+             this.func_71253_a(CryptManager.func_75891_b());
+-            field_155771_h.info("Starting Minecraft server on {}:{}", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), Integer.valueOf(this.func_71215_F()));
++            Object[] p = {this.func_71211_k().isEmpty() ? "0.0.0.0" : this.func_71211_k(), String.valueOf(this.func_71215_F())};
++            MohistMC.LOGGER.info(Message.getFormatString("server.ip", p));
+ 
++		if(!SpigotConfig.lateBind) {
+             try
+             {
+                 this.func_147137_ag().func_151265_a(inetaddress, this.func_71215_F());
+@@ -192,15 +254,7 @@
+                 field_155771_h.warn("Perhaps a server is already running on that port?");
+                 return false;
+             }
+-
+-            if (!this.func_71266_T())
+-            {
+-                field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+-                field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
+-                field_155771_h.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
+-                field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+-            }
+-
++		}
+             if (this.func_152368_aE())
+             {
+                 this.func_152358_ax().func_152658_c();
+@@ -212,7 +266,7 @@
+             }
+             else
+             {
+-                this.func_184105_a(new DedicatedPlayerList(this));
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
+                 long j = System.nanoTime();
+ 
+                 if (this.func_71270_I() == null)
+@@ -260,12 +314,22 @@
+                 TileEntitySkull.func_184293_a(this.func_152358_ax());
+                 TileEntitySkull.func_184294_a(this.func_147130_as());
+                 PlayerProfileCache.func_187320_a(this.func_71266_T());
+-                field_155771_h.info("Preparing level \"{}\"", (Object)this.func_71270_I());
++                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
++                field_155771_h.info(Message.getString("mohist.start.preparing_level"), (Object)this.func_71270_I());
+                 this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+                 String s3 = String.format("%.3fs", (double)i1 / 1.0E9D);
+-                field_155771_h.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
++                if (MohistConfig.instance.support_nocmd.getValue()) {
++                    MohistMC.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", s3);
++                } else {
++                    MohistMC.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
++                }
+ 
++                Bukkit.getPluginManager().callEvent(new BukkitServerStartDoneEvent());//Mohist
++                Object[] p1 = {this.func_71211_k().isEmpty() ? "0.0.0.0" : this.func_71211_k(), String.valueOf(this.func_71215_F())};
++                MohistMC.LOGGER.info(Message.getFormatString("server.ip", p1));
++                Metrics.MohistMetrics.startMetrics();
++                WatchMohist.start();
+                 if (this.field_71340_o.func_187239_a("announce-player-achievements"))
+                 {
+                     this.field_71305_c[0].func_82736_K().func_82764_b("announceAdvancements", this.field_71340_o.func_73670_a("announce-player-achievements", true) ? "true" : "false");
+@@ -285,18 +349,35 @@
+                     field_155771_h.info("Starting remote control listener");
+                     this.field_71339_n = new RConThreadMain(this);
+                     this.field_71339_n.func_72602_a();
++					this.remoteConsole = new org.bukkit.craftbukkit.v1_12_R1.command.CraftRemoteConsoleCommandSender(this.field_184115_n);
+                 }
+ 
+-                if (this.func_175593_aQ() > 0L)
+-                {
+-                    Thread thread1 = new Thread(new ServerHangWatchdog(this));
+-                    thread1.setName("Server Watchdog");
+-                    thread1.setDaemon(true);
+-                    thread1.start();
++				if (this.server.getBukkitSpawnRadius() > -1) {
++                    DedicatedServer.field_155771_h.info("'settings.spawn-radius' in bukkit.yml has been moved to 'spawn-protection' in server.properties. I will move your config for you.");
++                    this.field_71340_o.field_73672_b.remove("spawn-protection");
++                    this.field_71340_o.func_73669_a("spawn-protection", this.server.getBukkitSpawnRadius());
++                    this.server.removeBukkitSpawnRadius();
++                    this.field_71340_o.func_73668_b();
+                 }
+ 
++                if (SpigotConfig.lateBind) {
++                    try {
++                        this.func_147137_ag().func_151265_a(inetaddress, this.func_71215_F());
++                    } catch (IOException ioexception) {
++                        field_155771_h.warn("**** FAILED TO BIND TO PORT!");
++                        field_155771_h.warn("The exception was: {}", (Object)ioexception.toString());
++                        field_155771_h.warn("Perhaps a server is already running on that port?");
++                        return false;
++                    }
++                }
++                for(FakePlayer fp : FakePlayer.fakePlayers){
++                    fp.callBukkitLoginEvent();
++                }
++                FakePlayer.fakePlayers=null;
++                FakePlayer.BukkitInited=true;
+                 Items.field_190931_a.func_150895_a(CreativeTabs.field_78027_g, NonNullList.func_191196_a());
+-                return true;
++                // <3 you Grum for this, saves us ~30 patch files! --^
++                return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
+             }
+         }
+     }
+@@ -419,11 +500,20 @@
+ 
+     public void func_71333_ah()
+     {
+-        while (!this.field_71341_l.isEmpty())
+-        {
+-            PendingCommand pendingcommand = this.field_71341_l.remove(0);
+-            this.func_71187_D().func_71556_a(pendingcommand.field_73701_b, pendingcommand.field_73702_a);
++        MinecraftTimings.serverCommandTimer.startTiming(); // Spigot
++        PendingCommand pendingcommand;
++        while ((pendingcommand = this.field_71341_l.poll()) != null) {  // Paper - use proper queue
++            // CraftBukkit start - ServerCommand for preprocessing
++            ServerCommandEvent event = new ServerCommandEvent(console, pendingcommand.field_73702_a);
++            server.getPluginManager().callEvent(event);
++            if (event.isCancelled()) continue;
++            pendingcommand = new PendingCommand(event.getCommand(), pendingcommand.field_73701_b);
++
++            // this.getCommandManager().executeCommand(pendingcommand.sender, pendingcommand.command); // Called in dispatchServerCommand
++            server.dispatchServerCommand(console, pendingcommand);
++            // CraftBukkit end
+         }
++        MinecraftTimings.serverCommandTimer.stopTiming(); // Spigot
+     }
+ 
+     public boolean func_71262_S()
+@@ -515,7 +605,7 @@
+ 
+     public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
+     {
+-        if (p_175579_1_.field_73011_w.func_186058_p().func_186068_a() != 0)
++        if (p_175579_1_.field_73011_w.getDimension() != 0)
+         {
+             return false;
+         }
+@@ -584,6 +674,9 @@
+         return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
+     }
+ 
++    //Forge: Enable formated text for colors in console.
++    @Override public void func_145747_a(net.minecraft.util.text.ITextComponent message) { field_155771_h.info(message.func_150254_d()); }
++
+     protected boolean func_152368_aE() throws IOException
+     {
+         boolean flag = false;
+@@ -673,13 +766,79 @@
+ 
+     public String func_71258_A()
+     {
+-        return "";
++        // CraftBukkit start - Whole method
++        StringBuilder result = new StringBuilder();
++        org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
++
++        result.append(server.getName());
++        result.append(" on Bukkit ");
++        result.append(server.getBukkitVersion());
++
++        if (plugins.length > 0 && server.getQueryPlugins()) {
++            result.append(": ");
++
++            for (int i = 0; i < plugins.length; i++) {
++                if (i > 0) {
++                    result.append("; ");
++                }
++
++                result.append(plugins[i].getDescription().getName());
++                result.append(" ");
++                result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
++            }
++        }
++
++        return result.toString();
++        // CraftBukkit end
+     }
+ 
+-    public String func_71252_i(String p_71252_1_)
+-    {
+-        this.field_184115_n.func_70007_b();
+-        this.field_71321_q.func_71556_a(this.field_184115_n, p_71252_1_);
+-        return this.field_184115_n.func_70008_c();
++
++    // CraftBukkit start - fire RemoteServerCommandEvent
++    public String func_71252_i(final String p_71252_1_)
++	{
++        Waitable<String> waitable = new Waitable<String>() {
++            @Override
++            protected String evaluate() {
++                field_184115_n.func_70007_b();
++                // Event changes start
++                RemoteServerCommandEvent event = new RemoteServerCommandEvent(remoteConsole, p_71252_1_);
++                server.getPluginManager().callEvent(event);
++                if (event.isCancelled()) {
++                    return "";
++                }
++                // Event change end
++                PendingCommand serverCommand = new PendingCommand(event.getCommand(), field_184115_n);
++                server.dispatchServerCommand(remoteConsole, serverCommand);
++                return field_184115_n.func_70008_c();
++            }
++        };
++        // Paper start
++        if (p_71252_1_.toLowerCase().startsWith("timings") && p_71252_1_.toLowerCase().matches("timings (report|paste|get|merged|seperate)")) {
++            org.bukkit.command.BufferedCommandSender sender = new org.bukkit.command.BufferedCommandSender();
++            waitable = new Waitable<String>() {
++                @Override
++                protected String evaluate() {
++                    return sender.getBuffer();
++                }
++            };
++            co.aikar.timings.Timings.generateReport(new co.aikar.timings.TimingsReportListener(sender, waitable));
++        } else {
++            processQueue.add(waitable);
++        }
++        // Paper end
++        try {
++            return waitable.get();
++        } catch (java.util.concurrent.ExecutionException e) {
++            throw new RuntimeException("Exception processing rcon command " + p_71252_1_, e.getCause());
++        } catch (InterruptedException e) {
++            Thread.currentThread().interrupt(); // Maintain interrupted state
++            throw new RuntimeException("Interrupted processing rcon command " + p_71252_1_, e);
++        }
+     }
++    // CraftBukkit end
++
++    @Override
++    public PropertyManager getPropertyManager() {
++        return this.field_71340_o;
++    }
+\ No newline at end of file
+ }

@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/WeightedBakedModel.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/WeightedBakedModel.java
+@@ -41,6 +41,8 @@
+         return this.field_177566_c.func_177555_b();
+     }
+ 
++    public boolean isAmbientOcclusion(IBlockState state) { return this.field_177566_c.isAmbientOcclusion(state); }
++
+\ No newline at end of file
+     public boolean func_177556_c()
+     {
+         return this.field_177566_c.func_177556_c();

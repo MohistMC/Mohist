@@ -12,8 +12,8 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.logging.log4j.LogManager;
 import org.fusesource.jansi.AnsiConsole;
-import red.mohist.Mohist;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.MohistMC;
+import com.mohistmc.util.i18n.Message;
 
 public class Main {
     public static boolean useJline = true;
@@ -21,7 +21,7 @@ public class Main {
 
     public static OptionSet main(String[] args) {
         // Todo: Installation script
-        Mohist.LOGGER = LogManager.getLogger("Mohist");
+        MohistMC.LOGGER = LogManager.getLogger("Mohist");
         OptionParser parser = new OptionParser() {
             {
                 acceptsAll(asList("?", "help"), "Show the help");

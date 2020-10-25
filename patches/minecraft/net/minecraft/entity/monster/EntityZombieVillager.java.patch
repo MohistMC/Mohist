@@ -1,0 +1,163 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
+@@ -19,6 +19,7 @@
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
+ import net.minecraft.potion.PotionEffect;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.ResourceLocation;
+@@ -30,6 +31,8 @@
+ import net.minecraft.world.storage.loot.LootTableList;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
+ 
+ public class EntityZombieVillager extends EntityZombie
+ {
+@@ -38,6 +41,8 @@
+     private int field_82234_d;
+     private UUID field_191992_by;
+ 
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
++
+     public EntityZombieVillager(World p_i47277_1_)
+     {
+         super(p_i47277_1_);
+@@ -53,11 +58,14 @@
+     public void func_190733_a(int p_190733_1_)
+     {
+         this.field_70180_af.func_187227_b(field_190739_c, Integer.valueOf(p_190733_1_));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, p_190733_1_);
+     }
+ 
++    //Use Forge Variant below
++    @Deprecated
+     public int func_190736_dl()
+     {
+-        return Math.max(((Integer)this.field_70180_af.func_187225_a(field_190739_c)).intValue() % 6, 0);
++        return Math.max(((Integer)this.field_70180_af.func_187225_a(field_190739_c)).intValue(), 0);
+     }
+ 
+     public static void func_190737_b(DataFixer p_190737_0_)
+@@ -69,6 +77,7 @@
+     {
+         super.func_70014_b(p_70014_1_);
+         p_70014_1_.func_74768_a("Profession", this.func_190736_dl());
++        p_70014_1_.func_74778_a("ProfessionName", this.getForgeProfession().getRegistryName().toString());
+         p_70014_1_.func_74768_a("ConversionTime", this.func_82230_o() ? this.field_82234_d : -1);
+ 
+         if (this.field_191992_by != null)
+@@ -81,6 +90,12 @@
+     {
+         super.func_70037_a(p_70037_1_);
+         this.func_190733_a(p_70037_1_.func_74762_e("Profession"));
++        if (p_70037_1_.func_74764_b("ProfessionName"))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p = net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("ProfessionName")));
++            if (p == null) p = net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER;
++            this.setForgeProfession(p);
++        }
+ 
+         if (p_70037_1_.func_150297_b("ConversionTime", 99) && p_70037_1_.func_74762_e("ConversionTime") > -1)
+         {
+@@ -91,7 +106,7 @@
+     @Nullable
+     public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, @Nullable IEntityLivingData p_180482_2_)
+     {
+-        this.func_190733_a(this.field_70170_p.field_73012_v.nextInt(6));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
+         return super.func_180482_a(p_180482_1_, p_180482_2_);
+     }
+ 
+@@ -100,6 +115,11 @@
+         if (!this.field_70170_p.field_72995_K && this.func_82230_o())
+         {
+             int i = this.func_190735_dq();
++            // CraftBukkit start - Use wall time instead of ticks for villager conversion
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++            this.lastTick = MinecraftServer.currentTick;
++            i *= elapsedTicks;
++            // CraftBukkit end
+             this.field_82234_d -= i;
+ 
+             if (this.field_82234_d <= 0)
+@@ -135,7 +155,7 @@
+         }
+     }
+ 
+-    protected boolean func_70692_ba()
++    public boolean func_70692_ba()
+     {
+         return !this.func_82230_o();
+     }
+@@ -175,7 +195,7 @@
+     {
+         EntityVillager entityvillager = new EntityVillager(this.field_70170_p);
+         entityvillager.func_82149_j(this);
+-        entityvillager.func_70938_b(this.func_190736_dl());
++        entityvillager.setProfession(this.getForgeProfession());
+         entityvillager.func_190672_a(this.field_70170_p.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null, false);
+         entityvillager.func_82187_q();
+ 
+@@ -193,7 +213,7 @@
+             entityvillager.func_174805_g(this.func_174833_aM());
+         }
+ 
+-        this.field_70170_p.func_72838_d(entityvillager);
++        this.field_70170_p.addEntity(entityvillager, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CURED);
+ 
+         if (this.field_191992_by != null)
+         {
+@@ -239,8 +259,8 @@
+                 }
+             }
+         }
+-
+-        return i;
++        int ticks = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks();
++        return MohistConfig.instance.RealTimeTicking() ? i * ticks : i;
+     }
+ 
+     protected float func_70647_i()
+@@ -278,4 +298,37 @@
+     {
+         return ItemStack.field_190927_a;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    @Nullable
++    private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
++    public void setForgeProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
++    {
++        this.prof = prof;
++        this.func_190733_a(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
++    }
++
++    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getForgeProfession()
++    {
++        if (this.prof == null)
++        {
++            this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getById(this.func_190736_dl());
++            if (this.prof == null)
++                return net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER;
++        }
++        return this.prof;
++    }
++
++    @Override
++    public void func_184206_a(DataParameter<?> key)
++    {
++        super.func_184206_a(key);
++        if (key.equals(field_190739_c))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.field_70180_af.func_187225_a(field_190739_c));
++        }
++    }
++
++    /* ======================================== FORGE END =====================================*/
+\ No newline at end of file
+ }

@@ -31,7 +31,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.util.StringUtil;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 
 public class TimingsCommand extends BukkitCommand {

@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/advancements/AdvancementList.java
++++ ../src-work/minecraft/net/minecraft/advancements/AdvancementList.java
+@@ -18,7 +18,7 @@
+ public class AdvancementList
+ {
+     private static final Logger field_192091_a = LogManager.getLogger();
+-    private final Map<ResourceLocation, Advancement> field_192092_b = Maps.<ResourceLocation, Advancement>newHashMap();
++    public final Map<ResourceLocation, Advancement> field_192092_b = Maps.<ResourceLocation, Advancement>newHashMap();
+     private final Set<Advancement> field_192093_c = Sets.<Advancement>newLinkedHashSet();
+     private final Set<Advancement> field_192094_d = Sets.<Advancement>newLinkedHashSet();
+     private AdvancementList.Listener field_192095_e;
+@@ -128,12 +128,12 @@
+                     }
+ 
+                     Entry<ResourceLocation, Advancement.Builder> entry1 = (Entry)iterator.next();
+-                    field_192091_a.error("Couldn't load advancement " + entry1.getKey() + ": " + entry1.getValue());
++                    field_192091_a.debug("Couldn't load advancement " + entry1.getKey() + ": " + entry1.getValue());
+                 }
+             }
+         }
+ 
+-        field_192091_a.info("Loaded " + this.field_192092_b.size() + " advancements");
++       // LOGGER.info("Loaded " + this.advancements.size() + " advancements"); // CraftBukkit - moved to AdvancementDataWorld#reload
+\ No newline at end of file
+     }
+ 
+     public void func_192087_a()

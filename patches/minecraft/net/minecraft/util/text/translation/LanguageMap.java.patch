@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/util/text/translation/LanguageMap.java
++++ ../src-work/minecraft/net/minecraft/util/text/translation/LanguageMap.java
+@@ -12,6 +12,8 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.commons.io.IOUtils;
++import com.mohistmc.MohistMC;
++import com.mohistmc.util.i18n.Message;
+ 
+ public class LanguageMap
+ {
+@@ -23,10 +25,42 @@
+ 
+     public LanguageMap()
+     {
++        String lang = Message.getLocale().toLowerCase();
++        InputStream inputstream1 = MohistMC.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
++        InputStream inputstream2 = MohistMC.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
++        InputStream inputstream = (inputstream1 == null ? inputstream2 : inputstream1);
+         try
+         {
+-            InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
++            inject(this, inputstream);
++        }
++        finally
++        {
++            IOUtils.closeQuietly(inputstream); // Forge: close stream after use (MC-153470)
++            IOUtils.closeQuietly(inputstream1);
++            IOUtils.closeQuietly(inputstream2);
++        }
++    }
+ 
++    public static void inject(InputStream inputstream)
++    {
++        inject(field_74817_a, inputstream);
++    }
++
++    private static void inject(LanguageMap inst, InputStream inputstream)
++    {
++        Map<String, String> map = parseLangFile(inputstream);
++        inst.field_74816_c.putAll(map);
++        inst.field_150511_e = System.currentTimeMillis();
++    }
++
++    public static Map<String, String> parseLangFile(InputStream inputstream)
++    {
++        Map<String, String> table = Maps.newHashMap();
++        try
++        {
++            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
++            if (inputstream == null) return table;
++
+             for (String s : IOUtils.readLines(inputstream, StandardCharsets.UTF_8))
+             {
+                 if (!s.isEmpty() && s.charAt(0) != '#')
+@@ -37,17 +71,18 @@
+                     {
+                         String s1 = astring[0];
+                         String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");
+-                        this.field_74816_c.put(s1, s2);
++                        table.put(s1, s2);
+                     }
+                 }
+             }
+ 
+-            this.field_150511_e = System.currentTimeMillis();
+         }
+         catch (IOException var7)
+         {
+             ;
+         }
++        catch (Exception ex) {}
++        return table;
+\ No newline at end of file
+     }
+ 
+     static LanguageMap func_74808_a()

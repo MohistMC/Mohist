@@ -41,7 +41,7 @@ import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.bukkit.inventory.Recipe;
-import red.mohist.recipe.CustomModRecipe;
+import com.mohistmc.recipe.CustomModRecipe;
 
 public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {

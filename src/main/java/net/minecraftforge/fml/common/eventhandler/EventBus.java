@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import org.bukkit.Bukkit;
-import red.mohist.api.event.BukkitHookForgeEvent;
+import com.mohistmc.api.event.BukkitHookForgeEvent;
 
 public class EventBus implements IEventExceptionHandler
 {

@@ -82,4 +82,8 @@ public final class PotionData {
         PotionData other = (PotionData) obj;
         return (this.upgraded == other.upgraded) && (this.extended == other.extended) && (this.type == other.type);
     }
+
+    public boolean isUncraftable() {
+        return type == PotionType.UNCRAFTABLE;
+    }
 }

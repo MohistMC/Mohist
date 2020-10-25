@@ -1,0 +1,164 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
+@@ -19,10 +19,12 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftShapedRecipe;
++import org.bukkit.inventory.Recipe;
++import com.mohistmc.recipe.CustomModRecipe;
+ 
+-public class ShapedRecipes implements IRecipe
++public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements net.minecraftforge.common.crafting.IShapedRecipe
+ {
+     public final int field_77576_b;
+     public final int field_77577_c;
+@@ -30,6 +32,8 @@
+     private final ItemStack field_77575_e;
+     private final String field_194137_e;
+ 
++    public ResourceLocation key;
++
+     public ShapedRecipes(String p_i47501_1_, int p_i47501_2_, int p_i47501_3_, NonNullList<Ingredient> p_i47501_4_, ItemStack p_i47501_5_)
+     {
+         this.field_194137_e = p_i47501_1_;
+@@ -39,7 +43,6 @@
+         this.field_77575_e = p_i47501_5_;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public String func_193358_e()
+     {
+         return this.field_194137_e;
+@@ -58,10 +61,7 @@
+         {
+             ItemStack itemstack = p_179532_1_.func_70301_a(i);
+ 
+-            if (itemstack.func_77973_b().func_77634_r())
+-            {
+-                nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
+-            }
++            nonnulllist.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
+         }
+ 
+         return nonnulllist;
+@@ -72,7 +72,6 @@
+         return this.field_77574_d;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public boolean func_194133_a(int p_194133_1_, int p_194133_2_)
+     {
+         return p_194133_1_ >= this.field_77576_b && p_194133_2_ >= this.field_77577_c;
+@@ -80,9 +79,9 @@
+ 
+     public boolean func_77569_a(InventoryCrafting p_77569_1_, World p_77569_2_)
+     {
+-        for (int i = 0; i <= 3 - this.field_77576_b; ++i)
++        for (int i = 0; i <= p_77569_1_.func_174922_i() - this.field_77576_b; ++i)
+         {
+-            for (int j = 0; j <= 3 - this.field_77577_c; ++j)
++            for (int j = 0; j <= p_77569_1_.func_174923_h() - this.field_77577_c; ++j)
+             {
+                 if (this.func_77573_a(p_77569_1_, i, j, true))
+                 {
+@@ -101,9 +100,9 @@
+ 
+     private boolean func_77573_a(InventoryCrafting p_77573_1_, int p_77573_2_, int p_77573_3_, boolean p_77573_4_)
+     {
+-        for (int i = 0; i < 3; ++i)
++        for (int i = 0; i < p_77573_1_.func_174922_i(); ++i)
+         {
+-            for (int j = 0; j < 3; ++j)
++            for (int j = 0; j < p_77573_1_.func_174923_h(); ++j)
+             {
+                 int k = i - p_77573_2_;
+                 int l = j - p_77573_3_;
+@@ -379,4 +378,83 @@
+             return new ItemStack(item, j, i);
+         }
+     }
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        if (this.field_77577_c < 1 || this.field_77577_c > 3 || this.field_77576_b < 1 || this.field_77576_b > 3) {
++            return new CustomModRecipe((IRecipe) this, this.getRegistryName());
++        }
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77575_e);
++        CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
++        switch (this.field_77577_c) {
++            case 1:
++                switch (this.field_77576_b) {
++                    case 1:
++                        recipe.shape("a");
++                        break;
++                    case 2:
++                        recipe.shape("ab");
++                        break;
++                    case 3:
++                        recipe.shape("abc");
++                        break;
++                }
++                break;
++            case 2:
++                switch (this.field_77576_b) {
++                    case 1:
++                        recipe.shape("a","b");
++                        break;
++                    case 2:
++                        recipe.shape("ab","cd");
++                        break;
++                    case 3:
++                        recipe.shape("abc","def");
++                        break;
++                }
++                break;
++            case 3:
++                switch (this.field_77576_b) {
++                    case 1:
++                        recipe.shape("a","b","c");
++                        break;
++                    case 2:
++                        recipe.shape("ab","cd","ef");
++                        break;
++                    case 3:
++                        recipe.shape("abc","def","ghi");
++                        break;
++                }
++                break;
++        }
++        char c = 'a';
++        for (Ingredient list : this.field_77574_d) {
++            if (list != null) {
++                ItemStack[] matchingStacks = list.func_193365_a();
++                if (matchingStacks.length > 0) {
++                    net.minecraft.item.ItemStack stack = matchingStacks[0];
++                    recipe.setIngredient(c, org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getMaterial(stack.func_77973_b()), (matchingStacks.length) > 1 ? 32767 : stack.func_77960_j());
++                }
++            }
++            c++;
++        }
++        return recipe;
++    }
++
++    @Override
++    public void setKey(ResourceLocation key) {
++        this.key = key;
++    }
++
++    //================================================ FORGE START ================================================
++    @Override
++    public int getRecipeWidth()
++    {
++        return this.func_192403_f();
++    }
++    @Override
++    public int getRecipeHeight()
++    {
++        return this.func_192404_g();
++    }
+\ No newline at end of file
+ }

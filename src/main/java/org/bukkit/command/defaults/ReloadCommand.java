@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 public class ReloadCommand extends BukkitCommand {
     public ReloadCommand(String name) {

@@ -60,11 +60,12 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
-import red.mohist.configuration.MohistConfig;
-import red.mohist.forge.ForgeInjectBukkit;
-import red.mohist.forge.ModCompatibleFixUtils;
-import red.mohist.util.NumberUtils;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.forge.ModCompatibleFixUtils;
+import com.mohistmc.forge.MohistForgeUtils;
+import com.mohistmc.util.NumberUtils;
+import com.mohistmc.util.i18n.Message;
 
 public class DimensionManager
 {
@@ -276,14 +277,14 @@ public class DimensionManager
         }
         try
         {
-            /*
+
             // Mohist start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
             if(MohistForgeUtils.craftWorldLoading)
             {
                 return;
             }
             // Mohist end
-             */
+
             DimensionManager.getProviderType(dim);
         }
         catch (Exception e)
@@ -291,11 +292,12 @@ public class DimensionManager
             FMLLog.log.error("Cannot Hotload Dim: {}", dim);
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
+        String name = "DIM" + dim;
         MinecraftServer mcServer = overworld.getMinecraftServer();
-        ISaveHandler savehandler = overworld.getSaveHandler();
+        // Use saved dimension from level.dat if it exists. This guarantees that after a world is created, the same dimension will be used. Fixes issues with MultiVerse
+        ISaveHandler saveHandler = new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true, mcServer.getDataFixer());
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        String name = "DIM" + dim;
         org.bukkit.World.Environment env = org.bukkit.World.Environment.getEnvironment(dim);
         if (dim >= -1 && dim <= 1)
         {
@@ -312,8 +314,8 @@ public class DimensionManager
             worldSettings.setGeneratorOptions(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
         }
         WorldInfo worldInfo = new WorldInfo(worldSettings, name);
-        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true, mcServer.getDataFixer()), dim, overworld, mcServer.profiler, worldInfo, env, gen).init()));
-
+        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, saveHandler, dim, overworld, mcServer.profiler, worldInfo, env, gen).init()));
+        world.initialize(worldSettings);
         mcServer.getPlayerList().setPlayerManager(mcServer.worldServerList.toArray(new WorldServer[0]));
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
@@ -410,7 +412,8 @@ public class DimensionManager
     {
         WorldServer world = worlds.get(id);
         if (world == null || !canUnloadWorld(world)) return;
-        for (String dim1 : MohistConfig.instance.autounloadWorld_whitelist) {
+        if (!MohistConfig.instance.autounloadworldenable.getValue()) return;
+        for (String dim1 : MohistConfig.instance.autounloadworld_whitelist) {
             if (dim1.equals("*") || (NumberUtils.isInteger(dim1) && Integer.valueOf(dim1).intValue() == id)) {
                 return;
             }

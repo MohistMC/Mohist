@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 class TimingHandler implements Timing {
 

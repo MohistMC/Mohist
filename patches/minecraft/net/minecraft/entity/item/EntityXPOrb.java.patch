@@ -1,0 +1,200 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
+@@ -3,6 +3,7 @@
+ import net.minecraft.block.material.Material;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.MoverType;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Enchantments;
+@@ -15,6 +16,11 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
++import com.mohistmc.common.RealTimeTicking;
++import com.mohistmc.configuration.MohistConfig;
+ 
+ public class EntityXPOrb extends Entity
+ {
+@@ -74,10 +80,16 @@
+     public void func_70071_h_()
+     {
+         super.func_70071_h_();
++        EntityPlayer prevTarget = this.field_80001_f;// CraftBukkit - store old target
+ 
+         if (this.field_70532_c > 0)
+         {
+-            --this.field_70532_c;
++            if(MohistConfig.instance.RealTimeTicking()) {
++                int ticks = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks();
++                this.field_70532_c = Math.max(0, this.field_70532_c - ticks);
++            } else {
++                --this.field_70532_c;
++            }
+         }
+ 
+         this.field_70169_q = this.field_70165_t;
+@@ -117,18 +129,27 @@
+ 
+         if (this.field_80001_f != null)
+         {
+-            double d1 = (this.field_80001_f.field_70165_t - this.field_70165_t) / 8.0D;
+-            double d2 = (this.field_80001_f.field_70163_u + (double)this.field_80001_f.func_70047_e() / 2.0D - this.field_70163_u) / 8.0D;
+-            double d3 = (this.field_80001_f.field_70161_v - this.field_70161_v) / 8.0D;
+-            double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+-            double d5 = 1.0D - d4;
++            boolean cancelled = false;
++            if (this.field_80001_f != prevTarget) {
++                EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this, field_80001_f, EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++                EntityLivingBase target = event.getTarget() == null ? null : ((org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
++                field_80001_f = target instanceof EntityPlayer ? (EntityPlayer) target : null;
++                cancelled = event.isCancelled();
++            }
+ 
+-            if (d5 > 0.0D)
+-            {
+-                d5 = d5 * d5;
+-                this.field_70159_w += d1 / d4 * d5 * 0.1D;
+-                this.field_70181_x += d2 / d4 * d5 * 0.1D;
+-                this.field_70179_y += d3 / d4 * d5 * 0.1D;
++            if (!cancelled && field_80001_f != null) {
++                double d1 = (this.field_80001_f.field_70165_t - this.field_70165_t) / 8.0D;
++                double d2 = (this.field_80001_f.field_70163_u + (double) this.field_80001_f.func_70047_e() / 2.0D - this.field_70163_u) / 8.0D;
++                double d3 = (this.field_80001_f.field_70161_v - this.field_70161_v) / 8.0D;
++                double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
++                double d5 = 1.0D - d4;
++
++                if (d5 > 0.0D) {
++                    d5 = d5 * d5;
++                    this.field_70159_w += d1 / d4 * d5 * 0.1D;
++                    this.field_70181_x += d2 / d4 * d5 * 0.1D;
++                    this.field_70179_y += d3 / d4 * d5 * 0.1D;
++                }
+             }
+         }
+ 
+@@ -137,7 +158,9 @@
+ 
+         if (this.field_70122_E)
+         {
+-            f = this.field_70170_p.func_180495_p(new BlockPos(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) - 1, MathHelper.func_76128_c(this.field_70161_v))).func_177230_c().field_149765_K * 0.98F;
++            BlockPos underPos = new BlockPos(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) - 1, MathHelper.func_76128_c(this.field_70161_v));
++            net.minecraft.block.state.IBlockState underState = this.field_70170_p.func_180495_p(underPos);
++            f = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, underPos, this) * 0.98F;
+         }
+ 
+         this.field_70159_w *= (double)f;
+@@ -150,7 +173,12 @@
+         }
+ 
+         ++this.field_70533_a;
+-        ++this.field_70531_b;
++        if (MohistConfig.instance.RealTimeTicking()) {
++            int ticks = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks();
++            this.field_70531_b += ticks;
++        } else {
++            ++this.field_70531_b;
++        }
+ 
+         if (this.field_70531_b >= 6000)
+         {
+@@ -170,6 +198,7 @@
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
+     {
++        if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; //Forge: Fixes MC-53850
+         if (this.func_180431_b(p_70097_1_))
+         {
+             return false;
+@@ -192,36 +221,42 @@
+     {
+         p_70014_1_.func_74777_a("Health", (short)this.field_70529_d);
+         p_70014_1_.func_74777_a("Age", (short)this.field_70531_b);
+-        p_70014_1_.func_74777_a("Value", (short)this.field_70530_e);
++        p_70014_1_.func_74768_a("Value", this.field_70530_e); // Paper - save as Integer
+     }
+ 
+     public void func_70037_a(NBTTagCompound p_70037_1_)
+     {
+         this.field_70529_d = p_70037_1_.func_74765_d("Health");
+         this.field_70531_b = p_70037_1_.func_74765_d("Age");
+-        this.field_70530_e = p_70037_1_.func_74765_d("Value");
++        this.field_70530_e = p_70037_1_.func_74762_e("Value"); // Paper - save as Integer
+     }
+ 
+     public void func_70100_b_(EntityPlayer p_70100_1_)
+     {
+         if (!this.field_70170_p.field_72995_K)
+         {
+-            if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0)
+-            {
++            if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0 )
++			{
++                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(p_70100_1_, this))) return;
+                 p_70100_1_.field_71090_bL = 2;
+                 p_70100_1_.func_71001_a(this, 1);
+                 ItemStack itemstack = EnchantmentHelper.func_92099_a(Enchantments.field_185296_A, p_70100_1_);
+ 
+                 if (!itemstack.func_190926_b() && itemstack.func_77951_h())
+                 {
+-                    int i = Math.min(this.func_184514_c(this.field_70530_e), itemstack.func_77952_i());
+-                    this.field_70530_e -= this.func_184515_b(i);
+-                    itemstack.func_77964_b(itemstack.func_77952_i() - i);
++                    float ratio = itemstack.func_77973_b().getXpRepairRatio(itemstack);
++                    int i = Math.min(roundAverage(this.field_70530_e * ratio), itemstack.func_77952_i());
++                    org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_70100_1_, this, itemstack, i);
++                    i = event.getRepairAmount();
++                    if (!event.isCancelled()) {
++                        this.field_70530_e -= roundAverage(i / ratio);
++                        itemstack.func_77964_b(itemstack.func_77952_i() - i);
++                    }
+                 }
+ 
+                 if (this.field_70530_e > 0)
+                 {
+-                    p_70100_1_.func_71023_q(this.field_70530_e);
++                    p_70100_1_.func_71023_q(CraftEventFactory.callPlayerExpChangeEvent(p_70100_1_, this.field_70530_e).getAmount()); // CraftBukkit - this.value -> event.getAmount()
+                 }
+ 
+                 this.func_70106_y();
+@@ -291,6 +326,24 @@
+ 
+     public static int func_70527_a(int p_70527_0_)
+     {
++        // CraftBukkit start
++        if (p_70527_0_ > 162670129) return p_70527_0_ - 100000;
++        if (p_70527_0_ > 81335063) return 81335063;
++        if (p_70527_0_ > 40667527) return 40667527;
++        if (p_70527_0_ > 20333759) return 20333759;
++        if (p_70527_0_ > 10166857) return 10166857;
++        if (p_70527_0_ > 5083423) return 5083423;
++        if (p_70527_0_ > 2541701) return 2541701;
++        if (p_70527_0_ > 1270849) return 1270849;
++        if (p_70527_0_ > 635413) return 635413;
++        if (p_70527_0_ > 317701) return 317701;
++        if (p_70527_0_ > 158849) return 158849;
++        if (p_70527_0_ > 79423) return 79423;
++        if (p_70527_0_ > 39709) return 39709;
++        if (p_70527_0_ > 19853) return 19853;
++        if (p_70527_0_ > 9923) return 9923;
++        if (p_70527_0_ > 4957) return 4957;
++        // CraftBukkit end
+         if (p_70527_0_ >= 2477)
+         {
+             return 2477;
+@@ -337,4 +390,10 @@
+     {
+         return false;
+     }
++
++    private static int roundAverage(float value)
++    {
++        double floor = Math.floor(value);
++        return (int) floor + (Math.random() < value - floor ? 1 : 0);
++    }
+\ No newline at end of file
+ }

@@ -35,11 +35,11 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
-import red.mohist.api.PlayerAPI;
-import red.mohist.configuration.MohistConfig;
-import red.mohist.forge.ForgeVersion;
-import red.mohist.forge.MohistForgeUtils;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.api.PlayerAPI;
+import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.forge.ForgeVersion;
+import com.mohistmc.forge.MohistForgeUtils;
+import com.mohistmc.util.i18n.Message;
 
 enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
 {

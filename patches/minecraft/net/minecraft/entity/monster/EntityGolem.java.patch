@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityGolem.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityGolem.java
+@@ -41,7 +41,7 @@
+         return 120;
+     }
+ 
+-    protected boolean func_70692_ba()
++    public boolean func_70692_ba()
+\ No newline at end of file
+     {
+         return false;
+     }

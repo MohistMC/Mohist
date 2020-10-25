@@ -1159,7 +1159,7 @@ public class CraftWorld implements World {
         if (data != null && data.getClass().equals(org.bukkit.material.MaterialData.class)) {
             org.bukkit.material.MaterialData materialData = (org.bukkit.material.MaterialData) data;
             Validate.isTrue(materialData.getItemType().isBlock(), "Material must be block");
-            spigot().playEffect(loc, effect, materialData.getItemType().getId(), materialData.getData(), 0, 0, 0, 1, 1, radius);
+            spigot().playEffect(loc, effect, materialData.getItemType().getBlockID(), materialData.getData(), 0, 0, 0, 1, 1, radius);
         } else {
             int dataValue = data == null ? 0 : CraftEffect.getDataValue(effect, data);
             playEffect(loc, effect, dataValue, radius);

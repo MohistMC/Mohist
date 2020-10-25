@@ -40,8 +40,8 @@ import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import red.mohist.inventory.CraftCustomInventory;
-import red.mohist.inventory.InventoryOwner;
+import com.mohistmc.inventory.CraftCustomInventory;
+import com.mohistmc.inventory.InventoryOwner;
 
 public class VanillaInventoryCodeHooks
 {

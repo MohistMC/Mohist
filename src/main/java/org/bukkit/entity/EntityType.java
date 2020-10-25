@@ -13,10 +13,10 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-import red.mohist.entity.CraftCustomAbstractHorse;
-import red.mohist.entity.CraftCustomChestHorse;
-import red.mohist.entity.CraftCustomEntity;
-import red.mohist.entity.CustomProjectileEntity;
+import com.mohistmc.entity.CraftCustomAbstractHorse;
+import com.mohistmc.entity.CraftCustomChestHorse;
+import com.mohistmc.entity.CraftCustomEntity;
+import com.mohistmc.entity.CustomProjectileEntity;
 
 public enum EntityType {
 
@@ -269,7 +269,6 @@ public enum EntityType {
      * An unknown entity without an Entity Class
      */
     UNKNOWN(null, null, -1, false),
-    FORGE_MOD("forge_mod", CraftCustomEntity.class, -1, false),
     FORGE_MOD_PROJECTILE("forge_mod_projectile", CustomProjectileEntity.class, -1, false),
     FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", CraftCustomChestHorse.class, -1, false),
     FORGE_MOD_HORSE("forge_mod_horse", CraftCustomAbstractHorse.class, -1, false);

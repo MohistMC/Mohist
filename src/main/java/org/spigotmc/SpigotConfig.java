@@ -25,8 +25,9 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import red.mohist.Mohist;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.MohistMC;
+import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.util.i18n.Message;
 
 public class SpigotConfig {
 
@@ -190,7 +191,9 @@ public class SpigotConfig {
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
         commands.put( "restart", new RestartCommand( "restart" ) );
-        WatchdogThread.doStart( timeoutTime, restartOnCrash );
+        if (MohistConfig.instance.getBoolean("mohist.watchdog_spigot")) {
+            WatchdogThread.doStart(timeoutTime, restartOnCrash);
+        }
     }
 
     private static void bungee() {
@@ -222,7 +225,7 @@ public class SpigotConfig {
         for (String name : section.getKeys(true)) {
             if (section.isInt(name)) {
                 if (StatList.getOneShotStat(name) == null) {
-                    Mohist.LOGGER.warn("Ignoring non existent stats.forced-stats " + name);
+                    MohistMC.LOGGER.warn("Ignoring non existent stats.forced-stats " + name);
                     continue;
                 }
                 forcedStats.put(name, section.getInt(name));

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="com.mojang.util,red.mohist.console.log4j">
+<Configuration status="warn" packages="com.mojang.util,com.mohistmc.console.log4j">
     <Appenders>
         <Console name="WINDOWS_COMPAT" target="SYSTEM_OUT"/>
         <Queue name="TerminalConsole">
             <PatternLayout pattern="[%hTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
             <DefaultRolloverStrategy max="20" fileIndex="min"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>

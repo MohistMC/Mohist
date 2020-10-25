@@ -40,7 +40,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends EntityPlayerMP
@@ -69,7 +69,7 @@ public class FakePlayer extends EntityPlayerMP
                 Bukkit.getPluginManager().callEvent(prelogin1);
                 PlayerLoginEvent login = new PlayerLoginEvent(getBukkitEntity(), "localhost", InetAddress.getLoopbackAddress());
                 Bukkit.getPluginManager().callEvent(login);
-                Mohist.LOGGER.info("%s","Fakeplayer "+getName()+" ("+getUniqueID()+") joined server");
+                MohistMC.LOGGER.info("%s","Fakeplayer "+getName()+" ("+getUniqueID()+") joined server");
             });
         }).start();
     }

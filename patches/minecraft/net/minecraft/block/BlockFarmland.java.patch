@@ -1,0 +1,79 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
+@@ -8,7 +8,6 @@
+ import net.minecraft.block.state.BlockStateContainer;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+-import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.item.Item;
+@@ -19,6 +18,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityInteractEvent;
+ 
+ public class BlockFarmland extends Block
+ {
+@@ -72,16 +73,38 @@
+ 
+     public void func_180658_a(World p_180658_1_, BlockPos p_180658_2_, Entity p_180658_3_, float p_180658_4_)
+     {
+-        if (!p_180658_1_.field_72995_K && p_180658_1_.field_73012_v.nextFloat() < p_180658_4_ - 0.5F && p_180658_3_ instanceof EntityLivingBase && (p_180658_3_ instanceof EntityPlayer || p_180658_1_.func_82736_K().func_82766_b("mobGriefing")) && p_180658_3_.field_70130_N * p_180658_3_.field_70130_N * p_180658_3_.field_70131_O > 0.512F)
++        super.func_180658_a(p_180658_1_, p_180658_2_, p_180658_3_, p_180658_4_); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
++        if (net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, Blocks.field_150346_d.func_176223_P(), p_180658_4_, p_180658_3_)) // Forge: Move logic to Entity#canTrample
+         {
++            // CraftBukkit start - Interact soil
++            org.bukkit.event.Cancellable cancellable = null;
++            if (p_180658_3_ instanceof EntityPlayer) {
++                cancellable = CraftEventFactory.callPlayerInteractEvent((EntityPlayer) p_180658_3_, org.bukkit.event.block.Action.PHYSICAL, p_180658_2_, null, null, null);
++            } else if (p_180658_1_.getWorld() != null && p_180658_3_ != null) {
++                cancellable = new EntityInteractEvent(p_180658_3_.getBukkitEntity(), p_180658_1_.getWorld().getBlockAt(p_180658_2_.func_177958_n(), p_180658_2_.func_177956_o(), p_180658_2_.func_177952_p()));
++                p_180658_1_.getServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
++            }
++
++            if (cancellable != null && cancellable.isCancelled()) {
++                return;
++            }
++
++            if (CraftEventFactory.callEntityChangeBlockEvent(p_180658_3_, p_180658_2_, Blocks.field_150346_d, 0).isCancelled()) {
++                return;
++            }
++            // CraftBukkit end
+             func_190970_b(p_180658_1_, p_180658_2_);
+         }
+ 
+-        super.func_180658_a(p_180658_1_, p_180658_2_, p_180658_3_, p_180658_4_);
++        // super.onFallenUpon(worldIn, pos, entityIn, fallDistance); // CraftBukkit - moved up
+     }
+ 
+     protected static void func_190970_b(World p_190970_0_, BlockPos p_190970_1_)
+     {
++        org.bukkit.block.Block block = p_190970_0_.getWorld().getBlockAt(p_190970_1_.func_177958_n(), p_190970_1_.func_177956_o(), p_190970_1_.func_177952_p());
++        if (CraftEventFactory.callBlockFadeEvent(block, Blocks.field_150346_d).isCancelled()) {
++            return;
++        }
+         p_190970_0_.func_175656_a(p_190970_1_, Blocks.field_150346_d.func_176223_P());
+         AxisAlignedBB axisalignedbb = field_194405_c.func_186670_a(p_190970_1_);
+ 
+@@ -95,7 +118,7 @@
+     private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
+     {
+         Block block = p_176529_1_.func_180495_p(p_176529_2_.func_177984_a()).func_177230_c();
+-        return block instanceof BlockCrops || block instanceof BlockStem;
++        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(p_176529_1_.func_180495_p(p_176529_2_), p_176529_1_, p_176529_2_, EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
+     }
+ 
+     private boolean func_176530_e(World p_176530_1_, BlockPos p_176530_2_)
+@@ -108,7 +131,7 @@
+             }
+         }
+ 
+-        return false;
++        return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(p_176530_1_, p_176530_2_);
+\ No newline at end of file
+     }
+ 
+     public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_)

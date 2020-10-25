@@ -1,1 +1,9 @@
 rootProject.name = 'Mohist'
+
+include ':mcp'
+include ':clean'
+include ':mohist'
+
+project(":mcp").projectDir = file("projects/mcp")
+project(":clean").projectDir = file("projects/clean")
+project(":mohist").projectDir = file("projects/mohist")

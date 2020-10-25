@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import net.minecraft.server.management.UserListIPBans;
 import net.minecraft.server.management.UserListIPBansEntry;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 public final class CraftIpBanEntry implements org.bukkit.BanEntry {
     private final UserListIPBans list;
@@ -79,7 +79,7 @@ public final class CraftIpBanEntry implements org.bukkit.BanEntry {
         try {
             this.list.writeChanges();
         } catch (IOException ex) {
-            Mohist.LOGGER.error("Failed to save banned-ips.json, {0}", ex.getMessage());
+            MohistMC.LOGGER.error("Failed to save banned-ips.json, {0}", ex.getMessage());
         }
     }
 }

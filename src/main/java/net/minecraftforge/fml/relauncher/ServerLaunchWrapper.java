@@ -20,17 +20,11 @@
 package net.minecraftforge.fml.relauncher;
 
 import org.apache.logging.log4j.LogManager;
-import red.mohist.Mohist;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.MohistMC;
+import com.mohistmc.util.i18n.Message;
 
-import java.io.*;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
-
-import static red.mohist.util.JarTool.inputStreamFile;
 
 public class ServerLaunchWrapper {
 
@@ -56,12 +50,11 @@ public class ServerLaunchWrapper {
         }
         Class<?> launchwrapper = null;
         try {
-            launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, Mohist.class.getClassLoader());
-            Class.forName("org.objectweb.asm.Type", true, Mohist.class.getClassLoader());
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//set date format
+            launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, MohistMC.class.getClassLoader());
+            Class.forName("org.objectweb.asm.Type", true, MohistMC.class.getClassLoader());
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
-            Mohist.LOGGER = LogManager.getLogger("Mohist");
+            MohistMC.LOGGER = LogManager.getLogger("Mohist");
         } catch (Exception e) {
             System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
             System.out.println("   ");

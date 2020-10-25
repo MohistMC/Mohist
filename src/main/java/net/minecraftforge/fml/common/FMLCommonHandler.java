@@ -81,7 +81,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.server.FMLServerHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 /**
  * The main class for non-obfuscated hook handling code

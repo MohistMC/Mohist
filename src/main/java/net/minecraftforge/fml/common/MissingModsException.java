@@ -33,7 +33,7 @@ import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 public class MissingModsException extends EnhancedRuntimeException implements IDisplayableError
 {

@@ -51,7 +51,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.commons.io.IOUtils;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.util.i18n.Message;
 
 /**
  * Handles primary communication from hooked code into the system

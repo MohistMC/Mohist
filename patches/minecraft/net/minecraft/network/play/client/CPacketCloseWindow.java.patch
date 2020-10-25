@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/CPacketCloseWindow.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketCloseWindow.java
+@@ -15,7 +15,6 @@
+     {
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public CPacketCloseWindow(int p_i46881_1_)
+     {
+         this.field_149556_a = p_i46881_1_;

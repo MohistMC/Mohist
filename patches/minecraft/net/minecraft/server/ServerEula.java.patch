@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/server/ServerEula.java
++++ ../src-work/minecraft/net/minecraft/server/ServerEula.java
+@@ -4,18 +4,18 @@
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.OutputStream;
+-import java.util.Properties;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
++import java.io.OutputStreamWriter;
++import java.nio.charset.StandardCharsets;
++import java.text.SimpleDateFormat;
++import java.util.Date;
+ import org.apache.commons.io.IOUtils;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
++import com.mohistmc.util.i18n.Message;
++import com.mohistmc.util.i18n.UTF8Properties;
+ 
+-@SideOnly(Side.SERVER)
+ public class ServerEula
+ {
+-    private static final Logger field_154349_a = LogManager.getLogger();
+     private final File field_154350_b;
+     private final boolean field_154351_c;
+ 
+@@ -32,14 +32,13 @@
+ 
+         try
+         {
+-            Properties properties = new Properties();
++            UTF8Properties properties = new UTF8Properties();
+             fileinputstream = new FileInputStream(p_154347_1_);
+-            properties.load(fileinputstream);
++            properties.load(new InputStreamReader(fileinputstream, StandardCharsets.UTF_8));
+             flag = Boolean.parseBoolean(properties.getProperty("eula", "false"));
+         }
+         catch (Exception var8)
+         {
+-            field_154349_a.warn("Failed to load {}", (Object)p_154347_1_);
+             this.func_154348_b();
+         }
+         finally
+@@ -61,14 +60,14 @@
+ 
+         try
+         {
+-            Properties properties = new Properties();
++            UTF8Properties properties = new UTF8Properties();
+             fileoutputstream = new FileOutputStream(this.field_154350_b);
+-            properties.setProperty("eula", "false");
+-            properties.store(fileoutputstream, "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).");
++            properties.put("eula", "false", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
++            Object[] p = {"https://account.mojang.com/documents/minecraft_eula"};
++            properties.orderStore(new OutputStreamWriter(fileoutputstream, StandardCharsets.UTF_8), Message.getFormatString("eula.text",p));
+         }
+         catch (Exception exception)
+         {
+-            field_154349_a.warn("Failed to save {}", this.field_154350_b, exception);
+         }
+         finally
+         {

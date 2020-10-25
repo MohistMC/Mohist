@@ -81,8 +81,8 @@ import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfessio
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 import org.bukkit.inventory.Recipe;
-import red.mohist.recipe.CustomModRecipe;
-import red.mohist.util.i18n.Message;
+import com.mohistmc.recipe.CustomModRecipe;
+import com.mohistmc.util.i18n.Message;
 
 /**
  * INTERNAL ONLY

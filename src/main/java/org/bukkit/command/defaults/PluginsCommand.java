@@ -11,8 +11,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-import red.mohist.util.i18n.Message;
-import red.mohist.util.pluginmanager.PluginManagers;
+import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.pluginmanager.PluginManagers;
 
 public class PluginsCommand extends BukkitCommand {
     public PluginsCommand(String name) {

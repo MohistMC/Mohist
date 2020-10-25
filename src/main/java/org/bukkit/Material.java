@@ -4,7 +4,8 @@ import com.google.common.collect.Maps;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Map;
-import javax.annotation.Nullable;
+
+import net.minecraftforge.common.util.EnumHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.map.MapView;
 import org.bukkit.material.Banner;
@@ -535,30 +536,46 @@ public enum Material {
     RECORD_11(2266, 1),
     RECORD_12(2267, 1),;
 
-    private static Material[] byId = new Material[32676];
-    private static Material[] blockById = new Material[32676];
+    public static Material[] byId = new Material[32676];
+    public static Material[] blockById = new Material[32676];
     private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
-    public static Map<String, Material> BLOCK_BY_NAME = Maps.newHashMap();
+    private boolean isForgeBlock = false;
 
     static {
         for (Material material : values()) {
-            if (byId.length > material.id) {
-                byId[material.id] = material;
+            if (material.isForgeBlock()) {
+                if (blockById.length > material.id) {
+                    blockById[material.id] = material;
+                } else {
+                    blockById = Arrays.copyOfRange(blockById, 0, material.id + 2);
+                    blockById[material.id] = material;
+                }
             } else {
-                byId = Arrays.copyOfRange(byId, 0, material.id + 2);
-                byId[material.id] = material;
+                if (byId.length > material.id) {
+                    byId[material.id] = material;
+                } else {
+                    byId = Arrays.copyOfRange(byId, 0, material.id + 2);
+                    byId[material.id] = material;
+                }
             }
             BY_NAME.put(material.name(), material);
         }
     }
 
     private final int id;
+    private int blockID;
     private final Constructor<? extends MaterialData> ctor;
     private final int maxStack;
     private final short durability;
 
     Material(final int id) {
         this(id, 64);
+    }
+
+    // Cauldron start - constructor used to set if the Material is a block or not
+    private Material(final int id, boolean flag) {
+        this(id, 64);
+        this.isForgeBlock = flag;
     }
     // Cauldron end
 
@@ -580,6 +597,7 @@ public enum Material {
 
     Material(final int id, final int stack, final int durability, final Class<? extends MaterialData> data) {
         this.id = id;
+        this.blockID = id;
         this.durability = (short) durability;
         this.maxStack = stack;
         // try to cache the constructor for this material
@@ -602,9 +620,14 @@ public enum Material {
         if (byId.length > id && id >= 0) {
             return byId[id];
         } else {
-            if (blockById.length > id && id >= 0) {
-                return blockById[id];
-            }
+            return null;
+        }
+    }
+
+    public static Material getBlockMaterial(final int id) {
+        if (blockById.length > id && id >= 0) {
+            return blockById[id];
+        } else {
             return null;
         }
     }
@@ -619,7 +642,7 @@ public enum Material {
      * @return Material if found, or null
      */
     public static Material getMaterial(final String name) {
-        return BLOCK_BY_NAME.containsKey(name) ? BLOCK_BY_NAME.get(name) : BY_NAME.get(name);
+        return BY_NAME.get(name);
     }
 
     /**
@@ -648,7 +671,7 @@ public enum Material {
             // Cauldron start - extract to normalizeName()
             String filtered = normalizeName(name);
             // Mohist - use BLOCK_BY_NAME to get blocks of mods
-            result = BLOCK_BY_NAME.containsKey(filtered) ? BLOCK_BY_NAME.get(filtered) : BY_NAME.get(filtered);
+            result = BY_NAME.get(filtered);
             // Cauldron end
         }
 
@@ -660,38 +683,30 @@ public enum Material {
         return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
     }
 
-    @Nullable
-    public static Material addMaterial(Material material) {
-        if (byId[material.id] == null) {
-            byId[material.id] = material;
-            BY_NAME.put(normalizeName(material.name()), material);
-            BY_NAME.put("X" + String.valueOf(material.id), material);
+    public static Material addMaterial(String materialName, int id, boolean isBlock) {
+        // Forge Blocks
+        if (isBlock && blockById[id] == null) {
+            String materialName_block = normalizeName("X" + String.valueOf(id));
+            Material material = BY_NAME.get(materialName);
+            if (material != null){
+                material.blockID = id;
+                material.isForgeBlock = true;
+            }else {
+                material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), true});
+            }
+            blockById[id] = material;
+            BY_NAME.put(materialName, material);
+            BY_NAME.put(materialName_block, material);
+            return material;
+        } else if (byId[id] == null) { // Forge Items
+            String materialName_item = normalizeName("X" + String.valueOf(id));
+            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), false});
+            byId[id] = material;
+            BY_NAME.put(materialName, material);
+            BY_NAME.put(materialName_item, material);
             return material;
         }
         return null;
-    }
-
-    @Nullable
-    public static Material addBlockMaterial(Material material) {
-        if (blockById[material.id] == null) {
-            blockById[material.id] = material;
-            BLOCK_BY_NAME.put(normalizeName(material.name()), material);
-            BLOCK_BY_NAME.put("X" + String.valueOf(material.id), material);
-            return material;
-        }
-        return null;
-    }
-
-    public static Material getBlockMaterial(final int id) {
-        if (blockById.length > id && id >= 0) {
-            return blockById[id];
-        } else {
-            return null;
-        }
-    }
-
-    public static Material getBlockMaterial(final String name) {
-        return BLOCK_BY_NAME.get(name);
     }
 
     /**
@@ -703,6 +718,16 @@ public enum Material {
 
     public int getId() {
         return id;
+    }
+
+    /**
+     * Gets the ForgeBlock ID of this Material
+     *
+     * @return ID of this material's Block
+     */
+
+    public int getBlockID() {
+        return blockID;
     }
 
     /**
@@ -766,8 +791,15 @@ public enum Material {
      * @return true if this material is a block
      */
     public boolean isBlock() {
-        return Arrays.stream(blockById).anyMatch(material -> this == material);
+        return id < 256 || isForgeBlock; // Cauldron
     }
+
+    /**
+     * Checks if the material is a forge block
+     *
+     * @return true if this material is a forge block
+     */
+    public boolean isForgeBlock() { return isForgeBlock; }
 
     /**
      * Checks if this Material is edible.

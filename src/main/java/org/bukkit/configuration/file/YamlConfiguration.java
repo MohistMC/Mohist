@@ -13,7 +13,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 /**
  * An implementation of {@link Configuration} which saves all files in Yaml.
@@ -48,7 +48,7 @@ public class YamlConfiguration extends FileConfiguration {
             config.load(file);
         } catch (FileNotFoundException ex) {
         } catch (IOException | InvalidConfigurationException ex) {
-            Mohist.LOGGER.error("Cannot load " + file, ex);
+            MohistMC.LOGGER.error("Cannot load " + file, ex);
         }
 
         return config;
@@ -73,7 +73,7 @@ public class YamlConfiguration extends FileConfiguration {
         try {
             config.load(reader);
         } catch (IOException | InvalidConfigurationException ex) {
-            Mohist.LOGGER.error("Cannot load configuration from stream", ex);
+            MohistMC.LOGGER.error("Cannot load configuration from stream", ex);
         }
 
         return config;

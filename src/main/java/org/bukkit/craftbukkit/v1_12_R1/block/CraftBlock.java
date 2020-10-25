@@ -10,6 +10,7 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -36,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockVector;
+import com.mohistmc.block.CraftCustomContainer;
 
 public class CraftBlock implements Block {
     private final CraftChunk chunk;
@@ -186,7 +188,7 @@ public class CraftBlock implements Block {
 
     @Override
     public void setType(Material type, boolean applyPhysics) {
-        setTypeId(type.getId(), applyPhysics);
+        setTypeId(type.getBlockID(), applyPhysics);
     }
 
     public boolean setTypeId(final int type) {
@@ -293,16 +295,20 @@ public class CraftBlock implements Block {
     @Override
     public BlockState getState() {
         Material material = getType();
-        // Cauldron start - if null, check for TE that implements IInventory
-        if (material == null) {
-            TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));
+        // Mohist start - check for TE that implements IInventory
+        if (material.isForgeBlock()) {
+            TileEntity tileEntity = chunk.getCraftWorld().getTileEntityAt(x, y, z);
             if (tileEntity != null) {
-                return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+                // block with IInventory
+                if (tileEntity instanceof IInventory) {
+                    return new CraftCustomContainer(this);
+                }
+                return new CraftBlockEntityState<>(this, tileEntity.getClass());
             } else {
                 return new CraftBlockState(this);
             }
         }
-        // Cauldron end
+        // Mohist end
         switch (material) {
             case SIGN:
             case SIGN_POST:
@@ -377,9 +383,13 @@ public class CraftBlock implements Block {
                 return new CraftBed(this);
             default:
                 // Cauldron start
-                TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));;
+                TileEntity tileEntity = chunk.getCraftWorld().getTileEntityAt(x, y, z);
                 if (tileEntity != null) {
-                    return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+                    // block with IInventory
+                    if (tileEntity instanceof IInventory) {
+                        return new CraftCustomContainer(this);
+                    }
+                    return new CraftBlockEntityState<>(this, tileEntity.getClass());
                 } else {
                     return new CraftBlockState(this);
                 }

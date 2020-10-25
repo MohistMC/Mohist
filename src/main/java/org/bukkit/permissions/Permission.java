@@ -8,7 +8,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 /**
  * Represents a unique permission that may be attached to a {@link
@@ -92,7 +92,7 @@ public class Permission {
             try {
                 result.add(Permission.loadPermission(entry.getKey().toString(), (Map<?, ?>) entry.getValue(), def, result));
             } catch (Throwable ex) {
-                Mohist.LOGGER.error(String.format(error, entry.getKey()), ex);
+                MohistMC.LOGGER.error(String.format(error, entry.getKey()), ex);
             }
         }
 

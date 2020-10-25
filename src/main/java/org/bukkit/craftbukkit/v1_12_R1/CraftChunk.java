@@ -181,11 +181,12 @@ public class CraftChunk implements Chunk {
 
         BlockState[] entities = new BlockState[chunk.getTileEntityMap().size()];
 
-        for (BlockPos pos : chunk.getTileEntityMap().keySet()) {
-            if (pos == null) {
+        for (Object obj : chunk.getTileEntityMap().keySet().toArray()) {
+            if (!(obj instanceof BlockPos)) {
                 continue;
             }
 
+            BlockPos pos = (BlockPos) obj;
             entities[index++] = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
         }
 

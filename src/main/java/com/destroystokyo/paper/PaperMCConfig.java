@@ -40,7 +40,6 @@ public class PaperMCConfig {
     static Map<String, Command> commands;
     private static boolean verbose;
     /*========================================================================*/
-    private static boolean metricsStarted;
 
     public static void init(File configFile) {
         CONFIG_FILE = configFile;
@@ -310,11 +309,5 @@ public class PaperMCConfig {
             maxBookPageSize = 2560;
             maxBookTotalSizeMultiplier = 0.98D;
         }
-    }
-
-    public static boolean allowPistonDuplication;
-    private static void allowPistonDuplication() {
-        allowPistonDuplication = getBoolean("settings.unsupported-settings.allow-piston-duplication", config.getBoolean("settings.unsupported-settings.allow-tnt-duplication", false));
-        set("settings.unsupported-settings.allow-tnt-duplication", null);
     }
 }

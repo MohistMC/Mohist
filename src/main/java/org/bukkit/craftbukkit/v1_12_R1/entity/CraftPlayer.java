@@ -119,7 +119,7 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import org.spigotmc.AsyncCatcher;
 import org.spigotmc.SpigotConfig;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -602,7 +602,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendBlockChange(Location loc, Material material, byte data) {
-        sendBlockChange(loc, material.getId(), data);
+        sendBlockChange(loc, material.getBlockID(), data);
     }
 
     @Override
@@ -1458,15 +1458,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setFlying(boolean value) {
-        boolean needsUpdate = getHandle().capabilities.isFlying != value; // Paper - Only refresh abilities if needed
         if (!getAllowFlight() && value) {
             throw new IllegalArgumentException("Cannot make player fly if getAllowFlight() is false");
         }
 
         getHandle().capabilities.isFlying = value;
-        if (needsUpdate) {
-            getHandle().sendPlayerAbilities(); // Paper - Only refresh abilities if needed
-        }
+        getHandle().sendPlayerAbilities();
     }
 
     @Override
@@ -1638,7 +1635,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         double healthMod = scaledHealth ? healthScale : getMaxHealth();
         if (healthMod >= Float.MAX_VALUE || healthMod <= 0) {
             healthMod = 20; // Reset health
-            Mohist.LOGGER.warn(getName() + " tried to crash the server with a large health attribute");
+            MohistMC.LOGGER.warn(getName() + " tried to crash the server with a large health attribute");
         }
         collection.add(new ModifiableAttributeInstance(getHandle().getAttributeMap(), (new RangedAttribute(null, "generic.maxHealth", healthMod, 0.0D, Float.MAX_VALUE)).setDescription("Max Health").setShouldWatch(true)));
         // Spigot end
@@ -1785,6 +1782,42 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public Player.Spigot spigot() {
         return spigot;
+    }
+
+    @Override
+    public void sendMessage(BaseComponent component) {
+        sendMessage(new BaseComponent[]{component});
+    }
+
+    @Override
+    public void sendMessage(BaseComponent... components) {
+        if (getHandle().connection == null) {
+            return;
+        }
+
+        SPacketChat packet = new SPacketChat(null, ChatType.CHAT);
+        packet.components = components;
+        getHandle().connection.sendPacket(packet);
+    }
+
+    @Override
+    public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent component) {
+        sendMessage(position, new BaseComponent[]{component});
+    }
+
+    @Override
+    public void sendMessage(ChatMessageType position, BaseComponent... components) {
+        if (getHandle().connection == null) {
+            return;
+        }
+
+        SPacketChat packet = new SPacketChat(null, ChatType.byId((byte) position.ordinal()));
+        // Action bar doesn't render colours, replace colours with legacy section symbols
+        if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR) {
+            components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
+        }
+        packet.components = components;
+        getHandle().connection.sendPacket(packet);
     }
     // Spigot end
 

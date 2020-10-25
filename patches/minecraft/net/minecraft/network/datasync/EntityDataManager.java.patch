@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/network/datasync/EntityDataManager.java
++++ ../src-work/minecraft/net/minecraft/network/datasync/EntityDataManager.java
+@@ -4,6 +4,7 @@
+ import com.google.common.collect.Maps;
+ import io.netty.handler.codec.DecoderException;
+ import io.netty.handler.codec.EncoderException;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import java.io.IOException;
+ import java.util.List;
+ import java.util.Map;
+@@ -26,7 +27,7 @@
+     private static final Logger field_190303_a = LogManager.getLogger();
+     private static final Map < Class <? extends Entity > , Integer > field_187232_a = Maps. < Class <? extends Entity > , Integer > newHashMap();
+     private final Entity field_187233_b;
+-    private final Map < Integer, EntityDataManager.DataEntry<? >> field_187234_c = Maps. < Integer, EntityDataManager.DataEntry<? >> newHashMap();
++    private final Map < Integer, EntityDataManager.DataEntry<? >> field_187234_c = new Int2ObjectOpenHashMap<>(); // Paper
+     private final ReadWriteLock field_187235_d = new ReentrantReadWriteLock();
+     private boolean field_187236_e = true;
+     private boolean field_187237_f;
+@@ -38,7 +39,7 @@
+ 
+     public static <T> DataParameter<T> func_187226_a(Class <? extends Entity > p_187226_0_, DataSerializer<T> p_187226_1_)
+     {
+-        if (field_190303_a.isDebugEnabled())
++        if (true || field_190303_a.isDebugEnabled()) //Forge: This is very useful for mods that register keys on classes that are not their own
+         {
+             try
+             {
+@@ -46,7 +47,9 @@
+ 
+                 if (!oclass.equals(p_187226_0_))
+                 {
+-                    field_190303_a.debug("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
++                    //Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
++                    if (field_190303_a.isDebugEnabled()) field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
++                    else field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass);
+\ No newline at end of file
+                 }
+             }
+             catch (ClassNotFoundException var5)

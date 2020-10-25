@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 /**
  */
@@ -47,7 +47,7 @@ public class ConversationTracker {
             try {
                 conversation.abandon(new ConversationAbandonedEvent(conversation, new ManuallyAbandonedConversationCanceller()));
             } catch (Throwable t) {
-                Mohist.LOGGER.error("Unexpected exception while abandoning a conversation", t);
+                MohistMC.LOGGER.error("Unexpected exception while abandoning a conversation", t);
             }
         }
     }

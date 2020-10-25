@@ -21,6 +21,7 @@ package net.minecraftforge.fml.relauncher.libraries;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+import com.mohistmc.util.i18n.Message;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -437,7 +438,7 @@ public class LibraryManager
             if (!base.isDirectory() || !base.exists())
                 continue;
 
-            FMLLog.log.info(red.mohist.util.i18n.Message.getString("fml.log.4"), base.getAbsolutePath());
+            FMLLog.log.info(Message.getString("fml.log.4"), base.getAbsolutePath());
             for (File f : base.listFiles(MOD_FILENAME_FILTER))
             {
                 if (!list.contains(f))

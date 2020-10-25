@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketChat.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketChat.java
+@@ -13,11 +13,18 @@
+ {
+     private ITextComponent field_148919_a;
+     private ChatType field_179842_b;
++    public net.md_5.bungee.api.chat.BaseComponent[] components; // Spigot
+ 
+     public SPacketChat()
+     {
+     }
+ 
++    public SPacketChat(ITextComponent message, byte type)
++    {
++        this.field_148919_a = message;
++        this.field_179842_b = ChatType.func_192582_a(type);
++    }
++
+     public SPacketChat(ITextComponent p_i46960_1_)
+     {
+         this(p_i46960_1_, ChatType.SYSTEM);
+@@ -37,7 +44,13 @@
+ 
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
+     {
+-        p_148840_1_.func_179256_a(this.field_148919_a);
++        // Spigot start
++        if (components != null) {
++            p_148840_1_.func_180714_a(net.md_5.bungee.chat.ComponentSerializer.toString(components));
++        } else {
++            p_148840_1_.func_179256_a(this.field_148919_a);
++        }
++        // Paper end
+\ No newline at end of file
+         p_148840_1_.writeByte(this.field_179842_b.func_192583_a());
+     }
+ 

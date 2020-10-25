@@ -6,12 +6,8 @@ import org.bukkit.command.CommandSender;
 
 public class ModCustomCommand extends Command {
 
-    public ModCustomCommand(String name) {
-        super(name);
-    }
-
-    public ModCustomCommand(String name, String description, String usageMessage, List<String> aliases) {
-        super(name, description, usageMessage, aliases);
+    public ModCustomCommand(String name, String description, String usage, List<String> aliases) {
+        super(name, description, usage, aliases);
     }
 
     @Override

@@ -15,8 +15,7 @@ import javax.annotation.Nullable;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.spigotmc.SpigotConfig;
-import red.mohist.configuration.MohistConfig;
+import com.mohistmc.configuration.MohistConfig;
 
 public class CraftPlayerProfile implements PlayerProfile {
 
@@ -190,7 +189,7 @@ public class CraftPlayerProfile implements PlayerProfile {
         PlayerProfileCache userCache = server.getPlayerProfileCache();
         if (profile.getId() == null) {
             final GameProfile profile;
-            boolean isOnlineMode = server.isServerInOnlineMode() || (SpigotConfig.bungee);
+            boolean isOnlineMode = server.isServerInOnlineMode() || MohistConfig.isProxyOnlineMode();
             if (isOnlineMode) {
                 profile = lookupName ? userCache.getGameProfileForUsername(name) : userCache.getProfileIfCached(name);
             } else {
@@ -215,7 +214,7 @@ public class CraftPlayerProfile implements PlayerProfile {
     public boolean complete(boolean textures) {
         MinecraftServer server = MinecraftServer.getServerInst();
 
-        boolean isOnlineMode = server.isServerInOnlineMode() || (SpigotConfig.bungee);
+        boolean isOnlineMode = server.isServerInOnlineMode() || MohistConfig.isProxyOnlineMode();
         boolean isCompleteFromCache = this.completeFromCache(true);
         if (isOnlineMode && (!isCompleteFromCache || textures && !hasTextures())) {
             try {

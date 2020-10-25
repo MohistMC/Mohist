@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 import net.minecraft.server.management.UserListBans;
 import net.minecraft.server.management.UserListBansEntry;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 public final class CraftProfileBanEntry implements org.bukkit.BanEntry {
     private final UserListBans list;
@@ -80,7 +80,7 @@ public final class CraftProfileBanEntry implements org.bukkit.BanEntry {
         try {
             this.list.writeChanges();
         } catch (IOException ex) {
-            Mohist.LOGGER.error("Failed to save banned-players.json, {0}", ex.getMessage());
+            MohistMC.LOGGER.error("Failed to save banned-players.json, {0}", ex.getMessage());
         }
     }
 }

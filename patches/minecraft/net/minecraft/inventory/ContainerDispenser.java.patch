@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerDispenser.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerDispenser.java
+@@ -1,16 +1,24 @@
+ package net.minecraft.inventory;
+ 
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
+ 
+ public class ContainerDispenser extends Container
+ {
+-    private final IInventory field_178146_a;
++    public final IInventory field_178146_a;
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
+ 
+     public ContainerDispenser(IInventory p_i45799_1_, IInventory p_i45799_2_)
+     {
+         this.field_178146_a = p_i45799_2_;
+ 
++        // TODO: Should we check to make sure it really is an InventoryPlayer?
++        this.player = (InventoryPlayer) p_i45799_1_;
++
+         for (int i = 0; i < 3; ++i)
+         {
+             for (int j = 0; j < 3; ++j)
+@@ -35,6 +43,7 @@
+ 
+     public boolean func_75145_c(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable) return true;
+         return this.field_178146_a.func_70300_a(p_75145_1_);
+     }
+ 
+@@ -79,4 +88,15 @@
+ 
+         return itemstack;
+     }
++
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        CraftInventory inventory = new CraftInventory(this.field_178146_a);
++        bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
+\ No newline at end of file
+ }

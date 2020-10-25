@@ -65,7 +65,7 @@ import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.event.inventory.InventoryType;
-import red.mohist.configuration.MohistConfig;
+import com.mohistmc.configuration.MohistConfig;
 
 public class FMLNetworkHandler
 {

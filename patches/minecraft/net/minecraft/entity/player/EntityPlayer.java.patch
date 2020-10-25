@@ -1,0 +1,1228 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
+@@ -8,7 +8,6 @@
+ import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+-import net.minecraft.block.BlockBed;
+ import net.minecraft.block.BlockHorizontal;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+@@ -32,7 +31,6 @@
+ import net.minecraft.entity.passive.EntityPig;
+ import net.minecraft.entity.passive.EntityTameable;
+ import net.minecraft.entity.projectile.EntityFishHook;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.init.MobEffects;
+ import net.minecraft.init.SoundEvents;
+@@ -42,7 +40,6 @@
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.inventory.InventoryEnderChest;
+ import net.minecraft.item.ItemArmor;
+-import net.minecraft.item.ItemAxe;
+ import net.minecraft.item.ItemElytra;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.ItemSword;
+@@ -92,10 +89,26 @@
+ import net.minecraft.world.WorldServer;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftItem;
++import org.bukkit.entity.Player;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.player.PlayerBedEnterEvent;
++import org.bukkit.event.player.PlayerBedLeaveEvent;
++import org.bukkit.event.player.PlayerDropItemEvent;
++import org.bukkit.event.player.PlayerVelocityEvent;
++import org.bukkit.util.Vector;
+ 
+ @SuppressWarnings("incomplete-switch")
+ public abstract class EntityPlayer extends EntityLivingBase
+ {
++    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
++    protected java.util.HashMap<Integer, BlockPos> spawnChunkMap = new java.util.HashMap<Integer, BlockPos>();
++    protected java.util.HashMap<Integer, Boolean> spawnForcedMap = new java.util.HashMap<Integer, Boolean>();
++    public float eyeHeight = this.getDefaultEyeHeight();
++    public static final net.minecraft.entity.ai.attributes.IAttribute REACH_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "generic.reachDistance", 5.0D, 0.0D, 1024.0D).func_111112_a(true);
++
+     private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
+     private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
+     protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
+@@ -103,10 +116,10 @@
+     protected static final DataParameter<NBTTagCompound> field_192032_bt = EntityDataManager.<NBTTagCompound>func_187226_a(EntityPlayer.class, DataSerializers.field_192734_n);
+     protected static final DataParameter<NBTTagCompound> field_192033_bu = EntityDataManager.<NBTTagCompound>func_187226_a(EntityPlayer.class, DataSerializers.field_192734_n);
+     public InventoryPlayer field_71071_by = new InventoryPlayer(this);
+-    protected InventoryEnderChest field_71078_a = new InventoryEnderChest();
++    protected InventoryEnderChest field_71078_a = new InventoryEnderChest(this); // CraftBukkit - add "this" to constructor
+     public Container field_71069_bz;
+     public Container field_71070_bA;
+-    protected FoodStats field_71100_bB = new FoodStats();
++    protected FoodStats field_71100_bB = new FoodStats().fixAppleCore(this); // CraftBukkit - add "this" to constructor
+     protected int field_71101_bC;
+     public float field_71107_bF;
+     public float field_71109_bG;
+@@ -117,9 +130,9 @@
+     public double field_71094_bP;
+     public double field_71095_bQ;
+     public double field_71085_bR;
+-    protected boolean field_71083_bS;
++    public boolean field_71083_bS;
+     public BlockPos field_71081_bT;
+-    private int field_71076_b;
++    public int field_71076_b;
+     public float field_71079_bU;
+     @SideOnly(Side.CLIENT)
+     public float field_71082_cx;
+@@ -141,6 +154,15 @@
+     @Nullable
+     public EntityFishHook field_71104_cf;
+ 
++    public boolean fauxSleeping;
++    public String spawnWorld = "";
++    public int oldLevel = -1;
++
++    @Override
++    public CraftHumanEntity getBukkitEntity() {
++        return (CraftHumanEntity) super.getBukkitEntity();
++    }
++
+     protected CooldownTracker func_184815_l()
+     {
+         return new CooldownTracker();
+@@ -156,6 +178,9 @@
+         BlockPos blockpos = p_i45324_1_.func_175694_M();
+         this.func_70012_b((double)blockpos.func_177958_n() + 0.5D, (double)(blockpos.func_177956_o() + 1), (double)blockpos.func_177952_p() + 0.5D, 0.0F, 0.0F);
+         this.field_70741_aB = 180.0F;
++
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++        super.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
+ 
+     protected void func_110147_ax()
+@@ -165,6 +190,7 @@
+         this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.10000000149011612D);
+         this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);
+         this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188792_h);
++        this.func_110140_aT().func_111150_b(REACH_DISTANCE);
+     }
+ 
+     protected void func_70088_a()
+@@ -180,6 +206,7 @@
+ 
+     public void func_70071_h_()
+     {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPreTick(this);
+         this.field_70145_X = this.func_175149_v();
+ 
+         if (this.func_175149_v())
+@@ -207,7 +234,7 @@
+                 {
+                     this.func_70999_a(true, true, false);
+                 }
+-                else if (this.field_70170_p.func_72935_r())
++                else if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, this.field_71081_bT))
+                 {
+                     this.func_70999_a(false, true, true);
+                 }
+@@ -367,6 +394,7 @@
+                 this.func_70105_a(f, f1);
+             }
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPostTick(this);
+     }
+ 
+     public int func_82145_z()
+@@ -399,7 +427,7 @@
+         return SoundCategory.PLAYERS;
+     }
+ 
+-    protected int func_190531_bD()
++    public int func_190531_bD()
+     {
+         return 20;
+     }
+@@ -454,11 +482,11 @@
+             this.field_71109_bG = 0.0F;
+             this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
+ 
+-            if (this.func_184187_bx() instanceof EntityPig)
++            if (this.func_184187_bx() instanceof EntityLivingBase && ((EntityLivingBase)this.func_184187_bx()).shouldRiderFaceForward(this))
+             {
+                 this.field_70125_A = f1;
+                 this.field_70177_z = f;
+-                this.field_70761_aq = ((EntityPig)this.func_184187_bx()).field_70761_aq;
++                this.field_70761_aq = ((EntityLivingBase)this.func_184187_bx()).field_70761_aq;
+             }
+         }
+     }
+@@ -490,7 +518,8 @@
+         {
+             if (this.func_110143_aJ() < this.func_110138_aP() && this.field_70173_aa % 20 == 0)
+             {
+-                this.func_70691_i(1.0F);
++                // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
++                this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
+             }
+ 
+             if (this.field_71100_bB.func_75121_c() && this.field_70173_aa % 10 == 0)
+@@ -518,7 +547,7 @@
+ 
+         this.func_70659_e((float)iattributeinstance.func_111126_e());
+         float f = MathHelper.func_76133_a(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
+-        float f1 = (float)(Math.atan(-this.field_70181_x * 0.20000000298023224D) * 15.0D);
++        float f1 = (float) (org.bukkit.craftbukkit.v1_12_R1.TrigMath.atan(-this.field_70181_x * 0.20000000298023224D) * 15.0D);
+ 
+         if (f > 0.1F)
+         {
+@@ -609,11 +638,15 @@
+ 
+     public void func_70645_a(DamageSource p_70645_1_)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
+         super.func_70645_a(p_70645_1_);
+         this.func_70105_a(0.2F, 0.2F);
+         this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+         this.field_70181_x = 0.10000000149011612D;
+ 
++        captureDrops = true;
++        capturedDrops.clear();
++
+         if ("Notch".equals(this.func_70005_c_()))
+         {
+             this.func_146097_a(new ItemStack(Items.field_151034_e, 1), true, false);
+@@ -625,6 +658,9 @@
+             this.field_71071_by.func_70436_m();
+         }
+ 
++        captureDrops = false;
++        if (!field_70170_p.field_72995_K) net.minecraftforge.event.ForgeEventFactory.onPlayerDrops(this, p_70645_1_, capturedDrops, field_70718_bc > 0);
++
+         if (p_70645_1_ != null)
+         {
+             this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * 0.017453292F) * 0.1F);
+@@ -675,13 +711,25 @@
+     @Nullable
+     public EntityItem func_71040_bB(boolean p_71040_1_)
+     {
+-        return this.func_146097_a(this.field_71071_by.func_70298_a(this.field_71071_by.field_70461_c, p_71040_1_ && !this.field_71071_by.func_70448_g().func_190926_b() ? this.field_71071_by.func_70448_g().func_190916_E() : 1), false, true);
++        // Called only when dropped by Q or CTRL-Q
++        ItemStack stack = field_71071_by.func_70448_g();
++
++        if (stack.func_190926_b())
++        {
++            return null;
++        }
++        if (stack.func_77973_b().onDroppedByPlayer(stack, this))
++        {
++            int count = p_71040_1_ ? this.field_71071_by.func_70448_g().func_190916_E() : 1;
++            return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, field_71071_by.func_70298_a(field_71071_by.field_70461_c, count), true);
++        }
++        return null;
+     }
+ 
+     @Nullable
+     public EntityItem func_71019_a(ItemStack p_71019_1_, boolean p_71019_2_)
+     {
+-        return this.func_146097_a(p_71019_1_, false, p_71019_2_);
++        return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_71019_1_, false);
+     }
+ 
+     @Nullable
+@@ -723,6 +771,30 @@
+                 entityitem.field_70179_y += Math.sin((double)f3) * (double)f2;
+             }
+ 
++            // CraftBukkit start - fire PlayerDropItemEvent
++            Player player = (Player) this.getBukkitEntity();
++            CraftItem drop = new CraftItem(this.field_70170_p.getServer(), entityitem);
++
++            PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
++            this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++                org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
++                if (p_146097_3_ && (cur == null || cur.getAmount() == 0)) {
++                    // The complete stack was dropped
++                    player.getInventory().setItemInHand(drop.getItemStack());
++                } else if (p_146097_3_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
++                    // Only one item is dropped
++                    cur.setAmount(cur.getAmount() + 1);
++                    player.getInventory().setItemInHand(cur);
++                } else {
++                    // Fallback
++                    player.getInventory().addItem(drop.getItemStack());
++                }
++                return null;
++            }
++            // CraftBukkit end
++
+             ItemStack itemstack = this.func_184816_a(entityitem);
+ 
+             if (p_146097_3_)
+@@ -741,14 +813,22 @@
+ 
+     public ItemStack func_184816_a(EntityItem p_184816_1_)
+     {
++        if (captureDrops) capturedDrops.add(p_184816_1_);
++        else // Forge: Don't indent to keep patch smaller.
+         this.field_70170_p.func_72838_d(p_184816_1_);
+         return p_184816_1_.func_92059_d();
+     }
+ 
++    @Deprecated //Use location sensitive version below
+     public float func_184813_a(IBlockState p_184813_1_)
+     {
+-        float f = this.field_71071_by.func_184438_a(p_184813_1_);
++        return getDigSpeed(p_184813_1_, null);
++    }
+ 
++    public float getDigSpeed(IBlockState state, BlockPos pos)
++    {
++        float f = this.field_71071_by.func_184438_a(state);
++
+         if (f > 1.0F)
+         {
+             int i = EnchantmentHelper.func_185293_e(this);
+@@ -798,12 +878,13 @@
+             f /= 5.0F;
+         }
+ 
+-        return f;
++        f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed(this, state, f, pos);
++        return (f < 0 ? 0 : f);
+     }
+ 
+     public boolean func_184823_b(IBlockState p_184823_1_)
+     {
+-        return this.field_71071_by.func_184432_b(p_184823_1_);
++        return net.minecraftforge.event.ForgeEventFactory.doPlayerHarvestCheck(this, p_184823_1_, this.field_71071_by.func_184432_b(p_184823_1_));
+     }
+ 
+     public static void func_189806_a(DataFixer p_189806_0_)
+@@ -857,12 +938,28 @@
+             this.func_70999_a(true, true, false);
+         }
+ 
++        this.spawnWorld = p_70037_1_.func_74779_i("SpawnWorld");
++        if ("".equals(spawnWorld)) {
++            this.spawnWorld = this.field_70170_p.getServer().getWorlds().get(0).getName();
++        }
++
+         if (p_70037_1_.func_150297_b("SpawnX", 99) && p_70037_1_.func_150297_b("SpawnY", 99) && p_70037_1_.func_150297_b("SpawnZ", 99))
+         {
+             this.field_71077_c = new BlockPos(p_70037_1_.func_74762_e("SpawnX"), p_70037_1_.func_74762_e("SpawnY"), p_70037_1_.func_74762_e("SpawnZ"));
+             this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
+         }
+ 
++        NBTTagList spawnlist = null;
++        spawnlist = p_70037_1_.func_150295_c("Spawns", 10);
++        for (int i = 0; i < spawnlist.func_74745_c(); i++)
++        {
++            NBTTagCompound spawndata = (NBTTagCompound)spawnlist.func_150305_b(i);
++            int spawndim = spawndata.func_74762_e("Dim");
++            this.spawnChunkMap.put(spawndim, new BlockPos(spawndata.func_74762_e("SpawnX"), spawndata.func_74762_e("SpawnY"), spawndata.func_74762_e("SpawnZ")));
++            this.spawnForcedMap.put(spawndim, spawndata.func_74767_n("SpawnForced"));
++        }
++        this.spawnDimension = p_70037_1_.func_74767_n("HasSpawnDimensionSet") ? p_70037_1_.func_74762_e("SpawnDimension") : null;
++
+         this.field_71100_bB.func_75112_a(p_70037_1_);
+         this.field_71075_bZ.func_75095_b(p_70037_1_);
+ 
+@@ -896,6 +993,7 @@
+         p_70014_1_.func_74768_a("XpTotal", this.field_71067_cb);
+         p_70014_1_.func_74768_a("XpSeed", this.field_175152_f);
+         p_70014_1_.func_74768_a("Score", this.func_71037_bA());
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(p_70014_1_); //Moved down so it doesn't keep missing every MC update.
+ 
+         if (this.field_71077_c != null)
+         {
+@@ -905,6 +1003,27 @@
+             p_70014_1_.func_74757_a("SpawnForced", this.field_82248_d);
+         }
+ 
++        NBTTagList spawnlist = new NBTTagList();
++        for (java.util.Map.Entry<Integer, BlockPos> entry : this.spawnChunkMap.entrySet())
++        {
++            BlockPos spawn = entry.getValue();
++            if (spawn == null) continue;
++            Boolean forced = spawnForcedMap.get(entry.getKey());
++            if (forced == null) forced = false;
++            NBTTagCompound spawndata = new NBTTagCompound();
++            spawndata.func_74768_a("Dim", entry.getKey());
++            spawndata.func_74768_a("SpawnX", spawn.func_177958_n());
++            spawndata.func_74768_a("SpawnY", spawn.func_177956_o());
++            spawndata.func_74768_a("SpawnZ", spawn.func_177952_p());
++            spawndata.func_74757_a("SpawnForced", forced);
++            spawnlist.func_74742_a(spawndata);
++        }
++        p_70014_1_.func_74782_a("Spawns", spawnlist);
++
++        p_70014_1_.func_74757_a("HasSpawnDimensionSet", this.hasSpawnDimension());
++        if (this.hasSpawnDimension())
++            p_70014_1_.func_74768_a("SpawnDimension", this.getSpawnDimension());
++
+         this.field_71100_bB.func_75117_b(p_70014_1_);
+         this.field_71075_bZ.func_75091_a(p_70014_1_);
+         p_70014_1_.func_74782_a("EnderItems", this.field_71078_a.func_70487_g());
+@@ -918,10 +1037,12 @@
+         {
+             p_70014_1_.func_74782_a("ShoulderEntityRight", this.func_192025_dl());
+         }
++        p_70014_1_.func_74778_a("SpawnWorld", spawnWorld); // CraftBukkit - fixes bed spawns for multiworld worlds
+     }
+ 
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_70097_1_, p_70097_2_)) return false;
+         if (this.func_180431_b(p_70097_1_))
+         {
+             return false;
+@@ -945,13 +1066,13 @@
+                     this.func_70999_a(true, true, false);
+                 }
+ 
+-                this.func_192030_dh();
++                // this.spawnShoulderEntities(); // CraftBukkit - moved down
+ 
+                 if (p_70097_1_.func_76350_n())
+                 {
+                     if (this.field_70170_p.func_175659_aa() == EnumDifficulty.PEACEFUL)
+                     {
+-                        p_70097_2_ = 0.0F;
++                        return false; // CraftBukkit - f = 0.0f -> return false
+                     }
+ 
+                     if (this.field_70170_p.func_175659_aa() == EnumDifficulty.EASY)
+@@ -965,7 +1086,14 @@
+                     }
+                 }
+ 
+-                return p_70097_2_ == 0.0F ? false : super.func_70097_a(p_70097_1_, p_70097_2_);
++                // return amount == 0.0F ? false : super.attackEntityFrom(source, amount);
++                // CraftBukkit start - Don't filter out 0 damage
++                boolean damaged = super.func_70097_a(p_70097_1_, p_70097_2_);
++                if (damaged) {
++                    this.func_192030_dh();
++                }
++                return damaged;
++                // CraftBukkit end
+             }
+         }
+     }
+@@ -974,7 +1102,7 @@
+     {
+         super.func_190629_c(p_190629_1_);
+ 
+-        if (p_190629_1_.func_184614_ca().func_77973_b() instanceof ItemAxe)
++        if (p_190629_1_.func_184614_ca().func_77973_b().canDisableShield(p_190629_1_.func_184614_ca(), this.func_184607_cu(), this, p_190629_1_))
+         {
+             this.func_190777_m(true);
+         }
+@@ -982,17 +1110,29 @@
+ 
+     public boolean func_96122_a(EntityPlayer p_96122_1_)
+     {
+-        Team team = this.func_96124_cp();
+-        Team team1 = p_96122_1_.func_96124_cp();
+-
+-        if (team == null)
+-        {
+-            return true;
++        // Team team = this.getTeam();
++        // Team team1 = other.getTeam();
++        // CraftBukkit start - Change to check OTHER player's scoreboard team according to API
++        // To summarize this method's logic, it's "Can parameter hurt this"
++        org.bukkit.scoreboard.Team team;
++        if (p_96122_1_ instanceof EntityPlayerMP) {
++            EntityPlayerMP thatPlayer = (EntityPlayerMP) p_96122_1_;
++            team = thatPlayer.getBukkitEntity().getScoreboard().getPlayerTeam(thatPlayer.getBukkitEntity());
++            if (team == null || team.allowFriendlyFire()) {
++                return true;
++            }
++        } else {
++            // This should never be called, but is implemented anyway
++            org.bukkit.OfflinePlayer thisPlayer = p_96122_1_.field_70170_p.getServer().getOfflinePlayer(p_96122_1_.func_70005_c_());
++            team = p_96122_1_.field_70170_p.getServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
++            if (team == null || team.allowFriendlyFire()) {
++                return true;
++            }
+         }
+-        else
+-        {
+-            return !team.func_142054_a(team1) ? true : team.func_96665_g();
++        if (this instanceof EntityPlayerMP) {
++            return !team.hasPlayer(((EntityPlayerMP) this).getBukkitEntity());
+         }
++        return !team.hasPlayer(this.field_70170_p.getServer().getOfflinePlayer(this.func_70005_c_()));
+     }
+ 
+     protected void func_70675_k(float p_70675_1_)
+@@ -1002,14 +1142,16 @@
+ 
+     protected void func_184590_k(float p_184590_1_)
+     {
+-        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b() == Items.field_185159_cQ)
++        if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b().isShield(this.field_184627_bm, this))
+         {
++            ItemStack copyBeforeUse = this.field_184627_bm.func_77946_l();
+             int i = 1 + MathHelper.func_76141_d(p_184590_1_);
+             this.field_184627_bm.func_77972_a(i, this);
+ 
+             if (this.field_184627_bm.func_190926_b())
+             {
+                 EnumHand enumhand = this.func_184600_cs();
++                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, enumhand);
+ 
+                 if (enumhand == EnumHand.MAIN_HAND)
+                 {
+@@ -1043,27 +1185,42 @@
+ 
+     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_)
+     {
+-        if (!this.func_180431_b(p_70665_1_))
++        this.damageEntity_CB(p_70665_1_, p_70665_2_);
++        Float exhaustion = 2634905535.520F; this.func_71020_j(exhaustion.floatValue());
++    }
++
++    // TODO: Check if Cauldron way is correct
++    protected boolean damageEntity_CB(DamageSource damageSrc, float damageAmount)
++    {
++        if (true) {
++            return super.damageEntity_CB(damageSrc, damageAmount);
++        }
++        if (!this.func_180431_b(damageSrc))
+         {
+-            p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
+-            p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
+-            float f = p_70665_2_;
+-            p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
+-            this.func_110149_m(this.func_110139_bj() - (f - p_70665_2_));
++            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
++            if (damageAmount <= 0) return false;
++            damageAmount = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, field_71071_by.field_70460_b, damageSrc, damageAmount);
++            if (damageAmount <= 0) return false;
++            damageAmount = this.func_70672_c(damageSrc, damageAmount);
++            float f = damageAmount;
++            damageAmount = Math.max(damageAmount - this.func_110139_bj(), 0.0F);
++            this.func_110149_m(this.func_110139_bj() - (f - damageAmount));
++            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, damageSrc, damageAmount);
+ 
+-            if (p_70665_2_ != 0.0F)
++            if (damageAmount != 0.0F)
+             {
+-                this.func_71020_j(p_70665_1_.func_76345_d());
++                this.func_71020_j(damageSrc.func_76345_d());
+                 float f1 = this.func_110143_aJ();
+-                this.func_70606_j(this.func_110143_aJ() - p_70665_2_);
+-                this.func_110142_aN().func_94547_a(p_70665_1_, f1, p_70665_2_);
++                this.func_70606_j(this.func_110143_aJ() - damageAmount);
++                this.func_110142_aN().func_94547_a(damageSrc, f1, damageAmount);
+ 
+-                if (p_70665_2_ < 3.4028235E37F)
++                if (damageAmount < 3.4028235E37F)
+                 {
+-                    this.func_71064_a(StatList.field_188112_z, Math.round(p_70665_2_ * 10.0F));
++                    this.func_71064_a(StatList.field_188112_z, Math.round(damageAmount * 10.0F));
+                 }
+             }
+         }
++        return false;
+     }
+ 
+     public void func_175141_a(TileEntitySign p_175141_1_)
+@@ -1115,6 +1272,8 @@
+         }
+         else
+         {
++            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_190775_1_, p_190775_2_);
++            if (cancelResult != null) return cancelResult;
+             ItemStack itemstack = this.func_184586_b(p_190775_2_);
+             ItemStack itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
+ 
+@@ -1124,7 +1283,10 @@
+                 {
+                     itemstack.func_190920_e(itemstack1.func_190916_E());
+                 }
+-
++                if (!this.field_71075_bZ.field_75098_d && itemstack.func_190926_b())
++                {
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_190775_2_);
++                }
+                 return EnumActionResult.SUCCESS;
+             }
+             else
+@@ -1140,6 +1302,7 @@
+                     {
+                         if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d)
+                         {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_190775_2_);
+                             this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
+                         }
+ 
+@@ -1165,6 +1328,7 @@
+ 
+     public void func_71059_n(Entity p_71059_1_)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_71059_1_)) return;
+         if (p_71059_1_.func_70075_an())
+         {
+             if (!p_71059_1_.func_85031_j(this))
+@@ -1203,9 +1367,11 @@
+                     boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
+                     flag2 = flag2 && !this.func_70051_ag();
+ 
++                    net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(this, p_71059_1_, flag2, flag2 ? 1.5F : 1.0F);
++                    flag2 = hitResult != null;
+                     if (flag2)
+                     {
+-                        f *= 1.5F;
++                        f *= hitResult.getDamageModifier();
+                     }
+ 
+                     f = f + f1;
+@@ -1232,8 +1398,17 @@
+ 
+                         if (j > 0 && !p_71059_1_.func_70027_ad())
+                         {
+-                            flag4 = true;
+-                            p_71059_1_.func_70015_d(1);
++                            // flag4 = true;
++                            // targetEntity.setFire(1);
++                            // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
++                            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_71059_1_.getBukkitEntity(), 1);
++                            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++
++                            if (!combustEvent.isCancelled()) {
++                                flag4 = true;
++                                p_71059_1_.func_70015_d(combustEvent.getDuration());
++                            }
++                            // CraftBukkit end
+                         }
+                     }
+ 
+@@ -1257,7 +1432,7 @@
+ 
+                             this.field_70159_w *= 0.6D;
+                             this.field_70179_y *= 0.6D;
+-                            this.func_70031_b(false);
++							this.func_70031_b(false);
+                         }
+ 
+                         if (flag3)
+@@ -1268,8 +1443,10 @@
+                             {
+                                 if (entitylivingbase != this && entitylivingbase != p_71059_1_ && !this.func_184191_r(entitylivingbase) && this.func_70068_e(entitylivingbase) < 9.0D)
+                                 {
+-                                    entitylivingbase.func_70653_a(this, 0.4F, (double)MathHelper.func_76126_a(this.field_70177_z * 0.017453292F), (double)(-MathHelper.func_76134_b(this.field_70177_z * 0.017453292F)));
+-                                    entitylivingbase.func_70097_a(DamageSource.func_76365_a(this), f3);
++                                    // CraftBukkit start - Only apply knockback if the damage hits
++                                    if (entitylivingbase.func_70097_a(DamageSource.func_76365_a(this).sweep(), f3)) {
++                                        entitylivingbase.func_70653_a(this, 0.4F, (double) MathHelper.func_76126_a(this.field_70177_z * 0.017453292F), (double) (-MathHelper.func_76134_b(this.field_70177_z * 0.017453292F)));
++                                    }
+                                 }
+                             }
+ 
+@@ -1279,11 +1456,28 @@
+ 
+                         if (p_71059_1_ instanceof EntityPlayerMP && p_71059_1_.field_70133_I)
+                         {
+-                            ((EntityPlayerMP)p_71059_1_).field_71135_a.func_147359_a(new SPacketEntityVelocity(p_71059_1_));
+-                            p_71059_1_.field_70133_I = false;
+-                            p_71059_1_.field_70159_w = d1;
+-                            p_71059_1_.field_70181_x = d2;
+-                            p_71059_1_.field_70179_y = d3;
++                            // CraftBukkit start - Add Velocity Event
++                            boolean cancelled = false;
++                            Player player = (Player) p_71059_1_.getBukkitEntity();
++                            org.bukkit.util.Vector velocity = new Vector( d1, d2, d3 );
++
++                            PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
++                            field_70170_p.getServer().getPluginManager().callEvent(event);
++
++                            if (event.isCancelled()) {
++                                cancelled = true;
++                            } else if (!velocity.equals(event.getVelocity())) {
++                                player.setVelocity(event.getVelocity());
++                            }
++
++                            if (!cancelled) {
++                                ((EntityPlayerMP) p_71059_1_).field_71135_a.func_147359_a(new SPacketEntityVelocity(p_71059_1_));
++                                p_71059_1_.field_70133_I = false;
++                                p_71059_1_.field_70159_w = d1;
++                                p_71059_1_.field_70181_x = d2;
++                                p_71059_1_.field_70179_y = d3;
++                            }
++                            // CraftBukkit end
+                         }
+ 
+                         if (flag2)
+@@ -1332,10 +1526,12 @@
+ 
+                         if (!itemstack1.func_190926_b() && entity instanceof EntityLivingBase)
+                         {
++                            ItemStack beforeHitCopy = itemstack1.func_77946_l();
+                             itemstack1.func_77961_a((EntityLivingBase)entity, this);
+ 
+                             if (itemstack1.func_190926_b())
+                             {
++                                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, beforeHitCopy, EnumHand.MAIN_HAND);
+                                 this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
+                             }
+                         }
+@@ -1347,7 +1543,14 @@
+ 
+                             if (j > 0)
+                             {
+-                                p_71059_1_.func_70015_d(j * 4);
++                                // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
++                                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_71059_1_.getBukkitEntity(), j * 4);
++                                org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++
++                                if (!combustEvent.isCancelled()) {
++                                    p_71059_1_.func_70015_d(combustEvent.getDuration());
++                                }
++                                // CraftBukkit end
+                             }
+ 
+                             if (this.field_70170_p instanceof WorldServer && f5 > 2.0F)
+@@ -1357,7 +1560,8 @@
+                             }
+                         }
+ 
+-                        this.func_71020_j(0.1F);
++						this.func_71020_j(2634905535.520F);
++                        this.func_71020_j(field_70170_p.spigotConfig.combatExhaustion); // Spigot - Change to use configurable value
+                     }
+                     else
+                     {
+@@ -1367,6 +1571,11 @@
+                         {
+                             p_71059_1_.func_70066_B();
+                         }
++                        // CraftBukkit start - resync on cancelled event
++                        if (this instanceof EntityPlayerMP) {
++                            ((EntityPlayerMP) this).getBukkitEntity().updateInventory();
++                        }
++                        // CraftBukkit end
+                     }
+                 }
+             }
+@@ -1384,7 +1593,7 @@
+ 
+         if (this.field_70146_Z.nextFloat() < f)
+         {
+-            this.func_184811_cZ().func_185145_a(Items.field_185159_cQ, 100);
++            this.func_184811_cZ().func_185145_a(this.func_184607_cu().func_77973_b(), 100);
+             this.func_184602_cy();
+             this.field_70170_p.func_72960_a(this, (byte)30);
+         }
+@@ -1440,9 +1649,18 @@
+         return this.field_146106_i;
+     }
+ 
++    public GameProfile getProfile()
++	{
++        return func_146103_bH();
++    }
++
+     public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
+     {
+-        EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(p_180469_1_).func_177229_b(BlockHorizontal.field_185512_D);
++        EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, p_180469_1_);
++        if (ret != null) return ret;
++        final IBlockState state = this.field_70170_p.func_175667_e(p_180469_1_) ? this.field_70170_p.func_180495_p(p_180469_1_) : null;
++        final boolean isBed = state != null && state.func_177230_c().isBed(state, this.field_70170_p, p_180469_1_, this);
++        final EnumFacing enumfacing = isBed && state.func_177230_c() instanceof BlockHorizontal ? (EnumFacing)state.func_177229_b(BlockHorizontal.field_185512_D) : null;
+ 
+         if (!this.field_70170_p.field_72995_K)
+         {
+@@ -1456,7 +1674,7 @@
+                 return EntityPlayer.SleepResult.NOT_POSSIBLE_HERE;
+             }
+ 
+-            if (this.field_70170_p.func_72935_r())
++            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, p_180469_1_))
+             {
+                 return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
+             }
+@@ -1481,11 +1699,24 @@
+             this.func_184210_p();
+         }
+ 
++        // CraftBukkit start - fire PlayerBedEnterEvent
++        if (this.getBukkitEntity() instanceof Player) {
++            Player player = (Player) this.getBukkitEntity();
++            org.bukkit.block.Block bed = this.field_70170_p.getWorld().getBlockAt(p_180469_1_.func_177958_n(), p_180469_1_.func_177956_o(), p_180469_1_.func_177952_p());
++
++            PlayerBedEnterEvent event = new PlayerBedEnterEvent(player, bed);
++            this.field_70170_p.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++                return EntityPlayer.SleepResult.OTHER_PROBLEM;
++            }
++        }
++        // CraftBukkit end
++
+         this.func_192030_dh();
+         this.func_70105_a(0.2F, 0.2F);
+ 
+-        if (this.field_70170_p.func_175667_e(p_180469_1_))
+-        {
++        if (enumfacing != null) {
+             float f1 = 0.5F + (float)enumfacing.func_82601_c() * 0.4F;
+             float f = 0.5F + (float)enumfacing.func_82599_e() * 0.4F;
+             this.func_175139_a(enumfacing);
+@@ -1517,6 +1748,7 @@
+         {
+             return true;
+         }
++        else if (p_190774_2_ == null) return false;
+         else
+         {
+             BlockPos blockpos = p_190774_1_.func_177972_a(p_190774_2_.func_176734_d());
+@@ -1532,13 +1764,14 @@
+ 
+     public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
+     {
++        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_70999_1_, p_70999_2_, p_70999_3_);
+         this.func_70105_a(0.6F, 1.8F);
+-        IBlockState iblockstate = this.field_70170_p.func_180495_p(this.field_71081_bT);
++        IBlockState iblockstate = this.field_71081_bT == null ? null : this.field_70170_p.func_180495_p(this.field_71081_bT);
+ 
+-        if (this.field_71081_bT != null && iblockstate.func_177230_c() == Blocks.field_150324_C)
++        if (this.field_71081_bT != null && iblockstate.func_177230_c().isBed(iblockstate, field_70170_p, field_71081_bT, this))
+         {
+-            this.field_70170_p.func_180501_a(this.field_71081_bT, iblockstate.func_177226_a(BlockBed.field_176471_b, Boolean.valueOf(false)), 4);
+-            BlockPos blockpos = BlockBed.func_176468_a(this.field_70170_p, this.field_71081_bT, 0);
++            iblockstate.func_177230_c().setBedOccupied(field_70170_p, field_71081_bT, this, false);
++            BlockPos blockpos = iblockstate.func_177230_c().getBedSpawnPosition(iblockstate, field_70170_p, field_71081_bT, this);
+ 
+             if (blockpos == null)
+             {
+@@ -1547,6 +1780,10 @@
+ 
+             this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
+         }
++        else
++        {
++            p_70999_3_ = false;
++        }
+ 
+         this.field_71083_bS = false;
+ 
+@@ -1555,6 +1792,23 @@
+             this.field_70170_p.func_72854_c();
+         }
+ 
++        // CraftBukkit start - fire PlayerBedLeaveEvent
++        if (this.getBukkitEntity() instanceof Player) {
++            Player player = (Player) this.getBukkitEntity();
++
++            org.bukkit.block.Block bed;
++            BlockPos blockposition = this.field_71081_bT;
++            if (blockposition != null) {
++                bed = this.field_70170_p.getWorld().getBlockAt(blockposition.func_177958_n(), blockposition.func_177956_o(), blockposition.func_177952_p());
++            } else {
++                bed = this.field_70170_p.getWorld().getBlockAt(player.getLocation());
++            }
++
++            PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed);
++            this.field_70170_p.getServer().getPluginManager().callEvent(event);
++        }
++        // CraftBukkit end
++
+         this.field_71076_b = p_70999_1_ ? 0 : 100;
+ 
+         if (p_70999_3_)
+@@ -1565,15 +1819,16 @@
+ 
+     private boolean func_175143_p()
+     {
+-        return this.field_70170_p.func_180495_p(this.field_71081_bT).func_177230_c() == Blocks.field_150324_C;
++        return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, this.field_71081_bT);
+     }
+ 
+     @Nullable
+     public static BlockPos func_180467_a(World p_180467_0_, BlockPos p_180467_1_, boolean p_180467_2_)
+     {
+-        Block block = p_180467_0_.func_180495_p(p_180467_1_).func_177230_c();
++        IBlockState state = p_180467_0_.func_180495_p(p_180467_1_);
++        Block block = state.func_177230_c();
+ 
+-        if (block != Blocks.field_150324_C)
++        if (!block.isBed(state, p_180467_0_, p_180467_1_, null))
+         {
+             if (!p_180467_2_)
+             {
+@@ -1588,16 +1843,17 @@
+         }
+         else
+         {
+-            return BlockBed.func_176468_a(p_180467_0_, p_180467_1_, 0);
++            return block.getBedSpawnPosition(state, p_180467_0_, p_180467_1_, null);
+         }
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public float func_71051_bG()
+     {
+-        if (this.field_71081_bT != null)
++        IBlockState state = this.field_71081_bT == null ? null : this.field_70170_p.func_180495_p(field_71081_bT);
++        if (state != null && state.func_177230_c().isBed(state, field_70170_p, field_71081_bT, this))
+         {
+-            EnumFacing enumfacing = (EnumFacing)this.field_70170_p.func_180495_p(this.field_71081_bT).func_177229_b(BlockHorizontal.field_185512_D);
++            EnumFacing enumfacing = state.func_177230_c().getBedDirection(state, field_70170_p, field_71081_bT);
+ 
+             switch (enumfacing)
+             {
+@@ -1625,7 +1881,7 @@
+         return this.field_71083_bS && this.field_71076_b >= 100;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
++    //@SideOnly(Side.CLIENT) Mohist - Allow DeltaHardMode to use this method
+     public int func_71060_bI()
+     {
+         return this.field_71076_b;
+@@ -1637,25 +1893,35 @@
+ 
+     public BlockPos func_180470_cg()
+     {
+-        return this.field_71077_c;
++        return getBedLocation(this.field_71093_bK);
+     }
+ 
++    @Deprecated // Use dimension-sensitive version.
+     public boolean func_82245_bX()
+     {
+-        return this.field_82248_d;
++        return isSpawnForced(this.field_71093_bK);
+     }
+ 
+     public void func_180473_a(BlockPos p_180473_1_, boolean p_180473_2_)
+     {
++        if(net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_180473_1_, p_180473_2_)) return;
++        if (this.field_71093_bK != 0)
++        {
++            setSpawnChunk(p_180473_1_, p_180473_2_, this.field_71093_bK);
++            return;
++        }
++
+         if (p_180473_1_ != null)
+         {
+             this.field_71077_c = p_180473_1_;
+             this.field_82248_d = p_180473_2_;
++            this.spawnWorld = this.field_70170_p.field_72986_A.func_76065_j();
+         }
+         else
+         {
+             this.field_71077_c = null;
+             this.field_82248_d = false;
++            this.spawnWorld = "";
+         }
+     }
+ 
+@@ -1691,11 +1957,13 @@
+ 
+         if (this.func_70051_ag())
+         {
+-            this.func_71020_j(0.2F);
++            this.func_71020_j(2634905535.520F); // Mohist - AppleCore ModuleExhaustingActions
++            this.func_71020_j(field_70170_p.spigotConfig.jumpSprintExhaustion); // Spigot - Change to use configurable value
+         }
+         else
+         {
+-            this.func_71020_j(0.05F);
++            this.func_71020_j(2634905535.520F); // Mohist - AppleCore ModuleExhaustingActions
++            this.func_71020_j(field_70170_p.spigotConfig.jumpWalkExhaustion); // Spigot - Change to use configurable value
+         }
+     }
+ 
+@@ -1714,7 +1982,10 @@
+             this.field_70181_x = d3 * 0.6D;
+             this.field_70747_aH = f;
+             this.field_70143_R = 0.0F;
+-            this.func_70052_a(7, false);
++            // this.setFlag(7, false);
++            if (func_70083_f(7) && !org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++                this.func_70052_a(7, false);
++            }
+         }
+         else
+         {
+@@ -1839,6 +2110,10 @@
+ 
+             super.func_180430_e(p_180430_1_, p_180430_2_);
+         }
++        else
++        {
++            net.minecraftforge.event.ForgeEventFactory.onPlayerFall(this, p_180430_1_, p_180430_2_);
++        }
+     }
+ 
+     protected void func_71061_d_()
+@@ -1943,6 +2218,7 @@
+ 
+     public void func_71020_j(float p_71020_1_)
+     {
++        if (p_71020_1_ == 2634905535.520F) return;
+         if (!this.field_71075_bZ.field_75102_a)
+         {
+             if (!this.field_70170_p.field_72995_K)
+@@ -2115,10 +2391,12 @@
+ 
+     protected void func_192030_dh()
+     {
+-        this.func_192026_k(this.func_192023_dk());
+-        this.func_192029_h(new NBTTagCompound());
+-        this.func_192026_k(this.func_192025_dl());
+-        this.func_192031_i(new NBTTagCompound());
++        if (this.spawnShoulderEntity_CB(this.func_192023_dk())) {
++            this.func_192029_h(new NBTTagCompound());
++        }
++        if (this.spawnShoulderEntity_CB(this.func_192025_dl())) {
++            this.func_192031_i(new NBTTagCompound());
++        }
+     }
+ 
+     private void func_192026_k(@Nullable NBTTagCompound p_192026_1_)
+@@ -2137,6 +2415,23 @@
+         }
+     }
+ 
++    private boolean spawnShoulderEntity_CB(@Nullable NBTTagCompound p_192026_1_) // CraftBukkit void->boolean
++    {
++        if (!this.field_70170_p.field_72995_K && !p_192026_1_.func_82582_d())
++        {
++            Entity entity = EntityList.func_75615_a(p_192026_1_, this.field_70170_p);
++
++            if (entity instanceof EntityTameable)
++            {
++                ((EntityTameable)entity).func_184754_b(this.field_96093_i);
++            }
++
++            entity.func_70107_b(this.field_70165_t, this.field_70163_u + 0.699999988079071D, this.field_70161_v);
++            return this.field_70170_p.addEntity(entity, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY);
++        }
++        return true;
++    }
++
+     @SideOnly(Side.CLIENT)
+     public boolean func_98034_c(EntityPlayer p_98034_1_)
+     {
+@@ -2176,7 +2471,10 @@
+ 
+     public ITextComponent func_145748_c_()
+     {
+-        ITextComponent itextcomponent = new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
++        ITextComponent itextcomponent = new TextComponentString("");
++        if (!prefixes.isEmpty()) for (ITextComponent prefix : prefixes) itextcomponent.func_150257_a(prefix);
++        itextcomponent.func_150257_a(new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayNameString())));
++        if (!suffixes.isEmpty()) for (ITextComponent suffix : suffixes) itextcomponent.func_150257_a(suffix);
+         itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
+         itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
+         itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
+@@ -2185,7 +2483,7 @@
+ 
+     public float func_70047_e()
+     {
+-        float f = 1.62F;
++        float f = eyeHeight;
+ 
+         if (this.func_70608_bn())
+         {
+@@ -2368,7 +2666,7 @@
+         return (NBTTagCompound)this.field_70180_af.func_187225_a(field_192032_bt);
+     }
+ 
+-    protected void func_192029_h(NBTTagCompound p_192029_1_)
++    public void func_192029_h(NBTTagCompound p_192029_1_)
+     {
+         this.field_70180_af.func_187227_b(field_192032_bt, p_192029_1_);
+     }
+@@ -2378,7 +2676,7 @@
+         return (NBTTagCompound)this.field_70180_af.func_187225_a(field_192033_bu);
+     }
+ 
+-    protected void func_192031_i(NBTTagCompound p_192031_1_)
++    public void func_192031_i(NBTTagCompound p_192031_1_)
+     {
+         this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
+     }
+@@ -2418,9 +2716,171 @@
+ 
+     public boolean func_189808_dh()
+     {
+-        return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
++        return this.field_71075_bZ.field_75098_d && (this.func_70003_b(2, "") || this.canUseCommand(2, "", "minecraft"));
+     }
+ 
++    /**
++     * Opens a GUI with this player, uses FML's IGuiHandler system.
++     * Allows for extension by modders.
++     *
++     * @param mod The mod trying to open a GUI
++     * @param modGuiId GUI ID
++     * @param world Current World
++     * @param x Passed directly to IGuiHandler, data meaningless Typically world X position
++     * @param y Passed directly to IGuiHandler, data meaningless Typically world Y position
++     * @param z Passed directly to IGuiHandler, data meaningless Typically world Z position
++     */
++    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
++    {
++        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
++    }
++
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * A dimension aware version of getBedLocation.
++     * @param dimension The dimension to get the bed spawn for
++     * @return The player specific spawn location for the dimension.  May be null.
++     */
++    public BlockPos getBedLocation(int dimension)
++    {
++        return dimension == 0 ? field_71077_c : spawnChunkMap.get(dimension);
++    }
++
++    /**
++     * A dimension aware version of isSpawnForced.
++     * Noramally isSpawnForced is used to determine if the respawn system should check for a bed or not.
++     * This just extends that to be dimension aware.
++     * @param dimension The dimension to get whether to check for a bed before spawning for
++     * @return The player specific spawn location for the dimension.  May be null.
++     */
++    public boolean isSpawnForced(int dimension)
++    {
++        if (dimension == 0) return this.field_82248_d;
++        Boolean forced = this.spawnForcedMap.get(dimension);
++        return forced == null ? false : forced;
++    }
++
++    /**
++     * A dimension aware version of setSpawnChunk.
++     * This functions identically, but allows you to specify which dimension to affect, rather than affecting the player's current dimension.
++     * @param pos The spawn point to set as the player-specific spawn point for the dimension
++     * @param forced Whether or not the respawn code should check for a bed at this location (true means it won't check for a bed)
++     * @param dimension Which dimension to apply the player-specific respawn point to
++     */
++    public void setSpawnChunk(BlockPos pos, boolean forced, int dimension)
++    {
++        if (dimension == 0)
++        {
++            if (pos != null)
++            {
++                field_71077_c = pos;
++                field_82248_d = forced;
++            }
++            else
++            {
++                field_71077_c = null;
++                field_82248_d = false;
++            }
++            return;
++        }
++
++        if (pos != null)
++        {
++            spawnChunkMap.put(dimension, pos);
++            spawnForcedMap.put(dimension, forced);
++        }
++        else
++        {
++            spawnChunkMap.remove(dimension);
++            spawnForcedMap.remove(dimension);
++        }
++    }
++
++    private String displayname;
++
++    /**
++     * Returns the default eye height of the player
++     * @return player default eye height
++     */
++    public float getDefaultEyeHeight()
++    {
++        return 1.62F;
++    }
++
++    /**
++     * Get the currently computed display name, cached for efficiency.
++     * @return the current display name
++     */
++    public String getDisplayNameString()
++    {
++        if(this.displayname == null)
++        {
++            this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
++        }
++        return this.displayname;
++    }
++
++    /**
++     * Force the displayed name to refresh
++     */
++    public void refreshDisplayName()
++    {
++        this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
++    }
++
++    private final java.util.Collection<ITextComponent> prefixes = new java.util.LinkedList<ITextComponent>();
++    private final java.util.Collection<ITextComponent> suffixes = new java.util.LinkedList<ITextComponent>();
++
++    /**
++     * Add a prefix to the player's username in chat
++     * @param prefix The prefix
++     */
++    public void addPrefix(ITextComponent prefix) { prefixes.add(prefix); }
++
++    /**
++     * Add a suffix to the player's username in chat
++     * @param suffix The suffix
++     */
++    public void addSuffix(ITextComponent suffix) { suffixes.add(suffix); }
++
++    public java.util.Collection<ITextComponent> getPrefixes() { return this.prefixes; }
++    public java.util.Collection<ITextComponent> getSuffixes() { return this.suffixes; }
++
++    private final net.minecraftforge.items.IItemHandler playerMainHandler = new net.minecraftforge.items.wrapper.PlayerMainInvWrapper(field_71071_by);
++    private final net.minecraftforge.items.IItemHandler playerEquipmentHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                    new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(field_71071_by),
++                    new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(field_71071_by));
++    private final net.minecraftforge.items.IItemHandler playerJoinedHandler = new net.minecraftforge.items.wrapper.PlayerInvWrapper(field_71071_by);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if (facing == null) return (T) playerJoinedHandler;
++            else if (facing.func_176740_k().func_176720_b()) return (T) playerMainHandler;
++            else if (facing.func_176740_k().func_176722_c()) return (T) playerEquipmentHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
++
++    @Nullable
++    private Integer spawnDimension;
++    public boolean hasSpawnDimension() { return spawnDimension != null; }
++    public int getSpawnDimension() { return spawnDimension != null ? spawnDimension : 0; }
++    public void setSpawnDimension(@Nullable Integer dimension) { this.spawnDimension = dimension; }
++
++    /* ======================================== FORGE END  =====================================*/
++
+\ No newline at end of file
+     public static enum EnumChatVisibility
+     {
+         FULL(0, "options.chat.visibility.full"),

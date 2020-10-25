@@ -1,0 +1,247 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PreYggdrasilConverter.java
++++ ../src-work/minecraft/net/minecraft/server/management/PreYggdrasilConverter.java
+@@ -10,7 +10,6 @@
+ import com.mojang.authlib.ProfileLookupCallback;
+ import com.mojang.authlib.yggdrasil.ProfileNotFoundException;
+ import java.io.File;
+-import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.nio.charset.StandardCharsets;
+ import java.text.ParseException;
+@@ -22,6 +21,8 @@
+ import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.nbt.CompressedStreamTools;
++import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.dedicated.PropertyManager;
+@@ -30,6 +31,7 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import com.mohistmc.configuration.MohistConfig;
+ 
+ public class PreYggdrasilConverter
+ {
+@@ -49,7 +51,7 @@
+             }
+         }), String.class);
+ 
+-        if (p_152717_0_.func_71266_T())
++        if (p_152717_0_.func_71266_T() || MohistConfig.isProxyOnlineMode()) // Spigot: bungee = online mode, for now.
+         {
+             p_152717_0_.func_152359_aw().findProfilesByNames(astring, Agent.MINECRAFT, p_152717_2_);
+         }
+@@ -135,9 +137,10 @@
+                 {
+                     userlistbans.func_152679_g();
+                 }
+-                catch (FileNotFoundException filenotfoundexception)
++                // CraftBukkit start - FileNotFoundException -> IOException, don't print stacktrace
++                catch (IOException filenotfoundexception)
+                 {
+-                    field_152732_e.warn("Could not load existing file {}", userlistbans.func_152691_c().getName(), filenotfoundexception);
++                    field_152732_e.warn("Could not load existing file {}", userlistbans.func_152691_c().getName());
+                 }
+             }
+ 
+@@ -155,7 +158,7 @@
+                         if (astring == null)
+                         {
+                             PreYggdrasilConverter.field_152732_e.warn("Could not convert user banlist entry for {}", (Object)p_onProfileLookupSucceeded_1_.getName());
+-                            throw new PreYggdrasilConverter.ConversionError("Profile not in the conversionlist");
++                            throw new ConversionError("Profile not in the conversionlist");
+                         }
+                         else
+                         {
+@@ -172,7 +175,7 @@
+ 
+                         if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException))
+                         {
+-                            throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
++                            throw new ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
+                         }
+                     }
+                 };
+@@ -186,7 +189,7 @@
+                 field_152732_e.warn("Could not read old user banlist to convert it!", (Throwable)ioexception);
+                 return false;
+             }
+-            catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror)
++            catch (ConversionError preyggdrasilconverter$conversionerror)
+             {
+                 field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
+                 return false;
+@@ -211,9 +214,10 @@
+                 {
+                     userlistipbans.func_152679_g();
+                 }
+-                catch (FileNotFoundException filenotfoundexception)
++                // CraftBukkit start - FileNotFoundException -> IOException, don't print stacktrace
++                catch (IOException filenotfoundexception)
+                 {
+-                    field_152732_e.warn("Could not load existing file {}", userlistipbans.func_152691_c().getName(), filenotfoundexception);
++                    field_152732_e.warn("Could not load existing file {}", userlistipbans.func_152691_c().getName());
+                 }
+             }
+ 
+@@ -261,9 +265,10 @@
+                 {
+                     userlistops.func_152679_g();
+                 }
+-                catch (FileNotFoundException filenotfoundexception)
++                // CraftBukkit start - FileNotFoundException -> IOException, don't print stacktrace
++                catch (IOException filenotfoundexception)
+                 {
+-                    field_152732_e.warn("Could not load existing file {}", userlistops.func_152691_c().getName(), filenotfoundexception);
++                    field_152732_e.warn("Could not load existing file {}", userlistops.func_152691_c().getName());
+                 }
+             }
+ 
+@@ -283,7 +288,7 @@
+ 
+                         if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException))
+                         {
+-                            throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
++                            throw new ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
+                         }
+                     }
+                 };
+@@ -297,7 +302,7 @@
+                 field_152732_e.warn("Could not read old oplist to convert it!", (Throwable)ioexception);
+                 return false;
+             }
+-            catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror)
++            catch (ConversionError preyggdrasilconverter$conversionerror)
+             {
+                 field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
+                 return false;
+@@ -322,9 +327,10 @@
+                 {
+                     userlistwhitelist.func_152679_g();
+                 }
+-                catch (FileNotFoundException filenotfoundexception)
++                // CraftBukkit start - FileNotFoundException -> IOException, don't print stacktrace
++                catch (IOException filenotfoundexception)
+                 {
+-                    field_152732_e.warn("Could not load existing file {}", userlistwhitelist.func_152691_c().getName(), filenotfoundexception);
++                    field_152732_e.warn("Could not load existing file {}", userlistwhitelist.func_152691_c().getName());
+                 }
+             }
+ 
+@@ -344,7 +350,7 @@
+ 
+                         if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException))
+                         {
+-                            throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
++                            throw new ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
+                         }
+                     }
+                 };
+@@ -358,7 +364,7 @@
+                 field_152732_e.warn("Could not read old whitelist to convert it!", (Throwable)ioexception);
+                 return false;
+             }
+-            catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror)
++            catch (ConversionError preyggdrasilconverter$conversionerror)
+             {
+                 field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
+                 return false;
+@@ -409,7 +415,7 @@
+ 
+                         if (uuid == null)
+                         {
+-                            throw new PreYggdrasilConverter.ConversionError("Missing UUID for user profile " + p_onProfileLookupSucceeded_1_.getName());
++                            throw new ConversionError("Missing UUID for user profile " + p_onProfileLookupSucceeded_1_.getName());
+                         }
+                         else
+                         {
+@@ -427,18 +433,41 @@
+                         }
+                         else
+                         {
+-                            throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
++                            throw new ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
+                         }
+                     }
+                     private void func_152743_a(File p_152743_1_, String p_152743_2_, String p_152743_3_)
+                     {
+                         File file5 = new File(file1, p_152743_2_ + ".dat");
+                         File file6 = new File(p_152743_1_, p_152743_3_ + ".dat");
++                        // CraftBukkit start - Use old file name to seed lastKnownName
++                        NBTTagCompound root = null;
++
++                        try {
++                            root = CompressedStreamTools.func_74796_a(new java.io.FileInputStream(file1));
++                        } catch (Exception exception) {
++                            exception.printStackTrace();
++                        }
++
++                        if (root != null) {
++                            if (!root.func_74764_b("bukkit")) {
++                                root.func_74782_a("bukkit", new NBTTagCompound());
++                            }
++                            NBTTagCompound data = root.func_74775_l("bukkit");
++                            data.func_74778_a("lastKnownName", p_152743_2_);
++
++                            try {
++                                CompressedStreamTools.func_74799_a(root, new java.io.FileOutputStream(file2));
++                            } catch (Exception exception) {
++                                exception.printStackTrace();
++                            }
++                        }
++                        // CraftBukkit end
+                         PreYggdrasilConverter.func_152711_b(p_152743_1_);
+ 
+                         if (!file5.renameTo(file6))
+                         {
+-                            throw new PreYggdrasilConverter.ConversionError("Could not convert file for " + p_152743_2_);
++                            throw new ConversionError("Could not convert file for " + p_152743_2_);
+                         }
+                     }
+                     private String func_152744_a(GameProfile p_152744_1_)
+@@ -456,7 +485,7 @@
+ 
+                         if (s2 == null)
+                         {
+-                            throw new PreYggdrasilConverter.ConversionError("Could not find the filename for " + p_152744_1_.getName() + " anymore");
++                            throw new ConversionError("Could not find the filename for " + p_152744_1_.getName() + " anymore");
+                         }
+                         else
+                         {
+@@ -467,7 +496,7 @@
+                 func_152717_a(p_152723_0_, Lists.newArrayList(astring), profilelookupcallback);
+                 return true;
+             }
+-            catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror)
++            catch (ConversionError preyggdrasilconverter$conversionerror)
+             {
+                 field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
+                 return false;
+@@ -486,12 +515,12 @@
+         {
+             if (!p_152711_0_.isDirectory())
+             {
+-                throw new PreYggdrasilConverter.ConversionError("Can't create directory " + p_152711_0_.getName() + " in world save directory.");
++                throw new ConversionError("Can't create directory " + p_152711_0_.getName() + " in world save directory.");
+             }
+         }
+         else if (!p_152711_0_.mkdirs())
+         {
+-            throw new PreYggdrasilConverter.ConversionError("Can't create directory " + p_152711_0_.getName() + " in world save directory.");
++            throw new ConversionError("Can't create directory " + p_152711_0_.getName() + " in world save directory.");
+         }
+     }
+ 
+@@ -589,7 +618,7 @@
+     private static File func_152725_d(PropertyManager p_152725_0_)
+     {
+         String s = p_152725_0_.func_73671_a("level-name", "world");
+-        File file1 = new File(s);
++        File file1 = new File(MinecraftServer.getServerInst().server.getWorldContainer(), s); // CraftBukkit - Respect container setting
+\ No newline at end of file
+         return new File(file1, "players");
+     }
+ 

@@ -393,6 +393,7 @@ public class EntityRegistry
     {
         this.entityClassRegistrations.put(entity, registration);
         this.entityRegistrations.put(registration.container, registration);
+        registerBukkitType(entity, registration.entityName);
     }
 
     private static void registerBukkitType(Class<? extends Entity> entityClass, String entityName) {
@@ -412,7 +413,7 @@ public class EntityRegistry
         if (activeModContainer != null) {
             modId = activeModContainer.getModId();
         }
-        entityName = modId + "-" + entityName;
+        entityName = modId + "_" + entityName;
         entityTypeMap.put(entityClass, entityName);
         entityClassMap.put(entityName, entityClass);
     }

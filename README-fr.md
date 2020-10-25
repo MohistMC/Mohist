@@ -1,4 +1,4 @@
-<img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
+<img src="https://i.loli.net/2020/09/06/lQscneqbV8Hptxz.png">
 
 ## Mohist-1.12.2
 #### [English](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md) | [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) 
@@ -11,7 +11,7 @@
 [![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2854-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 ![](https://img.shields.io/badge/AdoptOpenJDK-8u242-brightgreen.svg?colorB=469C00)
-![](https://img.shields.io/badge/Gradle-5.6.4-brightgreen.svg?colorB=469C00)
+![](https://img.shields.io/badge/Gradle-4.9-brightgreen.svg?colorB=469C00)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats%20Button)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 
@@ -44,23 +44,11 @@ Build
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * Build
   * Build avec Linux :
-  `bash gradlew launch4j`
+  `bash gradlew setup installerJar`
   * Build avec Windows :
-  `gradlew.bat launch4j `
+  `gradlew.bat setup installerJar `
 
-Plugin development
-------
-* Building
-   * Build with Linux:
-   `bash gradlew reobfToSRG`
-   * Build with Windows:
-   `gradlew.bat reobfToSRG`
-
-All builds will be in `.\build\mohist_srg.jar` Is the development frontend you need
-
-Développement de plugins
-------
- [**Guide de remap de Mohist**](https://github.com/Mohist-Community/MohistRemapGuide)
+All builds will be in `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`` Is the development frontend you need
 
 Merci aux projets suivants
 ------

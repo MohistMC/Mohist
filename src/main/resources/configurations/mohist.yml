@@ -12,10 +12,12 @@ forge:
   enable_mods_whitelist: false
   whitelist_mods_number: 0
   disablechunkforcesystem: false
-  autounloadWorld_whitelist:
-    - 0
-    - 1
-    - -1
+  autounloadworld:
+    enable: false
+    whitelist:
+      - 0
+      - 1
+      - -1
   modsblacklist:
     list: []
     kickmessage: Use of unauthorized mods
@@ -37,6 +39,9 @@ mohist:
   disable_plugins_blacklist: false
   check_update_auto_download: false
   realtimeticking: false
+  watchdog_mohist: false
+  watchdog_spigot: true
+  showlogo: true
 eventCanceled:
   explosion: false
 consolecolor:

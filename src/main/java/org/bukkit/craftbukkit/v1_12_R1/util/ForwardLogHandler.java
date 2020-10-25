@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import red.mohist.Mohist;
+import com.mohistmc.MohistMC;
 
 public class ForwardLogHandler extends ConsoleHandler {
     private Map<String, Logger> cachedLoggers = new ConcurrentHashMap<>();
@@ -24,7 +24,7 @@ public class ForwardLogHandler extends ConsoleHandler {
 
     @Override
     public void publish(LogRecord record) {
-        Logger logger = Mohist.LOGGER;
+        Logger logger = MohistMC.LOGGER;
         Throwable exception = record.getThrown();
         Level level = record.getLevel();
         String message = getFormatter().formatMessage(record);

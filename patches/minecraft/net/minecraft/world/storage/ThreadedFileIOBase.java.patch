@@ -1,0 +1,86 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/ThreadedFileIOBase.java
++++ ../src-work/minecraft/net/minecraft/world/storage/ThreadedFileIOBase.java
+@@ -1,22 +1,23 @@
+ package net.minecraft.world.storage;
+ 
+-import com.google.common.collect.Lists;
+-import java.util.Collections;
+ import java.util.List;
++import java.util.concurrent.atomic.AtomicInteger;
++import com.mohistmc.common.async.MohistThreadBox;
+ 
+ public class ThreadedFileIOBase implements Runnable
+ {
+     private static final ThreadedFileIOBase field_75741_a = new ThreadedFileIOBase();
+-    private final List<IThreadedFileIO> field_75739_b = Collections.<IThreadedFileIO>synchronizedList(Lists.newArrayList());
++    private final List<IThreadedFileIO> field_75739_b = null; // Akarin - I don't think any plugin rely on this
+     private volatile long field_75740_c;
+     private volatile long field_75737_d;
+     private volatile boolean field_75738_e;
++    private final AtomicInteger queuedChunkCounter = new AtomicInteger(0);
+ 
+     private ThreadedFileIOBase()
+     {
+-        Thread thread = new Thread(this, "File IO Thread");
+-        thread.setPriority(1);
+-        thread.start();
++        //Thread thread = new Thread(this, "File IO Thread");
++        //thread.setPriority(1);
++        //thread.start();
+     }
+ 
+     public static ThreadedFileIOBase func_178779_a()
+@@ -47,7 +48,7 @@
+ 
+             try
+             {
+-                Thread.sleep(this.field_75738_e ? 0L : 10L);
++                Thread.sleep(this.field_75738_e ? 0L : 2L);
+             }
+             catch (InterruptedException interruptedexception1)
+             {
+@@ -68,22 +69,35 @@
+         }
+     }
+ 
++    /**
++     * Process a chunk, re-add to the queue if unsuccessful
++     */
++    private void writeChunk(IThreadedFileIO fileIo) {
++        if (!fileIo.func_75814_c()) { // PAIL: WriteNextIO() -> Returns if the write was unsuccessful
++            queuedChunkCounter.decrementAndGet();
++
++            try {
++                Thread.sleep(field_75738_e ? 0L : 2L);
++            } catch (InterruptedException ex) {
++                ex.printStackTrace();
++            }
++        } else {
++            writeChunk(fileIo);
++        }
++    }
++
+     public void func_75735_a(IThreadedFileIO p_75735_1_)
+     {
+-        if (!this.field_75739_b.contains(p_75735_1_))
+-        {
+-            ++this.field_75740_c;
+-            this.field_75739_b.add(p_75735_1_);
+-        }
++        queuedChunkCounter.incrementAndGet();
++        MohistThreadBox.FILEIO.execute(() -> writeChunk(p_75735_1_));
+     }
+ 
+     public void func_75734_a() throws InterruptedException
+     {
+         this.field_75738_e = true;
+ 
+-        while (this.field_75740_c != this.field_75737_d)
+-        {
+-            Thread.sleep(10L);
++        while (this.queuedChunkCounter.get() != 0) {
++            Thread.sleep(9L);
+\ No newline at end of file
+         }
+ 
+         this.field_75738_e = false;
