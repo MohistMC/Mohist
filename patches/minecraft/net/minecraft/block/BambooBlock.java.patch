@@ -8,9 +8,12 @@
  
  public class BambooBlock extends Block implements IGrowable {
     protected static final VoxelShape field_220261_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 16.0D, 11.0D);
-@@ -102,8 +103,9 @@
+@@ -100,10 +101,11 @@
+ 
+    public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
        if (p_225542_1_.func_177229_b(field_220266_f) == 0) {
-          if (p_225542_4_.nextInt(3) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9) {
+-         if (p_225542_4_.nextInt(3) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9) {
++         if (p_225542_4_.nextInt(Math.max(1, (int) (100.0F / p_225542_2_.spigotConfig.bambooModifier) * 3)) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9) {
              int i = this.func_220260_b(p_225542_2_, p_225542_3_) + 1;
 -            if (i < 16) {
 +            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt(3) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9)) {

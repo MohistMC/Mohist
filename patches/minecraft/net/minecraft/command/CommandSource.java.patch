@@ -49,6 +49,15 @@
     public Vector3d func_197036_d() {
        return this.field_197042_d;
     }
+@@ -207,7 +223,7 @@
+          }
+       }
+ 
+-      if (this.field_197041_c != this.field_197047_i && this.field_197047_i.func_200252_aR().func_223586_b(GameRules.field_223608_k)) {
++      if (this.field_197041_c != this.field_197047_i && this.field_197047_i.func_200252_aR().func_223586_b(GameRules.field_223608_k) && !org.spigotmc.SpigotConfig.silentCommandBlocks) { // Spigot
+          this.field_197047_i.func_145747_a(itextcomponent, Util.field_240973_b_);
+       }
+ 
 @@ -254,4 +270,10 @@
     public DynamicRegistries func_241861_q() {
        return this.field_197047_i.func_244267_aX();

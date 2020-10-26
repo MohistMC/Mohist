@@ -380,6 +380,8 @@ project(':forge') {
         installer 'mysql:mysql-connector-java:5.1.49'
         installer 'org.apache.logging.log4j:log4j-iostreams:2.11.2'
         installer 'net.md-5:SpecialSource:1.8.5'
+        // spigot
+        installer 'net.md-5:bungeecord-chat:1.16-R0.3'
 
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'

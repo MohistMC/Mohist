@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/ai/attributes/RangedAttribute.java
 +++ b/net/minecraft/entity/ai/attributes/RangedAttribute.java
+@@ -4,7 +4,7 @@
+ 
+ public class RangedAttribute extends Attribute {
+    private final double field_111120_a;
+-   private final double field_111118_b;
++   public double field_111118_b; // Spigot
+ 
+    public RangedAttribute(String p_i231504_1_, double p_i231504_2_, double p_i231504_4_, double p_i231504_6_) {
+       super(p_i231504_1_, p_i231504_2_);
 @@ -20,6 +20,7 @@
     }
  

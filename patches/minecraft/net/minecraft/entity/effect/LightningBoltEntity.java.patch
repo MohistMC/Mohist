@@ -8,7 +8,7 @@
  import net.minecraft.network.play.server.SSpawnObjectPacket;
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
-@@ -22,12 +23,14 @@
+@@ -22,14 +23,17 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,8 +23,18 @@
 +   public boolean field_184529_d; // CraftBukkit private->public
     @Nullable
     private ServerPlayerEntity field_204810_e;
++   public boolean isSilent = false; // Spigot
  
-@@ -59,7 +62,24 @@
+    public LightningBoltEntity(EntityType<? extends LightningBoltEntity> p_i231491_1_, World p_i231491_2_) {
+       super(p_i231491_1_, p_i231491_2_);
+@@ -53,13 +57,30 @@
+ 
+    public void func_70071_h_() {
+       super.func_70071_h_();
+-      if (this.field_70262_b == 2) {
++      if (!isSilent && this.field_70262_b == 2) {  // Spigot
+          Difficulty difficulty = this.field_70170_p.func_175659_aa();
+          if (difficulty == Difficulty.NORMAL || difficulty == Difficulty.HARD) {
              this.func_195053_a(4);
           }
  
@@ -50,7 +60,7 @@
           this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187752_dd, SoundCategory.WEATHER, 2.0F, 0.5F + this.field_70146_Z.nextFloat() * 0.2F);
        }
  
-@@ -75,14 +95,15 @@
+@@ -75,14 +96,15 @@
           }
        }
  
@@ -68,7 +78,7 @@
                 entity.func_241841_a((ServerWorld)this.field_70170_p, this);
              }
  
-@@ -99,14 +120,22 @@
+@@ -99,14 +121,22 @@
           BlockPos blockpos = this.func_233580_cy_();
           BlockState blockstate = AbstractFireBlock.func_235326_a_(this.field_70170_p, blockpos);
           if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {

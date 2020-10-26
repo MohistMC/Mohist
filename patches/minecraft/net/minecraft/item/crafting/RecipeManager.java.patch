@@ -41,12 +41,13 @@
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, irecipe);
-@@ -68,10 +76,24 @@
+@@ -68,10 +76,25 @@
        field_199521_c.info("Loaded {} recipes", (int)map.size());
     }
  
 +   // CraftBukkit start
 +   public void addRecipe(final IRecipe<?> irecipe) {
++      org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
 +      final Map<ResourceLocation, IRecipe<?>> map = this.field_199522_d.get(irecipe.func_222127_g());
 +      if (map.containsKey(irecipe.func_199560_c())) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.func_199560_c());
@@ -67,7 +68,7 @@
     }
  
     public <C extends IInventory, T extends IRecipe<C>> List<T> func_241447_a_(IRecipeType<T> p_241447_1_) {
-@@ -147,4 +169,14 @@
+@@ -147,4 +170,14 @@
        });
        this.field_199522_d = ImmutableMap.copyOf(map);
     }

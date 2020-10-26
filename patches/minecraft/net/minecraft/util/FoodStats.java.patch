@@ -74,7 +74,7 @@
           }
        }
  
-@@ -51,14 +79,14 @@
+@@ -51,15 +79,15 @@
           ++this.field_75123_d;
           if (this.field_75123_d >= 10) {
              float f = Math.min(this.field_75125_b, 6.0F);
@@ -87,7 +87,9 @@
           ++this.field_75123_d;
           if (this.field_75123_d >= 80) {
 -            p_75118_1_.func_70691_i(1.0F);
+-            this.func_75113_a(6.0F);
 +            p_75118_1_.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
-             this.func_75113_a(6.0F);
++            this.func_75113_a(entityhuman.field_70170_p.spigotConfig.regenExhaustion); // Spigot - Change to use configurable value
              this.field_75123_d = 0;
           }
+       } else if (this.field_75127_a <= 0) {

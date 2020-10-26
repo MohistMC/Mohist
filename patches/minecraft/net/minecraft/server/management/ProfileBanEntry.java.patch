@@ -8,9 +8,36 @@
  import java.util.Date;
  import java.util.Objects;
  import java.util.UUID;
-@@ -51,4 +52,22 @@
+@@ -36,19 +37,45 @@
+    }
+ 
+    private static GameProfile func_152648_b(JsonObject p_152648_0_) {
+-      if (p_152648_0_.has("uuid") && p_152648_0_.has("name")) {
++      // Spigot start
++      // this whole method has to be reworked to account for the fact Bukkit only accepts UUID bans and gives no way for usernames to be stored!
++      UUID uuid = null;
++      String name = null;
++      if (p_152648_0_.has("uuid")) {
+          String s = p_152648_0_.get("uuid").getAsString();
+ 
+-         UUID uuid;
+          try {
+             uuid = UUID.fromString(s);
+          } catch (Throwable throwable) {
+-            return null;
+          }
+ 
+-         return new GameProfile(uuid, p_152648_0_.get("name").getAsString());
++      }
++      if (p_152648_0_.has("name")) {
++         name = p_152648_0_.get("name").getAsString();
++      }
++      if (uuid != null || name != null) {
++         return new GameProfile(uuid, name);
+       } else {
           return null;
        }
++      // Spigot End
     }
 +
 +   // CraftBukkit start

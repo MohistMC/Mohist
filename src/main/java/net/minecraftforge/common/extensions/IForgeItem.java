@@ -269,7 +269,7 @@ public interface IForgeItem
      */
     default int getEntityLifespan(ItemStack itemStack, World world)
     {
-        return 6000;
+        return world.spigotConfig.itemDespawnRate;
     }
 
     /**

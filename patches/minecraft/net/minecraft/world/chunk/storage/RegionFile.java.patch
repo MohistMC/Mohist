@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/chunk/storage/RegionFile.java
++++ b/net/minecraft/world/chunk/storage/RegionFile.java
+@@ -71,6 +71,14 @@
+                if (l != 0) {
+                   int i1 = func_227142_b_(l);
+                   int j1 = func_227131_a_(l);
++                  // Spigot start
++                  if (j1 == 255) {
++                     // We're maxed out, so we need to read the proper length from the section
++                     ByteBuffer realLen = ByteBuffer.allocate(4);
++                     this.field_76719_c.read(realLen, i1 * 4096);
++                     j1 = (realLen.getInt(0) + 4) / 4096 + 1;
++                  }
++                  // Spigot end
+                   if (i1 < 2) {
+                      field_227122_a_.warn("Region file {} has invalid sector at index: {}; sector {} overlaps with header", p_i231894_1_, k, i1);
+                      this.field_76716_d.put(k, 0);
+@@ -103,6 +111,13 @@
+       } else {
+          int j = func_227142_b_(i);
+          int k = func_227131_a_(i);
++         // Spigot start
++         if (k == 255) {
++            ByteBuffer realLen = ByteBuffer.allocate(4);
++            this.field_76719_c.read(realLen, j * 4096);
++            k = (realLen.getInt(0) + 4) / 4096 + 1;
++         }
++         // Spigot end
+          int l = k * 4096;
+          ByteBuffer bytebuffer = ByteBuffer.allocate(l);
+          this.field_76719_c.read(bytebuffer, (long)(j * 4096));

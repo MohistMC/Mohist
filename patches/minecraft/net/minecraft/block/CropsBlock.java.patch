@@ -8,7 +8,7 @@
  
  public class CropsBlock extends BushBlock implements IGrowable {
     public static final IntegerProperty field_176488_a = BlockStateProperties.field_208170_W;
-@@ -61,12 +62,14 @@
+@@ -61,13 +62,27 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -19,13 +19,26 @@
              float f = func_180672_a(this, p_225542_2_, p_225542_3_);
 -            if (p_225542_4_.nextInt((int)(25.0F / f) + 1) == 0) {
 -               p_225542_2_.func_180501_a(p_225542_3_, this.func_185528_e(i + 1), 2);
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
++            // Spigot start
++            int modifier;
++            if (this == Blocks.field_185773_cZ) {
++               modifier = p_225542_2_.spigotConfig.beetrootModifier;
++            } else if (this == Blocks.field_150459_bM) {
++               modifier = p_225542_2_.spigotConfig.carrotModifier;
++            } else if (this == Blocks.field_150469_bN) {
++               modifier = p_225542_2_.spigotConfig.potatoModifier;
++            } else {
++               modifier = p_225542_2_.spigotConfig.wheatModifier;
+             }
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt((int) ((100.0F / modifier) * (25.0F / f)) + 1) == 0)) {
++               // Spigot end
 +               CraftEventFactory.handleBlockFormEvent(p_225542_2_, p_225542_3_, this.func_185528_e(i + 1), 2); // CraftBukkit
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
-             }
++            }
           }
        }
-@@ -80,7 +83,7 @@
+ 
+@@ -80,7 +95,7 @@
           i = j;
        }
  
@@ -34,7 +47,7 @@
     }
  
     protected int func_185529_b(World p_185529_1_) {
-@@ -95,9 +98,9 @@
+@@ -95,9 +110,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
              BlockState blockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
@@ -46,7 +59,7 @@
                    f1 = 3.0F;
                 }
              }
-@@ -133,7 +136,7 @@
+@@ -133,7 +148,7 @@
     }
  
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {

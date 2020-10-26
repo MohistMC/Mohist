@@ -110,8 +110,12 @@
        return p_190202_1_ % 32 == 0 ? 0.5D : 0.0D;
     }
  
-@@ -96,6 +113,21 @@
-          if (this.field_70520_f++ == 100) {
+@@ -93,9 +110,24 @@
+             this.func_70076_C();
+          }
+ 
+-         if (this.field_70520_f++ == 100) {
++         if (this.field_70520_f++ == this.field_70170_p.spigotConfig.hangingTickFrequency) { // Spigot
              this.field_70520_f = 0;
              if (!this.field_70128_L && !this.func_70518_d()) {
 +            // CraftBukkit start - fire break events

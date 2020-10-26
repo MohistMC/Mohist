@@ -13,7 +13,7 @@
                 } else {
                    this.func_192743_a(advancement, entry.getValue());
                 }
-@@ -159,6 +163,10 @@
+@@ -159,11 +163,16 @@
        }
  
        this.func_240920_c_(p_240921_1_);
@@ -24,7 +24,13 @@
        this.func_192752_d();
        this.func_240919_b_(p_240921_1_);
     }
-@@ -192,6 +200,8 @@
+ 
+    public void func_192749_b() {
++      if (org.spigotmc.SpigotConfig.disableAdvancementSaving) return; // Spigot
+       Map<ResourceLocation, AdvancementProgress> map = Maps.newHashMap();
+ 
+       for(Entry<Advancement, AdvancementProgress> entry : this.field_192758_f.entrySet()) {
+@@ -192,6 +201,8 @@
     }
  
     public boolean func_192750_a(Advancement p_192750_1_, String p_192750_2_) {
@@ -33,7 +39,7 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
        boolean flag1 = advancementprogress.func_192105_a();
-@@ -200,10 +210,12 @@
+@@ -200,10 +211,12 @@
           this.field_192761_i.add(p_192750_1_);
           flag = true;
           if (!flag1 && advancementprogress.func_192105_a()) {
