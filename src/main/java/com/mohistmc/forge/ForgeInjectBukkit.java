@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_16_R2.util.CraftMagicNumbers;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.permissions.DefaultPermissions;
@@ -32,6 +33,8 @@ public class ForgeInjectBukkit {
                 Item item = entry.getValue();
                 int id = Item.getIdFromItem(item);
                 Material material = Material.addMaterial(materialName, id, false);
+                CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
+                CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
                 if (material != null) {
                     MohistMC.LOGGER.debug("Save-ITEM: " + material.name() + " - " + materialName);
                 }
@@ -49,6 +52,8 @@ public class ForgeInjectBukkit {
                 Block block = entry.getValue();
                 int id = Item.getIdFromItem(block.asItem());
                 Material material = Material.addMaterial(materialName, id, true);
+                CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
+                CraftMagicNumbers.MATERIAL_BLOCK.put(material, block);
                 if (material != null) {
                     MohistMC.LOGGER.debug("Save-BLOCK:" + material.name() + " - " + materialName);
                 }
