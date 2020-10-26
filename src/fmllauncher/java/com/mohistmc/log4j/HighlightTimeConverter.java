@@ -2,6 +2,8 @@ package com.mohistmc.log4j;
 
 import java.util.List;
 import javax.annotation.Nullable;
+
+import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -46,30 +48,24 @@ public class HighlightTimeConverter extends LogEventPatternConverter
     @Override
     public void format(LogEvent event, StringBuilder toAppendTo)
     {
-        Level level = event.getLevel();
-        if (level.isMoreSpecificThan(Level.ERROR))
-        {
-            format(ANSI_ERROR, event, toAppendTo);
-            return;
-        }
-        else if (level.isMoreSpecificThan(Level.WARN))
-        {
-            format(ANSI_WARN, event, toAppendTo);
-            return;
-        }else if (level.isMoreSpecificThan(Level.INFO))
-        {
-            format(ANSI_INFO, event, toAppendTo);
-            return;
-        }
-        else if (level.isMoreSpecificThan(Level.FATAL))
-        {
-            format(ANSI_FATAL, event, toAppendTo);
-            return;
-        }
-        else if (level.isMoreSpecificThan(Level.TRACE))
-        {
-            format(ANSI_TRACE, event, toAppendTo);
-            return;
+        if (TerminalConsoleAppender.isAnsiSupported()) {
+            Level level = event.getLevel();
+            if (level.isMoreSpecificThan(Level.ERROR)) {
+                format(ANSI_ERROR, event, toAppendTo);
+                return;
+            } else if (level.isMoreSpecificThan(Level.WARN)) {
+                format(ANSI_WARN, event, toAppendTo);
+                return;
+            } else if (level.isMoreSpecificThan(Level.INFO)) {
+                format(ANSI_INFO, event, toAppendTo);
+                return;
+            } else if (level.isMoreSpecificThan(Level.FATAL)) {
+                format(ANSI_FATAL, event, toAppendTo);
+                return;
+            } else if (level.isMoreSpecificThan(Level.TRACE)) {
+                format(ANSI_TRACE, event, toAppendTo);
+                return;
+            }
         }
 
         //noinspection ForLoopReplaceableByForEach
@@ -79,25 +75,20 @@ public class HighlightTimeConverter extends LogEventPatternConverter
         }
     }
 
-    private void format(String style, LogEvent event, StringBuilder toAppendTo)
-    {
+    private void format(String style, LogEvent event, StringBuilder toAppendTo) {
         int start = toAppendTo.length();
         toAppendTo.append(style);
         int end = toAppendTo.length();
 
         //noinspection ForLoopReplaceableByForEach
-        for (int i = 0, size = formatters.size(); i < size; i++)
-        {
+        for (int i = 0, size = formatters.size(); i < size; i++) {
             formatters.get(i).format(event, toAppendTo);
         }
 
-        if (toAppendTo.length() == end)
-        {
+        if (toAppendTo.length() == end) {
             // No content so we don't need to append the ANSI escape code
             toAppendTo.setLength(start);
-        }
-        else
-        {
+        } else {
             // Append reset code after the line
             toAppendTo.append(ANSI_RESET);
         }
@@ -106,10 +97,8 @@ public class HighlightTimeConverter extends LogEventPatternConverter
     @Override
     public boolean handlesThrowable()
     {
-        for (final PatternFormatter formatter : formatters)
-        {
-            if (formatter.handlesThrowable())
-            {
+        for (final PatternFormatter formatter : formatters) {
+            if (formatter.handlesThrowable()) {
                 return true;
             }
         }

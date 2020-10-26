@@ -5,16 +5,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import jline.Terminal;
+
+import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
 
 public class ColouredConsoleSender extends CraftConsoleCommandSender {
-    private final Terminal terminal;
     private final Map<ChatColor, String> replacements = new EnumMap<ChatColor, String>(ChatColor.class);
     private final ChatColor[] colors = ChatColor.values();
     private final boolean jansiPassthrough;
@@ -24,7 +23,6 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
 
     protected ColouredConsoleSender() {
         super();
-        this.terminal = ((CraftServer) getServer()).getReader().getTerminal();
         this.jansiPassthrough = Boolean.getBoolean("jansi.passthrough");
 
         replacements.put(ChatColor.BLACK, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
@@ -54,7 +52,7 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
     @Override
     public void sendMessage(String message) {
         // support jansi passthrough VM option when jansi doesn't detect an ANSI supported terminal
-        if (jansiPassthrough || terminal.isAnsiSupported()) {
+        if (jansiPassthrough || TerminalConsoleAppender.isAnsiSupported()) {
             if (!conversationTracker.isConversingModaly()) {
                 String result = convertRGBColors(message);
                 for (ChatColor color : colors) {

@@ -1159,10 +1159,6 @@ public final class CraftServer implements Server {
         return logger;
     }
 
-    public ConsoleReader getReader() {
-        return console.reader;
-    }
-
     @Override
     public PluginCommand getPluginCommand(String name) {
         Command command = commandMap.getCommand(name);

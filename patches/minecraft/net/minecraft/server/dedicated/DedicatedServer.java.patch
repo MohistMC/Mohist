@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -2,16 +2,15 @@
+@@ -2,10 +2,13 @@
  
  import com.google.common.base.Strings;
  import com.google.common.collect.Lists;
@@ -10,16 +10,11 @@
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.datafixers.DataFixer;
--import java.io.BufferedReader;
++
+ import java.io.BufferedReader;
  import java.io.IOException;
--import java.io.InputStreamReader;
- import java.net.InetAddress;
- import java.net.Proxy;
--import java.nio.charset.StandardCharsets;
- import java.util.Collections;
- import java.util.List;
- import java.util.Locale;
-@@ -34,15 +33,16 @@
+ import java.io.InputStreamReader;
+@@ -34,15 +37,16 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerPropertiesProvider;
  import net.minecraft.server.gui.MinecraftServerGui;
@@ -37,7 +32,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.DynamicRegistries;
-@@ -53,22 +53,33 @@
+@@ -53,22 +57,33 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
@@ -75,24 +70,16 @@
        this.field_71340_o = p_i232601_7_;
        this.field_184115_n = new RConConsoleSource(this);
     }
-@@ -76,12 +87,43 @@
+@@ -76,12 +91,32 @@
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
--            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-+            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +            // CraftBukkit start
 +            if (!org.bukkit.craftbukkit.Main.useConsole) {
 +               return;
 +            }
-+            jline.console.ConsoleReader bufferedreader = reader;
-+            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
-+            try {
-+               System.in.available();
-+            } catch (IOException ex) {
-+               return;
-+            }
-+            // CraftBukkit end
++            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
+             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
 -            String s1;
 +            String s3;
@@ -101,11 +88,7 @@
 -                  DedicatedServer.this.func_195581_a(s1, DedicatedServer.this.func_195573_aM());
 +               // CraftBukkit start - JLine disabling compatibility
 +               while (!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l()) {
-+                  if (Main.useJline) {
-+                     s3 = bufferedreader.readLine(">", null);
-+                  } else {
-+                     s3 = bufferedreader.readLine();
-+                  }
++                  s3 = bufferedreader.readLine();
 +
 +                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
 +                  if (s3 == null) {
@@ -123,7 +106,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-@@ -89,6 +131,28 @@
+@@ -89,6 +124,21 @@
  
           }
        };
@@ -136,14 +119,7 @@
 +      }
 +      global.addHandler(new org.bukkit.craftbukkit.v1_16_R2.util.ForwardLogHandler());
 +
-+      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
-+      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
-+         if (appender instanceof org.apache.logging.log4j.core.appender.ConsoleAppender) {
-+            logger.removeAppender(appender);
-+         }
-+      }
-+
-+      //new org.bukkit.craftbukkit.v1_16_R2.util.TerminalConsoleWriterThread(System.out, this.reader).start();
++      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
 +
 +      System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
 +      System.setErr(IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
@@ -152,7 +128,7 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
        thread.start();
-@@ -107,6 +171,12 @@
+@@ -107,6 +157,12 @@
           this.func_71189_e(serverproperties.field_219009_c);
        }
  
@@ -165,7 +141,7 @@
        this.func_71188_g(serverproperties.field_219012_f);
        this.func_71245_h(serverproperties.field_219013_g);
        this.func_180507_a_(serverproperties.field_219014_h, this.func_184113_aK());
-@@ -114,7 +184,7 @@
+@@ -114,7 +170,7 @@
        this.func_104055_i(serverproperties.field_219016_j);
        super.func_143006_e(serverproperties.field_219005_R.get());
        this.func_205741_k(serverproperties.field_219017_k);
@@ -174,7 +150,7 @@
        field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
        InetAddress inetaddress = null;
        if (!this.func_71211_k().isEmpty()) {
-@@ -138,6 +208,12 @@
+@@ -138,6 +194,12 @@
           return false;
        }
  
@@ -187,7 +163,7 @@
        if (!this.func_71266_T()) {
           field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
           field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
-@@ -152,17 +228,20 @@
+@@ -152,17 +214,20 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -210,7 +186,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,23 +254,18 @@
+@@ -175,23 +240,18 @@
           if (serverproperties.field_219030_x) {
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = MainThread.func_242130_a(this);
@@ -239,7 +215,7 @@
     }
  
     public boolean func_230537_U_() {
-@@ -272,7 +346,7 @@
+@@ -272,7 +332,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -248,7 +224,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -295,11 +369,21 @@
+@@ -295,11 +355,21 @@
     }
  
     public void func_71333_ah() {
@@ -271,7 +247,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -402,7 +486,7 @@
+@@ -402,7 +472,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -280,7 +256,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -481,13 +565,39 @@
+@@ -481,13 +551,39 @@
     }
  
     public String func_71258_A() {
@@ -322,7 +298,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -507,6 +617,11 @@
+@@ -507,6 +603,11 @@
        return false;
     }
  
@@ -334,7 +310,7 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -518,4 +633,15 @@
+@@ -518,4 +619,15 @@
     public boolean func_230540_aS_() {
        return this.field_71340_o.func_219034_a().field_241078_O_;
     }
