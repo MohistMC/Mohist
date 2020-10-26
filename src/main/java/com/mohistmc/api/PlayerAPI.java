@@ -1,6 +1,8 @@
 package com.mohistmc.api;
 
+import java.net.SocketAddress;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -10,8 +12,8 @@ import org.bukkit.entity.Player;
 
 public class PlayerAPI {
 
-    public static Map<ServerPlayerEntity, Integer> mods = new ConcurrentHashMap<>();
-    public static Map<ServerPlayerEntity, String> modlist = new ConcurrentHashMap<>();
+    public static Map<SocketAddress, Integer> mods = new ConcurrentHashMap<>();
+    public static Map<SocketAddress, String> modlist = new ConcurrentHashMap<>();
 
     /**
      *  Get Player ping
@@ -32,11 +34,13 @@ public class PlayerAPI {
 
     // Don't count the default number of mods
     public static int getModSize(Player player) {
-        return mods.get(getNMSPlayer(player)) == null ? 0 : mods.get(getNMSPlayer(player)) - 2;
+        SocketAddress socketAddress = getRemoteAddress(player);
+        return mods.get(socketAddress) == null ? 0 : mods.get(socketAddress) - 2;
     }
 
     public static String getModlist(Player player) {
-        return modlist.get(getNMSPlayer(player)) == null ? "null" : modlist.get(getNMSPlayer(player));
+        SocketAddress socketAddress = getRemoteAddress(player);
+        return modlist.get(socketAddress) == null ? "null" : modlist.get(socketAddress);
     }
 
     public static Boolean hasMod(Player player, String modid){
@@ -46,5 +50,10 @@ public class PlayerAPI {
     public static boolean isOp(PlayerEntity ep)
     {
         return MinecraftServer.getServer().getPlayerList().canSendCommands(ep.getGameProfile());
+    }
+
+    public static SocketAddress getRemoteAddress(Player player)
+    {
+        return getNMSPlayer(player).connection.netManager.getRemoteAddress();
     }
 }

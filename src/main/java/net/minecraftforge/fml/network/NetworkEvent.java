@@ -26,6 +26,7 @@ import io.netty.util.AttributeKey;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.INetHandler;
+import net.minecraft.network.login.ServerLoginNetHandler;
 import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
@@ -34,6 +35,7 @@ import net.minecraft.util.concurrent.ThreadTaskExecutor;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
 
+import java.net.SocketAddress;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -228,6 +230,17 @@ public class NetworkEvent extends Event
             {
                 ServerPlayNetHandler netHandlerPlayServer = (ServerPlayNetHandler) netHandler;
                 return netHandlerPlayServer.player;
+            }
+            return null;
+        }
+
+        @Nullable
+        public SocketAddress getRemoteAddress()
+        {
+            INetHandler netHandler = networkManager.getNetHandler();
+            if (netHandler instanceof ServerLoginNetHandler) {
+                ServerLoginNetHandler serverLoginNetHandler = (ServerLoginNetHandler)netHandler;
+                return serverLoginNetHandler.networkManager.getRemoteAddress();
             }
             return null;
         }
