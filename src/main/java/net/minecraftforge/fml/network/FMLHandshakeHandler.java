@@ -210,10 +210,13 @@ public class FMLHandshakeHandler {
             c.get().getNetworkManager().closeChannel(new StringTextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
+        //TODO: c.get().getSender() == null
+        /*
         if(!clientModList.getModList().isEmpty()) {
             PlayerAPI.mods.put(c.get().getSender(), clientModList.getModList().size());
             PlayerAPI.modlist.put(c.get().getSender(), String.join(", ", clientModList.getModList()));
         }
+         */
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
     }
 
