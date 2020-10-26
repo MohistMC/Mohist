@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -2,16 +2,14 @@
+@@ -2,16 +2,15 @@
  
  import com.google.common.base.Strings;
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
++import com.mohistmc.forge.BukkitPermissionsHandler;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -18,7 +19,7 @@
  import java.util.Collections;
  import java.util.List;
  import java.util.Locale;
-@@ -34,15 +32,16 @@
+@@ -34,15 +33,16 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerPropertiesProvider;
  import net.minecraft.server.gui.MinecraftServerGui;
@@ -36,10 +37,11 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.DynamicRegistries;
-@@ -53,22 +52,31 @@
+@@ -53,22 +53,32 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
++import net.minecraftforge.server.permission.PermissionAPI;
 +import org.apache.logging.log4j.Level;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -72,7 +74,7 @@
        this.field_71340_o = p_i232601_7_;
        this.field_184115_n = new RConConsoleSource(this);
     }
-@@ -76,12 +84,43 @@
+@@ -76,12 +86,43 @@
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -120,7 +122,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-@@ -89,6 +128,28 @@
+@@ -89,6 +130,28 @@
  
           }
        };
@@ -149,7 +151,7 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
        thread.start();
-@@ -114,7 +175,7 @@
+@@ -114,7 +177,7 @@
        this.func_104055_i(serverproperties.field_219016_j);
        super.func_143006_e(serverproperties.field_219005_R.get());
        this.func_205741_k(serverproperties.field_219017_k);
@@ -158,7 +160,7 @@
        field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
        InetAddress inetaddress = null;
        if (!this.func_71211_k().isEmpty()) {
-@@ -138,6 +199,12 @@
+@@ -138,6 +201,12 @@
           return false;
        }
  
@@ -171,7 +173,7 @@
        if (!this.func_71266_T()) {
           field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
           field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
-@@ -152,17 +219,20 @@
+@@ -152,17 +221,20 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -194,7 +196,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,23 +245,18 @@
+@@ -175,23 +247,18 @@
           if (serverproperties.field_219030_x) {
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = MainThread.func_242130_a(this);
@@ -214,15 +216,16 @@
           if (serverproperties.field_241079_P_) {
              ServerInfoMBean.func_233490_a_(this);
           }
- 
+-
 -         return true;
++         PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
        }
 +
     }
  
     public boolean func_230537_U_() {
-@@ -272,7 +337,7 @@
+@@ -272,7 +339,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -231,7 +234,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -297,7 +362,15 @@
+@@ -297,7 +364,15 @@
     public void func_71333_ah() {
        while(!this.field_71341_l.isEmpty()) {
           PendingCommand pendingcommand = this.field_71341_l.remove(0);
@@ -248,7 +251,7 @@
        }
  
     }
-@@ -402,7 +475,7 @@
+@@ -402,7 +477,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -257,7 +260,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -481,13 +554,39 @@
+@@ -481,13 +556,39 @@
     }
  
     public String func_71258_A() {
@@ -299,7 +302,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -507,6 +606,11 @@
+@@ -507,6 +608,11 @@
        return false;
     }
  
@@ -311,7 +314,7 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -518,4 +622,15 @@
+@@ -518,4 +624,15 @@
     public boolean func_230540_aS_() {
        return this.field_71340_o.func_219034_a().field_241078_O_;
     }
