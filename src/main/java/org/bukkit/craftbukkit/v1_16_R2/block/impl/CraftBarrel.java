@@ -15,7 +15,7 @@ public final class CraftBarrel extends org.bukkit.craftbukkit.v1_16_R2.block.dat
 
     // org.bukkit.craftbukkit.v1_16_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.state.EnumProperty<?> FACING = getEnum(net.minecraft.block.BarrierBlock.class, "facing");
+    private static final net.minecraft.state.EnumProperty<?> FACING = getEnum(net.minecraft.block.BarrelBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
