@@ -55,6 +55,15 @@
                 this.func_70227_a(raytraceresult);
                 this.field_70160_al = true;
              }
+@@ -262,7 +269,7 @@
+ 
+    protected void func_225516_i_() {
+       ++this.field_70252_j;
+-      if (this.field_70252_j >= 1200) {
++      if (this.field_70252_j >= ((this instanceof TridentEntity) ? field_70170_p.spigotConfig.tridentDespawnRate : field_70170_p.spigotConfig.arrowDespawnRate)) { // Spigot
+          this.func_70106_y();
+       }
+ 
 @@ -320,7 +327,13 @@
        boolean flag = entity.func_200600_R() == EntityType.field_200803_q;
        int k = entity.func_223314_ad();

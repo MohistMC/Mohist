@@ -38,18 +38,22 @@
           this.writeBoolean(false);
        } else {
           this.writeBoolean(true);
-@@ -300,8 +310,8 @@
+@@ -300,8 +310,12 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
 -         if (item.func_77645_m() || item.func_77651_p()) {
 -            compoundnbt = p_150788_1_.func_77978_p();
 +         if (item.isDamageable(p_150788_1_) || item.func_77651_p()) {
++            // Spigot start - filter
++            p_150788_1_ = p_150788_1_.func_77946_l();
++            CraftItemStack.setItemMeta(p_150788_1_, CraftItemStack.getItemMeta(p_150788_1_));
++            // Spigot end
 +            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
           }
  
           this.func_150786_a(compoundnbt);
-@@ -317,7 +327,12 @@
+@@ -317,7 +331,12 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);

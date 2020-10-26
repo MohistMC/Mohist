@@ -24,10 +24,12 @@
  
     public SaplingBlock(Tree p_i48337_1_, AbstractBlock.Properties p_i48337_2_) {
        super(p_i48337_2_);
-@@ -29,7 +35,28 @@
+@@ -28,8 +34,29 @@
+    }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
-       if (p_225542_2_.func_201696_r(p_225542_3_.func_177984_a()) >= 9 && p_225542_4_.nextInt(7) == 0) {
+-      if (p_225542_2_.func_201696_r(p_225542_3_.func_177984_a()) >= 9 && p_225542_4_.nextInt(7) == 0) {
++      if (p_225542_2_.func_201696_r(p_225542_3_.func_177984_a()) >= 9 && p_225542_4_.nextInt(Math.max(2, (int) (((100.0F / p_225542_2_.spigotConfig.saplingModifier) * 7) + 0.5F))) == 0) { // Spigot
 +      if (!p_225542_2_.isAreaLoaded(p_225542_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
 +         // CraftBukkit start
 +         p_225542_2_.captureTreeGeneration = true;

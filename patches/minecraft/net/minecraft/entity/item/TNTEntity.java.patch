@@ -9,14 +9,23 @@
  public class TNTEntity extends Entity {
     private static final DataParameter<Integer> field_184537_a = EntityDataManager.func_187226_a(TNTEntity.class, DataSerializers.field_187192_b);
     @Nullable
-    private LivingEntity field_94084_b;
+-   private LivingEntity field_94084_b;
++   public LivingEntity field_94084_b;
     private int field_70516_a = 80;
 +   public float yield = 4; // CraftBukkit - add field
 +   public boolean isIncendiary = false; // CraftBukkit - add field
  
     public TNTEntity(EntityType<? extends TNTEntity> p_i50216_1_, World p_i50216_2_) {
        super(p_i50216_1_, p_i50216_2_);
-@@ -65,10 +68,13 @@
+@@ -53,6 +56,7 @@
+    }
+ 
+    public void func_70071_h_() {
++      if (field_70170_p.spigotConfig.currentPrimedTnt++ > field_70170_p.spigotConfig.maxTntTicksPerTick) { return; } // Spigot
+       if (!this.func_189652_ae()) {
+          this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, -0.04D, 0.0D));
+       }
+@@ -65,10 +69,13 @@
  
        --this.field_70516_a;
        if (this.field_70516_a <= 0) {
@@ -31,7 +40,7 @@
        } else {
           this.func_233566_aG_();
           if (this.field_70170_p.field_72995_K) {
-@@ -79,8 +85,13 @@
+@@ -79,8 +86,13 @@
     }
  
     protected void func_70515_d() {

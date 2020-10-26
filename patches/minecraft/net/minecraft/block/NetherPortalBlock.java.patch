@@ -9,7 +9,14 @@
  
  public class NetherPortalBlock extends Block {
     public static final EnumProperty<Direction.Axis> field_176550_a = BlockStateProperties.field_208199_z;
-@@ -54,7 +56,8 @@
+@@ -48,13 +50,14 @@
+    }
+ 
+    public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
+-      if (p_225542_2_.func_230315_m_().func_236043_f_() && p_225542_2_.func_82736_K().func_223586_b(GameRules.field_223601_d) && p_225542_4_.nextInt(2000) < p_225542_2_.func_175659_aa().func_151525_a()) {
++      if (p_225542_2_.spigotConfig.enableZombiePigmenPortalSpawns && p_225542_2_.func_230315_m_().func_236043_f_() && p_225542_2_.func_82736_K().func_223586_b(GameRules.field_223601_d) && p_225542_4_.nextInt(2000) < p_225542_2_.func_175659_aa().func_151525_a()) { // Spigot
+          while(p_225542_2_.func_180495_p(p_225542_3_).func_203425_a(this)) {
+             p_225542_3_ = p_225542_3_.func_177977_b();
           }
  
           if (p_225542_2_.func_180495_p(p_225542_3_).func_215688_a(p_225542_2_, p_225542_3_, EntityType.field_233592_ba_)) {

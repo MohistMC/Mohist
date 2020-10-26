@@ -26,7 +26,7 @@
              if (blockstate == null) {
                 return ActionResultType.FAIL;
              } else if (!this.func_195941_b(blockitemusecontext, blockstate)) {
-@@ -64,13 +74,22 @@
+@@ -64,14 +74,23 @@
                    blockstate1 = this.func_219985_a(blockpos, world, itemstack, blockstate1);
                    this.func_195943_a(blockpos, world, playerentity, itemstack, blockstate1);
                    block.func_180633_a(world, blockpos, blockstate1, playerentity, itemstack);
@@ -46,11 +46,13 @@
  
 -               SoundType soundtype = blockstate1.func_215695_r();
 -               world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+-               if (playerentity == null || !playerentity.field_71075_bZ.field_75098_d) {
 +               SoundType soundtype = blockstate1.getSoundType(world, blockpos, p_195942_1_.func_195999_j());
-+               world.func_184133_a(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, p_195942_1_.func_195999_j()), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
-                if (playerentity == null || !playerentity.field_71075_bZ.field_75098_d) {
++               // world.playSound(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, context.getPlayer()), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
++               if ((playerentity == null || !playerentity.field_71075_bZ.field_75098_d)  && itemstack != ItemStack.field_190927_a) { // CraftBukkit
                    itemstack.func_190918_g(1);
                 }
+ 
 @@ -81,10 +100,16 @@
        }
     }
@@ -124,6 +126,15 @@
     }
  
     protected boolean func_219987_d() {
+@@ -152,7 +192,7 @@
+          if (compoundnbt != null) {
+             TileEntity tileentity = p_179224_0_.func_175625_s(p_179224_2_);
+             if (tileentity != null) {
+-               if (!p_179224_0_.field_72995_K && tileentity.func_183000_F() && (p_179224_1_ == null || !p_179224_1_.func_195070_dx())) {
++               if (!p_179224_0_.field_72995_K && tileentity.func_183000_F() && (p_179224_1_ == null || !(p_179224_1_.func_195070_dx() || (p_179224_1_.field_71075_bZ.field_75098_d && p_179224_1_.getBukkitEntity().hasPermission("minecraft.nbt.place"))))) { // Spigot - add permission
+                   return false;
+                }
+ 
 @@ -192,10 +232,18 @@
     }
  

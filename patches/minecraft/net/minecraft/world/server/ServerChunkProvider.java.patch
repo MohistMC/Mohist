@@ -28,7 +28,7 @@
     public ServerWorldLightManager func_212863_j_() {
        return this.field_217242_h;
     }
-@@ -119,7 +129,7 @@
+@@ -119,15 +129,17 @@
           for(int j = 0; j < 4; ++j) {
              if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
                 IChunk ichunk = this.field_222877_p[j];
@@ -37,7 +37,17 @@
                    return ichunk;
                 }
              }
-@@ -208,7 +218,15 @@
+          }
+ 
+          iprofiler.func_230035_c_("getChunkCacheMiss");
++         field_73251_h.timings.syncChunkLoadTimer.startTiming(); // Spigot
+          CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.func_217233_c(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
+          this.field_217243_i.func_213161_c(completablefuture::isDone);
++         field_73251_h.timings.syncChunkLoadTimer.stopTiming(); // Spigot
+          IChunk ichunk1 = completablefuture.join().map((p_222874_0_) -> {
+             return p_222874_0_;
+          }, (p_222870_1_) -> {
+@@ -208,7 +220,15 @@
        long i = chunkpos.func_201841_a();
        int j = 33 + ChunkStatus.func_222599_a(p_217233_3_);
        ChunkHolder chunkholder = this.func_217213_a(i);
@@ -54,7 +64,7 @@
           this.field_217240_d.func_219356_a(TicketType.field_219494_g, chunkpos, j, chunkpos);
           if (this.func_217224_a(chunkholder, j)) {
              IProfiler iprofiler = this.field_73251_h.func_217381_Z();
-@@ -226,7 +244,7 @@
+@@ -226,7 +246,7 @@
     }
  
     private boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
@@ -63,7 +73,7 @@
     }
  
     public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
-@@ -292,7 +310,7 @@
+@@ -292,7 +312,7 @@
        return this.func_222872_a(i, ChunkHolder::func_219296_a);
     }
  
@@ -72,7 +82,7 @@
        ChunkHolder chunkholder = this.func_217213_a(p_222872_1_);
        if (chunkholder == null) {
           return false;
-@@ -308,11 +326,31 @@
+@@ -308,19 +328,43 @@
     }
  
     public void close() throws IOException {
@@ -103,8 +113,45 @@
 +
     public void func_217207_a(BooleanSupplier p_217207_1_) {
        this.field_73251_h.func_217381_Z().func_76320_a("purge");
++      this.field_73251_h.timings.doChunkMap.startTiming(); // Spigot
        this.field_217240_d.func_219340_a();
-@@ -507,11 +545,16 @@
+       this.func_217235_l();
++      this.field_73251_h.timings.doChunkMap.stopTiming(); // Spigot
+       this.field_73251_h.func_217381_Z().func_219895_b("chunks");
+       this.func_217220_m();
++      this.field_73251_h.timings.doChunkUnload.startTiming(); // Spigot
+       this.field_73251_h.func_217381_Z().func_219895_b("unload");
+       this.field_217237_a.func_219204_a(p_217207_1_);
++      this.field_73251_h.timings.doChunkUnload.stopTiming(); // Spigot
+       this.field_73251_h.func_217381_Z().func_76319_b();
+       this.func_222869_l();
+    }
+@@ -355,11 +399,13 @@
+                   ChunkPos chunkpos = p_241099_7_.func_219277_h();
+                   if (!this.field_217237_a.func_219243_d(chunkpos)) {
+                      chunk.func_177415_c(chunk.func_177416_w() + j);
+-                     if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l())) {
++                     if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l()) && !this.field_217237_a.isOutsideOfRange(chunkpos, true)) { // Spigot
+                         WorldEntitySpawner.func_234979_a_(this.field_73251_h, chunk, worldentityspawner$entitydensitymanager, this.field_217247_m, this.field_217246_l, flag2);
+                      }
+ 
++                     this.field_73251_h.timings.doTickTiles.startTiming(); // Spigot
+                      this.field_73251_h.func_217441_a(chunk, k);
++                     this.field_73251_h.timings.doTickTiles.stopTiming(); // Spigot
+                   }
+                }
+             }
+@@ -373,7 +419,9 @@
+          this.field_73251_h.func_217381_Z().func_76319_b();
+       }
+ 
++      this.field_73251_h.timings.tracker.startTiming(); // Spigot
+       this.field_217237_a.func_219169_g();
++      this.field_73251_h.timings.tracker.stopTiming(); // Spigot
+    }
+ 
+    private void func_241098_a_(long p_241098_1_, Consumer<Chunk> p_241098_3_) {
+@@ -507,11 +555,16 @@
        }
  
        protected boolean func_213168_p() {

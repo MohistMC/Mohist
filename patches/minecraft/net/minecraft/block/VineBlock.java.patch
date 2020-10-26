@@ -16,7 +16,7 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
 -      if (p_225542_2_.field_73012_v.nextInt(4) == 0) {
-+      if (p_225542_2_.field_73012_v.nextInt(4) == 0 && p_225542_2_.isAreaLoaded(p_225542_3_, 4)) { // Forge: check area to prevent loading unloaded chunks
++      if (p_225542_2_.field_73012_v.nextInt(Math.max(1, (int) (100.0F / p_225542_2_.spigotConfig.vineModifier) * 4)) == 0 && p_225542_2_.isAreaLoaded(p_225542_3_, 4)) { // Forge: check area to prevent loading unloaded chunks
           Direction direction = Direction.func_239631_a_(p_225542_4_);
           BlockPos blockpos = p_225542_3_.func_177984_a();
           if (direction.func_176740_k().func_176722_c() && !p_225542_1_.func_177229_b(func_176267_a(direction))) {

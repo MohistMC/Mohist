@@ -124,7 +124,7 @@
     private int field_147375_m;
     private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
     private double field_184349_l;
-@@ -185,8 +238,33 @@
+@@ -185,9 +238,36 @@
        p_i1530_2_.func_150719_a(this);
        this.field_147369_b = p_i1530_3_;
        p_i1530_3_.field_71135_a = this;
@@ -149,6 +149,7 @@
 +   private float lastPitch = Float.MAX_VALUE;
 +   private float lastYaw = Float.MAX_VALUE;
 +   private boolean justTeleported = false;
++   private boolean hasMoved; // Spigot
 +
 +   public CraftPlayer getPlayer() {
 +      return (this.field_147369_b == null) ? null : (CraftPlayer) this.field_147369_b.getBukkitEntity();
@@ -156,9 +157,11 @@
 +   // CraftBukkit end
 +
     public void func_73660_a() {
++      org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.playerConnectionTimer.startTiming(); // Spigot
        this.func_184342_d();
        this.field_147369_b.field_70169_q = this.field_147369_b.func_226277_ct_();
-@@ -233,7 +311,7 @@
+       this.field_147369_b.field_70167_r = this.field_147369_b.func_226278_cu_();
+@@ -233,7 +313,7 @@
  
        this.field_147367_d.func_213185_aS().func_76320_a("keepAlive");
        long i = Util.func_211177_b();
@@ -167,7 +170,7 @@
           if (this.field_194403_g) {
              this.func_194028_b(new TranslationTextComponent("disconnect.timeout"));
           } else {
-@@ -245,15 +323,20 @@
+@@ -245,17 +325,23 @@
        }
  
        this.field_147367_d.func_213185_aS().func_76319_b();
@@ -190,8 +193,11 @@
 +         this.field_147369_b.func_143004_u(); // CraftBukkit - SPIGOT-854
           this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.idling"));
        }
++      org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.playerConnectionTimer.stopTiming(); // Spigot
  
-@@ -276,13 +359,44 @@
+    }
+ 
+@@ -276,13 +362,44 @@
        return this.field_147367_d.func_213199_b(this.field_147369_b.func_146103_bH());
     }
  
@@ -239,7 +245,7 @@
  
     public void func_147358_a(CInputPacket p_147358_1_) {
        PacketThreadUtil.func_218796_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
-@@ -322,7 +436,30 @@
+@@ -322,7 +439,30 @@
              double d8 = d5 - this.field_184358_u;
              double d9 = entity.func_213322_ci().func_189985_c();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -266,13 +272,21 @@
 +               speed = field_147369_b.field_71075_bZ.field_75097_g * 10f;
 +            }
 +            speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
-+            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.func_217264_d()) {
++            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.func_217264_d()) { // Spigot
 +               // CraftBukkit end
                 field_147370_c.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.func_200200_C_().getString(), this.field_147369_b.func_200200_C_().getString(), d6, d7, d8);
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
-@@ -348,13 +485,62 @@
+@@ -342,19 +482,80 @@
+             d8 = d5 - entity.func_226281_cx_();
+             d10 = d6 * d6 + d7 * d7 + d8 * d8;
+             boolean flag1 = false;
+-            if (d10 > 0.0625D) {
++            if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
+                flag1 = true;
+                field_147370_c.warn("{} (vehicle of {}) moved wrongly! {}", entity.func_200200_C_().getString(), this.field_147369_b.func_200200_C_().getString(), Math.sqrt(d10));
              }
++            Location curPos = this.getPlayer().getLocation(); // Spigot
  
              entity.func_70080_a(d3, d4, d5, f, f1);
 +            this.field_147369_b.func_70080_a(d3, d4, d5, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A); // Forge - Resync player position on vehicle moving
@@ -286,6 +300,17 @@
  
 +            // CraftBukkit start - fire PlayerMoveEvent
 +            Player player = this.getPlayer();
++            // Spigot Start
++            if ( !hasMoved )
++            {
++               lastPosX = curPos.getX();
++               lastPosY = curPos.getY();
++               lastPosZ = curPos.getZ();
++               lastYaw = curPos.getYaw();
++               lastPitch = curPos.getPitch();
++               hasMoved = true;
++            }
++            // Spigot End
 +            Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event l
 +            Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
 +            // If the packet contains movement information then we update the To location with the correct XYZ.
@@ -305,7 +330,7 @@
 +               this.lastYaw = to.getYaw();
 +               this.lastPitch = to.getPitch();
 +               // Skip the first time we do this
-+               if (from.getX() != Double.MAX_VALUE) {
++               if (true) { // Spigot - don't skip any move events
 +                  Location oldTo = to.clone();
 +                  PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
 +                  this.craftServer.getPluginManager().callEvent(event);
@@ -334,7 +359,7 @@
              this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
              this.field_147369_b.func_71000_j(this.field_147369_b.func_226277_ct_() - d0, this.field_147369_b.func_226278_cu_() - d1, this.field_147369_b.func_226281_cx_() - d2);
              this.field_184345_D = d7 >= -0.03125D && !this.field_147367_d.func_71231_X() && this.func_241162_a_(entity);
-@@ -367,12 +553,12 @@
+@@ -367,12 +568,12 @@
     }
  
     private boolean func_241162_a_(Entity p_241162_1_) {
@@ -349,7 +374,7 @@
           this.field_147369_b.func_70080_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
           this.field_184352_o = this.field_184362_y.field_72450_a;
           this.field_184353_p = this.field_184362_y.field_72448_b;
-@@ -382,6 +568,7 @@
+@@ -382,6 +583,7 @@
           }
  
           this.field_184362_y = null;
@@ -357,7 +382,7 @@
        }
  
     }
-@@ -410,6 +597,12 @@
+@@ -410,6 +612,12 @@
  
     public void func_195518_a(CTabCompletePacket p_195518_1_) {
        PacketThreadUtil.func_218796_a(p_195518_1_, this, this.field_147369_b.func_71121_q());
@@ -370,7 +395,7 @@
        StringReader stringreader = new StringReader(p_195518_1_.func_197707_b());
        if (stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
-@@ -417,6 +610,7 @@
+@@ -417,6 +625,7 @@
  
        ParseResults<CommandSource> parseresults = this.field_147367_d.func_195571_aL().func_197054_a().parse(stringreader, this.field_147369_b.func_195051_bN());
        this.field_147367_d.func_195571_aL().func_197054_a().getCompletionSuggestions(parseresults).thenAccept((p_195519_2_) -> {
@@ -378,7 +403,7 @@
           this.field_147371_a.func_179290_a(new STabCompletePacket(p_195518_1_.func_197709_a(), p_195519_2_));
        });
     }
-@@ -622,6 +816,7 @@
+@@ -622,6 +831,7 @@
        Container container = this.field_147369_b.field_71070_bA;
        if (container instanceof MerchantContainer) {
           MerchantContainer merchantcontainer = (MerchantContainer)container;
@@ -386,7 +411,7 @@
           merchantcontainer.func_75175_c(i);
           merchantcontainer.func_217046_g(i);
        }
-@@ -630,6 +825,14 @@
+@@ -630,6 +840,14 @@
  
     public void func_210156_a(CEditBookPacket p_210156_1_) {
        PacketThreadUtil.func_218796_a(p_210156_1_, this, this.field_147369_b.func_71121_q());
@@ -401,7 +426,7 @@
        ItemStack itemstack = p_210156_1_.func_210346_a();
        if (!itemstack.func_190926_b()) {
           if (WritableBookItem.func_150930_a(itemstack.func_77978_p())) {
-@@ -654,9 +857,11 @@
+@@ -654,9 +872,11 @@
                    }
  
                    itemstack2.func_77983_a("pages", listnbt);
@@ -414,7 +439,7 @@
                 }
              }
  
-@@ -691,7 +896,7 @@
+@@ -691,7 +911,7 @@
           this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_player_movement"));
        } else {
           ServerWorld serverworld = this.field_147369_b.func_71121_q();
@@ -423,7 +448,7 @@
              if (this.field_147368_e == 0) {
                 this.func_184342_d();
              }
-@@ -702,12 +907,21 @@
+@@ -702,12 +922,21 @@
                    this.func_147364_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
                 }
  
@@ -445,7 +470,7 @@
                    double d0 = this.field_147369_b.func_226277_ct_();
                    double d1 = this.field_147369_b.func_226278_cu_();
                    double d2 = this.field_147369_b.func_226281_cx_();
-@@ -730,14 +944,31 @@
+@@ -730,14 +959,31 @@
                    } else {
                       ++this.field_184347_F;
                       int i = this.field_184347_F - this.field_184348_G;
@@ -474,12 +499,12 @@
                       if (!this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_223586_b(GameRules.field_223615_r) || !this.field_147369_b.func_184613_cA())) {
                          float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
 -                        if (d11 - d10 > (double)(f2 * (float)i) && !this.func_217264_d()) {
-+                        if (d11 - d10 > Math.max(f2, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.func_217264_d()) {
++                        if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.func_217264_d()) { // Spigot
 +                           // CraftBukkit end
                             field_147370_c.warn("{} moved too quickly! {},{},{}", this.field_147369_b.func_200200_C_().getString(), d7, d8, d9);
                             this.func_147364_a(this.field_147369_b.func_226277_ct_(), this.field_147369_b.func_226278_cu_(), this.field_147369_b.func_226281_cx_(), this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
                             return;
-@@ -754,6 +985,7 @@
+@@ -754,6 +1000,7 @@
                       }
  
                       this.field_147369_b.func_213315_a(MoverType.PLAYER, new Vector3d(d7, d8, d9));
@@ -487,7 +512,15 @@
                       d7 = d4 - this.field_147369_b.func_226277_ct_();
                       d8 = d5 - this.field_147369_b.func_226278_cu_();
                       if (d8 > -0.5D || d8 < 0.5D) {
-@@ -770,10 +1002,74 @@
+@@ -763,17 +1010,81 @@
+                      d9 = d6 - this.field_147369_b.func_226281_cx_();
+                      d11 = d7 * d7 + d8 * d8 + d9 * d9;
+                      boolean flag1 = false;
+-                     if (!this.field_147369_b.func_184850_K() && d11 > 0.0625D && !this.field_147369_b.func_70608_bn() && !this.field_147369_b.field_71134_c.func_73083_d() && this.field_147369_b.field_71134_c.func_73081_b() != GameType.SPECTATOR) {
++                     if (!this.field_147369_b.func_184850_K() && d11 > org.spigotmc.SpigotConfig.movedWronglyThreshold  && !this.field_147369_b.func_70608_bn() && !this.field_147369_b.field_71134_c.func_73083_d() && this.field_147369_b.field_71134_c.func_73081_b() != GameType.SPECTATOR) { // Spigot
+                         flag1 = true;
+                         field_147370_c.warn("{} moved wrongly!", (Object)this.field_147369_b.func_200200_C_().getString());
+                      }
  
                       this.field_147369_b.func_70080_a(d4, d5, d6, f, f1);
                       if (this.field_147369_b.field_70145_X || this.field_147369_b.func_70608_bn() || (!flag1 || !serverworld.func_226665_a__(this.field_147369_b, axisalignedbb)) && !this.func_241163_a_(serverworld, axisalignedbb)) {
@@ -564,7 +597,7 @@
                          if (flag) {
                             this.field_147369_b.field_70143_R = 0.0F;
                          }
-@@ -806,24 +1102,83 @@
+@@ -806,24 +1117,83 @@
        this.func_175089_a(p_147364_1_, p_147364_3_, p_147364_5_, p_147364_7_, p_147364_8_, Collections.emptySet());
     }
  
@@ -656,7 +689,7 @@
        BlockPos blockpos = p_147345_1_.func_179715_a();
        this.field_147369_b.func_143004_u();
        CPlayerDiggingPacket.Action cplayerdiggingpacket$action = p_147345_1_.func_180762_c();
-@@ -831,14 +1186,45 @@
+@@ -831,14 +1201,45 @@
        case SWAP_ITEM_WITH_OFFHAND:
           if (!this.field_147369_b.func_175149_v()) {
              ItemStack itemstack = this.field_147369_b.func_184586_b(Hand.OFF_HAND);
@@ -705,15 +738,39 @@
              this.field_147369_b.func_225609_n_(false);
           }
  
-@@ -873,6 +1259,7 @@
+@@ -862,6 +1263,22 @@
+       }
+    }
+ 
++   // Spigot start - limit place/interactions
++   private int limitedPackets;
++   private long lastLimitedPacket = -1;
++   private boolean checkLimit(long timestamp) {
++      if (lastLimitedPacket != -1 && timestamp - lastLimitedPacket < 30 && limitedPackets++ >= 4) {
++         return false;
++      }
++      if (lastLimitedPacket == -1 || timestamp - lastLimitedPacket >= 30) {
++         lastLimitedPacket = timestamp;
++         limitedPackets = 0;
++         return true;
++      }
++      return true;
++   }
++   // Spigot end
++
+    private static boolean func_241166_a_(ServerPlayerEntity p_241166_0_, ItemStack p_241166_1_) {
+       if (p_241166_1_.func_190926_b()) {
+          return false;
+@@ -873,6 +1290,8 @@
  
     public void func_184337_a(CPlayerTryUseItemOnBlockPacket p_184337_1_) {
        PacketThreadUtil.func_218796_a(p_184337_1_, this, this.field_147369_b.func_71121_q());
 +      if (this.field_147369_b.func_70610_aX()) return; // CraftBukkit
++      if (!checkLimit(p_184337_1_.timestamp)) return; // Spigot - check limit
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        Hand hand = p_184337_1_.func_187022_c();
        ItemStack itemstack = this.field_147369_b.func_184586_b(hand);
-@@ -881,7 +1268,17 @@
+@@ -881,7 +1300,17 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -732,11 +789,12 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (direction == Direction.UP && !actionresulttype.func_226246_a_() && blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z() - 1 && func_241166_a_(this.field_147369_b, itemstack)) {
                 ITextComponent itextcomponent = (new TranslationTextComponent("build.tooHigh", this.field_147367_d.func_71207_Z())).func_240699_a_(TextFormatting.RED);
-@@ -901,11 +1298,42 @@
+@@ -901,11 +1330,43 @@
  
     public void func_147346_a(CPlayerTryUseItemPacket p_147346_1_) {
        PacketThreadUtil.func_218796_a(p_147346_1_, this, this.field_147369_b.func_71121_q());
 +      if (this.field_147369_b.func_70610_aX()) return; // CraftBukkit
++      if (!checkLimit(p_147346_1_.timestamp)) return; // Spigot - check limit
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        Hand hand = p_147346_1_.func_187028_a();
        ItemStack itemstack = this.field_147369_b.func_184586_b(hand);
@@ -775,7 +833,7 @@
           ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, serverworld, itemstack, hand);
           if (actionresulttype.func_226247_b_()) {
              this.field_147369_b.func_226292_a_(hand, true);
-@@ -920,7 +1348,7 @@
+@@ -920,7 +1381,7 @@
           for(ServerWorld serverworld : this.field_147367_d.func_212370_w()) {
              Entity entity = p_175088_1_.func_179727_a(serverworld);
              if (entity != null) {
@@ -784,7 +842,7 @@
                 return;
              }
           }
-@@ -928,8 +1356,12 @@
+@@ -928,8 +1389,12 @@
  
     }
  
@@ -797,7 +855,7 @@
  
     public void func_184340_a(CSteerBoatPacket p_184340_1_) {
        PacketThreadUtil.func_218796_a(p_184340_1_, this, this.field_147369_b.func_71121_q());
-@@ -941,11 +1373,26 @@
+@@ -941,11 +1406,26 @@
     }
  
     public void func_147231_a(ITextComponent p_147231_1_) {
@@ -828,12 +886,12 @@
        if (this.func_217264_d()) {
           field_147370_c.info("Stopping singleplayer server as player logged out");
           this.field_147367_d.func_71263_m(false);
-@@ -970,6 +1417,15 @@
+@@ -970,6 +1450,15 @@
           }
        }
  
 +      // CraftBukkit start
-+      if (p_211148_1_ == null) {
++      if (p_211148_1_ == null || this.processedDisconnect) { // Spigot
 +         return;
 +      } else if (p_211148_1_ instanceof SWorldSpawnChangedPacket) {
 +         SWorldSpawnChangedPacket packet6 = (SWorldSpawnChangedPacket) p_211148_1_;
@@ -844,7 +902,7 @@
        try {
           this.field_147371_a.func_201058_a(p_211148_1_, p_211148_2_);
        } catch (Throwable throwable) {
-@@ -984,7 +1440,16 @@
+@@ -984,7 +1473,16 @@
  
     public void func_147355_a(CHeldItemChangePacket p_147355_1_) {
        PacketThreadUtil.func_218796_a(p_147355_1_, this, this.field_147369_b.func_71121_q());
@@ -861,7 +919,7 @@
           if (this.field_147369_b.field_71071_by.field_70461_c != p_147355_1_.func_149614_c() && this.field_147369_b.func_184600_cs() == Hand.MAIN_HAND) {
              this.field_147369_b.func_184602_cy();
           }
-@@ -993,12 +1458,24 @@
+@@ -993,12 +1491,24 @@
           this.field_147369_b.func_143004_u();
        } else {
           field_147370_c.warn("{} tried to set an invalid carried item", (Object)this.field_147369_b.func_200200_C_().getString());
@@ -888,7 +946,7 @@
           this.func_147359_a(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
        } else {
           this.field_147369_b.func_143004_u();
-@@ -1006,38 +1483,243 @@
+@@ -1006,38 +1516,258 @@
  
           for(int i = 0; i < s.length(); ++i) {
              if (!SharedConstants.func_71566_a(s.charAt(i))) {
@@ -964,8 +1022,18 @@
 +    //       this.disconnect(new TranslationTextComponent("disconnect.spam"));
 +    //    }
 +
++            // Spigot start - spam exclusions
++            boolean counted = true;
++            for (String exclude : org.spigotmc.SpigotConfig.spamExclusions) {
++               if (exclude != null && s.startsWith(exclude)) {
++                  counted = false;
++                  break;
++               }
++            }
++            // Spigot end
++
 +         // CraftBukkit start - replaced with thread safe throttle
-+         if (chatSpamField.addAndGet(this, 20) > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
++         if (counted && chatSpamField.addAndGet(this, 20) > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) { // Spigot
 +            if (!isSync) {
 +               Waitable waitable = new Waitable() {
 +                  @Override
@@ -1061,13 +1129,16 @@
  
     private void func_147361_d(String p_147361_1_) {
 -      this.field_147367_d.func_195571_aL().func_197059_a(this.field_147369_b.func_195051_bN(), p_147361_1_);
++      org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.playerCommandTimer.startTiming(); // Spigot
 +      // CraftBukkit start - whole method
-+      this.field_147370_c.info(this.field_147369_b.func_195047_I_() + " issued server command: " + p_147361_1_);
++      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
++      this.field_147370_c.info(this.field_147369_b.func_200200_C_() + " issued server command: " + p_147361_1_);
 +
 +      CraftPlayer player = this.getPlayer();
 +      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, p_147361_1_, new LazyPlayerSet(field_147367_d));
 +      this.craftServer.getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
++         org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
 +         return;
 +      }
 +      try {
@@ -1078,6 +1149,8 @@
 +         player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
 +         java.util.logging.Logger.getLogger(ServerPlayNetHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 +         return;
++      } finally {
++         org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
 +      }
 +      // CraftBukkit end
     }
@@ -1139,7 +1212,7 @@
        this.field_147369_b.func_143004_u();
        switch(p_147357_1_.func_180764_b()) {
        case PRESS_SHIFT_KEY:
-@@ -1091,6 +1773,8 @@
+@@ -1091,8 +1821,16 @@
  
     public void func_147340_a(CUseEntityPacket p_147340_1_) {
        PacketThreadUtil.func_218796_a(p_147340_1_, this, this.field_147369_b.func_71121_q());
@@ -1147,8 +1220,16 @@
 +         return; // CraftBukkit
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        Entity entity = p_147340_1_.func_149564_a(serverworld);
++      // Spigot Start
++      if (entity == field_147369_b && !field_147369_b.func_175149_v()) {
++         disconnect("Cannot interact with self!");
++         return;
++      }
++      // Spigot End
        this.field_147369_b.func_143004_u();
-@@ -1101,19 +1785,71 @@
+       this.field_147369_b.func_226284_e_(p_147340_1_.func_241792_e_());
+       if (entity != null) {
+@@ -1101,19 +1839,71 @@
              Hand hand = p_147340_1_.func_186994_b();
              ItemStack itemstack = hand != null ? this.field_147369_b.func_184586_b(hand).func_77946_l() : ItemStack.field_190927_a;
              Optional<ActionResultType> optional = Optional.empty();
@@ -1230,7 +1311,7 @@
  
              if (optional.isPresent() && optional.get().func_226246_a_()) {
                 CriteriaTriggers.field_241276_P_.func_241476_a_(this.field_147369_b, itemstack, entity);
-@@ -1122,8 +1858,9 @@
+@@ -1122,8 +1912,9 @@
                 }
              }
           }
@@ -1241,7 +1322,7 @@
     }
  
     public void func_147342_a(CClientStatusPacket p_147342_1_) {
-@@ -1156,14 +1893,22 @@
+@@ -1156,14 +1947,22 @@
  
     public void func_147356_a(CCloseWindowPacket p_147356_1_) {
        PacketThreadUtil.func_218796_a(p_147356_1_, this, this.field_147369_b.func_71121_q());
@@ -1266,7 +1347,7 @@
              NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
              for(int i = 0; i < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++i) {
-@@ -1172,8 +1917,274 @@
+@@ -1172,8 +1971,274 @@
  
              this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist);
           } else {
@@ -1368,7 +1449,7 @@
 +                  }
 +                  break;
 +               case SWAP:
-+                  if (p_147351_1_.func_149543_e() >= 0 && p_147351_1_.func_149543_e() < 9) {
++                  if ((p_147351_1_.func_149543_e() >= 0 && p_147351_1_.func_149543_e() < 9) || p_147351_1_.func_149543_e() == 40) {
 +                     click = org.bukkit.event.inventory.ClickType.NUMBER_KEY;
 +                     Slot clickedSlot = this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d());
 +                     if (clickedSlot.func_82869_a(field_147369_b)) {
@@ -1543,7 +1624,7 @@
                 this.field_147369_b.field_71135_a.func_147359_a(new SConfirmTransactionPacket(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
                 this.field_147369_b.field_71137_h = true;
                 this.field_147369_b.field_71070_bA.func_75142_b();
-@@ -1186,8 +2197,8 @@
+@@ -1186,8 +2251,8 @@
                 NonNullList<ItemStack> nonnulllist1 = NonNullList.func_191196_a();
  
                 for(int j = 0; j < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++j) {
@@ -1554,7 +1635,7 @@
                 }
  
                 this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist1);
-@@ -1209,6 +2220,7 @@
+@@ -1209,6 +2274,7 @@
  
     public void func_147338_a(CEnchantItemPacket p_147338_1_) {
        PacketThreadUtil.func_218796_a(p_147338_1_, this, this.field_147369_b.func_71121_q());
@@ -1562,7 +1643,16 @@
        this.field_147369_b.func_143004_u();
        if (this.field_147369_b.field_71070_bA.field_75152_c == p_147338_1_.func_149539_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75140_a(this.field_147369_b, p_147338_1_.func_149537_d());
-@@ -1237,6 +2249,42 @@
+@@ -1223,7 +2289,7 @@
+          boolean flag = p_147344_1_.func_149627_c() < 0;
+          ItemStack itemstack = p_147344_1_.func_149625_d();
+          CompoundNBT compoundnbt = itemstack.func_179543_a("BlockEntityTag");
+-         if (!itemstack.func_190926_b() && compoundnbt != null && compoundnbt.func_74764_b("x") && compoundnbt.func_74764_b("y") && compoundnbt.func_74764_b("z")) {
++         if (!itemstack.func_190926_b() && compoundnbt != null && compoundnbt.func_74764_b("x") && compoundnbt.func_74764_b("y") && compoundnbt.func_74764_b("z") && this.field_147369_b.getBukkitEntity().hasPermission("minecraft.nbt.copy")) { // Spigot
+             BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
+             TileEntity tileentity = this.field_147369_b.field_70170_p.func_175625_s(blockpos);
+             if (tileentity != null) {
+@@ -1237,6 +2303,42 @@
  
           boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() <= 45;
           boolean flag2 = itemstack.func_190926_b() || itemstack.func_77952_i() >= 0 && itemstack.func_190916_E() <= 64 && !itemstack.func_190926_b();
@@ -1605,7 +1695,7 @@
           if (flag1 && flag2) {
              if (itemstack.func_190926_b()) {
                 this.field_147369_b.field_71069_bz.func_75141_a(p_147344_1_.func_149627_c(), ItemStack.field_190927_a);
-@@ -1256,6 +2304,7 @@
+@@ -1256,6 +2358,7 @@
  
     public void func_147339_a(CConfirmTransactionPacket p_147339_1_) {
        PacketThreadUtil.func_218796_a(p_147339_1_, this, this.field_147369_b.func_71121_q());
@@ -1613,7 +1703,7 @@
        int i = this.field_147369_b.field_71070_bA.field_75152_c;
        if (i == p_147339_1_.func_149532_c() && this.field_147372_n.getOrDefault(i, (short)(p_147339_1_.func_149533_d() + 1)) == p_147339_1_.func_149533_d() && !this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75128_a(this.field_147369_b, true);
-@@ -1265,6 +2314,7 @@
+@@ -1265,6 +2368,7 @@
  
     public void func_147343_a(CUpdateSignPacket p_147343_1_) {
        PacketThreadUtil.func_218796_a(p_147343_1_, this, this.field_147369_b.func_71121_q());
@@ -1621,7 +1711,7 @@
        this.field_147369_b.func_143004_u();
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
        BlockPos blockpos = p_147343_1_.func_179722_a();
-@@ -1278,15 +2328,31 @@
+@@ -1278,15 +2382,31 @@
           SignTileEntity signtileentity = (SignTileEntity)tileentity;
           if (!signtileentity.func_145914_a() || signtileentity.func_145911_b() != this.field_147369_b) {
              field_147370_c.warn("Player {} just tried to change non-editable sign", (Object)this.field_147369_b.func_200200_C_().getString());
@@ -1654,7 +1744,7 @@
           signtileentity.func_70296_d();
           serverworld.func_184138_a(blockpos, blockstate, blockstate, 3);
        }
-@@ -1294,6 +2360,7 @@
+@@ -1294,6 +2414,7 @@
     }
  
     public void func_147353_a(CKeepAlivePacket p_147353_1_) {
@@ -1662,7 +1752,7 @@
        if (this.field_194403_g && p_147353_1_.func_149460_c() == this.field_194404_h) {
           int i = (int)(Util.func_211177_b() - this.field_194402_f);
           this.field_147369_b.field_71138_i = (this.field_147369_b.field_71138_i * 3 + i) / 4;
-@@ -1306,7 +2373,17 @@
+@@ -1306,7 +2427,17 @@
  
     public void func_147348_a(CPlayerAbilitiesPacket p_147348_1_) {
        PacketThreadUtil.func_218796_a(p_147348_1_, this, this.field_147369_b.func_71121_q());
@@ -1681,7 +1771,7 @@
     }
  
     public void func_147352_a(CClientSettingsPacket p_147352_1_) {
-@@ -1314,9 +2391,6 @@
+@@ -1314,9 +2445,6 @@
        this.field_147369_b.func_147100_a(p_147352_1_);
     }
  
@@ -1691,7 +1781,7 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
-@@ -1330,4 +2404,54 @@
+@@ -1330,4 +2458,54 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }

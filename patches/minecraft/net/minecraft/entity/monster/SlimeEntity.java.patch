@@ -98,6 +98,15 @@
        return this.func_70809_q() == 1 ? this.func_200600_R().func_220348_g() : LootTables.field_186419_a;
     }
  
+@@ -272,7 +299,7 @@
+          }
+ 
+          ChunkPos chunkpos = new ChunkPos(p_223366_3_);
+-         boolean flag = SharedSeedRandom.func_205190_a(chunkpos.field_77276_a, chunkpos.field_77275_b, ((ISeedReader)p_223366_1_).func_72905_C(), 987234911L).nextInt(10) == 0;
++         boolean flag = SharedSeedRandom.func_205190_a(chunkpos.field_77276_a, chunkpos.field_77275_b, ((ISeedReader)p_223366_1_).func_72905_C(), p_223366_1_.getMinecraftWorld().spigotConfig.slimeSeed).nextInt(10) == 0; // Spigot
+          if (p_223366_4_.nextInt(10) == 0 && flag && p_223366_3_.func_177956_o() < 40) {
+             return func_223315_a(p_223366_0_, p_223366_1_, p_223366_2_, p_223366_3_, p_223366_4_);
+          }
 @@ -324,6 +351,12 @@
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }

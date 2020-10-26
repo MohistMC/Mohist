@@ -17,7 +17,7 @@
           int i = p_225542_1_.func_177229_b(field_176501_a);
 -         if (i < 2) {
 -            p_225542_2_.func_180501_a(p_225542_3_, p_225542_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2);
-+         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_2_.field_73012_v.nextInt(5) == 0)) {
++         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_2_.field_73012_v.nextInt(Math.max(1, (int) (100.0F / p_225542_2_.spigotConfig.cocoaModifier) * 5)) == 0)) { // Spigot
 +            CraftEventFactory.handleBlockGrowEvent(p_225542_2_, p_225542_3_, p_225542_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2); // CraftBukkkit
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
           }

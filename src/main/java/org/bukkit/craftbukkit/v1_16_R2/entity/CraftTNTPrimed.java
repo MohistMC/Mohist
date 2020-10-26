@@ -64,4 +64,13 @@ public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
 
         return (source != null) ? source.getBukkitEntity() : null;
     }
+
+    @Override
+    public void setSource(Entity source) {
+        if (source instanceof LivingEntity) {
+            getHandle().tntPlacedBy = ((CraftLivingEntity) source).getHandle();
+        } else {
+            getHandle().tntPlacedBy = null;
+        }
+    }
 }
