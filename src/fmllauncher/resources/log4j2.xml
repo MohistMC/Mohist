@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mohistmc.console.log4j,com.mojang.util,cpw.mods.modlauncher.log" shutdownHook="disable">
+<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util,cpw.mods.modlauncher.log" shutdownHook="disable">
     <filters>
         <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="NETWORK_PACKETS" onMatch="${sys:forge.logging.marker.networking:-DENY}" onMismatch="NEUTRAL"/>
@@ -20,10 +20,10 @@
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}">
+                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg}%n%tEx">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}"/>
-                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}"/>
+                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg}%n%tEx"/>
+                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg}%n%tEx"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
