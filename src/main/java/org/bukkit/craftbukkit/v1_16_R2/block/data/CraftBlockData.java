@@ -390,7 +390,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.BambooBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBamboo::new);
         register(net.minecraft.block.BannerBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBanner::new);
         register(net.minecraft.block.WallBannerBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBannerWall::new);
-        register(net.minecraft.block.BarrierBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBarrel::new);
+        register(net.minecraft.block.BarrelBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBarrel::new);
         register(net.minecraft.block.BedBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBed::new);
         register(net.minecraft.block.BeehiveBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBeehive::new);
         register(net.minecraft.block.BeetrootBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftBeetroot::new);
@@ -506,10 +506,10 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.TripWireBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftTripwire::new);
         register(net.minecraft.block.TripWireHookBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftTripwireHook::new);
         register(net.minecraft.block.TurtleEggBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftTurtleEgg::new);
-        register(net.minecraft.block.TwistingVinesBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftTwistingVines::new);
+        register(net.minecraft.block.TwistingVinesTopBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftTwistingVines::new);
         register(net.minecraft.block.VineBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftVine::new);
         register(net.minecraft.block.WallSignBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftWallSign::new);
-        register(net.minecraft.block.WeepingVinesBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftWeepingVines::new);
+        register(net.minecraft.block.WeepingVinesTopBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftWeepingVines::new);
         register(net.minecraft.block.WitherSkeletonSkullBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftWitherSkull::new);
         register(net.minecraft.block.WitherSkeletonWallSkullBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftWitherSkullWall::new);
         register(net.minecraft.block.WoodButtonBlock.class, org.bukkit.craftbukkit.v1_16_R2.block.impl.CraftWoodButton::new);
