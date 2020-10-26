@@ -5,6 +5,8 @@ import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import com.mohistmc.util.MohistEnumHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.AnaloguePowerable;
@@ -3523,10 +3525,18 @@ public enum Material implements Keyed {
     public final Class<?> data;
     private final boolean legacy;
     private final NamespacedKey key;
+    private boolean isForgeBlock = false;
 
     private Material(final int id) {
         this(id, 64);
     }
+
+    // Mohist start - constructor used to set if the Material is a block or not
+    private Material(final int id, boolean flag) {
+        this(id, 64);
+        this.isForgeBlock = flag;
+    }
+    // Mohist end
 
     private Material(final int id, final int stack) {
         this(id, stack, MaterialData.class);
@@ -4462,9 +4472,11 @@ public enum Material implements Keyed {
             //</editor-fold>
                 return true;
             default:
-                return 0 <= id && id < 256;
+                return (0 <= id && id < 256) || isForgeBlock;
         }
     }
+
+    public boolean isForgeBlock() { return isForgeBlock; }
 
     /**
      * Checks if this Material is edible.
@@ -8616,6 +8628,29 @@ public enum Material implements Keyed {
             default:
                 return null;
             // </editor-fold>
+        }
+    }
+
+    // use a normalize() function to ensure it is accessible after a round-trip
+    public static String normalizeName(String name) {
+        return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
+    }
+
+    public static Material addMaterial(String materialName, int id, boolean isBlock) {
+        // Forge Blocks
+        if (isBlock) {
+            Material material = BY_NAME.get(materialName);
+            if (material != null){
+                material.isForgeBlock = true;
+            }else {
+                material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), true});
+            }
+            BY_NAME.put(materialName, material);
+            return material;
+        } else { // Forge Items
+            Material material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), false});
+            BY_NAME.put(materialName, material);
+            return material;
         }
     }
 }
