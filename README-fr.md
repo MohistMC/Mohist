@@ -1,7 +1,8 @@
 <img src="https://i.loli.net/2020/09/06/lQscneqbV8Hptxz.png">
 
 ## Mohist-1.12.2
-#### [English](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md) | [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) 
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-ru.md">Russian</a>
+
 
 ## Il est très recommandé d'utiliser les dernières versions de Mohist pour résoudre rapidement les erreures !
 

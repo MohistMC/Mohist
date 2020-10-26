@@ -15,68 +15,66 @@
 [![](https://img.shields.io/bstats/servers/6762?label=bStats&style=for-the-badge)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>  | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-ru.md">Russian</a>
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-ru.md">Russian</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 </div>
       
-Getting Help
+Obter ajuda
 ------
-   [**Home**](https://mohist.red/)
+   [**Início**](https://mohist.red/)
    
    [**Discord**](https://discord.gg/ZgXjHGd)
    
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
-Download
+Baixar
 ------
 
 You can download the latest version from [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/).
 
-Install
+Instalar
 ------
-This software requires Java 8.
+Esse programa precisa do Java 8.
 
-[Download Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) and place the server jar in an empty directory.
-
-Now launch it using the `java` command:
+Baixe [Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) e ponha o jar do servidor numa pasta vazia. Agora abra usando o seguinte comando 'java':
 
 ```bash
 java -jar yourJar.jar
 ```
 
-Building
+Compilando
 ------
-* Checkout project
+* Verificação do projeto
   * Clone Mohist:
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * Build Mohist
-  * Build with Linux:
+  * Compilando no Linux:
   `bash gradlew setup installerJar`
-  * Build with Windows:
+  * Compilando no Windows:
   `gradlew.bat setup installerJar`
 
-The Mohist server jar file is located at `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
+Todas as Compilações ficarão em `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
 
-This is the jarfile that you should run.
+mohist-xxxxx-server.jar é o arquivo do servidor que você deve abrir
 
-Thanks to the following projects
+Agradecimentos pelos segintes projetos
 ------
-* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
-* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
-* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
-* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
-* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - suporte de plugins.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - otimizações de perfomance.
+* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - suporte de plugins.
+* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - suporte de plugins.
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - suporte de mods.
+* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Código fonte parcial.
+* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Código fonte parcial.
+* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Código fonte parcial.
 
-A Special Thanks To:
+Agradecimentos especiais para:
 -------------
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
 
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
-[YourKit](http://www.yourkit.com/), makers of the outstanding java profiler, support open source projects of all kinds with their full featured [Java](https://www.yourkit.com/java/profiler/index.jsp) and [.NET](https://www.yourkit.com/.net/profiler/index.jsp) application profilers. We thank them for granting Mohist an OSS license so that we can make our software the best it can be.
+[YourKit](http://www.yourkit.com/), criadores do excelente profiler do java, apoie projetos de código aberto de todos os tipos com o [Java](https://www.yourkit.com/java/profiler/index.jsp) e profilers de aplicações [.NET](https://www.yourkit.com/.net/profiler/index.jsp). Queremos agradecê-los por conseguir uma licença OSS para o Mohist. Desse jeito conseguimos dar o nosso melhor em nosso software.

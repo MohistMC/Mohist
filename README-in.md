@@ -15,68 +15,66 @@
 [![](https://img.shields.io/bstats/servers/6762?label=bStats&style=for-the-badge)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>  | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-ru.md">Russian</a>
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-ru.md">Russian</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 </div>
       
-Getting Help
+Mendapatkan bantuan
 ------
-   [**Home**](https://mohist.red/)
+   [**Beranda**](https://mohist.red/)
    
    [**Discord**](https://discord.gg/ZgXjHGd)
    
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
-Download
+Unduh
 ------
 
 You can download the latest version from [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/).
 
-Install
+Instal
 ------
-This software requires Java 8.
+Perangkat lunak ini membutuhkan Java 8.
 
-[Download Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) and place the server jar in an empty directory.
-
-Now launch it using the `java` command:
+Unduh [Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) dan tempatkan server jar dalam direktori kosong. Sekarang jalankan menggunakan perintah `java`:
 
 ```bash
 java -jar yourJar.jar
 ```
 
-Building
+Membangun
 ------
 * Checkout project
-  * Clone Mohist:
+  * Klon Mohist:
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * Build Mohist
-  * Build with Linux:
+  * Bangun menggunakan Linux:
   `bash gradlew setup installerJar`
-  * Build with Windows:
+  * Bangun menggunakan Windows:
   `gradlew.bat setup installerJar`
 
-The Mohist server jar file is located at `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
+Semua file akan berada di `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
 
-This is the jarfile that you should run.
+mohist-xxxxx-server.jar adalah file server yang harus anda jalankan
 
-Thanks to the following projects
+Terima kasih sudah mengikuti proyek Mohist
 ------
-* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
-* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
-* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
-* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
-* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - dukungan Plugin.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - optimalisasi kinerja.
+* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - dukungan Plugin.
+* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - dukungan Plugin.
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - dukungan Mod.
+* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Sumber kode.
+* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Sumber kode.
+* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Sumber kode.
 
-A Special Thanks To:
+Terima kasih khusus kepada:
 -------------
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
 
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
-[YourKit](http://www.yourkit.com/), makers of the outstanding java profiler, support open source projects of all kinds with their full featured [Java](https://www.yourkit.com/java/profiler/index.jsp) and [.NET](https://www.yourkit.com/.net/profiler/index.jsp) application profilers. We thank them for granting Mohist an OSS license so that we can make our software the best it can be.
+[YourKit](http://www.yourkit.com/), pembuat profiler java yang luar biasa, mendukung semua jenis proyek open source dengan fitur yang lengkap diaplikasi [Java](https://www.yourkit.com/java/profiler/index.jsp) dan [.NET](https://www.yourkit.com/.net/profiler/index.jsp). Kami berterima kasih kepada mereka karena telah memberikan lisensi OSS kepada Mohist sehingga kami dapat membuat perangkat lunak kami menjadi yang terbaik.
