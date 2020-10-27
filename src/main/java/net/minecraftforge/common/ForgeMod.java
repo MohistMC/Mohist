@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import com.mohistmc.forge.BukkitPermissionsHandler;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.SoundEvent;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -136,8 +138,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
-
-        VersionChecker.startVersionCheck();
+        PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
+        //VersionChecker.startVersionCheck();
 
         /*
          * We can't actually add any of these, because vanilla clients will choke on unknown argument types
