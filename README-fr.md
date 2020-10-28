@@ -15,9 +15,16 @@
 ![](https://img.shields.io/badge/Gradle-4.9-brightgreen.svg?colorB=469C00)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats%20Button)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
+[![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
+[![](https://img.shields.io/badge/Patreon-Support-orange.svg?logo=Patreon)](https://www.patreon.com/mohist)
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
+
+| Version  | Support |
+| ------------- | ------------- |
+| 1.16.x  | Active  |
+| 1.12.2  | Active  |
 
 Obtenir de l'aide
 ------
