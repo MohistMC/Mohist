@@ -534,7 +534,7 @@ project(':forge') {
             def json = [
                 _comment_: launcherJson.comment,
                 spec: 0,
-                profile: project.name,
+                profile: 'mohist',
                 version: launcherJson.id,
                 icon: "data:image/png;base64," + new String(Base64.getEncoder().encode(Files.readAllBytes(rootProject.file("icon.ico").toPath()))),
                 json: '/version.json',
@@ -666,6 +666,7 @@ project(':forge') {
     }
     
     task launcherJar(type: Jar) {
+        baseName 'mohist'
         classifier 'launcher'
         from sourceSets.fmllauncher.output
         doFirst {
@@ -703,6 +704,7 @@ project(':forge') {
     }
     
     task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar', 'signLauncherJar']) {
+        baseName 'mohist'
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
