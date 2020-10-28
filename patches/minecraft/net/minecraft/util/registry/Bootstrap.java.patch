@@ -10,10 +10,11 @@
  import net.minecraft.util.text.LanguageMap;
  import net.minecraft.world.GameRules;
  import org.apache.logging.log4j.LogManager;
-@@ -48,7 +51,67 @@
+@@ -48,7 +51,68 @@
                 IDispenseItemBehavior.func_218401_c();
                 ArgumentTypes.func_197483_a();
                 TagRegistryManager.func_242197_b();
++               net.minecraftforge.registries.GameData.vanillaSnapshot();
 +               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
                 func_179868_d();
 +               // CraftBukkit start - easier than fixing the decompile
@@ -78,7 +79,7 @@
              }
           }
        }
-@@ -103,7 +166,6 @@
+@@ -103,7 +167,6 @@
              Commands.func_242986_b();
           }
  
