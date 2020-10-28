@@ -89,10 +89,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Attribute.class, "forge");
 
     public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swimSpeed", 1.0D, 0.0D, 1024.0D).func_233753_a_(true));
-    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, Float.MAX_VALUE).func_233753_a_(true));
+    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, 64.0).func_233753_a_(true));
     public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).func_233753_a_(true));
 
-    public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute( "generic.reachDistance", 5.0D, 0.0D, 1024.0D).func_233753_a_(true));
+    public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).func_233753_a_(true));
 
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
@@ -138,8 +138,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
-        PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
+
         //VersionChecker.startVersionCheck();
+        PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
 
         /*
          * We can't actually add any of these, because vanilla clients will choke on unknown argument types
