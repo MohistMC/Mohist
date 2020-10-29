@@ -48,7 +48,7 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
         }
 
         CompoundNBT nbtTagCompound = tileEntity.write(new CompoundNBT());
-        T snapshot = (T) TileEntity.func_235657_b_(getHandle(), nbtTagCompound);
+        T snapshot = (T) TileEntity.readTileEntity(getHandle(), nbtTagCompound);
 
         return snapshot;
     }
@@ -57,7 +57,7 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
     private void copyData(T from, T to) {
         BlockPos pos = to.getPos();
         CompoundNBT nbtTagCompound = from.write(new CompoundNBT());
-        to.func_230337_a_(getHandle(), nbtTagCompound);
+        to.read(getHandle(), nbtTagCompound);
 
         // reset the original position:
         to.setPos(pos);

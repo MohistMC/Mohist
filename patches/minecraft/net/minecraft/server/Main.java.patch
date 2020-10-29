@@ -148,7 +148,7 @@
 +                return;
 +            }
 +            SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
-+            SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s, Dimension.field_236053_b_);
++            SaveFormat.LevelSave saveformat$levelsave = saveformat.getLevelSave(s, Dimension.field_236053_b_);
 +            MinecraftServer.func_240777_a_(saveformat$levelsave);
 +            DatapackCodec datapackcodec = saveformat$levelsave.func_237297_e_();
 +            boolean flag = optionset.has("safeMode");

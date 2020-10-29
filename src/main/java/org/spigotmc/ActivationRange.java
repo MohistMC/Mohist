@@ -194,7 +194,7 @@ public class ActivationRange
         }
         if ( !( entity instanceof ArrowEntity ) )
         {
-            if ( !entity.func_233570_aj_() || !entity.passengers.isEmpty() || entity.isPassenger() )
+            if ( !entity.isOnGround() || !entity.passengers.isEmpty() || entity.isPassenger() )
             {
                 return true;
             }

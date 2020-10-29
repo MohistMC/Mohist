@@ -216,13 +216,13 @@
 -         this.field_73061_a.func_184103_al().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241771_h_, this.field_73004_o), this.func_234923_W_());
 +       /* CraftBukkit start
 +      if (this.prevRainingStrength != this.rainingStrength) {
-+         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241771_h_, this.rainingStrength), this.func_234923_W_());
++         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241771_h_, this.rainingStrength), this.getDimensionKey());
        }
  
 -      if (this.field_73018_p != this.field_73017_q) {
 -         this.field_73061_a.func_184103_al().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.field_73017_q), this.func_234923_W_());
 +      if (this.prevThunderingStrength != this.thunderingStrength) {
-+         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.thunderingStrength), this.func_234923_W_());
++         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.thunderingStrength), this.getDimensionKey());
        }
  
 -      if (flag != this.func_72896_J()) {
@@ -234,16 +234,16 @@
 +      if (flag != this.isRaining()) {
           if (flag) {
 -            this.field_73061_a.func_184103_al().func_148540_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241766_c_, 0.0F));
-+            this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241766_c_, 0.0F), this.func_234923_W_());
++            this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241766_c_, 0.0F), this.getDimensionKey());
           } else {
 -            this.field_73061_a.func_184103_al().func_148540_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241765_b_, 0.0F));
-+            this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241765_b_, 0.0F), this.func_234923_W_());
++            this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241765_b_, 0.0F), this.getDimensionKey());
           }
  
 -         this.field_73061_a.func_184103_al().func_148540_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241771_h_, this.field_73004_o));
 -         this.field_73061_a.func_184103_al().func_148540_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.field_73017_q));
-+         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241771_h_, this.rainingStrength), this.func_234923_W_());
-+         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.thunderingStrength), this.func_234923_W_());
++         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241771_h_, this.rainingStrength), this.getDimensionKey());
++         this.server.getPlayerList().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.thunderingStrength), this.getDimensionKey());
        }
 +     // */
  
@@ -779,15 +779,16 @@
     }
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
+-      Explosion explosion = new Explosion(this, p_230546_1_, p_230546_2_, p_230546_3_, p_230546_4_, p_230546_6_, p_230546_8_, p_230546_10_, p_230546_11_, p_230546_12_);
+-      explosion.func_77278_a();
+-      explosion.func_77279_a(false);
 +      // CraftBukkit start
 +      Explosion explosion = super.func_230546_a_(p_230546_1_, p_230546_2_, p_230546_3_, p_230546_4_, p_230546_6_, p_230546_8_, p_230546_10_, p_230546_11_, p_230546_12_);
 +      if (explosion.wasCanceled) {
 +         return explosion;
 +      }
 +      /* Remove
-       Explosion explosion = new Explosion(this, p_230546_1_, p_230546_2_, p_230546_3_, p_230546_4_, p_230546_6_, p_230546_8_, p_230546_10_, p_230546_11_, p_230546_12_);
--      explosion.func_77278_a();
--      explosion.func_77279_a(false);
++      Explosion explosion = new Explosion(this, exploder, damageSource, context, x, y, z, size, causesFire, mode);
 +      explosion.doExplosionA();
 +      explosion.doExplosionB(false);
 +       */

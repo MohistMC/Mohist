@@ -16,12 +16,12 @@ public class CraftFluidTag extends CraftTag<Fluid, org.bukkit.Fluid> {
 
     @Override
     public boolean isTagged(org.bukkit.Fluid fluid) {
-        return getHandle().func_230235_a_(CraftMagicNumbers.getFluid(fluid));
+        return getHandle().contains(CraftMagicNumbers.getFluid(fluid));
 
     }
 
     @Override
     public Set<org.bukkit.Fluid> getValues() {
-        return Collections.unmodifiableSet(getHandle().func_230236_b_().stream().map(CraftMagicNumbers::getFluid).collect(Collectors.toSet()));
+        return Collections.unmodifiableSet(getHandle().getAllElements().stream().map(CraftMagicNumbers::getFluid).collect(Collectors.toSet()));
     }
 }

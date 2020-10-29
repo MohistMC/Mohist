@@ -64,16 +64,18 @@
     }
  
     public void func_216118_a(IInventory p_216118_1_, LootContext p_216118_2_) {
+-      List<ItemStack> list = this.func_216113_a(p_216118_2_);
+-      Random random = p_216118_2_.func_216032_b();
 +      // CraftBukkit start
 +      this.fillInventory(p_216118_1_, p_216118_2_, false);
 +   }
 +
-+   public void fillInventory(IInventory p_216118_1_, LootContext p_216118_2_, boolean plugin) {
++   public void fillInventory(IInventory p_216118_1_, LootContext context, boolean plugin) {
 +      // CraftBukkit end
-       List<ItemStack> list = this.func_216113_a(p_216118_2_);
-       Random random = p_216118_2_.func_216032_b();
++      List<ItemStack> list = this.func_216113_a(context);
++      Random random = context.func_216032_b();
 +      // CraftBukkit start
-+      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_216118_1_, this, p_216118_2_, list, plugin);
++      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_216118_1_, this, context, list, plugin);
 +      if (event.isCancelled()) {
 +         return;
 +      }

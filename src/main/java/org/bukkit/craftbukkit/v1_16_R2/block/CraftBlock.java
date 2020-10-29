@@ -591,7 +591,7 @@ public class CraftBlock implements Block {
     }
 
     private static int getPower(int i, net.minecraft.block.BlockState iblockdata) {
-        if (!iblockdata.getBlock().func_235332_a_(Blocks.REDSTONE_WIRE)) {
+        if (!iblockdata.getBlock().matchesBlock(Blocks.REDSTONE_WIRE)) {
             return i;
         } else {
             int j = iblockdata.get(RedstoneWireBlock.POWER);
@@ -634,7 +634,7 @@ public class CraftBlock implements Block {
         boolean result = false;
 
         // Modelled off EntityHuman#hasBlock
-        if (block != Blocks.AIR && (item == null || !iblockdata.func_235783_q_() || nmsItem.canHarvestBlock(iblockdata))) { // TODO: 26/06/2020 func_235783_q_ this could be isToolNotRequired ? fix this if it breaks ;)
+        if (block != Blocks.AIR && (item == null || !iblockdata.getRequiresTool() || nmsItem.canHarvestBlock(iblockdata))) { // TODO: 26/06/2020 func_235783_q_ this could be isToolNotRequired ? fix this if it breaks ;)
             net.minecraft.block.Block.spawnDrops(iblockdata, (ServerWorld) world.getMinecraftWorld(), position, world.getTileEntity(position), null, nmsItem);
             result = true;
         }
@@ -666,7 +666,7 @@ public class CraftBlock implements Block {
         net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
         // Modelled off EntityHuman#hasBlock
-        if (item == null || !iblockdata.func_235783_q_() || nms.canHarvestBlock(iblockdata)) {
+        if (item == null || !iblockdata.getRequiresTool() || nms.canHarvestBlock(iblockdata)) {
             return net.minecraft.block.Block.getDrops(iblockdata, (ServerWorld) world.getMinecraftWorld(), position, world.getTileEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else {

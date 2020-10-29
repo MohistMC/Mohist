@@ -30,12 +30,12 @@ public class CraftStrider extends CraftAnimals implements Strider {
 
     @Override
     public void setSaddle(boolean saddled) {
-        getHandle().field_234313_bz_.func_233619_a_(saddled);
+        getHandle().field_234313_bz_.setSaddledFromBoolean(saddled);
     }
 
     @Override
     public int getBoostTicks() {
-        return getHandle().field_234313_bz_.field_233610_a_ ? getHandle().field_234313_bz_.field_233611_b_ : 0;
+        return getHandle().field_234313_bz_.saddledRaw ? getHandle().field_234313_bz_.field_233611_b_ : 0;
     }
 
     @Override
@@ -47,12 +47,12 @@ public class CraftStrider extends CraftAnimals implements Strider {
 
     @Override
     public int getCurrentBoostTicks() {
-        return getHandle().field_234313_bz_.field_233610_a_ ? getHandle().field_234313_bz_.field_233611_b_ : 0;
+        return getHandle().field_234313_bz_.saddledRaw ? getHandle().field_234313_bz_.field_233611_b_ : 0;
     }
 
     @Override
     public void setCurrentBoostTicks(int ticks) {
-        if (!getHandle().field_234313_bz_.field_233610_a_) {
+        if (!getHandle().field_234313_bz_.saddledRaw) {
             return;
         }
 

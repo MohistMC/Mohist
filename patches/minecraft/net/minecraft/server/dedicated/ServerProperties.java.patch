@@ -36,8 +36,8 @@
 -   public static ServerProperties func_244380_a(DynamicRegistries p_244380_0_, Path p_244380_1_) {
 -      return new ServerProperties(func_218969_b(p_244380_1_), p_244380_0_);
 +   // CraftBukkit start
-+   public static ServerProperties func_244380_a(DynamicRegistries p_244380_0_, Path p_244380_1_, OptionSet optionset) {
-+      return new ServerProperties(func_218969_b(p_244380_1_), p_244380_0_, optionset);
++   public static ServerProperties func_244380_a(DynamicRegistries registries, Path p_244380_1_, OptionSet optionset) {
++      return new ServerProperties(func_218969_b(p_244380_1_), registries, optionset);
     }
  
 -   protected ServerProperties func_241881_b(DynamicRegistries p_241881_1_, Properties p_241881_2_) {

@@ -20,7 +20,7 @@
  
  public class RedstoneOreBlock extends Block {
     public static final BooleanProperty field_196501_a = RedstoneTorchBlock.field_196528_a;
-@@ -30,29 +32,49 @@
+@@ -30,30 +32,50 @@
     }
  
     public void func_196270_a(BlockState p_196270_1_, World p_196270_2_, BlockPos p_196270_3_, PlayerEntity p_196270_4_) {
@@ -64,17 +64,21 @@
     }
  
 -   private static void func_196500_d(BlockState p_196500_0_, World p_196500_1_, BlockPos p_196500_2_) {
-+   private static void activate(BlockState p_196500_0_, World p_196500_1_, BlockPos p_196500_2_, Entity entity) { // CraftBukkit - add Entity
-       func_180691_e(p_196500_1_, p_196500_2_);
-       if (!p_196500_0_.func_177229_b(field_196501_a)) {
+-      func_180691_e(p_196500_1_, p_196500_2_);
+-      if (!p_196500_0_.func_177229_b(field_196501_a)) {
+-         p_196500_1_.func_180501_a(p_196500_2_, p_196500_0_.func_206870_a(field_196501_a, Boolean.valueOf(true)), 3);
++   private static void activate(BlockState state, World world, BlockPos pos, Entity entity) { // CraftBukkit - add Entity
++      func_180691_e(world, pos);
++      if (!state.func_177229_b(field_196501_a)) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(entity, p_196500_2_, p_196500_0_.func_206870_a(field_196501_a, true)).isCancelled()) {
++         if (CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state.func_206870_a(field_196501_a, true)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_196500_1_.func_180501_a(p_196500_2_, p_196500_0_.func_206870_a(field_196501_a, Boolean.valueOf(true)), 3);
++         world.func_180501_a(pos, state.func_206870_a(field_196501_a, Boolean.valueOf(true)), 3);
        }
  
+    }
 @@ -64,6 +86,11 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {

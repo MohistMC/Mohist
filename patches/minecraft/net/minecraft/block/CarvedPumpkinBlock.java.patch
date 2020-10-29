@@ -20,7 +20,7 @@
 -            p_196358_1_.func_180501_a(cachedblockinfo.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2);
 -            p_196358_1_.func_217379_c(2001, cachedblockinfo.func_177508_d(), Block.func_196246_j(cachedblockinfo.func_177509_a()));
 +            blockList.func_180501_a(cachedblockinfo.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2); // CraftBukkit
-+            //p_196358_1_.playEvent(2001, cachedblockinfo.getPos(), Block.getStateId(cachedblockinfo.getBlockState())); // CraftBukkit
++            //world.playEvent(2001, cachedblockinfo.getPos(), Block.getStateId(cachedblockinfo.getBlockState())); // CraftBukkit
           }
  
           SnowGolemEntity snowgolementity = EntityType.field_200745_ak.func_200721_a(p_196358_1_);
@@ -32,8 +32,8 @@
 +         if (!p_196358_1_.addEntity(snowgolementity, SpawnReason.BUILD_SNOWMAN)) {
 +            return;
 +         }
-+         for (BlockPos pos : blockList.getBlocks()) {
-+            p_196358_1_.func_217379_c(2001, pos, Block.func_196246_j(p_196358_1_.func_180495_p(pos)));
++         for (BlockPos blockPos : blockList.getBlocks()) {
++            p_196358_1_.func_217379_c(2001, blockPos, Block.func_196246_j(p_196358_1_.func_180495_p(blockPos)));
 +         }
 +         blockList.updateList();
 +         // CraftBukkit end
@@ -48,7 +48,7 @@
 -                  p_196358_1_.func_180501_a(cachedblockinfo2.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2);
 -                  p_196358_1_.func_217379_c(2001, cachedblockinfo2.func_177508_d(), Block.func_196246_j(cachedblockinfo2.func_177509_a()));
 +                  blockList.func_180501_a(cachedblockinfo2.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2); // CraftBukkit
-+                  //p_196358_1_.playEvent(2001, cachedblockinfo2.getPos(), Block.getStateId(cachedblockinfo2.getBlockState())); // CraftBukkit
++                  //world.playEvent(2001, cachedblockinfo2.getPos(), Block.getStateId(cachedblockinfo2.getBlockState())); // CraftBukkit
                 }
              }
  
@@ -62,8 +62,8 @@
 +            if (!p_196358_1_.addEntity(irongolementity, SpawnReason.BUILD_IRONGOLEM)) {
 +               return;
 +            }
-+            for (BlockPos pos : blockList.getBlocks()) {
-+               p_196358_1_.func_217379_c(2001, pos, Block.func_196246_j(p_196358_1_.func_180495_p(pos)));
++            for (BlockPos blockPos : blockList.getBlocks()) {
++               p_196358_1_.func_217379_c(2001, blockPos, Block.func_196246_j(p_196358_1_.func_180495_p(blockPos)));
 +            }
 +            blockList.updateList();
 +            // CraftBukkit end

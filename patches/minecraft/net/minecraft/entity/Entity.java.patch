@@ -901,8 +901,8 @@
 +   }
 +
 +   @Nullable
-+   public Entity teleportTo(ServerWorld p_241206_1_, BlockPos pos) {
-+      return this.changeDimension(p_241206_1_, p_241206_1_.func_85176_s(), pos);
++   public Entity teleportTo(ServerWorld server, BlockPos pos) {
++      return this.changeDimension(server, server.func_85176_s(), pos);
 +   }
 +
 +   @Nullable
@@ -911,28 +911,28 @@
 +   }
 +
 +   @Nullable
-+   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter, BlockPos location) {
++   public Entity changeDimension(ServerWorld server, net.minecraftforge.common.util.ITeleporter teleporter, BlockPos location) {
        if (this.field_70170_p instanceof ServerWorld && !this.field_70128_L) {
           this.field_70170_p.func_217381_Z().func_76320_a("changeDimension");
 -         this.func_213319_R();
 +         // CraftBukkit start
-+         if (p_241206_1_ == null){
++         if (server == null){
 +            return null;
 +         }
 +         // CraftBukkit end
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
-+         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, p_241206_1_, this::func_241829_a) : new PortalInfo(new Vector3d(location.func_177958_n(), location.func_177956_o(), location.func_177952_p()), Vector3d.field_186680_a, this.field_70177_z, this.field_70125_A, p_241206_1_, null);
++         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, server, this::func_241829_a) : new PortalInfo(new Vector3d(location.func_177958_n(), location.func_177956_o(), location.func_177952_p()), Vector3d.field_186680_a, this.field_70177_z, this.field_70125_A, server, null);
 +
           if (portalinfo == null) {
              return null;
           } else {
 +            // CraftBukkit start
-+            p_241206_1_ = portalinfo.world;
++            server = portalinfo.world;
 +            this.func_213319_R();
 +            // CraftBukkit end
-+            ServerWorld serverWorld = p_241206_1_;
-+            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
++            ServerWorld serverWorld = server;
++            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, server, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
              this.field_70170_p.func_217381_Z().func_219895_b("reloading");
 -            Entity entity = this.func_200600_R().func_200721_a(p_241206_1_);
 +            Entity entity = this.func_200600_R().func_200721_a(serverWorld);
@@ -961,7 +961,8 @@
              this.func_241204_bJ_();
              this.field_70170_p.func_217381_Z().func_76319_b();
              ((ServerWorld)this.field_70170_p).func_82742_i();
-             p_241206_1_.func_82742_i();
+-            p_241206_1_.func_82742_i();
++            server.func_82742_i();
              this.field_70170_p.func_217381_Z().func_76319_b();
 -            return entity;
 +            return transportedEntity;
@@ -1099,20 +1100,7 @@
     }
  
     protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
-@@ -2399,6 +2905,12 @@
-    public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
-    }
- 
-+   // CraftBukkit - start
-+   public BlockPos getPosition() {
-+      return new BlockPos(this);
-+   }
-+   // CraftBukkit - end
-+
-    public World func_130014_f_() {
-       return this.field_70170_p;
-    }
-@@ -2594,7 +3106,7 @@
+@@ -2594,7 +3100,7 @@
        return SoundCategory.NEUTRAL;
     }
  
@@ -1121,7 +1109,7 @@
        return 1;
     }
  
-@@ -2796,6 +3308,7 @@
+@@ -2796,6 +3302,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -1129,7 +1117,7 @@
  
     }
  
-@@ -2811,4 +3324,63 @@
+@@ -2811,4 +3318,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }

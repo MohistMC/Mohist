@@ -145,7 +145,7 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public DimensionType func_230315_m_() {
+    public DimensionType getDimensionType() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -175,7 +175,7 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public boolean func_241211_a_(BlockPos blockposition, BlockState iblockdata, int i, int j) {
+    public boolean setBlockState(BlockPos pos, BlockState state, int flags, int recursionLeft) {
         return false;
     }
 
@@ -195,7 +195,7 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean destroyBlock(BlockPos pos, boolean dropBlock, @Nullable Entity entity, int recursionLeft) {
+        return false;
     }
 }

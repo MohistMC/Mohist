@@ -34,7 +34,7 @@
        if (!world.func_201670_d()) {
           BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
 -         this.func_239796_a_(func_239797_a_((ServerWorld)world, blockpos) || func_239798_b_((ServerWorld)world, blockpos));
-+         this.func_239796_a_(func_239797_a_((ServerWorld)world, blockpos) || func_239798_b_((ServerWorld)world, blockpos, bukkitBlock, craftItem));  // CraftBukkit
++         this.func_239796_a_(func_239797_a_((ServerWorld)world, blockpos) || shear((ServerWorld)world, blockpos, bukkitBlock, craftItem));  // CraftBukkit
           if (this.func_239795_a_() && p_82487_2_.func_96631_a(1, world.func_201674_k(), (ServerPlayerEntity)null)) {
              p_82487_2_.func_190920_e(0);
           }
@@ -43,8 +43,9 @@
     }
  
 -   private static boolean func_239798_b_(ServerWorld p_239798_0_, BlockPos p_239798_1_) {
-+   private static boolean func_239798_b_(ServerWorld p_239798_0_, BlockPos p_239798_1_, org.bukkit.block.Block bukkitBlock, CraftItemStack craftItem) { // CraftBukkit - add args
-       for(LivingEntity livingentity : p_239798_0_.func_175647_a(LivingEntity.class, new AxisAlignedBB(p_239798_1_), EntityPredicates.field_180132_d)) {
+-      for(LivingEntity livingentity : p_239798_0_.func_175647_a(LivingEntity.class, new AxisAlignedBB(p_239798_1_), EntityPredicates.field_180132_d)) {
++   private static boolean shear(ServerWorld world, BlockPos pos, org.bukkit.block.Block bukkitBlock, CraftItemStack craftItem) { // CraftBukkit - add args
++      for(LivingEntity livingentity : world.func_175647_a(LivingEntity.class, new AxisAlignedBB(pos), EntityPredicates.field_180132_d)) {
           if (livingentity instanceof IShearable) {
              IShearable ishearable = (IShearable)livingentity;
              if (ishearable.func_230262_K__()) {

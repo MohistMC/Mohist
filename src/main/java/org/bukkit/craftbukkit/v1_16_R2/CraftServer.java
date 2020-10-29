@@ -450,7 +450,7 @@ public final class CraftServer implements Server {
 
     public void syncCommands() {
         // Clear existing commands
-        Commands dispatcher = console.resourceManager.field_240953_c_ = new Commands();
+        Commands dispatcher = console.resourceManager.commands = new Commands();
 
         // Register all commands, vanilla ones will be using the old dispatcher references
         for (Map.Entry<String, Command> entry : commandMap.getKnownCommands().entrySet()) {
@@ -628,7 +628,7 @@ public final class CraftServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        return this.getProperties().field_241082_U_.func_236222_c_();
+        return this.getProperties().field_241082_U_.doesGenerateFeatures();
     }
 
     @Override
@@ -807,7 +807,7 @@ public final class CraftServer implements Server {
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
         for (ServerWorld world : console.getWorlds()) {
-            world.field_241103_E_.func_230409_a_(config.difficulty);
+            world.field_241103_E_.setDifficulty(config.difficulty);
             world.setAllowedSpawnTypes(config.spawnMonsters, config.spawnAnimals);
             if (this.getTicksPerAnimalSpawns() < 0) {
                 world.ticksPerAnimalSpawns = 400;
@@ -990,13 +990,13 @@ public final class CraftServer implements Server {
         RegistryKey<Dimension> actualDimension;
         switch (creator.environment()) {
             case NORMAL:
-                actualDimension = Dimension.field_236053_b_;
+                actualDimension = Dimension.OVERWORLD;
                 break;
             case NETHER:
-                actualDimension = Dimension.field_236054_c_;
+                actualDimension = Dimension.THE_NETHER;
                 break;
             case THE_END:
-                actualDimension = Dimension.field_236055_d_;
+                actualDimension = Dimension.THE_END;
                 break;
             default:
                 throw new IllegalArgumentException("Illegal dimension");
@@ -1004,7 +1004,7 @@ public final class CraftServer implements Server {
 
         SaveFormat.LevelSave worldSession;
         try {
-            worldSession = SaveFormat.func_237269_a_(getWorldContainer().toPath()).func_237274_c_(name, actualDimension);
+            worldSession = SaveFormat.create(getWorldContainer().toPath()).getLevelSave(name, actualDimension);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -1012,8 +1012,8 @@ public final class CraftServer implements Server {
 
         boolean hardcore = creator.hardcore();
 
-        WorldSettingsImport<INBT> registryreadops = WorldSettingsImport.func_244335_a((DynamicOps) NBTDynamicOps.INSTANCE, console.getDataPackRegistries().func_240970_h_(), console.field_240767_f_);
-        ServerWorldInfo worlddata = (ServerWorldInfo) worldSession.func_237284_a_((DynamicOps) registryreadops, console.datapackconfiguration);
+        WorldSettingsImport<INBT> registryreadops = WorldSettingsImport.create((DynamicOps) NBTDynamicOps.INSTANCE, console.getDataPackRegistries().getResourceManager(), console.field_240767_f_);
+        ServerWorldInfo worlddata = (ServerWorldInfo) worldSession.readServerConfiguration((DynamicOps) registryreadops, console.datapackconfiguration);
 
         WorldSettings worldSettings;
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)
@@ -1029,44 +1029,44 @@ public final class CraftServer implements Server {
             worlddata = new ServerWorldInfo(worldSettings, generatorsettings, Lifecycle.stable());
         }
         worlddata.checkName(name);
-        worlddata.func_230412_a_(console.getServerModName(), console.func_230045_q_().isPresent());
+        worlddata.addServerBranding(console.getServerModName(), console.func_230045_q_().isPresent());
 
         if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.func_240761_a_(worldSession, DataFixesManager.getDataFixer(), console.options.has("eraseCache"), () -> {
+            net.minecraft.server.Main.forceWorldUpgrade(worldSession, DataFixesManager.getDataFixer(), console.options.has("eraseCache"), () -> {
                 return true;
-            }, worlddata.func_230418_z_().func_236224_e_().func_239659_c_().stream().map((entry) -> {
-                return RegistryKey.func_240903_a_(Registry.field_239698_ad_, ((RegistryKey) entry.getKey()).func_240901_a_());
+            }, worlddata.getDimensionGeneratorSettings().func_236224_e_().getEntries().stream().map((entry) -> {
+                return RegistryKey.getOrCreateKey(Registry.DIMENSION_TYPE_KEY, ((RegistryKey) entry.getKey()).getLocation());
             }).collect(ImmutableSet.toImmutableSet()));
         }
 
-        long j = BiomeManager.func_235200_a_(creator.seed());
+        long j = BiomeManager.getHashedSeed(creator.seed());
         List<ISpecialSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
-        SimpleRegistry<Dimension> registrymaterials = worlddata.func_230418_z_().func_236224_e_();
-        Dimension worlddimension = (Dimension) registrymaterials.func_230516_a_(actualDimension);
+        SimpleRegistry<Dimension> registrymaterials = worlddata.getDimensionGeneratorSettings().func_236224_e_();
+        Dimension worlddimension = (Dimension) registrymaterials.getValueForKey(actualDimension);
         DimensionType dimensionmanager;
         net.minecraft.world.gen.ChunkGenerator chunkgenerator;
 
         if (worlddimension == null) {
-            dimensionmanager = (DimensionType) console.field_240767_f_.func_230520_a_().func_243576_d(DimensionType.field_235999_c_);
-            chunkgenerator = DimensionGeneratorSettings.func_242750_a(console.field_240767_f_.func_243612_b(Registry.field_239720_u_), console.field_240767_f_.func_243612_b(Registry.field_243549_ar), (new Random()).nextLong());
+            dimensionmanager = (DimensionType) console.field_240767_f_.func_230520_a_().getOrThrow(DimensionType.OVERWORLD);
+            chunkgenerator = DimensionGeneratorSettings.func_242750_a(console.field_240767_f_.getRegistry(Registry.BIOME_KEY), console.field_240767_f_.getRegistry(Registry.NOISE_SETTINGS_KEY), (new Random()).nextLong());
         } else {
-            dimensionmanager = worlddimension.func_236063_b_();
-            chunkgenerator = worlddimension.func_236064_c_();
+            dimensionmanager = worlddimension.getDimensionType();
+            chunkgenerator = worlddimension.getChunkGenerator();
         }
 
-        RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.func_240903_a_(Registry.field_239699_ae_, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
+        RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
 
         ServerWorld internal = (ServerWorld) new ServerWorld(console, console.backgroundExecutor, worldSession, worlddata, worldKey, dimensionmanager, getServer().chunkStatusListenerFactory.create(11),
-                chunkgenerator, worlddata.func_230418_z_().func_236227_h_(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, creator.environment(), generator);
+                chunkgenerator, worlddata.getDimensionGeneratorSettings().func_236227_h_(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, creator.environment(), generator);
 
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
             return null;
         }
 
-        console.initWorld(internal, worlddata, worlddata, worlddata.func_230418_z_());
+        console.initWorld(internal, worlddata, worlddata, worlddata.getDimensionGeneratorSettings());
 
         internal.setAllowedSpawnTypes(true, true);
-        console.worlds.put(internal.func_234923_W_(), internal);
+        console.worlds.put(internal.getDimensionKey(), internal);
 
         pluginManager.callEvent(new WorldInitEvent(internal.getCBWorld()));
 
@@ -1093,7 +1093,7 @@ public final class CraftServer implements Server {
             return false;
         }
 
-        if (handle.func_234923_W_() == net.minecraft.world.World.field_234918_g_) {
+        if (handle.getDimensionKey() == net.minecraft.world.World.OVERWORLD) {
             return false;
         }
 
@@ -1364,7 +1364,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public CraftMapView getMap(int id) {
-        MapData worldmap = console.getWorld(net.minecraft.world.World.field_234918_g_).getMapData("map_" + id);
+        MapData worldmap = console.getWorld(net.minecraft.world.World.OVERWORLD).getMapData("map_" + id);
         if (worldmap == null) {
             return null;
         }
@@ -1567,7 +1567,7 @@ public final class CraftServer implements Server {
 
     @Override
     public GameMode getDefaultGameMode() {
-        return GameMode.getByValue(console.getWorld(net.minecraft.world.World.field_234918_g_).field_241103_E_.getGameType().getID());
+        return GameMode.getByValue(console.getWorld(net.minecraft.world.World.OVERWORLD).field_241103_E_.getGameType().getID());
     }
 
     @Override
@@ -1575,7 +1575,7 @@ public final class CraftServer implements Server {
         Validate.notNull(mode, "Mode cannot be null");
 
         for (World world : getWorlds()) {
-            ((CraftWorld) world).getHandle().field_241103_E_.func_230392_a_(GameType.getByID(mode.getValue()));
+            ((CraftWorld) world).getHandle().field_241103_E_.setGameType(GameType.getByID(mode.getValue()));
         }
     }
 
@@ -1598,12 +1598,12 @@ public final class CraftServer implements Server {
 
     @Override
     public File getWorldContainer() {
-        return this.getServer().anvilConverterForAnvilFile.func_237291_a_(net.minecraft.world.World.field_234918_g_).getParentFile();
+        return this.getServer().anvilConverterForAnvilFile.getDimensionFolder(net.minecraft.world.World.OVERWORLD).getParentFile();
     }
 
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
-        PlayerData storage = console.field_240766_e_;
+        PlayerData storage = console.playerDataManager;
         String[] files = storage.getPlayerDataFolder().list(new DatFileFilter());
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
 
@@ -1985,15 +1985,15 @@ public final class CraftServer implements Server {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
 
-                return (org.bukkit.Tag<T>) new CraftBlockTag(console.func_244266_aF().func_241835_a(), key);
+                return (org.bukkit.Tag<T>) new CraftBlockTag(console.func_244266_aF().getBlockTags(), key);
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
 
-                return (org.bukkit.Tag<T>) new CraftItemTag(console.func_244266_aF().func_241836_b(), key);
+                return (org.bukkit.Tag<T>) new CraftItemTag(console.func_244266_aF().getItemTags(), key);
             case org.bukkit.Tag.REGISTRY_FLUIDS:
                 Preconditions.checkArgument(clazz == org.bukkit.Fluid.class, "Fluid namespace must have fluid type");
 
-                return (org.bukkit.Tag<T>) new CraftFluidTag(console.func_244266_aF().func_241837_c(), key);
+                return (org.bukkit.Tag<T>) new CraftFluidTag(console.func_244266_aF().getFluidTags(), key);
             default:
                 throw new IllegalArgumentException();
         }
@@ -2006,18 +2006,18 @@ public final class CraftServer implements Server {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
 
-                ITagCollection<Block> blockTags = console.func_244266_aF().func_241835_a();
-                return blockTags.func_241833_a().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, key)).collect(ImmutableList.toImmutableList());
+                ITagCollection<Block> blockTags = console.func_244266_aF().getBlockTags();
+                return blockTags.getIDTagMap().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
 
-                ITagCollection<Item> itemTags = console.func_244266_aF().func_241836_b();
-                return itemTags.func_241833_a().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
+                ITagCollection<Item> itemTags = console.func_244266_aF().getItemTags();
+                return itemTags.getIDTagMap().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_FLUIDS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Fluid namespace must have fluid type");
 
-                ITagCollection<Fluid> fluidTags = console.func_244266_aF().func_241837_c();
-                return fluidTags.func_241833_a().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftFluidTag(fluidTags, key)).collect(ImmutableList.toImmutableList());
+                ITagCollection<Fluid> fluidTags = console.func_244266_aF().getFluidTags();
+                return fluidTags.getIDTagMap().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftFluidTag(fluidTags, key)).collect(ImmutableList.toImmutableList());
             default:
                 throw new IllegalArgumentException();
         }

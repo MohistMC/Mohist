@@ -804,7 +804,7 @@
     protected float func_70655_b(DamageSource p_70655_1_, float p_70655_2_) {
        if (!p_70655_1_.func_76363_c()) {
 -         this.func_230294_b_(p_70655_1_, p_70655_2_);
-+         // this.func_230294_b_(source, damage); // CraftBukkit - Moved into damageEntityCB(DamageSource, float)
++         // this.damageArmor(source, damage); // CraftBukkit - Moved into damageEntityCB(DamageSource, float)
           p_70655_2_ = CombatRules.func_189427_a(p_70655_2_, (float)this.func_70658_aO(), (float)this.func_233637_b_(Attributes.field_233827_j_));
        }
  

@@ -14,13 +14,15 @@
     private final String field_240741_d_;
  
 -   private Color(int p_i232573_1_, String p_i232573_2_) {
+-      this.field_240740_c_ = p_i232573_1_;
+-      this.field_240741_d_ = p_i232573_2_;
 +   // CraftBukkit start
 +   @Nullable
 +   public final TextFormatting format;
 +
-+   private Color(int p_i232573_1_, String p_i232573_2_, TextFormatting format) {
-       this.field_240740_c_ = p_i232573_1_;
-       this.field_240741_d_ = p_i232573_2_;
++   private Color(int color, String name, TextFormatting format) {
++      this.field_240740_c_ = color;
++      this.field_240741_d_ = name;
 +      this.format = format;
     }
  

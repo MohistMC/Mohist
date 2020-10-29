@@ -164,7 +164,7 @@
           if (this.field_70995_bG == 1 && !this.func_174814_R()) {
 -            this.field_70170_p.func_175669_a(1028, this.func_233580_cy_(), 0);
 +            // CraftBukkit start - Use relative location for far away sounds
-+            // this.world.playBroadcastSound(1028, this.func_233580_cy_(), 0);
++            // this.world.playBroadcastSound(1028, this.getPosition(), 0);
 +            int viewDistance = ((ServerWorld) this.field_70170_p).getCBServer().getViewDistance() * 16;
 +            for (ServerPlayerEntity player : (List<ServerPlayerEntity>) MinecraftServer.getServer().func_184103_al().field_72404_b) {
 +               double deltaX = this.func_226277_ct_() - player.func_226277_ct_();

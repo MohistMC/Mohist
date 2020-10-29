@@ -35,7 +35,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
                 String page = pages.getString(i);
                 if (resolved) {
                     try {
-                        this.pages.add(Serializer.func_240643_a_(page));
+                        this.pages.add(Serializer.getComponentFromJson(page));
                         continue;
                     } catch (Exception e) {
                         // Ignore and treat as an old book

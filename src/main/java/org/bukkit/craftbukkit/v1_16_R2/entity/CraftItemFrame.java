@@ -140,12 +140,12 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
 
     @Override
     public boolean isFixed() {
-        return getHandle().field_234259_an_;
+        return getHandle().fixed;
     }
 
     @Override
     public void setFixed(boolean fixed) {
-        getHandle().field_234259_an_ = fixed;
+        getHandle().fixed = fixed;
     }
 
     @Override

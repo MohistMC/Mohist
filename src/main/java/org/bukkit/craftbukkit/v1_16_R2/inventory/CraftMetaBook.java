@@ -84,7 +84,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 String page = pages.getString(i);
                 if (resolved) {
                     try {
-                        this.pages.add(Serializer.func_240643_a_(page));
+                        this.pages.add(Serializer.getComponentFromJson(page));
                         continue;
                     } catch (Exception e) {
                         // Ignore and treat as an old book
@@ -376,7 +376,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 throw new IllegalArgumentException("Invalid page number " + page + "/" + pages.size());
             }
             BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
-            CraftMetaBook.this.pages.set(page - 1, ITextComponent.Serializer.func_240644_b_(ComponentSerializer.toString(newText)));
+            CraftMetaBook.this.pages.set(page - 1, ITextComponent.Serializer.getComponentFromJsonLenient(ComponentSerializer.toString(newText)));
         }
         @Override
         public void setPages(final BaseComponent[]... pages) {
@@ -392,7 +392,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 if (page == null) {
                     page = new BaseComponent[0];
                 }
-                CraftMetaBook.this.pages.add(ITextComponent.Serializer.func_240644_b_(ComponentSerializer.toString(page)));
+                CraftMetaBook.this.pages.add(ITextComponent.Serializer.getComponentFromJsonLenient(ComponentSerializer.toString(page)));
             }
         }
         @Override

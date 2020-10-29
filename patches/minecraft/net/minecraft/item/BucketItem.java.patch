@@ -96,7 +96,7 @@
 +      return tryPlaceContainedLiquid(p_180616_1_, p_180616_2_, p_180616_3_, p_180616_4_, null, null, null);
 +   }
 +
-+   public boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, World worldIn, BlockPos posIn, @Nullable BlockRayTraceResult p_180616_4_, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
++   public boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, World worldIn, BlockPos posIn, @Nullable BlockRayTraceResult rayTrace, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
 +      // CraftBukkit end
        if (!(this.field_77876_a instanceof FlowingFluid)) {
           return false;
@@ -125,7 +125,7 @@
 -            int j = p_180616_3_.func_177956_o();
 -            int k = p_180616_3_.func_177952_p();
 -            p_180616_2_.func_184133_a(p_180616_1_, p_180616_3_, SoundEvents.field_187646_bt, SoundCategory.BLOCKS, 0.5F, 2.6F + (p_180616_2_.field_73012_v.nextFloat() - p_180616_2_.field_73012_v.nextFloat()) * 0.8F);
-+            return p_180616_4_ != null && this.tryPlaceContainedLiquid(player, worldIn, p_180616_4_.func_216350_a().func_177972_a(p_180616_4_.func_216354_b()), (BlockRayTraceResult)null, enumdirection, clicked, itemstack); // CraftBukkit
++            return rayTrace != null && this.tryPlaceContainedLiquid(player, worldIn, rayTrace.func_216350_a().func_177972_a(rayTrace.func_216354_b()), (BlockRayTraceResult)null, enumdirection, clicked, itemstack); // CraftBukkit
 +         } else if (worldIn.func_230315_m_().func_236040_e_() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
 +            int i = posIn.func_177958_n();
 +            int j = posIn.func_177956_o();

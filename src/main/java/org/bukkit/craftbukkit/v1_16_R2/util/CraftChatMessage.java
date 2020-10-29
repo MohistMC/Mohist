@@ -45,11 +45,11 @@ public final class CraftChatMessage {
         // Separate pattern with no group 3, new lines are part of previous string
         private static final Pattern INCREMENTAL_PATTERN_KEEP_NEWLINES = Pattern.compile("(" + String.valueOf(ChatColor.COLOR_CHAR) + "[0-9a-fk-orx])|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(ChatColor.COLOR_CHAR) + " ]|$))))", Pattern.CASE_INSENSITIVE);
         // ChatColor.b does not explicitly reset, its more of empty
-        private static final Style RESET = Style.field_240709_b_.func_240713_a_(false).func_240722_b_(false).setUnderlined(false).setStrikethrough(false).setObfuscated(false);
+        private static final Style RESET = Style.EMPTY.setBold(false).setItalic(false).setUnderlined(false).setStrikethrough(false).setObfuscated(false);
 
         private final List<ITextComponent> list = new ArrayList<ITextComponent>();
         private IFormattableTextComponent currentChatComponent = new StringTextComponent("");
-        private Style modifier = Style.field_240709_b_;
+        private Style modifier = Style.EMPTY;
         private final ITextComponent[] output;
         private int currentIndex;
         private StringBuilder hex;
@@ -87,16 +87,16 @@ public final class CraftChatMessage {
                         hex.append(c);
 
                         if (hex.length() == 7) {
-                            modifier = modifier.func_240718_a_(Color.func_240745_a_(hex.toString()));
+                            modifier = modifier.setColor(Color.fromHex(hex.toString()));
                             hex = null;
                         }
                     } else if (format.isFancyStyling() && format != TextFormatting.RESET) {
                         switch (format) {
                         case BOLD:
-                            modifier = modifier.func_240713_a_(Boolean.TRUE);
+                            modifier = modifier.setBold(Boolean.TRUE);
                             break;
                         case ITALIC:
-                            modifier = modifier.func_240722_b_(Boolean.TRUE);
+                            modifier = modifier.setItalic(Boolean.TRUE);
                             break;
                         case STRIKETHROUGH:
                             modifier = modifier.setStrikethrough(Boolean.TRUE);
@@ -111,7 +111,7 @@ public final class CraftChatMessage {
                             throw new AssertionError("Unexpected message format");
                         }
                     } else { // Color resets formatting
-                        modifier = RESET.func_240712_a_(format);
+                        modifier = RESET.setFormatting(format);
                     }
                     needsAdd = true;
                     break;
@@ -119,9 +119,9 @@ public final class CraftChatMessage {
                     if (!(match.startsWith("http://") || match.startsWith("https://"))) {
                         match = "http://" + match;
                     }
-                    modifier = modifier.func_240715_a_(new ClickEvent(Action.OPEN_URL, match));
+                    modifier = modifier.setClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     appendNewComponent(matcher.end(groupId));
-                    modifier = modifier.func_240715_a_((ClickEvent) null);
+                    modifier = modifier.setClickEvent((ClickEvent) null);
                     break;
                 case 3:
                     if (needsAdd) {
@@ -141,13 +141,13 @@ public final class CraftChatMessage {
         }
 
         private void appendNewComponent(int index) {
-            ITextComponent addition = new StringTextComponent(message.substring(currentIndex, index)).func_230530_a_(modifier);
+            ITextComponent addition = new StringTextComponent(message.substring(currentIndex, index)).setStyle(modifier);
             currentIndex = index;
             if (currentChatComponent == null) {
                 currentChatComponent = new StringTextComponent("");
                 list.add(currentChatComponent);
             }
-            currentChatComponent.func_230529_a_(addition);
+            currentChatComponent.append(addition);
         }
 
         private ITextComponent[] getOutput() {
@@ -182,14 +182,14 @@ public final class CraftChatMessage {
         boolean hadFormat = false;
         for (ITextComponent c : (Iterable<ITextComponent>) component) {
             Style modi = c.getStyle();
-            Color color = modi.func_240711_a_();
+            Color color = modi.getColor();
             if (!c.getString().isEmpty() || color != null) {
                 if (color != null) {
                     if (color.format != null) {
                         out.append(color.format);
                     } else {
                         out.append(ChatColor.COLOR_CHAR).append("x");
-                        for (char magic : color.func_240747_b_().substring(1).toCharArray()) {
+                        for (char magic : color.getName().substring(1).toCharArray()) {
                             out.append(ChatColor.COLOR_CHAR).append(magic);
                         }
                     }
@@ -253,24 +253,24 @@ public final class CraftChatMessage {
                     }
 
                     StringTextComponent prev = new StringTextComponent(msg.substring(pos, matcher.start()));
-                    prev.func_230530_a_(modifier);
+                    prev.setStyle(modifier);
                     extras.add(prev);
 
                     StringTextComponent link = new StringTextComponent(matcher.group());
-                    Style linkModi = modifier.func_240715_a_(new ClickEvent(Action.OPEN_URL, match));
-                    link.func_230530_a_(linkModi);
+                    Style linkModi = modifier.setClickEvent(new ClickEvent(Action.OPEN_URL, match));
+                    link.setStyle(linkModi);
                     extras.add(link);
 
                     pos = matcher.end();
                 }
 
                 StringTextComponent prev = new StringTextComponent(msg.substring(pos));
-                prev.func_230530_a_(modifier);
+                prev.setStyle(modifier);
                 extras.add(prev);
                 extras.addAll(extrasOld);
 
                 for (ITextComponent c : extras) {
-                    text.func_230529_a_(c);
+                    text.append(c);
                 }
             }
         }

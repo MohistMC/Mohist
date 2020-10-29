@@ -254,8 +254,8 @@
  
 +               // CraftBukkit start - respect vanish API
 +               if (this.field_219403_c instanceof ServerPlayerEntity) {
-+                  Player player = ((ServerPlayerEntity) this.field_219403_c).getBukkitEntity();
-+                  if (!p_219400_1_.getBukkitEntity().canSee(player)) {
++                  Player craftPlayer = ((ServerPlayerEntity) this.field_219403_c).getBukkitEntity();
++                  if (!p_219400_1_.getBukkitEntity().canSee(craftPlayer)) {
 +                     flag1 = false;
 +                  }
 +               }

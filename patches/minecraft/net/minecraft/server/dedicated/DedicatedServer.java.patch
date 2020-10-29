@@ -150,7 +150,7 @@
        super.func_143006_e(serverproperties.field_219005_R.get());
        this.func_205741_k(serverproperties.field_219017_k);
 -      this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
-+	  // this.field_240768_i_.func_230392_a_(serverproperties.gamemode); // CraftBukkit - moved to world loading
++	  // this.serverConfig.setGameType(serverproperties.gamemode); // CraftBukkit - moved to world loading
        field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
        InetAddress inetaddress = null;
        if (!this.func_71211_k().isEmpty()) {
@@ -159,7 +159,7 @@
        }
  
 +      // CraftBukkit start
-+      // this.setPlayerList((PlayerList) (new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_))); // Spigot - moved up
++      // this.setPlayerList((PlayerList) (new DedicatedPlayerList(this, this.field_240767_f_, this.playerDataManager))); // Spigot - moved up
 +      server.loadPlugins();
 +      server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +      // CraftBukkit end
@@ -172,7 +172,7 @@
           return false;
        } else {
 -         this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
-+         // this.setPlayerList(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_)); // CraftBukkit - moved up
++         // this.setPlayerList(new DedicatedPlayerList(this, this.field_240767_f_, this.playerDataManager)); // CraftBukkit - moved up
           long i = Util.func_211178_c();
           this.func_71191_d(serverproperties.field_219026_t);
           SkullTileEntity.func_184293_a(this.func_152358_ax());

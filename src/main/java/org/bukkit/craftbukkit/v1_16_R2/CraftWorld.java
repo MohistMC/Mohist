@@ -299,7 +299,7 @@ public class CraftWorld implements World {
 
     @Override
     public Location getSpawnLocation() {
-        BlockPos spawn = world.func_241135_u_();
+        BlockPos spawn = world.getSpawnPoint();
         return new Location(this, spawn.getX(), spawn.getY(), spawn.getZ());
     }
 
@@ -662,7 +662,7 @@ public class CraftWorld implements World {
     public LightningStrike strikeLightningEffect(Location loc) {
         LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
         lightning.teleportKeepLoaded(loc.getX(), loc.getY(), loc.getZ());
-        lightning.func_233623_a_(true);
+        lightning.setEffectOnly(true);
         world.strikeLightning(lightning);
         return (LightningStrike) lightning.getBukkitEntity();
     }
@@ -674,66 +674,66 @@ public class CraftWorld implements World {
         ConfiguredFeature gen;
         switch (type) {
         case BIG_TREE:
-            gen = Features.field_243869_bO;
+            gen = Features.FANCY_OAK;
             break;
         case BIRCH:
-            gen = Features.field_243864_bJ;
+            gen = Features.BIRCH;
             break;
         case REDWOOD:
-            gen = Features.field_243866_bL;
+            gen = Features.SPRUCE;
             break;
         case TALL_REDWOOD:
-            gen = Features.field_243867_bM;
+            gen = Features.PINE;
             break;
         case JUNGLE:
-            gen = Features.field_243871_bQ;
+            gen = Features.MEGA_JUNGLE_TREE;
             break;
         case SMALL_JUNGLE:
-            gen = Features.field_243870_bP;
+            gen = Features.JUNGLE_TREE_NO_VINE;
             break;
         case COCOA_TREE:
-            gen = Features.field_243868_bN;
+            gen = Features.JUNGLE_TREE;
             break;
         case JUNGLE_BUSH:
-            gen = Features.field_243876_bV;
+            gen = Features.JUNGLE_BUSH;
             break;
         case RED_MUSHROOM:
-            gen = Features.field_243861_bG;
+            gen = Features.HUGE_RED_MUSHROOM;
             break;
         case BROWN_MUSHROOM:
-            gen = Features.field_243860_bF;
+            gen = Features.HUGE_BROWN_MUSHROOM;
             break;
         case SWAMP:
-            gen = Features.field_243875_bU;
+            gen = Features.SWAMP_TREE;
             break;
         case ACACIA:
-            gen = Features.field_243865_bK;
+            gen = Features.ACACIA;
             break;
         case DARK_OAK:
-            gen = Features.field_243863_bI;
+            gen = Features.DARK_OAK;
             break;
         case MEGA_REDWOOD:
-            gen = Features.field_243873_bS;
+            gen = Features.MEGA_PINE;
             break;
         case TALL_BIRCH:
-            gen = Features.field_243877_bW;
+            gen = Features.OAK_BEES_0002;
             break;
         case CHORUS_PLANT:
             ((ChorusFlowerBlock) Blocks.CHORUS_FLOWER).generatePlant(world, pos, rand, 8);
             return true;
         case CRIMSON_FUNGUS:
-            gen = Features.field_243856_bB;
+            gen = Features.CRIMSON_FUNGI;
             break;
         case WARPED_FUNGUS:
-            gen = Features.field_243858_bD;
+            gen = Features.WARPED_FUNGI;
             break;
         case TREE:
         default:
-            gen = Features.field_243862_bH;
+            gen = Features.OAK;
             break;
         }
 
-        return gen.feature.func_241855_a(world, world.getChunkProvider().getChunkGenerator(), rand, pos, gen.config);
+        return gen.feature.generate(world, world.getChunkProvider().getChunkGenerator(), rand, pos, gen.config);
     }
 
     @Override
@@ -803,7 +803,7 @@ public class CraftWorld implements World {
             return;
         }
 
-        world.func_241114_a_(world.getDayTime() + event.getSkipAmount());
+        world.setDayTime(world.getDayTime() + event.getSkipAmount());
 
         // Forces the client to update to the new time immediately
         for (Player p : getPlayers()) {
@@ -925,7 +925,7 @@ public class CraftWorld implements World {
 
     @Override
     public Biome getBiome(int x, int y, int z) {
-        return CraftBlock.biomeBaseToBiome(getHandle().func_241828_r().func_243612_b(Registry.field_239720_u_), this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2));
+        return CraftBlock.biomeBaseToBiome(getHandle().func_241828_r().getRegistry(Registry.BIOME_KEY), this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2));
     }
 
     @Override
@@ -937,7 +937,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setBiome(int x, int y, int z, Biome bio) {
-        net.minecraft.world.biome.Biome bb = CraftBlock.biomeToBiomeBase(getHandle().func_241828_r().func_243612_b(Registry.field_239720_u_), bio);
+        net.minecraft.world.biome.Biome bb = CraftBlock.biomeToBiomeBase(getHandle().func_241828_r().getRegistry(Registry.BIOME_KEY), bio);
         BlockPos pos = new BlockPos(x, 0, z);
         if (this.world.isBlockLoaded(pos)) {
             net.minecraft.world.chunk.Chunk chunk = this.world.getChunkAt(pos);
@@ -1266,7 +1266,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-        this.getHandle().field_241103_E_.func_230409_a_(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
+        this.getHandle().field_241103_E_.setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
     }
 
     @Override
@@ -1595,7 +1595,7 @@ public class CraftWorld implements World {
                     entity = net.minecraft.entity.EntityType.CAT.create(world);
                 }
             } else if (PigZombie.class.isAssignableFrom(clazz)) {
-                entity = net.minecraft.entity.EntityType.field_233592_ba_.create(world);
+                entity = net.minecraft.entity.EntityType.ZOMBIFIED_PIGLIN.create(world);
             } else if (Zombie.class.isAssignableFrom(clazz)) {
                 if (Husk.class.isAssignableFrom(clazz)) {
                     entity = net.minecraft.entity.EntityType.HUSK.create(world);
@@ -1687,15 +1687,15 @@ public class CraftWorld implements World {
             } else if (Bee.class.isAssignableFrom(clazz)) {
                 entity = net.minecraft.entity.EntityType.BEE.create(world);
             } else if (Hoglin.class.isAssignableFrom(clazz)) {
-                entity = net.minecraft.entity.EntityType.field_233588_G_.create(world);
+                entity = net.minecraft.entity.EntityType.HOGLIN.create(world);
             } else if (Piglin.class.isAssignableFrom(clazz)) {
-                entity = net.minecraft.entity.EntityType.field_233591_ai_.create(world);
+                entity = net.minecraft.entity.EntityType.PIGLIN.create(world);
             } else if (PiglinBrute.class.isAssignableFrom(clazz)) {
                 entity = net.minecraft.entity.EntityType.field_242287_aj.create(world);
             } else if (Strider.class.isAssignableFrom(clazz)) {
-                entity = net.minecraft.entity.EntityType.field_233589_aE_.create(world);
+                entity = net.minecraft.entity.EntityType.STRIDER.create(world);
             } else if (Zoglin.class.isAssignableFrom(clazz)) {
-                entity = net.minecraft.entity.EntityType.field_233590_aW_.create(world);
+                entity = net.minecraft.entity.EntityType.ZOGLIN.create(world);
             }
 
             if (entity != null) {
@@ -1787,7 +1787,7 @@ public class CraftWorld implements World {
         Preconditions.checkArgument(entity != null, "Cannot spawn null entity");
 
         if (entity instanceof MobEntity) {
-            ((MobEntity) entity).onInitialSpawn(getHandle(), getHandle().getDifficultyForLocation(entity.func_233580_cy_()), net.minecraft.entity.SpawnReason.COMMAND, (ILivingEntityData) null, null);
+            ((MobEntity) entity).onInitialSpawn(getHandle(), getHandle().getDifficultyForLocation(entity.getPosition()), net.minecraft.entity.SpawnReason.COMMAND, (ILivingEntityData) null, null);
         }
 
         if (function != null) {
@@ -1843,7 +1843,7 @@ public class CraftWorld implements World {
     public void setKeepSpawnInMemory(boolean keepLoaded) {
         world.keepSpawnInMemory = keepLoaded;
         // Grab the worlds spawn chunk
-        BlockPos chunkcoordinates = this.world.func_241135_u_();
+        BlockPos chunkcoordinates = this.world.getSpawnPoint();
         if (keepLoaded) {
             world.getChunkProvider().registerTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
         } else {
@@ -1873,7 +1873,7 @@ public class CraftWorld implements World {
 
     @Override
     public File getWorldFolder() {
-        return world.convertable.func_237285_a_(FolderName.field_237253_i_).toFile().getParentFile();
+        return world.convertable.resolveFilePath(FolderName.DOT).toFile().getParentFile();
     }
 
     @Override
@@ -1903,7 +1903,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean canGenerateStructures() {
-        return world.field_241103_E_.func_230418_z_().func_236222_c_();
+        return world.field_241103_E_.getDimensionGeneratorSettings().doesGenerateFeatures();
     }
 
     @Override
@@ -1913,7 +1913,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setHardcore(boolean hardcore) {
-        world.field_241103_E_.func_230408_H_().hardcoreEnabled = hardcore;
+        world.field_241103_E_.worldSettings.hardcoreEnabled = hardcore;
     }
 
     @Override
@@ -2086,7 +2086,7 @@ public class CraftWorld implements World {
         double z = loc.getZ();
 
         SPlaySoundPacket packet = new SPlaySoundPacket(new ResourceLocation(sound), SoundCategory.valueOf(category.name()), new Vector3d(x, y, z), volume, pitch);
-        world.getServer().getPlayerList().sendToAllNearExcept(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, this.world.func_234923_W_(), packet);
+        world.getServer().getPlayerList().sendToAllNearExcept(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, this.world.getDimensionKey(), packet);
     }
 
     private static Map<String, RuleKey<?>> gamerules;
@@ -2291,7 +2291,7 @@ public class CraftWorld implements World {
     @Override
     public Location locateNearestStructure(Location origin, StructureType structureType, int radius, boolean findUnexplored) {
         BlockPos originPos = new BlockPos(origin.getX(), origin.getY(), origin.getZ());
-        BlockPos nearest = getHandle().getChunkProvider().getChunkGenerator().func_235956_a_(getHandle(), Structure.field_236365_a_.get(structureType.getName()), originPos, radius, findUnexplored);
+        BlockPos nearest = getHandle().getChunkProvider().getChunkGenerator().func_235956_a_(getHandle(), Structure.NAME_STRUCTURE_BIMAP.get(structureType.getName()), originPos, radius, findUnexplored);
         return (nearest == null) ? null : new Location(this, nearest.getX(), nearest.getY(), nearest.getZ());
     }
 

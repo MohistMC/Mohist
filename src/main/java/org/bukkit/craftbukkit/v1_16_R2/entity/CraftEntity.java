@@ -440,7 +440,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         if (entity instanceof AbstractArrowEntity) {
             return ((AbstractArrowEntity) entity).inGround;
         }
-        return entity.func_233570_aj_();
+        return entity.isOnGround();
     }
 
     @Override
