@@ -31,7 +31,7 @@
           } catch (Exception exception) {
              field_215785_a.error("Exception reading {}", p_242976_2_, exception);
              return null;
-@@ -255,16 +263,27 @@
+@@ -255,18 +263,29 @@
     }
  
     public SaveFormat.LevelSave func_237274_c_(String p_237274_1_) throws IOException {
@@ -40,8 +40,8 @@
     }
  
 +   // CraftBukkit start
-+   public SaveFormat.LevelSave func_237274_c_(String p_237274_1_, RegistryKey<Dimension> dimensionType) throws IOException {
-+      return new SaveFormat.LevelSave(p_237274_1_, dimensionType);
++   public SaveFormat.LevelSave getLevelSave(String saveName, RegistryKey<Dimension> dimensionType) throws IOException {
++      return new SaveFormat.LevelSave(saveName, dimensionType);
 +      // CraftBukkit end
 +   }
 +
@@ -53,15 +53,19 @@
        private final Map<FolderName, Path> field_237281_e_ = Maps.newHashMap();
  
 -      public LevelSave(String p_i232152_2_) throws IOException {
+-         this.field_237280_d_ = p_i232152_2_;
+-         this.field_237279_c_ = SaveFormat.this.field_215786_c.resolve(p_i232152_2_);
 +      // CraftBukkit start
 +      private final RegistryKey<Dimension> dimensionType;
 +
-+      public LevelSave(String p_i232152_2_, RegistryKey<Dimension> dimensionType) throws IOException {
++      public LevelSave(String saveName, RegistryKey<Dimension> dimensionType) throws IOException {
 +         this.dimensionType = dimensionType;
 +         // CraftBukkit end
-          this.field_237280_d_ = p_i232152_2_;
-          this.field_237279_c_ = SaveFormat.this.field_215786_c.resolve(p_i232152_2_);
++         this.field_237280_d_ = saveName;
++         this.field_237279_c_ = SaveFormat.this.field_215786_c.resolve(saveName);
           this.field_237278_b_ = SessionLockManager.func_232998_a_(this.field_237279_c_);
+       }
+ 
 @@ -281,9 +300,23 @@
        }
  

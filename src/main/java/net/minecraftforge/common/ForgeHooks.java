@@ -178,7 +178,7 @@ public class ForgeHooks
     public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
         //state = state.getActualState(world, pos);
-        if (!state.func_235783_q_())
+        if (!state.getRequiresTool())
             return true;
 
         ItemStack stack = player.getHeldItemMainhand();
@@ -227,7 +227,7 @@ public class ForgeHooks
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.HOE, 0));
 
         //This is taken from PickaxeItem, if that changes update here.
-        for (Block block : new Block[]{Blocks.OBSIDIAN, Blocks.field_235399_ni_, Blocks.field_235397_ng_, Blocks.field_235400_nj_, Blocks.field_235398_nh_})
+        for (Block block : new Block[]{Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.NETHERITE_BLOCK, Blocks.RESPAWN_ANCHOR, Blocks.ANCIENT_DEBRIS})
             blockToolSetter.accept(block, ToolType.PICKAXE, 3);
         for (Block block : new Block[]{Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE})
             blockToolSetter.accept(block, ToolType.PICKAXE, 2);
@@ -253,7 +253,7 @@ public class ForgeHooks
             if (state.isAir(world, pos))
                 return false;
 
-            if (isCreative && Screen.func_231172_r_() && state.hasTileEntity())
+            if (isCreative && Screen.hasControlDown() && state.hasTileEntity())
                 te = world.getTileEntity(pos);
 
             result = state.getPickBlock(target, world, pos, player);
@@ -481,7 +481,7 @@ public class ForgeHooks
                 if (ichat == null)
                     ichat = new StringTextComponent(part);
                 else
-                    ichat.func_240702_b_(part);
+                    ichat.appendString(part);
             }
             lastEnd = end;
             String url = string.substring(start, end);
@@ -497,7 +497,7 @@ public class ForgeHooks
                         if (ichat == null)
                             ichat = new StringTextComponent(url);
                         else
-                            ichat.func_240702_b_(url);
+                            ichat.appendString(url);
                         continue;
                     }
                     url = "http://" + url;
@@ -507,16 +507,16 @@ public class ForgeHooks
             {
                 // Bad syntax bail out!
                 if (ichat == null) ichat = new StringTextComponent(url);
-                else ichat.func_240702_b_(url);
+                else ichat.appendString(url);
                 continue;
             }
 
             // Set the click event and append the link.
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
-            link.func_230530_a_(link.getStyle().func_240715_a_(click).setUnderlined(true).func_240718_a_(Color.func_240744_a_(TextFormatting.BLUE)));
+            link.setStyle(link.getStyle().setClickEvent(click).setUnderlined(true).setColor(Color.fromTextFormatting(TextFormatting.BLUE)));
             if (ichat == null)
                 ichat = new StringTextComponent("");
-            ichat.func_230529_a_(link);
+            ichat.append(link);
         }
 
         // Append the rest of the message.
@@ -524,7 +524,7 @@ public class ForgeHooks
         if (ichat == null)
             ichat = new StringTextComponent(end);
         else if (end.length() > 0)
-            ichat.func_230529_a_(new StringTextComponent(string.substring(lastEnd)));
+            ichat.append(new StringTextComponent(string.substring(lastEnd)));
         return ichat;
     }
 
@@ -890,7 +890,7 @@ public class ForgeHooks
         MobSpawnInfoBuilder spawnBuilder = new MobSpawnInfoBuilder(spawns);
         BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder);
         MinecraftForge.EVENT_BUS.post(event);
-        return callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().func_242508_a(), event.getSpawns().func_242577_b()).setRegistryName(name);
+        return callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().build(), event.getSpawns().copy()).setRegistryName(name);
     }
 
     private static class LootTableContext
@@ -1142,7 +1142,7 @@ public class ForgeHooks
                     dummy = new ITag.ItemEntry(new ResourceLocation(s));
                 else
                     dummy = new ITag.TagEntry(new ResourceLocation(s.substring(1)));
-                allList.removeIf(e -> e.func_232968_a_().equals(dummy));
+                allList.removeIf(e -> e.getEntry().equals(dummy));
             }
         }
     }

@@ -306,7 +306,7 @@ public class CraftChunk implements Chunk {
 
         if (includeBiome || includeBiomeTempRain) {
             BiomeProvider wcm = world.getHandle().getChunkProvider().getChunkGenerator().getBiomeProvider();
-            biome = new BiomeContainer(world.getHandle().func_241828_r().func_243612_b(Registry.field_239720_u_), new ChunkPos(x, z), wcm);
+            biome = new BiomeContainer(world.getHandle().func_241828_r().getRegistry(Registry.BIOME_KEY), new ChunkPos(x, z), wcm);
         }
 
         /* Fill with empty data */

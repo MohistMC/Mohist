@@ -154,9 +154,9 @@
 +      this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
     }
  
-+   protected World(ISpawnWorldInfo p_i241925_1_, RegistryKey<World> p_i241925_2_, final DimensionType p_i241925_3_, Supplier<IProfiler> p_i241925_4_, boolean p_i241925_5_, boolean p_i241925_6_, long p_i241925_7_, org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env) {
++   protected World(ISpawnWorldInfo worldInfo, RegistryKey<World> dimension, final DimensionType dimensionType, Supplier<IProfiler> profiler, boolean isRemote, boolean isDebug, long seed, org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env) {
 +      super(World.class);
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(((ServerWorldInfo) p_i241925_1_).func_76065_j()); // Spigot
++      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(((ServerWorldInfo) worldInfo).func_76065_j()); // Spigot
 +      this.generator = gen;
 +      this.world = new CraftWorld((ServerWorld) this, gen, env);
 +      this.ticksPerAnimalSpawns = this.getCBServer().getTicksPerAnimalSpawns(); // CraftBukkit
@@ -164,16 +164,16 @@
 +      this.ticksPerWaterSpawns = this.getCBServer().getTicksPerWaterSpawns(); // CraftBukkit
 +      this.ticksPerWaterAmbientSpawns = this.getCBServer().getTicksPerWaterAmbientSpawns(); // CraftBukkit
 +      this.ticksPerAmbientSpawns = this.getCBServer().getTicksPerAmbientSpawns(); // CraftBukkit
-+      this.typeKey = (RegistryKey) this.getCBServer().getHandle().func_72365_p().field_240767_f_.func_230520_a_().func_230519_c_(p_i241925_3_).orElseThrow(() -> {
-+         return new IllegalStateException("Unregistered dimension type: " + p_i241925_3_);
++      this.typeKey = (RegistryKey) this.getCBServer().getHandle().func_72365_p().field_240767_f_.func_230520_a_().func_230519_c_(dimensionType).orElseThrow(() -> {
++         return new IllegalStateException("Unregistered dimension type: " + dimensionType);
 +      });
 +      // CraftBukkit end
-+      this.field_72984_F = p_i241925_4_;
-+      this.field_72986_A = p_i241925_1_;
-+      this.field_234921_x_ = p_i241925_3_;
-+      this.field_73011_w = p_i241925_2_;
-+      this.field_72995_K = p_i241925_5_;
-+      if (p_i241925_3_.func_242724_f() != 1.0D) {
++      this.field_72984_F = profiler;
++      this.field_72986_A = worldInfo;
++      this.field_234921_x_ = dimensionType;
++      this.field_73011_w = dimension;
++      this.field_72995_K = isRemote;
++      if (dimensionType.func_242724_f() != 1.0D) {
 +         this.field_175728_M = new WorldBorder() {
 +            public double func_230316_a_() {
 +               return super.func_230316_a_(); // CraftBukkit
@@ -188,8 +188,8 @@
 +      }
 +
 +      this.field_217407_c = Thread.currentThread();
-+      this.field_226689_w_ = new BiomeManager(this, p_i241925_7_, p_i241925_3_.func_227176_e_());
-+      this.field_234916_c_ = p_i241925_6_;
++      this.field_226689_w_ = new BiomeManager(this, seed, dimensionType.func_227176_e_());
++      this.field_234916_c_ = isDebug;
 +      // CraftBukkit start
 +      func_175723_af().world = (ServerWorld) this;
 +      // From PlayerList.setPlayerFileData

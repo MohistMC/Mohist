@@ -192,33 +192,49 @@
           atomicreference.get().func_240802_v_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
-@@ -237,7 +275,7 @@
+@@ -237,26 +275,34 @@
        return s;
     }
  
 -   public MinecraftServer(Thread p_i232576_1_, DynamicRegistries.Impl p_i232576_2_, SaveFormat.LevelSave p_i232576_3_, IServerConfiguration p_i232576_4_, ResourcePackList p_i232576_5_, Proxy p_i232576_6_, DataFixer p_i232576_7_, DataPackRegistries p_i232576_8_, MinecraftSessionService p_i232576_9_, GameProfileRepository p_i232576_10_, PlayerProfileCache p_i232576_11_, IChunkStatusListenerFactory p_i232576_12_) {
-+   public MinecraftServer(OptionSet options, DatapackCodec datapackconfiguration, Thread p_i232576_1_, DynamicRegistries.Impl p_i232576_2_, SaveFormat.LevelSave p_i232576_3_, IServerConfiguration p_i232576_4_, ResourcePackList p_i232576_5_, Proxy p_i232576_6_, DataFixer p_i232576_7_, DataPackRegistries p_i232576_8_, MinecraftSessionService p_i232576_9_, GameProfileRepository p_i232576_10_, PlayerProfileCache p_i232576_11_, IChunkStatusListenerFactory p_i232576_12_) {
++   public MinecraftServer(OptionSet options, DatapackCodec datapackconfiguration, Thread serverThread, DynamicRegistries.Impl p_i232576_2_, SaveFormat.LevelSave anvilConverterForAnvilFile, IServerConfiguration p_i232576_4_, ResourcePackList dataPacks, Proxy serverProxy, DataFixer dataFixer, DataPackRegistries dataRegistries, MinecraftSessionService sessionService, GameProfileRepository profileRepo, PlayerProfileCache profileCache, IChunkStatusListenerFactory chunkStatusListenerFactory) {
        super("Server");
        this.field_240767_f_ = p_i232576_2_;
        this.field_240768_i_ = p_i232576_4_;
-@@ -247,7 +285,7 @@
-       this.field_147143_S = p_i232576_9_;
-       this.field_152365_W = p_i232576_10_;
-       this.field_152366_X = p_i232576_11_;
+-      this.field_110456_c = p_i232576_6_;
+-      this.field_195577_ad = p_i232576_5_;
+-      this.field_195576_ac = p_i232576_8_;
+-      this.field_147143_S = p_i232576_9_;
+-      this.field_152365_W = p_i232576_10_;
+-      this.field_152366_X = p_i232576_11_;
 -      this.field_147144_o = new NetworkSystem(this);
+-      this.field_213220_d = p_i232576_12_;
+-      this.field_71310_m = p_i232576_3_;
+-      this.field_240766_e_ = p_i232576_3_.func_237292_b_();
+-      this.field_184112_s = p_i232576_7_;
+-      this.field_200258_al = new FunctionManager(this, p_i232576_8_.func_240960_a_());
+-      this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
+-      this.field_175590_aa = p_i232576_1_;
++      this.field_110456_c = serverProxy;
++      this.field_195577_ad = dataPacks;
++      this.field_195576_ac = dataRegistries;
++      this.field_147143_S = sessionService;
++      this.field_152365_W = profileRepo;
++      this.field_152366_X = profileCache;
 +      // this.networkSystem = new NetworkSystem(this); // Spigot
-       this.field_213220_d = p_i232576_12_;
-       this.field_71310_m = p_i232576_3_;
-       this.field_240766_e_ = p_i232576_3_.func_237292_b_();
-@@ -256,7 +294,15 @@
-       this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
-       this.field_175590_aa = p_i232576_1_;
++      this.field_213220_d = chunkStatusListenerFactory;
++      this.field_71310_m = anvilConverterForAnvilFile;
++      this.field_240766_e_ = anvilConverterForAnvilFile.func_237292_b_();
++      this.field_184112_s = dataFixer;
++      this.field_200258_al = new FunctionManager(this, dataRegistries.func_240960_a_());
++      this.field_240765_ak_ = new TemplateManager(dataRegistries.func_240970_h_(), anvilConverterForAnvilFile, dataFixer);
++      this.field_175590_aa = serverThread;
        this.field_213217_au = Util.func_215072_e();
 +
 +      // CraftBukkit start
 +      this.options = options;
 +      this.datapackconfiguration = datapackconfiguration;
-+      this.vanillaCommandDispatcher = p_i232576_8_.field_240953_c_; // CraftBukkit
++      this.vanillaCommandDispatcher = dataRegistries.field_240953_c_; // CraftBukkit
 +
 +      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_16_R2.util.ServerShutdownThread(this));
     }
@@ -242,10 +258,11 @@
 +   /*
     protected void func_240800_l__() {
 -      this.func_175584_a();
-+      this.setResourcePackFromWorld();
-       this.field_240768_i_.func_230412_a_(this.getServerModName(), this.func_230045_q_().isPresent());
+-      this.field_240768_i_.func_230412_a_(this.getServerModName(), this.func_230045_q_().isPresent());
 -      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
 -      this.func_240787_a_(ichunkstatuslistener);
++      this.setResourcePackFromWorld();
++      this.serverConfig.addServerBranding(this.getServerModName(), this.func_230045_q_().isPresent());
 +      IChunkStatusListener ichunkstatuslistener = this.chunkStatusListenerFactory.create(11);
 +      // this.func_240787_a_(ichunkstatuslistener);
        this.func_230543_p_();
@@ -316,7 +333,7 @@
 +               }
 +            }
 +            try {
-+               worldSession = SaveFormat.func_237269_a_(server.getWorldContainer().toPath()).func_237274_c_(name, dimensionKey);
++               worldSession = SaveFormat.func_237269_a_(server.getWorldContainer().toPath()).getLevelSave(name, dimensionKey);
 +            } catch (IOException ex) {
 +               throw new RuntimeException(ex);
 +            }
@@ -569,14 +586,15 @@
 +      // CraftBukkit start - moved to ServerWorld.save
 +      /*
        ServerWorld serverworld1 = this.func_241755_D_();
-       IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
+-      IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
 -      iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
 -      this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
 -      this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
 -      return flag;
-+      iserverworldinfo.func_230393_a_(serverworld1.getWorldBorder().func_235927_t_());
-+      this.field_240768_i_.func_230414_b_(this.getCustomBossEvents().write());
-+      this.anvilConverterForAnvilFile.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.getPlayerList().getHostPlayerData());
++      IServerWorldInfo iserverworldinfo = this.serverConfig.getServerWorldInfo();
++      iserverworldinfo.setWorldBorderSerializer(serverworld1.getWorldBorder().getSerializer());
++      this.serverConfig.setCustomBossEventData(this.getCustomBossEvents().write());
++      this.anvilConverterForAnvilFile.saveLevel(this.field_240767_f_, this.serverConfig, this.getPlayerList().getHostPlayerData());
 +       */
 +      // CraftBukkit end
 +       return flag;
@@ -856,7 +874,7 @@
 +         /* Drop global time updates
 +         if (this.tickCounter % 20 == 0) {
 +            this.profiler.startSection("timeSync");
-+            this.playerList.func_232642_a_(new SUpdateTimePacket(serverworld.getGameTime(), serverworld.getDayTime(), serverworld.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)), serverworld.func_234923_W_());
++            this.playerList.func_232642_a_(new SUpdateTimePacket(serverworld.getGameTime(), serverworld.getDayTime(), serverworld.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)), serverworld.getDimensionKey());
 +            this.profiler.endSection();
           }
 +         // CraftBukkit end */

@@ -5,7 +5,7 @@
        BlockPos blockpos = p_234016_3_.func_218180_b();
        if (p_234016_4_.func_177229_b(ComposterBlock.field_220298_a) == 8) {
 -         p_234016_4_ = ComposterBlock.func_235489_d_(p_234016_4_, p_234016_1_, blockpos);
-+         p_234016_4_ = ComposterBlock.func_235489_d_(p_234016_4_, p_234016_1_, blockpos, p_234016_2_); // CraftBukkit
++         p_234016_4_ = ComposterBlock.empty(p_234016_4_, p_234016_1_, blockpos, p_234016_2_); // CraftBukkit
        }
  
        int i = 20;
@@ -14,7 +14,7 @@
  
                 for(int i2 = 0; i2 < l1; ++i2) {
 -                  blockstate = ComposterBlock.func_235486_a_(blockstate, p_234016_1_, itemstack, blockpos);
-+                  blockstate = ComposterBlock.func_235486_a_(blockstate, p_234016_1_, itemstack, blockpos, p_234016_2_); // CraftBukkit
++                  blockstate = ComposterBlock.attemptFill(blockstate, p_234016_1_, itemstack, blockpos, p_234016_2_); // CraftBukkit
                    if (blockstate.func_177229_b(ComposterBlock.field_220298_a) == 7) {
                       this.func_242308_a(p_234016_1_, p_234016_4_, blockpos, blockstate);
                       return;

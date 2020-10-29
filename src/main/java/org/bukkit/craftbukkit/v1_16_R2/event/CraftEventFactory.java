@@ -180,12 +180,12 @@ public class CraftEventFactory {
     private static boolean canBuild(ServerWorld world, Player player, int x, int z) {
         int spawnSize = Bukkit.getServer().getSpawnRadius();
 
-        if (world.func_234923_W_() != World.field_234918_g_) return true;
+        if (world.getDimensionKey() != World.OVERWORLD) return true;
         if (spawnSize <= 0) return true;
         if (((CraftServer) Bukkit.getServer()).getHandle().getOppedPlayers().isEmpty()) return true;
         if (player.isOp()) return true;
 
-        BlockPos chunkcoordinates = world.func_241135_u_();
+        BlockPos chunkcoordinates = world.getSpawnPoint();
 
         int distanceFromSpawn = Math.max(Math.abs(x - chunkcoordinates.getX()), Math.abs(z - chunkcoordinates.getZ()));
         return distanceFromSpawn > spawnSize;
@@ -1311,8 +1311,8 @@ public class CraftEventFactory {
     private static ITextComponent stripEvents(ITextComponent c) {
         Style modi = c.getStyle();
         if (modi != null) {
-            modi = modi.func_240715_a_(null);
-            modi = modi.func_240716_a_(null);
+            modi = modi.setClickEvent(null);
+            modi = modi.setHoverEvent(null);
         }
         if (c instanceof TranslationTextComponent) {
             TranslationTextComponent cm = (TranslationTextComponent) c;
@@ -1330,7 +1330,7 @@ public class CraftEventFactory {
                 ls.set(i, stripEvents(ls.get(i)));
             }
         }
-        return c.func_230531_f_().func_230530_a_(modi);
+        return c.copyRaw().setStyle(modi);
     }
 
     public static PlayerUnleashEntityEvent callPlayerUnleashEntityEvent(MobEntity entity, PlayerEntity player) {

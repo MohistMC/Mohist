@@ -129,7 +129,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return CraftBlock.biomeBaseToBiome((Registry<net.minecraft.world.biome.Biome>) biome.field_242704_g, biome.getNoiseBiome(x >> 2, y >> 2, z >> 2));
+        return CraftBlock.biomeBaseToBiome((Registry<net.minecraft.world.biome.Biome>) biome.biomeRegistry, biome.getNoiseBiome(x >> 2, y >> 2, z >> 2));
     }
 
     @Override

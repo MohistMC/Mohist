@@ -28,7 +28,7 @@ public class CraftHorse extends CraftAbstractHorse implements Horse {
 
     @Override
     public Color getColor() {
-        return Color.values()[getHandle().func_234239_eK_().func_234253_a_()];
+        return Color.values()[getHandle().func_234239_eK_().getId()];
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CraftHorse extends CraftAbstractHorse implements Horse {
 
     @Override
     public Style getStyle() {
-        return Style.values()[getHandle().func_234240_eM_().func_234247_a_()];
+        return Style.values()[getHandle().func_234240_eM_().getId()];
     }
 
     @Override

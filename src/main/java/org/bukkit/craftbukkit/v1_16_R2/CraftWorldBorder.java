@@ -51,8 +51,8 @@ public class CraftWorldBorder implements WorldBorder {
 
     @Override
     public Location getCenter() {
-        double x = this.handle.func_230316_a_();
-        double z = this.handle.func_230317_b_();
+        double x = this.handle.getCenterX();
+        double z = this.handle.getCenterZ();
 
         return new Location(this.world, x, 0, z);
     }

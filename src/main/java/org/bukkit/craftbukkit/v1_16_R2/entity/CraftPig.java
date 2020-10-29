@@ -20,12 +20,12 @@ public class CraftPig extends CraftAnimals implements Pig {
 
     @Override
     public void setSaddle(boolean saddled) {
-        getHandle().field_234214_bx_.func_233619_a_(saddled);
+        getHandle().field_234214_bx_.setSaddledFromBoolean(saddled);
     }
 
     @Override
     public int getBoostTicks() {
-        return getHandle().field_234214_bx_.field_233610_a_ ? getHandle().field_234214_bx_.field_233612_c_ : 0;
+        return getHandle().field_234214_bx_.saddledRaw ? getHandle().field_234214_bx_.boostTimeRaw : 0;
     }
 
     @Override
@@ -37,16 +37,16 @@ public class CraftPig extends CraftAnimals implements Pig {
 
     @Override
     public int getCurrentBoostTicks() {
-        return getHandle().field_234214_bx_.field_233610_a_ ? getHandle().field_234214_bx_.field_233611_b_ : 0;
+        return getHandle().field_234214_bx_.saddledRaw ? getHandle().field_234214_bx_.field_233611_b_ : 0;
     }
 
     @Override
     public void setCurrentBoostTicks(int ticks) {
-        if (!getHandle().field_234214_bx_.field_233610_a_) {
+        if (!getHandle().field_234214_bx_.saddledRaw) {
             return;
         }
 
-        int max = getHandle().field_234214_bx_.field_233612_c_;
+        int max = getHandle().field_234214_bx_.boostTimeRaw;
         Preconditions.checkArgument(ticks >= 0 && ticks <= max, "boost ticks must not exceed 0 or %d (inclusive)", max);
 
         this.getHandle().field_234214_bx_.field_233611_b_ = ticks;

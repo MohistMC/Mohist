@@ -108,13 +108,13 @@ public final class CraftMagicNumbers implements UnsafeValues {
             }
 
             ResourceLocation key = key(material);
-            Registry.ITEM.func_241873_b(key).ifPresent((item) -> {
+            Registry.ITEM.getOptional(key).ifPresent((item) -> {
                 MATERIAL_ITEM.put(material, item);
             });
-            Registry.BLOCK.func_241873_b(key).ifPresent((block) -> {
+            Registry.BLOCK.getOptional(key).ifPresent((block) -> {
                 MATERIAL_BLOCK.put(material, block);
             });
-            Registry.FLUID.func_241873_b(key).ifPresent((fluid) -> {
+            Registry.FLUID.getOptional(key).ifPresent((fluid) -> {
                 MATERIAL_FLUID.put(material, fluid);
             });
         }
@@ -246,7 +246,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     private static File getBukkitDataPackFolder() {
-        return new File(MinecraftServer.getServer().func_240776_a_(FolderName.field_237251_g_).toFile(), "bukkit");
+        return new File(MinecraftServer.getServer().func_240776_a_(FolderName.DATAPACKS).toFile(), "bukkit");
     }
 
     @Override
@@ -258,7 +258,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         JsonElement jsonelement = AdvancementManager.GSON.fromJson(advancement, JsonElement.class);
         JsonObject jsonobject = JSONUtils.getJsonObject(jsonelement, "advancement");
-        net.minecraft.advancements.Advancement.Builder nms = net.minecraft.advancements.Advancement.Builder.func_241043_a_(jsonobject, new ConditionArrayParser(minecraftkey, MinecraftServer.getServer().func_229736_aP_()));
+        net.minecraft.advancements.Advancement.Builder nms = net.minecraft.advancements.Advancement.Builder.deserialize(jsonobject, new ConditionArrayParser(minecraftkey, MinecraftServer.getServer().func_229736_aP_()));
         if (nms != null) {
             MinecraftServer.getServer().getAdvancementManager().advancementList.loadAdvancements(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
             Advancement bukkit = Bukkit.getAdvancement(key);

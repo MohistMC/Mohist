@@ -59,12 +59,12 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
         @Override
         public Biome getBiome(int x, int y, int z) {
-            return CraftBlock.biomeBaseToBiome((Registry<net.minecraft.world.biome.Biome>) biome.field_242704_g, biome.getNoiseBiome(x >> 2, y >> 2, z >> 2));
+            return CraftBlock.biomeBaseToBiome((Registry<net.minecraft.world.biome.Biome>) biome.biomeRegistry, biome.getNoiseBiome(x >> 2, y >> 2, z >> 2));
         }
 
         @Override
         public void setBiome(int x, int y, int z, Biome bio) {
-            biome.setBiome(x >> 2, y >> 2, z >> 2, CraftBlock.biomeToBiomeBase((Registry<net.minecraft.world.biome.Biome>) biome.field_242704_g, bio));
+            biome.setBiome(x >> 2, y >> 2, z >> 2, CraftBlock.biomeToBiomeBase((Registry<net.minecraft.world.biome.Biome>) biome.biomeRegistry, bio));
         }
     }
 
@@ -92,8 +92,8 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     @Override
-    public int func_230356_f_() {
-        return delegate.func_230356_f_();
+    public int getSeaLevel() {
+        return delegate.getSeaLevel();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
         random.setSeed((long) x * 341873128712L + (long) z * 132897987541L);
 
         // Get default biome data for chunk
-        CustomBiomeGrid biomegrid = new CustomBiomeGrid(new BiomeContainer(world.func_241828_r().func_243612_b(Registry.field_239720_u_), p_225551_2_.getPos(), this.getBiomeProvider()));
+        CustomBiomeGrid biomegrid = new CustomBiomeGrid(new BiomeContainer(world.func_241828_r().getRegistry(Registry.BIOME_KEY), p_225551_2_.getPos(), this.getBiomeProvider()));
 
         ChunkData data;
         if (generator.isParallelCapable()) {
@@ -133,7 +133,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
         }
 
         // Set biome grid
-        ((ChunkPrimer) p_225551_2_).func_225548_a_(biomegrid.biome);
+        ((ChunkPrimer) p_225551_2_).setBiomes(biomegrid.biome);
 
         if (craftData.getTiles() != null) {
             for (BlockPos pos : craftData.getTiles()) {
@@ -142,7 +142,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
                 int tz = pos.getZ();
                 Block block = craftData.getTypeId(tx, ty, tz).getBlock();
 
-                if (block.func_235695_q_()) {
+                if (block.isTileEntityProvider()) {
                     TileEntity tile = ((ITileEntityProvider) block).createNewTileEntity(world);
                     p_225551_2_.addTileEntity(new BlockPos((x << 4) + tx, ty, (z << 4) + tz), tile);
                 }
@@ -173,8 +173,8 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     @Override
-    public int func_222529_a(int p_222529_1_, int p_222529_2_, Type heightmapType) {
-        return delegate.func_222529_a(p_222529_1_, p_222529_2_, heightmapType);
+    public int getHeight(int p_222529_1_, int p_222529_2_, Type heightmapType) {
+        return delegate.getHeight(p_222529_1_, p_222529_2_, heightmapType);
     }
 
     @Override
@@ -197,8 +197,8 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     @Override
-    public int func_230355_e_() {
-        return delegate.func_230355_e_();
+    public int getMaxBuildHeight() {
+        return delegate.getMaxBuildHeight();
     }
 
     @Override

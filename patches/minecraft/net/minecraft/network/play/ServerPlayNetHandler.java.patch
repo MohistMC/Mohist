@@ -618,7 +618,7 @@
                          this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
                          this.field_147369_b.func_71122_b(this.field_147369_b.func_226278_cu_() - d3, p_147347_1_.func_149465_i());
 -                        this.field_147369_b.func_230245_c_(p_147347_1_.func_149465_i());
-+                        // this.player.func_230245_c_(packetIn.isOnGround()); Moved up
++                        // this.player.setOnGround(packetIn.isOnGround()); Moved up
                          if (flag) {
                             this.field_147369_b.field_70143_R = 0.0F;
                          }
@@ -900,7 +900,7 @@
 +      // CraftBukkit start - Replace vanilla quit message handling with our own.
 +       /*
 +      this.server.refreshStatusNextTick();
-+      this.server.getPlayerList().func_232641_a_((new TranslationTextComponent("multiplayer.player.left", this.player.getDisplayName())).func_240699_a_(TextFormatting.YELLOW), ChatType.SYSTEM, Util.field_240973_b_);
++      this.server.getPlayerList().func_232641_a_((new TranslationTextComponent("multiplayer.player.left", this.player.getDisplayName())).mergeStyle(TextFormatting.YELLOW), ChatType.SYSTEM, Util.DUMMY_UUID);
 +      this.player.disconnect();
 +      this.server.getPlayerList().playerLoggedOut(this.player);
 +     */

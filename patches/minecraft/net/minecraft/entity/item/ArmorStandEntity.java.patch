@@ -67,8 +67,8 @@
 +         Player bukkitPlayer = (Player) p_226529_1_.getBukkitEntity();
 +         ArmorStand self = (ArmorStand) this.getBukkitEntity();
 +
-+         EquipmentSlot slot = CraftEquipmentSlot.getSlot(p_226529_2_);
-+         PlayerArmorStandManipulateEvent armorStandManipulateEvent = new PlayerArmorStandManipulateEvent(bukkitPlayer, self, playerHeldItem, armorStandItem, slot);
++         EquipmentSlot equipmentSlot = CraftEquipmentSlot.getSlot(p_226529_2_);
++         PlayerArmorStandManipulateEvent armorStandManipulateEvent = new PlayerArmorStandManipulateEvent(bukkitPlayer, self, playerHeldItem, armorStandItem, equipmentSlot);
 +         this.field_70170_p.getCBServer().getPluginManager().callEvent(armorStandManipulateEvent);
 +
 +         if (armorStandManipulateEvent.isCancelled()) {
@@ -128,7 +128,7 @@
     private void func_213816_g(DamageSource p_213816_1_) {
        this.func_190773_I();
 -      this.func_213345_d(p_213816_1_);
-+    // this.spawnDrops(p_213816_1_); // CraftBukkit - moved down
++    // this.spawnDrops(source); // CraftBukkit - moved down
  
        for(int i = 0; i < this.field_184799_bw.size(); ++i) {
           ItemStack itemstack = this.field_184799_bw.get(i);

@@ -101,7 +101,7 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public boolean func_213705_dZ() {
+        public boolean hasXPBar() {
             return false; // is-regular-villager flag (hides some gui elements: xp bar, name suffix)
         }
 

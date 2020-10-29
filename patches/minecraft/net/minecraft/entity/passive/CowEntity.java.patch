@@ -15,7 +15,7 @@
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
        if (itemstack.func_77973_b() == Items.field_151133_ar && !this.func_70631_g_()) {
 +         // CraftBukkit start - Got milk?
-+         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerWorld) p_230254_1_.field_70170_p, p_230254_1_, this.getPosition(), this.getPosition(), null, itemstack, Items.field_151117_aB);
++         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerWorld) p_230254_1_.field_70170_p, p_230254_1_, this.func_233580_cy_(), this.func_233580_cy_(), null, itemstack, Items.field_151117_aB);
 +         if (event.isCancelled()) {
 +            return ActionResultType.PASS;
 +         }

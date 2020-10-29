@@ -63,20 +63,34 @@
     }
  
     public boolean func_208508_f() {
-@@ -187,7 +211,7 @@
+@@ -187,19 +211,19 @@
        return new Vector3d(d2, d4, d3);
     }
  
 -   public static PortalInfo func_242963_a(ServerWorld p_242963_0_, TeleportationRepositioner.Result p_242963_1_, Direction.Axis p_242963_2_, Vector3d p_242963_3_, EntitySize p_242963_4_, Vector3d p_242963_5_, float p_242963_6_, float p_242963_7_) {
-+   public static PortalInfo func_242963_a(ServerWorld p_242963_0_, TeleportationRepositioner.Result p_242963_1_, Direction.Axis p_242963_2_, Vector3d p_242963_3_, EntitySize p_242963_4_, Vector3d p_242963_5_, float p_242963_6_, float p_242963_7_, CraftPortalEvent portalEventInfo) {
-       BlockPos blockpos = p_242963_1_.field_243679_a;
-       BlockState blockstate = p_242963_0_.func_180495_p(blockpos);
+-      BlockPos blockpos = p_242963_1_.field_243679_a;
+-      BlockState blockstate = p_242963_0_.func_180495_p(blockpos);
++   public static PortalInfo func_242963_a(ServerWorld world, TeleportationRepositioner.Result result, Direction.Axis axis, Vector3d offsetVector, EntitySize size, Vector3d motion, float rotationYaw, float rotationPitch, CraftPortalEvent portalEventInfo) {
++      BlockPos blockpos = result.field_243679_a;
++      BlockState blockstate = world.func_180495_p(blockpos);
        Direction.Axis direction$axis = blockstate.func_177229_b(BlockStateProperties.field_208199_z);
-@@ -200,6 +224,6 @@
-       double d4 = 0.5D + p_242963_3_.func_82616_c();
+-      double d0 = (double)p_242963_1_.field_243680_b;
+-      double d1 = (double)p_242963_1_.field_243681_c;
+-      int i = p_242963_2_ == direction$axis ? 0 : 90;
+-      Vector3d vector3d = p_242963_2_ == direction$axis ? p_242963_5_ : new Vector3d(p_242963_5_.field_72449_c, p_242963_5_.field_72448_b, -p_242963_5_.field_72450_a);
+-      double d2 = (double)p_242963_4_.field_220315_a / 2.0D + (d0 - (double)p_242963_4_.field_220315_a) * p_242963_3_.func_82615_a();
+-      double d3 = (d1 - (double)p_242963_4_.field_220316_b) * p_242963_3_.func_82617_b();
+-      double d4 = 0.5D + p_242963_3_.func_82616_c();
++      double d0 = (double)result.field_243680_b;
++      double d1 = (double)result.field_243681_c;
++      int i = axis == direction$axis ? 0 : 90;
++      Vector3d vector3d = axis == direction$axis ? motion : new Vector3d(motion.field_72449_c, motion.field_72448_b, -motion.field_72450_a);
++      double d2 = (double)size.field_220315_a / 2.0D + (d0 - (double)size.field_220315_a) * offsetVector.func_82615_a();
++      double d3 = (d1 - (double)size.field_220316_b) * offsetVector.func_82617_b();
++      double d4 = 0.5D + offsetVector.func_82616_c();
        boolean flag = direction$axis == Direction.Axis.X;
        Vector3d vector3d1 = new Vector3d((double)blockpos.func_177958_n() + (flag ? d2 : d4), (double)blockpos.func_177956_o() + d3, (double)blockpos.func_177952_p() + (flag ? d4 : d2));
 -      return new PortalInfo(vector3d1, vector3d, p_242963_6_ + (float)i, p_242963_7_);
-+      return new PortalInfo(vector3d1, vector3d, p_242963_6_ + (float)i, p_242963_7_, p_242963_0_, portalEventInfo); // CraftBukkit
++      return new PortalInfo(vector3d1, vector3d, rotationYaw + (float)i, rotationPitch, world, portalEventInfo); // CraftBukkit
     }
  }

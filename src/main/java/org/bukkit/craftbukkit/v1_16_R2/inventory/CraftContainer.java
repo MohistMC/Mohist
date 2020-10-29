@@ -158,7 +158,7 @@ public class CraftContainer extends Container {
             case ANVIL:
                 return ContainerType.ANVIL;
             case SMITHING:
-                return ContainerType.field_234650_u_;
+                return ContainerType.SMITHING;
             case HOPPER:
                 return ContainerType.HOPPER;
             case DROPPER:
@@ -174,7 +174,7 @@ public class CraftContainer extends Container {
             case LOOM:
                 return ContainerType.LOOM;
             case CARTOGRAPHY:
-                return ContainerType.field_226625_v_;
+                return ContainerType.CARTOGRAPHY_TABLE;
             case GRINDSTONE:
                 return ContainerType.GRINDSTONE;
             case STONECUTTER:
