@@ -1,8 +1,6 @@
-<img src="https://i.loli.net/2019/08/30/btYR9WDxd4XvhH3.png">
+<img src="https://i.loli.net/2020/09/06/lQscneqbV8Hptxz.png">
 
 ## Mohist-1.7.10
-
-## The upstream project is UrniumMC!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.7.10)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.7.10/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
@@ -14,9 +12,9 @@
 ![](https://img.shields.io/badge/ideaIU-jbr8-brightgreen.svg?colorB=469C00)
 
 ### Getting Help
-   [**Home**](https://mohist.red/)
+   [**Home**](https://mohistmc.com//)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
-   [**Discord**](https://discord.gg/JPF68ZM)
+   [**Discord**](https://discord.gg/ZgXjHGd)
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
    <img src="https://bstats.org/signatures/bukkit/Mohist.svg">
@@ -42,7 +40,3 @@
 All builds will be in `.\Mohist\build\distributions\`
 
 Mohist-xxxxx-server.jar - is the server we should run it
-
-
-### 中国用户捐赠二维码(备注信息便于记录)
-<img src="https://i.loli.net/2019/11/04/PkybBF1puUwCz6l.png">
