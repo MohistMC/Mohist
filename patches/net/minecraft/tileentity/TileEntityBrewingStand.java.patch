@@ -1,0 +1,109 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
+@@ -13,17 +13,55 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.potion.PotionHelper;
+ 
++// CraftBukkit start
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.BrewEvent;
++// CraftBukkit end
++
+ public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
+ {
+     private static final int[] field_145941_a = new int[] {3};
+     private static final int[] field_145947_i = new int[] {0, 1, 2};
+-    private ItemStack[] brewingItemStacks = new ItemStack[4];
+-    private int brewTime;
++    public ItemStack[] brewingItemStacks = new ItemStack[4]; // CraftBukkit - private -> public
++    public int brewTime; // CraftBukkit - private -> public
+     private int filledSlots;
+     private Item ingredientID;
+     private String field_145942_n;
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
+     private static final String __OBFID = "CL_00000345";
+ 
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = 64;
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public ItemStack[] getContents()
++    {
++        return this.brewingItemStacks;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
++
+     public String getInventoryName()
+     {
+         return this.hasCustomInventoryName() ? this.field_145942_n : "container.brewing";
+@@ -46,12 +84,17 @@
+ 
+     public void updateEntity()
+     {
++        // CraftBukkit start - Use wall time instead of ticks for brewing
++        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++        this.lastTick = MinecraftServer.currentTick;
++
+         if (this.brewTime > 0)
+         {
+-            --this.brewTime;
++            this.brewTime -= elapsedTicks;
+ 
+-            if (this.brewTime == 0)
++            if (this.brewTime <= 0)   // == -> <=
+             {
++                // CraftBukkit end
+                 this.brewPotions();
+                 this.markDirty();
+             }
+@@ -141,7 +184,19 @@
+         if (this.canBrew())
+         {
+             ItemStack itemstack = this.brewingItemStacks[3];
++            // CraftBukkit start
++            if (getOwner() != null)
++            {
++                BrewEvent event = new BrewEvent(worldObj.getWorld().getBlockAt(xCoord, yCoord, zCoord), (org.bukkit.inventory.BrewerInventory) this.getOwner()
++                        .getInventory());
++                org.bukkit.Bukkit.getPluginManager().callEvent(event);
+ 
++                if (event.isCancelled())
++                {
++                    return;
++                }
++            }
++            // CraftBukkit end
+             for (int i = 0; i < 3; ++i)
+             {
+                 if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+@@ -280,7 +335,7 @@
+ 
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return this.maxStack; // CraftBukkit
+     }
+ 
+     public boolean isUseableByPlayer(EntityPlayer p_70300_1_)

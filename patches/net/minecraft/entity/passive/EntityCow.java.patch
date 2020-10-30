@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityCow.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityCow.java
+@@ -17,6 +17,11 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++// CraftBukkit end
++
+ public class EntityCow extends EntityAnimal
+ {
+     private static final String __OBFID = "CL_00001640";
+@@ -109,15 +114,25 @@
+ 
+         if (itemstack != null && itemstack.getItem() == Items.bucket && !p_70085_1_.capabilities.isCreativeMode)
+         {
++            // CraftBukkit start - Got milk?
++            org.bukkit.Location loc = this.getBukkitEntity().getLocation();
++            org.bukkit.event.player.PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(p_70085_1_, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, itemstack, Items.milk_bucket);
++
++            if (event.isCancelled())
++            {
++                return false;
++            }
++
+             if (itemstack.stackSize-- == 1)
+             {
+-                p_70085_1_.inventory.setInventorySlotContents(p_70085_1_.inventory.currentItem, new ItemStack(Items.milk_bucket));
++                p_70085_1_.inventory.setInventorySlotContents(p_70085_1_.inventory.currentItem, CraftItemStack.asNMSCopy(event.getItemStack()));
+             }
+             else if (!p_70085_1_.inventory.addItemStackToInventory(new ItemStack(Items.milk_bucket)))
+             {
+-                p_70085_1_.dropPlayerItemWithRandomChoice(new ItemStack(Items.milk_bucket, 1, 0), false);
++                p_70085_1_.dropPlayerItemWithRandomChoice(CraftItemStack.asNMSCopy(event.getItemStack()), false);
+             }
+ 
++            // CraftBukkit end
+             return true;
+         }
+         else

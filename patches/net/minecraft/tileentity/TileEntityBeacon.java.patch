@@ -1,0 +1,111 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
+@@ -18,6 +18,15 @@
+ import net.minecraft.stats.AchievementList;
+ import net.minecraft.util.AxisAlignedBB;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.entity.Player;
++import org.bukkit.potion.PotionEffectType;
++import red.mohist.api.event.paper.BeaconEffectEvent;
++// CraftBukkit end
++
+ public class TileEntityBeacon extends TileEntity implements IInventory
+ {
+     public static final Potion[][] effectsList = new Potion[][] {{Potion.moveSpeed, Potion.digSpeed}, {Potion.resistance, Potion.jump}, {Potion.damageBoost}, {Potion.regeneration}};
+@@ -31,6 +40,35 @@
+     private int secondaryEffect;
+     private ItemStack payment;
+     private String field_146008_p;
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return new ItemStack[] { this.payment };
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00000339";
+ 
+     public void updateEntity()
+@@ -60,20 +98,42 @@
+             Iterator iterator = list.iterator();
+             EntityPlayer entityplayer;
+ 
+-            while (iterator.hasNext())
+-            {
+-                entityplayer = (EntityPlayer)iterator.next();
+-                entityplayer.addPotionEffect(new PotionEffect(this.primaryEffect, 180, b0, true));
++            //PaperSpigot start
++            org.bukkit.block.Block block = worldObj.getWorld().getBlockAt(this.xCoord, this.yCoord, this.zCoord);
++            org.bukkit.potion.PotionEffect primaryEffect = new org.bukkit.potion.PotionEffect(PotionEffectType.getById(this.getPrimaryEffect()), 180, b0, true);
++            //PaperSpigot stop
++
++            while (iterator.hasNext()) {
++                entityplayer = (EntityPlayer) iterator.next();
++                //PaperSpigot start
++                BeaconEffectEvent event = new BeaconEffectEvent(block, primaryEffect, (Player) entityplayer.getBukkitEntity(), true);
++                if (CraftEventFactory.callEvent(event).isCancelled()) continue;
++
++                org.bukkit.potion.PotionEffect effect = event.getEffect();
++                entityplayer.addPotionEffect(new PotionEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient()));
++                //PaperSpigot end
+             }
+ 
+             if (this.levels >= 4 && this.primaryEffect != this.secondaryEffect && this.secondaryEffect > 0)
+             {
+                 iterator = list.iterator();
++                org.bukkit.potion.PotionEffect secondaryEffect;
++                if (this.secondaryEffect == 10) {
++                    secondaryEffect = new org.bukkit.potion.PotionEffect(PotionEffectType.getById(10), 180, b0, true); // PaperSpigot
++                } else {
++                    secondaryEffect = new org.bukkit.potion.PotionEffect(PotionEffectType.getById(this.getPrimaryEffect()), 180, b0, true); // PaperSpigot
++                }
+ 
+                 while (iterator.hasNext())
+                 {
+                     entityplayer = (EntityPlayer)iterator.next();
+-                    entityplayer.addPotionEffect(new PotionEffect(this.secondaryEffect, 180, 0, true));
++                    //PaperSpigot Start - BeaconEffectEvent
++                    BeaconEffectEvent event = new BeaconEffectEvent(block, secondaryEffect, (Player) entityplayer.getBukkitEntity(), false);
++                    if (CraftEventFactory.callEvent(event).isCancelled()) continue;
++
++                    org.bukkit.potion.PotionEffect effect = event.getEffect();
++                    entityplayer.addPotionEffect(new PotionEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient()));
++                    //PaperSpigot end
+                 }
+             }
+         }
+@@ -343,7 +403,7 @@
+ 
+     public int getInventoryStackLimit()
+     {
+-        return 1;
++        return maxStack; // CraftBukkit
+     }
+ 
+     public boolean isUseableByPlayer(EntityPlayer p_70300_1_)

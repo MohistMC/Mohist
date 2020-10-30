@@ -1,0 +1,72 @@
+--- ../src-base/minecraft/net/minecraftforge/event/world/BlockEvent.java
++++ ../src-work/minecraft/net/minecraftforge/event/world/BlockEvent.java
+@@ -16,6 +16,14 @@
+ import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.common.util.BlockSnapshot;
+ 
++// Cauldron start
++import org.bukkit.block.BlockState;
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import net.minecraft.entity.player.EntityPlayerMP;
++import org.bukkit.event.block.BlockMultiPlaceEvent;
++// Cauldron end
++
+ public class BlockEvent extends Event {
+     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
+ 
+@@ -80,17 +88,18 @@
+             super(x, y, z, world, block, blockMetadata);
+             this.player = player;
+ 
+-            if (block == null || !ForgeHooks.canHarvestBlock(block, player, blockMetadata) || // Handle empty block or player unable to break block scenario
+-                block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
++            // Cauldron start - handle event on bukkit side
++            org.bukkit.event.block.BlockBreakEvent bukkitEvent = CraftEventFactory.callBlockBreakEvent(world, x, y, z, block, blockMetadata,
++                    (EntityPlayerMP) player);
++            if (bukkitEvent.isCancelled())
+             {
+-                this.exp = 0;
++                this.setCanceled(true);
+             }
+             else
+             {
+-                int meta = block.getDamageValue(world, x, y, z);
+-                int bonusLevel = EnchantmentHelper.getFortuneModifier(player);
+-                this.exp = block.getExpDrop(world, meta, bonusLevel);
++                this.exp = bukkitEvent.getExpToDrop();
+             }
++            // Cauldron end
+         }
+ 
+         public EntityPlayer getPlayer()
+@@ -140,6 +149,15 @@
+             this.blockSnapshot = blockSnapshot;
+             this.placedBlock = blockSnapshot.getCurrentBlock();
+             this.placedAgainst = placedAgainst;
++            // Cauldron start - handle event on bukkit side
++            if(!(this instanceof MultiPlaceEvent)) {
++                org.bukkit.craftbukkit.block.CraftBlockState blockstate = new org.bukkit.craftbukkit.block.CraftBlockState(blockSnapshot);
++                org.bukkit.event.block.BlockPlaceEvent bukkitEvent = CraftEventFactory.callBlockPlaceEvent(super.world, player, blockstate, super.x, super.y, super.z);
++                if (bukkitEvent.isCancelled() || !bukkitEvent.canBuild()) {
++                    this.setCanceled(true);
++                }
++            }
++            // Cauldron end
+             if (DEBUG)
+             {
+                 System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ]\n", placedBlock, placedAgainst, player.getCurrentEquippedItem(), player);
+@@ -161,6 +179,13 @@
+         public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, Block placedAgainst, EntityPlayer player) {
+             super(blockSnapshots.get(0), placedAgainst, player);
+             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
++
++            ArrayList<BlockState> tStates=new ArrayList<BlockState>(blockSnapshots.size());
++            for(BlockSnapshot sSnapshot : this.blockSnapshots){
++                tStates.add(new CraftBlockState(sSnapshot));
++            }
++            BlockMultiPlaceEvent tEvent=CraftEventFactory.callBlockMultiPlaceEvent(super.world,player,tStates,super.x,super.y,super.z);
++            this.setCanceled(tEvent.isCancelled()||!tEvent.canBuild());
+             if (DEBUG)
+             {
+                 System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, this.itemInHand, player);

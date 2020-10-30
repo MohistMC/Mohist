@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraftforge/common/ISpecialArmor.java
++++ ../src-work/minecraft/net/minecraftforge/common/ISpecialArmor.java
+@@ -92,6 +92,11 @@
+          */
+         public static float ApplyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
+         {
++            return ApplyArmor(entity, inventory, source, damage, true);
++        }
++
++        public static float ApplyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage, boolean applyDamage)
++        {
+             if (DEBUG)
+             {
+                 System.out.println("Start: " + damage + " " + (damage * 25));
+@@ -145,9 +150,12 @@
+                         int itemDamage = (int)(absorb / 25D < 1 ? 1 : absorb / 25D);
+                         if (stack.getItem() instanceof ISpecialArmor)
+                         {
+-                            ((ISpecialArmor)stack.getItem()).damageArmor(entity, stack, source, itemDamage, prop.Slot);
++                            if (applyDamage)
++                            {
++                                ((ISpecialArmor) stack.getItem()).damageArmor(entity, stack, source, itemDamage, prop.Slot);
++                            }
+                         }
+-                        else
++                        else if(applyDamage)
+                         {
+                             if (DEBUG)
+                             {

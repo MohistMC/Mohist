@@ -1,0 +1,60 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockMushroom.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMushroom.java
+@@ -6,6 +6,12 @@
+ import net.minecraft.world.gen.feature.WorldGenBigMushroom;
+ import net.minecraftforge.common.util.ForgeDirection;
+ 
++// CraftBukkit start
++import org.bukkit.block.BlockState;
++import org.bukkit.event.block.BlockSpreadEvent;
++import org.bukkit.TreeType;
++// CraftBukkit end
++
+ public class BlockMushroom extends BlockBush implements IGrowable
+ {
+     private static final String __OBFID = "CL_00000272";
+@@ -19,7 +25,9 @@
+ 
+     public void updateTick(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
+     {
+-        if (p_149674_5_.nextInt(25) == 0)
++        final int sourceX = p_149674_2_, sourceY = p_149674_3_, sourceZ = p_149674_4_; // CraftBukkit
++
++        if (p_149674_5_.nextInt(Math.max(1, (int) p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().mushroomModifier * 25)) == 0)   // Spigot // Cauldron
+         {
+             byte b0 = 4;
+             int l = 5;
+@@ -66,7 +74,19 @@
+ 
+             if (p_149674_1_.isAirBlock(i1, j1, k1) && this.canBlockStay(p_149674_1_, i1, j1, k1))
+             {
+-                p_149674_1_.setBlock(i1, j1, k1, this, 0, 2);
++                // CraftBukkit start
++                org.bukkit.World bworld = p_149674_1_.getWorld();
++                BlockState blockState = bworld.getBlockAt(i1, j1, k1).getState();
++                blockState.setTypeId(Block.getIdFromBlock(this)); // nms: this.id, 0, 2
++                BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(sourceX, sourceY, sourceZ), blockState);
++                p_149674_1_.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    blockState.update(true);
++                }
++
++                // CraftBukkit end
+             }
+         }
+     }
+@@ -102,10 +122,12 @@
+ 
+         if (this == Blocks.brown_mushroom)
+         {
++            BlockSapling.treeType = TreeType.BROWN_MUSHROOM; // CraftBukkit
+             worldgenbigmushroom = new WorldGenBigMushroom(0);
+         }
+         else if (this == Blocks.red_mushroom)
+         {
++            BlockSapling.treeType = TreeType.RED_MUSHROOM; // CraftBukkit
+             worldgenbigmushroom = new WorldGenBigMushroom(1);
+         }
+ 

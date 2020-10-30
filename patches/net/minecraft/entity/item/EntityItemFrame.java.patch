@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityItemFrame.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityItemFrame.java
+@@ -45,6 +45,13 @@
+         {
+             if (!this.worldObj.isRemote)
+             {
++                // CraftBukkit start
++                if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_) || this.isDead)
++                {
++                    return true;
++                }
++                // CraftBukkit end
++
+                 this.func_146065_b(p_70097_1_.getEntity(), false);
+                 this.setDisplayedItem((ItemStack)null);
+             }
+@@ -115,7 +122,7 @@
+             if (p_110131_1_.getItem() == Items.filled_map)
+             {
+                 MapData mapdata = ((ItemMap)p_110131_1_.getItem()).getMapData(p_110131_1_, this.worldObj);
+-                mapdata.playersVisibleOnMap.remove("frame-" + this.getEntityId());
++                mapdata.playersVisibleOnMap.remove(java.util.UUID.nameUUIDFromBytes(("frame-" + this.getEntityId()).getBytes(org.apache.commons.codec.Charsets.US_ASCII))); // Spigot
+             }
+ 
+             p_110131_1_.setItemFrame((EntityItemFrame)null);
+@@ -203,4 +210,11 @@
+ 
+         return true;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

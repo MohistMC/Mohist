@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
+@@ -9,11 +9,18 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.world.World;
+ 
+-public class RecipeFireworks implements IRecipe
++public class RecipeFireworks extends ShapelessRecipes implements IRecipe   // CraftBukkit - added extends
+ {
+     private ItemStack field_92102_a;
+     private static final String __OBFID = "CL_00000083";
+ 
++    // CraftBukkit start - Delegate to new parent class with bogus info
++    public RecipeFireworks()
++    {
++        super(new ItemStack(Items.fireworks, 0, 0), java.util.Arrays.asList(new ItemStack(Items.gunpowder, 0, 5)));
++    }
++    // CraftBukkit end
++
+     public boolean matches(InventoryCrafting p_77569_1_, World p_77569_2_)
+     {
+         this.field_92102_a = null;

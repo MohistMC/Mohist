@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/GameModeCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/GameModeCommand.java
+@@ -50,7 +50,7 @@
+ 
+             GameMode mode = GameMode.getByValue(value);
+ 
+-            if (mode == null) {
++            if (mode == null || mode == GameMode.NOT_SET) { // Cauldron
+                 if (modeArg.equalsIgnoreCase("creative") || modeArg.equalsIgnoreCase("c")) {
+                     mode = GameMode.CREATIVE;
+                 } else if (modeArg.equalsIgnoreCase("adventure") || modeArg.equalsIgnoreCase("a")) {

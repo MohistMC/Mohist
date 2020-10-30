@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
+@@ -21,6 +21,11 @@
+     public IChunkLoader getChunkLoader(WorldProvider p_75763_1_)
+     {
+         File file1 = this.getWorldDirectory();
++        // Cauldron start
++        // To workaround the issue of Bukkit relying on every world having a seperate container
++        // we won't be generating a DIMXX folder for chunk loaders since this name is already generated
++        // for the world container with provider.getSaveFolder().
++        /*
+         File file2;
+ 
+         if (p_75763_1_.getSaveFolder() != null)
+@@ -32,7 +37,9 @@
+         else
+         {
+             return new AnvilChunkLoader(file1);
+-        }
++        } */
++        return new AnvilChunkLoader(file1);
++        // Cauldron end
+     }
+ 
+     public void saveWorldInfoWithPlayer(WorldInfo p_75755_1_, NBTTagCompound p_75755_2_)

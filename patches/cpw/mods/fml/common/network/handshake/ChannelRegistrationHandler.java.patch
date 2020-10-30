@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/network/handshake/ChannelRegistrationHandler.java
++++ ../src-work/minecraft/cpw/mods/fml/common/network/handshake/ChannelRegistrationHandler.java
+@@ -2,6 +2,8 @@
+ 
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.SimpleChannelInboundHandler;
++
++import java.io.UnsupportedEncodingException;
+ import java.util.Set;
+ import net.minecraft.network.NetworkManager;
+ import org.apache.logging.log4j.Level;
+@@ -24,6 +26,23 @@
+             msg.payload().readBytes(data);
+             String channels = new String(data,Charsets.UTF_8);
+             String[] split = channels.split("\0");
++            // Cauldron start - register bukkit channels for players
++            NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
++            if (msg.channel().equals("REGISTER"))
++            {
++                for (String channel : split)
++                {
++                    dispatcher.player.getBukkitEntity().addChannel(channel);
++                }
++            }
++            else
++            {
++                for (String channel : split)
++                {
++                    dispatcher.player.getBukkitEntity().removeChannel(channel);
++                }
++            }
++            // Cauldron end
+             Set<String> channelSet = ImmutableSet.copyOf(split);
+             FMLCommonHandler.instance().fireNetRegistrationEvent(manager, channelSet, msg.channel(), side);
+         }

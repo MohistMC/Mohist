@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraftforge/common/chunkio/ChunkIOExecutor.java
++++ ../src-work/minecraft/net/minecraftforge/common/chunkio/ChunkIOExecutor.java
+@@ -22,7 +22,7 @@
+     }
+ 
+     public static void adjustPoolSize(int players) {
+-        int size = Math.max(BASE_THREADS, (int) Math.ceil(players / PLAYERS_PER_THREAD));
++        int size = Math.max(BASE_THREADS, (int) Math.ceil((double) players / PLAYERS_PER_THREAD));
+         instance.setActiveThreads(size);
+     }
+ 

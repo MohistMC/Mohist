@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraftforge/common/ForgeModContainer.java
++++ ../src-work/minecraft/net/minecraftforge/common/ForgeModContainer.java
+@@ -277,11 +277,6 @@
+         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
+         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
+         FMLCommonHandler.instance().bus().register(this);
+-
+-        if (!ForgeModContainer.disableVersionCheck)
+-        {
+-            ForgeVersion.startVersionCheck();
+-        }
+     }
+ 
+     @Subscribe

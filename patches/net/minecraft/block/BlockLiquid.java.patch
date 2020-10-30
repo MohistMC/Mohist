@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
+@@ -509,7 +509,7 @@
+                     {
+                         p_149805_1_.setBlock(p_149805_2_, p_149805_3_, p_149805_4_, Blocks.obsidian);
+                     }
+-                    else if (l <= 4)
++                    else if (l > 0) //Paper Spigot
+                     {
+                         p_149805_1_.setBlock(p_149805_2_, p_149805_3_, p_149805_4_, Blocks.cobblestone);
+                     }

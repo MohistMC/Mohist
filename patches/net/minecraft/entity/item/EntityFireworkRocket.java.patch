@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityFireworkRocket.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityFireworkRocket.java
+@@ -11,7 +11,7 @@
+ public class EntityFireworkRocket extends Entity
+ {
+     private int fireworkAge;
+-    private int lifetime;
++    public int lifetime; // CraftBukkit - private -> public
+     private static final String __OBFID = "CL_00001718";
+ 
+     public EntityFireworkRocket(World p_i1762_1_)
+@@ -199,4 +199,11 @@
+     {
+         return false;
+     }
++    
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

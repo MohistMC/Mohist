@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityDropper.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityDropper.java
+@@ -8,4 +8,12 @@
+     {
+         return this.hasCustomInventoryName() ? this.field_146020_a : "container.dropper";
+     }
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

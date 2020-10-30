@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCrops.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCrops.java
+@@ -49,10 +49,9 @@
+             {
+                 float f = this.func_149864_n(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_);
+ 
+-                if (p_149674_5_.nextInt((int)(25.0F / f) + 1) == 0)
++                if (p_149674_5_.nextInt((int)(p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().wheatModifier * (25.0F / f)) + 1) == 0)    // Spigot // Cauldron
+                 {
+-                    ++l;
+-                    p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, l, 2);
++                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, this, ++l); // CraftBukkit
+                 }
+             }
+         }

@@ -1,0 +1,105 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
+@@ -13,10 +13,17 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class CraftingManager
+ {
+     private static final CraftingManager instance = new CraftingManager();
+-    private List recipes = new ArrayList();
++    // CraftBukkit start
++    /** A list of all the recipes added */
++    public List recipes = new ArrayList(); // private -> public
++    public IRecipe lastRecipe;
++    public org.bukkit.inventory.InventoryView lastCraftView;
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00000090";
+ 
+     public static final CraftingManager getInstance()
+@@ -24,7 +31,8 @@
+         return instance;
+     }
+ 
+-    private CraftingManager()
++    // CraftBukkit - private -> public
++    public CraftingManager()
+     {
+         (new RecipesTools()).addRecipes(this);
+         (new RecipesWeapons()).addRecipes(this);
+@@ -152,6 +160,24 @@
+         this.addShapelessRecipe(new ItemStack(Items.fire_charge, 3), new Object[] {Items.gunpowder, Items.blaze_powder, new ItemStack(Items.coal, 1, 1)});
+         this.addRecipe(new ItemStack(Blocks.daylight_detector), new Object[] {"GGG", "QQQ", "WWW", 'G', Blocks.glass, 'Q', Items.quartz, 'W', Blocks.wooden_slab});
+         this.addRecipe(new ItemStack(Blocks.hopper), new Object[] {"I I", "ICI", " I ", 'I', Items.iron_ingot, 'C', Blocks.chest});
++        this.addShapelessRecipe(new ItemStack(Blocks.mossy_cobblestone, 1), new Object[] { Blocks.vine, Blocks.cobblestone });
++        /*Collections.sort(this.recipes, new Comparator() // CraftBukkit - moved below
++        {
++            private static final String __OBFID = "CL_00000091";
++            public int compare(IRecipe par1IRecipe, IRecipe par2IRecipe)
++            {
++                return par1IRecipe instanceof ShapelessRecipes && par2IRecipe instanceof ShapedRecipes ? 1 : (par2IRecipe instanceof ShapelessRecipes && par1IRecipe instanceof ShapedRecipes ? -1 : (par2IRecipe.getRecipeSize() < par1IRecipe.getRecipeSize() ? -1 : (par2IRecipe.getRecipeSize() > par1IRecipe.getRecipeSize() ? 1 : 0)));
++            }
++            public int compare(Object par1Obj, Object par2Obj)
++            {
++                return this.compare((IRecipe)par1Obj, (IRecipe)par2Obj);
++            }
++        });*/
++         this.sort(); // CraftBukkit - call new sort method
++    }
++
++    public void sort()
++    {
+         Collections.sort(this.recipes, new Comparator()
+         {
+             private static final String __OBFID = "CL_00000091";
+@@ -312,7 +338,22 @@
+                 i1 = 0;
+             }
+ 
+-            return new ItemStack(itemstack.getItem(), 1, i1);
++            // Cauldron start - vanilla compatibility
++            if (p_82787_1_.resultInventory == null)
++            {
++                return new ItemStack(itemstack.getItem(), 1, i1);
++            }
++            // Cauldron end
++            // CraftBukkit start - Construct a dummy repair recipe
++            ItemStack result = new ItemStack(itemstack.getItem(), 1, i1);
++            List<ItemStack> ingredients = new ArrayList<ItemStack>();
++            ingredients.add(itemstack.copy());
++            ingredients.add(itemstack1.copy());
++            ShapelessRecipes recipe = new ShapelessRecipes(result.copy(), ingredients);
++            p_82787_1_.currentRecipe = recipe;
++            result = CraftEventFactory.callPreCraftEvent(p_82787_1_, result, lastCraftView, true);
++            return result;
++            // CraftBukkit end
+         }
+         else
+         {
+@@ -320,12 +361,23 @@
+             {
+                 IRecipe irecipe = (IRecipe)this.recipes.get(j);
+ 
+-                if (irecipe.matches(p_82787_1_, p_82787_2_))
++                if (irecipe.matches(p_82787_1_, p_82787_2_) && p_82787_1_.resultInventory != null) // Cauldron - add null check for vanilla compatibility
+                 {
++                    // CraftBukkit start - INVENTORY_PRE_CRAFT event
++                    p_82787_1_.currentRecipe = irecipe;
++                    ItemStack result = irecipe.getCraftingResult(p_82787_1_);
++                    return CraftEventFactory.callPreCraftEvent(p_82787_1_, result, lastCraftView, false);
++                    // CraftBukkit end
++                }
++                // Cauldron start - vanilla
++                else if (irecipe.matches(p_82787_1_, p_82787_2_))
++                {
+                     return irecipe.getCraftingResult(p_82787_1_);
+                 }
++                // Cauldron end
+             }
+ 
++            p_82787_1_.currentRecipe = null; // CraftBukkit - Clear recipe when no recipe is found
+             return null;
+         }
+     }

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/FlatLayerInfo.java
++++ ../src-work/minecraft/net/minecraft/world/gen/FlatLayerInfo.java
+@@ -12,7 +12,6 @@
+ 
+     public FlatLayerInfo(int p_i45467_1_, Block p_i45467_2_)
+     {
+-        this.layerCount = 1;
+         this.layerCount = p_i45467_1_;
+         this.field_151537_a = p_i45467_2_;
+     }

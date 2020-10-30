@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerDispenser.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerDispenser.java
+@@ -4,14 +4,28 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityDispenser;
+ 
++// CraftBukkit start
++import net.minecraft.entity.player.InventoryPlayer;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class ContainerDispenser extends Container
+ {
+-    private TileEntityDispenser tileDispenser;
++    public TileEntityDispenser tileDispenser; // CraftBukkit - private -> public
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001763";
+ 
+     public ContainerDispenser(IInventory p_i1825_1_, TileEntityDispenser p_i1825_2_)
+     {
+         this.tileDispenser = p_i1825_2_;
++        // CraftBukkit start - Save player
++        // TODO: Should we check to make sure it really is an InventoryPlayer?
++        this.player = (InventoryPlayer)p_i1825_1_;
++        // CraftBukkit end
+         int i;
+         int j;
+ 
+@@ -39,6 +53,13 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        // CraftBukkit start
++        if (!this.checkReachable)
++        {
++            return true;
++        }
++        // CraftBukkit end
++
+         return this.tileDispenser.isUseableByPlayer(p_75145_1_);
+     }
+ 
+@@ -83,4 +104,18 @@
+ 
+         return itemstack;
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventory inventory = new CraftInventory(this.tileDispenser);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

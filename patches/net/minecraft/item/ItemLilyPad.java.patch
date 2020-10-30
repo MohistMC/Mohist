@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemLilyPad.java
++++ ../src-work/minecraft/net/minecraft/item/ItemLilyPad.java
+@@ -48,7 +48,17 @@
+                 {
+                     // special case for handling block placement with water lilies
+                     net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(p_77659_2_, i, j + 1, k);
++                    // Cauldron start - special case for handling block placement with water lilies
++                    org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(p_77659_2_, i, j + 1, k);
+                     p_77659_2_.setBlock(i, j + 1, k, Blocks.waterlily);
++                    org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(p_77659_2_,
++                            p_77659_3_, blockstate, i, j, k);
++                    if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild()))
++                    {
++                        blockstate.update(true, false);
++                        return p_77659_1_;
++                    }
++                    // Cauldron end
+                     if (net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(p_77659_3_, blocksnapshot, net.minecraftforge.common.util.ForgeDirection.UP).isCanceled()) 
+                     {
+                         blocksnapshot.restore(true, false);
+@@ -66,6 +76,15 @@
+         }
+     }
+ 
++    // Cauldron start
++    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8,
++            float par9, float par10)
++    {
++        cpw.mods.fml.relauncher.FMLRelaunchLog.info("onItemUse par1ItemStack = " + par1ItemStack);
++        return super.onItemUse(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10);
++    }
++    // Cauldron end
++
+     @SideOnly(Side.CLIENT)
+     public int getColorFromItemStack(ItemStack p_82790_1_, int p_82790_2_)
+     {

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGeneratorBonusChest.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGeneratorBonusChest.java
+@@ -50,7 +50,7 @@
+                     p_76484_1_.setBlock(i1, j1, k1, Blocks.chest, 0, 2);
+                     TileEntityChest tileentitychest = (TileEntityChest)p_76484_1_.getTileEntity(i1, j1, k1);
+ 
+-                    if (tileentitychest != null && tileentitychest != null)
++                    if (tileentitychest != null)
+                     {
+                         WeightedRandomChestContent.generateChestContents(p_76484_2_, this.theBonusChestGenerator, tileentitychest, this.itemsToGenerateInBonusChest);
+                     }

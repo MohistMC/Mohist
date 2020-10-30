@@ -1,0 +1,60 @@
+--- ../src-base/minecraft/org/bukkit/configuration/MemorySection.java
++++ ../src-work/minecraft/org/bukkit/configuration/MemorySection.java
+@@ -336,6 +336,23 @@
+         return val instanceof Double;
+     }
+ 
++    // PaperSpigot start - Add getFloat
++    public float getFloat(String path) {
++        Object def = getDefault(path);
++        return getFloat(path, (def instanceof Float) ? toFloat(def) : 0);
++    }
++
++    public float getFloat(String path, float def) {
++        Object val = get(path, def);
++        return (val instanceof Float) ? toFloat(val) : def;
++    }
++
++    public boolean isFloat(String path) {
++        Object val = get(path);
++        return val instanceof Float;
++    }
++    // PaperSpigot end
++
+     public long getLong(String path) {
+         Object def = getDefault(path);
+         return getLong(path, (def instanceof Number) ? toLong(def) : 0);
+@@ -760,7 +777,8 @@
+      * @return Full path of the section from its root.
+      */
+     public static String createPath(ConfigurationSection section, String key) {
+-        return createPath(section, key, (section == null) ? null : section.getRoot());
++        Validate.notNull(section, "Cannot create path without a section");
++        return createPath(section, key, section.getRoot());
+     }
+ 
+     /**
+@@ -784,17 +802,15 @@
+         char separator = root.options().pathSeparator();
+ 
+         StringBuilder builder = new StringBuilder();
+-        if (section != null) {
+-            for (ConfigurationSection parent = section; (parent != null) && (parent != relativeTo); parent = parent.getParent()) {
+-                if (builder.length() > 0) {
+-                    builder.insert(0, separator);
+-                }
+-
+-                builder.insert(0, parent.getName());
++        for (ConfigurationSection parent = section; parent != null && parent != relativeTo; parent = parent.getParent()) {
++            if (builder.length() > 0) {
++                builder.insert(0, separator);
+             }
++
++            builder.insert(0, parent.getName());
+         }
+ 
+-        if ((key != null) && (key.length() > 0)) {
++        if (key != null && key.length() > 0) {
+             if (builder.length() > 0) {
+                 builder.append(separator);
+             }

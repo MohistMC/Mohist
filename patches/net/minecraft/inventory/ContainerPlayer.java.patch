@@ -1,0 +1,82 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
+@@ -12,18 +12,33 @@
+ import net.minecraft.item.crafting.CraftingManager;
+ import net.minecraft.util.IIcon;
+ 
++// CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.play.server.S2FPacketSetSlot;
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class ContainerPlayer extends Container
+ {
+     public InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
+     public IInventory craftResult = new InventoryCraftResult();
+     public boolean isLocalWorld;
+     private final EntityPlayer thePlayer;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001754";
+ 
+     public ContainerPlayer(final InventoryPlayer p_i1819_1_, boolean p_i1819_2_, EntityPlayer p_i1819_3_)
+     {
+         this.isLocalWorld = p_i1819_2_;
+         this.thePlayer = p_i1819_3_;
++        this.craftResult = new InventoryCraftResult(); // CraftBukkit - moved to before InventoryCrafting construction
++        this.craftMatrix = new InventoryCrafting(this, 2, 2, p_i1819_1_.player); // CraftBukkit - pass player
++        this.craftMatrix.resultInventory = this.craftResult; // CraftBukkit - let InventoryCrafting know about its result slot
++        this.player = p_i1819_1_; // CraftBukkit - save player
+         this.addSlotToContainer(new SlotCrafting(p_i1819_1_.player, this.craftMatrix, this.craftResult, 0, 144, 36));
+         int i;
+         int j;
+@@ -72,12 +87,24 @@
+             this.addSlotToContainer(new Slot(p_i1819_1_, i, 8 + i * 18, 142));
+         }
+ 
+-        this.onCraftMatrixChanged(this.craftMatrix);
++       // this.onCraftMatrixChanged(this.craftMatrix); // CraftBukkit - unneeded since it just sets result slot to empty
+     }
+ 
+     public void onCraftMatrixChanged(IInventory p_75130_1_)
+     {
+-        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.thePlayer.worldObj));
++        // CraftBukkit start (Note: the following line would cause an error if called during construction)
++        CraftingManager.getInstance().lastCraftView = getBukkitView();
++        ItemStack craftResult = CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.thePlayer.worldObj);
++        this.craftResult.setInventorySlotContents(0, craftResult);
++
++        if (super.crafters.size() < 1)
++        {
++            return;
++        }
++
++        EntityPlayerMP player = (EntityPlayerMP) super.crafters.get(0); // TODO: Is this _always_ correct? Seems like it.
++        player.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, 0, craftResult));
++        // CraftBukkit end
+     }
+ 
+     public void onContainerClosed(EntityPlayer p_75134_1_)
+@@ -187,4 +214,18 @@
+     {
+         return p_94530_2_.inventory != this.craftResult && super.func_94530_a(p_94530_1_, p_94530_2_);
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftMatrix, this.craftResult);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

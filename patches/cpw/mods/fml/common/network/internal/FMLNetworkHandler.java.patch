@@ -1,0 +1,75 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
++++ ../src-work/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
+@@ -47,6 +47,16 @@
+ import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++//Cauldron start
++import net.minecraft.inventory.IInventory;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.tileentity.TileEntity;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.event.inventory.InventoryType;
++// Cauldron end
+ 
+ public class FMLNetworkHandler
+ {
+@@ -75,6 +85,31 @@
+             Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, x, y, z);
+             if (remoteGuiContainer != null)
+             {
++                // Cauldron start - create bukkitView for passed container then fire open event.
++                if (entityPlayer != null)
++                {
++                    if (remoteGuiContainer.getBukkitView() == null)
++                    {
++                        TileEntity te = entityPlayer.worldObj.getTileEntity(x, y, z);
++                        if (te != null && te instanceof IInventory)
++                        {
++                            IInventory teInv = (IInventory)te;
++                            CraftInventory inventory = new CraftInventory(teInv);
++                            remoteGuiContainer.bukkitView = new CraftInventoryView(entityPlayer.getBukkitEntity(), inventory, remoteGuiContainer);
++                        }
++                        else
++                        {
++                            remoteGuiContainer.bukkitView = new CraftInventoryView(entityPlayer.getBukkitEntity(), MinecraftServer.getServer().server.createInventory(entityPlayer.getBukkitEntity(), InventoryType.CHEST), remoteGuiContainer);
++                        }
++
++                        remoteGuiContainer = CraftEventFactory.callInventoryOpenEvent((EntityPlayerMP)entityPlayer, remoteGuiContainer, false);
++                        if (remoteGuiContainer == null)
++                        {
++                            return;
++                        }
++                    }
++                }
++                // Cauldron end
+                 entityPlayerMP.getNextWindowId();
+                 entityPlayerMP.closeContainer();
+                 int windowId = entityPlayerMP.currentWindowId;
+@@ -131,6 +166,7 @@
+     public static String checkModList(Map<String,String> listData, Side side)
+     {
+         List<ModContainer> rejects = Lists.newArrayList();
++        List<ModContainer> hackpacks = Lists.newArrayList();
+         for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
+         {
+             boolean result = networkMod.getValue().check(listData, side);
+@@ -138,9 +174,15 @@
+             {
+                 rejects.add(networkMod.getKey());
+             }
++            String name = networkMod.getKey().getName().toLowerCase() + networkMod.getKey().getModId().toLowerCase();
++            if(rejects.isEmpty() && (name.contains("cjb") || name.contains("kradxns") || name.contains("chestfinder") || name.contains("cheating") || name.contains("xray") || name.contains("radarbro") || name.contains("zyin"))) hackpacks.add(networkMod.getKey());
+         }
+         if (rejects.isEmpty())
+         {
++            if(!hackpacks.isEmpty()) {
++                FMLLog.info("[Thermos] Rejecting hacker %s: %s", side, hackpacks);
++                return String.format("Hack rejections %s",hackpacks);
++            }
+             return null;
+         }
+         else

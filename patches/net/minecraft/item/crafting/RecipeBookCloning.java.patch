@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeBookCloning.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeBookCloning.java
+@@ -6,10 +6,17 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.World;
+ 
+-public class RecipeBookCloning implements IRecipe
++public class RecipeBookCloning extends ShapelessRecipes implements IRecipe   // CraftBukkit - added extends
+ {
+     private static final String __OBFID = "CL_00000081";
+ 
++    // CraftBukkit start - Delegate to new parent class
++    public RecipeBookCloning()
++    {
++        super(new ItemStack(Items.written_book, 0, -1), java.util.Arrays.asList(new ItemStack(Items.writable_book, 0, 0)));
++    }
++    // CraftBukkit end
++
+     public boolean matches(InventoryCrafting p_77569_1_, World p_77569_2_)
+     {
+         int i = 0;

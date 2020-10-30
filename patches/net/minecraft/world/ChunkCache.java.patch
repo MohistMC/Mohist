@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
++++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
+@@ -36,7 +36,7 @@
+         {
+             for (k2 = this.chunkZ; k2 <= i2; ++k2)
+             {
+-                chunk = p_i1964_1_.getChunkFromChunkCoords(j2, k2);
++                chunk = p_i1964_1_.getChunkIfLoaded(j2, k2);
+ 
+                 if (chunk != null)
+                 {

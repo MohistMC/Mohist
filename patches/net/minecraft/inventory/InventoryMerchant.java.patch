@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryMerchant.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryMerchant.java
+@@ -6,6 +6,12 @@
+ import net.minecraft.village.MerchantRecipe;
+ import net.minecraft.village.MerchantRecipeList;
+ 
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
++
+ public class InventoryMerchant implements IInventory
+ {
+     private final IMerchant theMerchant;
+@@ -13,6 +19,40 @@
+     private final EntityPlayer thePlayer;
+     private MerchantRecipe currentRecipe;
+     private int currentRecipeIndex;
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.theInventory;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public void setMaxStackSize(int i)
++    {
++        maxStack = i;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return thePlayer.getBukkitEntity();
++    }
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001756";
+ 
+     public InventoryMerchant(EntityPlayer p_i1820_1_, IMerchant p_i1820_2_)
+@@ -124,7 +164,7 @@
+ 
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     public boolean isUseableByPlayer(EntityPlayer p_70300_1_)

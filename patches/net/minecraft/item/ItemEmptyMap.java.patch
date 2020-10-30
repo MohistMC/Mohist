@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemEmptyMap.java
++++ ../src-work/minecraft/net/minecraft/item/ItemEmptyMap.java
+@@ -27,6 +27,7 @@
+         mapdata.zCenter = (int)(Math.round(p_77659_3_.posZ / (double)i) * (long)i);
+         mapdata.dimension = p_77659_2_.provider.dimensionId;
+         mapdata.markDirty();
++        org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(mapdata.mapView)); // CraftBukkit
+         --p_77659_1_.stackSize;
+ 
+         if (p_77659_1_.stackSize <= 0)

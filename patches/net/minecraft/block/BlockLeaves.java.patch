@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
+@@ -18,6 +18,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.common.IShearable;
+ 
++import org.bukkit.event.block.LeavesDecayEvent; // CraftBukkit
++
+ public abstract class BlockLeaves extends BlockLeavesBase implements IShearable
+ {
+     int[] field_150128_a;
+@@ -222,6 +224,16 @@
+ 
+     private void removeLeaves(World p_150126_1_, int p_150126_2_, int p_150126_3_, int p_150126_4_)
+     {
++        // CraftBukkit start
++        LeavesDecayEvent event = new LeavesDecayEvent(p_150126_1_.getWorld().getBlockAt(p_150126_2_, p_150126_3_, p_150126_4_));
++        p_150126_1_.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled())
++        {
++            return;
++        }
++
++        // CraftBukkit end
+         this.dropBlockAsItem(p_150126_1_, p_150126_2_, p_150126_3_, p_150126_4_, p_150126_1_.getBlockMetadata(p_150126_2_, p_150126_3_, p_150126_4_), 0);
+         p_150126_1_.setBlockToAir(p_150126_2_, p_150126_3_, p_150126_4_);
+     }

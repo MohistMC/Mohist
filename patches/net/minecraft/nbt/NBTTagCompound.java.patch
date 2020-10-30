@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
+@@ -17,9 +17,22 @@
+ public class NBTTagCompound extends NBTBase
+ {
+     private static final Logger logger = LogManager.getLogger();
+-    private Map tagMap = new HashMap();
++    private Map<String, NBTBase> tagMap = null;
+     private static final String __OBFID = "CL_00001215";
+ 
++    public NBTTagCompound()
++    {
++    	this (false);
++    }
++    
++    public NBTTagCompound(boolean _copy)
++    {
++    	if (!_copy)
++    	{
++    		tagMap = new HashMap<String, NBTBase>();
++    	}
++    }
++    
+     void write(DataOutput p_74734_1_) throws IOException
+     {
+         Iterator iterator = this.tagMap.keySet().iterator();
+@@ -336,15 +349,12 @@
+ 
+     public NBTBase copy()
+     {
+-        NBTTagCompound nbttagcompound = new NBTTagCompound();
+-        Iterator iterator = this.tagMap.keySet().iterator();
++        NBTTagCompound nbttagcompound = new NBTTagCompound(true);
++        nbttagcompound.tagMap = new HashMap<String, NBTBase>((int)(this.tagMap.size()*1.35)+1); //compaction factor
++        
++        for(Map.Entry<String, NBTBase> s : this.tagMap.entrySet())
++            nbttagcompound.setTag(s.getKey(), s.getValue().copy());
+ 
+-        while (iterator.hasNext())
+-        {
+-            String s = (String)iterator.next();
+-            nbttagcompound.setTag(s, ((NBTBase)this.tagMap.get(s)).copy());
+-        }
+-
+         return nbttagcompound;
+     }
+ 

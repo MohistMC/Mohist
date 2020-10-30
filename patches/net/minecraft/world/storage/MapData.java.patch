@@ -1,0 +1,207 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/MapData.java
++++ ../src-work/minecraft/net/minecraft/world/storage/MapData.java
+@@ -14,6 +14,14 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldSavedData;
+ 
++// CraftBukkit start
++import java.util.UUID;
++
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.map.CraftMapView;
++// CraftBukkit end
++
+ public class MapData extends WorldSavedData
+ {
+     public int xCenter;
+@@ -21,14 +29,27 @@
+     public int dimension;
+     public byte scale;
+     public byte[] colors = new byte[16384];
+-    public List playersArrayList = new ArrayList();
+-    private Map playersHashMap = new HashMap();
+-    public Map playersVisibleOnMap = new LinkedHashMap();
++    public List<MapInfo> playersArrayList = new ArrayList<MapInfo>(); // Spigot
++    private Map<EntityPlayer, MapInfo> playersHashMap = new HashMap<EntityPlayer, MapInfo>(); // Spigot
++    public Map<java.util.UUID, MapCoord> playersVisibleOnMap = new LinkedHashMap<java.util.UUID, MapCoord>(); // Spigot
++
++    private org.bukkit.craftbukkit.map.RenderData vanillaRender = new org.bukkit.craftbukkit.map.RenderData(); // Paper
++
++    // CraftBukkit start
++    public final CraftMapView mapView;
++    private CraftServer server;
++    private UUID uniqueId = null;
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00000577";
+ 
+     public MapData(String p_i2140_1_)
+     {
+         super(p_i2140_1_);
++        // CraftBukkit start
++        mapView = new CraftMapView(this);
++        server = (CraftServer) org.bukkit.Bukkit.getServer();
++        vanillaRender.buffer = colors; // Paper
++        // CraftBukkit end
+     }
+ 
+     public void readFromNBT(NBTTagCompound p_76184_1_)
+@@ -89,6 +110,7 @@
+                     }
+                 }
+             }
++            vanillaRender.buffer = colors; // Paper
+         }
+     }
+ 
+@@ -107,14 +129,14 @@
+     {
+         if (!this.playersHashMap.containsKey(p_76191_1_))
+         {
+-            MapData.MapInfo mapinfo = new MapData.MapInfo(p_76191_1_);
++            MapData.MapInfo mapinfo = new MapData.MapInfo(this, p_76191_1_); // Cauldron
+             this.playersHashMap.put(p_76191_1_, mapinfo);
+             this.playersArrayList.add(mapinfo);
+         }
+ 
+         if (!p_76191_1_.inventory.hasItemStack(p_76191_2_))
+         {
+-            this.playersVisibleOnMap.remove(p_76191_1_.getCommandSenderName());
++            this.playersVisibleOnMap.remove(p_76191_1_.getUniqueID());
+         }
+ 
+         for (int i = 0; i < this.playersArrayList.size(); ++i)
+@@ -125,7 +147,7 @@
+             {
+                 if (!p_76191_2_.isOnItemFrame() && mapinfo1.entityplayerObj.dimension == this.dimension)
+                 {
+-                    this.func_82567_a(0, mapinfo1.entityplayerObj.worldObj, mapinfo1.entityplayerObj.getCommandSenderName(), mapinfo1.entityplayerObj.posX, mapinfo1.entityplayerObj.posZ, (double)mapinfo1.entityplayerObj.rotationYaw);
++                    this.func_82567_a(0, mapinfo1.entityplayerObj.worldObj, mapinfo1.entityplayerObj.getCommandSenderName(), mapinfo1.entityplayerObj.getUniqueID(), mapinfo1.entityplayerObj.posX, mapinfo1.entityplayerObj.posZ, (double)mapinfo1.entityplayerObj.rotationYaw);
+                 }
+             }
+             else
+@@ -137,11 +159,11 @@
+ 
+         if (p_76191_2_.isOnItemFrame())
+         {
+-            this.func_82567_a(1, p_76191_1_.worldObj, "frame-" + p_76191_2_.getItemFrame().getEntityId(), (double)p_76191_2_.getItemFrame().field_146063_b, (double)p_76191_2_.getItemFrame().field_146062_d, (double)(p_76191_2_.getItemFrame().hangingDirection * 90));
++            this.func_82567_a(1, p_76191_1_.worldObj, "frame-" + p_76191_2_.getItemFrame().getEntityId(), UUID.nameUUIDFromBytes(("frame-" + p_76191_2_.getItemFrame().getEntityId()).getBytes(org.apache.commons.codec.Charsets.US_ASCII)), (double)p_76191_2_.getItemFrame().field_146063_b, (double)p_76191_2_.getItemFrame().field_146062_d, (double)(p_76191_2_.getItemFrame().hangingDirection * 90));
+         }
+     }
+ 
+-    private void func_82567_a(int p_82567_1_, World p_82567_2_, String p_82567_3_, double p_82567_4_, double p_82567_6_, double p_82567_8_)
++    private void func_82567_a(int p_82567_1_, World p_82567_2_, String entityName, UUID p_82567_3_, double p_82567_4_, double p_82567_6_, double p_82567_8_)
+     {
+         int j = 1 << this.scale;
+         float f = (float)(p_82567_4_ - (double)this.xCenter) / (float)j;
+@@ -156,7 +178,7 @@
+             p_82567_8_ += p_82567_8_ < 0.0D ? -8.0D : 8.0D;
+             b2 = (byte)((int)(p_82567_8_ * 16.0D / 360.0D));
+ 
+-            if (p_82567_2_.provider.shouldMapSpin(p_82567_3_, p_82567_4_, p_82567_6_, p_82567_8_))
++            if (p_82567_2_.provider.shouldMapSpin(entityName, p_82567_4_, p_82567_6_, p_82567_8_))
+             {
+                 int k = (int)(p_82567_2_.getWorldInfo().getWorldTime() / 10L);
+                 b2 = (byte)(k * k * 34187121 + k * 121 >> 15 & 15);
+@@ -250,7 +272,7 @@
+                 byte b3 = p_76192_1_[i * 3 + 2];
+                 byte b0 = p_76192_1_[i * 3 + 3];
+                 byte b1 = (byte)(p_76192_1_[i * 3 + 1] & 15);
+-                this.playersVisibleOnMap.put("icon-" + i, new MapData.MapCoord(b2, b3, b0, b1));
++                this.playersVisibleOnMap.put(UUID.nameUUIDFromBytes(("icon-" + i).getBytes(org.apache.commons.codec.Charsets.US_ASCII)), new MapData.MapCoord(b2, b3, b0, b1));
+             }
+         }
+         else if (p_76192_1_[0] == 2)
+@@ -265,7 +287,7 @@
+ 
+         if (mapinfo == null)
+         {
+-            mapinfo = new MapData.MapInfo(p_82568_1_);
++            mapinfo = new MapData.MapInfo(this, p_82568_1_); // Cauldron
+             this.playersHashMap.put(p_82568_1_, mapinfo);
+             this.playersArrayList.add(mapinfo);
+         }
+@@ -292,6 +314,24 @@
+ 
+     public class MapInfo
+     {
++        /*
++        // Paper start
++        private void addSeenPlayers(java.util.Collection icons) {
++            org.bukkit.entity.Player player = (org.bukkit.entity.Player) entityplayerObj.getBukkitEntity();
++            mapDataObj.playersVisibleOnMap.forEach((uuid, mapIcon) -> {
++                // If this cursor is for a player check visibility with vanish system
++                org.bukkit.entity.Player other = org.bukkit.Bukkit.getPlayer((UUID) uuid); // Spigot
++                if (other == null || player.canSee(other)) {
++                    icons.add(mapIcon);
++                }
++            });
++        }
++
++        private boolean shouldUseVanillaMap() {
++            return mapDataObj.mapView.getRenderers().size() == 1 && mapDataObj.mapView.getRenderers().get(0).getClass() == org.bukkit.craftbukkit.map.CraftMapRenderer.class;
++        }
++	    // Paper stop
++        */
+         public final EntityPlayer entityplayerObj;
+         public int[] field_76209_b = new int[128];
+         public int[] field_76210_c = new int[128];
+@@ -300,10 +340,12 @@
+         private byte[] lastPlayerLocationOnMap;
+         public int field_82569_d;
+         private boolean field_82570_i;
++        final MapData mapDataObj; // Cauldron
+         private static final String __OBFID = "CL_00000578";
+ 
+-        public MapInfo(EntityPlayer p_i2138_2_)
++        public MapInfo(MapData mapData, EntityPlayer p_i2138_2_)
+         {
++            this.mapDataObj = mapData; // Cauldron
+             this.entityplayerObj = p_i2138_2_;
+ 
+             for (int i = 0; i < this.field_76209_b.length; ++i)
+@@ -328,20 +370,37 @@
+                 int i;
+                 int i1;
+ 
++                // Spigot start
++                boolean custom = this.mapDataObj.mapView.renderers.size() > 1 || !(this.mapDataObj.mapView.renderers.get(0) instanceof org.bukkit.craftbukkit.map.CraftMapRenderer);
++                org.bukkit.craftbukkit.map.RenderData render = (custom) ? this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()) : null; // CraftBukkit
++    
+                 if (--this.ticksUntilPlayerLocationMapUpdate < 0)
+                 {
+                     this.ticksUntilPlayerLocationMapUpdate = 4;
+-                    abyte = new byte[MapData.this.playersVisibleOnMap.size() * 3 + 1];
++                    abyte = new byte[((custom) ? render.cursors.size() : this.mapDataObj.playersVisibleOnMap.size()) * 3 + 1]; // CraftBukkit
+                     abyte[0] = 1;
+                     i = 0;
+-
+-                    for (Iterator iterator = MapData.this.playersVisibleOnMap.values().iterator(); iterator.hasNext(); ++i)
++    
++                    // CraftBukkit start
++    
++                    // Spigot start
++                    for (Iterator iterator = ((custom) ? render.cursors.iterator() : this.mapDataObj.playersVisibleOnMap.values().iterator()); iterator.hasNext(); ++i)
+                     {
+-                        MapData.MapCoord mapcoord = (MapData.MapCoord)iterator.next();
+-                        abyte[i * 3 + 1] = (byte)(mapcoord.iconSize << 4 | mapcoord.iconRotation & 15);
+-                        abyte[i * 3 + 2] = mapcoord.centerX;
+-                        abyte[i * 3 + 3] = mapcoord.centerZ;
++                        org.bukkit.map.MapCursor cursor = (custom) ? (org.bukkit.map.MapCursor) iterator.next() : null;
++    
++                        if (cursor != null && !cursor.isVisible())
++                        {
++                            continue;
++                        }
++    
++                        MapCoord deco = (custom) ? null : (MapCoord) iterator.next();
++                        abyte[i * 3 + 1] = (byte)(((custom) ? cursor.getRawType() : deco.iconSize) << 4 | ((custom) ? cursor.getDirection() : deco.iconRotation) & 15);
++                        abyte[i * 3 + 2] = (byte)((custom) ? cursor.getX() : deco.centerX);
++                        abyte[i * 3 + 3] = (byte)((custom) ? cursor.getY() : deco.centerZ);
+                     }
++    
++                    // Spigot end
++                    // CraftBukkit end
+ 
+                     boolean flag = !p_76204_1_.isOnItemFrame();
+ 

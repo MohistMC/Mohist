@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityEnderEye.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityEnderEye.java
+@@ -117,7 +117,7 @@
+         this.rotationYaw = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * 0.2F;
+ 
+         if (!this.worldObj.isRemote)
+-        {
++        {   
+             double d0 = this.targetX - this.posX;
+             double d1 = this.targetZ - this.posZ;
+             float f1 = (float)Math.sqrt(d0 * d0 + d1 * d1);
+@@ -203,4 +203,11 @@
+     {
+         return false;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

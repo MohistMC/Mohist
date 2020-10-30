@@ -1,0 +1,387 @@
+--- ../src-base/minecraft/net/minecraftforge/common/DimensionManager.java
++++ ../src-work/minecraft/net/minecraftforge/common/DimensionManager.java
+@@ -34,6 +34,15 @@
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.SaveHandler;
+ import net.minecraftforge.event.world.WorldEvent;
++// Cauldron start
++import net.minecraft.server.dedicated.DedicatedServer;
++import net.minecraft.world.chunk.storage.AnvilSaveHandler;
++import net.minecraftforge.cauldron.CauldronUtils;
++import net.minecraftforge.common.util.EnumHelper;
++import org.bukkit.World.Environment;
++import org.bukkit.WorldCreator;
++import org.bukkit.generator.ChunkGenerator;
++// Cauldron end
+ 
+ public class DimensionManager
+ {
+@@ -46,6 +55,11 @@
+     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
+     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
+     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
++    // Cauldron start
++    private static Hashtable<Class<? extends WorldProvider>, Integer> classToProviders = new Hashtable<Class<? extends WorldProvider>, Integer>();
++    private static ArrayList<Integer> bukkitDims = new ArrayList<Integer>(); // used to keep track of Bukkit dimensions
++    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
++    // Cauldron end
+ 
+     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
+     {
+@@ -53,7 +67,23 @@
+         {
+             return false;
+         }
++        // Cauldron start - register provider with bukkit and add appropriate config option
++        String worldType = "unknown";
++        if (id != -1 && id != 0 && id != 1) // ignore vanilla
++        {
++            worldType = provider.getSimpleName().toLowerCase();
++            worldType = worldType.replace("worldprovider", "");
++            worldType = worldType.replace("provider", "");
++            registerBukkitEnvironment(id, worldType);
++        }
++        else
++        {
++            worldType = Environment.getEnvironment(id).name().toLowerCase();
++        }
++        keepLoaded = MinecraftServer.getServer().cauldronConfig.getBoolean("world-environment-settings." + worldType + ".keep-world-loaded", keepLoaded);
++        // Cauldron end
+         providers.put(id, provider);
++        classToProviders.put(provider, id);
+         spawnSettings.put(id, keepLoaded);
+         return true;
+     }
+@@ -157,28 +187,33 @@
+ 
+     public static Integer[] getIDs(boolean check)
+     {
+-        if (check)
++        // Cauldron start - check config option and only log world leak messages if enabled
++        if (MinecraftServer.getServer().cauldronConfig.worldLeakDebug.getValue())
+         {
+-            List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
+-            allWorlds.removeAll(worlds.values());
+-            for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
++            if (check)
+             {
+-                World w = li.next();
+-                leakedWorlds.add(System.identityHashCode(w));
+-            }
+-            for (World w : allWorlds)
+-            {
+-                int leakCount = leakedWorlds.count(System.identityHashCode(w));
+-                if (leakCount == 5)
++                List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
++                allWorlds.removeAll(worlds.values());
++                for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
+                 {
+-                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
++                    World w = li.next();
++                    leakedWorlds.add(System.identityHashCode(w));
+                 }
+-                else if (leakCount % 5 == 0)
++                for (World w : allWorlds)
+                 {
+-                    FMLLog.fine("The world %x (%s) may have leaked: seen %d times.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
++                    int leakCount = leakedWorlds.count(System.identityHashCode(w));
++                    if (leakCount == 5)
++                    {
++                        FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences). Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to Cauldron.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
++                    }
++                    else if (leakCount % 5 == 0)
++                    {
++                        FMLLog.fine("The world %x (%s) may have leaked: seen %d times. Note: This may be a caused by a mod, plugin, or just a false-positive(No memory leak). If server crashes due to OOM, report to Cauldron.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName(), leakCount);
++                    }
+                 }
+             }
+         }
++        // Cauldron end
+         return getIDs();
+     }
+     public static Integer[] getIDs()
+@@ -191,12 +226,23 @@
+         if (world != null)
+         {
+             worlds.put(id, world);
+-            weakWorldMap.put(world, world);
++            // Cauldron start - check config option and only log world leak messages if enabled
++            if (MinecraftServer.getServer().cauldronConfig.worldLeakDebug.getValue())
++            {
++                weakWorldMap.put(world, world);
++            }
++            // handle all world adds here for Bukkit
++            if (!MinecraftServer.getServer().worlds.contains(world))
++            {
++                MinecraftServer.getServer().worlds.add(world);
++            }
++            // Cauldron end
+             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
+             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.func_73046_m());
+         }
+         else
+         {
++            MinecraftServer.getServer().worlds.remove(getWorld(id)); // Cauldron - remove world from our new world arraylist
+             worlds.remove(id);
+             MinecraftServer.getServer().worldTickTimes.remove(id);
+             FMLLog.info("Unloading dimension %d", id);
+@@ -224,6 +270,7 @@
+     }
+ 
+     public static void initDimension(int dim) {
++        if (dim == 0) return; // Cauldron - overworld
+         WorldServer overworld = getWorld(0);
+         if (overworld == null)
+         {
+@@ -231,6 +278,12 @@
+         }
+         try
+         {
++            // Cauldron start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
++            if(net.minecraftforge.cauldron.CauldronHooks.craftWorldLoading)
++            {
++                return;
++            }
++            // Cauldron end
+             DimensionManager.getProviderType(dim);
+         }
+         catch (Exception e)
+@@ -242,9 +295,63 @@
+         ISaveHandler savehandler = overworld.getSaveHandler();
+         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
+ 
+-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
++        // Cauldron start - handles hotloading dimensions
++        String worldType;
++        String name;
++        String oldName = "";
++        String realName = "";
++        Environment env = Environment.getEnvironment(getProviderType(dim));
++        if (dim >= -1 && dim <= 1)
++        {
++            if ((dim == -1 && !mcServer.getAllowNether()) || (dim == 1 && !mcServer.server.getAllowEnd()))
++                return;
++            worldType = env.toString().toLowerCase();
++            name = "DIM" + dim;
++            realName = name;
++        }
++        else
++        {
++            WorldProvider provider = WorldProvider.getProviderForDimension(dim);
++            worldType = provider.getClass().getSimpleName().toLowerCase();
++            worldType = worldType.replace("worldprovider", "");
++            oldName = "world_" + worldType;
++            worldType = worldType.replace("provider", "");
++
++            if (Environment.getEnvironment(DimensionManager.getProviderType(dim)) == null)
++                    env = DimensionManager.registerBukkitEnvironment(DimensionManager.getProviderType(provider.getClass()), worldType);
++
++            name = provider.getSaveFolder();
++            if (name == null) name = "DIM0";
++
++            if (net.minecraftforge.cauldron.configuration.CauldronConfig.instance.realNames.getValue()) // Thermos - allow server owners to use real names for worlds, but remember to keep the SaveHandler directory..
++            {
++                realName = provider.getDimensionName();
++            }
++            else { realName = name; }
++
++        }
++        // add ability to disable dimensions
++        if (!MinecraftServer.getServer().cauldronConfig.getBoolean("world-environment-settings." + worldType + ".enabled", true))
++            return;
++
++        CauldronUtils.migrateWorlds(worldType, oldName, overworld.getWorldInfo().getWorldName(), name); // Cauldron
++        ChunkGenerator gen = mcServer.server.getGenerator(name);
++        if (mcServer instanceof DedicatedServer) {
++            worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
++        }
++
++
++        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), realName, dim, worldSettings, overworld, mcServer.theProfiler, env, gen); // Thermos - real world names, heyo!
++
++        if (gen != null)
++        {
++            world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
++        }
++        mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
+         world.addWorldAccess(new WorldManager(mcServer, world));
+         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
++        mcServer.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(world.getWorld()));
++        // Cauldron end
+         if (!mcServer.isSinglePlayer())
+         {
+             world.getWorldInfo().setGameType(mcServer.getGameType());
+@@ -253,6 +360,79 @@
+         mcServer.func_147139_a(mcServer.func_147135_j());
+     }
+ 
++    // Cauldron start - new method for handling creation of Bukkit dimensions. Currently supports MultiVerse
++    public static WorldServer initDimension(WorldCreator creator, WorldSettings worldSettings) {
++        WorldServer overworld = getWorld(0);
++        if (overworld == null) {
++            throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
++        }
++
++        MinecraftServer mcServer = overworld.func_73046_m();
++
++        String worldType;
++        String name;
++
++        int providerId = 0;
++        if (creator.environment() != null)
++            providerId = creator.environment().getId();
++        try {
++            providerId = getProviderType(providerId);
++        }
++        catch (IllegalArgumentException e)
++        {
++            // do nothing
++        }
++
++        Environment env = creator.environment();
++        worldType = env.name().toLowerCase();
++        name = creator.name();
++        int dim = 0;
++        // Use saved dimension from level.dat if it exists. This guarantees that after a world is created, the same dimension will be used. Fixes issues with MultiVerse
++        AnvilSaveHandler saveHandler = new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true);
++        if (saveHandler.loadWorldInfo() != null)
++        {
++            int savedDim = saveHandler.loadWorldInfo().getDimension();
++            if (savedDim != 0 && savedDim != -1 && savedDim != 1)
++            {
++                dim = savedDim;
++            }
++        }
++        if (dim == 0)
++        {
++            dim = getNextFreeDimId();
++        }
++
++        if (!isDimensionRegistered(dim)) // handle reloads properly
++        {
++            registerDimension(dim, providerId);
++            addBukkitDimension(dim);
++        }
++        ChunkGenerator gen = creator.generator();
++        if (mcServer instanceof DedicatedServer) {
++            worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
++        }
++
++        WorldServer world = new WorldServerMulti(mcServer, saveHandler, name, dim, worldSettings, overworld, mcServer.theProfiler, env, gen);
++
++        if (gen != null)
++        {
++            world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
++        }
++        world.provider.dimensionId = dim; // Fix for TerrainControl injecting their own WorldProvider
++        mcServer.getConfigurationManager().setPlayerManager(mcServer.worlds.toArray(new WorldServer[mcServer.worlds.size()]));
++
++        world.addWorldAccess(new WorldManager(mcServer, world));
++        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
++        if (!mcServer.isSinglePlayer())
++        {
++            world.getWorldInfo().setGameType(mcServer.getGameType());
++        }
++        mcServer.func_147139_a(mcServer.func_147135_j());
++
++        return world;
++    }
++    // Cauldron end
++
+     public static WorldServer getWorld(int id)
+     {
+         return worlds.get(id);
+@@ -266,7 +446,7 @@
+     public static boolean shouldLoadSpawn(int dim)
+     {
+         int id = getProviderType(dim);
+-        return spawnSettings.containsKey(id) && spawnSettings.get(id);
++        return ((spawnSettings.containsKey(id) && spawnSettings.get(id)) || (getWorld(dim) != null && getWorld(dim).keepSpawnInMemory)); // Cauldron added bukkit check
+     }
+ 
+     static
+@@ -306,7 +486,8 @@
+     }
+ 
+     public static void unloadWorld(int id) {
+-        unloadQueue.add(id);
++        if (!shouldLoadSpawn(id)) // Cauldron - prevent mods from force unloading if we have it disabled
++            unloadQueue.add(id);
+     }
+ 
+     /*
+@@ -315,26 +496,9 @@
+     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
+         for (int id : unloadQueue) {
+             WorldServer w = worlds.get(id);
+-            try {
+-                if (w != null)
+-                {
+-                    w.saveAllChunks(true, null);
+-                }
+-                else
+-                {
+-                    FMLLog.warning("Unexpected world unload - world %d is already unloaded", id);
+-                }
+-            } catch (MinecraftException e) {
+-                e.printStackTrace();
+-            }
+-            finally
++            if (w != null)
+             {
+-                if (w != null)
+-                {
+-                    MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+-                    w.flush();
+-                    setWorld(id, null);
+-                }
++                MinecraftServer.getServer().server.unloadWorld(w.getWorld(), true); // Cauldron - unload through our new method for simplicity
+             }
+         }
+         unloadQueue.clear();
+@@ -425,4 +589,45 @@
+             return null;
+         }
+     }
++
++    // Cauldron start - add registration for Bukkit Environments
++    public static Environment registerBukkitEnvironment(int dim, String providerName)
++    {
++        Environment env = Environment.getEnvironment(dim);
++        if (env == null) // Cauldron  if environment not found, register one
++        {
++            providerName = providerName.replace("WorldProvider", "");
++            env = EnumHelper.addBukkitEnvironment(dim, providerName.toUpperCase());
++            Environment.registerEnvironment(env);
++        }
++        return env;
++    }
++
++    public static int getProviderType(Class<? extends WorldProvider> provider)
++    {
++        return classToProviders.get(provider);
++    }
++
++    public static void addBukkitDimension(int dim)
++    {
++        if (!bukkitDims.contains(dim))
++            bukkitDims.add(dim);
++    }
++
++    public static void removeBukkitDimension(int dim)
++    {
++        if (bukkitDims.contains(dim))
++            bukkitDims.remove(bukkitDims.indexOf(dim));
++    }
++
++    public static ArrayList<Integer> getBukkitDimensionIDs()
++    {
++        return bukkitDims;
++    }
++
++    public static boolean isBukkitDimension(int dim)
++    {
++        return bukkitDims.contains(dim);
++    }
++    // Cauldron end
+ }

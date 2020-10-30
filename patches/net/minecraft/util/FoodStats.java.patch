@@ -1,0 +1,88 @@
+--- ../src-base/minecraft/net/minecraft/util/FoodStats.java
++++ ../src-work/minecraft/net/minecraft/util/FoodStats.java
+@@ -7,16 +7,34 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.EnumDifficulty;
++// CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.play.server.S06PacketUpdateHealth;
++// CraftBukkit end
+ 
+ public class FoodStats
+ {
+-    private int foodLevel = 20;
+-    private float foodSaturationLevel = 5.0F;
+-    private float foodExhaustionLevel;
+-    private int foodTimer;
++    // CraftBukkit start - All made public
++    public int foodLevel = 20;
++    public float foodSaturationLevel = 5.0F;
++    public float foodExhaustionLevel;
++    public int foodTimer;
++    private EntityPlayer entityplayer;
++    // CraftBukkit end
+     private int prevFoodLevel = 20;
+     private static final String __OBFID = "CL_00001729";
+ 
++    // CraftBukkit start - added EntityPlayer constructor
++    public FoodStats(EntityPlayer entityplayer)
++    {
++        org.apache.commons.lang.Validate.notNull(entityplayer);
++        this.entityplayer = entityplayer;
++    }
++
++    public FoodStats() {} // Thermos allow empty constructor
++
++    // CraftBukkit end
++
+     public void addStats(int p_75122_1_, float p_75122_2_)
+     {
+         this.foodLevel = Math.min(p_75122_1_ + this.foodLevel, 20);
+@@ -25,7 +43,17 @@
+ 
+     public void func_151686_a(ItemFood p_151686_1_, ItemStack p_151686_2_)
+     {
+-        this.addStats(p_151686_1_.func_150905_g(p_151686_2_), p_151686_1_.func_150906_h(p_151686_2_));
++        // CraftBukkit start
++        int oldFoodLevel = foodLevel;
++        org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityplayer, p_151686_1_.func_150905_g(p_151686_2_) + oldFoodLevel);
++
++        if (!event.isCancelled())
++        {
++            this.addStats(event.getFoodLevel() - oldFoodLevel, p_151686_1_.func_150906_h(p_151686_2_));
++        }
++
++        ((EntityPlayerMP) entityplayer).playerNetServerHandler.sendPacket(new S06PacketUpdateHealth(((EntityPlayerMP) entityplayer).getBukkitEntity().getScaledHealth(), entityplayer.getFoodStats().foodLevel, entityplayer.getFoodStats().foodSaturationLevel));
++        // CraftBukkit end
+     }
+ 
+     public void onUpdate(EntityPlayer p_75118_1_)
+@@ -43,7 +71,16 @@
+             }
+             else if (enumdifficulty != EnumDifficulty.PEACEFUL)
+             {
+-                this.foodLevel = Math.max(this.foodLevel - 1, 0);
++                // CraftBukkit start
++                org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(p_75118_1_, Math.max(this.foodLevel - 1, 0));
++
++                if (!event.isCancelled())
++                {
++                    this.foodLevel = event.getFoodLevel();
++                }
++
++                ((EntityPlayerMP) p_75118_1_).playerNetServerHandler.sendPacket(new S06PacketUpdateHealth(((EntityPlayerMP) p_75118_1_).getBukkitEntity().getScaledHealth(), this.foodLevel, this.foodSaturationLevel));
++                // CraftBukkit end
+             }
+         }
+ 
+@@ -53,7 +90,8 @@
+ 
+             if (this.foodTimer >= 80)
+             {
+-                p_75118_1_.heal(1.0F);
++                // CraftBukkit - added RegainReason
++                p_75118_1_.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED);
+                 this.addExhaustion(3.0F);
+                 this.foodTimer = 0;
+             }

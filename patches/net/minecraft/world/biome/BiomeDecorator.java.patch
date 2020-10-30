@@ -1,0 +1,253 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
+@@ -1,28 +1,23 @@
+ package net.minecraft.world.biome;
+ 
+-import java.util.Random;
+ import net.minecraft.block.BlockFlower;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.world.World;
+-import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+-import net.minecraft.world.gen.feature.WorldGenBigMushroom;
+-import net.minecraft.world.gen.feature.WorldGenCactus;
+-import net.minecraft.world.gen.feature.WorldGenClay;
+-import net.minecraft.world.gen.feature.WorldGenDeadBush;
+-import net.minecraft.world.gen.feature.WorldGenFlowers;
+-import net.minecraft.world.gen.feature.WorldGenLiquids;
+-import net.minecraft.world.gen.feature.WorldGenMinable;
+-import net.minecraft.world.gen.feature.WorldGenPumpkin;
+-import net.minecraft.world.gen.feature.WorldGenReed;
+-import net.minecraft.world.gen.feature.WorldGenSand;
+-import net.minecraft.world.gen.feature.WorldGenWaterlily;
+-import net.minecraft.world.gen.feature.WorldGenerator;
++import net.minecraft.world.chunk.Chunk;
++import net.minecraft.world.gen.feature.*;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
++import net.minecraftforge.event.terraingen.OreGenEvent;
++import net.minecraftforge.event.terraingen.TerrainGen;
+ 
++import java.util.ArrayList;
++import java.util.Iterator;
++import java.util.List;
++import java.util.Random;
++
+ import static net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.*;
+ import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.*;
+-import net.minecraftforge.common.*;
+-import net.minecraftforge.event.terraingen.*;
+ 
+ public class BiomeDecorator
+ {
+@@ -61,6 +56,8 @@
+     public int clayPerChunk;
+     public int bigMushroomsPerChunk;
+     public boolean generateLakes;
++    private final List<Chunk> chunksToUnload = new ArrayList<Chunk>(); // Spigot
++private final java.util.concurrent.locks.ReentrantLock decorateLock = new java.util.concurrent.locks.ReentrantLock(); // Thermos - prevent decorator crashes
+     private static final String __OBFID = "CL_00000164";
+ 
+     public BiomeDecorator()
+@@ -92,12 +89,36 @@
+ 
+     public void decorateChunk(World p_150512_1_, Random p_150512_2_, BiomeGenBase p_150512_3_, int p_150512_4_, int p_150512_5_)
+     {
+-        if (this.currentWorld != null)
+-        {
+-            throw new RuntimeException("Already decorating!!");
+-        }
+-        else
+-        {
++      int ct = 0;
++      while(decorateLock.isLocked() && !decorateLock.isHeldByCurrentThread())
++      {
++          try { Thread.sleep(100L); } catch(Exception e) {} finally { ct++; }
++          if(ct > 100 ) {
++              throw new RuntimeException("Generating a chunk in world " + this.currentWorld.getWorldInfo().getWorldName() +" took longer than 10 seconds, Thermos needs to crash so the server doesn't time out...sorry!");
++          } // Thermos - Decoration took too long, we'll have to crash the server at this point so it doesn't hang.
++      }
++      decorateLock.lock();
++
++      // Thermos start
++      World prevWorld = this.currentWorld;
++      Random prevRandom = this.randomGenerator;
++      int prevChunkX = this.chunk_X;
++      int prevChunkZ = this.chunk_Z;
++      // Thermos end
++
++      try {
++            //throw new RuntimeException("Already decorating!!");
++            // TODO Runtime with Timeout https://stackoverflow.com/questions/2275443/how-to-timeout-a-thread
++            /*System.out.println("[Thermos] Already Decorating a Chunk! Waiting...");
++            for(int i = 0; i < 10; i++)
++            {
++                try{ Thread.sleep(100L); } catch(Exception e){}
++            }
++            if(this.currentWorld != null)
++                decorateChunk(p_150512_1_, p_150512_2_, p_150512_3_, p_150512_4_, p_150512_5_);
++            else
++                System.out.println("[Thermos] Decoration failure @ X:" + (p_150512_4_ << 4) + ", Z:" + (p_150512_5_ << 4) );
++*/
+             this.currentWorld = p_150512_1_;
+             this.randomGenerator = p_150512_2_;
+             this.chunk_X = p_150512_4_;
+@@ -105,7 +126,16 @@
+             this.genDecorations(p_150512_3_);
+             this.currentWorld = null;
+             this.randomGenerator = null;
+-        }
++      } finally {
++            // Thermos start
++            this.currentWorld = prevWorld;
++            this.randomGenerator = prevRandom;
++            this.chunk_X = prevChunkX;
++            this.chunk_Z = prevChunkZ;
++            // Thermos end
++
++            decorateLock.unlock();
++      }
+     }
+ 
+     protected void genDecorations(BiomeGenBase p_150513_1_)
+@@ -194,7 +224,7 @@
+         {
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            i1 = nextInt(this.currentWorld.getHeightValue(k, l) * 2);
++            i1 = nextInt(this.getHighestBlockYAt(k, l) * 2); // Spigot
+             WorldGenerator worldgenerator = p_150513_1_.getRandomWorldGenForGrass(this.randomGenerator);
+             worldgenerator.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+         }
+@@ -204,7 +234,7 @@
+         {
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            i1 = nextInt(this.currentWorld.getHeightValue(k, l) * 2);
++            i1 = nextInt(this.getHighestBlockYAt(k, l) * 2); // Spigot
+             (new WorldGenDeadBush(Blocks.deadbush)).generate(this.currentWorld, this.randomGenerator, k, i1, l);
+         }
+ 
+@@ -214,7 +244,7 @@
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+ 
+-            for (i1 = nextInt(this.currentWorld.getHeightValue(k, l) * 2); i1 > 0 && this.currentWorld.isAirBlock(k, i1 - 1, l); --i1)
++            for (i1 = nextInt(this.getHighestBlockYAt(k, l) * 2); i1 > 0 && this.currentWorld.isAirBlock(k, i1 - 1, l); --i1)  // Spigot
+             {
+                 ;
+             }
+@@ -229,7 +259,7 @@
+             {
+                 k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+                 l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-                i1 = this.currentWorld.getHeightValue(k, l);
++                i1 = this.getHighestBlockYAt(k, l); // Spigot
+                 this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             }
+ 
+@@ -237,7 +267,7 @@
+             {
+                 k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+                 l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-                i1 = nextInt(this.currentWorld.getHeightValue(k, l) * 2);
++                i1 = nextInt(this.getHighestBlockYAt(k, l) * 2); // Spigot
+                 this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+             }
+         }
+@@ -246,7 +276,7 @@
+         {
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            l = nextInt(this.currentWorld.getHeightValue(j, k) * 2);
++            l = nextInt(this.getHighestBlockYAt(j, k) * 2); // Spigot
+             this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, j, l, k);
+         }
+ 
+@@ -254,7 +284,7 @@
+         {
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            l = nextInt(this.currentWorld.getHeightValue(j, k) * 2);
++            l = nextInt(this.getHighestBlockYAt(j, k) * 2); // Spigot
+             this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, j, l, k);
+         }
+ 
+@@ -263,7 +293,7 @@
+         {
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            i1 = nextInt(this.currentWorld.getHeightValue(k, l) * 2);
++            i1 = nextInt(this.getHighestBlockYAt(k, l) * 2); // Spigot
+             this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+         }
+ 
+@@ -271,7 +301,7 @@
+         {
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            i1 = nextInt(this.currentWorld.getHeightValue(k, l) * 2);
++            i1 = nextInt(this.getHighestBlockYAt(k, l) * 2); // Spigot
+             this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+         }
+ 
+@@ -280,7 +310,7 @@
+         {
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            l = nextInt(this.currentWorld.getHeightValue(j, k) * 2);
++            l = nextInt(this.getHighestBlockYAt(j, k) * 2); // Spigot
+             (new WorldGenPumpkin()).generate(this.currentWorld, this.randomGenerator, j, l, k);
+         }
+ 
+@@ -289,7 +319,7 @@
+         {
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+-            i1 = nextInt(this.currentWorld.getHeightValue(k, l) * 2);
++            i1 = nextInt(this.getHighestBlockYAt(k, l) * 2); // Spigot
+             this.cactusGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
+         }
+ 
+@@ -313,6 +343,7 @@
+             }
+         }
+ 
++        this.unloadChunks(); // Spigot - unload chunks we force loaded
+         MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(currentWorld, randomGenerator, chunk_X, chunk_Z));
+     }
+ 
+@@ -360,6 +391,33 @@
+         MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Post(currentWorld, randomGenerator, chunk_X, chunk_Z));
+     }
+ 
++    // Spigot start - force load chunks
++    private int getHighestBlockYAt(int i, int j)
++    {
++        // Make sure the chunk is loaded
++        if (!this.currentWorld.chunkExists(i >> 4, j >> 4))
++        {
++            // If not, load it, then add it to our unload list
++            this.chunksToUnload.add(this.currentWorld.getChunkFromChunkCoords(i >> 4, j >> 4));
++        }
++
++        return this.currentWorld.getHeightValue(i, j);
++    }
++
++    private void unloadChunks()
++    {
++        Iterator<Chunk> iter = this.chunksToUnload.iterator();
++
++        while (iter.hasNext())
++        {
++            Chunk chunk = iter.next();
++            if (chunk.bukkitChunk != null)
++                this.currentWorld.getWorld().unloadChunk(chunk.bukkitChunk);
++            iter.remove();
++        }
++    }
++    // Spigot end
++
+     private int nextInt(int i) {
+         if (i <= 1)
+             return 0;

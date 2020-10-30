@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryBasic.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryBasic.java
+@@ -2,6 +2,11 @@
+ 
+ import java.util.ArrayList;
+ import java.util.List;
++
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
++
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ 
+@@ -9,7 +14,7 @@
+ {
+     private String inventoryTitle;
+     private int slotsCount;
+-    private ItemStack[] inventoryContents;
++    protected ItemStack[] inventoryContents; // CraftBukkit - protected
+     private List field_70480_d;
+     private boolean field_94051_e;
+     private static final String __OBFID = "CL_00001514";
+@@ -150,4 +155,33 @@
+     {
+         return true;
+     }
++
++    // Cauldron start
++    @Override
++    public ItemStack[] getContents()
++    {
++        return null;
++    }
++
++    @Override
++    public void onOpen(CraftHumanEntity who) {}
++
++    @Override
++    public void onClose(CraftHumanEntity who) {}
++
++    @Override
++    public List<HumanEntity> getViewers()
++    {
++        return null;
++    }
++
++    @Override
++    public InventoryHolder getOwner()
++    {
++        return null;
++    }
++
++    @Override
++    public void setMaxStackSize(int size) {}
++    // Cauldron end
+ }

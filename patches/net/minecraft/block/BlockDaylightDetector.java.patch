@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDaylightDetector.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDaylightDetector.java
+@@ -73,6 +73,7 @@
+ 
+             if (l != i1)
+             {
++                i1 = org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(p_149957_1_, p_149957_2_, p_149957_3_, p_149957_4_, l, i1).getNewCurrent(); // CraftBukkit - Call BlockRedstoneEvent
+                 p_149957_1_.setBlockMetadataWithNotify(p_149957_2_, p_149957_3_, p_149957_4_, i1, 3);
+             }
+         }

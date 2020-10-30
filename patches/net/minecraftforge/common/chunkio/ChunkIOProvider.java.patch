@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraftforge/common/chunkio/ChunkIOProvider.java
++++ ../src-work/minecraft/net/minecraftforge/common/chunkio/ChunkIOProvider.java
+@@ -9,6 +9,9 @@
+ import java.io.IOException;
+ import java.util.concurrent.atomic.AtomicInteger;
+ 
++import org.bukkit.Server;
++import org.bukkit.craftbukkit.util.LongHash;
++
+ class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> {
+     private final AtomicInteger threadNumber = new AtomicInteger(1);
+ 
+@@ -41,14 +44,36 @@
+         queuedChunk.loader.loadEntities(queuedChunk.world, queuedChunk.compound.getCompoundTag("Level"), chunk);
+         MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, queuedChunk.compound)); // Don't call ChunkDataEvent.Load async
+         chunk.lastSaveTime = queuedChunk.provider.worldObj.getTotalWorldTime();
+-        queuedChunk.provider.loadedChunkHashMap.add(ChunkCoordIntPair.chunkXZ2Int(queuedChunk.x, queuedChunk.z), chunk);
++        queuedChunk.provider.loadedChunkHashMap_KC.add(LongHash.toLong(queuedChunk.x, queuedChunk.z), chunk); // Will auto-pass to chunkT
+         queuedChunk.provider.loadedChunks.add(chunk);
+         chunk.onChunkLoad();
+ 
+         if (queuedChunk.provider.currentChunkProvider != null) {
++            queuedChunk.provider.worldObj.timings.syncChunkLoadStructuresTimer.startTiming(); // Spigot
+             queuedChunk.provider.currentChunkProvider.recreateStructures(queuedChunk.x, queuedChunk.z);
++            queuedChunk.provider.worldObj.timings.syncChunkLoadStructuresTimer.stopTiming(); // Spigot
+         }
++        
++        Server server = queuedChunk.provider.worldObj.getServer();
++        if (server != null) {
++            server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(chunk.bukkitChunk, false));
++        }
+ 
++        // Update neighbor counts
++        for (int x = -2; x < 3; x++) {
++            for (int z = -2; z < 3; z++) {
++                if (x == 0 && z == 0) {
++                    continue;
++                }
++
++                net.minecraft.world.chunk.Chunk neighbor = queuedChunk.provider.getChunkIfLoaded(chunk.xPosition + x, chunk.zPosition + z);
++                if (neighbor != null) {
++                    neighbor.setNeighborLoaded(-x, -z);
++                    chunk.setNeighborLoaded(x, z);
++                }
++            }
++        }
++
+         chunk.populateChunk(queuedChunk.provider, queuedChunk.provider, queuedChunk.x, queuedChunk.z);
+     }
+ 

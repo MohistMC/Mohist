@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
+@@ -16,6 +16,7 @@
+ import net.minecraftforge.common.EnumPlantType;
+ import net.minecraftforge.common.util.ForgeDirection;
+ import net.minecraftforge.common.IPlantable;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public class BlockCactus extends Block implements IPlantable
+ {
+@@ -47,9 +48,9 @@
+             {
+                 int i1 = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
+ 
+-                if (i1 == 15)
++                if (i1 >= (byte) range(3, (p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().cactusModifier * 15) + 0.5F, 15))   // Spigot // Cauldron
+                 {
+-                    p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
++                    CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, 0); // CraftBukkit
+                     p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, 0, 4);
+                     this.onNeighborBlockChange(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
+                 }
+@@ -135,6 +136,7 @@
+ 
+     public void onEntityCollidedWithBlock(World p_149670_1_, int p_149670_2_, int p_149670_3_, int p_149670_4_, Entity p_149670_5_)
+     {
++        // Cauldron - moved CraftBukkit hook to func_145775_I() - doBlockCollisions
+         p_149670_5_.attackEntityFrom(DamageSource.cactus, 1.0F);
+     }
+ 

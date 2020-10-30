@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPressurePlate.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPressurePlate.java
+@@ -8,6 +8,8 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
++
+ public class BlockPressurePlate extends BlockBasePressurePlate
+ {
+     private BlockPressurePlate.Sensitivity field_150069_a;
+@@ -54,8 +56,34 @@
+ 
+             while (iterator.hasNext())
+             {
+-                Entity entity = (Entity)iterator.next();
++                Entity entity = (Entity) iterator.next();
+ 
++                // CraftBukkit start - Call interact event when turning on a pressure plate
++                if (this.func_150060_c(p_150065_1_.getBlockMetadata(p_150065_2_, p_150065_3_, p_150065_4_)) == 0)
++                {
++                    org.bukkit.World bworld = p_150065_1_.getWorld();
++                    org.bukkit.plugin.PluginManager manager = p_150065_1_.getServer().getPluginManager();
++                    org.bukkit.event.Cancellable cancellable;
++
++                    if (entity instanceof EntityPlayer)
++                    {
++                        cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entity, org.bukkit.event.block.Action.PHYSICAL, p_150065_2_, p_150065_3_, p_150065_4_, -1, null);
++                    }
++                    else
++                    {
++                        cancellable = new EntityInteractEvent(entity.getBukkitEntity(), bworld.getBlockAt(p_150065_2_, p_150065_3_, p_150065_4_));
++                        manager.callEvent((EntityInteractEvent) cancellable);
++                    }
++
++                    // We only want to block turning the plate on if all events are cancelled
++                    if (cancellable.isCancelled())
++                    {
++                        continue;
++                    }
++                }
++
++                // CraftBukkit end
++
+                 if (!entity.doesEntityNotTriggerPressurePlate())
+                 {
+                     return 15;

@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemShears.java
++++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
+@@ -3,7 +3,11 @@
+ import java.util.ArrayList;
+ import java.util.Random;
+ 
++import org.bukkit.event.player.PlayerShearEntityEvent;
++
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockLeaves;
++import net.minecraft.block.BlockLeavesBase;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.enchantment.Enchantment;
+@@ -61,6 +65,16 @@
+             IShearable target = (IShearable)entity;
+             if (target.isShearable(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ))
+             {
++                // Cauldron start
++                PlayerShearEntityEvent event = new PlayerShearEntityEvent((org.bukkit.entity.Player) player.getBukkitEntity(), entity.getBukkitEntity());
++                player.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return false;
++                }
++
++                // Cauldron end
+                 ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ,
+                         EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
+ 
+@@ -94,7 +108,7 @@
+             {
+                 ArrayList<ItemStack> drops = target.onSheared(itemstack, player.worldObj, x, y, z,
+                         EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
+-                Random rand = new Random();
++                Random rand = new thermos.thermite.ThermiteRandom();
+ 
+                 for(ItemStack stack : drops)
+                 {

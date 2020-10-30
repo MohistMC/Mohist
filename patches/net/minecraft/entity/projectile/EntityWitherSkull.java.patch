@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityWitherSkull.java
+@@ -13,6 +13,8 @@
+ import net.minecraft.world.Explosion;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.entity.ExplosionPrimeEvent; // CraftBukkit
++
+ public class EntityWitherSkull extends EntityFireball
+ {
+     private static final String __OBFID = "CL_00001728";
+@@ -68,7 +70,7 @@
+                 {
+                     if (p_70227_1_.entityHit.attackEntityFrom(DamageSource.causeMobDamage(this.shootingEntity), 8.0F) && !p_70227_1_.entityHit.isEntityAlive())
+                     {
+-                        this.shootingEntity.heal(5.0F);
++                        this.shootingEntity.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
+                     }
+                 }
+                 else
+@@ -96,7 +98,16 @@
+                 }
+             }
+ 
+-            this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"));
++            // CraftBukkit start
++            ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, event.getRadius(), event.getFire(), this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"));
++            }
++
++            // CraftBukkit end
+             this.setDead();
+         }
+     }
+@@ -125,4 +136,11 @@
+     {
+         this.dataWatcher.updateObject(10, Byte.valueOf((byte)(p_82343_1_ ? 1 : 0)));
+     }
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

@@ -1,0 +1,76 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryLargeChest.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryLargeChest.java
+@@ -3,11 +3,62 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ 
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
++
+ public class InventoryLargeChest implements IInventory
+ {
+     private String name;
+-    private IInventory upperChest;
+-    private IInventory lowerChest;
++    public IInventory upperChest; // CraftBukkit - private -> public
++    public IInventory lowerChest; // CraftBukkit - private -> public
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++
++    public ItemStack[] getContents()
++    {
++        ItemStack[] result = new ItemStack[this.getSizeInventory()];
++
++        for (int i = 0; i < result.length; i++)
++        {
++            result[i] = this.getStackInSlot(i);
++        }
++
++        return result;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        this.upperChest.onOpen(who);
++        this.lowerChest.onOpen(who);
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        this.upperChest.onClose(who);
++        this.lowerChest.onClose(who);
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return null; // This method won't be called since CraftInventoryDoubleChest doesn't defer to here
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        this.upperChest.setMaxStackSize(size);
++        this.lowerChest.setMaxStackSize(size);
++    }
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001507";
+ 
+     public InventoryLargeChest(String p_i1559_1_, IInventory p_i1559_2_, IInventory p_i1559_3_)
+@@ -77,7 +128,7 @@
+ 
+     public int getInventoryStackLimit()
+     {
+-        return this.upperChest.getInventoryStackLimit();
++        return Math.min(this.upperChest.getInventoryStackLimit(), this.lowerChest.getInventoryStackLimit()); // CraftBukkit - check both sides
+     }
+ 
+     public void markDirty()

@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/org/bukkit/configuration/file/FileConfiguration.java
++++ ../src-work/minecraft/org/bukkit/configuration/file/FileConfiguration.java
+@@ -36,7 +36,7 @@
+      * @deprecated temporary compatibility measure
+      */
+     @Deprecated
+-    public static final boolean UTF8_OVERRIDE;
++    public static final boolean UTF8_OVERRIDE=true;
+     /**
+      * This value specifies if the system default encoding is unicode, but
+      * cannot parse standard ASCII.
+@@ -44,24 +44,14 @@
+      * @deprecated temporary compatibility measure
+      */
+     @Deprecated
+-    public static final boolean UTF_BIG;
++    public static final boolean UTF_BIG=false;
+     /**
+      * This value specifies if the system supports unicode.
+      *
+      * @deprecated temporary compatibility measure
+      */
+     @Deprecated
+-    public static final boolean SYSTEM_UTF;
+-    static {
+-        final byte[] testBytes = Base64Coder.decode("ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX4NCg==");
+-        final String testString = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\r\n";
+-        final Charset defaultCharset = Charset.defaultCharset();
+-        final String resultString = new String(testBytes, defaultCharset);
+-        final boolean trueUTF = defaultCharset.name().contains("UTF");
+-        UTF8_OVERRIDE = !testString.equals(resultString) || defaultCharset.equals(Charset.forName("US-ASCII"));
+-        SYSTEM_UTF = trueUTF || UTF8_OVERRIDE;
+-        UTF_BIG = trueUTF && UTF8_OVERRIDE;
+-    }
++    public static final boolean SYSTEM_UTF=true;
+ 
+     /**
+      * Creates an empty {@link FileConfiguration} with no default values.
+@@ -102,7 +92,7 @@
+ 
+         String data = saveToString();
+ 
+-        Writer writer = new OutputStreamWriter(new FileOutputStream(file), UTF8_OVERRIDE && !UTF_BIG ? Charsets.UTF_8 : Charset.defaultCharset());
++        Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
+ 
+         try {
+             writer.write(data);
+@@ -166,7 +156,7 @@
+ 
+         final FileInputStream stream = new FileInputStream(file);
+ 
+-        load(new InputStreamReader(stream, UTF8_OVERRIDE && !UTF_BIG ? Charsets.UTF_8 : Charset.defaultCharset()));
++        load(new InputStreamReader(stream, Charsets.UTF_8));
+     }
+ 
+     /**
+@@ -191,7 +181,7 @@
+     public void load(InputStream stream) throws IOException, InvalidConfigurationException {
+         Validate.notNull(stream, "Stream cannot be null");
+ 
+-        load(new InputStreamReader(stream, UTF8_OVERRIDE ? Charsets.UTF_8 : Charset.defaultCharset()));
++        load(new InputStreamReader(stream, Charsets.UTF_8));
+     }
+ 
+     /**

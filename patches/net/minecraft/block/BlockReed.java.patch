@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockReed.java
++++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
+@@ -44,9 +44,9 @@
+                 {
+                     int i1 = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
+ 
+-                    if (i1 == 15)
++                    if (i1 >= (byte) range(3, (p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().caneModifier * 15) + 0.5F, 15))   // Spigot // Cauldron
+                     {
+-                        p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
++                        org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, 0); // CraftBukkit
+                         p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, 0, 4);
+                     }
+                     else

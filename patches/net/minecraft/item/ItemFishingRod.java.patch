@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFishingRod.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFishingRod.java
+@@ -9,6 +9,8 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.player.PlayerFishEvent; // CraftBukkit
++
+ public class ItemFishingRod extends Item
+ {
+     @SideOnly(Side.CLIENT)
+@@ -44,11 +46,22 @@
+         }
+         else
+         {
++            // CraftBukkit start
++            EntityFishHook hook = new EntityFishHook(p_77659_2_, p_77659_3_);
++            PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) p_77659_3_.getBukkitEntity(), null, (org.bukkit.entity.Fish) hook.getBukkitEntity(), PlayerFishEvent.State.FISHING);
++            p_77659_2_.getServer().getPluginManager().callEvent(playerFishEvent);
++
++            if (playerFishEvent.isCancelled())
++            {
++                return p_77659_1_;
++            }
++
++            // CraftBukkit end
+             p_77659_2_.playSoundAtEntity(p_77659_3_, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+ 
+             if (!p_77659_2_.isRemote)
+             {
+-                p_77659_2_.spawnEntityInWorld(new EntityFishHook(p_77659_2_, p_77659_3_));
++                p_77659_2_.spawnEntityInWorld(hook); // CraftBukkit - moved creation up
+             }
+ 
+             p_77659_3_.swingItem();

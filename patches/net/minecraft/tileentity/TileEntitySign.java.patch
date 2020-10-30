@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySign.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySign.java
+@@ -11,7 +11,7 @@
+ {
+     public String[] signText = new String[] {"", "", "", ""};
+     public int lineBeingEdited = -1;
+-    private boolean field_145916_j = true;
++    public boolean field_145916_j = true; // CraftBukkit - private -> public
+     private EntityPlayer field_145917_k;
+     private static final String __OBFID = "CL_00000363";
+ 
+@@ -43,7 +43,19 @@
+     public Packet getDescriptionPacket()
+     {
+         String[] astring = new String[4];
+-        System.arraycopy(this.signText, 0, astring, 0, 4);
++
++        // CraftBukkit start - Limit sign text to 15 chars per line
++        for (int i = 0; i < 4; ++i)
++        {
++            astring[i] = this.signText[i];
++
++            if (this.signText[i].length() > 15)
++            {
++                astring[i] = this.signText[i].substring(0, 15);
++            }
++        }
++
++        // CraftBukkit end
+         return new S33PacketUpdateSign(this.xCoord, this.yCoord, this.zCoord, astring);
+     }
+ 
+@@ -72,4 +84,26 @@
+     {
+         return this.field_145917_k;
+     }
++
++    // CraftBukkit start - central method to limit sign text to 15 chars per line
++    public static String[] sanitizeLines(String[] lines) {
++        String[] astring = new String[4];
++        for (int i = 0; i < 4; ++i) {
++            astring[i] = lines[i];
++
++            if (lines[i].length() > 15) {
++                astring[i] = lines[i].substring(0, 15);
++            }
++        }
++        return astring;
++    }
++    // CraftBukkit end
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

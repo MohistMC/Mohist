@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
++++ ../src-work/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
+@@ -17,6 +17,8 @@
+ import net.minecraft.util.WeightedRandom;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.entity.CreatureSpawnEvent; // CraftBukkit
++
+ public abstract class MobSpawnerBaseLogic
+ {
+     public int spawnDelay = 20;
+@@ -162,7 +164,15 @@
+ 
+             if (p_98265_1_.worldObj != null)
+             {
+-                p_98265_1_.worldObj.spawnEntityInWorld(p_98265_1_);
++                p_98265_1_.worldObj.addEntity(p_98265_1_, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
++
++                // Spigot Start
++                if (p_98265_1_.worldObj.getSpigotConfig().nerfSpawnerMobs) // Cauldron
++                {
++                    p_98265_1_.fromMobSpawner = true;
++                }
++
++                // Spigot End
+             }
+ 
+             NBTTagCompound nbttagcompound2;
+@@ -190,7 +200,7 @@
+ 
+                     if (p_98265_1_.worldObj != null)
+                     {
+-                        p_98265_1_.worldObj.spawnEntityInWorld(entity2);
++                        p_98265_1_.worldObj.addEntity(entity2, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
+                     }
+ 
+                     entity1.mountEntity(entity2);
+@@ -202,7 +212,7 @@
+         else if (p_98265_1_ instanceof EntityLivingBase && p_98265_1_.worldObj != null)
+         {
+             ((EntityLiving)p_98265_1_).onSpawnWithEgg((IEntityLivingData)null);
+-            this.getSpawnerWorld().spawnEntityInWorld(p_98265_1_);
++            this.getSpawnerWorld().addEntity(p_98265_1_, CreatureSpawnEvent.SpawnReason.SPAWNER); // CraftBukkit
+         }
+ 
+         return p_98265_1_;

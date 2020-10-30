@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityPigZombie.java
+@@ -15,11 +15,13 @@
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.entity.EntityTargetEvent; // CraftBukkit
++
+ public class EntityPigZombie extends EntityZombie
+ {
+     private static final UUID field_110189_bq = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
+     private static final AttributeModifier field_110190_br = (new AttributeModifier(field_110189_bq, "Attacking speed boost", 0.45D, 0)).setSaved(false);
+-    private int angerLevel;
++    public int angerLevel; // CraftBukkit - private -> public
+     private int randomSoundDelay;
+     private Entity field_110191_bu;
+     private static final String __OBFID = "CL_00001693";
+@@ -122,6 +124,24 @@
+ 
+     private void becomeAngryAt(Entity p_70835_1_)
+     {
++        // CraftBukkit start
++        org.bukkit.entity.Entity bukkitTarget = p_70835_1_ == null ? null : p_70835_1_.getBukkitEntity();
++        EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), bukkitTarget, EntityTargetEvent.TargetReason.PIG_ZOMBIE_TARGET);
++        this.worldObj.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled())
++        {
++            return;
++        }
++
++        if (event.getTarget() == null)
++        {
++            this.entityToAttack = null;
++            return;
++        }
++
++        p_70835_1_ = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++        // CraftBukkit end
+         this.entityToAttack = p_70835_1_;
+         this.angerLevel = 400 + this.rand.nextInt(400);
+         this.randomSoundDelay = this.rand.nextInt(40);

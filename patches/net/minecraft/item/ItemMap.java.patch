@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMap.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMap.java
+@@ -19,6 +19,11 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.storage.MapData;
+ 
++// CraftBukkit start
++import org.bukkit.Bukkit;
++import org.bukkit.event.server.MapInitializeEvent;
++// CraftBukkit end
++
+ public class ItemMap extends ItemMapBase
+ {
+     private static final String __OBFID = "CL_00000047";
+@@ -56,10 +61,14 @@
+             mapdata.scale = 3;
+             int i = 128 * (1 << mapdata.scale);
+             mapdata.xCenter = Math.round((float)p_77873_2_.getWorldInfo().getSpawnX() / (float)i) * i;
+-            mapdata.zCenter = Math.round((float)(p_77873_2_.getWorldInfo().getSpawnZ() / i)) * i;
++            mapdata.zCenter = Math.round((float) p_77873_2_.getWorldInfo().getSpawnZ() / (float)i) * i;
+             mapdata.dimension = p_77873_2_.provider.dimensionId;
+             mapdata.markDirty();
+             p_77873_2_.setItemData(s, mapdata);
++            // CraftBukkit start
++            MapInitializeEvent event = new MapInitializeEvent(mapdata.mapView);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            // CraftBukkit end
+         }
+ 
+         return mapdata;
+@@ -279,6 +288,10 @@
+             mapdata1.dimension = mapdata.dimension;
+             mapdata1.markDirty();
+             p_77622_2_.setItemData("map_" + p_77622_1_.getItemDamage(), mapdata1);
++            // CraftBukkit start
++            MapInitializeEvent event = new MapInitializeEvent(mapdata1.mapView);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            // CraftBukkit end
+         }
+     }
+ 

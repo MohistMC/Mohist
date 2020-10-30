@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockJukebox.java
++++ ../src-work/minecraft/net/minecraft/block/BlockJukebox.java
+@@ -163,8 +163,23 @@
+ 
+             public void func_145857_a(ItemStack p_145857_1_)
+             {
++                // CraftBukkit start - There can only be one
++                if (p_145857_1_ != null)
++                {
++                    p_145857_1_.stackSize = 1;
++                }
++
++                // CraftBukkit end
+                 this.field_145858_a = p_145857_1_;
+                 this.markDirty();
+             }
++
++            // Cauldron start
++            @Override
++            public boolean canUpdate()
++            {
++                return false;
++            }
++            // Cauldron end
+         }
+ }

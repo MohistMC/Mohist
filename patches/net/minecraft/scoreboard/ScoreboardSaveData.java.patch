@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/scoreboard/ScoreboardSaveData.java
++++ ../src-work/minecraft/net/minecraft/scoreboard/ScoreboardSaveData.java
+@@ -65,6 +65,7 @@
+         {
+             NBTTagCompound nbttagcompound = p_96498_1_.getCompoundTagAt(i);
+             ScorePlayerTeam scoreplayerteam = this.theScoreboard.createTeam(nbttagcompound.getString("Name"));
++            if(scoreplayerteam.getMembershipCollection().isEmpty()) continue; // Paper - Don't save empty scoreboard teams to scoreboard.dat
+             scoreplayerteam.setTeamName(nbttagcompound.getString("DisplayName"));
+             scoreplayerteam.setNamePrefix(nbttagcompound.getString("Prefix"));
+             scoreplayerteam.setNameSuffix(nbttagcompound.getString("Suffix"));

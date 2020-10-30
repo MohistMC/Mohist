@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListEntry.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListEntry.java
+@@ -17,7 +17,7 @@
+         this.field_152642_a = p_i1147_1_;
+     }
+ 
+-    Object func_152640_f()
++    public Object func_152640_f() // CraftBukkit - private -> public
+     {
+         return this.field_152642_a;
+     }

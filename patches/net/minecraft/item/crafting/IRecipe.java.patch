@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
+@@ -13,4 +13,6 @@
+     int getRecipeSize();
+ 
+     ItemStack getRecipeOutput();
++
++    org.bukkit.inventory.Recipe toBukkitRecipe(); // CraftBukkit
+ }

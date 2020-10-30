@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/org/bukkit/plugin/SimpleServicesManager.java
++++ ../src-work/minecraft/org/bukkit/plugin/SimpleServicesManager.java
+@@ -79,7 +79,8 @@
+                         while (it2.hasNext()) {
+                             RegisteredServiceProvider<?> registered = it2.next();
+ 
+-                            if (registered.getPlugin().equals(plugin)) {
++                            Plugin oPlugin = registered.getPlugin();
++                            if (oPlugin != null ? oPlugin.equals(plugin) : plugin == null) {
+                                 it2.remove();
+                                 unregisteredEvents.add(new ServiceUnregisterEvent(registered));
+                             }

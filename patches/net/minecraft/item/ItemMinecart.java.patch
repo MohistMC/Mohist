@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMinecart.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMinecart.java
+@@ -79,6 +79,15 @@
+         {
+             if (!p_77648_3_.isRemote)
+             {
++                // CraftBukkit start - Minecarts
++                org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(p_77648_2_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_1_);
++
++                if (event.isCancelled())
++                {
++                    return false;
++                }
++
++                // CraftBukkit end
+                 EntityMinecart entityminecart = EntityMinecart.createMinecart(p_77648_3_, (double)((float)p_77648_4_ + 0.5F), (double)((float)p_77648_5_ + 0.5F), (double)((float)p_77648_6_ + 0.5F), this.minecartType);
+ 
+                 if (p_77648_1_.hasDisplayName())

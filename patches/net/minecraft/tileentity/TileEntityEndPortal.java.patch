@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityEndPortal.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityEndPortal.java
+@@ -3,4 +3,12 @@
+ public class TileEntityEndPortal extends TileEntity
+ {
+     private static final String __OBFID = "CL_00000365";
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

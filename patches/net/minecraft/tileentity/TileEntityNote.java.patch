@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityNote.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityNote.java
+@@ -68,7 +68,23 @@
+                 b0 = 4;
+             }
+ 
+-            p_145878_1_.addBlockEvent(p_145878_2_, p_145878_3_, p_145878_4_, Blocks.noteblock, b0, this.note);
++            // CraftBukkit start
++            org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callNotePlayEvent(this.worldObj, p_145878_2_, p_145878_3_, p_145878_4_, b0, this.note);
++
++            if (!event.isCancelled())
++            {
++                this.worldObj.addBlockEvent(p_145878_2_, p_145878_3_, p_145878_4_, Blocks.noteblock, event.getInstrument().getType(), event.getNote().getId());
++            }
++
++            // CraftBukkit end
+         }
+     }
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

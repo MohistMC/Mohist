@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerBeacon.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerBeacon.java
+@@ -8,6 +8,8 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityBeacon;
+ 
++import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
++
+ public class ContainerBeacon extends Container
+ {
+     private TileEntityBeacon tileBeacon;
+@@ -15,10 +17,15 @@
+     private int field_82865_g;
+     private int field_82867_h;
+     private int field_82868_i;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001735";
+ 
+     public ContainerBeacon(InventoryPlayer p_i1802_1_, TileEntityBeacon p_i1802_2_)
+     {
++        player = p_i1802_1_; // CraftBukkit
+         this.tileBeacon = p_i1802_2_;
+         this.addSlotToContainer(this.beaconSlot = new ContainerBeacon.BeaconSlot(p_i1802_2_, 0, 136, 110));
+         byte b0 = 36;
+@@ -77,6 +84,13 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        // CraftBukkit start
++        if (!this.checkReachable)
++        {
++            return true;
++        }
++        // CraftBukkit end
++
+         return this.tileBeacon.isUseableByPlayer(p_75145_1_);
+     }
+ 
+@@ -145,6 +159,20 @@
+         return itemstack;
+     }
+ 
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryBeacon(this.tileBeacon);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
++
+     class BeaconSlot extends Slot
+     {
+         private static final String __OBFID = "CL_00001736";

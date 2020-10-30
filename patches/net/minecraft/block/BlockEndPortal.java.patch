@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockEndPortal.java
++++ ../src-work/minecraft/net/minecraft/block/BlockEndPortal.java
+@@ -15,6 +15,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.entity.EntityPortalEnterEvent; // CraftBukkit
++
+ public class BlockEndPortal extends BlockContainer
+ {
+     public static boolean field_149948_a;
+@@ -64,6 +66,10 @@
+     {
+         if (p_149670_5_.ridingEntity == null && p_149670_5_.riddenByEntity == null && !p_149670_1_.isRemote)
+         {
++            // CraftBukkit start - Entity in portal
++            EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_149670_5_.getBukkitEntity(), new org.bukkit.Location(p_149670_1_.getWorld(), p_149670_2_, p_149670_3_, p_149670_4_));
++            p_149670_1_.getServer().getPluginManager().callEvent(event);
++            // CraftBukkit end
+             p_149670_5_.travelToDimension(1);
+         }
+     }

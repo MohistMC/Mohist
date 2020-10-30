@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerMerchant.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerMerchant.java
+@@ -8,6 +8,8 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
++
+ public class ContainerMerchant extends Container
+ {
+     private IMerchant theMerchant;

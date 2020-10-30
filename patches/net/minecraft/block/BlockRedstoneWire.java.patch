@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneWire.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneWire.java
+@@ -18,6 +18,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
++
+ public class BlockRedstoneWire extends Block
+ {
+     private boolean field_150181_a = true;
+@@ -159,8 +161,17 @@
+             i3 = l1;
+         }
+ 
++        // CraftBukkit start
+         if (k1 != i3)
+         {
++            BlockRedstoneEvent event = new BlockRedstoneEvent(p_150175_1_.getWorld().getBlockAt(p_150175_2_, p_150175_3_, p_150175_4_), k1, i3);
++            p_150175_1_.getServer().getPluginManager().callEvent(event);
++            i3 = event.getNewCurrent();
++        }
++
++        // CraftBukkit end
++        if (k1 != i3)
++        {
+             p_150175_1_.setBlockMetadataWithNotify(p_150175_2_, p_150175_3_, p_150175_4_, i3, 2);
+             this.field_150179_b.add(new ChunkPosition(p_150175_2_, p_150175_3_, p_150175_4_));
+             this.field_150179_b.add(new ChunkPosition(p_150175_2_ - 1, p_150175_3_, p_150175_4_));
+@@ -294,7 +305,8 @@
+         }
+     }
+ 
+-    private int func_150178_a(World p_150178_1_, int p_150178_2_, int p_150178_3_, int p_150178_4_, int p_150178_5_)
++    // CraftBukkit - private -> public
++    public int func_150178_a(World p_150178_1_, int p_150178_2_, int p_150178_3_, int p_150178_4_, int p_150178_5_)
+     {
+         if (p_150178_1_.getBlock(p_150178_2_, p_150178_3_, p_150178_4_) != this)
+         {

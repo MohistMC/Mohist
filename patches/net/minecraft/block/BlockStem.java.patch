@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStem.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
+@@ -17,6 +17,8 @@
+ import net.minecraft.world.World;
+ import static net.minecraftforge.common.util.ForgeDirection.*;
+ 
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class BlockStem extends BlockBush implements IGrowable
+ {
+     private final Block field_149877_a;
+@@ -46,14 +48,14 @@
+         {
+             float f = this.func_149875_n(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_);
+ 
+-            if (p_149674_5_.nextInt((int)(25.0F / f) + 1) == 0)
++            if (p_149674_5_.nextInt((int)(p_149674_1_.growthOdds / (this == Blocks.pumpkin_stem ? p_149674_1_.getSpigotConfig().pumpkinModifier : p_149674_1_.spigotConfig.melonModifier) * (25.0F / f)) + 1) == 0)   // Spigot // Cauldron
+             {
+                 int l = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
+ 
+                 if (l < 7)
+                 {
+                     ++l;
+-                    p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, l, 2);
++                    CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, this, l); // CraftBukkit
+                 }
+                 else
+                 {
+@@ -105,7 +107,7 @@
+ 
+                     if (p_149674_1_.isAirBlock(j1, p_149674_3_, k1) && (block.canSustainPlant(p_149674_1_, j1, p_149674_3_ - 1, k1, UP, this) || block == Blocks.dirt || block == Blocks.grass))
+                     {
+-                        p_149674_1_.setBlock(j1, p_149674_3_, k1, this.field_149877_a);
++                        CraftEventFactory.handleBlockGrowEvent(p_149674_1_, j1, p_149674_3_, k1, this.field_149877_a, 0); // CraftBukkit
+                     }
+                 }
+             }

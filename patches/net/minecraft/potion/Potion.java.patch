@@ -1,0 +1,79 @@
+--- ../src-base/minecraft/net/minecraft/potion/Potion.java
++++ ../src-work/minecraft/net/minecraft/potion/Potion.java
+@@ -17,6 +17,12 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.StringUtils;
+ 
++// CraftBukkit start
++import net.minecraft.entity.projectile.EntityPotion;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
++// CraftBukkit end
++
+ public class Potion
+ {
+     public static final Potion[] potionTypes = new Potion[32];
+@@ -78,6 +84,7 @@
+         }
+ 
+         this.liquidColor = p_i1573_3_;
++        org.bukkit.potion.PotionEffectType.registerPotionEffectType(new org.bukkit.craftbukkit.potion.CraftPotionEffectType(this)); // CraftBukkit
+     }
+ 
+     protected Potion setIconIndex(int p_76399_1_, int p_76399_2_)
+@@ -97,14 +104,14 @@
+         {
+             if (p_76394_1_.getHealth() < p_76394_1_.getMaxHealth())
+             {
+-                p_76394_1_.heal(1.0F);
++                p_76394_1_.heal(1.0F, RegainReason.MAGIC_REGEN); // CraftBukkit
+             }
+         }
+         else if (this.id == poison.id)
+         {
+             if (p_76394_1_.getHealth() > 1.0F)
+             {
+-                p_76394_1_.attackEntityFrom(DamageSource.magic, 1.0F);
++                p_76394_1_.attackEntityFrom(CraftEventFactory.POISON, 1.0F); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
+             }
+         }
+         else if (this.id == wither.id)
+@@ -131,12 +138,19 @@
+         }
+         else
+         {
+-            p_76394_1_.heal((float)Math.max(4 << p_76394_2_, 0));
++            p_76394_1_.heal((float)Math.max(4 << p_76394_2_, 0), RegainReason.MAGIC); // CraftBukkit
+         }
+     }
+ 
+     public void affectEntity(EntityLivingBase p_76402_1_, EntityLivingBase p_76402_2_, int p_76402_3_, double p_76402_4_)
+     {
++        // CraftBukkit start - Delegate; we need EntityPotion
++        applyInstantEffect(p_76402_1_, p_76402_2_, p_76402_3_, p_76402_4_, null);
++    }
++
++    public void applyInstantEffect(EntityLivingBase p_76402_1_, EntityLivingBase p_76402_2_, int p_76402_3_, double p_76402_4_, EntityPotion potion)
++    {
++        // CraftBukkit end
+         int j;
+ 
+         if ((this.id != heal.id || p_76402_2_.isEntityUndead()) && (this.id != harm.id || !p_76402_2_.isEntityUndead()))
+@@ -151,14 +165,15 @@
+                 }
+                 else
+                 {
+-                    p_76402_2_.attackEntityFrom(DamageSource.causeIndirectMagicDamage(p_76402_2_, p_76402_1_), (float)j);
++                    // CraftBukkit - The "damager" needs to be the potion
++                    p_76402_2_.attackEntityFrom(DamageSource.causeIndirectMagicDamage(potion != null ? potion : p_76402_2_, p_76402_1_), (float)j);
+                 }
+             }
+         }
+         else
+         {
+             j = (int)(p_76402_4_ * (double)(4 << p_76402_3_) + 0.5D);
+-            p_76402_2_.heal((float)j);
++            p_76402_2_.heal((float)j, RegainReason.MAGIC); // CraftBukkit
+         }
+     }
+ 

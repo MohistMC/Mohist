@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/event/FMLServerStartingEvent.java
++++ ../src-work/minecraft/cpw/mods/fml/common/event/FMLServerStartingEvent.java
+@@ -16,6 +16,7 @@
+ import net.minecraft.command.ICommand;
+ import net.minecraft.server.MinecraftServer;
+ import cpw.mods.fml.common.LoaderState.ModState;
++import org.bukkit.command.Command; // Cauldron
+ 
+ public class FMLServerStartingEvent extends FMLStateEvent
+ {
+@@ -43,4 +44,12 @@
+         CommandHandler ch = (CommandHandler) getServer().getCommandManager();
+         ch.registerCommand(command);
+     }
++
++    // Cauldron start - used for mods to register a Bukkit command
++    public void registerServerCommand(String fallbackPrefix, Command command)
++    {
++        org.bukkit.command.SimpleCommandMap commandMap = getServer().server.getCommandMap();
++        commandMap.register(fallbackPrefix, command);
++    }
++    // Cauldron end 
+ }

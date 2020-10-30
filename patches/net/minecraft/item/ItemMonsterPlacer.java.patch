@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -55,7 +55,7 @@
+ 
+     public boolean onItemUse(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
+     {
+-        if (p_77648_3_.isRemote)
++        if (p_77648_3_.isRemote || p_77648_1_.getItemDamage() == 48 || p_77648_1_.getItemDamage() == 49 || p_77648_1_.getItemDamage() == 63 || p_77648_1_.getItemDamage() == 64)   // CraftBukkit
+         {
+             return true;
+         }
+@@ -168,7 +168,7 @@
+                     entityliving.rotationYawHead = entityliving.rotationYaw;
+                     entityliving.renderYawOffset = entityliving.rotationYaw;
+                     entityliving.onSpawnWithEgg((IEntityLivingData)null);
+-                    p_77840_0_.spawnEntityInWorld(entity);
++                    p_77840_0_.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+                     entityliving.playLivingSound();
+                 }
+             }

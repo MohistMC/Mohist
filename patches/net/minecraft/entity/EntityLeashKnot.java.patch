@@ -1,0 +1,98 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityLeashKnot.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityLeashKnot.java
+@@ -2,8 +2,10 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.Iterator;
+ import java.util.List;
++
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Items;
+ import net.minecraft.item.ItemStack;
+@@ -11,6 +13,13 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.world.World;
+ 
++ // CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.play.server.S1BPacketEntityAttach;
++
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++// CraftBukkit end
++
+ public class EntityLeashKnot extends EntityHanging
+ {
+     private static final String __OBFID = "CL_00001548";
+@@ -84,6 +93,14 @@
+ 
+                     if (entityliving.getLeashed() && entityliving.getLeashedToEntity() == p_130002_1_)
+                     {
++                        // CraftBukkit start
++                        if (CraftEventFactory.callPlayerLeashEntityEvent(entityliving, this, p_130002_1_).isCancelled())
++                        {
++                            ((EntityPlayerMP) p_130002_1_).playerNetServerHandler.sendPacket(new S1BPacketEntityAttach(1, entityliving, entityliving.getLeashedToEntity()));
++                            continue;
++                        }
++
++                        // CraftBukkit end
+                         entityliving.setLeashedToEntity(this, true);
+                         flag = true;
+                     }
+@@ -93,9 +110,12 @@
+ 
+         if (!this.worldObj.isRemote && !flag)
+         {
+-            this.setDead();
++            // CraftBukkit start - Move below
++            //this.setDead();
++            boolean die = true;
+ 
+-            if (p_130002_1_.capabilities.isCreativeMode)
++            // CraftBukkit end
++            if (true || p_130002_1_.capabilities.isCreativeMode)   // CraftBukkit - Process for non-creative as well
+             {
+                 d0 = 7.0D;
+                 list = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getBoundingBox(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + d0, this.posZ + d0));
+@@ -110,11 +130,27 @@
+ 
+                         if (entityliving.getLeashed() && entityliving.getLeashedToEntity() == this)
+                         {
+-                            entityliving.clearLeashed(true, false);
++                            // CraftBukkit start
++                            if (CraftEventFactory.callPlayerUnleashEntityEvent(entityliving, p_130002_1_).isCancelled())
++                            {
++                                die = false;
++                                continue;
++                            }
++
++                            entityliving.clearLeashed(true, !p_130002_1_.capabilities.isCreativeMode); // false -> survival mode boolean
++                            // CraftBukkit end
+                         }
+                     }
+                 }
+             }
++
++            // CraftBukkit start
++            if (die)
++            {
++                this.setDead();
++            }
++
++            // CraftBukkit end
+         }
+ 
+         return true;
+@@ -154,4 +190,11 @@
+ 
+         return null;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

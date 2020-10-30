@@ -1,0 +1,63 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -10,15 +10,25 @@
+ import net.minecraft.stats.AchievementList;
+ import net.minecraft.tileentity.TileEntityBrewingStand;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class ContainerBrewingStand extends Container
+ {
+     private TileEntityBrewingStand tileBrewingStand;
+     private final Slot theSlot;
+     private int brewTime;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001737";
+ 
+     public ContainerBrewingStand(InventoryPlayer p_i1805_1_, TileEntityBrewingStand p_i1805_2_)
+     {
++        this.player = p_i1805_1_; // CraftBukkit
+         this.tileBrewingStand = p_i1805_2_;
+         this.addSlotToContainer(new ContainerBrewingStand.Potion(p_i1805_1_.player, p_i1805_2_, 0, 56, 46));
+         this.addSlotToContainer(new ContainerBrewingStand.Potion(p_i1805_1_.player, p_i1805_2_, 1, 79, 53));
+@@ -74,6 +84,13 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        // CraftBukkit start
++        if (!this.checkReachable)
++        {
++            return true;
++        }
++        // CraftBukkit end
++
+         return this.tileBrewingStand.isUseableByPlayer(p_75145_1_);
+     }
+ 
+@@ -152,6 +169,20 @@
+         return itemstack;
+     }
+ 
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.tileBrewingStand);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
++
+     class Ingredient extends Slot
+     {
+         private static final String __OBFID = "CL_00001738";

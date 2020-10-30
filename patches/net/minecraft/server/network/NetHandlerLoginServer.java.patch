@@ -1,0 +1,269 @@
+--- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
++++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
+@@ -2,17 +2,17 @@
+ 
+ import com.google.common.base.Charsets;
+ import com.mojang.authlib.GameProfile;
+-import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+-
+ import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+ import io.netty.util.concurrent.GenericFutureListener;
+-import java.math.BigInteger;
++
+ import java.security.PrivateKey;
+ import java.util.Arrays;
+ import java.util.Random;
+ import java.util.UUID;
+ import java.util.concurrent.atomic.AtomicInteger;
++
+ import javax.crypto.SecretKey;
++
+ import net.minecraft.network.EnumConnectionState;
+ import net.minecraft.network.NetworkManager;
+ import net.minecraft.network.login.INetHandlerLoginServer;
+@@ -23,12 +23,17 @@
+ import net.minecraft.network.login.server.S02PacketLoginSuccess;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.ChatComponentText;
+-import net.minecraft.util.CryptManager;
+ import net.minecraft.util.IChatComponent;
++
+ import org.apache.commons.lang3.Validate;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++// CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++// CraftBukkit end
++import com.mojang.authlib.properties.Property;
++
+ public class NetHandlerLoginServer implements INetHandlerLoginServer
+ {
+     private static final AtomicInteger field_147331_b = new AtomicInteger(0);
+@@ -37,25 +42,28 @@
+     private final byte[] field_147330_e = new byte[4];
+     private final MinecraftServer field_147327_f;
+     public final NetworkManager field_147333_a;
+-    private NetHandlerLoginServer.LoginState field_147328_g;
++    private LoginState field_147328_g;
+     private int field_147336_h;
+     private GameProfile field_147337_i;
+     private String field_147334_j;
+     private SecretKey field_147335_k;
++    public String hostname = ""; // CraftBukkit - add field
+     private static final String __OBFID = "CL_00001458";
++    private final boolean debug;
+ 
+     public NetHandlerLoginServer(MinecraftServer p_i45298_1_, NetworkManager p_i45298_2_)
+     {
+-        this.field_147328_g = NetHandlerLoginServer.LoginState.HELLO;
++        this.field_147328_g = LoginState.HELLO;
+         this.field_147334_j = "";
+         this.field_147327_f = p_i45298_1_;
+         this.field_147333_a = p_i45298_2_;
++        this.debug = p_i45298_1_.cauldronConfig.userLogin.getValue();
+         field_147329_d.nextBytes(this.field_147330_e);
+     }
+ 
+     public void onNetworkTick()
+     {
+-        if (this.field_147328_g == NetHandlerLoginServer.LoginState.READY_TO_ACCEPT)
++        if (this.field_147328_g == LoginState.READY_TO_ACCEPT)
+         {
+             this.func_147326_c();
+         }
+@@ -81,24 +89,54 @@
+         }
+     }
+ 
++    // Spigot start
++    public void initUUID()
++    {
++        UUID uuid;
++        if ( field_147333_a.spoofedUUID != null )
++        {
++            uuid = field_147333_a.spoofedUUID;
++        } else
++        {
++            uuid = UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + this.field_147337_i.getName() ).getBytes( Charsets.UTF_8 ) );
++        }
++
++        this.field_147337_i = new GameProfile( uuid, this.field_147337_i.getName() );
++
++        if (field_147333_a.spoofedProfile != null)
++        {
++            for ( Property property : field_147333_a.spoofedProfile )
++            {
++                this.field_147337_i.getProperties().put( property.getName(), property );
++            }
++        }
++    }
++    // Spigot end
++
+     public void func_147326_c()
+     {
++        // Spigot start - Moved to initUUID
++        /*
+         if (!this.field_147337_i.isComplete())
+         {
+             this.field_147337_i = this.func_152506_a(this.field_147337_i);
+         }
++        */
++        // Spigot end
+ 
+-        String s = this.field_147327_f.getConfigurationManager().allowUserToConnect(this.field_147333_a.getSocketAddress(), this.field_147337_i);
++        // CraftBukkit start - fire PlayerLoginEvent
++        EntityPlayerMP s = this.field_147327_f.getConfigurationManager().attemptLogin(this, this.field_147337_i, this.hostname);
+ 
+-        if (s != null)
++        if (s == null)
+         {
+-            this.func_147322_a(s);
++            // this.func_147322_a(s);
++            // CraftBukkit end
+         }
+         else
+         {
+             this.field_147328_g = NetHandlerLoginServer.LoginState.ACCEPTED;
+             this.field_147333_a.scheduleOutboundPacket(new S02PacketLoginSuccess(this.field_147337_i), new GenericFutureListener[0]);
+-            FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.getConfigurationManager(), this.field_147333_a, this.field_147327_f.getConfigurationManager().createPlayerForUser(this.field_147337_i));
++            FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.getConfigurationManager(), this.field_147333_a, this.field_147327_f.getConfigurationManager().processLogin(this.field_147337_i, s)); // CraftBukkit - add player reference
+         }
+     }
+ 
+@@ -114,29 +152,33 @@
+ 
+     public void onConnectionStateTransition(EnumConnectionState p_147232_1_, EnumConnectionState p_147232_2_)
+     {
+-        Validate.validState(this.field_147328_g == NetHandlerLoginServer.LoginState.ACCEPTED || this.field_147328_g == NetHandlerLoginServer.LoginState.HELLO, "Unexpected change in protocol", new Object[0]);
++        Validate.validState(this.field_147328_g == LoginState.ACCEPTED || this.field_147328_g == LoginState.HELLO, "Unexpected change in protocol", new Object[0]);
+         Validate.validState(p_147232_2_ == EnumConnectionState.PLAY || p_147232_2_ == EnumConnectionState.LOGIN, "Unexpected protocol " + p_147232_2_, new Object[0]);
+     }
+ 
+     public void processLoginStart(C00PacketLoginStart p_147316_1_)
+     {
+-        Validate.validState(this.field_147328_g == NetHandlerLoginServer.LoginState.HELLO, "Unexpected hello packet", new Object[0]);
++        if (debug) logger.info("Login attempt");
++        Validate.validState(this.field_147328_g == LoginState.HELLO, "Unexpected hello packet", new Object[0]);
+         this.field_147337_i = p_147316_1_.func_149304_c();
++        if (debug) logger.info("Received profile: " + this.field_147337_i.getName());
+ 
+         if (this.field_147327_f.isServerInOnlineMode() && !this.field_147333_a.isLocalChannel())
+         {
+-            this.field_147328_g = NetHandlerLoginServer.LoginState.KEY;
++            if (debug) logger.info("Send encryption request to " + this.field_147337_i.getName());
++            this.field_147328_g = LoginState.KEY;
+             this.field_147333_a.scheduleOutboundPacket(new S01PacketEncryptionRequest(this.field_147334_j, this.field_147327_f.getKeyPair().getPublic(), this.field_147330_e), new GenericFutureListener[0]);
+         }
+         else
+         {
+-            this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
++            if (debug) logger.info("Lookup offline UUID for " + this.field_147337_i.getName());
++            (new ThreadPlayerLookupUUID(this, "User Authenticator #" + field_147331_b.incrementAndGet())).start(); // Spigot
+         }
+     }
+ 
+     public void processEncryptionResponse(C01PacketEncryptionResponse p_147315_1_)
+     {
+-        Validate.validState(this.field_147328_g == NetHandlerLoginServer.LoginState.KEY, "Unexpected key packet", new Object[0]);
++        Validate.validState(this.field_147328_g == LoginState.KEY, "Unexpected key packet", new Object[0]);
+         PrivateKey privatekey = this.field_147327_f.getKeyPair().getPrivate();
+ 
+         if (!Arrays.equals(this.field_147330_e, p_147315_1_.func_149299_b(privatekey)))
+@@ -145,54 +187,12 @@
+         }
+         else
+         {
++            if (debug) logger.info("Enabling encryption for " + this.field_147337_i.getName());
+             this.field_147335_k = p_147315_1_.func_149300_a(privatekey);
+             this.field_147328_g = NetHandlerLoginServer.LoginState.AUTHENTICATING;
+             this.field_147333_a.enableEncryption(this.field_147335_k);
+-            (new Thread("User Authenticator #" + field_147331_b.incrementAndGet())
+-            {
+-                private static final String __OBFID = "CL_00001459";
+-                public void run()
+-                {
+-                    GameProfile gameprofile = NetHandlerLoginServer.this.field_147337_i;
+-
+-                    try
+-                    {
+-                        String s = (new BigInteger(CryptManager.getServerIdHash(NetHandlerLoginServer.this.field_147334_j, NetHandlerLoginServer.this.field_147327_f.getKeyPair().getPublic(), NetHandlerLoginServer.this.field_147335_k))).toString(16);
+-                        NetHandlerLoginServer.this.field_147337_i = NetHandlerLoginServer.this.field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s);
+-
+-                        if (NetHandlerLoginServer.this.field_147337_i != null)
+-                        {
+-                            NetHandlerLoginServer.logger.info("UUID of player " + NetHandlerLoginServer.this.field_147337_i.getName() + " is " + NetHandlerLoginServer.this.field_147337_i.getId());
+-                            NetHandlerLoginServer.this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
+-                        }
+-                        else if (NetHandlerLoginServer.this.field_147327_f.isSinglePlayer())
+-                        {
+-                            NetHandlerLoginServer.logger.warn("Failed to verify username but will let them in anyway!");
+-                            NetHandlerLoginServer.this.field_147337_i = NetHandlerLoginServer.this.func_152506_a(gameprofile);
+-                            NetHandlerLoginServer.this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
+-                        }
+-                        else
+-                        {
+-                            NetHandlerLoginServer.this.func_147322_a("Failed to verify username!");
+-                            NetHandlerLoginServer.logger.error("Username \'" + NetHandlerLoginServer.this.field_147337_i.getName() + "\' tried to join with an invalid session");
+-                        }
+-                    }
+-                    catch (AuthenticationUnavailableException authenticationunavailableexception)
+-                    {
+-                        if (NetHandlerLoginServer.this.field_147327_f.isSinglePlayer())
+-                        {
+-                            NetHandlerLoginServer.logger.warn("Authentication servers are down but will let them in anyway!");
+-                            NetHandlerLoginServer.this.field_147337_i = NetHandlerLoginServer.this.func_152506_a(gameprofile);
+-                            NetHandlerLoginServer.this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
+-                        }
+-                        else
+-                        {
+-                            NetHandlerLoginServer.this.func_147322_a("Authentication servers are down. Please try again later, sorry!");
+-                            NetHandlerLoginServer.logger.error("Couldn\'t verify username because servers are unavailable");
+-                        }
+-                    }
+-                }
+-            }).start();
++            if (debug) logger.info("Lookup online UUID for " + this.field_147337_i.getName());
++            (new ThreadPlayerLookupUUID(this, "User Authenticator #" + field_147331_b.incrementAndGet())).start();
+         }
+     }
+ 
+@@ -202,6 +202,38 @@
+         return new GameProfile(uuid, p_152506_1_.getName());
+     }
+ 
++    // Cauldron start - access methods for ThreadPlayerLookupUUID
++    static String getLoginServerId(NetHandlerLoginServer loginServer) {
++        return loginServer.field_147334_j;
++    }
++
++    static MinecraftServer getMinecraftServer(NetHandlerLoginServer loginServer) {
++        return loginServer.field_147327_f;
++    }
++
++    static SecretKey getSecretKey(NetHandlerLoginServer loginServer) {
++        return loginServer.field_147335_k;
++    }
++
++    static GameProfile processPlayerLoginGameProfile(NetHandlerLoginServer loginServer, GameProfile gameprofile) {
++        if (loginServer.debug) logger.info("Player logged in: " + gameprofile);
++        return loginServer.field_147337_i = gameprofile;
++    }
++
++    static GameProfile getGameProfile(NetHandlerLoginServer loginServer) {
++        return loginServer.field_147337_i;
++    }
++
++    static Logger getLogger() {
++        return logger;
++    }
++
++    static void setLoginState(NetHandlerLoginServer loginServer, LoginState state)
++    {
++        loginServer.field_147328_g = state;
++    }
++    // Cauldron end
++
+     static enum LoginState
+     {
+         HELLO,

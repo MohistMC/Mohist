@@ -1,0 +1,81 @@
+--- ../src-base/minecraft/net/minecraftforge/fluids/BlockFluidClassic.java
++++ ../src-work/minecraft/net/minecraftforge/fluids/BlockFluidClassic.java
+@@ -1,13 +1,13 @@
+ package net.minecraftforge.fluids;
+ 
+-import java.util.Random;
+-
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import java.util.Random;
++
+ /**
+  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
+  *
+@@ -133,9 +133,21 @@
+             world.setBlockMetadataWithNotify(x, y, z, 0, 2);
+         }
+ 
++        // Cauldron start
++        org.bukkit.Server server = world.getServer();
++        org.bukkit.World bworld = world.getWorld();
++        org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(x, y, z);
++        // Cauldron end
++
+         // Flow vertically if possible
+         if (canDisplace(world, x, y + densityDir, z))
+         {
++            // Cauldron start
++            org.bukkit.block.BlockFace face = densityDir < 0 ? org.bukkit.block.BlockFace.DOWN : org.bukkit.block.BlockFace.UP;
++            org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(source, face);
++            if (server != null) server.getPluginManager().callEvent(event);
++            if (event.isCancelled()) return;
++            // Cauldron end
+             flowIntoBlock(world, x, y + densityDir, z, 1);
+             return;
+         }
+@@ -155,10 +167,38 @@
+             }
+             boolean flowTo[] = getOptimalFlowDirections(world, x, y, z);
+ 
+-            if (flowTo[0]) flowIntoBlock(world, x - 1, y, z,     flowMeta);
++            // Cauldron start
++            /*if (flowTo[0]) flowIntoBlock(world, x - 1, y, z,     flowMeta);
+             if (flowTo[1]) flowIntoBlock(world, x + 1, y, z,     flowMeta);
+             if (flowTo[2]) flowIntoBlock(world, x,     y, z - 1, flowMeta);
+-            if (flowTo[3]) flowIntoBlock(world, x,     y, z + 1, flowMeta);
++            if (flowTo[3]) flowIntoBlock(world, x,     y, z + 1, flowMeta);*/
++            org.bukkit.block.BlockFace[] faces = new org.bukkit.block.BlockFace[] { org.bukkit.block.BlockFace.WEST, org.bukkit.block.BlockFace.EAST,
++                    org.bukkit.block.BlockFace.NORTH, org.bukkit.block.BlockFace.SOUTH };
++            for (int i = 0; i < 4; i++)
++            {
++                if (flowTo[i])
++                {
++                    org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(source, faces[i]);
++                    if (server != null) server.getPluginManager().callEvent(event);
++                    if (event.isCancelled()) continue;
++                    switch (i)
++                    {
++                        case 0:
++                            flowIntoBlock(world, x - 1, y, z, flowMeta);
++                            break;
++                        case 1:
++                            flowIntoBlock(world, x + 1, y, z, flowMeta);
++                            break;
++                        case 2:
++                            flowIntoBlock(world, x, y, z - 1, flowMeta);
++                            break;
++                        case 3:
++                            flowIntoBlock(world, x, y, z + 1, flowMeta);
++                            break;
++                    }
++                }
++            }
++            // Cauldron end
+         }
+     }
+ 

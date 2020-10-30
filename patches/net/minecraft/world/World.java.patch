@@ -1,0 +1,1688 @@
+--- ../src-base/minecraft/net/minecraft/world/World.java
++++ ../src-work/minecraft/net/minecraft/world/World.java
+@@ -2,9 +2,11 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.ArrayList;
+ import java.util.Calendar;
+ import java.util.Collection;
++import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+@@ -12,6 +14,9 @@
+ import java.util.Set;
+ import java.util.UUID;
+ import java.util.concurrent.Callable;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.ConcurrentMap;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockHopper;
+ import net.minecraft.block.BlockLiquid;
+@@ -23,11 +28,15 @@
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.EntityList;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
++import net.minecraft.inventory.IInventory;
++import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.network.play.server.S2EPacketCloseWindow;
+ import net.minecraft.pathfinding.PathEntity;
+ import net.minecraft.pathfinding.PathFinder;
+ import net.minecraft.profiler.Profiler;
+@@ -70,6 +79,46 @@
+ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+ import net.minecraft.entity.EnumCreatureType;
+ 
++// CraftBukkit start
++import net.minecraft.entity.EntityLivingBase;
++import net.minecraft.entity.item.EntityItem;
++import net.minecraft.entity.monster.EntityGhast;
++import net.minecraft.entity.monster.EntityGolem;
++import net.minecraft.entity.monster.EntityMob;
++import net.minecraft.entity.monster.EntitySlime;
++import net.minecraft.entity.passive.EntityAnimal;
++import net.minecraft.entity.passive.EntityWaterMob;
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.world.gen.ChunkProviderServer;
++
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.generator.ChunkGenerator;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.block.BlockCanBuildEvent;
++import org.bukkit.event.block.BlockPhysicsEvent;
++import org.bukkit.event.block.BlockPlaceEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
++import org.bukkit.event.weather.WeatherChangeEvent;
++import org.bukkit.event.weather.ThunderChangeEvent;
++
++// CraftBukkit end
++// Spigot Start
++import net.minecraft.entity.item.EntityXPOrb;
++import org.bukkit.craftbukkit.SpigotTimings;
++
++// Spigot end
++// Cauldron start
++import net.minecraftforge.cauldron.CauldronHooks;
++import net.minecraftforge.cauldron.configuration.CauldronWorldConfig;
++import net.minecraftforge.cauldron.configuration.SushchestvoWorldConfig;
++import net.minecraftforge.cauldron.configuration.TileEntityWorldConfig;
++import net.minecraftforge.common.DimensionManager;
++// Cauldron end
++import org.spigotmc.TickLimiter;
++
+ public abstract class World implements IBlockAccess
+ {
+    /**
+@@ -83,15 +132,14 @@
+ 
+     public boolean scheduledUpdatesAreImmediate;
+     public List loadedEntityList = new ArrayList();
+-    protected List unloadedEntityList = new ArrayList();
++    public List unloadedEntityList = new ArrayList(); // Cauldron
+     public List loadedTileEntityList = new ArrayList();
+     private List addedTileEntityList = new ArrayList();
+-    private List field_147483_b = new ArrayList();
++    public List field_147483_b = new ArrayList(); // Cauldron
+     public List playerEntities = new ArrayList();
+     public List weatherEffects = new ArrayList();
+     private long cloudColour = 16777215L;
+     public int skylightSubtracted;
+-    protected int updateLCG = (new Random()).nextInt();
+     protected final int DIST_HASH_MAGIC = 1013904223;
+     public float prevRainingStrength;
+     public float rainingStrength;
+@@ -99,27 +147,92 @@
+     public float thunderingStrength;
+     public int lastLightningBolt;
+     public EnumDifficulty difficultySetting;
+-    public Random rand = new Random();
+-    public final WorldProvider provider;
++    public Random rand = new thermos.thermite.ThermiteRandom();
++    protected int updateLCG = this.rand.nextInt();
++    public WorldProvider provider; // CraftBukkit - remove final
+     protected List worldAccesses = new ArrayList();
+-    protected IChunkProvider chunkProvider;
++    public IChunkProvider chunkProvider; // CraftBukkit - public
+     protected final ISaveHandler saveHandler;
+-    protected WorldInfo worldInfo;
++    public WorldInfo worldInfo; // CraftBukkit - public
+     public boolean findingSpawnPoint;
+     public MapStorage mapStorage;
+     public VillageCollection villageCollectionObj;
+     protected final VillageSiege villageSiegeObj = new VillageSiege(this);
+     public final Profiler theProfiler;
+     private final Calendar theCalendar = Calendar.getInstance();
+-    protected Scoreboard worldScoreboard = new Scoreboard();
++    public Scoreboard worldScoreboard = new Scoreboard(); // CraftBukkit - protected -> public
+     public boolean isRemote;
+-    protected Set activeChunkSet = new HashSet();
++    // CraftBukkit start - public, longhashset
++    public boolean spawnHostileMobs;
++    public boolean spawnPeacefulMobs;
++    // Added the following
++    public long ticksPerAnimalSpawns;
++    public long ticksPerMonsterSpawns;
++    public boolean populating;
++    private int tickPosition;
++    // CraftBukkit end
++    public Set activeChunkSet = new HashSet(); // Cauldron - protected -> public
+     private int ambientTickCountdown;
+-    protected boolean spawnHostileMobs;
+-    protected boolean spawnPeacefulMobs;
+     private ArrayList collidingBoundingBoxes;
+     private boolean field_147481_N;
+     int[] lightUpdateBlockList;
++    // Cauldron start
++    public boolean captureTreeGeneration = false;
++    public ArrayList<EntityItem> capturedItems = new ArrayList<EntityItem>();
++    public int entitiesTicked;
++    public int tilesTicked;
++    public CauldronWorldConfig cauldronConfig;
++    public TileEntityWorldConfig tileentityConfig;
++    public SushchestvoWorldConfig sushchestvoConfig;
++    
++    public Boolean isModded = null;
++    // preload world crash report classes to fix NCDFE masking StackOverflow/memory error, see #721
++    private static boolean preloadedCrashClasses = false;
++    {
++        if (!preloadedCrashClasses)
++        {
++            // generate a temporary crash report
++            Throwable throwable = new Throwable();
++            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception while updating neighbours");
++            CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being updated");
++
++            // loads all the required classes - including net.minecraft.crash.CallableBlockType (package private)
++            crashreportcategory.addCrashSectionCallable("Source block type", new Callable() {
++                public String call()
++                {
++                    return "";
++                }
++            });
++            CrashReportCategory.func_147153_a(crashreportcategory, 0, 0, 0, Blocks.air, -1);
++
++            preloadedCrashClasses = true;
++        }
++    }
++    // Cauldron end
++    // Spigot start
++
++    /** Positions to update */
++    protected final gnu.trove.map.hash.TLongShortHashMap activeChunkSet_CB;
++    public float growthOdds = 100;
++    protected float modifiedOdds = 100;
++
++    public static long chunkToKey(int x, int z)
++    {
++        long k = ((((long) x) & 0xFFFF0000L) << 16) | ((((long) x) & 0x0000FFFFL) << 0);
++        k |= ((((long) z) & 0xFFFF0000L) << 32) | ((((long) z) & 0x0000FFFFL) << 16);
++        return k;
++    }
++
++    public static int keyToX(long k)
++    {
++        return (int) (((k >> 16) & 0xFFFF0000) | (k & 0x0000FFFF));
++    }
++
++    public static int keyToZ(long k)
++    {
++        return (int) (((k >> 32) & 0xFFFF0000L) | ((k >> 16) & 0x0000FFFF));
++    }
++    // Spigot end
+     private static final String __OBFID = "CL_00000140";
+     public boolean restoringBlockSnapshots = false;
+     public boolean captureBlockSnapshots = false;
+@@ -166,6 +279,27 @@
+         return this.provider.worldChunkMgr;
+     }
+ 
++    // CraftBukkit start
++    private final CraftWorld world;
++    public boolean pvpMode;
++    public boolean keepSpawnInMemory = false; // Cauldron - default to false to give forge's keepLoaded higher priority
++    public ChunkGenerator generator;
++    public final org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++    public final SpigotTimings.WorldTimingsHandler timings; // Spigot
++    private org.spigotmc.TickLimiter entityLimiter; // Spigot
++    private org.spigotmc.TickLimiter tileLimiter; // Spigot
++    private int tileTickPosition; // Spigot
++
++    public CraftWorld getWorld()
++    {
++        return this.world;
++    }
++
++    public CraftServer getServer()
++    {
++        return (CraftServer) Bukkit.getServer();
++    }
++
+     @SideOnly(Side.CLIENT)
+     public World(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_)
+     {
+@@ -179,6 +313,12 @@
+         this.worldInfo = new WorldInfo(p_i45368_4_, p_i45368_2_);
+         this.provider = p_i45368_3_;
+         perWorldStorage = new MapStorage((ISaveHandler)null);
++        // Cauldron start
++        this.world = null;
++        this.timings = null;
++        this.spigotConfig = null;
++        this.activeChunkSet_CB = null;
++        // Cauldron end
+     }
+ 
+     // Broken up so that the WorldClient gets the chance to set the mapstorage object before the dimension initializes
+@@ -207,8 +347,182 @@
+         this.calculateInitialWeather();
+     }
+ 
++    // Changed signature - added gen and env
++    public World(ISaveHandler p_i45369_1_, String p_i45369_2_, WorldSettings p_i45369_3_, WorldProvider p_i45369_4_, Profiler p_i45369_5_, ChunkGenerator gen,
++            org.bukkit.World.Environment env)
++    {
++        this.spigotConfig = new org.spigotmc.SpigotWorldConfig(p_i45369_2_); // Spigot
++        initLimiter(); // Spigot
++        // Cauldron start
++        this.cauldronConfig = new CauldronWorldConfig(p_i45369_2_, MinecraftServer.getServer().cauldronConfig);
++        this.tileentityConfig = new TileEntityWorldConfig(p_i45369_2_, MinecraftServer.getServer().tileEntityConfig);
++        this.sushchestvoConfig = new SushchestvoWorldConfig(p_i45369_2_, MinecraftServer.getServer().sushchestvoConfig);
++        // Cauldron end
++        this.worldInfo = p_i45369_1_.loadWorldInfo(); // Spigot
++        this.generator = gen;
++        this.world = new CraftWorld((WorldServer) this, gen, env);
++        this.ticksPerAnimalSpawns = this.getServer().getTicksPerAnimalSpawns(); // CraftBukkit
++        this.ticksPerMonsterSpawns = this.getServer().getTicksPerMonsterSpawns(); // CraftBukkit
++        // CraftBukkit end
++        // Spigot start
++        this.activeChunkSet_CB = new gnu.trove.map.hash.TLongShortHashMap(spigotConfig.chunksPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
++        this.activeChunkSet_CB.setAutoCompactionFactor(0);
++        // Spigot end
++        this.ambientTickCountdown = this.rand.nextInt(12000);
++        this.spawnHostileMobs = true;
++        this.spawnPeacefulMobs = true;
++        this.collidingBoundingBoxes = new ArrayList();
++        this.lightUpdateBlockList = new int[32768];
++        this.saveHandler = p_i45369_1_;
++        this.theProfiler = p_i45369_5_;
++        // Cauldron start
++        // Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
++        // Buildcraft has suffered from the issue this fixes.  If you load the same data from two different worlds they can get two different copies of the same object, thus the last saved gets final say.
++        if (DimensionManager.getWorld(0) != null) // if overworld has loaded, use its mapstorage
++        {
++            this.mapStorage = DimensionManager.getWorld(0).mapStorage;
++        }
++        else
++        // if we are loading overworld, create a new mapstorage
++        {
++            this.mapStorage = new MapStorage(p_i45369_1_);
++        }
++        // Cauldron end
++        // this.worldInfo = p_i45369_1_.loadWorldInfo(); // Spigot - Moved up
++
++        if (p_i45369_4_ != null)
++        {
++            this.provider = p_i45369_4_;
++        }
++        else if (this.worldInfo != null && this.worldInfo.getDimension() != 0) // Cauldron
++        {
++            this.provider = WorldProvider.getProviderForDimension(this.worldInfo.getDimension()); // Cauldron
++        }
++        else
++        {
++            this.provider = WorldProvider.getProviderForDimension(0);
++        }
++
++        if (this.worldInfo == null)
++        {
++            this.worldInfo = new WorldInfo(p_i45369_3_, p_i45369_2_);
++            this.worldInfo.setDimension(this.provider.dimensionId); // Cauldron - Save dimension to level.dat
++        }
++        else
++        {
++            this.worldInfo.setWorldName(p_i45369_2_);
++            // Cauldron start - Use saved dimension from level.dat. Fixes issues with MultiVerse
++            if (this.worldInfo.getDimension() != 0)
++                this.provider.dimensionId = this.worldInfo.getDimension();
++            else
++            {
++                this.worldInfo.setDimension(this.provider.dimensionId);
++            }
++            // Cauldron end
++        }
++
++        // Cauldron start - Guarantee provider dimension is not reset. This is required for mods that rely on the provider ID to match the client dimension. Without this, IC2 will send the wrong ID to clients.
++        int providerId = this.provider.dimensionId;
++        this.provider.registerWorld(this);
++        this.provider.dimensionId = providerId;
++        // Cauldron end
++        // Cauldron start - workaround to fix TC with overworld
++        if (this.worldInfo.getDimension() == 0)
++        {
++            generator = this.getServer().getGenerator(p_i45369_2_);
++            if (generator != null)
++            {
++                getWorld().setGenerator(generator);
++                getWorld().getPopulators().addAll(generator.getDefaultPopulators(getWorld()));
++            }
++        }
++        // Cauldron end
++        this.chunkProvider = this.createChunkProvider();
++        // Thermos start
++	try {
++	if(this.chunkProvider != null)
++            this.isModded = !this.chunkProvider.getClass().getPackage().getName().startsWith("net.minecraft"); } catch(Exception e) { this.isModded = false; }
++        // Thermos end
++        
++        if (this instanceof WorldServer)
++        {
++            this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer) this, p_i45369_1_));
++        }
++        else
++        {
++            this.perWorldStorage = new MapStorage((ISaveHandler) null);
++        }
++
++        timings = new SpigotTimings.WorldTimingsHandler(this); // Spigot - code below can generate new world and access timings
++        if (!this.worldInfo.isInitialized())
++        {
++            try
++            {
++                this.initialize(p_i45369_3_);
++            }
++            catch (Throwable throwable1)
++            {
++                CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Exception initializing level");
++
++                try
++                {
++                    this.addWorldInfoToCrashReport(crashreport);
++                }
++                catch (Throwable throwable)
++                {
++                    ;
++                }
++
++                throw new ReportedException(crashreport);
++            }
++
++            this.worldInfo.setServerInitialized(true);
++        }
++
++        VillageCollection villagecollection = (VillageCollection) this.perWorldStorage.loadData(VillageCollection.class, "villages");
++
++        if (villagecollection == null)
++        {
++            this.villageCollectionObj = new VillageCollection(this);
++            this.perWorldStorage.setData("villages", this.villageCollectionObj);
++        }
++        else
++        {
++            this.villageCollectionObj = villagecollection;
++            this.villageCollectionObj.func_82566_a(this);
++        }
++
++        this.calculateInitialSkylight();
++        this.calculateInitialWeather();
++        this.getServer().addWorld(this.world); // CraftBukkit
++    }
++
+     public World(ISaveHandler p_i45369_1_, String p_i45369_2_, WorldSettings p_i45369_3_, WorldProvider p_i45369_4_, Profiler p_i45369_5_)
+     {
++        // Cauldron start - handle dummy worlds
++        if (DimensionManager.getWorld(0) != null)
++        {
++            this.spigotConfig = new org.spigotmc.SpigotWorldConfig(p_i45369_2_); // Spigot
++            initLimiter(); // Spigot
++            this.cauldronConfig = new CauldronWorldConfig(p_i45369_2_, MinecraftServer.getServer().cauldronConfig);
++            this.tileentityConfig = new TileEntityWorldConfig(p_i45369_2_, MinecraftServer.getServer().tileEntityConfig);
++            this.sushchestvoConfig = new SushchestvoWorldConfig(p_i45369_2_, MinecraftServer.getServer().sushchestvoConfig);            
++            this.world = DimensionManager.getWorld(0).getWorld();
++            this.timings = DimensionManager.getWorld(0).timings;
++            this.activeChunkSet_CB = new gnu.trove.map.hash.TLongShortHashMap(spigotConfig.chunksPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
++            this.activeChunkSet_CB.setAutoCompactionFactor(0);
++            this.mapStorage = DimensionManager.getWorld(0).mapStorage;
++        }
++        else
++        {
++            this.spigotConfig = null;
++            this.cauldronConfig = null;
++            this.world = null;
++            this.timings = null;
++            this.activeChunkSet_CB = null;
++            this.mapStorage = null;
++        }
++        // Cauldron end
+         this.ambientTickCountdown = this.rand.nextInt(12000);
+         this.spawnHostileMobs = true;
+         this.spawnPeacefulMobs = true;
+@@ -216,7 +530,6 @@
+         this.lightUpdateBlockList = new int[32768];
+         this.saveHandler = p_i45369_1_;
+         this.theProfiler = p_i45369_5_;
+-        this.mapStorage = getMapStorage(p_i45369_1_);
+         this.worldInfo = p_i45369_1_.loadWorldInfo();
+ 
+         if (p_i45369_4_ != null)
+@@ -235,15 +548,33 @@
+         if (this.worldInfo == null)
+         {
+             this.worldInfo = new WorldInfo(p_i45369_3_, p_i45369_2_);
++            this.worldInfo.setDimension(this.provider.dimensionId); // Cauldron - Save dimension to level.dat
+         }
+         else
+         {
+             this.worldInfo.setWorldName(p_i45369_2_);
++            // Cauldron start - Use saved dimension from level.dat. Fixes issues with MultiVerse
++            if (this.worldInfo.getDimension() != 0)
++                this.provider.dimensionId = this.worldInfo.getDimension();
++            else
++            {
++                this.worldInfo.setDimension(this.provider.dimensionId);
++            }
++            // Cauldron end
+         }
+ 
++        // Cauldron start - Guarantee provider dimension is not reset. This is required for mods that rely on the provider ID to match the client dimension. Without this, IC2 will send the wrong ID to clients.
++        int providerId = this.provider.dimensionId;
+         this.provider.registerWorld(this);
++        this.provider.dimensionId = providerId;
++        // Cauldron end
+         this.chunkProvider = this.createChunkProvider();
+-
++        // Thermos start
++	try {
++	if(this.chunkProvider != null)
++            this.isModded = !this.chunkProvider.getClass().getPackage().getName().startsWith("net.minecraft"); } catch(Exception e) { this.isModded = false; }
++        // Thermos end
++        
+         if (this instanceof WorldServer)
+         {
+             this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, p_i45369_1_));
+@@ -294,6 +625,7 @@
+         this.calculateInitialSkylight();
+         this.calculateInitialWeather();
+     }
++    // Cauldron end    
+ 
+     private static MapStorage s_mapStorage;
+     private static ISaveHandler s_savehandler;
+@@ -336,6 +668,18 @@
+ 
+     public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_)
+     {
++        // Cauldron start - tree generation
++        if (captureTreeGeneration)
++        {
++            for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : capturedBlockSnapshots)
++            {
++                if (blocksnapshot.x == p_147439_1_ && blocksnapshot.y == p_147439_2_ && blocksnapshot.z == p_147439_3_)
++                {
++                    return blocksnapshot.replacedBlock;
++                }
++            }
++        }
++        // Cauldron end
+         if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256)
+         {
+             Chunk chunk = null;
+@@ -376,35 +720,58 @@
+         return this.checkChunksExist(p_72873_1_ - p_72873_4_, p_72873_2_ - p_72873_4_, p_72873_3_ - p_72873_4_, p_72873_1_ + p_72873_4_, p_72873_2_ + p_72873_4_, p_72873_3_ + p_72873_4_);
+     }
+ 
+-    public boolean checkChunksExist(int p_72904_1_, int p_72904_2_, int p_72904_3_, int p_72904_4_, int p_72904_5_, int p_72904_6_)
+-    {
+-        if (p_72904_5_ >= 0 && p_72904_2_ < 256)
+-        {
+-            p_72904_1_ >>= 4;
+-            p_72904_3_ >>= 4;
+-            p_72904_4_ >>= 4;
+-            p_72904_6_ >>= 4;
++	public boolean checkChunksExist(int p_72904_1_, int p_72904_2_, int p_72904_3_, int p_72904_4_, int p_72904_5_, int p_72904_6_)
++	{
++		if (p_72904_5_ >= 0 && p_72904_2_ < 256)
++		{
++			if (!(this.chunkProvider instanceof ChunkProviderServer))
++			{
++				p_72904_1_ >>= 4;
++				p_72904_3_ >>= 4;
++				p_72904_4_ >>= 4;
++				p_72904_6_ >>= 4;
++	
++				for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1)
++				{
++					for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1)
++					{
++						if (!this.chunkExists(k1, l1))
++						{
++							return false;
++						}
++					}
++				}
++	
++				return true;
++			}
++			else
++			{
++				p_72904_1_ >>= 4;
++				p_72904_3_ >>= 4;
++				p_72904_4_ >>= 4;
++				p_72904_6_ >>= 4;
++	
++				ArrayList<int[]> st = new ArrayList<int[]>();
++				st.ensureCapacity((p_72904_4_ - p_72904_1_+1) * (p_72904_6_ - p_72904_3_ + 1));
++	
++				for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1)
++				{
++					for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1)
++					{
++						st.add(new int[] { k1, l1} );
++					}
++				}
++				ChunkProviderServer cps = (ChunkProviderServer) this.chunkProvider;
++				return cps.loadedChunkHashMap_KC.rawThermos().bulkCheck(st);            	
++			}
++		}
++		else
++		{
++			return false;
++		}
++	}
+ 
+-            for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1)
+-            {
+-                for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1)
+-                {
+-                    if (!this.chunkExists(k1, l1))
+-                    {
+-                        return false;
+-                    }
+-                }
+-            }
+-
+-            return true;
+-        }
+-        else
+-        {
+-            return false;
+-        }
+-    }
+-
+-    protected boolean chunkExists(int p_72916_1_, int p_72916_2_)
++    public boolean chunkExists(int p_72916_1_, int p_72916_2_) // Cauldron - protected -> public for repackaging
+     {
+         return this.chunkProvider.chunkExists(p_72916_1_, p_72916_2_);
+     }
+@@ -421,6 +788,27 @@
+ 
+     public boolean setBlock(int p_147465_1_, int p_147465_2_, int p_147465_3_, Block p_147465_4_, int p_147465_5_, int p_147465_6_)
+     {
++        // Cauldron start - tree generation
++        if (this.captureTreeGeneration)
++        {
++            net.minecraftforge.common.util.BlockSnapshot blocksnapshot = null;
++
++            for (net.minecraftforge.common.util.BlockSnapshot previous : capturedBlockSnapshots)
++            {
++                if (previous.x == p_147465_1_ && previous.y == p_147465_2_ && previous.z == p_147465_3_)
++                {
++                    blocksnapshot = previous;
++                    break;
++                }
++            }
++            if (blocksnapshot != null)
++            {
++                capturedBlockSnapshots.remove(blocksnapshot);
++            }
++            this.capturedBlockSnapshots.add(new net.minecraftforge.common.util.BlockSnapshot(this, p_147465_1_, p_147465_2_, p_147465_3_, p_147465_4_, p_147465_5_, p_147465_6_));
++            return true;
++        }
++        // Cauldron end
+         if (p_147465_1_ >= -30000000 && p_147465_3_ >= -30000000 && p_147465_1_ < 30000000 && p_147465_3_ < 30000000)
+         {
+             if (p_147465_2_ < 0)
+@@ -448,8 +836,22 @@
+                     this.capturedBlockSnapshots.add(blockSnapshot);
+                 }
+ 
++                // Cauldron start - capture blockstates
++                net.minecraftforge.common.util.BlockSnapshot blocksnapshot = null;
++                if (this.captureBlockSnapshots)
++                {
++                    blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, p_147465_1_, p_147465_2_, p_147465_3_, p_147465_6_);
++                    this.capturedBlockSnapshots.add(blocksnapshot);
++                }
++
+                 boolean flag = chunk.func_150807_a(p_147465_1_ & 15, p_147465_2_, p_147465_3_ & 15, p_147465_4_, p_147465_5_);
+ 
++                if (!flag && this.captureBlockSnapshots)
++                {
++                    this.capturedBlockSnapshots.remove(blocksnapshot);
++                }
++                // Cauldron end
++
+                 if (!flag && blockSnapshot != null)
+                 {
+                     this.capturedBlockSnapshots.remove(blockSnapshot);
+@@ -460,6 +862,7 @@
+                 this.func_147451_t(p_147465_1_, p_147465_2_, p_147465_3_);
+                 this.theProfiler.endSection();
+ 
++                // Cauldron add !this.captureBlockStates
+                 if (flag && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
+                 {
+                     // Modularize client and physic updates
+@@ -496,6 +899,19 @@
+ 
+     public int getBlockMetadata(int p_72805_1_, int p_72805_2_, int p_72805_3_)
+     {
++        // Cauldron start - tree generation
++        if (captureTreeGeneration)
++        {
++            for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : capturedBlockSnapshots)
++            {
++                if (blocksnapshot.x == p_72805_1_ && blocksnapshot.y == p_72805_2_ && blocksnapshot.z == p_72805_3_)
++                {
++                    return blocksnapshot.meta;
++                }
++            }
++        }
++        // Cauldron end
++
+         if (p_72805_1_ >= -30000000 && p_72805_3_ >= -30000000 && p_72805_1_ < 30000000 && p_72805_3_ < 30000000)
+         {
+             if (p_72805_2_ < 0)
+@@ -511,7 +927,7 @@
+                 Chunk chunk = this.getChunkFromChunkCoords(p_72805_1_ >> 4, p_72805_3_ >> 4);
+                 p_72805_1_ &= 15;
+                 p_72805_3_ &= 15;
+-                return chunk.getBlockMetadata(p_72805_1_, p_72805_2_, p_72805_3_);
++                return chunk == null ? 0 : chunk.getBlockMetadata(p_72805_1_, p_72805_2_, p_72805_3_);
+             }
+         }
+         else
+@@ -610,6 +1026,12 @@
+ 
+     public void notifyBlockChange(int p_147444_1_, int p_147444_2_, int p_147444_3_, Block p_147444_4_)
+     {
++        // CraftBukkit start
++        if (this.populating)
++        {
++            return;
++        }
++        // CraftBukkit end
+         this.notifyBlocksOfNeighborChange(p_147444_1_, p_147444_2_, p_147444_3_, p_147444_4_);
+     }
+ 
+@@ -694,6 +1116,21 @@
+ 
+             try
+             {
++                // CraftBukkit start
++                CraftWorld world = ((WorldServer) this).getWorld();
++
++                if (world != null && !isProfilingWorld())
++                {
++                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_147460_1_, p_147460_2_, p_147460_3_),
++                            CraftMagicNumbers.getId(p_147460_4_));
++                    this.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return;
++                    }
++                }
++                // CraftBukkit end
+                 block.onNeighborBlockChange(this, p_147460_1_, p_147460_2_, p_147460_3_, p_147460_4_);
+             }
+             catch (Throwable throwable1)
+@@ -809,6 +1246,8 @@
+                     p_72849_2_ = 255;
+                 }
+ 
++                if (!this.blockExists(p_72849_1_, p_72849_2_, p_72849_3_)) return 0; // Paper
++
+                 Chunk chunk = this.getChunkFromChunkCoords(p_72849_1_ >> 4, p_72849_3_ >> 4);
+                 p_72849_1_ &= 15;
+                 p_72849_3_ &= 15;
+@@ -947,14 +1386,13 @@
+         {
+             int l = p_72972_2_ >> 4;
+             int i1 = p_72972_4_ >> 4;
+-
+-            if (!this.chunkExists(l, i1))
++            Chunk chunk = this.getChunkIfLoaded(l, i1);
++            if(chunk == null)
+             {
+                 return p_72972_1_.defaultLightValue;
+             }
+             else
+             {
+-                Chunk chunk = this.getChunkFromChunkCoords(l, i1);
+                 return chunk.getSavedLightValue(p_72972_1_, p_72972_2_ & 15, p_72972_3_, p_72972_4_ & 15);
+             }
+         }
+@@ -1304,11 +1742,26 @@
+         this.weatherEffects.add(p_72942_1_);
+         return true;
+     }
+-
++    
++    public List<EntityItem> itemStackSpawnQueue = new ArrayList<EntityItem>();
++    public boolean captureItemDrops = false;
++    
+     public boolean spawnEntityInWorld(Entity p_72838_1_)
+     {
++        // CraftBukkit start - Used for entities other than creatures
++    	if(p_72838_1_ instanceof EntityItem && this.captureItemDrops)
++    	{
++    		itemStackSpawnQueue.add((EntityItem)p_72838_1_);
++    		return true;
++    	}
++        return this.addEntity(p_72838_1_, SpawnReason.DEFAULT); // Set reason as DEFAULT
++    }
++
++    public boolean addEntity(Entity p_72838_1_, SpawnReason spawnReason) // Changed signature, added SpawnReason
++    {
++        if (p_72838_1_ == null || !p_72838_1_.entityAllowedToSpawn()) return false; // Cauldron
+         // do not drop any items while restoring blocksnapshots. Prevents dupes
+-        if (!this.isRemote && (p_72838_1_ == null || (p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
++        if (!this.isRemote && ((p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
+ 
+         int i = MathHelper.floor_double(p_72838_1_.posX / 16.0D);
+         int j = MathHelper.floor_double(p_72838_1_.posZ / 16.0D);
+@@ -1319,23 +1772,99 @@
+             flag = true;
+         }
+ 
++        // CraftBukkit start
++        org.bukkit.event.Cancellable event = null;
++        // Cauldron start - workaround for handling CraftBukkit's SpawnReason with customspawners and block spawners
++        if (p_72838_1_.spawnReason != null && p_72838_1_.spawnReason.equals("natural"))
++        {
++            spawnReason = SpawnReason.NATURAL;
++        }
++        else if (p_72838_1_.spawnReason != null && p_72838_1_.spawnReason.equals("spawner"))
++        {
++            spawnReason = SpawnReason.SPAWNER;
++        }
++        // Cauldron end
++
++        if (p_72838_1_ instanceof EntityLivingBase && !(p_72838_1_ instanceof EntityPlayerMP))
++        {
++            // Cauldron start - add custom entity support
++            boolean isAnimal = p_72838_1_ instanceof EntityAnimal || p_72838_1_ instanceof EntityWaterMob || p_72838_1_ instanceof EntityGolem
++                    || p_72838_1_.isCreatureType(EnumCreatureType.creature, false);
++            boolean isMonster = p_72838_1_ instanceof EntityMob || p_72838_1_ instanceof EntityGhast || p_72838_1_ instanceof EntitySlime
++                    || p_72838_1_.isCreatureType(EnumCreatureType.monster, false);
++            // Cauldron end
++
++            if (spawnReason != SpawnReason.CUSTOM)
++            {
++                if (isAnimal && !spawnPeacefulMobs || isMonster && !spawnHostileMobs)
++                {
++                    p_72838_1_.isDead = true;
++                    return false;
++                }
++            }
++
++            event = CraftEventFactory.callCreatureSpawnEvent((EntityLivingBase) p_72838_1_, spawnReason);
++        }
++        else if (p_72838_1_ instanceof EntityItem)
++        {
++            event = CraftEventFactory.callItemSpawnEvent((EntityItem) p_72838_1_);
++        }
++        else if (p_72838_1_.getBukkitEntity() instanceof org.bukkit.entity.Projectile)
++        {
++            // Not all projectiles extend EntityProjectile, so check for Bukkit interface instead
++            event = CraftEventFactory.callProjectileLaunchEvent(p_72838_1_);
++        }
++        // Spigot start
++        else if (p_72838_1_ instanceof EntityXPOrb)
++        {
++            EntityXPOrb xp = (EntityXPOrb) p_72838_1_;
++            double radius = this.getSpigotConfig().expMerge; // Cauldron
++
++            if (radius > 0)
++            {
++                List<Entity> entities = this.getEntitiesWithinAABBExcludingEntity(p_72838_1_, p_72838_1_.boundingBox.expand(radius, radius, radius));
++
++                for (Entity e : entities)
++                {
++                    if (e instanceof EntityXPOrb)
++                    {
++                        EntityXPOrb loopItem = (EntityXPOrb) e;
++
++                        if (!loopItem.isDead)
++                        {
++                            xp.xpValue += loopItem.xpValue;
++                            loopItem.setDead();
++                        }
++                    }
++                }
++            }
++        } // Spigot end
++
++        if (event != null && (event.isCancelled() || p_72838_1_.isDead))
++        {
++            p_72838_1_.isDead = true;
++            return false;
++        }
++        // CraftBukkit end
++
+         if (!flag && !this.chunkExists(i, j))
+         {
++            p_72838_1_.isDead = true; // CraftBukkit
+             return false;
+         }
+         else
+         {
++            if (MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(p_72838_1_, this)) && !flag || p_72838_1_.isDead) return false;
+             if (p_72838_1_ instanceof EntityPlayer)
+             {
+                 EntityPlayer entityplayer = (EntityPlayer)p_72838_1_;
+                 this.playerEntities.add(entityplayer);
+                 this.updateAllPlayersSleepingFlag();
+             }
+-            if (MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(p_72838_1_, this)) && !flag) return false;
+-
+             this.getChunkFromChunkCoords(i, j).addEntity(p_72838_1_);
+             this.loadedEntityList.add(p_72838_1_);
+             this.onEntityAdded(p_72838_1_);
++            net.minecraftforge.cauldron.CauldronHooks.logEntitySpawn(this, p_72838_1_, spawnReason);
+             return true;
+         }
+     }
+@@ -1346,6 +1875,8 @@
+         {
+             ((IWorldAccess)this.worldAccesses.get(i)).onEntityCreate(p_72923_1_);
+         }
++
++        p_72923_1_.valid = true; // CraftBukkit
+     }
+ 
+     public void onEntityRemoved(Entity p_72847_1_)
+@@ -1354,6 +1885,8 @@
+         {
+             ((IWorldAccess)this.worldAccesses.get(i)).onEntityDestroy(p_72847_1_);
+         }
++
++        p_72847_1_.valid = false; // CraftBukkit
+     }
+ 
+     public void removeEntity(Entity p_72900_1_)
+@@ -1397,6 +1930,19 @@
+         }
+ 
+         this.loadedEntityList.remove(p_72973_1_);
++        // CraftBukkit start - Decrement loop variable field if we've already ticked this entity
++        int index = this.loadedEntityList.indexOf(p_72973_1_);
++
++        if (index != -1)
++        {
++            if (index <= this.tickPosition)
++            {
++                this.tickPosition--;
++            }
++
++            this.loadedEntityList.remove(index);
++        }
++        // CraftBukkit end
+         this.onEntityRemoved(p_72973_1_);
+     }
+ 
+@@ -1407,42 +1953,62 @@
+ 
+     public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2_)
+     {
+-        this.collidingBoundingBoxes.clear();
++        this.collidingBoundingBoxes = new ArrayList(30);
++        if (CauldronHooks.checkBoundingBoxSize(p_72945_1_, p_72945_2_)) return new ArrayList(); // Removing misbehaved living entities
+         int i = MathHelper.floor_double(p_72945_2_.minX);
+         int j = MathHelper.floor_double(p_72945_2_.maxX + 1.0D);
+         int k = MathHelper.floor_double(p_72945_2_.minY);
+         int l = MathHelper.floor_double(p_72945_2_.maxY + 1.0D);
+         int i1 = MathHelper.floor_double(p_72945_2_.minZ);
+         int j1 = MathHelper.floor_double(p_72945_2_.maxZ + 1.0D);
++        // Spigot start
++        int ystart = ((k - 1) < 0) ? 0 : (k - 1);
+ 
+-        for (int k1 = i; k1 < j; ++k1)
++        for (int chunkx = (i >> 4); chunkx <= ((j - 1) >> 4); chunkx++)
+         {
+-            for (int l1 = i1; l1 < j1; ++l1)
++            int cx = chunkx << 4;
++
++            for (int chunkz = (i1 >> 4); chunkz <= ((j1 - 1) >> 4); chunkz++)
+             {
+-                if (this.blockExists(k1, 64, l1))
++                if (!this.chunkExists(chunkx, chunkz))
+                 {
+-                    for (int i2 = k - 1; i2 < l; ++i2)
+-                    {
+-                        Block block;
++                    continue;
++                }
+ 
+-                        if (k1 >= -30000000 && k1 < 30000000 && l1 >= -30000000 && l1 < 30000000)
++                int cz = chunkz << 4;
++                Chunk chunk = this.getChunkFromChunkCoords(chunkx, chunkz);
++                // Compute ranges within chunk
++                int xstart = (i < cx) ? cx : i;
++                int xend = (j < (cx + 16)) ? j : (cx + 16);
++                int zstart = (i1 < cz) ? cz : i1;
++                int zend = (j1 < (cz + 16)) ? j1 : (cz + 16);
++
++                // Loop through blocks within chunk
++                for (int x = xstart; x < xend; x++)
++                {
++                    for (int z = zstart; z < zend; z++)
++                    {
++                        for (int y = ystart; y < l; y++)
+                         {
+-                            block = this.getBlock(k1, i2, l1);
+-                        }
+-                        else
+-                        {
+-                            block = Blocks.stone;
+-                        }
++                            Block block = chunk.getBlock(x - cx, y, z - cz);
+ 
+-                        block.addCollisionBoxesToList(this, k1, i2, l1, p_72945_2_, this.collidingBoundingBoxes, p_72945_1_);
++                            if (block != null)
++                            {
++                                block.addCollisionBoxesToList(this, x, y, z, p_72945_2_, this.collidingBoundingBoxes, p_72945_1_);
++                            }
++                        }
+                     }
+                 }
+             }
+         }
++        // Spigot end
+ 
+         double d0 = 0.25D;
+         List list = this.getEntitiesWithinAABBExcludingEntity(p_72945_1_, p_72945_2_.expand(d0, d0, d0));
++        net.minecraftforge.cauldron.CauldronHooks.logEntitySize(this, p_72945_1_, list); // Cauldron add logging for entity collisions
+ 
++        this.collidingBoundingBoxes.ensureCapacity(list.size());
++        
+         for (int j2 = 0; j2 < list.size(); ++j2)
+         {
+             AxisAlignedBB axisalignedbb1 = ((Entity)list.get(j2)).getBoundingBox();
+@@ -1797,11 +2363,22 @@
+         Entity entity;
+         CrashReport crashreport;
+         CrashReportCategory crashreportcategory;
++        // Cauldron start
++        entitiesTicked = 0;
++        tilesTicked = 0;
++        // Cauldron end
+ 
+         for (i = 0; i < this.weatherEffects.size(); ++i)
+         {
+             entity = (Entity)this.weatherEffects.get(i);
+ 
++            // CraftBukkit start - Fixed an NPE
++            if (entity == null)
++            {
++                continue;
++            }
++            // CraftBukkit end
++
+             try
+             {
+                 ++entity.ticksExisted;
+@@ -1812,14 +2389,7 @@
+                 crashreport = CrashReport.makeCrashReport(throwable2, "Ticking entity");
+                 crashreportcategory = crashreport.makeCategory("Entity being ticked");
+ 
+-                if (entity == null)
+-                {
+-                    crashreportcategory.addCrashSection("Entity", "~~NULL~~");
+-                }
+-                else
+-                {
+-                    entity.addEntityCrashInfo(crashreportcategory);
+-                }
++                entity.addEntityCrashInfo(crashreportcategory);
+ 
+                 if (ForgeModContainer.removeErroringEntities)
+                 {
+@@ -1862,6 +2432,8 @@
+ 
+         this.unloadedEntityList.clear();
+         this.theProfiler.endStartSection("regular");
++        org.spigotmc.ActivationRange.activateEntities(this); // Spigot
++        timings.entityTick.startTiming(); // Spigot
+ 
+         for (i = 0; i < this.loadedEntityList.size(); ++i)
+         {
+@@ -1884,7 +2456,9 @@
+             {
+                 try
+                 {
++                    SpigotTimings.tickEntityTimer.startTiming(); // Spigot
+                     this.updateEntity(entity);
++                    SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
+                 }
+                 catch (Throwable throwable1)
+                 {
+@@ -1924,22 +2498,72 @@
+             this.theProfiler.endSection();
+         }
+ 
++        timings.entityTick.stopTiming(); // Spigot
+         this.theProfiler.endStartSection("blockEntities");
++        timings.tileEntityTick.startTiming(); // Spigot
+         this.field_147481_N = true;
+-        Iterator iterator = this.loadedTileEntityList.iterator();
+-
+-        while (iterator.hasNext())
++        // CraftBukkit start - From below, clean up tile entities before ticking them
++        if (!this.field_147483_b.isEmpty())
+         {
+-            TileEntity tileentity = (TileEntity)iterator.next();
++            for (Object tile : field_147483_b)
++            {
++                TileEntity te = (TileEntity)tile;
++                try { te.setGC(true); } catch (Exception e) {}
++                te.onChunkUnload();
++            }
++            List temporary_tile_entity_list = new ArrayList(this.loadedTileEntityList.size());
++            for(Object tile : loadedTileEntityList)
++            {
++                boolean marker = false;
++                try { marker = !((TileEntity)tile).isGC(); } catch (Exception e) { try { marker = this.field_147483_b.contains(tile); } catch (Exception ex) { marker = false; } }
++                if (marker) { temporary_tile_entity_list.add(tile); }
++            }
++            this.loadedTileEntityList = temporary_tile_entity_list;
++            for (Object tile : field_147483_b)
++            {
++                TileEntity te = (TileEntity)tile;
++                try { te.setGC(false); } catch (Exception e) { }
++            }
++            this.field_147483_b.clear();
++        }
++        // CraftBukkit end
+ 
+-            if (!tileentity.isInvalid() && tileentity.hasWorldObj() && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
++        int tilesThisCycle = 0;
++        for (tileLimiter.initTick(); tilesThisCycle < loadedTileEntityList.size() && (tilesThisCycle % 10 == 0 || tileLimiter.shouldContinue()); tileTickPosition++, tilesThisCycle++) {
++            tileTickPosition = (tileTickPosition < loadedTileEntityList.size()) ? tileTickPosition : 0;
++            TileEntity tileentity = (TileEntity) this.loadedTileEntityList.get(tileTickPosition);
++
++            // Spigot start
++            if (tileentity == null)
+             {
++                tilesThisCycle--;
++                this.loadedTileEntityList.remove(tileTickPosition--);
++                continue;
++            }
++            // Spigot end
++
++            if (tileentity.isInvalid()) {
++                tilesThisCycle--;
++                this.loadedTileEntityList.remove(tileTickPosition--);
++                if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4)) {
++                    Chunk chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
++                    if (chunk != null) chunk.removeInvalidTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
++                }
++                continue;
++            }
++
++            if (tileentity.hasWorldObj() && CauldronHooks.canTileEntityTick(tileentity, this) && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
++            {
+                 try
+                 {
++                    tileentity.tickTimer.startTiming(); // Spigot
++                    tilesTicked++;
+                     tileentity.updateEntity();
++                    tileentity.tickTimer.stopTiming(); // Spigot
+                 }
+                 catch (Throwable throwable)
+                 {
++                    tileentity.tickTimer.stopTiming(); // Spigot
+                     crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
+                     crashreportcategory = crashreport.makeCategory("Block entity being ticked");
+                     tileentity.func_145828_a(crashreportcategory);
+@@ -1955,32 +2579,11 @@
+                     }
+                 }
+             }
+-
+-            if (tileentity.isInvalid())
+-            {
+-                iterator.remove();
+-
+-                if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4))
+-                {
+-                    Chunk chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+-
+-                    if (chunk != null)
+-                    {
+-                        chunk.removeInvalidTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
+-                    }
+-                }
+-            }
+         }
+ 
+-        if (!this.field_147483_b.isEmpty())
+-        {
+-            for (Object tile : field_147483_b)
+-            {
+-               ((TileEntity)tile).onChunkUnload();
+-            }
+-            this.loadedTileEntityList.removeAll(this.field_147483_b);
+-            this.field_147483_b.clear();
+-        }
++        timings.tileEntityTick.stopTiming(); // Spigot
++        timings.tileEntityPending.startTiming(); // Spigot
++        this.field_147481_N = false;
+ 
+         this.field_147481_N = false;
+ 
+@@ -1992,14 +2595,14 @@
+             {
+                 TileEntity tileentity1 = (TileEntity)this.addedTileEntityList.get(k);
+ 
+-                if (!tileentity1.isInvalid())
++                if (!tileentity1.isInvalid() && !tileentity1.isGC())
+                 {
+                     if (!this.loadedTileEntityList.contains(tileentity1))
+                     {
+                         this.loadedTileEntityList.add(tileentity1);
+                     }
+                 }
+-                else
++                else if(tileentity1.isInvalid())
+                 {
+                     if (this.chunkExists(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4))
+                     {
+@@ -2016,17 +2619,24 @@
+             this.addedTileEntityList.clear();
+         }
+ 
++        timings.tileEntityPending.stopTiming(); // Spigot
+         this.theProfiler.endSection();
+         this.theProfiler.endSection();
++        
+     }
+ 
+     public void func_147448_a(Collection p_147448_1_)
+     {
+-        List dest = field_147481_N ? addedTileEntityList : loadedTileEntityList;
+-        for(TileEntity entity : (Collection<TileEntity>)p_147448_1_)
++        // Cauldron start
++        Collection dest = field_147481_N ? addedTileEntityList : loadedTileEntityList; // List -> Collection for CB loadedTileEntityList type change
++        for(Object entity : p_147448_1_)
+         {
+-            if(entity.canUpdate()) dest.add(entity);
++            if (CauldronHooks.canUpdate((TileEntity) entity))
++            {
++                dest.add(entity);
++            }
+         }
++        // Cauldron end
+     }
+ 
+     public void updateEntity(Entity p_72870_1_)
+@@ -2036,11 +2646,16 @@
+ 
+     public void updateEntityWithOptionalForce(Entity p_72866_1_, boolean p_72866_2_)
+     {
++        if (p_72866_1_.isDead) return;
+         int i = MathHelper.floor_double(p_72866_1_.posX);
+         int j = MathHelper.floor_double(p_72866_1_.posZ);
+-        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
+-        byte b0 = isForced ? (byte)0 : 32;
+-        boolean canUpdate = !p_72866_2_ || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
++        ChunkCoordIntPair cp = new ChunkCoordIntPair(i >> 4, j >> 4);
++        boolean isForced = this.activity.containsKey(cp) || getPersistentChunks().containsKey(cp);
++        // byte b0 = isForced ? (byte)0 : 32; Thermos - this B ded
++        // CraftBukkit start - Use neighbor cache instead of looking up
++        Chunk startingChunk = this.getChunkIfLoaded(i >> 4, j >> 4);
++        boolean canUpdate = !p_72866_2_ || (startingChunk != null && (isForced || startingChunk.areNeighborsLoaded(2)));
++        // CraftBukkit end
+ 
+         if (!canUpdate)
+         {
+@@ -2048,9 +2663,30 @@
+             MinecraftForge.EVENT_BUS.post(event);
+             canUpdate = event.canUpdate;
+         }
+-
++        // Spigot start
++        /* Thermos - tickAbility has several possible states:
++         0  = don't change anything
++         -1 = force no tick
++         1  = force tick and ignore Spigot
++        */
++        byte tickAbility = CauldronHooks.canSushchestvoTick(p_72866_1_,this);
++        if (!isForced && !canUpdate && (tickAbility == -1 || (!org.spigotmc.ActivationRange.checkIfActive(p_72866_1_) && tickAbility != 1))) // Cauldron - ignore if forge event forced update or entity is in forced chunk
++        {
++            p_72866_1_.ticksExisted++;
++            p_72866_1_.inactiveTick();
++            return;
++        }
++        else if(tickAbility == -1) // Thermos force no ticking if it is set to be so
++        {
++            p_72866_1_.ticksExisted++;
++            p_72866_1_.inactiveTick();
++            return;        	
++        }
++        // Spigot end
+         if (canUpdate)
+         {
++            p_72866_1_.tickTimer.startTiming();
++            entitiesTicked++; // Cauldron
+             p_72866_1_.lastTickPosX = p_72866_1_.posX;
+             p_72866_1_.lastTickPosY = p_72866_1_.posY;
+             p_72866_1_.lastTickPosZ = p_72866_1_.posZ;
+@@ -2134,6 +2770,7 @@
+                     p_72866_1_.riddenByEntity = null;
+                 }
+             }
++            p_72866_1_.tickTimer.stopTiming(); // Spigot
+         }
+     }
+ 
+@@ -2570,7 +3207,7 @@
+             return;
+         }
+ 
+-        if (p_147455_4_.canUpdate())
++        if (CauldronHooks.canUpdate(p_147455_4_))
+         {
+             if (this.field_147481_N)
+             {
+@@ -2606,12 +3243,32 @@
+     public void removeTileEntity(int p_147475_1_, int p_147475_2_, int p_147475_3_)
+     {
+         Chunk chunk = getChunkFromChunkCoords(p_147475_1_ >> 4, p_147475_3_ >> 4);
++        TileEntity te = chunk.getTileEntityUnsafe(p_147475_1_ & 15, p_147475_2_, p_147475_3_ & 15);
++        if(te != null)
++        {
++            /* TODO: This was done incorrectly by me originally. The idea is to forcefully close the inventories of broken tiles
++             * However, at the moment this does not seem possible. I was looking through the code and found that containers
++             * have all the information about who is using them. However, there is no easy way to tell that a container is
++             * linked to a tile. Maybe this can be something for the future but it is unlikely.
++             *
++             */
++        	/*if(te instanceof IInventory)
++        	{
++        		IInventory ii = (IInventory)te;
++        		for(HumanEntity e : ii.getViewers())
++        		{
++        			e.closeInventory();
++        		}
++        	}*/
++        }
++        
+         if (chunk != null) chunk.removeTileEntity(p_147475_1_ & 15, p_147475_2_, p_147475_3_ & 15);
+         func_147453_f(p_147475_1_, p_147475_2_, p_147475_3_, getBlock(p_147475_1_, p_147475_2_, p_147475_3_));
+     }
+ 
+     public void func_147457_a(TileEntity p_147457_1_)
+     {
++        if(p_147457_1_ != null)
+         this.field_147483_b.add(p_147457_1_);
+     }
+ 
+@@ -2718,7 +3375,15 @@
+ 
+                     if (i <= 0)
+                     {
+-                        this.worldInfo.setThundering(!this.worldInfo.isThundering());
++                        // CraftBukkit start
++                        ThunderChangeEvent thunder = new ThunderChangeEvent(this.getWorld(), !this.worldInfo.isThundering());
++                        this.getServer().getPluginManager().callEvent(thunder);
++
++                        if (!thunder.isCancelled())
++                        {
++                            this.worldInfo.setThundering(!this.worldInfo.isThundering());
++                        }
++                        // CraftBukkit end
+                     }
+                 }
+ 
+@@ -2754,7 +3419,15 @@
+ 
+                     if (j <= 0)
+                     {
+-                        this.worldInfo.setRaining(!this.worldInfo.isRaining());
++                        // CraftBukkit start
++                        WeatherChangeEvent weather = new WeatherChangeEvent(this.getWorld(), !this.worldInfo.isRaining());
++                        this.getServer().getPluginManager().callEvent(weather);
++
++                        if (!weather.isCancelled())
++                        {
++                            this.worldInfo.setRaining(!this.worldInfo.isRaining());
++                        }
++                        // CraftBukkit end
+                     }
+                 }
+ 
+@@ -2777,8 +3450,41 @@
+     protected void setActivePlayerChunksAndCheckLight()
+     {
+         this.activeChunkSet.clear();
++        // Cauldron start - add persistent chunks to be ticked for growth
++        this.activeChunkSet_CB.clear();
++        for (ChunkCoordIntPair chunk : getPersistentChunks().keySet())
++        {
++            this.activeChunkSet.add(chunk);
++            long key = chunkToKey(chunk.chunkXPos, chunk.chunkZPos);
++            this.activeChunkSet_CB.put(key, (short) 0);
++            if (!this.chunkExists(chunk.chunkXPos, chunk.chunkZPos))
++            {
++                ((WorldServer) this).theChunkProviderServer.loadChunk(chunk.chunkXPos, chunk.chunkZPos);
++            }
++        }
++        // Cauldron end
+         this.theProfiler.startSection("buildList");
+-        this.activeChunkSet.addAll(getPersistentChunks().keySet());
++        // Spigot start
++        int optimalChunks = this.getSpigotConfig().chunksPerTick; // Cauldron
++
++        // Quick conditions to allow us to exist early
++        if (optimalChunks <= 0) // Cauldron tick chunks even if no players are logged in
++        {
++            return;
++        }
++
++        // Keep chunks with growth inside of the optimal chunk range
++        int chunksPerPlayer = Math.min(200, Math.max(1, (int) (((optimalChunks - playerEntities.size()) / (double) playerEntities.size()) + 0.5)));
++        // Cauldron start - use server view distance instead of capping it at 7
++        int randRange = this.func_152379_p();
++        if (randRange < 1)
++        {
++            throw new IllegalArgumentException("Too small view radius! edit server.properties and change view-distance to a value > 0.");
++        }
++        // Cauldron end
++        // odds of growth happening vs growth happening in vanilla
++        this.growthOdds = this.modifiedOdds = Math.max(35, Math.min(100, ((chunksPerPlayer + 1) * 100F) / 15F));
++        // Spigot end
+         int i;
+         EntityPlayer entityplayer;
+         int j;
+@@ -2788,17 +3494,28 @@
+         for (i = 0; i < this.playerEntities.size(); ++i)
+         {
+             entityplayer = (EntityPlayer)this.playerEntities.get(i);
+-            j = MathHelper.floor_double(entityplayer.posX / 16.0D);
+-            k = MathHelper.floor_double(entityplayer.posZ / 16.0D);
+-            l = this.func_152379_p();
++            int chunkX = MathHelper.floor_double(entityplayer.posX / 16.0D);
++            int chunkZ = MathHelper.floor_double(entityplayer.posZ / 16.0D);
++            // Spigot start - Always update the chunk the player is on
++            long key = chunkToKey(chunkX, chunkZ);
++            int existingPlayers = Math.max(0, activeChunkSet_CB.get(key)); //filter out -1's
++            activeChunkSet_CB.put(key, (short) (existingPlayers + 1));
++            activeChunkSet.add(new ChunkCoordIntPair(chunkX, chunkZ)); // Cauldron - vanilla compatibility
+ 
+-            for (int i1 = -l; i1 <= l; ++i1)
++            // Check and see if we update the chunks surrounding the player this tick
++            for (int chunk = 0; chunk < chunksPerPlayer; chunk++)
+             {
+-                for (int j1 = -l; j1 <= l; ++j1)
++                int dx = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(randRange);
++                int dz = (rand.nextBoolean() ? 1 : -1) * rand.nextInt(randRange);
++                long hash = chunkToKey(dx + chunkX, dz + chunkZ);
++
++                if (!activeChunkSet_CB.contains(hash) && this.chunkExists(dx + chunkX, dz + chunkZ))
+                 {
+-                    this.activeChunkSet.add(new ChunkCoordIntPair(i1 + j, j1 + k));
++                    activeChunkSet_CB.put(hash, (short) -1); //no players
++                    activeChunkSet.add(new ChunkCoordIntPair(dx + chunkX, dz + chunkZ)); // Cauldron - vanilla compatibility
+                 }
+             }
++            // Spigot End
+         }
+ 
+         this.theProfiler.endSection();
+@@ -2810,7 +3527,7 @@
+ 
+         this.theProfiler.startSection("playerCheckLight");
+ 
+-        if (!this.playerEntities.isEmpty())
++        if (this.getSpigotConfig().randomLightUpdates && !this.playerEntities.isEmpty()) // Spigot // Cauldron
+         {
+             i = this.rand.nextInt(this.playerEntities.size());
+             entityplayer = (EntityPlayer)this.playerEntities.get(i);
+@@ -3034,9 +3751,9 @@
+         }
+     }
+ 
+-    public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_)
++    public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_, Chunk chunk, List<Chunk> neighbors)
+     {
+-        if (!this.doChunksNearChunkExist(p_147463_2_, p_147463_3_, p_147463_4_, 17))
++        if (chunk == null) // CraftBukkit / PaperSpigot
+         {
+             return false;
+         }
+@@ -3188,7 +3905,7 @@
+ 
+     public List getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_)
+     {
+-        ArrayList arraylist = new ArrayList();
++        ArrayList arraylist = new ArrayList(30); // Thermos - force minimal size
+         int i = MathHelper.floor_double((p_94576_2_.minX - MAX_ENTITY_RADIUS) / 16.0D);
+         int j = MathHelper.floor_double((p_94576_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+         int k = MathHelper.floor_double((p_94576_2_.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+@@ -3219,7 +3936,7 @@
+         int j = MathHelper.floor_double((p_82733_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
+         int k = MathHelper.floor_double((p_82733_2_.minZ - MAX_ENTITY_RADIUS) / 16.0D);
+         int l = MathHelper.floor_double((p_82733_2_.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+-        ArrayList arraylist = new ArrayList();
++        ArrayList arraylist = new ArrayList(40);
+ 
+         for (int i1 = i; i1 <= j; ++i1)
+         {
+@@ -3284,8 +4001,21 @@
+         {
+             Entity entity = (Entity)this.loadedEntityList.get(j);
+ 
+-            if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).isNoDespawnRequired()) && p_72907_1_.isAssignableFrom(entity.getClass()))
++            // CraftBukkit start - Split out persistent check, don't apply it to special persistent mobs
++            if (entity instanceof EntityLiving)
+             {
++                EntityLiving entityliving = (EntityLiving) entity;
++
++                if (entityliving.canDespawn_CB() && entityliving.isNoDespawnRequired())
++                {
++                    continue;
++                }
++            }
++
++            if (p_72907_1_.isAssignableFrom(entity.getClass()))
++            {
++                // if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).isNoDespawnRequired()) && p_72907_1_.isAssignableFrom(entity.getClass()))
++                // CraftBukkit end
+                 ++i;
+             }
+         }
+@@ -3298,6 +4028,7 @@
+         for (int i = 0; i < p_72868_1_.size(); ++i)
+         {
+             Entity entity = (Entity)p_72868_1_.get(i);
++            if (!entity.entityAllowedToSpawn()) continue;
+             if (!MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)))
+             {
+                 loadedEntityList.add(entity);
+@@ -3314,8 +4045,17 @@
+     public boolean canPlaceEntityOnSide(Block p_147472_1_, int p_147472_2_, int p_147472_3_, int p_147472_4_, boolean p_147472_5_, int p_147472_6_, Entity p_147472_7_, ItemStack p_147472_8_)
+     {
+         Block block1 = this.getBlock(p_147472_2_, p_147472_3_, p_147472_4_);
++        if (block1 == null) return false; // Cauldron
+         AxisAlignedBB axisalignedbb = p_147472_5_ ? null : p_147472_1_.getCollisionBoundingBoxFromPool(this, p_147472_2_, p_147472_3_, p_147472_4_);
+-        return axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, p_147472_7_) ? false : (block1.getMaterial() == Material.circuits && p_147472_1_ == Blocks.anvil ? true : block1.isReplaceable(this, p_147472_2_, p_147472_3_, p_147472_4_) && p_147472_1_.canReplace(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
++        // CraftBukkit start - store default return
++        boolean defaultReturn = axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, p_147472_7_) ? false
++                : (block1.getMaterial() == Material.circuits && p_147472_1_ == Blocks.anvil ? true : block1.isReplaceable(this, p_147472_2_, p_147472_3_,
++                        p_147472_4_) && p_147472_1_.canReplace(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
++        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(p_147472_2_, p_147472_3_, p_147472_4_),
++                CraftMagicNumbers.getId(p_147472_1_), defaultReturn);
++        this.getServer().getPluginManager().callEvent(event);
++        return event.isBuildable();
++        // CraftBukkit end
+     }
+ 
+     public PathEntity getPathEntityToEntity(Entity p_72865_1_, Entity p_72865_2_, float p_72865_3_, boolean p_72865_4_, boolean p_72865_5_, boolean p_72865_6_, boolean p_72865_7_)
+@@ -3464,6 +4204,12 @@
+         for (int i = 0; i < this.playerEntities.size(); ++i)
+         {
+             EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
++            // CraftBukkit start - Fixed an NPE
++            if (entityplayer1 == null || entityplayer1.isDead)
++            {
++                continue;
++            }
++            // CraftBukkit end
+             double d5 = entityplayer1.getDistanceSq(p_72977_1_, p_72977_3_, p_72977_5_);
+ 
+             if ((p_72977_7_ < 0.0D || d5 < p_72977_7_ * p_72977_7_) && (d4 == -1.0D || d5 < d4))
+@@ -3489,7 +4235,12 @@
+         for (int i = 0; i < this.playerEntities.size(); ++i)
+         {
+             EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
+-
++            // CraftBukkit start - Fixed an NPE
++            if (entityplayer1 == null || entityplayer1.isDead)
++            {
++                continue;
++            }
++            // CraftBukkit end
+             if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive())
+             {
+                 double d5 = entityplayer1.getDistanceSq(p_72846_1_, p_72846_3_, p_72846_5_);
+@@ -3660,6 +4411,18 @@
+ 
+     public void updateAllPlayersSleepingFlag() {}
+ 
++    // CraftBukkit start
++    // Calls the method that checks to see if players are sleeping
++    // Called by CraftPlayer.setPermanentSleeping()
++    public void checkSleepStatus()
++    {
++        if (!this.isRemote)
++        {
++            this.updateAllPlayersSleepingFlag();
++        }
++    }
++    // CraftBukkit end
++
+     public float getWeightedThunderStrength(float p_72819_1_)
+     {
+         return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * p_72819_1_) * this.getRainStrength(p_72819_1_);
+@@ -3932,8 +4695,8 @@
+      */
+     public void addTileEntity(TileEntity entity)
+     {
+-        List dest = field_147481_N ? addedTileEntityList : loadedTileEntityList;
+-        if(entity.canUpdate())
++        Collection dest = field_147481_N ? addedTileEntityList : loadedTileEntityList; // Cauldron - List -> Collection for CB loadedTileEntityList type change
++        if (CauldronHooks.canUpdate(entity))
+         {
+             dest.add(entity);
+         }
+@@ -4029,4 +4792,127 @@
+         }
+         return count;
+     }
++
++    // Cauldron start
++    public boolean isEmpty(int x, int y, int z) // Required until SS inheritance bug is fixed
++    {
++        return isAirBlock(x, y, z);
++    }
++
++    public Block getType(int x, int y, int z) // Required until SS inheritance bug is fixed
++    {
++        return getBlock(x, y, z);
++    }
++
++    public ConcurrentMap<ChunkCoordIntPair, Ticket> activity = new ConcurrentHashMap<ChunkCoordIntPair, Ticket>();
++    
++    public boolean isActiveChunk(int x, int z)
++    {
++        return activeChunkSet_CB.containsKey(chunkToKey(x, z)) || activity.containsKey(new ChunkCoordIntPair(x, z));
++    }
++
++    public boolean isActiveChunk(long key)
++    {
++        return isActiveChunk(keyToX(key), keyToZ(key));
++    }
++
++    private final HashMap<Integer, Object[]> access_cache = new HashMap<Integer, Object[]>();
++
++    public boolean isActiveBlockCoord(int x, int z)
++    {
++        return isActiveChunk(x >> 4, z >> 4);
++    }
++
++    public boolean isActiveBlockCoord(int x, int y, int z)
++    {
++        return isActiveChunk(x >> 4, z >> 4);
++    }    
++    
++    public boolean inActiveChunk(Entity entity)
++    {
++        return isActiveBlockCoord(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posZ));
++    }
++
++    // this method is used by ForgeMultipart and Immibis's Microblocks
++    public boolean canPlaceMultipart(Block block, int x, int y, int z)
++    {
++        BlockPlaceEvent placeEvent = null;
++        if (ItemStack.currentPlayer != null)
++        {
++            placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(this, ItemStack.currentPlayer,
++                    org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, x, y, z, 3), x, y, z);
++        }
++
++        if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild()))
++        {
++            return false;
++        }
++
++        return true;
++    }
++
++    public org.spigotmc.SpigotWorldConfig getSpigotConfig()
++    {
++        if (this.spigotConfig == null) if (DimensionManager.getWorld(0) != null) return DimensionManager.getWorld(0).spigotConfig;
++        return this.spigotConfig;
++    }
++    // Cauldron end
++    
++    // Spigot start
++    private void initLimiter() {
++        entityLimiter = new TickLimiter(spigotConfig.entityMaxTickTime);
++        tileLimiter = new TickLimiter(spigotConfig.tileMaxTickTime);
++    }
++    // Spigot end
++    
++    // Cauldron start
++    public boolean isProfilingWorld() {
++        return provider.dimensionId == Integer.MIN_VALUE; // Mystcraft
++    }
++    // Cauldron end
++    
++    public Chunk getChunkIfLoaded(int x, int z) {
++        return ((ChunkProviderServer) this.chunkProvider).getChunkIfLoaded(x, z);
++    }
++
++    public java.util.concurrent.ExecutorService lightingExecutor = java.util.concurrent.Executors.newSingleThreadExecutor(new com.google.common.util.concurrent.ThreadFactoryBuilder().setNameFormat("PaperSpigot - Lighting Thread").build()); // PaperSpigot - Asynchronous lighting updates
++
++    /**
++     * PaperSpigot - Asynchronous lighting updates
++     */
++    public boolean updateLightByType(final EnumSkyBlock enumskyblock, final int x, final int y, final int z) {
++        final Chunk chunk = this.getChunkIfLoaded(x >> 4, z >> 4);
++        if (chunk == null || !chunk.areNeighborsLoaded(1)) {
++            return false;
++        }
++        // Thermos force modded chunks to use synchronous lighting
++        if(chunk.worldObj.isModded == null) chunk.worldObj.isModded = false;
++        if (!chunk.worldObj.spigotConfig.useAsyncLighting || !chunk.worldObj.isModded) {
++            return this.updateLightByType(enumskyblock, x, y, z, chunk, null);
++        }
++
++        final List<Chunk> neighbors = new ArrayList<Chunk>();
++        for (int cx = (x >> 4) - 1; cx <= (x >> 4) + 1; ++cx) {
++            for (int cz = (z >> 4) - 1; cz <= (z >> 4) + 1; ++cz) {
++                if (cx != x >> 4 && cz != z >> 4) {
++                    Chunk neighbor = this.getChunkIfLoaded(cx, cz);
++                    if (neighbor != null) {
++                        neighbors.add(neighbor);
++                    }
++                }
++            }
++        }
++
++        if (!Bukkit.isPrimaryThread()) {
++            return this.updateLightByType(enumskyblock, x, y, z, chunk, neighbors);
++        }
++
++        lightingExecutor.submit(new Runnable() {
++            @Override
++            public void run() {
++                World.this.updateLightByType(enumskyblock, x, y, z, chunk, neighbors);
++            }
++        });
++        return true;
++    }
+ }

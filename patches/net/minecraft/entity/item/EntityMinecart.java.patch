@@ -1,0 +1,234 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecart.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecart.java
+@@ -28,6 +28,15 @@
+ import net.minecraftforge.event.entity.minecart.MinecartCollisionEvent;
+ import net.minecraftforge.event.entity.minecart.MinecartUpdateEvent;
+ 
++// CraftBukkit start
++import org.bukkit.Location;
++import org.bukkit.entity.Vehicle;
++import org.bukkit.event.vehicle.VehicleDamageEvent;
++import org.bukkit.event.vehicle.VehicleDestroyEvent;
++import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
++import org.bukkit.util.Vector;
++// CraftBukkit end
++
+ public abstract class EntityMinecart extends Entity
+ {
+     private boolean isInReverse;
+@@ -47,6 +56,17 @@
+     private double velocityZ;
+     private static final String __OBFID = "CL_00001670";
+ 
++    // CraftBukkit start
++    public boolean slowWhenEmpty = true;
++    private double derailedX = 0.5D;
++    private double derailedY = 0.5D;
++    private double derailedZ = 0.5D;
++    private double flyingX = 0.95D;
++    private double flyingY = 0.95D;
++    private double flyingZ = 0.95D;
++    public double maxSpeed = 0.4D;
++    // CraftBukkit end
++
+     /* Forge: Minecart Compatibility Layer Integration. */
+     public static float defaultMaxSpeedAirLateral = 0.4f;
+     public static float defaultMaxSpeedAirVertical = -1f;
+@@ -138,6 +158,7 @@
+         this.prevPosX = p_i1713_2_;
+         this.prevPosY = p_i1713_4_;
+         this.prevPosZ = p_i1713_6_;
++        this.worldObj.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleCreateEvent((Vehicle) this.getBukkitEntity())); // CraftBukkit
+     }
+ 
+     public double getMountedYOffset()
+@@ -155,6 +176,19 @@
+             }
+             else
+             {
++                // CraftBukkit start
++                Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++                org.bukkit.entity.Entity passenger = (p_70097_1_.getEntity() == null) ? null : p_70097_1_.getEntity().getBukkitEntity();
++                VehicleDamageEvent event = new VehicleDamageEvent(vehicle, passenger, p_70097_2_);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return true;
++                }
++
++                p_70097_2_ = (float) event.getDamage();
++                // CraftBukkit end
+                 this.setRollingDirection(-this.getRollingDirection());
+                 this.setRollingAmplitude(10);
+                 this.setBeenAttacked();
+@@ -168,6 +202,18 @@
+                         this.riddenByEntity.mountEntity(this);
+                     }
+ 
++                    // CraftBukkit start
++                    VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, passenger);
++                    this.worldObj.getServer().getPluginManager().callEvent(destroyEvent);
++
++                    if (destroyEvent.isCancelled())
++                    {
++                        this.setDamage(40); // Maximize damage so this doesn't
++                                            // get triggered again right away
++                        return true;
++                    }
++                    // CraftBukkit end
++
+                     if (flag && !this.hasCustomInventoryName())
+                     {
+                         this.setDead();
+@@ -220,6 +266,14 @@
+ 
+     public void onUpdate()
+     {
++        // CraftBukkit start
++        double prevX = this.posX;
++        double prevY = this.posY;
++        double prevZ = this.posZ;
++        float prevYaw = this.rotationYaw;
++        float prevPitch = this.rotationPitch;
++        // CraftBukkit end
++
+         if (this.getRollingAmplitude() > 0)
+         {
+             this.setRollingAmplitude(this.getRollingAmplitude() - 1);
+@@ -245,7 +299,7 @@
+ 
+             if (this.inPortal)
+             {
+-                if (minecraftserver.getAllowNether())
++                if (true || minecraftserver.getAllowNether())   // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
+                 {
+                     if (this.ridingEntity == null && this.portalCounter++ >= i)
+                     {
+@@ -324,7 +378,7 @@
+                 --i;
+             }
+ 
+-            double d0 = 0.4D;
++            double d0 = this.maxSpeed; // CraftBukkit
+             double d2 = 0.0078125D;
+             Block block = this.worldObj.getBlock(l, i, i1);
+ 
+@@ -368,7 +422,18 @@
+             }
+ 
+             this.setRotation(this.rotationYaw, this.rotationPitch);
++            // CraftBukkit start
++            org.bukkit.World bworld = this.worldObj.getWorld();
++            Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
++            Location to = new Location(bworld, this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
++            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++            this.worldObj.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
+ 
++            if (!from.equals(to))
++            {
++                this.worldObj.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, from, to));
++            }
++            // CraftBukkit end
+             AxisAlignedBB box;
+             if (getCollisionHandler() != null)
+             {
+@@ -445,18 +510,22 @@
+ 
+         if (this.onGround)
+         {
+-            this.motionX *= 0.5D;
+-            this.motionY *= 0.5D;
+-            this.motionZ *= 0.5D;
++            // CraftBukkit start
++            this.motionX *= this.derailedX;
++            this.motionY *= this.derailedY;
++            this.motionZ *= this.derailedZ;
++            // CraftBukkit end
+         }
+ 
+         this.moveEntity(this.motionX, moveY, this.motionZ);
+ 
+         if (!this.onGround)
+         {
++            // CraftBukkit start // Cauldron - CB changed to flyingX but Forge changed to getDragAir() - prefer Forge in this case
+             this.motionX *= getDragAir();
+             this.motionY *= getDragAir();
+             this.motionZ *= getDragAir();
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -678,7 +747,7 @@
+ 
+     protected void applyDrag()
+     {
+-        if (this.riddenByEntity != null)
++        if (this.riddenByEntity != null || !this.slowWhenEmpty) // CraftBukkit
+         {
+             this.motionX *= 0.996999979019165D;
+             this.motionY *= 0.0D;
+@@ -866,6 +935,18 @@
+         {
+             if (p_70108_1_ != this.riddenByEntity)
+             {
++                // CraftBukkit start
++                Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++                org.bukkit.entity.Entity hitEntity = (p_70108_1_ == null) ? null : p_70108_1_.getBukkitEntity();
++                VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent(vehicle, hitEntity);
++                this.worldObj.getServer().getPluginManager().callEvent(collisionEvent);
++
++                if (collisionEvent.isCancelled())
++                {
++                    return;
++                }
++                // CraftBukkit end
++
+                 if (p_70108_1_ instanceof EntityLivingBase && !(p_70108_1_ instanceof EntityPlayer) && !(p_70108_1_ instanceof EntityIronGolem) && canBeRidden()               && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && p_70108_1_.ridingEntity == null)
+                 {
+                     p_70108_1_.mountEntity(this);
+@@ -875,7 +956,8 @@
+                 double d1 = p_70108_1_.posZ - this.posZ;
+                 double d2 = d0 * d0 + d1 * d1;
+ 
+-                if (d2 >= 9.999999747378752E-5D)
++                // CraftBukkit - collision
++                if (d2 >= 9.999999747378752E-5D && !collisionEvent.isCollisionCancelled())
+                 {
+                     d2 = (double)MathHelper.sqrt_double(d2);
+                     d0 /= d2;
+@@ -1089,6 +1171,34 @@
+     {
+         return this.entityName;
+     }
++
++    // CraftBukkit start - Methods for getting and setting flying and derailed
++    // velocity modifiers
++    public Vector getFlyingVelocityMod()
++    {
++        return new Vector(flyingX, flyingY, flyingZ);
++    }
++
++    public void setFlyingVelocityMod(Vector flying)
++    {
++        flyingX = flying.getX();
++        flyingY = flying.getY();
++        flyingZ = flying.getZ();
++    }
++
++    public Vector getDerailedVelocityMod()
++    {
++        return new Vector(derailedX, derailedY, derailedZ);
++    }
++
++    public void setDerailedVelocityMod(Vector derailed)
++    {
++        derailedX = derailed.getX();
++        derailedY = derailed.getY();
++        derailedZ = derailed.getZ();
++    }
++    // CraftBukkit end
++
+     /* =================================== FORGE START ===========================================*/
+     /**
+      * Moved to allow overrides.

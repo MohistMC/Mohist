@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityWolf.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWolf.java
+@@ -139,7 +139,8 @@
+ 
+     protected String getLivingSound()
+     {
+-        return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.getWatchableObjectFloat(18) < 10.0F ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
++        // CraftBukkit - (getFloat(18) < 10) -> (getFloat(18) < this.getMaxHealth() / 2)
++        return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.getWatchableObjectFloat(18) < (this.getMaxHealth() / 2) ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
+     }
+ 
+     protected String getHurtSound()
+@@ -527,7 +528,7 @@
+ 
+     protected boolean canDespawn()
+     {
+-        return !this.isTamed() && this.ticksExisted > 2400;
++        return !this.isTamed(); // CraftBukkit
+     }
+ 
+     public boolean func_142018_a(EntityLivingBase p_142018_1_, EntityLivingBase p_142018_2_)

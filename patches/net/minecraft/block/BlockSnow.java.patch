@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
+@@ -114,6 +114,14 @@
+     {
+         if (p_149674_1_.getSavedLightValue(EnumSkyBlock.Block, p_149674_2_, p_149674_3_, p_149674_4_) > 11)
+         {
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_), Blocks.air).isCancelled())
++            {
++                return;
++            }
++
++            // CraftBukkit end
++            this.dropBlockAsItem(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_), 0);
+             p_149674_1_.setBlockToAir(p_149674_2_, p_149674_3_, p_149674_4_);
+         }
+     }

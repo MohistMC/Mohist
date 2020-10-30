@@ -1,0 +1,228 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -21,6 +21,13 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++// CraftBukkit start
++import java.util.UUID;
++
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++// CraftBukkit end
++import cpw.mods.fml.common.registry.GameData; // Cauldron
++
+ public class SaveHandler implements ISaveHandler, IPlayerFileData
+ {
+     private static final Logger logger = LogManager.getLogger();
+@@ -29,6 +36,8 @@
+     private final File mapDataDir;
+     private final long initializationTime = MinecraftServer.getSystemTimeMillis();
+     private final String saveDirectoryName;
++    private UUID uuid = null; // CraftBukkit
++    private static boolean initializedBukkit = false; // Cauldron
+     private static final String __OBFID = "CL_00000585";
+ 
+     public SaveHandler(File p_i2146_1_, String p_i2146_2_, boolean p_i2146_3_)
+@@ -67,7 +76,7 @@
+         catch (IOException ioexception)
+         {
+             ioexception.printStackTrace();
+-            throw new RuntimeException("Failed to check session lock, aborting");
++            throw new RuntimeException("Failed to check session lock for world " + this.worldDirectory + ", aborting"); // Cauldron
+         }
+     }
+ 
+@@ -87,7 +96,8 @@
+             {
+                 if (datainputstream.readLong() != this.initializationTime)
+                 {
+-                    throw new MinecraftException("The save is being accessed from another location, aborting");
++                	// Thermos - disable Cauldron feature that can cause problems for some mods
++                	// throw new MinecraftException("The save folder for world " + this.worldDirectory + " is being accessed from another location, aborting"); // Cauldron
+                 }
+             }
+             finally
+@@ -97,7 +107,10 @@
+         }
+         catch (IOException ioexception)
+         {
+-            throw new MinecraftException("Failed to check session lock, aborting");
++            // Cauldron start
++            ioexception.printStackTrace();
++            throw new MinecraftException("Failed to check session lock for world " + this.worldDirectory + ", aborting");
++            // Cauldron end
+         }
+     }
+ 
+@@ -122,6 +135,7 @@
+                 nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
+                 worldInfo = new WorldInfo(nbttagcompound1);
+                 FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                this.initBukkitData(worldInfo); // Cauldron
+                 return worldInfo;
+             }
+             catch (StartupQuery.AbortedException e)
+@@ -145,6 +159,7 @@
+                 nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
+                 worldInfo = new WorldInfo(nbttagcompound1);
+                 FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                this.initBukkitData(worldInfo); // Cauldron
+                 return worldInfo;
+             }
+             catch (StartupQuery.AbortedException e)
+@@ -157,6 +172,7 @@
+             }
+         }
+ 
++        this.initBukkitData(worldInfo); // Cauldron
+         return null;
+     }
+ 
+@@ -284,6 +300,18 @@
+ 
+         if (nbttagcompound != null)
+         {
++            // CraftBukkit start
++            if (p_75752_1_ instanceof EntityPlayerMP)
++            {
++                CraftPlayer player = (CraftPlayer) p_75752_1_.getBukkitEntity(); // Cauldron
++                // Only update first played if it is older than the one we have
++                long modified = new File(playersDirectory, p_75752_1_.getCommandSenderName() + ".dat").lastModified();
++                if (modified < player.getFirstPlayed())
++                {
++                    player.setFirstPlayed(modified);
++                }
++            }
++            // CraftBukkit end
+             p_75752_1_.readFromNBT(nbttagcompound);
+         }
+ 
+@@ -291,6 +319,27 @@
+         return nbttagcompound;
+     }
+ 
++    // CraftBukkit start
++    public NBTTagCompound getPlayerData(String par1Str)
++    {
++        try
++        {
++            File file1 = new File(this.playersDirectory, par1Str + ".dat");
++
++            if (file1.exists())
++            {
++                return CompressedStreamTools.readCompressed(new FileInputStream(file1));
++            }
++        }
++        catch (Exception exception)
++        {
++            logger.warn("Failed to load player data for " + par1Str);
++        }
++
++        return null;
++    }
++    // CraftBukkit end
++
+     public IPlayerFileData getSaveHandler()
+     {
+         return this;
+@@ -323,6 +372,100 @@
+         return this.saveDirectoryName;
+     }
+ 
++    // CraftBukkit start
++    public UUID getUUID()
++    {
++        if (uuid != null)
++        {
++            return uuid;
++        }
++
++        File file1 = new File(this.worldDirectory, "uid.dat");
++
++        if (file1.exists())
++        {
++            DataInputStream dis = null;
++
++            try
++            {
++                dis = new DataInputStream(new FileInputStream(file1));
++                return uuid = new UUID(dis.readLong(), dis.readLong());
++            }
++            catch (IOException ex)
++            {
++                logger.warn("Failed to read " + file1 + ", generating new random UUID", ex);
++            }
++            finally
++            {
++                if (dis != null)
++                {
++                    try
++                    {
++                        dis.close();
++                    }
++                    catch (IOException ex)
++                    {
++                        // NOOP
++                    }
++                }
++            }
++        }
++
++        uuid = UUID.randomUUID();
++        DataOutputStream dos = null;
++
++        try
++        {
++            dos = new DataOutputStream(new FileOutputStream(file1));
++            dos.writeLong(uuid.getMostSignificantBits());
++            dos.writeLong(uuid.getLeastSignificantBits());
++        }
++        catch (IOException ex)
++        {
++            logger.warn("Failed to write " + file1, ex);
++        }
++        finally
++        {
++            if (dos != null)
++            {
++                try
++                {
++                    dos.close();
++                }
++                catch (IOException ex)
++                {
++                    // NOOP
++                }
++            }
++        }
++
++        return uuid;
++    }
++
++    public File getPlayerDir()
++    {
++        return playersDirectory;
++    }
++
++    // CraftBukkit end
++
++    // Cauldron start
++    public void initBukkitData(WorldInfo worldInfo)
++    {
++        // inject bukkit materials before plugins load
++        if (!this.initializedBukkit && (worldInfo == null || worldInfo.getDimension() == 0))
++        {
++            GameData.injectBlockBukkitMaterials();
++            GameData.injectItemBukkitMaterials();
++            // since we modify bukkit enums, we need to guarantee that plugins are
++            // loaded after all mods have been loaded by FML to avoid race conditions.
++            MinecraftServer.getServer().server.loadPlugins();
++            MinecraftServer.getServer().server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++            this.initializedBukkit = true;
++        }
++    }
++    // Cauldron end
++
+     public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
+     {
+         try

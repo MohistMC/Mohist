@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerFurnace.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerFurnace.java
+@@ -8,12 +8,34 @@
+ import net.minecraft.item.crafting.FurnaceRecipes;
+ import net.minecraft.tileentity.TileEntityFurnace;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class ContainerFurnace extends Container
+ {
+     private TileEntityFurnace tileFurnace;
+     private int lastCookTime;
+     private int lastBurnTime;
+     private int lastItemBurnTime;
++
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventoryFurnace inventory = new CraftInventoryFurnace(this.tileFurnace);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001748";
+ 
+     public ContainerFurnace(InventoryPlayer p_i1812_1_, TileEntityFurnace p_i1812_2_)
+@@ -22,6 +44,7 @@
+         this.addSlotToContainer(new Slot(p_i1812_2_, 0, 56, 17));
+         this.addSlotToContainer(new Slot(p_i1812_2_, 1, 56, 53));
+         this.addSlotToContainer(new SlotFurnace(p_i1812_1_.player, p_i1812_2_, 2, 116, 35));
++        this.player = p_i1812_1_; // CraftBukkit - save player
+         int i;
+ 
+         for (i = 0; i < 3; ++i)
+@@ -96,6 +119,11 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.tileFurnace.isUseableByPlayer(p_75145_1_);
+     }
+ 

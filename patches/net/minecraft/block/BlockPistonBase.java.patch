@@ -1,0 +1,133 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
+@@ -4,6 +4,7 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.List;
+ import net.minecraft.block.material.Material;
++import net.minecraft.block.BlockRailBase;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+@@ -21,6 +22,12 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.event.block.BlockPistonRetractEvent;
++import org.bukkit.event.block.BlockPistonExtendEvent;
++// CraftBukkit end
++
+ public class BlockPistonBase extends Block
+ {
+     private final boolean isSticky;
+@@ -128,13 +135,37 @@
+ 
+             if (flag && !isExtended(l))
+             {
+-                if (canExtend(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
++                // CraftBukkit start
++                int length = canExtend_IntCB(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1);
++
++                if (length >= 0)
+                 {
++                    org.bukkit.block.Block block = p_150078_1_.getWorld().getBlockAt(p_150078_2_, p_150078_3_, p_150078_4_);
++                    BlockPistonExtendEvent event = new BlockPistonExtendEvent(block, length, CraftBlock.notchToBlockFace(i1));
++                    p_150078_1_.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return;
++                    }
++
++                    // CraftBukkit end
+                     p_150078_1_.addBlockEvent(p_150078_2_, p_150078_3_, p_150078_4_, this, 0, i1);
+                 }
+             }
+             else if (!flag && isExtended(l))
+             {
++                // CraftBukkit start
++                org.bukkit.block.Block block = p_150078_1_.getWorld().getBlockAt(p_150078_2_, p_150078_3_, p_150078_4_);
++                BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, CraftBlock.notchToBlockFace(i1));
++                p_150078_1_.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return;
++                }
++
++                // CraftBukkit end
+                 p_150078_1_.setBlockMetadataWithNotify(p_150078_2_, p_150078_3_, p_150078_4_, i1, 2);
+                 p_150078_1_.addBlockEvent(p_150078_2_, p_150078_3_, p_150078_4_, this, 1, i1);
+             }
+@@ -297,6 +328,11 @@
+ 
+     public static int getPistonOrientation(int p_150076_0_)
+     {
++        if ((p_150076_0_ & 7) >= Facing.oppositeSide.length)
++        {
++            return 7;    // CraftBukkit - check for AIOOB on piston data
++        }
++
+         return p_150076_0_ & 7;
+     }
+ 
+@@ -328,7 +364,7 @@
+ 
+     private static boolean canPushBlock(Block p_150080_0_, World p_150080_1_, int p_150080_2_, int p_150080_3_, int p_150080_4_, boolean p_150080_5_)
+     {
+-        if (p_150080_0_ == Blocks.obsidian)
++        if (p_150080_0_ == Blocks.obsidian || (p_150080_0_ instanceof BlockRailBase))
+         {
+             return false;
+         }
+@@ -366,7 +402,13 @@
+         }
+     }
+ 
+-    private static boolean canExtend(World p_150077_0_, int p_150077_1_, int p_150077_2_, int p_150077_3_, int p_150077_4_)
++    // Cauldron start - vanilla compatibility
++    private static boolean canExtend(World world, int i, int j, int k, int l) {
++        return canExtend_IntCB(world, i, j, k, l) >= 0;
++    }
++    // Cauldron end
++
++    private static int canExtend_IntCB(World p_150077_0_, int p_150077_1_, int p_150077_2_, int p_150077_3_, int p_150077_4_) // CraftBukkit int -> boolean
+     {
+         int i1 = p_150077_1_ + Facing.offsetsXForSide[p_150077_4_];
+         int j1 = p_150077_2_ + Facing.offsetsYForSide[p_150077_4_];
+@@ -379,7 +421,7 @@
+             {
+                 if (j1 <= 0 || j1 >= p_150077_0_.getHeight())
+                 {
+-                    return false;
++                    return -1; // CraftBukkit
+                 }
+ 
+                 Block block = p_150077_0_.getBlock(i1, j1, k1);
+@@ -388,14 +430,14 @@
+                 {
+                     if (!canPushBlock(block, p_150077_0_, i1, j1, k1, true))
+                     {
+-                        return false;
++                        return -1; // CraftBukkit
+                     }
+ 
+                     if (block.getMobilityFlag() != 1)
+                     {
+                         if (l1 == 12)
+                         {
+-                            return false;
++                            return -1; // CraftBukkit
+                         }
+ 
+                         i1 += Facing.offsetsXForSide[p_150077_4_];
+@@ -407,7 +449,7 @@
+                 }
+             }
+ 
+-            return true;
++            return l1; // CraftBukkit
+         }
+     }
+ 

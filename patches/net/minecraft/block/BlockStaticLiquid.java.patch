@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStaticLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStaticLiquid.java
+@@ -5,6 +5,8 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.craftbukkit.event.CraftEventFactory;  // CraftBukkit
++
+ public class BlockStaticLiquid extends BlockLiquid
+ {
+     private static final String __OBFID = "CL_00000315";
+@@ -43,6 +45,11 @@
+         {
+             int l = p_149674_5_.nextInt(3);
+             int i1;
++            // CraftBukkit start - Prevent lava putting something on fire, remember igniter block coords
++            int x = p_149674_2_;
++            int y = p_149674_3_;
++            int z = p_149674_4_;
++            // CraftBukkit end
+ 
+             for (i1 = 0; i1 < l; ++i1)
+             {
+@@ -55,6 +62,16 @@
+                 {
+                     if (this.isFlammable(p_149674_1_, p_149674_2_ - 1, p_149674_3_, p_149674_4_) || this.isFlammable(p_149674_1_, p_149674_2_ + 1, p_149674_3_, p_149674_4_) || this.isFlammable(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ - 1) || this.isFlammable(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ + 1) || this.isFlammable(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_) || this.isFlammable(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_))
+                     {
++                        // CraftBukkit start - Prevent lava putting something on fire
++                        if (p_149674_1_.getBlock(p_149674_2_, p_149674_3_, p_149674_4_) != Blocks.fire)
++                        {
++                            if (CraftEventFactory.callBlockIgniteEvent(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, x, y, z).isCancelled())
++                            {
++                                continue;
++                            }
++                        }
++
++                        // CraftBukkit end
+                         p_149674_1_.setBlock(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.fire);
+                         return;
+                     }
+@@ -77,6 +94,16 @@
+ 
+                     if (p_149674_1_.isAirBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_) && this.isFlammable(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_))
+                     {
++                        // CraftBukkit start - Prevent lava putting something on fire
++                        if (p_149674_1_.getBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_) != Blocks.fire)
++                        {
++                            if (CraftEventFactory.callBlockIgniteEvent(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, x, y, z).isCancelled())
++                            {
++                                continue;
++                            }
++                        }
++
++                        // CraftBukkit end
+                         p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, Blocks.fire);
+                     }
+                 }

@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerChest.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerChest.java
+@@ -3,10 +3,46 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
+ 
++// CraftBukkit start
++import net.minecraft.entity.player.InventoryPlayer;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class ContainerChest extends Container
+ {
+-    private IInventory lowerChestInventory;
++    public IInventory lowerChestInventory; // CraftBukkit - private->public
+     private int numRows;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null || player == null) // Cauldron
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventory inventory;
++
++        if (this.lowerChestInventory instanceof InventoryPlayer)
++        {
++            inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryPlayer((InventoryPlayer) this.lowerChestInventory);
++        }
++        else if (this.lowerChestInventory instanceof InventoryLargeChest)
++        {
++            inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) this.lowerChestInventory);
++        }
++        else
++        {
++            inventory = new CraftInventory(this.lowerChestInventory);
++        }
++
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001742";
+ 
+     public ContainerChest(IInventory p_i1806_1_, IInventory p_i1806_2_)
+@@ -15,6 +51,12 @@
+         this.numRows = p_i1806_2_.getSizeInventory() / 9;
+         p_i1806_2_.openInventory();
+         int i = (this.numRows - 4) * 18;
++        // CraftBukkit start - Save player
++        if (p_i1806_1_ instanceof InventoryPlayer) // Cauldron - make sure it is an InventoryPlayer before casting
++        {
++            this.player = (InventoryPlayer) p_i1806_1_;
++        }
++        // CraftBukkit end
+         int j;
+         int k;
+ 
+@@ -42,6 +84,13 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        // CraftBukkit start
++        if (!this.checkReachable)
++        {
++            return true;
++        }
++        // CraftBukkit end
++
+         return this.lowerChestInventory.isUseableByPlayer(p_75145_1_);
+     }
+ 

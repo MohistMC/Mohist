@@ -1,0 +1,72 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
+@@ -24,6 +24,12 @@
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+ 
++// CraftBukkit start
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTeleportEvent;
++// CraftBukkit end
++
+ public class EntityEnderman extends EntityMob
+ {
+     private static final UUID attackingSpeedBoostModifierUUID = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
+@@ -161,9 +167,15 @@
+ 
+                     if (EntityEnderman.getCarriable(block))
+                     {
+-                        this.func_146081_a(block);
+-                        this.setCarryingData(this.worldObj.getBlockMetadata(k, i, j));
+-                        this.worldObj.setBlock(k, i, j, Blocks.air);
++                        // CraftBukkit start - Pickup event
++                        if (this.worldObj.getWorld() == null || !CraftEventFactory.callEntityChangeBlockEvent(this, this.worldObj.getWorld().getBlockAt(i, j, k), org.bukkit.Material.AIR).isCancelled()) // Cauldron
++                        {
++                            this.func_146081_a(block);
++                            this.setCarryingData(this.worldObj.getBlockMetadata(i, j, k));
++                            this.worldObj.setBlock(i, j, k, Blocks.air);
++                        }
++
++                        // CraftBukkit end
+                     }
+                 }
+             }
+@@ -177,8 +189,14 @@
+ 
+                 if (block.getMaterial() == Material.air && block1.getMaterial() != Material.air && block1.renderAsNormalBlock())
+                 {
+-                    this.worldObj.setBlock(k, i, j, this.func_146080_bZ(), this.getCarryingData(), 3);
+-                    this.func_146081_a(Blocks.air);
++                    // CraftBukkit start - Place event
++                    if (!CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.func_146080_bZ(), this.getCarryingData()).isCancelled())
++                    {
++                        this.worldObj.setBlock(i, j, k, this.func_146080_bZ(), this.getCarryingData(), 3);
++                        this.func_146081_a(Blocks.air);
++                    }
++
++                    // CraftBukkit end
+                 }
+             }
+         }
+@@ -306,8 +324,19 @@
+ 
+             if (flag1)
+             {
+-                this.setPosition(this.posX, this.posY, this.posZ);
++                // CraftBukkit start - Teleport event
++                EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.worldObj.getWorld(), d3, d4, d5), new Location(this.worldObj.getWorld(), this.posX, this.posY, this.posZ));
++                this.worldObj.getServer().getPluginManager().callEvent(teleport);
+ 
++                if (teleport.isCancelled())
++                {
++                    return false;
++                }
++
++                Location to = teleport.getTo();
++                this.setPosition(to.getX(), to.getY(), to.getZ());
++                // CraftBukkit end
++
+                 if (this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
+                 {
+                     flag = true;

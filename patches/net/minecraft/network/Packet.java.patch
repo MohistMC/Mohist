@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/network/Packet.java
++++ ../src-work/minecraft/net/minecraft/network/Packet.java
+@@ -9,6 +9,7 @@
+ public abstract class Packet
+ {
+     private static final Logger logger = LogManager.getLogger();
++    public final long timestamp = System.currentTimeMillis(); // CraftBukkit
+     private static final String __OBFID = "CL_00001272";
+ 
+     public static Packet generatePacket(BiMap p_148839_0_, int p_148839_1_)

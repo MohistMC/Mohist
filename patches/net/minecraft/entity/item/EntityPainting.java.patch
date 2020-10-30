@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityPainting.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityPainting.java
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.ArrayList;
++
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityHanging;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -19,6 +21,7 @@
+     public EntityPainting(World p_i1599_1_)
+     {
+         super(p_i1599_1_);
++        this.art = EntityPainting.EnumArt.values()[this.rand.nextInt(EntityPainting.EnumArt.values().length)]; // CraftBukkit - generate a non-null painting
+     }
+ 
+     public EntityPainting(World p_i1600_1_, int p_i1600_2_, int p_i1600_3_, int p_i1600_4_, int p_i1600_5_)
+@@ -170,4 +173,11 @@
+             this.offsetY = p_i1598_7_;
+         }
+     }
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

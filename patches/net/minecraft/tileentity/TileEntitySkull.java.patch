@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySkull.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySkull.java
+@@ -79,6 +79,14 @@
+         this.func_152109_d();
+     }
+ 
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
++
+     private void func_152109_d()
+     {
+         if (this.field_152110_j != null && !StringUtils.isNullOrEmpty(this.field_152110_j.getName()))
+@@ -113,6 +121,13 @@
+         this.field_145910_i = p_145903_1_;
+     }
+ 
++    // CraftBukkit start
++    public int getRotation()
++    {
++        return this.field_145910_i;
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.CLIENT)
+     public int func_145906_b()
+     {

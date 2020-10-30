@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneLight.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneLight.java
+@@ -9,6 +9,8 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class BlockRedstoneLight extends Block
+ {
+     private final boolean field_150171_a;
+@@ -35,6 +37,13 @@
+             }
+             else if (!this.field_150171_a && p_149726_1_.isBlockIndirectlyGettingPowered(p_149726_2_, p_149726_3_, p_149726_4_))
+             {
++                // CraftBukkit start
++                if (CraftEventFactory.callRedstoneChange(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_, 0, 15).getNewCurrent() != 15)
++                {
++                    return;
++                }
++
++                // CraftBukkit end
+                 p_149726_1_.setBlock(p_149726_2_, p_149726_3_, p_149726_4_, Blocks.lit_redstone_lamp, 0, 2);
+             }
+         }
+@@ -50,6 +59,13 @@
+             }
+             else if (!this.field_150171_a && p_149695_1_.isBlockIndirectlyGettingPowered(p_149695_2_, p_149695_3_, p_149695_4_))
+             {
++                // CraftBukkit start
++                if (CraftEventFactory.callRedstoneChange(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, 0, 15).getNewCurrent() != 15)
++                {
++                    return;
++                }
++
++                // CraftBukkit end
+                 p_149695_1_.setBlock(p_149695_2_, p_149695_3_, p_149695_4_, Blocks.lit_redstone_lamp, 0, 2);
+             }
+         }
+@@ -59,6 +75,13 @@
+     {
+         if (!p_149674_1_.isRemote && this.field_150171_a && !p_149674_1_.isBlockIndirectlyGettingPowered(p_149674_2_, p_149674_3_, p_149674_4_))
+         {
++            // CraftBukkit start
++            if (CraftEventFactory.callRedstoneChange(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, 15, 0).getNewCurrent() != 0)
++            {
++                return;
++            }
++
++            // CraftBukkit end
+             p_149674_1_.setBlock(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.redstone_lamp, 0, 2);
+         }
+     }

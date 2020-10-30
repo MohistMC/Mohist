@@ -1,0 +1,148 @@
+--- ../src-base/minecraft/net/minecraft/world/Explosion.java
++++ ../src-work/minecraft/net/minecraft/world/Explosion.java
+@@ -7,6 +7,7 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.enchantment.EnchantmentProtection;
+@@ -15,11 +16,19 @@
+ import net.minecraft.entity.item.EntityTNTPrimed;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ 
++
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityExplodeEvent;
++import org.bukkit.Location;
++// CraftBukkit end
++
+ public class Explosion
+ {
+     public boolean isFlaming;
+@@ -34,6 +43,7 @@
+     public float explosionSize;
+     public List affectedBlockPositions = new ArrayList();
+     private Map field_77288_k = new HashMap();
++    public boolean wasCanceled = false; // CraftBukkit
+     private static final String __OBFID = "CL_00000134";
+ 
+     public Explosion(World p_i1948_1_, Entity p_i1948_2_, double p_i1948_3_, double p_i1948_5_, double p_i1948_7_, float p_i1948_9_)
+@@ -48,6 +58,12 @@
+ 
+     public void doExplosionA()
+     {
++        // CraftBukkit start
++        if (this.explosionSize < 0.1F)
++        {
++            return;
++        }
++        // CraftBukkit end
+         float f = this.explosionSize;
+         HashSet hashset = new HashSet();
+         int i;
+@@ -112,7 +128,14 @@
+         int i2 = MathHelper.floor_double(this.explosionY + (double)this.explosionSize + 1.0D);
+         int l = MathHelper.floor_double(this.explosionZ - (double)this.explosionSize - 1.0D);
+         int j2 = MathHelper.floor_double(this.explosionZ + (double)this.explosionSize + 1.0D);
+-        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getBoundingBox((double)i, (double)k, (double)l, (double)j, (double)i2, (double)j2));
++        // PaperSpigot start - Fix lag from explosions processing dead entities
++        List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getBoundingBox((double)i, (double)k, (double)l, (double)j, (double)i2, (double)j2), new net.minecraft.command.IEntitySelector() {
++            @Override
++            public boolean isEntityApplicable(Entity entity) {
++                return !entity.isDead;
++            }
++        });
++        // PaperSpigot end
+         net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, this.explosionSize);
+         Vec3 vec3 = Vec3.createVectorHelper(this.explosionX, this.explosionY, this.explosionZ);
+ 
+@@ -135,7 +158,15 @@
+                     d7 /= d9;
+                     double d10 = (double)this.worldObj.getBlockDensity(vec3, entity.boundingBox);
+                     double d11 = (1.0D - d4) * d10;
+-                    entity.attackEntityFrom(DamageSource.setExplosionSource(this), (float)((int)((d11 * d11 + d11) / 2.0D * 8.0D * (double)this.explosionSize + 1.0D)));
++                    // CraftBukkit start
++                    CraftEventFactory.entityDamage = exploder;
++                    if (!entity.attackEntityFrom(DamageSource.setExplosionSource(this), (float) ((int) ((d11 * d11 + d11) / 2.0D * 8.0D
++                            * (double) this.explosionSize + 1.0D))))
++                    {
++                        CraftEventFactory.entityDamage = null;
++                    }
++                    if (!MinecraftServer.cauldronConfig.allowTntPunishment.getValue()) continue;
++                    // CraftBukkit end
+                     double d8 = EnchantmentProtection.func_92092_a(entity, d11);
+                     entity.motionX += d5 * d8;
+                     entity.motionY += d6 * d8;
+@@ -174,6 +205,39 @@
+ 
+         if (this.isSmoking)
+         {
++            // CraftBukkit start
++            org.bukkit.World bworld = this.worldObj.getWorld();
++            org.bukkit.entity.Entity explode = this.exploder == null ? null : this.exploder.getBukkitEntity();
++            Location location = new Location(bworld, this.explosionX, this.explosionY, this.explosionZ);
++            List<org.bukkit.block.Block> blockList = new ArrayList<org.bukkit.block.Block>();
++
++            for (int i1 = this.affectedBlockPositions.size() - 1; i1 >= 0; i1--)
++            {
++                ChunkPosition cpos = (ChunkPosition) this.affectedBlockPositions.get(i1);
++                org.bukkit.block.Block bblock = bworld.getBlockAt(cpos.chunkPosX, cpos.chunkPosY, cpos.chunkPosZ);
++
++                if (bblock.getType() != org.bukkit.Material.AIR)
++                {
++                    blockList.add(bblock);
++                }
++            }
++
++            EntityExplodeEvent event = new EntityExplodeEvent(explode, location, blockList, 0.3F);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++            this.affectedBlockPositions.clear();
++
++            for (org.bukkit.block.Block bblock : event.blockList())
++            {
++                ChunkPosition coords = new ChunkPosition(bblock.getX(), bblock.getY(), bblock.getZ());
++                affectedBlockPositions.add(coords);
++            }
++
++            if (event.isCancelled())
++            {
++                this.wasCanceled = true;
++                return;
++            }
++            // CraftBukkit end
+             iterator = this.affectedBlockPositions.iterator();
+ 
+             while (iterator.hasNext())
+@@ -209,7 +273,8 @@
+                 {
+                     if (block.canDropFromExplosion(this))
+                     {
+-                        block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), 1.0F / this.explosionSize, 0);
++                        // CraftBukkit - add yield
++                        block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), event.getYield(), 0);
+                     }
+ 
+                     block.onBlockExploded(this.worldObj, i, j, k, this);
+@@ -232,7 +297,12 @@
+ 
+                 if (block.getMaterial() == Material.air && block1.func_149730_j() && this.explosionRNG.nextInt(3) == 0)
+                 {
+-                    this.worldObj.setBlock(i, j, k, Blocks.fire);
++                    // CraftBukkit start - Ignition by explosion
++                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.worldObj, i, j, k, this).isCancelled())
++                    {
++                        this.worldObj.setBlock(i, j, k, Blocks.fire);
++                    }
++                    // CraftBukkit end
+                 }
+             }
+         }

@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/util/IntHashMap.java
++++ ../src-work/minecraft/net/minecraft/util/IntHashMap.java
+@@ -10,7 +10,7 @@
+     private int threshold = 12;
+     private final float growFactor = 0.75F;
+     private transient volatile int versionStamp;
+-    private Set keySet = new HashSet();
++    // private Set keySet = new HashSet(); // CraftBukkit - expensive and unused
+     private static final String __OBFID = "CL_00001490";
+ 
+     private static int computeHash(int p_76044_0_)
+@@ -61,7 +61,7 @@
+ 
+     public void addKey(int p_76038_1_, Object p_76038_2_)
+     {
+-        this.keySet.add(Integer.valueOf(p_76038_1_));
++        //this.keySet.add(Integer.valueOf(p_76038_1_)); // CraftBukkit
+         int j = computeHash(p_76038_1_);
+         int k = getSlotIndex(j, this.slots.length);
+ 
+@@ -125,7 +125,7 @@
+ 
+     public Object removeObject(int p_76049_1_)
+     {
+-        this.keySet.remove(Integer.valueOf(p_76049_1_));
++        //this.keySet.remove(Integer.valueOf(p_76049_1_)); // CraftBukkit
+         IntHashMap.Entry entry = this.removeEntry(p_76049_1_);
+         return entry == null ? null : entry.valueEntry;
+     }

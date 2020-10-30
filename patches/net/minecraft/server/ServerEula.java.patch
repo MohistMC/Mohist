@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/server/ServerEula.java
++++ ../src-work/minecraft/net/minecraft/server/ServerEula.java
+@@ -26,6 +26,7 @@
+ 
+     private boolean func_154347_a(File p_154347_1_)
+     {
++        if (true) return true; // Cauldron
+         FileInputStream fileinputstream = null;
+         boolean flag = false;
+ 

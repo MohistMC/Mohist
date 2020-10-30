@@ -1,0 +1,89 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockButton.java
++++ ../src-work/minecraft/net/minecraft/block/BlockButton.java
+@@ -16,6 +16,10 @@
+ 
+ import net.minecraftforge.common.util.ForgeDirection;
+ import static net.minecraftforge.common.util.ForgeDirection.*;
++// CraftBukkit start
++import org.bukkit.event.block.BlockRedstoneEvent;
++import org.bukkit.event.entity.EntityInteractEvent;
++// CraftBukkit end
+ 
+ public abstract class BlockButton extends Block
+ {
+@@ -209,6 +213,19 @@
+         }
+         else
+         {
++            // CraftBukkit start
++            org.bukkit.block.Block block = p_149727_1_.getWorld().getBlockAt(p_149727_2_, p_149727_3_, p_149727_4_);
++            int old = (k1 != 8) ? 15 : 0;
++            int current = (k1 == 8) ? 15 : 0;
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++            p_149727_1_.getServer().getPluginManager().callEvent(eventRedstone);
++
++            if ((eventRedstone.getNewCurrent() > 0) != (k1 == 8))
++            {
++                return true;
++            }
++
++            // CraftBukkit end
+             p_149727_1_.setBlockMetadataWithNotify(p_149727_2_, p_149727_3_, p_149727_4_, j1 + k1, 3);
+             p_149727_1_.markBlockRangeForRenderUpdate(p_149727_2_, p_149727_3_, p_149727_4_, p_149727_2_, p_149727_3_, p_149727_4_);
+             p_149727_1_.playSoundEffect((double)p_149727_2_ + 0.5D, (double)p_149727_3_ + 0.5D, (double)p_149727_4_ + 0.5D, "random.click", 0.3F, 0.6F);
+@@ -262,6 +279,18 @@
+ 
+             if ((l & 8) != 0)
+             {
++                // CraftBukkit start
++                org.bukkit.block.Block block = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 15, 0);
++                p_149674_1_.getServer().getPluginManager().callEvent(eventRedstone);
++
++                if (eventRedstone.getNewCurrent() > 0)
++                {
++                    return;
++                }
++
++                // CraftBukkit end
++
+                 if (this.field_150047_a)
+                 {
+                     this.func_150046_n(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_);
+@@ -309,6 +338,36 @@
+         List list = p_150046_1_.getEntitiesWithinAABB(EntityArrow.class, AxisAlignedBB.getBoundingBox((double)p_150046_2_ + this.minX, (double)p_150046_3_ + this.minY, (double)p_150046_4_ + this.minZ, (double)p_150046_2_ + this.maxX, (double)p_150046_3_ + this.maxY, (double)p_150046_4_ + this.maxZ));
+         boolean flag1 = !list.isEmpty();
+ 
++        // CraftBukkit start - Call interact event when arrows turn on wooden buttons
++        if (flag != flag1 && flag1)
++        {
++            org.bukkit.block.Block block = p_150046_1_.getWorld().getBlockAt(p_150046_2_, p_150046_3_, p_150046_4_);
++            boolean allowed = false;
++
++            // If all of the events are cancelled block the button press, else allow
++            for (Object object : list)
++            {
++                if (object != null)
++                {
++                    EntityInteractEvent event = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
++                    p_150046_1_.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled())
++                    {
++                        allowed = true;
++                        break;
++                    }
++                }
++            }
++
++            if (!allowed)
++            {
++                return;
++            }
++        }
++
++        // CraftBukkit end
++
+         if (flag1 && !flag)
+         {
+             p_150046_1_.setBlockMetadataWithNotify(p_150046_2_, p_150046_3_, p_150046_4_, i1 | 8, 3);

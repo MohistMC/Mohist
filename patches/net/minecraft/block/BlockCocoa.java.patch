@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
+@@ -51,7 +51,8 @@
+             if (i1 < 2)
+             {
+                 ++i1;
+-                p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, i1 << 2 | getDirection(l), 2);
++                // CraftBukkit
++                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, this, i1 << 2 | getDirection(l));
+             }
+         }
+     }

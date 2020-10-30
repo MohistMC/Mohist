@@ -1,0 +1,109 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
+@@ -46,6 +46,13 @@
+ import net.minecraftforge.event.ForgeEventFactory;
+ import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
+ 
++//CraftBukkit start
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityCombustEvent;
++//CraftBukkit end
++
+ public class EntityZombie extends EntityMob
+ {
+     protected static final IAttribute field_110186_bp = (new RangedAttribute("zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).setDescription("Spawn Reinforcements Chance");
+@@ -56,6 +63,7 @@
+     private boolean field_146076_bu = false;
+     private float field_146074_bv = -1.0F;
+     private float field_146073_bw;
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
+     private static final String __OBFID = "CL_00001702";
+ 
+     public EntityZombie(World p_i1745_1_)
+@@ -64,7 +72,12 @@
+         this.getNavigator().setBreakDoors(true);
+         this.tasks.addTask(0, new EntityAISwimming(this));
+         this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
+-        this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityVillager.class, 1.0D, true));
++
++        if (p_i1745_1_.getSpigotConfig().zombieAggressiveTowardsVillager) // Cauldron
++        {
++            this.tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityVillager.class, 1.0D, true));    // Spigot
++        }
++
+         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+         this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
+         this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+@@ -72,7 +85,12 @@
+         this.tasks.addTask(8, new EntityAILookIdle(this));
+         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
+         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
+-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, 0, false));
++
++        if (p_i1745_1_.getSpigotConfig().zombieAggressiveTowardsVillager) // Cauldron
++        {
++            this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, 0, false));    // Spigot
++        }
++
+         this.setSize(0.6F, 1.8F);
+     }
+ 
+@@ -204,7 +222,16 @@
+ 
+                 if (flag)
+                 {
+-                    this.setFire(8);
++                    // CraftBukkit start
++                    EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 8);
++                    this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled())
++                    {
++                        this.setFire(event.getDuration());
++                    }
++
++                    // CraftBukkit end
+                 }
+             }
+         }
+@@ -272,7 +299,7 @@
+ 
+                         if (this.worldObj.checkNoEntityCollision(entityzombie.boundingBox) && this.worldObj.getCollidingBoundingBoxes(entityzombie, entityzombie.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(entityzombie.boundingBox))
+                         {
+-                            this.worldObj.spawnEntityInWorld(entityzombie);
++                            this.worldObj.addEntity(entityzombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.REINFORCEMENTS); // CraftBukkit
+                             if (entitylivingbase != null) entityzombie.setAttackTarget(entitylivingbase);
+                             entityzombie.onSpawnWithEgg((IEntityLivingData)null);
+                             this.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
+@@ -292,6 +319,11 @@
+         if (!this.worldObj.isRemote && this.isConverting())
+         {
+             int i = this.getConversionTimeBoost();
++            // CraftBukkit start - Use wall time instead of ticks for villager conversion
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++            this.lastTick = MinecraftServer.currentTick;
++            i *= elapsedTicks;
++            // CraftBukkit end
+             this.conversionTime -= i;
+ 
+             if (this.conversionTime <= 0)
+@@ -313,7 +345,16 @@
+ 
+             if (this.getHeldItem() == null && this.isBurning() && this.rand.nextFloat() < (float)i * 0.3F)
+             {
+-                p_70652_1_.setFire(2 * i);
++                // CraftBukkit start
++                EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_70652_1_.getBukkitEntity(), 2 * i);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    p_70652_1_.setFire(event.getDuration());
++                }
++
++                // CraftBukkit end
+             }
+         }
+ 

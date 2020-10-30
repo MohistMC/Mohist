@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
+@@ -117,6 +117,7 @@
+         this.thunderTime = p_i2157_1_.getInteger("thunderTime");
+         this.thundering = p_i2157_1_.getBoolean("thundering");
+         this.hardcore = p_i2157_1_.getBoolean("hardcore");
++        this.dimension = p_i2157_1_.getInteger("dimension"); // Cauldron
+ 
+         if (p_i2157_1_.hasKey("initialized", 99))
+         {
+@@ -193,6 +194,7 @@
+         this.allowCommands = p_i2159_1_.allowCommands;
+         this.initialized = p_i2159_1_.initialized;
+         this.theGameRules = p_i2159_1_.theGameRules;
++        this.dimension = p_i2159_1_.dimension; // Cauldron
+     }
+ 
+     public NBTTagCompound getNBTTagCompound()
+@@ -234,6 +236,7 @@
+         p_76064_1_.setBoolean("allowCommands", this.allowCommands);
+         p_76064_1_.setBoolean("initialized", this.initialized);
+         p_76064_1_.setTag("GameRules", this.theGameRules.writeGameRulesToNBT());
++        p_76064_1_.setInteger("dimension", this.dimension); // Cauldron
+ 
+         if (p_76064_2_ != null)
+         {
+@@ -282,6 +285,21 @@
+         return this.playerTag;
+     }
+ 
++    // Cauldron start
++    /**
++     * Sets the Dimension.
++     */
++    public void setDimension(int dim)
++    {
++        this.dimension = dim;
++    }
++
++    public int getDimension()
++    {
++        return this.dimension;
++    }
++    // Cauldron end
++
+     public int getVanillaDimension()
+     {
+         return this.dimension;
+@@ -556,4 +574,8 @@
+     {
+         return this.additionalProperties!=null? this.additionalProperties.get(additionalProperty) : null;
+     }
++    
++    public void tick() {
++        totalTime++;
++    }
+ }

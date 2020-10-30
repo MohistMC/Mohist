@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraftforge/common/ForgeChunkManager.java
++++ ../src-work/minecraft/net/minecraftforge/common/ForgeChunkManager.java
+@@ -352,6 +352,7 @@
+         {
+             this.ticket = ticket;
+             this.location = location;
++            ticket.world.activity.put(location, ticket);
+         }
+     }
+ 
+@@ -363,6 +364,7 @@
+         {
+             this.ticket = ticket;
+             this.location = location;
++            ticket.world.activity.remove(location, ticket);
+         }
+     }
+ 

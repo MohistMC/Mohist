@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFireball.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFireball.java
+@@ -61,6 +61,18 @@
+             {
+                 if (p_77648_3_.getBlock(p_77648_4_, p_77648_5_, p_77648_6_).getMaterial() == Material.air)
+                 {
++                    // CraftBukkit start
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_77648_2_).isCancelled())
++                    {
++                        if (!p_77648_2_.capabilities.isCreativeMode)
++                        {
++                            --p_77648_1_.stackSize;
++                        }
++
++                        return false;
++                    }
++
++                    // CraftBukkit end
+                     p_77648_3_.playSoundEffect((double)p_77648_4_ + 0.5D, (double)p_77648_5_ + 0.5D, (double)p_77648_6_ + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+                     p_77648_3_.setBlock(p_77648_4_, p_77648_5_, p_77648_6_, Blocks.fire);
+                 }

@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
+@@ -15,6 +15,7 @@
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+ 
+ public class BlockDoor extends Block
+ {
+@@ -329,15 +330,32 @@
+                 {
+                     this.dropBlockAsItem(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, l, 0);
+                 }
++
++                // CraftBukkit start
+             }
+-            else
++            else if (p_149695_5_.canProvidePower())
+             {
+-                boolean flag1 = p_149695_1_.isBlockIndirectlyGettingPowered(p_149695_2_, p_149695_3_, p_149695_4_) || p_149695_1_.isBlockIndirectlyGettingPowered(p_149695_2_, p_149695_3_ + 1, p_149695_4_);
++                org.bukkit.World bworld = p_149695_1_.getWorld();
++                org.bukkit.block.Block bukkitBlock = bworld.getBlockAt(p_149695_2_, p_149695_3_, p_149695_4_);
++                org.bukkit.block.Block blockTop = bworld.getBlockAt(p_149695_2_, p_149695_3_ + 1, p_149695_4_);
++                int power = bukkitBlock.getBlockPower();
++                int powerTop = blockTop.getBlockPower();
+ 
+-                if ((flag1 || p_149695_5_.canProvidePower()) && p_149695_5_ != this)
++                if (powerTop > power)
+                 {
+-                    this.func_150014_a(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, flag1);
++                    power = powerTop;
+                 }
++
++                int oldPower = (p_149695_1_.getBlockMetadata(p_149695_2_, p_149695_3_, p_149695_4_) & 4) > 0 ? 15 : 0;
++
++                if (oldPower == 0 ^ power == 0)
++                {
++                    BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, oldPower, power);
++                    p_149695_1_.getServer().getPluginManager().callEvent(eventRedstone);
++                    this.func_150014_a(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, eventRedstone.getNewCurrent() > 0);
++                }
++
++                // CraftBukkit end
+             }
+         }
+         else

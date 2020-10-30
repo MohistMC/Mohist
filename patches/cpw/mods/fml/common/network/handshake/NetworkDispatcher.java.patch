@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/network/handshake/NetworkDispatcher.java
++++ ../src-work/minecraft/cpw/mods/fml/common/network/handshake/NetworkDispatcher.java
+@@ -76,7 +76,7 @@
+     public static final AttributeKey<Boolean> IS_LOCAL = new AttributeKey<Boolean>("fml:isLocal");
+     public final NetworkManager manager;
+     private final ServerConfigurationManager scm;
+-    private EntityPlayerMP player;
++    public EntityPlayerMP player; // Cauldron
+     private ConnectionState state;
+     private ConnectionType connectionType;
+     private final Side side;
+@@ -140,6 +140,16 @@
+ 
+     int serverInitiateHandshake()
+     {
++    	// Thermos wait until the player object was assigned by the fml:packet_handler in serverToClientHandshake()
++    	for(int i = 0; this.manager.channel().pipeline().get("fml:packet_handler") == null; i++)
++    	{
++    		try {Thread.sleep(10L);} catch(Exception e){}
++    		if(i == 20) // We waited 200ms, no dice
++    		{
++    			return -100000;
++    		}
++    	}
++    	
+         // Send mod salutation to the client
+         // This will be ignored by vanilla clients
+         this.state = ConnectionState.AWAITING_HANDSHAKE;
+@@ -219,7 +229,7 @@
+         }
+         else
+         {
+-            FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : %s", msg.getClass().getName());
++            // FMLLog.info("Unexpected packet during modded negotiation - assuming vanilla or keepalives : %s", msg.getClass().getName());
+         }
+         return false;
+     }
+@@ -304,6 +314,7 @@
+             state = ConnectionState.HANDSHAKING;
+         }
+         String channelName = msg.func_149559_c();
++        player.getBukkitEntity().addChannel(channelName); // Cauldron - register channel for bukkit player
+         if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
+         {
+             FMLProxyPacket proxy = new FMLProxyPacket(msg);
+@@ -325,6 +336,7 @@
+         else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.SERVER))
+         {
+             FMLProxyPacket proxy = new FMLProxyPacket(msg);
++            serverHandler.getCraftServer().getMessenger().dispatchIncomingMessage(player.getBukkitEntity(), msg.func_149559_c(), msg.func_149558_e()); // pass msg to bukkit
+             proxy.setDispatcher(this);
+             context.fireChannelRead(proxy);
+             return true;
+@@ -482,7 +494,7 @@
+         // Stop the epic channel closed spam at close
+         if (!(cause instanceof ClosedChannelException))
+         {
+-            FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
++            // FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+         }
+         super.exceptionCaught(ctx, cause);
+     }

@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathNavigate.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathNavigate.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.entity.monster.EntityZombie;
+ import net.minecraft.entity.passive.EntityChicken;
+ import net.minecraft.init.Blocks;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.World;
+@@ -98,10 +99,29 @@
+         return !this.canNavigate() ? null : this.worldObj.getPathEntityToEntity(this.theEntity, p_75494_1_, this.getPathSearchRange(), this.canPassOpenWoodenDoors, this.canPassClosedWoodenDoors, this.avoidsWater, this.canSwim);
+     }
+ 
++    private int lastFailure = 0;
++    private int pathFindFailures = 0;
+     public boolean tryMoveToEntityLiving(Entity p_75497_1_, double p_75497_2_)
+     {
++    	if (this.pathFindFailures > 10 && this.currentPath == null && MinecraftServer.currentTick < this.lastFailure + 40) 
++    	{
++    		return false;
++    	}
++    	
+         PathEntity pathentity = this.getPathToEntityLiving(p_75497_1_);
+-        return pathentity != null ? this.setPath(pathentity, p_75497_2_) : false;
++        //return pathentity != null ? this.setPath(pathentity, p_75497_2_) : false;
++        if (pathentity != null && this.setPath(pathentity, p_75497_2_))
++        {
++        	this.lastFailure = 0;
++        	this.pathFindFailures = 0;
++        	return true;
++        }
++        else
++        {
++        	this.lastFailure = MinecraftServer.currentTick;
++        	this.pathFindFailures = 0;
++        	return false;
++        }
+     }
+ 
+     public boolean setPath(PathEntity p_75484_1_, double p_75484_2_)
+@@ -227,6 +247,8 @@
+ 
+     public void clearPathEntity()
+     {
++    	this.pathFindFailures = 0;
++    	this.lastFailure = 0;
+         this.currentPath = null;
+     }
+ 

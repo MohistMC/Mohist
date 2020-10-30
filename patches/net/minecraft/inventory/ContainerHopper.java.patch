@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerHopper.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerHopper.java
+@@ -4,13 +4,36 @@
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class ContainerHopper extends Container
+ {
+     private final IInventory field_94538_a;
+     private static final String __OBFID = "CL_00001750";
+ 
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventory inventory = new CraftInventory(this.field_94538_a);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
++
+     public ContainerHopper(InventoryPlayer p_i1814_1_, IInventory p_i1814_2_)
+     {
++        this.player = p_i1814_1_; // CraftBukkit - save player
+         this.field_94538_a = p_i1814_2_;
+         p_i1814_2_.openInventory();
+         byte b0 = 51;
+@@ -37,6 +60,11 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.field_94538_a.isUseableByPlayer(p_75145_1_);
+     }
+ 

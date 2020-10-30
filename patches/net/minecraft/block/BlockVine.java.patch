@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockVine.java
++++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
+@@ -21,6 +21,8 @@
+ import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.common.IShearable;
+ 
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class BlockVine extends Block implements IShearable
+ {
+     private static final String __OBFID = "CL_00000330";
+@@ -268,7 +270,11 @@
+ 
+                     if (j2 > 0)
+                     {
+-                        p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, j2, 2);
++                        // CraftBukkit start - Call BlockSpreadEvent
++                        org.bukkit.block.Block source = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++                        org.bukkit.block.Block block = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_ + 1, p_149674_4_);
++                        CraftEventFactory.handleBlockSpreadEvent(block, source, this, l1);
++                        // CraftBukkit end
+                     }
+                 }
+             }
+@@ -290,27 +296,34 @@
+                     {
+                         l1 = k1 + 1 & 3;
+                         i2 = k1 + 3 & 3;
++                        // CraftBukkit start - Call BlockSpreadEvent
++                        org.bukkit.block.Block source = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++                        org.bukkit.block.Block bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1]);
+ 
+                         if ((i1 & 1 << l1) != 0 && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1], this, 1 << l1, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << l1);
+                         }
+                         else if ((i1 & 1 << i2) != 0 && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1], this, 1 << i2, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << i2);
+                         }
+                         else if ((i1 & 1 << l1) != 0 && p_149674_1_.isAirBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1]) && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[l1])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1], this, 1 << (k1 + 2 & 3), 2);
++                            bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1]);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << (k1 + 2 & 3));
+                         }
+                         else if ((i1 & 1 << i2) != 0 && p_149674_1_.isAirBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2]) && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[i2])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2], this, 1 << (k1 + 2 & 3), 2);
++                            bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2]);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << (k1 + 2 & 3));
+                         }
+                         else if (this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_ + 1, p_149674_4_ + Direction.offsetZ[k1])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1], this, 0, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 0);
+                         }
++
++                        // CraftBukkit end
+                     }
+                     else if (block.blockMaterial.isOpaque() && block.renderAsNormalBlock())
+                     {
+@@ -327,7 +340,11 @@
+ 
+                         if (l1 > 0)
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_, this, l1, 2);
++                            // CraftBukkit start - Call BlockSpreadEvent
++                            org.bukkit.block.Block source = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++                            org.bukkit.block.Block bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_ - 1, p_149674_4_);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, l1);
++                            // CraftBukkit end
+                         }
+                     }
+                     else if (block == this)

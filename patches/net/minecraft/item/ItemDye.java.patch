@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemDye.java
++++ ../src-work/minecraft/net/minecraft/item/ItemDye.java
+@@ -23,6 +23,8 @@
+ import net.minecraftforge.common.util.FakePlayerFactory;
+ import net.minecraftforge.event.entity.player.BonemealEvent;
+ 
++import org.bukkit.event.entity.SheepDyeWoolEvent; // CraftBukkit
++
+ public class ItemDye extends Item
+ {
+     public static final String[] field_150923_a = new String[] {"black", "red", "green", "brown", "blue", "purple", "cyan", "silver", "gray", "pink", "lime", "yellow", "lightBlue", "magenta", "orange", "white"};
+@@ -220,6 +222,18 @@
+ 
+             if (!entitysheep.getSheared() && entitysheep.getFleeceColor() != i)
+             {
++                // CraftBukkit start
++                byte bColor = (byte) i;
++                SheepDyeWoolEvent event = new SheepDyeWoolEvent((org.bukkit.entity.Sheep) entitysheep.getBukkitEntity(), org.bukkit.DyeColor.getByData(bColor));
++                entitysheep.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return false;
++                }
++
++                i = (byte) event.getColor().getWoolData();
++                // CraftBukkit end
+                 entitysheep.setFleeceColor(i);
+                 --p_111207_1_.stackSize;
+             }

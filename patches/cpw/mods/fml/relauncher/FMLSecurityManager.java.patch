@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/cpw/mods/fml/relauncher/FMLSecurityManager.java
++++ ../src-work/minecraft/cpw/mods/fml/relauncher/FMLSecurityManager.java
+@@ -10,6 +10,9 @@
+  *
+  */
+ public class FMLSecurityManager extends SecurityManager {
++	
++	public SecurityManager defman;
++	
+     @Override
+     public void checkPermission(Permission perm)
+     {
+@@ -29,6 +32,10 @@
+         {
+             throw new SecurityException("Cannot replace the FML security manager");
+         }
++        else if ("register".equals(permName))// Allow the default security policy to be taken into consideration for "register"-ing
++        {
++        	defman.checkPermission(perm);
++        }
+         return;
+     }
+ 

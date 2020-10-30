@@ -1,0 +1,60 @@
+--- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
++++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+@@ -13,9 +13,11 @@
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.profiler.PlayerUsageSnooper;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.dedicated.PropertyManager;
+ import net.minecraft.util.CryptManager;
+ import net.minecraft.util.HttpUtil;
+ import net.minecraft.world.EnumDifficulty;
++import net.minecraft.world.MinecraftException;
+ import net.minecraft.world.WorldManager;
+ import net.minecraft.world.WorldServer;
+ import net.minecraft.world.WorldServerMulti;
+@@ -78,7 +80,7 @@
+         this.initialWorldChunkLoad();
+     }
+ 
+-    protected boolean startServer() throws IOException
++    protected boolean startServer() throws java.net.UnknownHostException // Cauldron
+     {
+         logger.info("Starting integrated minecraft server version 1.7.10");
+         this.setOnlineMode(true);
+@@ -103,7 +105,15 @@
+         {
+             logger.info("Saving and pausing game...");
+             this.getConfigurationManager().saveAllPlayerData();
+-            this.saveAllWorlds(false);
++            try
++            {
++                this.saveAllWorlds(false);
++            }
++            catch (MinecraftException e)
++            {
++                // TODO Auto-generated catch block
++                e.printStackTrace();
++            }
+         }
+ 
+         if (!this.isGamePaused)
+@@ -236,7 +246,7 @@
+         }
+     }
+ 
+-    public void stopServer()
++    public void stopServer() throws MinecraftException // Cauldron
+     {
+         super.stopServer();
+ 
+@@ -277,4 +287,10 @@
+     {
+         return 4;
+     }
++
++    @Override
++    public PropertyManager getPropertyManager()
++    {
++        return null;
++    }
+ }

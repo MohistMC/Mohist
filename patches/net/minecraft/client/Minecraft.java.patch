@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/client/Minecraft.java
++++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
+@@ -148,6 +148,7 @@
+ import net.minecraft.util.Timer;
+ import net.minecraft.util.Util;
+ import net.minecraft.world.EnumDifficulty;
++import net.minecraft.world.MinecraftException;
+ import net.minecraft.world.WorldProviderEnd;
+ import net.minecraft.world.WorldProviderHell;
+ import net.minecraft.world.WorldSettings;
+@@ -2655,7 +2656,14 @@
+ 
+             if (integratedserver != null)
+             {
+-                integratedserver.stopServer();
++                try
++                {
++                    integratedserver.stopServer();
++                }
++                catch (MinecraftException e)
++                {
++                    e.printStackTrace();
++                }
+             }
+         }
+     }

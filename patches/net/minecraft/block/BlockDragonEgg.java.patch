@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDragonEgg.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDragonEgg.java
+@@ -10,6 +10,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.block.BlockFromToEvent; // CraftBukkit
++
+ public class BlockDragonEgg extends Block
+ {
+     private static final String __OBFID = "CL_00000232";
+@@ -43,7 +45,8 @@
+ 
+             if (!BlockFalling.fallInstantly && p_150018_1_.checkChunksExist(p_150018_2_ - b0, p_150018_3_ - b0, p_150018_4_ - b0, p_150018_2_ + b0, p_150018_3_ + b0, p_150018_4_ + b0))
+             {
+-                EntityFallingBlock entityfallingblock = new EntityFallingBlock(p_150018_1_, (double)((float)p_150018_2_ + 0.5F), (double)((float)p_150018_3_ + 0.5F), (double)((float)p_150018_4_ + 0.5F), this);
++                // CraftBukkit - added data
++                EntityFallingBlock entityfallingblock = new EntityFallingBlock(p_150018_1_, (double)((float) p_150018_2_ + 0.5F), (double)((float) p_150018_3_ + 0.5F), (double)((float) p_150018_4_ + 0.5F), this, p_150018_1_.getBlockMetadata(p_150018_2_, p_150018_3_, p_150018_4_));
+                 p_150018_1_.spawnEntityInWorld(entityfallingblock);
+             }
+             else
+@@ -86,6 +89,22 @@
+ 
+                 if (p_150019_1_.getBlock(i1, j1, k1).blockMaterial == Material.air)
+                 {
++                    // CraftBukkit start
++                    org.bukkit.block.Block from = p_150019_1_.getWorld().getBlockAt(p_150019_2_, p_150019_3_, p_150019_4_);
++                    org.bukkit.block.Block to = p_150019_1_.getWorld().getBlockAt(i1, j1, k1);
++                    BlockFromToEvent event = new BlockFromToEvent(from, to);
++                    org.bukkit.Bukkit.getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return;
++                    }
++
++                    i1 = event.getToBlock().getX();
++                    j1 = event.getToBlock().getY();
++                    k1 = event.getToBlock().getZ();
++                    // CraftBukkit end
++
+                     if (!p_150019_1_.isRemote)
+                     {
+                         p_150019_1_.setBlock(i1, j1, k1, this, p_150019_1_.getBlockMetadata(p_150019_2_, p_150019_3_, p_150019_4_), 2);

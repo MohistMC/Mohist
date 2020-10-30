@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraftforge/oredict/ShapedOreRecipe.java
++++ ../src-work/minecraft/net/minecraftforge/oredict/ShapedOreRecipe.java
+@@ -6,6 +6,10 @@
+ import java.util.Map;
+ import java.util.Map.Entry;
+ 
++// Cauldron start
++import org.bukkit.inventory.Recipe;
++// Cauldron end
++
+ import net.minecraft.block.Block;
+ import net.minecraft.item.crafting.IRecipe;
+ import net.minecraft.inventory.InventoryCrafting;
+@@ -13,6 +17,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.ShapedRecipes;
+ import net.minecraft.world.World;
++import net.minecraftforge.cauldron.inventory.CustomModRecipe;
+ 
+ public class ShapedOreRecipe implements IRecipe
+ {
+@@ -25,6 +30,7 @@
+     private int width = 0;
+     private int height = 0;
+     private boolean mirrored = true;
++    private ShapedRecipes vanillaRecipe = null; // Cauldron - bukkit compatibility
+ 
+     public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
+     public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
+@@ -127,6 +133,7 @@
+ 
+     ShapedOreRecipe(ShapedRecipes recipe, Map<ItemStack, String> replacements)
+     {
++        vanillaRecipe = recipe; // Cauldron - bukkit compatibility
+         output = recipe.getRecipeOutput();
+         width = recipe.recipeWidth;
+         height = recipe.recipeHeight;
+@@ -255,4 +262,13 @@
+     {
+         return this.input;
+     }
++
++    // Cauldron start - required for Bukkit API
++    @Override
++    public Recipe toBukkitRecipe() {
++        if (vanillaRecipe != null)
++            return vanillaRecipe.toBukkitRecipe();
++        return new CustomModRecipe(this);
++    }
++    // Cauldron end
+ }

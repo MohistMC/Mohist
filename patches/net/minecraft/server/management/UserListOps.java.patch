@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListOps.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListOps.java
+@@ -35,6 +35,7 @@
+ 
+     protected String func_152699_b(GameProfile p_152699_1_)
+     {
++        if (p_152699_1_ == null || p_152699_1_.getId() == null) return "invalid"; // Cauldron - handle GameProfiles with no ID
+         return p_152699_1_.getId().toString();
+     }
+ 

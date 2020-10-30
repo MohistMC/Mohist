@@ -1,0 +1,275 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
+@@ -5,6 +5,7 @@
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.ArrayList;
++import java.util.Collection;
+ import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+@@ -33,6 +34,13 @@
+ import org.apache.logging.log4j.Logger;
+ 
+ import cpw.mods.fml.common.FMLLog;
++// Cauldron start
++import java.util.Map;
++import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.cauldron.CauldronUtils;
++import net.minecraftforge.common.util.EnumHelper;
++import cpw.mods.fml.common.asm.transformers.SideTransformer;
++// Cauldron end
+ 
+ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
+ {
+@@ -41,6 +49,7 @@
+     private Set pendingAnvilChunksCoordinates = new HashSet();
+     private Object syncLockObject = new Object();
+     public final File chunkSaveLocation;
++    private List checkedTileEntities = new ArrayList(); // Cauldron
+     private static final String __OBFID = "CL_00000384";
+ 
+     public AnvilChunkLoader(File p_i2003_1_)
+@@ -68,18 +77,22 @@
+             }
+         }
+ 
+-        return RegionFileCache.createOrLoadRegionFile(this.chunkSaveLocation, i, j).chunkExists(i & 31, j & 31);
++        final RegionFile region = RegionFileCache.createOrLoadRegionFile(this.chunkSaveLocation, i, j, false);
++        return region != null && region.chunkExists(i & 31, j & 31);
+     }
+ 
+     public Chunk loadChunk(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
+     {
++        p_75815_1_.timings.syncChunkLoadDataTimer.startTiming(); // Spigot
+         Object[] data = this.loadChunk__Async(p_75815_1_, p_75815_2_, p_75815_3_);
++        p_75815_1_.timings.syncChunkLoadDataTimer.stopTiming(); // Spigot
+ 
+         if (data != null)
+         {
+             Chunk chunk = (Chunk) data[0];
+             NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
+             this.loadEntities(p_75815_1_, nbttagcompound.getCompoundTag("Level"), chunk);
++            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, nbttagcompound)); // Cauldron - Don't call ChunkDataEvent.Load async
+             return chunk;
+         }
+ 
+@@ -156,8 +169,8 @@
+             if (!chunk.isAtLocation(p_75822_2_, p_75822_3_))
+             {
+                 logger.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
+-                p_75822_4_.setInteger("xPos", p_75822_2_);
+-                p_75822_4_.setInteger("zPos", p_75822_3_);
++                p_75822_4_.getCompoundTag("Level").setInteger("xPos", p_75822_2_); // CraftBukkit - .getCompound("Level")
++                p_75822_4_.getCompoundTag("Level").setInteger("zPos", p_75822_3_); // CraftBukkit - .getCompound("Level")
+                 // Have to move tile entities since we don't load them at this stage
+                 NBTTagList tileEntities = p_75822_4_.getCompoundTag("Level").getTagList("TileEntities", 10);
+ 
+@@ -187,8 +200,18 @@
+ 
+     public void saveChunk(World p_75816_1_, Chunk p_75816_2_) throws MinecraftException, IOException
+     {
+-        p_75816_1_.checkSessionLock();
++        // CraftBukkit start - "handle" exception
++        try
++        {
++            p_75816_1_.checkSessionLock();
++        }
++        catch (MinecraftException ex)
++        {
++            ex.printStackTrace();
++        }
+ 
++        // CraftBukkit end
++
+         try
+         {
+             NBTTagCompound nbttagcompound = new NBTTagCompound();
+@@ -230,7 +253,7 @@
+ 
+     public boolean writeNextIO()
+     {
+-        AnvilChunkLoader.PendingChunk pendingchunk = null;
++        PendingChunk pendingchunktosave = null;
+         Object object = this.syncLockObject;
+ 
+         synchronized (this.syncLockObject)
+@@ -240,15 +263,15 @@
+                 return false;
+             }
+ 
+-            pendingchunk = (AnvilChunkLoader.PendingChunk)this.chunksToRemove.remove(0);
+-            this.pendingAnvilChunksCoordinates.remove(pendingchunk.chunkCoordinate);
++            pendingchunktosave = (PendingChunk) this.chunksToRemove.remove(0);
++            this.pendingAnvilChunksCoordinates.remove(pendingchunktosave.chunkCoordinate);
+         }
+ 
+-        if (pendingchunk != null)
++        if (pendingchunktosave != null)
+         {
+             try
+             {
+-                this.writeChunkNBTTags(pendingchunk);
++                this.writeChunkNBTTags(pendingchunktosave);
+             }
+             catch (Exception exception)
+             {
+@@ -259,7 +282,7 @@
+         return true;
+     }
+ 
+-    private void writeChunkNBTTags(AnvilChunkLoader.PendingChunk p_75821_1_) throws IOException
++    public void writeChunkNBTTags(AnvilChunkLoader.PendingChunk p_75821_1_) throws java.io.IOException   // CraftBukkit - public -> private, added throws
+     {
+         DataOutputStream dataoutputstream = RegionFileCache.getChunkOutputStream(this.chunkSaveLocation, p_75821_1_.chunkCoordinate.chunkXPos, p_75821_1_.chunkCoordinate.chunkZPos);
+         CompressedStreamTools.write(p_75821_1_.nbtTags, dataoutputstream);
+@@ -307,19 +330,19 @@
+ 
+                 if (extendedblockstorage.getBlockMSBArray() != null)
+                 {
+-                    nbttagcompound1.setByteArray("Add", extendedblockstorage.getBlockMSBArray().data);
++                    nbttagcompound1.setByteArray("Add", extendedblockstorage.getBlockMSBArray().getValueArray()); // Spigot
+                 }
+ 
+-                nbttagcompound1.setByteArray("Data", extendedblockstorage.getMetadataArray().data);
+-                nbttagcompound1.setByteArray("BlockLight", extendedblockstorage.getBlocklightArray().data);
++                nbttagcompound1.setByteArray("Data", extendedblockstorage.getMetadataArray().getValueArray()); // Spigot
++                nbttagcompound1.setByteArray("BlockLight", extendedblockstorage.getBlocklightArray().getValueArray()); // Spigot
+ 
+                 if (flag)
+                 {
+-                    nbttagcompound1.setByteArray("SkyLight", extendedblockstorage.getSkylightArray().data);
++                    nbttagcompound1.setByteArray("SkyLight", extendedblockstorage.getSkylightArray().getValueArray()); // Spigot
+                 }
+                 else
+                 {
+-                    nbttagcompound1.setByteArray("SkyLight", new byte[extendedblockstorage.getBlocklightArray().data.length]);
++                    nbttagcompound1.setByteArray("SkyLight", new byte[extendedblockstorage.getBlocklightArray().getValueArray().length]); // Spigot
+                 }
+ 
+                 nbttaglist.appendTag(nbttagcompound1);
+@@ -379,17 +402,16 @@
+         }
+ 
+         p_75820_3_.setTag("TileEntities", nbttaglist3);
+-        List list = p_75820_2_.getPendingBlockUpdates(p_75820_1_, false);
+-
+-        if (list != null)
++        Collection<NextTickListEntry> list = p_75820_2_.getPendingBlockUpdates(p_75820_1_, false);
++        if(list == null)
+         {
++        	return;
++        }
+             long k = p_75820_2_.getTotalWorldTime();
+             NBTTagList nbttaglist1 = new NBTTagList();
+-            Iterator iterator = list.iterator();
+-
+-            while (iterator.hasNext())
++            for(Iterator<NextTickListEntry> iterator = list.iterator(); iterator.hasNext();)
+             {
+-                NextTickListEntry nextticklistentry = (NextTickListEntry)iterator.next();
++                NextTickListEntry nextticklistentry = iterator.next();
+                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+                 nbttagcompound2.setInteger("i", Block.getIdFromBlock(nextticklistentry.func_151351_a()));
+                 nbttagcompound2.setInteger("x", nextticklistentry.xCoord);
+@@ -401,7 +423,6 @@
+             }
+ 
+             p_75820_3_.setTag("TileTicks", nbttaglist1);
+-        }
+     }
+ 
+     private Chunk readChunkFromNBT(World p_75823_1_, NBTTagCompound p_75823_2_)
+@@ -455,6 +476,7 @@
+ 
+     public void loadEntities(World p_75823_1_, NBTTagCompound p_75823_2_, Chunk chunk)
+     {
++        p_75823_1_.timings.syncChunkLoadEntitiesTimer.startTiming(); // Spigot
+         NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
+ 
+         if (nbttaglist1 != null)
+@@ -468,24 +490,31 @@
+                 if (entity2 != null)
+                 {
+                     chunk.addEntity(entity2);
+-                    Entity entity = entity2;
+-
+-                    for (NBTTagCompound nbttagcompound2 = nbttagcompound3; nbttagcompound2.hasKey("Riding", 10); nbttagcompound2 = nbttagcompound2.getCompoundTag("Riding"))
++                    // Cauldron start - check to see if we killed entity due to invalid location
++                    if (!entity2.isDead)
+                     {
+-                        Entity entity1 = EntityList.createEntityFromNBT(nbttagcompound2.getCompoundTag("Riding"), p_75823_1_);
++                        Entity entity = entity2;
+ 
+-                        if (entity1 != null)
++                        for (NBTTagCompound nbttagcompound2 = nbttagcompound3; nbttagcompound2.hasKey("Riding", 10); nbttagcompound2 = nbttagcompound2.getCompoundTag("Riding"))
+                         {
+-                            chunk.addEntity(entity1);
+-                            entity.mountEntity(entity1);
+-                        }
++                            Entity entity1 = EntityList.createEntityFromNBT(nbttagcompound2.getCompoundTag("Riding"), p_75823_1_);
+ 
+-                        entity = entity1;
++                            if (entity1 != null)
++                            {
++                                chunk.addEntity(entity1);
++                                entity.mountEntity(entity1);
++                            }
++
++                            entity = entity1;
++                        }
+                     }
++                    // Cauldron end
+                 }
+             }
+         }
+ 
++        p_75823_1_.timings.syncChunkLoadEntitiesTimer.stopTiming(); // Spigot
++        p_75823_1_.timings.syncChunkLoadTileEntitiesTimer.startTiming(); // Spigot
+         NBTTagList nbttaglist2 = p_75823_2_.getTagList("TileEntities", 10);
+ 
+         if (nbttaglist2 != null)
+@@ -497,11 +526,35 @@
+ 
+                 if (tileentity != null)
+                 {
++                    // Cauldron start - check if TE should tick and inject into Bukkit's InventoryType
++                    if (!this.checkedTileEntities.contains(tileentity.getClass()))
++                    {
++                        // verify if TE should tick
++                        if (MinecraftServer.getServer().tileEntityConfig.preventInvalidTileEntityUpdates.getValue())
++                        {
++                            SideTransformer.allowInvalidSide = true;
++                            if (!CauldronUtils.isOverridingUpdateEntity(tileentity.getClass()) && CauldronUtils.canTileEntityUpdate(tileentity.getClass()))
++                            {
++                                if (MinecraftServer.getServer().tileEntityConfig.enableTECanUpdateWarning.getValue())
++                                {
++                                    MinecraftServer.getServer().logInfo("Detected TE " + tileentity.getClass().getName() + " with canUpdate set to true and no updateEntity override!. Please report to mod author as this can hurt performance.");
++                                }
++                                MinecraftServer.getServer().bannedTileEntityUpdates.add(tileentity.getClass());
++                            }
++                            SideTransformer.allowInvalidSide = false;
++                        }
++                        // inject TE into InventoryType to support inventory events
++                        EnumHelper.addInventoryType(tileentity);
++                        this.checkedTileEntities.add(tileentity.getClass());
++                    }
++                    // Cauldron end
+                     chunk.addTileEntity(tileentity);
+                 }
+             }
+         }
+ 
++        p_75823_1_.timings.syncChunkLoadTileEntitiesTimer.stopTiming(); // Spigot
++        p_75823_1_.timings.syncChunkLoadTileTicksTimer.startTiming(); // Spigot
+         if (p_75823_2_.hasKey("TileTicks", 9))
+         {
+             NBTTagList nbttaglist3 = p_75823_2_.getTagList("TileTicks", 10);
+@@ -515,6 +568,7 @@
+                 }
+             }
+         }
++        p_75823_1_.timings.syncChunkLoadTileTicksTimer.stopTiming(); // Spigot
+ 
+         // return chunk;
+     }

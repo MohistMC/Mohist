@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagList.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagList.java
+@@ -9,7 +9,7 @@
+ 
+ public class NBTTagList extends NBTBase
+ {
+-    private List tagList = new ArrayList();
++    private List<NBTBase> tagList = new ArrayList<NBTBase>();
+     private byte tagType = 0;
+     private static final String __OBFID = "CL_00001224";
+ 
+@@ -192,11 +192,11 @@
+     {
+         NBTTagList nbttaglist = new NBTTagList();
+         nbttaglist.tagType = this.tagType;
+-        Iterator iterator = this.tagList.iterator();
+-
+-        while (iterator.hasNext())
++        if ( nbttaglist.tagList instanceof ArrayList ) // Thermos, ensure we dont create arrays to then delete them
++        	((ArrayList<NBTBase>)nbttaglist.tagList).ensureCapacity(this.tagList.size());
++        
++        for(NBTBase nbtbase : this.tagList)
+         {
+-            NBTBase nbtbase = (NBTBase)iterator.next();
+             NBTBase nbtbase1 = nbtbase.copy();
+             nbttaglist.tagList.add(nbtbase1);
+         }

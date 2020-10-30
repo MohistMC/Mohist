@@ -1,0 +1,137 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
+@@ -25,6 +25,8 @@
+ import java.net.InetAddress;
+ import java.net.SocketAddress;
+ import java.util.Queue;
++import java.util.UUID;
++
+ import javax.crypto.SecretKey;
+ import net.minecraft.util.ChatComponentTranslation;
+ import net.minecraft.util.CryptManager;
+@@ -38,6 +40,8 @@
+ import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.Marker;
+ import org.apache.logging.log4j.MarkerManager;
++import com.mojang.authlib.properties.Property;
++import com.google.common.collect.ImmutableSet; // Spigot
+ 
+ public class NetworkManager extends SimpleChannelInboundHandler
+ {
+@@ -54,13 +58,32 @@
+     private final Queue receivedPacketsQueue = Queues.newConcurrentLinkedQueue();
+     private final Queue outboundPacketsQueue = Queues.newConcurrentLinkedQueue();
+     private Channel channel;
+-    private SocketAddress socketAddress;
++    // Spigot start
++    public SocketAddress socketAddress;
++    public Property[] spoofedProfile;
++    public UUID spoofedUUID;
++    // Spigot end
+     private INetHandler netHandler;
+     private EnumConnectionState connectionState;
+     private IChatComponent terminationReason;
+     private boolean field_152463_r;
+     private static final String __OBFID = "CL_00001240";
+ 
++    // Spigot Start
++    public static final AttributeKey<Integer> protocolVersion = new AttributeKey<Integer>("protocol_version");
++    public static final ImmutableSet<Integer> SUPPORTED_VERSIONS = ImmutableSet.of(4, 5);
++    public static final int CURRENT_VERSION = 5;
++    public static int getVersion(Channel attr)
++    {
++        Integer ver = attr.attr( protocolVersion ).get();
++        return ( ver != null ) ? ver : CURRENT_VERSION;
++    }
++    public int getVersion()
++    {
++        return getVersion( this.channel );
++    }
++    // Spigot End
++
+     public NetworkManager(boolean p_i45147_1_)
+     {
+         this.isClientSide = p_i45147_1_;
+@@ -71,6 +94,7 @@
+         super.channelActive(p_channelActive_1_);
+         this.channel = p_channelActive_1_.channel();
+         this.socketAddress = this.channel.remoteAddress();
++        this.field_152463_r = false; // Spigot
+         this.setConnectionState(EnumConnectionState.HANDSHAKING);
+     }
+ 
+@@ -128,6 +152,7 @@
+ 
+     public void scheduleOutboundPacket(Packet p_150725_1_, GenericFutureListener ... p_150725_2_)
+     {
++        if (p_150725_1_ == null) return;
+         if (this.channel != null && this.channel.isOpen())
+         {
+             this.flushOutboundQueue();
+@@ -181,9 +206,9 @@
+     {
+         if (this.channel != null && this.channel.isOpen())
+         {
+-            while (!this.outboundPacketsQueue.isEmpty())
++            NetworkManager.InboundHandlerTuplePacketListener inboundhandlertuplepacketlistener = null;
++            while ((inboundhandlertuplepacketlistener = (NetworkManager.InboundHandlerTuplePacketListener)this.outboundPacketsQueue.poll()) != null)
+             {
+-                NetworkManager.InboundHandlerTuplePacketListener inboundhandlertuplepacketlistener = (NetworkManager.InboundHandlerTuplePacketListener)this.outboundPacketsQueue.poll();
+                 this.dispatchPacket(inboundhandlertuplepacketlistener.field_150774_a, inboundhandlertuplepacketlistener.field_150773_b);
+             }
+         }
+@@ -208,7 +233,15 @@
+         {
+             for (int i = 1000; !this.receivedPacketsQueue.isEmpty() && i >= 0; --i)
+             {
+-                Packet packet = (Packet)this.receivedPacketsQueue.poll();
++                Packet packet = (Packet) this.receivedPacketsQueue.poll();
++
++                // CraftBukkit start
++                if (!this.isChannelOpen() || !this.channel.config().isAutoRead())   // Should be isConnected
++                {
++                    continue;
++                }
++
++                // CraftBukkit end
+                 packet.processPacket(this.netHandler);
+             }
+ 
+@@ -225,11 +258,14 @@
+ 
+     public void closeChannel(IChatComponent p_150718_1_)
+     {
++        this.field_152463_r = false; // Spigot
++
+         if (this.channel.isOpen())
+         {
+             this.channel.close();
+             this.terminationReason = p_150718_1_;
+         }
++        outboundPacketsQueue.clear();
+     }
+ 
+     public boolean isLocalChannel()
+@@ -254,7 +290,7 @@
+                 {
+                     ;
+                 }
+-
++                try { p_initChannel_1_.config().setOption(ChannelOption.SO_KEEPALIVE, true); } catch (ChannelException ignored) {}
+                 try
+                 {
+                     p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.valueOf(false));
+@@ -322,6 +358,13 @@
+         return channel;
+     }
+ 
++    // Spigot Start
++    public SocketAddress getRawAddress()
++    {
++        return this.channel.remoteAddress();
++    }
++    // Spigot End
++
+     static class InboundHandlerTuplePacketListener
+         {
+             private final Packet field_150774_a;

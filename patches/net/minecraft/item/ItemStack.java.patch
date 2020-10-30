@@ -1,0 +1,260 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
+@@ -2,14 +2,18 @@
+ 
+ import com.google.common.collect.HashMultimap;
+ import com.google.common.collect.Multimap;
++
++import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.text.DecimalFormat;
+ import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
+ import java.util.Map.Entry;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.enchantment.Enchantment;
+ import net.minecraft.enchantment.EnchantmentDurability;
+@@ -22,6 +26,7 @@
+ import net.minecraft.entity.item.EntityItemFrame;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.event.HoverEvent;
++import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -35,6 +40,21 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.event.ForgeEventFactory;
+ 
++import org.bukkit.craftbukkit.util.CraftMagicNumbers; // CraftBukkit
++
++import net.minecraft.entity.player.EntityPlayerMP; // Spigot
++// Cauldron start
++import net.minecraft.block.BlockSapling;
++import net.minecraft.block.BlockMushroom;
++
++import org.bukkit.Location;
++import org.bukkit.TreeType;
++import org.bukkit.block.BlockState;
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.entity.Player;
++import org.bukkit.event.world.StructureGrowEvent;
++// Cauldron end
++
+ public final class ItemStack
+ {
+     public static final DecimalFormat field_111284_a = new DecimalFormat("#.###");
+@@ -43,7 +63,12 @@
+     private Item field_151002_e;
+     public NBTTagCompound stackTagCompound;
+     int itemDamage;
+-    private EntityItemFrame itemFrame;
++    // Cauldron - due to a bug in Gson(https://code.google.com/p/google-gson/issues/detail?id=440), a stackoverflow 
++    //         can occur when gson attempts to resolve a field of a class that points to itself.
++    //         As a temporary workaround, we will prevent serialization for this object until the bug is fixed.
++    //         This fixes EE3's serialization of ItemStack.
++    private transient EntityItemFrame itemFrame;
++    public static EntityPlayer currentPlayer; // Cauldron - reference to current player calling onItemUse
+     private static final String __OBFID = "CL_00000043";
+ 
+     private cpw.mods.fml.common.registry.RegistryDelegate<Item> delegate;
+@@ -82,12 +107,23 @@
+         {
+             this.itemDamage = 0;
+         }
++        
++        sizeCheck(this);
+     }
+ 
++    public static void sizeCheck(ItemStack stack)
++    {
++    	if(stack.stackSize < -1)
++    	{
++    		//stack.field_151002_e = Items.flint;
++    		stack.stackSize = 0;
++    	}
++    }
+     public static ItemStack loadItemStackFromNBT(NBTTagCompound p_77949_0_)
+     {
+         ItemStack itemstack = new ItemStack();
+         itemstack.readFromNBT(p_77949_0_);
++        
+         return itemstack.getItem() != null ? itemstack : null;
+     }
+ 
+@@ -95,6 +131,9 @@
+ 
+     public ItemStack splitStack(int p_77979_1_)
+     {
++        if(p_77979_1_<=0||p_77979_1_>this.stackSize) {
++            return new ItemStack((Item) null, 0, 0);
++        }
+         ItemStack itemstack = new ItemStack(this.field_151002_e, p_77979_1_, this.itemDamage);
+ 
+         if (this.stackTagCompound != null)
+@@ -126,12 +165,14 @@
+     public boolean tryPlaceItemIntoWorld(EntityPlayer p_77943_1_, World p_77943_2_, int p_77943_3_, int p_77943_4_, int p_77943_5_, int p_77943_6_, float p_77943_7_, float p_77943_8_, float p_77943_9_)
+     {
+         if (!p_77943_2_.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
+-        boolean flag = this.getItem().onItemUse(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
+ 
++        // Cauldron start - handle all placement events here
++        boolean flag = this.getItem().onItemUse(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
+         if (flag)
+         {
+             p_77943_1_.addStat(StatList.objectUseStats[Item.getIdFromItem(this.field_151002_e)], 1);
+         }
++        // Cauldron end
+ 
+         return flag;
+     }
+@@ -143,6 +184,7 @@
+ 
+     public ItemStack useItemRightClick(World p_77957_1_, EntityPlayer p_77957_2_)
+     {
++    	sizeCheck(this);
+         return this.getItem().onItemRightClick(this, p_77957_1_, p_77957_2_);
+     }
+ 
+@@ -153,7 +195,8 @@
+ 
+     public NBTTagCompound writeToNBT(NBTTagCompound p_77955_1_)
+     {
+-        p_77955_1_.setShort("id", (short)Item.getIdFromItem(this.field_151002_e));
++        sizeCheck(this);
++    	p_77955_1_.setShort("id", (short)Item.getIdFromItem(this.field_151002_e));
+         p_77955_1_.setByte("Count", (byte)this.stackSize);
+         p_77955_1_.setShort("Damage", (short)this.itemDamage);
+ 
+@@ -175,6 +218,8 @@
+         {
+             this.itemDamage = 0;
+         }
++        
++        sizeCheck(this);
+ 
+         if (p_77963_1_.hasKey("tag", 10))
+         {
+@@ -184,11 +229,13 @@
+ 
+     public int getMaxStackSize()
+     {
++    	sizeCheck(this);
+         return this.getItem().getItemStackLimit(this);
+     }
+ 
+     public boolean isStackable()
+     {
++        sizeCheck(this);
+         return this.getMaxStackSize() > 1 && (!this.isItemStackDamageable() || !this.isItemDamaged());
+     }
+ 
+@@ -227,8 +274,22 @@
+         return getItem().getMaxDamage(this);
+     }
+ 
++    // Spigot start
++
++    /**
++     * Attempts to damage the ItemStack with par1 amount of damage, If the ItemStack has the Unbreaking enchantment
++     * there is a chance for each point of damage to be negated. Returns true if it takes more damage than
++     * getMaxDamage(). Returns false otherwise or if the ItemStack can't be damaged or if all points of damage are
++     * negated.
++     */
+     public boolean attemptDamageItem(int p_96631_1_, Random p_96631_2_)
+     {
++        return isDamaged(p_96631_1_, p_96631_2_, null);
++    }
++
++    public boolean isDamaged(int p_96631_1_, Random p_96631_2_, EntityLivingBase entitylivingbase)
++    {
++        // Spigot end
+         if (!this.isItemStackDamageable())
+         {
+             return false;
+@@ -250,6 +311,23 @@
+ 
+                 p_96631_1_ -= k;
+ 
++                // Spigot start
++                if (entitylivingbase instanceof EntityPlayerMP)
++                {
++                    org.bukkit.craftbukkit.inventory.CraftItemStack item = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(this);
++                    org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent(
++                            (org.bukkit.entity.Player) entitylivingbase.getBukkitEntity(), item, p_96631_1_);
++                    org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return false;
++                    }
++
++                    p_96631_1_ = event.getDamage();
++                }
++                // Spigot end
++
+                 if (p_96631_1_ <= 0)
+                 {
+                     return false;
+@@ -267,7 +345,7 @@
+         {
+             if (this.isItemStackDamageable())
+             {
+-                if (this.attemptDamageItem(p_77972_1_, p_77972_2_.getRNG()))
++                if (this.isDamaged(p_77972_1_, p_77972_2_.getRNG(), p_77972_2_))
+                 {
+                     p_77972_2_.renderBrokenItemStack(this);
+                     --this.stackSize;
+@@ -283,11 +361,14 @@
+                         }
+                     }
+ 
+-                    if (this.stackSize < 0)
++                    sizeCheck(this);
++
++                    // CraftBukkit start - Check for item breaking
++                    if (this.stackSize == 0 && p_77972_2_ instanceof EntityPlayer)
+                     {
+-                        this.stackSize = 0;
++                        org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemBreakEvent((EntityPlayer) p_77972_2_, this);
+                     }
+-
++                    // CraftBukkit end
+                     this.itemDamage = 0;
+                 }
+             }
+@@ -326,6 +407,8 @@
+ 
+     public ItemStack copy()
+     {
++    	sizeCheck(this);
++    	
+         ItemStack itemstack = new ItemStack(this.field_151002_e, this.stackSize, this.itemDamage);
+ 
+         if (this.stackTagCompound != null)
+@@ -419,6 +502,7 @@
+ 
+     public void setTagCompound(NBTTagCompound p_77982_1_)
+     {
++        // Cauldron - do not alter name of compound. Fixes Ars Magica 2 Spellbooks
+         this.stackTagCompound = p_77982_1_;
+     }
+ 
+@@ -768,4 +852,12 @@
+ 
+         return ichatcomponent;
+     }
++    
++    // Spigot start
++    public static boolean fastMatches(ItemStack is1, ItemStack is2) {
++        if (is1 == null && is2 == null) return true;
++        if (is1 != null && is2 != null) return is1.stackSize == is2.stackSize && is1.field_151002_e == is2.field_151002_e && is1.itemDamage == is2.itemDamage;
++        return false;
++    }
++    // Spigot end
+ }

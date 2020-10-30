@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -24,8 +24,8 @@
+     private Block field_145785_f;
+     protected boolean inGround;
+     public int throwableShake;
+-    private EntityLivingBase thrower;
+-    private String throwerName;
++    public EntityLivingBase thrower; // CraftBukkit - private -> public
++    public String throwerName; // CraftBukkit - private -> public
+     private int ticksInGround;
+     private int ticksInAir;
+     private static final String __OBFID = "CL_00001723";
+@@ -50,6 +50,7 @@
+     {
+         super(p_i1777_1_);
+         this.thrower = p_i1777_2_;
++        this.projectileSource = (org.bukkit.entity.LivingEntity) p_i1777_2_.getBukkitEntity(); // CraftBukkit
+         this.setSize(0.25F, 0.25F);
+         this.setLocationAndAngles(p_i1777_2_.posX, p_i1777_2_.posY + (double)p_i1777_2_.getEyeHeight(), p_i1777_2_.posZ, p_i1777_2_.rotationYaw, p_i1777_2_.rotationPitch);
+         this.posX -= (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
+@@ -187,7 +188,7 @@
+ 
+                     if (movingobjectposition1 != null)
+                     {
+-                        double d1 = vec3.distanceTo(movingobjectposition1.hitVec);
++                        double d1 = vec3.squareDistanceTo(movingobjectposition1.hitVec); // CraftBukkit - distance efficiency
+ 
+                         if (d1 < d0 || d0 == 0.0D)
+                         {
+@@ -213,6 +214,14 @@
+             else
+             {
+                 this.onImpact(movingobjectposition);
++
++                // CraftBukkit start
++                if (this.isDead)
++                {
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this);
++                }
++
++                // CraftBukkit end
+             }
+         }
+ 

@@ -1,0 +1,255 @@
+import thermos.CreateChangelog
+import thermos.InstallBundle
+
+buildscript {
+    repositories {
+        maven {
+            name 'forge'
+            url 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name 'sonatype'
+            url 'http://oss.sonatype.org/content/repositories/snapshots/'
+        }
+        maven {
+            name 'spigot'
+            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        }
+
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'maven'
+apply plugin: 'cauldron'
+
+repositories {
+    clear()
+    maven {
+        name 'sonatype'
+        url 'http://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
+    maven {
+        name 'forge'
+        url 'http://files.minecraftforge.net/maven'
+    }
+    maven {
+        name 'minecraft'
+        url 'https://libraries.minecraft.net/'
+    }
+    maven {
+        name 'spigot'
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+
+    mavenCentral()
+}
+
+minecraft {
+    version = '1.7.10'
+    mcpVersion = '9.05'
+    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
+    tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
+    installerVersion = "1.4"
+    srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4"
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+}
+
+group = 'red.mohist'
+
+ext.mcVersion = "1.7.10"
+ext.forgeVersion = "10.13.4.1614"
+version = '1.7.10-' + 'git rev-parse --short HEAD'.execute().text.trim()
+
+launch4j {
+    jreMinVersion = '1.7.0'
+}
+
+configurations {
+    compile.extendsFrom exported
+    libraries
+    bootstrap
+}
+
+
+dependencies {
+    bootstrap 'pw.prok:KBootstrapX:0.2.+'
+    libraries 'org.ow2.asm:asm-all:5.0.3'
+    libraries 'com.typesafe.akka:akka-actor_2.11:2.3.3'
+    libraries 'com.typesafe:config:1.3.1'
+    libraries 'org.scala-lang:scala-actors-migration_2.11:1.1.0'
+    libraries 'org.scala-lang:scala-compiler:2.11.1'
+    libraries 'org.scala-lang.plugins:scala-continuations-library_2.11:1.0.2'
+    libraries 'org.scala-lang.plugins:scala-continuations-plugin_2.11.1:1.0.2'
+    libraries 'org.scala-lang:scala-library:2.11.1'
+    libraries 'org.scala-lang:scala-parser-combinators_2.11:1.0.1'
+    libraries 'org.scala-lang:scala-reflect:2.11.1'
+    libraries 'org.scala-lang:scala-swing_2.11:1.0.1'
+    libraries 'org.scala-lang:scala-xml_2.11:1.0.2'
+    libraries 'net.sf.jopt-simple:jopt-simple:5.0.1'
+    libraries 'lzma:lzma:0.0.1'
+    libraries 'org.yaml:snakeyaml:1.15'
+    libraries 'commons-lang:commons-lang:2.6'
+    libraries 'org.avaje:ebean:2.8.1'
+    libraries 'jline:jline:2.13'
+    libraries 'net.md-5:SpecialSource:1.7-SNAPSHOT'
+    libraries 'net.sourceforge.argo:argo:2.25'
+    libraries 'com.googlecode.json-simple:json-simple:1.1'
+    libraries 'org.xerial:sqlite-jdbc:3.7.2'
+    libraries 'mysql:mysql-connector-java:5.1.46'//
+    libraries 'javax.persistence:persistence-api:1.0.2'
+    libraries 'org.apache.httpcomponents:httpclient:4.4.1'
+    libraries 'pw.prok:KImagine:0.2.0@jar'
+    libraries 'net.openhft:affinity:3.0.1'
+    libraries 'org.fusesource.jansi:jansi:1.11'
+    libraries 'java3d:vecmath:1.3.1'
+    libraries 'com.koloboke:koloboke-impl-jdk8:1.0.0'
+}
+
+packageUniversal {
+    from { configurations.exported.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+def String repeat(String string, int times) {
+    StringBuilder builder = new StringBuilder(string.length() * times)
+    times.times { builder.append(string) }
+    builder as String
+}
+
+def generateClasspath(boolean legacy = false) {
+    def classpath = ''
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each {
+        def jar = "${it.group.replace('.', '/')}/${it.name}/${it.version}/${it.name}-${it.version}.jar"
+        classpath += " libraries/${jar}"
+    }
+    classpath += " libraries/net/minecraft/server/1.7.10/server-1.7.10.jar"
+    return classpath.trim()
+}
+
+def generateManifest(boolean legacy = false) {
+    [
+            'Manifest-Version' : '1.1',
+            'Implementation-Title'  : project.name,
+            'Implementation-Version': 'git rev-parse --short HEAD'.execute().text.trim(),
+            'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
+            'Main-Class'            : 'red.mohist.Mohist',
+            'Class-Path'            : generateClasspath(legacy)
+    ]
+}
+
+tasks.packageUniversal {
+    classifier = 'server'
+    setManifest {}
+    manifest.attributes(generateManifest(true))
+}
+
+task jar(type: Jar, dependsOn: packageUniversal) {
+    destinationDir file("${buildDir}/distributions")
+    from zipTree(tasks.packageUniversal.archivePath)
+    manifest.attributes(generateManifest())
+}
+
+tasks.createChangelog.onlyIf { false }
+tasks.packageInstaller.onlyIf { false }
+
+task packageChangelog(type: CreateChangelog) {
+    onlyIf { project.hasProperty('officialBuild') }
+    classifier = 'changelog'
+    extension = 'txt'
+    oldChangelogUrl = "https://i.tcpr.ca/thermos/changelog.txt"
+    //hash = gitInfo('hash')
+    //message = gitInfo('message')
+    version = project.version
+}
+
+task bundleStub(type: Jar) {
+    classifier = 'stub'
+    manifest.attributes([
+            'Main-Class': 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
+            'Class-Path': "bin/${project.group.replace('.', '/')}/${project.name}/${project.version}/${project.name}-${project.version}.jar"
+    ])
+}
+
+task installBundle(type: InstallBundle, dependsOn: jar) {
+    serverJar tasks.jar.archivePath
+    bootstrapClasspath configurations.bootstrap
+    bootstrapMain 'pw.prok.bootstrap.Main'
+}
+
+task packageBundle(type: Zip, dependsOn: installBundle) {
+    classifier = 'bundle'
+    from fileTree(installBundle.installLocation)
+    from bundleStub
+    rename bundleStub.archiveName, 'Thermos.jar'
+}
+
+task signJars(type: Sign, dependsOn: [packageUniversal, packageChangelog, packageBundle, jar, 'generatePomFileForMavenPublication']) {
+    sign packageUniversal
+    sign packageChangelog
+    sign packageBundle
+    sign jar
+}
+
+task signPom(type: Sign, dependsOn: 'generatePomFileForMavenPublication') {
+    outputs.upToDateWhen { false }
+    sign file("${buildDir}/publications/maven/pom-default.xml")
+}
+
+task preparePublication(dependsOn: [signJars, signPom]) {}
+
+def getPomSignature = {
+    return project.tasks.signPom.signatureFiles.collect { it }[0]
+}
+
+def getSignatureFiles = {
+    def allFiles = project.tasks.signJars.signatureFiles.collect { it }
+    def signedServer = allFiles.find { it.name.contains('-server') }
+    def signedChangelog = allFiles.find { it.name.contains('-changelog') }
+    def signedBundle = allFiles.find { it.name.contains('-bundle') }
+    def signedJar = (allFiles - [signedServer, signedChangelog, signedBundle])[0]
+    return [
+            [archive: signedServer, classifier: 'server', extension: 'jar.asc'],
+            [archive: signedChangelog, classifier: 'changelog', extension: 'txt.asc'],
+            [archive: signedBundle, classifier: 'bundle', extension: 'zip.asc'],
+            [archive: signedJar, classifier: null, extension: 'jar.asc']
+    ]
+}
+
+tasks.generateProjectCauldron << {
+    def file = new File('eclipse/cauldron/build.gradle')
+    file.append('''
+repositories {
+    clear()
+    maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
+    maven {
+        name 'forge'
+        url 'http://files.minecraftforge.net/maven'
+    }
+    maven {
+        name 'minecraft'
+        url 'https://libraries.minecraft.net/'
+    }
+    mavenCentral()
+}
+dependencies {
+''')
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
+        if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
+            return
+        }
+        file.append("    compile '${module}'\n")
+    }
+    file.append('}')
+}
+
+task resolveAllDependencies {
+    doLast {
+        configurations.each { it.resolve() }
+    }
+}

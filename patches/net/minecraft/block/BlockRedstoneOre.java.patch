@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
+@@ -13,6 +13,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
++
+ public class BlockRedstoneOre extends Block
+ {
+     private boolean field_150187_a;
+@@ -43,8 +45,30 @@
+ 
+     public void onEntityWalking(World p_149724_1_, int p_149724_2_, int p_149724_3_, int p_149724_4_, Entity p_149724_5_)
+     {
+-        this.func_150185_e(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_);
+-        super.onEntityWalking(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_, p_149724_5_);
++        // CraftBukkit start
++        if (p_149724_5_ instanceof EntityPlayer)
++        {
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) p_149724_5_, org.bukkit.event.block.Action.PHYSICAL, p_149724_2_, p_149724_3_, p_149724_4_, -1, null);
++
++            if (!event.isCancelled())
++            {
++                this.func_150185_e(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_);
++                super.onEntityWalking(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_, p_149724_5_);
++            }
++        }
++        else
++        {
++            EntityInteractEvent event = new EntityInteractEvent(p_149724_5_.getBukkitEntity(), p_149724_1_.getWorld().getBlockAt(p_149724_2_, p_149724_3_, p_149724_4_));
++            p_149724_1_.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                this.func_150185_e(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_);
++                super.onEntityWalking(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_, p_149724_5_);
++            }
++        }
++
++        // CraftBukkit end
+     }
+ 
+     public boolean onBlockActivated(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)

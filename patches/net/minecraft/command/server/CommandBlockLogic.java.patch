@@ -1,0 +1,212 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandBlockLogic.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandBlockLogic.java
+@@ -9,18 +9,30 @@
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.tileentity.TileEntityCommandBlockListener;
+ import net.minecraft.util.ChatComponentText;
+ import net.minecraft.util.IChatComponent;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import java.util.ArrayList;
++import org.apache.logging.log4j.Level;
++import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
++import com.google.common.base.Joiner;
++import net.minecraft.command.PlayerSelector;
++import net.minecraft.entity.EntityMinecartCommandBlockListener;
++import net.minecraft.entity.player.EntityPlayerMP;
++// CraftBukkit end
++
+ public abstract class CommandBlockLogic implements ICommandSender
+ {
+     private static final SimpleDateFormat field_145766_a = new SimpleDateFormat("HH:mm:ss");
+     private int field_145764_b;
+     private boolean field_145765_c = true;
+     private IChatComponent field_145762_d = null;
+-    private String field_145763_e = "";
++    public String field_145763_e = ""; // CraftBukkit - private -> public
+     private String field_145761_f = "@";
++    protected org.bukkit.command.CommandSender sender; // CraftBukkit - add sender;
+     private static final String __OBFID = "CL_00000128";
+ 
+     public int func_145760_g()
+@@ -94,8 +106,143 @@
+ 
+         if (minecraftserver != null && minecraftserver.isCommandBlockEnabled())
+         {
+-            ICommandManager icommandmanager = minecraftserver.getCommandManager();
+-            this.field_145764_b = icommandmanager.executeCommand(this, this.field_145763_e);
++            // CraftBukkit start - Handle command block commands using Bukkit dispatcher
++            org.bukkit.command.SimpleCommandMap commandMap = minecraftserver.server.getCommandMap();
++            Joiner joiner = Joiner.on(" ");
++            String command = this.field_145763_e;
++
++            if (this.field_145763_e.startsWith("/"))
++            {
++                command = this.field_145763_e.substring(1);
++            }
++
++            String[] args = command.split(" ");
++            ArrayList<String[]> commands = new ArrayList<String[]>();
++
++            // Block disallowed commands
++            if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("op") ||
++                    args[0].equalsIgnoreCase("deop") || args[0].equalsIgnoreCase("ban") || args[0].equalsIgnoreCase("ban-ip") ||
++                    args[0].equalsIgnoreCase("pardon") || args[0].equalsIgnoreCase("pardon-ip") || args[0].equalsIgnoreCase("reload"))
++            {
++                this.field_145764_b = 0;
++                return;
++            }
++
++            // If the world has no players don't run
++            if (this.getEntityWorld().playerEntities.isEmpty())
++            {
++                this.field_145764_b = 0;
++                return;
++            }
++
++            // Handle vanilla commands;
++            if (minecraftserver.server.getCommandBlockOverride(args[0]))
++            {
++                org.bukkit.command.Command commandBlockCommand = commandMap.getCommand("minecraft:" + args[0]);
++
++                if (commandBlockCommand instanceof VanillaCommandWrapper)
++                {
++                    this.field_145764_b = ((VanillaCommandWrapper) commandBlockCommand).dispatchVanillaCommandBlock(this, this.field_145763_e);
++                    return;
++                }
++            }
++
++            // Make sure this is a valid command
++            if (commandMap.getCommand(args[0]) == null)
++            {
++                // Cauldron start - execute command using the vanilla command manager if it isn't in the bukkit command map
++                net.minecraft.command.ICommandManager icommandmanager = minecraftserver.getCommandManager();
++                icommandmanager.executeCommand(this, this.field_145763_e);
++                return;
++                // Cauldron end
++            }
++
++            // testfor command requires special handling
++            if (args[0].equalsIgnoreCase("testfor"))
++            {
++                if (args.length < 2)
++                {
++                    this.field_145764_b = 0;
++                    return;
++                }
++
++                EntityPlayerMP[] players = PlayerSelector.matchPlayers(this, args[1]);
++
++                if (players != null && players.length > 0)
++                {
++                    this.field_145764_b = players.length;
++                    return;
++                }
++                else
++                {
++                    EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[1]);
++
++                    if (player == null)
++                    {
++                        this.field_145764_b = 0;
++                        return;
++                    }
++                    else
++                    {
++                        this.field_145764_b = 1;
++                        return;
++                    }
++                }
++            }
++
++            commands.add(args);
++            // Find positions of command block syntax, if any
++            ArrayList<String[]> newCommands = new ArrayList<String[]>();
++
++            for (int i = 0; i < args.length; i++)
++            {
++                if (PlayerSelector.hasArguments(args[i]))
++                {
++                    for (int j = 0; j < commands.size(); j++)
++                    {
++                        newCommands.addAll(this.buildCommands(commands.get(j), i));
++                    }
++
++                    ArrayList<String[]> temp = commands;
++                    commands = newCommands;
++                    newCommands = temp;
++                    newCommands.clear();
++                }
++            }
++
++            int completed = 0;
++
++            // Now dispatch all of the commands we ended up with
++            for (int i = 0; i < commands.size(); i++)
++            {
++                try
++                {
++                    if (commandMap.dispatch(sender, joiner.join(java.util.Arrays.asList(commands.get(i)))))
++                    {
++                        completed++;
++                    }
++                }
++                catch (Throwable exception)
++                {
++                    if (this instanceof TileEntityCommandBlockListener)
++                    {
++                        TileEntityCommandBlockListener listener = (TileEntityCommandBlockListener) this;
++                        MinecraftServer.getLogger().log(Level.WARN, String.format("CommandBlock at (%d,%d,%d) failed to handle command", listener.getPlayerCoordinates().posX, listener.getPlayerCoordinates().posY, listener.getPlayerCoordinates().posZ), exception);
++                    }
++                    else if (this instanceof EntityMinecartCommandBlockListener)
++                    {
++                        EntityMinecartCommandBlockListener listener = (EntityMinecartCommandBlockListener) this;
++                        MinecraftServer.getLogger().log(Level.WARN, String.format("MinecartCommandBlock at (%d,%d,%d) failed to handle command", listener.getPlayerCoordinates().posX, listener.getPlayerCoordinates().posY, listener.getPlayerCoordinates().posZ), exception);
++                    }
++                    else
++                    {
++                        MinecraftServer.getLogger().log(Level.WARN, String.format("Unknown CommandBlock failed to handle command"), exception);
++                    }
++                }
++            }
++
++            this.field_145764_b = completed;
++            // CraftBukkit end
+         }
+         else
+         {
+@@ -103,6 +250,31 @@
+         }
+     }
+ 
++    // CraftBukkit start
++    private ArrayList<String[]> buildCommands(String[] args, int pos)
++    {
++        ArrayList<String[]> commands = new ArrayList<String[]>();
++        EntityPlayerMP[] players = PlayerSelector.matchPlayers(this, args[pos]);
++
++        if (players != null)
++        {
++            for (EntityPlayerMP player : players)
++            {
++                if (player.worldObj != this.getEntityWorld())
++                {
++                    continue;
++                }
++
++                String[] command = args.clone();
++                command[pos] = player.getCommandSenderName();
++                commands.add(command);
++            }
++        }
++
++        return commands;
++    }
++    // CraftBukkit end
++
+     public String getCommandSenderName()
+     {
+         return this.field_145761_f;

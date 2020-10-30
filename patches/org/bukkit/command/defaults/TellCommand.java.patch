@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/TellCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/TellCommand.java
+@@ -45,4 +45,16 @@
+ 
+         return true;
+     }
++
++    // Spigot Start
++    @Override
++    public java.util.List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException
++    {
++        if ( args.length == 0 )
++        {
++            return super.tabComplete( sender, alias, args );
++        }
++        return java.util.Collections.emptyList();
++    }
++    // Spigot End
+ }

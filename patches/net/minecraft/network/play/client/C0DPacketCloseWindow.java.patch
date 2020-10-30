@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/C0DPacketCloseWindow.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/C0DPacketCloseWindow.java
+@@ -15,11 +15,12 @@
+ 
+     public C0DPacketCloseWindow() {}
+ 
+-    @SideOnly(Side.CLIENT)
++    // CraftBukkit start - Add constructor
+     public C0DPacketCloseWindow(int p_i45247_1_)
+     {
+         this.field_149556_a = p_i45247_1_;
+     }
++    // CraftBukkit end
+ 
+     public void processPacket(INetHandlerPlayServer p_148833_1_)
+     {

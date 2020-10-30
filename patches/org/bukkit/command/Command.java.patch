@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/org/bukkit/command/Command.java
++++ ../src-work/minecraft/org/bukkit/command/Command.java
+@@ -31,6 +31,7 @@
+     protected String usageMessage;
+     private String permission;
+     private String permissionMessage;
++    public org.spigotmc.CustomTimingsHandler timings; // Spigot
+ 
+     protected Command(String name) {
+         this(name, "", "/" + name, new ArrayList<String>());
+@@ -44,6 +45,7 @@
+         this.usageMessage = usageMessage;
+         this.aliases = aliases;
+         this.activeAliases = new ArrayList<String>(aliases);
++        this.timings = new org.spigotmc.CustomTimingsHandler("** Command: " + name); // Spigot
+     }
+ 
+     /**
+@@ -200,6 +202,7 @@
+     public boolean setLabel(String name) {
+         this.nextLabel = name;
+         if (!isRegistered()) {
++            this.timings = new org.spigotmc.CustomTimingsHandler("** Command: " + name); // Spigot
+             this.label = name;
+             return true;
+         }

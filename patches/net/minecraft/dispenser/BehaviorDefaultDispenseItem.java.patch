@@ -1,0 +1,101 @@
+--- ../src-base/minecraft/net/minecraft/dispenser/BehaviorDefaultDispenseItem.java
++++ ../src-work/minecraft/net/minecraft/dispenser/BehaviorDefaultDispenseItem.java
+@@ -6,6 +6,11 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
++
+ public class BehaviorDefaultDispenseItem implements IBehaviorDispenseItem
+ {
+     private static final String __OBFID = "CL_00001195";
+@@ -23,10 +28,17 @@
+         EnumFacing enumfacing = BlockDispenser.func_149937_b(p_82487_1_.getBlockMetadata());
+         IPosition iposition = BlockDispenser.func_149939_a(p_82487_1_);
+         ItemStack itemstack1 = p_82487_2_.splitStack(1);
+-        doDispense(p_82487_1_.getWorld(), itemstack1, 6, enumfacing, iposition);
++        // CraftBukkit start
++        if (!doDispense(p_82487_1_.getWorld(), itemstack1, 6, enumfacing, p_82487_1_))
++        {
++           p_82487_2_.stackSize++;
++        }
++
++        // CraftBukkit end
+         return p_82487_2_;
+     }
+ 
++    // Cauldron start - vanilla compatibility
+     public static void doDispense(World p_82486_0_, ItemStack p_82486_1_, int p_82486_2_, EnumFacing p_82486_3_, IPosition p_82486_4_)
+     {
+         double d0 = p_82486_4_.getX();
+@@ -42,7 +54,67 @@
+         entityitem.motionZ += p_82486_0_.rand.nextGaussian() * 0.007499999832361937D * (double)p_82486_2_;
+         p_82486_0_.spawnEntityInWorld(entityitem);
+     }
++    // Cauldron end
+ 
++    // CraftBukkit start - void -> boolean return, IPosition -> ISourceBlock last argument
++    public static boolean doDispense(World world, ItemStack itemstack, int i, EnumFacing enumfacing, IBlockSource iblocksource)
++    {
++        IPosition iposition = BlockDispenser.func_149939_a(iblocksource);
++        // CraftBukkit end
++        double d0 = iposition.getX();
++        double d1 = iposition.getY();
++        double d2 = iposition.getZ();
++        EntityItem entityitem = new EntityItem(world, d0, d1 - 0.3D, d2, itemstack);
++        double d3 = world.rand.nextDouble() * 0.1D + 0.2D;
++        entityitem.motionX = (double) enumfacing.getFrontOffsetX() * d3;
++        entityitem.motionY = 0.20000000298023224D;
++        entityitem.motionZ = (double) enumfacing.getFrontOffsetZ() * d3;
++        entityitem.motionX += world.rand.nextGaussian() * 0.007499999832361937D * (double) i;
++        entityitem.motionY += world.rand.nextGaussian() * 0.007499999832361937D * (double) i;
++        entityitem.motionZ += world.rand.nextGaussian() * 0.007499999832361937D * (double) i;
++        // CraftBukkit start
++        org.bukkit.block.Block block = world.getWorld().getBlockAt(iblocksource.getXInt(), iblocksource.getYInt(), iblocksource.getZInt());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(entityitem.motionX, entityitem.motionY, entityitem.motionZ));
++
++        if (!BlockDispenser.eventFired)
++        {
++            world.getServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled())
++        {
++            return false;
++        }
++
++        entityitem.setEntityItemStack(CraftItemStack.asNMSCopy(event.getItem()));
++        entityitem.motionX = event.getVelocity().getX();
++        entityitem.motionY = event.getVelocity().getY();
++        entityitem.motionZ = event.getVelocity().getZ();
++
++        if (!event.getItem().equals(craftItem))
++        {
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.getObject(eventStack.getItem());
++
++            if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem.getClass() != BehaviorDefaultDispenseItem.class)
++            {
++                ibehaviordispenseitem.dispense(iblocksource, eventStack);
++            }
++            else
++            {
++                world.spawnEntityInWorld(entityitem);
++            }
++
++            return false;
++        }
++
++        world.spawnEntityInWorld(entityitem);
++        return true;
++        // CraftBukkit end
++    }
++
+     protected void playDispenseSound(IBlockSource p_82485_1_)
+     {
+         p_82485_1_.getWorld().playAuxSFX(1000, p_82485_1_.getXInt(), p_82485_1_.getYInt(), p_82485_1_.getZInt(), 0);

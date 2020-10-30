@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityMob.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMob.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.monster;
+ 
++import org.bukkit.event.entity.EntityTargetEvent; // CraftBukkit
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityCreature;
+@@ -75,7 +76,29 @@
+             {
+                 if (entity != this)
+                 {
+-                    this.entityToAttack = entity;
++                    // CraftBukkit start - We still need to call events for entities without goals
++                    if (entity != this.entityToAttack && (this instanceof EntityBlaze || this instanceof EntityEnderman || this instanceof EntitySpider || this instanceof EntityGiantZombie || this instanceof EntitySilverfish))
++                    {
++                        EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, entity, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
++
++                        if (!event.isCancelled())
++                        {
++                            if (event.getTarget() == null)
++                            {
++                                this.entityToAttack = null;
++                            }
++                            else
++                            {
++                                this.entityToAttack = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++                            }
++                        }
++                    }
++                    else
++                    {
++                        this.entityToAttack = entity;
++                    }
++
++                    // CraftBukkit end
+                 }
+ 
+                 return true;

@@ -1,0 +1,255 @@
+--- ../src-base/minecraft/net/minecraft/inventory/Container.java
++++ ../src-work/minecraft/net/minecraft/inventory/Container.java
+@@ -2,36 +2,94 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.ArrayList;
+ import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
++
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.MathHelper;
+ 
++
++// CraftBukkit start
++import java.util.HashMap;
++import java.util.Map;
++
++import net.minecraft.entity.player.EntityPlayerMP;
++
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.Event.Result;
++import org.bukkit.event.inventory.InventoryDragEvent;
++import org.bukkit.inventory.InventoryView;
++// CraftBukkit end
++import org.spigotmc.SpigotConfig;
++
+ public abstract class Container
+ {
+     public List inventoryItemStacks = new ArrayList();
+-    public List inventorySlots = new ArrayList();
++    public List<Slot> inventorySlots = new ArrayList<Slot>();
+     public int windowId;
+     @SideOnly(Side.CLIENT)
+     private short transactionID;
+     private int field_94535_f = -1;
+-    private int field_94536_g;
++    public int field_94536_g; // CraftBukkit - private -> public
+     private final Set field_94537_h = new HashSet();
++    public InventoryView bukkitView = null; // Cauldron
++    private int tickCount = 0; // Spigot
++    private final int fullMatchRate = SpigotConfig.fullMatchRate; // Spigot
+     protected List crafters = new ArrayList();
+     private Set playerList = new HashSet();
+     private static final String __OBFID = "CL_00001730";
+ 
++    // CraftBukkit start
++    public boolean checkReachable = true;
++    public InventoryView getBukkitView() { return bukkitView; } // Cauldron
++    public void transferTo(Container other, org.bukkit.craftbukkit.entity.CraftHumanEntity player)
++    {
++        InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
++        // Cauldron start - add null checks to skip modded inventories with no Bukkit wrappers, and
++        // catch AbstractMethodErrors for modded IInventory's with no onClose()
++        if (source != null) {
++            try {
++                ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++
++            try {
++                ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++        }
++        if (destination != null) {
++            try {
++                ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++
++            try {
++                ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++            } catch (AbstractMethodError ex) {
++                // modded
++            }
++        }
++        // Cauldron end
++    }
++    // CraftBukkit end
++
+     protected Slot addSlotToContainer(Slot p_75146_1_)
+     {
+         p_75146_1_.slotNumber = this.inventorySlots.size();
+         this.inventorySlots.add(p_75146_1_);
+-        this.inventoryItemStacks.add((Object)null);
++        this.inventoryItemStacks.add(null);
+         return p_75146_1_;
+     }
+ 
+@@ -39,7 +97,11 @@
+     {
+         if (this.crafters.contains(p_75132_1_))
+         {
+-            throw new IllegalArgumentException("Listener already listening");
++            // Cauldron start - As we do not create a new player object on respawn, we need to update the client with changes if listener already exists
++            //throw new IllegalArgumentException("Listener already listening");
++            p_75132_1_.sendContainerAndContentsToPlayer(this, this.getInventory());
++            this.detectAndSendChanges();
++            // Cauldron end
+         }
+         else
+         {
+@@ -51,7 +113,7 @@
+ 
+     public List getInventory()
+     {
+-        ArrayList arraylist = new ArrayList();
++        ArrayList<ItemStack> arraylist = new ArrayList<ItemStack>();
+ 
+         for (int i = 0; i < this.inventorySlots.size(); ++i)
+         {
+@@ -71,10 +133,12 @@
+     {
+         for (int i = 0; i < this.inventorySlots.size(); ++i)
+         {
+-            ItemStack itemstack = ((Slot)this.inventorySlots.get(i)).getStack();
++        	Slot slotty = (Slot)this.inventorySlots.get(i);
++        	slotty.slotNumber = i; // Thermos ensure correct indexing
++            ItemStack itemstack = (slotty).getStack();
+             ItemStack itemstack1 = (ItemStack)this.inventoryItemStacks.get(i);
+ 
+-            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack))
++            if (!areItemStacksEqual(itemstack1, itemstack))
+             {
+                 itemstack1 = itemstack == null ? null : itemstack.copy();
+                 this.inventoryItemStacks.set(i, itemstack1);
+@@ -85,6 +149,7 @@
+                 }
+             }
+         }
++        tickCount++;
+     }
+ 
+     public boolean enchantItem(EntityPlayer p_75140_1_, int p_75140_2_)
+@@ -109,6 +174,10 @@
+ 
+     public Slot getSlot(int p_75139_1_)
+     {
++        // Cauldron start - vanilla compatibility. fixes NPE with ProjectRed's Item Stock Keeper
++        if (p_75139_1_ < 0 || p_75139_1_ > this.inventorySlots.size())
++            return null;
++        // Cauldron end
+         return (Slot)this.inventorySlots.get(p_75139_1_);
+     }
+ 
+@@ -168,6 +237,7 @@
+                     itemstack3 = inventoryplayer.getItemStack().copy();
+                     i1 = inventoryplayer.getItemStack().stackSize;
+                     Iterator iterator = this.field_94537_h.iterator();
++                    Map<Integer, ItemStack> draggedSlots = new HashMap<Integer, ItemStack>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
+ 
+                     while (iterator.hasNext())
+                     {
+@@ -190,18 +260,55 @@
+                             }
+ 
+                             i1 -= itemstack1.stackSize - j1;
+-                            slot1.putStack(itemstack1);
++                            draggedSlots.put(slot1.slotNumber, itemstack1); // CraftBukkit - Put in map instead of setting
+                         }
+                     }
+ 
+-                    itemstack3.stackSize = i1;
++                    // CraftBukkit start - InventoryDragEvent
++                    InventoryView view = getBukkitView();
++                    org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack3);
++                    newcursor.setAmount(i1);
++                    Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<Integer, org.bukkit.inventory.ItemStack>();
+ 
+-                    if (itemstack3.stackSize <= 0)
++                    for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet())
+                     {
+-                        itemstack3 = null;
++                        eventmap.put(ditem.getKey(), CraftItemStack.asBukkitCopy(ditem.getValue()));
+                     }
+ 
+-                    inventoryplayer.setItemStack(itemstack3);
++                    // It's essential that we set the cursor to the new value here to prevent item duplication if a plugin closes the inventory.
++                    ItemStack oldCursor = inventoryplayer.getItemStack();
++                    inventoryplayer.setItemStack(CraftItemStack.asNMSCopy(newcursor));
++                    InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != org.bukkit.Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.field_94535_f == i1, eventmap); // Should be dragButton
++                    p_75144_4_.worldObj.getServer().getPluginManager().callEvent(event);
++                    // Whether or not a change was made to the inventory that requires an update.
++                    boolean needsUpdate = event.getResult() != Result.DEFAULT;
++
++                    if (event.getResult() != Result.DENY)
++                    {
++                        for (Map.Entry<Integer, ItemStack> dslot : draggedSlots.entrySet())
++                        {
++                            view.setItem(dslot.getKey(), CraftItemStack.asBukkitCopy(dslot.getValue()));
++                        }
++
++                        // The only time the carried item will be set to null is if the inventory is closed by the server.
++                        // If the inventory is closed by the server, then the cursor items are dropped.  This is why we change the cursor early.
++                        if (inventoryplayer.getItemStack() != null)
++                        {
++                            inventoryplayer.setItemStack(CraftItemStack.asNMSCopy(event.getCursor()));
++                            needsUpdate = true;
++                        }
++                    }
++                    else
++                    {
++                        inventoryplayer.setItemStack(oldCursor);
++                    }
++
++                    if (needsUpdate && p_75144_4_ instanceof EntityPlayerMP)
++                    {
++                        ((EntityPlayerMP) p_75144_4_).sendContainerToPlayer(this);
++                    }
++
++                    // CraftBukkit end
+                 }
+ 
+                 this.func_94533_d();
+@@ -235,10 +342,17 @@
+ 
+                         if (p_75144_2_ == 1)
+                         {
+-                            p_75144_4_.dropPlayerItemWithRandomChoice(inventoryplayer.getItemStack().splitStack(1), true);
++                            // CraftBukkit start - Store a reference
++                            ItemStack itemstack4 = inventoryplayer.getItemStack();
+ 
+                             if (inventoryplayer.getItemStack().stackSize == 0)
+                             {
++                                p_75144_4_.dropPlayerItemWithRandomChoice(inventoryplayer.getItemStack().splitStack(1), true);
++                            }
++
++                            if (itemstack4.stackSize == 0)
++                            {
++                                // CraftBukkit end
+                                 inventoryplayer.setItemStack((ItemStack)null);
+                             }
+                         }
+@@ -730,4 +844,10 @@
+             return MathHelper.floor_float(f * 14.0F) + (i > 0 ? 1 : 0);
+         }
+     }
++    
++    // Spigot start
++    public boolean areItemStacksEqual(ItemStack is1, ItemStack is2) {
++        return tickCount % fullMatchRate == 0 ? ItemStack.areItemStacksEqual(is1, is2) : ItemStack.fastMatches(is1, is2);
++    }
++    // Spigot
+ }

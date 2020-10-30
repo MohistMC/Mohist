@@ -1,0 +1,92 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -7,18 +7,35 @@
+ import net.minecraft.item.crafting.CraftingManager;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.play.server.S2FPacketSetSlot;
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class ContainerWorkbench extends Container
+ {
+-    public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+-    public IInventory craftResult = new InventoryCraftResult();
++    public InventoryCrafting craftMatrix; // CraftBukkit - move initialization into constructor
++    public IInventory craftResult; // CraftBukkit - move initialization into constructor
+     private World worldObj;
+     private int posX;
+     private int posY;
+     private int posZ;
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001744";
+ 
+     public ContainerWorkbench(InventoryPlayer p_i1808_1_, World p_i1808_2_, int p_i1808_3_, int p_i1808_4_, int p_i1808_5_)
+     {
++        // CraftBukkit start - Switched order of IInventory construction and stored player
++        this.craftResult = new InventoryCraftResult();
++        this.craftMatrix = new InventoryCrafting(this, 3, 3, p_i1808_1_.player); // CraftBukkit - pass player
++        this.craftMatrix.resultInventory = this.craftResult;
++        this.player = p_i1808_1_;
++        // CraftBukkit end
+         this.worldObj = p_i1808_2_;
+         this.posX = p_i1808_3_;
+         this.posY = p_i1808_4_;
+@@ -53,7 +70,19 @@
+ 
+     public void onCraftMatrixChanged(IInventory p_75130_1_)
+     {
+-        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
++        // CraftBukkit start
++        CraftingManager.getInstance().lastCraftView = getBukkitView();
++        ItemStack craftResult = CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj);
++        this.craftResult.setInventorySlotContents(0, craftResult);
++
++        if (super.crafters.size() < 1 || !(super.crafters.get(0) instanceof EntityPlayerMP))
++        {
++            return;
++        }
++
++        EntityPlayerMP player = (EntityPlayerMP) super.crafters.get(0); // Thermos - this will always be correct now!
++        player.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, 0, craftResult));
++        // CraftBukkit end
+     }
+ 
+     public void onContainerClosed(EntityPlayer p_75134_1_)
+@@ -76,6 +105,11 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable)
++        {
++            return true;    // CraftBukkit
++        }
++
+         return this.worldObj.getBlock(this.posX, this.posY, this.posZ) != Blocks.crafting_table ? false : p_75145_1_.getDistanceSq((double)this.posX + 0.5D, (double)this.posY + 0.5D, (double)this.posZ + 0.5D) <= 64.0D;
+     }
+ 
+@@ -141,4 +175,18 @@
+     {
+         return p_94530_2_.inventory != this.craftResult && super.func_94530_a(p_94530_1_, p_94530_2_);
+     }
++
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
++            return bukkitEntity;
++        }
++
++        CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftMatrix, this.craftResult);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+ }

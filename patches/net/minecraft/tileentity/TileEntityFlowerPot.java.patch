@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFlowerPot.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFlowerPot.java
+@@ -55,4 +55,12 @@
+     {
+         return this.flowerPotData;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

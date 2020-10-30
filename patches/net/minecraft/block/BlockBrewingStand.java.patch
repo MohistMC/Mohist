@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBrewingStand.java
+@@ -20,6 +20,7 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.IIcon;
+ import net.minecraft.world.World;
++import net.minecraft.nbt.NBTTagCompound;
+ 
+ public class BlockBrewingStand extends BlockContainer
+ {
+@@ -126,6 +127,12 @@
+                         entityitem.motionX = (double)((float)this.field_149961_a.nextGaussian() * f3);
+                         entityitem.motionY = (double)((float)this.field_149961_a.nextGaussian() * f3 + 0.2F);
+                         entityitem.motionZ = (double)((float)this.field_149961_a.nextGaussian() * f3);
++                        // Spigot Start
++                        if ( itemstack.hasTagCompound() )
++                        {
++                            entityitem.getEntityItem().setTagCompound( (NBTTagCompound) itemstack.getTagCompound().copy() );
++                        }
++                        // Spigot End
+                         p_149749_1_.spawnEntityInWorld(entityitem);
+                     }
+                 }

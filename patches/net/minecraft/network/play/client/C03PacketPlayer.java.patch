@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/C03PacketPlayer.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/C03PacketPlayer.java
+@@ -10,15 +10,17 @@
+ 
+ public class C03PacketPlayer extends Packet
+ {
+-    protected double field_149479_a;
+-    protected double field_149477_b;
+-    protected double field_149478_c;
+-    protected double field_149475_d;
+-    protected float field_149476_e;
+-    protected float field_149473_f;
++    // CraftBukkit start - protected -> public
++    public double field_149479_a;
++    public double field_149477_b;
++    public double field_149478_c;
++    public double field_149475_d;
++    public float field_149476_e;
++    public float field_149473_f;
++    // CraftBukkit end
+     protected boolean field_149474_g;
+-    protected boolean field_149480_h;
+-    protected boolean field_149481_i;
++    public boolean field_149480_h; // CraftBukkit - protected -> public
++    public boolean field_149481_i;
+     private static final String __OBFID = "CL_00001360";
+ 
+     public C03PacketPlayer() {}

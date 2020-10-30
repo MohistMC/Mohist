@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/DeopCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/DeopCommand.java
+@@ -49,9 +49,9 @@
+ 
+         if (args.length == 1) {
+             List<String> completions = new ArrayList<String>();
+-            for (OfflinePlayer player : Bukkit.getOperators()) {
++            for (OfflinePlayer player : Bukkit.getOnlinePlayers()) {
+                 String playerName = player.getName();
+-                if (StringUtil.startsWithIgnoreCase(playerName, args[0])) {
++                if (player.isOp() && StringUtil.startsWithIgnoreCase(playerName, args[0])) {
+                     completions.add(playerName);
+                 }
+             }

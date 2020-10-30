@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityExpBottle.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityExpBottle.java
+@@ -43,9 +43,20 @@
+     {
+         if (!this.worldObj.isRemote)
+         {
+-            this.worldObj.playAuxSFX(2002, (int)Math.round(this.posX), (int)Math.round(this.posY), (int)Math.round(this.posZ), 0);
++            // CraftBukkit moved after event
++            //this.worldObj.playAuxSFX(2002, (int)Math.round(this.posX), (int)Math.round(this.posY), (int)Math.round(this.posZ), 0);
+             int i = 3 + this.worldObj.rand.nextInt(5) + this.worldObj.rand.nextInt(5);
++            // CraftBukkit start
++            org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, i);
++            i = event.getExperience();
+ 
++            if (event.getShowEffect())
++            {
++                this.worldObj.playAuxSFX(2002, (int) Math.round(this.posX), (int) Math.round(this.posY), (int) Math.round(this.posZ), 0);
++            }
++
++            // CraftBukkit end
++
+             while (i > 0)
+             {
+                 int j = EntityXPOrb.getXPSplit(i);
+@@ -56,4 +67,11 @@
+             this.setDead();
+         }
+     }
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

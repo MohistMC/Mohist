@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/S05PacketSpawnPosition.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/S05PacketSpawnPosition.java
+@@ -10,9 +10,9 @@
+ 
+ public class S05PacketSpawnPosition extends Packet
+ {
+-    private int field_149364_a;
+-    private int field_149362_b;
+-    private int field_149363_c;
++    public int field_149364_a; // CraftBukkit - private -> public
++    public int field_149362_b; // CraftBukkit - private -> public
++    public int field_149363_c; // CraftBukkit - private -> public
+     private static final String __OBFID = "CL_00001336";
+ 
+     public S05PacketSpawnPosition() {}

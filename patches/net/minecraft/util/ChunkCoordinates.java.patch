@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/util/ChunkCoordinates.java
++++ ../src-work/minecraft/net/minecraft/util/ChunkCoordinates.java
+@@ -38,7 +38,7 @@
+ 
+     public int hashCode()
+     {
+-        return this.posX + this.posZ << 8 + this.posY << 16;
++        return this.posX + (this.posZ << 8) + (this.posY << 16);
+     }
+ 
+     public int compareTo(ChunkCoordinates p_compareTo_1_)

@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemHangingEntity.java
++++ ../src-work/minecraft/net/minecraft/item/ItemHangingEntity.java
+@@ -8,6 +8,12 @@
+ import net.minecraft.util.Direction;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.entity.Player;
++import org.bukkit.event.hanging.HangingPlaceEvent;
++import org.bukkit.event.painting.PaintingPlaceEvent;
++// CraftBukkit end
++
+ public class ItemHangingEntity extends Item
+ {
+     private final Class hangingEntityClass;
+@@ -44,6 +50,28 @@
+                 {
+                     if (!p_77648_3_.isRemote)
+                     {
++                        // CraftBukkit start
++                        Player who = (Player) p_77648_2_.getBukkitEntity();
++                        org.bukkit.block.Block blockClicked = p_77648_3_.getWorld().getBlockAt(p_77648_4_, p_77648_5_, p_77648_6_);
++                        org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(p_77648_7_);
++                        HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) entityhanging.getBukkitEntity(), who, blockClicked, blockFace);
++                        p_77648_3_.getServer().getPluginManager().callEvent(event);
++                        PaintingPlaceEvent paintingEvent = null;
++
++                        if (entityhanging instanceof EntityPainting)
++                        {
++                            // Fire old painting event until it can be removed
++                            paintingEvent = new PaintingPlaceEvent((org.bukkit.entity.Painting) entityhanging.getBukkitEntity(), who, blockClicked, blockFace);
++                            paintingEvent.setCancelled(event.isCancelled());
++                            p_77648_3_.getServer().getPluginManager().callEvent(paintingEvent);
++                        }
++
++                        if (event.isCancelled() || (paintingEvent != null && paintingEvent.isCancelled()))
++                        {
++                            return false;
++                        }
++
++                        // CraftBukkit end
+                         p_77648_3_.spawnEntityInWorld(entityhanging);
+                     }
+ 

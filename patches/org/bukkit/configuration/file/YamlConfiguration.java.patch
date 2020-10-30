@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/configuration/file/YamlConfiguration.java
++++ ../src-work/minecraft/org/bukkit/configuration/file/YamlConfiguration.java
+@@ -33,7 +33,7 @@
+     public String saveToString() {
+         yamlOptions.setIndent(options().indent());
+         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+-        yamlOptions.setAllowUnicode(SYSTEM_UTF);
++        yamlOptions.setAllowUnicode(true);
+         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+ 
+         String header = buildHeader();

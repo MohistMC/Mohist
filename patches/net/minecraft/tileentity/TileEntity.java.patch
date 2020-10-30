@@ -1,0 +1,99 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
+@@ -22,20 +22,32 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import org.bukkit.craftbukkit.Overridden;
++import org.spigotmc.CustomTimingsHandler; // Spigot
++import org.bukkit.inventory.InventoryHolder; // CraftBukkit
++
+ public class TileEntity
+ {
+     private static final Logger logger = LogManager.getLogger();
+     private static Map nameToClassMap = new HashMap();
+-    private static Map classToNameMap = new HashMap();
+-    protected World worldObj;
++    public static Map classToNameMap = new HashMap(); // Cauldron - private -> public
++    public World worldObj; // CraftBukkit - protected -> public
++    private boolean GC = false;
+     public int xCoord;
+     public int yCoord;
+     public int zCoord;
+     protected boolean tileEntityInvalid;
+     public int blockMetadata = -1;
+     public Block blockType;
++    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
+     private static final String __OBFID = "CL_00000340";
+ 
++    @Override
++    public int hashCode()
++    {
++        return ((yCoord * 31 + xCoord) * 31 + zCoord) * 17 + yCoord;
++    }
++
+     public static void addMapping(Class p_145826_0_, String p_145826_1_)
+     {
+         if (nameToClassMap.containsKey(p_145826_1_))
+@@ -48,7 +60,7 @@
+             classToNameMap.put(p_145826_0_, p_145826_1_);
+         }
+     }
+-
++    static boolean IGNORE_TILE_UPDATES = false; // Paper
+     public World getWorldObj()
+     {
+         return this.worldObj;
+@@ -106,7 +118,11 @@
+         }
+         catch (Exception exception)
+         {
+-            exception.printStackTrace();
++            // Cauldron start - better debug
++            FMLLog.log(Level.ERROR, exception,
++                    "A TileEntity %s(%s) located @ %s,%s,%s has thrown an exception during creation, it cannot be created. Report this to the mod author",
++                    p_145827_0_.getString("id"), oclass.getName(), p_145827_0_.getInteger("x"), p_145827_0_.getInteger("y"), p_145827_0_.getInteger("z"));
++            // Cauldron end
+         }
+ 
+         if (tileentity != null)
+@@ -145,6 +161,7 @@
+     {
+         if (this.worldObj != null)
+         {
++            if (IGNORE_TILE_UPDATES) return; // Paper
+             this.blockMetadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
+             this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
+ 
+@@ -282,6 +299,31 @@
+         addMapping(TileEntityFlowerPot.class, "FlowerPot");
+     }
+ 
++    // CraftBukkit start
++    public InventoryHolder getOwner()
++    {
++        org.bukkit.block.BlockState state = worldObj.getWorld().getBlockAt(xCoord, yCoord, zCoord).getState();
++
++        if (state instanceof InventoryHolder)
++        {
++            return (InventoryHolder) state;
++        }
++
++        return null;
++    }
++    // CraftBukkit end
++    // KCauldron start
++    public boolean isGC()
++    {
++        return this.GC; //Returns true if the chunk it is inside of has marked it for unloading
++    }
++
++    public void setGC(boolean state)
++    {
++        this.GC = state; //Should never be touched by a mod. Would make it package-private but not sure if that would still work
++    }
++    // KCauldron end
++
+     // -- BEGIN FORGE PATCHES --
+     /**
+      * Determines if this TileEntity requires update calls.

@@ -1,0 +1,186 @@
+--- ../src-base/minecraft/net/minecraft/entity/DataWatcher.java
++++ ../src-work/minecraft/net/minecraft/entity/DataWatcher.java
+@@ -22,12 +22,22 @@
+ {
+     private final Entity field_151511_a;
+     private boolean isBlank = true;
+-    private static final HashMap dataTypes = new HashMap();
+-    private final Map watchedObjects = new HashMap();
++
++//    private static final HashMap dataTypes = new HashMap();
++//    private final Map watchedObjects = new HashMap();
++
+     private boolean objectChanged;
+     private ReadWriteLock lock = new ReentrantReadWriteLock();
+     private static final String __OBFID = "CL_00001559";
+ 
++    // Spigot Start
++    private static final gnu.trove.map.TObjectIntMap classToId = new gnu.trove.map.hash.TObjectIntHashMap( 10, 0.5f, -1 );
++    private final gnu.trove.map.TIntObjectMap dataValues = new gnu.trove.map.hash.TIntObjectHashMap( 10, 0.5f, -1 );
++    // These exist as an attempt at backwards compatability for (broken) NMS plugins
++    private static final Map dataTypes = gnu.trove.TDecorators.wrap( classToId );
++    private final Map watchedObjects = gnu.trove.TDecorators.wrap( dataValues );
++    // Spigot End
++
+     public DataWatcher(Entity p_i45313_1_)
+     {
+         this.field_151511_a = p_i45313_1_;
+@@ -35,9 +45,9 @@
+ 
+     public void addObject(int p_75682_1_, Object p_75682_2_)
+     {
+-        Integer integer = (Integer)dataTypes.get(p_75682_2_.getClass());
++        int integer = classToId.get(p_75682_2_.getClass());
+ 
+-        if (integer == null)
++        if (integer == -1)
+         {
+             throw new IllegalArgumentException("Unknown data type: " + p_75682_2_.getClass());
+         }
+@@ -45,15 +55,15 @@
+         {
+             throw new IllegalArgumentException("Data value id is too big with " + p_75682_1_ + "! (Max is " + 31 + ")");
+         }
+-        else if (this.watchedObjects.containsKey(Integer.valueOf(p_75682_1_)))
++        else if (this.dataValues.containsKey(p_75682_1_))
+         {
+             throw new IllegalArgumentException("Duplicate id value for " + p_75682_1_ + "!");
+         }
+         else
+         {
+-            DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(integer.intValue(), p_75682_1_, p_75682_2_);
++            DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(integer, p_75682_1_, p_75682_2_);
+             this.lock.writeLock().lock();
+-            this.watchedObjects.put(Integer.valueOf(p_75682_1_), watchableobject);
++            this.dataValues.put(p_75682_1_, watchableobject);
+             this.lock.writeLock().unlock();
+             this.isBlank = false;
+         }
+@@ -63,7 +73,7 @@
+     {
+         DataWatcher.WatchableObject watchableobject = new DataWatcher.WatchableObject(p_82709_2_, p_82709_1_, (Object)null);
+         this.lock.writeLock().lock();
+-        this.watchedObjects.put(Integer.valueOf(p_82709_1_), watchableobject);
++        this.dataValues.put(p_82709_1_, watchableobject);
+         this.lock.writeLock().unlock();
+         this.isBlank = false;
+     }
+@@ -105,7 +115,7 @@
+ 
+         try
+         {
+-            watchableobject = (DataWatcher.WatchableObject)this.watchedObjects.get(Integer.valueOf(p_75691_1_));
++            watchableobject = (DataWatcher.WatchableObject)this.dataValues.get(p_75691_1_);
+         }
+         catch (Throwable throwable)
+         {
+@@ -166,7 +176,7 @@
+         if (this.objectChanged)
+         {
+             this.lock.readLock().lock();
+-            Iterator iterator = this.watchedObjects.values().iterator();
++            Iterator iterator = this.dataValues.valueCollection().iterator();
+ 
+             while (iterator.hasNext())
+             {
+@@ -195,7 +205,7 @@
+     public void func_151509_a(PacketBuffer p_151509_1_) throws IOException
+     {
+         this.lock.readLock().lock();
+-        Iterator iterator = this.watchedObjects.values().iterator();
++        Iterator iterator = this.dataValues.valueCollection().iterator();
+ 
+         while (iterator.hasNext())
+         {
+@@ -209,9 +219,9 @@
+ 
+     public List getAllWatched()
+     {
+-        ArrayList arraylist = null;
++        ArrayList arraylist = new ArrayList();
+         this.lock.readLock().lock();
+-        DataWatcher.WatchableObject watchableobject;
++        /*DataWatcher.WatchableObject watchableobject;
+ 
+         for (Iterator iterator = this.watchedObjects.values().iterator(); iterator.hasNext(); arraylist.add(watchableobject))
+         {
+@@ -221,7 +231,8 @@
+             {
+                 arraylist = new ArrayList();
+             }
+-        }
++        }*/
++        arraylist.addAll(this.dataValues.valueCollection());
+ 
+         this.lock.readLock().unlock();
+         return arraylist;
+@@ -231,9 +242,24 @@
+     {
+         int i = (p_151510_1_.getObjectType() << 5 | p_151510_1_.getDataValueId() & 31) & 255;
+         p_151510_0_.writeByte(i);
+-
+-        switch (p_151510_1_.getObjectType())
++        // Thermos start data type error correction code
++        int type = p_151510_1_.getObjectType();
++        Object object = p_151510_1_.getObject();
++        int rt = -1;
++        if(object instanceof Byte) rt = 0;
++        else if(object instanceof Short) rt = 1;
++        else if(object instanceof Integer) rt = 2;
++        else if(object instanceof Float) rt = 3;
++        else if(object instanceof String) rt = 4;
++        else if(object instanceof ItemStack) rt = 5;
++        else if(object instanceof ChunkCoordinates) rt = 6;
++        if(rt != -1 && type != rt)
+         {
++        	System.out.println("[Thermos] Watchable object type is incorrect! Appying correct type! ( " +type+" -> " +rt+")");
++        	type = rt;
++        }
++        switch (type)
++        {
+             case 0:
+                 p_151510_0_.writeByte(((Byte)p_151510_1_.getObject()).byteValue());
+                 break;
+@@ -247,7 +273,11 @@
+                 p_151510_0_.writeFloat(((Float)p_151510_1_.getObject()).floatValue());
+                 break;
+             case 4:
+-                p_151510_0_.writeStringToBuffer((String)p_151510_1_.getObject());
++            	String str = (String)p_151510_1_.getObject();
++            	if(str.getBytes().length < 32767) 
++            		p_151510_0_.writeStringToBuffer((String)p_151510_1_.getObject());
++            	else
++            		System.out.println("[Thermos] Warning! Skipped data watcher string larger than 32767 bytes ( "+str.getBytes().length+")!");
+                 break;
+             case 5:
+                 ItemStack itemstack = (ItemStack)p_151510_1_.getObject();
+@@ -318,7 +348,7 @@
+         while (iterator.hasNext())
+         {
+             DataWatcher.WatchableObject watchableobject = (DataWatcher.WatchableObject)iterator.next();
+-            DataWatcher.WatchableObject watchableobject1 = (DataWatcher.WatchableObject)this.watchedObjects.get(Integer.valueOf(watchableobject.getDataValueId()));
++            DataWatcher.WatchableObject watchableobject1 = (DataWatcher.WatchableObject)this.dataValues.get(watchableobject.getDataValueId());
+ 
+             if (watchableobject1 != null)
+             {
+@@ -343,13 +373,13 @@
+ 
+     static
+     {
+-        dataTypes.put(Byte.class, Integer.valueOf(0));
+-        dataTypes.put(Short.class, Integer.valueOf(1));
+-        dataTypes.put(Integer.class, Integer.valueOf(2));
+-        dataTypes.put(Float.class, Integer.valueOf(3));
+-        dataTypes.put(String.class, Integer.valueOf(4));
+-        dataTypes.put(ItemStack.class, Integer.valueOf(5));
+-        dataTypes.put(ChunkCoordinates.class, Integer.valueOf(6));
++        classToId.put(Byte.class, 0);
++        classToId.put(Short.class, 1);
++        classToId.put(Integer.class, 2);
++        classToId.put(Float.class, 3);
++        classToId.put(String.class, 4);
++        classToId.put(ItemStack.class, 5);
++        classToId.put(ChunkCoordinates.class, 6);
+     }
+ 
+     public static class WatchableObject

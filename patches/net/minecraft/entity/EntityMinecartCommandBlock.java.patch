@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityMinecartCommandBlock.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityMinecartCommandBlock.java
+@@ -16,33 +16,9 @@
+ 
+ public class EntityMinecartCommandBlock extends EntityMinecart
+ {
+-    private final CommandBlockLogic field_145824_a = new CommandBlockLogic()
+-    {
+-        private static final String __OBFID = "CL_00001673";
+-        public void func_145756_e()
+-        {
+-            EntityMinecartCommandBlock.this.getDataWatcher().updateObject(23, this.func_145753_i());
+-            EntityMinecartCommandBlock.this.getDataWatcher().updateObject(24, IChatComponent.Serializer.func_150696_a(this.func_145749_h()));
+-        }
+-        @SideOnly(Side.CLIENT)
+-        public int func_145751_f()
+-        {
+-            return 1;
+-        }
+-        @SideOnly(Side.CLIENT)
+-        public void func_145757_a(ByteBuf p_145757_1_)
+-        {
+-            p_145757_1_.writeInt(EntityMinecartCommandBlock.this.getEntityId());
+-        }
+-        public ChunkCoordinates getPlayerCoordinates()
+-        {
+-            return new ChunkCoordinates(MathHelper.floor_double(EntityMinecartCommandBlock.this.posX), MathHelper.floor_double(EntityMinecartCommandBlock.this.posY + 0.5D), MathHelper.floor_double(EntityMinecartCommandBlock.this.posZ));
+-        }
+-        public World getEntityWorld()
+-        {
+-            return EntityMinecartCommandBlock.this.worldObj;
+-        }
+-    };
++    private final EntityMinecartCommandBlockListener field_145824_a_CB= new EntityMinecartCommandBlockListener(this); // CraftBukkit
++    private final CommandBlockLogic field_145824_a = field_145824_a_CB; // Cauldron
++
+     private int field_145823_b = 0;
+     private static final String __OBFID = "CL_00001672";
+ 

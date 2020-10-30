@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
++++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
+@@ -15,6 +15,12 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++// CraftBukkit start
++import org.bukkit.block.BlockState;
++import org.bukkit.event.block.BlockSpreadEvent;
++import org.bukkit.event.block.BlockFadeEvent;
++// CraftBukkit end
++
+ public class BlockGrass extends Block implements IGrowable
+ {
+     private static final Logger logger = LogManager.getLogger();
+@@ -45,11 +51,25 @@
+         {
+             if (p_149674_1_.getBlockLightValue(p_149674_2_, p_149674_3_ + 1, p_149674_4_) < 4 && p_149674_1_.getBlockLightOpacity(p_149674_2_, p_149674_3_ + 1, p_149674_4_) > 2)
+             {
+-                p_149674_1_.setBlock(p_149674_2_, p_149674_3_, p_149674_4_, Blocks.dirt);
++                // CraftBukkit start
++                org.bukkit.World bworld = p_149674_1_.getWorld();
++                BlockState blockState = bworld.getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_).getState();
++                blockState.setTypeId(Block.getIdFromBlock(Blocks.dirt));
++                BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
++                p_149674_1_.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    blockState.update(true);
++                }
++
++                // CraftBukkit end
+             }
+             else if (p_149674_1_.getBlockLightValue(p_149674_2_, p_149674_3_ + 1, p_149674_4_) >= 9)
+             {
+-                for (int l = 0; l < 4; ++l)
++                int numGrowth = Math.min(4, Math.max(20, (int)(4 * 100F / p_149674_1_.growthOdds)));  // Spigot
++
++                for (int l = 0; l < numGrowth; ++l)   // Spigot
+                 {
+                     int i1 = p_149674_2_ + p_149674_5_.nextInt(3) - 1;
+                     int j1 = p_149674_3_ + p_149674_5_.nextInt(5) - 3;
+@@ -58,7 +78,19 @@
+ 
+                     if (p_149674_1_.getBlock(i1, j1, k1) == Blocks.dirt && p_149674_1_.getBlockMetadata(i1, j1, k1) == 0 && p_149674_1_.getBlockLightValue(i1, j1 + 1, k1) >= 4 && p_149674_1_.getBlockLightOpacity(i1, j1 + 1, k1) <= 2)
+                     {
+-                        p_149674_1_.setBlock(i1, j1, k1, Blocks.grass);
++                        // CraftBukkit start
++                        org.bukkit.World bworld = p_149674_1_.getWorld();
++                        BlockState blockState = bworld.getBlockAt(i1, j1, k1).getState();
++                        blockState.setTypeId(Block.getIdFromBlock(Blocks.grass));
++                        BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_), blockState);
++                        p_149674_1_.getServer().getPluginManager().callEvent(event);
++
++                        if (!event.isCancelled())
++                        {
++                            blockState.update(true);
++                        }
++
++                        // CraftBukkit end
+                     }
+                 }
+             }

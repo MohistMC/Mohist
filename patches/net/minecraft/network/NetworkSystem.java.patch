@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
+@@ -25,7 +25,9 @@
+ import java.util.Collections;
+ import java.util.Iterator;
+ import java.util.List;
++import java.util.Set;
+ import java.util.concurrent.Callable;
++import java.util.concurrent.ConcurrentHashMap;
+ import net.minecraft.client.network.NetHandlerHandshakeMemory;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -51,6 +53,9 @@
+     private final List networkManagers = Collections.synchronizedList(new ArrayList());
+     private static final String __OBFID = "CL_00001447";
+ 
++    private boolean processing = false; // Thermos (Robotia) -- syncy time!
++    private final Set stack = Collections.newSetFromMap(new ConcurrentHashMap());
++
+     public NetworkSystem(MinecraftServer p_i45292_1_)
+     {
+         this.mcServer = p_i45292_1_;
+@@ -88,7 +93,9 @@
+ 
+                     p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new PingResponseHandler(NetworkSystem.this)).addLast("splitter", new MessageDeserializer2()).addLast("decoder", new MessageDeserializer(NetworkManager.field_152462_h)).addLast("prepender", new MessageSerializer2()).addLast("encoder", new MessageSerializer(NetworkManager.field_152462_h));
+                     NetworkManager networkmanager = new NetworkManager(false);
+-                    NetworkSystem.this.networkManagers.add(networkmanager);
++
++                    if (processing) { stack.add(networkmanager); } // Thermos (Robotia) -- syncy time
++                    else { NetworkSystem.this.networkManagers.add(networkmanager); }
+                     p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
+                     networkmanager.setNetHandler(new NetHandlerHandshakeTCP(NetworkSystem.this.mcServer, networkmanager));
+                 }
+@@ -111,7 +118,8 @@
+                 {
+                     NetworkManager networkmanager = new NetworkManager(false);
+                     networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
+-                    NetworkSystem.this.networkManagers.add(networkmanager);
++                    if (processing) { stack.add(networkmanager); } // Thermos (Robotia) -- syncy time
++                    else { NetworkSystem.this.networkManagers.add(networkmanager); }
+                     p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
+                 }
+             }).group(eventLoops).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
+@@ -135,10 +143,18 @@
+ 
+     public void networkTick()
+     {
+-        List list = this.networkManagers;
+-
++        // List list = new ArrayList(this.networkManagers); // Thermos (Robotia) -- not sure if this was put here by accident?
++        this.processing = true; // Thermos (Robotia)
+         synchronized (this.networkManagers)
+         {
++            // Spigot Start
++            // This prevents players from 'gaming' the server, and strategically relogging to increase their position in the tick order
++            if (org.spigotmc.SpigotConfig.playerShuffle > 0 && MinecraftServer.currentTick % org.spigotmc.SpigotConfig.playerShuffle == 0)
++            {
++                Collections.shuffle(this.networkManagers);
++            }
++
++            // Spigot End
+             Iterator iterator = this.networkManagers.iterator();
+ 
+             while (iterator.hasNext())
+@@ -197,6 +213,9 @@
+                 }
+             }
+         }
++        this.processing = false;
++        this.networkManagers.addAll(stack);
++        stack.clear();
+     }
+ 
+     public MinecraftServer func_151267_d()

@@ -1,0 +1,1253 @@
+--- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
++++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server;
+ 
++import com.avaje.ebean.LogLevel;
+ import com.google.common.base.Charsets;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.GameProfileRepository;
+@@ -16,6 +17,7 @@
+ import io.netty.buffer.ByteBufOutputStream;
+ import io.netty.buffer.Unpooled;
+ import io.netty.handler.codec.base64.Base64;
++
+ import java.awt.GraphicsEnvironment;
+ import java.awt.image.BufferedImage;
+ import java.io.File;
+@@ -33,7 +35,10 @@
+ import java.util.Random;
+ import java.util.UUID;
+ import java.util.concurrent.Callable;
++import java.util.logging.Level;
++
+ import javax.imageio.ImageIO;
++
+ import net.minecraft.command.CommandBase;
+ import net.minecraft.command.ICommandManager;
+ import net.minecraft.command.ICommandSender;
+@@ -50,6 +55,7 @@
+ import net.minecraft.profiler.PlayerUsageSnooper;
+ import net.minecraft.profiler.Profiler;
+ import net.minecraft.server.dedicated.DedicatedServer;
++import net.minecraft.server.dedicated.PropertyManager;
+ import net.minecraft.server.gui.IUpdatePlayerListBox;
+ import net.minecraft.server.management.PlayerProfileCache;
+ import net.minecraft.server.management.ServerConfigurationManager;
+@@ -72,6 +78,7 @@
+ import net.minecraft.world.storage.ISaveFormat;
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.WorldInfo;
++
+ import org.apache.commons.lang3.Validate;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -79,19 +86,59 @@
+ import net.minecraftforge.common.DimensionManager;
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.world.WorldEvent;
++import net.openhft.affinity.AffinityLock;
+ 
++// CraftBukkit start
++import java.io.IOException;
++
++import jline.console.ConsoleReader;
++import joptsimple.OptionSet;
++import net.minecraft.world.chunk.storage.AnvilSaveHandler;
++
++import org.bukkit.World.Environment;
++import org.bukkit.craftbukkit.SpigotTimings; // Spigot
++import org.bukkit.craftbukkit.util.Waitable;
++import org.bukkit.event.server.RemoteServerCommandEvent;
++import org.bukkit.event.world.WorldSaveEvent;
++import org.fusesource.jansi.AnsiConsole;
++import org.spigotmc.WatchdogThread;
++
++// CraftBukkit end
++// Cauldron start
++import java.util.Map;
++import java.lang.reflect.Constructor;
++
++import joptsimple.OptionParser;
++import red.mohist.configuration.MohistConfig;
++import thermos.ThermosConfig;
++import cpw.mods.fml.common.asm.transformers.SideTransformer;
++import net.minecraft.command.ServerCommand;
++import net.minecraft.tileentity.TileEntity;
++import net.minecraft.world.WorldProvider;
++import net.minecraftforge.cauldron.CauldronUtils;
++import net.minecraftforge.cauldron.configuration.CauldronConfig;
++import net.minecraftforge.cauldron.configuration.SushchestvoConfig;
++import net.minecraftforge.cauldron.configuration.TileEntityConfig;
++import net.minecraftforge.common.util.EnumHelper;
++
++import org.bukkit.configuration.ConfigurationSection;
++import org.bukkit.configuration.file.YamlConfiguration;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.block.CraftBlock;
++// Cauldron end
++
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
+ {
+     private static final Logger logger = LogManager.getLogger();
+     public static final File field_152367_a = new File("usercache.json");
+     private static MinecraftServer mcServer;
+-    private final ISaveFormat anvilConverterForAnvilFile;
++    public ISaveFormat anvilConverterForAnvilFile; // CraftBukkit - private final -> public
+     private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("server", this, getSystemTimeMillis());
+-    private final File anvilFile;
++    public File anvilFile; // CraftBukkit - private final -> public
+     private final List tickables = new ArrayList();
+     private final ICommandManager commandManager;
+     public final Profiler theProfiler = new Profiler();
+-    private final NetworkSystem field_147144_o;
++    private NetworkSystem field_147144_o; // Spigot
+     private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
+     private final Random field_147146_q = new Random();
+     @SideOnly(Side.SERVER)
+@@ -135,8 +182,42 @@
+     private long field_147142_T = 0L;
+     private final GameProfileRepository field_152365_W;
+     private final PlayerProfileCache field_152366_X;
++    // CraftBukkit start
++    public List<WorldServer> worlds = new ArrayList<WorldServer>();
++    public org.bukkit.craftbukkit.CraftServer server;
++    public static OptionSet options; // Cauldron
++    public org.bukkit.command.ConsoleCommandSender console;
++    public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
++    public ConsoleReader reader;
++    public static int currentTick = (int)(System.currentTimeMillis() / 50);
++    public final Thread primaryThread;
++    public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
++    public int autosavePeriod;
++    // CraftBukkit end
++    // Spigot start
++    private static final int TPS = 20;
++    private static final int TICK_TIME = 1000000000 / TPS;
++    public final double[] recentTps = new double[ 3 ];
++    // Spigot end
++    // Cauldron start
++    public static CauldronConfig cauldronConfig;
++    public static ThermosConfig thermosConfig;
++    public static TileEntityConfig tileEntityConfig;
++    public static SushchestvoConfig sushchestvoConfig;
++    public static YamlConfiguration configuration;
++    public static YamlConfiguration commandsConfiguration;
++    public static MohistConfig mohistConfig;
++    public static File configFile;
++    public static File commandFile;
++    public static double currentTps = 0;
++    public static boolean useJline = true;
++    public static boolean useConsole = true;
++    public static boolean callingForgeTick = false;
++    public static List<Class<? extends TileEntity>> bannedTileEntityUpdates = new ArrayList<Class<? extends TileEntity>>();
++    // Cauldron end
+     private static final String __OBFID = "CL_00001462";
+ 
++    // Cauldron start - IntegratedServer requires this
+     public MinecraftServer(File p_i45281_1_, Proxy p_i45281_2_)
+     {
+         this.field_152366_X = new PlayerProfileCache(this, field_152367_a);
+@@ -149,10 +230,74 @@
+         this.field_152364_T = new YggdrasilAuthenticationService(p_i45281_2_, UUID.randomUUID().toString());
+         this.field_147143_S = this.field_152364_T.createMinecraftSessionService();
+         this.field_152365_W = this.field_152364_T.createProfileRepository();
++        this.primaryThread = new Thread(this, "Server thread"); // CraftBukkit
++        thermosConfig = new ThermosConfig();
++        cauldronConfig = new CauldronConfig("cauldron.yml", "cauldron");
++        tileEntityConfig = new TileEntityConfig("tileentities.yml", "cauldron_te");
++        sushchestvoConfig = new SushchestvoConfig("entities.yml", "cauldron_e");
++        mohistConfig = new MohistConfig();
+     }
++    // Cauldron end
+ 
+-    protected abstract boolean startServer() throws IOException;
++    public MinecraftServer(OptionSet options, Proxy proxy)   // CraftBukkit - signature file -> OptionSet
++    {
++        this.field_152366_X = new PlayerProfileCache(this, field_152367_a);
++        mcServer = this;
++        this.serverProxy = proxy;
++        // this.anvilFile = p_i45281_1_; // CraftBukkit
++        // this.field_147144_o = new NetworkSystem(this); // Spigot
++        this.commandManager = new ServerCommandManager();
++        // this.anvilConverterForAnvilFile = new AnvilSaveConverter(p_i45281_1_);  // CraftBukkit - moved to DedicatedServer.init
++        this.field_152364_T = new YggdrasilAuthenticationService(proxy, UUID.randomUUID().toString());
++        this.field_147143_S = this.field_152364_T.createMinecraftSessionService();
++        this.field_152365_W = this.field_152364_T.createProfileRepository();
++        // Cauldron start
++        thermosConfig = new ThermosConfig();
++        cauldronConfig = new CauldronConfig("cauldron.yml", "cauldron");
++        tileEntityConfig = new TileEntityConfig("tileentities.yml", "cauldron_te");
++        sushchestvoConfig = new SushchestvoConfig("entities.yml", "cauldron_e");
++        mohistConfig = new MohistConfig();
++        // Cauldron end
++        // CraftBukkit start
++        this.options = options;
++        // Try to see if we're actually running in a terminal, disable jline if not
++        if (System.console() == null)
++        {
++            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++            this.useJline = false; // Cauldron
++        }
+ 
++        try
++        {
++            this.reader = new ConsoleReader(System.in, System.out);
++            this.reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
++        }
++        catch (Throwable e)
++        {
++            try
++            {
++                // Try again with jline disabled for Windows users without C++ 2008 Redistributable
++                System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++                System.setProperty("user.language", "en");
++                this.useJline = false; // Cauldron
++                this.reader = new ConsoleReader(System.in, System.out);
++                this.reader.setExpandEvents(false);
++            }
++            catch (IOException ex)
++            {
++                logger.warn((String) null, ex);
++            }
++        }
++        net.minecraftforge.cauldron.CauldronHooks.enableThreadContentionMonitoring();
++        Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));
++        primaryThread = new Thread(this, "Server thread"); // Moved from main
++    }
++    
++    public abstract PropertyManager getPropertyManager();
++    // CraftBukkit end
++
++    protected abstract boolean startServer() throws java.net.UnknownHostException; // CraftBukkit - throws UnknownHostException
++
+     protected void convertMapIfNeeded(String p_71237_1_)
+     {
+         if (this.getActiveAnvilConverter().isOldMapFormat(p_71237_1_))
+@@ -172,6 +317,7 @@
+                         MinecraftServer.logger.info("Converting... " + p_73718_1_ + "%");
+                     }
+                 }
++                
+                 @SideOnly(Side.CLIENT)
+                 public void resetProgressAndMessage(String p_73721_1_) {}
+                 @SideOnly(Side.CLIENT)
+@@ -195,10 +341,17 @@
+ 
+     protected void loadAllWorlds(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, String p_71247_6_)
+     {
++        // Cauldron start - register vanilla server commands
++        ServerCommandManager vanillaCommandManager = (ServerCommandManager)this.getCommandManager();
++        vanillaCommandManager.registerVanillaCommands();
++        // Cauldron end
+         this.convertMapIfNeeded(p_71247_1_);
+         this.setUserMessage("menu.loadingLevel");
+-        ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(p_71247_1_, true);
+-        WorldInfo worldinfo = isavehandler.loadWorldInfo();
++        // Cauldron start - SaveHandler/WorldInfo below are not used and must be disabled to prevent FML receiving different handlers for overworld
++        //ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(p_71247_1_, true);
++        //WorldInfo worldinfo = isavehandler.loadWorldInfo();
++        // Cauldron end
++        /* CraftBukkit start - Removed worldsettings
+         WorldSettings worldsettings;
+ 
+         if (worldinfo == null)
+@@ -215,11 +368,79 @@
+         {
+             worldsettings.enableBonusChest();
+         }
++        // */
+ 
+-        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, p_71247_2_, 0, theProfiler) : new WorldServer(this, isavehandler, p_71247_2_, 0, worldsettings, theProfiler));
+-        for (int dim : DimensionManager.getStaticDimensionIDs())
++        WorldSettings worldsettings = new WorldSettings(p_71247_3_, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), p_71247_5_);
++        worldsettings.func_82750_a(p_71247_6_);
++        WorldServer world;
++
++        // Cauldron - overworld generator is handled in World after plugins load
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), p_71247_2_, true), p_71247_2_, 0, theProfiler) : new WorldServer(this, new AnvilSaveHandler(server.getWorldContainer(), p_71247_2_, true), p_71247_2_, 0, worldsettings, theProfiler, Environment.getEnvironment(0), null));
++
++        for (int dimension : DimensionManager.getStaticDimensionIDs())
+         {
+-            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, p_71247_2_, dim, worldsettings, overWorld, theProfiler));
++            String worldType = "";
++            String name = "";
++            String oldName = "";
++            org.bukkit.generator.ChunkGenerator gen = null;
++            // Cauldron start
++            Environment env = Environment.getEnvironment(dimension);
++            if (dimension != 0)
++            {
++                if ((dimension == -1 && !this.getAllowNether()) || (dimension == 1 && !this.server.getAllowEnd()))
++                    continue;
++
++                if (env == null)
++                {
++                    WorldProvider provider = WorldProvider.getProviderForDimension(dimension);
++                    worldType = provider.getClass().getSimpleName().toLowerCase();
++                    worldType = worldType.replace("worldprovider", "");
++                    oldName = "world_" + worldType.toLowerCase();
++                    worldType = worldType.replace("provider", "");
++                    env = Environment.getEnvironment(DimensionManager.getProviderType(provider.getClass()));
++                    name = provider.getSaveFolder();
++                    if (name == null) name = "DIM0";
++                }
++                else 
++                {
++                    worldType = env.toString().toLowerCase();
++                    name = "DIM" + dimension;
++                    oldName = p_71247_1_ + "_" + worldType;
++                    oldName = oldName.replaceAll(" ", "_");
++                }
++
++                // check if the world is enabled or not
++                if (!configuration.isBoolean("world-settings." + worldType + ".enabled")) {
++                    configuration.set("world-settings." + worldType + ".enabled", true);
++                }
++                boolean enabled = configuration.getBoolean("world-settings." + worldType + ".enabled");
++                try {
++                    configuration.save(MinecraftServer.configFile);
++                } catch (IOException e) {
++                    e.printStackTrace();
++                }
++                if (!enabled)
++                    continue;
++                // end world enabled check
++
++                gen = this.server.getGenerator(name);
++                worldsettings = new WorldSettings(p_71247_3_, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), p_71247_5_);
++                worldsettings.func_82750_a(p_71247_6_);
++
++                CauldronUtils.migrateWorlds(worldType, oldName, p_71247_1_, name);
++
++                this.setUserMessage(name);
++            }
++
++            world = (dimension == 0 ? overWorld : new WorldServerMulti(this, new AnvilSaveHandler(server.getWorldContainer(), name, true), name, dimension, worldsettings, overWorld, this.theProfiler, env, gen));
++            // Cauldron end
++            if (gen != null)
++            {
++                world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
++            }
++
++            this.server.scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(this, world.getScoreboard());
++            this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(world.getWorld()));
+             world.addWorldAccess(new WorldManager(this, world));
+ 
+             if (!this.isSinglePlayer())
+@@ -227,12 +448,14 @@
+                 world.getWorldInfo().setGameType(this.getGameType());
+             }
+ 
+-            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
++            this.serverConfigManager.setPlayerManager(this.worlds.toArray(new WorldServer[this.worlds.size()]));
++            // CraftBukkit end
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((World)world)); // Forge
+         }
+-
+-        this.serverConfigManager.setPlayerManager(new WorldServer[]{ overWorld });
+         this.func_147139_a(this.func_147135_j());
+         this.initialWorldChunkLoad();
++        CraftBlock.dumpMaterials();
++        // Cauldron end
+     }
+ 
+     protected void initialWorldChunkLoad()
+@@ -244,9 +467,12 @@
+         int i = 0;
+         this.setUserMessage("menu.generatingTerrain");
+         byte b0 = 0;
++        // Cauldron start - we now handle CraftBukkit's keepSpawnInMemory logic in DimensionManager. Prevents crashes with mods such as DivineRPG and speeds up server startup time by a ton.
+         logger.info("Preparing start region for level " + b0);
+         WorldServer worldserver = this.worldServers[b0];
+         ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
++        boolean before = worldserver.theChunkProviderServer.loadChunkOnProvideRequest;
++        worldserver.theChunkProviderServer.loadChunkOnProvideRequest = true;
+         long j = getSystemTimeMillis();
+ 
+         for (int k = -192; k <= 192 && this.isServerRunning(); k += 16)
+@@ -265,7 +491,8 @@
+                 worldserver.theChunkProviderServer.loadChunk(chunkcoordinates.posX + k >> 4, chunkcoordinates.posZ + l >> 4);
+             }
+         }
+-
++        worldserver.theChunkProviderServer.loadChunkOnProvideRequest = before;
++        // Cauldron end
+         this.clearCurrentTask();
+     }
+ 
+@@ -292,19 +519,17 @@
+     {
+         this.currentTask = null;
+         this.percentDone = 0;
++        this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD); // CraftBukkit
+     }
+ 
+-    protected void saveAllWorlds(boolean p_71267_1_)
++    protected void saveAllWorlds(boolean p_71267_1_) throws MinecraftException   // CraftBukkit - added throws
+     {
+         if (!this.worldIsBeingDeleted)
+         {
+-            WorldServer[] aworldserver = this.worldServers;
+-            if (aworldserver == null) return; //Forge: Just in case, NPE protection as it has been encountered.
+-            int i = aworldserver.length;
+-
+-            for (int j = 0; j < i; ++j)
++            // CraftBukkit start
++            for (int j = 0; j < this.worlds.size(); ++j)
+             {
+-                WorldServer worldserver = aworldserver[j];
++                WorldServer worldserver = this.worlds.get(j);
+ 
+                 if (worldserver != null)
+                 {
+@@ -313,25 +538,45 @@
+                         logger.info("Saving chunks for level \'" + worldserver.getWorldInfo().getWorldName() + "\'/" + worldserver.provider.getDimensionName());
+                     }
+ 
+-                    try
++                    worldserver.saveAllChunks(true, (IProgressUpdate) null);
++                    worldserver.flush();
++                    WorldSaveEvent event = new WorldSaveEvent(worldserver.getWorld());
++                    this.server.getPluginManager().callEvent(event);
++                    // Cauldron start - save world configs
++                    if (worldserver.cauldronConfig != null)
+                     {
+-                        worldserver.saveAllChunks(true, (IProgressUpdate)null);
++                        worldserver.cauldronConfig.save();
+                     }
+-                    catch (MinecraftException minecraftexception)
++                    if (worldserver.tileentityConfig != null)
+                     {
+-                        logger.warn(minecraftexception.getMessage());
++                        worldserver.tileentityConfig.save();
+                     }
++                    if (worldserver.sushchestvoConfig != null)
++                    {
++                    	worldserver.sushchestvoConfig.save();
++                    }
++                    // Cauldron end
+                 }
+             }
++
++            // CraftBukkit end
+         }
+     }
+ 
+-    public void stopServer()
++    public void stopServer() throws MinecraftException // CraftBukkit - added throws
+     {
+         if (!this.worldIsBeingDeleted && Loader.instance().hasReachedState(LoaderState.SERVER_STARTED) && !serverStopped) // make sure the save is valid and we don't save twice
+         {
+             logger.info("Stopping server");
+ 
++            // CraftBukkit start
++            if (this.server != null)
++            {
++                this.server.disablePlugins();
++            }
++
++            // CraftBukkit end
++
+             if (this.func_147137_ag() != null)
+             {
+                 this.func_147137_ag().terminateEndpoints();
+@@ -347,7 +592,14 @@
+             if (this.worldServers != null)
+             {
+                 logger.info("Saving worlds");
+-                this.saveAllWorlds(false);
++                try
++                {
++                    this.saveAllWorlds(false);
++                }
++                catch (MinecraftException e)
++                {
++                    e.printStackTrace();
++                }
+ 
+                 for (int i = 0; i < this.worldServers.length; ++i)
+                 {
+@@ -380,6 +632,13 @@
+         this.serverRunning = false;
+     }
+ 
++    // Spigot Start
++    private static double calcTps(double avg, double exp, double tps)
++    {
++        return (avg * exp) + (tps * (1 - exp));
++    }
++    // Spigot End
++
+     public void run()
+     {
+         try
+@@ -392,45 +651,51 @@
+                 this.field_147147_p.func_151315_a(new ChatComponentText(this.motd));
+                 this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.10", 5));
+                 this.func_147138_a(this.field_147147_p);
+-
++                DedicatedServer.allowPlayerLogins = true; // Cauldron - server is ready, allow player logins
++                // Spigot start
++                Arrays.fill(recentTps, 20);
++                long lastTick = 0, catchupTime = 0, curTime, wait;
++                AffinityLock al = null;
++                if(CauldronConfig.instance.affinity.getValue())
++                {
++                	al = AffinityLock.acquireCore();
++                	if(al.isAllocated())
++                		logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] We're locked in! " + AffinityLock.dumpLocks());
++                	else logger.log(org.apache.logging.log4j.Level.WARN, "[Thermos] Couldn't bind to a CPU core!");
++                }
++                try {
+                 while (this.serverRunning)
+                 {
+-                    long j = getSystemTimeMillis();
+-                    long k = j - i;
++                    curTime = System.nanoTime();
++                    wait = TICK_TIME - (curTime - lastTick) - catchupTime;
+ 
+-                    if (k > 2000L && i - this.timeOfLastWarning >= 15000L)
++                    if (wait > 0)
+                     {
+-                        logger.warn("Can\'t keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", new Object[] {Long.valueOf(k), Long.valueOf(k / 50L)});
+-                        k = 2000L;
+-                        this.timeOfLastWarning = i;
++                        Thread.sleep(wait / 1000000);
++                        catchupTime = 0;
++                        continue;
+                     }
+-
+-                    if (k < 0L)
++                    else
+                     {
+-                        logger.warn("Time ran backwards! Did the system time change?");
+-                        k = 0L;
++                        catchupTime = Math.min(1000000000, Math.abs(wait));
+                     }
+ 
+-                    l += k;
+-                    i = j;
+-
+-                    if (this.worldServers[0].areAllPlayersAsleep())
++                    if (MinecraftServer.currentTick++ % 100 == 0)
+                     {
+-                        this.tick();
+-                        l = 0L;
++                        currentTps = 1E9 / (curTime - lastTick);
++                        recentTps[0] = calcTps(recentTps[0], 0.92, currentTps);   // 1/exp(5sec/1min)
++                        recentTps[1] = calcTps(recentTps[1], 0.9835, currentTps);   // 1/exp(5sec/5min)
++                        recentTps[2] = calcTps(recentTps[2], 0.9945, currentTps);   // 1/exp(5sec/15min)
+                     }
+-                    else
+-                    {
+-                        while (l > 50L)
+-                        {
+-                            l -= 50L;
+-                            this.tick();
+-                        }
+-                    }
+ 
+-                    Thread.sleep(Math.max(1L, 50L - l));
++                    lastTick = curTime;
++                    this.tick();
+                     this.serverIsRunning = true;
+                 }
++                }
++                finally { if(al != null) { al.release(); } }
++
++                // Spigot end
+                 FMLCommonHandler.instance().handleServerStopping();
+                 FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             }
+@@ -448,6 +713,14 @@
+         catch (Throwable throwable1)
+         {
+             logger.error("Encountered an unexpected exception", throwable1);
++
++            // Spigot Start
++            if (throwable1.getCause() != null)
++            {
++                logger.error("\tCause of unexpected exception was", throwable1.getCause());
++            }
++
++            // Spigot End
+             CrashReport crashreport = null;
+ 
+             if (throwable1 instanceof ReportedException)
+@@ -477,6 +750,7 @@
+         {
+             try
+             {
++                org.spigotmc.WatchdogThread.doStop(); // Spigot
+                 this.stopServer();
+                 this.serverStopped = true;
+             }
+@@ -486,6 +760,16 @@
+             }
+             finally
+             {
++                // CraftBukkit start - Restore terminal to original settings
++                try
++                {
++                    this.reader.getTerminal().restore();
++                }
++                catch (Exception e)
++                {
++                }
++
++                // CraftBukkit end
+                 FMLCommonHandler.instance().handleServerStopped();
+                 this.serverStopped = true;
+                 this.systemExitNow();
+@@ -532,8 +816,12 @@
+ 
+     public void tick()
+     {
++        SpigotTimings.serverTickTimer.startTiming(); // Spigot
++        WatchdogThread.tick(); // Thermos - be a good little WatchDog and actually restart if there's a problem!
+         long i = System.nanoTime();
++        callingForgeTick = true; // Cauldron start - handle loadOnProviderRequests during forge tick event
+         FMLCommonHandler.instance().onPreServerTick();
++        callingForgeTick = false; // Cauldron end
+         ++this.tickCounter;
+ 
+         if (this.startProfiling)
+@@ -562,12 +850,21 @@
+             this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
+         }
+ 
+-        if (this.tickCounter % 900 == 0)
++        if ((this.autosavePeriod > 0) && ((this.tickCounter % this.autosavePeriod) == 0))   // CraftBukkit
+         {
++            SpigotTimings.worldSaveTimer.startTiming(); // Spigot
+             this.theProfiler.startSection("save");
+             this.serverConfigManager.saveAllPlayerData();
+-            this.saveAllWorlds(true);
++            try
++            {
++                this.saveAllWorlds(true);
++            }
++            catch (MinecraftException e)
++            {
++                e.printStackTrace();
++            }
+             this.theProfiler.endSection();
++            SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
+         }
+ 
+         this.theProfiler.startSection("tallying");
+@@ -575,25 +872,57 @@
+         this.theProfiler.endSection();
+         this.theProfiler.startSection("snooper");
+ 
+-        if (!this.usageSnooper.isSnooperRunning() && this.tickCounter > 100)
++        if (isSnooperEnabled() && !this.usageSnooper.isSnooperRunning() && this.tickCounter > 100)   // Spigot
+         {
+             this.usageSnooper.startSnooper();
+         }
+ 
+-        if (this.tickCounter % 6000 == 0)
++        if (isSnooperEnabled() && this.tickCounter % 6000 == 0)   // Spigot
+         {
+             this.usageSnooper.addMemoryStatsToSnooper();
+         }
+ 
+         this.theProfiler.endSection();
+         this.theProfiler.endSection();
++        callingForgeTick = true; // Cauldron start - handle loadOnProviderRequests during forge tick event
+         FMLCommonHandler.instance().onPostServerTick();
++        callingForgeTick = false; // Cauldron end
++        SpigotTimings.serverTickTimer.stopTiming(); // Spigot
++        org.spigotmc.CustomTimingsHandler.tick(); // Spigot
+     }
+ 
+     public void updateTimeLightAndEntities()
+     {
+         this.theProfiler.startSection("levels");
++        SpigotTimings.schedulerTimer.startTiming(); // Spigot
++        // CraftBukkit start
++        this.server.getScheduler().mainThreadHeartbeat(this.tickCounter);
++        SpigotTimings.schedulerTimer.stopTiming(); // Spigot
++
++        // Run tasks that are waiting on processing
++        SpigotTimings.processQueueTimer.startTiming(); // Spigot
++        while (!processQueue.isEmpty())
++        {
++            processQueue.remove().run();
++        }
++        SpigotTimings.processQueueTimer.stopTiming(); // Spigot
++
++        SpigotTimings.chunkIOTickTimer.startTiming(); // Spigot
+         net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
++        SpigotTimings.chunkIOTickTimer.stopTiming(); // Spigot
++
++        SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
++        // Send time updates to everyone, it will get the right time from the world the player is in.
++        if (this.tickCounter % 20 == 0)
++        {
++            for (int i = 0; i < this.getConfigurationManager().playerEntityList.size(); ++i)
++            {
++                EntityPlayerMP entityplayermp = (EntityPlayerMP) this.getConfigurationManager().playerEntityList.get(i);
++                entityplayermp.playerNetServerHandler.sendPacket(new S03PacketTimeUpdate(entityplayermp.worldObj.getTotalWorldTime(), entityplayermp.getPlayerTime(), entityplayermp.worldObj.getGameRules().getGameRuleBooleanValue("doDaylightCycle"))); // for per player time
++            }
++        }
++        SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
++
+         int i;
+ 
+         Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
+@@ -602,19 +931,21 @@
+             int id = ids[x];
+             long j = System.nanoTime();
+ 
+-            if (id == 0 || this.getAllowNether())
+-            {
++            // CraftBukkit start
++            //if (id == 0 || this.getAllowNether())
++            //{
+                 WorldServer worldserver = DimensionManager.getWorld(id);
+                 this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
+                 this.theProfiler.startSection("pools");
+                 this.theProfiler.endSection();
+-
++                /* Drop global time updates
+                 if (this.tickCounter % 20 == 0)
+                 {
+                     this.theProfiler.startSection("timeSync");
+                     this.serverConfigManager.sendPacketToAllPlayersInDimension(new S03PacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(), worldserver.getGameRules().getGameRuleBooleanValue("doDaylightCycle")), worldserver.provider.dimensionId);
+                     this.theProfiler.endSection();
+                 }
++                // CraftBukkit end */
+ 
+                 this.theProfiler.startSection("tick");
+                 FMLCommonHandler.instance().onPreWorldTick(worldserver);
+@@ -622,22 +953,46 @@
+ 
+                 try
+                 {
++                    worldserver.timings.doTick.startTiming(); // Spigot
+                     worldserver.tick();
++                    worldserver.timings.doTick.stopTiming(); // Spigot
+                 }
+                 catch (Throwable throwable1)
+                 {
+-                    crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
++                    // Spigot Start
++                    try
++                    {
++                        crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
++                    }
++                    catch (Throwable t)
++                    {
++                        throw new RuntimeException("Error generating crash report", t);
++                    }
++    
++                    // Spigot End
+                     worldserver.addWorldInfoToCrashReport(crashreport);
+                     throw new ReportedException(crashreport);
+                 }
+ 
+                 try
+                 {
++                    worldserver.timings.tickEntities.startTiming(); // Spigot
+                     worldserver.updateEntities();
++                    worldserver.timings.tickEntities.stopTiming(); // Spigot
+                 }
+                 catch (Throwable throwable)
+                 {
+-                    crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
++                    // Spigot Start
++                    try
++                    {
++                        crashreport = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
++                    }
++                    catch (Throwable t)
++                    {
++                        throw new RuntimeException("Error generating crash report", t);
++                    }
++    
++                    // Spigot End
+                     worldserver.addWorldInfoToCrashReport(crashreport);
+                     throw new ReportedException(crashreport);
+                 }
+@@ -645,10 +1000,12 @@
+                 FMLCommonHandler.instance().onPostWorldTick(worldserver);
+                 this.theProfiler.endSection();
+                 this.theProfiler.startSection("tracker");
++                worldserver.timings.tracker.startTiming(); // Spigot
+                 worldserver.getEntityTracker().updateTrackedEntities();
++                worldserver.timings.tracker.stopTiming(); // Spigot
+                 this.theProfiler.endSection();
+                 this.theProfiler.endSection();
+-            }
++            // } // CraftBukkit
+ 
+             worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
+         }
+@@ -656,15 +1013,21 @@
+         this.theProfiler.endStartSection("dim_unloading");
+         DimensionManager.unloadWorlds(worldTickTimes);
+         this.theProfiler.endStartSection("connection");
++        SpigotTimings.connectionTimer.startTiming(); // Spigot
+         this.func_147137_ag().networkTick();
++        SpigotTimings.connectionTimer.stopTiming(); // Spigot
+         this.theProfiler.endStartSection("players");
++        SpigotTimings.playerListTimer.startTiming(); // Spigot
+         this.serverConfigManager.sendPlayerInfoToAllPlayers();
++        SpigotTimings.playerListTimer.stopTiming(); // Spigot
+         this.theProfiler.endStartSection("tickables");
+ 
++        SpigotTimings.tickablesTimer.startTiming(); // Spigot
+         for (i = 0; i < this.tickables.size(); ++i)
+         {
+             ((IUpdatePlayerListBox)this.tickables.get(i)).update();
+         }
++        SpigotTimings.tickablesTimer.stopTiming(); // Spigot
+ 
+         this.theProfiler.endSection();
+     }
+@@ -699,6 +1062,13 @@
+ 
+     public WorldServer worldServerForDimension(int p_71218_1_)
+     {
++        // Cauldron start - this is required for MystCraft agebooks to teleport correctly
++        // verify the nether or the end is allowed, and if not return overworld
++        if ((p_71218_1_ == -1 && !this.getAllowNether()) || (p_71218_1_ == 1 && !this.server.getAllowEnd()))
++        {
++            return DimensionManager.getWorld(0);
++        }
++        // Cauldron end
+         WorldServer ret = DimensionManager.getWorld(p_71218_1_);
+         if (ret == null)
+         {
+@@ -784,13 +1154,14 @@
+ 
+     public List getPossibleCompletions(ICommandSender p_71248_1_, String p_71248_2_)
+     {
+-        ArrayList arraylist = new ArrayList();
++        // Cauldron start - add mod commands to list then pass to bukkit
++        java.util.HashSet arraylist = new java.util.HashSet(); // use a set here to avoid duplicates
+ 
+         if (p_71248_2_.startsWith("/"))
+         {
+-            p_71248_2_ = p_71248_2_.substring(1);
+-            boolean flag = !p_71248_2_.contains(" ");
+-            List list = this.commandManager.getPossibleCommands(p_71248_1_, p_71248_2_);
++            String char1 = p_71248_2_.substring(1); // rename var to avoid removing slash from passed message
++            boolean flag = !char1.contains(" ");
++            List list = this.commandManager.getPossibleCommands(p_71248_1_, char1);
+ 
+             if (list != null)
+             {
+@@ -798,40 +1169,25 @@
+ 
+                 while (iterator.hasNext())
+                 {
+-                    String s3 = (String)iterator.next();
++                    String command = (String)iterator.next();
+ 
+                     if (flag)
+                     {
+-                        arraylist.add("/" + s3);
++                        arraylist.add("/" + command);
+                     }
+                     else
+                     {
+-                        arraylist.add(s3);
++                        arraylist.add(command);
+                     }
+                 }
+             }
+-
+-            return arraylist;
+         }
+-        else
+-        {
+-            String[] astring = p_71248_2_.split(" ", -1);
+-            String s1 = astring[astring.length - 1];
+-            String[] astring1 = this.serverConfigManager.getAllUsernames();
+-            int i = astring1.length;
+ 
+-            for (int j = 0; j < i; ++j)
+-            {
+-                String s2 = astring1[j];
+-
+-                if (CommandBase.doesStringStartWith(s1, s2))
+-                {
+-                    arraylist.add(s2);
+-                }
+-            }
+-
+-            return arraylist;
+-        }
++        arraylist.addAll(this.server.tabComplete(p_71248_1_, p_71248_2_));  // add craftbukkit commands
++        ArrayList completions = new ArrayList(arraylist);
++        Collections.sort(completions); // sort the final list
++        return completions;
++        // Cauldron end
+     }
+ 
+     public static MinecraftServer getServer()
+@@ -1034,7 +1390,7 @@
+ 
+     public boolean isServerInOnlineMode()
+     {
+-        return this.onlineMode;
++        return this.server.getOnlineMode(); // CraftBukkit
+     }
+ 
+     public void setOnlineMode(boolean p_71229_1_)
+@@ -1124,7 +1480,7 @@
+ 
+     public NetworkSystem func_147137_ag()
+     {
+-        return this.field_147144_o;
++        return (this.field_147144_o) == null ? this.field_147144_o = new NetworkSystem(this) : this.field_147144_o;     // Spigot
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -1259,8 +1615,11 @@
+     {
+         Bootstrap.func_151354_b();
+ 
++        OptionSet options = loadOptions(p_main_0_);
++
+         try
+         {
++            /* CraftBukkit start - Replace everything
+             boolean flag = true;
+             String s = null;
+             String s1 = ".";
+@@ -1356,16 +1715,34 @@
+             {
+                 dedicatedserver.setGuiEnabled();
+             }
++            // */
++            // CraftBukkit end
++            if (CauldronUtils.deobfuscatedEnvironment()) useJline = false; // Cauldron
++            DedicatedServer dedicatedserver = new DedicatedServer(options);
+ 
+-            dedicatedserver.startServerThread();
+-            Runtime.getRuntime().addShutdownHook(new Thread("Server Shutdown Thread")
++            if (options.has("port"))
+             {
+-                private static final String __OBFID = "CL_00001806";
+-                public void run()
++                int port = (Integer) options.valueOf("port");
++
++                if (port > 0)
+                 {
+-                    dedicatedserver.stopServer();
++                    dedicatedserver.setServerPort(port);
+                 }
+-            });
++            }
++
++            if (options.has("universe"))
++            {
++                dedicatedserver.anvilFile = (File) options.valueOf("universe");
++            }
++
++            if (options.has("world"))
++            {
++                dedicatedserver.setFolderName((String) options.valueOf("world"));
++            }
++
++            dedicatedserver.primaryThread.start();
++            // Runtime.getRuntime().addShutdownHook(new ThreadShutdown("Server Shutdown Thread", dedicatedserver));
++            // CraftBukkit end
+         }
+         catch (Exception exception)
+         {
+@@ -1400,15 +1777,70 @@
+     @SideOnly(Side.SERVER)
+     public String getPlugins()
+     {
+-        return "";
++        // CraftBukkit start - Whole method
++        StringBuilder result = new StringBuilder();
++        org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
++        result.append(server.getName());
++        result.append(" on Bukkit ");
++        result.append(server.getBukkitVersion());
++
++        if (plugins.length > 0 && this.server.getQueryPlugins())
++        {
++            result.append(": ");
++
++            for (int i = 0; i < plugins.length; i++)
++            {
++                if (i > 0)
++                {
++                    result.append("; ");
++                }
++
++                result.append(plugins[i].getDescription().getName());
++                result.append(" ");
++                result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
++            }
++        }
++
++        return result.toString();
++        // CraftBukkit end
+     }
+ 
+     @SideOnly(Side.SERVER)
+-    public String handleRConCommand(String p_71252_1_)
++    public String handleRConCommand(final String par1Str)
+     {
+-        RConConsoleSource.instance.resetLog();
+-        this.commandManager.executeCommand(RConConsoleSource.instance, p_71252_1_);
+-        return RConConsoleSource.instance.getLogContents();
++        Waitable<String> waitable = new Waitable<String>()
++        {
++            @Override
++            protected String evaluate()
++            {
++                RConConsoleSource.instance.resetLog();
++                // Event changes start
++                RemoteServerCommandEvent event = new RemoteServerCommandEvent(MinecraftServer.this.remoteConsole, par1Str);
++                MinecraftServer.this.server.getPluginManager().callEvent(event);
++                // Event changes end
++                ServerCommand servercommand = new ServerCommand(event.getCommand(), RConConsoleSource.instance);
++                MinecraftServer.this.server.dispatchServerCommand(MinecraftServer.this.remoteConsole, servercommand); // CraftBukkit
++                // this.n.a(RemoteControlCommandListener.instance, s);
++                return RConConsoleSource.instance.getLogContents();
++            }
++        };
++        processQueue.add(waitable);
++
++        try
++        {
++            return waitable.get();
++        }
++        catch (java.util.concurrent.ExecutionException e)
++        {
++            throw new RuntimeException("Exception processing rcon command " + par1Str, e.getCause());
++        }
++        catch (InterruptedException e)
++        {
++            Thread.currentThread().interrupt(); // Maintain interrupted state
++            throw new RuntimeException("Interrupted processing rcon command " + par1Str, e);
++        }
++
++        // CraftBukkit end
+     }
+ 
+     @SideOnly(Side.SERVER)
+@@ -1455,9 +1887,214 @@
+         return this.serverStopped;
+     }
+ 
++    public static OptionSet loadOptions(String[] args) {
++        OptionParser parser = new OptionParser() {
++            {
++                acceptsAll(Arrays.asList("?", "help"), "Show the help");
++
++                acceptsAll(Arrays.asList("c", "config"), "Properties file to use")
++                        .withRequiredArg()
++                        .ofType(File.class)
++                        .defaultsTo(new File("server.properties"))
++                        .describedAs("Properties file");
++
++                acceptsAll(Arrays.asList("P", "plugins"), "Plugin directory to use")
++                        .withRequiredArg()
++                        .ofType(File.class)
++                        .defaultsTo(new File("plugins"))
++                        .describedAs("Plugin directory");
++
++                acceptsAll(Arrays.asList("h", "host", "server-ip"), "Host to listen on")
++                        .withRequiredArg()
++                        .ofType(String.class)
++                        .describedAs("Hostname or IP");
++
++                acceptsAll(Arrays.asList("W", "world-dir", "universe", "world-container"), "World container")
++                        .withRequiredArg()
++                        .ofType(File.class)
++                        .describedAs("Directory containing worlds");
++
++                acceptsAll(Arrays.asList("w", "world", "level-name"), "World name")
++                        .withRequiredArg()
++                        .ofType(String.class)
++                        .describedAs("World name");
++
++                acceptsAll(Arrays.asList("p", "port", "server-port"), "Port to listen on")
++                        .withRequiredArg()
++                        .ofType(Integer.class)
++                        .describedAs("Port");
++
++                acceptsAll(Arrays.asList("o", "online-mode"), "Whether to use online authentication")
++                        .withRequiredArg()
++                        .ofType(Boolean.class)
++                        .describedAs("Authentication");
++
++                acceptsAll(Arrays.asList("s", "size", "max-players"), "Maximum amount of players")
++                        .withRequiredArg()
++                        .ofType(Integer.class)
++                        .describedAs("Server size");
++
++                acceptsAll(Arrays.asList("d", "date-format"), "Format of the date to display in the console (for log entries)")
++                        .withRequiredArg()
++                        .ofType(SimpleDateFormat.class)
++                        .describedAs("Log date format");
++
++                acceptsAll(Arrays.asList("log-pattern"), "Specfies the log filename pattern")
++                        .withRequiredArg()
++                        .ofType(String.class)
++                        .defaultsTo("server.log")
++                        .describedAs("Log filename");
++
++                acceptsAll(Arrays.asList("log-limit"), "Limits the maximum size of the log file (0 = unlimited)")
++                        .withRequiredArg()
++                        .ofType(Integer.class)
++                        .defaultsTo(0)
++                        .describedAs("Max log size");
++
++                acceptsAll(Arrays.asList("log-count"), "Specified how many log files to cycle through")
++                        .withRequiredArg()
++                        .ofType(Integer.class)
++                        .defaultsTo(1)
++                        .describedAs("Log count");
++
++                acceptsAll(Arrays.asList("log-append"), "Whether to append to the log file")
++                        .withRequiredArg()
++                        .ofType(Boolean.class)
++                        .defaultsTo(true)
++                        .describedAs("Log append");
++
++                acceptsAll(Arrays.asList("log-strip-color"), "Strips color codes from log file");
++
++                acceptsAll(Arrays.asList("b", "bukkit-settings"), "File for bukkit settings")
++                        .withRequiredArg()
++                        .ofType(File.class)
++                        .defaultsTo(new File("bukkit.yml"))
++                        .describedAs("Yml file");
++
++                acceptsAll(Arrays.asList("C", "commands-settings"), "File for command settings")
++                         .withRequiredArg()
++                         .ofType(File.class)
++                         .defaultsTo(new File("commands.yml"))
++                         .describedAs("Yml file");
++
++                acceptsAll(Arrays.asList("nojline"), "Disables jline and emulates the vanilla console");
++
++                acceptsAll(Arrays.asList("noconsole"), "Disables the console");
++
++                acceptsAll(Arrays.asList("v", "version"), "Show the CraftBukkit Version");
++
++                acceptsAll(Arrays.asList("demo"), "Demo mode");
++            }
++        };
++
++        OptionSet options = null;
++
++        try {
++            options = parser.parse(args);
++        } catch (joptsimple.OptionException ex) {
++            logger.log(org.apache.logging.log4j.Level.ERROR, ex.getLocalizedMessage());
++        }
++
++        if ((options == null) || (options.has("?"))) {
++            try {
++                parser.printHelpOn(System.out);
++            } catch (IOException ex) {
++                logger.log(org.apache.logging.log4j.Level.ERROR, ex);
++            }
++        } else {
++            try {
++                // This trick bypasses Maven Shade's clever rewriting of our getProperty call when using String literals
++                String jline_UnsupportedTerminal = new String(new char[] {'j','l','i','n','e','.','U','n','s','u','p','p','o','r','t','e','d','T','e','r','m','i','n','a','l'});
++                String jline_terminal = new String(new char[] {'j','l','i','n','e','.','t','e','r','m','i','n','a','l'});
++
++                useJline = !(jline_UnsupportedTerminal).equals(System.getProperty(jline_terminal));
++
++                if (options.has("nojline")) {
++                    System.setProperty("user.language", "en");
++                    useJline = false;
++                }
++
++                if (!useJline) {
++                    // This ensures the terminal literal will always match the jline implementation
++                    System.setProperty(jline.TerminalFactory.JLINE_TERMINAL, jline.UnsupportedTerminal.class.getName());
++                }else {
++                    AnsiConsole.systemInstall(); // install Windows JNI library
++                }
++
++                if (options.has("noconsole")) {
++                    useConsole = false;
++                }
++                // Cauldron start - initialize config
++                configFile = (File) options.valueOf("bukkit-settings");
++                commandFile = (File)options.valueOf("commands-settings");
++                configuration = YamlConfiguration.loadConfiguration(configFile);
++                configuration.options().copyDefaults(true);
++                configuration.setDefaults(YamlConfiguration.loadConfiguration(MinecraftServer.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml")));
++                ConfigurationSection legacyAlias = null;
++                if (!configuration.isString("aliases")) {
++                    legacyAlias = configuration.getConfigurationSection("aliases");
++                    configuration.set("aliases", "now-in-commands.yml");
++                }
++                try {
++                    configuration.save(configFile);
++                    } catch (IOException ex) {
++                        logger.log(org.apache.logging.log4j.Level.ERROR, "Could not save " + configFile, ex);
++                }
++                if (commandFile.isFile()) {
++                    legacyAlias = null;
++                }
++                commandsConfiguration = YamlConfiguration.loadConfiguration(commandFile);
++                commandsConfiguration.options().copyDefaults(true);
++                commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration(MinecraftServer.class.getClassLoader().getResourceAsStream("configurations/commands.yml")));
++                try {
++                    commandsConfiguration.save(commandFile);
++                    } catch (IOException ex) {
++                        logger.log(org.apache.logging.log4j.Level.ERROR, "Could not save " + commandFile, ex);
++                }
++
++                // Migrate aliases from old file and add previously implicit $1- to pass all arguments
++                if (legacyAlias != null) {
++                    ConfigurationSection aliases = commandsConfiguration.createSection("aliases");
++                    for (String key : legacyAlias.getKeys(false)) {
++                        ArrayList<String> commands = new ArrayList<String>();
++
++                        if (legacyAlias.isList(key)) {
++                            for (String command : legacyAlias.getStringList(key)) {
++                                commands.add(command + " $1-");
++                            }
++                        } else {
++                            commands.add(legacyAlias.getString(key) + " $1-");
++                        }
++
++                        aliases.set(key, commands);
++                    }
++                }
++
++                try {
++                    commandsConfiguration.save(commandFile);
++                    } catch (IOException ex) {
++                        logger.log(org.apache.logging.log4j.Level.ERROR, "Could not save " + commandFile, ex);
++                }
++
++                return options;
++                // Cauldron end
++            } catch (Throwable t) {
++                t.printStackTrace();
++            }
++        }
++        return null; // Cauldron
++    }
++
+     @SideOnly(Side.SERVER)
+     public void setForceGamemode(boolean p_104055_1_)
+     {
+         this.isGamemodeForced = p_104055_1_;
+     }
++
++    // CraftBukkit start
++    public static Logger getLogger()
++    {
++        return logger;
++    }
++    // CraftBukkit end
+ }

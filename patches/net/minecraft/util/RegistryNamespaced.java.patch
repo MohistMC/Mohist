@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/util/RegistryNamespaced.java
++++ ../src-work/minecraft/net/minecraft/util/RegistryNamespaced.java
+@@ -5,6 +5,11 @@
+ import java.util.Iterator;
+ import java.util.Map;
+ 
++// Cauldron start
++import cpw.mods.fml.common.FMLLog;
++import net.minecraft.block.Block;
++// Cauldron end
++
+ public class RegistryNamespaced extends RegistrySimple implements IObjectIntIterable
+ {
+     protected ObjectIntIdentityMap underlyingIntegerMap = new ObjectIntIdentityMap();
+@@ -18,6 +23,21 @@
+ 
+     public void addObject(int p_148756_1_, String p_148756_2_, Object p_148756_3_)
+     {
++        // Cauldron start - register item/block materials for Bukkit
++        boolean isForgeBlock = p_148756_3_ instanceof Block && (p_148756_3_.getClass().getName().length() > 3 && !p_148756_3_.getClass().getName().startsWith("net.minecraft.block")) ? true : false;
++        org.bukkit.Material material = org.bukkit.Material.addMaterial(p_148756_1_, p_148756_2_, isForgeBlock);
++        if (material != null && net.minecraft.server.MinecraftServer.thermosConfig.loggingMaterialInjection.getValue())
++        {
++            if (isForgeBlock)
++            {
++                FMLLog.info("Injected new Forge block material %s with ID %d.", material.name(), material.getId());
++            }
++            else
++            {
++                FMLLog.info("Injected new Forge item material %s with ID %d.", material.name(), material.getId());
++            }
++        }
++        // Cauldron end
+         this.underlyingIntegerMap.func_148746_a(p_148756_3_, p_148756_1_);
+         this.putObject(ensureNamespaced(p_148756_2_), p_148756_3_);
+     }

@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/dispenser/BehaviorProjectileDispense.java
++++ ../src-work/minecraft/net/minecraft/dispenser/BehaviorProjectileDispense.java
+@@ -7,6 +7,12 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import net.minecraft.tileentity.TileEntityDispenser;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
++
+ public abstract class BehaviorProjectileDispense extends BehaviorDefaultDispenseItem
+ {
+     private static final String __OBFID = "CL_00001394";
+@@ -17,9 +23,42 @@
+         IPosition iposition = BlockDispenser.func_149939_a(p_82487_1_);
+         EnumFacing enumfacing = BlockDispenser.func_149937_b(p_82487_1_.getBlockMetadata());
+         IProjectile iprojectile = this.getProjectileEntity(world, iposition);
++        // CraftBukkit start
++        ItemStack itemstack1 = p_82487_2_.splitStack(1);
++        org.bukkit.block.Block block = world.getWorld().getBlockAt(p_82487_1_.getXInt(), p_82487_1_.getYInt(), p_82487_1_.getZInt());
++        CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) enumfacing.getFrontOffsetX(), (double)((float) enumfacing.getFrontOffsetY() + 0.1F), (double) enumfacing.getFrontOffsetZ()));
++
++        if (!BlockDispenser.eventFired)
++        {
++            world.getServer().getPluginManager().callEvent(event);
++        }
++
++        if (event.isCancelled())
++        {
++            p_82487_2_.stackSize++;
++            return p_82487_2_;
++        }
++
++        if (!event.getItem().equals(craftItem))
++        {
++            p_82487_2_.stackSize++;
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            IBehaviorDispenseItem ibehaviordispenseitem = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.getObject(eventStack.getItem());
++
++            if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider && ibehaviordispenseitem != this)
++            {
++                ibehaviordispenseitem.dispense(p_82487_1_, eventStack);
++                return p_82487_2_;
++            }
++        }
++
+         iprojectile.setThrowableHeading((double)enumfacing.getFrontOffsetX(), (double)((float)enumfacing.getFrontOffsetY() + 0.1F), (double)enumfacing.getFrontOffsetZ(), this.func_82500_b(), this.func_82498_a());
++        ((Entity) iprojectile).projectileSource = new org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource((TileEntityDispenser) p_82487_1_.getBlockTileEntity());
++        // CraftBukkit end
+         world.spawnEntityInWorld((Entity)iprojectile);
+-        p_82487_2_.splitStack(1);
++        // p_82487_2_.splitStack(1); // CraftBukkit - Handled during event processing
+         return p_82487_2_;
+     }
+ 

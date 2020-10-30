@@ -1,0 +1,105 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityCreature.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityCreature.java
+@@ -13,12 +13,18 @@
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.World;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityUnleashEvent;
++// CraftBukkit end
++
+ public abstract class EntityCreature extends EntityLiving
+ {
+     public static final UUID field_110179_h = UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A");
+     public static final AttributeModifier field_110181_i = (new AttributeModifier(field_110179_h, "Fleeing speed bonus", 2.0D, 2)).setSaved(false);
+-    private PathEntity pathToEntity;
+-    protected Entity entityToAttack;
++    public PathEntity pathToEntity; // CraftBukkit - private -> public
++    public Entity entityToAttack; // CraftBukkit - protected -> public
+     protected boolean hasAttacked;
+     protected int fleeingTick;
+     private ChunkCoordinates homePosition = new ChunkCoordinates(0, 0, 0);
+@@ -52,8 +58,29 @@
+ 
+         if (this.entityToAttack == null)
+         {
+-            this.entityToAttack = this.findPlayerToAttack();
++            // CraftBukkit start
++            Entity target = this.findPlayerToAttack();
+ 
++            if (target != null)
++            {
++                EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), target.getBukkitEntity(), EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    if (event.getTarget() == null)
++                    {
++                        this.entityToAttack = null;
++                    }
++                    else
++                    {
++                        this.entityToAttack = ((CraftEntity) event.getTarget()).getHandle();
++                    }
++                }
++            }
++
++            // CraftBukkit end
++
+             if (this.entityToAttack != null)
+             {
+                 this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f4, true, false, false, true);
+@@ -70,7 +97,23 @@
+         }
+         else
+         {
+-            this.entityToAttack = null;
++            // CraftBukkit start
++            EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), null, EntityTargetEvent.TargetReason.TARGET_DIED);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                if (event.getTarget() == null)
++                {
++                    this.entityToAttack = null;
++                }
++                else
++                {
++                    this.entityToAttack = ((CraftEntity) event.getTarget()).getHandle();
++                }
++            }
++
++            // CraftBukkit end
+         }
+ 
+         if (this.entityToAttack instanceof EntityPlayerMP && ((EntityPlayerMP)this.entityToAttack).theItemInWorldManager.isCreative())
+@@ -122,7 +165,8 @@
+                 double d1 = vec3.xCoord - this.posX;
+                 double d2 = vec3.zCoord - this.posZ;
+                 double d3 = vec3.yCoord - (double)i;
+-                float f1 = (float)(Math.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
++                // CraftBukkit - Math -> TrigMath
++                float f1 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
+                 float f2 = MathHelper.wrapAngleTo180_float(f1 - this.rotationYaw);
+                 this.moveForward = (float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+ 
+@@ -303,6 +347,7 @@
+             {
+                 if (f > 10.0F)
+                 {
++                    this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
+                     this.clearLeashed(true, true);
+                 }
+ 
+@@ -335,6 +380,7 @@
+ 
+             if (f > 10.0F)
+             {
++                this.worldObj.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
+                 this.clearLeashed(true, true);
+             }
+         }

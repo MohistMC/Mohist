@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/BanIpCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/BanIpCommand.java
+@@ -32,7 +32,7 @@
+             return false;
+         }
+ 
+-        String reason = args.length > 0 ? StringUtils.join(args, ' ', 1, args.length) : null;
++        String reason = StringUtils.join(args, ' ', 1, args.length);
+ 
+         if (ipValidity.matcher(args[0]).matches()) {
+             processIPBan(args[0], sender, reason);

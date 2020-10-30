@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/cpw/mods/fml/relauncher/FMLInjectionData.java
++++ ../src-work/minecraft/cpw/mods/fml/relauncher/FMLInjectionData.java
+@@ -38,28 +38,13 @@
+     static void build(File mcHome, LaunchClassLoader classLoader)
+     {
+         minecraftHome = mcHome;
+-        InputStream stream = classLoader.getResourceAsStream("fmlversion.properties");
+-        Properties properties = new Properties();
+-
+-        if (stream != null)
+-        {
+-            try
+-            {
+-                properties.load(stream);
+-            }
+-            catch (IOException ex)
+-            {
+-                FMLRelaunchLog.log(Level.ERROR, ex, "Could not get FML version information - corrupted installation detected!");
+-            }
+-        }
+-
+-        major = properties.getProperty("fmlbuild.major.number", "missing");
+-        minor = properties.getProperty("fmlbuild.minor.number", "missing");
+-        rev = properties.getProperty("fmlbuild.revision.number", "missing");
+-        build = properties.getProperty("fmlbuild.build.number", "missing");
+-        mccversion = properties.getProperty("fmlbuild.mcversion", "missing");
+-        mcpversion = properties.getProperty("fmlbuild.mcpversion", "missing");
+-        deobfuscationDataHash = properties.getProperty("fmlbuild.deobfuscation.hash","deadbeef");
++        major = "7";
++        minor = "99";
++        rev = "4";
++        build = "1614";
++        mccversion = "1.7.10";
++        mcpversion = "9.05";
++        deobfuscationDataHash = "deadbeef";
+     }
+ 
+     static String debfuscationDataName()

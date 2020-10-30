@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
++++ ../src-work/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
+@@ -13,6 +13,10 @@
+     {
+         super(p_i1568_1_, p_i1568_2_);
+         this.indirectEntity = p_i1568_3_;
++        // KCauldron start - pass projectlie source
++        if (damageSourceEntity != null && damageSourceEntity.getBukkitEntity() instanceof org.bukkit.entity.Projectile && indirectEntity != null && indirectEntity.getBukkitEntity() instanceof org.bukkit.projectiles.ProjectileSource)
++            ((org.bukkit.entity.Projectile) damageSourceEntity.getBukkitEntity()).setShooter((org.bukkit.projectiles.ProjectileSource) indirectEntity.getBukkitEntity());
++        // KCauldron end
+     }
+ 
+     public Entity getSourceOfDamage()
+@@ -33,4 +37,11 @@
+         String s1 = s + ".item";
+         return itemstack != null && itemstack.hasDisplayName() && StatCollector.canTranslate(s1) ? new ChatComponentTranslation(s1, new Object[] {p_151519_1_.func_145748_c_(), ichatcomponent, itemstack.func_151000_E()}): new ChatComponentTranslation(s, new Object[] {p_151519_1_.func_145748_c_(), ichatcomponent});
+     }
++
++    // CraftBukkit start
++    public Entity getProximateDamageSource()
++    {
++        return super.getEntity();
++    }
++    // CraftBukkit end
+ }

@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
+@@ -75,7 +75,8 @@
+ 
+     public String getWorldName()
+     {
+-        return this.theWorldInfo.getWorldName();
++        String name = super.getWorldName();
++        return name != null ? name : this.theWorldInfo.getWorldName();
+     }
+ 
+     public int getSaveVersion()
+@@ -129,8 +130,6 @@
+ 
+     public void setSpawnPosition(int p_76081_1_, int p_76081_2_, int p_76081_3_) {}
+ 
+-    public void setWorldName(String p_76062_1_) {}
+-
+     public void setSaveVersion(int p_76078_1_) {}
+ 
+     public void setThundering(boolean p_76069_1_) {}
+@@ -174,4 +173,17 @@
+     {
+         return this.theWorldInfo.getGameRulesInstance();
+     }
++    
++    public int getDimension() {
++        return this.theWorldInfo.getDimension();
++    }
++    
++    public void setDimension(int dim) {
++        this.theWorldInfo.setDimension(dim);
++    }
++    
++    @Override
++    public void tick() {
++        theWorldInfo.tick();
++    }
+ }

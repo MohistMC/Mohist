@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/inventory/Slot.java
++++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
+@@ -10,7 +10,7 @@
+ 
+ public class Slot
+ {
+-    private final int slotIndex;
++    public final int slotIndex; // CraftBukkit - private -> public
+     public final IInventory inventory;
+     public int slotNumber;
+     public int xDisplayPosition;

@@ -1,0 +1,94 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySlime.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySlime.java
+@@ -14,12 +14,21 @@
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.chunk.Chunk;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.SlimeSplitEvent;
++import net.minecraft.entity.Entity;
++// CraftBukkit end
++
+ public class EntitySlime extends EntityLiving implements IMob
+ {
+     public float squishAmount;
+     public float squishFactor;
+     public float prevSquishFactor;
+     private int slimeJumpDelay;
++    private Entity lastTarget; // CraftBukkit
+     private static final String __OBFID = "CL_00001698";
+ 
+     public EntitySlime(World p_i1742_1_)
+@@ -37,7 +46,7 @@
+         this.dataWatcher.addObject(16, new Byte((byte)1));
+     }
+ 
+-    protected void setSlimeSize(int p_70799_1_)
++    public void setSlimeSize(int p_70799_1_) // CraftBukkit - protected -> public
+     {
+         this.dataWatcher.updateObject(16, new Byte((byte)p_70799_1_));
+         this.setSize(0.6F * (float)p_70799_1_, 0.6F * (float)p_70799_1_);
+@@ -131,8 +140,27 @@
+     protected void updateEntityActionState()
+     {
+         this.despawnEntity();
+-        EntityPlayer entityplayer = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0D);
++        // CraftBukkit start
++        Entity entityplayer = this.worldObj.getClosestVulnerablePlayerToEntity(this, 16.0D); // EntityPlayer -> Entity
++        EntityTargetEvent event = null;
+ 
++        if (entityplayer != null && !entityplayer.equals(lastTarget))
++        {
++            event = CraftEventFactory.callEntityTargetEvent(this, entityplayer, EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++        }
++        else if (lastTarget != null && entityplayer == null)
++        {
++            event = CraftEventFactory.callEntityTargetEvent(this, entityplayer, EntityTargetEvent.TargetReason.FORGOT_TARGET);
++        }
++
++        if (event != null && !event.isCancelled())
++        {
++            entityplayer = event.getTarget() == null ? null : ((CraftEntity) event.getTarget()).getHandle();
++        }
++
++        this.lastTarget = entityplayer;
++        // CraftBukkit end
++
+         if (entityplayer != null)
+         {
+             this.faceEntity(entityplayer, 10.0F, 20.0F);
+@@ -190,7 +218,22 @@
+         if (!this.worldObj.isRemote && i > 1 && this.getHealth() <= 0.0F)
+         {
+             int j = 2 + this.rand.nextInt(3);
++            // CraftBukkit start
++            SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), j);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
+ 
++            if (!event.isCancelled() && event.getCount() > 0)
++            {
++                j = event.getCount();
++            }
++            else
++            {
++                super.setDead();
++                return;
++            }
++
++            // CraftBukkit end
++
+             for (int k = 0; k < j; ++k)
+             {
+                 float f = ((float)(k % 2) - 0.5F) * (float)i / 4.0F;
+@@ -198,7 +241,7 @@
+                 EntitySlime entityslime = this.createInstance();
+                 entityslime.setSlimeSize(i / 2);
+                 entityslime.setLocationAndAngles(this.posX + (double)f, this.posY + 0.5D, this.posZ + (double)f1, this.rand.nextFloat() * 360.0F, 0.0F);
+-                this.worldObj.spawnEntityInWorld(entityslime);
++                this.worldObj.addEntity(entityslime, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
+             }
+         }
+ 

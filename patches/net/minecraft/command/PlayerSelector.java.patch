@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/command/PlayerSelector.java
++++ ../src-work/minecraft/net/minecraft/command/PlayerSelector.java
+@@ -7,6 +7,7 @@
+ import java.util.Map;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
++import net.minecraft.command.server.CommandBlockLogic;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.ChunkCoordinates;
+@@ -51,6 +52,13 @@
+ 
+     public static EntityPlayerMP[] matchPlayers(ICommandSender p_82380_0_, String p_82380_1_)
+     {
++        // CraftBukkit start
++        if (!(p_82380_0_ instanceof CommandBlockLogic))
++        {
++            return null;
++        }
++
++        // CraftBukkit end
+         Matcher matcher = tokenPattern.matcher(p_82380_1_);
+ 
+         if (matcher.matches())

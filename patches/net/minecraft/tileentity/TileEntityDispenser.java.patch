@@ -1,0 +1,87 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
+@@ -7,6 +7,13 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ 
++// CraftBukkit start
++import java.util.List;
++
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
++
+ public class TileEntityDispenser extends TileEntity implements IInventory
+ {
+     private ItemStack[] field_146022_i = new ItemStack[9];
+@@ -14,6 +21,36 @@
+     protected String field_146020_a;
+     private static final String __OBFID = "CL_00000352";
+ 
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.field_146022_i;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++    // CraftBukkit end
++
+     public int getSizeInventory()
+     {
+         return 9;
+@@ -79,6 +116,11 @@
+         {
+             if (this.field_146022_i[k] != null && this.field_146021_j.nextInt(j++) == 0)
+             {
++                if (this.field_146022_i[k].stackSize == 0)
++                {
++                    continue;    // CraftBukkit
++                }
++
+                 i = k;
+             }
+         }
+@@ -176,7 +218,7 @@
+ 
+     public int getInventoryStackLimit()
+     {
+-        return 64;
++        return maxStack; // CraftBukkit
+     }
+ 
+     public boolean isUseableByPlayer(EntityPlayer p_70300_1_)
+@@ -192,4 +234,12 @@
+     {
+         return true;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

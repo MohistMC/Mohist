@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/item/Item.java
++++ ../src-work/minecraft/net/minecraft/item/Item.java
+@@ -54,6 +54,7 @@
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
+ import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.DimensionManager; // Cauldron
+ import net.minecraftforge.common.util.EnumHelper;
+ 
+ public class Item
+@@ -402,6 +403,12 @@
+             {
+                 object = (new ItemDoublePlant(Blocks.double_plant, Blocks.double_plant, BlockDoublePlant.field_149892_a)).setUnlocalizedName("doublePlant");
+             }
++            // CraftBukkit start - allow certain blocks to retain data
++            else if (block == Blocks.mob_spawner || block == Blocks.brown_mushroom_block || block == Blocks.red_mushroom_block)
++            {
++                object = new ItemColored(block, true);
++            }
++            // CraftBukkit end
+             else
+             {
+                 if (hashset.contains(block))
+@@ -923,7 +930,13 @@
+      */
+     public int getEntityLifespan(ItemStack itemStack, World world)
+     {
+-        return 6000;
++        // Cauldron start - fixes MFR proxy worlds used with grinder/slaughterhouse
++        if (world == null)
++        {
++            return 6000;
++        }
++        return world.getSpigotConfig().itemDespawnRate; // Spigot
++        // Cauldron end
+     }
+ 
+     /**

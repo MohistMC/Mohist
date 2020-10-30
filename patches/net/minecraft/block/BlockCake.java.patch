@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCake.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCake.java
+@@ -12,6 +12,10 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.play.server.S06PacketUpdateHealth;
++// CraftBukkit end
+ 
+ public class BlockCake extends Block
+ {
+@@ -104,7 +108,17 @@
+     {
+         if (p_150036_5_.canEat(false))
+         {
+-            p_150036_5_.getFoodStats().addStats(2, 0.1F);
++            // CraftBukkit start
++            int oldFoodLevel = p_150036_5_.getFoodStats().foodLevel;
++            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(p_150036_5_, 2 + oldFoodLevel);
++
++            if (!event.isCancelled())
++            {
++                p_150036_5_.getFoodStats().addStats(event.getFoodLevel() - oldFoodLevel, 0.1F);
++            }
++
++            ((EntityPlayerMP) p_150036_5_).playerNetServerHandler.sendPacket(new S06PacketUpdateHealth(((EntityPlayerMP) p_150036_5_).getBukkitEntity().getScaledHealth(), p_150036_5_.getFoodStats().foodLevel, p_150036_5_.getFoodStats().foodSaturationLevel));
++            // CraftBukkit end
+             int l = p_150036_1_.getBlockMetadata(p_150036_2_, p_150036_3_, p_150036_4_) + 1;
+ 
+             if (l >= 6)

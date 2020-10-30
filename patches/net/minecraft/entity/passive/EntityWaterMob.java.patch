@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityWaterMob.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWaterMob.java
+@@ -1,8 +1,11 @@
+ package net.minecraft.entity.passive;
+ 
++import net.minecraft.block.Block;
+ import net.minecraft.entity.EntityCreature;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.init.Blocks;
+ import net.minecraft.util.DamageSource;
++import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+ 
+ public abstract class EntityWaterMob extends EntityCreature implements IAnimals
+@@ -16,7 +19,14 @@
+ 
+     public boolean canBreatheUnderwater()
+     {
+-        return true;
++        // Paper start - Don't let water mobs spawn in non-water blocks
++        // Based around EntityAnimal's implementation
++        int i = MathHelper.floor_double(this.posX);
++        int j = MathHelper.floor_double(this.boundingBox.maxY); // minY of bounding box
++        int k = MathHelper.floor_double(this.posZ);
++        Block block = this.worldObj.getType(i, j, k);
++        return block == Blocks.water || block == Blocks.flowing_water;
++        // Paper end
+     }
+ 
+     public boolean getCanSpawnHere()

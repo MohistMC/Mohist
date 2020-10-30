@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserList.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserList.java
+@@ -119,6 +119,9 @@
+ 
+     protected String func_152681_a(Object p_152681_1_)
+     {
++        if(p_152681_1_ instanceof com.mojang.authlib.GameProfile){
++            return ((com.mojang.authlib.GameProfile)p_152681_1_).getName().toLowerCase();
++        }
+         return p_152681_1_.toString();
+     }
+ 
+@@ -184,6 +187,12 @@
+         return this.field_152696_d.size() < 1;
+     }
+ 
++    // CraftBukkit start
++    public Collection<UserListEntry> getValues() {
++        return this.field_152696_d.values();
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.SERVER)
+     public void func_152679_g() throws IOException
+     {

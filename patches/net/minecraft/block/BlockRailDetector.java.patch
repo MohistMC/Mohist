@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRailDetector.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRailDetector.java
+@@ -16,6 +16,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
++
+ public class BlockRailDetector extends BlockRailBase
+ {
+     @SideOnly(Side.CLIENT)
+@@ -86,6 +88,17 @@
+             flag1 = true;
+         }
+ 
++        // CraftBukkit start
++        if (flag != flag1)
++        {
++            org.bukkit.block.Block block = p_150054_1_.getWorld().getBlockAt(p_150054_2_, p_150054_3_, p_150054_4_);
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
++            p_150054_1_.getServer().getPluginManager().callEvent(eventRedstone);
++            flag1 = eventRedstone.getNewCurrent() > 0;
++        }
++
++        // CraftBukkit end
++
+         if (flag1 && !flag)
+         {
+             p_150054_1_.setBlockMetadataWithNotify(p_150054_2_, p_150054_3_, p_150054_4_, p_150054_5_ | 8, 3);

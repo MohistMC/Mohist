@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/ISaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/ISaveHandler.java
+@@ -27,4 +27,6 @@
+     File getMapFileFromName(String p_75758_1_);
+ 
+     String getWorldDirectoryName();
++
++    java.util.UUID getUUID(); // CraftBukkit
+ }
