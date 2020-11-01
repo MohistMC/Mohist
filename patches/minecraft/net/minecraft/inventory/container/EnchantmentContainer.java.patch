@@ -188,7 +188,7 @@
 +                  enchants.put(org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(Registry.field_212628_q.func_177774_c(instance.field_76302_b))), instance.field_76303_c);
 +               }
 +               CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
-+               EnchantItemEvent event = new EnchantItemEvent((Player) p_75140_1_.getBukkitEntity(), this.getBukkitView(), field_217006_g.getLocation().getBlock(), item, this.field_75167_g[i], enchants, i);
++               EnchantItemEvent event = new EnchantItemEvent((Player) p_75140_1_.getBukkitEntity(), this.getBukkitView(), field_217006_g.getLocation().getBlock(), item, this.field_75167_g[p_75140_2_], enchants, p_75140_2_);
 +               p_217003_6_.getCBServer().getPluginManager().callEvent(event);
 +               int level = event.getExpLevelCost();
 +               if (event.isCancelled() || (level > p_75140_1_.field_71068_ca && !p_75140_1_.field_71075_bZ.field_75098_d) || event.getEnchantsToAdd().isEmpty()) {
