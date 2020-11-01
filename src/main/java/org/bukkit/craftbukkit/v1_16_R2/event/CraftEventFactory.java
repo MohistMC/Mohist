@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_16_R2.event;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
+import com.mohistmc.MohistMC;
 import com.mojang.datafixers.util.Either;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -1285,9 +1286,9 @@ public class CraftEventFactory {
     }
 
     public static ItemStack handleEditBookEvent(ServerPlayerEntity player, EquipmentSlotType slot, ItemStack itemInHand, ItemStack newBookItem) {
-        int currentItem = (slot == EquipmentSlotType.MAINHAND) ? player.inventory.currentItem : -1;
+        int itemInHandIndex = (slot == EquipmentSlotType.MAINHAND) ? player.inventory.currentItem : -1;
 
-        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(player.getBukkitEntity(), currentItem, (BookMeta) CraftItemStack.getItemMeta(itemInHand), (BookMeta) CraftItemStack.getItemMeta(newBookItem), newBookItem.getItem() == Items.WRITTEN_BOOK);
+        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(player.getBukkitEntity(), itemInHandIndex, (BookMeta) CraftItemStack.getItemMeta(itemInHand), (BookMeta) CraftItemStack.getItemMeta(newBookItem), newBookItem.getItem() == Items.WRITTEN_BOOK);
         player.world.getCBServer().getPluginManager().callEvent(editBookEvent);
 
         // If they've got the same item in their hand, it'll need to be updated.
