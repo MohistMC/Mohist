@@ -611,10 +611,10 @@
 +               Vector3d vec3d = (Vector3d) optional.get();
 +               float f1;
 +
-+               if (!iblockdata.func_235714_a_((Tag) BlockTags.field_219747_F) && !flag3) {
++               if (!iblockdata.func_235714_a_(BlockTags.field_219747_F) && !flag3) {
 +                  f1 = f;
 +               } else {
-+                  Vector3d vec3d1 = Vector3d.func_237492_c_((Vector3i) blockpos).func_178788_d(vec3d).func_72432_b();
++                  Vector3d vec3d1 = Vector3d.func_237492_c_(blockpos).func_178788_d(vec3d).func_72432_b();
 +                  f1 = (float) MathHelper.func_76138_g(MathHelper.func_181159_b(vec3d1.field_72449_c, vec3d1.field_72450_a) * 57.2957763671875D - 90.0D);
 +               }
 +               serverplayerentity.func_242111_a(worldserver1.func_234923_W_(), blockpos, f, flag, false);
