@@ -20,7 +20,7 @@
 -   private float field_75125_b;
 -   private float field_75126_c;
 +   public int field_75127_a = 20;
-+   public float field_75125_b;
++   public float field_75125_b = 5.0F; // Mohist nms
 +   public float field_75126_c;
     private int field_75123_d;
 +   private PlayerEntity entityhuman; // CraftBukkit
@@ -58,10 +58,12 @@
        }
  
     }
-@@ -43,6 +62,15 @@
+@@ -42,7 +61,16 @@
+          if (this.field_75125_b > 0.0F) {
              this.field_75125_b = Math.max(this.field_75125_b - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
-             this.field_75127_a = Math.max(this.field_75127_a - 1, 0);
+-            this.field_75127_a = Math.max(this.field_75127_a - 1, 0);
++            // this.foodLevel = Math.max(this.foodLevel - 1, 0);
 +            // CraftBukkit start
 +            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.field_75127_a - 1, 0));
 +
