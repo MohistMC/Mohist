@@ -28,15 +28,17 @@
              } else {
                 tileentity = TileEntity.func_235657_b_(blockstate, compoundnbt);
              }
-@@ -209,7 +209,7 @@
+@@ -209,8 +209,8 @@
              }
           }
  
 -         if (blockstate.func_177230_c() instanceof ITileEntityProvider) {
+-            field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
 +         if (blockstate.hasTileEntity()) {
-             field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
++            field_208303_a.warn("Tried to access a block entity before it was created. {} {}", (Object)p_175625_1_, blockstate.func_177230_c().toString());
           }
  
+          return null;
 @@ -225,9 +225,9 @@
        }
  
