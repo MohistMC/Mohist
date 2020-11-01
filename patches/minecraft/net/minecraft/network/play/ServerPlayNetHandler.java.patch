@@ -454,7 +454,7 @@
 -                  this.field_147369_b.func_184611_a(p_210156_1_.func_212644_d(), itemstack2);
 +                  this.field_147369_b.func_184611_a(p_210156_1_.func_212644_d(), CraftEventFactory.handleEditBookEvent(field_147369_b, enumitemslot, itemstack1, itemstack2)); // CraftBukkit
                 } else {
-+                  ItemStack old = itemstack1.func_77946_l(); // CraftBukkit
++                  ItemStack old = itemstack1.func_77946_l();
                    itemstack1.func_77983_a("pages", itemstack.func_77978_p().func_150295_c("pages", 8));
 +                  CraftEventFactory.handleEditBookEvent(field_147369_b, enumitemslot, old, itemstack1); // CraftBukkit
                 }
