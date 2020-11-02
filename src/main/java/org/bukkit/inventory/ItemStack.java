@@ -1,6 +1,7 @@
 package org.bukkit.inventory;
 
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.inventory.meta.ForgeCapMeta;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang.Validate;
@@ -21,6 +22,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     private MaterialData data = null;
     private short durability = 0;
     private ItemMeta meta;
+    private ForgeCapMeta forgeCapMeta;
 
     @Utility
     protected ItemStack() {
@@ -137,6 +139,9 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
         if (stack.hasItemMeta()) {
             setItemMeta0(stack.getItemMeta(), getType0());
         }
+        if(stack.hasForgeCapMeta()) {
+            setForgeCapMeta(stack.getForgeCapMeta());
+        }
     }
 
     private static Material getType0(int id) {
@@ -185,6 +190,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
             if (raw instanceof ItemMeta) {
                 result.setItemMeta((ItemMeta) raw);
             }
+        }
+
+        if (args.containsKey("forgeCapMeta")) {
+            result.setForgeCapMeta(ForgeCapMeta.deserializeNBT((String) args.get("forgeMeta")));
         }
 
         return result;
@@ -378,7 +387,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
         if (stack == this) {
             return true;
         }
-        return getTypeId() == stack.getTypeId() && getDurability() == stack.getDurability() && hasItemMeta() == stack.hasItemMeta() && (hasItemMeta() ? Bukkit.getItemFactory().equals(getItemMeta(), stack.getItemMeta()) : true);
+        return getTypeId() == stack.getTypeId() && getDurability() == stack.getDurability() && hasItemMeta() == stack.hasItemMeta() && (hasItemMeta() ? Bukkit.getItemFactory().equals(getItemMeta(), stack.getItemMeta()) : true) && (hasForgeCapMeta() ? getForgeCapMeta().equals(stack.getForgeCapMeta()) : true);
     }
 
     @Override
@@ -392,6 +401,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
 
             if (this.data != null) {
                 itemStack.data = this.data.clone();
+            }
+
+            if (this.forgeCapMeta != null) {
+                itemStack.forgeCapMeta = this.forgeCapMeta.clone();
             }
 
             return itemStack;
@@ -409,6 +422,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
         hash = hash * 31 + getAmount();
         hash = hash * 31 + (getDurability() & 0xffff);
         hash = hash * 31 + (hasItemMeta() ? (meta == null ? getItemMeta().hashCode() : meta.hashCode()) : 0);
+        hash = hash * 31 + (hasForgeCapMeta() ? forgeCapMeta.hashCode() : 0);
 
         return hash;
     }
@@ -553,6 +567,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
             result.put("meta", meta);
         }
 
+        if (hasForgeCapMeta()) {
+            result.put("forgeCapMeta", forgeCapMeta.serializeNBT());
+        }
+
         return result;
     }
 
@@ -604,5 +622,17 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
         }
 
         return true;
+    }
+
+    public boolean hasForgeCapMeta() {
+        return forgeCapMeta != null;
+    }
+
+    public void setForgeCapMeta(ForgeCapMeta forgeCapMeta) {
+        this.forgeCapMeta = forgeCapMeta;
+    }
+
+    public ForgeCapMeta getForgeCapMeta() {
+        return this.forgeCapMeta;
     }
 }

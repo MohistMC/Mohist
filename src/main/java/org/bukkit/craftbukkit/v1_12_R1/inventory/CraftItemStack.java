@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.inventory.meta.ForgeCapMeta;
 import java.util.Map;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
@@ -32,6 +33,7 @@ public final class CraftItemStack extends ItemStack {
      */
     private CraftItemStack(net.minecraft.item.ItemStack item) {
         this.handle = item;
+        ForgeCapMeta.setCap(item, this);
     }
 
     private CraftItemStack(ItemStack item) {
@@ -65,7 +67,7 @@ public final class CraftItemStack extends ItemStack {
             return net.minecraft.item.ItemStack.EMPTY;
         }
 
-        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability());
+        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability(), original.hasForgeCapMeta() ? original.getForgeCapMeta().getCap() : null);
         if (original.hasItemMeta()) {
             setItemMeta(stack, original.getItemMeta());
         }
@@ -85,7 +87,12 @@ public final class CraftItemStack extends ItemStack {
         if (original.isEmpty()) {
             return new ItemStack(Material.AIR);
         }
-        return asCraftMirror(copyNMSStack(original, original.getCount()));
+        ItemStack stack = new ItemStack(CraftMagicNumbers.getMaterial(original.getItem()), original.getCount(), (short) original.getMetadata());
+        if (hasItemMeta(original)) {
+            stack.setItemMeta(getItemMeta(original));
+        }
+        ForgeCapMeta.setCap(original, stack);
+        return stack;
     }
 
     public static CraftItemStack asCraftMirror(net.minecraft.item.ItemStack original) {
@@ -454,7 +461,7 @@ public final class CraftItemStack extends ItemStack {
         if (!(that.getTypeId() == getTypeId() && getDurability() == that.getDurability())) {
             return false;
         }
-        return hasItemMeta() ? that.hasItemMeta() && handle.getTagCompound().equals(that.handle.getTagCompound()) : !that.hasItemMeta();
+        return (hasItemMeta() ? that.hasItemMeta() && handle.getTagCompound().equals(that.handle.getTagCompound()) : !that.hasItemMeta()) && handle.areCapsCompatible(that.handle);
     }
 
     @Override
