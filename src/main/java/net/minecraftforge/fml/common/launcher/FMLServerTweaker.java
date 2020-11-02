@@ -55,7 +55,7 @@ public class FMLServerTweaker extends FMLTweaker {
 
         classLoader.addClassLoaderExclusion("org.jline.");
         classLoader.addClassLoaderExclusion("com.sun.jna.");
-        classLoader.addClassLoaderExclusion("com.mohistmc.console.log4j.TerminalConsoleAppender");
+        classLoader.addClassLoaderExclusion("com.mohistmc.console.log4j.");
 
         FMLLaunchHandler.configureForServerLaunch(classLoader, this);
         FMLLaunchHandler.appendCoreMods();

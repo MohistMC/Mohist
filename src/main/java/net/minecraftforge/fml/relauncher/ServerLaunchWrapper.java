@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.relauncher;
 
+import com.mohistmc.console.log4j.Log4jCrashFix;
 import org.apache.logging.log4j.LogManager;
 import com.mohistmc.MohistMC;
 import com.mohistmc.util.i18n.Message;
@@ -72,6 +73,7 @@ public class ServerLaunchWrapper {
         } catch (Exception e) {
             System.out.println(Message.getString("mohist.start.error"));
             e.printStackTrace(System.err);
+            new Log4jCrashFix(System.out).run();
             System.exit(1);
         }
     }
