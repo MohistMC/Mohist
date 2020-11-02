@@ -26,10 +26,7 @@ public class TicksPerSecondCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
         World currentWorld = null;
         if (sender instanceof CraftPlayer) {
             currentWorld = ((CraftPlayer) sender).getWorld();

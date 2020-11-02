@@ -28,10 +28,7 @@ public class VersionCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
             sender.sendMessage("This server is running " + Bukkit.getName() + " version " + MohistMC.getVersion() +  " (MC: 1.12.2) (Implementing API version " + Bukkit.getBukkitVersion() + ", Forge version " + ForgeVersion.getVersion() + ")");

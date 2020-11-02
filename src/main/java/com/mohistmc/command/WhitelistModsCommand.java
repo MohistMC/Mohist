@@ -19,25 +19,25 @@ public class WhitelistModsCommand extends Command {
 
   @Override
   public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-    if(testPermission(sender) || sender.isOp()) {
-      if (args.length == 0) {
-        sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
-        return false;
-      }
-
-      switch (args[0].toLowerCase()) {
-        case "enable":
-          setValueMohist("forge.modswhitelist.list", makeModList());
-          setValueMohist("forge.enable_mods_whitelist", true);
-          break;
-        case "disable":
-          setValueMohist("forge.enable_mods_whitelist", false);
-          break;
-        case "update":
-          setValueMohist("forge.modswhitelist.list", makeModList());
-          break;
-      }
+    if (!testPermission(sender)) return true;
+    if (args.length == 0) {
+      sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+      return false;
     }
+
+    switch (args[0].toLowerCase()) {
+      case "enable":
+        setValueMohist("forge.modswhitelist.list", makeModList());
+        setValueMohist("forge.enable_mods_whitelist", true);
+        break;
+      case "disable":
+        setValueMohist("forge.enable_mods_whitelist", false);
+        break;
+      case "update":
+        setValueMohist("forge.modswhitelist.list", makeModList());
+        break;
+    }
+
     return true;
   }
 

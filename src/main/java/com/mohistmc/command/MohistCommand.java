@@ -53,10 +53,7 @@ public class MohistCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.isOp() || !testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);

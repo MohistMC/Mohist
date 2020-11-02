@@ -24,6 +24,7 @@ public class ItemCommand{
             if (item instanceof ItemBlock) {
                 player.sendMessage(ChatColor.GRAY + "Block ID - " + ChatColor.GREEN + Block.getIdFromBlock(Block.getBlockFromItem(item)));
             }
+            player.sendMessage(ChatColor.GRAY + "ForgeBlock - " + (itemStack.getType().isForgeBlock() ? Boolean.valueOf(true) : Boolean.valueOf(false)));
         } else {
             sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");
         }

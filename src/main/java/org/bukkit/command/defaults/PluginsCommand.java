@@ -38,29 +38,30 @@ public class PluginsCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
             sender.sendMessage("Plugins " + getPluginList());
             return false;
         }
 
-        switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "load":
-                PluginManagers.loadPluginCommand(sender, currentAlias, args);
-                break;
-            case "unload":
-                PluginManagers.unloadPluginCommand(sender, currentAlias, args);
-                break;
-            case "reload":
-                PluginManagers.reloadPluginCommand(sender, currentAlias, args);
-                break;
-            default:
-                sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
-                return false;
+        if (sender.hasPermission(PluginManagers.permission)) {
+            switch (args[0].toLowerCase(Locale.ENGLISH)) {
+                case "load":
+                    PluginManagers.loadPluginCommand(sender, currentAlias, args);
+                    break;
+                case "unload":
+                    PluginManagers.unloadPluginCommand(sender, currentAlias, args);
+                    break;
+                case "reload":
+                    PluginManagers.reloadPluginCommand(sender, currentAlias, args);
+                    break;
+                default:
+                    sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+                    return false;
+            }
+        } else {
+            sender.sendMessage(Message.getFormatString("command.nopermission", new Object[]{ PluginManagers.permission }));
         }
         return true;
     }
