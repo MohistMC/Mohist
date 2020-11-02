@@ -146,27 +146,27 @@ public class HighlightTimeConverter extends LogEventPatternConverter
     }
 
     public static String getError() {
-        String cc = MohistConfig.getHighlight("consolecolor.error-time", "b");
-        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
+        String cc = MohistConfig.instance.ANSI_ERROR_TIME.getValue();
+        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 
     public static String getWarn() {
-        String cc = MohistConfig.getHighlight("consolecolor.warn-time", "b");
-        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
+        String cc = MohistConfig.instance.ANSI_WARN_TIME.getValue();
+        return ANSIColorUtils.getColor(cc, "\u001B[33;1m");
     }
 
     public static String getInfo() {
-        String cc = MohistConfig.getHighlight("consolecolor.info-time", "b");
+        String cc = MohistConfig.instance.ANSI_INFO_TIME.getValue();
         return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getFatal() {
-        String cc = MohistConfig.getHighlight("consolecolor.fatal-time", "b");
-        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
+        String cc = MohistConfig.instance.ANSI_FATAL_TIME.getValue();
+        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 
     public static String getTrace() {
-        String cc = MohistConfig.getHighlight("consolecolor.trace-time", "b");
-        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
+        String cc = MohistConfig.instance.ANSI_TRACE_TIME.getValue();
+        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 }
