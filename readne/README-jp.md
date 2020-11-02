@@ -17,7 +17,7 @@
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
 [![](https://img.shields.io/badge/Patreon-Support-orange.svg?logo=Patreon)](https://www.patreon.com/mohist)
 
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-ru.md">Russian</a>
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-fr.md">Français</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-ru.md">Russian</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
@@ -28,60 +28,60 @@
 | 1.16.x  | Active  |
 | 1.12.2  | Active  |
       
-Obter ajuda
+ヘルプの参照
 ------
-   [**Início**](https://mohist.red/)
+   [**ホーム**](https://mohist.red/)
    
    [**Discord**](https://discord.gg/ZgXjHGd)
    
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
-Baixar
+ダウンロード
 ------
 
 You can download the latest version from [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/).
 
-Instalar
+インストール
 ------
-Esse programa precisa do Java 8.
+このソフトウェアにはJava 8が必要です。
 
-Baixe [Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) e ponha o jar do servidor numa pasta vazia. Agora abra usando o seguinte comando 'java':
+[Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) をダウンロードし、空のディレクトリにサーバーのjarファイルを置いて下さい。 `java` コマンドを使用して起動します :
 
 ```bash
 java -jar yourJar.jar
 ```
 
-Compilando
+ビルド
 ------
-* Verificação do projeto
-  * Clone Mohist:
+* プロジェクトの確認
+  * クローン Mohist:
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * Build Mohist
-  * Compilando no Linux:
+  * Linuxでのビルド:
   `bash gradlew setup installerJar`
-  * Compilando no Windows:
+  * Windowsでのビルド:
   `gradlew.bat setup installerJar`
 
-Todas as Compilações ficarão em `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
+すべてのビルドは `.\projects\mohist\build\libs\mohist-xxxxx-server.jar` になります
 
-mohist-xxxxx-server.jar é o arquivo do servidor que você deve abrir
+mohist-xxxxx-server.jar は実行すべきサーバーファイルです
 
-Agradecimentos pelos segintes projetos
+以下のプロジェクトに感謝します。
 ------
-* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - suporte de plugins.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - otimizações de perfomance.
-* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - suporte de plugins.
-* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - suporte de plugins.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - suporte de mods.
-* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Código fonte parcial.
-* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Código fonte parcial.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Código fonte parcial.
+* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - プラグインのサポート.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - パフォーマンスの最適化.
+* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - プラグインのサポート.
+* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - プラグインのサポート.
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - MODのサポート.
+* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - 部分的なコードソース.
+* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - 部分的なコードソース.
+* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - 部分的なコードソース.
 
-Agradecimentos especiais para:
+特別に感謝します:
 -------------
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
 
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
-[YourKit](http://www.yourkit.com/), criadores do excelente profiler do java, apoie projetos de código aberto de todos os tipos com o [Java](https://www.yourkit.com/java/profiler/index.jsp) e profilers de aplicações [.NET](https://www.yourkit.com/.net/profiler/index.jsp). Queremos agradecê-los por conseguir uma licença OSS para o Mohist. Desse jeito conseguimos dar o nosso melhor em nosso software.
+あなたのキット [YourKit](http://www.yourkit.com/) は優れたJavaプロファイラーのメーカーであり、あらゆる機能のオープンソースプロジェクトを、フル機能の[Java](https://www.yourkit.com/java/profiler/index.jsp) と[.NET](https://www.yourkit.com/.net/profiler/index.jsp) アプリケーションプロファイラーでサポートしています。 私たちのソフトウェアを最高のものにできるように、Mohist に OSS ライセンスを付与していただいた彼らに感謝します。

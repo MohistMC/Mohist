@@ -17,7 +17,7 @@
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
 [![](https://img.shields.io/badge/Patreon-Support-orange.svg?logo=Patreon)](https://www.patreon.com/mohist)
 
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-ru.md">Russian</a>
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-fr.md">Français</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-ru.md">Russian</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
@@ -28,60 +28,60 @@
 | 1.16.x  | Active  |
 | 1.12.2  | Active  |
       
-Obtener Ayuda
+Mendapatkan bantuan
 ------
-   [**Inicio**](https://mohist.red/)
+   [**Beranda**](https://mohist.red/)
    
    [**Discord**](https://discord.gg/ZgXjHGd)
    
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
-Descargar
+Unduh
 ------
 
 You can download the latest version from [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/).
 
-Instalar
+Instal
 ------
-Este software requiere Java 8.
+Perangkat lunak ini membutuhkan Java 8.
 
-Descarga [Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) y coloca el archivo .jar del servidor en un directorio vacío. Ahora inicia usando el comando `java`:
+Unduh [Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) dan tempatkan server jar dalam direktori kosong. Sekarang jalankan menggunakan perintah `java`:
 
 ```bash
 java -jar yourJar.jar
 ```
 
-Compilación
+Membangun
 ------
-* Revisa el proyecto
-  * Clone Mohist:
+* Checkout project
+  * Klon Mohist:
   `git clone https://github.com/Mohist-Community/Mohist.git`
-* Construir Mohist
-  * Construir en Linux:
+* Build Mohist
+  * Bangun menggunakan Linux:
   `bash gradlew setup installerJar`
-  * Construir en Windows:
+  * Bangun menggunakan Windows:
   `gradlew.bat setup installerJar`
 
-The Mohist server jar file is located at `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
+Semua file akan berada di `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
 
-mohist-xxxxx-server.jar es el archivo del servidor que deberías ejecutar
+mohist-xxxxx-server.jar adalah file server yang harus anda jalankan
 
-Gracias a los siguientes proyectos
+Terima kasih sudah mengikuti proyek Mohist
 ------
-* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - soporte al plugin.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - optimización del rendimiento.
-* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - soporte al plugin.
-* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - soporte al plugin.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - soporte de Mods.
-* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Fuente de código parcial.
-* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Fuente de código parcial.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Fuente de código parcial.
+* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - dukungan Plugin.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - optimalisasi kinerja.
+* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - dukungan Plugin.
+* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - dukungan Plugin.
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - dukungan Mod.
+* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Sumber kode.
+* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Sumber kode.
+* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Sumber kode.
 
-Agradecimientos especiales a:
+Terima kasih khusus kepada:
 -------------
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
 
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
-[YourKit](http://www.yourkit.com/), creadores del excelente perfilador (profiler) de Java, soportan proyectos de código abierto de todo tipo de perfiladores (profilers) con sus características completas en [Java](https://www.yourkit.com/java/profiler/index.jsp) y en [.NET](https://www.yourkit.com/.net/profiler/index.jsp). Les agradecemos que hayan concedido a Mohist una licencia OSS para que podamos hacer de nuestro software lo mejor que puede ser.
+[YourKit](http://www.yourkit.com/), pembuat profiler java yang luar biasa, mendukung semua jenis proyek open source dengan fitur yang lengkap diaplikasi [Java](https://www.yourkit.com/java/profiler/index.jsp) dan [.NET](https://www.yourkit.com/.net/profiler/index.jsp). Kami berterima kasih kepada mereka karena telah memberikan lisensi OSS kepada Mohist sehingga kami dapat membuat perangkat lunak kami menjadi yang terbaik.
