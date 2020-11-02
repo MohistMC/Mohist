@@ -175,6 +175,12 @@ public class MohistConfig extends ConfigBase {
         return RealTimeTicking.getValue();
     }
 
+    public static String getHighlight(String key, String def) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        String color = yml.getString(key, def);
+        return color;
+    }
+
     public static void setValueMohist(String oldValue, String value) {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         yml.set(oldValue, value);

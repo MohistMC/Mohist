@@ -166,27 +166,27 @@ public class HighlightLevelConverter extends LogEventPatternConverter
     }
 
     public static String getError() {
-        String cc = MohistConfig.instance.ANSI_ERROR_LEVEL.getValue();
+        String cc = MohistConfig.getHighlight("consolecolor.error-level", "c");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 
     public static String getWarn() {
-        String cc = MohistConfig.instance.ANSI_WARN_LEVEL.getValue();
+        String cc = MohistConfig.getHighlight("consolecolor.warn-level", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[33;1m");
     }
 
     public static String getInfo() {
-        String cc = MohistConfig.instance.ANSI_INFO_LEVEL.getValue();
+        String cc = MohistConfig.getHighlight("consolecolor.info-level", "2");
         return ANSIColorUtils.getColor(cc, "\u001B[32;22m");
     }
 
     public static String getFatal() {
-        String cc = MohistConfig.instance.ANSI_FATAL_LEVEL.getValue();
+        String cc = MohistConfig.getHighlight("consolecolor.fatal-level", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 
     public static String getTrace() {
-        String cc = MohistConfig.instance.ANSI_TRACE_LEVEL.getValue();
+        String cc = MohistConfig.getHighlight("consolecolor.trace-level", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 }

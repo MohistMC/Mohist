@@ -1,6 +1,5 @@
 package com.mohistmc;
 
-import com.mohistmc.configuration.MohistConfig;
 import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
 import com.mohistmc.bukkit.AutoDeletePlugins;
