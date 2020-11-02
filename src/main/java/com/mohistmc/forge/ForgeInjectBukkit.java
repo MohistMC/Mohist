@@ -1,17 +1,34 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.entity.CraftCustomEntity;
+import com.mohistmc.util.MohistEnumHelper;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Effect;
+import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.WorldType;
+import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_16_R2.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.v1_16_R2.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_16_R2.util.CraftMagicNumbers;
+import org.bukkit.entity.EntityType;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.permissions.DefaultPermissions;
 
 import java.util.Map;
@@ -21,6 +38,11 @@ public class ForgeInjectBukkit {
     public static void init(){
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
+        addEnumBiome();
+        addEnumEnchantment();
+        addEnumPotion();
+        addEnumPattern();
+        addEnumEntity();
     }
 
 
@@ -61,10 +83,10 @@ public class ForgeInjectBukkit {
         }
     }
 
-    /*
+
     public static void addEnumEnchantment() {
         // Enchantment
-        for (Map.Entry<ResourceLocation, Enchantment> entry : ForgeRegistries.ENCHANTMENTS.getEntries()) {
+        for (Map.Entry<RegistryKey<Enchantment>, Enchantment> entry : ForgeRegistries.ENCHANTMENTS.getEntries()) {
             org.bukkit.enchantments.Enchantment.registerEnchantment(new CraftEnchantment(entry.getValue()));
         }
         org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();
@@ -72,7 +94,7 @@ public class ForgeInjectBukkit {
 
     public static void addEnumPotion() {
         // Points
-        for (Map.Entry<ResourceLocation, Potion> entry : ForgeRegistries.POTIONS.getEntries()) {
+        for (Map.Entry<RegistryKey<Effect>, Effect> entry : ForgeRegistries.POTIONS.getEntries()) {
             PotionEffectType pet = new CraftPotionEffectType(entry.getValue());
             PotionEffectType.registerPotionEffectType(pet);
         }
@@ -81,11 +103,11 @@ public class ForgeInjectBukkit {
 
     public static void addEnumBiome() {
         List<String> map = new ArrayList<>();
-        for (Map.Entry<ResourceLocation, net.minecraft.world.biome.Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
-            String biomeName = entry.getKey().getResourcePath().toUpperCase(java.util.Locale.ENGLISH);
-            if (!entry.getKey().getResourceDomain().equals("minecraft") && !map.contains(biomeName)) {
+        for (Map.Entry<RegistryKey<Biome>, Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
+            String biomeName = entry.getValue().getRegistryName().getNamespace();
+            if (!biomeName.equals("minecraft") && !map.contains(biomeName)) {
                 map.add(biomeName);
-                EnumHelper.addEnum(Biome.class, biomeName, new Class[0]);
+                MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
             }
         }
         map.clear();
@@ -97,19 +119,19 @@ public class ForgeInjectBukkit {
             String p_i47246_3_ = bannerpattern.name();
             String hashname = bannerpattern.getHashname();
             if (PatternType.getByIdentifier(hashname) == null) {
-                PatternType patternType = EnumHelper.addEnum(PatternType.class, p_i47246_3_, new Class[]{String.class}, hashname);
+                PatternType patternType = MohistEnumHelper.addEnum0(PatternType.class, p_i47246_3_, new Class[]{String.class}, hashname);
                 PATTERN_MAP.put(hashname, patternType);
             }
         }
     }
 
     public static World.Environment addEnumEnvironment(int id, String name) {
-        return (World.Environment)EnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+        return (World.Environment)MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
     }
 
     public static WorldType addEnumWorldType(String name)
     {
-        WorldType worldType = EnumHelper.addEnum(WorldType.class, name, new Class [] { String.class }, name);
+        WorldType worldType = MohistEnumHelper.addEnum0(WorldType.class, name, new Class [] { String.class }, name);
         Map<String, WorldType> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
         BY_NAME.put(name.toUpperCase(), worldType);
         return worldType;
@@ -119,17 +141,16 @@ public class ForgeInjectBukkit {
         Map<String, EntityType> NAME_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
         Map<Short, EntityType> ID_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
 
-        for (Map.Entry<String, Class<? extends Entity>> entity : EntityRegistry.entityClassMap.entrySet()) {
-            String name = entity.getKey();
+        for (Map.Entry<RegistryKey<net.minecraft.entity.EntityType<?>>, net.minecraft.entity.EntityType<?>> entity : ForgeRegistries.ENTITIES.getEntries()) {
+            String name = entity.getValue().getRegistryName().getNamespace();
             String entityType = name.toUpperCase();
-            int typeId = GameData.getEntityRegistry().getID(EntityRegistry.getEntry(entity.getValue()));
-            EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, name, CraftCustomEntity.class, typeId, false);
+            int typeId = name.hashCode();
+            EntityType bukkitType = MohistEnumHelper.addEnum0(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, name, CraftCustomEntity.class, typeId, false);
 
             NAME_MAP.put(name.toLowerCase(), bukkitType);
             ID_MAP.put((short)typeId, bukkitType);
         }
     }
-     */
 
     public static void registerDefaultPermission(String name, DefaultPermissionLevel level, String desc) {
         PermissionDefault permissionDefault;

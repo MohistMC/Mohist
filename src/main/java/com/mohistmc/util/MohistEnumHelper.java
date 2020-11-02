@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class MohistEnumHelper {
 
@@ -95,7 +96,13 @@ public class MohistEnumHelper {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends Enum<? >> T addEnum0(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues)
+    {
+        return addEnum(enumType, enumName, paramTypes, paramValues);
+    }
+
+    @Nullable
     public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues) {
         if (!isSetup) {
             setup();
