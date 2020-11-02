@@ -10,6 +10,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.spigotmc.SpigotConfig;
+import scala.reflect.io.Directory;
 
 public class MohistConfig extends ConfigBase {
 
@@ -99,6 +100,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting watchdog_spigot = new BoolSetting(this, "mohist.watchdog_spigot", true, "Open watchdog_spigot");
     public final BoolSetting watchdog_mohist = new BoolSetting(this, "mohist.watchdog_mohist", false, "Open watchdog_mohist");
     public final BoolSetting showlogo = new BoolSetting(this, "mohist.showlogo", true, "Show logo");
+    public final BoolSetting World_Directory_Client = new BoolSetting(this, "world.directory_in_client", true, "The world directory is the same as the client");
 
     public List<Integer> dimensionsNotLoaded =new ArrayList();
     /* ======================================================================== */
