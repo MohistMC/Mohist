@@ -2,8 +2,10 @@ package org.bukkit;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import org.bukkit.advancement.Advancement;
@@ -185,13 +187,19 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
         protected SimpleRegistry(@NotNull Class<T> type, @NotNull Predicate<T> predicate) {
             ImmutableMap.Builder<NamespacedKey, T> builder = ImmutableMap.builder();
 
+            List<NamespacedKey> mapcache = new ArrayList<>();
+
             for (T entry : type.getEnumConstants()) {
                 if (predicate.test(entry)) {
-                    builder.put(entry.getKey(), entry);
+                    mapcache.add(entry.getKey());
+                    if (!mapcache.contains(entry.getKey())) {
+                        builder.put(entry.getKey(), entry);
+                    }
                 }
             }
 
             map = builder.build();
+            mapcache.clear();
         }
 
         @Nullable
