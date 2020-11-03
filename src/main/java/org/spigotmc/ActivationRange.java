@@ -1,7 +1,6 @@
 package org.spigotmc;
 
 import java.util.Collection;
-import java.util.List;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -31,7 +30,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import org.bukkit.craftbukkit.v1_16_R2.SpigotTimings;
+import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 
 public class ActivationRange
 {

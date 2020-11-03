@@ -15,12 +15,12 @@
        ItemStack itemstack;
 -      if (p_234470_1_.func_92059_d().func_77973_b() == Items.field_151074_bl) {
 +      // CraftBukkit start
-+      if (p_234470_1_.func_92059_d().func_77973_b() == Items.field_151074_bl && !org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityPickupItemEvent(p_234470_0_, p_234470_1_, 0, false).isCancelled()) {
++      if (p_234470_1_.func_92059_d().func_77973_b() == Items.field_151074_bl && !org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityPickupItemEvent(p_234470_0_, p_234470_1_, 0, false).isCancelled()) {
           p_234470_0_.func_71001_a(p_234470_1_, p_234470_1_.func_92059_d().func_190916_E());
           itemstack = p_234470_1_.func_92059_d();
           p_234470_1_.func_70106_y();
 -      } else {
-+      } else if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityPickupItemEvent(p_234470_0_, p_234470_1_, p_234470_1_.func_92059_d().func_190916_E() - 1, false).isCancelled()) {
++      } else if (!org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityPickupItemEvent(p_234470_0_, p_234470_1_, p_234470_1_.func_92059_d().func_190916_E() - 1, false).isCancelled()) {
           p_234470_0_.func_71001_a(p_234470_1_, 1);
           itemstack = func_234465_a_(p_234470_1_);
 +      } else {

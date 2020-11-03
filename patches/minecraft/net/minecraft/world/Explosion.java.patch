@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/Explosion.java
 +++ b/net/minecraft/world/Explosion.java
-@@ -12,6 +12,7 @@
+@@ -12,13 +12,14 @@
  import java.util.Random;
  import java.util.Set;
  import javax.annotation.Nullable;
@@ -8,7 +8,7 @@
  import net.minecraft.block.AbstractFireBlock;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
-@@ -19,6 +20,7 @@
+-import net.minecraft.block.Blocks;
  import net.minecraft.enchantment.ProtectionEnchantment;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.LivingEntity;
@@ -16,18 +16,18 @@
  import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.entity.item.TNTEntity;
  import net.minecraft.entity.player.PlayerEntity;
-@@ -41,6 +43,10 @@
+@@ -41,6 +42,10 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockExplodeEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
  
  public class Explosion {
     private static final ExplosionContext field_242407_a = new ExplosionContext();
-@@ -52,13 +58,16 @@
+@@ -52,13 +57,16 @@
     private final double field_77285_c;
     private final double field_77282_d;
     @Nullable
@@ -45,7 +45,7 @@
     @OnlyIn(Dist.CLIENT)
     public Explosion(World p_i45752_1_, @Nullable Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_) {
        this(p_i45752_1_, p_i45752_2_, p_i45752_3_, p_i45752_5_, p_i45752_7_, p_i45752_9_, false, Explosion.Mode.DESTROY, p_i45752_10_);
-@@ -78,7 +87,7 @@
+@@ -78,7 +86,7 @@
     public Explosion(World p_i231610_1_, @Nullable Entity p_i231610_2_, @Nullable DamageSource p_i231610_3_, @Nullable ExplosionContext p_i231610_4_, double p_i231610_5_, double p_i231610_7_, double p_i231610_9_, float p_i231610_11_, boolean p_i231610_12_, Explosion.Mode p_i231610_13_) {
        this.field_77287_j = p_i231610_1_;
        this.field_77283_e = p_i231610_2_;
@@ -54,7 +54,7 @@
        this.field_77284_b = p_i231610_5_;
        this.field_77285_c = p_i231610_7_;
        this.field_77282_d = p_i231610_9_;
-@@ -86,6 +95,7 @@
+@@ -86,6 +94,7 @@
        this.field_222260_b = p_i231610_13_;
        this.field_199593_j = p_i231610_3_ == null ? DamageSource.func_94539_a(this) : p_i231610_3_;
        this.field_234893_k_ = p_i231610_4_ == null ? this.func_234894_a_(p_i231610_2_) : p_i231610_4_;
@@ -62,7 +62,7 @@
     }
  
     private ExplosionContext func_234894_a_(@Nullable Entity p_234894_1_) {
-@@ -126,6 +136,11 @@
+@@ -126,6 +135,11 @@
     }
  
     public void func_77278_a() {
@@ -74,7 +74,7 @@
        Set<BlockPos> set = Sets.newHashSet();
        int i = 16;
  
-@@ -154,7 +169,7 @@
+@@ -154,7 +168,7 @@
                          f -= (optional.get() + 0.3F) * 0.3F;
                       }
  
@@ -83,7 +83,7 @@
                          set.add(blockpos);
                       }
  
-@@ -176,6 +191,7 @@
+@@ -176,6 +190,7 @@
        int j2 = MathHelper.func_76128_c(this.field_77282_d - (double)f2 - 1.0D);
        int j1 = MathHelper.func_76128_c(this.field_77282_d + (double)f2 + 1.0D);
        List<Entity> list = this.field_77287_j.func_72839_b(this.field_77283_e, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
@@ -91,7 +91,7 @@
        Vector3d vector3d = new Vector3d(this.field_77284_b, this.field_77285_c, this.field_77282_d);
  
        for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -193,7 +209,15 @@
+@@ -193,7 +208,15 @@
                    d9 = d9 / d13;
                    double d14 = (double)func_222259_a(vector3d, entity);
                    double d10 = (1.0D - d12) * d14;
@@ -108,7 +108,7 @@
                    double d11 = d10;
                    if (entity instanceof LivingEntity) {
                       d11 = ProtectionEnchantment.func_92092_a((LivingEntity)entity, d10);
-@@ -231,17 +255,57 @@
+@@ -231,17 +254,57 @@
           ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist = new ObjectArrayList<>();
           Collections.shuffle(this.field_77281_g, this.field_77287_j.field_73012_v);
  
@@ -171,7 +171,7 @@
                    }
  
                    blockstate.func_215693_a(lootcontext$builder).forEach((p_229977_2_) -> {
-@@ -249,8 +313,7 @@
+@@ -249,8 +312,7 @@
                    });
                 }
  
@@ -181,12 +181,12 @@
                 this.field_77287_j.func_217381_Z().func_76319_b();
              }
           }
-@@ -263,14 +326,19 @@
+@@ -263,14 +325,19 @@
        if (this.field_77286_a) {
           for(BlockPos blockpos2 : this.field_77281_g) {
              if (this.field_77290_i.nextInt(3) == 0 && this.field_77287_j.func_180495_p(blockpos2).func_196958_f() && this.field_77287_j.func_180495_p(blockpos2.func_177977_b()).func_200015_d(this.field_77287_j, blockpos2.func_177977_b())) {
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callBlockIgniteEvent(this.field_77287_j, blockpos2.func_177958_n(), blockpos2.func_177956_o(), blockpos2.func_177952_p(), this).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callBlockIgniteEvent(this.field_77287_j, blockpos2.func_177958_n(), blockpos2.func_177956_o(), blockpos2.func_177952_p(), this).isCancelled()) {
                 this.field_77287_j.func_175656_a(blockpos2, AbstractFireBlock.func_235326_a_(this.field_77287_j, blockpos2));
              }
 +               // CraftBukkit end
@@ -201,7 +201,7 @@
        int i = p_229976_0_.size();
  
        for(int j = 0; j < i; ++j) {
-@@ -324,6 +392,15 @@
+@@ -324,6 +391,15 @@
        return this.field_77281_g;
     }
  

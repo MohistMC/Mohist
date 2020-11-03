@@ -57,7 +57,7 @@
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false)) {
++      if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false)) {
 +         return false;
 +      }
 +      // CraftBukkit end

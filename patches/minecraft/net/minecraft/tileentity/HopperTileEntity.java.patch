@@ -15,8 +15,8 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -109,7 +109,7 @@
 +                  Inventory destinationInventory;
 +                  // Have to special case large chests as they work oddly
 +                  if (iinventory instanceof DoubleSidedInventory) {
-+                     destinationInventory = new org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
++                     destinationInventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
 +                  } else {
 +                     destinationInventory = iinventory.getOwner().getInventory();
 +                  }
@@ -153,7 +153,7 @@
 +         Inventory sourceInventory;
 +         // Have to special case large chests as they work oddly
 +         if (p_174915_1_ instanceof DoubleSidedInventory) {
-+            sourceInventory = new org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) p_174915_1_);
++            sourceInventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) p_174915_1_);
 +         } else {
 +            sourceInventory = p_174915_1_.getOwner().getInventory();
 +         }

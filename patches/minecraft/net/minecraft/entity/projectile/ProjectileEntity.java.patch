@@ -20,7 +20,7 @@
     }
  
     protected void func_70227_a(RayTraceResult p_70227_1_) {
-+      org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callProjectileHitEvent(this, p_70227_1_); // CraftBukkit - Call event
++      org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callProjectileHitEvent(this, p_70227_1_); // CraftBukkit - Call event
        RayTraceResult.Type raytraceresult$type = p_70227_1_.func_216346_c();
        if (raytraceresult$type == RayTraceResult.Type.ENTITY) {
           this.func_213868_a((EntityRayTraceResult)p_70227_1_);

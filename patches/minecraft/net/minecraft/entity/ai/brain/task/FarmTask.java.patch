@@ -23,7 +23,7 @@
              if (block instanceof CropsBlock && ((CropsBlock)block).func_185525_y(blockstate)) {
 -               p_212833_1_.func_225521_a_(this.field_220422_a, true, p_212833_2_);
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
 +                  p_212833_1_.func_225521_a_(this.field_220422_a, true, p_212833_2_);
 +               }
 +               // CraftBukkit end
@@ -59,7 +59,7 @@
 +                        }
                       }
 +
-+                     if (planted != null && !org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, planted.func_176223_P()).isCancelled()) {
++                     if (planted != null && !org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, planted.func_176223_P()).isCancelled()) {
 +                        p_212833_1_.func_180501_a(this.field_220422_a, planted.func_176223_P(), 3);
 +                     } else {
 +                        flag = false;

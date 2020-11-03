@@ -12,7 +12,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
  
  public class RabbitEntity extends AnimalEntity {
     private static final DataParameter<Integer> field_184773_bv = EntityDataManager.func_187226_a(RabbitEntity.class, DataSerializers.field_187192_b);

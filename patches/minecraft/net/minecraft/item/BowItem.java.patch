@@ -39,7 +39,7 @@
                    }
  
 +                  // CraftBukkit start
-+                  org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityShootBowEvent(playerentity, p_77615_1_, itemstack, abstractarrowentity, p_77615_3_.func_184600_cs(), f, !flag1);
++                  org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityShootBowEvent(playerentity, p_77615_1_, itemstack, abstractarrowentity, p_77615_3_.func_184600_cs(), f, !flag1);
 +                  if (event.isCancelled()) {
 +                     event.getProjectile().remove();
 +                     return;

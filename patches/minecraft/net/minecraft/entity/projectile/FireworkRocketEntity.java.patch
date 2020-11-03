@@ -4,7 +4,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
  
  @OnlyIn(
     value = Dist.CLIENT,
@@ -32,7 +32,7 @@
 +      this.field_92056_a += 1;
 +      if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.func_191510_k();
 +         }
 +         // CraftBukkit end
@@ -44,7 +44,7 @@
     protected void func_70088_a() {
        this.field_70180_af.func_187214_a(field_184566_a, ItemStack.field_190927_a);
        this.field_70180_af.func_187214_a(field_191512_b, OptionalInt.empty());
-@@ -150,9 +166,19 @@
+@@ -151,9 +167,19 @@
        }
  
        if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
@@ -65,7 +65,7 @@
     }
  
     private void func_213893_k() {
-@@ -164,7 +190,11 @@
+@@ -165,7 +191,11 @@
     protected void func_213868_a(EntityRayTraceResult p_213868_1_) {
        super.func_213868_a(p_213868_1_);
        if (!this.field_70170_p.field_72995_K) {
@@ -78,7 +78,7 @@
        }
     }
  
-@@ -172,7 +202,11 @@
+@@ -173,7 +203,11 @@
        BlockPos blockpos = new BlockPos(p_230299_1_.func_216350_a());
        this.field_70170_p.func_180495_p(blockpos).func_196950_a(this.field_70170_p, blockpos, this);
        if (!this.field_70170_p.func_201670_d() && this.func_213894_l()) {
@@ -91,7 +91,7 @@
        }
  
        super.func_230299_a_(p_230299_1_);
-@@ -196,7 +230,9 @@
+@@ -197,7 +231,9 @@
  
        if (f > 0.0F) {
           if (this.field_191513_e != null) {
@@ -101,7 +101,7 @@
           }
  
           double d0 = 5.0D;
-@@ -217,7 +253,9 @@
+@@ -218,7 +254,9 @@
  
                 if (flag) {
                    float f1 = f * (float)Math.sqrt((5.0D - (double)this.func_70032_d(livingentity)) / 5.0D);

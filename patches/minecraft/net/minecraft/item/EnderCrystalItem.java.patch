@@ -6,7 +6,7 @@
                    endercrystalentity.func_184517_a(false);
 +
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, endercrystalentity).isCancelled()) {
++                  if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, endercrystalentity).isCancelled()) {
 +                     return ActionResultType.FAIL;
 +                  }
 +                  // CraftBukkit end

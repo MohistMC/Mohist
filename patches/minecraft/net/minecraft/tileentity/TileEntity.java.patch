@@ -16,14 +16,14 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_16_R2.persistence.CraftPersistentDataContainer;
-+import org.bukkit.craftbukkit.v1_16_R2.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.inventory.InventoryHolder;
 +import org.spigotmc.CustomTimingsHandler;
  
 -public abstract class TileEntity {
 +public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity {
-+   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.getTileEntityTimings(this); // Spigot
++   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.getTileEntityTimings(this); // Spigot
 +   // CraftBukkit start - data containers
 +   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 +   public CraftPersistentDataContainer persistentDataContainer;

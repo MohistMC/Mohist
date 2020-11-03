@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,12 +1,12 @@
+@@ -1,36 +1,33 @@
  package net.minecraft.server;
  
  import com.google.common.collect.ImmutableSet;
@@ -15,8 +15,9 @@
  import java.io.File;
  import java.net.Proxy;
  import java.nio.file.Path;
-@@ -15,23 +15,19 @@
- import java.util.UUID;
+ import java.nio.file.Paths;
+ import java.util.Optional;
++import java.util.UUID;
  import java.util.concurrent.CompletableFuture;
  import java.util.function.BooleanSupplier;
 -import joptsimple.OptionParser;
@@ -41,7 +42,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -39,174 +35,156 @@
+@@ -38,174 +35,156 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Bootstrap;
  import net.minecraft.util.registry.DynamicRegistries;
@@ -163,7 +164,7 @@
 +            ResourcePackList resourcepacklist = new ResourcePackList(new ServerPackFinder(), new FolderPackFinder(saveformat$levelsave.func_237285_a_(FolderName.field_237251_g_).toFile(), IPackNameDecorator.field_232627_c_));
  
 -         File file1 = new File(optionset.valueOf(optionspec9));
--         YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString());
+-         YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
 -         MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
 -         GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
 -         PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));

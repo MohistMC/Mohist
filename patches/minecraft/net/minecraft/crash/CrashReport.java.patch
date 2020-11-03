@@ -5,7 +5,7 @@
           return String.format("%d total; %s", list.size(), list.stream().collect(Collectors.joining(" ")));
        });
 +      net.minecraftforge.fml.CrashReportExtender.enhanceCrashReport(this, this.field_85061_c);
-+      this.field_85061_c.func_189529_a("CraftBukkit Information", (ICrashReportDetail) new org.bukkit.craftbukkit.v1_16_R2.CraftCrashReport()); // CraftBukkit
++      this.field_85061_c.func_189529_a("CraftBukkit Information", (ICrashReportDetail) new org.bukkit.craftbukkit.v1_16_R3.CraftCrashReport()); // CraftBukkit
     }
  
     public String func_71501_a() {

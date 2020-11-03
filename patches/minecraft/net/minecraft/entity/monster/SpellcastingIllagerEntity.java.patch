@@ -14,7 +14,7 @@
           --this.field_193321_c;
           if (this.field_193321_c == 0) {
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcastingIllagerEntity.this, func_193320_l())) { // PAIL rename getSpell
++            if (!org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcastingIllagerEntity.this, func_193320_l())) { // PAIL rename getSpell
 +               return;
 +            }
 +            // CraftBukkit end

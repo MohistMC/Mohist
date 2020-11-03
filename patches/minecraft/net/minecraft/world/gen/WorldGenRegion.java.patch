@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
-@@ -170,11 +170,11 @@
+@@ -173,11 +173,11 @@
  
     public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
        BlockState blockstate = this.func_180495_p(p_241212_1_);
@@ -14,7 +14,7 @@
              Block.func_220054_a(blockstate, this.field_201689_f, p_241212_1_, tileentity, p_241212_3_, ItemStack.field_190927_a);
           }
  
-@@ -194,11 +194,11 @@
+@@ -197,11 +197,11 @@
           if (compoundnbt != null) {
              if ("DUMMY".equals(compoundnbt.func_74779_i("id"))) {
                 Block block = blockstate.func_177230_c();
@@ -28,7 +28,7 @@
              } else {
                 tileentity = TileEntity.func_235657_b_(blockstate, compoundnbt);
              }
-@@ -209,8 +209,8 @@
+@@ -212,8 +212,8 @@
              }
           }
  
@@ -39,7 +39,7 @@
           }
  
           return null;
-@@ -225,9 +225,9 @@
+@@ -228,9 +228,9 @@
        }
  
        Block block = p_241211_2_.func_177230_c();
@@ -51,7 +51,7 @@
           } else {
              CompoundNBT compoundnbt = new CompoundNBT();
              compoundnbt.func_74768_a("x", p_241211_1_.func_177958_n());
-@@ -236,7 +236,7 @@
+@@ -239,7 +239,7 @@
              compoundnbt.func_74778_a("id", "DUMMY");
              ichunk.func_201591_a(compoundnbt);
           }
@@ -60,7 +60,7 @@
           ichunk.func_177425_e(p_241211_1_);
        }
  
-@@ -252,9 +252,16 @@
+@@ -255,9 +255,16 @@
     }
  
     public boolean func_217376_c(Entity p_217376_1_) {
@@ -80,7 +80,7 @@
        return true;
     }
  
-@@ -328,6 +335,11 @@
+@@ -331,6 +338,11 @@
     public void func_217378_a(@Nullable PlayerEntity p_217378_1_, int p_217378_2_, BlockPos p_217378_3_, int p_217378_4_) {
     }
  

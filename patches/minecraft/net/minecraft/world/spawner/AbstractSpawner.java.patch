@@ -62,7 +62,7 @@
  
 -                     if (!serverworld.func_242106_g(entity)) {
 +                     // Spigot Start
-+                     if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callSpawnerSpawnEvent(entity, blockpos).isCancelled()) {
++                     if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callSpawnerSpawnEvent(entity, blockpos).isCancelled()) {
 +                        Entity vehicle = entity.func_184187_bx();
 +                        if (vehicle != null) {
 +                           vehicle.field_70128_L = true;

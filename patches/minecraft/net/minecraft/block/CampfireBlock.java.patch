@@ -17,7 +17,7 @@
           if (flag && !p_220066_2_.func_177229_b(field_220101_b) && !p_220066_2_.func_177229_b(field_220103_d)) {
              BlockPos blockpos = p_220066_3_.func_216350_a();
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callBlockIgniteEvent(p_220066_1_, blockpos, p_220066_4_).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callBlockIgniteEvent(p_220066_1_, blockpos, p_220066_4_).isCancelled()) {
 +               return;
 +            }
 +            // CraftBukkit end

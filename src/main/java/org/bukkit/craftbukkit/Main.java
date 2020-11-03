@@ -12,8 +12,7 @@ import com.mohistmc.util.i18n.Message;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
-import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
-import org.fusesource.jansi.AnsiConsole;
+import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 
 public class Main {
     public static boolean useJline = true;

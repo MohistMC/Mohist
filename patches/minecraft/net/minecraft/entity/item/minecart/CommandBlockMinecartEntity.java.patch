@@ -5,7 +5,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftMinecartCommand;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMinecartCommand;
  
  public class CommandBlockMinecartEntity extends AbstractMinecartEntity {
 -   private static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(CommandBlockMinecartEntity.class, DataSerializers.field_187194_d);

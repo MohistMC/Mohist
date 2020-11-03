@@ -6,7 +6,7 @@
        int i = (int)Math.min((long)this.func_77444_a(p_150871_2_) + (long)p_150871_3_, 2147483647L);
 +
 +      // CraftBukkit start - fire Statistic events
-+      org.bukkit.event.Cancellable cancellable = org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.handleStatisticsIncrease(p_150871_1_, p_150871_2_, this.func_77444_a(p_150871_2_), i);
++      org.bukkit.event.Cancellable cancellable = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.handleStatisticsIncrease(p_150871_1_, p_150871_2_, this.func_77444_a(p_150871_2_), i);
 +      if (cancellable != null && cancellable.isCancelled()) {
 +         return;
 +      }

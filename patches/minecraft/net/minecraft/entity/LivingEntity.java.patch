@@ -51,10 +51,10 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import net.minecraftforge.common.ForgeHooks;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_16_R2.SpigotTimings;
-+import org.bukkit.craftbukkit.v1_16_R2.attribute.CraftAttributeMap;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
++import org.bukkit.craftbukkit.v1_16_R3.attribute.CraftAttributeMap;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.entity.*;
 +import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
@@ -490,7 +490,7 @@
     public void func_70606_j(float p_70606_1_) {
 +      // CraftBukkit start - Handle scaled health
 +      if (this instanceof ServerPlayerEntity) {
-+         org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer player = ((ServerPlayerEntity) this).getBukkitEntity();
++         org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer player = ((ServerPlayerEntity) this).getBukkitEntity();
 +         // Squeeze
 +         if (p_70606_1_ < 0.0F) {
 +            player.setRealHealth(0.0D);
