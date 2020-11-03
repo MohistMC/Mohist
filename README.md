@@ -1,7 +1,7 @@
 <img src="https://i.loli.net/2020/09/06/lQscneqbV8Hptxz.png">
 
 <div align="center">
-  <h1>Mohist 1.16.3</h1>
+  <h1>Mohist 1.16.4</h1>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API(1.12.2/1.16), formerly known as Thermos/Cauldron/MCPC+
 
@@ -23,7 +23,7 @@
 
 | Version  | Support |
 | ------------- | ------------- |
-| 1.16.x  | Active  |
+| 1.16.4  | Active  |
 | 1.12.2  | Active  |
 
 Progress
@@ -53,7 +53,7 @@ Building
 * Checkout project
   * Clone Mohist:  
   `git clone https://github.com/Mohist-Community/Mohist.git`  
-  `git checkout 1.16.3`
+  `git checkout 1.16.4`
 * Build Mohist
   * Build with Linux:  
   `bash gradlew setup`  
