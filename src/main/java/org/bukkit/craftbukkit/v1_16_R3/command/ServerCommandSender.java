@@ -117,6 +117,18 @@ public abstract class ServerCommandSender implements CommandSender {
             ServerCommandSender.this.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(components));
         }
 
+        @Override
+        public void sendMessage(UUID sender, net.md_5.bungee.api.chat.BaseComponent... components)
+        {
+            this.sendMessage(components);
+        }
+
+        @Override
+        public void sendMessage(UUID sender, net.md_5.bungee.api.chat.BaseComponent component)
+        {
+            this.sendMessage(component);
+        }
+
     };
 
     @Override
