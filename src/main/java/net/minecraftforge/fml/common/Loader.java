@@ -44,6 +44,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mohistmc.configuration.MohistConfig;
 import com.mohistmc.forge.BukkitPermissionsHandler;
 import java.io.File;
 import java.io.FileInputStream;
@@ -636,7 +637,7 @@ public class Loader
         FMLCommonHandler.instance().fireSidedRegistryEvents();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();
-        PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
+        if (MohistConfig.instance.bukkitPermissionsHandler.getValue()) PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
         FMLLog.log.info("Registered Forge API Permission Handler(Bukkit)");
         modController.transition(LoaderState.INITIALIZATION, false);
         progressBar.step("Initializing Minecraft Engine");

@@ -104,6 +104,8 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting showlogo = new BoolSetting(this, "mohist.showlogo", true, "Show logo");
     public final BoolSetting World_Directory_Client = new BoolSetting(this, "world.directory_in_client", true, "The world directory is the same as the client");
 
+    public final BoolSetting bukkitPermissionsHandler = new BoolSetting(this, "mohist.BukkitPermissionsHandler", true, "Whether to use mohist's permission replacement");
+
     public List<Integer> dimensionsNotLoaded =new ArrayList();
     /* ======================================================================== */
 
