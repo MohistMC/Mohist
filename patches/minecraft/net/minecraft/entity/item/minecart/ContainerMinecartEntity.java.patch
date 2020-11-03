@@ -22,8 +22,8 @@
     @Nullable
 -   private ResourceLocation field_184290_c;
 -   private long field_184291_d;
-+   public ResourceLocation field_184290_c; // private->public CraftBukkit
-+   public long field_184291_d; // private->public CraftBukkit
++   public ResourceLocation field_184290_c;
++   public long field_184291_d;
  
 +   // CraftBukkit start
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();

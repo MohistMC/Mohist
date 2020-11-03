@@ -52,7 +52,7 @@
           if (flag || this.func_70271_g() > 40.0F) {
 +               // CraftBukkit start
 +               VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
-+               this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++               this.field_70170_p.getCBServer().getPluginManager().callEvent(destroyEvent);
 +
 +               if(destroyEvent.isCancelled()){
 +                  this.func_70266_a(40F); // Maximize damage so this doesn't trigger again right away
@@ -99,9 +99,9 @@
  
 +      // CraftBukkit start
 +      org.bukkit.Server server = this.field_70170_p.getCBServer();
-+      org.bukkit.World world = this.field_70170_p.getCBWorld();
++      org.bukkit.World bworld = this.field_70170_p.getCBWorld();
 +
-+      Location to = new Location(world, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, this.field_70125_A);
++      Location to = new Location(bworld, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, this.field_70125_A);
 +      Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 +
 +      server.getPluginManager().callEvent(new VehicleUpdateEvent(vehicle));

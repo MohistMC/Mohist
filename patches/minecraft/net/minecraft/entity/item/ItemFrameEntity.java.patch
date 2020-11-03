@@ -16,15 +16,6 @@
  
     public ItemFrameEntity(EntityType<? extends ItemFrameEntity> p_i50224_1_, World p_i50224_2_) {
        super(p_i50224_1_, p_i50224_2_);
-@@ -52,7 +53,7 @@
-       this.func_174859_a(p_i45852_3_);
-    }
- 
--   protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
-+    protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
-       return 0.0F;
-    }
- 
 @@ -61,7 +62,7 @@
        this.func_184212_Q().func_187214_a(field_184526_d, 0);
     }
@@ -34,7 +25,7 @@
        Validate.notNull(p_174859_1_);
        this.field_174860_b = p_174859_1_;
        if (p_174859_1_.func_176740_k().func_176722_c()) {
-@@ -79,15 +80,24 @@
+@@ -79,16 +80,25 @@
  
     protected void func_174856_o() {
        if (this.field_174860_b != null) {
@@ -47,6 +38,7 @@
 -         double d5 = (double)this.func_82330_g();
 -         double d6 = (double)this.func_82329_d();
 -         Direction.Axis direction$axis = this.field_174860_b.func_176740_k();
+-         switch(direction$axis) {
 +         // CraftBukkit start code moved in to calculateBoundingBox
 +         this.func_174826_a(calculateBoundingBox(this, this.field_174861_a, this.field_174860_b, this.func_82329_d(), this.func_82330_g()));
 +      }
@@ -65,17 +57,27 @@
 +      double d5 = height;
 +      double d6 = width;
 +      final Direction.Axis direction$axis = direction.func_176740_k();
-          switch(direction$axis) {
++      switch (direction$axis) {
           case X:
              d4 = 1.0D;
-@@ -102,9 +112,9 @@
-          d4 = d4 / 32.0D;
-          d5 = d5 / 32.0D;
-          d6 = d6 / 32.0D;
+             break;
+@@ -97,14 +107,14 @@
+             break;
+          case Z:
+             d6 = 1.0D;
+-         }
+-
+-         d4 = d4 / 32.0D;
+-         d5 = d5 / 32.0D;
+-         d6 = d6 / 32.0D;
 -         this.func_174826_a(new AxisAlignedBB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6));
-+         return new AxisAlignedBB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6);
        }
--   }
++
++      d4 = d4 / 32.0D;
++      d5 = d5 / 32.0D;
++      d6 = d6 / 32.0D;
++      return new AxisAlignedBB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6);
+    }
 +   // CraftBukkit end
  
     public boolean func_70518_d() {

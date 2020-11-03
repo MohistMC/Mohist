@@ -12,15 +12,13 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
-+import net.minecraft.util.EntityDamageSource;
++import net.minecraft.util.IndirectEntityDamageSource;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.Rotation;
  import net.minecraft.util.math.AxisAlignedBB;
-@@ -21,14 +23,18 @@
- import net.minecraft.util.math.vector.Vector3d;
+@@ -22,13 +24,16 @@
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.apache.commons.lang3.NotImplementedException;
  import org.apache.commons.lang3.Validate;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -36,7 +34,7 @@
     protected Direction field_174860_b = Direction.SOUTH;
  
     protected HangingEntity(EntityType<? extends HangingEntity> p_i48561_1_, World p_i48561_2_) {
-@@ -43,7 +49,7 @@
+@@ -43,7 +48,7 @@
     protected void func_70088_a() {
     }
  
@@ -45,7 +43,7 @@
        Validate.notNull(p_174859_1_);
        Validate.isTrue(p_174859_1_.func_176740_k().func_176722_c());
        this.field_174860_b = p_174859_1_;
-@@ -54,23 +60,34 @@
+@@ -54,23 +59,34 @@
  
     protected void func_174856_o() {
        if (this.field_174860_b != null) {
@@ -53,7 +51,7 @@
 -         double d1 = (double)this.field_174861_a.func_177956_o() + 0.5D;
 -         double d2 = (double)this.field_174861_a.func_177952_p() + 0.5D;
 +         // CraftBukkit start code moved in to calculateBoundingBox
-+         calculateBoundingBox(this, this.field_174861_a, this.field_174860_b, this.func_82329_d(), this.func_82330_g());
++         this.func_174826_a(calculateBoundingBox(this, this.field_174861_a, this.field_174860_b, this.func_82329_d(), this.func_82330_g()));
 +         // CraftBukkit ebd
 +      }
 +   }
@@ -95,12 +93,12 @@
              d8 = 1.0D;
           } else {
              d6 = 1.0D;
-@@ -79,11 +96,11 @@
+@@ -79,11 +95,11 @@
           d6 = d6 / 32.0D;
           d7 = d7 / 32.0D;
           d8 = d8 / 32.0D;
 -         this.func_174826_a(new AxisAlignedBB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8));
-+      return new AxisAlignedBB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8);
++         return new AxisAlignedBB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8);
        }
 -   }
 +   // CraftBukkit end
@@ -110,7 +108,7 @@
        return p_190202_1_ % 32 == 0 ? 0.5D : 0.0D;
     }
  
-@@ -93,9 +110,24 @@
+@@ -93,15 +109,29 @@
              this.func_70076_C();
           }
  
@@ -118,25 +116,32 @@
 +         if (this.field_70520_f++ == this.field_70170_p.spigotConfig.hangingTickFrequency) { // Spigot
              this.field_70520_f = 0;
              if (!this.field_70128_L && !this.func_70518_d()) {
-+            // CraftBukkit start - fire break events
-+            Material material = this.field_70170_p.func_180495_p(new BlockPos(this)).func_185904_a();
-+            HangingBreakEvent.RemoveCause cause;
-+            if (!material.equals(Material.field_151579_a)) {
-+               // TODO: This feels insufficient to catch 100% of suffocation cases
-+               cause = HangingBreakEvent.RemoveCause.OBSTRUCTION;
-+            } else {
-+               cause = HangingBreakEvent.RemoveCause.PHYSICS;
-+            }
-+            HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), cause);
-+            this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
-+            if (field_70128_L || event.isCancelled()) {
-+               return;
-+            }
-+            // CraftBukkit end
++               // CraftBukkit start - fire break events
++               Material material = this.field_70170_p.func_180495_p(new BlockPos(this)).func_185904_a();
++               HangingBreakEvent.RemoveCause cause;
++               if (!material.equals(Material.field_151579_a)) {
++                  // TODO: This feels insufficient to catch 100% of suffocation cases
++                  cause = HangingBreakEvent.RemoveCause.OBSTRUCTION;
++               } else {
++                  cause = HangingBreakEvent.RemoveCause.PHYSICS;
++               }
++               HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), cause);
++               this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++               if (field_70128_L || event.isCancelled()) {
++                  return;
++               }
++               // CraftBukkit end
                 this.func_70106_y();
-                this.func_110128_b((Entity)null);
+-               this.func_110128_b((Entity)null);
++               this.func_110128_b((Entity) null);
              }
-@@ -120,6 +152,8 @@
+          }
+       }
+-
+    }
+ 
+    public boolean func_70518_d() {
+@@ -120,6 +150,8 @@
                 int j1 = (j - 1) / -2;
                 blockpos$mutable.func_189533_g(blockpos).func_189534_c(direction, k + i1).func_189534_c(Direction.UP, l + j1);
                 BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$mutable);
@@ -145,12 +150,12 @@
                 if (!blockstate.func_185904_a().func_76220_a() && !RedstoneDiodeBlock.func_185546_B(blockstate)) {
                    return false;
                 }
-@@ -152,6 +186,19 @@
+@@ -152,6 +184,19 @@
           return false;
        } else {
           if (!this.field_70128_L && !this.field_70170_p.field_72995_K) {
 +            // CraftBukkit start - fire break events
-+            Entity damager = (p_70097_1_ instanceof EntityDamageSource) ? ((EntityDamageSource) p_70097_1_).getProximateDamageSource() : p_70097_1_.func_76346_g();
++            Entity damager = (p_70097_1_ instanceof IndirectEntityDamageSource) ? ((IndirectEntityDamageSource) p_70097_1_).getProximateDamageSource() : p_70097_1_.func_76346_g();
 +            HangingBreakEvent event;
 +            if (damager != null) {
 +               event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_70097_1_.func_94541_c() ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
@@ -165,11 +170,12 @@
              this.func_70106_y();
              this.func_70018_K();
              this.func_110128_b(p_70097_1_.func_76346_g());
-@@ -163,6 +210,15 @@
+@@ -163,6 +208,17 @@
  
     public void func_213315_a(MoverType p_213315_1_, Vector3d p_213315_2_) {
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L && p_213315_2_.func_189985_c() > 0.0D) {
 +         if (this.field_70128_L) return; // CraftBukkit
++
 +         // CraftBukkit start - fire break events
 +         // TODO - Does this need its own cause? Seems to only be triggered by pistons
 +         HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.PHYSICS);
@@ -178,6 +184,7 @@
 +            return;
 +         }
 +         // CraftBukkit end
++
           this.func_70106_y();
           this.func_110128_b((Entity)null);
        }

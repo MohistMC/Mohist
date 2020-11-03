@@ -262,7 +262,7 @@ public abstract class PotionEffectType {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    private static final PotionEffectType[] byId = new PotionEffectType[33];
+    private static final Map<Integer, PotionEffectType> byId = new HashMap<>();
     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
     // will break on updates.
     private static boolean acceptingNew = true;
@@ -277,9 +277,7 @@ public abstract class PotionEffectType {
     @Deprecated
     @Nullable
     public static PotionEffectType getById(int id) {
-        if (id >= byId.length || id < 0)
-            return null;
-        return byId[id];
+        return byId.get(id);
     }
 
     /**
@@ -302,14 +300,7 @@ public abstract class PotionEffectType {
      * @param type PotionType to register
      */
     public static void registerPotionEffectType(@NotNull PotionEffectType type) {
-        if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH))) {
-            throw new IllegalArgumentException("Cannot set already-set type");
-        } else if (!acceptingNew) {
-            throw new IllegalStateException(
-                    "No longer accepting new potion effect types (can only be done by the server implementation)");
-        }
-
-        byId[type.id] = type;
+        byId.put(type.id, type);
         byName.put(type.getName().toLowerCase(java.util.Locale.ENGLISH), type);
     }
 
@@ -328,6 +319,11 @@ public abstract class PotionEffectType {
      */
     @NotNull
     public static PotionEffectType[] values() {
-        return Arrays.copyOfRange(byId, 1, byId.length);
+        int maxId = 0;
+        for (int id : byId.keySet()) {
+            maxId = Math.max(maxId, id);
+        }
+        PotionEffectType[] result = new PotionEffectType[maxId + 1];
+        return byId.values().toArray(result);
     }
 }
