@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/world/GameRules.java
++++ ../src-work/minecraft/net/minecraft/world/GameRules.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.world;
+ 
++import com.mohistmc.configuration.MohistConfig;
+ import java.util.Set;
+ import java.util.TreeMap;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -12,7 +13,7 @@
+     {
+         this.func_180262_a("doFireTick", "true", GameRules.ValueType.BOOLEAN_VALUE);
+         this.func_180262_a("mobGriefing", "true", GameRules.ValueType.BOOLEAN_VALUE);
+-        this.func_180262_a("keepInventory", "false", GameRules.ValueType.BOOLEAN_VALUE);
++        this.func_180262_a("keepInventory", MohistConfig.instance.keepInventory.getValue().toString(), GameRules.ValueType.BOOLEAN_VALUE);
+         this.func_180262_a("doMobSpawning", "true", GameRules.ValueType.BOOLEAN_VALUE);
+         this.func_180262_a("doMobLoot", "true", GameRules.ValueType.BOOLEAN_VALUE);
+         this.func_180262_a("doTileDrops", "true", GameRules.ValueType.BOOLEAN_VALUE);

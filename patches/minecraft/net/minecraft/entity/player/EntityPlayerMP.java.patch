@@ -341,7 +341,7 @@
          boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
          this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
 +        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<>(this.field_71071_by.func_70302_i_());
-+        boolean keepInventory = this.field_70170_p.func_82736_K().func_82766_b("keepInventory") || this.func_175149_v();
++        boolean keepInventory = this.field_70170_p.func_82736_K().func_82766_b("keepInventory") || this.func_175149_v() || MohistConfig.instance.keepInventory.getValue();
  
 -        if (flag)
 -        {

@@ -40,6 +40,8 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting support_nocmd = new BoolSetting(this, "mohist.support_nocmd", false, Message.getString("mohistsettings.support_nocmd"));
     // Bukkit Event Canceled
     public final BoolSetting explosion_canceled = new BoolSetting(this, "eventCanceled.explosion", false, Message.getString("mohistsettings.explosion_canceled"));
+    public final BoolSetting keepInventory = new BoolSetting(this, "eventCanceled.keepInventory", true, Message.getString("mohistsettings.keepInventory"));
+    public final BoolSetting keepLevel = new BoolSetting(this, "eventCanceled.keepLevel", true, Message.getString("mohistsettings.keepLevel"));
 
     public final BoolSetting use_custom_java8 = new BoolSetting(this, "mohist.use_custom_java8", false, Message.getString("mohistsettings.use_custom_java8"));
     public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true, Message.getString("mohistsettings.check_update"));
