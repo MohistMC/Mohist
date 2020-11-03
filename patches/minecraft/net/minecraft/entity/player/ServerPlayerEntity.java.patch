@@ -789,9 +789,9 @@
     }
  
 +   // CraftBukkit start - Support multi-line messages
-+   public void sendMessage(ITextComponent[] ichatbasecomponent) {
++   public void sendMessage(UUID uuid, ITextComponent[] ichatbasecomponent) {
 +      for (ITextComponent component : ichatbasecomponent) {
-+         this.func_145747_a(component, Util.field_240973_b_);
++         this.func_145747_a(component, (uuid == null) ? Util.field_240973_b_ : uuid);
 +      }
 +   }
 +   // CraftBukkit end

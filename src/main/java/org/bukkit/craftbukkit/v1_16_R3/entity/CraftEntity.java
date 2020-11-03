@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
@@ -1016,6 +1017,16 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
         @Override
         public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components)
+        {
+        }
+
+        @Override
+        public void sendMessage(UUID sender, BaseComponent... components)
+        {
+        }
+
+        @Override
+        public void sendMessage(UUID sender, BaseComponent component)
         {
         }
 

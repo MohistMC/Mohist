@@ -1796,6 +1796,19 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
             getHandle().connection.sendPacket(packet);
         }
 
+        @Override
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, UUID sender, BaseComponent component) {
+            sendMessage( position, sender, new BaseComponent[] { component } );
+        }
+
+        @Override
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, UUID sender, BaseComponent... components) {
+            if ( getHandle().connection == null ) return;
+
+            SChatPacket packet = new SChatPacket(null, ChatType.byId((byte) position.ordinal()), sender == null ? Util.DUMMY_UUID : sender);
+            packet.components = components;
+            getHandle().connection.sendPacket(packet);
+        }
     };
 
     public Player.Spigot spigot()
