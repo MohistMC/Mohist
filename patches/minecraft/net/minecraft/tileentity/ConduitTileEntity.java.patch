@@ -4,8 +4,8 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
  
  public class ConduitTileEntity extends TileEntity implements ITickableTileEntity {

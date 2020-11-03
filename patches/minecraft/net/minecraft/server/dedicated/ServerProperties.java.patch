@@ -16,7 +16,7 @@
     public final boolean field_219007_a = this.func_218982_a("online-mode", true);
     public final boolean field_219008_b = this.func_218982_a("prevent-proxy-connections", false);
     public final String field_219009_c = this.func_218973_a("server-ip", "");
-@@ -61,8 +63,10 @@
+@@ -62,8 +64,10 @@
     public final PropertyManager<ServerProperties>.Property<Boolean> field_219006_S;
     public final DimensionGeneratorSettings field_241082_U_;
  
@@ -29,7 +29,7 @@
        if (this.func_218982_a("snooper-enabled", true)) {
        }
  
-@@ -93,11 +97,13 @@
+@@ -95,11 +99,13 @@
        this.field_241082_U_ = DimensionGeneratorSettings.func_242753_a(p_i242099_2_, p_i242099_1_);
     }
  

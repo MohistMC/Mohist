@@ -21,8 +21,8 @@
  import net.minecraft.world.server.ServerWorld;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_16_R2.util.DummyGeneratorAccess;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R3.util.DummyGeneratorAccess;
 +import org.bukkit.event.block.BlockDispenseEvent;
 +import org.bukkit.event.world.StructureGrowEvent;
  
@@ -179,7 +179,7 @@
 +            }
 +            SmallFireballEntity entitysmallfireball = new SmallFireballEntity(world, d0, d1, d2, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +            entitysmallfireball.func_213898_b(itemstack1);
-+            entitysmallfireball.projectileSource = new org.bukkit.craftbukkit.v1_16_R2.projectiles.CraftBlockProjectileSource((DispenserTileEntity) p_82487_1_.func_150835_j());
++            entitysmallfireball.projectileSource = new org.bukkit.craftbukkit.v1_16_R3.projectiles.CraftBlockProjectileSource((DispenserTileEntity) p_82487_1_.func_150835_j());
 +            world.func_217376_c(entitysmallfireball);
 +            // stack.shrink(1); // Handled during event processing
 +            // CraftBukkit end
@@ -306,7 +306,7 @@
              if (AbstractFireBlock.func_241465_a_(world, blockpos, direction)) {
 -               world.func_175656_a(blockpos, AbstractFireBlock.func_235326_a_(world, blockpos));
 +               // CraftBukkit start - Ignition by dispensing flint and steel
-+               if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callBlockIgniteEvent(world, blockpos, p_82487_1_.func_180699_d()).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callBlockIgniteEvent(world, blockpos, p_82487_1_.func_180699_d()).isCancelled()) {
 +                  world.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
 +               }
 +               // CraftBukkit end

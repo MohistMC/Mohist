@@ -12,8 +12,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftBlockInventoryHolder;
-+import org.bukkit.craftbukkit.v1_16_R2.util.DummyGeneratorAccess;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftBlockInventoryHolder;
++import org.bukkit.craftbukkit.v1_16_R3.util.DummyGeneratorAccess;
  
  public class ComposterBlock extends Block implements ISidedInventoryProvider {
     public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
@@ -40,7 +40,7 @@
 +         // CraftBukkit start
 +         double rand = world.func_201674_k().nextDouble();
 +         BlockState blockstate = attemptCompost(state, DummyGeneratorAccess.INSTANCE, pos, stack, rand);
-+         if (state == blockstate || org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, blockstate).isCancelled()) {
++         if (state == blockstate || org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, blockstate).isCancelled()) {
 +            return state;
 +         }
 +         blockstate = attemptCompost(state, (IWorld) world, pos, stack, rand);
@@ -60,7 +60,7 @@
 +   public static BlockState empty(BlockState state, World world, BlockPos pos, Entity entity) {
 +      if (entity != null) {
 +         BlockState iblockdata1 = func_235490_d_(state, DummyGeneratorAccess.INSTANCE, pos);
-+         if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, iblockdata1).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, iblockdata1).isCancelled()) {
 +            return state;
 +         }
 +      }

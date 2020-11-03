@@ -1,12 +1,11 @@
 --- a/net/minecraft/inventory/container/HopperContainer.java
 +++ b/net/minecraft/inventory/container/HopperContainer.java
-@@ -5,10 +5,29 @@
+@@ -5,10 +5,28 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryView;
-+import org.bukkit.inventory.InventoryView;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
  
  public class HopperContainer extends Container {
     private final IInventory field_94538_a;
@@ -30,7 +29,7 @@
     public HopperContainer(int p_i50078_1_, PlayerInventory p_i50078_2_) {
        this(p_i50078_1_, p_i50078_2_, new Inventory(5));
     }
-@@ -16,6 +35,7 @@
+@@ -16,6 +34,7 @@
     public HopperContainer(int p_i50079_1_, PlayerInventory p_i50079_2_, IInventory p_i50079_3_) {
        super(ContainerType.field_221522_p, p_i50079_1_);
        this.field_94538_a = p_i50079_3_;
@@ -38,7 +37,7 @@
        func_216962_a(p_i50079_3_, 5);
        p_i50079_3_.func_174889_b(p_i50079_2_.field_70458_d);
        int i = 51;
-@@ -37,6 +57,7 @@
+@@ -37,6 +56,7 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {

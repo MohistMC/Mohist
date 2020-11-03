@@ -12,7 +12,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPickupItemEvent;
 +import org.bukkit.event.player.PlayerPickupItemEvent;
  
@@ -113,7 +113,7 @@
 +      // CraftBukkit end
 +      if (!this.field_70170_p.field_72995_K && this.field_70292_b >= field_70170_p.spigotConfig.itemDespawnRate) { // Spigot
 +         // CraftBukkit start - fire ItemDespawnEvent
-+         if (org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +            this.field_70292_b = 0;
 +            return;
 +         }

@@ -13,7 +13,7 @@
  import java.io.BufferedReader;
  import java.io.IOException;
  import java.io.InputStreamReader;
-@@ -34,15 +36,16 @@
+@@ -35,14 +37,16 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerPropertiesProvider;
  import net.minecraft.server.gui.MinecraftServerGui;
@@ -21,7 +21,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.server.management.PreYggdrasilConverter;
  import net.minecraft.tileentity.SkullTileEntity;
- import net.minecraft.util.CryptManager;
++import net.minecraft.util.CryptManager;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
 -import net.minecraft.util.DefaultWithNameUncaughtExceptionHandler;
  import net.minecraft.util.NonNullList;
@@ -31,7 +31,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.DynamicRegistries;
-@@ -53,22 +56,31 @@
+@@ -55,24 +59,33 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
@@ -40,7 +40,7 @@
  import org.apache.logging.log4j.Logger;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_16_R2.SpigotTimings;
++import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.bukkit.plugin.Plugin;
@@ -57,6 +57,8 @@
 +   public ServerPropertiesProvider field_71340_o;
     @Nullable
     private MinecraftServerGui field_213225_q;
+    @Nullable
+    private final ChatFilterClient field_244714_r;
  
 -   public DedicatedServer(Thread p_i232601_1_, DynamicRegistries.Impl p_i232601_2_, SaveFormat.LevelSave p_i232601_3_, ResourcePackList p_i232601_4_, DataPackRegistries p_i232601_5_, IServerConfiguration p_i232601_6_, ServerPropertiesProvider p_i232601_7_, DataFixer p_i232601_8_, MinecraftSessionService p_i232601_9_, GameProfileRepository p_i232601_10_, PlayerProfileCache p_i232601_11_, IChunkStatusListenerFactory p_i232601_12_) {
 -      super(p_i232601_1_, p_i232601_2_, p_i232601_3_, p_i232601_6_, p_i232601_4_, Proxy.NO_PROXY, p_i232601_8_, p_i232601_5_, p_i232601_9_, p_i232601_10_, p_i232601_11_, p_i232601_12_);
@@ -66,8 +68,8 @@
 +      // CraftBukkit end
        this.field_71340_o = p_i232601_7_;
        this.field_184115_n = new RConConsoleSource(this);
-    }
-@@ -76,12 +88,38 @@
+       this.field_244714_r = null;
+@@ -81,12 +94,38 @@
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -110,7 +112,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-@@ -89,6 +127,21 @@
+@@ -94,6 +133,21 @@
  
           }
        };
@@ -121,7 +123,7 @@
 +      for (java.util.logging.Handler handler : global.getHandlers()) {
 +         global.removeHandler(handler);
 +      }
-+      global.addHandler(new org.bukkit.craftbukkit.v1_16_R2.util.ForwardLogHandler());
++      global.addHandler(new org.bukkit.craftbukkit.v1_16_R3.util.ForwardLogHandler());
 +
 +      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
 +
@@ -132,7 +134,7 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
        thread.start();
-@@ -107,6 +160,12 @@
+@@ -112,6 +166,12 @@
           this.func_71189_e(serverproperties.field_219009_c);
        }
  
@@ -145,7 +147,7 @@
        this.func_71188_g(serverproperties.field_219012_f);
        this.func_71245_h(serverproperties.field_219013_g);
        this.func_180507_a_(serverproperties.field_219014_h, this.func_184113_aK());
-@@ -114,7 +173,7 @@
+@@ -119,7 +179,7 @@
        this.func_104055_i(serverproperties.field_219016_j);
        super.func_143006_e(serverproperties.field_219005_R.get());
        this.func_205741_k(serverproperties.field_219017_k);
@@ -154,7 +156,7 @@
        field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
        InetAddress inetaddress = null;
        if (!this.func_71211_k().isEmpty()) {
-@@ -138,6 +197,12 @@
+@@ -142,6 +202,12 @@
           return false;
        }
  
@@ -167,7 +169,7 @@
        if (!this.func_71266_T()) {
           field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
           field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
-@@ -152,17 +217,20 @@
+@@ -156,17 +222,20 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -190,11 +192,11 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -175,23 +243,17 @@
+@@ -179,23 +248,17 @@
           if (serverproperties.field_219030_x) {
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = MainThread.func_242130_a(this);
-+            this.remoteConsole = new org.bukkit.craftbukkit.v1_16_R2.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
++            this.remoteConsole = new org.bukkit.craftbukkit.v1_16_R3.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
           }
  
 -         if (this.func_175593_aQ() > 0L) {
@@ -218,7 +220,7 @@
     }
  
     public boolean func_230537_U_() {
-@@ -272,7 +334,7 @@
+@@ -280,7 +343,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -227,7 +229,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -295,11 +357,21 @@
+@@ -303,11 +366,21 @@
     }
  
     public void func_71333_ah() {
@@ -250,7 +252,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -402,7 +474,7 @@
+@@ -410,7 +483,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -259,7 +261,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -481,13 +553,39 @@
+@@ -489,13 +562,39 @@
     }
  
     public String func_71258_A() {
@@ -301,7 +303,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -507,6 +605,11 @@
+@@ -515,6 +614,11 @@
        return false;
     }
  
@@ -313,9 +315,9 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -518,4 +621,15 @@
-    public boolean func_230540_aS_() {
-       return this.field_71340_o.func_219034_a().field_241078_O_;
+@@ -531,4 +635,15 @@
+    public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
+       return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
     }
 +
 +   // CraftBukkit start

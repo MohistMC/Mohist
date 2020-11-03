@@ -44,7 +44,7 @@
 +         if (isIncendiary) { // CraftBukkit
              BlockPos blockpos = p_230299_1_.func_216350_a().func_177972_a(p_230299_1_.func_216354_b());
 -            if (this.field_70170_p.func_175623_d(blockpos)) {
-+            if (this.field_70170_p.func_175623_d(blockpos) && !org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) { // CraftBukkit
++            if (this.field_70170_p.func_175623_d(blockpos) && !org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) { // CraftBukkit
                 this.field_70170_p.func_175656_a(blockpos, AbstractFireBlock.func_235326_a_(this.field_70170_p, blockpos));
              }
           }

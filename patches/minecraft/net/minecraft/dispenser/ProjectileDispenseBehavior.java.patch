@@ -9,7 +9,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Direction;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public abstract class ProjectileDispenseBehavior extends DefaultDispenseItemBehavior {
@@ -45,7 +45,7 @@
 +         }
 +      }
 +      iprojectile.func_70186_c(event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), this.func_82500_b(), this.func_82498_a());
-+      ((Entity) iprojectile).projectileSource = new org.bukkit.craftbukkit.v1_16_R2.projectiles.CraftBlockProjectileSource(p_82487_1_.func_150835_j());
++      ((Entity) iprojectile).projectileSource = new org.bukkit.craftbukkit.v1_16_R3.projectiles.CraftBlockProjectileSource(p_82487_1_.func_150835_j());
 +      // CraftBukkit end
 +      world.func_217376_c((Entity) iprojectile);
 +      // stack.shrink(1); // CraftBukkit - Handled during event processing

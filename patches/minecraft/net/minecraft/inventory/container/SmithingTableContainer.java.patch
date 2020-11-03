@@ -4,7 +4,7 @@
  import net.minecraft.item.crafting.SmithingRecipe;
  import net.minecraft.util.IWorldPosCallable;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
  
  public class SmithingTableContainer extends AbstractRepairContainer {
     private final World field_234651_g_;
@@ -24,13 +24,13 @@
        List<SmithingRecipe> list = this.field_234651_g_.func_199532_z().func_215370_b(IRecipeType.field_234827_g_, this.field_234643_d_, this.field_234651_g_);
        if (list.isEmpty()) {
 -         this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+         org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++         org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
        } else {
           this.field_234652_h_ = list.get(0);
           ItemStack itemstack = this.field_234652_h_.func_77572_b(this.field_234643_d_);
           this.field_234642_c_.func_193056_a(this.field_234652_h_);
 -         this.field_234642_c_.func_70299_a(0, itemstack);
-+         org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack); // CraftBukkit
++         org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack); // CraftBukkit
        }
  
     }
@@ -45,7 +45,7 @@
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
-+      org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventorySmithing(this.field_234644_e_.getLocation(), this.field_234643_d_, this.field_234642_c_);
++      org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventorySmithing(this.field_234644_e_.getLocation(), this.field_234643_d_, this.field_234642_c_);
 +      bukkitEntity = new CraftInventoryView(this.field_234645_f_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }

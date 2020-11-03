@@ -1,13 +1,12 @@
 --- a/net/minecraft/inventory/container/RepairContainer.java
 +++ b/net/minecraft/inventory/container/RepairContainer.java
-@@ -19,13 +19,22 @@
+@@ -19,13 +19,21 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryAnvil;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryView;
-+import org.bukkit.inventory.InventoryView;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryAnvil;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
  
  public class RepairContainer extends AbstractRepairContainer {
     private static final Logger field_148326_f = LogManager.getLogger();
@@ -25,7 +24,7 @@
     public RepairContainer(int p_i50101_1_, PlayerInventory p_i50101_2_) {
        this(p_i50101_1_, p_i50101_2_, IWorldPosCallable.field_221489_a);
     }
-@@ -48,6 +57,8 @@
+@@ -48,6 +56,8 @@
           p_230301_1_.func_82242_a(-this.field_82854_e.func_221495_b());
        }
  
@@ -34,7 +33,7 @@
        this.field_234643_d_.func_70299_a(0, ItemStack.field_190927_a);
        if (this.field_82856_l > 0) {
           ItemStack itemstack = this.field_234643_d_.func_70301_a(1);
-@@ -64,7 +75,7 @@
+@@ -64,7 +74,7 @@
        this.field_82854_e.func_221494_a(0);
        this.field_234644_e_.func_221486_a((p_234633_1_, p_234633_2_) -> {
           BlockState blockstate = p_234633_1_.func_180495_p(p_234633_2_);
@@ -43,16 +42,16 @@
              BlockState blockstate1 = AnvilBlock.func_196433_f(blockstate);
              if (blockstate1 == null) {
                 p_234633_1_.func_217377_a(p_234633_2_, false);
-@@ -88,7 +99,7 @@
+@@ -88,7 +98,7 @@
        int j = 0;
        int k = 0;
        if (itemstack.func_190926_b()) {
 -         this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+         org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++         org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
           this.field_82854_e.func_221494_a(0);
        } else {
           ItemStack itemstack1 = itemstack.func_77946_l();
-@@ -96,12 +107,15 @@
+@@ -96,12 +106,15 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
           this.field_82856_l = 0;
@@ -66,29 +65,29 @@
                 int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);
                 if (l2 <= 0) {
 -                  this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
-@@ -117,7 +131,7 @@
+@@ -117,7 +130,7 @@
                 this.field_82856_l = i3;
              } else {
                 if (!flag && (itemstack1.func_77973_b() != itemstack2.func_77973_b() || !itemstack1.func_77984_f())) {
 -                  this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
-@@ -196,7 +210,7 @@
+@@ -196,7 +209,7 @@
                 }
  
                 if (flag3 && !flag2) {
 -                  this.field_234642_c_.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
-@@ -214,17 +228,18 @@
+@@ -214,17 +227,18 @@
              i += k;
              itemstack1.func_200302_a(new StringTextComponent(this.field_82857_m));
           }
@@ -110,7 +109,7 @@
              itemstack1 = ItemStack.field_190927_a;
           }
  
-@@ -269,4 +284,20 @@
+@@ -269,4 +283,20 @@
     public int func_216976_f() {
        return this.field_82854_e.func_221495_b();
     }

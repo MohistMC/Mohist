@@ -12,7 +12,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityEnterLoveModeEvent;
  
  public abstract class AnimalEntity extends AgeableEntity {
@@ -95,7 +95,7 @@
  
 +         // CraftBukkit start - call EntityBreedEvent
 +         int experience = this.func_70681_au().nextInt(7) + 1;
-+         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityBreedEvent(ageableentity, this, p_234177_2_, serverplayerentity, this.breedItem, experience);
++         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityBreedEvent(ageableentity, this, p_234177_2_, serverplayerentity, this.breedItem, experience);
 +         if (entityBreedEvent.isCancelled()) {
 +            return;
 +         }

@@ -37,30 +37,28 @@
  import net.minecraft.util.Hand;
  import net.minecraft.util.HandSide;
  import net.minecraft.util.NonNullList;
-@@ -121,6 +126,7 @@
- import net.minecraft.util.text.TextFormatting;
+@@ -122,6 +127,7 @@
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.util.text.event.HoverEvent;
+ import net.minecraft.util.text.filter.IChatFilter;
 +import net.minecraft.world.DimensionType;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -129,13 +135,29 @@
+@@ -130,13 +136,27 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
-+import org.bukkit.GameMode;
 +import org.bukkit.Location;
 +import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.v1_16_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.event.inventory.InventoryType;
 +import org.bukkit.event.player.PlayerChangedMainHandEvent;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
-+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 +import org.bukkit.event.player.PlayerLocaleChangeEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -76,7 +74,7 @@
     private final PlayerAdvancements field_192042_bX;
     private final ServerStatisticsManager field_147103_bO;
     private float field_130068_bO = Float.MIN_VALUE;
-@@ -147,8 +169,8 @@
+@@ -148,8 +168,8 @@
     private float field_71149_ch = -1.0E8F;
     private int field_71146_ci = -99999999;
     private boolean field_71147_cj = true;
@@ -87,7 +85,7 @@
     private ChatVisibility field_71143_cn;
     private boolean field_71140_co = true;
     private long field_143005_bX = Util.func_211177_b();
-@@ -172,20 +194,69 @@
+@@ -175,21 +195,70 @@
     public int field_71138_i;
     public boolean field_71136_j;
  
@@ -115,6 +113,7 @@
        this.field_192042_bX = p_i45285_1_.func_184103_al().func_192054_h(this);
        this.field_70138_W = 1.0F;
        this.func_205734_a(p_i45285_2_);
+       this.field_244528_co = p_i45285_1_.func_244435_a(this);
 +
 +      // CraftBukkit start
 +      this.displayName = this.func_195047_I_();
@@ -159,7 +158,7 @@
           int i = Math.max(0, this.field_71133_b.func_184108_a(p_205734_1_));
           int j = MathHelper.func_76128_c(p_205734_1_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
           if (j < i) {
-@@ -247,11 +318,20 @@
+@@ -251,11 +320,20 @@
        if (p_70037_1_.func_150297_b("recipeBook", 10)) {
           this.field_192041_cq.func_192825_a(p_70037_1_.func_74775_l("recipeBook"), this.field_71133_b.func_199529_aN());
        }
@@ -180,7 +179,7 @@
        if (p_70037_1_.func_150297_b("SpawnX", 99) && p_70037_1_.func_150297_b("SpawnY", 99) && p_70037_1_.func_150297_b("SpawnZ", 99)) {
           this.field_241138_cr_ = new BlockPos(p_70037_1_.func_74762_e("SpawnX"), p_70037_1_.func_74762_e("SpawnY"), p_70037_1_.func_74762_e("SpawnZ"));
           this.field_241139_cs_ = p_70037_1_.func_74767_n("SpawnForced");
-@@ -278,7 +358,19 @@
+@@ -282,7 +360,19 @@
  
        Entity entity1 = this.func_184208_bv();
        Entity entity = this.func_184187_bx();
@@ -201,7 +200,7 @@
           CompoundNBT compoundnbt1 = new CompoundNBT();
           CompoundNBT compoundnbt2 = new CompoundNBT();
           entity1.func_70039_c(compoundnbt2);
-@@ -299,8 +391,31 @@
+@@ -303,8 +393,31 @@
              p_213281_1_.func_218657_a("SpawnDimension", p_241148_1_);
           });
        }
@@ -233,7 +232,7 @@
  
     public void func_195394_a(int p_195394_1_) {
        float f = (float)this.func_71050_bK();
-@@ -347,6 +462,11 @@
+@@ -351,6 +464,11 @@
     }
  
     public void func_70071_h_() {
@@ -245,7 +244,7 @@
        this.field_71134_c.func_73075_a();
        --this.field_147101_bU;
        if (this.field_70172_ad > 0) {
-@@ -411,7 +531,7 @@
+@@ -415,7 +533,7 @@
           }
  
           if (this.func_110143_aJ() != this.field_71149_ch || this.field_71146_ci != this.field_71100_bB.func_75116_a() || this.field_71100_bB.func_75115_e() == 0.0F != this.field_71147_cj) {
@@ -254,7 +253,7 @@
              this.field_71149_ch = this.func_110143_aJ();
              this.field_71146_ci = this.field_71100_bB.func_75116_a();
              this.field_71147_cj = this.field_71100_bB.func_75115_e() == 0.0F;
-@@ -442,6 +562,12 @@
+@@ -446,6 +564,12 @@
              this.func_184849_a(ScoreCriteria.field_186701_k, MathHelper.func_76123_f((float)this.field_184856_bZ));
           }
  
@@ -267,7 +266,7 @@
           if (this.field_71068_ca != this.field_184855_bY) {
              this.field_184855_bY = this.field_71068_ca;
              this.func_184849_a(ScoreCriteria.field_186702_l, MathHelper.func_76123_f((float)this.field_184855_bY));
-@@ -456,6 +582,16 @@
+@@ -460,6 +584,16 @@
              CriteriaTriggers.field_192135_o.func_192215_a(this);
           }
  
@@ -284,7 +283,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Player being ticked");
-@@ -465,15 +601,48 @@
+@@ -469,15 +603,48 @@
     }
  
     private void func_184849_a(ScoreCriteria p_184849_1_, int p_184849_2_) {
@@ -331,12 +330,12 @@
 +         if (deathMessage.equals(deathmessage)) {
 +            itextcomponent = this.func_110142_aN().func_151521_b();
 +         } else {
-+            itextcomponent = org.bukkit.craftbukkit.v1_16_R2.util.CraftChatMessage.fromStringOrNull(deathMessage);
++            itextcomponent = org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromStringOrNull(deathMessage);
 +         }
           this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent), (p_212356_2_) -> {
              if (!p_212356_2_.isSuccess()) {
                 int i = 256;
-@@ -505,11 +674,20 @@
+@@ -509,11 +676,20 @@
           this.func_241157_eT_();
        }
  
@@ -360,7 +359,7 @@
        LivingEntity livingentity = this.func_94060_bK();
        if (livingentity != null) {
           this.func_71029_a(Stats.field_199091_i.func_199076_b(livingentity.func_200600_R()));
-@@ -541,10 +719,12 @@
+@@ -545,10 +721,12 @@
           this.func_85039_t(p_191956_2_);
           String s = this.func_195047_I_();
           String s1 = p_191956_1_.func_195047_I_();
@@ -375,7 +374,7 @@
           } else {
              this.func_195066_a(Stats.field_188070_B);
           }
-@@ -560,7 +740,8 @@
+@@ -564,7 +742,8 @@
        if (scoreplayerteam != null) {
           int i = scoreplayerteam.func_178775_l().func_175746_b();
           if (i >= 0 && i < p_195398_3_.length) {
@@ -385,7 +384,7 @@
           }
        }
  
-@@ -599,28 +780,44 @@
+@@ -603,28 +782,44 @@
     }
  
     private boolean func_175400_cq() {
@@ -436,7 +435,7 @@
           if (!this.field_71136_j) {
              this.field_71136_j = true;
              this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.field_192040_cp ? 0.0F : 1.0F));
-@@ -629,36 +826,46 @@
+@@ -633,36 +828,46 @@
  
           return this;
        } else {
@@ -503,7 +502,7 @@
                 this.field_71135_a.func_147359_a(new SPlayEntityEffectPacket(this.func_145782_y(), effectinstance));
              }
  
-@@ -666,6 +873,11 @@
+@@ -670,6 +875,11 @@
              this.field_71144_ck = -1;
              this.field_71149_ch = -1.0F;
              this.field_71146_ci = -1;
@@ -515,7 +514,7 @@
           }
  
           return this;
-@@ -686,22 +898,22 @@
+@@ -690,22 +900,22 @@
  
     }
  
@@ -542,7 +541,7 @@
        RegistryKey<World> registrykey = p_213846_1_.func_234923_W_();
        RegistryKey<World> registrykey1 = this.field_70170_p.func_234923_W_();
        CriteriaTriggers.field_193134_u.func_233551_a_(this, registrykey, registrykey1);
-@@ -738,43 +950,80 @@
+@@ -742,43 +952,80 @@
        this.field_71070_bA.func_75142_b();
     }
  
@@ -613,7 +612,7 @@
 +      if (force) {
 +         bedResult = Either.right(Unit.INSTANCE);
 +      }
-+      bedResult = org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPlayerBedEnterEvent(this, blockposition, bedResult);
++      bedResult = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPlayerBedEnterEvent(this, blockposition, bedResult);
 +      if (bedResult.left().isPresent()) {
 +         return bedResult;
 +      }
@@ -637,7 +636,7 @@
     }
  
     public void func_213342_e(BlockPos p_213342_1_) {
-@@ -783,6 +1032,7 @@
+@@ -787,6 +1034,7 @@
     }
  
     private boolean func_241147_a_(BlockPos p_241147_1_, Direction p_241147_2_) {
@@ -645,7 +644,7 @@
        return this.func_241158_g_(p_241147_1_) || this.func_241158_g_(p_241147_1_.func_177972_a(p_241147_2_.func_176734_d()));
     }
  
-@@ -797,6 +1047,7 @@
+@@ -801,6 +1049,7 @@
     }
  
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
@@ -653,7 +652,7 @@
        if (this.func_70608_bn()) {
           this.func_71121_q().func_72863_F().func_217216_a(this, new SAnimateHandPacket(this, 2));
        }
-@@ -862,6 +1113,13 @@
+@@ -866,6 +1115,13 @@
        this.field_71139_cq = this.field_71139_cq % 100 + 1;
     }
  
@@ -667,7 +666,7 @@
     public OptionalInt func_213829_a(@Nullable INamedContainerProvider p_213829_1_) {
        if (p_213829_1_ == null) {
           return OptionalInt.empty();
-@@ -872,16 +1130,37 @@
+@@ -876,16 +1132,37 @@
  
           this.func_71117_bO();
           Container container = p_213829_1_.createMenu(this.field_71139_cq, this.field_71071_by, this);
@@ -708,7 +707,7 @@
              return OptionalInt.of(this.field_71139_cq);
           }
        }
-@@ -892,14 +1171,26 @@
+@@ -896,14 +1173,26 @@
     }
  
     public void func_184826_a(AbstractHorseEntity p_184826_1_, IInventory p_184826_2_) {
@@ -737,7 +736,7 @@
     }
  
     public void func_184814_a(ItemStack p_184814_1_, Hand p_184814_2_) {
-@@ -938,6 +1229,11 @@
+@@ -942,6 +1231,11 @@
     public void func_71110_a(Container p_71110_1_, NonNullList<ItemStack> p_71110_2_) {
        this.field_71135_a.func_147359_a(new SWindowItemsPacket(p_71110_1_.field_75152_c, p_71110_2_));
        this.field_71135_a.func_147359_a(new SSetSlotPacket(-1, -1, this.field_71071_by.func_70445_o()));
@@ -749,7 +748,7 @@
     }
  
     public void func_71112_a(Container p_71112_1_, int p_71112_2_, int p_71112_3_) {
-@@ -945,6 +1241,7 @@
+@@ -949,6 +1243,7 @@
     }
  
     public void func_71053_j() {
@@ -757,7 +756,7 @@
        this.field_71135_a.func_147359_a(new SCloseWindowPacket(this.field_71070_bA.field_75152_c));
        this.func_71128_l();
     }
-@@ -957,6 +1254,7 @@
+@@ -961,6 +1256,7 @@
  
     public void func_71128_l() {
        this.field_71070_bA.func_75134_a(this);
@@ -765,7 +764,7 @@
        this.field_71070_bA = this.field_71069_bz;
     }
  
-@@ -978,14 +1276,14 @@
+@@ -982,14 +1278,14 @@
  
     public void func_71064_a(Stat<?> p_71064_1_, int p_71064_2_) {
        this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
@@ -782,7 +781,7 @@
     }
  
     public int func_195065_a(Collection<IRecipe<?>> p_195065_1_) {
-@@ -1026,8 +1324,17 @@
+@@ -1030,8 +1326,17 @@
  
     public void func_71118_n() {
        this.field_71149_ch = -1.0E8F;
@@ -800,7 +799,7 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
        this.field_71135_a.func_147359_a(new SChatPacket(p_146105_1_, p_146105_2_ ? ChatType.GAME_INFO : ChatType.CHAT, Util.field_240973_b_));
     }
-@@ -1075,12 +1382,19 @@
+@@ -1079,12 +1384,19 @@
        this.field_71144_ck = -1;
        this.field_71149_ch = -1.0F;
        this.field_71146_ci = -1;
@@ -821,7 +820,7 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1139,6 +1453,8 @@
+@@ -1143,6 +1455,8 @@
     }
  
     public void func_71033_a(GameType p_71033_1_) {
@@ -830,7 +829,7 @@
        this.field_71134_c.func_73076_a(p_71033_1_);
        this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241767_d_, (float)p_71033_1_.func_77148_a()));
        if (p_71033_1_ == GameType.SPECTATOR) {
-@@ -1183,10 +1499,22 @@
+@@ -1187,10 +1501,22 @@
     }
  
     public void func_147100_a(CClientSettingsPacket p_147100_1_) {
@@ -853,7 +852,7 @@
     }
  
     public ChatVisibility func_147096_v() {
-@@ -1245,7 +1573,7 @@
+@@ -1249,7 +1575,7 @@
        this.field_175401_bS = (Entity)(p_175399_1_ == null ? this : p_175399_1_);
        if (entity != this.field_175401_bS) {
           this.field_71135_a.func_147359_a(new SCameraPacket(this.field_175401_bS));
@@ -862,7 +861,7 @@
        }
  
     }
-@@ -1272,7 +1600,7 @@
+@@ -1276,7 +1602,7 @@
  
     @Nullable
     public ITextComponent func_175396_E() {
@@ -871,7 +870,7 @@
     }
  
     public void func_184609_a(Hand p_184609_1_) {
-@@ -1292,27 +1620,34 @@
+@@ -1296,27 +1622,34 @@
        return this.field_192042_bX;
     }
  
@@ -919,7 +918,7 @@
        }
  
     }
-@@ -1335,6 +1670,7 @@
+@@ -1339,6 +1672,7 @@
     }
  
     public void func_242111_a(RegistryKey<World> p_242111_1_, @Nullable BlockPos p_242111_2_, float p_242111_3_, boolean p_242111_4_, boolean p_242111_5_) {
@@ -927,7 +926,7 @@
        if (p_242111_2_ != null) {
           boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
           if (p_242111_5_ && !flag) {
-@@ -1387,6 +1723,8 @@
+@@ -1391,6 +1725,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -936,11 +935,10 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1400,4 +1738,132 @@
-          return itementity;
+@@ -1405,8 +1741,136 @@
        }
     }
-+
+ 
 +   public String language = "en_us"; // private->public CraftBukkit
 +   /**
 +    * Returns the language last reported by the player as their local language.
@@ -949,6 +947,11 @@
 +   public String getLanguage() {
 +      return this.language;
 +   }
++
+    @Nullable
+    public IChatFilter func_244529_Q() {
+       return this.field_244528_co;
+    }
 +
 +   // CraftBukkit start - Add per-player time and weather.
 +   public long timeOffset = 0;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ItemStack.java
 +++ b/net/minecraft/item/ItemStack.java
-@@ -7,16 +7,18 @@
+@@ -7,16 +7,17 @@
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
  import com.mojang.serialization.Codec;
@@ -11,7 +11,6 @@
  import java.util.Collection;
  import java.util.List;
  import java.util.Locale;
-+import java.util.Map;
 +import java.util.Map.Entry;
  import java.util.Objects;
  import java.util.Optional;
@@ -20,73 +19,37 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
-@@ -24,6 +26,12 @@
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockState;
-+import net.minecraft.block.Blocks;
-+import net.minecraft.block.ContainerBlock;
-+import net.minecraft.block.JukeboxBlock;
-+import net.minecraft.block.SaplingBlock;
-+import net.minecraft.block.SoundType;
-+import net.minecraft.block.WitherSkeletonSkullBlock;
- import net.minecraft.client.util.ITooltipFlag;
- import net.minecraft.command.arguments.BlockPredicateArgument;
- import net.minecraft.command.arguments.BlockStateParser;
-@@ -44,18 +52,27 @@
+@@ -44,6 +45,8 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.INBT;
  import net.minecraft.nbt.ListNBT;
 +import net.minecraft.nbt.NBTDynamicOps;
-+import net.minecraft.network.play.server.SChangeBlockPacket;
 +import net.minecraft.server.MinecraftServer;
  import net.minecraft.stats.Stats;
  import net.minecraft.tags.BlockTags;
  import net.minecraft.tags.ITag;
- import net.minecraft.tags.ITagCollectionSupplier;
-+import net.minecraft.tileentity.SignTileEntity;
-+import net.minecraft.tileentity.SkullTileEntity;
-+import net.minecraft.tileentity.TileEntity;
- import net.minecraft.util.ActionResult;
- import net.minecraft.util.ActionResultType;
- import net.minecraft.util.CachedBlockInfo;
-+import net.minecraft.util.Direction;
- import net.minecraft.util.Hand;
- import net.minecraft.util.IItemProvider;
+@@ -56,6 +59,7 @@
  import net.minecraft.util.ResourceLocation;
-+import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.Util;
 +import net.minecraft.util.datafix.TypeReferences;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.text.IFormattableTextComponent;
-@@ -67,12 +84,23 @@
- import net.minecraft.util.text.TranslationTextComponent;
- import net.minecraft.util.text.event.HoverEvent;
- import net.minecraft.world.World;
-+import net.minecraft.world.server.ServerWorld;
- import net.minecraftforge.api.distmarker.Dist;
+@@ -71,8 +75,11 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.Location;
-+import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_16_R2.block.CraftBlockState;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_16_R2.util.CraftMagicNumbers;
-+import org.bukkit.entity.Player;
-+import org.bukkit.event.block.BlockFertilizeEvent;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 +import org.bukkit.event.player.PlayerItemDamageEvent;
-+import org.bukkit.event.world.StructureGrowEvent;
  
 -public final class ItemStack {
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
     public static final Codec<ItemStack> field_234691_a_ = RecordCodecBuilder.create((p_234698_0_) -> {
        return p_234698_0_.group(Registry.field_212630_s.fieldOf("id").forGetter((p_234706_0_) -> {
           return p_234706_0_.field_151002_e;
-@@ -82,6 +110,9 @@
+@@ -82,6 +89,9 @@
           return Optional.ofNullable(p_234704_0_.field_77990_d);
        })).apply(p_234698_0_, ItemStack::new);
     });
@@ -96,7 +59,7 @@
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack field_190927_a = new ItemStack((Item)null);
     public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
-@@ -91,7 +122,7 @@
+@@ -91,7 +101,7 @@
     private int field_77994_a;
     private int field_77992_b;
     @Deprecated
@@ -105,7 +68,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,34 +140,65 @@
+@@ -109,34 +119,65 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -179,7 +142,7 @@
     }
  
     public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
-@@ -151,7 +213,7 @@
+@@ -151,7 +192,7 @@
     public boolean func_190926_b() {
        if (this == field_190927_a) {
           return true;
@@ -188,7 +151,7 @@
           return this.field_77994_a <= 0;
        } else {
           return true;
-@@ -167,20 +229,34 @@
+@@ -167,20 +208,34 @@
     }
  
     public Item func_77973_b() {
@@ -229,7 +192,7 @@
           }
  
           return actionresulttype;
-@@ -206,12 +282,15 @@
+@@ -206,12 +261,15 @@
        if (this.field_77990_d != null) {
           p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
        }
@@ -247,7 +210,7 @@
     }
  
     public boolean func_77985_e() {
-@@ -219,7 +298,7 @@
+@@ -219,7 +277,7 @@
     }
  
     public boolean func_77984_f() {
@@ -256,7 +219,7 @@
           CompoundNBT compoundnbt = this.func_77978_p();
           return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
        } else {
-@@ -228,19 +307,19 @@
+@@ -228,19 +286,19 @@
     }
  
     public boolean func_77951_h() {
@@ -280,7 +243,7 @@
     }
  
     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
-@@ -258,6 +337,19 @@
+@@ -258,6 +316,19 @@
              }
  
              p_96631_1_ -= j;
@@ -300,7 +263,7 @@
              if (p_96631_1_ <= 0) {
                 return false;
              }
-@@ -276,9 +368,17 @@
+@@ -276,9 +347,17 @@
     public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
        if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
           if (this.func_77984_f()) {
@@ -311,14 +274,14 @@
 +
 +               // CraftBukkit start - Check for item breaking
 +               if (this.field_77994_a == 1 && p_222118_2_ instanceof PlayerEntity) {
-+                  org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callPlayerItemBreakEvent((PlayerEntity) p_222118_2_, this);
++                  org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPlayerItemBreakEvent((PlayerEntity) p_222118_2_, this);
 +               }
 +               // CraftBukkit end
 +
                 this.func_190918_g(1);
                 if (p_222118_2_ instanceof PlayerEntity) {
                    ((PlayerEntity)p_222118_2_).func_71029_a(Stats.field_199088_e.func_199076_b(item));
-@@ -308,7 +408,7 @@
+@@ -308,7 +387,7 @@
     }
  
     public boolean func_150998_b(BlockState p_150998_1_) {
@@ -327,7 +290,7 @@
     }
  
     public ActionResultType func_111282_a_(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
-@@ -319,7 +419,7 @@
+@@ -319,7 +398,7 @@
        if (this.func_190926_b()) {
           return field_190927_a;
        } else {
@@ -336,7 +299,7 @@
           itemstack.func_190915_d(this.func_190921_D());
           if (this.field_77990_d != null) {
              itemstack.field_77990_d = this.field_77990_d.func_74737_b();
-@@ -336,7 +436,7 @@
+@@ -336,7 +415,7 @@
           if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
              return false;
           } else {
@@ -345,7 +308,7 @@
           }
        } else {
           return false;
-@@ -359,7 +459,7 @@
+@@ -359,7 +438,7 @@
        } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
           return false;
        } else {
@@ -354,7 +317,7 @@
        }
     }
  
-@@ -435,7 +535,17 @@
+@@ -435,7 +514,17 @@
        return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
     }
  
@@ -372,7 +335,7 @@
     public CompoundNBT func_77978_p() {
        return this.field_77990_d;
     }
-@@ -479,7 +589,7 @@
+@@ -479,7 +568,7 @@
  
     public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
        this.field_77990_d = p_77982_1_;
@@ -381,7 +344,7 @@
           this.func_196085_b(this.func_77952_i());
        }
  
-@@ -673,6 +783,7 @@
+@@ -673,6 +762,7 @@
           }
        }
  
@@ -389,7 +352,7 @@
        return list;
     }
  
-@@ -795,6 +906,12 @@
+@@ -795,6 +885,12 @@
     }
  
     public void func_82841_c(int p_82841_1_) {
@@ -402,7 +365,7 @@
        this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
     }
  
-@@ -817,7 +934,7 @@
+@@ -817,7 +913,7 @@
              }
           }
        } else {
@@ -411,7 +374,7 @@
        }
  
        return multimap;
-@@ -839,6 +956,14 @@
+@@ -839,6 +935,14 @@
        listnbt.add(compoundnbt);
     }
  
@@ -426,7 +389,7 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -954,6 +1079,35 @@
+@@ -954,6 +1058,35 @@
        return this.func_77973_b().func_219971_r();
     }
  

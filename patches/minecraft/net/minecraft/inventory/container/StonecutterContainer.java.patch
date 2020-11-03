@@ -1,18 +1,17 @@
 --- a/net/minecraft/inventory/container/StonecutterContainer.java
 +++ b/net/minecraft/inventory/container/StonecutterContainer.java
-@@ -19,6 +19,11 @@
+@@ -19,6 +19,10 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryStonecutter;
-+import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryStonecutter;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 +import org.bukkit.entity.Player;
-+import org.bukkit.inventory.InventoryView;
  
  public class StonecutterContainer extends Container {
     private final IWorldPosCallable field_217088_g;
-@@ -37,9 +42,31 @@
+@@ -37,9 +41,31 @@
           StonecutterContainer.this.func_75130_a(this);
           StonecutterContainer.this.field_217094_m.run();
        }
@@ -44,7 +43,7 @@
     public StonecutterContainer(int p_i50059_1_, PlayerInventory p_i50059_2_) {
        this(p_i50059_1_, p_i50059_2_, IWorldPosCallable.field_221489_a);
     }
-@@ -85,6 +112,7 @@
+@@ -85,6 +111,7 @@
        }
  
        this.func_216958_a(this.field_217089_h);
@@ -52,7 +51,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -108,6 +136,7 @@
+@@ -108,6 +135,7 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {

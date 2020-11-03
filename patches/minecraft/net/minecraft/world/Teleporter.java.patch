@@ -79,7 +79,7 @@
           d0 = d1;
        }
  
-+      org.bukkit.craftbukkit.v1_16_R2.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_16_R2.util.BlockStateListPopulator(this.field_85192_a); // CraftBukkit - Use BlockStateListPopulator
++      org.bukkit.craftbukkit.v1_16_R3.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_16_R3.util.BlockStateListPopulator(this.field_85192_a); // CraftBukkit - Use BlockStateListPopulator
        if (d0 == -1.0D) {
 -         blockpos = (new BlockPos(p_242956_1_.func_177958_n(), MathHelper.func_76125_a(p_242956_1_.func_177956_o(), 70, this.field_85192_a.func_234938_ad_() - 10), p_242956_1_.func_177952_p())).func_185334_h();
 +         blockpos = (new BlockPos(pos.func_177958_n(), MathHelper.func_76125_a(pos.func_177956_o(), 70, this.field_85192_a.func_234938_ad_() - 10), pos.func_177952_p())).func_185334_h();

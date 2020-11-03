@@ -5,7 +5,7 @@
           DoorBlock doorblock = (DoorBlock)blockstate.func_177230_c();
           if (!doorblock.func_242664_h(blockstate)) {
 +            // CraftBukkit start - entities opening doors
-+            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_212831_2_.getBukkitEntity(), org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock.at(p_212831_2_.field_70170_p, blockpos));
++            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_212831_2_.getBukkitEntity(), org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock.at(p_212831_2_.field_70170_p, blockpos));
 +            p_212831_2_.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               return;
@@ -19,7 +19,7 @@
           DoorBlock doorblock1 = (DoorBlock)blockstate1.func_177230_c();
           if (!doorblock1.func_242664_h(blockstate1)) {
 +            // CraftBukkit start - entities opening doors
-+            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_212831_2_.getBukkitEntity(), org.bukkit.craftbukkit.v1_16_R2.block.CraftBlock.at(p_212831_2_.field_70170_p, blockpos));
++            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_212831_2_.getBukkitEntity(), org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock.at(p_212831_2_.field_70170_p, blockpos));
 +            p_212831_2_.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               return;

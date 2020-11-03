@@ -25,11 +25,11 @@
 +import org.bukkit.Server;
 +import org.bukkit.block.BlockFace;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_16_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity;
-+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_16_R2.event.CraftPortalEvent;
++import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftPortalEvent;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Vehicle;
 +import org.bukkit.event.entity.EntityAirChangeEvent;
@@ -133,7 +133,7 @@
 +   public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
 +   public boolean forceExplosionKnockback; // SPIGOT-949
 +   public boolean persistentInvisibility = false;
-+   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.getEntityTimings(this); // Spigot
++   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.getEntityTimings(this); // Spigot
 +
 +   // Spigot start
 +   public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
@@ -325,7 +325,7 @@
     }
  
     public void func_213315_a(MoverType p_213315_1_, Vector3d p_213315_2_) {
-+      org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
        if (this.field_70145_X) {
           this.func_174826_a(this.func_174813_aQ().func_191194_a(p_213315_2_));
           this.func_174829_m();
@@ -390,7 +390,7 @@
  
           this.field_70170_p.func_217381_Z().func_76319_b();
        }
-+      org.bukkit.craftbukkit.v1_16_R2.SpigotTimings.entityMoveTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.entityMoveTimer.stopTiming(); // Spigot
     }
  
     protected BlockPos func_226268_ag_() {
@@ -593,7 +593,7 @@
 +               bworld = server.getWorld(worldName);
 +            }
 +            if (bworld == null) {
-+               bworld = ((org.bukkit.craftbukkit.v1_16_R2.CraftServer) server).getServer().func_71218_a(World.field_234918_g_).getCBWorld();
++               bworld = ((org.bukkit.craftbukkit.v1_16_R3.CraftServer) server).getServer().func_71218_a(World.field_234918_g_).getCBWorld();
 +            }
 +            func_70029_a(bworld == null ? null : ((CraftWorld) bworld).getHandle());
 +         }
@@ -614,7 +614,7 @@
        } else {
 +         // CraftBukkit start - Capture drops for death event
 +         if (this instanceof LivingEntity && !((LivingEntity) this).forceDrops) {
-+            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack.asBukkitCopy(p_70099_1_));
++            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.asBukkitCopy(p_70099_1_));
 +            return null;
 +         }
 +         // CraftBukkit end

@@ -34,7 +34,7 @@
     protected void func_175445_a(ItemEntity p_175445_1_) {
        ItemStack itemstack = p_175445_1_.func_92059_d();
 -      if (this.func_175448_a(itemstack)) {
-+      if (!org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack.func_190916_E() - 1, !this.func_175448_a(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
++      if (!org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack.func_190916_E() - 1, !this.func_175448_a(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
 +         itemstack = p_175445_1_.func_92059_d(); // CraftBukkit - update ItemStack from event
           int i = itemstack.func_190916_E();
           if (i > 1) {

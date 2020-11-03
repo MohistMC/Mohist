@@ -14,7 +14,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
  
  @OnlyIn(
@@ -108,7 +108,7 @@
 +         if (this.func_195044_w().func_177230_c() == Blocks.field_150447_bR) {
 +            int newPower = Math.max(0, Math.min(15, this.field_145987_o));
 +            if (oldPower != newPower) {
-+               org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callRedstoneChange(field_145850_b, field_174879_c, oldPower, newPower);
++               org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callRedstoneChange(field_145850_b, field_174879_c, oldPower, newPower);
 +            }
 +         }
 +         // CraftBukkit end
@@ -127,7 +127,7 @@
 +         if (this.func_195044_w().func_177230_c() == Blocks.field_150447_bR) {
 +            int newPower = Math.max(0, Math.min(15, this.field_145987_o));
 +            if (oldPower != newPower) {
-+               org.bukkit.craftbukkit.v1_16_R2.event.CraftEventFactory.callRedstoneChange(field_145850_b, field_174879_c, oldPower, newPower);
++               org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callRedstoneChange(field_145850_b, field_174879_c, oldPower, newPower);
 +            }
 +         }
 +         // CraftBukkit end
