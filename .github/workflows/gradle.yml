@@ -1,13 +1,13 @@
 # This workflow will build a Java project with Gradle
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: 1.16.3 CI with Gradle
+name: 1.16.4 CI with Gradle
 
 on:
   push:
-    branches: [ 1.16.3 ]
+    branches: [ 1.16.4 ]
   pull_request:
-    branches: [ 1.16.3 ]
+    branches: [ 1.16.4 ]
 
 jobs:
   build:
