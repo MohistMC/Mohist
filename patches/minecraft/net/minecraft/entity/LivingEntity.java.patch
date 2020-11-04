@@ -1333,14 +1333,14 @@
 -            if (world.func_226669_j_(this) && !world.func_72953_d(this.func_174813_aQ())) {
 -               flag = true;
 +            // CraftBukkit start - Teleport event
-+            // this.enderTeleportTo(d0, d6, d2);
-+            EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.field_70170_p.getCBWorld(), d0, d1, d2), new Location(this.field_70170_p.getCBWorld(), p_213373_1_, p_213373_3_, p_213373_5_));
++            // this.setPositionAndUpdate(x, d3, z);
++            EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.field_70170_p.getCBWorld(), d0, d1, d2), new Location(this.field_70170_p.getCBWorld(), p_213373_1_, d3, p_213373_5_));
 +            this.field_70170_p.getCBServer().getPluginManager().callEvent(teleport);
 +            if (!teleport.isCancelled()) {
 +               Location to = teleport.getTo();
 +               this.func_70634_a(to.getX(), to.getY(), to.getZ());
 +               if (world.func_226669_j_(this) && !world.func_72953_d(this.func_174813_aQ())) {
-+                  flag1 = true;
++                  flag = true;
 +               }
              }
 +            // CraftBukkit end

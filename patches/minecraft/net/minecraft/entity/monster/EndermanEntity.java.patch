@@ -75,15 +75,17 @@
           if (blockstate2 != null) {
              blockstate2 = Block.func_199770_b(blockstate2, this.field_179475_a.field_70170_p, blockpos);
 -            if (this.func_220836_a(world, blockpos, blockstate2, blockstate, blockstate1, blockpos1)) {
+-               world.func_180501_a(blockpos, blockstate2, 3);
+-               this.field_179475_a.func_195406_b((BlockState)null);
 +            if (this.func_220836_a(world, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(field_179475_a, net.minecraftforge.common.util.BlockSnapshot.create(world.func_234923_W_(), world, blockpos1), net.minecraft.util.Direction.UP)) {
 +               // CraftBukkit start - Place event
-+               if (!CraftEventFactory.callEntityChangeBlockEvent(this.field_179475_a, blockpos, blockstate).isCancelled()) {
-                world.func_180501_a(blockpos, blockstate2, 3);
-                this.field_179475_a.func_195406_b((BlockState)null);
++               if (!CraftEventFactory.callEntityChangeBlockEvent(this.field_179475_a, blockpos, blockstate2).isCancelled()) {
++                  world.func_180501_a(blockpos, blockstate2, 3);
++                  this.field_179475_a.func_195406_b((BlockState) null);
++               }
++               // CraftBukkit end
              }
 -
-+               // CraftBukkit end
-+            }
           }
        }
  
@@ -102,3 +104,20 @@
              return false;
           } else {
              return this.field_179473_a.func_70681_au().nextInt(20) == 0;
+@@ -521,10 +537,13 @@
+          BlockRayTraceResult blockraytraceresult = world.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, this.field_179473_a));
+          boolean flag = blockraytraceresult.func_216350_a().equals(blockpos);
+          if (block.func_203417_a(BlockTags.field_201151_l) && flag) {
+-            world.func_217377_a(blockpos, false);
+-            this.field_179473_a.func_195406_b(blockstate.func_177230_c().func_176223_P());
++            // CraftBukkit start - Pickup event
++            if (!CraftEventFactory.callEntityChangeBlockEvent(this.field_179473_a, blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++               world.func_217377_a(blockpos, false);
++               this.field_179473_a.func_195406_b(blockstate.func_177230_c().func_176223_P());
++            }
++            // CraftBukkit end
+          }
+-
+       }
+    }
+ }
