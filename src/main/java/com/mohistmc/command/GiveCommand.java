@@ -11,10 +11,16 @@ import static net.minecraft.command.CommandBase.parseInt;
 
 public class GiveCommand {
 
-    public static boolean info(CommandSender sender, String[] args) {
+    public static void info(CommandSender sender, String[] args) {
         if (args.length >= 3) {
-            Player player = Bukkit.getPlayer(args[1]);
-            if (player == null) return false;
+            String playername = null;
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.getName().toLowerCase().equals(args[1])) {
+                    playername = player.getName();
+                }
+            }
+            Player player = Bukkit.getPlayer(playername);
+            if (player == null) return;
             String args2 = args[2];
             String[] s = args2.split(":");
             String j = args2.contains(":") ? s[1] : String.valueOf(0);
@@ -47,6 +53,5 @@ public class GiveCommand {
                 }
             }
         }
-        return false;
     }
 }
