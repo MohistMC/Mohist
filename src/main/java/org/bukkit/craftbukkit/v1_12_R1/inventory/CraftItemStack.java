@@ -87,12 +87,7 @@ public final class CraftItemStack extends ItemStack {
         if (original.isEmpty()) {
             return new ItemStack(Material.AIR);
         }
-        ItemStack stack = new ItemStack(CraftMagicNumbers.getMaterial(original.getItem()), original.getCount(), (short) original.getMetadata());
-        if (hasItemMeta(original)) {
-            stack.setItemMeta(getItemMeta(original));
-        }
-        ForgeCapMeta.setCap(original, stack);
-        return stack;
+        return asCraftMirror(copyNMSStack(original, original.getCount()));
     }
 
     public static CraftItemStack asCraftMirror(net.minecraft.item.ItemStack original) {
