@@ -30,7 +30,7 @@ Progress
 ------
 
 - [x] Rectify Forge (acd18455c)
-- [x] Start patch craftbukkit(6fd677ca) bukkit(30885166) spigot(aa477927)
+- [x] Start patch craftbukkit(3eb7236e) bukkit(30885166) spigot(37d799b2)
 - [x] Beta release
 - [ ] The nms patch is compatible with mcp
 
