@@ -28,7 +28,7 @@ public class MohistInstaller {
             ExecutorService pool = Executors.newFixedThreadPool(8);
             if (!Files.exists(path)) {
                 ProcessBuilder builder = new ProcessBuilder();
-                builder.command("java", "-jar", String.format("forge-1.16.3-" + MohistInstaller.class.getPackage().getSpecificationVersion() + "-installer.jar"), "--installServer", ".");
+                builder.command("java", "-jar", String.format("forge-1.16.4-" + MohistInstaller.class.getPackage().getSpecificationVersion() + "-installer.jar"), "--installServer", ".");
                 builder.inheritIO();
                 Process process = builder.start();
                 process.waitFor();
@@ -38,7 +38,7 @@ public class MohistInstaller {
     }
 
     public static String getPath() {
-        return "1.16.3-" + MohistInstaller.class.getPackage().getSpecificationVersion();
+        return "1.16.4-" + MohistInstaller.class.getPackage().getSpecificationVersion();
     }
 }
 
