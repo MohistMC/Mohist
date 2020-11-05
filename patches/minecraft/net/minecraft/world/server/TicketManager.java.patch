@@ -9,7 +9,33 @@
     private final TicketManager.ChunkTicketTracker field_219378_f = new TicketManager.ChunkTicketTracker();
     private final TicketManager.PlayerChunkTracker field_219381_i = new TicketManager.PlayerChunkTracker(8);
     private final TicketManager.PlayerTicketTracker field_219382_j = new TicketManager.PlayerTicketTracker(33);
-@@ -145,6 +145,18 @@
+@@ -98,10 +98,22 @@
+       }
+ 
+       if (!this.field_219383_k.isEmpty()) {
+-         this.field_219383_k.forEach((p_219343_1_) -> {
++         // CraftBukkit start
++         // Iterate pending chunk updates with protection against concurrent modification exceptions
++         java.util.Iterator<ChunkHolder> iter = this.field_219383_k.iterator();
++         int expectedSize = this.field_219383_k.size();
++         do {
++            ChunkHolder p_219343_1_ = iter.next();
++            iter.remove();
++            expectedSize--;
+             p_219343_1_.func_219291_a(p_219353_1_);
+-         });
+-         this.field_219383_k.clear();
++            if (this.field_219383_k.size() != expectedSize) {
++               expectedSize = this.field_219383_k.size();
++               iter = this.field_219383_k.iterator();
++            }
++         } while (iter.hasNext());
++         // CraftBukkit end
++
+          return true;
+       } else {
+          if (!this.field_219387_o.isEmpty()) {
+@@ -145,6 +157,18 @@
  
     }
  
@@ -28,7 +54,7 @@
     private void func_219349_b(long p_219349_1_, Ticket<?> p_219349_3_) {
        SortedArraySet<Ticket<?>> sortedarrayset = this.func_229848_e_(p_219349_1_);
        if (sortedarrayset.remove(p_219349_3_)) {
-@@ -157,6 +169,27 @@
+@@ -157,6 +181,27 @@
        this.field_219378_f.func_215491_b(p_219349_1_, func_229844_a_(sortedarrayset), false);
     }
  
@@ -56,7 +82,7 @@
     public <T> void func_219356_a(TicketType<T> p_219356_1_, ChunkPos p_219356_2_, int p_219356_3_, T p_219356_4_) {
        this.func_219347_a(p_219356_2_.func_201841_a(), new Ticket<>(p_219356_1_, p_219356_3_, p_219356_4_));
     }
-@@ -166,6 +199,14 @@
+@@ -166,6 +211,14 @@
        this.func_219349_b(p_219345_2_.func_201841_a(), ticket);
     }
  
@@ -71,7 +97,7 @@
     public <T> void func_219331_c(TicketType<T> p_219331_1_, ChunkPos p_219331_2_, int p_219331_3_, T p_219331_4_) {
        this.func_219347_a(p_219331_2_.func_201841_a(), new Ticket<>(p_219331_1_, 33 - p_219331_3_, p_219331_4_));
     }
-@@ -242,6 +283,24 @@
+@@ -242,6 +295,24 @@
        return this.field_219384_l.func_225396_a();
     }
  

@@ -79,7 +79,7 @@
 +            }
 +
 +            LivingEntity livingentity = ((CraftLivingEntity) victim).getHandle();
-+            double intensity = event.getIntensity(victim);
++            double dl = event.getIntensity(victim);
 +            // CraftBukkit end
 +
 +            for (EffectInstance effectinstance : p_213888_1_) {
@@ -95,9 +95,9 @@
 +               // CraftBukkit end
 +
 +               if (effect.func_76403_b()) {
-+                  effect.func_180793_a(this, this.func_234616_v_(), livingentity, effectinstance.func_76458_c(), intensity);
++                  effect.func_180793_a(this, this.func_234616_v_(), livingentity, effectinstance.func_76458_c(), dl);
 +               } else {
-+                  int i = (int) (intensity * (double) effectinstance.func_76459_b() + 0.5D);
++                  int i = (int) (dl * (double) effectinstance.func_76459_b() + 0.5D);
 +                  if (i > 20) {
 +                     livingentity.addPotionEffect(new EffectInstance(effect, i, effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()), Cause.POTION_SPLASH); // CraftBukkit
 +                  }
@@ -145,7 +145,7 @@
 +         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_184542_1_, blockstate.func_206870_a(CampfireBlock.field_220101_b, false)).isCancelled()) { // PAIL rename LIT
 +            this.field_70170_p.func_217378_a((PlayerEntity) null, 1009, p_184542_1_, 0);
 +            CampfireBlock.func_235475_c_(this.field_70170_p, p_184542_1_, blockstate);
-+            this.field_70170_p.func_175656_a(p_184542_1_, blockstate.func_206870_a(CampfireBlock.field_220101_b, Boolean.valueOf(false)));
++            this.field_70170_p.func_175656_a(p_184542_1_, blockstate.func_206870_a(CampfireBlock.field_220101_b, false));
 +         }
 +         // CraftBukkit end
        }

@@ -258,6 +258,7 @@
        } else {
           Chunk chunk = this.func_175726_f(p_241211_1_);
           Block block = p_241211_2_.func_177230_c();
+-         BlockState blockstate = chunk.func_177436_a(p_241211_1_, p_241211_2_, (p_241211_3_ & 64) != 0);
 +         // CraftBukkit start - capture blockstates
 +         boolean captured = false;
 +         if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_241211_1_)) {
@@ -278,7 +279,7 @@
 +         int oldLight = old.getLightValue(this, p_241211_1_);
 +         int oldOpacity = old.func_200016_a(this, p_241211_1_);
 +
-          BlockState blockstate = chunk.func_177436_a(p_241211_1_, p_241211_2_, (p_241211_3_ & 64) != 0);
++         BlockState blockstate = chunk.setBlockState(p_241211_1_, p_241211_2_, (p_241211_3_ & 64) != 0, (p_241211_3_ & 1024) == 0);
           if (blockstate == null) {
 +            // CraftBukkit start - remove blockstate if failed (or the same)
 +            if (this.captureBlockStates && captured) {

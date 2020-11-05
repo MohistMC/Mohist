@@ -8,15 +8,17 @@
  
  public abstract class ProjectileEntity extends Entity {
     private UUID field_234609_b_;
-@@ -30,6 +31,7 @@
+@@ -29,7 +30,9 @@
+       if (p_212361_1_ != null) {
           this.field_234609_b_ = p_212361_1_.func_110124_au();
           this.field_234610_c_ = p_212361_1_.func_145782_y();
++
        }
 +      this.projectileSource = (p_212361_1_ != null && p_212361_1_.getBukkitEntity() instanceof ProjectileSource) ? (ProjectileSource) p_212361_1_.getBukkitEntity() : null; // CraftBukkit
  
     }
  
-@@ -104,6 +106,7 @@
+@@ -104,6 +107,7 @@
     }
  
     protected void func_70227_a(RayTraceResult p_70227_1_) {

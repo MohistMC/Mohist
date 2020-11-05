@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/PlayerData.java
 +++ b/net/minecraft/world/storage/PlayerData.java
-@@ -2,6 +2,8 @@
+@@ -2,8 +2,11 @@
  
  import com.mojang.datafixers.DataFixer;
  import java.io.File;
@@ -8,8 +8,19 @@
 +import java.io.InputStream;
  import javax.annotation.Nullable;
  import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
-@@ -31,6 +33,7 @@
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTUtil;
+@@ -11,6 +14,7 @@
+ import net.minecraft.util.datafix.DefaultTypeReferences;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+ 
+ public class PlayerData {
+    private static final Logger field_237332_b_ = LogManager.getLogger();
+@@ -31,6 +35,7 @@
           File file2 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat");
           File file3 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat_old");
           Util.func_240977_a_(file2, file1, file3);
@@ -17,7 +28,7 @@
        } catch (Exception exception) {
           field_237332_b_.warn("Failed to save player data for {}", (Object)p_237335_1_.func_200200_C_().getString());
        }
-@@ -43,9 +46,27 @@
+@@ -43,21 +48,64 @@
  
        try {
           File file1 = new File(this.field_237333_c_, p_237336_1_.func_189512_bd() + ".dat");
@@ -45,7 +56,17 @@
        } catch (Exception exception) {
           field_237332_b_.warn("Failed to load player data for {}", (Object)p_237336_1_.func_200200_C_().getString());
        }
-@@ -54,10 +75,26 @@
+ 
+       if (compoundnbt != null) {
++         // CraftBukkit start
++         if (p_237336_1_ instanceof ServerPlayerEntity) {
++            CraftPlayer cplayer = (CraftPlayer)p_237336_1_.getBukkitEntity();
++            long modified = new File(this.field_237333_c_, String.valueOf(p_237336_1_.func_110124_au().toString()) + ".dat").lastModified();
++            if (modified < cplayer.getFirstPlayed()) {
++               cplayer.setFirstPlayed(modified);
++            }
++         }
++         // CraftBukkit end
           int i = compoundnbt.func_150297_b("DataVersion", 3) ? compoundnbt.func_74762_e("DataVersion") : -1;
           p_237336_1_.func_70020_e(NBTUtil.func_210822_a(this.field_237331_a_, DefaultTypeReferences.PLAYER, compoundnbt, i));
        }
@@ -72,12 +93,12 @@
     public String[] func_237334_a_() {
        String[] astring = this.field_237333_c_.list();
        if (astring == null) {
-@@ -72,4 +109,8 @@
+@@ -72,4 +120,8 @@
  
        return astring;
     }
 +
-+   public File getPlayerDataFolder() {
++   public File getPlayerDir() {
 +      return field_237333_c_;
 +   }
  }

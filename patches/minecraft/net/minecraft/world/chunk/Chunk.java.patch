@@ -26,8 +26,8 @@
     private boolean field_76636_d;
 -   private final World field_76637_e;
 -   private final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
-+   public final ServerWorld field_76637_e; // private->public CraftBukkit // CraftBukkit - type
-+   public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class); // private->public CraftBukkit
++   public final ServerWorld field_76637_e; // CraftBukkit - type
++   public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
     private final UpgradeData field_196967_n;
 -   private final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
 -   private final ClassInheritanceMultiMap<Entity>[] field_76645_j;

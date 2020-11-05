@@ -99,7 +99,7 @@
        p_189551_1_.func_74768_a("xCenter", this.field_76201_a);
        p_189551_1_.func_74768_a("zCenter", this.field_76199_b);
        p_189551_1_.func_74774_a("scale", this.field_76197_d);
-@@ -363,11 +417,20 @@
+@@ -363,12 +417,22 @@
  
        @Nullable
        public IPacket<?> func_176101_a(ItemStack p_176101_1_) {
@@ -120,5 +120,7 @@
 -            return this.field_176109_i++ % 5 == 0 ? new SMapDataPacket(FilledMapItem.func_195949_f(p_176101_1_), MapData.this.field_76197_d, MapData.this.field_186210_e, MapData.this.field_215161_h, MapData.this.field_76203_h.values(), MapData.this.field_76198_e, 0, 0, 0, 0) : null;
 +            return this.field_176109_i++ % 5 == 0 ? new SMapDataPacket(FilledMapItem.func_195949_f(p_176101_1_), MapData.this.field_76197_d, MapData.this.field_186210_e, MapData.this.field_215161_h, icons, render.buffer, 0, 0, 0, 0) : null;
           }
++         // CraftBukkit end
        }
  
+       public void func_176102_a(int p_176102_1_, int p_176102_2_) {
