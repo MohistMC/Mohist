@@ -4,7 +4,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.entity.LivingEntity;
++import org.bukkit.projectiles.ProjectileSource;
  
  public abstract class ProjectileEntity extends Entity {
     private UUID field_234609_b_;
@@ -12,7 +12,7 @@
           this.field_234609_b_ = p_212361_1_.func_110124_au();
           this.field_234610_c_ = p_212361_1_.func_145782_y();
        }
-+      this.projectileSource = p_212361_1_ == null ? null : (LivingEntity) p_212361_1_.getBukkitEntity(); // CraftBukkit
++      this.projectileSource = (p_212361_1_ != null && p_212361_1_.getBukkitEntity() instanceof ProjectileSource) ? (ProjectileSource) p_212361_1_.getBukkitEntity() : null; // CraftBukkit
  
     }
  
