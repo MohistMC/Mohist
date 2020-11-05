@@ -33,7 +33,7 @@
                    if (j == 0) {
                       TridentEntity tridententity = new TridentEntity(p_77615_2_, playerentity, p_77615_1_);
                       tridententity.func_234612_a_(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, 2.5F + (float)j * 0.5F, 1.0F);
-@@ -68,15 +72,41 @@
+@@ -68,15 +72,40 @@
                       }
  
                       p_77615_2_.func_217376_c(tridententity);
@@ -42,15 +42,14 @@
 +                     if (!p_77615_2_.func_217376_c(tridententity)) {
 +                        if (playerentity instanceof ServerPlayerEntity) {
 +                           ((ServerPlayerEntity) playerentity).getBukkitEntity().updateInventory();
-+                           return;
 +                        }
-+
-+                        p_77615_1_.func_222118_a(1, playerentity, (p_220047_1_) -> {
-+                           p_220047_1_.func_213334_d(p_77615_3_.func_184600_cs());
-+                        });
-+                        tridententity.field_203054_h = p_77615_1_.func_77946_l(); // SPIGOT-4511 update since damage call moved
-+                        // CraftBukkit end
++                        return;
 +                     }
++                     p_77615_1_.func_222118_a(1, playerentity, (p_220047_1_) -> {
++                        p_220047_1_.func_213334_d(p_77615_3_.func_184600_cs());
++                     });
++                     tridententity.field_203054_h = p_77615_1_.func_77946_l(); // SPIGOT-4511 update since damage call moved
++                     // CraftBukkit end
 +
                       p_77615_2_.func_217384_a((PlayerEntity)null, tridententity, SoundEvents.field_203274_ip, SoundCategory.PLAYERS, 1.0F, 1.0F);
                       if (!playerentity.field_71075_bZ.field_75098_d) {
