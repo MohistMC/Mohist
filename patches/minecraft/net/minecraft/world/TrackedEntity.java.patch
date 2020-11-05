@@ -121,13 +121,14 @@
  
        ++this.field_219472_n;
        if (this.field_219461_c.field_70133_I) {
+-         this.func_219451_a(new SEntityVelocityPacket(this.field_219461_c));
 +         // CraftBukkit start - Create PlayerVelocity event
 +         boolean cancelled = false;
 +         if (this.field_219461_c instanceof ServerPlayerEntity) {
-+            Player player = ((ServerPlayerEntity) this.field_219461_c).getBukkitEntity();
++            Player player = (Player) this.field_219461_c.getBukkitEntity();
 +            org.bukkit.util.Vector velocity = player.getVelocity();
 +            PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
-+            Bukkit.getPluginManager().callEvent(event);
++            this.field_219461_c.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               cancelled = true;
 +            } else if (!velocity.equals(event.getVelocity())) {
@@ -135,13 +136,13 @@
 +            }
 +         }
 +         if (!cancelled) {
-          this.func_219451_a(new SEntityVelocityPacket(this.field_219461_c));
++            this.func_219451_a(new SEntityVelocityPacket(this.field_219461_c));
 +         }
 +         // CraftBukkit end
           this.field_219461_c.field_70133_I = false;
        }
  
-@@ -187,31 +226,42 @@
+@@ -187,31 +226,43 @@
     public void func_219454_a(ServerPlayerEntity p_219454_1_) {
        this.field_219461_c.func_184203_c(p_219454_1_);
        p_219454_1_.func_152339_d(this.field_219461_c);
@@ -162,6 +163,7 @@
 -         field_219459_a.warn("Fetching packet for removed entity " + this.field_219461_c);
 +         // CraftBukkit start - Remove useless error spam, just return
 +         //LOGGER.warn("Fetching packet for removed entity " + this.trackedEntity);
++         return;
 +         // CraftBukkit end
        }
  
@@ -190,7 +192,7 @@
           }
  
           if (((LivingEntity)this.field_219461_c).func_184613_cA()) {
-@@ -221,7 +271,7 @@
+@@ -221,7 +272,7 @@
  
        this.field_219471_m = this.field_219461_c.func_213322_ci();
        if (flag && !(ipacket instanceof SSpawnMobPacket)) {
@@ -199,7 +201,7 @@
        }
  
        if (this.field_219461_c instanceof LivingEntity) {
-@@ -235,30 +285,35 @@
+@@ -235,30 +286,35 @@
           }
  
           if (!list.isEmpty()) {
@@ -240,7 +242,7 @@
           }
        }
  
-@@ -273,6 +328,11 @@
+@@ -273,6 +329,11 @@
        if (this.field_219461_c instanceof LivingEntity) {
           Set<ModifiableAttributeInstance> set = ((LivingEntity)this.field_219461_c).func_233645_dx_().func_233778_a_();
           if (!set.isEmpty()) {

@@ -126,6 +126,20 @@
        this.field_73251_h.func_217381_Z().func_76319_b();
        this.func_222869_l();
     }
+@@ -331,11 +375,11 @@
+       this.field_217245_k = i;
+       IWorldInfo iworldinfo = this.field_73251_h.func_72912_H();
+       boolean flag = this.field_73251_h.func_234925_Z_();
+-      boolean flag1 = this.field_73251_h.func_82736_K().func_223586_b(GameRules.field_223601_d);
++      boolean flag1 = this.field_73251_h.func_82736_K().func_223586_b(GameRules.field_223601_d) && !field_73251_h.func_217369_A().isEmpty(); //CraftBukkit
+       if (!flag) {
+          this.field_73251_h.func_217381_Z().func_76320_a("pollingChunks");
+          int k = this.field_73251_h.func_82736_K().func_223592_c(GameRules.field_223610_m);
+-         boolean flag2 = iworldinfo.func_82573_f() % 400L == 0L;
++         boolean flag2 = field_73251_h.ticksPerAnimalSpawns != 0L && iworldinfo.func_82573_f() % field_73251_h.ticksPerAnimalSpawns == 0L; // CraftBukkit
+          this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
+          int l = this.field_217240_d.func_219358_b();
+          WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = WorldEntitySpawner.func_234964_a_(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_);
 @@ -355,11 +399,13 @@
                    ChunkPos chunkpos = p_241099_7_.func_219277_h();
                    if (!this.field_217237_a.func_219243_d(chunkpos)) {

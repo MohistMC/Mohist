@@ -1600,7 +1600,7 @@ public final class CraftServer implements Server {
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
         PlayerData storage = console.playerDataManager;
-        String[] files = storage.getPlayerDataFolder().list(new DatFileFilter());
+        String[] files = storage.getPlayerDir().list(new DatFileFilter());
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
 
         for (String file : files) {
