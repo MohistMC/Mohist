@@ -110,14 +110,17 @@
           for(IPacket<?> ipacket : list) {
              serverplayerentity.field_71135_a.func_147359_a(ipacket);
           }
-@@ -204,6 +206,13 @@
+@@ -204,6 +206,16 @@
        return i;
     }
  
 +   // CraftBukkit start - Send to players
 +   private void sendAll(IPacket packet) {
-+      ((List<ServerPlayerEntity>) this.field_96555_a.func_184103_al().field_72404_b).stream().filter(entityplayer -> entityplayer.getBukkitEntity().getScoreboard().getHandle() == this)
-+          .forEach(entityplayer -> entityplayer.field_71135_a.func_147359_a(packet));
++      for (ServerPlayerEntity entityplayer : this.field_96555_a.func_184103_al().field_72404_b) {
++         if (entityplayer.getBukkitEntity().getScoreboard().getHandle() == this) {
++            entityplayer.field_71135_a.func_147359_a(packet);
++         }
++      }
 +   }
 +   // CraftBukkit end
 +
