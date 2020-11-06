@@ -229,8 +229,8 @@ tasks.generateProjectCauldron << {
     file.append('''
 repositories {
     clear()
+    maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven' }
     maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
-        maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven' }
     maven {
         name 'forge'
         url 'https://files.minecraftforge.net/maven'
