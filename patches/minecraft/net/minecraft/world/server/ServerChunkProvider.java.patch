@@ -136,7 +136,7 @@
           this.field_73251_h.func_217381_Z().func_76320_a("pollingChunks");
           int k = this.field_73251_h.func_82736_K().func_223592_c(GameRules.field_223610_m);
 -         boolean flag2 = iworldinfo.func_82573_f() % 400L == 0L;
-+         boolean flag2 = field_73251_h.ticksPerAnimalSpawns != 0L && iworldinfo.func_82573_f() % field_73251_h.ticksPerAnimalSpawns == 0L; // CraftBukkit
++         boolean flag2 = iworldinfo.func_82573_f() % 400 == 0L; // TODO: Mohist - Refresh the velocity anomaly
           this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
           int l = this.field_217240_d.func_219358_b();
           WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = WorldEntitySpawner.func_234964_a_(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_);
