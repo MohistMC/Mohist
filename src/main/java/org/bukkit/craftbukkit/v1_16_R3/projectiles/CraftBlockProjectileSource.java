@@ -20,6 +20,7 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.tileentity.DispenserTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.server.ServerWorld;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -65,7 +66,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity) {
         Validate.isTrue(getBlock().getType() == Material.DISPENSER, "Block is no longer dispenser");
         // Copied from DispenserBlock.dispense()
-        ProxyBlockSource isourceblock = new ProxyBlockSource(dispenserBlock.getWorld().getMinecraftWorld(), dispenserBlock.getPos());
+        ProxyBlockSource isourceblock = new ProxyBlockSource((ServerWorld) dispenserBlock.getWorld(), dispenserBlock.getPos());
         // Copied from DispenseTaskProjectile
         IPosition iposition = DispenserBlock.getDispensePosition(isourceblock);
         Direction enumdirection = (Direction) isourceblock.getBlockState().get(DispenserBlock.FACING);
