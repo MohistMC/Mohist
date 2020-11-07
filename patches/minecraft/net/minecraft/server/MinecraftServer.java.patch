@@ -521,7 +521,7 @@
        field_147145_h.info("Preparing start region for dimension {}", (Object)serverworld.func_234923_W_().func_240901_a_());
        BlockPos blockpos = serverworld.func_241135_u_();
        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
-@@ -462,31 +641,39 @@
+@@ -462,31 +641,40 @@
        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
        while(serverchunkprovider.func_217229_b() != 441) {
@@ -568,14 +568,16 @@
 +      // CraftBukkit end
        p_213186_1_.func_219510_b();
        serverchunkprovider.func_212863_j_().func_215598_a(5);
-       this.func_240794_aZ_();
+-      this.func_240794_aZ_();
++      //this.func_240794_aZ_();
 +      // CraftBukkit start
++      serverworld1.func_72891_a(this.func_230536_N_(), this.func_230537_U_());
 +      this.forceTicks = false;
 +      // CraftBukkit end
     }
  
     protected void func_175584_a() {
-@@ -529,20 +716,45 @@
+@@ -529,20 +717,45 @@
           flag = true;
        }
  
@@ -626,7 +628,7 @@
        if (this.func_147137_ag() != null) {
           this.func_147137_ag().func_151268_b();
        }
-@@ -551,6 +763,7 @@
+@@ -551,6 +764,7 @@
           field_147145_h.info("Saving players");
           this.field_71318_t.func_72389_g();
           this.field_71318_t.func_72392_r();
@@ -634,7 +636,7 @@
        }
  
        field_147145_h.info("Saving worlds");
-@@ -566,6 +779,7 @@
+@@ -566,6 +780,7 @@
        for(ServerWorld serverworld1 : this.func_212370_w()) {
           if (serverworld1 != null) {
              try {
@@ -642,7 +644,7 @@
                 serverworld1.close();
              } catch (IOException ioexception1) {
                 field_147145_h.error("Exception closing the level", (Throwable)ioexception1);
-@@ -584,6 +798,12 @@
+@@ -584,6 +799,12 @@
        } catch (IOException ioexception) {
           field_147145_h.error("Failed to unlock level {}", this.field_71310_m.func_237282_a_(), ioexception);
        }
@@ -655,7 +657,7 @@
  
     }
  
-@@ -611,23 +831,48 @@
+@@ -611,23 +832,48 @@
  
     }
  
@@ -706,7 +708,7 @@
                 this.field_211151_aa += 50L;
                 LongTickDetector longtickdetector = LongTickDetector.func_233524_a_("Server");
                 this.func_240773_a_(longtickdetector);
-@@ -643,11 +888,20 @@
+@@ -643,11 +889,20 @@
                 this.func_240795_b_(longtickdetector);
                 this.field_71296_Q = true;
              }
@@ -727,7 +729,7 @@
           CrashReport crashreport;
           if (throwable1 instanceof ReportedException) {
              crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
-@@ -662,6 +916,7 @@
+@@ -662,6 +917,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -735,7 +737,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -670,6 +925,14 @@
+@@ -670,6 +926,14 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -750,7 +752,7 @@
              this.func_71240_o();
           }
  
-@@ -678,9 +941,16 @@
+@@ -678,9 +942,16 @@
     }
  
     private boolean func_212379_aT() {
@@ -768,7 +770,7 @@
     protected void func_213202_o() {
        this.func_213160_bf();
        this.func_213161_c(() -> {
-@@ -688,7 +958,7 @@
+@@ -688,7 +959,7 @@
        });
     }
  
@@ -777,7 +779,7 @@
        return new TickDelayedTask(this.field_71315_w, p_212875_1_);
     }
  
-@@ -770,7 +1040,10 @@
+@@ -770,7 +1041,10 @@
     }
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
@@ -788,7 +790,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -785,23 +1058,26 @@
+@@ -785,23 +1059,26 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -818,7 +820,7 @@
           this.field_71307_n.func_76471_b();
        }
  
-@@ -812,50 +1088,99 @@
+@@ -812,50 +1089,99 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
@@ -924,7 +926,7 @@
  
        this.field_71304_b.func_76319_b();
     }
-@@ -915,7 +1240,7 @@
+@@ -915,7 +1241,7 @@
     }
  
     public String getServerModName() {
@@ -933,7 +935,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -928,6 +1253,7 @@
+@@ -928,6 +1254,7 @@
        p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
           StringBuilder stringbuilder = new StringBuilder();
  
@@ -941,7 +943,7 @@
           for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
-@@ -953,7 +1279,7 @@
+@@ -953,7 +1280,7 @@
     public abstract Optional<String> func_230045_q_();
  
     public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
@@ -950,7 +952,7 @@
     }
  
     public KeyPair func_71250_E() {
-@@ -1158,7 +1484,7 @@
+@@ -1158,7 +1485,7 @@
  
     @Nullable
     public NetworkSystem func_147137_ag() {
@@ -959,7 +961,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -1273,6 +1599,7 @@
+@@ -1273,6 +1600,7 @@
        }).thenAcceptAsync((p_240782_2_) -> {
           this.field_195576_ac.close();
           this.field_195576_ac = p_240782_2_;
@@ -967,7 +969,7 @@
           this.field_195577_ad.func_198985_a(p_240780_1_);
           this.field_240768_i_.func_230410_a_(func_240771_a_(this.field_195577_ad));
           p_240782_2_.func_240971_i_();
-@@ -1280,6 +1607,7 @@
+@@ -1280,6 +1608,7 @@
           this.func_184103_al().func_193244_w();
           this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
           this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
@@ -975,7 +977,7 @@
        }, this);
        if (this.func_213162_bc()) {
           this.func_213161_c(completablefuture::isDone);
-@@ -1289,10 +1617,13 @@
+@@ -1289,10 +1618,13 @@
     }
  
     public static DatapackCodec func_240772_a_(ResourcePackList p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
@@ -991,7 +993,7 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1366,6 +1697,11 @@
+@@ -1366,6 +1698,11 @@
        return true;
     }
  
@@ -1003,7 +1005,7 @@
     public RecipeManager func_199529_aN() {
        return this.field_195576_ac.func_240967_e_();
     }
-@@ -1442,6 +1778,31 @@
+@@ -1442,6 +1779,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
@@ -1035,7 +1037,7 @@
     public void func_223711_a(Path p_223711_1_) throws IOException {
        Path path = p_223711_1_.resolve("levels");
  
-@@ -1570,6 +1931,10 @@
+@@ -1570,6 +1932,10 @@
        return this.field_240768_i_;
     }
  
@@ -1046,7 +1048,7 @@
     public DynamicRegistries func_244267_aX() {
        return this.field_240767_f_;
     }
-@@ -1578,4 +1943,20 @@
+@@ -1578,4 +1944,20 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return null;
     }
