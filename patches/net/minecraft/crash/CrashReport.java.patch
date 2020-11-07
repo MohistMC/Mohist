@@ -14,7 +14,7 @@
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.plugin.Plugin;
-+import red.mohist.Mohist;
++import com.mohistmc.MohistMC;
  
  public class CrashReport
  {
@@ -25,7 +25,7 @@
 +        this.theReportCategory.addCrashSectionCallable("Mohist Version", new Callable<String>() {
 +            @Override
 +            public String call() throws Exception {
-+                return String.format("%s:", Mohist.getVersion());
++                return String.format("%s:", MohistMC.getVersion());
 +            }
 +        });
 +        this.theReportCategory.addCrashSectionCallable("Plugins", new Callable<String>() {

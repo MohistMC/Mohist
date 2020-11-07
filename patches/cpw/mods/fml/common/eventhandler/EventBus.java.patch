@@ -5,7 +5,7 @@
  import cpw.mods.fml.common.Loader;
  import cpw.mods.fml.common.ModContainer;
 +import org.bukkit.Bukkit;
-+import red.mohist.api.event.BukkitHookForgeEvent;
++import com.mohistmc.api.event.BukkitHookForgeEvent;
  
  public class EventBus implements IEventExceptionHandler
  {

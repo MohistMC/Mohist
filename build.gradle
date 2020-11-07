@@ -63,7 +63,7 @@ minecraft {
     }
 }
 
-group = 'red.mohist'
+group = 'com.mohistmc'
 
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "10.13.4.1614"
@@ -140,7 +140,7 @@ def generateManifest(boolean legacy = false) {
             'Implementation-Title'  : project.name,
             'Implementation-Version': 'git rev-parse --short HEAD'.execute().text.trim(),
             'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
-            'Main-Class'            : 'red.mohist.Mohist',
+            'Main-Class'            : 'com.mohist.MohistMC',
             'Class-Path'            : generateClasspath(legacy)
     ]
 }
