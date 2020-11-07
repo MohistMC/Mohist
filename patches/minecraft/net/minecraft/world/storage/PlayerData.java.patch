@@ -20,7 +20,15 @@
  
  public class PlayerData {
     private static final Logger field_237332_b_ = LogManager.getLogger();
-@@ -31,6 +35,7 @@
+@@ -24,6 +28,7 @@
+    }
+ 
+    public void func_237335_a_(PlayerEntity p_237335_1_) {
++      if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
+       try {
+          CompoundNBT compoundnbt = p_237335_1_.func_189511_e(new CompoundNBT());
+          File file1 = File.createTempFile(p_237335_1_.func_189512_bd() + "-", ".dat", this.field_237333_c_);
+@@ -31,6 +36,7 @@
           File file2 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat");
           File file3 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat_old");
           Util.func_240977_a_(file2, file1, file3);
@@ -28,7 +36,7 @@
        } catch (Exception exception) {
           field_237332_b_.warn("Failed to save player data for {}", (Object)p_237335_1_.func_200200_C_().getString());
        }
-@@ -43,21 +48,64 @@
+@@ -43,21 +49,64 @@
  
        try {
           File file1 = new File(this.field_237333_c_, p_237336_1_.func_189512_bd() + ".dat");
@@ -93,7 +101,7 @@
     public String[] func_237334_a_() {
        String[] astring = this.field_237333_c_.list();
        if (astring == null) {
-@@ -72,4 +120,8 @@
+@@ -72,4 +121,8 @@
  
        return astring;
     }
