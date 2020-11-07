@@ -123,11 +123,11 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         super(tag);
 
         if (tag.hasKey(BOOK_TITLE.NBT)) {
-            this.title = limit(tag.getString(BOOK_TITLE.NBT), 1024); // Spigot
+            this.title = tag.getString(BOOK_TITLE.NBT);
         }
 
         if (tag.hasKey(BOOK_AUTHOR.NBT)) {
-            this.author = limit(tag.getString(BOOK_AUTHOR.NBT), 1024); // Spigot
+            this.author = tag.getString(BOOK_AUTHOR.NBT);
         }
 
         boolean resolved = false;
@@ -152,7 +152,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                         // Ignore and treat as an old book
                     }
                 }
-                addPage(limit(page, 1024)); // Spigot
+                addPage(page);
             }
         }
     }
