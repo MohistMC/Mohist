@@ -1618,7 +1618,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void sendHealthUpdate() {
-        getHandle().connection.sendPacket(new SPacketUpdateHealth(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
+        // Mohist-617: Compatible with Auto Sieve of Extra Utilities 2
+        if (getHandle().connection != null) {
+            getHandle().connection.sendPacket(new SPacketUpdateHealth(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
+        }
     }
 
     public void injectScaledMaxHealth(Collection<IAttributeInstance> collection, boolean force) {
