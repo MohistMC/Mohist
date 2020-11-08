@@ -65,7 +65,7 @@
 +                        entityplayermp.field_71135_a.teleport(teleEvent.getTo());
 +                        entitylivingbase.field_70143_R = 0.0F;
 +                        CraftEventFactory.entityDamage = this;
-+                        entitylivingbase.func_70097_a(DamageSource.field_76379_h, 5.0F);
++                        entitylivingbase.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
 +                        CraftEventFactory.entityDamage = null;
 +                    }
 +                    // CraftBukkit end
