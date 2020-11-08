@@ -32,3 +32,12 @@
        int i = 3;
        p_i50077_3_.func_174889_b(p_i50077_2_.field_70458_d);
        int j = -18;
+@@ -66,7 +82,7 @@
+    }
+ 
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
+-      return this.field_111243_a.func_70300_a(p_75145_1_) && this.field_111242_f.func_70089_S() && this.field_111242_f.func_70032_d(p_75145_1_) < 8.0F;
++      return this.field_111243_a.func_70300_a(p_75145_1_) && (this.field_111242_f.func_70089_S() && this.field_111242_f.valid) && this.field_111242_f.func_70032_d(p_75145_1_) < 8.0F; // Paper - Fix MC-161754
+    }
+ 
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {

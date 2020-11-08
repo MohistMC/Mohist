@@ -49,7 +49,7 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         old.remove();
 
         ItemFrameEntity frame = new ItemFrameEntity(world,position,direction);
-        frame.setDisplayedItem(item);
+        frame.setItem(item, true, false);
         world.addEntity(frame);
         this.entity = frame;
     }

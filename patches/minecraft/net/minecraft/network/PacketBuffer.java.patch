@@ -1,6 +1,14 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
-@@ -38,8 +38,9 @@
+@@ -29,6 +29,7 @@
+ import net.minecraft.nbt.INBT;
+ import net.minecraft.nbt.NBTDynamicOps;
+ import net.minecraft.nbt.NBTSizeTracker;
++import net.minecraft.tileentity.SkullTileEntity;
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.math.BlockPos;
+@@ -38,8 +39,9 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -11,7 +19,7 @@
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -256,7 +257,7 @@
+@@ -256,7 +258,7 @@
        } else {
           try {
              CompressedStreamTools.func_74800_a(p_150786_1_, new ByteBufOutputStream(this));
@@ -20,7 +28,7 @@
              throw new EncoderException(ioexception);
           }
        }
-@@ -292,7 +293,16 @@
+@@ -292,7 +294,16 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
@@ -38,7 +46,7 @@
           this.writeBoolean(false);
        } else {
           this.writeBoolean(true);
-@@ -300,8 +310,12 @@
+@@ -300,8 +311,21 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
@@ -47,13 +55,22 @@
 +         if (item.isDamageable(p_150788_1_) || item.func_77651_p()) {
 +            // Spigot start - filter
 +            p_150788_1_ = p_150788_1_.func_77946_l();
-+            CraftItemStack.setItemMeta(p_150788_1_, CraftItemStack.getItemMeta(p_150788_1_));
++            //CraftItemStack.setItemMeta(stack, CraftItemStack.getItemMeta(stack)); // Paper - This is no longer needed due to NBT being supported
 +            // Spigot end
 +            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
++            // Paper start
++            if (compoundnbt != null && compoundnbt.func_150297_b("SkullOwner", 10)) {
++               CompoundNBT owner = compoundnbt.func_74775_l("SkullOwner");
++               if (owner.func_186855_b("Id")) {
++                  compoundnbt.func_186854_a("SkullOwnerOrig", owner.func_186857_a("Id"));
++                  SkullTileEntity.sanitizeUUID(owner);
++               }
++            }
++            // Paper end
           }
  
           this.func_150786_a(compoundnbt);
-@@ -317,7 +331,12 @@
+@@ -317,7 +341,12 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);

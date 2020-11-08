@@ -136,7 +136,7 @@
           ItemStack itemstack = this.field_184799_bw.get(i);
           if (!itemstack.func_190926_b()) {
 -            Block.func_180635_a(this.field_70170_p, this.func_233580_cy_().func_177984_a(), itemstack);
-+            drops.add(CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
++            drops.add(CraftItemStack.asCraftMirror(itemstack)); // CraftBukkit - add to drops
              this.field_184799_bw.set(i, ItemStack.field_190927_a);
           }
        }
@@ -145,7 +145,7 @@
           ItemStack itemstack1 = this.field_184800_bx.get(j);
           if (!itemstack1.func_190926_b()) {
 -            Block.func_180635_a(this.field_70170_p, this.func_233580_cy_().func_177984_a(), itemstack1);
-+            drops.add(CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
++            drops.add(CraftItemStack.asCraftMirror(itemstack1)); // CraftBukkit - add to drops
              this.field_184800_bx.set(j, ItemStack.field_190927_a);
           }
        }

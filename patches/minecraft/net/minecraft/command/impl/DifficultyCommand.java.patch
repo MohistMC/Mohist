@@ -1,0 +1,24 @@
+--- a/net/minecraft/command/impl/DifficultyCommand.java
++++ b/net/minecraft/command/impl/DifficultyCommand.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.world.Difficulty;
++import net.minecraft.world.server.ServerWorld;
+ 
+ public class DifficultyCommand {
+    private static final DynamicCommandExceptionType field_198349_a = new DynamicCommandExceptionType((p_208823_0_) -> {
+@@ -35,10 +36,11 @@
+ 
+    public static int func_198345_a(CommandSource p_198345_0_, Difficulty p_198345_1_) throws CommandSyntaxException {
+       MinecraftServer minecraftserver = p_198345_0_.func_197028_i();
+-      if (minecraftserver.func_240793_aU_().func_176130_y() == p_198345_1_) {
++      ServerWorld world = p_198345_0_.func_197023_e(); // Paper
++      if (world.field_241103_E_.func_176130_y() == p_198345_1_) {
+          throw field_198349_a.create(p_198345_1_.func_151526_b());
+       } else {
+-         minecraftserver.func_147139_a(p_198345_1_, true);
++         minecraftserver.setDifficultyForAllWorlds(world, p_198345_1_, true);
+          p_198345_0_.func_197030_a(new TranslationTextComponent("commands.difficulty.success", p_198345_1_.func_199285_b()), true);
+          return 0;
+       }

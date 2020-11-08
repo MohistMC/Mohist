@@ -20,7 +20,19 @@
                 BlockPos blockpos = template$blockinfo.field_186242_a;
                 if (mutableboundingbox == null || mutableboundingbox.func_175898_b(blockpos)) {
                    FluidState fluidstate = p_237146_4_.func_204763_l() ? p_237146_1_.func_204610_c(blockpos) : null;
-@@ -330,7 +334,7 @@
+@@ -244,9 +248,11 @@
+                               template$blockinfo.field_186244_c.func_74772_a("LootTableSeed", p_237146_5_.nextLong());
+                            }
+ 
++                           tileentity1.isLoadingStructure = true;
+                            tileentity1.func_230337_a_(template$blockinfo.field_186243_b, template$blockinfo.field_186244_c);
+                            tileentity1.func_189668_a(p_237146_4_.func_186212_b());
+                            tileentity1.func_189667_a(p_237146_4_.func_186215_c());
++                           tileentity1.isLoadingStructure = false;
+                         }
+                      }
+ 
+@@ -330,7 +336,7 @@
              }
  
              if (!p_237146_4_.func_186221_e()) {
@@ -29,7 +41,7 @@
              }
  
              return true;
-@@ -359,14 +363,19 @@
+@@ -359,14 +365,19 @@
        });
     }
  
@@ -50,7 +62,7 @@
           }
  
           if (template$blockinfo1 != null) {
-@@ -377,13 +386,30 @@
+@@ -377,13 +388,30 @@
        return list;
     }
  
@@ -87,7 +99,7 @@
              ListNBT listnbt = new ListNBT();
              listnbt.add(DoubleNBT.func_229684_a_(vector3d1.field_72450_a));
              listnbt.add(DoubleNBT.func_229684_a_(vector3d1.field_72448_b));
-@@ -391,10 +417,10 @@
+@@ -391,10 +419,10 @@
              compoundnbt.func_218657_a("Pos", listnbt);
              compoundnbt.func_82580_o("UUID");
              func_215382_a(p_237143_1_, compoundnbt).ifPresent((p_242927_6_) -> {

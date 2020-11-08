@@ -130,7 +130,7 @@
 -      this.func_184212_Q().func_187227_b(field_184525_c, p_174864_1_);
 -      if (!p_174864_1_.func_190926_b()) {
 +      this.func_184212_Q().func_187227_b(field_184525_c, stack);
-+      if (!stack.func_190926_b() && playSound) { // CraftBukkit
++      if (!stack.func_190926_b() && p_174864_2_ && playSound) { // CraftBukkit
           this.func_184185_a(SoundEvents.field_187620_cL, 1.0F, 1.0F);
        }
  

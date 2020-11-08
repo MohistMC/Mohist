@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/RailState.java
 +++ b/net/minecraft/block/RailState.java
-@@ -15,14 +15,16 @@
+@@ -15,17 +15,31 @@
     private BlockState field_196923_d;
     private final boolean field_208513_e;
     private final List<BlockPos> field_196924_e = Lists.newArrayList();
@@ -19,7 +19,34 @@
        this.func_208509_a(railshape);
     }
  
-@@ -178,7 +180,7 @@
++   public final World getWorld() { return this.field_196920_a; } // Paper - OBFHELPER
++
++   public final BlockPos getPos() { return this.field_196921_b; } // Paper - OBFHELPER
++
++   public final BlockState getRailState() { return this.field_196923_d; } // Paper - OBFHELPER
++
++   // Paper start - prevent desync
++   public boolean isValid() {
++      return this.getWorld().func_180495_p(this.getPos()).func_177230_c() == this.getRailState().func_177230_c();
++   }
++    // Paper end - prevent desync
++
+    public List<BlockPos> func_196907_a() {
+       return this.field_196924_e;
+    }
+@@ -142,6 +156,11 @@
+    }
+ 
+    private void func_208510_c(RailState p_208510_1_) {
++      // Paper start - prevent desync
++      if (!this.isValid() || !p_208510_1_.isValid()) {
++         return;
++      }
++      // Paper end - prevent desync
+       this.field_196924_e.add(p_208510_1_.field_196921_b);
+       BlockPos blockpos = this.field_196921_b.func_177978_c();
+       BlockPos blockpos1 = this.field_196921_b.func_177968_d();
+@@ -178,7 +197,7 @@
           }
        }
  
@@ -28,7 +55,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos.func_177984_a())) {
              railshape = RailShape.ASCENDING_NORTH;
           }
-@@ -188,7 +190,7 @@
+@@ -188,7 +207,7 @@
           }
        }
  
@@ -37,7 +64,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos3.func_177984_a())) {
              railshape = RailShape.ASCENDING_EAST;
           }
-@@ -304,7 +306,7 @@
+@@ -304,7 +323,7 @@
           }
        }
  
@@ -46,7 +73,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos.func_177984_a())) {
              railshape = RailShape.ASCENDING_NORTH;
           }
-@@ -314,7 +316,7 @@
+@@ -314,7 +333,7 @@
           }
        }
  
@@ -55,3 +82,28 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos3.func_177984_a())) {
              railshape = RailShape.ASCENDING_EAST;
           }
+@@ -332,10 +351,14 @@
+       this.field_196923_d = this.field_196923_d.func_206870_a(this.field_196922_c.func_176560_l(), railshape);
+       if (p_226941_2_ || this.field_196920_a.func_180495_p(this.field_196921_b) != this.field_196923_d) {
+          this.field_196920_a.func_180501_a(this.field_196921_b, this.field_196923_d, 3);
+-
++         // Paper start - prevent desync
++         if (!this.isValid()) {
++            return this;
++         }
++         // Paper end - prevent desync
+          for(int i = 0; i < this.field_196924_e.size(); ++i) {
+             RailState railstate = this.func_196908_a(this.field_196924_e.get(i));
+-            if (railstate != null) {
++            if (railstate != null && railstate.isValid()) { // Paper - prevent desync
+                railstate.func_196903_f();
+                if (railstate.func_196905_c(this)) {
+                   railstate.func_208510_c(this);
+@@ -348,6 +371,6 @@
+    }
+ 
+    public BlockState func_196916_c() {
+-      return this.field_196923_d;
++      return this.getWorld().func_180495_p(this.getPos()); // Paper - prevent desync
+    }
+ }
