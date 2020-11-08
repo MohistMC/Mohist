@@ -841,7 +841,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     public static class Snapshot
     {
-        private static final Comparator<ResourceLocation> sorter = (a, b) -> a.compareNamespaced(b);
+        private static final Comparator<ResourceLocation> sorter = (a,b) -> a.compareNamespaced(b);
         public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap(sorter);
         public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap(sorter);
         public final Set<Integer> blocked = Sets.newTreeSet();

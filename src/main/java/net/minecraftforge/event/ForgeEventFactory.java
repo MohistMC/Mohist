@@ -327,7 +327,7 @@ public class ForgeEventFactory
 
     public static void firePlayerLoadingEvent(PlayerEntity player, PlayerData playerFileData, String uuidString)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, playerFileData.getPlayerDir(), uuidString));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, playerFileData.getPlayerDataFolder(), uuidString));
     }
 
     @Nullable
