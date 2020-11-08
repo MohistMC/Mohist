@@ -1,6 +1,14 @@
 --- a/net/minecraft/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/item/crafting/ShapelessRecipe.java
-@@ -11,20 +11,38 @@
+@@ -4,6 +4,7 @@
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
+ import it.unimi.dsi.fastutil.ints.IntList;
++import java.util.Iterator;
+ import net.minecraft.inventory.CraftingInventory;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.network.PacketBuffer;
+@@ -11,20 +12,38 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
@@ -39,7 +47,7 @@
     public ResourceLocation func_199560_c() {
        return this.field_199562_a;
     }
-@@ -33,7 +51,7 @@
+@@ -33,7 +52,7 @@
        return IRecipeSerializer.field_222158_b;
     }
  
@@ -48,29 +56,67 @@
        return this.field_194138_c;
     }
  
-@@ -47,17 +65,20 @@
+@@ -47,17 +66,56 @@
  
     public boolean func_77569_a(CraftingInventory p_77569_1_, World p_77569_2_) {
        RecipeItemHelper recipeitemhelper = new RecipeItemHelper();
 +      java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
        int i = 0;
  
++      // Paper start
++      java.util.List<ItemStack> providedItems = new java.util.ArrayList<>();
++      co.aikar.util.Counter<ItemStack> matchedProvided = new co.aikar.util.Counter<>();
++      co.aikar.util.Counter<Ingredient> matchedIngredients = new co.aikar.util.Counter<>();
++      // Paper end
        for(int j = 0; j < p_77569_1_.func_70302_i_(); ++j) {
           ItemStack itemstack = p_77569_1_.func_70301_a(j);
           if (!itemstack.func_190926_b()) {
-             ++i;
-+            if (isSimple)
-             recipeitemhelper.func_221264_a(itemstack, 1);
-+            else inputs.add(itemstack);
+-            ++i;
+-            recipeitemhelper.func_221264_a(itemstack, 1);
++            if (isSimple) {
++               // Paper start
++               itemstack = itemstack.func_77946_l();
++               providedItems.add(itemstack);
++               for (Ingredient ingredient : field_77579_b) {
++                  if (ingredient.test(itemstack)) {
++                     matchedProvided.increment(itemstack);
++                     matchedIngredients.increment(ingredient);
++                  }
++               }
++               // Paper end
++            } else {
++               inputs.add(itemstack);
++            }
           }
        }
  
 -      return i == this.field_77579_b.size() && recipeitemhelper.func_194116_a(this, (IntList)null);
-+      return i == this.field_77579_b.size() && (isSimple ? recipeitemhelper.func_194116_a(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.field_77579_b) != null);
++      //return i == this.recipeItems.size() && (isSimple ? recipeitemhelper.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.recipeItems) != null);
++      // Paper start
++      if (matchedProvided.isEmpty() || matchedIngredients.isEmpty()) {
++         return false;
++      }
++      java.util.List<Ingredient> ingredients = new java.util.ArrayList<>(this.field_77579_b);
++      providedItems.sort(java.util.Comparator.comparingInt((ItemStack c) -> (int) matchedProvided.getCount(c)).reversed());
++      ingredients.sort(java.util.Comparator.comparingInt((Ingredient c) -> (int) matchedIngredients.getCount(c)));
++
++      PROVIDED:
++      for (ItemStack provided : providedItems) {
++         for (Iterator<Ingredient> itIngredient = ingredients.iterator(); itIngredient.hasNext(); ) {
++            Ingredient ingredient = itIngredient.next();
++            if (ingredient.test(provided)) {
++               itIngredient.remove();
++               continue PROVIDED;
++            }
++         }
++         return false;
++      }
++      return isSimple ? ingredients.isEmpty() : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.field_77579_b) != null;
++      // Paper end
     }
  
     public ItemStack func_77572_b(CraftingInventory p_77572_1_) {
-@@ -68,14 +89,15 @@
+@@ -68,14 +126,15 @@
        return p_194133_1_ * p_194133_2_ >= this.field_77579_b.size();
     }
  

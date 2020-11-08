@@ -489,7 +489,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         //}
 
         // entity.setLocation() throws no event, and so cannot be cancelled
-        entity.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        entity.setLocationAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch()); // Paper - use proper setPositionRotation for teleportation
         // SPIGOT-619: Force sync head rotation also
         entity.setRotationYawHead(location.getYaw());
 
@@ -701,14 +701,15 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             return false;
         }
         final CraftEntity other = (CraftEntity) obj;
-        return (this.getEntityId() == other.getEntityId());
+        return (this.getHandle() == other.getHandle()); // Paper - while logically the same, this is clearer
     }
 
+    // Paper - Fix hashCode. entity ID's are not static.
+    // A CraftEntity can change reference to a new entity with a new ID, and hash codes should never change
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + this.getEntityId();
-        return hash;
+        return getUniqueId().hashCode();
+        // Paper end
     }
 
     @Override

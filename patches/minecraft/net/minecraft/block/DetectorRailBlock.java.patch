@@ -8,7 +8,14 @@
  
  public class DetectorRailBlock extends AbstractRailBlock {
     public static final EnumProperty<RailShape> field_176573_b = BlockStateProperties.field_208166_S;
-@@ -72,6 +73,14 @@
+@@ -66,12 +67,21 @@
+ 
+    private void func_176570_e(World p_176570_1_, BlockPos p_176570_2_, BlockState p_176570_3_) {
+       if (this.func_196260_a(p_176570_3_, p_176570_1_, p_176570_2_)) {
++         if (p_176570_3_.func_177230_c() != this) { return; } // Paper - not our block, don't do anything
+          boolean flag = p_176570_3_.func_177229_b(field_176574_M);
+          boolean flag1 = false;
+          List<AbstractMinecartEntity> list = this.func_200878_a(p_176570_1_, p_176570_2_, AbstractMinecartEntity.class, (Predicate<Entity>)null);
           if (!list.isEmpty()) {
              flag1 = true;
           }
@@ -23,7 +30,7 @@
  
           if (flag1 && !flag) {
              BlockState blockstate = p_176570_3_.func_206870_a(field_176574_M, Boolean.valueOf(true));
-@@ -131,6 +140,8 @@
+@@ -131,6 +141,8 @@
           }
  
           List<AbstractMinecartEntity> list1 = this.func_200878_a(p_180641_2_, p_180641_3_, AbstractMinecartEntity.class, EntityPredicates.field_96566_b);

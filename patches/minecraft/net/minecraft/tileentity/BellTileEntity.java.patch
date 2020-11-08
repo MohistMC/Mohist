@@ -1,0 +1,42 @@
+--- a/net/minecraft/tileentity/BellTileEntity.java
++++ b/net/minecraft/tileentity/BellTileEntity.java
+@@ -23,8 +23,8 @@
+    public int field_213943_a;
+    public boolean field_213944_b;
+    public Direction field_213945_c;
+-   private List<LivingEntity> field_213947_h;
+-   private boolean field_213948_i;
++   private List<LivingEntity> field_213947_h;private List<LivingEntity> getEntitiesAtRing() { return this.field_213947_h; } // Paper - OBFHELPER
++   private boolean field_213948_i;private boolean getShouldReveal() { return this.field_213948_i; } // Paper - OBFHELPER
+    private int field_213949_j;
+ 
+    public BellTileEntity() {
+@@ -51,6 +51,11 @@
+ 
+       if (this.field_213943_a >= 50) {
+          this.field_213944_b = false;
++         // Paper start
++         if (!this.getShouldReveal()) {
++            this.getEntitiesAtRing().clear();
++         }
++         // Paper end
+          this.field_213943_a = 0;
+       }
+ 
+@@ -65,6 +70,7 @@
+          } else {
+             this.func_222828_b(this.field_145850_b);
+             this.func_222826_c(this.field_145850_b);
++            this.getEntitiesAtRing().clear(); // Paper
+             this.field_213948_i = false;
+          }
+       }
+@@ -102,7 +108,7 @@
+             }
+          }
+       }
+-
++      this.getEntitiesAtRing().removeIf(e -> !e.func_70089_S()); // Paper
+    }
+ 
+    private boolean func_222830_f() {

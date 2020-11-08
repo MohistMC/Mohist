@@ -63,6 +63,15 @@
  
           this.field_70169_q = this.func_226277_ct_();
           this.field_70167_r = this.func_226278_cu_();
+@@ -104,7 +118,7 @@
+             }
+          }
+ 
+-         if (!this.field_70122_E || func_213296_b(this.func_213322_ci()) > (double)1.0E-5F || (this.field_70173_aa + this.func_145782_y()) % 4 == 0) {
++         if (!this.field_70122_E || func_213296_b(this.func_213322_ci()) > (double)1.0E-5F || this.field_70173_aa % 4 == 0) { // Paper - Ensure checking item movement is always offset from Spigot's entity activation range check
+             this.func_213315_a(MoverType.SELF, this.func_213322_ci());
+             float f1 = 0.98F;
+             if (this.field_70122_E) {
 @@ -132,9 +146,11 @@
              }
           }

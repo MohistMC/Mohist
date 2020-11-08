@@ -46,7 +46,15 @@
           VoxelShape voxelshape = blockstate.func_196952_d(this.field_70170_p, blockpos);
           if (!voxelshape.func_197766_b()) {
              Vector3d vector3d1 = this.func_213303_ch();
-@@ -184,7 +191,7 @@
+@@ -161,6 +168,7 @@
+ 
+          ++this.field_184552_b;
+       } else {
++         if (field_70173_aa > 200) this.tickDespawnCounter(); // Paper - tick despawnCounter regardless after 10 seconds
+          this.field_184552_b = 0;
+          Vector3d vector3d2 = this.func_213303_ch();
+          Vector3d vector3d3 = vector3d2.func_178787_e(vector3d);
+@@ -184,7 +192,7 @@
                 }
              }
  
@@ -55,8 +63,11 @@
                 this.func_70227_a(raytraceresult);
                 this.field_70160_al = true;
              }
-@@ -262,7 +269,7 @@
+@@ -260,9 +268,10 @@
  
+    }
+ 
++   protected final void tickDespawnCounter() { this.func_225516_i_(); } // Paper - OBFHELPER
     protected void func_225516_i_() {
        ++this.field_70252_j;
 -      if (this.field_70252_j >= 1200) {
@@ -64,7 +75,7 @@
           this.func_70106_y();
        }
  
-@@ -320,7 +327,13 @@
+@@ -320,7 +329,13 @@
        boolean flag = entity.func_200600_R() == EntityType.field_200803_q;
        int k = entity.func_223314_ad();
        if (this.func_70027_ad() && !flag) {
@@ -79,7 +90,7 @@
        }
  
        if (entity.func_70097_a(damagesource, (float)i)) {
-@@ -477,8 +490,20 @@
+@@ -477,8 +492,20 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K && (this.field_70254_i || this.func_203047_q()) && this.field_70249_b <= 0) {

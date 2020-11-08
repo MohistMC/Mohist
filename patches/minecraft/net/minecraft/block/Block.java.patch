@@ -31,7 +31,15 @@
        this.field_176227_L = builder.func_235882_a_(Block::func_176223_P, BlockState::new);
        this.func_180632_j(this.field_176227_L.func_177621_b());
     }
-@@ -261,19 +266,46 @@
+@@ -240,6 +245,7 @@
+ 
+    }
+ 
++   public static void dropNaturally(BlockState state, IWorld worldIn, BlockPos pos, @Nullable TileEntity tileEntityIn) { func_220059_a(state, worldIn, pos, tileEntityIn); }
+    public static void func_220059_a(BlockState p_220059_0_, IWorld p_220059_1_, BlockPos p_220059_2_, @Nullable TileEntity p_220059_3_) {
+       if (p_220059_1_ instanceof ServerWorld) {
+          func_220070_a(p_220059_0_, (ServerWorld)p_220059_1_, p_220059_2_, p_220059_3_).forEach((p_220061_2_) -> {
+@@ -261,19 +267,46 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -81,7 +89,7 @@
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -283,6 +315,7 @@
+@@ -283,6 +316,7 @@
  
     }
  
@@ -89,7 +97,7 @@
     public float func_149638_a() {
        return this.field_235689_au_;
     }
-@@ -332,6 +365,7 @@
+@@ -332,6 +366,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -97,7 +105,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -363,6 +397,7 @@
+@@ -363,6 +398,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -105,7 +113,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -382,6 +417,7 @@
+@@ -382,6 +418,7 @@
        return this.field_196275_y;
     }
  
@@ -113,7 +121,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -391,7 +427,7 @@
+@@ -391,7 +428,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -122,7 +130,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -399,7 +435,7 @@
+@@ -399,7 +436,7 @@
     }
  
     public String toString() {
@@ -131,7 +139,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -410,6 +446,83 @@
+@@ -410,6 +447,83 @@
        return this;
     }
  

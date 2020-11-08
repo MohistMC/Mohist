@@ -165,6 +165,7 @@ project(':forge') {
             url 'https://repo.maven.apache.org/maven2/'
         }
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+        maven { url 'https://papermc.io/repo/repository/maven-public/' }
     }
 
     ext {
@@ -382,6 +383,9 @@ project(':forge') {
         installer 'net.md-5:SpecialSource:1.8.5'
         // spigot
         installer 'net.md-5:bungeecord-chat:1.16-R0.3'
+
+        // paper
+        //installer 'co.aikar:cleaner:1.0-SNAPSHOT'
 
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'

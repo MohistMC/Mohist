@@ -47,3 +47,12 @@
        return mapdata;
     }
  
+@@ -226,7 +243,7 @@
+ 
+             for(int l = 0; l < 128 * i; ++l) {
+                for(int i1 = 0; i1 < 128 * i; ++i1) {
+-                  abiome[l * 128 * i + i1] = p_226642_0_.func_226691_t_(new BlockPos((j / i - 64) * i + i1, 0, (k / i - 64) * i + l));
++                  abiome[l * 128 * i + i1] = p_226642_0_.getBiomeBySeed((j / i - 64) * i + i1, 0, (k / i - 64) * i + l); // Paper
+                }
+             }
+ 

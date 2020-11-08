@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/SkullTileEntity.java
 +++ b/net/minecraft/tileentity/SkullTileEntity.java
-@@ -1,16 +1,32 @@
+@@ -1,16 +1,33 @@
  package net.minecraft.tileentity;
  
 +import com.google.common.base.Predicate;
@@ -27,13 +27,14 @@
  import net.minecraft.block.Blocks;
 +import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
++import net.minecraft.nbt.ListNBT;
  import net.minecraft.nbt.NBTUtil;
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 +import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.StringUtils;
  import net.minecraftforge.api.distmarker.Dist;
-@@ -22,10 +38,54 @@
+@@ -22,10 +39,54 @@
     @Nullable
     private static MinecraftSessionService field_184299_k;
     @Nullable
@@ -89,7 +90,46 @@
     public SkullTileEntity() {
        super(TileEntityType.field_200985_p);
     }
-@@ -101,32 +161,71 @@
+@@ -88,9 +149,37 @@
+ 
+    @Nullable
+    public SUpdateTileEntityPacket func_189518_D_() {
+-      return new SUpdateTileEntityPacket(this.field_174879_c, 4, this.func_189517_E_());
++      return new SUpdateTileEntityPacket(this.field_174879_c, 4, sanitizeTileEntityUUID(this.func_189517_E_())); // Paper
+    }
+ 
++    // Paper start
++    public static CompoundNBT sanitizeTileEntityUUID(CompoundNBT cmp) {
++       CompoundNBT owner = cmp.func_74775_l("Owner");
++      if (!owner.isEmpty()) {
++         sanitizeUUID(owner);
++      }
++      return cmp;
++   }
++
++   public static void sanitizeUUID(CompoundNBT owner) {
++      CompoundNBT properties = owner.func_74775_l("Properties");
++      ListNBT list = null;
++      if (!properties.isEmpty()) {
++         list = properties.func_150295_c("textures", 10);
++      }
++
++      if (list != null && !list.isEmpty()) {
++         String textures = ((CompoundNBT)list.get(0)).func_74779_i("Value");
++         if (textures != null && textures.length() > 3) {
++            UUID uuid = UUID.nameUUIDFromBytes(textures.getBytes());
++            owner.func_186854_a("Id", uuid);
++            return;
++         }
++      }
++      owner.func_186854_a("Id", UUID.randomUUID());
++   }
++   // Paper end
++
+    public CompoundNBT func_189517_E_() {
+       return this.func_189515_b(new CompoundNBT());
+    }
+@@ -101,32 +190,71 @@
     }
  
     private void func_152109_d() {

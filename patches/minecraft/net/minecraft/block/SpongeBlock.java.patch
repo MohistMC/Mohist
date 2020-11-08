@@ -62,7 +62,7 @@
                    ++i;
                    if (j < 6) {
                       queue.add(new Tuple<>(blockpos1, j + 1));
-@@ -80,6 +88,36 @@
+@@ -80,6 +88,40 @@
           }
        }
  
@@ -88,7 +88,11 @@
 +                  // NOP
 +               } else if (material == Material.field_203243_f || material == Material.field_204868_h) {
 +                  TileEntity tileentity = blockState.hasTileEntity() ? p_176312_1_.func_175625_s(blockposition2) : null;
-+                  func_220059_a(blockState, p_176312_1_, blockposition2, tileentity);
++                  // Paper start
++                  if (block.getHandle().func_185904_a() == Material.field_151579_a) {
++                     dropNaturally(blockState, p_176312_1_, blockposition2, tileentity);
++                  }
++                  // Paper end
 +               }
 +            }
 +            p_176312_1_.func_180501_a(blockposition2, block.getHandle(), block.getFlag());

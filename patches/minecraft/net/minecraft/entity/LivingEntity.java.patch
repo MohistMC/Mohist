@@ -1053,7 +1053,15 @@
        if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0) {
           this.field_110158_av = -1;
           this.field_82175_bq = true;
-@@ -1848,15 +2296,16 @@
+@@ -1733,6 +2181,7 @@
+       return p_233634_1_.test(this.func_184614_ca().func_77973_b()) || p_233634_1_.test(this.func_184592_cb().func_77973_b());
+    }
+ 
++   public final ItemStack getItemInHand(Hand enumhand) { return this.func_184586_b(enumhand); } // Paper - OBFHELPER
+    public ItemStack func_184586_b(Hand p_184586_1_) {
+       if (p_184586_1_ == Hand.MAIN_HAND) {
+          return this.func_184582_a(EquipmentSlotType.MAINHAND);
+@@ -1848,15 +2297,16 @@
        }
  
        this.field_70160_al = true;
@@ -1072,7 +1080,7 @@
     }
  
     protected float func_189749_co() {
-@@ -1870,11 +2319,15 @@
+@@ -1870,11 +2320,15 @@
     public void func_213352_e(Vector3d p_213352_1_) {
        if (this.func_70613_aW() || this.func_184186_bw()) {
           double d0 = 0.08D;
@@ -1089,7 +1097,7 @@
  
           FluidState fluidstate = this.field_70170_p.func_204610_c(this.func_233580_cy_());
           if (this.func_70090_H() && this.func_241208_cS_() && !this.func_230285_a_(fluidstate.func_206886_c())) {
-@@ -1899,6 +2352,7 @@
+@@ -1899,6 +2353,7 @@
                 f5 = 0.96F;
              }
  
@@ -1097,7 +1105,7 @@
              this.func_213309_a(f6, p_213352_1_);
              this.func_213315_a(MoverType.SELF, this.func_213322_ci());
              Vector3d vector3d6 = this.func_213322_ci();
-@@ -1973,11 +2427,12 @@
+@@ -1973,11 +2428,12 @@
              }
  
              if (this.field_70122_E && !this.field_70170_p.field_72995_K) {
@@ -1112,7 +1120,7 @@
              float f4 = this.field_70122_E ? f3 * 0.91F : 0.91F;
              Vector3d vector3d5 = this.func_233633_a_(p_213352_1_, f3);
              double d2 = vector3d5.field_72448_b;
-@@ -2049,7 +2504,7 @@
+@@ -2049,7 +2505,7 @@
           double d0 = MathHelper.func_151237_a(p_213362_1_.field_72450_a, (double)-0.15F, (double)0.15F);
           double d1 = MathHelper.func_151237_a(p_213362_1_.field_72449_c, (double)-0.15F, (double)0.15F);
           double d2 = Math.max(p_213362_1_.field_72448_b, (double)-0.15F);
@@ -1121,7 +1129,7 @@
              d2 = 0.0D;
           }
  
-@@ -2077,6 +2532,8 @@
+@@ -2077,6 +2533,8 @@
     }
  
     public void func_70071_h_() {
@@ -1130,7 +1138,7 @@
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();
-@@ -2122,7 +2579,9 @@
+@@ -2122,7 +2580,9 @@
           }
        }
  
@@ -1140,7 +1148,7 @@
        double d0 = this.func_226277_ct_() - this.field_70169_q;
        double d1 = this.func_226281_cx_() - this.field_70166_s;
        float f = (float)(d0 * d0 + d1 * d1);
-@@ -2200,6 +2659,7 @@
+@@ -2200,6 +2660,7 @@
           this.field_70125_A = 0.0F;
        }
  
@@ -1148,7 +1156,7 @@
     }
  
     private void func_241353_q_() {
-@@ -2232,6 +2692,7 @@
+@@ -2232,6 +2693,7 @@
  
           ItemStack itemstack1 = this.func_184582_a(equipmentslottype);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -1156,7 +1164,7 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlotType.class);
              }
-@@ -2368,6 +2829,7 @@
+@@ -2368,6 +2830,7 @@
  
        this.func_213293_j(d1, d3, d5);
        this.field_70170_p.func_217381_Z().func_76320_a("ai");
@@ -1164,7 +1172,7 @@
        if (this.func_70610_aX()) {
           this.field_70703_bu = false;
           this.field_70702_br = 0.0F;
-@@ -2377,6 +2839,7 @@
+@@ -2377,6 +2840,7 @@
           this.func_70626_be();
           this.field_70170_p.func_217381_Z().func_76319_b();
        }
@@ -1172,7 +1180,7 @@
  
        this.field_70170_p.func_217381_Z().func_76319_b();
        this.field_70170_p.func_217381_Z().func_76320_a("jump");
-@@ -2412,7 +2875,9 @@
+@@ -2412,7 +2876,9 @@
        this.field_191988_bg *= 0.98F;
        this.func_184616_r();
        AxisAlignedBB axisalignedbb = this.func_174813_aQ();
@@ -1182,7 +1190,7 @@
        this.field_70170_p.func_217381_Z().func_76319_b();
        this.field_70170_p.func_217381_Z().func_76320_a("push");
        if (this.field_204807_bs > 0) {
-@@ -2420,7 +2885,9 @@
+@@ -2420,7 +2886,9 @@
           this.func_204801_a(axisalignedbb, this.func_174813_aQ());
        }
  
@@ -1192,7 +1200,7 @@
        this.field_70170_p.func_217381_Z().func_76319_b();
        if (!this.field_70170_p.field_72995_K && this.func_230270_dK_() && this.func_203008_ap()) {
           this.func_70097_a(DamageSource.field_76369_e, 1.0F);
-@@ -2436,6 +2903,8 @@
+@@ -2436,6 +2904,8 @@
        boolean flag = this.func_70083_f(7);
        if (flag && !this.field_70122_E && !this.func_184218_aH() && !this.func_70644_a(Effects.field_188424_y)) {
           ItemStack itemstack = this.func_184582_a(EquipmentSlotType.CHEST);
@@ -1201,7 +1209,7 @@
           if (itemstack.func_77973_b() == Items.field_185160_cR && ElytraItem.func_185069_d(itemstack)) {
              flag = true;
              if (!this.field_70170_p.field_72995_K && (this.field_184629_bo + 1) % 20 == 0) {
-@@ -2451,7 +2920,8 @@
+@@ -2451,7 +2921,8 @@
        }
  
        if (!this.field_70170_p.field_72995_K) {
@@ -1211,7 +1219,7 @@
        }
  
     }
-@@ -2579,6 +3049,7 @@
+@@ -2579,6 +3050,7 @@
     }
  
     public boolean func_70685_l(Entity p_70685_1_) {
@@ -1219,7 +1227,7 @@
        Vector3d vector3d = new Vector3d(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
        Vector3d vector3d1 = new Vector3d(p_70685_1_.func_226277_ct_(), p_70685_1_.func_226280_cw_(), p_70685_1_.func_226281_cx_());
        return this.field_70170_p.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this)).func_216346_c() == RayTraceResult.Type.MISS;
-@@ -2603,13 +3074,20 @@
+@@ -2603,13 +3075,20 @@
     }
  
     public boolean func_70067_L() {
@@ -1242,7 +1250,7 @@
     protected void func_70018_K() {
        this.field_70133_I = this.field_70146_Z.nextDouble() >= this.func_233637_b_(Attributes.field_233820_c_);
     }
-@@ -2668,8 +3146,16 @@
+@@ -2668,8 +3147,16 @@
  
     private void func_184608_ct() {
        if (this.func_184587_cr()) {
@@ -1261,7 +1269,7 @@
              this.field_184627_bm.func_222121_b(this.field_70170_p, this, this.func_184605_cv());
              if (this.func_226299_p_()) {
                 this.func_226293_b_(this.field_184627_bm, 5);
-@@ -2717,8 +3203,10 @@
+@@ -2717,8 +3204,10 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
        if (!itemstack.func_190926_b() && !this.func_184587_cr()) {
@@ -1273,7 +1281,7 @@
           if (!this.field_70170_p.field_72995_K) {
              this.func_204802_c(1, true);
              this.func_204802_c(2, p_184598_1_ == Hand.OFF_HAND);
-@@ -2778,6 +3266,9 @@
+@@ -2778,6 +3267,9 @@
           vector3d1 = vector3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_72441_c(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
@@ -1283,7 +1291,7 @@
           this.field_70170_p.func_195594_a(new ItemParticleData(ParticleTypes.field_197591_B, p_195062_1_), vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c, vector3d.field_72450_a, vector3d.field_72448_b + 0.05D, vector3d.field_72449_c);
        }
  
-@@ -2790,7 +3281,28 @@
+@@ -2790,7 +3282,28 @@
        } else {
           if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr()) {
              this.func_226293_b_(this.field_184627_bm, 16);
@@ -1313,7 +1321,7 @@
              if (itemstack != this.field_184627_bm) {
                 this.func_184611_a(hand, itemstack);
              }
-@@ -2815,7 +3327,11 @@
+@@ -2815,7 +3328,11 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {
@@ -1325,7 +1333,7 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
-@@ -2886,10 +3402,18 @@
+@@ -2886,10 +3403,18 @@
           }
  
           if (flag1) {
@@ -1347,7 +1355,7 @@
           }
        }
  
-@@ -2964,8 +3488,8 @@
+@@ -2964,8 +3489,8 @@
        }
  
        BlockState blockstate = this.field_70170_p.func_180495_p(p_213342_1_);
@@ -1358,7 +1366,7 @@
        }
  
        this.func_213301_b(Pose.SLEEPING);
-@@ -2981,15 +3505,15 @@
+@@ -2981,15 +3506,15 @@
  
     private boolean func_213359_p() {
        return this.func_213374_dv().map((p_241350_1_) -> {
@@ -1377,7 +1385,7 @@
              Vector3d vector3d1 = BedBlock.func_242652_a(this.func_200600_R(), this.field_70170_p, p_241348_1_, this.field_70177_z).orElseGet(() -> {
                 BlockPos blockpos = p_241348_1_.func_177984_a();
                 return new Vector3d((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.1D, (double)blockpos.func_177952_p() + 0.5D);
-@@ -3012,7 +3536,9 @@
+@@ -3012,7 +3537,9 @@
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
        BlockPos blockpos = this.func_213374_dv().orElse((BlockPos)null);
@@ -1388,7 +1396,7 @@
     }
  
     public boolean func_70094_T() {
-@@ -3048,7 +3574,7 @@
+@@ -3048,7 +3575,7 @@
        if (item.func_219971_r()) {
           for(Pair<EffectInstance, Float> pair : item.func_219967_s().func_221464_f()) {
              if (!p_213349_2_.field_72995_K && pair.getFirst() != null && p_213349_2_.field_73012_v.nextFloat() < pair.getSecond()) {
@@ -1397,7 +1405,7 @@
              }
           }
        }
-@@ -3082,6 +3608,60 @@
+@@ -3082,6 +3609,60 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }
  
@@ -1458,7 +1466,7 @@
     @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB func_184177_bl() {
        if (this.func_184582_a(EquipmentSlotType.HEAD).func_77973_b() == Items.field_196151_dA) {
-@@ -3091,4 +3671,5 @@
+@@ -3091,4 +3672,5 @@
           return super.func_184177_bl();
        }
     }

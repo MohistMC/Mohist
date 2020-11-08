@@ -12,7 +12,7 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
-@@ -15,20 +17,32 @@
+@@ -15,20 +17,33 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -29,6 +29,7 @@
 +   public CraftPersistentDataContainer persistentDataContainer;
 +   // CraftBukkit end
     private static final Logger field_145852_a = LogManager.getLogger();
++   public boolean isLoadingStructure = false; // Paper
     private final TileEntityType<?> field_200663_e;
     @Nullable
 -   protected World field_145850_b;
@@ -48,7 +49,7 @@
     }
  
     @Nullable
-@@ -47,6 +61,15 @@
+@@ -47,6 +62,15 @@
  
     public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
        this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
@@ -64,7 +65,7 @@
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -62,6 +85,13 @@
+@@ -62,6 +86,13 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -78,7 +79,7 @@
           return p_189516_1_;
        }
     }
-@@ -94,7 +124,7 @@
+@@ -94,7 +125,7 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
@@ -87,7 +88,7 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -133,6 +163,8 @@
+@@ -133,6 +164,8 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -96,7 +97,7 @@
     }
  
     public void func_145829_t() {
-@@ -175,6 +207,13 @@
+@@ -175,6 +208,13 @@
        return this.field_200663_e;
     }
  
@@ -110,7 +111,7 @@
     public void func_222814_r() {
        if (!this.field_222816_g) {
           this.field_222816_g = true;
-@@ -183,4 +222,10 @@
+@@ -183,4 +223,10 @@
           }, this::func_174877_v);
        }
     }

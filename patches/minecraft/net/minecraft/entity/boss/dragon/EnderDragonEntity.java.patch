@@ -184,3 +184,20 @@
           }
        }
  
+@@ -712,6 +796,7 @@
+    public void func_213281_b(CompoundNBT p_213281_1_) {
+       super.func_213281_b(p_213281_1_);
+       p_213281_1_.func_74768_a("DragonPhase", this.field_184677_bJ.func_188756_a().func_188652_i().func_188740_b());
++      p_213281_1_.func_74768_a("Paper.DeathTick", this.field_70995_bG); // Paper
+    }
+ 
+    public void func_70037_a(CompoundNBT p_70037_1_) {
+@@ -719,7 +804,7 @@
+       if (p_70037_1_.func_74764_b("DragonPhase")) {
+          this.field_184677_bJ.func_188758_a(PhaseType.func_188738_a(p_70037_1_.func_74762_e("DragonPhase")));
+       }
+-
++      this.field_70995_bG = p_70037_1_.func_74762_e("Paper.DeathTick"); // Paper
+    }
+ 
+    public void func_70623_bb() {

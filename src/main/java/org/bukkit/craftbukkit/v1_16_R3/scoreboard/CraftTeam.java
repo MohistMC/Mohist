@@ -202,7 +202,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
 
     @Override
     public boolean hasEntry(String entry) throws IllegalArgumentException, IllegalStateException {
-        Validate.notNull("Entry cannot be null");
+        Validate.notNull(entry,"Entry cannot be null");
 
         CraftScoreboard scoreboard = checkState();
 

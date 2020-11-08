@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,36 +1,33 @@
+@@ -1,36 +1,34 @@
  package net.minecraft.server;
  
  import com.google.common.collect.ImmutableSet;
@@ -13,6 +13,7 @@
 -import java.awt.GraphicsEnvironment;
 +
  import java.io.File;
++import java.io.IOException;
  import java.net.Proxy;
  import java.nio.file.Path;
  import java.nio.file.Paths;
@@ -42,7 +43,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -38,174 +35,156 @@
+@@ -38,174 +36,178 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Bootstrap;
  import net.minecraft.util.registry.DynamicRegistries;
@@ -61,6 +62,8 @@
 -import net.minecraft.world.storage.ServerWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.configuration.InvalidConfigurationException;
++import org.bukkit.configuration.file.YamlConfiguration;
  
  public class Main {
 -   private static final Logger field_240759_a_ = LogManager.getLogger();
@@ -88,6 +91,8 @@
 +            if (optionset == null) {
 +                return;
 +            }
++            YamlConfiguration bukkitConfiguration = loadConfigFile((File)optionset.valueOf("bukkit-settings"));
++            YamlConfiguration spigotConfiguration = loadConfigFile((File)optionset.valueOf("spigot-settings"));
 +            Path path1 = Paths.get("eula.txt");
 +            ServerEula servereula = new ServerEula(path1);
  
@@ -138,17 +143,27 @@
 -            field_240759_a_.info("Initialized '{}' and '{}'", path.toAbsolutePath(), path1.toAbsolutePath());
 -            return;
 -         }
-+            File file1 = (File) optionset.valueOf("universe"); // CraftBukkit
++            org.spigotmc.SpigotConfig.disabledAdvancements = spigotConfiguration.getStringList("advancements.disabled"); // Paper - fix SPIGOT-5885, must be set early in init
++            // Paper start - fix SPIGOT-5824
++            File file;
++            File userCacheFile = new File("usercache.json");
++            if (optionset.has("universe")) {
++                file = (File) optionset.valueOf("universe"); // CraftBukkit
++                userCacheFile = new File(file, "usercache.json");
++            } else {
++                file = new File(bukkitConfiguration.getString("settings.world-container", "."));
++            }
++            // Paper end - fix SPIGOT-5824
 +            YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString());
 +            MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
 +            GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
-+            PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
++            PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, userCacheFile); // Paper - only move usercache.json into folder if --universe is used, not world-container
 +            String s = (String) Optional.ofNullable(optionset.valueOf("world")).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
-+            if (s == null || s.isEmpty() || new File(file1, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
++            if (s == null || s.isEmpty() || new File(file, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
 +                field_240759_a_.error(Message.get("nms.invalid.dir") + s);
 +                return;
 +            }
-+            SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
++            SaveFormat saveformat = SaveFormat.func_237269_a_(file.toPath());
 +            SaveFormat.LevelSave saveformat$levelsave = saveformat.getLevelSave(s, Dimension.field_236053_b_);
 +            MinecraftServer.func_240777_a_(saveformat$levelsave);
 +            DatapackCodec datapackcodec = saveformat$levelsave.func_237297_e_();
@@ -287,21 +302,22 @@
 +    }
  
 -   }
-+    public static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<DimensionType>> p_240761_4_) { // private->public CraftBukkit
-+        field_240759_a_.info(Message.get("nms.world.upgrade"));
-+        WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
-+        ITextComponent itextcomponent = null;
++    private static YamlConfiguration loadConfigFile(final File configFile) throws IOException, InvalidConfigurationException {
++        final YamlConfiguration config = new YamlConfiguration();
++        if (configFile.exists()) {
++            config.load(configFile);
++        }
++        return config;
++    }
  
 -   private static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<World>> p_240761_4_) {
 -      field_240759_a_.info("Forcing world upgrade!");
 -      WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
 -      ITextComponent itextcomponent = null;
-+        while (!worldoptimizer.func_212218_b()) {
-+            ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
-+            if (itextcomponent != itextcomponent1) {
-+                itextcomponent = itextcomponent1;
-+                field_240759_a_.info(worldoptimizer.func_212215_m().getString());
-+            }
++    public static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<DimensionType>> p_240761_4_) { // private->public CraftBukkit
++        field_240759_a_.info(Message.get("nms.world.upgrade"));
++        WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
++        ITextComponent itextcomponent = null;
  
 -      while(!worldoptimizer.func_212218_b()) {
 -         ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
@@ -309,10 +325,11 @@
 -            itextcomponent = itextcomponent1;
 -            field_240759_a_.info(worldoptimizer.func_212215_m().getString());
 -         }
-+            int i = worldoptimizer.func_212211_j();
-+            if (i > 0) {
-+                int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
-+                field_240759_a_.info(Message.get("nms.world.update", MathHelper.func_76141_d((float) j / (float) i * 100.0F), j, i));
++        while (!worldoptimizer.func_212218_b()) {
++            ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
++            if (itextcomponent != itextcomponent1) {
++                itextcomponent = itextcomponent1;
++                field_240759_a_.info(worldoptimizer.func_212215_m().getString());
 +            }
  
 -         int i = worldoptimizer.func_212211_j();
@@ -320,7 +337,12 @@
 -            int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
 -            field_240759_a_.info("{}% completed ({} / {} chunks)...", MathHelper.func_76141_d((float)j / (float)i * 100.0F), j, i);
 -         }
--
++            int i = worldoptimizer.func_212211_j();
++            if (i > 0) {
++                int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
++                field_240759_a_.info(Message.get("nms.world.update", MathHelper.func_76141_d((float) j / (float) i * 100.0F), j, i));
++            }
+ 
 -         if (!p_240761_3_.getAsBoolean()) {
 -            worldoptimizer.func_212217_a();
 -         } else {
