@@ -1618,7 +1618,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void sendHealthUpdate() {
-        // Mohist-617: Compatible with Auto Sieve of Extra Utilities 2
+        // Mohist-617: Compatible with Auto Sieve of ExCompressum
         if (getHandle().connection != null) {
             getHandle().connection.sendPacket(new SPacketUpdateHealth(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
         }
