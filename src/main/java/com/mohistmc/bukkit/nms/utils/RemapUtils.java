@@ -49,10 +49,10 @@ public class RemapUtils {
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
-        relocations.put("net.minecraft.server", "net.minecraft.server.v1_16_R2");
+        relocations.put("net.minecraft.server", "net.minecraft.server.v1_16_R3");
         try {
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/cb2srg.srg"))),
+                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
                     new MavenShade(relocations),
                     null, false);
         } catch (Exception e) {
