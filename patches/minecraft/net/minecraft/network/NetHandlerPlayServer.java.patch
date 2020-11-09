@@ -1211,7 +1211,7 @@
 +        MinecraftTimings.playerCommandTimer.startTiming(); // Spigot
 +        if (org.spigotmc.SpigotConfig.logCommands) // Spigot
 +        {
-+            field_147370_c.info(this.field_147369_b.func_70005_c_() + Message.getString("server.command.issued_command") + p_147361_1_);
++            field_147370_c.info(Message.getFormatString("server.command.issued_command", new Object[] {this.field_147369_b.func_70005_c_(), p_147361_1_}));
 +        }
 +
 +        CraftPlayer player = this.getPlayer();
