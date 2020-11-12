@@ -179,7 +179,7 @@ public class ForgeHooks
     {
         //state = state.getActualState(world, pos);
         if (!state.getRequiresTool())
-            return true;
+            return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
 
         ItemStack stack = player.getHeldItemMainhand();
         ToolType tool = state.getHarvestTool();
@@ -674,9 +674,15 @@ public class ForgeHooks
         return ret;
     }
 
+    @Deprecated // TODO: Remove 1.17 - Use player-contextual version below.
     public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
-        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
+        return onAnvilChange(container, left, right, outputSlot, name, baseCost, null);
+    }
+
+    public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost, PlayerEntity player)
+    {
+        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost, player);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
         if (e.getOutput().isEmpty()) return true;
 

@@ -916,7 +916,7 @@
        }
  
        return serverstatisticsmanager;
-@@ -761,12 +1090,12 @@
+@@ -761,14 +1090,16 @@
  
     public PlayerAdvancements func_192054_h(ServerPlayerEntity p_192054_1_) {
        UUID uuid = p_192054_1_.func_110124_au();
@@ -930,8 +930,12 @@
 +         // this.advancements.put(uuid, playeradvancements); // CraftBukkit
        }
  
++      // Forge: don't overwrite active player with a fake one.
++      if (!(p_192054_1_ instanceof net.minecraftforge.common.util.FakePlayer))
        playeradvancements.func_192739_a(p_192054_1_);
-@@ -786,7 +1115,7 @@
+       return playeradvancements;
+    }
+@@ -786,7 +1117,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -940,7 +944,7 @@
     }
  
     @Nullable
-@@ -799,11 +1128,14 @@
+@@ -799,11 +1130,14 @@
     }
  
     public void func_193244_w() {
@@ -957,7 +961,7 @@
        SUpdateRecipesPacket supdaterecipespacket = new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b());
  
        for(ServerPlayerEntity serverplayerentity : this.field_72404_b) {
-@@ -816,4 +1148,12 @@
+@@ -816,4 +1150,12 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }

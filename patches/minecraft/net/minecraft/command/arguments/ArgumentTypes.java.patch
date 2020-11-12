@@ -9,3 +9,12 @@
           p_197484_0_.func_192572_a(new ResourceLocation(""));
        } else {
           p_197484_0_.func_192572_a(entry.field_197481_c);
+@@ -220,4 +220,8 @@
+          this.field_197481_c = p_i48088_3_;
+       }
+    }
++   @javax.annotation.Nullable public static ResourceLocation getId(ArgumentType<?> type) {
++      Entry<?> entry = func_201040_a(type);
++      return entry == null ? null : entry.field_197481_c;
++   }
+ }
