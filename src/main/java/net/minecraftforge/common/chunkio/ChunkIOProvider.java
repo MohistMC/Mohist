@@ -106,7 +106,7 @@ class ChunkIOProvider implements Runnable
 
         provider.id2ChunkMap.put(ChunkPos.asLong(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
         this.chunk.onLoad();
-        this.chunk.populateCB(provider, provider.chunkGenerator, false);
+        this.chunk.loadNearby(provider, provider.chunkGenerator, false);
         this.runCallbacks();
     }
 

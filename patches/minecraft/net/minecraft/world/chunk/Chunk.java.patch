@@ -370,7 +370,7 @@
          }
      }
  
-+    public void populateCB(IChunkProvider chunkProvider, IChunkGenerator chunkGenrator, boolean newChunk)
++    public void loadNearby(IChunkProvider chunkProvider, IChunkGenerator chunkGenrator, boolean newChunk)
 +    {
 +        field_76637_e.timings.syncChunkLoadPostTimer.startTiming(); // Spigot
 +        Server server = field_76637_e.getServer();
@@ -439,7 +439,7 @@
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
-@@ -1008,8 +1160,30 @@
+@@ -1008,8 +1160,29 @@
          {
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
@@ -449,7 +449,6 @@
 +            long xRand = random.nextLong() / 2L * 2L + 1L;
 +            long zRand = random.nextLong() / 2L * 2L + 1L;
 +            random.setSeed((long) this.field_76635_g * xRand + (long) this.field_76647_h * zRand ^ field_76637_e.func_72905_C());
-+
 +            org.bukkit.World world = this.field_76637_e.getWorld();
 +            if (world != null) {
 +                this.field_76637_e.populating = true;
@@ -470,7 +469,7 @@
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
-@@ -1064,7 +1238,7 @@
+@@ -1064,7 +1237,7 @@
          {
              BlockPos blockpos = this.field_177447_w.poll();
  
@@ -479,7 +478,7 @@
              {
                  TileEntity tileentity = this.func_177422_i(blockpos);
                  this.field_76637_e.func_175690_a(blockpos, tileentity);
-@@ -1075,7 +1249,7 @@
+@@ -1075,7 +1248,7 @@
  
      public boolean func_150802_k()
      {
@@ -488,7 +487,7 @@
      }
  
      public boolean func_186035_j()
-@@ -1128,6 +1302,13 @@
+@@ -1128,6 +1301,13 @@
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -502,7 +501,7 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1176,10 +1357,16 @@
+@@ -1176,10 +1356,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -519,7 +518,7 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1190,7 +1377,12 @@
+@@ -1190,7 +1376,12 @@
  
          if (k == 255)
          {
@@ -533,7 +532,7 @@
              k = Biome.func_185362_a(biome);
              this.field_76651_r[j << 4 | i] = (byte)(k & 255);
          }
-@@ -1244,13 +1436,13 @@
+@@ -1244,13 +1435,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -549,7 +548,7 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1265,6 +1457,7 @@
+@@ -1265,6 +1456,7 @@
  
      public void func_150809_p()
      {
@@ -557,7 +556,7 @@
          this.field_76646_k = true;
          this.field_150814_l = true;
          BlockPos blockpos = new BlockPos(this.field_76635_g << 4, 0, this.field_76647_h << 4);
-@@ -1303,6 +1496,7 @@
+@@ -1303,6 +1495,7 @@
                  this.field_150814_l = false;
              }
          }
@@ -565,7 +564,7 @@
      }
  
      private void func_177441_y()
-@@ -1381,7 +1575,7 @@
+@@ -1381,7 +1574,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -574,7 +573,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1614,7 @@
+@@ -1420,6 +1613,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
@@ -582,7 +581,7 @@
          }
      }
  
-@@ -1433,6 +1628,10 @@
+@@ -1433,6 +1627,10 @@
          return this.field_76645_j;
      }
  
@@ -593,7 +592,7 @@
      public boolean func_177419_t()
      {
          return this.field_76646_k;
-@@ -1489,4 +1688,55 @@
+@@ -1489,4 +1687,55 @@
          QUEUED,
          CHECK;
      }
@@ -648,5 +647,4 @@
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }
-\ No newline at end of file
  }

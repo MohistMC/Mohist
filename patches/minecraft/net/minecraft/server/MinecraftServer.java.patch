@@ -701,7 +701,7 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -671,87 +822,126 @@
+@@ -671,87 +822,124 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -724,7 +724,6 @@
 -            while (!this.field_175589_i.isEmpty())
 -            {
 -                Util.func_181617_a(this.field_175589_i.poll(), field_147145_h);
--            }
 +        // Spigot start
 +        FutureTask<?> entry;
 +        int count = this.field_175589_i.size();
@@ -739,26 +738,25 @@
 +        MinecraftTimings.processQueueTimer.startTiming(); // Spigot
 +        while (!processQueue.isEmpty()) {
 +            processQueue.remove().run();
-         }
++        }
 +        MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
- 
--        this.field_71304_b.func_76318_c("levels");
-+        MinecraftTimings.chunkIOTickTimer.startTiming(); // Spigot
-+        org.bukkit.craftbukkit.v1_12_R1.chunkio.ChunkIOExecutor.tick();
-+        MinecraftTimings.chunkIOTickTimer.stopTiming(); // Spigot
- 
--        for (int j = 0; j < this.field_71305_c.length; ++j)
++
 +        MinecraftTimings.timeUpdateTimer.startTiming(); // Spigot
 +        // Send time updates to everyone, it will get the right time from the world the player is in.
 +        if (this.field_71315_w % 20 == 0) {
 +            for (int i = 0; i < this.func_184103_al().func_181057_v().size(); ++i) {
 +                EntityPlayerMP entityplayer = (EntityPlayerMP) this.func_184103_al().func_181057_v().get(i);
 +                entityplayer.field_71135_a.func_147359_a(new SPacketTimeUpdate(entityplayer.field_70170_p.func_82737_E(), entityplayer.getPlayerTime(), entityplayer.field_70170_p.func_82736_K().func_82766_b("doDaylightCycle"))); // Add support for per player time
-+            }
-+        }
-+        MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot
+             }
+         }
++        MinecraftTimings.chunkIOTickTimer.startTiming(); // Spigot
 +        net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
-+
++        MinecraftTimings.chunkIOTickTimer.stopTiming(); // Spigot
++        MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot
+ 
+-        this.field_71304_b.func_76318_c("levels");
+-
+-        for (int j = 0; j < this.field_71305_c.length; ++j)
 +        for (int x = 0; x < worldServerList.size(); x++)
          {
              long i = System.nanoTime();
@@ -877,7 +875,7 @@
  
          this.field_71304_b.func_76319_b();
      }
-@@ -763,8 +953,11 @@
+@@ -763,8 +951,11 @@
  
      public void func_71256_s()
      {
@@ -891,7 +889,7 @@
      }
  
      public File func_71209_f(String p_71209_1_)
-@@ -779,16 +972,25 @@
+@@ -779,16 +970,25 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -922,7 +920,7 @@
      public String func_71249_w()
      {
          return "1.12.2";
-@@ -816,7 +1018,7 @@
+@@ -816,7 +1016,7 @@
  
      public String getServerModName()
      {
@@ -931,7 +929,7 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -845,7 +1047,7 @@
+@@ -845,7 +1045,7 @@
  
      public List<String> func_184104_a(ICommandSender p_184104_1_, String p_184104_2_, @Nullable BlockPos p_184104_3_, boolean p_184104_4_)
      {
@@ -940,7 +938,7 @@
          boolean flag = p_184104_2_.startsWith("/");
  
          if (flag)
-@@ -862,11 +1064,9 @@
+@@ -862,11 +1062,9 @@
              {
                  if (CommandBase.func_71523_a(s2, s1))
                  {
@@ -953,7 +951,7 @@
          }
          else
          {
-@@ -879,27 +1079,29 @@
+@@ -879,27 +1077,29 @@
                  {
                      if (flag1 && !p_184104_4_)
                      {
@@ -989,7 +987,7 @@
      }
  
      public void func_145747_a(ITextComponent p_145747_1_)
-@@ -912,6 +1114,10 @@
+@@ -912,6 +1112,10 @@
          return true;
      }
  
@@ -1000,7 +998,7 @@
      public ICommandManager func_71187_D()
      {
          return this.field_71321_q;
-@@ -947,13 +1153,11 @@
+@@ -947,13 +1151,11 @@
          this.field_71294_K = p_71261_1_;
      }
  
@@ -1014,7 +1012,7 @@
      public String func_71221_J()
      {
          return this.field_71287_L;
-@@ -966,7 +1170,7 @@
+@@ -966,7 +1168,7 @@
  
      public void func_147139_a(EnumDifficulty p_147139_1_)
      {
@@ -1023,7 +1021,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1048,9 +1252,9 @@
+@@ -1048,9 +1250,9 @@
          p_70000_1_.func_152768_a("avg_tick_ms", Integer.valueOf((int)(MathHelper.func_76127_a(this.field_71311_j) * 1.0E-6D)));
          int l = 0;
  
@@ -1035,7 +1033,7 @@
              {
                  if (worldserver1 != null)
                  {
-@@ -1088,7 +1292,8 @@
+@@ -1088,7 +1290,8 @@
  
      public boolean func_71266_T()
      {
@@ -1045,7 +1043,7 @@
      }
  
      public void func_71229_d(boolean p_71229_1_)
-@@ -1182,7 +1387,7 @@
+@@ -1182,7 +1385,7 @@
  
      public void func_71235_a(GameType p_71235_1_)
      {
@@ -1054,7 +1052,7 @@
          {
              worldserver1.func_72912_H().func_76060_a(p_71235_1_);
          }
-@@ -1285,7 +1490,7 @@
+@@ -1285,7 +1488,7 @@
      @Nullable
      public Entity func_175576_a(UUID p_175576_1_)
      {
@@ -1063,7 +1061,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1311,6 +1516,11 @@
+@@ -1311,6 +1514,11 @@
          return this;
      }
  
@@ -1075,7 +1073,7 @@
      public int func_175580_aG()
      {
          return 29999984;
-@@ -1320,15 +1530,14 @@
+@@ -1320,15 +1528,14 @@
      {
          Validate.notNull(p_175586_1_);
  
@@ -1096,7 +1094,7 @@
          }
          else
          {
-@@ -1409,124 +1618,42 @@
+@@ -1409,124 +1616,42 @@
      }
  
      @SideOnly(Side.SERVER)
@@ -1238,7 +1236,7 @@
          }
      }
  
-@@ -1539,7 +1666,8 @@
+@@ -1539,7 +1664,8 @@
      @SideOnly(Side.SERVER)
      public boolean func_71239_B()
      {
@@ -1248,7 +1246,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1598,4 +1726,14 @@
+@@ -1598,4 +1724,14 @@
      {
          return this.field_175590_aa;
      }

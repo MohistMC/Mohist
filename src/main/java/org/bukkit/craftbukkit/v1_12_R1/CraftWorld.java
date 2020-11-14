@@ -537,7 +537,7 @@ public class CraftWorld implements World {
             world.getChunkProvider().id2ChunkMap.put(chunkKey, chunk);
 
             chunk.onLoad();
-            chunk.populateCB(world.getChunkProvider(), world.getChunkProvider().chunkGenerator, true);
+            chunk.loadNearby(world.getChunkProvider(), world.getChunkProvider().chunkGenerator, true);
 
             refreshChunk(x, z);
         }
