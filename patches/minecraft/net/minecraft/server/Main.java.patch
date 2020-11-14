@@ -43,7 +43,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -38,174 +36,181 @@
+@@ -38,174 +36,173 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Bootstrap;
  import net.minecraft.util.registry.DynamicRegistries;
@@ -213,7 +213,7 @@
 -         ResourcePackList resourcepacklist = new ResourcePackList(new ServerPackFinder(), new FolderPackFinder(saveformat$levelsave.func_237285_a_(FolderName.field_237251_g_).toFile(), IPackNameDecorator.field_232627_c_));
 -         DatapackCodec datapackcodec1 = MinecraftServer.func_240772_a_(resourcepacklist, datapackcodec == null ? DatapackCodec.field_234880_a_ : datapackcodec, flag);
 -         CompletableFuture<DataPackRegistries> completablefuture = DataPackRegistries.func_240961_a_(resourcepacklist.func_232623_f_(), Commands.EnvironmentType.DEDICATED, serverpropertiesprovider.func_219034_a().field_225395_K, Util.func_215072_e(), Runnable::run);
-+            DatapackCodec datapackCodec = MinecraftServer.func_240772_a_(resourcepacklist, datapackcodec == null ? DatapackCodec.field_234880_a_ : datapackcodec, flag);
++            DatapackCodec datapackcodec1 = MinecraftServer.func_240772_a_(resourcepacklist, datapackcodec == null ? DatapackCodec.field_234880_a_ : datapackcodec, flag);
 +            CompletableFuture<DataPackRegistries> completablefuture = DataPackRegistries.func_240961_a_(resourcepacklist.func_232623_f_(), Commands.EnvironmentType.DEDICATED, serverpropertiesprovider.func_219034_a().field_225395_K, Util.func_215072_e(), Runnable::run);
  
 -         DataPackRegistries datapackregistries;
@@ -250,21 +250,25 @@
 -            iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
 -         }
 +            datapackregistries.func_240971_i_();
++            final DedicatedServer dedicatedserver = MinecraftServer.func_240784_a_((p_240762_16_) -> {
++                DedicatedServer dedicatedserver1 = new DedicatedServer(optionset, datapackcodec1, p_240762_16_, dynamicregistries$impl, saveformat$levelsave, resourcepacklist, datapackregistries, null, serverpropertiesprovider, DataFixesManager.func_210901_a(), minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new);
  
 -         if (optionset.has(optionspec4)) {
 -            func_240761_a_(saveformat$levelsave, DataFixesManager.func_210901_a(), optionset.has(optionspec5), () -> {
 -               return true;
 -            }, iserverconfiguration.func_230418_z_().func_236226_g_());
 -         }
-+            final DedicatedServer dedicatedserver = MinecraftServer.func_240784_a_((p_240762_16_) -> {
-+                // Mohist start
-+                MinecraftServer.getServer().betterCavesFix(optionset, datapackCodec);
-+                // Mohist end
-+                DedicatedServer dedicatedserver1 = new DedicatedServer(p_240762_16_, dynamicregistries$impl, saveformat$levelsave, resourcepacklist, datapackregistries, null, serverpropertiesprovider, DataFixesManager.func_210901_a(), minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new);
-+                //boolean flag1 = !optionset.has("nogui") && !optionset.valuesOf("nogui").contains("nogui");
-+                //if (flag1 && !GraphicsEnvironment.isHeadless()) {
-+                //  dedicatedserver1.setGuiEnabled();
-+                //}
++                if (optionset.has("port")) {
++                    int port = (Integer) optionset.valueOf("port");
++                    if (port > 0) {
++                        dedicatedserver1.func_71208_b(port);
++                    }
++                }
++                return dedicatedserver1;
++            });
++        } catch (Exception exception1) {
++            field_240759_a_.fatal(Message.get("mohist.start.fail"), (Throwable) exception1);
++        }
  
 -         saveformat$levelsave.func_237287_a_(dynamicregistries$impl, iserverconfiguration);
 -         IServerConfiguration iserverconfiguration1 = iserverconfiguration;
@@ -278,17 +282,7 @@
 -            if (flag1 && !GraphicsEnvironment.isHeadless()) {
 -               dedicatedserver1.func_120011_ar();
 -            }
-+                if (optionset.has("port")) {
-+                    int port = (Integer) optionset.valueOf("port");
-+                    if (port > 0) {
-+                        dedicatedserver1.func_71208_b(port);
-+                    }
-+                }
-+                return dedicatedserver1;
-+            });
-+        } catch (Exception exception1) {
-+            field_240759_a_.fatal(Message.get("mohist.start.fail"), (Throwable) exception1);
-+        }
++    }
  
 -            return dedicatedserver1;
 -         });
@@ -302,9 +296,6 @@
 -      } catch (Exception exception1) {
 -         field_240759_a_.fatal("Failed to start the minecraft server", (Throwable)exception1);
 -      }
-+    }
- 
--   }
 +    private static YamlConfiguration loadConfigFile(final File configFile) throws IOException, InvalidConfigurationException {
 +        final YamlConfiguration config = new YamlConfiguration();
 +        if (configFile.exists()) {
@@ -313,21 +304,16 @@
 +        return config;
 +    }
  
--   private static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<World>> p_240761_4_) {
--      field_240759_a_.info("Forcing world upgrade!");
--      WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
--      ITextComponent itextcomponent = null;
+-   }
 +    public static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<DimensionType>> p_240761_4_) { // private->public CraftBukkit
 +        field_240759_a_.info(Message.get("nms.world.upgrade"));
 +        WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
 +        ITextComponent itextcomponent = null;
  
--      while(!worldoptimizer.func_212218_b()) {
--         ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
--         if (itextcomponent != itextcomponent1) {
--            itextcomponent = itextcomponent1;
--            field_240759_a_.info(worldoptimizer.func_212215_m().getString());
--         }
+-   private static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<World>> p_240761_4_) {
+-      field_240759_a_.info("Forcing world upgrade!");
+-      WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
+-      ITextComponent itextcomponent = null;
 +        while (!worldoptimizer.func_212218_b()) {
 +            ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
 +            if (itextcomponent != itextcomponent1) {
@@ -335,10 +321,11 @@
 +                field_240759_a_.info(worldoptimizer.func_212215_m().getString());
 +            }
  
--         int i = worldoptimizer.func_212211_j();
--         if (i > 0) {
--            int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
--            field_240759_a_.info("{}% completed ({} / {} chunks)...", MathHelper.func_76141_d((float)j / (float)i * 100.0F), j, i);
+-      while(!worldoptimizer.func_212218_b()) {
+-         ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
+-         if (itextcomponent != itextcomponent1) {
+-            itextcomponent = itextcomponent1;
+-            field_240759_a_.info(worldoptimizer.func_212215_m().getString());
 -         }
 +            int i = worldoptimizer.func_212211_j();
 +            if (i > 0) {
@@ -346,6 +333,12 @@
 +                field_240759_a_.info(Message.get("nms.world.update", MathHelper.func_76141_d((float) j / (float) i * 100.0F), j, i));
 +            }
  
+-         int i = worldoptimizer.func_212211_j();
+-         if (i > 0) {
+-            int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
+-            field_240759_a_.info("{}% completed ({} / {} chunks)...", MathHelper.func_76141_d((float)j / (float)i * 100.0F), j, i);
+-         }
+-
 -         if (!p_240761_3_.getAsBoolean()) {
 -            worldoptimizer.func_212217_a();
 -         } else {
