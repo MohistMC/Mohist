@@ -856,7 +856,7 @@ task setup() {
 }
 
 def JenkinsNumber() {
-    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/debug/api/json").openConnection()
+    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/api/json").openConnection()
     conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
     conn.connect()
     def root = conn.content.text
