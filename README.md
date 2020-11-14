@@ -5,7 +5,7 @@
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API(1.12.2/1.16), formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohist-Community%2Fjob%2Fdebug)](https://ci.codemc.io/job/Mohist-Community/job/debug)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohist-Community%2Fjob%2Fdebug)](https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4)
 [![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars&logo=github)](https://github.com/Mohist-Community/Mohist/stargazers)
 [![](https://img.shields.io/github/license/Mohist-Community/Mohist?)](https://github.com/Mohist-Community/Mohist/blob/1.16.4/LICENSE)
 [![](https://img.shields.io/badge/Forge-1.16.4-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](http://files.minecraftforge.net/)
@@ -45,7 +45,7 @@ Getting Help
 Download
 ------
 
-You can download the latest version from [**Jenkins**](https://ci.codemc.io/job/Mohist-Community/job/debug/).
+You can download the latest version from [**Jenkins**](https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/).
 
 Install
 ------
