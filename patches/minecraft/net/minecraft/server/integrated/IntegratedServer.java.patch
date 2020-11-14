@@ -16,15 +16,6 @@
  
  @OnlyIn(Dist.CLIENT)
  public class IntegratedServer extends MinecraftServer {
-@@ -42,7 +44,7 @@
-    private UUID field_211528_n;
- 
-    public IntegratedServer(Thread p_i232494_1_, Minecraft p_i232494_2_, DynamicRegistries.Impl p_i232494_3_, SaveFormat.LevelSave p_i232494_4_, ResourcePackList p_i232494_5_, DataPackRegistries p_i232494_6_, IServerConfiguration p_i232494_7_, MinecraftSessionService p_i232494_8_, GameProfileRepository p_i232494_9_, PlayerProfileCache p_i232494_10_, IChunkStatusListenerFactory p_i232494_11_) {
--      super(p_i232494_1_, p_i232494_3_, p_i232494_4_, p_i232494_7_, p_i232494_5_, p_i232494_2_.func_110437_J(), p_i232494_2_.func_184126_aj(), p_i232494_6_, p_i232494_8_, p_i232494_9_, p_i232494_10_, p_i232494_11_);
-+      super(null,null,p_i232494_1_, p_i232494_3_, p_i232494_4_, p_i232494_7_, p_i232494_5_, p_i232494_2_.func_110437_J(), p_i232494_2_.func_184126_aj(), p_i232494_6_, p_i232494_8_, p_i232494_9_, p_i232494_10_, p_i232494_11_);
-       this.func_71224_l(p_i232494_2_.func_110432_I().func_111285_a());
-       this.func_71204_b(p_i232494_2_.func_71355_q());
-       this.func_71191_d(256);
 @@ -56,9 +58,10 @@
        this.func_71188_g(true);
        this.func_71245_h(true);

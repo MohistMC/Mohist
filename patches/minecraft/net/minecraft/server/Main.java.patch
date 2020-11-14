@@ -43,7 +43,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -38,174 +36,178 @@
+@@ -38,174 +36,181 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Bootstrap;
  import net.minecraft.util.registry.DynamicRegistries;
@@ -257,7 +257,10 @@
 -            }, iserverconfiguration.func_230418_z_().func_236226_g_());
 -         }
 +            final DedicatedServer dedicatedserver = MinecraftServer.func_240784_a_((p_240762_16_) -> {
-+                DedicatedServer dedicatedserver1 = new DedicatedServer(optionset, datapackCodec, p_240762_16_, dynamicregistries$impl, saveformat$levelsave, resourcepacklist, datapackregistries, null, serverpropertiesprovider, DataFixesManager.func_210901_a(), minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new);
++                // Mohist start
++                MinecraftServer.getServer().betterCavesFix(optionset, datapackCodec);
++                // Mohist end
++                DedicatedServer dedicatedserver1 = new DedicatedServer(p_240762_16_, dynamicregistries$impl, saveformat$levelsave, resourcepacklist, datapackregistries, null, serverpropertiesprovider, DataFixesManager.func_210901_a(), minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new);
 +                //boolean flag1 = !optionset.has("nogui") && !optionset.valuesOf("nogui").contains("nogui");
 +                //if (flag1 && !GraphicsEnvironment.isHeadless()) {
 +                //  dedicatedserver1.setGuiEnabled();
