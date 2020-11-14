@@ -181,7 +181,7 @@
 +         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
 -         this.func_240800_l__();
-+         this.loadWorld(field_71310_m.func_237282_a_()); // CraftBukkit
++         this.func_240800_l__(); // CraftBukkit
           long j = Util.func_211178_c() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
