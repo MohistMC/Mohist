@@ -75,8 +75,13 @@ public class UpdateUtils {
   }
 
   public static File getMohistJar() {
-    return new File(UpdateUtils.class.getProtectionDomain().getCodeSource().getLocation().getFile().replaceFirst("file:/", "").split("server.jar!/com/mohistmc/")[0]+"server.jar");
-  }
+        try {
+            return new File(UpdateUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        } catch (URISyntaxException e) {
+            System.out.println("Can't found the Mohist jar !");
+        }
+        return null;
+   }
 
   public static HashMap<String, String> getLibs() {
     HashMap<String, String> libsToDl = new HashMap<>();
