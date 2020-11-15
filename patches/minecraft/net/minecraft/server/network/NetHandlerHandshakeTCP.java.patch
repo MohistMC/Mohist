@@ -22,7 +22,7 @@
  
 +    private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
 +    private static int throttleCounter = 0;
-+    public static final com.google.gson.Gson gson = new com.google.gson.Gson(); // Spigot
++    private static final com.google.gson.Gson gson = new com.google.gson.Gson(); // Spigot
 +
      public NetHandlerHandshakeTCP(MinecraftServer p_i45295_1_, NetworkManager p_i45295_2_)
      {
