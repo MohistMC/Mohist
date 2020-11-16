@@ -42,7 +42,8 @@ public class MohistMC {
 
         if (MohistConfigUtil.bMohist("check_libraries")) DownloadLibraries.run();
 
-        MappingFix.init();
+        //MappingFix.init();
+        MappingFix.copyMappings();
 
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));

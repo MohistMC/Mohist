@@ -70,7 +70,7 @@ public class SpigotConfig {
     public static List<String> disabledAdvancements;
     static int version;
     static Map<String, Command> commands;
-    private static File CONFIG_FILE;
+    public static File CONFIG_FILE;
 
     public static void init(File configFile) {
         CONFIG_FILE = configFile;

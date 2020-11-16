@@ -76,8 +76,10 @@ public class UpdateUtils {
 
   public static File getMohistJar() {
         try {
-            return new File(UpdateUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-        } catch (URISyntaxException e) {
+          String path = UpdateUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
+          if(path.contains("!/")) path = path.split("!/")[0].split("jar:file:/")[1];
+          return new File(path);
+        } catch (Exception e) {
             System.out.println("Can't found the Mohist jar !");
         }
         return null;
