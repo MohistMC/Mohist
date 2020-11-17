@@ -29,10 +29,10 @@
 Progress
 ------
 
-- [x] Rectify Forge (0c5ced1bb)
+- [x] Rectify Forge (49b596dda)
 - [x] Start patch 
-  * CraftBukkit(23618b2c)  
-  * Bukkit(2e244e41)  
+  * CraftBukkit(1f89e50c)  
+  * Bukkit(de96535b)  
   * Spigot(a19903d2)  
   * Paper(2609a118)
 - [x] Beta release

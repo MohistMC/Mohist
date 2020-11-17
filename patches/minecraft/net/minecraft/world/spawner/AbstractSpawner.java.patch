@@ -74,7 +74,7 @@
 +                     }
 +                     // Spigot End
 +
-+                     if (!serverworld.addAllEntities(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER)) { // CraftBukkit
++                     if (!serverworld.addAllEntitiesSafely(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER)) { // CraftBukkit
                          this.func_98273_j();
                          return;
                       }

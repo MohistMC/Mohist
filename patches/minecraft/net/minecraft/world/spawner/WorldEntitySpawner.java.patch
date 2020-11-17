@@ -102,7 +102,7 @@
 -                           p_234966_5_.run(mobentity, p_234966_2_);
 -                           if (j >= mobentity.func_70641_bl()) {
 +                           // CraftBukkit start
-+                           if (p_234966_1_.addAllEntities(mobentity, CreatureSpawnEvent.SpawnReason.NATURAL)) {
++                           if (p_234966_1_.addAllEntitiesSafely(mobentity, CreatureSpawnEvent.SpawnReason.NATURAL)) {
 +                              ++j;
 +                              ++l1;
 +                              p_234966_5_.run(mobentity, p_234966_2_);
