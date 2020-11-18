@@ -27,10 +27,10 @@ public class DownloadLibraries{
                 System.out.println("Detected China IP, Using Gitee Mirror.");
                 url = "https://mohist-community.gitee.io/mohistdown/libraries-1.7.10.zip"; //Gitee Mirror
             } else {
-                url = "https://github.com/Mohist-Community/Mohist/releases/download/1.7.10bate/libraries.zip"; //Github Mirror
+                url = "https://ltps.space/mohist/api/libraries.zip";
             }
         } catch (Exception e) {
-            url = "https://github.com/Mohist-Community/Mohist/releases/download/1.7.10bate/libraries.zip"; //Github Mirror
+            url = "https://ltps.space/mohist/api/libraries.zip";
         }
         new Download(url, fileName);
         File file = new File(fileName);
