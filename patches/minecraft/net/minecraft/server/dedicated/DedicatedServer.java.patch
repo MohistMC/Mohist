@@ -169,7 +169,7 @@
        if (!this.func_71266_T()) {
           field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
           field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
-@@ -156,17 +223,20 @@
+@@ -156,17 +223,21 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -182,8 +182,8 @@
           PlayerProfileCache.func_187320_a(this.func_71266_T());
 +         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
--         this.func_240800_l__();
-+         this.func_240800_l__(); // CraftBukkit
++         setS(serverproperties.field_219021_o);
+          this.func_240800_l__();
           long j = Util.func_211178_c() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
@@ -192,7 +192,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -179,23 +249,17 @@
+@@ -179,23 +250,17 @@
           if (serverproperties.field_219030_x) {
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = MainThread.func_242130_a(this);
@@ -220,7 +220,7 @@
     }
  
     public boolean func_230537_U_() {
-@@ -241,7 +305,7 @@
+@@ -241,7 +306,7 @@
     }
  
     public void func_230543_p_() {
@@ -229,7 +229,7 @@
     }
  
     public boolean func_71199_h() {
-@@ -280,7 +344,7 @@
+@@ -280,7 +345,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -238,7 +238,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -303,11 +367,21 @@
+@@ -303,11 +368,21 @@
     }
  
     public void func_71333_ah() {
@@ -261,7 +261,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -410,7 +484,7 @@
+@@ -410,7 +485,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -270,7 +270,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -489,13 +563,39 @@
+@@ -489,13 +564,39 @@
     }
  
     public String func_71258_A() {
@@ -312,7 +312,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -515,6 +615,11 @@
+@@ -515,6 +616,11 @@
        return false;
     }
  
@@ -324,7 +324,7 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -531,4 +636,15 @@
+@@ -531,4 +637,15 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
     }
