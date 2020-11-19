@@ -46,7 +46,7 @@ public class SpigotConfig {
     public static YamlConfiguration config;
     public static boolean logCommands;
     public static int tabComplete;
-    public static int timeoutTime = 60;
+    public static int timeoutTime = 90;
     public static boolean bungee;
     public static boolean lateBind;
     public static boolean disableStatSaving;
