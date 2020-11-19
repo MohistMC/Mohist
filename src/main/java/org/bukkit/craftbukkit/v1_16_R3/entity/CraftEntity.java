@@ -3,6 +3,8 @@ package org.bukkit.craftbukkit.v1_16_R3.entity;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mohistmc.entity.CraftCustomEntity;
+import com.mohistmc.entity.CustomProjectileEntity;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -383,6 +385,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof AreaEffectCloudEntity) { return new CraftAreaEffectCloud(server, (AreaEffectCloudEntity) entity); }
         else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
         else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
+        else if (entity instanceof net.minecraft.entity.projectile.ProjectileEntity) { return new CustomProjectileEntity(server, entity); }
+        else if (entity instanceof net.minecraft.entity.Entity) {return new CraftCustomEntity(server, entity);}
         // CHECKSTYLE:ON
 
         throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
