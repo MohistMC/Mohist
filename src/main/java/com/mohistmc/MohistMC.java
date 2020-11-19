@@ -1,6 +1,7 @@
 package com.mohistmc;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.mohistmc.configuration.MohistConfigUtil;
@@ -17,7 +18,7 @@ public class MohistMC {
 
     public static final String NAME = "Mohist";
     public static final String VERSION = "1.1";
-    public static final String LIB_VERSION = "1";
+    public static final String LIB_VERSION = "1.1";
 
     public static String getVersion() {
         return MohistMC.class.getPackage().getImplementationVersion() != null ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
@@ -32,9 +33,9 @@ public class MohistMC {
             eula.createEULAFile();
             return;
         }
-        if (Update.isCheckVersion()) {
-            Update.hasLatestVersion();
-        }
+//        if (Update.isCheckVersion()) {
+//            Update.hasLatestVersion();
+//        }
         if (Update.getLibrariesVersion()) {
             System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
             DownloadLibraries.run();
@@ -69,7 +70,7 @@ public class MohistMC {
 
         try
         {
-            Method main = launchwrapper != null ? launchwrapper.getMethod("main", String[].class) : null;
+            Method main = launchwrapper.getMethod("main", String[].class);
             String[] allArgs = new String[args.length + 2];
             allArgs[0] = "--tweakClass";
             allArgs[1] = "cpw.mods.fml.common.launcher.FMLServerTweaker";
@@ -79,6 +80,8 @@ public class MohistMC {
         catch (Exception e)
         {
             System.out.println(Message.getString("mohist.start.error"));
+            if (e instanceof InvocationTargetException)
+                System.out.println(((InvocationTargetException)e).getCause());
             e.printStackTrace(System.err);
             System.exit(1);
         }
