@@ -18,6 +18,8 @@
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
         <Logger level="info" name="com.mojang"/>
         <Logger level="info" name="net.minecraft"/>
+        <Logger level="error" name="org.apache"/>
+        <Logger level="error" name="httpclient"/>
         <Root level="all">
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
