@@ -28,8 +28,6 @@ public class DownloadLibraries {
       libF.mkdirs();
       libF.createNewFile();
       Files.copy(MohistMC.class.getClassLoader().getResourceAsStream("mohist_libraries.json"), libF.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    } else {
-      Files.copy(MohistMC.class.getClassLoader().getResourceAsStream("mohist_libraries.json"), libF.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
     HashMap<String, String> libs = getLibs();
     ArrayList<File> indexLibs = new ArrayList<>();
