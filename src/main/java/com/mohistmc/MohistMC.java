@@ -3,6 +3,7 @@ package com.mohistmc;
 import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.DownloadLibraries;
+import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.i18n.Message;
 
@@ -41,6 +42,8 @@ public class MohistMC {
             while (!"true".equals(new Scanner(System.in).next())) ;
             EulaUtil.writeInfos();
         }
+
+        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
 
         System.out.println(Message.getString("mohist.start"));
         System.out.println(Message.getString("load.libraries"));
