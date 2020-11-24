@@ -226,6 +226,9 @@ def getSignatureFiles = {
 tasks.generateProjectCauldron << {
     def file = new File('eclipse/cauldron/build.gradle')
     file.append('''
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 repositories {
     clear()
     maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven' }
