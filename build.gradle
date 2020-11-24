@@ -138,7 +138,7 @@ def generateManifest(boolean legacy = false) {
     [
             'Manifest-Version' : '1.1',
             'Implementation-Title'  : project.name,
-            'Implementation-Version': 'git rev-parse --short HEAD'.execute().text.trim(),
+            'Implementation-Version': project.version,
             'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
             'Main-Class'            : 'com.mohistmc.MohistMC',
             'Class-Path'            : generateClasspath(legacy)
