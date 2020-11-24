@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -1,11 +1,10 @@
+@@ -1,22 +1,25 @@
  package net.minecraft.world.chunk.storage;
  
  import com.google.common.collect.Maps;
@@ -13,7 +13,11 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Set;
-@@ -13,10 +12,10 @@
+ import javax.annotation.Nullable;
++
++import me.jellysquid.phosphor.api.IChunkLightingData;
++import me.jellysquid.phosphor.api.ILightingEngineProvider;
++import me.jellysquid.phosphor.core.lighting.LightingHooks;
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityList;
@@ -25,7 +29,7 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.datafix.DataFixer;
  import net.minecraft.util.datafix.FixTypes;
-@@ -31,6 +30,8 @@
+@@ -31,9 +34,12 @@
  import net.minecraft.world.chunk.NibbleArray;
  import net.minecraft.world.storage.IThreadedFileIO;
  import net.minecraft.world.storage.ThreadedFileIOBase;
@@ -34,7 +38,11 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -49,25 +50,48 @@
++//Phosphor injected
+ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
+ {
+     private static final Logger field_151505_a = LogManager.getLogger();
+@@ -49,25 +55,48 @@
          this.field_193416_e = p_i46673_2_;
      }
  
@@ -87,7 +95,7 @@
      }
  
      public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
-@@ -80,6 +104,13 @@
+@@ -80,6 +109,13 @@
      @Nullable
      protected Chunk func_75822_a(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
      {
@@ -101,7 +109,7 @@
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
              field_151505_a.error("Chunk file at {},{} is missing level data, skipping", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_));
-@@ -103,10 +134,29 @@
+@@ -103,16 +139,37 @@
                      field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h));
                      nbttagcompound.func_74768_a("xPos", p_75822_2_);
                      nbttagcompound.func_74768_a("zPos", p_75822_3_);
@@ -132,7 +140,15 @@
              }
          }
      }
-@@ -121,7 +171,10 @@
+ 
+     public void func_75816_a(World p_75816_1_, Chunk p_75816_2_) throws MinecraftException, IOException
+     {
++        ((ILightingEngineProvider) p_75816_1_).getLightingEngine().processLightUpdates();
++
+         p_75816_1_.func_72906_B();
+ 
+         try
+@@ -121,7 +178,10 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
              nbttagcompound.func_74768_a("DataVersion", 1343);
@@ -143,7 +159,7 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -153,32 +206,29 @@
+@@ -153,32 +213,29 @@
          }
          else
          {
@@ -194,7 +210,7 @@
  
              return lvt_3_1_;
          }
-@@ -186,9 +236,10 @@
+@@ -186,9 +243,10 @@
  
      private void func_183013_b(ChunkPos p_183013_1_, NBTTagCompound p_183013_2_) throws IOException
      {
@@ -208,7 +224,7 @@
      }
  
      public void func_75819_b(World p_75819_1_, Chunk p_75819_2_) throws IOException
-@@ -305,11 +356,19 @@
+@@ -305,11 +363,19 @@
              {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
@@ -228,7 +244,7 @@
              }
          }
  
-@@ -318,8 +377,16 @@
+@@ -318,8 +384,16 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -245,7 +261,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -345,6 +412,18 @@
+@@ -345,6 +419,20 @@
  
              p_75820_3_.func_74782_a("TileTicks", nbttaglist3);
          }
@@ -261,10 +277,12 @@
 +                net.minecraftforge.fml.common.FMLLog.log.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
 +            }
 +        }
++        LightingHooks.writeNeighborLightChecksToNBT(p_75820_1_, p_75820_3_);
++        p_75820_3_.func_74757_a("LightPopulated", ((IChunkLightingData) p_75820_1_).isLightInitialized());
      }
  
      private Chunk func_75823_a(World p_75823_1_, NBTTagCompound p_75823_2_)
-@@ -388,6 +467,17 @@
+@@ -388,6 +476,19 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -272,6 +290,8 @@
 +            chunk.getCapabilities().deserializeNBT(p_75823_2_.func_74775_l("ForgeCaps"));
 +        }
 +
++        LightingHooks.readNeighborLightChecksFromNBT(chunk, p_75823_2_);
++        ((IChunkLightingData) chunk).setLightInitialized(p_75823_2_.func_74767_n("LightPopulated"));
 +        // End this method here and split off entity loading to another method
 +        return chunk;
 +    }
@@ -282,7 +302,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.func_74745_c(); ++j1)
-@@ -396,7 +486,6 @@
+@@ -396,7 +497,6 @@
              func_186050_a(nbttagcompound1, p_75823_1_, chunk);
              chunk.func_177409_g(true);
          }
@@ -290,7 +310,7 @@
          NBTTagList nbttaglist2 = p_75823_2_.func_150295_c("TileEntities", 10);
  
          for (int k1 = 0; k1 < nbttaglist2.func_74745_c(); ++k1)
-@@ -409,7 +498,6 @@
+@@ -409,7 +509,6 @@
                  chunk.func_150813_a(tileentity);
              }
          }
@@ -298,7 +318,7 @@
          if (p_75823_2_.func_150297_b("TileTicks", 9))
          {
              NBTTagList nbttaglist3 = p_75823_2_.func_150295_c("TileTicks", 10);
-@@ -431,8 +519,7 @@
+@@ -431,8 +530,7 @@
                  p_75823_1_.func_180497_b(new BlockPos(nbttagcompound3.func_74762_e("x"), nbttagcompound3.func_74762_e("y"), nbttagcompound3.func_74762_e("z")), block, nbttagcompound3.func_74762_e("t"), nbttagcompound3.func_74762_e("p"));
              }
          }
@@ -308,7 +328,7 @@
      }
  
      @Nullable
-@@ -470,29 +557,34 @@
+@@ -470,29 +568,34 @@
      @Nullable
      public static Entity func_186054_a(NBTTagCompound p_186054_0_, World p_186054_1_, double p_186054_2_, double p_186054_4_, double p_186054_6_, boolean p_186054_8_)
      {
@@ -349,7 +369,7 @@
  
                          if (entity1 != null)
                          {
-@@ -521,11 +613,14 @@
+@@ -521,11 +624,14 @@
  
      public static void func_186052_a(Entity p_186052_0_, World p_186052_1_)
      {
@@ -368,7 +388,7 @@
              }
          }
      }
-@@ -563,4 +658,9 @@
+@@ -563,4 +669,9 @@
              return entity;
          }
      }

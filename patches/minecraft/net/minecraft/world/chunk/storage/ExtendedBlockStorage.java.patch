@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
-@@ -27,6 +27,22 @@
+@@ -15,6 +15,8 @@
+     private NibbleArray field_76679_g;
+     private NibbleArray field_76685_h;
+ 
++    private int lightRefCount = -1;
++
+     public ExtendedBlockStorage(int p_i1997_1_, boolean p_i1997_2_)
+     {
+         this.field_76684_a = p_i1997_1_;
+@@ -27,6 +29,22 @@
          }
      }
  
@@ -23,7 +32,7 @@
      public IBlockState func_177485_a(int p_177485_1_, int p_177485_2_, int p_177485_3_)
      {
          return this.field_177488_d.func_186016_a(p_177485_1_, p_177485_2_, p_177485_3_);
-@@ -34,6 +50,8 @@
+@@ -34,6 +52,8 @@
  
      public void func_177484_a(int p_177484_1_, int p_177484_2_, int p_177484_3_, IBlockState p_177484_4_)
      {
@@ -32,14 +41,90 @@
          IBlockState iblockstate = this.func_177485_a(p_177484_1_, p_177484_2_, p_177484_3_);
          Block block = iblockstate.func_177230_c();
          Block block1 = p_177484_4_.func_177230_c();
-@@ -63,7 +81,8 @@
- 
-     public boolean func_76663_a()
-     {
--        return this.field_76682_b == 0;
-+        // return this.blockRefCount == 0;
-+        return false; // CraftBukkit - MC-80966
-\ No newline at end of file
+@@ -61,11 +81,40 @@
+         this.field_177488_d.func_186013_a(p_177484_1_, p_177484_2_, p_177484_3_, p_177484_4_);
      }
  
+-    public boolean func_76663_a()
+-    {
+-        return this.field_76682_b == 0;
++    public boolean func_76663_a() {
++        //Was return false -> Craftbukkit MC
++        if (this.field_76682_b != 0) {
++            return false;
++        }
++
++        // -1 indicates the lightRefCount needs to be re-calculated
++        if (this.lightRefCount == -1) {
++            if (this.checkLightArrayEqual(this.field_76685_h, (byte) 0xFF)
++                    && this.checkLightArrayEqual(this.field_76679_g, (byte) 0x00)) {
++                this.lightRefCount = 0; // Lighting is trivial, don't send to clients
++            } else {
++                this.lightRefCount = 1; // Lighting is not trivial, send to clients
++            }
++        }
++
++        return this.lightRefCount == 0;
+     }
++    private boolean checkLightArrayEqual(NibbleArray storage, byte val) {
++        if (storage == null) {
++            return true;
++        }
+ 
++        byte[] arr = storage.func_177481_a();
++
++        for (byte b : arr) {
++            if (b != val) {
++                return false;
++            }
++        }
++
++        return true;
++    }
++
      public boolean func_76675_b()
+     {
+         return this.field_76683_c > 0;
+@@ -76,9 +125,9 @@
+         return this.field_76684_a;
+     }
+ 
+-    public void func_76657_c(int p_76657_1_, int p_76657_2_, int p_76657_3_, int p_76657_4_)
+-    {
++    public void func_76657_c(int p_76657_1_, int p_76657_2_, int p_76657_3_, int p_76657_4_) {
+         this.field_76685_h.func_76581_a(p_76657_1_, p_76657_2_, p_76657_3_, p_76657_4_);
++        this.lightRefCount = -1;
+     }
+ 
+     public int func_76670_c(int p_76670_1_, int p_76670_2_, int p_76670_3_)
+@@ -86,9 +135,9 @@
+         return this.field_76685_h.func_76582_a(p_76670_1_, p_76670_2_, p_76670_3_);
+     }
+ 
+-    public void func_76677_d(int p_76677_1_, int p_76677_2_, int p_76677_3_, int p_76677_4_)
+-    {
++    public void func_76677_d(int p_76677_1_, int p_76677_2_, int p_76677_3_, int p_76677_4_) {
+         this.field_76679_g.func_76581_a(p_76677_1_, p_76677_2_, p_76677_3_, p_76677_4_);
++        this.lightRefCount = -1;
+     }
+ 
+     public int func_76674_d(int p_76674_1_, int p_76674_2_, int p_76674_3_)
+@@ -138,13 +187,13 @@
+         return this.field_76685_h;
+     }
+ 
+-    public void func_76659_c(NibbleArray p_76659_1_)
+-    {
++    public void func_76659_c(NibbleArray p_76659_1_) {
+         this.field_76679_g = p_76659_1_;
++        this.lightRefCount = -1;
+     }
+ 
+-    public void func_76666_d(NibbleArray p_76666_1_)
+-    {
++    public void func_76666_d(NibbleArray p_76666_1_) {
+         this.field_76685_h = p_76666_1_;
++        this.lightRefCount = -1;
+\ No newline at end of file
+     }
+ }

@@ -1,11 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -8,15 +8,19 @@
+@@ -8,15 +8,26 @@
  import java.util.Map;
  import java.util.Random;
  import java.util.concurrent.ConcurrentLinkedQueue;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
++
++import me.jellysquid.phosphor.api.IChunkLighting;
++import me.jellysquid.phosphor.api.IChunkLightingData;
++import me.jellysquid.phosphor.api.ILightingEngine;
++import me.jellysquid.phosphor.api.ILightingEngineProvider;
++import me.jellysquid.phosphor.core.WorldChunkSlice;
++import me.jellysquid.phosphor.core.lighting.LightingHooks;
  import net.minecraft.block.Block;
 -import net.minecraft.block.ITileEntityProvider;
 +import net.minecraft.block.BlockSand;
@@ -21,18 +28,21 @@
  import net.minecraft.init.Biomes;
  import net.minecraft.init.Blocks;
  import net.minecraft.network.PacketBuffer;
-@@ -40,8 +44,9 @@
+@@ -40,9 +51,12 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Server;
  
 -public class Chunk
-+public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
++public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider, IChunkLighting, IChunkLightingData, ILightingEngineProvider
  {
++    private static final EnumFacing[] HORIZONTAL = EnumFacing.Plane.HORIZONTAL.func_179516_a();
++
      private static final Logger field_150817_t = LogManager.getLogger();
      public static final ExtendedBlockStorage field_186036_a = null;
-@@ -50,13 +55,13 @@
+     private final ExtendedBlockStorage[] field_76652_q;
+@@ -50,13 +64,13 @@
      private final int[] field_76638_b;
      private final boolean[] field_76639_c;
      private boolean field_76636_d;
@@ -50,12 +60,18 @@
      private boolean field_76646_k;
      private boolean field_150814_l;
      private boolean field_150815_m;
-@@ -68,7 +73,37 @@
+@@ -68,7 +82,43 @@
      private int field_76649_t;
      private final ConcurrentLinkedQueue<BlockPos> field_177447_w;
      public boolean field_189550_d;
 +    public gnu.trove.map.hash.TObjectIntHashMap<Class> entityCount = new gnu.trove.map.hash.TObjectIntHashMap<Class>(); // Spigot
  
++    private short[] neighborLightChecks;
++
++    private boolean isLightInitialized;
++
++    private ILightingEngine lightingEngine;
++
 +    // CraftBukkit start - Neighbor loaded cache for chunk lighting and entity ticking
 +    private int neighbors = 0x1 << 12;
 +    public long chunkKey;
@@ -88,13 +104,14 @@
      public Chunk(World p_i1995_1_, int p_i1995_2_, int p_i1995_3_)
      {
          this.field_76652_q = new ExtendedBlockStorage[16];
-@@ -91,8 +126,14 @@
+@@ -91,8 +141,15 @@
  
          Arrays.fill(this.field_76638_b, -999);
          Arrays.fill(this.field_76651_r, (byte) - 1);
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
 +        this.bukkitChunk = new org.bukkit.craftbukkit.v1_12_R1.CraftChunk(this);
 +        this.chunkKey = ChunkPos.func_77272_a(this.field_76635_g, this.field_76647_h);
++        this.lightingEngine = ((ILightingEngineProvider) this.field_76637_e).getLightingEngine();
      }
  
 +    public org.bukkit.Chunk bukkitChunk;
@@ -103,7 +120,7 @@
      public Chunk(World p_i45645_1_, ChunkPrimer p_i45645_2_, int p_i45645_3_, int p_i45645_4_)
      {
          this(p_i45645_1_, p_i45645_3_, p_i45645_4_);
-@@ -179,7 +220,7 @@
+@@ -179,7 +236,7 @@
                  {
                      IBlockState iblockstate = this.func_186032_a(j, l - 1, k);
  
@@ -112,7 +129,237 @@
                      {
                          this.field_76634_f[k << 4 | j] = l;
  
-@@ -452,12 +493,13 @@
+@@ -274,35 +331,15 @@
+     {
+         this.field_76637_e.field_72984_F.func_76320_a("recheckGaps");
+ 
+-        if (this.field_76637_e.func_175697_a(new BlockPos(this.field_76635_g * 16 + 8, 0, this.field_76647_h * 16 + 8), 16))
+-        {
+-            for (int i = 0; i < 16; ++i)
+-            {
+-                for (int j = 0; j < 16; ++j)
+-                {
+-                    if (this.field_76639_c[i + j * 16])
+-                    {
+-                        this.field_76639_c[i + j * 16] = false;
+-                        int k = this.func_76611_b(i, j);
+-                        int l = this.field_76635_g * 16 + i;
+-                        int i1 = this.field_76647_h * 16 + j;
+-                        int j1 = Integer.MAX_VALUE;
++        WorldChunkSlice slice = new WorldChunkSlice(this.field_76637_e, this.field_76635_g, this.field_76647_h);
+ 
+-                        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+-                        {
+-                            j1 = Math.min(j1, this.field_76637_e.func_82734_g(l + enumfacing.func_82601_c(), i1 + enumfacing.func_82599_e()));
+-                        }
+-
+-                        this.func_76599_g(l, i1, j1);
+-
+-                        for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
+-                        {
+-                            this.func_76599_g(l + enumfacing1.func_82601_c(), i1 + enumfacing1.func_82599_e(), k);
+-                        }
+-
+-                        if (p_150803_1_)
+-                        {
++        if (this.field_76637_e.func_175697_a(new BlockPos(this.field_76635_g * 16 + 8, 0, this.field_76647_h * 16 + 8), 16)) {
++            for (int x = 0; x < 16; ++x) {
++                for (int z = 0; z < 16; ++z) {
++                    if (this.recheckGapsForColumn(slice, x, z)) {
++                        if (p_150803_1_) {
+                             this.field_76637_e.field_72984_F.func_76319_b();
++
+                             return;
+                         }
+                     }
+@@ -314,7 +351,75 @@
+ 
+         this.field_76637_e.field_72984_F.func_76319_b();
+     }
++    private boolean recheckGapsForColumn(WorldChunkSlice slice, int x, int z) {
++        int i = x + z * 16;
+ 
++        if (this.field_76639_c[i]) {
++            this.field_76639_c[i] = false;
++
++            int height = this.func_76611_b(x, z);
++
++            int x1 = this.field_76635_g * 16 + x;
++            int z1 = this.field_76647_h * 16 + z;
++
++            int max = this.recheckGapsGetLowestHeight(slice, x1, z1);
++
++            this.recheckGapsSkylightNeighborHeight(slice, x1, z1, height, max);
++
++            return true;
++        }
++
++        return false;
++    }
++
++    private int recheckGapsGetLowestHeight(WorldChunkSlice slice, int x, int z) {
++        int max = Integer.MAX_VALUE;
++
++        for (EnumFacing facing : HORIZONTAL) {
++            int j = x + facing.func_82601_c();
++            int k = z + facing.func_82599_e();
++
++            max = Math.min(max, slice.getChunkFromWorldCoords(j, k).func_177442_v());
++        }
++
++        return max;
++    }
++
++    private void recheckGapsSkylightNeighborHeight(WorldChunkSlice slice, int x, int z, int height, int max) {
++        this.checkSkylightNeighborHeight(slice, x, z, max);
++
++        for (EnumFacing facing : HORIZONTAL) {
++            int j = x + facing.func_82601_c();
++            int k = z + facing.func_82599_e();
++
++            this.checkSkylightNeighborHeight(slice, j, k, height);
++        }
++    }
++
++    private void checkSkylightNeighborHeight(WorldChunkSlice slice, int x, int z, int maxValue) {
++        int i = slice.getChunkFromWorldCoords(x, z).func_76611_b(x & 15, z & 15);
++
++        if (i > maxValue) {
++            this.updateSkylightNeighborHeight(slice, x, z, maxValue, i + 1);
++        } else if (i < maxValue) {
++            this.updateSkylightNeighborHeight(slice, x, z, i, maxValue + 1);
++        }
++    }
++
++    private void updateSkylightNeighborHeight(WorldChunkSlice slice, int x, int z, int startY, int endY) {
++        if (endY > startY) {
++            if (!slice.isLoaded(x, z, 16)) {
++                return;
++            }
++
++            for (int i = startY; i < endY; ++i) {
++                this.field_76637_e.func_180500_c(EnumSkyBlock.SKY, new BlockPos(x, i, z));
++            }
++
++            this.field_76643_l = true;
++        }
++    }
++
+     private void func_76599_g(int p_76599_1_, int p_76599_2_, int p_76599_3_)
+     {
+         int i = this.field_76637_e.func_175645_m(new BlockPos(p_76599_1_, 0, p_76599_2_)).func_177956_o();
+@@ -347,117 +452,38 @@
+         int i = this.field_76634_f[p_76615_3_ << 4 | p_76615_1_] & 255;
+         int j = i;
+ 
+-        if (p_76615_2_ > i)
+-        {
++        if (p_76615_2_ > i) {
+             j = p_76615_2_;
+         }
+ 
+-        while (j > 0 && this.func_150808_b(p_76615_1_, j - 1, p_76615_3_) == 0)
+-        {
++        while (j > 0 && this.func_150808_b(p_76615_1_, j - 1, p_76615_3_) == 0) {
+             --j;
+         }
+ 
+-        if (j != i)
+-        {
+-            this.field_76637_e.func_72975_g(p_76615_1_ + this.field_76635_g * 16, p_76615_3_ + this.field_76647_h * 16, j, i);
++        if (j != i) {
+             this.field_76634_f[p_76615_3_ << 4 | p_76615_1_] = j;
+-            int k = this.field_76635_g * 16 + p_76615_1_;
+-            int l = this.field_76647_h * 16 + p_76615_3_;
+ 
+-            if (this.field_76637_e.field_73011_w.func_191066_m())
+-            {
+-                if (j < i)
+-                {
+-                    for (int j1 = j; j1 < i; ++j1)
+-                    {
+-                        ExtendedBlockStorage extendedblockstorage2 = this.field_76652_q[j1 >> 4];
+-
+-                        if (extendedblockstorage2 != field_186036_a)
+-                        {
+-                            extendedblockstorage2.func_76657_c(p_76615_1_, j1 & 15, p_76615_3_, 15);
+-                            this.field_76637_e.func_175679_n(new BlockPos((this.field_76635_g << 4) + p_76615_1_, j1, (this.field_76647_h << 4) + p_76615_3_));
+-                        }
+-                    }
+-                }
+-                else
+-                {
+-                    for (int i1 = i; i1 < j; ++i1)
+-                    {
+-                        ExtendedBlockStorage extendedblockstorage = this.field_76652_q[i1 >> 4];
+-
+-                        if (extendedblockstorage != field_186036_a)
+-                        {
+-                            extendedblockstorage.func_76657_c(p_76615_1_, i1 & 15, p_76615_3_, 0);
+-                            this.field_76637_e.func_175679_n(new BlockPos((this.field_76635_g << 4) + p_76615_1_, i1, (this.field_76647_h << 4) + p_76615_3_));
+-                        }
+-                    }
+-                }
+-
+-                int k1 = 15;
+-
+-                while (j > 0 && k1 > 0)
+-                {
+-                    --j;
+-                    int i2 = this.func_150808_b(p_76615_1_, j, p_76615_3_);
+-
+-                    if (i2 == 0)
+-                    {
+-                        i2 = 1;
+-                    }
+-
+-                    k1 -= i2;
+-
+-                    if (k1 < 0)
+-                    {
+-                        k1 = 0;
+-                    }
+-
+-                    ExtendedBlockStorage extendedblockstorage1 = this.field_76652_q[j >> 4];
+-
+-                    if (extendedblockstorage1 != field_186036_a)
+-                    {
+-                        extendedblockstorage1.func_76657_c(p_76615_1_, j & 15, p_76615_3_, k1);
+-                    }
+-                }
++            if (this.field_76637_e.field_73011_w.func_191066_m()) {
++                LightingHooks.relightSkylightColumn(this.field_76637_e, (Chunk) (Object) this, p_76615_1_, p_76615_3_, i, j);
+             }
+ 
+             int l1 = this.field_76634_f[p_76615_3_ << 4 | p_76615_1_];
+-            int j2 = i;
+-            int k2 = l1;
+ 
+-            if (l1 < i)
+-            {
+-                j2 = l1;
+-                k2 = i;
+-            }
+-
+-            if (l1 < this.field_82912_p)
+-            {
++            if (l1 < this.field_82912_p) {
+                 this.field_82912_p = l1;
+             }
+-
+-            if (this.field_76637_e.field_73011_w.func_191066_m())
+-            {
+-                for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+-                {
+-                    this.func_76609_d(k + enumfacing.func_82601_c(), l + enumfacing.func_82599_e(), j2, k2);
+-                }
+-
+-                this.func_76609_d(k, l, j2, k2);
+-            }
+-
+-            this.field_76643_l = true;
+         }
+     }
  
      public int func_177437_b(BlockPos p_177437_1_)
      {
@@ -128,7 +375,7 @@
      }
  
      public IBlockState func_177435_g(BlockPos p_177435_1_)
-@@ -539,6 +581,7 @@
+@@ -539,6 +565,7 @@
          {
              Block block = p_177436_2_.func_177230_c();
              Block block1 = iblockstate.func_177230_c();
@@ -136,29 +383,46 @@
              ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
              boolean flag = false;
  
-@@ -556,14 +599,19 @@
+@@ -549,24 +576,27 @@
+                     return null;
+                 }
+ 
+-                extendedblockstorage = new ExtendedBlockStorage(j >> 4 << 4, this.field_76637_e.field_73011_w.func_191066_m());
++                extendedblockstorage = this.initSection(j >> 4 << 4, this.field_76637_e.field_73011_w.func_191066_m());
+                 this.field_76652_q[j >> 4] = extendedblockstorage;
+-                flag = j >= i1;
++                //flag = j >= i1;
+             }
  
              extendedblockstorage.func_177484_a(i, j & 15, k, p_177436_2_);
  
 -            if (block1 != block)
 +            //if (block1 != block)
++            if (!this.field_76637_e.field_72995_K)
              {
-                 if (!this.field_76637_e.field_72995_K)
-                 {
-+                    if (block1 != block) //Only fire block breaks when the block changes.
-                     block1.func_180663_b(this.field_76637_e, p_177436_1_, iblockstate);
-+                    TileEntity te = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
-+                    if (te != null && te.shouldRefresh(this.field_76637_e, p_177436_1_, iblockstate, p_177436_2_)) this.field_76637_e.func_175713_t(p_177436_1_);
-                 }
+-                if (!this.field_76637_e.field_72995_K)
+-                {
+-                    block1.func_180663_b(this.field_76637_e, p_177436_1_, iblockstate);
+-                }
 -                else if (block1 instanceof ITileEntityProvider)
-+                else if (block1.hasTileEntity(iblockstate))
-                 {
-+                    TileEntity te = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
-+                    if (te != null && te.shouldRefresh(this.field_76637_e, p_177436_1_, iblockstate, p_177436_2_))
-                     this.field_76637_e.func_175713_t(p_177436_1_);
-                 }
+-                {
+-                    this.field_76637_e.func_175713_t(p_177436_1_);
+-                }
++                if (block1 != block) //Only fire block breaks when the block changes.
++                block1.func_180663_b(this.field_76637_e, p_177436_1_, iblockstate);
++                TileEntity te = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
++                if (te != null && te.shouldRefresh(this.field_76637_e, p_177436_1_, iblockstate, p_177436_2_)) this.field_76637_e.func_175713_t(p_177436_1_);
              }
-@@ -580,8 +628,7 @@
++            else if (block1.hasTileEntity(iblockstate))
++            {
++                TileEntity te = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
++                if (te != null && te.shouldRefresh(this.field_76637_e, p_177436_1_, iblockstate, p_177436_2_))
++                this.field_76637_e.func_175713_t(p_177436_1_);
++            }
+ 
+             if (extendedblockstorage.func_177485_a(i, j & 15, k).func_177230_c() != block)
+             {
+@@ -580,8 +610,7 @@
                  }
                  else
                  {
@@ -168,7 +432,16 @@
  
                      if (j1 > 0)
                      {
-@@ -601,28 +648,19 @@
+@@ -595,34 +624,28 @@
+                         this.func_76615_h(i, j, k);
+                     }
+ 
++                    k1 = 694698818;
++                    j1 = 694698818;
++
+                     if (j1 != k1 && (j1 < k1 || this.func_177413_a(EnumSkyBlock.SKY, p_177436_1_) > 0 || this.func_177413_a(EnumSkyBlock.BLOCK, p_177436_1_) > 0))
+                     {
+                         this.func_76595_e(i, k);
                      }
                  }
  
@@ -201,7 +474,52 @@
                          this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
                      }
  
-@@ -738,11 +776,29 @@
+@@ -640,23 +663,9 @@
+ 
+     public int func_177413_a(EnumSkyBlock p_177413_1_, BlockPos p_177413_2_)
+     {
+-        int i = p_177413_2_.func_177958_n() & 15;
+-        int j = p_177413_2_.func_177956_o();
+-        int k = p_177413_2_.func_177952_p() & 15;
+-        ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
++        this.lightingEngine.processLightUpdatesForType(p_177413_1_);
+ 
+-        if (extendedblockstorage == field_186036_a)
+-        {
+-            return this.func_177444_d(p_177413_2_) ? p_177413_1_.field_77198_c : 0;
+-        }
+-        else if (p_177413_1_ == EnumSkyBlock.SKY)
+-        {
+-            return !this.field_76637_e.field_73011_w.func_191066_m() ? 0 : extendedblockstorage.func_76670_c(i, j & 15, k);
+-        }
+-        else
+-        {
+-            return p_177413_1_ == EnumSkyBlock.BLOCK ? extendedblockstorage.func_76674_d(i, j & 15, k) : p_177413_1_.field_77198_c;
+-        }
++        return this.getCachedLightFor(p_177413_1_, p_177413_2_);
+     }
+ 
+     public void func_177431_a(EnumSkyBlock p_177431_1_, BlockPos p_177431_2_, int p_177431_3_)
+@@ -670,7 +679,8 @@
+         {
+             extendedblockstorage = new ExtendedBlockStorage(j >> 4 << 4, this.field_76637_e.field_73011_w.func_191066_m());
+             this.field_76652_q[j >> 4] = extendedblockstorage;
+-            this.func_76603_b();
++            LightingHooks.initSkylightForSection(this.field_76637_e, (Chunk) (Object) this, this.field_76652_q[p_177431_2_.func_177956_o() >> 4]);
++            //this.generateSkylightMap();
+         }
+ 
+         this.field_76643_l = true;
+@@ -690,6 +700,8 @@
+ 
+     public int func_177443_a(BlockPos p_177443_1_, int p_177443_2_)
+     {
++        this.lightingEngine.processLightUpdates();
++
+         int i = p_177443_1_.func_177958_n() & 15;
+         int j = p_177443_1_.func_177956_o();
+         int k = p_177443_1_.func_177952_p() & 15;
+@@ -738,11 +750,29 @@
              k = this.field_76645_j.length - 1;
          }
  
@@ -231,7 +549,7 @@
      }
  
      public void func_76622_b(Entity p_76622_1_)
-@@ -763,6 +819,23 @@
+@@ -763,6 +793,23 @@
          }
  
          this.field_76645_j[p_76608_2_].remove(p_76608_1_);
@@ -255,7 +573,7 @@
      }
  
      public boolean func_177444_d(BlockPos p_177444_1_)
-@@ -778,14 +851,23 @@
+@@ -778,14 +825,23 @@
      {
          IBlockState iblockstate = this.func_177435_g(p_177422_1_);
          Block block = iblockstate.func_177230_c();
@@ -281,7 +599,7 @@
          if (tileentity == null)
          {
              if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-@@ -795,14 +877,9 @@
+@@ -795,14 +851,9 @@
              }
              else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
              {
@@ -297,7 +615,7 @@
  
          return tileentity;
      }
-@@ -819,10 +896,11 @@
+@@ -819,10 +870,11 @@
  
      public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_)
      {
@@ -310,7 +628,7 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -854,12 +932,14 @@
+@@ -854,12 +906,15 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
          {
@@ -318,6 +636,7 @@
 +            this.field_76637_e.func_175650_b(com.google.common.collect.ImmutableList.copyOf(classinheritancemultimap));
          }
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(this));
++        LightingHooks.scheduleRelightChecksForChunkBoundaries(this.field_76637_e, (Chunk) (Object) this);
      }
  
      public void func_76623_d()
@@ -326,7 +645,7 @@
          this.field_76636_d = false;
  
          for (TileEntity tileentity : this.field_150816_i.values())
-@@ -869,8 +949,16 @@
+@@ -869,8 +924,16 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
          {
@@ -344,7 +663,7 @@
      }
  
      public void func_76630_e()
-@@ -880,8 +968,8 @@
+@@ -880,8 +943,8 @@
  
      public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, Predicate <? super Entity > p_177414_4_)
      {
@@ -355,7 +674,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -918,8 +1006,8 @@
+@@ -918,8 +981,8 @@
  
      public <T extends Entity> void func_177430_a(Class <? extends T > p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, Predicate <? super T > p_177430_4_)
      {
@@ -366,7 +685,7 @@
          i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
          j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -995,8 +1083,72 @@
+@@ -995,8 +1058,72 @@
          }
      }
  
@@ -439,7 +758,7 @@
          if (this.func_177419_t())
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
-@@ -1008,8 +1160,29 @@
+@@ -1008,8 +1135,29 @@
          {
              this.func_150809_p();
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
@@ -469,7 +788,7 @@
      }
  
      public BlockPos func_177440_h(BlockPos p_177440_1_)
-@@ -1064,7 +1237,7 @@
+@@ -1064,7 +1212,7 @@
          {
              BlockPos blockpos = this.field_177447_w.poll();
  
@@ -478,7 +797,7 @@
              {
                  TileEntity tileentity = this.func_177422_i(blockpos);
                  this.field_76637_e.func_175690_a(blockpos, tileentity);
-@@ -1075,7 +1248,7 @@
+@@ -1075,7 +1223,7 @@
  
      public boolean func_150802_k()
      {
@@ -487,7 +806,7 @@
      }
  
      public boolean func_186035_j()
-@@ -1128,6 +1301,13 @@
+@@ -1128,6 +1276,13 @@
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -501,7 +820,7 @@
          boolean flag = this.field_76637_e.field_73011_w.func_191066_m();
  
          for (int i = 0; i < this.field_76652_q.length; ++i)
-@@ -1176,10 +1356,16 @@
+@@ -1176,10 +1331,16 @@
          this.field_76646_k = true;
          this.func_76590_a();
  
@@ -518,7 +837,7 @@
      }
  
      public Biome func_177411_a(BlockPos p_177411_1_, BiomeProvider p_177411_2_)
-@@ -1190,7 +1376,12 @@
+@@ -1190,7 +1351,12 @@
  
          if (k == 255)
          {
@@ -532,7 +851,7 @@
              k = Biome.func_185362_a(biome);
              this.field_76651_r[j << 4 | i] = (byte)(k & 255);
          }
-@@ -1244,13 +1435,13 @@
+@@ -1244,13 +1410,13 @@
                      BlockPos blockpos1 = blockpos.func_177982_a(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -548,23 +867,55 @@
                              {
                                  this.field_76637_e.func_175664_x(blockpos2);
                              }
-@@ -1265,6 +1456,7 @@
+@@ -1265,44 +1431,11 @@
  
      public void func_150809_p()
      {
 +        field_76637_e.timings.lightChunk.startTiming(); // Paper
          this.field_76646_k = true;
-         this.field_150814_l = true;
-         BlockPos blockpos = new BlockPos(this.field_76635_g << 4, 0, this.field_76647_h << 4);
-@@ -1303,6 +1495,7 @@
-                 this.field_150814_l = false;
-             }
-         }
+-        this.field_150814_l = true;
+-        BlockPos blockpos = new BlockPos(this.field_76635_g << 4, 0, this.field_76647_h << 4);
+ 
+-        if (this.field_76637_e.field_73011_w.func_191066_m())
+-        {
+-            if (this.field_76637_e.func_175707_a(blockpos.func_177982_a(-1, 0, -1), blockpos.func_177982_a(16, this.field_76637_e.func_181545_F(), 16)))
+-            {
+-                label44:
+-
+-                for (int i = 0; i < 16; ++i)
+-                {
+-                    for (int j = 0; j < 16; ++j)
+-                    {
+-                        if (!this.func_150811_f(i, j))
+-                        {
+-                            this.field_150814_l = false;
+-                            break label44;
+-                        }
+-                    }
+-                }
+-
+-                if (this.field_150814_l)
+-                {
+-                    for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+-                    {
+-                        int k = enumfacing.func_176743_c() == EnumFacing.AxisDirection.POSITIVE ? 16 : 1;
+-                        this.field_76637_e.func_175726_f(blockpos.func_177967_a(enumfacing, k)).func_180700_a(enumfacing.func_176734_d());
+-                    }
+-
+-                    this.func_177441_y();
+-                }
+-            }
+-            else
+-            {
+-                this.field_150814_l = false;
+-            }
+-        }
++        LightingHooks.checkChunkLighting((Chunk) (Object) this, this.field_76637_e);
 +        field_76637_e.timings.lightChunk.stopTiming(); // Paper
      }
  
      private void func_177441_y()
-@@ -1381,7 +1574,7 @@
+@@ -1381,7 +1514,7 @@
          {
              blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
  
@@ -573,7 +924,7 @@
              {
                  this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1613,7 @@
+@@ -1420,6 +1553,7 @@
          else
          {
              System.arraycopy(p_177420_1_, 0, this.field_76634_f, 0, this.field_76634_f.length);
@@ -581,7 +932,7 @@
          }
      }
  
-@@ -1433,6 +1627,10 @@
+@@ -1433,6 +1567,10 @@
          return this.field_76645_j;
      }
  
@@ -592,10 +943,81 @@
      public boolean func_177419_t()
      {
          return this.field_76646_k;
-@@ -1489,4 +1687,55 @@
+@@ -1489,4 +1627,127 @@
          QUEUED,
          CHECK;
      }
++
++    /* ======================================== Phosphor ========================================*/
++
++
++    private ExtendedBlockStorage initSection(int y, boolean storeSkylight) {
++        ExtendedBlockStorage storage = new ExtendedBlockStorage(y, storeSkylight);
++
++        LightingHooks.initSkylightForSection(this.field_76637_e, (Chunk) (Object) this, storage);
++
++        return storage;
++    }
++
++
++    @Override
++    public short[] getNeighborLightChecks() {
++        return this.neighborLightChecks;
++    }
++
++    @Override
++    public void setNeighborLightChecks(short[] data) {
++        this.neighborLightChecks = data;
++    }
++
++    @Override
++    public ILightingEngine getLightingEngine() {
++        return this.lightingEngine;
++    }
++
++    @Override
++    public boolean isLightInitialized() {
++        return this.isLightInitialized;
++    }
++
++    @Override
++    public void setLightInitialized(boolean lightInitialized) {
++        this.isLightInitialized = lightInitialized;
++    }
++
++    @Override
++    public void setSkylightUpdatedPublic() {
++        this.func_177441_y();
++    }
++
++    @Override
++    public int getCachedLightFor(EnumSkyBlock type, BlockPos pos) {
++        int i = pos.func_177958_n() & 15;
++        int j = pos.func_177956_o();
++        int k = pos.func_177952_p() & 15;
++
++        ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
++
++        if (extendedblockstorage == Chunk.field_186036_a) {
++            if (this.func_177444_d(pos)) {
++                return type.field_77198_c;
++            } else {
++                return 0;
++            }
++        } else if (type == EnumSkyBlock.SKY) {
++            if (!this.field_76637_e.field_73011_w.func_191066_m()) {
++                return 0;
++            } else {
++                return extendedblockstorage.func_76670_c(i, j & 15, k);
++            }
++        } else {
++            if (type == EnumSkyBlock.BLOCK) {
++                return extendedblockstorage.func_76674_d(i, j & 15, k);
++            } else {
++                return type.field_77198_c;
++            }
++        }
++    }
 +
 +    /* ======================================== FORGE START =====================================*/
 +    /**
@@ -647,4 +1069,5 @@
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }
++
  }

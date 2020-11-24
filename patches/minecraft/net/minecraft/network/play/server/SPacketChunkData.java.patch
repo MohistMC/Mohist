@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
+@@ -6,6 +6,8 @@
+ import java.io.IOException;
+ import java.util.List;
+ import java.util.Map.Entry;
++
++import me.jellysquid.phosphor.api.ILightingEngineProvider;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+@@ -147,6 +149,8 @@
+ 
+     protected int func_189556_a(Chunk p_189556_1_, boolean p_189556_2_, int p_189556_3_)
+     {
++        ((ILightingEngineProvider) p_189556_1_).getLightingEngine().processLightUpdates();
++
+         int i = 0;
+         ExtendedBlockStorage[] aextendedblockstorage = p_189556_1_.func_76587_i();
+         int j = 0;

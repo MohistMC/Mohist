@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -23,18 +23,24 @@
+@@ -11,6 +11,8 @@
+ import java.util.List;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++
++import me.jellysquid.phosphor.api.ILightingEngineProvider;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.EnumCreatureType;
+@@ -23,18 +25,24 @@
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -26,7 +35,7 @@
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
-@@ -82,23 +88,57 @@
+@@ -82,23 +90,57 @@
          return chunk;
      }
  
@@ -90,7 +99,7 @@
          return chunk;
      }
  
-@@ -108,6 +148,7 @@
+@@ -108,6 +150,7 @@
  
          if (chunk == null)
          {
@@ -98,7 +107,7 @@
              long i = ChunkPos.func_77272_a(p_186025_1_, p_186025_2_);
  
              try
-@@ -126,7 +167,8 @@
+@@ -126,7 +169,8 @@
  
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
@@ -108,7 +117,7 @@
          }
  
          return chunk;
-@@ -168,7 +210,7 @@
+@@ -168,7 +212,7 @@
  
      private void func_73242_b(Chunk p_73242_1_)
      {
@@ -117,10 +126,21 @@
          {
              p_73242_1_.func_177432_b(this.field_73251_h.func_82737_E());
              this.field_73247_e.func_75816_a(this.field_73251_h, p_73242_1_);
-@@ -224,6 +266,11 @@
+@@ -185,6 +229,8 @@
+ 
+     public boolean func_186027_a(boolean p_186027_1_)
+     {
++        ((ILightingEngineProvider) this.field_73251_h).getLightingEngine().processLightUpdates();
++
+         int i = 0;
+         List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
+ 
+@@ -224,6 +270,13 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
++                ((ILightingEngineProvider) this.field_73251_h).getLightingEngine().processLightUpdates();
++
 +                for (ChunkPos forced : this.field_73251_h.getPersistentChunks().keySet())
 +                {
 +                    this.field_73248_b.remove(ChunkPos.func_77272_a(forced.field_77276_a, forced.field_77275_b));
@@ -129,7 +149,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -233,21 +280,56 @@
+@@ -233,21 +286,56 @@
  
                      if (chunk != null && chunk.field_189550_d)
                      {
