@@ -216,7 +216,7 @@ public class DumpCommand extends Command {
   private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
     switch (mode) {
       case "file":
-        saveToF("dump", type + "red", sb, sender);
+        saveToF("dump", type + ".red", sb, sender);
         break;
       case "web":
         try {
@@ -229,7 +229,7 @@ public class DumpCommand extends Command {
           }
         } catch (IOException e) {
           sender.sendMessage("Failed to upload to hastebin.");
-          saveToF("dump", type + "red", sb, sender);
+          saveToF("dump", type + ".red", sb, sender);
         }
         break;
     }

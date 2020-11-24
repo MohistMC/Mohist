@@ -1240,11 +1240,10 @@ public class CraftEventFactory {
     // Cauldron start
     public static BlockBreakEvent callBlockBreakEvent(net.minecraft.world.World world, BlockPos pos, IBlockState iBlockState, net.minecraft.entity.player.EntityPlayerMP player) {
         org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-        org.bukkit.event.block.BlockBreakEvent blockBreakEvent = new org.bukkit.event.block.BlockBreakEvent(bukkitBlock, ((EntityPlayerMP) player).getBukkitEntity());
-        EntityPlayerMP playermp = (EntityPlayerMP) player;
+        org.bukkit.event.block.BlockBreakEvent blockBreakEvent = new org.bukkit.event.block.BlockBreakEvent(bukkitBlock, player.getBukkitEntity());
         net.minecraft.block.Block block = iBlockState.getBlock();
-        if (!(playermp instanceof FakePlayer)) {
-            boolean isSwordNoBreak = playermp.interactionManager.getGameType().isCreative() && !playermp.getHeldItemMainhand().isEmpty() && playermp.getHeldItemMainhand().getItem() instanceof ItemSword;
+        if (!(player instanceof FakePlayer)) {
+            boolean isSwordNoBreak = player.interactionManager.getGameType().isCreative() && !player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof ItemSword;
             if (!isSwordNoBreak) {
                 int exp = 0;
                 if (!(block == null || !player.canHarvestBlock(block.getDefaultState()) || block.canSilkHarvest(world, pos, block.getBlockState().getBaseState(), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) > 0)) {
