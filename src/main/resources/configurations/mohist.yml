@@ -11,8 +11,12 @@
 
 support_nocmd: false
 console_name: Server
-check_update: true
-enable_progress: true
 server-type: FML
 lang: en_US
 config-version: 1
+mohist:
+  check_update: true
+  use_custom_java8: false
+  check_libraries: true
+  check_update_auto_download: false
+libraries_black_list: aaaaa;bbbbbb
