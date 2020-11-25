@@ -15,12 +15,13 @@ import static com.mohistmc.util.PluginsModsDelete.check;
  */
 public class AutoDeleteMods {
   public static final List<String> classlist = new ArrayList<>(Arrays.asList(
-    "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
-    "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
-    "com.performant.coremod.Performant" /*Performant*/,
-    "optifine.Differ" /*OptiFine*/,
-    "ichttt.mods.firstaid.FirstAid" /*FirstAid*/,
-    "guichaguri.betterfps.patches.misc.ServerPatch" /*BetterFps*/));
+          "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
+          "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
+          "com.performant.coremod.Performant" /*Performant*/,
+          "optifine.Differ" /*OptiFine*/,
+          "ichttt.mods.firstaid.FirstAid" /*FirstAid*/,
+          "guichaguri.betterfps.patches.misc.ServerPatch" /*BetterFps*/),
+          "com.unnoen.unloader.UnloadHandler" /*Unloader*/);
 
   public static void jar() throws Exception {
     System.out.println(Message.getString("update.mods"));
