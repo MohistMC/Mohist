@@ -20,8 +20,8 @@ public class AutoDeleteMods {
           "com.performant.coremod.Performant" /*Performant*/,
           "optifine.Differ" /*OptiFine*/,
           "ichttt.mods.firstaid.FirstAid" /*FirstAid*/,
-          "guichaguri.betterfps.patches.misc.ServerPatch" /*BetterFps*/),
-          "com.unnoen.unloader.UnloadHandler" /*Unloader*/);
+          "guichaguri.betterfps.patches.misc.ServerPatch" /*BetterFps*/,
+          "com.unnoen.unloader.UnloadHandler" /*Unloader*/));
 
   public static void jar() throws Exception {
     System.out.println(Message.getString("update.mods"));
