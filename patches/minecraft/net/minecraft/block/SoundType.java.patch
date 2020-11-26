@@ -1,0 +1,15 @@
+--- a/net/minecraft/block/SoundType.java
++++ b/net/minecraft/block/SoundType.java
+@@ -53,10 +53,10 @@
+    public static final SoundType field_235599_U_ = new SoundType(1.0F, 1.0F, SoundEvents.field_232707_eX_, SoundEvents.field_232721_fb_, SoundEvents.field_232720_fa_, SoundEvents.field_232709_eZ_, SoundEvents.field_232708_eY_);
+    public final float field_185860_m;
+    public final float field_185861_n;
+-   private final SoundEvent field_185862_o;
++   public final SoundEvent field_185862_o; // PAIL private -> public, rename breakSound
+    private final SoundEvent field_185863_p;
+    private final SoundEvent field_185864_q;
+-   private final SoundEvent field_185865_r;
++   public final SoundEvent field_185865_r; // PAIL private -> public, rename hitSound
+    private final SoundEvent field_185866_s;
+ 
+    public SoundType(float p_i46679_1_, float p_i46679_2_, SoundEvent p_i46679_3_, SoundEvent p_i46679_4_, SoundEvent p_i46679_5_, SoundEvent p_i46679_6_, SoundEvent p_i46679_7_) {
