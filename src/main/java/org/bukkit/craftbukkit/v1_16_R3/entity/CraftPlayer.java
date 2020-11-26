@@ -194,7 +194,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         if (getHandle().connection == null) return;
 
         for (ITextComponent component : CraftChatMessage.fromString(message)) {
-            getHandle().connection.sendPacket(new SChatPacket(component, ChatType.CHAT, Util.DUMMY_UUID));
+            getHandle().connection.sendPacket(new SChatPacket(component, ChatType.SYSTEM, Util.DUMMY_UUID));
         }
     }
 
@@ -475,7 +475,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     public void playSound(Location loc, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
         if (loc == null || sound == null || category == null || getHandle().connection == null) return;
 
-        SPlaySoundEffectPacket packet = new SPlaySoundEffectPacket(CraftSound.getSoundEffect(CraftSound.getSound(sound)), net.minecraft.util.SoundCategory.valueOf(category.name()), loc.getX(), loc.getY(), loc.getZ(), volume, pitch);
+        SPlaySoundEffectPacket packet = new SPlaySoundEffectPacket(CraftSound.getSoundEffect(sound), net.minecraft.util.SoundCategory.valueOf(category.name()), loc.getX(), loc.getY(), loc.getZ(), volume, pitch);
         getHandle().connection.sendPacket(packet);
     }
 
@@ -499,7 +499,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     @Override
     public void stopSound(Sound sound, org.bukkit.SoundCategory category) {
-        stopSound(CraftSound.getSound(sound), category);
+        stopSound(sound, category);
     }
 
     @Override

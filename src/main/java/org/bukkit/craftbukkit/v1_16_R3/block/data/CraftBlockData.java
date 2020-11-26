@@ -2,8 +2,6 @@ package org.bukkit.craftbukkit.v1_16_R3.block.data;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -24,8 +22,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.registry.Registry;
 import org.bukkit.Material;
+import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_16_R3.CraftSoundGroup;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 
@@ -511,5 +511,10 @@ public class CraftBlockData implements BlockData {
 
     public static CraftBlockData fromData(BlockState data) {
         return MAP.getOrDefault(data.getBlock().getClass(), CraftBlockData::new).apply(data);
+    }
+
+    @Override
+    public SoundGroup getSoundGroup() {
+        return CraftSoundGroup.getSoundGroup(state.getSoundType());
     }
 }
