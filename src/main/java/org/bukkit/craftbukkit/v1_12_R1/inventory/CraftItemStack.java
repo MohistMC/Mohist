@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.collect.ImmutableMap;
-import com.mohistmc.inventory.meta.ForgeCapMeta;
 import java.util.Map;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
@@ -33,7 +32,6 @@ public final class CraftItemStack extends ItemStack {
      */
     private CraftItemStack(net.minecraft.item.ItemStack item) {
         this.handle = item;
-        ForgeCapMeta.setCap(item, this);
     }
 
     private CraftItemStack(ItemStack item) {
@@ -67,7 +65,7 @@ public final class CraftItemStack extends ItemStack {
             return net.minecraft.item.ItemStack.EMPTY;
         }
 
-        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability(), original.hasForgeCapMeta() ? original.getForgeCapMeta().getCap() : null);
+        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability(), null);
         if (original.hasItemMeta()) {
             setItemMeta(stack, original.getItemMeta());
         }
