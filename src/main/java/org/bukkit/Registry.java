@@ -197,9 +197,9 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
 
             for (T entry : type.getEnumConstants()) {
                 if (predicate.test(entry)) {
-                    mapcache.add(entry.getKey());
                     if (!mapcache.contains(entry.getKey())) {
                         builder.put(entry.getKey(), entry);
+                        mapcache.add(entry.getKey());
                     }
                 }
             }
