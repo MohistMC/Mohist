@@ -193,13 +193,19 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
         protected SimpleRegistry(@NotNull Class<T> type, @NotNull Predicate<T> predicate) {
             ImmutableMap.Builder<NamespacedKey, T> builder = ImmutableMap.builder();
 
+            List<NamespacedKey> mapcache = new ArrayList<>();
+
             for (T entry : type.getEnumConstants()) {
                 if (predicate.test(entry)) {
-                    builder.put(entry.getKey(), entry);
+                    mapcache.add(entry.getKey());
+                    if (!mapcache.contains(entry.getKey())) {
+                        builder.put(entry.getKey(), entry);
+                    }
                 }
             }
 
             map = builder.build();
+            mapcache.clear();
         }
 
         @Nullable
