@@ -18,7 +18,7 @@ public class ServerAPI {
 
     // Don't count the default number of mods
     public static int getModSize() {
-        return mods.get("mods") == null ? 0 : mods.get("mods") - 4;
+        return mods.get("mods") == null ? 0 : mods.get("mods") - 5;
     }
 
     public static String getModList() {
