@@ -12,7 +12,7 @@ public class StringSetting extends Setting<String> {
 
     @Override
     public String getValue() {
-        return value;
+        return value.replace("&", "§");
     }
 
     @Override

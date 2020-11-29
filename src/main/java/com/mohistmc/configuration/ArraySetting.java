@@ -22,7 +22,7 @@ public abstract class ArraySetting<T> extends Setting<String>
     @Override
     public final String getValue()
     {
-        return this.value;
+        return this.value.replace("&", "§");
     }
 
     @Override
