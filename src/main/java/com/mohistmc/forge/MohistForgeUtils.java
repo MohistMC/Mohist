@@ -24,6 +24,6 @@ public class MohistForgeUtils {
             else
                 return Arrays.asList(clientMods).containsAll(Arrays.asList(MohistConfig.instance.modswhitelist.getValue().split(",")));
         }
-        return false;
+        return true;
     }
 }
