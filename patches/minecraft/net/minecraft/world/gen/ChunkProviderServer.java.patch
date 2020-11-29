@@ -26,7 +26,7 @@
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
-@@ -82,23 +88,57 @@
+@@ -82,43 +88,91 @@
          return chunk;
      }
  
@@ -90,15 +90,45 @@
          return chunk;
      }
  
-@@ -108,6 +148,7 @@
+     public Chunk func_186025_d(int p_186025_1_, int p_186025_2_)
+     {
+-        Chunk chunk = this.func_186028_c(p_186025_1_, p_186025_2_);
++        return getChunkAt(p_186025_1_, p_186025_2_, null);
++    }
  
++    public Chunk getChunkAt(int i, int j, Runnable runnable) {
++        return getChunkAt(i, j, runnable, true);
++    }
++
++    public Chunk getChunkAt(int x, int z, Runnable runnable, boolean generate) {
++        Chunk chunk = originalGetChunkAt(x, z);
++        return chunk;
++    }
++
++    public Chunk originalGetChunkAt(int x, int z) {
++        Chunk chunk = this.func_186028_c(x, z);
++
          if (chunk == null)
          {
+-            long i = ChunkPos.func_77272_a(p_186025_1_, p_186025_2_);
 +            field_73251_h.timings.syncChunkLoadTimer.startTiming(); // Spigot
-             long i = ChunkPos.func_77272_a(p_186025_1_, p_186025_2_);
++            long i = ChunkPos.func_77272_a(x, z);
  
              try
-@@ -126,7 +167,8 @@
+             {
+-                chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
++                chunk = this.field_186029_c.func_185932_a(x, z);
+             }
+             catch (Throwable throwable)
+             {
+                 CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception generating new chunk");
+                 CrashReportCategory crashreportcategory = crashreport.func_85058_a("Chunk to be generated");
+-                crashreportcategory.func_71507_a("Location", String.format("%d,%d", p_186025_1_, p_186025_2_));
++                crashreportcategory.func_71507_a("Location", String.format("%d,%d", x, z));
+                 crashreportcategory.func_71507_a("Position hash", Long.valueOf(i));
+                 crashreportcategory.func_71507_a("Generator", this.field_186029_c);
+                 throw new ReportedException(crashreport);
+@@ -126,7 +180,8 @@
  
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
@@ -108,7 +138,7 @@
          }
  
          return chunk;
-@@ -168,7 +210,7 @@
+@@ -168,7 +223,7 @@
  
      private void func_73242_b(Chunk p_73242_1_)
      {
@@ -117,7 +147,7 @@
          {
              p_73242_1_.func_177432_b(this.field_73251_h.func_82737_E());
              this.field_73247_e.func_75816_a(this.field_73251_h, p_73242_1_);
-@@ -224,6 +266,11 @@
+@@ -224,6 +279,11 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -129,7 +159,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -233,21 +280,56 @@
+@@ -233,21 +293,56 @@
  
                      if (chunk != null && chunk.field_189550_d)
                      {
