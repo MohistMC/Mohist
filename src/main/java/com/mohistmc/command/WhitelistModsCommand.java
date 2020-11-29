@@ -44,8 +44,9 @@ public class WhitelistModsCommand extends Command {
 
   private static String makeModList() {
     for (ModContainer mod : Loader.instance().getModList())
-      if (!mod.getModId().toLowerCase().equals("mohist"))
+      if (!mod.getModId().equals("mohist") || !mod.getModId().equals("forge")) {
         list = list + mod.getModId() + "@" + mod.getVersion() + ",";
+      }
     return list.substring(0, list.length() - 1);
   }
 }

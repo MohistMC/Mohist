@@ -4,9 +4,8 @@ public class StringSetting extends Setting<String> {
     private String value;
     private ConfigBase config;
 
-    public StringSetting(ConfigBase config, String path, String def,
-            String description) {
-        super(path, def, description);
+    public StringSetting(ConfigBase config, String path, String def) {
+        super(path, def);
         this.value = def;
         this.config = config;
     }

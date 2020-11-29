@@ -8,9 +8,9 @@ public abstract class ArraySetting<T> extends Setting<String>
 	protected ConfigBase config;
     protected String value;
 
-	public ArraySetting(String path, String def, String description, ConfigBase config)
+	public ArraySetting(String path, String def, ConfigBase config)
 	{
-		super(path, def, description);
+		super(path, def);
         this.value = def;
 		this.config = config;
 		this.initArr(def);

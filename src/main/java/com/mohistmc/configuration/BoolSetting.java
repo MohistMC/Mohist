@@ -7,9 +7,9 @@ public class BoolSetting extends Setting<Boolean>
     private Boolean value;
     private ConfigBase config;
 
-    public BoolSetting(ConfigBase config, String path, Boolean def, String description)
+    public BoolSetting(ConfigBase config, String path, Boolean def)
     {
-        super(path, def, description);
+        super(path, def);
         this.value = def;
         this.config = config;
     }

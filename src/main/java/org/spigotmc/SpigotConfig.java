@@ -191,7 +191,7 @@ public class SpigotConfig {
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
         commands.put( "restart", new RestartCommand( "restart" ) );
-        if (MohistConfig.instance.getBoolean("mohist.watchdog_spigot")) {
+        if (MohistConfig.instance.watchdog_spigot.getValue()) {
             WatchdogThread.doStart(timeoutTime, restartOnCrash);
         }
     }
