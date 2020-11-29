@@ -73,10 +73,15 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting stopserversaveworlds = new BoolSetting(this, "world.stopserversaveworlds", false, Message.getString("mohistsettings.stopserversaveworlds"));
     public final BoolSetting disableannounceAdvancements = new BoolSetting(this, "disable-announce-Advancements", false, Message.getString("mohistsettings.disableannounceAdvancements"));
 
-    public final StringSetting modsblacklist = new StringSetting(this, "forge.modswhitelist.list", "aaaa@version,bbbb@version", Message.getString("mohistsettings.modsblacklist"));
-    public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modswhitelist.kickmessage", "Use of unauthorized mods", Message.getString("mohistsettings.modsblacklistkickMessage"));
-    public final BoolSetting modswhitelistenable = new BoolSetting(this, "forge.enable_mods_whitelist", false, Message.getString("mohistsettings.modswhitelistenable"));
+    // mods black list
+    public final StringSetting modsblacklist = new StringSetting(this, "forge.modsblacklist.list", "aaaa@version,bbbb@version", Message.getString("mohistsettings.modsblacklist"));
+    public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modsblacklist.kickmessage", "Use of unauthorized mods", Message.getString("mohistsettings.modsblacklistkickMessage"));
+    public final BoolSetting modsblacklistenable = new BoolSetting(this, "forge.modsblacklist.enable", false, Message.getString("mohistsettings.modswhitelistenable"));
+
+    // mods white list
     public final IntSetting modsnumber = new IntSetting(this, "forge.whitelist_mods_number", 0, Message.getString("mohistsettings.whitelistmodsnumber"));
+
+
     public final IntSetting forgeversionmajor = new IntSetting(this, "forge.version.major", 14, "forge.version.major");
     public final IntSetting forgeversionminor = new IntSetting(this, "forge.version.minor", 23, "forge.version.minor");
     public final IntSetting forgeversionrevision = new IntSetting(this, "forge.version.revision", 5, "forge.version.revision");

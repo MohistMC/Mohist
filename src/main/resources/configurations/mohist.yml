@@ -6,11 +6,10 @@
 entity-tick-limit: 300
 hidejoinmodslist: false
 forge:
-  modswhitelist:
-    kickmessage: Use of unauthorized mods
+  modsblacklist:
+    enable: false
     list: aaaa@version,bbbb@version
-  enable_mods_whitelist: false
-  whitelist_mods_number: 0
+    kickmessage: Use of unauthorized mods
   disablechunkforcesystem: false
   autounloadworld:
     enable: false
@@ -18,9 +17,6 @@ forge:
       - 0
       - 1
       - -1
-  modsblacklist:
-    list: []
-    kickmessage: Use of unauthorized mods
   version:
     major: 14
     minor: 23
