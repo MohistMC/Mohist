@@ -1,12 +1,10 @@
 package com.mohistmc.bukkit;
 
+import static com.mohistmc.util.PluginsModsDelete.check;
 import com.mohistmc.util.i18n.Message;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.mohistmc.util.PluginsModsDelete.check;
 
 /**
  * @author Mgazul

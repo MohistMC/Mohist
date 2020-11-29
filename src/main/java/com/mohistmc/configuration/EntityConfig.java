@@ -11,8 +11,8 @@ public class EntityConfig extends ConfigBase
             + "Use carefully, it may break some mechanics";
 
     public static EntityConfig instance;
-    public final BoolSetting skipEntityTicks = new BoolSetting(this, "settings.skip-entity-ticks", true, "If enabled, turns on entity tick skip feature.");
-    public final BoolSetting skipActivationRange = new BoolSetting(this, "settings.skip-activation-range", false, "If enabled, skips entity activation range checks.");
+    public final BoolSetting skipEntityTicks = new BoolSetting(this, "settings.skip-entity-ticks", true);
+    public final BoolSetting skipActivationRange = new BoolSetting(this, "settings.skip-activation-range", false);
 
     public EntityConfig()
     {
@@ -36,9 +36,6 @@ public class EntityConfig extends ConfigBase
             String header = HEADER + "\n";
             for (Setting toggle : settings.values())
             {
-                if (!toggle.description.equals(""))
-                    header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
-
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));
             }

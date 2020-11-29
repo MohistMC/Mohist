@@ -1,5 +1,8 @@
 package com.mohistmc;
 
+import com.mohistmc.api.ServerAPI;
+import com.mohistmc.common.async.MohistThreadBox;
+import com.mohistmc.configuration.MohistConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -24,9 +27,6 @@ import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.spigotmc.SpigotConfig;
-import com.mohistmc.api.ServerAPI;
-import com.mohistmc.common.async.MohistThreadBox;
-import com.mohistmc.configuration.MohistConfig;
 
 /**
  * bStats collects some data for plugin authors.

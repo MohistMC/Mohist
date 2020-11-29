@@ -1,6 +1,7 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMC;
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 import com.mohistmc.util.i18n.Message;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,8 +17,6 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 
 public class DownloadJava {
   public static File java = new File("CustomJAVA/");

@@ -1,8 +1,8 @@
 package com.mohistmc.forge;
 
+import com.mohistmc.configuration.MohistConfigUtil;
 import java.io.File;
 import java.util.Map;
-import com.mohistmc.configuration.MohistConfigUtil;
 
 public class ForgeVersion {
 

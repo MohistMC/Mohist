@@ -2,10 +2,10 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMC;
 import com.mohistmc.configuration.MohistConfigUtil;
+import static com.mohistmc.network.download.UpdateUtils.downloadFile;
+import static com.mohistmc.network.download.UpdateUtils.getLibs;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.i18n.Message;
-
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -13,9 +13,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static com.mohistmc.network.download.UpdateUtils.downloadFile;
-import static com.mohistmc.network.download.UpdateUtils.getLibs;
+import javax.xml.bind.DatatypeConverter;
 
 public class DownloadLibraries {
   static int retry = 0;

@@ -1,18 +1,17 @@
 package com.mohistmc;
 
-import java.util.Scanner;
-import org.apache.logging.log4j.Logger;
 import com.mohistmc.bukkit.AutoDeletePlugins;
 import com.mohistmc.bukkit.nms.MappingFix;
 import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.forge.AutoDeleteMods;
+import static com.mohistmc.forge.FastWorkBenchConf.changeConf;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.DownloadLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.i18n.Message;
-
-import static com.mohistmc.forge.FastWorkBenchConf.changeConf;
+import java.util.Scanner;
+import org.apache.logging.log4j.Logger;
 
 public class MohistMC {
     public static final String NAME = "Mohist";

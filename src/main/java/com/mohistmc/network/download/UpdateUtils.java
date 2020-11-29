@@ -3,8 +3,10 @@ package com.mohistmc.network.download;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMC;
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
+import static com.mohistmc.network.download.NetworkUtil.getConn;
+import static com.mohistmc.network.download.NetworkUtil.getInput;
 import com.mohistmc.util.i18n.Message;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,11 +19,13 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
-import static com.mohistmc.network.download.NetworkUtil.getConn;
-import static com.mohistmc.network.download.NetworkUtil.getInput;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class UpdateUtils {
 

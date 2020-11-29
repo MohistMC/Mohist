@@ -1,14 +1,12 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.MohistMC;
-import org.apache.commons.io.FileUtils;
-
+import static com.mohistmc.util.PluginsModsDelete.fastbench;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-
-import static com.mohistmc.util.PluginsModsDelete.fastbench;
+import org.apache.commons.io.FileUtils;
 
 public class FastWorkBenchConf {
   public static void changeConf() throws Exception {

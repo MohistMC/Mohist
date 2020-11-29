@@ -3,7 +3,6 @@ package com.mohistmc.bukkit.nms.utils;
 import com.mohistmc.bukkit.nms.utils.srgutils.IMappingFile;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.i18n.Message;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;

@@ -42,7 +42,7 @@ public class WorldConfig
     {
         if (baseConfig.settings.get("world-settings.default." + path) == null)
         {
-            baseConfig.settings.put("world-settings.default." + path, new BoolSetting(baseConfig, "world-settings.default." + path, def, ""));
+            baseConfig.settings.put("world-settings.default." + path, new BoolSetting(baseConfig, "world-settings.default." + path, def));
         }
 
         baseConfig.config.addDefault( "world-settings.default." + path, def );
@@ -59,7 +59,7 @@ public class WorldConfig
     {
         if (baseConfig.settings.get("world-settings.default." + path) == null)
         {
-            baseConfig.settings.put("world-settings.default." + path, new IntSetting(baseConfig, "world-settings.default." + path, def, ""));
+            baseConfig.settings.put("world-settings.default." + path, new IntSetting(baseConfig, "world-settings.default." + path, def));
         }
 
         baseConfig.config.addDefault( "world-settings.default." + path, def );

@@ -1,11 +1,11 @@
 package com.mohistmc.bukkit.nms.proxy;
 
+import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
-import com.mohistmc.bukkit.nms.utils.RemapUtils;
 
 /**
  *

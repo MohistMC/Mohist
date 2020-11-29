@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.mohistmc.bukkit.nms.proxy.DelegateClassLoder;
 import com.mohistmc.bukkit.nms.proxy.DelegateURLClassLoder;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
+import com.mohistmc.bukkit.pluginfix.JavaScriptRemaper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ListIterator;
@@ -15,7 +16,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
-import com.mohistmc.bukkit.pluginfix.JavaScriptRemaper;
 public class MohistSuperClassRemapper {
 
     public static Map<String, Class<?>> superClassMap = Maps.newHashMap();

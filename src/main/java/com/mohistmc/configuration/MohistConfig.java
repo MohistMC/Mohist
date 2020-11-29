@@ -10,7 +10,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.spigotmc.SpigotConfig;
-import scala.reflect.io.Directory;
 
 public class MohistConfig extends ConfigBase {
 

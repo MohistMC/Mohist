@@ -23,6 +23,7 @@
 
 package com.mohistmc.console.log4j;
 
+import com.mohistmc.configuration.MohistConfig;
 import com.mohistmc.util.ANSIColorUtils;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -37,7 +38,6 @@ import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
-import com.mohistmc.configuration.MohistConfig;
 
 @Plugin(name = "highlightMsg", category = PatternConverter.CATEGORY)
 @ConverterKeys({"highlightMsg"})

@@ -11,7 +11,7 @@ public class TileEntityConfig extends ConfigBase
             + "Use carefully, it may break some mechanics";
 
     public static TileEntityConfig instance;
-    public final BoolSetting skipTileEntityTicks = new BoolSetting(this, "settings.skip-tileentity-ticks", true, "If enabled, turns on tileentity tick skip feature.");
+    public final BoolSetting skipTileEntityTicks = new BoolSetting(this, "settings.skip-tileentity-ticks", true);
 
     public TileEntityConfig()
     {
@@ -34,9 +34,6 @@ public class TileEntityConfig extends ConfigBase
             String header = HEADER + "\n";
             for (Setting toggle : settings.values())
             {
-                if (!toggle.description.equals(""))
-                    header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
-
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));
             }

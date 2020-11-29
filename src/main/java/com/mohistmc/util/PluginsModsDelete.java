@@ -1,19 +1,15 @@
 package com.mohistmc.util;
 
+import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import com.mohistmc.util.i18n.Message;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.Scanner;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
-
-import static com.mohistmc.network.download.UpdateUtils.downloadFile;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class PluginsModsDelete {
     public static boolean fastbench = false;

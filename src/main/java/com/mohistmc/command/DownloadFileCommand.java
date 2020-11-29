@@ -1,11 +1,9 @@
 package com.mohistmc.command;
 
+import static com.mohistmc.network.download.UpdateUtils.downloadFile;
+import java.io.File;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import java.io.File;
-
-import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 
 public class DownloadFileCommand extends Command {
 

@@ -7,8 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import static net.minecraft.command.CommandBase.parseInt;
-
 public class GiveCommand {
 
     public static void info(CommandSender sender, String[] args) {

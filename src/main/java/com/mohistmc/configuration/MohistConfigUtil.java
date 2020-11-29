@@ -2,7 +2,6 @@ package com.mohistmc.configuration;
 
 import com.mohistmc.MohistMC;
 import com.mohistmc.util.NumberUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

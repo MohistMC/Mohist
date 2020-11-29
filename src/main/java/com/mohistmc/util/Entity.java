@@ -1,10 +1,10 @@
 package com.mohistmc.util;
 
+import com.mohistmc.common.cache.EntityCache;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import com.mohistmc.common.cache.EntityCache;
 
 public class Entity {
     public static Map<Class<? extends net.minecraft.entity.Entity>, EntityCache> entityCache = new HashMap<Class<? extends net.minecraft.entity.Entity>, EntityCache>();

@@ -1,7 +1,7 @@
 package com.mohistmc.forge;
 
-import java.util.Arrays;
 import com.mohistmc.configuration.MohistConfig;
+import java.util.Arrays;
 
 public class MohistForgeUtils {
 

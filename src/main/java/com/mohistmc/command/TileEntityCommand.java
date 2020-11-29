@@ -1,6 +1,5 @@
 package com.mohistmc.command;
 
-import com.mohistmc.util.i18n.Message;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
