@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.generators;
 
+import com.google.common.collect.MultimapBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -74,7 +74,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
     public class PartBuilder {
         public BlockStateProvider.ConfiguredModelList models;
         public boolean useOr;
-        public final Multimap<Property<?>, Comparable<?>> conditions = HashMultimap.create();
+        public final Multimap<Property<?>, Comparable<?>> conditions = MultimapBuilder.linkedHashKeys().arrayListValues().build();
 
         PartBuilder(BlockStateProvider.ConfiguredModelList models) {
             this.models = models;
