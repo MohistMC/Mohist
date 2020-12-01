@@ -1,6 +1,5 @@
 package org.bukkit.plugin.java;
 
-import com.google.common.io.ByteStreams;
 import com.mohistmc.bukkit.nms.ClassLoaderContext;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.io.File;
@@ -17,7 +16,6 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -32,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
-final class PluginClassLoader extends URLClassLoader {
+public final class PluginClassLoader extends URLClassLoader {
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
     private final PluginDescriptionFile description;
@@ -136,22 +134,14 @@ final class PluginClassLoader extends URLClassLoader {
 
                     if (result == null) {
                         result = remappedFindClass(name);
-
-                        if (result != null) {
-                            loader.setClass(name, result);
-                        }
                     }
 
                     if (result == null) {
-                        try {
-                            result = Class.forName(name);
-                        } catch (Throwable throwable) {
-                            throw new ClassNotFoundException(name, throwable);
-                        }
+                        result = super.findClass(name);
                     }
 
-                    if (result == null) {
-                        throw new ClassNotFoundException(name);
+                    if (result != null) {
+                        loader.setClass(name, result);
                     }
 
                     classes.put(name, result);
