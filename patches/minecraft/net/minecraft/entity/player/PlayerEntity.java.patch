@@ -761,49 +761,26 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1669,26 +1873,34 @@
+@@ -1679,16 +1883,15 @@
  
-    protected void func_192030_dh() {
-       if (this.field_223730_e + 20L < this.field_70170_p.func_82737_E()) {
--         this.func_192026_k(this.func_192023_dk());
-+    //    this.spawnShoulderEntity(this.getLeftShoulderEntity());
-+    //    this.setLeftShoulderEntity(new CompoundNBT());
-+    //    this.spawnShoulderEntity(this.getRightShoulderEntity());
-+    //    this.setRightShoulderEntity(new CompoundNBT());
-+         // CraftBukkit start
-+         if (this.spawnShoulderEntity(this.func_192023_dk())) {
-          this.func_192029_h(new CompoundNBT());
--         this.func_192026_k(this.func_192025_dl());
-+         }
-+         if (this.spawnShoulderEntity(this.func_192025_dl())) {
-          this.func_192031_i(new CompoundNBT());
-       }
-+         // CraftBukkit end
-+      }
- 
-    }
- 
--   private void func_192026_k(CompoundNBT p_192026_1_) {
-+   private boolean spawnShoulderEntity(CompoundNBT p_192026_1_) { // CraftBukkit void->boolean
+    private void func_192026_k(CompoundNBT p_192026_1_) {
        if (!this.field_70170_p.field_72995_K && !p_192026_1_.isEmpty()) {
 -         EntityType.func_220330_a(p_192026_1_, this.field_70170_p).ifPresent((p_226562_1_) -> {
-+         return EntityType.func_220330_a(p_192026_1_, this.field_70170_p).map((p_226562_1_) -> {
++          EntityType.func_220330_a(p_192026_1_, this.field_70170_p).ifPresent((p_226562_1_) -> {
              if (p_226562_1_ instanceof TameableEntity) {
                 ((TameableEntity)p_226562_1_).func_184754_b(this.field_96093_i);
              }
  
              p_226562_1_.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + (double)0.7F, this.func_226281_cx_());
 -            ((ServerWorld)this.field_70170_p).func_217470_d(p_226562_1_);
--         });
-+            return ((ServerWorld) this.field_70170_p).addEntity(p_226562_1_, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBillot
-+         }).orElse(true); // CraftBukkit
++            ((ServerWorld) this.field_70170_p).addEntity(p_226562_1_, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBukkit
+          });
        }
 -
-+      return true; // CraftBukkit
     }
  
     public abstract boolean func_175149_v();
-@@ -1708,7 +1920,11 @@
+@@ -1708,7 +1911,11 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -816,7 +793,7 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1841,7 +2057,7 @@
+@@ -1841,7 +2048,7 @@
        return this.field_70180_af.func_187225_a(field_192032_bt);
     }
  
@@ -825,7 +802,7 @@
        this.field_70180_af.func_187227_b(field_192032_bt, p_192029_1_);
     }
  
-@@ -1849,7 +2065,7 @@
+@@ -1849,7 +2056,7 @@
        return this.field_70180_af.func_187225_a(field_192033_bu);
     }
  
@@ -834,7 +811,7 @@
        this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
     }
  
-@@ -1987,4 +2203,62 @@
+@@ -1987,4 +2194,62 @@
           return this.field_221260_g;
        }
     }
