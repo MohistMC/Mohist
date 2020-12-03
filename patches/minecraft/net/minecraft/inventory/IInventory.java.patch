@@ -9,18 +9,7 @@
  
  public interface IInventory extends IClearable {
     int func_70302_i_();
-@@ -18,9 +20,7 @@
- 
-    void func_70299_a(int p_70299_1_, ItemStack p_70299_2_);
- 
--   default int func_70297_j_() {
--      return 64;
--   }
-+   int func_70297_j_(); // CraftBukkit
- 
-    void func_70296_d();
- 
-@@ -59,4 +59,29 @@
+@@ -59,4 +61,29 @@
  
        return false;
     }
