@@ -1,5 +1,7 @@
 package org.bukkit.plugin.java;
 
+import com.google.common.io.ByteStreams;
+import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.nms.ClassLoaderContext;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.io.File;
@@ -16,11 +18,15 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import net.md_5.specialsource.repo.RuntimeRepo;
+import net.minecraft.server.MinecraftServer;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
@@ -133,18 +139,22 @@ public final class PluginClassLoader extends URLClassLoader {
                     }
 
                     if (result == null) {
+                        MohistMC.LOGGER.error(name);
                         result = remappedFindClass(name);
-                    }
+                        if (result != null) {
+                            loader.setClass(name, result);
+                        }
 
-                    if (result == null) {
-                        result = super.findClass(name);
-                    }
+                        if (result == null) {
+                            try {
+                                result = MinecraftServer.getServer().getClass().getClassLoader().loadClass(name);
+                            } catch (Throwable throwable) {
+                                throw new ClassNotFoundException(name, throwable);
+                            }
+                        }
 
-                    if (result != null) {
-                        loader.setClass(name, result);
+                        classes.put(name, result);
                     }
-
-                    classes.put(name, result);
                 }
             }
         } finally {
@@ -191,9 +201,29 @@ public final class PluginClassLoader extends URLClassLoader {
                 InputStream stream = url.openStream();
                 if (stream != null) {
                     byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
                     bytecode = RemapUtils.remapFindClass(bytecode);
+
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     URL jarURL = jarURLConnection.getJarFileURL();
+
+                    int dot = name.lastIndexOf('.');
+                    if (dot != -1) {
+                        String pkgName = name.substring(0, dot);
+                        if (getPackage(pkgName) == null) {
+                            try {
+                                if (manifest != null) {
+                                    definePackage(pkgName, manifest, url);
+                                } else {
+                                    definePackage(pkgName, null, null, null, null, null, null, null);
+                                }
+                            } catch (IllegalArgumentException ex) {
+                                if (getPackage(pkgName) == null) {
+                                    throw new IllegalStateException("Cannot find package " + pkgName);
+                                }
+                            }
+                        }
+                    }
                     CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
 
                     result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
@@ -209,5 +239,4 @@ public final class PluginClassLoader extends URLClassLoader {
 
         return result;
     }
-
 }
