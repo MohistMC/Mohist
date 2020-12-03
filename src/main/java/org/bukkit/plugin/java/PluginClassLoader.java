@@ -139,7 +139,6 @@ public final class PluginClassLoader extends URLClassLoader {
                     }
 
                     if (result == null) {
-                        MohistMC.LOGGER.error(name);
                         result = remappedFindClass(name);
                         if (result != null) {
                             loader.setClass(name, result);
