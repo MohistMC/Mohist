@@ -5496,7 +5496,7 @@ public enum Material implements Keyed {
             case CAVE_AIR:
             case VOID_AIR:
             // ----- Legacy Separator -----
-            //case LEGACY_AIR:
+            case LEGACY_AIR:
                 //</editor-fold>
                 return true;
             default:
