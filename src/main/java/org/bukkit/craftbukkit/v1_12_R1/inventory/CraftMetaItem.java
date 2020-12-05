@@ -184,11 +184,129 @@ class CraftMetaItem implements ItemMeta, Repairable {
         if (tag.hasKey(UNBREAKABLE.NBT)) {
             unbreakable = tag.getBoolean(UNBREAKABLE.NBT);
         }
+        if (tag.hasKey(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT)) {
+            unhandledTags.put(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT, tag.getTag(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT));
+        }
 
         if (tag.getTag(ATTRIBUTES.NBT) instanceof NBTTagList) {
             NBTTagList save = null;
-            NBTTagList nbttaglist = tag.getTagList(ATTRIBUTES.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);           
-			for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+            NBTTagList nbttaglist = tag.getTagList(ATTRIBUTES.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+            // Spigot start
+            gnu.trove.map.hash.TObjectDoubleHashMap<String> attributeTracker = new gnu.trove.map.hash.TObjectDoubleHashMap<>();
+            gnu.trove.map.hash.TObjectDoubleHashMap<String> attributeTrackerX = new gnu.trove.map.hash.TObjectDoubleHashMap<>();
+            Map<String, IAttribute> attributesByName = new HashMap<>();
+            attributeTracker.put( "generic.maxHealth", 20.0 );
+            attributesByName.put( "generic.maxHealth", SharedMonsterAttributes.MAX_HEALTH );
+            attributeTracker.put( "generic.followRange", 32.0 );
+            attributesByName.put( "generic.followRange", SharedMonsterAttributes.FOLLOW_RANGE );
+            attributeTracker.put( "generic.knockbackResistance", 0.0 );
+            attributesByName.put( "generic.knockbackResistance", SharedMonsterAttributes.KNOCKBACK_RESISTANCE );
+            attributeTracker.put( "generic.movementSpeed", 0.7 );
+            attributesByName.put( "generic.movementSpeed", SharedMonsterAttributes.MOVEMENT_SPEED );
+            attributeTracker.put( "generic.attackDamage", 1.0 );
+            attributesByName.put( "generic.attackDamage", SharedMonsterAttributes.ATTACK_DAMAGE );
+            NBTTagList oldList = nbttaglist;
+            nbttaglist = new NBTTagList();
+
+            List<NBTTagCompound> op0 = new ArrayList<>();
+            List<NBTTagCompound> op1 = new ArrayList<>();
+            List<NBTTagCompound> op2 = new ArrayList<>();
+            for ( int i = 0; i < oldList.tagCount(); ++i )
+            {
+                NBTTagCompound nbttagcompound = oldList.getCompoundTagAt( i );
+                if ( nbttagcompound == null ) continue;
+
+                if ( !nbttagcompound.hasKey(ATTRIBUTES_UUID_HIGH.NBT, 99) )
+                {
+                    continue;
+                }
+                if ( !nbttagcompound.hasKey(ATTRIBUTES_UUID_LOW.NBT, 99)  )
+                {
+                    continue;
+                }
+                if ( !( nbttagcompound.getTag( ATTRIBUTES_IDENTIFIER.NBT ) instanceof NBTTagString ) || !CraftItemFactory.KNOWN_NBT_ATTRIBUTE_NAMES.contains( nbttagcompound.getString( ATTRIBUTES_IDENTIFIER.NBT ) ) )
+                {
+                    continue;
+                }
+                if ( !( nbttagcompound.getTag( ATTRIBUTES_NAME.NBT ) instanceof NBTTagString ) || nbttagcompound.getString( ATTRIBUTES_NAME.NBT ).isEmpty() )
+                {
+                    continue;
+                }
+                if ( !nbttagcompound.hasKey(ATTRIBUTES_VALUE.NBT, 99) )
+                {
+                    continue;
+                }
+                if ( !nbttagcompound.hasKey(ATTRIBUTES_TYPE.NBT, 99) || nbttagcompound.getInteger( ATTRIBUTES_TYPE.NBT ) < 0 || nbttagcompound.getInteger( ATTRIBUTES_TYPE.NBT ) > 2 )
+                {
+                    continue;
+                }
+
+                switch ( nbttagcompound.getInteger( ATTRIBUTES_TYPE.NBT ) )
+                {
+                    case 0:
+                        op0.add( nbttagcompound );
+                        break;
+                    case 1:
+                        op1.add( nbttagcompound );
+                        break;
+                    case 2:
+                        op2.add( nbttagcompound );
+                        break;
+                }
+            }
+            for ( NBTTagCompound nbtTagCompound : op0 )
+            {
+                String name = nbtTagCompound.getString( ATTRIBUTES_IDENTIFIER.NBT );
+                if ( attributeTracker.containsKey( name ) )
+                {
+                    double val = attributeTracker.get( name );
+                    val += nbtTagCompound.getDouble( ATTRIBUTES_VALUE.NBT );
+                    if ( val != attributesByName.get( name ).clampValue( val ) )
+                    {
+                        continue;
+                    }
+                    attributeTracker.put( name, val );
+                }
+                nbttaglist.appendTag( nbtTagCompound );
+            }
+            for ( String name : attributeTracker.keySet() )
+            {
+                attributeTrackerX.put( name, attributeTracker.get( name ) );
+            }
+            for ( NBTTagCompound nbtTagCompound : op1 )
+            {
+                String name = nbtTagCompound.getString( ATTRIBUTES_IDENTIFIER.NBT );
+                if ( attributeTracker.containsKey( name ) )
+                {
+                    double val = attributeTracker.get( name );
+                    double valX = attributeTrackerX.get( name );
+                    val += valX * nbtTagCompound.getDouble( ATTRIBUTES_VALUE.NBT );
+                    if ( val != attributesByName.get( name ).clampValue( val ) )
+                    {
+                        continue;
+                    }
+                    attributeTracker.put( name, val );
+                }
+                nbttaglist.appendTag( nbtTagCompound );
+            }
+            for ( NBTTagCompound nbtTagCompound : op2 )
+            {
+                String name = nbtTagCompound.getString( ATTRIBUTES_IDENTIFIER.NBT );
+                if ( attributeTracker.containsKey( name ) )
+                {
+                    double val = attributeTracker.get( name );
+                    val += val * nbtTagCompound.getDouble( ATTRIBUTES_VALUE.NBT );
+                    if ( val != attributesByName.get( name ).clampValue( val ) )
+                    {
+                        continue;
+                    }
+                    attributeTracker.put( name, val );
+                }
+                nbttaglist.appendTag( nbtTagCompound );
+            }
+
+            // Spigot end
+            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 if (!(nbttaglist.get(i) instanceof NBTTagCompound)) {
                     continue;
                 }
