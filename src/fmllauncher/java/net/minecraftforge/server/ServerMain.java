@@ -19,6 +19,7 @@
 
 package net.minecraftforge.server;
 
+import com.mohistmc.utils.i18n;
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
 import cpw.mods.modlauncher.Launcher;
 
@@ -33,12 +34,12 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class ServerMain {
-    public static void main(String[] args) {
+    public static void startMohistServer(String[] args) {
         try {
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
         } catch (ClassNotFoundException cnfe) {
-            System.err.println("FATAL ERROR, You need to run the installer. The libraries required to launch a server are missing");
+            System.err.println(i18n.getString("mohist.start.server.error"));
             System.exit(1);
         }
 
