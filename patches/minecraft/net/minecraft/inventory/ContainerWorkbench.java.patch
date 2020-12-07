@@ -9,9 +9,8 @@
  
  public class ContainerWorkbench extends Container
  {
--    public InventoryCrafting field_75162_e = new InventoryCrafting(this, 3, 3);
+     public InventoryCrafting field_75162_e = new InventoryCrafting(this, 3, 3);
 -    public InventoryCraftResult field_75160_f = new InventoryCraftResult();
-+    public InventoryCrafting field_75162_e; // CraftBukkit - move initialization into constructor
 +    public InventoryCraftResult field_75160_f; // CraftBukkit - move initialization into constructor
      private final World field_75161_g;
      private final BlockPos field_178145_h;
@@ -24,7 +23,7 @@
      {
 +        // CraftBukkit start - Switched order of IInventory construction and stored player
 +        this.field_75160_f = new InventoryCraftResult();
-+        this.field_75162_e = new InventoryCrafting(this, 3, 3, p_i45800_1_.field_70458_d); // CraftBukkit - pass player
++        this.field_75162_e.setOwner(p_i45800_1_.field_70458_d); // Mohist compatibility with realbench mod
 +        this.field_75162_e.resultInventory = this.field_75160_f;
 +        this.playerInventory = p_i45800_1_;
 +        // CraftBukkit end

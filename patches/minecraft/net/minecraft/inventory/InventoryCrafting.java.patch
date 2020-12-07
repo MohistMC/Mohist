@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/InventoryCrafting.java
 +++ ../src-work/minecraft/net/minecraft/inventory/InventoryCrafting.java
-@@ -1,20 +1,76 @@
+@@ -1,20 +1,80 @@
  package net.minecraft.inventory;
  
 +import java.util.List;
@@ -67,6 +67,10 @@
 +    @Override
 +    public Location getLocation() {
 +        return owner.getBukkitEntity().getLocation();
++    }
++
++    public void setOwner (EntityPlayer player) {
++        this.owner = player;
 +    }
 +
 +    public InventoryCrafting(Container container, int i, int j, EntityPlayer player) {
