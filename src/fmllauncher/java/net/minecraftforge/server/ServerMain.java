@@ -19,7 +19,7 @@
 
 package net.minecraftforge.server;
 
-import com.mohistmc.utils.i18n;
+import com.mohistmc.utils.i18n.i18n;
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
 import cpw.mods.modlauncher.Launcher;
 

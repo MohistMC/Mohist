@@ -42,8 +42,6 @@ Getting Help
 
   [MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
 
-
-
 Upstream Projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
