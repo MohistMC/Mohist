@@ -1,5 +1,7 @@
 package com.mohistmc.utils;
 
+import com.mohistmc.utils.i18n.i18n;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;

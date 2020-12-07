@@ -3,7 +3,7 @@ package com.mohistmc.network.download;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.utils.i18n;
+import com.mohistmc.utils.i18n.i18n;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class UpdateUtils {
       String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timestamp").toString())));
 
       if(jar_sha.equals(build_number))
-        System.out.println(i18n.getFormatString("update.latest", new Object[]{"1.9", jar_sha, build_number}));
+        System.out.println(i18n.getFormatString("update.latest", new Object[]{"1.0", jar_sha, build_number}));
       else {
         System.out.println(i18n.getFormatString("update.detect", new Object[]{build_number, jar_sha, time}));
         if(bMohist("check_update_auto_download", "false"))

@@ -2,13 +2,17 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.utils.i18n;
+import com.mohistmc.utils.JarLoader;
+import com.mohistmc.utils.i18n.i18n;
 
 import java.io.File;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.jar.Manifest;
 
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import static com.mohistmc.network.download.UpdateUtils.getLibs;
@@ -65,5 +69,11 @@ public class DownloadLibraries {
         System.exit(0);
       }
     }
+  }
+
+  public static void loadLibs() throws Exception {
+    Manifest manifest = new Manifest(MohistMCStart.class.getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF"));
+    for (String path : manifest.getMainAttributes().getValue("Class-Path").split(" "))
+      new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()).loadJar(Paths.get(path).toUri().toURL());
   }
 }

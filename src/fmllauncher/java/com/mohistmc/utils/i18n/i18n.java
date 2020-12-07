@@ -1,4 +1,4 @@
-package com.mohistmc.utils;
+package com.mohistmc.utils.i18n;
 
 import com.mohistmc.config.MohistConfigUtil;
 
@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 public class i18n {
-  public static ResourceBundle rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()));
+  public static ResourceBundle rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
 
   public static String getString(String key) {
     return rb.getString(key);
