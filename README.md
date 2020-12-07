@@ -40,37 +40,12 @@ Progress
 
 Getting Help
 ------
-   [**Home**](https://mohistmc.com/) [**Discord**](https://discord.gg/ZgXjHGd) [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
-   
-Download
-------
 
-You can download the latest version from [**Jenkins**](https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/).
+  [MohistWiki](https://wiki.mohistmc.com/) (这里有你需要的一切与Mohist有关信息)
 
-Install
-------
 
-Take a moment you will find it
 
-Building
-------
-* Checkout project
-  * Clone Mohist:  
-  `git clone https://github.com/Mohist-Community/Mohist.git`  
-  `git checkout 1.16.4`
-* Build Mohist
-  * Build with Linux:  
-  `bash gradlew setup`  
-  `bash gradlew installerJar`  
-  * Build with Windows:  
-  `gradlew.bat setup`  
-  `gradlew.bat installerJar`
-
-The Mohist server jar file is located at `.\projects\mohist\build\libs\*.jar`
-
-This is the jarfile that you should run.
-
-Thanks to the following projects
+Upstream Projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
