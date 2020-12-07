@@ -1,8 +1,11 @@
 package com.mohistmc.config;
 
+import com.mohistmc.MohistMCStart;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class MohistConfigUtil {
     public static File mohistyml = new File("mohist-config/mohist.yml");
@@ -25,11 +28,13 @@ public class MohistConfigUtil {
     }
 
     public static void copyMohistConfig() {
-        mohistyml.getParentFile().mkdirs();
         try {
-            mohistyml.createNewFile();
-        } catch (IOException e) {
-            System.out.println("File copy exception !");
+            if (!mohistyml.exists()) {
+                mohistyml.mkdirs();
+                Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream("configs/mohist.yml"), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (Exception e) {
+            System.out.println("File copy exception!");
         }
     }
 }

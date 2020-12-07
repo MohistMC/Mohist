@@ -2,10 +2,8 @@ package com.mohistmc.utils;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
 
 public class JarLoader {
 
@@ -21,13 +19,13 @@ public class JarLoader {
         addURL.invoke(urlClassLoader, url);
     }
 
-    public static void loadjar(JarLoader jarLoader, String thepath) throws Exception {
-        File libdir = new File(thepath);
+    public static void loadjar(JarLoader jarLoader, String path) throws Exception {
+        File libdir = new File(path);
         if(libdir.isDirectory()) {
 
-            Files.walk(libdir.toPath()).filter(Files::isRegularFile).filter(c -> c.getFileName().toString().endsWith(".jar")).forEach(path -> {
-                try { jarLoader.loadJar(path.toFile().toURI().toURL()); } catch (Exception e) { }
-            });
+            for (File file : libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"))) {
+                jarLoader.loadJar(file.toURI().toURL());
+            }
 
         } else {
             System.exit(0);

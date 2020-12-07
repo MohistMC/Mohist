@@ -20,10 +20,10 @@
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg}%n%tEx">
+                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg}%n%tEx" charset="UTF-8">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n%tEx}"/>
-                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n%tEx}"/>
+                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n%tEx}" charset="UTF-8"/>
+                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n%tEx}" charset="UTF-8"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
