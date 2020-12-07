@@ -3,7 +3,7 @@
 <div align="center">
   <h1>Mohist 1.12.2</h1>
 
-### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API(1.12.2/1.16), formerly known as Thermos/Cauldron/MCPC+
+### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohist-Community%2Fjob%2FMohist-1.12.2)](https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2)
 [![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars&logo=github)](https://github.com/Mohist-Community/Mohist/stargazers)
@@ -20,7 +20,6 @@
 <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-fr.md">Français</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-ru.md">Russian</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
-[![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 </div>
 
 | Version  | Support |
@@ -30,43 +29,10 @@
       
 Obtener Ayuda
 ------
-   [**Inicio**](https://mohist.red/)
-   
-   [**Discord**](https://discord.gg/ZgXjHGd)
-   
-   [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
-   
-Descargar
-------
 
-You can download the latest version from [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/).
+[MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
 
-Instalar
-------
-Este software requiere Java 8.
-
-Descarga [Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) y coloca el archivo .jar del servidor en un directorio vacío. Ahora inicia usando el comando `java`:
-
-```bash
-java -jar yourJar.jar
-```
-
-Compilación
-------
-* Revisa el proyecto
-  * Clone Mohist:
-  `git clone https://github.com/Mohist-Community/Mohist.git`
-* Construir Mohist
-  * Construir en Linux:
-  `bash gradlew setup installerJar`
-  * Construir en Windows:
-  `gradlew.bat setup installerJar`
-
-The Mohist server jar file is located at `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`
-
-mohist-xxxxx-server.jar es el archivo del servidor que deberías ejecutar
-
-Gracias a los siguientes proyectos
+Upstream Projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - soporte al plugin.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - optimización del rendimiento.

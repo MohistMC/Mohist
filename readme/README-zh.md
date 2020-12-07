@@ -20,7 +20,6 @@
 <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-fr.md">Français</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
-[![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 </div>
 
 | Version  | Support |
@@ -30,58 +29,10 @@
 
 获得帮助
 ------
-   [**网站**](https://mohist.red/)
-   
-   [**DC群**](https://discord.gg/ZgXjHGd)
-   
-   [**QQ群**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
-   
-下载
-------
 
-你可以从詹金森获取到最新的开发版本
- [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/).
+[MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
 
-安装
-------
-本服务端需要 JRE 1.8.0作为前置及以后版本才可作为生产环境进行运行（推荐Oracle的JRE，第三方可能存在问题）
-
-[下载Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) 然后把服务端JAR文件放入一个空目录当中.
-
-启动它需要如下代码（Demo）
-
-```bash
-java -jar yourJar.jar
-```
-
-构建代码
-------
-* 下载Mohist源码
-  * 克隆 Mohist:
-  `git clone https://github.com/Mohist-Community/Mohist.git`
-* 构建Mohist源码
-  * Linux下构建:
-  `bash gradlew setup installerJar`
-  * Windows下构建:
-  `gradlew.bat setup installerJar`
-
-所有构建出的版本都会该目录 `.\build\distributions\`
-
-Mohist服务端核心文件应在这里 `.\projects\mohist\build\libs\mohist-xxxxx-server.jar``
-
-这就是你可以运行的服务端核心本体.
-
-插件开发
-------
-* 构建
-   * Linux下构建:
-   `bash gradlew reobfToSRG`
-   * Windows下构建:
-   `gradlew.bat reobfToSRG`
-
-`.\build\mohist_srg.jar` 是你进行开发所需的前置
-
-感谢以下开源项目
+Upstream Projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.

@@ -19,7 +19,6 @@
 [![](https://img.shields.io/badge/Patreon-Support-orange.svg?logo=Patreon)](https://www.patreon.com/mohist)
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
-[![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 
 | Version  | Support |
 | ------------- | ------------- |
@@ -28,37 +27,10 @@
 
 Obtenir de l'aide
 ------
-   [**Site**](https://mohist.red/)
-   [**Discord**](https://discord.gg/ZgXjHGd)
-   [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
-   
-Téléchargement
-------
-* [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 
-Installation
-------
-Mohist requiert Java 8.
+[MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
 
-[Télécharge ce fichier](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) et place le jar dans un dossier vide. Ensuite lance ton serveur avec la commande `java` ci-dessous :
-```sh
-java -jar tonJar.jar
-```
-
-Build
-------
-* Vérification du projet
-  * Tu peux utiliser ton IDE ou le cloner depuis git / invite de commandes :
-  `git clone https://github.com/Mohist-Community/Mohist.git`
-* Build
-  * Build avec Linux :
-  `bash gradlew setup installerJar`
-  * Build avec Windows :
-  `gradlew.bat setup installerJar `
-
-All builds will be in `.\projects\mohist\build\libs\mohist-xxxxx-server.jar`` Is the development frontend you need
-
-Merci aux projets suivants
+Upstream Projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - Support des plugins.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - Performances et Optimisations.
