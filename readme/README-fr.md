@@ -44,7 +44,8 @@ Upstream Projects
 Nous remercions tout particulièrement :
 -------------
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
-<a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
+<a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="172"></a>
+<a href="https://www.bisecthosting.com/mohistmc"><img src="https://cdn.discordapp.com/attachments/303673296929685504/709610584680955944/Asset_5.png" width="200"></a>
 
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
