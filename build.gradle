@@ -754,6 +754,7 @@ project(':forge') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
+                            'Launcher-Agent-Class': 'com.mohistmc.utils.JarLoader',
                             'Main-Class': 'com.mohistmc.MohistMCStart',
                             'Class-Path': classpath.toString(),
                             'ServerLaunchArgs': [
