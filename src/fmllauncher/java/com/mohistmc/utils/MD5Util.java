@@ -1,19 +1,27 @@
 package com.mohistmc.utils;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.file.Files;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class MD5Util {
+
   public static String getMd5(File path) {
     try {
-      return DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(Files.readAllBytes(path.toPath()))).toLowerCase();
-    } catch (NoSuchAlgorithmException | IOException e) {
-      e.printStackTrace();
+      return String.format("%032x", new BigInteger(1, MessageDigest.getInstance("MD5").digest(Files.readAllBytes(path.toPath())))).toLowerCase();
+    } catch (Exception e) {
+      return null;
     }
-    return null;
+  }
+
+  public static String getMd5(InputStream is) {
+    try {
+      return String.format("%032x", new BigInteger(1, new DigestInputStream(is, MessageDigest.getInstance("MD5")).getMessageDigest().digest())).toLowerCase();
+    } catch (Exception e) {
+      return null;
+    }
   }
 }
