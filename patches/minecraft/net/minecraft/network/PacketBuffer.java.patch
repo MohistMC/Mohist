@@ -19,15 +19,6 @@
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -256,7 +258,7 @@
-       } else {
-          try {
-             CompressedStreamTools.func_74800_a(p_150786_1_, new ByteBufOutputStream(this));
--         } catch (IOException ioexception) {
-+         } catch (Exception ioexception) { // CraftBukkit - IOException -> Exception
-             throw new EncoderException(ioexception);
-          }
-       }
 @@ -292,7 +294,16 @@
     }
  
