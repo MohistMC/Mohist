@@ -5,9 +5,9 @@ public class IntSetting extends Setting<Integer>
     private Integer value;
     private ConfigBase config;
     
-    public IntSetting(ConfigBase config, String path, Integer def, String description)
+    public IntSetting(ConfigBase config, String path, Integer def)
     {
-        super(path, def, description);
+        super(path, def);
         this.value = def;
         this.config = config;
     }

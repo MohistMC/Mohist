@@ -41,13 +41,13 @@ public class MohistMCStart {
                 " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
                 "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
                 "                                                    \n" + "\n" +
-                "                                      " + i18n.getString("mohist.launch.welcomemessage"));
+                "                                      " + i18n.get("mohist.launch.welcomemessage"));
         if (MohistConfigUtil.bMohist("check_libraries", "true")) DownloadLibraries.run();
         startInstallation();
         loadLibs();
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
         if(!hasAcceptedEULA()) {
-            System.out.println(i18n.getString("eula"));
+            System.out.println(i18n.get("eula"));
             while (!"true".equals(new Scanner(System.in).next())) ;
             writeInfos();
         }

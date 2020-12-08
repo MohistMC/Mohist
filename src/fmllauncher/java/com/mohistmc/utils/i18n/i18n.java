@@ -10,12 +10,12 @@ import java.util.TimeZone;
 public class i18n {
   public static ResourceBundle rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
 
-  public static String getString(String key) {
+  public static String get(String key) {
     return rb.getString(key);
   }
 
-  public static String getFormatString(String key, Object[] f) {
-    return new MessageFormat(getString(key)).format(f);
+  public static String get(String key, Object[] f) {
+    return new MessageFormat(get(key)).format(f);
   }
 
   public static String getLocale(int key) {

@@ -26,8 +26,8 @@ import static com.mohistmc.network.download.NetworkUtil.getInput;
 public class UpdateUtils {
 
   public static void versionCheck() {
-    System.out.println(i18n.getString("update.check"));
-    System.out.println(i18n.getString("update.stopcheck"));
+    System.out.println(i18n.get("update.check"));
+    System.out.println(i18n.get("update.stopcheck"));
 
     try {
       JsonElement root = new JsonParser().parse(new InputStreamReader(getInput("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/lastSuccessfulBuild/api/json")));
@@ -37,21 +37,21 @@ public class UpdateUtils {
       String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timestamp").toString())));
 
       if(jar_sha.equals(build_number))
-        System.out.println(i18n.getFormatString("update.latest", new Object[]{"1.0", jar_sha, build_number}));
+        System.out.println(i18n.get("update.latest", new Object[]{"1.0", jar_sha, build_number}));
       else {
-        System.out.println(i18n.getFormatString("update.detect", new Object[]{build_number, jar_sha, time}));
+        System.out.println(i18n.get("update.detect", new Object[]{build_number, jar_sha, time}));
         if(bMohist("check_update_auto_download", "false"))
           downloadFile("mhttps://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", getMohistJar());
       }
     } catch (Throwable e) {
-      System.out.println(i18n.getString("check.update.noci"));
+      System.out.println(i18n.get("check.update.noci"));
     }
   }
 
   private static int percentage = 0;
   public static void downloadFile(String URL, File f) throws Exception {
     URLConnection conn = getConn(URL.replace("mhttps", "https"));
-    System.out.println(i18n.getFormatString("download.file", new Object[]{f.getName(), getSize(conn.getContentLength())}));
+    System.out.println(i18n.get("download.file", new Object[]{f.getName(), getSize(conn.getContentLength())}));
     ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
     FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     int fS = conn.getContentLength();
@@ -61,7 +61,7 @@ public class UpdateUtils {
       public void run() {
         if(rbc.isOpen()) {
           if(percentage != Math.round((float) f.length() / fS * 100) && percentage < 100)
-            System.out.println(i18n.getFormatString("file.download.percentage", new Object[]{f.getName(), percentage}));
+            System.out.println(i18n.get("file.download.percentage", new Object[]{f.getName(), percentage}));
           percentage = Math.round((float) f.length() / fS * 100);
         } else t.cancel();
       }
@@ -71,7 +71,7 @@ public class UpdateUtils {
     rbc.close();
     if(URL.startsWith("mhttps"))
       restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())), true);
-    else System.out.println(i18n.getFormatString("download.file.ok", new Object[]{f.getName()}));
+    else System.out.println(i18n.get("download.file.ok", new Object[]{f.getName()}));
   }
 
   public static File getMohistJar() {

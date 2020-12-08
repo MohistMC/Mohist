@@ -5,9 +5,9 @@ import java.util.HashSet;
 
 public class StringArraySetting extends ArraySetting<String> 
 {
-    public StringArraySetting(ConfigBase config, String path, String def, String description) 
+    public StringArraySetting(ConfigBase config, String path, String def)
     {
-        super(path, def, description, config);
+        super(path, def, config);
     }
     
     @Override
