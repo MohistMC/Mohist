@@ -3,14 +3,13 @@ package com.mohistmc.utils;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.utils.i18n.i18n;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -19,18 +18,15 @@ public class InstallUtils {
     static String mcpVer = MohistMCStart.getMCPVersion();
     static String libPath = new File("libraries").getAbsolutePath();
     static File universalJar = new File(libPath+"/net/minecraftforge/forge/1.16.4-"+forgeVer+"/forge-1.16.4-"+forgeVer+"-universal.jar");
-    static File lzma;
+    static File lzma = new File(libPath+"/com/mohistmc/installation/data/server.lzma");;
 
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
+        copyFileFromJar(lzma, "data/server.lzma");
+        copyFileFromJar(universalJar, "data/forge-1.16.4-"+forgeVer+"-universal.jar");
 
-        String lzmaMd5 = DatatypeConverter.printHexBinary(new DigestInputStream(MohistMCStart.class.getClassLoader().getResourceAsStream("data/server.lzma"), MessageDigest.getInstance("MD5")).getMessageDigest().digest()).toLowerCase();
-        lzma = new File(libPath+"/com/mohistmc/installation/data/"+lzmaMd5+".lzma");
-
-        copyUniversalJar();
-        copyLzma();
-
-        ProcessBuilder processBuilder = new ProcessBuilder(new ArrayList<>(Arrays.asList("java", "-jar", "\""+libPath+"/com/mohistmc/installation/MohistInstallChecker.jar\"", "\""+libPath+"\"", forgeVer, mcpVer, lzmaMd5)));
+        ProcessBuilder processBuilder = new ProcessBuilder(new ArrayList<>(Arrays.asList("java", "-jar", "MohistInstallChecker.jar", "\""+libPath+"\"", forgeVer, mcpVer)));
+        processBuilder.directory(new File("libraries/com/mohistmc/installation/"));
         Process process = processBuilder.start();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -43,26 +39,15 @@ public class InstallUtils {
         process.waitFor();
         reader.close();
         process.destroy();
-    }
-
-    private static void copyLzma() throws Exception {
-        copyFileFromJar(lzma, "data/server.lzma");
-    }
-
-    private static void copyUniversalJar() throws Exception {
-        copyFileFromJar(universalJar, "data/forge-1.16.4-"+forgeVer+"-universal.jar");
+        new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()).loadJar(new File("libraries/net/minecraft/server/1.16.4-"+mcpVer+"/server-1.16.4-"+mcpVer+"-extra.jar").toPath().toUri().toURL());
     }
 
     private static void copyFileFromJar(File file, String pathInJar) throws Exception {
-        if(!file.exists()) {
+        InputStream is = MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar);
+        if(!file.exists() || !MD5Util.getMd5(file).equals(MD5Util.getMd5(is))) {
             file.getParentFile().mkdirs();
             file.createNewFile();
-            Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } else {
-            if (pathInJar.endsWith("-universal.jar")) {
-                file.delete();
-                Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
+            Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
