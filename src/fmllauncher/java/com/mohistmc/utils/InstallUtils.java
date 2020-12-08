@@ -58,6 +58,11 @@ public class InstallUtils {
             file.getParentFile().mkdirs();
             file.createNewFile();
             Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            if (pathInJar.endsWith("-universal.jar")) {
+                file.delete();
+                Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
         }
     }
 
