@@ -12,7 +12,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public abstract class ConfigBase
 {
     protected final File configFile;
-    private static boolean metricsStarted;
     
     /* ======================================================================== */
 

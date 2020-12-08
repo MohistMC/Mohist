@@ -22,7 +22,7 @@ public class InstallUtils {
     static File lzma;
 
     public static void startInstallation() throws Exception {
-        System.out.println(i18n.getString("installation.start"));
+        System.out.println(i18n.get("installation.start"));
 
         String lzmaMd5 = DatatypeConverter.printHexBinary(new DigestInputStream(MohistMCStart.class.getClassLoader().getResourceAsStream("data/server.lzma"), MessageDigest.getInstance("MD5")).getMessageDigest().digest()).toLowerCase();
         lzma = new File(libPath+"/com/mohistmc/installation/data/"+lzmaMd5+".lzma");
@@ -37,7 +37,7 @@ public class InstallUtils {
         String line;
         while ((line = reader.readLine()) != null)
             if(line.startsWith("="))
-                System.out.println(i18n.getString(line.replaceFirst("=", "")));
+                System.out.println(i18n.get(line.replaceFirst("=", "")));
             else System.out.println(line);
 
         process.waitFor();

@@ -39,7 +39,7 @@ public class ServerMain {
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
         } catch (ClassNotFoundException cnfe) {
-            System.err.println(i18n.getString("mohist.start.server.error"));
+            System.err.println(i18n.get("mohist.start.server.error"));
             System.exit(1);
         }
 
