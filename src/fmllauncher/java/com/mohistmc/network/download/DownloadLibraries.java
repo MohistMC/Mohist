@@ -3,6 +3,7 @@ package com.mohistmc.network.download;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.utils.JarLoader;
+import com.mohistmc.utils.MD5Util;
 import com.mohistmc.utils.i18n.i18n;
 
 import java.io.File;
@@ -16,7 +17,6 @@ import java.util.jar.Manifest;
 
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import static com.mohistmc.network.download.UpdateUtils.getLibs;
-import static com.mohistmc.utils.MD5Util.getMd5;
 
 public class DownloadLibraries {
   static int retry = 0;
@@ -34,7 +34,7 @@ public class DownloadLibraries {
     ArrayList<File> indexLibs = new ArrayList<>();
     for (Object o : libs.keySet()) {
       File lib = new File("libraries/" + o.toString().split("\\*")[1]);
-      boolean md5 = lib.exists() && getMd5(lib).equals(libs.get(o.toString()));
+      boolean md5 = lib.exists() && MD5Util.getMD5(lib).equals(libs.get(o.toString()));
       if(libs.get(o.toString()).equals("nomd5")) md5 = true;
       String u = o.toString().split("\\*")[0];
 
