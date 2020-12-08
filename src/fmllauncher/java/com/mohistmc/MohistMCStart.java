@@ -29,7 +29,7 @@ public class MohistMCStart {
 
     public static void main(String[] args) throws Exception {
         MohistConfigUtil.copyMohistConfig();
-        if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
+        if (MohistConfigUtil.bMohist("use_custom_java8", "false") || Float.parseFloat(System.getProperty("java.class.version")) != 52.0)
             DownloadJava.run(args);
         if(MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +
