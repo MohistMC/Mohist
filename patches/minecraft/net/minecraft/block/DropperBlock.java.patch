@@ -1,13 +1,14 @@
 --- a/net/minecraft/block/DropperBlock.java
 +++ b/net/minecraft/block/DropperBlock.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
  package net.minecraft.block;
  
++import com.mohistmc.inventory.InventoryOwner;
 +import net.minecraft.block.ChestBlock.DoubleInventory;
  import net.minecraft.dispenser.DefaultDispenseItemBehavior;
  import net.minecraft.dispenser.IDispenseItemBehavior;
  import net.minecraft.dispenser.ProxyBlockSource;
-@@ -13,6 +14,9 @@
+@@ -13,6 +15,9 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.server.ServerWorld;
@@ -17,7 +18,7 @@
  
  public class DropperBlock extends DispenserBlock {
     private static final IDispenseItemBehavior field_149947_P = new DefaultDispenseItemBehavior();
-@@ -29,7 +33,7 @@
+@@ -29,7 +34,7 @@
        return new DropperTileEntity();
     }
  
@@ -26,7 +27,7 @@
        ProxyBlockSource proxyblocksource = new ProxyBlockSource(p_176439_1_, p_176439_2_);
        DispenserTileEntity dispensertileentity = proxyblocksource.func_150835_j();
        int i = dispensertileentity.func_146017_i();
-@@ -37,15 +41,30 @@
+@@ -37,15 +42,30 @@
           p_176439_1_.func_217379_c(1001, p_176439_2_, 0);
        } else {
           ItemStack itemstack = dispensertileentity.func_70301_a(i);
@@ -47,7 +48,7 @@
 +               if (iinventory instanceof DoubleInventory) {
 +                  destinationInventory = new CraftInventoryDoubleChest((DoubleInventory) iinventory);
 +               } else {
-+                  destinationInventory = iinventory.getOwner().getInventory();
++                  destinationInventory = InventoryOwner.get(iinventory).getInventory();
 +               }
 +               InventoryMoveItemEvent event = new InventoryMoveItemEvent(dispensertileentity.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
 +               p_176439_1_.getCBServer().getPluginManager().callEvent(event);
