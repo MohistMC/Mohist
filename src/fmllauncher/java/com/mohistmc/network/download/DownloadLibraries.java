@@ -62,7 +62,7 @@ public class DownloadLibraries {
     } else {
       for(File f : indexLibs)
         if(f.getName().endsWith(".jar"))
-          new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()).loadJar(f.toPath().toUri().toURL());
+          new JarLoader().loadJar(f);
       System.out.println(i18n.get("libraries.check.end"));
       if(!fail.isEmpty()) {
         System.out.println(i18n.get("libraries.check.missing"));

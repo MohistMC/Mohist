@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class InstallUtils {
         process.waitFor();
         reader.close();
         process.destroy();
-        new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()).loadJar(new File("libraries/net/minecraft/server/1.16.4-"+mcpVer+"/server-1.16.4-"+mcpVer+"-extra.jar").toPath().toUri().toURL());
+        new JarLoader().loadJar(new File("libraries/net/minecraft/server/1.16.4-"+mcpVer+"/server-1.16.4-"+mcpVer+"-extra.jar"));
     }
 
     private static void copyFileFromJar(File file, String pathInJar) throws Exception {
