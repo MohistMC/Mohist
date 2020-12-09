@@ -1,5 +1,6 @@
 package com.mohistmc.entity;
 
+import com.mohistmc.api.ServerAPI;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
@@ -10,7 +11,7 @@ public class CraftCustomEntity extends CraftEntity {
 
     public CraftCustomEntity(CraftServer server, net.minecraft.entity.Entity entity) {
         super(server, entity);
-        this.entityName = ""; /*EntityRegistry.getCustomEntityTypeName(entity.getClass());*/
+        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
             entityName = entity.getName().getString();
         }

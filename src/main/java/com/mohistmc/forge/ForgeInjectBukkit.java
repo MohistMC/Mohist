@@ -1,6 +1,7 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.MohistMC;
+import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.MohistEnumHelper;
 import java.util.ArrayList;
@@ -147,6 +148,7 @@ public class ForgeInjectBukkit {
 
             NAME_MAP.put(name.toLowerCase(), bukkitType);
             ID_MAP.put((short)typeId, bukkitType);
+            ServerAPI.entityTypeMap.put(entity.getValue(), entityType);
         }
     }
 
