@@ -19,15 +19,11 @@ public class InstallUtils {
     public static File lzma = new File(libPath + "/com/mohistmc/installation/data/server.lzma");
     ;
     public static File extra = new File("libraries/net/minecraft/server/1.16.4-" + mcpVer + "/server-1.16.4-" + mcpVer + "-extra.jar");
-    public static boolean canLoderExtra = false;
 
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
         copyFileFromJar(lzma, "data/server.lzma");
         copyFileFromJar(universalJar, "data/forge-1.16.4-" + forgeVer + "-universal.jar");
-        if (!extra.exists()) {
-            canLoderExtra = true;
-        }
 
         ProcessBuilder processBuilder = new ProcessBuilder(new ArrayList<>(Arrays.asList("java", "-jar", "MohistInstallChecker.jar", "\"" + libPath + "\"", forgeVer, mcpVer)));
         processBuilder.directory(new File("libraries/com/mohistmc/installation/"));
@@ -43,9 +39,7 @@ public class InstallUtils {
         process.waitFor();
         reader.close();
         process.destroy();
-        if (canLoderExtra) {
-            new JarLoader().loadJar(extra);
-        }
+        new JarLoader().loadJar(extra);
     }
 
     private static void copyFileFromJar(File file, String pathInJar) throws Exception {

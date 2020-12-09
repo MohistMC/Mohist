@@ -30,7 +30,7 @@ public class JarLoader {
                 // If Java 8 or below fallback to old method
                 Method m = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                 m.setAccessible(true);
-                m.invoke(cl, path.toURI().toURL());
+                m.invoke((URLClassLoader)cl, path.toURI().toURL());
                 System.out.println(path);
             }
         }
