@@ -1,21 +1,23 @@
 package com.mohistmc.config;
 
 import com.mohistmc.MohistMCStart;
-
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class MohistConfigUtil {
+
     public static File mohistyml = new File("mohist-config/mohist.yml");
 
     public static String getString(File f, String key, String defaultReturn) {
         try {
-            for (String line : Files.readAllLines(f.toPath()))
-                if(line.contains(key+": "))
-                    return line.split(key+": ")[1].replace("'", "").replace("\"", "");
-        } catch (Throwable ignored) {}
+            for (String line : Files.readAllLines(f.toPath())) {
+                if (line.contains(key + ": ")) {
+                    return line.split(key + ": ")[1].replace("'", "").replace("\"", "");
+                }
+            }
+        } catch (Throwable ignored) {
+        }
         return defaultReturn;
     }
 

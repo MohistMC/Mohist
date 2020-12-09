@@ -21,15 +21,18 @@ public class JarLoader {
 
     public void loadJar(File path) throws Exception {
         ClassLoader cl = ClassLoader.getSystemClassLoader();
-        if (!(cl instanceof URLClassLoader)) {
-            // If Java 9 or higher use Instrumentation
-            System.out.println(path);
-            inst.appendToSystemClassLoaderSearch(new JarFile(path));
-        } else {
-            // If Java 8 or below fallback to old method
-            Method m = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            m.setAccessible(true);
-            m.invoke(cl, path.toPath().toUri().toURL());
+        if (!path.getName().equals("minecraft_server.1.16.4.jar")) {
+            if (!(cl instanceof URLClassLoader)) {
+                // If Java 9 or higher use Instrumentation
+                System.out.println(path);
+                inst.appendToSystemClassLoaderSearch(new JarFile(path));
+            } else {
+                // If Java 8 or below fallback to old method
+                Method m = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                m.setAccessible(true);
+                m.invoke(cl, path.toURI().toURL());
+                System.out.println(path);
+            }
         }
     }
 }

@@ -25,7 +25,6 @@ package com.mohistmc.log4j;
 
 import java.util.List;
 import javax.annotation.Nullable;
-
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
@@ -57,15 +56,37 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
      *
      * @param formatters The pattern formatters to generate the text to highlight
      */
-    protected HighlightMsgConverter(List<PatternFormatter> formatters)
-    {
+    protected HighlightMsgConverter(List<PatternFormatter> formatters) {
         super("highlightMsg", null);
         this.formatters = formatters;
     }
 
+    /**
+     * Gets a new instance of the {@link HighlightMsgConverter} with the
+     * specified options.
+     *
+     * @param config  The current configuration
+     * @param options The pattern options
+     * @return The new instance
+     */
+    @Nullable
+    public static HighlightMsgConverter newInstance(Configuration config, String[] options) {
+        if (options.length != 1) {
+            LOGGER.error("Incorrect number of options on highlightMsg. Expected 1 received " + options.length);
+            return null;
+        }
+        if (options[0] == null) {
+            LOGGER.error("No pattern supplied on highlightMsg");
+            return null;
+        }
+
+        PatternParser parser = PatternLayout.createPatternParser(config);
+        List<PatternFormatter> formatters = parser.parse(options[0]);
+        return new HighlightMsgConverter(formatters);
+    }
+
     @Override
-    public void format(LogEvent event, StringBuilder toAppendTo)
-    {
+    public void format(LogEvent event, StringBuilder toAppendTo) {
         if (TerminalConsoleAppender.isAnsiSupported()) {
             Level level = event.getLevel();
             if (level.isMoreSpecificThan(Level.ERROR)) {
@@ -112,40 +133,12 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
     }
 
     @Override
-    public boolean handlesThrowable()
-    {
+    public boolean handlesThrowable() {
         for (final PatternFormatter formatter : formatters) {
             if (formatter.handlesThrowable()) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Gets a new instance of the {@link HighlightMsgConverter} with the
-     * specified options.
-     *
-     * @param config The current configuration
-     * @param options The pattern options
-     * @return The new instance
-     */
-    @Nullable
-    public static HighlightMsgConverter newInstance(Configuration config, String[] options)
-    {
-        if (options.length != 1)
-        {
-            LOGGER.error("Incorrect number of options on highlightMsg. Expected 1 received " + options.length);
-            return null;
-        }
-        if (options[0] == null)
-        {
-            LOGGER.error("No pattern supplied on highlightMsg");
-            return null;
-        }
-
-        PatternParser parser = PatternLayout.createPatternParser(config);
-        List<PatternFormatter> formatters = parser.parse(options[0]);
-        return new HighlightMsgConverter(formatters);
     }
 }
