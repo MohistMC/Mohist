@@ -75,12 +75,9 @@ public class UpdateUtils {
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
-        if (URL.startsWith("mhttps")) {
+        if (URL.startsWith("mhttps"))
             restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())), true);
-        } else {
-            System.out.println(i18n.get("download.file.ok", new Object[]{f.getName()}));
-            new JarLoader().loadJar(f);
-        }
+        System.out.println(i18n.get("download.file.ok", new Object[]{f.getName()}));
     }
 
     public static File getMohistJar() {
