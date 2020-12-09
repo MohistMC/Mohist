@@ -1483,17 +1483,17 @@
 +               return;
 +            }
 +            InventoryView inventory = this.field_147369_b.field_71070_bA.getBukkitView();
-+            SlotType type = inventory.getSlotType(p_147351_1_.func_149544_d());
-+            InventoryClickEvent event;
-+            org.bukkit.event.inventory.ClickType click = org.bukkit.event.inventory.ClickType.UNKNOWN;
-+            InventoryAction action = InventoryAction.UNKNOWN;
-+            ItemStack itemstack = ItemStack.field_190927_a;
 +            // Mohist start
 +            if (inventory == null) {
 +               inventory = new CraftInventoryView(this.field_147369_b.getBukkitEntity(), MinecraftServer.getServer().server.createInventory(this.field_147369_b.getBukkitEntity(), InventoryType.CHEST), this.field_147369_b.field_71070_bA);
 +               this.field_147369_b.field_71070_bA.setBukkitView(inventory);
 +            }
 +            // Mohist end
++            SlotType type = inventory.getSlotType(p_147351_1_.func_149544_d());
++            InventoryClickEvent event;
++            org.bukkit.event.inventory.ClickType click = org.bukkit.event.inventory.ClickType.UNKNOWN;
++            InventoryAction action = InventoryAction.UNKNOWN;
++            ItemStack itemstack = ItemStack.field_190927_a;
 +            switch (p_147351_1_.func_186993_f()) {
 +               case PICKUP:
 +                  if (p_147351_1_.func_149543_e() == 0) {
