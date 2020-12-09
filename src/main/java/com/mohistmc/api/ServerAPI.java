@@ -15,6 +15,7 @@ public class ServerAPI {
     public static Set<String> modlists = new ConcurrentSet();
     public static Map<String, String> forgecmdper = new ConcurrentHashMap();
     public static Map<String, String> forgecmd = new ConcurrentHashMap();
+    public static Map<net.minecraft.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
 
     // Don't count the default number of mods
     public static int getModSize() {
