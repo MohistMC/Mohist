@@ -1,8 +1,8 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
+import static com.mohistmc.config.MohistConfigUtil.bMohist;
 import com.mohistmc.utils.i18n.i18n;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,25 +18,23 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.mohistmc.config.MohistConfigUtil.bMohist;
-
 public class DownloadJava {
     public static File java = new File("CustomJAVA/");
     public static File javabin = new File("CustomJAVA/bin/");
-    private static File javadl = new File(java.getAbsolutePath()+"/java.zip");
     public static ArrayList<String> launchArgs = new ArrayList<>();
+    private static File javadl = new File(java.getAbsolutePath() + "/java.zip");
 
     public static void run(String[] args) throws Exception {
         launchArgs.addAll(Arrays.asList(args));
 
-        if(!launchArgs.contains("launchedWithCustomJava8")) {
-            if(!javabin.exists()) {
-                if(!bMohist("use_custom_java8", "false")) {
+        if (!launchArgs.contains("launchedWithCustomJava8")) {
+            if (!javabin.exists()) {
+                if (!bMohist("use_custom_java8", "false")) {
                     System.out.println(i18n.get("unsupported.java.version"));
                     Scanner scan = new Scanner(System.in);
                     System.out.println(i18n.get("customjava.ask"));
                     String input = scan.nextLine();
-                    if(input.equalsIgnoreCase("Yes")) searchJava();
+                    if (input.equalsIgnoreCase("Yes")) searchJava();
                     else {
                         System.out.println(i18n.get("customjava.no"));
                         System.exit(0);
@@ -47,33 +45,33 @@ public class DownloadJava {
     }
 
     public static void searchJava() throws Exception {
-        if(System.getProperty("sun.arch.data.model").equals("64")) {
-            if(os().equals("Windows"))
+        if (System.getProperty("sun.arch.data.model").equals("64")) {
+            if (os().equals("Windows"))
                 prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javawin64.zip", "java.exe");
-            else if(os().equals("Unix"))
+            else if (os().equals("Unix"))
                 prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javalinux64.zip", "java");
-            else if(os().equals("Mac"))
+            else if (os().equals("Mac"))
                 prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javamac64.zip", "java");
         } else {
-            if(os().equals("Windows"))
+            if (os().equals("Windows"))
                 prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/janawin32.zip", "java.exe");
-            else if(os().equals("Unix"))
+            else if (os().equals("Unix"))
                 prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javalinux32.zip", "java");
         }
     }
 
     private static void prepareLaunch(String URL, String javaName) throws Exception {
-        if(!javabin.exists()) {
+        if (!javabin.exists()) {
             java.mkdirs();
             java.createNewFile();
             System.out.println(i18n.get("customjava.dl", new Object[]{os()}));
             UpdateUtils.downloadFile(URL, javadl);
             unzip(new FileInputStream(javadl), java.toPath());
             javadl.delete();
-            if(os().equals("Unix")) Runtime.getRuntime().exec("chmod 755 -R ./CustomJAVA");
+            if (os().equals("Unix")) Runtime.getRuntime().exec("chmod 755 -R ./CustomJAVA");
         }
 
-        ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath()+"/bin/"+javaName, "-jar"));
+        ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
         launchArgs.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
         launchArgs.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
         launchArgs.add("launchedWithCustomJava8");
@@ -86,7 +84,7 @@ public class DownloadJava {
         try (ZipInputStream zipIn = new ZipInputStream(is)) {
             for (ZipEntry ze; (ze = zipIn.getNextEntry()) != null; ) {
                 Path resolvedPath = targetDir.resolve(ze.getName());
-                if(ze.isDirectory()) Files.createDirectories(resolvedPath);
+                if (ze.isDirectory()) Files.createDirectories(resolvedPath);
                 else {
                     Files.createDirectories(resolvedPath.getParent());
                     Files.copy(zipIn, resolvedPath);

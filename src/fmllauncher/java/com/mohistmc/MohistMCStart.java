@@ -4,13 +4,11 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.DownloadLibraries;
 import com.mohistmc.network.download.UpdateUtils;
-import com.mohistmc.utils.i18n.i18n;
-
-import java.util.Scanner;
-
 import static com.mohistmc.utils.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.utils.EulaUtil.writeInfos;
 import static com.mohistmc.utils.InstallUtils.startInstallation;
+import com.mohistmc.utils.i18n.i18n;
+import java.util.Scanner;
 import static net.minecraftforge.server.ServerMain.startMohistServer;
 
 public class MohistMCStart {
@@ -31,7 +29,7 @@ public class MohistMCStart {
         MohistConfigUtil.copyMohistConfig();
         if (MohistConfigUtil.bMohist("use_custom_java8", "false") || Float.parseFloat(System.getProperty("java.class.version")) != 52.0)
             DownloadJava.run(args);
-        if(MohistConfigUtil.bMohist("show_logo", "true"))
+        if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
                     "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
@@ -43,7 +41,7 @@ public class MohistMCStart {
         if (MohistConfigUtil.bMohist("check_libraries", "true")) DownloadLibraries.run();
         startInstallation();
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
-        if(!hasAcceptedEULA()) {
+        if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
             while (!"true".equals(new Scanner(System.in).next())) ;
             writeInfos();
