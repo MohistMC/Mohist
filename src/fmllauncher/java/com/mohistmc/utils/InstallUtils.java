@@ -17,7 +17,6 @@ public class InstallUtils {
     public static String libPath = new File("libraries").getAbsolutePath();
     public static File universalJar = new File(libPath + "/net/minecraftforge/forge/1.16.4-" + forgeVer + "/forge-1.16.4-" + forgeVer + "-universal.jar");
     public static File lzma = new File(libPath + "/com/mohistmc/installation/data/server.lzma");
-    ;
     public static File extra = new File("libraries/net/minecraft/server/1.16.4-" + mcpVer + "/server-1.16.4-" + mcpVer + "-extra.jar");
 
     public static void startInstallation() throws Exception {

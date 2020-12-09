@@ -4,6 +4,8 @@ import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import static com.mohistmc.network.download.UpdateUtils.getLibs;
+
+import com.mohistmc.utils.JarLoader;
 import com.mohistmc.utils.MD5Util;
 import com.mohistmc.utils.i18n.i18n;
 import java.io.File;
@@ -38,6 +40,8 @@ public class DownloadLibraries {
 
                 try {
                     downloadFile(u, lib);
+                    if(lib.getName().endsWith(".jar"))
+                        new JarLoader().loadJar(lib);
                 } catch (Exception e) {
                     System.out.println(i18n.get("file.download.nook", new Object[]{u}));
                     e.printStackTrace();
