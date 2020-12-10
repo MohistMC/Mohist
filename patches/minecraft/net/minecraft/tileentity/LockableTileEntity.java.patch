@@ -11,7 +11,7 @@
  
     protected LockableTileEntity(TileEntityType<?> p_i48285_1_) {
        super(p_i48285_1_);
-@@ -81,4 +81,30 @@
+@@ -81,4 +81,29 @@
     }
  
     protected abstract Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_);
@@ -29,7 +29,6 @@
 +      return new net.minecraftforge.items.wrapper.InvWrapper(this);
 +   }
 +
-+   @javax.annotation.Nullable
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.Direction side) {
 +      if (!this.field_145846_f && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY )
 +         return itemHandler.cast();
@@ -37,8 +36,8 @@
 +   }
 +
 +   @Override
-+   public void func_145843_s() {
-+      super.func_145843_s();
++   protected void invalidateCaps() {
++      super.invalidateCaps();
 +      itemHandler.invalidate();
 +   }
  }
