@@ -1404,7 +1404,7 @@
              }
           }
        }
-@@ -3082,6 +3608,60 @@
+@@ -3082,6 +3608,58 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }
  
@@ -1454,18 +1454,16 @@
 +   }
 +
 +   @Override
-+   public void remove(boolean keepData) {
-+      super.remove(keepData);
-+      if (!keepData) {
-+         for (int x = 0; x < handlers.length; x++)
-+            handlers[x].invalidate();
-+      }
++   protected void invalidateCaps() {
++      super.invalidateCaps();
++      for (int x = 0; x < handlers.length; x++)
++         handlers[x].invalidate();
 +   }
 +
     @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB func_184177_bl() {
        if (this.func_184582_a(EquipmentSlotType.HEAD).func_77973_b() == Items.field_196151_dA) {
-@@ -3091,4 +3671,5 @@
+@@ -3091,4 +3669,5 @@
           return super.func_184177_bl();
        }
     }
