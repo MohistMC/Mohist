@@ -5,37 +5,30 @@ import com.mohistmc.util.Entity;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class EntityConfig extends ConfigBase
-{
-    private final String HEADER = "This is the main configuration file for Entities.\n"
-            + "Use carefully, it may break some mechanics";
-
+public class EntityConfig extends ConfigBase {
     public static EntityConfig instance;
     public final BoolSetting skipEntityTicks = new BoolSetting(this, "settings.skip-entity-ticks", true);
     public final BoolSetting skipActivationRange = new BoolSetting(this, "settings.skip-activation-range", false);
+    private final String HEADER = "This is the main configuration file for Entities.\n"
+            + "Use carefully, it may break some mechanics";
 
-    public EntityConfig()
-    {
+    public EntityConfig() {
         super("entity.yml");
         init();
         instance = this;
     }
 
-    public void init()
-    {
+    public void init() {
         settings.put(skipEntityTicks.path, skipEntityTicks);
         settings.put(skipActivationRange.path, skipActivationRange);
         load();
     }
 
-    public void load()
-    {
-        try
-        {
+    public void load() {
+        try {
             config = YamlConfiguration.loadConfiguration(configFile);
             String header = HEADER + "\n";
-            for (Setting toggle : settings.values())
-            {
+            for (Setting toggle : settings.values()) {
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));
             }
@@ -45,14 +38,11 @@ public class EntityConfig extends ConfigBase
             version = getInt("config-version", 1);
             set("config-version", 1);
 
-            for (EntityCache cache : Entity.entityCache.values())
-            {
-                cache.tickInterval = config.getInt( "world-settings." + cache.worldName + "." + cache.configPath + ".tick-interval", config.getInt( "world-settings.default." + cache.configPath + ".tick-interval") );
+            for (EntityCache cache : Entity.entityCache.values()) {
+                cache.tickInterval = config.getInt("world-settings." + cache.worldName + "." + cache.configPath + ".tick-interval", config.getInt("world-settings.default." + cache.configPath + ".tick-interval"));
             }
             this.save();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             MinecraftServer.LOGGER.warn("Could not load " + this.configFile);
             ex.printStackTrace();
         }

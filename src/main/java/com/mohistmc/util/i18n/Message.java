@@ -24,8 +24,8 @@ public class Message {
         if (locale.length() == 5) {
             String language = locale.substring(0, 2);
             String country = locale.substring(3, 5);
-            if(key == 1) return language;
-            if(key == 2) return country;
+            if (key == 1) return language;
+            if (key == 2) return country;
         }
         return "xx";
     }
@@ -42,7 +42,7 @@ public class Message {
         return Message.rb.getLocale().toString();
     }
 
-    public static boolean isCN(){
+    public static boolean isCN() {
         TimeZone timeZone = TimeZone.getDefault();
         return timeZone.getID().equals("Asia/Shanghai") || Message.getLocale().contains("CN") || Message.getCountry().contains("CN");
     }

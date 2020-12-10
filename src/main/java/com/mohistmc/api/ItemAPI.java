@@ -116,14 +116,13 @@ public class ItemAPI {
     }
 
     /**
-     *
      * Get the byte of {@link org.bukkit.inventory.ItemStack}
      *
      * @param iStack
      * @return
      */
     public static byte[] getNBTBytes(ItemStack iStack) {
-        try{
+        try {
             net.minecraft.item.ItemStack is = CraftItemStack.asNMSCopy(iStack);
             NBTTagCompound itemCompound = new NBTTagCompound();
             itemCompound = is.writeToNBT(itemCompound);
@@ -135,20 +134,19 @@ public class ItemAPI {
                 dataOut.close();
             }
             return byteOut.toByteArray();
-        }catch(Exception e){
+        } catch (Exception e) {
             return new byte[0];
         }
     }
 
     /**
-     *
      * Parse byte as {@link org.bukkit.inventory.ItemStack}
      *
      * @param bytes
      * @return
      */
     public static ItemStack getItemStackInNBTBytes(byte[] bytes) {
-        try{
+        try {
             DataInputStream dataIn = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(bytes))));
             NBTTagCompound tag;
             try {
@@ -158,7 +156,7 @@ public class ItemAPI {
             }
             net.minecraft.item.ItemStack is = new net.minecraft.item.ItemStack(tag);
             return CraftItemStack.asBukkitCopy(is);
-        }catch(Exception e){
+        } catch (Exception e) {
             return new ItemStack(Material.AIR);
         }
     }
@@ -188,11 +186,11 @@ public class ItemAPI {
         return Material.getBlockMaterial(id);
     }
 
-    public static String getModid(String name){
+    public static String getModid(String name) {
         return MODNAME_MAP.containsKey(name) ? MODNAME_MAP.get(name) : "unknown";
     }
 
-    public static String getModid(int id){
+    public static String getModid(int id) {
         return MODNAME_MAP.containsKey(id) ? MODNAME_MAP.get(id) : "unknown";
     }
 }

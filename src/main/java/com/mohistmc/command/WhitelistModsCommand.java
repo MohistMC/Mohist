@@ -9,44 +9,44 @@ import org.bukkit.command.CommandSender;
 
 public class WhitelistModsCommand extends Command {
 
-  public WhitelistModsCommand(String name) {
-    super(name);
-    this.description = "Command to update, enable or disable the mods whitelist.";
-    this.usageMessage = "/whitelistmods [enable|disable|update]";
-    this.setPermission("mohist.command.whitelistmods");
-  }
+    private static String list = "";
 
-  @Override
-  public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-    if (!testPermission(sender)) return true;
-    if (args.length == 0) {
-      sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
-      return false;
+    public WhitelistModsCommand(String name) {
+        super(name);
+        this.description = "Command to update, enable or disable the mods whitelist.";
+        this.usageMessage = "/whitelistmods [enable|disable|update]";
+        this.setPermission("mohist.command.whitelistmods");
     }
 
-    switch (args[0].toLowerCase()) {
-      case "enable":
-        MohistConfig.setValueMohist("forge.modswhitelist.list", makeModList());
-        MohistConfig.setValueMohist("forge.enable_mods_whitelist", true);
-        break;
-      case "disable":
-        MohistConfig.setValueMohist("forge.enable_mods_whitelist", false);
-        break;
-      case "update":
-        MohistConfig.setValueMohist("forge.modswhitelist.list", makeModList());
-        break;
+    private static String makeModList() {
+        for (ModContainer mod : Loader.instance().getModList())
+            if (!mod.getModId().equals("mohist") || !mod.getModId().equals("forge")) {
+                list = list + mod.getModId() + "@" + mod.getVersion() + ",";
+            }
+        return list.substring(0, list.length() - 1);
     }
 
-    return true;
-  }
+    @Override
+    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+        if (!testPermission(sender)) return true;
+        if (args.length == 0) {
+            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+            return false;
+        }
 
-  private static String list = "";
+        switch (args[0].toLowerCase()) {
+            case "enable":
+                MohistConfig.setValueMohist("forge.modswhitelist.list", makeModList());
+                MohistConfig.setValueMohist("forge.enable_mods_whitelist", true);
+                break;
+            case "disable":
+                MohistConfig.setValueMohist("forge.enable_mods_whitelist", false);
+                break;
+            case "update":
+                MohistConfig.setValueMohist("forge.modswhitelist.list", makeModList());
+                break;
+        }
 
-  private static String makeModList() {
-    for (ModContainer mod : Loader.instance().getModList())
-      if (!mod.getModId().equals("mohist") || !mod.getModId().equals("forge")) {
-        list = list + mod.getModId() + "@" + mod.getVersion() + ",";
-      }
-    return list.substring(0, list.length() - 1);
-  }
+        return true;
+    }
 }

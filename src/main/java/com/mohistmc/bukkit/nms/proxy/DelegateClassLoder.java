@@ -4,7 +4,7 @@ import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.security.ProtectionDomain;
 import net.md_5.specialsource.repo.RuntimeRepo;
 
-public class DelegateClassLoder extends ClassLoader{
+public class DelegateClassLoder extends ClassLoader {
 
     public static final String desc = DelegateClassLoder.class.getName().replace('.', '/');
 

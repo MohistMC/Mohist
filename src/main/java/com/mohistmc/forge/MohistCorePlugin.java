@@ -11,7 +11,7 @@ public class MohistCorePlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         return !FMLLaunchHandler.isDeobfuscatedEnvironment() ? new String[]{
-                 SendPacketTransformer.class.getCanonicalName(),
+                SendPacketTransformer.class.getCanonicalName(),
                 MyPetTransformer.class.getCanonicalName()
         } : null;
     }

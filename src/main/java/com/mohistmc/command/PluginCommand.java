@@ -1,6 +1,5 @@
 package com.mohistmc.command;
 
-import com.mohistmc.util.i18n.Message;
 import com.mohistmc.util.pluginmanager.PluginManagers;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +14,8 @@ import org.bukkit.plugin.Plugin;
 
 public class PluginCommand extends Command {
 
+    private final List<String> params = Arrays.asList("load", "unload", "reload");
+
     public PluginCommand(String name) {
         super(name);
         this.description = "Plugin manager";
@@ -22,8 +23,6 @@ public class PluginCommand extends Command {
         this.setAliases(Collections.singletonList("pl"));
         this.setPermission("mohist.command.plugin");
     }
-
-    private final List<String> params = Arrays.asList("load", "unload", "reload");
 
     private boolean checkparam(String args) {
         //TODO

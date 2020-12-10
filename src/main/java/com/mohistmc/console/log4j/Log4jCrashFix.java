@@ -13,7 +13,6 @@ public class Log4jCrashFix {
     private static final Map<String, BlockingQueue<String>> QUEUES;
     private static final ReadWriteLock QUEUE_LOCK;
     private static BlockingQueue<String> queue = null;
-    final private OutputStream output;
 
     static {
         Field f = null;
@@ -28,6 +27,8 @@ public class Log4jCrashFix {
             throw new RuntimeException(e);
         }
     }
+
+    final private OutputStream output;
 
     public Log4jCrashFix(OutputStream output) {
         this.output = output;
@@ -45,6 +46,7 @@ public class Log4jCrashFix {
                 }
             }
             QUEUE_LOCK.readLock().unlock();
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+        }
     }
 }

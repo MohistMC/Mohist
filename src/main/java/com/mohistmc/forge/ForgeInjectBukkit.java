@@ -35,7 +35,7 @@ import org.bukkit.util.permissions.DefaultPermissions;
 
 public class ForgeInjectBukkit {
 
-    public static void init(){
+    public static void init() {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumEnchantment();
@@ -45,10 +45,10 @@ public class ForgeInjectBukkit {
         addEnumEntity();
     }
 
-    public static void addEnumMaterialInItems(){
+    public static void addEnumMaterialInItems() {
         for (Map.Entry<ResourceLocation, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
             ResourceLocation key = entry.getKey();
-            if(!key.getResourceDomain().equals("minecraft")) {
+            if (!key.getResourceDomain().equals("minecraft")) {
                 // inject item materials into Bukkit for FML
                 String[] res = key.toString().split(":");
                 String modid = Material.normalizeName(res[0]);
@@ -67,10 +67,10 @@ public class ForgeInjectBukkit {
         }
     }
 
-    public static void addEnumMaterialsInBlocks(){
+    public static void addEnumMaterialsInBlocks() {
         for (Map.Entry<ResourceLocation, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
             ResourceLocation key = entry.getKey();
-            if(!key.getResourceDomain().equals("minecraft")) {
+            if (!key.getResourceDomain().equals("minecraft")) {
                 // inject block materials into Bukkit for FML
                 String[] res = key.toString().split(":");
                 String modid = Material.normalizeName(res[0]);
@@ -125,7 +125,7 @@ public class ForgeInjectBukkit {
         map.clear();
     }
 
-    public static void addEnumPattern(){
+    public static void addEnumPattern() {
         Map<String, PatternType> PATTERN_MAP = ObfuscationReflectionHelper.getPrivateValue(PatternType.class, null, "byString");
         for (BannerPattern bannerpattern : BannerPattern.values()) {
             String p_i47246_3_ = bannerpattern.name();
@@ -138,29 +138,28 @@ public class ForgeInjectBukkit {
     }
 
     public static World.Environment addEnumEnvironment(int id, String name) {
-        return (World.Environment)EnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+        return (World.Environment) EnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
     }
 
-    public static WorldType addEnumWorldType(String name)
-    {
-        WorldType worldType = EnumHelper.addEnum(WorldType.class, name, new Class [] { String.class }, name);
+    public static WorldType addEnumWorldType(String name) {
+        WorldType worldType = EnumHelper.addEnum(WorldType.class, name, new Class[]{String.class}, name);
         Map<String, WorldType> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
         BY_NAME.put(name.toUpperCase(), worldType);
         return worldType;
     }
 
     public static void addEnumEntity() {
-        Map<String, EntityType> NAME_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
-        Map<Short, EntityType> ID_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
+        Map<String, EntityType> NAME_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
+        Map<Short, EntityType> ID_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
 
         for (Map.Entry<String, Class<? extends Entity>> entity : EntityRegistry.entityClassMap.entrySet()) {
             String name = entity.getKey();
             String entityType = name.toUpperCase();
             int typeId = GameData.getEntityRegistry().getID(EntityRegistry.getEntry(entity.getValue()));
-            EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, name, CraftCustomEntity.class, typeId, false);
+            EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[]{String.class, Class.class, Integer.TYPE, Boolean.TYPE}, name, CraftCustomEntity.class, typeId, false);
 
             NAME_MAP.put(name.toLowerCase(), bukkitType);
-            ID_MAP.put((short)typeId, bukkitType);
+            ID_MAP.put((short) typeId, bukkitType);
         }
     }
 

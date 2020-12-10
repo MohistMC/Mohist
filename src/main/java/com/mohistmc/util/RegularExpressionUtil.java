@@ -8,10 +8,8 @@ import java.util.regex.Pattern;
  * DESC:
  * some regular rules
  * Cairerx(Wan Can guDinnerbone) 2020/6/22 8:46
- *
  **/
-public class RegularExpressionUtil
-{
+public class RegularExpressionUtil {
 
 
     //pwd strong check
@@ -48,12 +46,12 @@ public class RegularExpressionUtil
 
     /**
      * Determine whether source meets the regular pattern
-     * @param pattern  Regular rules
+     *
+     * @param pattern Regular rules
      * @param source  Input string
      * @return
      */
-    public static boolean patternMatch(Pattern pattern, String source)
-    {
+    public static boolean patternMatch(Pattern pattern, String source) {
         if (pattern == null)
             return false;
         return pattern.matcher(source).matches();

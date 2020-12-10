@@ -13,14 +13,10 @@ import org.spigotmc.SpigotConfig;
 
 public class MohistConfig extends ConfigBase {
 
-    private final String HEADER = "This is the main configuration file for Mohist.\n"
-            + "\n"
-            + "Home: https://mohist.red/\n";
-
     public static MohistConfig instance;
+    public static boolean bungeeOnlineMode = true;
 
     /* ======================================================================== */
-
     public final StringSetting unknownCommandMessage = new StringSetting(this, "messages.use-unknow-command", Message.getString("use.unknow.command"));
     public final StringSetting outdatedClientMessage = new StringSetting(this, "messages.Outdate-Client", Message.getString("outdate.client"));
     public final StringSetting outdatedServerMessage = new StringSetting(this, "messages.Outdate-Server", Message.getString("outdate.server"));
@@ -89,98 +85,31 @@ public class MohistConfig extends ConfigBase {
     public final IntSetting forgeversionrevision = new IntSetting(this, "forge.version.revision", 5);
     public final IntSetting forgeversionbuild = new IntSetting(this, "forge.version.build", 2854);
     public final BoolSetting autounloadworldenable = new BoolSetting(this, "forge.autounloadworld.enable", false);
-
-
-    public List<String> autounloadworld_whitelist = new ArrayList();
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false);
-
     public final BoolSetting CloseChatInConsole = new BoolSetting(this, "mohist.CloseChatInConsole", false);
-
     public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads", 2);
     public final BoolSetting keepSpawnInMemory = new BoolSetting(this, "keep-spawn-loaded", true);
     public final BoolSetting RealTimeTicking = new BoolSetting(this, "mohist.realtimeticking", false);
     public final BoolSetting FailOnUnresolvedGameProfile = new BoolSetting(this, "mohist.fail-on-unresolved-gameprofile", true);
-
     public final IntSetting entityTickLimit = new IntSetting(this, "entity-tick-limit", 300); // by CraftDream
     public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb");
-
     public final BoolSetting hideJoinModsList = new BoolSetting(this, "hidejoinmodslist", false);
     public final BoolSetting watchdog_spigot = new BoolSetting(this, "mohist.watchdog_spigot", true);
     public final BoolSetting watchdog_mohist = new BoolSetting(this, "mohist.watchdog_mohist", false);
     public final BoolSetting showlogo = new BoolSetting(this, "mohist.showlogo", true);
     public final BoolSetting World_Directory_Client = new BoolSetting(this, "world.directory_in_client", true);
-
     public final BoolSetting bukkitPermissionsHandler = new BoolSetting(this, "mohist.BukkitPermissionsHandler", true);
-
-    public List<Integer> dimensionsNotLoaded =new ArrayList();
+    private final String HEADER = "This is the main configuration file for Mohist.\n"
+            + "\n"
+            + "Home: https://mohist.red/\n";
+    public List<String> autounloadworld_whitelist = new ArrayList();
     /* ======================================================================== */
+    public List<Integer> dimensionsNotLoaded = new ArrayList();
 
     public MohistConfig() {
         super("mohist.yml");
         init();
         instance = this;
-    }
-
-    public void init()
-    {
-        for(Field f : this.getClass().getFields())
-        {
-            if(Modifier.isFinal(f.getModifiers()) && Modifier.isPublic(f.getModifiers()) && !Modifier.isStatic(f.getModifiers()))
-            {
-                try
-                {
-                    Setting setting = (Setting) f.get(this);
-                    if(setting == null) {
-                        continue;
-                    }
-                    settings.put(setting.path, setting);
-                }
-                catch (ClassCastException ignored)
-                {
-
-                }
-                catch(Throwable t)
-                {
-                    System.out.println("[Mohist] Failed to initialize a MohistConfig setting.");
-                    t.printStackTrace();
-                }
-            }
-        }
-        load();
-    }
-
-    @Override
-    public void load()
-    {
-        try
-        {
-            config = YamlConfiguration.loadConfiguration(configFile);
-            StringBuilder header = new StringBuilder(HEADER + "\n");
-            for (Setting toggle : settings.values())
-            {
-                config.addDefault(toggle.path, toggle.def);
-                settings.get(toggle.path).setValue(config.getString(toggle.path));
-            }
-
-            version = getInt("config-version", 3);
-            set("config-version", 3);
-            config.addDefault("forge.autounloadworld.whitelist", new String[]{"0", "1", "-1"});
-            this.autounloadworld_whitelist = config.getStringList("forge.autounloadworld.whitelist");
-            config.addDefault("world.dimensionsNotLoaded", new String[]{"1111111111111"});
-            this.dimensionsNotLoaded = config.getIntegerList("world.dimensionsNotLoaded");
-            config.options().header(header.toString());
-            config.options().copyDefaults(true);
-            this.save();
-        }
-        catch (Exception ex)
-        {
-            ServerAPI.getNMSServer().logSevere("Could not load " + this.configFile);
-            ex.printStackTrace();
-        }
-    }
-
-    public boolean RealTimeTicking(){
-        return RealTimeTicking.getValue();
     }
 
     public static String getHighlight(String key, String def) {
@@ -209,12 +138,60 @@ public class MohistConfig extends ConfigBase {
         }
     }
 
-    public static boolean bungeeOnlineMode = true;
     private static void bungeeOnlineMode() {
         bungeeOnlineMode = instance.getBoolean("mohist.bungee-online-mode", true);
     }
 
     public static boolean isProxyOnlineMode() {
         return Bukkit.getOnlineMode() || (SpigotConfig.bungee && bungeeOnlineMode);
+    }
+
+    public void init() {
+        for (Field f : this.getClass().getFields()) {
+            if (Modifier.isFinal(f.getModifiers()) && Modifier.isPublic(f.getModifiers()) && !Modifier.isStatic(f.getModifiers())) {
+                try {
+                    Setting setting = (Setting) f.get(this);
+                    if (setting == null) {
+                        continue;
+                    }
+                    settings.put(setting.path, setting);
+                } catch (ClassCastException ignored) {
+
+                } catch (Throwable t) {
+                    System.out.println("[Mohist] Failed to initialize a MohistConfig setting.");
+                    t.printStackTrace();
+                }
+            }
+        }
+        load();
+    }
+
+    @Override
+    public void load() {
+        try {
+            config = YamlConfiguration.loadConfiguration(configFile);
+            StringBuilder header = new StringBuilder(HEADER + "\n");
+            for (Setting toggle : settings.values()) {
+                config.addDefault(toggle.path, toggle.def);
+                settings.get(toggle.path).setValue(config.getString(toggle.path));
+            }
+
+            version = getInt("config-version", 3);
+            set("config-version", 3);
+            config.addDefault("forge.autounloadworld.whitelist", new String[]{"0", "1", "-1"});
+            this.autounloadworld_whitelist = config.getStringList("forge.autounloadworld.whitelist");
+            config.addDefault("world.dimensionsNotLoaded", new String[]{"1111111111111"});
+            this.dimensionsNotLoaded = config.getIntegerList("world.dimensionsNotLoaded");
+            config.options().header(header.toString());
+            config.options().copyDefaults(true);
+            this.save();
+        } catch (Exception ex) {
+            ServerAPI.getNMSServer().logSevere("Could not load " + this.configFile);
+            ex.printStackTrace();
+        }
+    }
+
+    public boolean RealTimeTicking() {
+        return RealTimeTicking.getValue();
     }
 }

@@ -55,7 +55,7 @@ public class WatchMohist implements Runnable {
         }
     }
 
-    public static boolean isEnable(){
+    public static boolean isEnable() {
         return MohistConfig.instance.watchdog_mohist.getValue();
     }
 }

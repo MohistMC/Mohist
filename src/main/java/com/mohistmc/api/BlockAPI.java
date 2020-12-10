@@ -7,7 +7,8 @@ import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 public class BlockAPI {
 
     /**
-     *  Determine whether {@link org.bukkit.Material} is Farmland
+     * Determine whether {@link org.bukkit.Material} is Farmland
+     *
      * @param material
      * @return
      */
@@ -17,6 +18,7 @@ public class BlockAPI {
 
     /**
      * Determine whether {@link org.bukkit.block.Block} is Farmland
+     *
      * @param block
      * @return
      */

@@ -8,13 +8,13 @@ import java.util.concurrent.Future;
  * 线程处理类
  *
  * @author Carierx_MAX(fakeTrotsky)
- * @date   2020-7-13
+ * @date 2020-7-13
  */
 public class ThreadExecutor {
 
-    private ExecutorService executor;
     private static ThreadExecutor pool = new ThreadExecutor();
     private final int threadMax = 10;
+    private ExecutorService executor;
 
     private ThreadExecutor() {
         System.out.println("threadMax>>>>>>>" + threadMax);
@@ -29,9 +29,9 @@ public class ThreadExecutor {
      * 关闭线程池，这里要说明的是：调用关闭线程池方法后，线程池会执行完队列中的所有任务才退出
      *
      * @author Carierx_MAX(fakeTrotsky)
-     * @date   2020-7-13
+     * @date 2020-7-13
      */
-    public void shutdown(){
+    public void shutdown() {
         executor.shutdown();
     }
 
@@ -41,7 +41,7 @@ public class ThreadExecutor {
      * @param task
      * @return
      * @author Carierx_MAX(fakeTrotsky)
-     * @date   2020-7-13
+     * @date 2020-7-13
      */
     public Future<?> submit(Runnable task) {
         return executor.submit(task);
@@ -53,7 +53,7 @@ public class ThreadExecutor {
      * @param task
      * @return
      * @author Carierx_MAX(fakeTrotsky)
-     * @date   2020-7-13
+     * @date 2020-7-13
      */
     public Future<?> submit(Callable<?> task) {
         return executor.submit(task);
@@ -64,9 +64,9 @@ public class ThreadExecutor {
      *
      * @param task
      * @author Carierx_MAX(fakeTrotsky)
-     * @date   2020-7-13
+     * @date 2020-7-13
      */
-    public void execute(Runnable task){
+    public void execute(Runnable task) {
         executor.execute(task);
     }
 

@@ -30,15 +30,14 @@ import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
 
 /**
- *
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */
 public class RemapUtils {
 
+    private static final List<Remapper> remappers = new ArrayList<>();
     public static MohistJarMapping jarMapping;
     public static MohistJarRemapper jarRemapper;
-    private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
 
     public static void init() {
@@ -50,8 +49,8 @@ public class RemapUtils {
         jarMapping.packages.put("red/mohist/bukkit/nms", "com/mohistmc/bukkit/nms");
         jarMapping.classes.put("red/mohist/Mohist", "com/mohistmc/MohistMC");
         jarMapping.classes.put("catserver/api/bukkit/event/ForgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","forgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent", "event");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "forgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent", "event");
         jarMapping.registerMethodMapping("org/bukkit/Bukkit", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Bukkit", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
         jarMapping.registerMethodMapping("org/bukkit/Server", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Server", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
         jarMapping.registerMethodMapping("org/bukkit/craftbukkit/v1_12_R1/CraftServer", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/craftbukkit/v1_12_R1/CraftServer", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
@@ -67,8 +66,8 @@ public class RemapUtils {
                     .replace("file:/", "") // linux
                     .replace("\\com\\mohistmc\\util", "") // win
                     .replace("/com/mohistmc/util", ""); // linux
-            String jarname = f1.substring(f1.lastIndexOf("\\")+1,f1.lastIndexOf("."));
-            String jarname1 = f1.substring(f1.lastIndexOf("/")+1,f1.lastIndexOf("."));
+            String jarname = f1.substring(f1.lastIndexOf("\\") + 1, f1.lastIndexOf("."));
+            String jarname1 = f1.substring(f1.lastIndexOf("/") + 1, f1.lastIndexOf("."));
             String path = f1
                     .replace("\\" + jarname + ".jar!", "")
                     .replace("/" + jarname1 + ".jar!", "");

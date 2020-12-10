@@ -7,7 +7,7 @@ import java.util.Set;
 
 public interface CustomMod {
 
-    static Set<InputStream>  is = new ConcurrentSet<>();
+    static Set<InputStream> is = new ConcurrentSet<>();
 
     File jarFile();
 }

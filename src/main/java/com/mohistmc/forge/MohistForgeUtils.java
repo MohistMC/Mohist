@@ -19,7 +19,7 @@ public class MohistForgeUtils {
     public static boolean modswhittelist(String modslist) {
         String[] clientMods = modslist.split(",");
         if (!MohistConfig.instance.modsblacklistenable.getValue() && MohistConfig.instance.modswhitelistenable.getValue()) {
-            if(MohistConfig.instance.modsnumber.getValue() >= 0)
+            if (MohistConfig.instance.modsnumber.getValue() >= 0)
                 return Arrays.asList(clientMods).containsAll(Arrays.asList(MohistConfig.instance.modswhitelist.getValue().split(","))) && clientMods.length == MohistConfig.instance.modsnumber.getValue();
             else
                 return Arrays.asList(clientMods).containsAll(Arrays.asList(MohistConfig.instance.modswhitelist.getValue().split(",")));

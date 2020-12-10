@@ -13,15 +13,9 @@ public class JarLoader {
         this.urlClassLoader = urlClassLoader;
     }
 
-    public void loadJar(URL url) throws Exception {
-        Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-        addURL.setAccessible(true);
-        addURL.invoke(urlClassLoader, url);
-    }
-
     public static void loadjar(JarLoader jarLoader, String path) throws Exception {
         File libdir = new File(path);
-        if(libdir.isDirectory()) {
+        if (libdir.isDirectory()) {
 
             for (File file : libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"))) {
                 jarLoader.loadJar(file.toURI().toURL());
@@ -30,5 +24,11 @@ public class JarLoader {
         } else {
             System.exit(0);
         }
+    }
+
+    public void loadJar(URL url) throws Exception {
+        Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        addURL.setAccessible(true);
+        addURL.invoke(urlClassLoader, url);
     }
 }

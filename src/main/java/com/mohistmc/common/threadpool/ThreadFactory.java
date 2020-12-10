@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 线程池构造工厂
  *
  * @author Carierx_Max(fakeTrotsky)
- * @date   2020-7-13
+ * @date 2020-7-13
  */
 public class ThreadFactory {
     private static ThreadFactory executorFactory = new ThreadFactory();
@@ -70,6 +70,7 @@ public class ThreadFactory {
     private java.util.concurrent.ThreadFactory getThreadFactory() {
         return new java.util.concurrent.ThreadFactory() {
             AtomicInteger sn = new AtomicInteger();
+
             public Thread newThread(Runnable r) {
                 SecurityManager s = System.getSecurityManager();
                 //TODO => ThreadFactory

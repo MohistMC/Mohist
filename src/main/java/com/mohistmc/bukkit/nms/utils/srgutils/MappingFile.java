@@ -35,12 +35,12 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 class MappingFile implements IMappingFile {
+    private static final Pattern DESC = Pattern.compile("L(?<cls>[^;]+);");
     private Map<String, Package> packages = new HashMap<>();
     private Collection<Package> packagesView = Collections.unmodifiableCollection(packages.values());
     private Map<String, Cls> classes = new HashMap<>();
     private Collection<Cls> classesView = Collections.unmodifiableCollection(classes.values());
     private Map<String, String> cache = new HashMap<>();
-    private static final Pattern DESC = Pattern.compile("L(?<cls>[^;]+);");
 
     @Override
     public Collection<Package> getPackages() {
@@ -117,7 +117,7 @@ class MappingFile implements IMappingFile {
     @Override
     public void write(Path path, Format format, boolean reversed) throws IOException {
         List<String> lines = new ArrayList<>();
-        Comparator<INode> sort = reversed ? (a,b) -> a.getMapped().compareTo(b.getMapped()) : (a,b) -> a.getOriginal().compareTo(b.getOriginal());
+        Comparator<INode> sort = reversed ? (a, b) -> a.getMapped().compareTo(b.getMapped()) : (a, b) -> a.getOriginal().compareTo(b.getOriginal());
         getPackages().stream().sorted(sort).map(e -> e.write(format, reversed)).forEachOrdered(lines::add);
         getClasses().stream().sorted(sort).forEachOrdered(cls -> {
             lines.add(cls.write(format, reversed));
@@ -222,11 +222,15 @@ class MappingFile implements IMappingFile {
 
             switch (format) {
                 case SRG:
-                case XSRG: return "PK: " + sorig + ' ' + smap;
+                case XSRG:
+                    return "PK: " + sorig + ' ' + smap;
                 case CSRG:
-                case TSRG: return getOriginal() + "/ " + getMapped() + '/';
-                case PG: throw new UnsupportedOperationException("ProGuard format does not support packages.");
-                default: throw new UnsupportedOperationException("Unknown format: " + format);
+                case TSRG:
+                    return getOriginal() + "/ " + getMapped() + '/';
+                case PG:
+                    throw new UnsupportedOperationException("ProGuard format does not support packages.");
+                default:
+                    throw new UnsupportedOperationException("Unknown format: " + format);
             }
         }
 
@@ -252,11 +256,15 @@ class MappingFile implements IMappingFile {
             String mName = !reversed ? getMapped() : getOriginal();
             switch (format) {
                 case SRG:
-                case XSRG: return "CL: " + oName + ' ' + mName;
+                case XSRG:
+                    return "CL: " + oName + ' ' + mName;
                 case CSRG:
-                case TSRG: return oName + ' ' + mName;
-                case PG: return oName.replace('/', '.') + " -> " + mName.replace('/', '.') + ':';
-                default: throw new UnsupportedOperationException("Unknown format: " + format);
+                case TSRG:
+                    return oName + ' ' + mName;
+                case PG:
+                    return oName.replace('/', '.') + " -> " + mName.replace('/', '.') + ':';
+                default:
+                    throw new UnsupportedOperationException("Unknown format: " + format);
             }
         }
 
@@ -268,7 +276,7 @@ class MappingFile implements IMappingFile {
         @Override
         public String remapField(String field) {
             Field fld = fields.get(field);
-            return fld  == null ? field : fld.getMapped();
+            return fld == null ? field : fld.getMapped();
         }
 
         void addField(String original, String mapped) {
@@ -338,12 +346,18 @@ class MappingFile implements IMappingFile {
                 String mDesc = !reversed ? this.getMappedDescriptor() : this.getDescriptor();
 
                 switch (format) {
-                    case SRG:  return "FD: " + oOwner+ '/' + oName + ' ' + mOwner + '/' + mName + (oDesc == null ? "" : " # " + oDesc + " " + mDesc);
-                    case XSRG: return "FD: " + oOwner + '/' + oName + (oDesc == null ? "" : ' ' + oDesc) + ' ' + mOwner + '/' + mName + (mDesc == null ? "" : ' ' + mDesc);
-                    case CSRG: return oOwner + ' ' + oName + ' ' + mName;
-                    case TSRG: return '\t' + oName + ' ' + mName;
-                    case PG:   return "    " + InternalUtils.toSource(oDesc) + ' ' + oName + " -> " + mName;
-                    default: throw new UnsupportedOperationException("Unknown format: " + format);
+                    case SRG:
+                        return "FD: " + oOwner + '/' + oName + ' ' + mOwner + '/' + mName + (oDesc == null ? "" : " # " + oDesc + " " + mDesc);
+                    case XSRG:
+                        return "FD: " + oOwner + '/' + oName + (oDesc == null ? "" : ' ' + oDesc) + ' ' + mOwner + '/' + mName + (mDesc == null ? "" : ' ' + mDesc);
+                    case CSRG:
+                        return oOwner + ' ' + oName + ' ' + mName;
+                    case TSRG:
+                        return '\t' + oName + ' ' + mName;
+                    case PG:
+                        return "    " + InternalUtils.toSource(oDesc) + ' ' + oName + " -> " + mName;
+                    default:
+                        throw new UnsupportedOperationException("Unknown format: " + format);
                 }
             }
 
@@ -377,6 +391,7 @@ class MappingFile implements IMappingFile {
             public String getDescriptor() {
                 return this.desc;
             }
+
             @Override
             public String getMappedDescriptor() {
                 return MappingFile.this.remapDescriptor(this.desc);
@@ -393,11 +408,16 @@ class MappingFile implements IMappingFile {
 
                 switch (format) {
                     case SRG:
-                    case XSRG: return "MD: " + oOwner + '/' + oName + ' ' + oDesc + ' ' + mOwner + '/' + mName + ' ' + mDesc;
-                    case CSRG: return oOwner + ' ' + oName + ' ' + oDesc + ' ' + mName;
-                    case TSRG: return '\t' + oName + ' ' + oDesc + ' ' + mName;
-                    case PG:   return "    " + (start == 0 && end == 0 ? "" : start + ":" + end + ":") + InternalUtils.toSource(oName, oDesc) + " -> " + mName;
-                    default: throw new UnsupportedOperationException("Unknown format: " + format);
+                    case XSRG:
+                        return "MD: " + oOwner + '/' + oName + ' ' + oDesc + ' ' + mOwner + '/' + mName + ' ' + mDesc;
+                    case CSRG:
+                        return oOwner + ' ' + oName + ' ' + oDesc + ' ' + mName;
+                    case TSRG:
+                        return '\t' + oName + ' ' + oDesc + ' ' + mName;
+                    case PG:
+                        return "    " + (start == 0 && end == 0 ? "" : start + ":" + end + ":") + InternalUtils.toSource(oName, oDesc) + " -> " + mName;
+                    default:
+                        throw new UnsupportedOperationException("Unknown format: " + format);
                 }
             }
 

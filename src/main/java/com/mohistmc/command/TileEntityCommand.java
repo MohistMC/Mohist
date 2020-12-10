@@ -14,14 +14,14 @@ import org.bukkit.command.CommandSender;
 
 public class TileEntityCommand extends Command {
 
+    private List<String> params = Arrays.asList("reload", "dump-all", "dump-existing");
+
     public TileEntityCommand(String name) {
         super(name);
         this.description = "TileEntity tick limiting commands";
         this.usageMessage = "/tileentity [reload|dump-all|dump-existing]";
         this.setPermission("mohist.command.tileentity");
     }
-
-    private List<String> params = Arrays.asList("reload", "dump-all", "dump-existing");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -65,7 +65,7 @@ public class TileEntityCommand extends Command {
 
                     MinecraftServer.LOGGER.info(
                             "Found TileEntity with name: " + com.mohistmc.util.TileEntity.sanitizeClassName(
-                                    ((Class)TileEntity.getRegisteredTileEntities().getObject(rl))
+                                    ((Class) TileEntity.getRegisteredTileEntities().getObject(rl))
                             )
                     );
                 }

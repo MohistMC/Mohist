@@ -11,14 +11,14 @@ import org.bukkit.command.CommandSender;
 
 public class EntityCommand extends Command {
 
+    private List<String> params = Arrays.asList("reload", "dump-existing");
+
     public EntityCommand(String name) {
         super(name);
         this.description = "Entity tick limiting commands";
         this.usageMessage = "/entity [reload|dump-existing]";
         this.setPermission("mohist.command.entity");
     }
-
-    private List<String> params = Arrays.asList("reload", "dump-existing");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {

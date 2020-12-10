@@ -19,6 +19,16 @@ import java.util.Random;
 //Voronoi
 
 public class Voronoi {
+    static final int order3D[][] = {
+            {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, 0, 0}, {0, -1, 0}, {0, 0, -1},
+            {1, 1, 0}, {1, 0, 1}, {0, 1, 1}, {-1, 1, 0}, {-1, 0, 1}, {0, -1, 1},
+            {1, -1, 0}, {1, 0, -1}, {0, 1, -1}, {-1, -1, 0}, {-1, 0, -1}, {0, -1, -1},
+            {1, 1, 1}, {-1, 1, 1}, {1, -1, 1}, {1, 1, -1}, {-1, -1, 1}, {-1, 1, -1},
+            {1, -1, -1}, {-1, -1, -1}
+    };
+    static final int order2D[][] = {
+            {0, 0}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
+    };
     private final float[][][][][] grid;
     private final Random r;
     private final int density;
@@ -28,8 +38,6 @@ public class Voronoi {
     private final boolean is2D;
     private final DistanceMetric metric;
     private final int level;
-
-    public enum DistanceMetric {Linear, Squared, Manhattan, Quadratic, Chebyshev, Wiggly}
 
     public Voronoi(final int size, final boolean is2D, final long seed, final int density, final DistanceMetric metric, final int level) {
         zsize = (is2D ? 1 : size);
@@ -86,18 +94,6 @@ public class Voronoi {
         }
     }
 
-    static final int order3D[][] = {
-            {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, 0, 0}, {0, -1, 0}, {0, 0, -1},
-            {1, 1, 0}, {1, 0, 1}, {0, 1, 1}, {-1, 1, 0}, {-1, 0, 1}, {0, -1, 1},
-            {1, -1, 0}, {1, 0, -1}, {0, 1, -1}, {-1, -1, 0}, {-1, 0, -1}, {0, -1, -1},
-            {1, 1, 1}, {-1, 1, 1}, {1, -1, 1}, {1, 1, -1}, {-1, -1, 1}, {-1, 1, -1},
-            {1, -1, -1}, {-1, -1, -1}
-    };
-    static final int order2D[][] = {
-            {0, 0}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
-    };
-
-
     public float get(final float xin, final float yin, final float zin) {
         if (is2D)
             throw new UnsupportedOperationException(
@@ -137,7 +133,6 @@ public class Voronoi {
         }
         return distances[level - 1];
     }
-
 
     public float get(final float xin, final float yin) {
         if (!is2D)
@@ -181,4 +176,6 @@ public class Voronoi {
     private int fastfloor(final float x) {
         return x > 0 ? (int) x : (int) x - 1;
     }
+
+    public enum DistanceMetric {Linear, Squared, Manhattan, Quadratic, Chebyshev, Wiggly}
 }

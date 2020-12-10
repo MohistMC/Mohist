@@ -31,11 +31,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class InternalUtils {
+    private static final List<String> ORDER = Arrays.asList("PK:", "CL:", "FD:", "MD:");
+
     static IMappingFile load(InputStream in) throws IOException {
         List<String> lines = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines()
-            .map(InternalUtils::stripComment)
-            .filter(l -> !l.isEmpty()) //Remove Empty lines
-            .collect(Collectors.toList());
+                .map(InternalUtils::stripComment)
+                .filter(l -> !l.isEmpty()) //Remove Empty lines
+                .collect(Collectors.toList());
 
         MappingFile ret = new MappingFile();
 
@@ -45,20 +47,26 @@ class InternalUtils {
             for (String line : lines) {
                 String[] pts = line.split(" ");
                 switch (pts[0]) {
-                    case "PK:": ret.addPackage(pts[1], pts[2]); break;
-                    case "CL:": ret.addClass(pts[1], pts[2]); break;
+                    case "PK:":
+                        ret.addPackage(pts[1], pts[2]);
+                        break;
+                    case "CL:":
+                        ret.addClass(pts[1], pts[2]);
+                        break;
                     case "FD:":
                         if (pts.length == 5)
                             ret.getOrCreateClass(rsplit(pts[1], '/', 1)[0]).addField(rsplit(pts[1], '/', 1)[1], rsplit(pts[3], '/', 1)[1], pts[2]);
                         else
                             ret.getOrCreateClass(rsplit(pts[1], '/', 1)[0]).addField(rsplit(pts[1], '/', 1)[1], rsplit(pts[2], '/', 1)[1]);
                         break;
-                    case "MD:": ret.getOrCreateClass(rsplit(pts[1], '/', 1)[0]).addMethod(rsplit(pts[1], '/', 1)[1], pts[2], rsplit(pts[3], '/', 1)[1]); break;
+                    case "MD:":
+                        ret.getOrCreateClass(rsplit(pts[1], '/', 1)[0]).addMethod(rsplit(pts[1], '/', 1)[1], pts[2], rsplit(pts[3], '/', 1)[1]);
+                        break;
                     default:
                         throw new IOException("Invalid SRG file, Unknown type: " + line);
                 }
             }
-        } else if(firstLine.contains(" -> ")) { // ProGuard
+        } else if (firstLine.contains(" -> ")) { // ProGuard
             for (String line : lines) {
                 if (!line.startsWith("    ") && line.endsWith(":")) {
                     String[] pts = line.replace('.', '/').split(" -> ");
@@ -82,8 +90,8 @@ class InternalUtils {
                     if (line.indexOf(':') != -1) {
                         int i = line.indexOf(':');
                         int j = line.indexOf(':', i + 1);
-                        start = Integer.parseInt(line.substring(0,     i));
-                        end   = Integer.parseInt(line.substring(i + 1, j));
+                        start = Integer.parseInt(line.substring(0, i));
+                        end = Integer.parseInt(line.substring(i + 1, j));
                         line = line.substring(j + 1);
                     }
 
@@ -105,7 +113,7 @@ class InternalUtils {
                         ; // We don't care about initializers, they keep their name by virtue of the JVM spec.
                     else
                     */
-                        cls.addMethod(name, desc.toString(), obf, start, end);
+                    cls.addMethod(name, desc.toString(), obf, start, end);
                 } else {
                     if (cls == null)
                         throw new IOException("Invalid PG line, missing class: " + line);
@@ -115,14 +123,14 @@ class InternalUtils {
             }
         } else { // TSRG/CSRG
             lines.stream().filter(l -> l.charAt(0) != '\t')
-            .map(l -> l.split(" "))
-            .filter(pts -> pts.length == 2)
-            .forEach(pts -> {
-                if (pts[0].endsWith("/"))
-                    ret.addPackage(pts[0].substring(0, pts[0].length() - 1), pts[1].substring(0, pts[1].length() -1));
-                else
-                    ret.addClass(pts[0], pts[1]);
-            });
+                    .map(l -> l.split(" "))
+                    .filter(pts -> pts.length == 2)
+                    .forEach(pts -> {
+                        if (pts[0].endsWith("/"))
+                            ret.addPackage(pts[0].substring(0, pts[0].length() - 1), pts[1].substring(0, pts[1].length() - 1));
+                        else
+                            ret.addClass(pts[0], pts[1]);
+                    });
 
             MappingFile.Cls cls = null;
             for (String line : lines) {
@@ -141,8 +149,7 @@ class InternalUtils {
                     if (pts.length == 2) {
                         if (!pts[0].endsWith("/"))
                             cls = ret.getClass(pts[0]);
-                    }
-                    else if (pts.length == 3)
+                    } else if (pts.length == 3)
                         ret.getClass(pts[0]).addField(pts[1], pts[2]);
                     else if (pts.length == 4)
                         ret.getClass(pts[0]).addMethod(pts[1], pts[2], pts[3]);
@@ -155,35 +162,47 @@ class InternalUtils {
     }
 
     static String toDesc(String type) {
-        if (type.endsWith("[]"))    return "[" + toDesc(type.substring(0, type.length() - 2));
-        if (type.equals("int"))     return "I";
-        if (type.equals("void"))    return "V";
+        if (type.endsWith("[]")) return "[" + toDesc(type.substring(0, type.length() - 2));
+        if (type.equals("int")) return "I";
+        if (type.equals("void")) return "V";
         if (type.equals("boolean")) return "Z";
-        if (type.equals("byte"))    return "B";
-        if (type.equals("char"))    return "C";
-        if (type.equals("short"))   return "S";
-        if (type.equals("double"))  return "D";
-        if (type.equals("float"))   return "F";
-        if (type.equals("long"))    return "J";
-        if (type.contains("/"))     return "L" + type + ";";
+        if (type.equals("byte")) return "B";
+        if (type.equals("char")) return "C";
+        if (type.equals("short")) return "S";
+        if (type.equals("double")) return "D";
+        if (type.equals("float")) return "F";
+        if (type.equals("long")) return "J";
+        if (type.contains("/")) return "L" + type + ";";
         throw new RuntimeException("Invalid toDesc input: " + type);
     }
 
     static String toSource(String desc) {
         char first = desc.charAt(0);
         switch (first) {
-            case 'I': return "int";
-            case 'V': return "void";
-            case 'Z': return "boolean";
-            case 'B': return "byte";
-            case 'C': return "char";
-            case 'S': return "short";
-            case 'D': return "double";
-            case 'F': return "float";
-            case 'J': return "long";
-            case '[': return toSource(desc.substring(1)) + "[]";
-            case 'L': return desc.substring(1, desc.length() - 1).replace('/', '.');
-            default: throw new IllegalArgumentException("Unknown descriptor: " + desc);
+            case 'I':
+                return "int";
+            case 'V':
+                return "void";
+            case 'Z':
+                return "boolean";
+            case 'B':
+                return "byte";
+            case 'C':
+                return "char";
+            case 'S':
+                return "short";
+            case 'D':
+                return "double";
+            case 'F':
+                return "float";
+            case 'J':
+                return "long";
+            case '[':
+                return toSource(desc.substring(1)) + "[]";
+            case 'L':
+                return desc.substring(1, desc.length() - 1).replace('/', '.');
+            default:
+                throw new IllegalArgumentException("Unknown descriptor: " + desc);
         }
     }
 
@@ -236,7 +255,6 @@ class InternalUtils {
         return pts.toArray(new String[pts.size()]);
     }
 
-    private static final List<String> ORDER = Arrays.asList("PK:", "CL:", "FD:", "MD:");
     public static int compareLines(String o1, String o2) {
         String[] pt1 = o1.split(" ");
         String[] pt2 = o2.split(" ");
@@ -247,11 +265,10 @@ class InternalUtils {
             return o1.compareTo(o2);
         if ("CL:".equals(pt1[0]))
             return compareCls(pt1[1], pt2[1]);
-        if ("FD:".equals(pt1[0]) || "MD:".equals(pt1[0]))
-        {
+        if ("FD:".equals(pt1[0]) || "MD:".equals(pt1[0])) {
             String[][] y = {
-                {pt1[1].substring(0, pt1[1].lastIndexOf('/')), pt1[1].substring(pt1[1].lastIndexOf('/') + 1)},
-                {pt2[1].substring(0, pt2[1].lastIndexOf('/')), pt2[1].substring(pt2[1].lastIndexOf('/') + 1)}
+                    {pt1[1].substring(0, pt1[1].lastIndexOf('/')), pt1[1].substring(pt1[1].lastIndexOf('/') + 1)},
+                    {pt2[1].substring(0, pt2[1].lastIndexOf('/')), pt2[1].substring(pt2[1].lastIndexOf('/') + 1)}
             };
             int ret = compareCls(y[0][0], y[1][0]);
             if (ret != 0)
@@ -264,12 +281,10 @@ class InternalUtils {
     public static int compareCls(String cls1, String cls2) {
         if (cls1.indexOf('/') > 0 && cls2.indexOf('/') > 0)
             return cls1.compareTo(cls2);
-        String[][] t = { cls1.split("\\$"), cls2.split("\\$") };
+        String[][] t = {cls1.split("\\$"), cls2.split("\\$")};
         int max = Math.min(t[0].length, t[1].length);
-        for (int i = 0; i < max; i++)
-        {
-            if (!t[0][i].equals(t[1][i]))
-            {
+        for (int i = 0; i < max; i++) {
+            if (!t[0][i].equals(t[1][i])) {
                 if (t[0][i].length() != t[1][i].length())
                     return t[0][i].length() - t[1][i].length();
                 return t[0][i].compareTo(t[1][i]);

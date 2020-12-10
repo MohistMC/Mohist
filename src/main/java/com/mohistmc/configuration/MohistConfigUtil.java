@@ -26,19 +26,19 @@ public class MohistConfigUtil {
         } else return defaultreturn;
     }
 
-  public static String getString(File f, String key, String defaultreturn) {
-    try {
-      StringBuilder s = new StringBuilder();
-      try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-        String l;
-        while ((l = br.readLine()) != null) if(!l.startsWith("#"))
-          s.append(l).append("\n");
-      }
-      return getString(s.toString(), key, defaultreturn);
-    } catch (IOException e) {
-      return defaultreturn;
+    public static String getString(File f, String key, String defaultreturn) {
+        try {
+            StringBuilder s = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                String l;
+                while ((l = br.readLine()) != null) if (!l.startsWith("#"))
+                    s.append(l).append("\n");
+            }
+            return getString(s.toString(), key, defaultreturn);
+        } catch (IOException e) {
+            return defaultreturn;
+        }
     }
-  }
 
     public static boolean getBoolean(File f, String key) {
         return Boolean.parseBoolean(getString(f, key, "true"));
