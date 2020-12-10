@@ -9,7 +9,10 @@ import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.DownloadLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
+import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.i18n.Message;
+import java.io.File;
+import java.net.URLClassLoader;
 import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
 
@@ -46,7 +49,7 @@ public class MohistMC {
 
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
-            while (!"true".equals(new Scanner(System.in).next())) ;
+            while (!"true".equals(new Scanner(System.in).next()));
             EulaUtil.writeInfos();
         }
 
@@ -54,7 +57,7 @@ public class MohistMC {
         if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) AutoDeletePlugins.jar();
         if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) AutoDeleteMods.jar();
         changeConf();
-
+        JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), new File("libraries/net/minecraft/1.12.2/minecraft_server.1.12.2.jar").getParent());
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 }

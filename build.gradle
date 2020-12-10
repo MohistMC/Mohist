@@ -564,7 +564,6 @@ project(':mohist') {
             artifacts.each { key, lib ->
                 classpath.append("libraries/${lib.downloads.artifact.path} ")
             }
-            classpath += "libraries/net/minecraft/1.12.2/minecraft_server.${MC_VERSION}.jar"
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
