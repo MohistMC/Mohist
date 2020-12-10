@@ -1230,7 +1230,7 @@
 +                return;
 +            }
 +        } catch (org.bukkit.command.CommandException ex) {
-+            player.sendMessage(org.bukkit.ChatColor.RED + Message.getString("minecraft.netHandlerplayserver.handleslashcommand2"));
++            player.sendMessage(org.bukkit.ChatColor.RED + Message.getString("minecraft.handleslashcommand"));
 +            java.util.logging.Logger.getLogger(NetHandlerPlayServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 +            MinecraftTimings.playerCommandTimer.stopTiming(); // Paper
 +            return;
