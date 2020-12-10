@@ -2,6 +2,7 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.Message;
 import java.io.BufferedReader;
@@ -22,13 +23,13 @@ public class DownloadLibraries {
         while ((str = b.readLine()) != null) {
             String[] args = str.split("\\|");
             if (args.length == 2) {
-                File file = new File(args[0]);
+                File file = new File(JarTool.getJarDir() + "/" + args[0]);
                 //System.out.println(MD5Util.getMD5(file) + " : " +  args[1]);
                 if ((!file.exists() || !MD5Util.md5CheckSum(file, args[1]))) {
                     if (MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(file.getName())) continue;
                     file.getParentFile().mkdirs();
                     String u = url + args[0];
-                    System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File("libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
+                    System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
 
                     try {
                         UpdateUtils.downloadFile(u, file);

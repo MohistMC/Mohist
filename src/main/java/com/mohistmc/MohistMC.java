@@ -1,15 +1,15 @@
 package com.mohistmc;
 
 import com.mohistmc.bukkit.AutoDeletePlugins;
-import com.mohistmc.bukkit.nms.MappingFix;
 import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.forge.AutoDeleteMods;
-import static com.mohistmc.forge.FastWorkBenchConf.changeConf;
+import com.mohistmc.forge.FastWorkBenchConf;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.DownloadLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.Message;
 import java.io.File;
 import java.net.URLClassLoader;
@@ -45,7 +45,7 @@ public class MohistMC {
         if (MohistConfigUtil.bMohist("check_libraries")) DownloadLibraries.run();
 
         //MappingFix.init();
-        MappingFix.copyMappings();
+        //MappingFix.copyMappings();
 
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
@@ -56,8 +56,8 @@ public class MohistMC {
         if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) AutoDeletePlugins.jar();
         if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) AutoDeleteMods.jar();
-        changeConf();
-        JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), new File("libraries/net/minecraft/1.12.2/minecraft_server.1.12.2.jar").getParent());
+        FastWorkBenchConf.changeConf();
+        JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), new File(JarTool.getJarDir() + "/libraries/net/minecraft/1.12.2/minecraft_server.1.12.2.jar").getParent());
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 }
