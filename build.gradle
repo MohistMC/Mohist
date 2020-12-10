@@ -28,13 +28,13 @@ apply plugin: 'maven'
 apply plugin: 'cauldron'
 
 repositories {
-    clear()
+    mavenLocal()
     maven {
         name 'sonatype'
         url 'http://oss.sonatype.org/content/repositories/snapshots/'
     }
     maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
-    maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven' }
+    maven { url 'https://github.com/mohist-community/maven/raw/master' }
     maven {
         name 'forge'
         url 'https://files.minecraftforge.net/maven'
@@ -230,8 +230,8 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 repositories {
-    clear()
-    maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven' }
+    mavenLocal()
+    maven { url 'https://github.com/mohist-community/maven/raw/master' }
     maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
     maven {
         name 'forge'
