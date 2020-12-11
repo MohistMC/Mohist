@@ -1,7 +1,7 @@
-<img src="https://i.loli.net/2020/09/06/lQscneqbV8Hptxz.png">
-
 <div align="center">
   <h1>Mohist 1.16.4</h1>
+
+# <font color=red>Warning: At present, the main work is to fix the compatibility of mods, please do not send issues about plugins</font>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
