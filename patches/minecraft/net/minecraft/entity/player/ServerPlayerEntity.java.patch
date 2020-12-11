@@ -127,7 +127,7 @@
 +   // If this is an issue, PRs are welcome
 +   public final BlockPos getSpawnPoint(ServerWorld worldserver) {
 +      final BlockPos blockposition = worldserver.func_241135_u_();
-+      if (worldserver.func_230315_m_().func_218272_d() && worldserver.field_241103_E_.func_76077_q() != GameType.ADVENTURE) {
++      if (worldserver.func_230315_m_().func_218272_d() && worldserver.getServerWorldInfo().func_76077_q() != GameType.ADVENTURE) {
 +         int i = Math.max(0, this.field_71133_b.func_184108_a(worldserver));
 +         int j = MathHelper.func_76128_c(worldserver.func_175723_af().func_177729_b(blockposition.func_177958_n(), blockposition.func_177952_p()));
 +         if (j < i) {
@@ -158,7 +158,7 @@
     private void func_205734_a(ServerWorld p_205734_1_) {
        BlockPos blockpos = p_205734_1_.func_241135_u_();
 -      if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.func_73046_m().func_240793_aU_().func_76077_q() != GameType.ADVENTURE) {
-+      if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.field_241103_E_.func_76077_q() != GameType.ADVENTURE) { // CraftBukkit
++      if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.getServerWorldInfo().func_76077_q() != GameType.ADVENTURE) { // CraftBukkit
           int i = Math.max(0, this.field_71133_b.func_184108_a(p_205734_1_));
           int j = MathHelper.func_76128_c(p_205734_1_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
           if (j < i) {

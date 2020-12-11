@@ -252,7 +252,7 @@
        p_72355_2_.func_71116_b();
 +      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedIn( p_72355_2_ );
 +      // CraftBukkit - Moved from above, added world
-+      field_148546_d.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", p_72355_2_.func_200200_C_().getString(), s1, p_72355_2_.func_145782_y(), serverworld1.field_241103_E_.func_76065_j(), p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_());
++      field_148546_d.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", p_72355_2_.func_200200_C_().getString(), s1, p_72355_2_.func_145782_y(), serverworld1.getServerWorldInfo().func_76065_j(), p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_());
     }
  
 -   protected void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
@@ -853,7 +853,7 @@
        }
  
 -      p_72381_1_.field_71134_c.func_73077_b(p_72381_3_.func_73046_m().func_240793_aU_().func_76077_q());
-+      p_72381_1_.field_71134_c.func_73077_b(p_72381_3_.field_241103_E_.func_76077_q()); // CraftBukkit
++      p_72381_1_.field_71134_c.func_73077_b(p_72381_3_.func_73046_m().func_240793_aU_().func_76077_q()); // CraftBukkit
     }
  
     @OnlyIn(Dist.CLIENT)
