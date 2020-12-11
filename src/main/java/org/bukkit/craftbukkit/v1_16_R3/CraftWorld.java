@@ -762,7 +762,7 @@ public class CraftWorld implements World {
 
     @Override
     public String getName() {
-        return world.field_241103_E_.getWorldName();
+        return world.getServer().getServerConfiguration().getWorldName();
     }
 
     @Override
@@ -1266,7 +1266,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-        this.getHandle().field_241103_E_.setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
+        this.getHandle().getServer().getServerConfiguration().setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
     }
 
     @Override
@@ -1292,12 +1292,12 @@ public class CraftWorld implements World {
 
     @Override
     public int getWeatherDuration() {
-        return world.field_241103_E_.getRainTime();
+        return world.getServerWorldInfo().getRainTime();
     }
 
     @Override
     public void setWeatherDuration(int duration) {
-        world.field_241103_E_.setRainTime(duration);
+        world.getServerWorldInfo().setRainTime(duration);
     }
 
     @Override
@@ -1307,19 +1307,19 @@ public class CraftWorld implements World {
 
     @Override
     public void setThundering(boolean thundering) {
-        world.field_241103_E_.setThundering(thundering);
+        world.getServerWorldInfo().setThundering(thundering);
         setThunderDuration(0); // Reset weather duration (legacy behaviour)
         setClearWeatherDuration(0); // Reset clear weather duration (reset "/weather clear" commands)
     }
 
     @Override
     public int getThunderDuration() {
-        return world.field_241103_E_.getThunderTime();
+        return world.getServerWorldInfo().getThunderTime();
     }
 
     @Override
     public void setThunderDuration(int duration) {
-        world.field_241103_E_.setThunderTime(duration);
+        world.getServerWorldInfo().setThunderTime(duration);
     }
 
     @Override
@@ -1329,12 +1329,12 @@ public class CraftWorld implements World {
 
     @Override
     public void setClearWeatherDuration(int duration) {
-        world.field_241103_E_.setClearWeatherTime(duration); // PAIL rename setClearWeatherDuration
+        world.getServerWorldInfo().setClearWeatherTime(duration); // PAIL rename setClearWeatherDuration
     }
 
     @Override
     public int getClearWeatherDuration() {
-        return world.field_241103_E_.getClearWeatherTime(); // PAIL rename getClearWeatherDuration
+        return world.getServerWorldInfo().getClearWeatherTime(); // PAIL rename getClearWeatherDuration
     }
 
     @Override
@@ -1925,7 +1925,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean canGenerateStructures() {
-        return world.field_241103_E_.getDimensionGeneratorSettings().doesGenerateFeatures();
+        return world.getServer().getServerConfiguration().getDimensionGeneratorSettings().doesGenerateFeatures();
     }
 
     @Override
@@ -1935,7 +1935,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setHardcore(boolean hardcore) {
-        world.field_241103_E_.worldSettings.hardcoreEnabled = hardcore;
+        world.getServer().getServerConfiguration().getWorldSettings().hardcoreEnabled = hardcore;
     }
 
     @Override

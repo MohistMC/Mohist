@@ -805,7 +805,7 @@ public final class CraftServer implements Server {
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
         for (ServerWorld world : console.getWorlds()) {
-            world.field_241103_E_.setDifficulty(config.difficulty);
+            world.getServer().getServerConfiguration().setDifficulty(config.difficulty);
             world.setAllowedSpawnTypes(config.spawnMonsters, config.spawnAnimals);
             if (this.getTicksPerAnimalSpawns() < 0) {
                 world.ticksPerAnimalSpawns = 400;
@@ -1565,7 +1565,7 @@ public final class CraftServer implements Server {
 
     @Override
     public GameMode getDefaultGameMode() {
-        return GameMode.getByValue(console.getWorld(net.minecraft.world.World.OVERWORLD).field_241103_E_.getGameType().getID());
+        return GameMode.getByValue(console.getWorld(net.minecraft.world.World.OVERWORLD).getServerWorldInfo().getGameType().getID());
     }
 
     @Override
@@ -1573,7 +1573,7 @@ public final class CraftServer implements Server {
         Validate.notNull(mode, "Mode cannot be null");
 
         for (World world : getWorlds()) {
-            ((CraftWorld) world).getHandle().field_241103_E_.setGameType(GameType.getByID(mode.getValue()));
+            ((CraftWorld) world).getHandle().getServerWorldInfo().setGameType(GameType.getByID(mode.getValue()));
         }
     }
 
