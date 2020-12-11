@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/cpw/mods/fml/relauncher/CoreModManager.java
 +++ ../src-work/minecraft/cpw/mods/fml/relauncher/CoreModManager.java
-@@ -60,7 +60,7 @@
-     private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
-     private static final Attributes.Name MODTYPE = new Attributes.Name("ModType");
-     private static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
--    private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin" };
-+    private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin", "pw.prok.imagine.ImagineLoadingPlugin" };
-     private static List<String> loadedCoremods = Lists.newArrayList();
-     private static List<FMLPluginWrapper> loadPlugins;
-     private static boolean deobfuscatedEnvironment;
 @@ -101,6 +101,7 @@
          @Override
          public void injectIntoClassLoader(LaunchClassLoader classLoader)
