@@ -56,8 +56,8 @@ public class MohistMC {
         if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) AutoDeletePlugins.jar();
         if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) AutoDeleteMods.jar();
-        FastWorkBenchConf.changeConf();
         JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), new File(JarTool.getJarDir() + "/libraries/net/minecraft/1.12.2/minecraft_server.1.12.2.jar").getParent());
+        FastWorkBenchConf.changeConf();
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 }
