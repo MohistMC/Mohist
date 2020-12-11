@@ -10,7 +10,7 @@
          return p_152681_1_.toString();
      }
  
-@@ -184,6 +187,12 @@
+@@ -184,34 +187,36 @@
          return this.field_152696_d.size() < 1;
      }
  
@@ -23,3 +23,48 @@
      @SideOnly(Side.SERVER)
      public void func_152679_g() throws IOException
      {
+-        Collection collection = null;
+-        BufferedReader bufferedreader = null;
++        if (this.field_152695_c.exists()) {
++            Collection collection = null;
++            BufferedReader bufferedreader = null;
+ 
+-        try
+-        {
+-            bufferedreader = Files.newReader(this.field_152695_c, Charsets.UTF_8);
+-            collection = (Collection)this.field_152694_b.fromJson(bufferedreader, field_152698_f);
+-        }
+-        finally
+-        {
+-            IOUtils.closeQuietly(bufferedreader);
+-        }
++            try {
++                bufferedreader = Files.newReader(this.field_152695_c, Charsets.UTF_8);
++                collection = (Collection) this.field_152694_b.fromJson(bufferedreader, field_152698_f);
++            } finally {
++                IOUtils.closeQuietly(bufferedreader);
++            }
+ 
+-        if (collection != null)
+-        {
+-            this.field_152696_d.clear();
+-            Iterator iterator = collection.iterator();
++            if (collection != null) {
++                this.field_152696_d.clear();
++                Iterator iterator = collection.iterator();
+ 
+-            while (iterator.hasNext())
+-            {
+-                UserListEntry userlistentry = (UserListEntry)iterator.next();
++                while (iterator.hasNext()) {
++                    UserListEntry userlistentry = (UserListEntry) iterator.next();
+ 
+-                if (userlistentry.func_152640_f() != null)
+-                {
+-                    this.field_152696_d.put(this.func_152681_a(userlistentry.func_152640_f()), userlistentry);
++                    if (userlistentry.func_152640_f() != null) {
++                        this.field_152696_d.put(this.func_152681_a(userlistentry.func_152640_f()), userlistentry);
++                    }
+                 }
+             }
+         }
