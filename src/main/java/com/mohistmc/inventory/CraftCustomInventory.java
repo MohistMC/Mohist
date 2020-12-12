@@ -1,5 +1,6 @@
 package com.mohistmc.inventory;
 
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -15,6 +16,7 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryCustom;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -70,5 +72,13 @@ public class CraftCustomInventory implements InventoryHolder {
     @Override
     public Inventory getInventory() {
         return this.container;
+    }
+
+    public static List<HumanEntity> getViewers(IInventory inventory) {
+        try {
+            return inventory.getViewers();
+        } catch (AbstractMethodError e) {
+            return new java.util.ArrayList<HumanEntity>();
+        }
     }
 }
