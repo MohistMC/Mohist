@@ -258,7 +258,7 @@
 +        final ITextComponent chatcomponenttext = new TextComponentTranslation(s);
 +
 +        this.field_147371_a.func_179288_a(new SPacketDisconnect(chatcomponenttext), new GenericFutureListener() {
-+            public void operationComplete(Future future) throws Exception { // CraftBukkit - decompile error
++            public void operationComplete(Future future) {
 +                NetHandlerPlayServer.this.field_147371_a.func_150718_a(chatcomponenttext);
              }
          });
