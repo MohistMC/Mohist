@@ -3,6 +3,8 @@ package org.bukkit.craftbukkit.v1_16_R3.entity;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mohistmc.entity.CraftCustomAbstractHorse;
+import com.mohistmc.entity.CraftCustomChestHorse;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.entity.CustomProjectileEntity;
 import java.util.List;
@@ -232,9 +234,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                             else if (entity instanceof MuleEntity) { return new CraftMule(server, (MuleEntity) entity); }
                             else if (entity instanceof TraderLlamaEntity) { return new CraftTraderLlama(server, (TraderLlamaEntity) entity); }
                             else if (entity instanceof LlamaEntity) { return new CraftLlama(server, (LlamaEntity) entity); }
+                            else { return new CraftCustomChestHorse(server, (AbstractChestedHorseEntity) entity); }
                         } else if (entity instanceof HorseEntity) { return new CraftHorse(server, (HorseEntity) entity); }
                         else if (entity instanceof SkeletonHorseEntity) { return new CraftSkeletonHorse(server, (SkeletonHorseEntity) entity); }
                         else if (entity instanceof ZombieHorseEntity) { return new CraftZombieHorse(server, (ZombieHorseEntity) entity); }
+                        else { return new CraftCustomAbstractHorse(server, (AbstractHorseEntity) entity); }
                     }
                     else if (entity instanceof RabbitEntity) { return new CraftRabbit(server, (RabbitEntity) entity); }
                     else if (entity instanceof PolarBearEntity) { return new CraftPolarBear(server, (PolarBearEntity) entity); }
