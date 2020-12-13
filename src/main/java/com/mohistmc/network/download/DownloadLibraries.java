@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class DownloadLibraries {
     static int retry = 0;
@@ -21,7 +20,7 @@ public class DownloadLibraries {
         System.out.println(Message.getString("libraries.checking.start"));
         String url = "https://www.mgazul.cn/";
         if(Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-        LinkedHashMap<File, String> libs = getLibs();
+        HashMap<File, String> libs = getLibs();
 
         for (File lib : getLibs().keySet()) {
             if((!lib.exists() || !MD5Util.md5CheckSum(lib, libs.get(lib)))) {
@@ -58,8 +57,8 @@ public class DownloadLibraries {
         }
     }
 
-    public static LinkedHashMap<File, String> getLibs() throws Exception {
-        LinkedHashMap<File, String> temp = new LinkedHashMap<>();
+    public static HashMap<File, String> getLibs() throws Exception {
+        HashMap<File, String> temp = new HashMap<>();
         BufferedReader b = new BufferedReader(new InputStreamReader(DownloadLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
         String str;
         while ((str = b.readLine()) != null) {
@@ -72,7 +71,6 @@ public class DownloadLibraries {
 
     public static void addLibs() throws Exception {
         for (File lib : getLibs().keySet())
-            if(lib.exists())
-                new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()).loadJar(lib.toURI().toURL());
+            new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()).loadJar(lib.toURI().toURL());
     }
 }
