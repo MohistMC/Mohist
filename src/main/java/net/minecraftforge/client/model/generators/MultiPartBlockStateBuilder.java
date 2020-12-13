@@ -19,7 +19,6 @@
 
 package net.minecraftforge.client.model.generators;
 
-import com.google.common.collect.MultimapBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +27,7 @@ import java.util.Map.Entry;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
