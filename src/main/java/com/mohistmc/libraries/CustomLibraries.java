@@ -13,7 +13,7 @@ public class CustomLibraries {
             file.mkdirs();
         }
         for (File lib : file.listFiles((dir, name) -> name.endsWith(".jar"))) {
-            if (DefaultLibraries.getDefaultLibs().contains(lib.getName())) {
+            if (!DefaultLibraries.getDefaultLibs().contains(lib.getName())) {
                 JarLoader.loadjar(lib.getPath());
             }
         }
