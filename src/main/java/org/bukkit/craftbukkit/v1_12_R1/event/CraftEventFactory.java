@@ -805,6 +805,20 @@ public class CraftEventFactory {
         return !event.isCancelled();
     }
 
+    public static boolean handleBlockGrowEvent(World world, int x, int y, int z, net.minecraft.block.state.IBlockState newState) {
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        CraftBlockState state = CraftBlockState.getBlockState(world, x, y, z);
+
+        BlockGrowEvent event = new BlockGrowEvent(block, state);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            world.setBlockState(new BlockPos(x, y, z), newState, 2);
+        }
+
+        return !event.isCancelled();
+    }
+
     public static FoodLevelChangeEvent callFoodLevelChangeEvent(EntityPlayer entity, int level) {
         FoodLevelChangeEvent event = new FoodLevelChangeEvent(entity.getBukkitEntity(), level);
         entity.getBukkitEntity().getServer().getPluginManager().callEvent(event);

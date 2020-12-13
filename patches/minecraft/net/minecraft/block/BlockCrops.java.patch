@@ -16,7 +16,7 @@
          if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) >= 9)
          {
              int i = this.func_185527_x(p_180650_3_);
-@@ -78,9 +80,11 @@
+@@ -78,9 +80,15 @@
              {
                  float f = func_180672_a(this, p_180650_1_, p_180650_2_);
  
@@ -25,22 +25,30 @@
                  {
 -                    p_180650_1_.func_180501_a(p_180650_2_, this.func_185528_e(i + 1), 2);
 +                    IBlockState data = this.func_185528_e(i + 1);
-+                    CraftEventFactory.handleBlockGrowEvent(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), this, func_176201_c(data));
++                    if (data.func_177230_c() == this) {
++                        CraftEventFactory.handleBlockGrowEvent(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), this, func_176201_c(data));
++                    } else {
++                        CraftEventFactory.handleBlockGrowEvent(p_180650_1_, p_180650_2_.func_177958_n(), p_180650_2_.func_177956_o(), p_180650_2_.func_177952_p(), data);
++                    }
 +                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_1_.func_180495_p(p_180650_2_));
                  }
              }
          }
-@@ -96,7 +100,8 @@
+@@ -96,7 +104,12 @@
              i = j;
          }
  
 -        p_176487_1_.func_180501_a(p_176487_2_, this.func_185528_e(i), 2);
 +        IBlockState data = this.func_185528_e(i);
-+        CraftEventFactory.handleBlockGrowEvent(p_176487_1_, p_176487_2_.func_177958_n(), p_176487_2_.func_177956_o(), p_176487_2_.func_177952_p(), this, func_176201_c(data));
++        if (data.func_177230_c() == this) {
++            CraftEventFactory.handleBlockGrowEvent(p_176487_1_, p_176487_2_.func_177958_n(), p_176487_2_.func_177956_o(), p_176487_2_.func_177952_p(), this, func_176201_c(data));
++        } else {
++            CraftEventFactory.handleBlockGrowEvent(p_176487_1_, p_176487_2_.func_177958_n(), p_176487_2_.func_177956_o(), p_176487_2_.func_177952_p(), data);
++        }
      }
  
      protected int func_185529_b(World p_185529_1_)
-@@ -116,11 +121,11 @@
+@@ -116,11 +129,11 @@
                  float f1 = 0.0F;
                  IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
  
@@ -54,7 +62,7 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -161,7 +166,8 @@
+@@ -161,7 +174,8 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -64,7 +72,7 @@
      }
  
      protected Item func_149866_i()
-@@ -174,11 +180,32 @@
+@@ -174,11 +188,32 @@
          return Items.field_151015_O;
      }
  
