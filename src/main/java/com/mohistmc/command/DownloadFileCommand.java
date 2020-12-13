@@ -1,5 +1,6 @@
 package com.mohistmc.command;
 
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import java.io.File;
 import org.bukkit.command.Command;
@@ -18,7 +19,7 @@ public class DownloadFileCommand extends Command {
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (!testPermission(sender)) return true;
 
-        if (args.length > 0) {
+        if (bMohist("downloadfile_command_enabled")) {
             if (args.length == 1) {
                 sender.sendMessage("[MOHIST] - You need to specify the path of the file.");
                 return false;
@@ -37,7 +38,7 @@ public class DownloadFileCommand extends Command {
                     return false;
                 }
             }
-        }
+        } else sender.sendMessage("[Mohist] To use this command, you need to set downloadfile_command_enabled to true in mohist-config/mohist.yml.");
         return true;
     }
 }

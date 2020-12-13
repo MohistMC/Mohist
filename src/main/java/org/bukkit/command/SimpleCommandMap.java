@@ -35,6 +35,7 @@ public class SimpleCommandMap implements CommandMap {
         register("mohist", new GetModListCommand("getmodlist"));
         register("mohist", new WhitelistModsCommand("whitelistmods"));
         register("mohist", new DownloadFileCommand("downloadfile"));
+        register("mohist", new UpdateMohistCommand("updatemohist"));
         register("mohist", new DumpCommand("dump"));
         register("mohist", new EntityCommand("entity"));
         register("mohist", new TileEntityCommand("tileentity"));

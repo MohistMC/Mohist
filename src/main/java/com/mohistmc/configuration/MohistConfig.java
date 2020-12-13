@@ -42,6 +42,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true);
     public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false);
     public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true);
+    public final BoolSetting downloadfile_command_enabled = new BoolSetting(this, "mohist.downloadfile_command_enabled", false);
     public final BoolSetting disable_plugins_blacklist = new BoolSetting(this, "mohist.disable_plugins_blacklist", false);
     public final BoolSetting disable_mods_blacklist = new BoolSetting(this, "mohist.disable_mods_blacklist", false);
     public final BoolSetting disable_config_update = new BoolSetting(this, "mohist.disable_config_update", false);
