@@ -1,26 +1,30 @@
-package com.mohistmc.network.download;
+package com.mohistmc.libraries;
 
 import com.mohistmc.configuration.MohistConfigUtil;
+import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.Message;
 
+import io.netty.util.internal.ConcurrentSet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.Set;
 
-public class DownloadLibraries {
-    static HashMap<String, String> fail = new HashMap<>();
+public class DefaultLibraries {
+
+    public static HashMap<String, String> fail = new HashMap<>();
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
         String str;
         String url = "https://www.mgazul.cn/";
         if (Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-        BufferedReader b = new BufferedReader(new InputStreamReader(DownloadLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
+        BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
         while ((str = b.readLine()) != null) {
             String[] args = str.split("\\|");
             if (args.length == 2) {
@@ -33,9 +37,9 @@ public class DownloadLibraries {
                     try {
                         UpdateUtils.downloadFile(u, file);
                         if (!file.getName().equals("minecraft_server.1.12.2.jar")) {
-                            JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), file.getParent());
+                            JarLoader.loadjar(file.getPath());
                         }
-                        if (fail.containsKey(u)) fail.remove(u);
+                        fail.remove(u);
                     } catch (Exception e) {
                         System.out.println(Message.getFormatString("file.download.nook", new Object[]{u}));
                         file.delete();
@@ -57,5 +61,18 @@ public class DownloadLibraries {
                 System.exit(0);
             }
         }
+    }
+
+    public static Set<String> getDefaultLibs() throws Exception {
+        Set<String> DefaultList = new ConcurrentSet<>();
+        BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
+        String str;
+        while ((str = b.readLine()) != null) {
+            String[] s = str.split("\\|");
+            String jarName = new File(JarTool.getJarDir() + "/" + s[0]).getName();
+            DefaultList.add(jarName);
+        }
+        b.close();
+        return DefaultList;
     }
 }

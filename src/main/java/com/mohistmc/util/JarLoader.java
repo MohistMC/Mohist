@@ -7,28 +7,20 @@ import java.net.URLClassLoader;
 
 public class JarLoader {
 
-    private URLClassLoader urlClassLoader;
-
-    public JarLoader(URLClassLoader urlClassLoader) {
-        this.urlClassLoader = urlClassLoader;
-    }
-
-    public static void loadjar(JarLoader jarLoader, String path) throws Exception {
-        File libdir = new File(path);
+    public static void loadjar(String file_or_directory) throws Exception {
+        File libdir = new File(file_or_directory);
         if (libdir.isDirectory()) {
-
             for (File file : libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"))) {
-                jarLoader.loadJar(file.toURI().toURL());
+                loadJar(file.toURI().toURL());
             }
-
         } else {
-            System.exit(0);
+            loadJar(libdir.toURI().toURL());
         }
     }
 
-    public void loadJar(URL url) throws Exception {
+    public static void loadJar(URL url) throws Exception {
         Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
         addURL.setAccessible(true);
-        addURL.invoke(urlClassLoader, url);
+        addURL.invoke((URLClassLoader) ClassLoader.getSystemClassLoader(), url);
     }
 }

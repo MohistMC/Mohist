@@ -12,7 +12,6 @@ import java.nio.file.StandardCopyOption;
 /**
  * Only used before the libraries file is loaded, yaml should be used later
  */
-@Deprecated
 public class MohistConfigUtil {
 
     public static File mohistyml = new File("mohist-config", "mohist.yml");
