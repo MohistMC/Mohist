@@ -390,7 +390,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
         else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
         else if (entity instanceof net.minecraft.entity.projectile.ProjectileEntity) { return new CustomProjectileEntity(server, entity); }
-        else if (entity instanceof net.minecraft.entity.Entity) {return new CraftCustomEntity(server, entity);}
+        else if (entity != null) {return new CraftCustomEntity(server, entity);}
         // CHECKSTYLE:ON
 
         throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
