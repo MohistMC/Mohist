@@ -104,13 +104,6 @@ class TimingHandler implements Timing {
             TimingHandler last;
             while ((last = TIMING_STACK.removeLast()) != this) {
                 last.timingDepth = 0;
-                String reportTo;
-                if ("minecraft".equals(last.identifier.group)) {
-                    reportTo = Message.getString("timings.handler.1");
-                } else {
-                    reportTo = Message.getFormatString("timings.handler.2", new Object[]{last.identifier.group});
-                }
-                Logger.getGlobal().log(Level.SEVERE, Message.getFormatString("timings.handler.3", new Object[]{reportTo, last.identifier}), new Throwable());
             }
             addDiff(System.nanoTime() - start, TIMING_STACK.peekLast());
 
