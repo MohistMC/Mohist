@@ -8,15 +8,6 @@
  import net.minecraft.world.storage.ISpawnWorldInfo;
  import net.minecraft.world.storage.MapData;
  import net.minecraftforge.api.distmarker.Dist;
-@@ -95,7 +96,7 @@
-    private final ClientChunkProvider field_239129_E_;
- 
-    public ClientWorld(ClientPlayNetHandler p_i242067_1_, ClientWorld.ClientWorldInfo p_i242067_2_, RegistryKey<World> p_i242067_3_, DimensionType p_i242067_4_, int p_i242067_5_, Supplier<IProfiler> p_i242067_6_, WorldRenderer p_i242067_7_, boolean p_i242067_8_, long p_i242067_9_) {
--      super(p_i242067_2_, p_i242067_3_, p_i242067_4_, p_i242067_6_, true, p_i242067_8_, p_i242067_9_);
-+      super(p_i242067_2_, p_i242067_3_, p_i242067_4_, p_i242067_6_, true, p_i242067_8_, p_i242067_9_, null, null);
-       this.field_73035_a = p_i242067_1_;
-       this.field_239129_E_ = new ClientChunkProvider(this, p_i242067_5_);
-       this.field_239130_d_ = p_i242067_2_;
 @@ -104,6 +105,8 @@
        this.func_239136_a_(new BlockPos(8, 64, 8), 0.0F);
        this.func_72966_v();
