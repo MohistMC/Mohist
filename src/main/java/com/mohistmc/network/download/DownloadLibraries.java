@@ -13,38 +13,40 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 
 public class DownloadLibraries {
-    static int retry = 0;
     static HashMap<String, String> fail = new HashMap<>();
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
+        String str;
         String url = "https://www.mgazul.cn/";
-        if(Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-        HashMap<File, String> libs = getLibs();
-
-        for (File lib : getLibs().keySet()) {
-            if((!lib.exists() || !MD5Util.md5CheckSum(lib, libs.get(lib)))) {
-                if(MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName()))
-                    continue;
-                lib.getParentFile().mkdirs();
-                String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-                System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
-
-                try {
-                    UpdateUtils.downloadFile(u, lib);
-                    fail.remove(u);
-                } catch (Exception e) {
-                    System.out.println(Message.getFormatString("file.download.nook", new Object[]{u}));
-                    lib.delete();
-                    fail.put(u, lib.getAbsolutePath());
+        if (Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
+        BufferedReader b = new BufferedReader(new InputStreamReader(DownloadLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
+        while ((str = b.readLine()) != null) {
+            String[] args = str.split("\\|");
+            if (args.length == 2) {
+                File file = new File(JarTool.getJarDir() + "/" + args[0]);
+                if ((!file.exists() || !MD5Util.md5CheckSum(file, args[1]))) {
+                    if (MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(file.getName())) continue;
+                    file.getParentFile().mkdirs();
+                    String u = url + args[0];
+                    System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
+                    try {
+                        UpdateUtils.downloadFile(u, file);
+                        if (!file.getName().equals("minecraft_server.1.12.2.jar")) {
+                            JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), file.getParent());
+                        }
+                        if (fail.containsKey(u)) fail.remove(u);
+                    } catch (Exception e) {
+                        System.out.println(Message.getFormatString("file.download.nook", new Object[]{u}));
+                        file.delete();
+                        fail.put(u, file.getAbsolutePath());
+                    }
                 }
             }
-
         }
+        b.close();
         /*FINISHED | RECHECK IF A FILE FAILED*/
-        if (retry < 3 && !fail.isEmpty()) {
-            retry++;
-            System.out.println(Message.getFormatString("update.retry", new Object[]{retry}));
+        if (!fail.isEmpty()) {
             run();
         } else {
             System.out.println(Message.getString("libraries.checking.end"));
@@ -55,22 +57,5 @@ public class DownloadLibraries {
                 System.exit(0);
             }
         }
-    }
-
-    public static HashMap<File, String> getLibs() throws Exception {
-        HashMap<File, String> temp = new HashMap<>();
-        BufferedReader b = new BufferedReader(new InputStreamReader(DownloadLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
-        String str;
-        while ((str = b.readLine()) != null) {
-            String[] s = str.split("\\|");
-            temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
-        }
-        b.close();
-        return temp;
-    }
-
-    public static void addLibs() throws Exception {
-        for (File lib : getLibs().keySet())
-            new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()).loadJar(lib.toURI().toURL());
     }
 }
