@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -1,7 +1,9 @@
+@@ -1,10 +1,13 @@
  package net.minecraft.server;
  
 +import co.aikar.timings.MinecraftTimings;
@@ -11,7 +11,11 @@
  import com.google.common.util.concurrent.Futures;
  import com.google.common.util.concurrent.ListenableFuture;
  import com.google.common.util.concurrent.ListenableFutureTask;
-@@ -13,7 +15,7 @@
++import com.mohistmc.network.MohistProxySelector;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.GameProfileRepository;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+@@ -13,29 +16,34 @@
  import io.netty.buffer.ByteBufOutputStream;
  import io.netty.buffer.Unpooled;
  import io.netty.handler.codec.base64.Base64;
@@ -20,7 +24,10 @@
  import java.awt.image.BufferedImage;
  import java.io.File;
  import java.io.IOException;
-@@ -23,19 +25,23 @@
+ import java.io.UnsupportedEncodingException;
+ import java.net.Proxy;
++import java.net.ProxySelector;
+ import java.net.URLEncoder;
  import java.nio.charset.StandardCharsets;
  import java.security.KeyPair;
  import java.text.SimpleDateFormat;
@@ -45,7 +52,7 @@
  import net.minecraft.advancements.AdvancementManager;
  import net.minecraft.advancements.FunctionManager;
  import net.minecraft.command.CommandBase;
-@@ -55,6 +61,7 @@
+@@ -55,6 +63,7 @@
  import net.minecraft.profiler.Profiler;
  import net.minecraft.profiler.Snooper;
  import net.minecraft.server.dedicated.DedicatedServer;
@@ -53,7 +60,7 @@
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.IProgressUpdate;
-@@ -79,33 +86,48 @@
+@@ -79,33 +88,48 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
  import net.minecraft.world.chunk.storage.AnvilSaveConverter;
@@ -108,7 +115,7 @@
      private PlayerList field_71318_t;
      private boolean field_71317_u = true;
      private boolean field_71316_v;
-@@ -123,11 +145,11 @@
+@@ -123,11 +147,11 @@
      private int field_71280_D;
      private int field_143008_E;
      public final long[] field_71311_j = new long[100];
@@ -122,7 +129,7 @@
      private String field_71287_L;
      private boolean field_71288_M;
      private boolean field_71289_N;
-@@ -143,12 +165,39 @@
+@@ -143,12 +167,39 @@
      private final GameProfileRepository field_152365_W;
      private final PlayerProfileCache field_152366_X;
      private long field_147142_T;
@@ -164,7 +171,7 @@
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
          this.field_110456_c = p_i47054_2_;
-@@ -161,8 +210,36 @@
+@@ -161,8 +212,36 @@
          this.field_71321_q = this.func_175582_h();
          this.field_71310_m = new AnvilSaveConverter(p_i47054_1_, p_i47054_3_);
          this.field_184112_s = p_i47054_3_;
@@ -201,7 +208,7 @@
      public ServerCommandManager func_175582_h()
      {
          return new ServerCommandManager(this);
-@@ -220,83 +297,93 @@
+@@ -220,83 +299,94 @@
  
      public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, String p_71247_6_)
      {
@@ -290,6 +297,7 @@
 +                ISaveHandler idatamanager = new AnvilSaveHandler(server.getWorldContainer(), p_71247_2_, true, this.field_184112_s);
 +                WorldInfo worlddata = idatamanager.func_75757_d();
 +                SaveHandler.initBukkitData();
++                ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
 +                server.loadPlugins();
 +                server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +                if (worlddata == null) {
@@ -349,7 +357,7 @@
      }
  
      public void func_71222_d()
-@@ -308,9 +395,12 @@
+@@ -308,9 +398,12 @@
          int i1 = 0;
          this.func_71192_d("menu.generatingTerrain");
          int j1 = 0;
@@ -364,7 +372,7 @@
          long k1 = func_130071_aq();
  
          for (int l1 = -192; l1 <= 192 && this.func_71278_l(); l1 += 16)
-@@ -321,7 +411,7 @@
+@@ -321,7 +414,7 @@
  
                  if (j2 - k1 > 1000L)
                  {
@@ -373,7 +381,7 @@
                      k1 = j2;
                  }
  
-@@ -379,13 +469,13 @@
+@@ -379,13 +472,13 @@
  
      public void func_71267_a(boolean p_71267_1_)
      {
@@ -389,7 +397,7 @@
                  }
  
                  try
-@@ -400,10 +490,24 @@
+@@ -400,10 +493,24 @@
          }
      }
  
@@ -417,7 +425,7 @@
          if (this.func_147137_ag() != null)
          {
              this.func_147137_ag().func_151268_b();
-@@ -411,14 +515,15 @@
+@@ -411,14 +518,15 @@
  
          if (this.field_71318_t != null)
          {
@@ -435,7 +443,7 @@
  
              for (WorldServer worldserver : this.field_71305_c)
              {
-@@ -428,21 +533,40 @@
+@@ -428,21 +536,40 @@
                  }
              }
  
@@ -478,7 +486,7 @@
      }
  
      public boolean func_71278_l()
-@@ -455,65 +579,72 @@
+@@ -455,65 +582,72 @@
          this.field_71317_u = false;
      }
  
@@ -581,7 +589,7 @@
              CrashReport crashreport = null;
  
              if (throwable1 instanceof ReportedException)
-@@ -522,35 +653,43 @@
+@@ -522,35 +656,43 @@
              }
              else
              {
@@ -630,7 +638,7 @@
                  this.func_71240_o();
              }
          }
-@@ -572,15 +711,17 @@
+@@ -572,15 +714,17 @@
              try
              {
                  BufferedImage bufferedimage = ImageIO.read(file1);
@@ -651,7 +659,7 @@
              }
              finally
              {
-@@ -615,9 +756,18 @@
+@@ -615,9 +759,18 @@
      {
      }
  
@@ -672,7 +680,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -634,7 +784,7 @@
+@@ -634,7 +787,7 @@
          {
              this.field_147142_T = i;
              this.field_147147_p.func_151319_a(new ServerStatusResponse.Players(this.func_71275_y(), this.func_71233_x()));
@@ -681,7 +689,7 @@
              int j = MathHelper.func_76136_a(this.field_147146_q, 0, this.func_71233_x() - agameprofile.length);
  
              for (int k = 0; k < agameprofile.length; ++k)
-@@ -644,9 +794,9 @@
+@@ -644,9 +797,9 @@
  
              Collections.shuffle(Arrays.asList(agameprofile));
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -693,7 +701,7 @@
          {
              this.field_71304_b.func_76320_a("save");
              this.field_71318_t.func_72389_g();
-@@ -654,6 +804,7 @@
+@@ -654,6 +807,7 @@
              this.field_71304_b.func_76319_b();
          }
  
@@ -701,7 +709,7 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -671,87 +822,124 @@
+@@ -671,87 +825,124 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -875,7 +883,7 @@
  
          this.field_71304_b.func_76319_b();
      }
-@@ -763,8 +951,11 @@
+@@ -763,8 +954,11 @@
  
      public void func_71256_s()
      {
@@ -889,7 +897,7 @@
      }
  
      public File func_71209_f(String p_71209_1_)
-@@ -779,16 +970,25 @@
+@@ -779,16 +973,25 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -920,7 +928,7 @@
      public String func_71249_w()
      {
          return "1.12.2";
-@@ -816,7 +1016,7 @@
+@@ -816,7 +1019,7 @@
  
      public String getServerModName()
      {
@@ -929,7 +937,7 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -845,7 +1045,7 @@
+@@ -845,7 +1048,7 @@
  
      public List<String> func_184104_a(ICommandSender p_184104_1_, String p_184104_2_, @Nullable BlockPos p_184104_3_, boolean p_184104_4_)
      {
@@ -938,7 +946,7 @@
          boolean flag = p_184104_2_.startsWith("/");
  
          if (flag)
-@@ -862,11 +1062,9 @@
+@@ -862,11 +1065,9 @@
              {
                  if (CommandBase.func_71523_a(s2, s1))
                  {
@@ -951,7 +959,7 @@
          }
          else
          {
-@@ -879,27 +1077,29 @@
+@@ -879,27 +1080,29 @@
                  {
                      if (flag1 && !p_184104_4_)
                      {
@@ -987,7 +995,7 @@
      }
  
      public void func_145747_a(ITextComponent p_145747_1_)
-@@ -912,6 +1112,10 @@
+@@ -912,6 +1115,10 @@
          return true;
      }
  
@@ -998,7 +1006,7 @@
      public ICommandManager func_71187_D()
      {
          return this.field_71321_q;
-@@ -947,13 +1151,11 @@
+@@ -947,13 +1154,11 @@
          this.field_71294_K = p_71261_1_;
      }
  
@@ -1012,7 +1020,7 @@
      public String func_71221_J()
      {
          return this.field_71287_L;
-@@ -966,7 +1168,7 @@
+@@ -966,7 +1171,7 @@
  
      public void func_147139_a(EnumDifficulty p_147139_1_)
      {
@@ -1021,7 +1029,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1048,9 +1250,9 @@
+@@ -1048,9 +1253,9 @@
          p_70000_1_.func_152768_a("avg_tick_ms", Integer.valueOf((int)(MathHelper.func_76127_a(this.field_71311_j) * 1.0E-6D)));
          int l = 0;
  
@@ -1033,7 +1041,7 @@
              {
                  if (worldserver1 != null)
                  {
-@@ -1088,7 +1290,8 @@
+@@ -1088,7 +1293,8 @@
  
      public boolean func_71266_T()
      {
@@ -1043,7 +1051,7 @@
      }
  
      public void func_71229_d(boolean p_71229_1_)
-@@ -1182,7 +1385,7 @@
+@@ -1182,7 +1388,7 @@
  
      public void func_71235_a(GameType p_71235_1_)
      {
@@ -1052,7 +1060,7 @@
          {
              worldserver1.func_72912_H().func_76060_a(p_71235_1_);
          }
-@@ -1285,7 +1488,7 @@
+@@ -1285,7 +1491,7 @@
      @Nullable
      public Entity func_175576_a(UUID p_175576_1_)
      {
@@ -1061,7 +1069,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1311,6 +1514,11 @@
+@@ -1311,6 +1517,11 @@
          return this;
      }
  
@@ -1073,7 +1081,7 @@
      public int func_175580_aG()
      {
          return 29999984;
-@@ -1320,15 +1528,14 @@
+@@ -1320,15 +1531,14 @@
      {
          Validate.notNull(p_175586_1_);
  
@@ -1094,7 +1102,7 @@
          }
          else
          {
-@@ -1409,124 +1616,42 @@
+@@ -1409,124 +1619,42 @@
      }
  
      @SideOnly(Side.SERVER)
@@ -1236,7 +1244,7 @@
          }
      }
  
-@@ -1539,7 +1664,8 @@
+@@ -1539,7 +1667,8 @@
      @SideOnly(Side.SERVER)
      public boolean func_71239_B()
      {
@@ -1246,7 +1254,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1598,4 +1724,14 @@
+@@ -1598,4 +1727,14 @@
      {
          return this.field_175590_aa;
      }

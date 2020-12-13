@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,21 +1,21 @@
+@@ -1,21 +1,19 @@
  package net.minecraft.server.dedicated;
  
 -import com.google.common.collect.Lists;
@@ -19,20 +19,17 @@
 -import java.nio.charset.StandardCharsets;
 -import java.util.Collections;
 -import java.util.List;
-+import java.util.Locale;
  import java.util.Random;
  import java.util.concurrent.TimeUnit;
  import java.util.regex.Pattern;
 +
-+import net.minecraft.client.resources.Language;
  import net.minecraft.command.ICommandSender;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.ICrashReportDetail;
-@@ -43,25 +43,44 @@
+@@ -43,25 +41,43 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
-+import net.minecraft.world.chunk.storage.AnvilSaveConverter;
 +import net.minecraftforge.common.util.FakePlayer;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -77,7 +74,7 @@
  
      public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
      {
-@@ -95,14 +114,22 @@
+@@ -95,14 +111,22 @@
          {
              public void run()
              {
@@ -106,7 +103,7 @@
                      }
                  }
                  catch (IOException ioexception1)
-@@ -111,17 +138,40 @@
+@@ -111,17 +135,40 @@
                  }
              }
          };
@@ -150,7 +147,7 @@
          this.field_154332_n = new ServerEula(new File("eula.txt"));
  
          if (!this.field_154332_n.func_154346_a())
-@@ -140,7 +190,7 @@
+@@ -140,7 +187,7 @@
              {
                  this.func_71229_d(this.field_71340_o.func_73670_a("online-mode", true));
                  this.func_190517_e(this.field_71340_o.func_73670_a("prevent-proxy-connections", false));
@@ -159,7 +156,7 @@
              }
  
              this.func_71251_e(this.field_71340_o.func_73670_a("spawn-animals", true));
-@@ -164,7 +214,7 @@
+@@ -164,7 +211,7 @@
              this.field_71338_p = this.field_71340_o.func_73670_a("generate-structures", true);
              int i = this.field_71340_o.func_73669_a("gamemode", GameType.SURVIVAL.func_77148_a());
              this.field_71337_q = WorldSettings.func_77161_a(i);
@@ -168,7 +165,7 @@
              InetAddress inetaddress = null;
  
              if (!this.func_71211_k().isEmpty())
-@@ -177,10 +227,22 @@
+@@ -177,10 +224,22 @@
                  this.func_71208_b(this.field_71340_o.func_73669_a("server-port", 25565));
              }
  
@@ -193,7 +190,7 @@
              try
              {
                  this.func_147137_ag().func_151265_a(inetaddress, this.func_71215_F());
-@@ -192,15 +254,7 @@
+@@ -192,15 +251,7 @@
                  field_155771_h.warn("Perhaps a server is already running on that port?");
                  return false;
              }
@@ -210,7 +207,7 @@
              if (this.func_152368_aE())
              {
                  this.func_152358_ax().func_152658_c();
-@@ -212,7 +266,7 @@
+@@ -212,7 +263,7 @@
              }
              else
              {
@@ -219,7 +216,7 @@
                  long j = System.nanoTime();
  
                  if (this.func_71270_I() == null)
-@@ -260,12 +314,22 @@
+@@ -260,12 +311,22 @@
                  TileEntitySkull.func_184293_a(this.func_152358_ax());
                  TileEntitySkull.func_184294_a(this.func_147130_as());
                  PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -244,7 +241,7 @@
                  if (this.field_71340_o.func_187239_a("announce-player-achievements"))
                  {
                      this.field_71305_c[0].func_82736_K().func_82764_b("announceAdvancements", this.field_71340_o.func_73670_a("announce-player-achievements", true) ? "true" : "false");
-@@ -285,18 +349,35 @@
+@@ -285,18 +346,35 @@
                      field_155771_h.info("Starting remote control listener");
                      this.field_71339_n = new RConThreadMain(this);
                      this.field_71339_n.func_72602_a();
@@ -287,7 +284,7 @@
              }
          }
      }
-@@ -419,11 +500,20 @@
+@@ -419,11 +497,20 @@
  
      public void func_71333_ah()
      {
@@ -312,7 +309,7 @@
      }
  
      public boolean func_71262_S()
-@@ -515,7 +605,7 @@
+@@ -515,7 +602,7 @@
  
      public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
      {
@@ -321,7 +318,7 @@
          {
              return false;
          }
-@@ -584,6 +674,9 @@
+@@ -584,6 +671,9 @@
          return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
      }
  
@@ -331,7 +328,7 @@
      protected boolean func_152368_aE() throws IOException
      {
          boolean flag = false;
-@@ -673,13 +766,79 @@
+@@ -673,13 +763,79 @@
  
      public String func_71258_A()
      {
