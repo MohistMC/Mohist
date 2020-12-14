@@ -17,7 +17,6 @@ public class AutoDeleteMods {
             "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
             "com.performant.coremod.Performant" /*Performant*/,
             "optifine.Differ" /*OptiFine*/,
-            "ichttt.mods.firstaid.FirstAid" /*FirstAid*/,
             "guichaguri.betterfps.patches.misc.ServerPatch" /*BetterFps*/,
             "com.unnoen.unloader.UnloadHandler" /*Unloader*/));
 

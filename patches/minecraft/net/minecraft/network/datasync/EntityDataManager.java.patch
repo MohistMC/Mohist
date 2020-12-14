@@ -8,7 +8,24 @@
  import java.io.IOException;
  import java.util.List;
  import java.util.Map;
-@@ -26,7 +27,7 @@
+@@ -13,6 +14,8 @@
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.EntityLivingBase;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.util.ReportedException;
+ import net.minecraftforge.fml.relauncher.Side;
+@@ -20,13 +23,15 @@
+ import org.apache.commons.lang3.ObjectUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
++import org.bukkit.entity.LivingEntity;
+ 
+ public class EntityDataManager
+ {
      private static final Logger field_190303_a = LogManager.getLogger();
      private static final Map < Class <? extends Entity > , Integer > field_187232_a = Maps. < Class <? extends Entity > , Integer > newHashMap();
      private final Entity field_187233_b;
@@ -17,7 +34,7 @@
      private final ReadWriteLock field_187235_d = new ReentrantReadWriteLock();
      private boolean field_187236_e = true;
      private boolean field_187237_f;
-@@ -38,7 +39,7 @@
+@@ -38,7 +43,7 @@
  
      public static <T> DataParameter<T> func_187226_a(Class <? extends Entity > p_187226_0_, DataSerializer<T> p_187226_1_)
      {
@@ -26,7 +43,7 @@
          {
              try
              {
-@@ -46,7 +47,9 @@
+@@ -46,7 +51,9 @@
  
                  if (!oclass.equals(p_187226_0_))
                  {
@@ -34,7 +51,18 @@
 +                    //Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
 +                    if (field_190303_a.isDebugEnabled()) field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
 +                    else field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass);
-\ No newline at end of file
                  }
              }
              catch (ClassNotFoundException var5)
+@@ -159,6 +166,10 @@
+             dataentry.func_187208_a(true);
+             this.field_187237_f = true;
+         }
++        if (p_187227_1_ == EntityLivingBase.field_184632_c && field_187233_b instanceof EntityPlayerMP && ((EntityPlayerMP) field_187233_b).initialized()){
++            CraftPlayer player = ((EntityPlayerMP) this.field_187233_b).getBukkitEntity();
++            player.setRealHealth(((Float) p_187227_2_));
++        }
+\ No newline at end of file
+     }
+ 
+     public <T> void func_187217_b(DataParameter<T> p_187217_1_)
