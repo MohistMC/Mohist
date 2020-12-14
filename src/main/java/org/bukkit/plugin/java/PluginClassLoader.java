@@ -1,5 +1,6 @@
 package org.bukkit.plugin.java;
 
+import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import net.md_5.specialsource.repo.RuntimeRepo;
@@ -160,17 +162,17 @@ public final class PluginClassLoader extends URLClassLoader {
         try {
             // Load the resource to the name
             String path = name.replace('.', '/').concat(".class");
-            URL url = this.findResource(path);
-            if (url != null) {
-                InputStream stream = url.openStream();
+            JarEntry entry = this.jar.getJarEntry(path);
+            if (entry != null) {
+                InputStream stream = this.jar.getInputStream(entry);
                 if (stream != null) {
-                    byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
-                    bytecode = RemapUtils.remapFindClass(bytecode);
-                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-                    URL jarURL = jarURLConnection.getJarFileURL();
-                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+                    byte[] classBytes = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    classBytes = RemapUtils.remapFindClass(classBytes);
 
-                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                    CodeSigner[] signers = entry.getCodeSigners();
+                    CodeSource source = new CodeSource(this.url, signers);
+
+                    result = this.defineClass(name, classBytes, 0, classBytes.length, source);
                     if (result != null) {
                         // Resolve it - sets the class loader of the class
                         this.resolveClass(result);
