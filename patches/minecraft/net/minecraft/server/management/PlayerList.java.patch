@@ -238,11 +238,10 @@
  
        if (compoundnbt != null && compoundnbt.func_150297_b("RootVehicle", 10)) {
           CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("RootVehicle");
--         Entity entity1 = EntityType.func_220335_a(compoundnbt1.func_74775_l("Entity"), serverworld1, (p_217885_1_) -> {
++         ServerWorld finalServerworld = serverworld1;
+          Entity entity1 = EntityType.func_220335_a(compoundnbt1.func_74775_l("Entity"), serverworld1, (p_217885_1_) -> {
 -            return !serverworld1.func_217470_d(p_217885_1_) ? null : p_217885_1_;
-+		 ServerWorld finalWorldServer = serverworld1;
-+         Entity entity1 = EntityType.func_220335_a(compoundnbt1.func_74775_l("Entity"), finalWorldServer, (p_217885_1_) -> {
-+            return !finalWorldServer.func_217470_d(p_217885_1_) ? null : p_217885_1_;
++            return !finalServerworld.func_217470_d(p_217885_1_) ? null : p_217885_1_;
           });
           if (entity1 != null) {
              UUID uuid;

@@ -1,6 +1,13 @@
 --- a/net/minecraft/network/login/ServerLoginNetHandler.java
 +++ b/net/minecraft/network/login/ServerLoginNetHandler.java
-@@ -29,10 +29,16 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.network.login;
+ 
++import com.mohistmc.MohistMC;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+ import java.math.BigInteger;
+@@ -29,10 +30,16 @@
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
  import net.minecraft.util.text.ITextComponent;
@@ -17,7 +24,7 @@
  
  public class ServerLoginNetHandler implements IServerLoginNetHandler {
     private static final AtomicInteger field_147331_b = new AtomicInteger(0);
-@@ -47,6 +53,7 @@
+@@ -47,6 +54,7 @@
     private final String field_147334_j = "";
     private SecretKey field_147335_k;
     private ServerPlayerEntity field_181025_l;
@@ -25,7 +32,7 @@
  
     public ServerLoginNetHandler(MinecraftServer p_i45298_1_, NetworkManager p_i45298_2_) {
        this.field_147327_f = p_i45298_1_;
-@@ -55,7 +62,13 @@
+@@ -55,7 +63,13 @@
     }
  
     public void func_73660_a() {
@@ -40,12 +47,11 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -72,6 +85,21 @@
+@@ -72,6 +86,20 @@
  
     }
  
 +   // CraftBukkit start
-+   @Deprecated
 +   public void disconnect(String s) {
 +      try {
 +         ITextComponent ichatbasecomponent = new StringTextComponent(s);
@@ -117,10 +123,10 @@
           if (serverplayerentity != null) {
              this.field_147328_g = ServerLoginNetHandler.State.DELAY_ACCEPT;
 -            this.field_181025_l = this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i);
-+            this.field_181025_l = this.field_147327_f.func_184103_al().createPlayerForUser(this.field_147337_i, s); // CraftBukkit - add player reference
++            this.field_181025_l = s; // CraftBukkit - add player reference
           } else {
 -            this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i));
-+            this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_147327_f.func_184103_al().createPlayerForUser(this.field_147337_i, s)); // CraftBukkit - add player reference
++            this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, s); // CraftBukkit - add player reference
           }
        }
  

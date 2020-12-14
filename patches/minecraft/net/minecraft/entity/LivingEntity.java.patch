@@ -479,7 +479,7 @@
  
     public float func_110143_aJ() {
 +      // CraftBukkit start - Use unscaled health
-+      if (this instanceof  ServerPlayerEntity) {
++      if (this instanceof ServerPlayerEntity) {
 +         return (float) ((ServerPlayerEntity) this).getBukkitEntity().getHealth();
 +      }
 +      // CraftBukkit end

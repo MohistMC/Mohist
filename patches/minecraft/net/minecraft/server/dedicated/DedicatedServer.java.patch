@@ -220,24 +220,6 @@
     }
  
     public boolean func_230537_U_() {
-@@ -241,7 +306,7 @@
-    }
- 
-    public void func_230543_p_() {
--      this.func_147139_a(this.func_213221_d_().field_219019_m, true);
-+      //this.setDifficultyForAllWorlds(this.getServerProperties().difficulty, true); // Paper - Don't overwrite level.dat's difficulty, keep current
-    }
- 
-    public boolean func_71199_h() {
-@@ -280,7 +345,7 @@
-       if (this.field_71342_m != null) {
-          this.field_71342_m.func_219591_b();
-       }
--
-+      System.exit(0); // CraftBukkit
-    }
- 
-    public void func_71190_q(BooleanSupplier p_71190_1_) {
 @@ -303,11 +368,21 @@
     }
  

@@ -1911,7 +1911,7 @@
     }
  
     public void func_147352_a(CClientSettingsPacket p_147352_1_) {
-@@ -1401,13 +2539,10 @@
+@@ -1401,9 +2539,6 @@
        this.field_147369_b.func_147100_a(p_147352_1_);
     }
  
@@ -1921,23 +1921,17 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
--         this.field_147367_d.func_147139_a(p_217263_1_.func_218773_b(), false);
-+         //this.server.setDifficultyForAllWorlds(p_217263_1_.func_218773_b(), false); // Paper - don't allow clients to change this
-       }
-    }
- 
 @@ -1417,4 +2552,54 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
 +
 +   // CraftBukkit start
-+   private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("minecraft:register");
-+   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("minecraft:unregister");
++   private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
++   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
 +
 +   public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
 +      PacketThreadUtil.func_218796_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
-+      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
 +      if (p_147349_1_.field_149562_a.equals(ServerPlayNetHandler.CUSTOM_REGISTER)) {
 +         try {
 +            String channels = p_147349_1_.field_149561_c.toString(com.google.common.base.Charsets.UTF_8);
@@ -1974,6 +1968,7 @@
 +            this.disconnect("Invalid custom payload!");
 +         }
 +      }
++      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
 +   }
 +
 +   public boolean isDisconnected() {
