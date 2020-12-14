@@ -1,10 +1,8 @@
 package org.bukkit.plugin.java;
 
-import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
@@ -104,21 +102,13 @@ public final class PluginClassLoader extends URLClassLoader {
                     if (result == null) {
                         result = remappedFindClass(name);
 
+                        if (result == null) {
+                            result = super.findClass(name);
+                        }
+
                         if (result != null) {
                             loader.setClass(name, result);
                         }
-                    }
-
-                    if (result == null) {
-                        try {
-                            result = launchClassLoader.getClass().getClassLoader().loadClass(name);
-                        } catch (Throwable throwable) {
-                            throw new ClassNotFoundException(name, throwable);
-                        }
-                    }
-
-                    if (result == null) {
-                        throw new ClassNotFoundException(name);
                     }
 
                     classes.put(name, result);
