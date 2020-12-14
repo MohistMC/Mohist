@@ -758,7 +758,6 @@ public final class CraftServer implements Server {
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
         Validate.notNull(sender, Message.get("bukkit.sender.notnull"));
         Validate.notNull(commandLine, Message.get("bukkit.commandline.notnull"));
-		org.spigotmc.AsyncCatcher.catchOp("command dispatch"); // Spigot
 
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
@@ -1059,8 +1058,9 @@ public final class CraftServer implements Server {
 
         RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
 
+        net.minecraft.world.World.setGeneratorAndEnv(generator, creator.environment());
         ServerWorld internal = (ServerWorld) new ServerWorld(console, console.backgroundExecutor, worldSession, worlddata, worldKey, dimensionmanager, getServer().chunkStatusListenerFactory.create(11),
-                chunkgenerator, worlddata.getDimensionGeneratorSettings().func_236227_h_(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, creator.environment(), generator);
+                chunkgenerator, worlddata.getDimensionGeneratorSettings().func_236227_h_(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true);
 
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
             return null;

@@ -145,7 +145,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityAnimation.register();
         CapabilityEnergy.register();
 
-        VersionChecker.startVersionCheck();
+        //VersionChecker.startVersionCheck();
 
         registerArgumentTypes();
     }

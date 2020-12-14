@@ -42,7 +42,6 @@ public class RestartCommand extends Command
 
     private static void restart(final String restartScript)
     {
-        AsyncCatcher.enabled = false; // Disable async catcher incase it interferes with us
         try
         {
             String[] split = restartScript.split( " " );

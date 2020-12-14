@@ -5,6 +5,7 @@ import net.minecraft.server.MinecraftServer;
 public class AsyncCatcher
 {
 
+    /*
     public static boolean enabled = true;
 
     public static void catchOp(String reason)
@@ -14,4 +15,5 @@ public class AsyncCatcher
             throw new IllegalStateException( "Asynchronous " + reason + "!" );
         }
     }
+     */
 }

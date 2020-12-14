@@ -326,7 +326,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     @Override
     public void kickPlayer(String message) {
-        org.spigotmc.AsyncCatcher.catchOp("player kick"); // Spigot
         if (getHandle().connection == null) return;
 
         getHandle().connection.disconnect(message == null ? "" : message);

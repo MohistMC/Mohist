@@ -119,8 +119,6 @@
     private final boolean field_241107_Q_;
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
  
--   public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_) {
--      super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
 +   // CraftBukkit start
 +   private int tickPosition;
 +   public final SaveFormat.LevelSave convertable;
@@ -131,8 +129,8 @@
 +   }
 +
 +   // Add env and gen to constructor,
-+   public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen) {
-+      super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_, gen, env);
+    public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_) {
+       super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
 +      this.pvpMode = p_i241885_1_.func_71219_W();
 +      convertable = p_i241885_3_;
 +      uuid = WorldUUID.getUUID(p_i241885_3_.field_237279_c_.toFile());
@@ -143,8 +141,8 @@
 -      this.field_241103_E_ = p_i241885_4_;
 +      // CraftBukkit start
 +      this.field_241103_E_ = (ServerWorldInfo) p_i241885_4_;
-+      if (gen != null) {
-+         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, gen);
++      if (generator != null) {
++         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
 +
        this.field_241102_C_ = new ServerChunkProvider(this, p_i241885_3_, p_i241885_1_.func_195563_aC(), p_i241885_1_.func_240792_aT_(), p_i241885_2_, p_i241885_8_, p_i241885_1_.func_184103_al().func_72395_o(), p_i241885_1_.func_230540_aS_(), p_i241885_7_, () -> {
@@ -549,7 +547,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -795,18 +933,26 @@
+@@ -795,18 +933,25 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
@@ -559,7 +557,6 @@
 +   }
 +
 +   private boolean addEntity0(Entity entityIn, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      org.spigotmc.AsyncCatcher.catchOp("entity add"); // Spigot
 +      if (entityIn.valid) { MinecraftServer.field_147145_h.error("Attempted Double World add on " + entityIn, new Throwable()); return true; } // Paper
 +      if (entityIn.field_70128_L) {
 +         // LOGGER.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.getKey(entityIn.getType())); // CraftBukkit
@@ -582,7 +579,7 @@
              return true;
           }
        }
-@@ -816,6 +962,7 @@
+@@ -816,6 +961,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -590,7 +587,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -851,15 +998,30 @@
+@@ -851,15 +997,30 @@
     }
  
     public boolean func_242106_g(Entity p_242106_1_) {
@@ -623,7 +620,7 @@
        this.field_147483_b.addAll(p_217466_1_.func_177434_r().values());
        ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = p_217466_1_.func_177429_s();
        int i = aclassinheritancemultimap.length;
-@@ -879,12 +1041,42 @@
+@@ -879,12 +1040,41 @@
  
     }
  
@@ -632,7 +629,6 @@
 +      removeEntityComplete(p_217484_1_, false);
 +   }
 +   public void removeEntityComplete(Entity p_217484_1_, boolean keepData) {
-+      org.spigotmc.AsyncCatcher.catchOp("entity unregister"); // Spigot
 +      // Spigot start
 +      if ( p_217484_1_ instanceof PlayerEntity )
 +      {
@@ -667,7 +663,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -894,13 +1086,23 @@
+@@ -894,10 +1084,19 @@
        }
  
        this.func_96441_U().func_181140_a(p_217484_1_);
@@ -687,11 +683,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-+      org.spigotmc.AsyncCatcher.catchOp("entity register"); // Spigot
-       if (this.field_217492_a) {
-          this.field_217499_z.add(p_217465_1_);
-       } else {
-@@ -913,20 +1115,31 @@
+@@ -913,20 +1112,31 @@
  
           this.field_175741_N.put(p_217465_1_.func_110124_au(), p_217465_1_);
           this.func_72863_F().func_217230_c(p_217465_1_);
@@ -724,7 +716,7 @@
        }
     }
  
-@@ -939,17 +1152,47 @@
+@@ -939,17 +1149,47 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -774,7 +766,7 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayerentity.field_71135_a.func_147359_a(new SAnimateBlockBreakPacket(p_175715_1_, p_175715_2_, p_175715_3_));
              }
-@@ -959,10 +1202,20 @@
+@@ -959,10 +1199,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -795,7 +787,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.func_234923_W_(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -997,9 +1250,17 @@
+@@ -997,9 +1247,17 @@
     }
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
@@ -816,7 +808,7 @@
        if (p_230546_12_ == Explosion.Mode.NONE) {
           explosion.func_180342_d();
        }
-@@ -1054,12 +1315,19 @@
+@@ -1054,12 +1312,19 @@
     }
  
     public <T extends IParticleData> int func_195598_a(T p_195598_1_, double p_195598_2_, double p_195598_4_, double p_195598_6_, int p_195598_8_, double p_195598_9_, double p_195598_11_, double p_195598_13_, double p_195598_15_) {
@@ -838,7 +830,7 @@
              ++i;
           }
        }
-@@ -1131,7 +1399,13 @@
+@@ -1131,7 +1396,13 @@
     @Nullable
     public MapData func_217406_a(String p_217406_1_) {
        return this.func_73046_m().func_241755_D_().func_217481_x().func_215753_b(() -> {
@@ -853,7 +845,7 @@
        }, p_217406_1_);
     }
  
-@@ -1333,6 +1607,11 @@
+@@ -1333,6 +1604,11 @@
  
     public void func_230547_a_(BlockPos p_230547_1_, Block p_230547_2_) {
        if (!this.func_234925_Z_()) {
@@ -865,7 +857,7 @@
           this.func_195593_d(p_230547_1_, p_230547_2_);
        }
  
-@@ -1399,15 +1678,44 @@
+@@ -1399,15 +1675,44 @@
     }
  
     public static void func_241121_a_(ServerWorld p_241121_0_) {
