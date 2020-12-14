@@ -33,7 +33,7 @@
           this.field_183008_d = true;
 -         this.field_147313_b.func_179290_a(new SServerInfoPacket(this.field_147314_a.func_147134_at()));
 +         // CraftBukkit start
-+         // this.networkManager.sendPacket(new SServerInfoPacket(this.server.getServerStatusResponse()));
++         //this.networkManager.sendPacket(new SServerInfoPacket(this.server.getServerStatusResponse()));
 +         Object[] players = field_147314_a.func_184103_al().field_72404_b.toArray();
 +         class ServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
 +
@@ -117,12 +117,12 @@
 +         // Spigot End
 +         playerSample.func_151330_a(profiles.toArray(new GameProfile[profiles.size()]));
 +
-+         ServerStatusResponse ping = new ServerStatusResponse();
++         ServerStatusResponse ping = this.field_147314_a.func_147134_at();
 +         ping.func_151320_a(event.icon.value);
 +         ping.func_151315_a(new StringTextComponent(event.getMotd()));
 +         ping.func_151319_a(playerSample);
 +         int version = SharedConstants.func_215069_a().getProtocolVersion();
-+         ping.func_151321_a(new ServerStatusResponse.Version(String.valueOf(this.field_147314_a.getServerModName()) + " " + this.field_147314_a.func_71249_w(), version));
++         ping.func_151321_a(new ServerStatusResponse.Version(field_147314_a.getServerModName() + " " + field_147314_a.func_71249_w(), version));
 +         this.field_147313_b.func_179290_a(new SServerInfoPacket(ping));
        }
 +      // CraftBukkit end
