@@ -220,7 +220,15 @@
     }
  
     public boolean func_230537_U_() {
-@@ -303,11 +368,21 @@
+@@ -281,6 +346,7 @@
+          this.field_71342_m.func_219591_b();
+       }
+ 
++      System.exit(0); // CraftBukkit
+    }
+ 
+    public void func_71190_q(BooleanSupplier p_71190_1_) {
+@@ -303,11 +369,21 @@
     }
  
     public void func_71333_ah() {
@@ -243,7 +251,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -410,7 +485,7 @@
+@@ -410,7 +486,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -252,7 +260,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -489,13 +564,39 @@
+@@ -489,13 +565,39 @@
     }
  
     public String func_71258_A() {
@@ -294,7 +302,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -515,6 +616,11 @@
+@@ -515,6 +617,11 @@
        return false;
     }
  
@@ -306,7 +314,7 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -531,4 +637,15 @@
+@@ -531,4 +638,15 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
     }
