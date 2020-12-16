@@ -20,8 +20,8 @@
     private static final DataParameter<ItemStack> field_184533_c = EntityDataManager.func_187226_a(ItemEntity.class, DataSerializers.field_187196_f);
 -   private int field_70292_b;
 -   private int field_145804_b;
-+   public int field_70292_b; // private->public CraftBukkit
-+   public int field_145804_b; // private->public CraftBukkit
++   public int field_70292_b;
++   public int field_145804_b;
     private int field_70291_e = 5;
     private UUID field_145801_f;
     private UUID field_145802_g;
@@ -271,17 +271,7 @@
        if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
           ((ItemEntity)entity).func_85054_d();
        }
-@@ -336,7 +443,9 @@
-    }
- 
-    public void func_92058_a(ItemStack p_92058_1_) {
-+      com.google.common.base.Preconditions.checkArgument(!p_92058_1_.func_190926_b(), "Cannot drop air"); // CraftBukkit
-       this.func_184212_Q().func_187227_b(field_184533_c, p_92058_1_);
-+      this.func_184212_Q().markDirty(ItemEntity.field_184533_c); // CraftBukkit - SPIGOT-4591, must mark dirty
-    }
- 
-    public void func_184206_a(DataParameter<?> p_184206_1_) {
-@@ -396,7 +505,7 @@
+@@ -396,7 +503,7 @@
  
     public void func_174870_v() {
        this.func_174871_r();
