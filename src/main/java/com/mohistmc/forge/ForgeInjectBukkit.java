@@ -125,7 +125,7 @@ public class ForgeInjectBukkit {
     }
 
     public static World.Environment addEnumEnvironment(int id, String name) {
-        return (World.Environment)MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+        return (World.Environment) MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
     }
 
     public static WorldType addEnumWorldType(String name)
