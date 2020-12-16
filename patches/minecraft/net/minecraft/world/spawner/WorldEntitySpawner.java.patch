@@ -163,17 +163,18 @@
                             flag = true;
                          }
                       }
-@@ -459,8 +517,11 @@
-          return this.field_234984_d_;
+@@ -463,6 +521,14 @@
+          int i = p_234991_1_.func_75601_b() * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
+          return this.field_234982_b_.getInt(p_234991_1_) < i;
        }
- 
--      private boolean func_234991_a_(EntityClassification p_234991_1_) {
--         int i = p_234991_1_.func_75601_b() * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
++
 +      // CraftBukkit start
 +      private boolean func_234991_a_(EntityClassification p_234991_1_, int limit) {
 +         int i = limit * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
 +         // CraftBukkit end
 +
-          return this.field_234982_b_.getInt(p_234991_1_) < i;
-       }
++         return this.field_234982_b_.getInt(p_234991_1_) < i;
++      }
     }
+ 
+    @FunctionalInterface
