@@ -95,12 +95,12 @@
  
     public void func_230409_a_(Difficulty p_230409_1_) {
        this.field_237342_b_ = this.field_237342_b_.func_234948_a_(p_230409_1_);
-+      // CraftBukkit start
-+      SServerDifficultyPacket packet = new SServerDifficultyPacket(this.func_176130_y(), this.func_176123_z());
-+      for (ServerPlayerEntity player : world.func_217369_A()) {
-+         player.field_71135_a.func_147359_a(packet);
++      /*/ CraftBukkit start
++      SServerDifficultyPacket packet = new SServerDifficultyPacket(this.getDifficulty(), this.isDifficultyLocked());
++      for (ServerPlayerEntity player : world.getPlayers()) {
++         player.connection.sendPacket(packet);
 +      }
-+      // CraftBukkit end
++      // CraftBukkit end*/
     }
  
     public boolean func_176123_z() {
