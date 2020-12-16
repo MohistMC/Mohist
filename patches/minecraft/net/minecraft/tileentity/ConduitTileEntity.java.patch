@@ -24,7 +24,7 @@
           for(PlayerEntity playerentity : list) {
              if (this.field_174879_c.func_218141_a(playerentity.func_233580_cy_(), (double)j) && playerentity.func_70026_G()) {
 -               playerentity.func_195064_c(new EffectInstance(Effects.field_205136_C, 260, 0, true, true));
-+               playerentity.addPotionEffect(new EffectInstance(Effects.field_205136_C, 260, 0, true, true), Cause.CONDUIT); // CraftBukkit
++               playerentity.addEffect(new EffectInstance(Effects.field_205136_C, 260, 0, true, true), Cause.CONDUIT); // CraftBukkit
              }
           }
  

@@ -70,13 +70,13 @@
  
        for(EffectInstance effectinstance : this.field_184560_g.func_185170_a()) {
 -         p_184548_1_.func_195064_c(new EffectInstance(effectinstance.func_188419_a(), Math.max(effectinstance.func_76459_b() / 8, 1), effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()));
-+         p_184548_1_.addPotionEffect(new EffectInstance(effectinstance.func_188419_a(), Math.max(effectinstance.func_76459_b() / 8, 1), effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()), Cause.ARROW); // CraftBukkit
++         p_184548_1_.addEffect(new EffectInstance(effectinstance.func_188419_a(), Math.max(effectinstance.func_76459_b() / 8, 1), effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()), Cause.ARROW); // CraftBukkit
        }
  
        if (!this.field_184561_h.isEmpty()) {
           for(EffectInstance effectinstance1 : this.field_184561_h) {
 -            p_184548_1_.func_195064_c(effectinstance1);
-+            p_184548_1_.addPotionEffect(effectinstance1, Cause.ARROW); // CraftBukkit
++            p_184548_1_.addEffect(effectinstance1, Cause.ARROW); // CraftBukkit
           }
        }
  

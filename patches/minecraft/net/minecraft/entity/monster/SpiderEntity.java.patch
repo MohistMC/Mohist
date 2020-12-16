@@ -27,7 +27,7 @@
           Effect effect = ((SpiderEntity.GroupData)p_213386_4_).field_188478_a;
           if (effect != null) {
 -            this.func_195064_c(new EffectInstance(effect, Integer.MAX_VALUE));
-+            this.addPotionEffect(new EffectInstance(effect, Integer.MAX_VALUE), Cause.SPIDER_SPAWN); // CraftBukkit
++            this.addEffect(new EffectInstance(effect, Integer.MAX_VALUE), Cause.SPIDER_SPAWN); // CraftBukkit
           }
        }
  

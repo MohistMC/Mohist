@@ -13,7 +13,7 @@
                    if (list != null) {
                       for(EffectInstance effectinstance : list) {
 -                        this.func_195064_c(new EffectInstance(effectinstance));
-+                        this.addPotionEffect(new EffectInstance(effectinstance), Cause.ATTACK); // CraftBukkit
++                        this.addEffect(new EffectInstance(effectinstance), Cause.ATTACK); // CraftBukkit
                       }
                    }
                 }

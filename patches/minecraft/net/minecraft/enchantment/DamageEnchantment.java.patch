@@ -13,7 +13,7 @@
           if (this.field_77361_a == 2 && livingentity.func_70668_bt() == CreatureAttribute.field_223224_c_) {
              int i = 20 + p_151368_1_.func_70681_au().nextInt(10 * p_151368_3_);
 -            livingentity.func_195064_c(new EffectInstance(Effects.field_76421_d, i, 3));
-+            livingentity.addPotionEffect(new EffectInstance(Effects.field_76421_d, i, 3), Cause.ATTACK);  // CraftBukkit
++            livingentity.addEffect(new EffectInstance(Effects.field_76421_d, i, 3), Cause.ATTACK);  // CraftBukkit
           }
        }
  

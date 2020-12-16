@@ -48,7 +48,7 @@
           this.func_174815_a(livingentity, entity);
           if (entity instanceof LivingEntity) {
 -            ((LivingEntity)entity).func_195064_c(new EffectInstance(Effects.field_188424_y, 200));
-+            ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.field_188424_y, 200), Cause.ATTACK); // CraftBukkit
++            ((LivingEntity) entity).addEffect(new EffectInstance(Effects.field_188424_y, 200), Cause.ATTACK); // CraftBukkit
           }
        }
  

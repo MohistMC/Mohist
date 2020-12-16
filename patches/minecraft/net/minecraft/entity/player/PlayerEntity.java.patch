@@ -125,7 +125,7 @@
        ItemStack itemstack = this.func_184582_a(EquipmentSlotType.HEAD);
        if (itemstack.func_77973_b() == Items.field_203179_ao && !this.func_208600_a(FluidTags.field_206959_a)) {
 -         this.func_195064_c(new EffectInstance(Effects.field_76427_o, 200, 0, false, false, true));
-+         this.addPotionEffect(new EffectInstance(Effects.field_76427_o, 200, 0, false, false, true), Cause.TURTLE_HELMET); // CraftBukkit
++         this.addEffect(new EffectInstance(Effects.field_76427_o, 200, 0, false, false, true), Cause.TURTLE_HELMET); // CraftBukkit
        }
  
     }

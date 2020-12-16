@@ -14,7 +14,7 @@
                 EffectInstance effectinstance = new EffectInstance(Effects.field_220309_E, 120000, i, false, false, true);
                 if (!this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223621_x)) {
 -                  playerentity.func_195064_c(effectinstance);
-+                  playerentity.addPotionEffect(effectinstance, Cause.PATROL_CAPTAIN); // CraftBukkit
++                  playerentity.addEffect(effectinstance, Cause.PATROL_CAPTAIN); // CraftBukkit
                 }
              }
           }

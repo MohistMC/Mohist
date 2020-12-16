@@ -36,7 +36,7 @@
  
        public void func_75249_e() {
 -         this.field_206836_c.func_195064_c(new EffectInstance(Effects.field_206827_D, 100));
-+         this.field_206836_c.addPotionEffect(new EffectInstance(Effects.field_206827_D, 100), Cause.DOLPHIN); // CraftBukkit - reason
++         this.field_206836_c.addEffect(new EffectInstance(Effects.field_206827_D, 100), Cause.DOLPHIN); // CraftBukkit - reason
        }
  
        public void func_75251_c() {
@@ -45,7 +45,7 @@
  
           if (this.field_206836_c.func_203007_ba() && this.field_206836_c.field_70170_p.field_73012_v.nextInt(6) == 0) {
 -            this.field_206836_c.func_195064_c(new EffectInstance(Effects.field_206827_D, 100));
-+            this.field_206836_c.addPotionEffect(new EffectInstance(Effects.field_206827_D, 100), Cause.DOLPHIN); // CraftBukkit - reason
++            this.field_206836_c.addEffect(new EffectInstance(Effects.field_206827_D, 100), Cause.DOLPHIN); // CraftBukkit - reason
           }
  
        }

@@ -99,7 +99,7 @@
 +               } else {
 +                  int i = (int) (dl * (double) effectinstance.func_76459_b() + 0.5D);
 +                  if (i > 20) {
-+                     livingentity.addPotionEffect(new EffectInstance(effect, i, effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()), Cause.POTION_SPLASH); // CraftBukkit
++                     livingentity.addEffect(new EffectInstance(effect, i, effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()), Cause.POTION_SPLASH); // CraftBukkit
 +                  }
 +               }
 +            }

@@ -120,7 +120,7 @@
                                   effectinstance.func_188419_a().func_180793_a(this, this.func_184494_w(), livingentity, effectinstance.func_76458_c(), 0.5D);
                                } else {
 -                                 livingentity.func_195064_c(new EffectInstance(effectinstance));
-+                                 livingentity.addPotionEffect(new EffectInstance(effectinstance), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD); // CraftBukkit
++                                 livingentity.addEffect(new EffectInstance(effectinstance), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD); // CraftBukkit
                                }
                             }
  

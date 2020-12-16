@@ -90,7 +90,7 @@
        }
  
 -      villagerentity.func_195064_c(new EffectInstance(Effects.field_76431_k, 200, 0));
-+      villagerentity.addPotionEffect(new EffectInstance(Effects.field_76431_k, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); // CraftBukkit
++      villagerentity.addEffect(new EffectInstance(Effects.field_76431_k, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); // CraftBukkit
        if (!this.func_174814_R()) {
           p_213791_1_.func_217378_a((PlayerEntity)null, 1027, this.func_233580_cy_(), 0);
        }
