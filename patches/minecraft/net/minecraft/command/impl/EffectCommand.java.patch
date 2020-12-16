@@ -13,7 +13,7 @@
           if (entity instanceof LivingEntity) {
              EffectInstance effectinstance = new EffectInstance(p_198360_2_, j, p_198360_4_, false, p_198360_5_);
 -            if (((LivingEntity)entity).func_195064_c(effectinstance)) {
-+            if (((LivingEntity)entity).addPotionEffect(effectinstance, Cause.COMMAND)) { // CraftBukkit
++            if (((LivingEntity)entity).addEffect(effectinstance, Cause.COMMAND)) { // CraftBukkit
                 ++i;
              }
           }

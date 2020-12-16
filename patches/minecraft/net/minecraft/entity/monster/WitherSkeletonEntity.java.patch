@@ -13,7 +13,7 @@
        } else {
           if (p_70652_1_ instanceof LivingEntity) {
 -            ((LivingEntity)p_70652_1_).func_195064_c(new EffectInstance(Effects.field_82731_v, 200));
-+            ((LivingEntity)p_70652_1_).addPotionEffect(new EffectInstance(Effects.field_82731_v, 200), Cause.ATTACK); // CraftBukkit
++            ((LivingEntity)p_70652_1_).addEffect(new EffectInstance(Effects.field_82731_v, 200), Cause.ATTACK); // CraftBukkit
           }
  
           return true;

@@ -23,7 +23,7 @@
           }
  
 -         this.func_195064_c(new EffectInstance(Effects.field_76436_u, 900));
-+         this.addPotionEffect(new EffectInstance(Effects.field_76436_u, 900), Cause.FOOD); // CraftBukkit
++         this.addEffect(new EffectInstance(Effects.field_76436_u, 900), Cause.FOOD); // CraftBukkit
           if (p_230254_1_.func_184812_l_() || !this.func_190530_aW()) {
              this.func_70097_a(DamageSource.func_76365_a(p_230254_1_), Float.MAX_VALUE);
           }

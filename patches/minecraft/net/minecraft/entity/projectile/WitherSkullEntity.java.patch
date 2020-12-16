@@ -46,7 +46,7 @@
  
              if (i > 0) {
 -               ((LivingEntity)entity).func_195064_c(new EffectInstance(Effects.field_82731_v, 20 * i, 1));
-+               ((LivingEntity)entity).addPotionEffect(new EffectInstance(Effects.field_82731_v, 20 * i, 1), Cause.ATTACK); // CraftBukkit
++               ((LivingEntity)entity).addEffect(new EffectInstance(Effects.field_82731_v, 20 * i, 1), Cause.ATTACK); // CraftBukkit
              }
           }
  

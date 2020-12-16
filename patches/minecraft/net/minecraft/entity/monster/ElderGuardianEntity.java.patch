@@ -13,7 +13,7 @@
              if (!serverplayerentity.func_70644_a(effect) || serverplayerentity.func_70660_b(effect).func_76458_c() < 2 || serverplayerentity.func_70660_b(effect).func_76459_b() < 1200) {
                 serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241774_k_, this.func_174814_R() ? 0.0F : 1.0F));
 -               serverplayerentity.func_195064_c(new EffectInstance(effect, 6000, 2));
-+               serverplayerentity.addPotionEffect(new EffectInstance(effect, 6000, 2), Cause.ATTACK); // CraftBukkit
++               serverplayerentity.addEffect(new EffectInstance(effect, 6000, 2), Cause.ATTACK); // CraftBukkit
              }
           }
        }

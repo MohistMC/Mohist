@@ -45,7 +45,7 @@
              }
  
 -            this.func_195064_c(new EffectInstance(Effects.field_76428_l, 200, 0));
-+            this.addPotionEffect(new EffectInstance(Effects.field_76428_l, 200, 0), EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
++            this.addEffect(new EffectInstance(Effects.field_76428_l, 200, 0), EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
           }
        }
  

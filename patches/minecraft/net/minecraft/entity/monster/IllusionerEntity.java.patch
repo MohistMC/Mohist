@@ -22,7 +22,7 @@
  
        protected void func_190868_j() {
 -         IllusionerEntity.this.func_70638_az().func_195064_c(new EffectInstance(Effects.field_76440_q, 400));
-+         IllusionerEntity.this.func_70638_az().addPotionEffect(new EffectInstance(Effects.field_76440_q, 400), Cause.ATTACK); // CraftBukkit
++         IllusionerEntity.this.func_70638_az().addEffect(new EffectInstance(Effects.field_76440_q, 400), Cause.ATTACK); // CraftBukkit
        }
  
        protected SoundEvent func_190871_k() {
@@ -31,7 +31,7 @@
  
        protected void func_190868_j() {
 -         IllusionerEntity.this.func_195064_c(new EffectInstance(Effects.field_76441_p, 1200));
-+         IllusionerEntity.this.addPotionEffect(new EffectInstance(Effects.field_76441_p, 1200), Cause.ILLUSION); // Craftbukkit
++         IllusionerEntity.this.addEffect(new EffectInstance(Effects.field_76441_p, 1200), Cause.ILLUSION); // Craftbukkit
        }
  
        @Nullable
