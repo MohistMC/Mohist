@@ -16,8 +16,8 @@
  
 +   // CraftBukkit - add overriden version
 +   @Override
-+   public boolean setAttackTarget(LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
-+      if (!super.setAttackTarget(entitylivingbaseIn, reason, fireEvent)) {
++   public boolean setGoalTarget(LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
++      if (!super.setGoalTarget(entitylivingbaseIn, reason, fireEvent)) {
 +         return false;
 +      }
 +      entitylivingbaseIn = func_70638_az();
@@ -67,7 +67,7 @@
                    this.field_70703_bu = false;
                    this.field_70699_by.func_75499_g();
 -                  this.func_70624_b((LivingEntity)null);
-+                  this.setAttackTarget((LivingEntity)null, TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
++                  this.setGoalTarget((LivingEntity)null, TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
                    return ActionResultType.SUCCESS;
                 }
  

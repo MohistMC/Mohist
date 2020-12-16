@@ -13,7 +13,7 @@
     protected void func_82167_n(Entity p_82167_1_) {
        if (p_82167_1_ instanceof IMob && !(p_82167_1_ instanceof CreeperEntity) && this.func_70681_au().nextInt(20) == 0) {
 -         this.func_70624_b((LivingEntity)p_82167_1_);
-+         this.setAttackTarget((LivingEntity)p_82167_1_, TargetReason.COLLISION, true); // CraftBukkit - set reason
++         this.setGoalTarget((LivingEntity)p_82167_1_, TargetReason.COLLISION, true); // CraftBukkit - set reason
        }
  
        super.func_82167_n(p_82167_1_);

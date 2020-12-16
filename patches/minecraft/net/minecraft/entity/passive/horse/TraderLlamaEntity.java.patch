@@ -13,7 +13,7 @@
  
        public void func_75249_e() {
 -         this.field_75299_d.func_70624_b(this.field_220801_c);
-+         this.field_75299_d.setAttackTarget(this.field_220801_c, TargetReason.TARGET_ATTACKED_OWNER, true); // CraftBukkit
++         this.field_75299_d.setGoalTarget(this.field_220801_c, TargetReason.TARGET_ATTACKED_OWNER, true); // CraftBukkit
           Entity entity = this.field_220800_b.func_110166_bE();
           if (entity instanceof WanderingTraderEntity) {
              this.field_220802_d = ((WanderingTraderEntity)entity).func_142015_aE();

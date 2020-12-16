@@ -24,7 +24,7 @@
                 if (p_226963_1_.func_213303_ch().func_72436_e(entity.func_213303_ch()) <= 16.0D) {
                    if (!this.func_226972_k_()) {
 -                     beeentity.func_70624_b(p_226963_1_);
-+                     beeentity.setAttackTarget(p_226963_1_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit
++                     beeentity.setGoalTarget(p_226963_1_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit
                    } else {
                       beeentity.func_226450_t_(400);
                    }

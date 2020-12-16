@@ -207,7 +207,7 @@
        ++this.field_70725_aQ;
 -      if (this.field_70725_aQ == 20) {
 -         this.func_70106_y();
-+      if (this.field_70725_aQ >= 20 && !this.field_70729_aU) { // CraftBukkit - (this.deathTime == 20) -> (this.deathTime >= 20 && !this.dead)
++      if (this.field_70725_aQ >= 20 && !this.field_70128_L) { // CraftBukkit - (this.deathTime == 20) -> (this.deathTime >= 20 && !this.removed)
 +         this.remove(this instanceof net.minecraft.entity.player.ServerPlayerEntity); //Forge keep data until we revive player
  
           for(int i = 0; i < 20; ++i) {
@@ -507,7 +507,7 @@
        } else if (this.field_70170_p.field_72995_K) {
           return false;
 -      } else if (this.func_233643_dh_()) {
-+      } else if (this.field_70128_L || this.field_70729_aU || this.func_233643_dh_()) { // CraftBukkit - Don't allow entities that got set to dead/killed elsewhere to get damaged and die
++      } else if (this.field_70128_L || this.field_70729_aU || this.func_233643_dh_()) {
           return false;
        } else if (p_70097_1_.func_76347_k() && this.func_70644_a(Effects.field_76426_n)) {
           return false;

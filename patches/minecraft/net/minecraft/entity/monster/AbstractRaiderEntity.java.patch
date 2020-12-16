@@ -23,7 +23,7 @@
  
           for(AbstractRaiderEntity abstractraiderentity : this.field_220853_c.field_70170_p.func_217374_a(AbstractRaiderEntity.class, this.field_220851_a, this.field_220853_c, this.field_220853_c.func_174813_aQ().func_72314_b(8.0D, 8.0D, 8.0D))) {
 -            abstractraiderentity.func_70624_b(this.field_220853_c.func_70638_az());
-+            abstractraiderentity.setAttackTarget(this.field_220853_c.func_70638_az(), TargetReason.FOLLOW_LEADER, true); // CraftBukkit
++            abstractraiderentity.setGoalTarget(this.field_220853_c.func_70638_az(), TargetReason.FOLLOW_LEADER, true); // CraftBukkit
           }
  
        }
@@ -32,7 +32,7 @@
           if (livingentity != null) {
              for(AbstractRaiderEntity abstractraiderentity : this.field_220853_c.field_70170_p.func_217374_a(AbstractRaiderEntity.class, this.field_220851_a, this.field_220853_c, this.field_220853_c.func_174813_aQ().func_72314_b(8.0D, 8.0D, 8.0D))) {
 -               abstractraiderentity.func_70624_b(livingentity);
-+               abstractraiderentity.setAttackTarget(livingentity, TargetReason.FOLLOW_LEADER, true); // CraftBukkit
++               abstractraiderentity.setGoalTarget(livingentity, TargetReason.FOLLOW_LEADER, true); // CraftBukkit
                 abstractraiderentity.func_213395_q(true);
              }
  
