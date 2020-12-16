@@ -18,9 +18,9 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
     public void setTarget(LivingEntity target) {
         MobEntity entity = getHandle();
         if (target == null) {
-            entity.setAttackTarget(null, null, false);
+            entity.setGoalTarget(null, null, false);
         } else if (target instanceof CraftLivingEntity) {
-            entity.setAttackTarget(((CraftLivingEntity) target).getHandle(), null, false);
+            entity.setGoalTarget(((CraftLivingEntity) target).getHandle(), null, false);
         }
     }
 

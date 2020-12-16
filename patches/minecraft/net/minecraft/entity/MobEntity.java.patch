@@ -52,19 +52,19 @@
     private final EntitySenses field_70723_bA;
     private final NonNullList<ItemStack> field_184656_bv = NonNullList.func_191197_a(2, ItemStack.field_190927_a);
 -   protected final float[] field_82174_bp = new float[2];
-+   public final float[] field_82174_bp = new float[2]; // protected->public CraftBukkit
++   public final float[] field_82174_bp = new float[2];
     private final NonNullList<ItemStack> field_184657_bw = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
 -   protected final float[] field_184655_bs = new float[4];
 -   private boolean field_82172_bs;
 -   private boolean field_82179_bU;
-+   public final float[] field_184655_bs = new float[4]; // protected->public CraftBukkit
++   public final float[] field_184655_bs = new float[4];
 +   // private boolean canPickUpLoot; // CraftBukkit - moved up to EntityLiving
-+   public boolean field_82179_bU; // private->public CraftBukkit
++   public boolean field_82179_bU;
     private final Map<PathNodeType, Float> field_184658_bz = Maps.newEnumMap(PathNodeType.class);
 -   private ResourceLocation field_184659_bA;
 -   private long field_184653_bB;
-+   public ResourceLocation field_184659_bA; // private->public CraftBukkit
-+   public long field_184653_bB; // private->public CraftBukkit
++   public ResourceLocation field_184659_bA;
++   public long field_184653_bB;
     @Nullable
     private Entity field_110168_bw;
     private int field_213400_bI;
@@ -91,10 +91,10 @@
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
 -      this.field_70696_bz = p_70624_1_;
 +      // CraftBukkit start
-+      this.setAttackTarget(p_70624_1_, EntityTargetEvent.TargetReason.UNKNOWN, true);
++      this.setGoalTarget(p_70624_1_, EntityTargetEvent.TargetReason.UNKNOWN, true);
     }
  
-+   public boolean setAttackTarget(LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) {
++   public boolean setGoalTarget(LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) {
 +      if (this.func_70638_az() == entitylivingbaseIn) {
 +         return false;
 +      }
@@ -286,7 +286,7 @@
  
     public boolean func_98052_bS() {
 -      return this.field_82172_bs;
-+      return this.canPickUpLoot_vanilla;
++      return super.canPickUpLoot_vanilla;
     }
  
     public void func_98053_h(boolean p_98053_1_) {

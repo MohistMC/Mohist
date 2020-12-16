@@ -5,7 +5,7 @@
        this.func_70604_c((LivingEntity)null);
        this.func_230259_a_((UUID)null);
 -      this.func_70624_b((LivingEntity)null);
-+      this.setAttackTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
++      this.setGoalTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
        this.func_230260_a__(0);
     }
  
@@ -13,7 +13,7 @@
  
     void func_70624_b(@Nullable LivingEntity p_70624_1_);
  
-+   boolean setAttackTarget(LivingEntity entityliving, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
++   boolean setGoalTarget(LivingEntity entityliving, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
 +
     @Nullable
     LivingEntity func_70638_az();

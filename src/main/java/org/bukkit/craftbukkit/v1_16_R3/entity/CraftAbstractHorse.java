@@ -81,7 +81,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
     public void setOwner(AnimalTamer owner) {
         if (owner != null) {
             setTamed(true);
-            getHandle().setAttackTarget(null, null, false);
+            getHandle().setGoalTarget(null, null, false);
             setOwnerUUID(owner.getUniqueId());
         } else {
             setTamed(false);

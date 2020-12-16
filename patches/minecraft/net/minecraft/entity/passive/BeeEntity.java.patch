@@ -76,7 +76,7 @@
        protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
           if (p_220793_1_ instanceof BeeEntity && this.field_75299_d.func_70685_l(p_220793_2_)) {
 -            p_220793_1_.func_70624_b(p_220793_2_);
-+            p_220793_1_.setAttackTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
++            p_220793_1_.setGoalTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
           }
  
        }

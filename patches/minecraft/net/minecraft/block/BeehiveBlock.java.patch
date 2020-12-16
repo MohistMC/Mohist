@@ -5,7 +5,7 @@
           for(BeeEntity beeentity : list) {
              if (beeentity.func_70638_az() == null) {
 -               beeentity.func_70624_b(list1.get(p_226881_1_.field_73012_v.nextInt(i)));
-+               beeentity.setAttackTarget(list1.get(p_226881_1_.field_73012_v.nextInt(i)), org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit
++               beeentity.setGoalTarget(list1.get(p_226881_1_.field_73012_v.nextInt(i)), org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit
              }
           }
        }

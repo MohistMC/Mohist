@@ -1,15 +1,6 @@
 --- a/net/minecraft/entity/monster/SlimeEntity.java
 +++ b/net/minecraft/entity/monster/SlimeEntity.java
-@@ -1,6 +1,8 @@
- package net.minecraft.entity.monster;
- 
-+import java.util.ArrayList;
- import java.util.EnumSet;
-+import java.util.List;
- import java.util.Objects;
- import java.util.Optional;
- import java.util.Random;
-@@ -44,6 +46,10 @@
+@@ -44,6 +44,10 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.biome.Biomes;
@@ -20,7 +11,7 @@
  
  public class SlimeEntity extends MobEntity implements IMob {
     private static final DataParameter<Integer> field_184711_bt = EntityDataManager.func_187226_a(SlimeEntity.class, DataSerializers.field_187192_b);
-@@ -73,7 +79,7 @@
+@@ -73,7 +77,7 @@
        this.field_70180_af.func_187214_a(field_184711_bt, 1);
     }
  
@@ -29,7 +20,7 @@
        this.field_70180_af.func_187227_b(field_184711_bt, p_70799_1_);
        this.func_226264_Z_();
        this.func_213323_x_();
-@@ -127,6 +133,7 @@
+@@ -127,6 +131,7 @@
        if (this.field_70122_E && !this.field_175452_bi) {
           int i = this.func_70809_q();
  
@@ -37,7 +28,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
-@@ -178,15 +185,28 @@
+@@ -178,15 +183,28 @@
        return (EntityType<? extends SlimeEntity>)super.func_200600_R();
     }
  
@@ -46,7 +37,7 @@
 +   public void remove(boolean keepData) {
        int i = this.func_70809_q();
 -      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_233643_dh_()) {
-+      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_233643_dh_() && !this.field_70128_L) {
++      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_233643_dh_() && !field_70128_L) {
           ITextComponent itextcomponent = this.func_200201_e();
           boolean flag = this.func_175446_cd();
           float f = (float)i / 4.0F;
@@ -54,34 +45,31 @@
           int k = 2 + this.field_70146_Z.nextInt(3);
  
 +         // CraftBukkit start
-+         SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), j);
++         SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
 +         this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++
 +         if (!event.isCancelled() && event.getCount() > 0) {
-+            j = event.getCount();
++            k = event.getCount();
 +         } else {
-+            super.func_70106_y();
++            super.remove(keepData);
 +            return;
 +         }
-+         List<LivingEntity> slimes = new ArrayList<>(j);
 +         // CraftBukkit end
 +
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
-@@ -200,11 +220,18 @@
+@@ -200,11 +218,15 @@
              slimeentity.func_184224_h(this.func_190530_aW());
              slimeentity.func_70799_a(j, true);
              slimeentity.func_70012_b(this.func_226277_ct_() + (double)f1, this.func_226278_cu_() + 0.5D, this.func_226281_cx_() + (double)f2, this.field_70146_Z.nextFloat() * 360.0F, 0.0F);
 -            this.field_70170_p.func_217376_c(slimeentity);
-+            slimes.add(slimeentity);
++            // CraftBukkit start
++            if (CraftEventFactory.callEntityTransformEvent(this, slimeentity, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++               return;
++            }
++            this.field_70170_p.addEntity(slimeentity, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
           }
-+
-+         // CraftBukkit start
-+         if (CraftEventFactory.callEntityTransformEvent(this, slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
-+            return;
-+         }
-+         slimes.forEach(living -> this.field_70170_p.addEntity(living, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT));   // CraftBukkit - SpawnReason
-+         // CraftBukkit end
        }
  
 -      super.func_70106_y();
@@ -89,7 +77,7 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
-@@ -257,7 +284,7 @@
+@@ -257,7 +279,7 @@
        return this.func_189101_db() ? SoundEvents.field_187900_fz : SoundEvents.field_187886_fs;
     }
  
@@ -98,7 +86,7 @@
        return this.func_70809_q() == 1 ? this.func_200600_R().func_220348_g() : LootTables.field_186419_a;
     }
  
-@@ -272,7 +299,7 @@
+@@ -272,7 +294,7 @@
           }
  
           ChunkPos chunkpos = new ChunkPos(p_223366_3_);
@@ -107,7 +95,7 @@
           if (p_223366_4_.nextInt(10) == 0 && flag && p_223366_3_.func_177956_o() < 40) {
              return func_223315_a(p_223366_0_, p_223366_1_, p_223366_2_, p_223366_3_, p_223366_4_);
           }
-@@ -324,6 +351,12 @@
+@@ -324,6 +346,12 @@
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }
  

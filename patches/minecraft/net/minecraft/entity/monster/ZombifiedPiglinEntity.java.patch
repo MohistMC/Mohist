@@ -44,7 +44,7 @@
        }
  
 -      super.func_70624_b(p_70624_1_);
-+      return super.setAttackTarget(entitylivingbaseIn, reason, fireEvent); // CraftBukkit
++      return super.setGoalTarget(entitylivingbaseIn, reason, fireEvent); // CraftBukkit
     }
  
     public void func_230258_H__() {

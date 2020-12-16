@@ -22,7 +22,7 @@
 +   }
 +
 +   public boolean setAttackTarget(@Nullable LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
-+      if(!super.setAttackTarget(entitylivingbaseIn, reason, fireEvent)){
++      if(!super.setGoalTarget(entitylivingbaseIn, reason, fireEvent)){
 +         return false;
 +      }
 +      entitylivingbaseIn = func_70638_az();

@@ -510,7 +510,7 @@ public class CraftEventFactory {
             boolean isNpc = entity instanceof NPC;
 
             if (spawnReason != CreatureSpawnEvent.SpawnReason.CUSTOM) {
-                if (isAnimal && !world.getCBWorld().getAllowAnimals() || isMonster && !world.getCBWorld().getAllowMonsters() || isNpc && !world.getServer().getServer().func_230537_U_()) {
+                if (isAnimal && !world.getCBWorld().getAllowAnimals() || isMonster && !world.getCBWorld().getAllowMonsters() || isNpc && !world.getServer().getServer().func_230538_V_()) {
                     entity.removed = true;
                     return false;
                 }
@@ -922,9 +922,8 @@ public class CraftEventFactory {
 
         if (cause != null) {
             return callEntityDamageEvent(null, entity, cause, modifiers, modifierFunctions, cancelled);
-        } else {
-            return new EntityDamageEvent(entity.getBukkitEntity(), DamageCause.CUSTOM, modifiers, modifierFunctions);
         }
+        throw new IllegalStateException(String.format("Unhandled damage of %s from %s", entity, source.damageType));
     }
 
     private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, DamageCause cause, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {

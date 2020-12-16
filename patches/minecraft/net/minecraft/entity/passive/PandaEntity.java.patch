@@ -23,7 +23,7 @@
        protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
           if (p_220793_1_ instanceof PandaEntity && ((PandaEntity)p_220793_1_).func_213398_dR()) {
 -            p_220793_1_.func_70624_b(p_220793_2_);
-+            p_220793_1_.setAttackTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit
++            p_220793_1_.setGoalTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit
           }
  
        }

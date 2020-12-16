@@ -550,6 +550,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         entity.remove();
     }
 
+    public void remove(boolean keepData) {
+        entity.remove(keepData);
+    }
+
     @Override
     public boolean isDead() {
         return !entity.isAlive();
