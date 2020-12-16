@@ -1,12 +1,12 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+import com.mohistmc.util.MohistEnumHelper;
 import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.mohistmc.util.MohistEnumHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.AnaloguePowerable;
@@ -8643,12 +8643,12 @@ public enum Material implements Keyed {
             if (material != null){
                 material.isForgeBlock = true;
             }else {
-                material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), true});
+                material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, true});
             }
             BY_NAME.put(materialName, material);
             return material;
         } else { // Forge Items
-            Material material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), false});
+            Material material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, false});
             BY_NAME.put(materialName, material);
             return material;
         }
