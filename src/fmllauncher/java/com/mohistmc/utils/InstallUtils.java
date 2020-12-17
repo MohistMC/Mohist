@@ -25,7 +25,7 @@ public class InstallUtils {
         copyFileFromJar(universalJar, "data/forge-1.16.4-" + forgeVer + "-universal.jar");
 
         ProcessBuilder processBuilder = new ProcessBuilder(new ArrayList<>(Arrays.asList("java", "-jar", "MohistInstallChecker.jar", "\"" + libPath + "\"", forgeVer, mcpVer)));
-        processBuilder.directory(new File(libPath + "lcom/mohistmc/installation/"));
+        processBuilder.directory(new File(libPath + "com/mohistmc/installation/"));
         Process process = processBuilder.start();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
