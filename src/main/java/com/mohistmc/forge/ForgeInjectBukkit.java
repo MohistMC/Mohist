@@ -178,6 +178,6 @@ public class ForgeInjectBukkit {
                 break;
         }
         Permission permission = new Permission(name, desc, permissionDefault);
-        DefaultPermissions.registerPermission(permission, false);
+        DefaultPermissions.registerPermission(permission);
     }
 }
