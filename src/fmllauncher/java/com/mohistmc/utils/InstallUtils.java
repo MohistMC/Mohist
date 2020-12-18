@@ -38,7 +38,6 @@ public class InstallUtils {
         process.waitFor();
         reader.close();
         process.destroy();
-        new JarLoader().loadJar(extra);
     }
 
     private static void copyFileFromJar(File file, String pathInJar) throws Exception {

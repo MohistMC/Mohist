@@ -5,7 +5,9 @@ import com.mohistmc.network.download.DownloadLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import static com.mohistmc.utils.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.utils.EulaUtil.writeInfos;
+import com.mohistmc.utils.InstallUtils;
 import static com.mohistmc.utils.InstallUtils.startInstallation;
+import com.mohistmc.utils.JarLoader;
 import com.mohistmc.utils.i18n.i18n;
 import java.util.Scanner;
 import static net.minecraftforge.server.ServerMain.startMohistServer;
@@ -40,6 +42,7 @@ public class MohistMCStart {
             DownloadLibraries.run();
             startInstallation();
         }
+        new JarLoader().loadJar(InstallUtils.extra);
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
