@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.mohistmc.entity.CraftCustomAbstractHorse;
 import com.mohistmc.entity.CraftCustomChestHorse;
 import com.mohistmc.entity.CraftCustomEntity;
-import com.mohistmc.entity.CustomProjectileEntity;
+import com.mohistmc.entity.CraftCustomProjectileEntity;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -136,6 +136,7 @@ import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.LlamaSpitEntity;
 import net.minecraft.entity.projectile.PotionEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.entity.projectile.SnowballEntity;
@@ -389,11 +390,9 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof AreaEffectCloudEntity) { return new CraftAreaEffectCloud(server, (AreaEffectCloudEntity) entity); }
         else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
         else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
-        else if (entity instanceof net.minecraft.entity.projectile.ProjectileEntity) { return new CustomProjectileEntity(server, entity); }
-        else if (entity != null) {return new CraftCustomEntity(server, entity);}
+        else if (entity instanceof ProjectileEntity) { return new CraftCustomProjectileEntity(server, entity); }
+        return new CraftCustomEntity(server, entity);
         // CHECKSTYLE:ON
-
-        throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
     }
 
     @Override

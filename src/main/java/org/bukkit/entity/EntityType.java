@@ -3,7 +3,7 @@ package org.bukkit.entity;
 import com.google.common.base.Preconditions;
 import com.mohistmc.entity.CraftCustomAbstractHorse;
 import com.mohistmc.entity.CraftCustomChestHorse;
-import com.mohistmc.entity.CustomProjectileEntity;
+import com.mohistmc.entity.CraftCustomProjectileEntity;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Keyed;
@@ -284,7 +284,7 @@ public enum EntityType implements Keyed {
      * An unknown entity without an Entity Class
      */
     UNKNOWN(null, null, -1, false),
-    FORGE_MOD_PROJECTILE("forge_mod_projectile", CustomProjectileEntity.class, -1, false),
+    FORGE_MOD_PROJECTILE("forge_mod_projectile", CraftCustomProjectileEntity.class, -1, false),
     FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", CraftCustomChestHorse.class, -1, false),
     FORGE_MOD_HORSE("forge_mod_horse", CraftCustomAbstractHorse.class, -1, false);
 
