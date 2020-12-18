@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_16_R3.entity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import com.mohistmc.api.ServerAPI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -99,7 +100,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         if (entity instanceof MobEntity || entity instanceof ArmorStandEntity) {
             equipment = new CraftEntityEquipment(this);
         }
-        this.entityName = ""; /*EntityRegistry.getCustomEntityTypeName(entity.getClass());*/
+        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
             entityName = entity.getName().getString();
         }
