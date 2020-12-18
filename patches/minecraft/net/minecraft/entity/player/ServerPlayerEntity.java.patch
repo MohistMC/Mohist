@@ -427,7 +427,7 @@
 -   public Entity func_241206_a_(ServerWorld p_241206_1_) {
 +   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      // CraftBukkit - start
-+      return changeDimension(p_241206_1_,teleporter, TeleportCause.UNKNOWN);
++      return changeDimension(p_241206_1_, teleporter, TeleportCause.UNKNOWN);
 +   }
 +
 +   @Nullable
