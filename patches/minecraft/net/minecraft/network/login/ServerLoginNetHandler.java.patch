@@ -55,12 +55,12 @@
 +   public void disconnect(String s) {
 +      try {
 +         ITextComponent ichatbasecomponent = new StringTextComponent(s);
-+         ServerLoginNetHandler.field_147332_c.info("Disconnecting {}: {}", this.func_147317_d(), s);
++         field_147332_c.info("Disconnecting {}: {}", this.func_147317_d(), s);
 +         this.field_147333_a.func_179290_a(new SDisconnectLoginPacket(ichatbasecomponent));
 +         this.field_147333_a.func_150718_a(ichatbasecomponent);
 +      }
 +      catch (Exception exception) {
-+         ServerLoginNetHandler.field_147332_c.error("Error whilst disconnecting player", exception);
++         field_147332_c.error("Error whilst disconnecting player", exception);
 +      }
 +   }
 +   // CraftBukkit end
@@ -173,35 +173,45 @@
  
              try {
 -               ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.func_191235_a());
-+               ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID) null, gameprofile.getName()), s, this.getAddress());
-                if (ServerLoginNetHandler.this.field_147337_i != null) {
+-               if (ServerLoginNetHandler.this.field_147337_i != null) {
 -                  ServerLoginNetHandler.field_147332_c.info("UUID of player {} is {}", ServerLoginNetHandler.this.field_147337_i.getName(), ServerLoginNetHandler.this.field_147337_i.getId());
 -                  ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
+-               } else if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
+-                  ServerLoginNetHandler.field_147332_c.warn("Failed to verify username but will let them in anyway!");
+-                  ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
+-                  ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
++               field_147337_i = field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID) null, gameprofile.getName()), s, this.getAddress());
++               if (field_147337_i != null) {
 +                  // CraftBukkit start - fire PlayerPreLoginEvent
 +                  if (!field_147333_a.func_150724_d()) {
 +                     return;
 +                  }
 +
 +                  new LoginHandler().fireEvents();
-                } else if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
-                   ServerLoginNetHandler.field_147332_c.warn("Failed to verify username but will let them in anyway!");
-                   ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
--                  ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
-+                  ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
++               } else if (field_147327_f.func_71264_H()) {
++                  field_147332_c.warn("Failed to verify username but will let them in anyway!");
++                  field_147337_i = func_152506_a(gameprofile);
++                  field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
                 } else {
-                   ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unverified_username"));
+-                  ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unverified_username"));
 -                  ServerLoginNetHandler.field_147332_c.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
-+                  ServerLoginNetHandler.field_147332_c.error("Username '{}' tried to join with an invalid session", (Object) gameprofile.getName());
++                  func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unverified_username"));
++                  field_147332_c.error("Username '{}' tried to join with an invalid session", (Object) gameprofile.getName());
                 }
              } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
-                   ServerLoginNetHandler.field_147332_c.warn("Authentication servers are down but will let them in anyway!");
-                   ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
+-               if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
+-                  ServerLoginNetHandler.field_147332_c.warn("Authentication servers are down but will let them in anyway!");
+-                  ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
 -                  ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
-+                  ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
++               if (field_147327_f.func_71264_H()) {
++                  field_147332_c.warn("Authentication servers are down but will let them in anyway!");
++                  field_147337_i = func_152506_a(gameprofile);
++                  field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
                 } else {
-                   ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.authservers_down"));
-                   ServerLoginNetHandler.field_147332_c.error("Couldn't verify username because servers are unavailable");
+-                  ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.authservers_down"));
+-                  ServerLoginNetHandler.field_147332_c.error("Couldn't verify username because servers are unavailable");
++                  func_194026_b(new TranslationTextComponent("multiplayer.disconnect.authservers_down"));
++                  field_147332_c.error("Couldn't verify username because servers are unavailable");
                 }
 +               // CraftBukkit start - catch all exceptions
 +            } catch (Exception exception) {
@@ -214,10 +224,11 @@
  
           @Nullable
 -         private InetAddress func_191235_a() {
-+         private InetAddress getAddress() {
-             SocketAddress socketaddress = ServerLoginNetHandler.this.field_147333_a.func_74430_c();
+-            SocketAddress socketaddress = ServerLoginNetHandler.this.field_147333_a.func_74430_c();
 -            return ServerLoginNetHandler.this.field_147327_f.func_190518_ac() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress)socketaddress).getAddress() : null;
-+            return ServerLoginNetHandler.this.field_147327_f.func_190518_ac() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
++         private InetAddress getAddress() {
++            SocketAddress socketaddress = field_147333_a.func_74430_c();
++            return field_147327_f.func_190518_ac() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
           }
        };
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_147332_c));
@@ -256,8 +267,8 @@
 +            }
 +         }
 +         // CraftBukkit end
-+         ServerLoginNetHandler.field_147332_c.info("UUID of player {} is {}", ServerLoginNetHandler.this.field_147337_i.getName(), ServerLoginNetHandler.this.field_147337_i.getId());
-+         ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
++         field_147332_c.info("UUID of player {} is {}", field_147337_i.getName(), field_147337_i.getId());
++         field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
 +      }
 +   }
 +   // Spigot end

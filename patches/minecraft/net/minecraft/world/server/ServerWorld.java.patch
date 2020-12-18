@@ -543,25 +543,37 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -795,12 +930,18 @@
+@@ -795,18 +930,24 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
+-      if (p_72838_1_.field_70128_L) {
+-         field_147491_a.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.func_200718_a(p_72838_1_.func_200600_R()));
 +      return addEntity0(p_72838_1_, CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
-+   private boolean addEntity0(Entity p_72838_1_, CreatureSpawnEvent.SpawnReason spawnReason) {
-       if (p_72838_1_.field_70128_L) {
-          field_147491_a.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.func_200718_a(p_72838_1_.func_200600_R()));
++   private boolean addEntity0(Entity entityIn, CreatureSpawnEvent.SpawnReason spawnReason) {
++      if (entityIn.field_70128_L) {
++         field_147491_a.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.func_200718_a(entityIn.func_200600_R()));
           return false;
-       } else if (this.func_217478_l(p_72838_1_)) {
+-      } else if (this.func_217478_l(p_72838_1_)) {
++      } else if (this.func_217478_l(entityIn)) {
           return false;
        } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_72838_1_, this))) return false;
-+         if (!CraftEventFactory.doEntityAddEventCalling(this, p_72838_1_, spawnReason)) return false;
-          IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_72838_1_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
+-         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_72838_1_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entityIn, this))) return false;
++         if (!CraftEventFactory.doEntityAddEventCalling(this, entityIn, spawnReason)) return false;
++         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(entityIn.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(entityIn.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, entityIn.field_98038_p);
           if (!(ichunk instanceof Chunk)) {
              return false;
+          } else {
+-            ichunk.func_76612_a(p_72838_1_);
+-            this.func_217465_m(p_72838_1_);
++            ichunk.func_76612_a(entityIn);
++            this.func_217465_m(entityIn);
+             return true;
+          }
+       }
 @@ -816,6 +957,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
