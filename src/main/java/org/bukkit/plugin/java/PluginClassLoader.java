@@ -3,6 +3,7 @@ package org.bukkit.plugin.java;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
@@ -166,6 +167,22 @@ public final class PluginClassLoader extends URLClassLoader {
                     if (result != null) {
                         // Resolve it - sets the class loader of the class
                         this.resolveClass(result);
+                    }
+                }
+            } else {
+                final URL url = this.findResource(path);
+                if (url != null) {
+                    final InputStream stream = url.openStream();
+                    if (stream != null) {
+                        byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                        bytecode = RemapUtils.remapFindClass(bytecode);
+                        final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                        final URL jarURL = jarURLConnection.getJarFileURL();
+                        final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+                        result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                        if (result != null) {
+                            this.resolveClass(result);
+                        }
                     }
                 }
             }
