@@ -21,9 +21,6 @@
         <TerminalConsole name="Console">
             <PatternLayout>
                 <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg}%n%tEx">
-                    <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n%tEx}"/>
-                    <PatternMatch key="com.mojang." pattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n%tEx}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
@@ -35,24 +32,15 @@
             </Policies>
             <DefaultRolloverStrategy max="99" fileIndex="min"/>
         </RollingRandomAccessFile>
-        <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.zip">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx" charset="UTF-8"/>
-            <Policies>
-                <OnStartupTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="200MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="5" fileIndex="min"/>
-        </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
-        <Logger level="${sys:forge.logging.mojang.level:-info}" name="com.mojang"/>
-        <Logger level="${sys:forge.logging.mojang.level:-info}" name="net.minecraft"/>
-        <Logger level="${sys:forge.logging.classtransformer.level:-info}" name="cpw.mods.modlauncher.ClassTransformer"/>
+        <Logger level="info" name="com.mojang"/>
+        <Logger level="info" name="net.minecraft"/>
+        <Logger level="info" name="cpw.mods.modlauncher.ClassTransformer"/>
         <Root level="all">
-            <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
-            <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
-            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-debug}"/>
+            <AppenderRef ref="Console" level="INFO"/>
+            <AppenderRef ref="File" level="ALL"/>
         </Root>
     </Loggers>
 </Configuration>
