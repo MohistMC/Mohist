@@ -5,6 +5,7 @@ import com.mohistmc.config.MohistConfigUtil;
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import static com.mohistmc.network.download.UpdateUtils.getLibs;
 
+import com.mohistmc.utils.InstallUtils;
 import com.mohistmc.utils.JarLoader;
 import com.mohistmc.utils.MD5Util;
 import com.mohistmc.utils.i18n.i18n;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 public class DownloadLibraries {
     static int retry = 0;
     static HashMap<String, String> fail = new HashMap<>();
-    static File libF = new File("libraries/mohist_libraries.json");
+    static File libF = new File(InstallUtils.libPath + "mohist_libraries.json");
 
     public static void run() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
@@ -27,7 +28,7 @@ public class DownloadLibraries {
         }
         HashMap<String, String> libs = getLibs();
         for (Object o : libs.keySet()) {
-            File lib = new File("libraries/" + o.toString().split("\\*")[1]);
+            File lib = new File(InstallUtils.libPath + o.toString().split("\\*")[1]);
             boolean md5 = lib.exists() && MD5Util.getMd5(lib).equals(libs.get(o.toString()));
             if (libs.get(o.toString()).equals("nomd5")) md5 = true;
             String u = o.toString().split("\\*")[0];

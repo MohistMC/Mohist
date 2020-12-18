@@ -24,7 +24,7 @@ public class CraftCustomEntity extends CraftEntity {
 
     @Override
     public String toString() {
-        return this.entityName;
+        return "CraftCustomEntity{" + entityName + '}';
     }
 
     @Override

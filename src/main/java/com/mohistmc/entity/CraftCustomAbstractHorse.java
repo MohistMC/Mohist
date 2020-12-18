@@ -3,6 +3,7 @@ package com.mohistmc.entity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftAbstractHorse;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 
@@ -14,7 +15,7 @@ public class CraftCustomAbstractHorse extends CraftAbstractHorse {
 
     @Override
     public String toString() {
-        return "CraftCustomAbstractHorse";
+        return "CraftCustomAbstractHorse{" + entityName + '}';
     }
 
     @Override
@@ -23,12 +24,17 @@ public class CraftCustomAbstractHorse extends CraftAbstractHorse {
         if (type != null) {
             return type;
         } else {
-            return EntityType.UNKNOWN;
+            return EntityType.FORGE_MOD_HORSE;
         }
     }
 
     @Override
     public Horse.Variant getVariant() {
         return Horse.Variant.FORGE_MOD_HORSE;
+    }
+
+    @Override
+    public EntityCategory getCategory() {
+        return EntityCategory.NONE;
     }
 }
