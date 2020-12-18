@@ -922,8 +922,9 @@ public class CraftEventFactory {
 
         if (cause != null) {
             return callEntityDamageEvent(null, entity, cause, modifiers, modifierFunctions, cancelled);
+        } else {
+            return new EntityDamageEvent(entity.getBukkitEntity(), DamageCause.CUSTOM, modifiers, modifierFunctions);
         }
-        throw new IllegalStateException(String.format("Unhandled damage of %s from %s", entity, source.damageType));
     }
 
     private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, DamageCause cause, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {
