@@ -1,6 +1,8 @@
 package com.mohistmc.command;
 
+import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ChatComponentAPI;
+import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.HasteUtils;
 import java.io.File;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -28,12 +31,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
+    private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "bukkit_material", "vanilla_material");
     private final List<String> tab_mode = Arrays.asList("file", "web");
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|bukkit_material|vanilla_material]";
         this.setPermission("mohist.command.dump");
     }
 
@@ -99,8 +102,11 @@ public class DumpCommand extends Command {
                 case "worldtype":
                     dumpWorldType(sender, mode);
                     break;
-                case "material":
-                    dumpMaterial(sender, mode);
+                case "bukkit_material":
+                    dumpBukkitMaterial(sender, mode);
+                    break;
+                case "vanilla_material":
+                    dumpVanillaMaterial(sender, mode);
                     break;
                 default:
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -197,13 +203,24 @@ public class DumpCommand extends Command {
         dump(sender, "worldtype", sb, mode);
     }
 
-    private void dumpMaterial(CommandSender sender, String mode) {
+    private void dumpBukkitMaterial(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
         for (Material material : Material.values()) {
             String key = material.name();
             sb.append(material).append("-").append(key).append("\n");
         }
-        dump(sender, "material", sb, mode);
+        dump(sender, "bukkit_material", sb, mode);
+    }
+
+    private void dumpVanillaMaterial(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (ResourceLocation material : ItemAPI.vanilla_item) {
+            sb.append(material).append("\n");
+        }
+        for (ResourceLocation material : BlockAPI.vanilla_block) {
+            sb.append(material).append("\n");
+        }
+        dump(sender, "vanilla_material", sb, mode);
     }
 
     private void dumpmsg(CommandSender sender, File file, String type) {

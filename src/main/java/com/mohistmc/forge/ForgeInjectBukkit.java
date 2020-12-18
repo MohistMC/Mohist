@@ -1,6 +1,7 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.MohistMC;
+import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.i18n.Message;
@@ -48,6 +49,7 @@ public class ForgeInjectBukkit {
     public static void addEnumMaterialInItems() {
         for (Map.Entry<ResourceLocation, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
             ResourceLocation key = entry.getKey();
+            ItemAPI.vanilla_item.add(key);
             if (!key.getResourceDomain().equals("minecraft")) {
                 // inject item materials into Bukkit for FML
                 String[] res = key.toString().split(":");
@@ -70,6 +72,7 @@ public class ForgeInjectBukkit {
     public static void addEnumMaterialsInBlocks() {
         for (Map.Entry<ResourceLocation, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
             ResourceLocation key = entry.getKey();
+            BlockAPI.vanilla_block.add(key);
             if (!key.getResourceDomain().equals("minecraft")) {
                 // inject block materials into Bukkit for FML
                 String[] res = key.toString().split(":");
