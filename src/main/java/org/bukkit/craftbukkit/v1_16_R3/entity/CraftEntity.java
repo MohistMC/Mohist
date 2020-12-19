@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.mohistmc.entity.CraftCustomAbstractHorse;
 import com.mohistmc.entity.CraftCustomChestHorse;
 import com.mohistmc.entity.CraftCustomEntity;
+import com.mohistmc.entity.CraftCustomFakePlayer;
 import com.mohistmc.entity.CraftCustomProjectileEntity;
 import java.util.List;
 import java.util.Set;
@@ -149,6 +150,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -195,6 +197,9 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
          * Order is *EXTREMELY* important -- keep it right! =D
          */
         // CHECKSTYLE:OFF
+        if (entity instanceof FakePlayer) {
+            return new CraftCustomFakePlayer(server, (FakePlayer) entity);
+        }
         if (entity instanceof LivingEntity) {
             // Players
             if (entity instanceof PlayerEntity) {

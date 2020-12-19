@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -289,10 +290,6 @@ public final class CraftServer implements Server {
         Potion.setPotionBrewer(new CraftPotionBrewer());
         Effects.BLINDNESS.getClass();
         // Ugly hack :(
-
-        if (!Main.useConsole) {
-            getLogger().info(Message.get("bukkit.console.disable"));
-        }
 
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         configuration.options().copyDefaults(true);
@@ -778,7 +775,7 @@ public final class CraftServer implements Server {
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
 
-        console.settings = new ServerPropertiesProvider(console.func_244267_aX(), console.options);
+        console.settings = new ServerPropertiesProvider(console.func_244267_aX(), Paths.get("server.properties"));
         ServerProperties config = console.settings.getProperties();
 
         console.setAllowPvp(config.allowPvp);
@@ -1033,14 +1030,6 @@ public final class CraftServer implements Server {
         worlddata.checkName(name);
         worlddata.addServerBranding(console.getServerModName(), console.func_230045_q_().isPresent());
 
-        if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.forceWorldUpgrade(worldSession, DataFixesManager.getDataFixer(), console.options.has("eraseCache"), () -> {
-                return true;
-            }, worlddata.getDimensionGeneratorSettings().func_236224_e_().getEntries().stream().map((entry) -> {
-                return RegistryKey.getOrCreateKey(Registry.DIMENSION_TYPE_KEY, ((RegistryKey) entry.getKey()).getLocation());
-            }).collect(ImmutableSet.toImmutableSet()));
-        }
-
         long j = BiomeManager.getHashedSeed(creator.seed());
         List<ISpecialSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
         SimpleRegistry<Dimension> registrymaterials = worlddata.getDimensionGeneratorSettings().func_236224_e_();
@@ -1073,7 +1062,7 @@ public final class CraftServer implements Server {
 
         pluginManager.callEvent(new WorldInitEvent(internal.getCBWorld()));
 
-        getServer().loadInitialChunks(internal.getChunkProvider().chunkManager.field_219266_t, internal);
+        getServer().loadSpawn(internal.getChunkProvider().chunkManager.field_219266_t, internal);
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getCBWorld()));
         return internal.getCBWorld();
@@ -2091,5 +2080,9 @@ public final class CraftServer implements Server {
     public Spigot spigot()
     {
         return spigot;
+    }
+
+    public void setPlayerList(PlayerList playerList) {
+        playerList = (DedicatedPlayerList)playerList;
     }
 }

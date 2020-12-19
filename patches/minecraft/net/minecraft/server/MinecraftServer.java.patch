@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -2,13 +2,17 @@
+@@ -2,13 +2,18 @@
  
  import com.google.common.base.Splitter;
  import com.google.common.collect.ImmutableList;
@@ -9,6 +9,7 @@
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
 +import com.mohistmc.forge.ForgeInjectBukkit;
++import com.mohistmc.util.DatapackCodecUtils;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -18,7 +19,7 @@
  import io.netty.buffer.ByteBuf;
  import io.netty.buffer.ByteBufOutputStream;
  import io.netty.buffer.Unpooled;
-@@ -37,12 +41,12 @@
+@@ -37,12 +42,12 @@
  import java.util.Date;
  import java.util.List;
  import java.util.Map;
@@ -32,15 +33,16 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
  import java.util.concurrent.atomic.AtomicReference;
-@@ -50,6 +54,7 @@
+@@ -50,6 +55,8 @@
  import java.util.function.Function;
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
++import joptsimple.OptionParser;
 +import joptsimple.OptionSet;
  import net.minecraft.advancements.AdvancementManager;
  import net.minecraft.advancements.FunctionManager;
  import net.minecraft.block.Block;
-@@ -65,6 +70,8 @@
+@@ -65,6 +72,8 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.loot.LootPredicateManager;
  import net.minecraft.loot.LootTableManager;
@@ -49,7 +51,7 @@
  import net.minecraft.network.NetworkSystem;
  import net.minecraft.network.ServerStatusResponse;
  import net.minecraft.network.play.server.SServerDifficultyPacket;
-@@ -81,6 +88,8 @@
+@@ -81,6 +90,8 @@
  import net.minecraft.resources.ResourcePackList;
  import net.minecraft.scoreboard.ScoreboardSaveData;
  import net.minecraft.scoreboard.ServerScoreboard;
@@ -58,7 +60,7 @@
  import net.minecraft.server.management.OpEntry;
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
-@@ -99,6 +108,7 @@
+@@ -99,6 +110,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.concurrent.RecursiveEventLoop;
  import net.minecraft.util.concurrent.TickDelayedTask;
@@ -66,7 +68,7 @@
  import net.minecraft.util.datafix.codec.DatapackCodec;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
-@@ -108,6 +118,7 @@
+@@ -108,6 +120,7 @@
  import net.minecraft.util.registry.DynamicRegistries;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.registry.SimpleRegistry;
@@ -74,23 +76,7 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
-@@ -123,7 +134,6 @@
- import net.minecraft.world.WorldSettings;
- import net.minecraft.world.biome.BiomeManager;
- import net.minecraft.world.biome.provider.BiomeProvider;
--import net.minecraft.world.border.IBorderListener;
- import net.minecraft.world.border.WorldBorder;
- import net.minecraft.world.chunk.listener.IChunkStatusListener;
- import net.minecraft.world.chunk.listener.IChunkStatusListenerFactory;
-@@ -141,7 +151,6 @@
- import net.minecraft.world.spawner.PhantomSpawner;
- import net.minecraft.world.spawner.WanderingTraderSpawner;
- import net.minecraft.world.storage.CommandStorage;
--import net.minecraft.world.storage.DerivedWorldInfo;
- import net.minecraft.world.storage.DimensionSavedDataManager;
- import net.minecraft.world.storage.FolderName;
- import net.minecraft.world.storage.IServerConfiguration;
-@@ -149,32 +158,39 @@
+@@ -149,32 +162,42 @@
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.PlayerData;
  import net.minecraft.world.storage.SaveFormat;
@@ -98,6 +84,7 @@
  import net.minecraft.world.storage.WorldSavedDataCallableSave;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.common.MinecraftForge;
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -106,6 +93,8 @@
 +import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 +import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 +import org.bukkit.event.server.ServerLoadEvent;
++import org.bukkit.event.world.WorldInitEvent;
++import org.bukkit.event.world.WorldLoadEvent;
 +import org.spigotmc.SlackActivityAccountant;
  
  public abstract class MinecraftServer extends RecursiveEventLoop<TickDelayedTask> implements ISnooperInfo, ICommandSource, AutoCloseable {
@@ -138,7 +127,7 @@
     private PlayerList field_71318_t;
     private volatile boolean field_71317_u = true;
     private boolean field_71316_v;
-@@ -204,7 +220,7 @@
+@@ -204,7 +227,7 @@
     private final GameProfileRepository field_152365_W;
     private final PlayerProfileCache field_152366_X;
     private long field_147142_T;
@@ -147,7 +136,7 @@
     protected long field_211151_aa = Util.func_211177_b();
     private long field_213213_ab;
     private boolean field_213214_ac;
-@@ -219,16 +235,36 @@
+@@ -219,16 +242,36 @@
     private final FrameTimer field_213215_ap = new FrameTimer();
     private boolean field_205745_an;
     private float field_211152_ao;
@@ -188,34 +177,18 @@
           atomicreference.get().func_240802_v_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
-@@ -240,6 +276,13 @@
-       return s;
-    }
- 
-+   // Mohist start
-+   public void betterCavesFix(OptionSet options, DatapackCodec datapackconfiguration) {
-+      this.options = options;
-+      this.datapackconfiguration = datapackconfiguration;
-+   }
-+   // Mohist end
-+
-    public MinecraftServer(Thread p_i232576_1_, DynamicRegistries.Impl p_i232576_2_, SaveFormat.LevelSave p_i232576_3_, IServerConfiguration p_i232576_4_, ResourcePackList p_i232576_5_, Proxy p_i232576_6_, DataFixer p_i232576_7_, DataPackRegistries p_i232576_8_, MinecraftSessionService p_i232576_9_, GameProfileRepository p_i232576_10_, PlayerProfileCache p_i232576_11_, IChunkStatusListenerFactory p_i232576_12_) {
-       super("Server");
-       this.field_240767_f_ = p_i232576_2_;
-@@ -250,7 +293,7 @@
-       this.field_147143_S = p_i232576_9_;
-       this.field_152365_W = p_i232576_10_;
-       this.field_152366_X = p_i232576_11_;
--      this.field_147144_o = new NetworkSystem(this);
-+      // this.networkSystem = new NetworkSystem(this); // Spigot
-       this.field_213220_d = p_i232576_12_;
-       this.field_71310_m = p_i232576_3_;
-       this.field_240766_e_ = p_i232576_3_.func_237292_b_();
-@@ -259,7 +302,13 @@
+@@ -259,7 +302,20 @@
        this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
        this.field_175590_aa = p_i232576_1_;
        this.field_213217_au = Util.func_215072_e();
-+
++      String[] arguments = ManagementFactory.getRuntimeMXBean().getInputArguments().toArray(new String[0]);
++      OptionParser parser = new org.bukkit.craftbukkit.Main();
++      try {
++         options = parser.parse(arguments);
++      } catch (Exception e) {
++         e.printStackTrace();
++      }
++      this.datapackconfiguration = DatapackCodecUtils.getDatapackCodec();
 +      // CraftBukkit start
 +      this.vanillaCommandDispatcher = p_i232576_8_.field_240953_c_; // CraftBukkit
 +
@@ -225,241 +198,28 @@
  
     private void func_213204_a(DimensionSavedDataManager p_213204_1_) {
        ScoreboardSaveData scoreboardsavedata = p_213204_1_.func_215752_a(ScoreboardSaveData::new, "scoreboard");
-@@ -271,7 +320,7 @@
- 
-    public static void func_240777_a_(SaveFormat.LevelSave p_240777_0_) {
-       if (p_240777_0_.func_237295_c_()) {
--         field_147145_h.info("Converting map!");
-+         field_147145_h.info("Converting map! {}", p_240777_0_.func_237282_a_()); // CraftBukkit
-          p_240777_0_.func_237283_a_(new IProgressUpdate() {
-             private long field_96245_b = Util.func_211177_b();
- 
-@@ -301,42 +350,170 @@
- 
-    }
- 
-+   private String s;
-+   public void setS (String s) {
-+      this.s = s;
-+   }
-+
-    protected void func_240800_l__() {
--      this.func_175584_a();
--      this.field_240768_i_.func_230412_a_(this.getServerModName(), this.func_230045_q_().isPresent());
--      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
--      this.func_240787_a_(ichunkstatuslistener);
-+      int worldCount = 3;
-+      for (int worldId = 0; worldId < worldCount; ++worldId) {
-+         ServerWorld world;
-+         ServerWorldInfo worlddata;
-+         byte dimension = 0;
-+         RegistryKey<Dimension> dimensionKey = Dimension.field_236053_b_;
-+         if (worldId == 1) {
-+            if (func_71255_r()) {
-+               dimension = -1;
-+               dimensionKey =  Dimension.field_236054_c_;
-+            } else {
-+               continue;
+@@ -375,9 +431,19 @@
+             ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, p_240787_1_, chunkgenerator1, flag, j, ImmutableList.of(), false);
+             worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
+             this.field_71305_c.put(registrykey1, serverworld1);
++            if (this.server.scoreboardManager == null) {
++               this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_16_R3.scoreboard.CraftScoreboardManager(this, serverworld1.func_96441_U());
 +            }
-+         }
-+         if (worldId == 2) {
-+            if (server.getAllowEnd()) {
-+               dimension = 1;
-+               dimensionKey =  Dimension.field_236055_d_;
-+            } else {
-+               continue;
++            if (serverworld1.generator != null) {
++               serverworld1.getCBWorld().getPopulators().addAll(serverworld1.generator.getDefaultPopulators(serverworld1.getCBWorld()));
 +            }
-+         }
-+         String worldType = org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
-+         String dim = "DIM" + dimension;
-+         String name = (dimension == 0) ? s : dim;
-+         SaveFormat.LevelSave worldSession;
-+         if (dimension == 0) {
-+            worldSession = this.field_71310_m;
-+         } else {
-+            File newWorld = new File(new File(name), dim);
-+            File oldWorld = new File(new File(s), dim);
-+            File oldLevelDat = new File(new File(s), "level.dat"); // The data folders exist on first run as they are created in the PersistentCollection constructor above, but the level.dat won't
-+            if (!newWorld.isDirectory() && oldWorld.isDirectory() && oldLevelDat.isFile()) {
-+               MinecraftServer.field_147145_h.info("---- Migration of old " + worldType + " folder required ----");
-+               MinecraftServer.field_147145_h.info("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
-+               MinecraftServer.field_147145_h.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
-+               MinecraftServer.field_147145_h.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
-+               if (newWorld.exists()) {
-+                  MinecraftServer.field_147145_h.warn("A file or folder already exists at " + newWorld + "!");
-+                  MinecraftServer.field_147145_h.info("---- Migration of old " + worldType + " folder failed ----");
-+               } else if (newWorld.getParentFile().mkdirs()) {
-+                  if (oldWorld.renameTo(newWorld)) {
-+                     MinecraftServer.field_147145_h.info("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
-+                     // Migrate world data too.
-+                     try {
-+                        com.google.common.io.Files.copy(oldLevelDat, new File(new File(name), "level.dat"));
-+                        org.apache.commons.io.FileUtils.copyDirectory(new File(new File(s), "data"), new File(new File(name), "data"));
-+                     } catch (IOException exception) {
-+                        MinecraftServer.field_147145_h.warn("Unable to migrate world data.");
-+                     }
-+                     MinecraftServer.field_147145_h.info("---- Migration of old " + worldType + " folder complete ----");
-+                  } else {
-+                     MinecraftServer.field_147145_h.warn("Could not move folder " + oldWorld + " to " + newWorld + "!");
-+                     MinecraftServer.field_147145_h.info("---- Migration of old " + worldType + " folder failed ----");
-+                  }
-+               } else {
-+                  MinecraftServer.field_147145_h.warn("Could not create path for " + newWorld + "!");
-+                  MinecraftServer.field_147145_h.info("---- Migration of old " + worldType + " folder failed ----");
-+               }
-+            }
-+            try {
-+               worldSession = SaveFormat.func_237269_a_(server.getWorldContainer().toPath()).getLevelSave(name, dimensionKey);
-+            } catch (IOException ex) {
-+               throw new RuntimeException(ex);
-+            }
-+            MinecraftServer.func_240777_a_(worldSession); // Run conversion now
-+         }
-+         org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
-+         DynamicRegistries.Impl iregistrycustom_dimension = this.field_240767_f_;
-+         WorldSettingsImport<INBT> registryreadops = WorldSettingsImport.func_244335_a((DynamicOps) NBTDynamicOps.field_210820_a, this.field_195576_ac.func_240970_h_(), iregistrycustom_dimension);
-+         worlddata = (ServerWorldInfo) worldSession.func_237284_a_((DynamicOps) registryreadops, datapackconfiguration);
-+         if (worlddata == null) {
-+            WorldSettings worldsettings;
-+            DimensionGeneratorSettings generatorsettings;
-+            if (this.func_71242_L()) {
-+               worldsettings = MinecraftServer.field_213219_c;
-+               generatorsettings = DimensionGeneratorSettings.func_242752_a((DynamicRegistries) iregistrycustom_dimension);
-+            } else {
-+               ServerProperties dedicatedserverproperties = ((DedicatedServer) this).func_213221_d_();
-+               worldsettings = new WorldSettings(dedicatedserverproperties.field_219021_o, dedicatedserverproperties.field_219020_n, dedicatedserverproperties.field_218990_C, dedicatedserverproperties.field_219019_m, false, new GameRules(), datapackconfiguration);
-+               generatorsettings = options.has("bonusChest") ? dedicatedserverproperties.field_241082_U_.func_236230_k_() : dedicatedserverproperties.field_241082_U_;
-+            }
-+            worlddata = new ServerWorldInfo(worldsettings, generatorsettings, Lifecycle.stable());
-+         }
-+         worlddata.checkName(name); // CraftBukkit - Migration did not rewrite the level.dat; This forces 1.8 to take the last loaded world as respawn (in this case the end)
-+         if (options.has("forceUpgrade")) {
-+            net.minecraft.server.Main.func_240761_a_(worldSession, DataFixesManager.func_210901_a(), options.has("eraseCache"), () -> {
-+               return true;
-+            }, worlddata.func_230418_z_().func_236224_e_().func_239659_c_().stream().map((entry) -> {
-+               return RegistryKey.func_240903_a_(Registry.field_239698_ad_, ((RegistryKey) entry.getKey()).getRegistryName());
-+            }).collect(ImmutableSet.toImmutableSet()));
-+         }
-+         IServerWorldInfo iworlddataserver = worlddata;
-+         DimensionGeneratorSettings generatorsettings = worlddata.func_230418_z_();
-+         boolean flag = generatorsettings.func_236227_h_();
-+         long i = generatorsettings.func_236221_b_();
-+         long j = BiomeManager.func_235200_a_(i);
-+         List<ISpecialSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(iworlddataserver));
-+         SimpleRegistry<Dimension> registrymaterials = generatorsettings.func_236224_e_();
-+         Dimension worlddimension = (Dimension) registrymaterials.func_230516_a_(dimensionKey);
-+         DimensionType dimensionmanager;
-+         ChunkGenerator chunkgenerator;
-+         if (worlddimension == null) {
-+            dimensionmanager = (DimensionType) this.field_240767_f_.func_230520_a_().func_243576_d(DimensionType.field_235999_c_);
-+            chunkgenerator = DimensionGeneratorSettings.func_242750_a(this.field_240767_f_.func_243612_b(Registry.field_239720_u_), this.field_240767_f_.func_243612_b(Registry.field_243549_ar), (new Random()).nextLong());
-+         } else {
-+            dimensionmanager = worlddimension.func_236063_b_();
-+            chunkgenerator = worlddimension.func_236064_c_();
-+         }
-+         RegistryKey<World> worldKey = RegistryKey.func_240903_a_(Registry.field_239699_ae_, dimensionKey.func_240901_a_());
-+         if (worldId == 0) {
-+            ForgeInjectBukkit.init();
-+            this.field_240768_i_ = worlddata;
-+            this.field_240768_i_.func_230392_a_(((DedicatedServer) this).func_213221_d_().field_219020_n); // From DedicatedServer.init
-+            IChunkStatusListener worldloadlistener = this.field_213220_d.create(11);
-+            World.setGeneratorAndEnv(gen, org.bukkit.World.Environment.getEnvironment(dimension));
-+            world = new ServerWorld(this, this.field_213217_au, worldSession, iworlddataserver, worldKey, dimensionmanager, worldloadlistener, chunkgenerator, flag, j, list, true);
-+            DimensionSavedDataManager worldpersistentdata = world.func_217481_x();
-+            this.func_213204_a(worldpersistentdata);
-+            this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_16_R3.scoreboard.CraftScoreboardManager(this, world.func_96441_U());
-+            this.field_229733_al_ = new CommandStorage(worldpersistentdata);
-+         } else {
-+            IChunkStatusListener worldloadlistener = this.field_213220_d.create(11);
-+            World.setGeneratorAndEnv(gen, org.bukkit.World.Environment.getEnvironment(dimension));
-+            world = new ServerWorld(this, this.field_213217_au, worldSession, iworlddataserver, worldKey, dimensionmanager, worldloadlistener, chunkgenerator, flag, j, ImmutableList.of(), true);
-+         }
-+         worlddata.func_230412_a_(this.getServerModName(), this.func_230045_q_().isPresent());
-+         this.initWorld(world, worlddata, field_240768_i_, worlddata.func_230418_z_());
-+         this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(world.getCBWorld()));
-+         this.field_71305_c.put(world.func_234923_W_(), world);
-+         this.func_184103_al().func_212504_a(world);
-+         if (worlddata.func_230404_D_() != null) {
-+            this.func_201300_aS().func_201381_a(worlddata.func_230404_D_());
-+         }
-+      }
-       this.func_230543_p_();
--      this.func_213186_a(ichunkstatuslistener);
-+      for (ServerWorld worldserver : this.func_212370_w()) {
-+         this.loadInitialChunks(worldserver.func_72863_F().field_217237_a.field_219266_t, worldserver);
-+         this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getCBWorld()));
-+      }
++            Bukkit.getPluginManager().callEvent(new WorldInitEvent(serverworld1.getCBWorld()));
+          }
+       }
+-
++      ForgeInjectBukkit.init();
 +      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
 +      this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
 +      this.field_147144_o.acceptConnections();
-+      // CraftBukkit end
     }
- 
-    protected void func_230543_p_() {
-    }
- 
--   protected void func_240787_a_(IChunkStatusListener p_240787_1_) {
--      IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
--      DimensionGeneratorSettings dimensiongeneratorsettings = this.field_240768_i_.func_230418_z_();
-+   // CraftBukkit start 
-+   public void initWorld(ServerWorld serverworld, ServerWorldInfo iserverworldinfo, IServerConfiguration saveData, DimensionGeneratorSettings dimensiongeneratorsettings) {
-       boolean flag = dimensiongeneratorsettings.func_236227_h_();
--      long i = dimensiongeneratorsettings.func_236221_b_();
--      long j = BiomeManager.func_235200_a_(i);
--      List<ISpecialSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(iserverworldinfo));
--      SimpleRegistry<Dimension> simpleregistry = dimensiongeneratorsettings.func_236224_e_();
--      Dimension dimension = simpleregistry.func_230516_a_(Dimension.field_236053_b_);
--      ChunkGenerator chunkgenerator;
--      DimensionType dimensiontype;
--      if (dimension == null) {
--         dimensiontype = this.field_240767_f_.func_230520_a_().func_243576_d(DimensionType.field_235999_c_);
--         chunkgenerator = DimensionGeneratorSettings.func_242750_a(this.field_240767_f_.func_243612_b(Registry.field_239720_u_), this.field_240767_f_.func_243612_b(Registry.field_243549_ar), (new Random()).nextLong());
--      } else {
--         dimensiontype = dimension.func_236063_b_();
--         chunkgenerator = dimension.func_236064_c_();
-+
-+      // CraftBukkit start
-+      if (serverworld.generator != null) {
-+         serverworld.getCBWorld().getPopulators().addAll(serverworld.generator.getDefaultPopulators(serverworld.getCBWorld()));
-       }
- 
--      ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
--      this.field_71305_c.put(World.field_234918_g_, serverworld);
--      DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
--      this.func_213204_a(dimensionsaveddatamanager);
--      this.field_229733_al_ = new CommandStorage(dimensionsaveddatamanager);
-       WorldBorder worldborder = serverworld.func_175723_af();
-       worldborder.func_235926_a_(iserverworldinfo.func_230398_q_());
-       if (!iserverworldinfo.func_76070_v()) {
-@@ -359,26 +536,8 @@
- 
-          iserverworldinfo.func_76091_d(true);
-       }
--
--      this.func_184103_al().func_212504_a(serverworld);
--      if (this.field_240768_i_.func_230404_D_() != null) {
--         this.func_201300_aS().func_201381_a(this.field_240768_i_.func_230404_D_());
--      }
--
--      for(Entry<RegistryKey<Dimension>, Dimension> entry : simpleregistry.func_239659_c_()) {
--         RegistryKey<Dimension> registrykey = entry.getKey();
--         if (registrykey != Dimension.field_236053_b_) {
--            RegistryKey<World> registrykey1 = RegistryKey.func_240903_a_(Registry.field_239699_ae_, registrykey.func_240901_a_());
--            DimensionType dimensiontype1 = entry.getValue().func_236063_b_();
--            ChunkGenerator chunkgenerator1 = entry.getValue().func_236064_c_();
--            DerivedWorldInfo derivedworldinfo = new DerivedWorldInfo(this.field_240768_i_, iserverworldinfo);
--            ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, p_240787_1_, chunkgenerator1, flag, j, ImmutableList.of(), false);
--            worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
--            this.field_71305_c.put(registrykey1, serverworld1);
--         }
--      }
--
-    }
-+   // CraftBukkit end
  
     private static void func_240786_a_(ServerWorld p_240786_0_, IServerWorldInfo p_240786_1_, boolean p_240786_2_, boolean p_240786_3_, boolean p_240786_4_) {
-       ChunkGenerator chunkgenerator = p_240786_0_.func_72863_F().func_201711_g();
-@@ -387,12 +546,27 @@
+@@ -387,12 +453,27 @@
        } else if (p_240786_3_) {
           p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177984_a(), 0.0F);
        } else {
@@ -487,24 +247,18 @@
           if (blockpos == null) {
              field_147145_h.warn("Unable to find spawn biome");
           }
-@@ -451,8 +625,14 @@
-       iserverworldinfo.func_230392_a_(GameType.SPECTATOR);
+@@ -452,7 +533,10 @@
     }
  
--   private void func_213186_a(IChunkStatusListener p_213186_1_) {
--      ServerWorld serverworld = this.func_241755_D_();
-+   // CraftBukkit start
-+   public void loadInitialChunks(IChunkStatusListener p_213186_1_, ServerWorld serverworld) {
+    private void func_213186_a(IChunkStatusListener p_213186_1_) {
 +      net.minecraftforge.common.world.StructureSpawnManager.gatherEntitySpawns();
-+	  if (!serverworld.getCBWorld().getKeepSpawnInMemory()) {
-+         return;
-+      }
+       ServerWorld serverworld = this.func_241755_D_();
 +      this.forceTicks = true;
 +      // CraftBukkit end
        field_147145_h.info("Preparing start region for dimension {}", (Object)serverworld.func_234923_W_().func_240901_a_());
        BlockPos blockpos = serverworld.func_241135_u_();
        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
-@@ -462,31 +642,40 @@
+@@ -462,31 +546,40 @@
        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
        while(serverchunkprovider.func_217229_b() != 441) {
@@ -520,27 +274,29 @@
 +      // CraftBukkit start
 +      //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
 +      this.executeModerately();
-+      ServerWorld serverworld1 = serverworld;
-+      ForcedChunksSaveData forcedchunkssavedata = (ForcedChunksSaveData) serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
-+      // CraftBukkit end
++      for (ServerWorld serverworld1 : this.field_71305_c.values()) {
++         if (serverworld1.getCBWorld().getKeepSpawnInMemory()) {
++            ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
  
 -      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
 -         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
 -         if (forcedchunkssavedata != null) {
 -            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
-+      if (forcedchunkssavedata != null) {
-+         LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
++            if (forcedchunkssavedata != null) {
++               LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
  
 -            while(longiterator.hasNext()) {
 -               long i = longiterator.nextLong();
 -               ChunkPos chunkpos = new ChunkPos(i);
 -               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
--            }
-+         while (longiterator.hasNext()) {
-+            long i = longiterator.nextLong();
-+            ChunkPos chunkpos = new ChunkPos(i);
-+            serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++               while (longiterator.hasNext()) {
++                  long i = longiterator.nextLong();
++                  ChunkPos chunkpos = new ChunkPos(i);
++                  serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++               }
+             }
           }
++         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverworld1.getCBWorld()));
        }
  
 -      this.field_211151_aa = Util.func_211177_b() + 10L;
@@ -551,16 +307,12 @@
 +      // CraftBukkit end
        p_213186_1_.func_219510_b();
        serverchunkprovider.func_212863_j_().func_215598_a(5);
--      this.func_240794_aZ_();
-+      //this.func_240794_aZ_();
-+      // CraftBukkit start
-+      serverworld1.func_72891_a(this.func_230536_N_(), this.func_230537_U_());
+       this.func_240794_aZ_();
 +      this.forceTicks = false;
-+      // CraftBukkit end
     }
  
     protected void func_175584_a() {
-@@ -534,15 +723,36 @@
+@@ -534,15 +627,36 @@
        iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
        this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
        this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
@@ -598,7 +350,7 @@
        if (this.func_147137_ag() != null) {
           this.func_147137_ag().func_151268_b();
        }
-@@ -551,6 +761,7 @@
+@@ -551,6 +665,7 @@
           field_147145_h.info("Saving players");
           this.field_71318_t.func_72389_g();
           this.field_71318_t.func_72392_r();
@@ -606,7 +358,7 @@
        }
  
        field_147145_h.info("Saving worlds");
-@@ -566,6 +777,7 @@
+@@ -566,6 +681,7 @@
        for(ServerWorld serverworld1 : this.func_212370_w()) {
           if (serverworld1 != null) {
              try {
@@ -614,7 +366,7 @@
                 serverworld1.close();
              } catch (IOException ioexception1) {
                 field_147145_h.error("Exception closing the level", (Throwable)ioexception1);
-@@ -584,6 +796,12 @@
+@@ -584,6 +700,12 @@
        } catch (IOException ioexception) {
           field_147145_h.error("Failed to unlock level {}", this.field_71310_m.func_237282_a_(), ioexception);
        }
@@ -627,7 +379,7 @@
  
     }
  
-@@ -611,23 +829,48 @@
+@@ -611,23 +733,49 @@
  
     }
  
@@ -658,8 +410,10 @@
 +
 +               if (i > 5000L && this.field_211151_aa - this.field_71299_R >= 30000L) {  // CraftBukkit
                    long j = i / 50L;
-+                  if (server.getWarnOnOverload()) // CraftBukkit
-                   field_147145_h.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
+-                  field_147145_h.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
++                  if (server.getWarnOnOverload()) {
++                     field_147145_h.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
++                  }
                    this.field_211151_aa += j * 50L;
                    this.field_71299_R = this.field_211151_aa;
                 }
@@ -674,11 +428,11 @@
 +               }
 +               // Spigot end
 +
-+               MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
++               currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
                 this.field_211151_aa += 50L;
                 LongTickDetector longtickdetector = LongTickDetector.func_233524_a_("Server");
                 this.func_240773_a_(longtickdetector);
-@@ -643,11 +886,20 @@
+@@ -643,11 +791,20 @@
                 this.func_240795_b_(longtickdetector);
                 this.field_71296_Q = true;
              }
@@ -699,7 +453,7 @@
           CrashReport crashreport;
           if (throwable1 instanceof ReportedException) {
              crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
-@@ -662,6 +914,7 @@
+@@ -662,6 +819,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -707,7 +461,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -670,6 +923,14 @@
+@@ -670,6 +828,14 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -722,7 +476,7 @@
              this.func_71240_o();
           }
  
-@@ -678,9 +939,16 @@
+@@ -678,9 +844,16 @@
     }
  
     private boolean func_212379_aT() {
@@ -740,7 +494,7 @@
     protected void func_213202_o() {
        this.func_213160_bf();
        this.func_213161_c(() -> {
-@@ -688,7 +956,7 @@
+@@ -688,7 +861,7 @@
        });
     }
  
@@ -749,7 +503,7 @@
        return new TickDelayedTask(this.field_71315_w, p_212875_1_);
     }
  
-@@ -770,7 +1038,10 @@
+@@ -770,7 +943,10 @@
     }
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
@@ -760,7 +514,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -785,23 +1056,26 @@
+@@ -785,23 +961,26 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -790,7 +544,7 @@
           this.field_71307_n.func_76471_b();
        }
  
-@@ -812,50 +1086,99 @@
+@@ -812,50 +991,99 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
@@ -896,7 +650,7 @@
  
        this.field_71304_b.func_76319_b();
     }
-@@ -915,7 +1238,7 @@
+@@ -915,7 +1143,7 @@
     }
  
     public String getServerModName() {
@@ -905,7 +659,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -928,6 +1251,7 @@
+@@ -928,6 +1156,7 @@
        p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
           StringBuilder stringbuilder = new StringBuilder();
  
@@ -913,7 +667,7 @@
           for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
-@@ -953,7 +1277,7 @@
+@@ -953,7 +1182,7 @@
     public abstract Optional<String> func_230045_q_();
  
     public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
@@ -922,16 +676,7 @@
     }
  
     public KeyPair func_71250_E() {
-@@ -1158,7 +1482,7 @@
- 
-    @Nullable
-    public NetworkSystem func_147137_ag() {
--      return this.field_147144_o;
-+      return this.field_147144_o == null ? this.field_147144_o = new NetworkSystem(this) : this.field_147144_o; // Spigot
-    }
- 
-    @OnlyIn(Dist.CLIENT)
-@@ -1273,6 +1597,7 @@
+@@ -1273,6 +1502,7 @@
        }).thenAcceptAsync((p_240782_2_) -> {
           this.field_195576_ac.close();
           this.field_195576_ac = p_240782_2_;
@@ -939,7 +684,7 @@
           this.field_195577_ad.func_198985_a(p_240780_1_);
           this.field_240768_i_.func_230410_a_(func_240771_a_(this.field_195577_ad));
           p_240782_2_.func_240971_i_();
-@@ -1280,6 +1605,7 @@
+@@ -1280,6 +1510,7 @@
           this.func_184103_al().func_193244_w();
           this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
           this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
@@ -947,7 +692,7 @@
        }, this);
        if (this.func_213162_bc()) {
           this.func_213161_c(completablefuture::isDone);
-@@ -1289,10 +1615,13 @@
+@@ -1289,10 +1520,13 @@
     }
  
     public static DatapackCodec func_240772_a_(ResourcePackList p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
@@ -963,7 +708,7 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1335,7 +1664,7 @@
+@@ -1335,7 +1569,7 @@
        if (this.func_205744_aT()) {
           PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
           WhiteList whitelist = playerlist.func_152599_k();
@@ -972,19 +717,7 @@
           for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(playerlist.func_181057_v())) {
              if (!whitelist.func_152705_a(serverplayerentity.func_146103_bH())) {
                 serverplayerentity.field_71135_a.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.not_whitelisted"));
-@@ -1366,6 +1695,11 @@
-       return true;
-    }
- 
-+   @Override
-+   public CommandSender getBukkitSender(CommandSource p0) {
-+      return null;
-+   }
-+
-    public RecipeManager func_199529_aN() {
-       return this.field_195576_ac.func_240967_e_();
-    }
-@@ -1442,6 +1776,31 @@
+@@ -1442,6 +1676,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
@@ -1016,7 +749,7 @@
     public void func_223711_a(Path p_223711_1_) throws IOException {
        Path path = p_223711_1_.resolve("levels");
  
-@@ -1570,6 +1929,10 @@
+@@ -1570,6 +1829,10 @@
        return this.field_240768_i_;
     }
  
@@ -1027,7 +760,7 @@
     public DynamicRegistries func_244267_aX() {
        return this.field_240767_f_;
     }
-@@ -1578,4 +1941,20 @@
+@@ -1578,4 +1841,85 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return null;
     }
@@ -1046,5 +779,70 @@
 +      return (Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
 +   }
 +   // CraftBukkit end
++
++   public void initWorld(ServerWorld serverWorld, IServerWorldInfo worldInfo, IServerConfiguration saveData, DimensionGeneratorSettings generatorSettings) {
++      boolean flag = generatorSettings.func_236227_h_();
++      if (serverWorld.generator != null) {
++         serverWorld.getCBWorld().getPopulators().addAll(serverWorld.generator.getDefaultPopulators(serverWorld.getCBWorld()));
++      }
++      WorldBorder worldborder = serverWorld.func_175723_af();
++      worldborder.func_235926_a_(worldInfo.func_230398_q_());
++      if (!worldInfo.func_76070_v()) {
++         try {
++            func_240786_a_(serverWorld, worldInfo, generatorSettings.func_236223_d_(), flag, true);
++            worldInfo.func_76091_d(true);
++            if (flag) {
++               this.func_240778_a_(this.field_240768_i_);
++            }
++         } catch (Throwable throwable) {
++            CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception initializing level");
++            try {
++               serverWorld.func_72914_a(crashreport);
++            } catch (Throwable throwable2) {
++               // empty catch block
++            }
++            throw new ReportedException(crashreport);
++         }
++         worldInfo.func_76091_d(true);
++      }
++   }
++
++   public void loadSpawn(IChunkStatusListener listener, ServerWorld serverWorld) {
++      this.markWorldsDirty();
++      MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverWorld));
++      if (!serverWorld.getCBWorld().getKeepSpawnInMemory()) {
++         return;
++      }
++      field_147145_h.info("Preparing start region for dimension {}", serverWorld.func_234923_W_().func_240901_a_());
++      BlockPos blockpos = serverWorld.func_241135_u_();
++      listener.func_219509_a(new ChunkPos(blockpos));
++      ServerChunkProvider serverchunkprovider = serverWorld.func_72863_F();
++      serverchunkprovider.func_212863_j_().func_215598_a(500);
++      this.field_211151_aa = Util.func_211177_b();
++      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
++
++      while (serverchunkprovider.func_217229_b() != 441) {
++         this.field_211151_aa = Util.func_211177_b() + 10L;
++         this.executeModerately();
++      }
++
++      this.executeModerately();
++
++      ForcedChunksSaveData forcedchunkssavedata = serverWorld.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
++      if (forcedchunkssavedata != null) {
++         LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
++
++         while (longiterator.hasNext()) {
++            long i = longiterator.nextLong();
++            ChunkPos chunkpos = new ChunkPos(i);
++            serverWorld.func_72863_F().func_217206_a(chunkpos, true);
++         }
++      }
++      this.executeModerately();
++      listener.func_219510_b();
++      serverchunkprovider.func_212863_j_().func_215598_a(5);
++      this.func_240794_aZ_();
++      this.forceTicks = false;
++   }
 +
  }

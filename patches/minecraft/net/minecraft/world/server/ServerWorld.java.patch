@@ -139,9 +139,8 @@
        this.field_241107_Q_ = p_i241885_13_;
        this.field_73061_a = p_i241885_1_;
        this.field_241104_N_ = p_i241885_12_;
--      this.field_241103_E_ = p_i241885_4_;
 +      // CraftBukkit start
-+      this.field_241103_E_ = (ServerWorldInfo) p_i241885_4_;
+       this.field_241103_E_ = p_i241885_4_;
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }

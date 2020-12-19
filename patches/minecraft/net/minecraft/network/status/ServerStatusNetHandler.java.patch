@@ -27,7 +27,7 @@
  
  public class ServerStatusNetHandler implements IServerStatusNetHandler {
     private static final ITextComponent field_183007_a = new TranslationTextComponent("multiplayer.status.request_handled");
-@@ -32,8 +45,100 @@
+@@ -32,8 +45,101 @@
           this.field_147313_b.func_150718_a(field_183007_a);
        } else {
           this.field_183008_d = true;
@@ -117,12 +117,13 @@
 +         // Spigot End
 +         playerSample.func_151330_a(profiles.toArray(new GameProfile[profiles.size()]));
 +
-+         ServerStatusResponse ping = this.field_147314_a.func_147134_at();
++         ServerStatusResponse ping = new ServerStatusResponse();
 +         ping.func_151320_a(event.icon.value);
 +         ping.func_151315_a(new StringTextComponent(event.getMotd()));
 +         ping.func_151319_a(playerSample);
 +         int version = SharedConstants.func_215069_a().getProtocolVersion();
 +         ping.func_151321_a(new ServerStatusResponse.Version(field_147314_a.getServerModName() + " " + field_147314_a.func_71249_w(), version));
++         ping.setForgeData(this.field_147314_a.func_147134_at().getForgeData());
 +         this.field_147313_b.func_179290_a(new SServerInfoPacket(ping));
        }
 +      // CraftBukkit end
