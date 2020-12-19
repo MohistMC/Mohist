@@ -1,82 +1,20 @@
 --- a/net/minecraft/server/dedicated/PropertyManager.java
 +++ b/net/minecraft/server/dedicated/PropertyManager.java
-@@ -13,18 +13,32 @@
- import java.util.function.Supplier;
- import java.util.function.UnaryOperator;
- import javax.annotation.Nullable;
-+import joptsimple.OptionSet;
- import net.minecraft.util.registry.DynamicRegistries;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -19,7 +19,7 @@
  
  public abstract class PropertyManager<T extends PropertyManager<T>> {
     private static final Logger field_164440_a = LogManager.getLogger();
 -   private final Properties field_73672_b;
 +   public final Properties field_73672_b;
-+   // CraftBukkit start
-+   private OptionSet options = null;
  
--   public PropertyManager(Properties p_i50717_1_) {
--      this.field_73672_b = p_i50717_1_;
-+   public PropertyManager(Properties properties, final OptionSet options) {
-+      this.field_73672_b = properties;
-+
-+      this.options = options;
-    }
- 
-+   private String getOverride(String name, String value) {
-+      if ((this.options != null) && (this.options.has(name)) && !name.equals( "online-mode")) { // Spigot
-+         return String.valueOf(this.options.valueOf(name));
-+      }
-+
-+      return value;
-+   }
-+   // CraftBukkit end
-+
-    public static Properties func_218969_b(Path p_218969_0_) {
-       Properties properties = new Properties();
- 
-@@ -38,8 +52,14 @@
-    }
+    public PropertyManager(Properties p_i50717_1_) {
+       this.field_73672_b = p_i50717_1_;
+@@ -39,7 +39,7 @@
  
     public void func_218970_c(Path p_218970_1_) {
--      try (OutputStream outputstream = Files.newOutputStream(p_218970_1_)) {
+       try (OutputStream outputstream = Files.newOutputStream(p_218970_1_)) {
 -         this.field_73672_b.store(outputstream, "Minecraft server properties");
-+      try {
-+         // CraftBukkit start - Don't attempt writing to file if it's read only
-+         if (p_218970_1_.toFile().exists() && !p_218970_1_.toFile().canWrite()) {
-+            return;
-+         }
-+         // CraftBukkit end
-+         OutputStream outputstream = Files.newOutputStream(p_218970_1_);
 +         net.minecraftforge.common.util.SortedProperties.store(field_73672_b, outputstream, "Minecraft server properties");
        } catch (IOException ioexception) {
           field_164440_a.error("Failed to store properties to file: " + p_218970_1_);
        }
-@@ -68,7 +88,7 @@
- 
-    @Nullable
-    private String func_218976_c(String p_218976_1_) {
--      return (String)this.field_73672_b.get(p_218976_1_);
-+      return (String) getOverride(p_218976_1_, this.field_73672_b.getProperty(p_218976_1_)); // CraftBukkit
-    }
- 
-    @Nullable
-@@ -155,7 +175,7 @@
-       return properties;
-    }
- 
--   protected abstract T func_241881_b(DynamicRegistries p_241881_1_, Properties p_241881_2_);
-+   protected abstract T func_241881_b(DynamicRegistries p_241881_1_, Properties p_241881_2_, OptionSet optionset); // CraftBukkit
- 
-    public class Property<V> implements Supplier<V> {
-       private final String field_219040_b;
-@@ -175,7 +195,7 @@
-       public T func_244381_a(DynamicRegistries p_244381_1_, V p_244381_2_) {
-          Properties properties = PropertyManager.this.func_218966_a();
-          properties.put(this.field_219040_b, this.field_219042_d.apply(p_244381_2_));
--         return PropertyManager.this.func_241881_b(p_244381_1_, properties);
-+         return PropertyManager.this.func_241881_b(p_244381_1_, properties, PropertyManager.this.options); // CraftBukkit
-       }
-    }
- }

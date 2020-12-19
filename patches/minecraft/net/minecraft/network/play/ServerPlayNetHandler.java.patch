@@ -143,13 +143,9 @@
     private int field_147375_m;
     private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
     private double field_184349_l;
-@@ -196,10 +251,36 @@
-       if (ichatfilter != null) {
-          ichatfilter.func_244800_a();
-       }
-+      // CraftBukkit start - add fields and methods
-+      this.craftServer = p_i1530_1_.server;
-+   }
+@@ -186,6 +241,30 @@
+    private int field_184347_F;
+    private int field_184348_G;
  
 +   private final org.bukkit.craftbukkit.v1_16_R3.CraftServer craftServer;
 +   public boolean processedDisconnect;
@@ -171,9 +167,21 @@
 +   private boolean hasMoved; // Spigot
 +
 +   public CraftPlayer getPlayer() {
-+      return (this.field_147369_b == null) ? null : (CraftPlayer) this.field_147369_b.getBukkitEntity();
-    }
++      return (this.field_147369_b == null) ? null : this.field_147369_b.getBukkitEntity();
++   }
 +   // CraftBukkit end
++
+    public ServerPlayNetHandler(MinecraftServer p_i1530_1_, NetworkManager p_i1530_2_, ServerPlayerEntity p_i1530_3_) {
+       this.field_147367_d = p_i1530_1_;
+       this.field_147371_a = p_i1530_2_;
+@@ -196,10 +275,12 @@
+       if (ichatfilter != null) {
+          ichatfilter.func_244800_a();
+       }
+-
++      // CraftBukkit start - add fields and methods
++      this.craftServer = p_i1530_1_.server;
+    }
  
     public void func_73660_a() {
 +      org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.playerConnectionTimer.startTiming(); // Spigot

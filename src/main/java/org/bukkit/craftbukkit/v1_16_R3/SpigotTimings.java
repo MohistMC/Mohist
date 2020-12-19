@@ -5,6 +5,7 @@ import java.util.HashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraft.world.storage.ServerWorldInfo;
 import org.bukkit.craftbukkit.v1_16_R3.scheduler.CraftTask;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -136,7 +137,7 @@ public class SpigotTimings {
         public final CustomTimingsHandler syncChunkLoadPostTimer;
 
         public WorldTimingsHandler(World server) {
-            String name = ((ServerWorldInfo) server.worldInfo).getWorldName() + " - ";
+            String name = ((IServerWorldInfo) server.worldInfo).getWorldName() + " - ";
 
             mobSpawn = new CustomTimingsHandler("** " + name + "mobSpawn");
             doChunkUnload = new CustomTimingsHandler("** " + name + "doChunkUnload");

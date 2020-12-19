@@ -66,32 +66,7 @@
           this.field_237278_b_ = SessionLockManager.func_232998_a_(this.field_237279_c_);
        }
  
-@@ -281,9 +300,23 @@
-       }
- 
-       public File func_237291_a_(RegistryKey<World> p_237291_1_) {
--         return DimensionType.func_236031_a_(p_237291_1_, this.field_237279_c_.toFile());
-+         // CraftBukkit start
-+         return this.getFolder(this.field_237279_c_.toFile());
-       }
- 
-+      private File getFolder(File file) {
-+         if (dimensionType == Dimension.field_236053_b_) {
-+            return file;
-+         } else if (dimensionType == Dimension.field_236054_c_) {
-+            return new File(file, "DIM-1");
-+         } else if (dimensionType == Dimension.field_236055_d_) {
-+            return new File(file, "DIM1");
-+         } else {
-+            throw new IllegalArgumentException("Unknwon dimension " + this.dimensionType);
-+         }
-+      }
-+      // CraftBukkit end
-+
-       private void func_237301_i_() {
-          if (!this.field_237278_b_.func_232997_a_()) {
-             throw new IllegalStateException("Lock is no longer valid");
-@@ -314,7 +347,7 @@
+@@ -314,7 +333,7 @@
        @Nullable
        public IServerConfiguration func_237284_a_(DynamicOps<INBT> p_237284_1_, DatapackCodec p_237284_2_) {
           this.func_237301_i_();
@@ -100,7 +75,7 @@
        }
  
        @Nullable
-@@ -335,6 +368,8 @@
+@@ -335,6 +354,8 @@
           CompoundNBT compoundnbt1 = new CompoundNBT();
           compoundnbt1.func_218657_a("Data", compoundnbt);
  
@@ -109,7 +84,7 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              CompressedStreamTools.func_244264_a(compoundnbt1, file2);
-@@ -352,6 +387,10 @@
+@@ -352,6 +373,10 @@
           return this.field_237279_c_.resolve("icon.png").toFile();
        }
  

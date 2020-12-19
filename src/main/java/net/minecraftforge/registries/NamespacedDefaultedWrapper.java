@@ -62,8 +62,8 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
             value.setRegistryName(key.getLocation());
 
         int realId = this.delegate.add(id, value);
-        if (realId != id && id != -1)
-            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+        //if (realId != id && id != -1)
+        //   LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
 
         return value;
     }

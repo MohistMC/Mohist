@@ -31,7 +31,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.DynamicRegistries;
-@@ -55,24 +59,34 @@
+@@ -55,17 +59,24 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
@@ -58,25 +58,11 @@
     @Nullable
     private MinecraftServerGui field_213225_q;
     @Nullable
-    private final ChatFilterClient field_244714_r;
- 
--   public DedicatedServer(Thread p_i232601_1_, DynamicRegistries.Impl p_i232601_2_, SaveFormat.LevelSave p_i232601_3_, ResourcePackList p_i232601_4_, DataPackRegistries p_i232601_5_, IServerConfiguration p_i232601_6_, ServerPropertiesProvider p_i232601_7_, DataFixer p_i232601_8_, MinecraftSessionService p_i232601_9_, GameProfileRepository p_i232601_10_, PlayerProfileCache p_i232601_11_, IChunkStatusListenerFactory p_i232601_12_) {
-+   // CraftBukkit start - Signature changed
-+   public DedicatedServer(joptsimple.OptionSet options, DatapackCodec datapackconfiguration, Thread p_i232601_1_, DynamicRegistries.Impl p_i232601_2_, SaveFormat.LevelSave p_i232601_3_, ResourcePackList p_i232601_4_, DataPackRegistries p_i232601_5_, IServerConfiguration p_i232601_6_, ServerPropertiesProvider p_i232601_7_, DataFixer p_i232601_8_, MinecraftSessionService p_i232601_9_, GameProfileRepository p_i232601_10_, PlayerProfileCache p_i232601_11_, IChunkStatusListenerFactory p_i232601_12_) {
-       super(p_i232601_1_, p_i232601_2_, p_i232601_3_, p_i232601_6_, p_i232601_4_, Proxy.NO_PROXY, p_i232601_8_, p_i232601_5_, p_i232601_9_, p_i232601_10_, p_i232601_11_, p_i232601_12_);
-+      // CraftBukkit end
-+      betterCavesFix(options, datapackconfiguration);
-       this.field_71340_o = p_i232601_7_;
-       this.field_184115_n = new RConConsoleSource(this);
-       this.field_244714_r = null;
-@@ -81,12 +95,38 @@
+@@ -81,12 +92,35 @@
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.Main.useConsole) {
-+               return;
-+            }
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 -
@@ -112,7 +98,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-@@ -94,6 +134,21 @@
+@@ -94,6 +128,20 @@
  
           }
        };
@@ -130,51 +116,15 @@
 +      System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
 +      System.setErr(IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
 +      // CraftBukkit end
-+
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
        thread.start();
-@@ -112,6 +167,12 @@
-          this.func_71189_e(serverproperties.field_219009_c);
-       }
- 
-+      // Spigot start
-+      this.func_184105_a((PlayerList) (new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_)));
-+      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
-+      org.spigotmc.SpigotConfig.registerCommands();
-+      // Spigot end
-+
-       this.func_71188_g(serverproperties.field_219012_f);
-       this.func_71245_h(serverproperties.field_219013_g);
-       this.func_180507_a_(serverproperties.field_219014_h, this.func_184113_aK());
-@@ -119,7 +180,7 @@
-       this.func_104055_i(serverproperties.field_219016_j);
-       super.func_143006_e(serverproperties.field_219005_R.get());
-       this.func_205741_k(serverproperties.field_219017_k);
--      this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
-+	  // this.serverConfig.setGameType(serverproperties.gamemode); // CraftBukkit - moved to world loading
-       field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
-       InetAddress inetaddress = null;
-       if (!this.func_71211_k().isEmpty()) {
-@@ -142,6 +203,12 @@
-          return false;
-       }
- 
-+      // CraftBukkit start
-+      // this.setPlayerList((PlayerList) (new DedicatedPlayerList(this, this.field_240767_f_, this.playerDataManager))); // Spigot - moved up
-+      server.loadPlugins();
-+      server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-+      // CraftBukkit end
-+
-       if (!this.func_71266_T()) {
-          field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-          field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
-@@ -156,17 +223,21 @@
-       if (!PreYggdrasilConverter.func_219587_e(this)) {
+@@ -157,16 +205,21 @@
           return false;
        } else {
--         this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
-+         // this.setPlayerList(new DedicatedPlayerList(this, this.field_240767_f_, this.playerDataManager)); // CraftBukkit - moved up
+          this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
++         server.loadPlugins();
++         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
           long i = Util.func_211178_c();
           this.func_71191_d(serverproperties.field_219026_t);
           SkullTileEntity.func_184293_a(this.func_152358_ax());
@@ -182,7 +132,6 @@
           PlayerProfileCache.func_187320_a(this.func_71266_T());
 +         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
-+         setS(serverproperties.field_219021_o);
           this.func_240800_l__();
           long j = Util.func_211178_c() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
@@ -192,7 +141,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -179,23 +250,17 @@
+@@ -179,23 +232,17 @@
           if (serverproperties.field_219030_x) {
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = MainThread.func_242130_a(this);
@@ -220,7 +169,7 @@
     }
  
     public boolean func_230537_U_() {
-@@ -281,6 +346,7 @@
+@@ -281,6 +328,7 @@
           this.field_71342_m.func_219591_b();
        }
  
@@ -228,7 +177,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -303,11 +369,21 @@
+@@ -303,11 +351,21 @@
     }
  
     public void func_71333_ah() {
@@ -251,7 +200,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -410,7 +486,7 @@
+@@ -410,7 +468,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -260,7 +209,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -489,13 +565,39 @@
+@@ -489,13 +547,39 @@
     }
  
     public String func_71258_A() {
@@ -302,7 +251,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -515,6 +617,11 @@
+@@ -515,6 +599,11 @@
        return false;
     }
  
@@ -314,15 +263,10 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -531,4 +638,15 @@
+@@ -531,4 +620,10 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
     }
-+
-+   // CraftBukkit start
-+   public boolean isDebuggingEnabled() {
-+      return this.func_213221_d_().debug;
-+   }
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSource wrapper) {

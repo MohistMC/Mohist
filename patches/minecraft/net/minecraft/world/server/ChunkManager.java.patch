@@ -162,12 +162,7 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
-@@ -802,13 +852,24 @@
-    @Nullable
-    private CompoundNBT func_219178_f(ChunkPos p_219178_1_) throws IOException {
-       CompoundNBT compoundnbt = this.func_227078_e_(p_219178_1_);
--      return compoundnbt == null ? null : this.func_235968_a_(this.field_219255_i.func_234923_W_(), this.field_219259_m, compoundnbt);
-+      return compoundnbt == null ? null : this.func_235968_a_(this.field_219255_i.getTypeKey(), this.field_219259_m, compoundnbt, p_219178_1_, field_219255_i); // CraftBukkit
+@@ -806,9 +856,20 @@
     }
  
     boolean func_219243_d(ChunkPos p_219243_1_) {

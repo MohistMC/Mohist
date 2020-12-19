@@ -347,7 +347,7 @@
 +            } else if (p_213315_2_.field_72449_c < vector3d.field_72449_c) {
 +               bl = bl.getRelative(BlockFace.NORTH);
 +            }
-+            if (!bl.getType().isAir()) {
++            if (bl.getType() != org.bukkit.Material.AIR) {
 +               VehicleBlockCollisionEvent event = new VehicleBlockCollisionEvent(vehicle, bl);
 +               field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +            }
