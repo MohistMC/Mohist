@@ -780,12 +780,7 @@
     }
  
     protected boolean func_184219_q(Entity p_184219_1_) {
-@@ -1743,11 +2102,17 @@
-             MinecraftServer minecraftserver = serverworld.func_73046_m();
-             RegistryKey<World> registrykey = this.field_70170_p.func_234923_W_() == World.field_234919_h_ ? World.field_234918_g_ : World.field_234919_h_;
-             ServerWorld serverworld1 = minecraftserver.func_71218_a(registrykey);
--            if (serverworld1 != null && minecraftserver.func_71255_r() && !this.func_184218_aH() && this.field_82153_h++ >= i) {
-+            if (true && !this.func_184218_aH() && this.field_82153_h++ >= i) {
+@@ -1747,7 +2106,13 @@
                 this.field_70170_p.func_217381_Z().func_76320_a("portal");
                 this.field_82153_h = i;
                 this.func_242279_ag();
