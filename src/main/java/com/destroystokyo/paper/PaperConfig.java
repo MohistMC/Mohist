@@ -182,4 +182,12 @@ public class PaperConfig {
         config.addDefault(path, def);
         return config.getString(path, config.getString(path));
     }
+    /* Flying kick Message */
+    public static String flyingKickPlayerMessage = "Flying is not enabled on this server";
+    public static String flyingKickVehicleMessage = "Flying is not enabled on this server";
+    private static void flyingKickMessages() {
+        flyingKickPlayerMessage = getString("messages.kick.flying-player", flyingKickPlayerMessage);
+        flyingKickVehicleMessage = getString("messages.kick.flying-vehicle", flyingKickVehicleMessage);
+    }
+    // End Flying Kick Message
 }
