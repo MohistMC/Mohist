@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
+import com.mohistmc.recipe.RecipeUtils;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +29,7 @@ public class RecipeIterator implements Iterator<Recipe> {
             current = recipes.next().getValue().values().iterator();
         }
 
-        return current.next().toBukkitRecipe();
+        return RecipeUtils.toBukkitRecipe(current.next());
     }
 
     @Override
