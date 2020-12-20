@@ -9,11 +9,8 @@ import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
-import com.mohistmc.util.JarLoader;
-import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.Message;
-import java.io.File;
-import java.net.URLClassLoader;
+
 import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
 
@@ -44,6 +41,8 @@ public class MohistMC {
         }
 
         if (MohistConfigUtil.bMohist("check_libraries")) DefaultLibraries.run();
+        DefaultLibraries.loadDefaultLibs();
+        CustomLibraries.loadCustomLibs();
 
         //MappingFix.init();
         //MappingFix.copyMappings();
@@ -57,8 +56,6 @@ public class MohistMC {
         if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) AutoDeletePlugins.jar();
         if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) AutoDeleteMods.jar();
-        CustomLibraries.run();
-        JarLoader.loadjar(JarTool.getJarDir() + "/libraries/net/minecraft/1.12.2/minecraft_server.1.12.2.jar");
         FastWorkBenchConf.changeConf();
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }

@@ -7,50 +7,43 @@ import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.Message;
 
-import io.netty.util.internal.ConcurrentSet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.LinkedHashMap;
 
 public class DefaultLibraries {
-
+    private static int retry = 0;
     public static HashMap<String, String> fail = new HashMap<>();
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
-        String str;
         String url = "https://www.mgazul.cn/";
         if (Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-        BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
-        while ((str = b.readLine()) != null) {
-            String[] args = str.split("\\|");
-            if (args.length == 2) {
-                File file = new File(JarTool.getJarDir() + "/" + args[0]);
-                if ((!file.exists() || !MD5Util.md5CheckSum(file, args[1]))) {
-                    if (MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(file.getName())) continue;
-                    file.getParentFile().mkdirs();
-                    String u = url + args[0];
-                    System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
-                    try {
-                        UpdateUtils.downloadFile(u, file);
-                        if (!file.getName().equals("minecraft_server.1.12.2.jar")) {
-                            JarLoader.loadjar(file.getPath());
-                        }
-                        fail.remove(u);
-                    } catch (Exception e) {
-                        System.out.println(Message.getFormatString("file.download.nook", new Object[]{u}));
-                        file.delete();
-                        fail.put(u, file.getAbsolutePath());
-                    }
+        LinkedHashMap<File, String> libs = getDefaultLibs();
+
+        for (File lib : getDefaultLibs().keySet()) {
+            if((!lib.exists() || !MD5Util.md5CheckSum(lib, libs.get(lib))) && !MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
+                lib.getParentFile().mkdirs();
+                String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
+                System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
+
+                try {
+                    UpdateUtils.downloadFile(u, lib);
+                    fail.remove(u);
+                } catch (Exception e) {
+                    System.out.println(Message.getFormatString("file.download.nook", new Object[]{u}));
+                    lib.delete();
+                    fail.put(u, lib.getAbsolutePath());
                 }
             }
+
         }
-        b.close();
         /*FINISHED | RECHECK IF A FILE FAILED*/
-        if (!fail.isEmpty()) {
+        if (retry < 3 && !fail.isEmpty()) {
+            retry++;
+            System.out.println(Message.getFormatString("update.retry", new Object[]{retry}));
             run();
         } else {
             System.out.println(Message.getString("libraries.checking.end"));
@@ -63,16 +56,21 @@ public class DefaultLibraries {
         }
     }
 
-    public static Set<String> getDefaultLibs() throws Exception {
-        Set<String> DefaultList = new ConcurrentSet<>();
+    public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
+        LinkedHashMap<File, String> temp = new LinkedHashMap<>();
         BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
         String str;
         while ((str = b.readLine()) != null) {
             String[] s = str.split("\\|");
-            String jarName = new File(JarTool.getJarDir() + "/" + s[0]).getName();
-            DefaultList.add(jarName);
+            temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
         }
         b.close();
-        return DefaultList;
+        return temp;
+    }
+
+    public static void loadDefaultLibs() throws Exception {
+        for (File lib : getDefaultLibs().keySet())
+            if(lib.exists() && !MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName()))
+                JarLoader.loadjar(lib.getAbsolutePath());
     }
 }
