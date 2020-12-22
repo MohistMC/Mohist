@@ -22,7 +22,7 @@
     private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<Integer> field_184738_bw = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187192_b);
 -   private static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
-+   public static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h); // private->public CraftBukkit
++   public static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
     private static final Predicate<Difficulty> field_213699_bC = (p_213697_0_) -> {
        return p_213697_0_ == Difficulty.HARD;
     };
@@ -30,8 +30,8 @@
     private boolean field_146076_bu;
     private int field_204707_bD;
 -   private int field_204708_bE;
-+   public int field_204708_bE; // private->public CraftBukkit
-+   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
++   public int field_204708_bE;
++   private int lastTick = MinecraftServer.currentTick;
  
     public ZombieEntity(EntityType<? extends ZombieEntity> p_i48549_1_, World p_i48549_2_) {
        super(p_i48549_1_, p_i48549_2_);
@@ -61,7 +61,7 @@
        }
  
        super.func_70071_h_();
-+      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
++      this.lastTick = MinecraftServer.currentTick;
     }
  
     public void func_70636_d() {
@@ -70,7 +70,7 @@
     }
  
 -   private void func_204704_a(int p_204704_1_) {
-+   public void func_204704_a(int p_204704_1_) { // private->public CraftBukkit
++   public void func_204704_a(int p_204704_1_) {
 +      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
        this.field_204708_bE = p_204704_1_;
        this.func_184212_Q().func_187227_b(field_204709_bA, true);
@@ -94,16 +94,19 @@
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                 int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-@@ -284,6 +299,8 @@
+@@ -284,9 +299,10 @@
                 if (WorldEntitySpawner.func_209382_a(entityspawnplacementregistry$placementtype, this.field_70170_p, blockpos, entitytype) && EntitySpawnPlacementRegistry.func_223515_a(entitytype, serverworld, SpawnReason.REINFORCEMENT, blockpos, this.field_70170_p.field_73012_v)) {
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_226668_i_(zombieentity) && this.field_70170_p.func_226669_j_(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
-+                     this.field_70170_p.addEntity(zombieentity, CreatureSpawnEvent.SpawnReason.REINFORCEMENTS); // CraftBukkit
 +                     if (livingentity != null)
                       zombieentity.func_70624_b(livingentity);
                       zombieentity.func_213386_a(serverworld, this.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
-                      serverworld.func_242417_l(zombieentity);
-@@ -304,7 +321,13 @@
+-                     serverworld.func_242417_l(zombieentity);
++                     serverworld.addAllEntities(zombieentity, CreatureSpawnEvent.SpawnReason.REINFORCEMENTS); // CraftBukkit
+                      this.func_110148_a(Attributes.field_233829_l_).func_233769_c_(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
+                      zombieentity.func_110148_a(Attributes.field_233829_l_).func_233769_c_(new AttributeModifier("Zombie reinforcement callee charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
+                      break;
+@@ -304,7 +320,13 @@
        if (flag) {
           float f = this.field_70170_p.func_175649_E(this.func_233580_cy_()).func_180168_b();
           if (this.func_184614_ca().func_190926_b() && this.func_70027_ad() && this.field_70146_Z.nextFloat() < f * 0.3F) {
@@ -118,7 +121,7 @@
           }
        }
  
-@@ -375,7 +398,12 @@
+@@ -375,7 +397,12 @@
           }
  
           VillagerEntity villagerentity = (VillagerEntity)p_241847_2_;
@@ -132,16 +135,16 @@
           zombievillagerentity.func_213386_a(p_241847_1_, p_241847_1_.func_175649_E(zombievillagerentity.func_233580_cy_()), SpawnReason.CONVERSION, new ZombieEntity.GroupData(false, true), (CompoundNBT)null);
           zombievillagerentity.func_213792_a(villagerentity.func_213700_eh());
           zombievillagerentity.func_223727_a(villagerentity.func_223722_es().func_234058_a_(NBTDynamicOps.field_210820_a).getValue());
-@@ -423,7 +451,7 @@
+@@ -423,7 +450,7 @@
                    chickenentity1.func_213386_a(p_213386_1_, p_213386_2_, SpawnReason.JOCKEY, (ILivingEntityData)null, (CompoundNBT)null);
                    chickenentity1.func_152117_i(true);
                    this.func_184220_m(chickenentity1);
 -                  p_213386_1_.func_217376_c(chickenentity1);
-+                  p_213386_1_.addEntity(chickenentity1, CreatureSpawnEvent.SpawnReason.MOUNT); // CraftBukkit
++                  p_213386_1_.addEntity(chickenentity1, CreatureSpawnEvent.SpawnReason.MOUNT);
                 }
              }
           }
-@@ -448,7 +476,7 @@
+@@ -448,7 +475,7 @@
     }
  
     public static boolean func_241399_a_(Random p_241399_0_) {
@@ -150,7 +153,7 @@
     }
  
     protected void func_207304_a(float p_207304_1_) {
-@@ -468,7 +496,7 @@
+@@ -468,7 +495,7 @@
     }
  
     protected void func_230291_eT_() {

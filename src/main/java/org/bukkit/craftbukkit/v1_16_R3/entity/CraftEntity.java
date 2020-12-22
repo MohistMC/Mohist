@@ -7,6 +7,7 @@ import com.mohistmc.entity.CraftCustomAbstractHorse;
 import com.mohistmc.entity.CraftCustomChestHorse;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.entity.CraftCustomFakePlayer;
+import com.mohistmc.entity.CraftCustomLivingEntity;
 import com.mohistmc.entity.CraftCustomProjectileEntity;
 import java.util.List;
 import java.util.Set;
@@ -232,6 +233,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         if (entity instanceof WolfEntity) { return new CraftWolf(server, (WolfEntity) entity); }
                         else if (entity instanceof CatEntity) { return new CraftCat(server, (CatEntity) entity); }
                         else if (entity instanceof ParrotEntity) { return new CraftParrot(server, (ParrotEntity) entity); }
+                        else { return new CraftTameableAnimal(server, (TameableEntity) entity); }
                     }
                     else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
                     else if (entity instanceof AbstractHorseEntity) {
@@ -396,8 +398,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
         else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
         else if (entity instanceof ProjectileEntity) { return new CraftCustomProjectileEntity(server, entity); }
-        return new CraftCustomEntity(server, entity);
+        else {return new CraftCustomEntity(server, entity);}
         // CHECKSTYLE:ON
+
+        throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
     }
 
     @Override
