@@ -93,7 +93,7 @@ public class MohistCommand extends Command {
                 }
                 break;
             case "reload":
-                MohistConfig.instance.init(new File("mohist-config/mohist.yml"));
+                MohistConfig.instance.load();
                 sender.sendMessage(ChatColor.GREEN + "mohist.yml reload complete.");
                 break;
             default:

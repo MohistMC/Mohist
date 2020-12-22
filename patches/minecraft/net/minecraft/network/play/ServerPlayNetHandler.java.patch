@@ -165,7 +165,7 @@
 +   private int dropCount = 0;
 +   private static final int SURVIVAL_PLACE_DISTANCE_SQUARED = 6 * 6;
 +   private static final int CREATIVE_PLACE_DISTANCE_SQUARED = 7 * 7;
-+
++   private MohistConfig mohistConfig = new MohistConfig();
 +   // Get position of last block hit for BlockDamageLevel.STOPPED
 +   private double lastPosX = Double.MAX_VALUE;
 +   private double lastPosY = Double.MAX_VALUE;
@@ -192,7 +192,7 @@
 -            field_147370_c.warn("{} was kicked for floating too long!", (Object)this.field_147369_b.func_200200_C_().getString());
 -            this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.flying"));
 +            field_147370_c.warn("{} was kicked for floating too long!", (Object)this.field_147369_b.func_195047_I_());
-+            this.disconnect(MohistConfig.flyingKickPlayerMessage);
++            this.disconnect(mohistConfig.kick_message.getValue());
              return;
           }
        } else {
@@ -203,7 +203,7 @@
 -               field_147370_c.warn("{} was kicked for floating a vehicle too long!", (Object)this.field_147369_b.func_200200_C_().getString());
 -               this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.flying"));
 +               field_147370_c.warn("{} was kicked for floating a vehicle too long!", (Object)this.field_147369_b.func_195047_I_());
-+               this.disconnect(MohistConfig.flyingKickPlayerMessage);
++               this.disconnect(mohistConfig.kick_message.getValue());
                 return;
              }
           } else {
