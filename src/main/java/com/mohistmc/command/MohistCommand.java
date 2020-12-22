@@ -4,6 +4,8 @@ import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.configuration.MohistConfig;
 import com.mohistmc.util.i18n.Message;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,7 +93,7 @@ public class MohistCommand extends Command {
                 }
                 break;
             case "reload":
-                MohistConfig.instance.load();
+                MohistConfig.instance.init(new File("mohist-config/mohist.yml"));
                 sender.sendMessage(ChatColor.GREEN + "mohist.yml reload complete.");
                 break;
             default:

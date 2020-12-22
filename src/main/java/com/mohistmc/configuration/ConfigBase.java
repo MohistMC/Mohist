@@ -77,6 +77,7 @@ public abstract class ConfigBase
         return getBoolean(path, def, true);
     }
 
+
     public boolean getBoolean(String path, boolean def, boolean useDefault)
     {
         if (useDefault)
