@@ -87,7 +87,7 @@
     private ChatVisibility field_71143_cn;
     private boolean field_71140_co = true;
     private long field_143005_bX = Util.func_211177_b();
-@@ -175,21 +197,74 @@
+@@ -175,18 +197,71 @@
     public int field_71138_i;
     public boolean field_71136_j;
  
@@ -159,11 +159,7 @@
 +
     private void func_205734_a(ServerWorld p_205734_1_) {
        BlockPos blockpos = p_205734_1_.func_241135_u_();
--      if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.func_73046_m().func_240793_aU_().func_76077_q() != GameType.ADVENTURE) {
-+      if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.getServerWorldInfo().func_76077_q() != GameType.ADVENTURE) { // CraftBukkit
-          int i = Math.max(0, this.field_71133_b.func_184108_a(p_205734_1_));
-          int j = MathHelper.func_76128_c(p_205734_1_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
-          if (j < i) {
+       if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.func_73046_m().func_240793_aU_().func_76077_q() != GameType.ADVENTURE) {
 @@ -234,6 +309,7 @@
  
     public void func_70037_a(CompoundNBT p_70037_1_) {

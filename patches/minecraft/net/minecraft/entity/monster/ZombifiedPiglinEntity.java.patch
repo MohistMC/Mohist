@@ -31,7 +31,7 @@
  
 -   public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
 -      if (this.func_70638_az() == null && p_70624_1_ != null) {
-+   public boolean setAttackTarget(@Nullable LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) { // CraftBukkit - signature
++   public boolean setAttackTarget(@Nullable LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) {
 +      if (this.func_70638_az() == null && entitylivingbaseIn != null) {
           this.field_234345_bu_ = field_234350_d_.func_233018_a_(this.field_70146_Z);
           this.field_241401_bA_ = field_241403_bz_.func_233018_a_(this.field_70146_Z);
@@ -44,7 +44,7 @@
        }
  
 -      super.func_70624_b(p_70624_1_);
-+      return super.setGoalTarget(entitylivingbaseIn, reason, fireEvent); // CraftBukkit
++      return super.setGoalTarget(entitylivingbaseIn, reason, fireEvent);
     }
  
     public void func_230258_H__() {

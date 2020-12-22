@@ -18,16 +18,16 @@
  
  public class ZombieVillagerEntity extends ZombieEntity implements IVillagerDataHolder {
 -   private static final DataParameter<Boolean> field_184739_bx = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_187198_h);
-+   public static final DataParameter<Boolean> field_184739_bx = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_187198_h); // private->public CraftBukkit
++   public static final DataParameter<Boolean> field_184739_bx = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<VillagerData> field_213795_c = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_218813_q);
 -   private int field_82234_d;
 -   private UUID field_191992_by;
-+   public int field_82234_d; // private->public CraftBukkit
-+   public UUID field_191992_by; // private->public CraftBukkit
++   public int field_82234_d;
++   public UUID field_191992_by;
     private INBT field_223728_bB;
     private CompoundNBT field_213793_bB;
     private int field_213794_bC;
-+   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
++   private int lastTick = MinecraftServer.currentTick;
  
     public ZombieVillagerEntity(EntityType<? extends ZombieVillagerEntity> p_i50186_1_, World p_i50186_2_) {
        super(p_i50186_1_, p_i50186_2_);
@@ -47,7 +47,7 @@
        }
  
        super.func_70071_h_();
-+      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
++      this.lastTick = MinecraftServer.currentTick;
     }
  
     public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
@@ -56,7 +56,7 @@
     }
  
 -   private void func_191991_a(@Nullable UUID p_191991_1_, int p_191991_2_) {
-+   public void func_191991_a(@Nullable UUID p_191991_1_, int p_191991_2_) { // private->public CraftBukkit
++   public void func_191991_a(@Nullable UUID p_191991_1_, int p_191991_2_) {
        this.field_191992_by = p_191991_1_;
        this.field_82234_d = p_191991_2_;
        this.func_184212_Q().func_187227_b(field_184739_bx, true);
