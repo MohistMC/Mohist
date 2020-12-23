@@ -44,6 +44,9 @@ mohist:
   watchdog_mohist: false
   watchdog_spigot: true
   showlogo: true
+  network_manage:
+    blacklist:
+      - "www.xxxxxx.com"
 eventCanceled:
   explosion: false
   keepLevel: false
