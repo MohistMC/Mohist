@@ -7,7 +7,6 @@ import com.mohistmc.entity.CraftCustomAbstractHorse;
 import com.mohistmc.entity.CraftCustomChestHorse;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.entity.CraftCustomFakePlayer;
-import com.mohistmc.entity.CraftCustomLivingEntity;
 import com.mohistmc.entity.CraftCustomProjectileEntity;
 import java.util.List;
 import java.util.Set;
