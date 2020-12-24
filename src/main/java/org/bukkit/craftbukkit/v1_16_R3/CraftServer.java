@@ -291,10 +291,6 @@ public final class CraftServer implements Server {
         Effects.BLINDNESS.getClass();
         // Ugly hack :(
 
-        if (!Main.useConsole) {
-            getLogger().info(Message.get("bukkit.console.disable"));
-        }
-
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         configuration.options().copyDefaults(true);
         configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
