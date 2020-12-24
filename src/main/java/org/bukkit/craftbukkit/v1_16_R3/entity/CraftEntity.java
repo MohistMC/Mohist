@@ -8,6 +8,8 @@ import com.mohistmc.entity.CraftCustomChestHorse;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.entity.CraftCustomFakePlayer;
 import com.mohistmc.entity.CraftCustomProjectileEntity;
+import com.mohistmc.entity.CraftCustomRaider;
+import com.mohistmc.entity.CraftCustomThrowableProjectile;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -46,6 +48,7 @@ import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
 import net.minecraft.entity.monster.AbstractIllagerEntity;
+import net.minecraft.entity.monster.AbstractRaiderEntity;
 import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.entity.monster.BlazeEntity;
 import net.minecraft.entity.monster.CaveSpiderEntity;
@@ -138,6 +141,7 @@ import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.LlamaSpitEntity;
 import net.minecraft.entity.projectile.PotionEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileItemEntity;
 import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.entity.projectile.SnowballEntity;
@@ -396,7 +400,9 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof AreaEffectCloudEntity) { return new CraftAreaEffectCloud(server, (AreaEffectCloudEntity) entity); }
         else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
         else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
-        else if (entity instanceof ProjectileEntity) { return new CraftCustomProjectileEntity(server, entity); }
+        else if (entity instanceof ProjectileEntity) { return new CraftCustomProjectileEntity(server, (ProjectileEntity) entity); }
+        else if (entity instanceof ProjectileItemEntity) { return new CraftCustomThrowableProjectile(server, (ProjectileItemEntity) entity); }
+        else if (entity instanceof AbstractRaiderEntity) { return new CraftCustomRaider(server, (AbstractRaiderEntity) entity); }
         else {return new CraftCustomEntity(server, entity);}
         // CHECKSTYLE:ON
 

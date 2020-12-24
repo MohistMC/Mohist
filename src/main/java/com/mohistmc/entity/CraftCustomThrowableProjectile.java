@@ -1,20 +1,16 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.ServerAPI;
-import com.mojang.authlib.GameProfile;
-import java.util.UUID;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileItemEntity;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftProjectile;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftThrowableProjectile;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Projectile;
-import org.bukkit.projectiles.ProjectileSource;
 
-public class CraftCustomProjectileEntity extends CraftProjectile {
+public class CraftCustomThrowableProjectile extends CraftThrowableProjectile {
+
     public String entityName;
 
-    public CraftCustomProjectileEntity(CraftServer server, ProjectileEntity entity) {
+    public CraftCustomThrowableProjectile(CraftServer server, ProjectileItemEntity entity) {
         super(server, entity);
         this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
@@ -28,14 +24,12 @@ public class CraftCustomProjectileEntity extends CraftProjectile {
         if (type != null) {
             return type;
         } else {
-            return EntityType.FORGE_MOD_PROJECTILE;
+            return EntityType.UNKNOWN;
         }
     }
 
     @Override
-    public String toString()
-    {
-        return "CustomProjectileEntity{" + entityName + '}';
+    public String toString() {
+        return "CraftCustomThrowableProjectile{" + entityName + '}';
     }
 }
-
