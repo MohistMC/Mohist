@@ -27,7 +27,7 @@ public class TerminalConsoleWriterThread extends Thread {
         String message;
 
         // Using name from log4j config in vanilla jar
-        while (Main.useJline) {
+        while (true) {
             message = QueueLogAppender.getNextLogEvent("TerminalConsole");
             if (message == null) {
                 continue;
