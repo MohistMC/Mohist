@@ -1,20 +1,17 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.ServerAPI;
-import com.mojang.authlib.GameProfile;
-import java.util.UUID;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.monster.AbstractRaiderEntity;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftProjectile;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftRaider;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Projectile;
-import org.bukkit.projectiles.ProjectileSource;
 
-public class CraftCustomProjectileEntity extends CraftProjectile {
+public class CraftCustomRaider extends CraftRaider {
+
     public String entityName;
 
-    public CraftCustomProjectileEntity(CraftServer server, ProjectileEntity entity) {
+    public CraftCustomRaider(CraftServer server, AbstractRaiderEntity entity) {
         super(server, entity);
         this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
@@ -33,9 +30,12 @@ public class CraftCustomProjectileEntity extends CraftProjectile {
     }
 
     @Override
-    public String toString()
-    {
-        return "CustomProjectileEntity{" + entityName + '}';
+    public String toString() {
+        return "CraftCustomRaider{" + entityName + '}';
+    }
+
+    @Override
+    public EntityCategory getCategory() {
+        return EntityCategory.ILLAGER;
     }
 }
-
