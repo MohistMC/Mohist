@@ -9,6 +9,7 @@ import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.entity.CraftCustomFakePlayer;
 import com.mohistmc.entity.CraftCustomProjectileEntity;
 import com.mohistmc.entity.CraftCustomRaider;
+import com.mohistmc.entity.CraftCustomThrowableEntity;
 import com.mohistmc.entity.CraftCustomThrowableProjectile;
 import java.util.List;
 import java.util.Set;
@@ -366,6 +367,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof PotionEntity) { return new CraftThrownPotion(server, (PotionEntity) entity); }
             else if (entity instanceof EnderPearlEntity) { return new CraftEnderPearl(server, (EnderPearlEntity) entity); }
             else if (entity instanceof ExperienceBottleEntity) { return new CraftThrownExpBottle(server, (ExperienceBottleEntity) entity); }
+            else { return new CraftCustomThrowableEntity(server, (ThrowableEntity) entity); }
         }
         else if (entity instanceof FallingBlockEntity) { return new CraftFallingBlock(server, (FallingBlockEntity) entity); }
         else if (entity instanceof DamagingProjectileEntity) {
