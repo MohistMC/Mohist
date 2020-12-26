@@ -17,12 +17,12 @@ import java.util.HashMap;
 public class DownloadLibraries {
     static int retry = 0;
     static HashMap<String, String> fail = new HashMap<>();
-    static File libF = new File(InstallUtils.libPath + "mohist_libraries.json");
+    static File libF = new File("libraries", "mohist_libraries.json");
 
     public static void run() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
         if (!libF.exists()) {
-            libF.mkdirs();
+            libF.getParentFile().mkdirs();
             libF.createNewFile();
             Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream("mohist_libraries.json"), libF.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
