@@ -49,13 +49,13 @@ public class UpdateUtils {
   }
 
   private static int percentage = 0;
-  public static void downloadFile(String URL, final File f) throws Exception {
+  public static void downloadFile(String URL, File f) throws Exception {
     URLConnection conn = getConn(URL.replace("mhttps", "https"));
     System.out.println(Message.getFormatString("file.download.start", new Object[]{f.getName(), getSize(conn.getContentLength())}));
-    final ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
+    ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
     FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-    final int fS = conn.getContentLength();
-    final Timer t = new Timer();
+    int fS = conn.getContentLength();
+    Timer t = new Timer();
     t.schedule(new TimerTask() {
       @Override
       public void run() {
