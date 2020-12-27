@@ -1148,19 +1148,7 @@
      }
  
      public float func_70047_e()
-@@ -2832,6 +3212,11 @@
-         return true;
-     }
- 
-+    public boolean canUseCommand(int permLevel, String commandName, String perm)
-+    {
-+        return true;
-+    }
-+
-     public BlockPos func_180425_c()
-     {
-         return new BlockPos(this.field_70165_t, this.field_70163_u + 0.5D, this.field_70161_v);
-@@ -2859,11 +3244,11 @@
+@@ -2859,11 +3239,11 @@
  
      public void func_174794_a(CommandResultStats.Type p_174794_1_, int p_174794_2_)
      {
@@ -1176,7 +1164,7 @@
  
      @Nullable
      public MinecraftServer func_184102_h()
-@@ -2901,6 +3286,217 @@
+@@ -2901,6 +3281,217 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -1394,7 +1382,7 @@
      public void func_184178_b(EntityPlayerMP p_184178_1_)
      {
      }
-@@ -3069,7 +3665,7 @@
+@@ -3069,7 +3660,7 @@
          return SoundCategory.NEUTRAL;
      }
  

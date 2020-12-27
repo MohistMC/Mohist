@@ -8,19 +8,7 @@
 +        this.field_70009_b.append(message);
 +    }
 +
+\ No newline at end of file
      public void func_145747_a(ITextComponent p_145747_1_)
      {
          this.field_70009_b.append(p_145747_1_.func_150260_c());
-@@ -32,6 +36,11 @@
-         return true;
-     }
- 
-+    public boolean canUseCommand(int permLevel, String commandName, String perm)
-+    {
-+        return true;
-+    }
-+
-\ No newline at end of file
-     public World func_130014_f_()
-     {
-         return this.field_184171_b.func_130014_f_();

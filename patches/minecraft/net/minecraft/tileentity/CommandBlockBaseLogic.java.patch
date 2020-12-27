@@ -49,18 +49,7 @@
  
      public int func_145760_g()
      {
-@@ -122,6 +140,10 @@
-         return p_70003_1_ <= 2;
-     }
- 
-+    public boolean canUseCommand(int permLevel, String commandName, String perm) {
-+        return permLevel <= 2;
-+    }
-+
-     public void func_145752_a(String p_145752_1_)
-     {
-         this.field_145763_e = p_145752_1_;
-@@ -152,7 +174,8 @@
+@@ -152,7 +170,8 @@
                      try
                      {
                          this.field_145762_d = null;
@@ -70,7 +59,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -198,6 +221,173 @@
+@@ -198,6 +217,173 @@
          }
      }
  

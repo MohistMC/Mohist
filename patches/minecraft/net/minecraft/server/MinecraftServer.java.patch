@@ -995,18 +995,7 @@
      }
  
      public void func_145747_a(ITextComponent p_145747_1_)
-@@ -912,6 +1115,10 @@
-         return true;
-     }
- 
-+    public boolean canUseCommand(int permLevel, String commandName, String perm) {
-+        return true;
-+    }
-+
-     public ICommandManager func_71187_D()
-     {
-         return this.field_71321_q;
-@@ -947,13 +1154,11 @@
+@@ -947,13 +1150,11 @@
          this.field_71294_K = p_71261_1_;
      }
  
@@ -1020,7 +1009,7 @@
      public String func_71221_J()
      {
          return this.field_71287_L;
-@@ -966,7 +1171,7 @@
+@@ -966,7 +1167,7 @@
  
      public void func_147139_a(EnumDifficulty p_147139_1_)
      {
@@ -1029,7 +1018,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1048,9 +1253,9 @@
+@@ -1048,9 +1249,9 @@
          p_70000_1_.func_152768_a("avg_tick_ms", Integer.valueOf((int)(MathHelper.func_76127_a(this.field_71311_j) * 1.0E-6D)));
          int l = 0;
  
@@ -1041,7 +1030,7 @@
              {
                  if (worldserver1 != null)
                  {
-@@ -1088,7 +1293,8 @@
+@@ -1088,7 +1289,8 @@
  
      public boolean func_71266_T()
      {
@@ -1051,7 +1040,7 @@
      }
  
      public void func_71229_d(boolean p_71229_1_)
-@@ -1182,7 +1388,7 @@
+@@ -1182,7 +1384,7 @@
  
      public void func_71235_a(GameType p_71235_1_)
      {
@@ -1060,7 +1049,7 @@
          {
              worldserver1.func_72912_H().func_76060_a(p_71235_1_);
          }
-@@ -1285,7 +1491,7 @@
+@@ -1285,7 +1487,7 @@
      @Nullable
      public Entity func_175576_a(UUID p_175576_1_)
      {
@@ -1069,7 +1058,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1311,6 +1517,11 @@
+@@ -1311,6 +1513,11 @@
          return this;
      }
  
@@ -1081,7 +1070,7 @@
      public int func_175580_aG()
      {
          return 29999984;
-@@ -1320,15 +1531,14 @@
+@@ -1320,15 +1527,14 @@
      {
          Validate.notNull(p_175586_1_);
  
@@ -1102,7 +1091,7 @@
          }
          else
          {
-@@ -1409,124 +1619,42 @@
+@@ -1409,124 +1615,42 @@
      }
  
      @SideOnly(Side.SERVER)
@@ -1244,7 +1233,7 @@
          }
      }
  
-@@ -1539,7 +1667,8 @@
+@@ -1539,7 +1663,8 @@
      @SideOnly(Side.SERVER)
      public boolean func_71239_B()
      {
@@ -1254,7 +1243,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1598,4 +1727,14 @@
+@@ -1598,4 +1723,14 @@
      {
          return this.field_175590_aa;
      }
