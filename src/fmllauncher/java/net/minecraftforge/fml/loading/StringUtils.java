@@ -42,6 +42,8 @@ public class StringUtils
     }
 
     public static URL toURL(final String string) {
+		if (string == null || string.trim().isEmpty() || string.contains("myurl.me") || string.contains("example.invalid"))
+            return null;
         try
         {
             return new URL(string);
