@@ -1,6 +1,27 @@
 --- a/net/minecraft/util/ResourceLocation.java
 +++ b/net/minecraft/util/ResourceLocation.java
-@@ -112,6 +112,12 @@
+@@ -7,6 +7,7 @@
+ import com.google.gson.JsonPrimitive;
+ import com.google.gson.JsonSerializationContext;
+ import com.google.gson.JsonSerializer;
++import com.mohistmc.MohistMC;
+ import com.mojang.brigadier.StringReader;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+@@ -26,7 +27,11 @@
+ 
+    protected ResourceLocation(String[] p_i47923_1_) {
+       this.field_110626_a = org.apache.commons.lang3.StringUtils.isEmpty(p_i47923_1_[0]) ? "minecraft" : p_i47923_1_[0];
+-      this.field_110625_b = p_i47923_1_[1];
++      if (p_i47923_1_[1].equals("fml|hs")) {
++         this.field_110625_b = "mohistbc";
++      } else {
++         this.field_110625_b = p_i47923_1_[1];
++      }
+       if (!func_217858_d(this.field_110626_a)) {
+          throw new ResourceLocationException("Non [a-z0-9_.-] character in namespace of location: " + this.field_110626_a + ':' + this.field_110625_b);
+       } else if (!func_217856_c(this.field_110625_b)) {
+@@ -112,6 +117,12 @@
        return i;
     }
  
