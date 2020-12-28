@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import org.apache.commons.lang3.Validate;
@@ -219,7 +220,7 @@ public final class CraftItemStack extends ItemStack {
             case ENDER_CHEST:
                 return new CraftMetaBlockState(item.getTagCompound(), CraftMagicNumbers.getMaterial(item.getItem()));
             default:
-                return new CraftMetaItem(item.getTagCompound());
+                return item.getItem() instanceof ItemBlock ? new CraftMetaBlockState(item.getTagCompound(), CraftMagicNumbers.getMaterial(item.getItem())) : new CraftMetaItem(item.getTagCompound());
         }
     }
 

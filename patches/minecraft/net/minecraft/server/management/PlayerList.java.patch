@@ -80,7 +80,7 @@
  
  public abstract class PlayerList
  {
-@@ -76,15 +109,15 @@
+@@ -76,7 +109,7 @@
      private static final Logger field_148546_d = LogManager.getLogger();
      private static final SimpleDateFormat field_72403_e = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
      private final MinecraftServer field_72400_f;
@@ -89,18 +89,16 @@
      private final Map<UUID, EntityPlayerMP> field_177454_f = Maps.<UUID, EntityPlayerMP>newHashMap();
      private final UserListBans field_72401_g;
      private final UserListIPBans field_72413_h;
-     private final UserListOps field_72414_i;
+@@ -84,7 +117,7 @@
      private final UserListWhitelist field_72411_j;
--    private final Map<UUID, StatisticsManagerServer> field_148547_k;
--    private final Map<UUID, PlayerAdvancements> field_192055_p;
+     private final Map<UUID, StatisticsManagerServer> field_148547_k;
+     private final Map<UUID, PlayerAdvancements> field_192055_p;
 -    private IPlayerFileData field_72412_k;
-+    // private final Map<UUID, StatisticsManagerServer> playerStatFiles;
-+    // private final Map<UUID, PlayerAdvancements> advancements;
 +    public IPlayerFileData field_72412_k;
      private boolean field_72409_l;
      protected int field_72405_c;
      private int field_72402_d;
-@@ -92,21 +125,29 @@
+@@ -92,8 +125,16 @@
      private boolean field_72407_n;
      private int field_72408_o;
  
@@ -117,14 +115,7 @@
          this.field_72401_g = new UserListBans(field_152613_a);
          this.field_72413_h = new UserListIPBans(field_152614_b);
          this.field_72414_i = new UserListOps(field_152615_c);
-         this.field_72411_j = new UserListWhitelist(field_152616_d);
--        this.field_148547_k = Maps.<UUID, StatisticsManagerServer>newHashMap();
--        this.field_192055_p = Maps.<UUID, PlayerAdvancements>newHashMap();
-+        // this.playerStatFiles = Maps.<UUID, StatisticsManagerServer>newHashMap();
-+        // this.advancements = Maps.<UUID, PlayerAdvancements>newHashMap();
-         this.field_72400_f = p_i1500_1_;
-         this.field_72401_g.func_152686_a(false);
-         this.field_72413_h.func_152686_a(false);
+@@ -106,7 +147,7 @@
          this.field_72405_c = 8;
      }
  
@@ -292,7 +283,7 @@
          }
          else
          {
-@@ -313,17 +408,33 @@
+@@ -313,8 +408,24 @@
          return nbttagcompound1;
      }
  
@@ -315,19 +306,8 @@
 +        if (p_72391_1_.field_71135_a == null) return;
 +        p_72391_1_.lastSave = MinecraftServer.currentTick; // Paper
          this.field_72412_k.func_75753_a(p_72391_1_);
--        StatisticsManagerServer statisticsmanagerserver = this.field_148547_k.get(p_72391_1_.func_110124_au());
-+        StatisticsManagerServer statisticsmanagerserver = p_72391_1_.func_147099_x();
+         StatisticsManagerServer statisticsmanagerserver = this.field_148547_k.get(p_72391_1_.func_110124_au());
  
-         if (statisticsmanagerserver != null)
-         {
-             statisticsmanagerserver.func_150883_b();
-         }
- 
--        PlayerAdvancements playeradvancements = this.field_192055_p.get(p_72391_1_.func_110124_au());
-+        PlayerAdvancements playeradvancements = p_72391_1_.func_192039_O();
- 
-         if (playeradvancements != null)
-         {
 @@ -343,19 +454,91 @@
              p_72377_1_.field_71135_a.func_147359_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {this.field_72404_b.get(i)}));
          }
@@ -429,14 +409,8 @@
  
          worldserver.func_72900_e(p_72367_1_);
          worldserver.func_184164_w().func_72695_c(p_72367_1_);
-@@ -387,11 +571,31 @@
-         if (entityplayermp == p_72367_1_)
-         {
-             this.field_177454_f.remove(uuid);
--            this.field_148547_k.remove(uuid);
--            this.field_192055_p.remove(uuid);
-+            // this.playerStatFiles.remove(uuid);
-+            // this.advancements.remove(uuid);
+@@ -391,7 +575,27 @@
+             this.field_192055_p.remove(uuid);
          }
  
 -        this.func_148540_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {p_72367_1_}));
@@ -1395,65 +1369,20 @@
      }
  
      public void func_148539_a(ITextComponent p_148539_1_)
-@@ -1022,10 +1840,19 @@
+@@ -1022,6 +1840,12 @@
          this.func_148544_a(p_148539_1_, true);
      }
  
--    public StatisticsManagerServer func_152602_a(EntityPlayer p_152602_1_)
 +    @Nullable
-+    public StatisticsManagerServer func_152602_a(EntityPlayer p_152602_1_) {
-+        if (p_152602_1_ instanceof EntityPlayerMP) {
-+            return this.getPlayerStatsFile((EntityPlayerMP) p_152602_1_);
-+        } else {
-+            return null;
-+        }
++    public StatisticsManagerServer getStatisticManager(EntityPlayerMP entityhuman) {
++        return func_152602_a(entityhuman);
 +    }
 +
-+    public StatisticsManagerServer getPlayerStatsFile(EntityPlayerMP playerIn)
++    @Nullable
+     public StatisticsManagerServer func_152602_a(EntityPlayer p_152602_1_)
      {
--        UUID uuid = p_152602_1_.func_110124_au();
--        StatisticsManagerServer statisticsmanagerserver = uuid == null ? null : (StatisticsManagerServer)this.field_148547_k.get(uuid);
-+        UUID uuid = playerIn.func_110124_au();
-+        StatisticsManagerServer statisticsmanagerserver = uuid == null ? null : (StatisticsManagerServer)playerIn.func_147099_x();
- 
-         if (statisticsmanagerserver == null)
-         {
-@@ -1034,7 +1861,7 @@
- 
-             if (!file2.exists())
-             {
--                File file3 = new File(file1, p_152602_1_.func_70005_c_() + ".json");
-+                File file3 = new File(file1, playerIn.func_70005_c_() + ".json");
- 
-                 if (file3.exists() && file3.isFile())
-                 {
-@@ -1044,7 +1871,7 @@
- 
-             statisticsmanagerserver = new StatisticsManagerServer(this.field_72400_f, file2);
-             statisticsmanagerserver.func_150882_a();
--            this.field_148547_k.put(uuid, statisticsmanagerserver);
-+            // this.playerStatFiles.put(uuid, statisticsmanagerserver);
-         }
- 
-         return statisticsmanagerserver;
-@@ -1053,14 +1880,14 @@
-     public PlayerAdvancements func_192054_h(EntityPlayerMP p_192054_1_)
-     {
-         UUID uuid = p_192054_1_.func_110124_au();
--        PlayerAdvancements playeradvancements = this.field_192055_p.get(uuid);
-+        PlayerAdvancements playeradvancements = p_192054_1_.func_192039_O();
- 
-         if (playeradvancements == null)
-         {
-             File file1 = new File(this.field_72400_f.func_71218_a(0).func_72860_G().func_75765_b(), "advancements");
-             File file2 = new File(file1, uuid + ".json");
-             playeradvancements = new PlayerAdvancements(this.field_72400_f, file2, p_192054_1_);
--            this.field_192055_p.put(uuid, playeradvancements);
-+            // this.advancements.put(uuid, playeradvancements);
-         }
- 
-         playeradvancements.func_192739_a(p_192054_1_);
-@@ -1073,7 +1900,7 @@
+         UUID uuid = p_152602_1_.func_110124_au();
+@@ -1073,7 +1897,7 @@
  
          if (this.field_72400_f.field_71305_c != null)
          {
@@ -1462,17 +1391,3 @@
              {
                  if (worldserver != null)
                  {
-@@ -1101,9 +1928,10 @@
- 
-     public void func_193244_w()
-     {
--        for (PlayerAdvancements playeradvancements : this.field_192055_p.values())
-+        for (EntityPlayerMP entityPlayerMP : this.field_72404_b)
-         {
--            playeradvancements.func_193766_b();
-+            entityPlayerMP.func_192039_O().func_193766_b();
-+            entityPlayerMP.func_192039_O().func_192741_b(entityPlayerMP); // CraftBukkit - trigger immediate flush of advancements
-\ No newline at end of file
-         }
-     }
- 

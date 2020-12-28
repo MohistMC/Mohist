@@ -155,15 +155,6 @@
          {
              int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
              int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
-@@ -179,7 +229,7 @@
-         }
- 
-         this.field_71133_b = p_i45285_1_;
--        this.field_147103_bO = p_i45285_1_.func_184103_al().func_152602_a(this);
-+        this.field_147103_bO = p_i45285_1_.func_184103_al().getPlayerStatsFile(this);
-         this.field_192042_bX = p_i45285_1_.func_184103_al().func_192054_h(this);
-         this.field_70138_W = 1.0F;
-         this.func_174828_a(blockpos, 0.0F, 0.0F);
 @@ -188,8 +238,34 @@
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + 1.0D, this.field_70161_v);
