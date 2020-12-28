@@ -26,7 +26,7 @@
     private boolean field_76636_d;
 -   private final World field_76637_e;
 -   private final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
-+   public final ServerWorld field_76637_e; // CraftBukkit - type
++   public final World field_76637_e;
 +   public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
     private final UpgradeData field_196967_n;
 -   private final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
@@ -36,17 +36,14 @@
     private final Map<Structure<?>, StructureStart<?>> field_201619_q = Maps.newHashMap();
     private final Map<Structure<?>, LongSet> field_201620_r = Maps.newHashMap();
     private final ShortList[] field_201622_t = new ShortList[16];
-@@ -92,8 +93,9 @@
+@@ -92,6 +93,7 @@
     }
  
     public Chunk(World p_i225781_1_, ChunkPos p_i225781_2_, BiomeContainer p_i225781_3_, UpgradeData p_i225781_4_, ITickList<Block> p_i225781_5_, ITickList<Fluid> p_i225781_6_, long p_i225781_7_, @Nullable ChunkSection[] p_i225781_9_, @Nullable Consumer<Chunk> p_i225781_10_) {
 +      super(Chunk.class);
        this.field_76645_j = new ClassInheritanceMultiMap[16];
--      this.field_76637_e = p_i225781_1_;
-+      this.field_76637_e = (ServerWorld) p_i225781_1_; // CraftBukkit - type
+       this.field_76637_e = p_i225781_1_;
        this.field_212816_F = p_i225781_2_;
-       this.field_196967_n = p_i225781_4_;
- 
 @@ -119,9 +121,24 @@
              field_150817_t.warn("Could not set level chunk sections, array length is {} instead of {}", p_i225781_9_.length, this.field_76652_q.length);
           }
@@ -281,10 +278,11 @@
 +         if (this.needsDecoration) {
 +            this.needsDecoration = false;
 +            java.util.Random random = new java.util.Random();
-+            random.setSeed(field_76637_e.func_72905_C());
++            random.setSeed(((ServerWorld) field_76637_e).func_72905_C());
 +            long xRand = random.nextLong() / 2L * 2L + 1L;
 +            long zRand = random.nextLong() / 2L * 2L + 1L;
-+            random.setSeed((long) this.field_212816_F.field_77276_a * xRand + (long) this.field_212816_F.field_77275_b * zRand ^ field_76637_e.func_72905_C());
++            random.setSeed((long) this.field_212816_F.field_77276_a * xRand + (long) this.field_212816_F.field_77275_b * zRand ^ ((ServerWorld) field_76637_e).func_72905_C());
++
 +            org.bukkit.World world = this.field_76637_e.getCBWorld();
 +            if (world != null) {
 +               this.field_76637_e.populating = true;
@@ -295,7 +293,6 @@
 +               } finally {
 +                  this.field_76637_e.populating = false;
 +               }
-+               this.field_76637_e.populating = false;
 +            }
 +            server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(bukkitChunk));
 +         }
