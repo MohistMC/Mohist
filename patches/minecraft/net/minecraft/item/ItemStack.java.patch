@@ -365,7 +365,7 @@
        this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
     }
  
-@@ -817,7 +913,7 @@
+@@ -817,9 +913,10 @@
              }
           }
        } else {
@@ -373,8 +373,11 @@
 +         multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
        }
  
++      multimap = net.minecraftforge.common.ForgeHooks.getAttributeModifiers(this, p_111283_1_, multimap);
        return multimap;
-@@ -839,6 +935,14 @@
+    }
+ 
+@@ -839,6 +936,14 @@
        listnbt.add(compoundnbt);
     }
  
@@ -389,7 +392,7 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -954,6 +1058,35 @@
+@@ -954,6 +1059,35 @@
        return this.func_77973_b().func_219971_r();
     }
  
