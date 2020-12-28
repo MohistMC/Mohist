@@ -1,4 +1,4 @@
-package com.mohistmc.network.download;
+package com.mohistmc.network;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -3,7 +3,7 @@ package com.mohistmc.configuration;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.cauldron.configuration.BoolSetting;
 import net.minecraftforge.cauldron.configuration.ConfigBase;
 import net.minecraftforge.cauldron.configuration.Setting;
@@ -30,12 +30,12 @@ public class MohistConfig extends ConfigBase {
     public final StringSetting console_name = new StringSetting(this, "console_name", "Server", "Front of the console, for example /say");
     public final BoolSetting support_nocmd = new BoolSetting(this, "support_nocmd", false, "Some server tools do not recognize I18N");
     // Bukkit Event Canceled
-    public final BoolSetting use_custom_java8 = new BoolSetting(this, "mohist.use_custom_java8", false, Message.getString("mohistsettings.use_custom_java8"));
-    public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false, Message.getString("mohistsettings.needToUpdate"));
-    public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true, Message.getString("mohistsettings.check_libraries"));
+    public final BoolSetting use_custom_java8 = new BoolSetting(this, "mohist.use_custom_java8", false, i18n.get("mohistsettings.use_custom_java8"));
+    public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false, i18n.get("mohistsettings.needToUpdate"));
+    public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true, i18n.get("mohistsettings.check_libraries"));
     public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true, "Check Update");
 
-    public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", Message.getString("mohistsettings.libraries_black_list"));
+    public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", i18n.get("mohistsettings.libraries_black_list"));
 
     /* ======================================================================== */
 

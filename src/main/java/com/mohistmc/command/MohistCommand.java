@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 
 public class MohistCommand extends Command {
 
@@ -40,7 +40,7 @@ public class MohistCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!sender.isOp()) {
-            sender.sendMessage(Message.getString("command.nopermission"));
+            sender.sendMessage(i18n.get("command.nopermission"));
             return true;
         }
 

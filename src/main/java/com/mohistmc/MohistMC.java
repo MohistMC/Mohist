@@ -1,11 +1,12 @@
 package com.mohistmc;
 
 import com.mohistmc.configuration.MohistConfigUtil;
-import com.mohistmc.network.download.DownloadJava;
-import com.mohistmc.network.download.DownloadLibraries;
-import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.libraries.CustomLibraries;
+import com.mohistmc.libraries.DefaultLibraries;
+import com.mohistmc.network.DownloadJava;
+import com.mohistmc.network.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -32,21 +33,23 @@ public class MohistMC {
                     " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
                     "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
                     "                                                    \n" + "\n");
-            System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
+            System.out.println("                                      " + i18n.get("forge.serverlanunchwrapper.1"));
         }
 
-        if (MohistConfigUtil.bMohist("check_libraries")) DownloadLibraries.run();
+        if (MohistConfigUtil.bMohist("check_libraries")) DefaultLibraries.run();
+        DefaultLibraries.loadDefaultLibs();
+        CustomLibraries.loadCustomLibs();
 
         if (!EulaUtil.hasAcceptedEULA()) {
-            System.out.println(Message.getString("eula"));
+            System.out.println(i18n.get("eula"));
             while (!"true".equals(new Scanner(System.in).next())) ;
             EulaUtil.writeInfos();
         }
 
         if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
 
-        System.out.println(Message.getString("mohist.start"));
-        System.out.println(Message.getString("load.libraries"));
+        System.out.println(i18n.get("mohist.start"));
+        System.out.println(i18n.get("load.libraries"));
         String[] allArgs = Arrays.asList("--tweakClass", "cpw.mods.fml.common.launcher.FMLServerTweaker").toArray(new String[args.length + 2]);
         System.arraycopy(args, 0, allArgs, 2, args.length);
 
@@ -54,7 +57,7 @@ public class MohistMC {
             Class.forName("net.minecraft.launchwrapper.Launch",true, MohistMC.class.getClassLoader()).getMethod("main", String[].class).invoke(null, (Object) allArgs);
             Class.forName("org.objectweb.asm.Type",true, MohistMC.class.getClassLoader());
         } catch (Exception e) {
-            System.out.println(Message.getString("mohist.start.error"));
+            System.out.println(i18n.get("mohist.start.error"));
             e.printStackTrace(System.err);
             System.exit(1);
         }

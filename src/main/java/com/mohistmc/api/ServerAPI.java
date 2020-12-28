@@ -1,6 +1,6 @@
 package com.mohistmc.api;
 
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 import io.netty.util.internal.ConcurrentSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +32,6 @@ public class ServerAPI {
     }
 
     public static String getLanguage(){
-        return Message.rb.getLocale().toString();
+        return i18n.rb.getLocale().toString();
     }
 }

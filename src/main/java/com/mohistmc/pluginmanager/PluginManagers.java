@@ -9,7 +9,7 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 
 public class PluginManagers {
 
@@ -19,7 +19,7 @@ public class PluginManagers {
                 return true;
             }
 
-            sender.sendMessage(Message.getString("command.nopermission"));
+            sender.sendMessage(i18n.get("command.nopermission"));
             return false;
         }
         return true;
@@ -32,7 +32,7 @@ public class PluginManagers {
 
         if (split.length < 2) {
             Object[] f = {label};
-            sender.sendMessage(Message.getFormatString("pluginscommand.load", f));
+            sender.sendMessage(i18n.get("pluginscommand.load", f));
             return true;
         }
         String jarName = split[1] + (split[1].endsWith(".jar") ? "" : ".jar");
@@ -43,7 +43,7 @@ public class PluginManagers {
             toLoad = new File("plugins" + File.separator + jarName);
             if (!toLoad.exists()) {
                 Object[] f = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.nofile", f));
+                sender.sendMessage(i18n.get("pluginscommand.nofile", f));
                 return true;
             } else {
                 String fileName = jarName.substring(0, jarName.length() - (".unloaded".length()));
@@ -56,7 +56,7 @@ public class PluginManagers {
         PluginDescriptionFile desc = Control.getDescription(toLoad);
         if (desc == null) {
             Object[] f = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.noyml", f));
+            sender.sendMessage(i18n.get("pluginscommand.noyml", f));
             return true;
         }
         Plugin[] pl = Bukkit.getPluginManager().getPlugins();
@@ -64,7 +64,7 @@ public class PluginManagers {
         for (Plugin p : plugins) {
             if (desc.getName().equals(p.getName())) {
                 Object[] f = {desc.getName()};
-                sender.sendMessage(Message.getFormatString("pluginscommand.alreadyloaded", f));
+                sender.sendMessage(i18n.get("pluginscommand.alreadyloaded", f));
                 return true;
             }
         }
@@ -72,10 +72,10 @@ public class PluginManagers {
         if ((p = Control.loadPlugin(toLoad)) != null) {
             Control.enablePlugin(p);
             Object[] d = {p.getDescription().getName(), p.getDescription().getVersion()};
-            sender.sendMessage(Message.getFormatString("pluginscommand.loaded", d));
+            sender.sendMessage(i18n.get("pluginscommand.loaded", d));
         } else {
             Object[] d = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.notload", d));
+            sender.sendMessage(i18n.get("pluginscommand.notload", d));
         }
 
         return true;
@@ -88,7 +88,7 @@ public class PluginManagers {
 
         if (split.length < 2) {
             Object[] f = {label};
-            sender.sendMessage(Message.getFormatString("pluginscommand.unload", f));
+            sender.sendMessage(i18n.get("pluginscommand.unload", f));
             return true;
         }
 
@@ -96,14 +96,14 @@ public class PluginManagers {
 
         if (p == null) {
             Object[] f = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.noplugin", f));
+            sender.sendMessage(i18n.get("pluginscommand.noplugin", f));
         } else {
             if (Control.unloadPlugin(p, true)) {
                 Object[] d = {p.getDescription().getName(), p.getDescription().getVersion()};
-                sender.sendMessage(Message.getFormatString("pluginscommand.unloaded", d));
+                sender.sendMessage(i18n.get("pluginscommand.unloaded", d));
             } else {
                 Object[] d = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.notunload", d));
+                sender.sendMessage(i18n.get("pluginscommand.notunload", d));
             }
         }
 
@@ -117,7 +117,7 @@ public class PluginManagers {
 
         if (split.length < 2) {
             Object[] f = {label};
-            sender.sendMessage(Message.getFormatString("pluginscommand.reload", f));
+            sender.sendMessage(i18n.get("pluginscommand.reload", f));
             return true;
         }
 
@@ -125,13 +125,13 @@ public class PluginManagers {
 
         if (p == null) {
             Object[] f = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.noplugin", f));
+            sender.sendMessage(i18n.get("pluginscommand.noplugin", f));
         } else {
             File file = Control.getFile((JavaPlugin) p);
 
             if (file == null) {
                 Object[] f = {p.getName()};
-                sender.sendMessage(Message.getFormatString("pluginscommand.nojar", f));
+                sender.sendMessage(i18n.get("pluginscommand.nojar", f));
                 return true;
             }
 
@@ -139,15 +139,15 @@ public class PluginManagers {
             JavaPlugin loaded = null;
             if (!Control.unloadPlugin(p, false)) {
                 Object[] f = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.unloaderror", f));
+                sender.sendMessage(i18n.get("pluginscommand.unloaderror", f));
             } else if ((loaded = (JavaPlugin) Control.loadPlugin(name)) == null) {
                 Object[] f = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.nojar", f));
+                sender.sendMessage(i18n.get("pluginscommand.nojar", f));
             }
 
             Control.enablePlugin(loaded);
             Object[] d = {split[1], loaded.getDescription().getVersion()};
-            sender.sendMessage(Message.getFormatString("pluginscommand.reloaded", d));
+            sender.sendMessage(i18n.get("pluginscommand.reloaded", d));
         }
         return true;
     }

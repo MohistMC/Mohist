@@ -1,7 +1,7 @@
-package com.mohistmc.network.download;
+package com.mohistmc.network;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,13 +32,13 @@ public class DownloadJava {
     if(!launchArgs.contains("launchedWithCustomJava8")) {
       if(!javabin.exists()) {
         if(!bMohist("use_custom_java8")) {
-          System.out.println(Message.getString("unsupported.java.version"));
+          System.out.println(i18n.get("unsupported.java.version"));
           Scanner scan = new Scanner(System.in);
-          System.out.println(Message.getString("customjava.ask"));
+          System.out.println(i18n.get("customjava.ask"));
           String input = scan.nextLine();
           if(input.equalsIgnoreCase("Yes")) searchJava();
           else {
-            System.out.println(Message.getString("customjava.no"));
+            System.out.println(i18n.get("customjava.no"));
             System.exit(0);
           }
         } else searchJava();
@@ -66,7 +66,7 @@ public class DownloadJava {
     if(!javabin.exists()) {
       java.mkdirs();
       java.createNewFile();
-      System.out.println(Message.getFormatString("customjava.dl", new Object[]{os()}));
+      System.out.println(i18n.get("customjava.dl", os()));
       UpdateUtils.downloadFile(URL, javadl);
       unzip(new FileInputStream(javadl), java.toPath());
       javadl.delete();
@@ -78,7 +78,7 @@ public class DownloadJava {
     launchArgs.add(new File(MohistMC.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
     launchArgs.add("launchedWithCustomJava8");
     command.addAll(launchArgs);
-    System.out.println(Message.getFormatString("customjava.run", new Object[]{os(), command}));
+    System.out.println(i18n.get("customjava.run", os(), command));
     UpdateUtils.restartServer(command);
   }
 
