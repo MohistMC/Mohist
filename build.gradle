@@ -322,13 +322,21 @@ project(':forge') {
                 'Implementation-Version':   project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Vendor':    'Forge Development LLC'
             ] as LinkedHashMap,
-            'com/mohistmc/'                : [
+            'com/mohistmc/': [
                 'Specification-Title'   : MCP_VERSION,
                 'Specification-Vendor'  : 'Mohist-Community',
                 'Specification-Version':  project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Title'  : 'Mohist',
                 'Implementation-Version': '1.16.4-' + JenkinsNumber(),
                 'Implementation-Vendor' : 'Mohist-Community'
+            ] as LinkedHashMap,
+            'org/bukkit/craftbukkit/v1_16_R3/': [
+                'Specification-Title'   : MCP_VERSION,
+                'Specification-Vendor'  : 'SpigotMC',
+                'Specification-Version':  '1.16.4',
+                'Implementation-Title'  : 'Spigot',
+                'Implementation-Version': '1.16.4-' + JenkinsNumber(),
+                'Implementation-Vendor' : 'SpigotMC'
             ] as LinkedHashMap
         ]
     }
