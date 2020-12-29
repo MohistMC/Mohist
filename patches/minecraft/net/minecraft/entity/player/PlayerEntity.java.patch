@@ -761,7 +761,40 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1679,16 +1883,15 @@
+@@ -1623,17 +1827,22 @@
+    }
+ 
+    public void func_184201_a(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_) {
+-      if (p_184201_1_ == EquipmentSlotType.MAINHAND) {
+-         this.func_184606_a_(p_184201_2_);
+-         this.field_71071_by.field_70462_a.set(this.field_71071_by.field_70461_c, p_184201_2_);
+-      } else if (p_184201_1_ == EquipmentSlotType.OFFHAND) {
+-         this.func_184606_a_(p_184201_2_);
+-         this.field_71071_by.field_184439_c.set(0, p_184201_2_);
+-      } else if (p_184201_1_.func_188453_a() == EquipmentSlotType.Group.ARMOR) {
+-         this.func_184606_a_(p_184201_2_);
+-         this.field_71071_by.field_70460_b.set(p_184201_1_.func_188454_b(), p_184201_2_);
+-      }
++      // CraftBukkit start
++      this.setItemStackToSlot(p_184201_1_, p_184201_2_, false);
++   }
+ 
++   public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {
++      if (slotIn == EquipmentSlotType.MAINHAND) {
++         this.playEquipSound(stack, silent);
++         this.field_71071_by.field_70462_a.set(this.field_71071_by.field_70461_c, stack);
++      } else if (slotIn == EquipmentSlotType.OFFHAND) {
++         this.playEquipSound(stack, silent);
++         this.field_71071_by.field_184439_c.set(0, stack);
++      } else if (slotIn.func_188453_a() == EquipmentSlotType.Group.ARMOR) {
++         this.playEquipSound(stack, silent);
++         this.field_71071_by.field_70460_b.set(slotIn.func_188454_b(), stack);
++      }
++      // CraftBukkit end
+    }
+ 
+    public boolean func_191521_c(ItemStack p_191521_1_) {
+@@ -1679,16 +1888,15 @@
  
     private void func_192026_k(CompoundNBT p_192026_1_) {
        if (!this.field_70170_p.field_72995_K && !p_192026_1_.isEmpty()) {
@@ -780,7 +813,7 @@
     }
  
     public abstract boolean func_175149_v();
-@@ -1708,7 +1911,11 @@
+@@ -1708,7 +1916,11 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -793,7 +826,7 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1841,7 +2048,7 @@
+@@ -1841,7 +2053,7 @@
        return this.field_70180_af.func_187225_a(field_192032_bt);
     }
  
@@ -802,7 +835,7 @@
        this.field_70180_af.func_187227_b(field_192032_bt, p_192029_1_);
     }
  
-@@ -1849,7 +2056,7 @@
+@@ -1849,7 +2061,7 @@
        return this.field_70180_af.func_187225_a(field_192033_bu);
     }
  
@@ -811,7 +844,7 @@
        this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
     }
  
-@@ -1987,4 +2194,62 @@
+@@ -1987,4 +2199,62 @@
           return this.field_221260_g;
        }
     }

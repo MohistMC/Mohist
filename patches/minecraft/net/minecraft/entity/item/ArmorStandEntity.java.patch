@@ -56,7 +56,33 @@
     public void func_213323_x_() {
        double d0 = this.func_226277_ct_();
        double d1 = this.func_226278_cu_();
-@@ -372,7 +386,23 @@
+@@ -131,14 +145,20 @@
+    }
+ 
+    public void func_184201_a(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_) {
+-      switch(p_184201_1_.func_188453_a()) {
++      // CraftBukkit start
++      this.setItemStackToSlot(p_184201_1_, p_184201_2_, false);
++   }
++
++   public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {
++      // CraftBukkit end
++      switch(slotIn.func_188453_a()) {
+       case HAND:
+-         this.func_184606_a_(p_184201_2_);
+-         this.field_184799_bw.set(p_184201_1_.func_188454_b(), p_184201_2_);
++         this.playEquipSound(stack, silent); // CraftBukkit
++         this.field_184799_bw.set(slotIn.func_188454_b(), stack);
+          break;
+       case ARMOR:
+-         this.func_184606_a_(p_184201_2_);
+-         this.field_184800_bx.set(p_184201_1_.func_188454_b(), p_184201_2_);
++         this.playEquipSound(stack, silent); // CraftBukkit
++         this.field_184800_bx.set(slotIn.func_188454_b(), stack);
+       }
+ 
+    }
+@@ -372,7 +392,23 @@
           return false;
        } else if (itemstack.func_190926_b() && (this.field_175442_bg & 1 << p_226529_2_.func_188452_c() + 16) != 0) {
           return false;
@@ -81,7 +107,7 @@
           ItemStack itemstack2 = p_226529_3_.func_77946_l();
           itemstack2.func_190920_e(1);
           this.func_184201_a(p_226529_2_, itemstack2);
-@@ -397,12 +427,22 @@
+@@ -397,12 +433,22 @@
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
           if (DamageSource.field_76380_i.equals(p_70097_1_)) {
@@ -107,7 +133,7 @@
                 return false;
              } else if (DamageSource.field_76372_a.equals(p_70097_1_)) {
                 if (this.func_70027_ad()) {
-@@ -426,7 +466,7 @@
+@@ -426,7 +472,7 @@
                 } else if (p_70097_1_.func_180136_u()) {
                    this.func_190773_I();
                    this.func_175412_z();
@@ -116,7 +142,7 @@
                    return flag1;
                 } else {
                    long i = this.field_70170_p.func_82737_E();
-@@ -486,7 +526,7 @@
+@@ -486,7 +532,7 @@
        f = f - p_213817_2_;
        if (f <= 0.5F) {
           this.func_213816_g(p_213817_1_);
@@ -125,7 +151,7 @@
        } else {
           this.func_70606_j(f);
        }
-@@ -500,12 +540,12 @@
+@@ -500,12 +546,12 @@
  
     private void func_213816_g(DamageSource p_213816_1_) {
        this.func_190773_I();
@@ -140,7 +166,7 @@
              this.field_184799_bw.set(i, ItemStack.field_190927_a);
           }
        }
-@@ -513,11 +553,11 @@
+@@ -513,11 +559,11 @@
        for(int j = 0; j < this.field_184800_bx.size(); ++j) {
           ItemStack itemstack1 = this.field_184800_bx.get(j);
           if (!itemstack1.func_190926_b()) {
@@ -154,7 +180,7 @@
     }
  
     private void func_190773_I() {
-@@ -601,7 +641,16 @@
+@@ -601,7 +647,16 @@
        return this.func_175410_n();
     }
  
@@ -171,7 +197,7 @@
        this.func_70106_y();
     }
  
-@@ -613,7 +662,7 @@
+@@ -613,7 +668,7 @@
        return this.func_181026_s() ? PushReaction.IGNORE : super.func_184192_z();
     }
  
@@ -180,7 +206,7 @@
        this.field_70180_af.func_187227_b(field_184801_a, this.func_184797_a(this.field_70180_af.func_187225_a(field_184801_a), 1, p_175420_1_));
     }
  
-@@ -621,7 +670,7 @@
+@@ -621,7 +676,7 @@
        return (this.field_70180_af.func_187225_a(field_184801_a) & 1) != 0;
     }
  
@@ -189,7 +215,7 @@
        this.field_70180_af.func_187227_b(field_184801_a, this.func_184797_a(this.field_70180_af.func_187225_a(field_184801_a), 4, p_175413_1_));
     }
  
-@@ -629,7 +678,7 @@
+@@ -629,7 +684,7 @@
        return (this.field_70180_af.func_187225_a(field_184801_a) & 4) != 0;
     }
  
@@ -198,7 +224,7 @@
        this.field_70180_af.func_187227_b(field_184801_a, this.func_184797_a(this.field_70180_af.func_187225_a(field_184801_a), 8, p_175426_1_));
     }
  
-@@ -637,7 +686,7 @@
+@@ -637,7 +692,7 @@
        return (this.field_70180_af.func_187225_a(field_184801_a) & 8) != 0;
     }
  

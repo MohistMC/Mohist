@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_16_R3.entity;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.entity.item.HangingEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.item.ItemStack;
@@ -67,6 +68,17 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     @Override
     public org.bukkit.inventory.ItemStack getItem() {
         return CraftItemStack.asBukkitCopy(getHandle().getDisplayedItem());
+    }
+
+    @Override
+    public float getItemDropChance() {
+        return getHandle().itemDropChance;
+    }
+
+    @Override
+    public void setItemDropChance(float chance) {
+        Preconditions.checkArgument(0.0 <= chance && chance <= 1.0, "Chance outside range [0, 1]");
+        getHandle().itemDropChance = chance;
     }
 
     @Override

@@ -39,7 +39,7 @@
        Chunk chunk = this.func_219298_c();
        if (chunk != null) {
           byte b0 = (byte)SectionPos.func_218159_a(p_244386_1_.func_177956_o());
-+         if (b0 >= this.field_244383_q.length) return; // CraftBukkit - SPIGOT-6086
++         if (b0 < 0 || b0 >= this.field_244383_q.length) return; // CraftBukkit - SPIGOT-6086, SPIGOT-6296
           if (this.field_244383_q[b0] == null) {
              this.field_244382_p = true;
              this.field_244383_q[b0] = new ShortArraySet();
