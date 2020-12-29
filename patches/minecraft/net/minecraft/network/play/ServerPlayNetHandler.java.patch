@@ -997,7 +997,7 @@
 +      this.player.disconnect();
 +      this.server.getPlayerList().playerLoggedOut(this.player);
 +     */
-+      String quitMessage = this.field_147367_d.func_184103_al().playerLoggedOut(this.field_147369_b);
++      String quitMessage = this.field_147367_d.func_184103_al().disconnect(this.field_147369_b);
        IChatFilter ichatfilter = this.field_147369_b.func_244529_Q();
        if (ichatfilter != null) {
           ichatfilter.func_244434_b();

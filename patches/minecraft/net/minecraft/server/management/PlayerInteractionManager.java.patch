@@ -34,15 +34,6 @@
  
  public class PlayerInteractionManager {
     private static final Logger field_225418_c = LogManager.getLogger();
-@@ -55,7 +65,7 @@
-       this.field_73091_c = p_241820_1_;
-       p_241820_1_.func_77147_a(this.field_73090_b.field_71075_bZ);
-       this.field_73090_b.func_71016_p();
--      this.field_73090_b.field_71133_b.func_184103_al().func_148540_a(new SPlayerListItemPacket(SPlayerListItemPacket.Action.UPDATE_GAME_MODE, this.field_73090_b));
-+      this.field_73090_b.field_71133_b.func_184103_al().sendAll(new SPlayerListItemPacket(SPlayerListItemPacket.Action.UPDATE_GAME_MODE, this.field_73090_b), this.field_73090_b); // CraftBukkit
-       this.field_73092_a.func_72854_c();
-    }
- 
 @@ -84,10 +94,10 @@
     }
  
@@ -89,7 +80,7 @@
 +               CraftEventFactory.callPlayerInteractEvent(this.field_73090_b, Action.LEFT_CLICK_BLOCK, p_225416_1_, p_225416_3_, this.field_73090_b.field_71071_by.func_70448_g(), Hand.MAIN_HAND);
                 this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false, "may not interact"));
 +               // Update any tile entity data for this block
-+               TileEntity tileentity = field_73092_a.func_175625_s(p_225416_1_);
++               TileEntity tileentity = this.field_73092_a.func_175625_s(p_225416_1_);
 +               if (tileentity != null) {
 +                  this.field_73090_b.field_71135_a.func_147359_a(tileentity.func_189518_D_());
 +               }
@@ -129,7 +120,7 @@
 +               } else if (data.func_177230_c() instanceof TrapDoorBlock) {
 +                  this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, p_225416_1_));
 +               }
-+            } else if (!blockstate.func_196958_f()) {
++            } else if (!blockstate.isAir(field_73092_a, p_225416_1_)) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
                 blockstate.func_196942_a(this.field_73092_a, p_225416_1_, this.field_73090_b);
                 f = blockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_225416_1_);
@@ -158,15 +149,7 @@
                 this.func_229860_a_(p_225416_1_, p_225416_2_, "insta mine");
              } else {
                 if (this.field_73088_d) {
-@@ -211,14 +280,15 @@
-       if (this.func_180237_b(p_229860_1_)) {
-          this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_229860_1_, this.field_73092_a.func_180495_p(p_229860_1_), p_229860_2_, true, p_229860_3_));
-       } else {
--         this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_229860_1_, this.field_73092_a.func_180495_p(p_229860_1_), p_229860_2_, false, p_229860_3_));
-+         this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, p_229860_1_)); // CraftBukkit - SPIGOT-5196
-       }
- 
-    }
+@@ -218,7 +287,8 @@
  
     public boolean func_180237_b(BlockPos p_180237_1_) {
        BlockState blockstate = this.field_73092_a.func_180495_p(p_180237_1_);
@@ -236,7 +219,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -288,11 +372,46 @@
+@@ -288,11 +372,45 @@
        }
     }
  
@@ -248,10 +231,9 @@
 +   public ItemStack interactItemStack;
     public ActionResultType func_219441_a(ServerPlayerEntity p_219441_1_, World p_219441_2_, ItemStack p_219441_3_, Hand p_219441_4_, BlockRayTraceResult p_219441_5_) {
        BlockPos blockpos = p_219441_5_.func_216350_a();
-+      ActionResultType enuminteractionresult = ActionResultType.PASS;
-+      boolean cancelledBlock = false;
-+
        BlockState blockstate = p_219441_2_.func_180495_p(blockpos);
++	  ActionResultType enuminteractionresult = ActionResultType.PASS;
++      boolean cancelledBlock = false;
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_);
 +      if (event.isCanceled()) return event.getCancellationResult();
        if (this.field_73091_c == GameType.SPECTATOR) {
@@ -283,26 +265,25 @@
           if (inamedcontainerprovider != null) {
              p_219441_1_.func_213829_a(inamedcontainerprovider);
              return ActionResultType.SUCCESS;
-@@ -300,10 +419,16 @@
+@@ -300,10 +418,15 @@
              return ActionResultType.PASS;
           }
        } else {
 +         ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
 +         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
-+            enuminteractionresult = blockstate.func_227031_a_(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_);
-+
-+            if (enuminteractionresult != ActionResultType.PASS) return enuminteractionresult;
++            ActionResultType result = p_219441_3_.onItemUseFirst(itemusecontext);
++            if (result != ActionResultType.PASS) return result;
 +         }
           boolean flag = !p_219441_1_.func_184614_ca().func_190926_b() || !p_219441_1_.func_184592_cb().func_190926_b();
 -         boolean flag1 = p_219441_1_.func_226563_dT_() && flag;
 +         boolean flag1 = (p_219441_1_.func_226563_dT_() && flag) && !(p_219441_1_.func_184614_ca().doesSneakBypassUse(p_219441_2_, blockpos, p_219441_1_) && p_219441_1_.func_184592_cb().doesSneakBypassUse(p_219441_2_, blockpos, p_219441_1_));
           ItemStack itemstack = p_219441_3_.func_77946_l();
 -         if (!flag1) {
-+         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1) {
++         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
              ActionResultType actionresulttype = blockstate.func_227031_a_(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_);
              if (actionresulttype.func_226246_a_()) {
                 CriteriaTriggers.field_232607_M_.func_226695_a_(p_219441_1_, blockpos, itemstack);
-@@ -311,8 +436,8 @@
+@@ -311,8 +434,8 @@
              }
           }
  
@@ -313,12 +294,8 @@
              ActionResultType actionresulttype1;
              if (this.func_73083_d()) {
                 int i = p_219441_3_.func_190916_E();
-@@ -327,10 +452,10 @@
-             }
- 
-             return actionresulttype1;
--         } else {
--            return ActionResultType.PASS;
+@@ -331,6 +454,8 @@
+             return ActionResultType.PASS;
           }
        }
 +      return enuminteractionresult;

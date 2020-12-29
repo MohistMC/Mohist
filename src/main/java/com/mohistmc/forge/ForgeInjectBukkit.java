@@ -10,9 +10,12 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -124,8 +127,20 @@ public class ForgeInjectBukkit {
         }
     }
 
-    public static World.Environment addEnumEnvironment(int id, String name) {
-        return (World.Environment) MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+    public static void addEnumEnvironment() {
+        int i = World.Environment.values().length;
+        Registry<DimensionType> registry = MinecraftServer.getServer().func_244267_aX().getRegistry(Registry.DIMENSION_TYPE_KEY);
+        for (Map.Entry<RegistryKey<DimensionType>, DimensionType> entry : registry.getEntries()) {
+            RegistryKey<DimensionType> key = entry.getKey();
+            ResourceLocation resourceLocation = key.getRegistryName();
+            if (!resourceLocation.getNamespace().equals("minecraft")) {
+                String name = Material.normalizeName(key.getLocation().toString());
+                int id = i - 1;
+                World.Environment environment = MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+                MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment);
+                i++;
+            }
+        }
     }
 
     public static WorldType addEnumWorldType(String name)
