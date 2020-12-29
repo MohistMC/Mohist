@@ -82,7 +82,7 @@
  
  public abstract class PlayerList {
     public static final File field_152613_a = new File("banned-players.json");
-@@ -94,15 +120,17 @@
+@@ -94,7 +120,7 @@
     private static final Logger field_148546_d = LogManager.getLogger();
     private static final SimpleDateFormat field_72403_e = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     private final MinecraftServer field_72400_f;
@@ -91,20 +91,16 @@
     private final Map<UUID, ServerPlayerEntity> field_177454_f = Maps.newHashMap();
     private final BanList field_72401_g = new BanList(field_152613_a);
     private final IPBanList field_72413_h = new IPBanList(field_152614_b);
-    private final OpList field_72414_i = new OpList(field_152615_c);
+@@ -102,7 +128,7 @@
     private final WhiteList field_72411_j = new WhiteList(field_152616_d);
--   private final Map<UUID, ServerStatisticsManager> field_148547_k = Maps.newHashMap();
--   private final Map<UUID, PlayerAdvancements> field_192055_p = Maps.newHashMap();
+    private final Map<UUID, ServerStatisticsManager> field_148547_k = Maps.newHashMap();
+    private final Map<UUID, PlayerAdvancements> field_192055_p = Maps.newHashMap();
 -   private final PlayerData field_72412_k;
-+   // CraftBukkit start
-+   // private final Map<UUID, ServerStatisticsManager> playerStatFiles = Maps.newHashMap();
-+   // private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
-+   // CraftBukkit end
-+   public final PlayerData field_72412_k; // private->public CraftBukkit
++   public final PlayerData field_72412_k;
     private boolean field_72409_l;
     private final DynamicRegistries.Impl field_232639_s_;
     protected final int field_72405_c;
-@@ -110,8 +138,28 @@
+@@ -110,8 +136,28 @@
     private GameType field_72410_m;
     private boolean field_72407_n;
     private int field_72408_o;
@@ -133,7 +129,7 @@
        this.field_72400_f = p_i231425_1_;
        this.field_232639_s_ = p_i231425_2_;
        this.field_72405_c = p_i231425_4_;
-@@ -125,6 +173,14 @@
+@@ -125,6 +171,14 @@
        String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
        playerprofilecache.func_152649_a(gameprofile);
        CompoundNBT compoundnbt = this.func_72380_a(p_72355_2_);
@@ -148,7 +144,7 @@
        RegistryKey<World> registrykey = compoundnbt != null ? DimensionType.func_236025_a_(new Dynamic<>(NBTDynamicOps.field_210820_a, compoundnbt.func_74781_a("Dimension"))).resultOrPartial(field_148546_d::error).orElse(World.field_234918_g_) : World.field_234918_g_;
        ServerWorld serverworld = this.field_72400_f.func_71218_a(registrykey);
        ServerWorld serverworld1;
-@@ -142,20 +198,36 @@
+@@ -142,20 +196,36 @@
           s1 = p_72355_1_.func_74430_c().toString();
        }
  
@@ -175,7 +171,6 @@
 -      serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), p_72355_2_.field_71134_c.func_241815_c_(), BiomeManager.func_235200_a_(serverworld1.func_72905_C()), iworldinfo.func_76093_s(), this.field_72400_f.func_240770_D_(), this.field_232639_s_, serverworld1.func_230315_m_(), serverworld1.func_234923_W_(), this.func_72352_l(), this.field_72402_d, flag1, !flag, serverworld1.func_234925_Z_(), serverworld1.func_241109_A_()));
 +      // Spigot - view distance
 +      serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), p_72355_2_.field_71134_c.func_241815_c_(), BiomeManager.func_235200_a_(serverworld1.func_72905_C()), iworldinfo.func_76093_s(), this.field_72400_f.func_240770_D_(), this.field_232639_s_, serverworld1.func_230315_m_(), serverworld1.func_234923_W_(), this.func_72352_l(), serverworld1.spigotConfig.viewDistance, flag1, !flag, serverworld1.func_234925_Z_(), serverworld1.func_241109_A_()));
-+      p_72355_2_.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
        serverplaynethandler.func_147359_a(new SCustomPayloadPlayPacket(SCustomPayloadPlayPacket.field_209911_b, (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
        serverplaynethandler.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
        serverplaynethandler.func_147359_a(new SPlayerAbilitiesPacket(p_72355_2_.field_71075_bZ));
@@ -184,10 +179,11 @@
        serverplaynethandler.func_147359_a(new STagsListPacket(this.field_72400_f.func_244266_aF()));
 +      serverplaynethandler.func_147359_a(new SEntityStatusPacket(p_72355_2_, (byte) (serverworld1.func_82736_K().func_223586_b(GameRules.field_223612_o) ? 22 : 23))); // Paper - fix this rule not being initialized on the client
 +      net.minecraftforge.fml.network.NetworkHooks.syncCustomTagTypes(p_72355_2_, this.field_72400_f.func_244266_aF());
++	  p_72355_2_.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
        this.func_187243_f(p_72355_2_);
        p_72355_2_.func_147099_x().func_150877_d();
        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
-@@ -167,19 +239,55 @@
+@@ -167,19 +237,55 @@
        } else {
           iformattabletextcomponent = new TranslationTextComponent("multiplayer.player.joined.renamed", p_72355_2_.func_145748_c_(), s);
        }
@@ -248,7 +244,7 @@
        this.func_72354_b(p_72355_2_, serverworld1);
        if (!this.field_72400_f.func_147133_T().isEmpty()) {
           p_72355_2_.func_175397_a(this.field_72400_f.func_147133_T(), this.field_72400_f.func_175581_ab());
-@@ -191,8 +299,9 @@
+@@ -191,8 +297,9 @@
  
        if (compoundnbt != null && compoundnbt.func_150297_b("RootVehicle", 10)) {
           CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("RootVehicle");
@@ -259,7 +255,7 @@
           });
           if (entity1 != null) {
              UUID uuid;
-@@ -225,9 +334,12 @@
+@@ -225,9 +332,12 @@
        }
  
        p_72355_2_.func_71116_b();
@@ -273,7 +269,7 @@
        Set<ScoreObjective> set = Sets.newHashSet();
  
        for(ScorePlayerTeam scoreplayerteam : p_96456_1_.func_96525_g()) {
-@@ -248,25 +360,26 @@
+@@ -248,25 +358,26 @@
     }
  
     public void func_212504_a(ServerWorld p_212504_1_) {
@@ -305,7 +301,7 @@
           }
  
           public void func_177696_b(WorldBorder p_177696_1_, double p_177696_2_) {
-@@ -285,6 +398,7 @@
+@@ -285,6 +396,7 @@
           compoundnbt1 = compoundnbt;
           p_72380_1_.func_70020_e(compoundnbt);
           field_148546_d.debug("loading single player");
@@ -313,24 +309,16 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,28 +407,43 @@
+@@ -293,6 +405,8 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
 +      if (p_72391_1_.field_71135_a == null) return;
 +      if (!p_72391_1_.getBukkitEntity().isPersistent()) return;
        this.field_72412_k.func_237335_a_(p_72391_1_);
--      ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
-+      ServerStatisticsManager serverstatisticsmanager = p_72391_1_.func_147099_x(); // CraftBukkit
+       ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
        if (serverstatisticsmanager != null) {
-          serverstatisticsmanager.func_150883_b();
-       }
- 
--      PlayerAdvancements playeradvancements = this.field_192055_p.get(p_72391_1_.func_110124_au());
-+      PlayerAdvancements playeradvancements = p_72391_1_.func_192039_O(); // CraftBukkit
-       if (playeradvancements != null) {
-          playeradvancements.func_192749_b();
-       }
+@@ -306,15 +420,28 @@
  
     }
  
@@ -366,7 +354,7 @@
              serverworld.func_217467_h(entity);
              entity.field_70128_L = true;
  
-@@ -323,107 +452,171 @@
+@@ -323,107 +450,169 @@
                 entity1.field_70128_L = true;
              }
  
@@ -392,12 +380,8 @@
 -      if (serverplayerentity == p_72367_1_) {
 +      if (serverplayerentity == playerIn) {
           this.field_177454_f.remove(uuid);
--         this.field_148547_k.remove(uuid);
--         this.field_192055_p.remove(uuid);
-+         // CraftBukkit start
-+         // this.playerStatFiles.remove(uuid);
-+         // this.advancements.remove(uuid);
-+         // CraftBukkit end
+          this.field_148547_k.remove(uuid);
+          this.field_192055_p.remove(uuid);
        }
  
 -      this.func_148540_a(new SPlayerListItemPacket(SPlayerListItemPacket.Action.REMOVE_PLAYER, p_72367_1_));
@@ -582,7 +566,7 @@
        serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
  
-@@ -431,48 +624,128 @@
+@@ -431,48 +620,128 @@
           serverplayerentity.func_184211_a(s);
        }
  
@@ -740,7 +724,7 @@
        return serverplayerentity;
     }
  
-@@ -484,12 +757,40 @@
+@@ -484,12 +753,40 @@
  
     public void func_72374_b() {
        if (++this.field_72408_o > 600) {
@@ -782,7 +766,7 @@
     public void func_148540_a(IPacket<?> p_148540_1_) {
        for(int i = 0; i < this.field_72404_b.size(); ++i) {
           (this.field_72404_b.get(i)).field_71135_a.func_147359_a(p_148540_1_);
-@@ -585,6 +886,7 @@
+@@ -585,6 +882,7 @@
           p_187245_1_.field_71135_a.func_147359_a(new SEntityStatusPacket(p_187245_1_, b0));
        }
  
@@ -790,7 +774,7 @@
        this.field_72400_f.func_195571_aL().func_197051_a(p_187245_1_);
     }
  
-@@ -598,18 +900,19 @@
+@@ -598,18 +896,19 @@
  
     @Nullable
     public ServerPlayerEntity func_152612_a(String p_152612_1_) {
@@ -817,7 +801,7 @@
           if (serverplayerentity != p_148543_1_ && serverplayerentity.field_70170_p.func_234923_W_() == p_148543_10_) {
              double d0 = p_148543_2_ - serverplayerentity.func_226277_ct_();
              double d1 = p_148543_4_ - serverplayerentity.func_226278_cu_();
-@@ -649,22 +952,32 @@
+@@ -649,22 +948,32 @@
     }
  
     public void func_72354_b(ServerPlayerEntity p_72354_1_, ServerWorld p_72354_2_) {
@@ -852,7 +836,7 @@
     }
  
     public int func_72394_k() {
-@@ -719,7 +1032,7 @@
+@@ -719,7 +1028,7 @@
           p_72381_1_.field_71134_c.func_241820_a(this.field_72410_m, GameType.NOT_SET);
        }
  
@@ -861,7 +845,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -728,32 +1041,50 @@
+@@ -728,25 +1037,44 @@
     }
  
     public void func_72392_r() {
@@ -890,19 +874,18 @@
 +      // CraftBukkit end
     }
  
--   public ServerStatisticsManager func_152602_a(PlayerEntity p_152602_1_) {
--      UUID uuid = p_152602_1_.func_110124_au();
--      ServerStatisticsManager serverstatisticsmanager = uuid == null ? null : this.field_148547_k.get(uuid);
 +   //CraftBukkit start
-+   public ServerStatisticsManager getPlayerStats(ServerPlayerEntity playerIn) {
-+      ServerStatisticsManager serverStatisticsManager = playerIn.func_147099_x();
-+      return (serverStatisticsManager == null) ? this.getStatisticManager(playerIn.func_110124_au(), playerIn.func_200200_C_().toString()) : serverStatisticsManager;
+    public ServerStatisticsManager func_152602_a(PlayerEntity p_152602_1_) {
+       UUID uuid = p_152602_1_.func_110124_au();
+-      ServerStatisticsManager serverstatisticsmanager = uuid == null ? null : this.field_148547_k.get(uuid);
++      ServerStatisticsManager serverStatisticsManager = this.field_148547_k.get(uuid);
++      return (serverStatisticsManager == null) ? this.getStatisticManager(p_152602_1_.func_110124_au(), p_152602_1_.func_200200_C_().toString()) : serverStatisticsManager;
 +   }
 +   // CraftBukkit end
 +
 +   public ServerStatisticsManager getStatisticManager(UUID uuid, String displayName) {
 +      ServerPlayerEntity player = func_177451_a(uuid);
-+      ServerStatisticsManager serverstatisticsmanager = player == null ? null : player.func_147099_x();
++      ServerStatisticsManager serverstatisticsmanager = player == null ? null : this.field_148547_k.get(uuid);
        if (serverstatisticsmanager == null) {
           File file1 = this.field_72400_f.func_240776_a_(FolderName.field_237246_b_).toFile();
           File file2 = new File(file1, uuid + ".json");
@@ -912,26 +895,8 @@
              if (file3.exists() && file3.isFile()) {
                 file3.renameTo(file2);
              }
-          }
- 
-          serverstatisticsmanager = new ServerStatisticsManager(this.field_72400_f, file2);
--         this.field_148547_k.put(uuid, serverstatisticsmanager);
-+         // this.playerStatFiles.put(uuid, serverstatisticsmanager); // CraftBukkit
-       }
- 
-       return serverstatisticsmanager;
-@@ -761,14 +1092,16 @@
- 
-    public PlayerAdvancements func_192054_h(ServerPlayerEntity p_192054_1_) {
-       UUID uuid = p_192054_1_.func_110124_au();
--      PlayerAdvancements playeradvancements = this.field_192055_p.get(uuid);
-+      PlayerAdvancements playeradvancements = p_192054_1_.func_192039_O(); // CraftBukkit
-       if (playeradvancements == null) {
-          File file1 = this.field_72400_f.func_240776_a_(FolderName.field_237245_a_).toFile();
-          File file2 = new File(file1, uuid + ".json");
-          playeradvancements = new PlayerAdvancements(this.field_72400_f.func_195563_aC(), this, this.field_72400_f.func_191949_aK(), file2, p_192054_1_);
--         this.field_192055_p.put(uuid, playeradvancements);
-+         // this.advancements.put(uuid, playeradvancements); // CraftBukkit
+@@ -769,6 +1097,8 @@
+          this.field_192055_p.put(uuid, playeradvancements);
        }
  
 +      // Forge: don't overwrite active player with a fake one.
@@ -939,7 +904,7 @@
        playeradvancements.func_192739_a(p_192054_1_);
        return playeradvancements;
     }
-@@ -786,7 +1119,7 @@
+@@ -786,7 +1116,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -948,24 +913,15 @@
     }
  
     @Nullable
-@@ -799,11 +1132,14 @@
-    }
- 
-    public void func_193244_w() {
--      for(PlayerAdvancements playeradvancements : this.field_192055_p.values()) {
--         playeradvancements.func_240918_a_(this.field_72400_f.func_191949_aK());
-+      for (ServerPlayerEntity player : field_72404_b) {
-+         player.func_192039_O().func_240918_a_(this.field_72400_f.func_191949_aK());
-+         player.func_192039_O().func_192741_b(player); // CraftBukkit - trigger immediate flush of advancements
+@@ -804,6 +1134,7 @@
        }
  
-+
        this.func_148540_a(new STagsListPacket(this.field_72400_f.func_244266_aF()));
 +      net.minecraftforge.fml.network.NetworkHooks.syncCustomTagTypes(this.field_72400_f.func_244266_aF());
        SUpdateRecipesPacket supdaterecipespacket = new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b());
  
        for(ServerPlayerEntity serverplayerentity : this.field_72404_b) {
-@@ -816,4 +1152,12 @@
+@@ -816,4 +1147,12 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }
