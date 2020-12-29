@@ -87,7 +87,7 @@
     private ChatVisibility field_71143_cn;
     private boolean field_71140_co = true;
     private long field_143005_bX = Util.func_211177_b();
-@@ -175,18 +197,71 @@
+@@ -175,6 +197,21 @@
     public int field_71138_i;
     public boolean field_71136_j;
  
@@ -109,11 +109,7 @@
     public ServerPlayerEntity(MinecraftServer p_i45285_1_, ServerWorld p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_) {
        super(p_i45285_2_, p_i45285_2_.func_241135_u_(), p_i45285_2_.func_242107_v(), p_i45285_3_);
        p_i45285_4_.field_73090_b = this;
-       this.field_71134_c = p_i45285_4_;
-       this.field_71133_b = p_i45285_1_;
--      this.field_147103_bO = p_i45285_1_.func_184103_al().func_152602_a(this);
-+      this.field_147103_bO = p_i45285_1_.func_184103_al().getPlayerStats(this);
-       this.field_192042_bX = p_i45285_1_.func_184103_al().func_192054_h(this);
+@@ -185,8 +222,46 @@
        this.field_70138_W = 1.0F;
        this.func_205734_a(p_i45285_2_);
        this.field_244528_co = p_i45285_1_.func_244435_a(this);
