@@ -215,6 +215,7 @@ public class VillagerRegistry
             careers.add(career);
         }
 
+        public ResourceLocation getName() { return this.name; }
         public ResourceLocation getSkin() { return this.texture; }
         public ResourceLocation getZombieSkin() { return this.zombie; }
         public VillagerCareer getCareer(int id)

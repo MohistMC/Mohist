@@ -5,9 +5,9 @@ import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.i18n.Message;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -19,6 +19,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.Material;
@@ -29,6 +30,7 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_12_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_12_R1.potion.CraftPotionEffectType;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Villager;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
@@ -44,6 +46,7 @@ public class ForgeInjectBukkit {
         addEnumBiome();
         addEnumPattern();
         addEnumEntity();
+        addEnumVillagerProfession();
     }
 
     public static void addEnumMaterialInItems() {
@@ -182,5 +185,24 @@ public class ForgeInjectBukkit {
         }
         Permission permission = new Permission(name, desc, permissionDefault);
         DefaultPermissions.registerPermission(permission);
+    }
+
+    public static void addEnumVillagerProfession() {
+        Map<Integer, VillagerRegistry.VillagerProfession> map = new TreeMap<>();
+        for (Map.Entry<ResourceLocation, VillagerRegistry.VillagerProfession> entry : ForgeRegistries.VILLAGER_PROFESSIONS.getEntries()) {
+            int id = VillagerRegistry.getId(entry.getValue());
+            map.put(id, entry.getValue());
+        }
+        for (Map.Entry<Integer, VillagerRegistry.VillagerProfession> entry : map.entrySet()) {
+            if (entry.getKey() > 5) {
+                String name = entry.getValue().getName().toString().replace(":", "_").toUpperCase();
+                VillagerRegistry.VillagerCareer career = entry.getValue().getCareer(entry.getKey());
+
+                Villager.Profession vp = EnumHelper.addEnum(Villager.Profession.class, name, new Class[]{Boolean.TYPE}, false);
+                Villager.Career vc = EnumHelper.addEnum(Villager.Career.class, career.getName().replace(".", "_").toUpperCase().toUpperCase(), new Class[]{Villager.Profession.class} , vp);
+                MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.villager", new Object[]{vp.name(), vc.name(), String.valueOf(vp.ordinal() - 2)}));
+            }
+        }
+
     }
 }
