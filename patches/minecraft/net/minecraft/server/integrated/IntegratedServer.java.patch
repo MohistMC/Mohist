@@ -41,7 +41,7 @@
     public File func_71238_n() {
        return this.field_71349_l.field_71412_D;
     }
-@@ -172,10 +180,11 @@
+@@ -172,6 +180,7 @@
     }
  
     public void func_71263_m(boolean p_71263_1_) {
@@ -49,8 +49,3 @@
        this.func_213167_f(() -> {
           for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(this.func_184103_al().func_181057_v())) {
              if (!serverplayerentity.func_110124_au().equals(this.field_211528_n)) {
--               this.func_184103_al().func_72367_e(serverplayerentity);
-+               this.func_184103_al().playerLoggedOut(serverplayerentity);
-             }
-          }
- 
