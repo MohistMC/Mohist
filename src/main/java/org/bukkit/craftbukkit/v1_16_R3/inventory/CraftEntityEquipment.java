@@ -20,9 +20,14 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setItem(EquipmentSlot slot, ItemStack item) {
+        this.setItem(slot, item, false);
+    }
+
+    @Override
+    public void setItem(EquipmentSlot slot, ItemStack item, boolean silent) {
         Preconditions.checkArgument(slot != null, "slot must not be null");
         EquipmentSlotType nmsSlot = CraftEquipmentSlot.getNMS(slot);
-        setEquipment(nmsSlot, item);
+        setEquipment(nmsSlot, item, silent);
     }
 
     @Override
@@ -39,7 +44,12 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setItemInMainHand(ItemStack item) {
-        setEquipment(EquipmentSlotType.MAINHAND, item);
+        this.setItemInMainHand(item, false);
+    }
+
+    @Override
+    public void setItemInMainHand(ItemStack item, boolean silent) {
+        setEquipment(EquipmentSlotType.MAINHAND, item, silent);
     }
 
     @Override
@@ -49,7 +59,12 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setItemInOffHand(ItemStack item) {
-        setEquipment(EquipmentSlotType.OFFHAND, item);
+        this.setItemInOffHand(item, false);
+    }
+
+    @Override
+    public void setItemInOffHand(ItemStack item, boolean silent) {
+        setEquipment(EquipmentSlotType.OFFHAND, item, silent);
     }
 
     @Override
@@ -69,7 +84,12 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setHelmet(ItemStack helmet) {
-        setEquipment(EquipmentSlotType.HEAD, helmet);
+        this.setHelmet(helmet, false);
+    }
+
+    @Override
+    public void setHelmet(ItemStack helmet, boolean silent) {
+        setEquipment(EquipmentSlotType.HEAD, helmet, silent);
     }
 
     @Override
@@ -79,7 +99,12 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setChestplate(ItemStack chestplate) {
-        setEquipment(EquipmentSlotType.CHEST, chestplate);
+        this.setChestplate(chestplate, false);
+    }
+
+    @Override
+    public void setChestplate(ItemStack chestplate, boolean silent) {
+        setEquipment(EquipmentSlotType.CHEST, chestplate, silent);
     }
 
     @Override
@@ -89,7 +114,12 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setLeggings(ItemStack leggings) {
-        setEquipment(EquipmentSlotType.LEGS, leggings);
+        this.setLeggings(leggings, false);
+    }
+
+    @Override
+    public void setLeggings(ItemStack leggings, boolean silent) {
+        setEquipment(EquipmentSlotType.LEGS, leggings, silent);
     }
 
     @Override
@@ -99,7 +129,12 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setBoots(ItemStack boots) {
-        setEquipment(EquipmentSlotType.FEET, boots);
+        this.setBoots(boots, false);
+    }
+
+    @Override
+    public void setBoots(ItemStack boots, boolean silent) {
+        setEquipment(EquipmentSlotType.FEET, boots, silent);
     }
 
     @Override
@@ -115,24 +150,24 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     @Override
     public void setArmorContents(ItemStack[] items) {
-        setEquipment(EquipmentSlotType.FEET, items.length >= 1 ? items[0] : null);
-        setEquipment(EquipmentSlotType.LEGS, items.length >= 2 ? items[1] : null);
-        setEquipment(EquipmentSlotType.CHEST, items.length >= 3 ? items[2] : null);
-        setEquipment(EquipmentSlotType.HEAD, items.length >= 4 ? items[3] : null);
+        setEquipment(EquipmentSlotType.FEET, items.length >= 1 ? items[0] : null, false);
+        setEquipment(EquipmentSlotType.LEGS, items.length >= 2 ? items[1] : null, false);
+        setEquipment(EquipmentSlotType.CHEST, items.length >= 3 ? items[2] : null, false);
+        setEquipment(EquipmentSlotType.HEAD, items.length >= 4 ? items[3] : null, false);
     }
 
     private ItemStack getEquipment(EquipmentSlotType slot) {
         return CraftItemStack.asBukkitCopy(entity.getHandle().getItemStackFromSlot(slot));
     }
 
-    private void setEquipment(EquipmentSlotType slot, ItemStack stack) {
-        entity.getHandle().setItemStackToSlot(slot, CraftItemStack.asNMSCopy(stack));
+    private void setEquipment(EquipmentSlotType slot, ItemStack stack, boolean silent) {
+        entity.getHandle().setItemStackToSlot(slot, CraftItemStack.asNMSCopy(stack), silent);
     }
 
     @Override
     public void clear() {
         for (EquipmentSlotType slot : EquipmentSlotType.values()) {
-            setEquipment(slot, null);
+            setEquipment(slot, null, false);
         }
     }
 

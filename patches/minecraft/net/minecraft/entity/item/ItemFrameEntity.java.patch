@@ -10,9 +10,10 @@
     private static final Logger field_195052_c = LogManager.getLogger();
     private static final DataParameter<ItemStack> field_184525_c = EntityDataManager.func_187226_a(ItemFrameEntity.class, DataSerializers.field_187196_f);
     private static final DataParameter<Integer> field_184526_d = EntityDataManager.func_187226_a(ItemFrameEntity.class, DataSerializers.field_187192_b);
-    private float field_82337_e = 1.0F;
+-   private float field_82337_e = 1.0F;
 -   private boolean field_234259_an_;
-+   public boolean field_234259_an_; // private->public CraftBukkit
++   public float field_82337_e = 1.0F;
++   public boolean field_234259_an_;
  
     public ItemFrameEntity(EntityType<? extends ItemFrameEntity> p_i50224_1_, World p_i50224_2_) {
        super(p_i50224_1_, p_i50224_2_);
