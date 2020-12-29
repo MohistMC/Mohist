@@ -25,6 +25,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.common.async.MohistThreadBox;
+import org.spigotmc.SpigotConfig;
 
 /**
  * bStats collects some data for plugin authors.
@@ -250,7 +251,7 @@ public class Metrics {
                 metrics.addCustomChart(new SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                 metrics.addCustomChart(new SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
                 metrics.addCustomChart(new SimplePie("mohist_version", MohistMC::getVersion));
-                metrics.addCustomChart(new SimplePie("bungeecord", () -> "false"));
+                metrics.addCustomChart(new SimplePie("bungeecord", () -> SpigotConfig.bungee ? "true" : "false"));
 
                 metrics.addCustomChart(new DrilldownPie("java_version", () -> {
                     Map<String, Map<String, Integer>> map = new HashMap<>();
@@ -282,7 +283,7 @@ public class Metrics {
                     Map<String, Integer> modslist = new HashMap<>();
                     String[] mods = ServerAPI.getModList().replace("[", "").replace("]", "").split(", ");
                     for(String x : mods){
-                        if (x.equals("minecraft") || x.equals("FML") || x.equals("forge") || x.equals("mcp") || x.equals("mohist")) {
+                        if (x.equals("minecraft") || x.equals("forge") || x.equals("mohist")) {
                             continue;
                         }
                         modslist.put(x, 1);
