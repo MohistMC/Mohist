@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -2,13 +2,18 @@
+@@ -2,13 +2,19 @@
  
  import com.google.common.base.Splitter;
  import com.google.common.collect.ImmutableList;
@@ -8,6 +8,7 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
++import com.mohistmc.common.async.MohistThreadBox;
 +import com.mohistmc.forge.ForgeInjectBukkit;
 +import com.mohistmc.util.DatapackCodecUtils;
  import com.mojang.authlib.GameProfile;
@@ -19,7 +20,7 @@
  import io.netty.buffer.ByteBuf;
  import io.netty.buffer.ByteBufOutputStream;
  import io.netty.buffer.Unpooled;
-@@ -37,12 +42,12 @@
+@@ -37,12 +43,12 @@
  import java.util.Date;
  import java.util.List;
  import java.util.Map;
@@ -33,7 +34,7 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
  import java.util.concurrent.atomic.AtomicReference;
-@@ -50,6 +55,8 @@
+@@ -50,6 +56,8 @@
  import java.util.function.Function;
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
@@ -42,7 +43,7 @@
  import net.minecraft.advancements.AdvancementManager;
  import net.minecraft.advancements.FunctionManager;
  import net.minecraft.block.Block;
-@@ -65,6 +72,8 @@
+@@ -65,6 +73,8 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.loot.LootPredicateManager;
  import net.minecraft.loot.LootTableManager;
@@ -51,7 +52,7 @@
  import net.minecraft.network.NetworkSystem;
  import net.minecraft.network.ServerStatusResponse;
  import net.minecraft.network.play.server.SServerDifficultyPacket;
-@@ -81,6 +90,8 @@
+@@ -81,6 +91,8 @@
  import net.minecraft.resources.ResourcePackList;
  import net.minecraft.scoreboard.ScoreboardSaveData;
  import net.minecraft.scoreboard.ServerScoreboard;
@@ -60,7 +61,7 @@
  import net.minecraft.server.management.OpEntry;
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
-@@ -99,6 +110,7 @@
+@@ -99,6 +111,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.concurrent.RecursiveEventLoop;
  import net.minecraft.util.concurrent.TickDelayedTask;
@@ -68,7 +69,7 @@
  import net.minecraft.util.datafix.codec.DatapackCodec;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
-@@ -108,6 +120,7 @@
+@@ -108,6 +121,7 @@
  import net.minecraft.util.registry.DynamicRegistries;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.registry.SimpleRegistry;
@@ -76,7 +77,7 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
-@@ -149,32 +162,42 @@
+@@ -149,32 +163,42 @@
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.PlayerData;
  import net.minecraft.world.storage.SaveFormat;
@@ -127,7 +128,7 @@
     private PlayerList field_71318_t;
     private volatile boolean field_71317_u = true;
     private boolean field_71316_v;
-@@ -204,7 +227,7 @@
+@@ -204,7 +228,7 @@
     private final GameProfileRepository field_152365_W;
     private final PlayerProfileCache field_152366_X;
     private long field_147142_T;
@@ -136,7 +137,7 @@
     protected long field_211151_aa = Util.func_211177_b();
     private long field_213213_ab;
     private boolean field_213214_ac;
-@@ -219,16 +242,36 @@
+@@ -219,16 +243,36 @@
     private final FrameTimer field_213215_ap = new FrameTimer();
     private boolean field_205745_an;
     private float field_211152_ao;
@@ -177,7 +178,7 @@
           atomicreference.get().func_240802_v_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
-@@ -259,7 +302,18 @@
+@@ -259,7 +303,18 @@
        this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
        this.field_175590_aa = p_i232576_1_;
        this.field_213217_au = Util.func_215072_e();
@@ -196,7 +197,7 @@
  
     private void func_213204_a(DimensionSavedDataManager p_213204_1_) {
        ScoreboardSaveData scoreboardsavedata = p_213204_1_.func_215752_a(ScoreboardSaveData::new, "scoreboard");
-@@ -333,6 +387,7 @@
+@@ -333,6 +388,7 @@
        }
  
        ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
@@ -204,7 +205,7 @@
        this.field_71305_c.put(World.field_234918_g_, serverworld);
        DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
        this.func_213204_a(dimensionsaveddatamanager);
-@@ -375,9 +430,20 @@
+@@ -375,9 +431,20 @@
              ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, p_240787_1_, chunkgenerator1, flag, j, ImmutableList.of(), false);
              worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
              this.field_71305_c.put(registrykey1, serverworld1);
@@ -226,7 +227,7 @@
     }
  
     private static void func_240786_a_(ServerWorld p_240786_0_, IServerWorldInfo p_240786_1_, boolean p_240786_2_, boolean p_240786_3_, boolean p_240786_4_) {
-@@ -387,6 +453,7 @@
+@@ -387,6 +454,7 @@
        } else if (p_240786_3_) {
           p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177984_a(), 0.0F);
        } else {
@@ -234,7 +235,7 @@
           BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
           Random random = new Random(p_240786_0_.func_72905_C());
           BlockPos blockpos = biomeprovider.func_225531_a_(0, p_240786_0_.func_181545_F(), 0, 256, (p_244265_0_) -> {
-@@ -452,7 +519,10 @@
+@@ -452,7 +520,10 @@
     }
  
     private void func_213186_a(IChunkStatusListener p_213186_1_) {
@@ -245,7 +246,7 @@
        field_147145_h.info("Preparing start region for dimension {}", (Object)serverworld.func_234923_W_().func_240901_a_());
        BlockPos blockpos = serverworld.func_241135_u_();
        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
-@@ -462,31 +532,40 @@
+@@ -462,31 +533,40 @@
        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
        while(serverchunkprovider.func_217229_b() != 441) {
@@ -299,7 +300,7 @@
     }
  
     protected void func_175584_a() {
-@@ -534,15 +613,36 @@
+@@ -534,15 +614,36 @@
        iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
        this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
        this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
@@ -337,7 +338,7 @@
        if (this.func_147137_ag() != null) {
           this.func_147137_ag().func_151268_b();
        }
-@@ -566,6 +666,7 @@
+@@ -566,6 +667,7 @@
        for(ServerWorld serverworld1 : this.func_212370_w()) {
           if (serverworld1 != null) {
              try {
@@ -345,7 +346,7 @@
                 serverworld1.close();
              } catch (IOException ioexception1) {
                 field_147145_h.error("Exception closing the level", (Throwable)ioexception1);
-@@ -584,6 +685,12 @@
+@@ -584,6 +686,12 @@
        } catch (IOException ioexception) {
           field_147145_h.error("Failed to unlock level {}", this.field_71310_m.func_237282_a_(), ioexception);
        }
@@ -358,7 +359,7 @@
  
     }
  
-@@ -611,23 +718,49 @@
+@@ -611,23 +719,49 @@
  
     }
  
@@ -411,7 +412,7 @@
                 this.field_211151_aa += 50L;
                 LongTickDetector longtickdetector = LongTickDetector.func_233524_a_("Server");
                 this.func_240773_a_(longtickdetector);
-@@ -643,11 +776,20 @@
+@@ -643,11 +777,20 @@
                 this.func_240795_b_(longtickdetector);
                 this.field_71296_Q = true;
              }
@@ -432,7 +433,7 @@
           CrashReport crashreport;
           if (throwable1 instanceof ReportedException) {
              crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
-@@ -662,6 +804,7 @@
+@@ -662,6 +805,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -440,16 +441,18 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -670,6 +813,8 @@
+@@ -670,7 +814,10 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
 +            org.spigotmc.WatchdogThread.doStop(); // Spigot
 +            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
              this.func_71240_o();
++            MohistThreadBox.METRICS.shutdown();
           }
  
-@@ -678,9 +823,16 @@
+       }
+@@ -678,9 +825,16 @@
     }
  
     private boolean func_212379_aT() {
@@ -467,7 +470,7 @@
     protected void func_213202_o() {
        this.func_213160_bf();
        this.func_213161_c(() -> {
-@@ -688,7 +840,7 @@
+@@ -688,7 +842,7 @@
        });
     }
  
@@ -476,7 +479,7 @@
        return new TickDelayedTask(this.field_71315_w, p_212875_1_);
     }
  
-@@ -770,7 +922,10 @@
+@@ -770,7 +924,10 @@
     }
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
@@ -487,7 +490,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -785,23 +940,26 @@
+@@ -785,23 +942,26 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -517,7 +520,7 @@
           this.field_71307_n.func_76471_b();
        }
  
-@@ -812,50 +970,89 @@
+@@ -812,50 +972,89 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
@@ -609,7 +612,7 @@
  
        this.field_71304_b.func_76319_b();
     }
-@@ -915,7 +1112,7 @@
+@@ -915,7 +1114,7 @@
     }
  
     public String getServerModName() {
@@ -618,7 +621,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -928,6 +1125,7 @@
+@@ -928,6 +1127,7 @@
        p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
           StringBuilder stringbuilder = new StringBuilder();
  
@@ -626,7 +629,7 @@
           for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
-@@ -953,7 +1151,7 @@
+@@ -953,7 +1153,7 @@
     public abstract Optional<String> func_230045_q_();
  
     public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
@@ -635,7 +638,7 @@
     }
  
     public KeyPair func_71250_E() {
-@@ -1273,6 +1471,7 @@
+@@ -1273,6 +1473,7 @@
        }).thenAcceptAsync((p_240782_2_) -> {
           this.field_195576_ac.close();
           this.field_195576_ac = p_240782_2_;
@@ -643,7 +646,7 @@
           this.field_195577_ad.func_198985_a(p_240780_1_);
           this.field_240768_i_.func_230410_a_(func_240771_a_(this.field_195577_ad));
           p_240782_2_.func_240971_i_();
-@@ -1280,6 +1479,7 @@
+@@ -1280,6 +1481,7 @@
           this.func_184103_al().func_193244_w();
           this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
           this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
@@ -651,7 +654,7 @@
        }, this);
        if (this.func_213162_bc()) {
           this.func_213161_c(completablefuture::isDone);
-@@ -1289,10 +1489,13 @@
+@@ -1289,10 +1491,13 @@
     }
  
     public static DatapackCodec func_240772_a_(ResourcePackList p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
@@ -667,7 +670,7 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1335,7 +1538,7 @@
+@@ -1335,7 +1540,7 @@
        if (this.func_205744_aT()) {
           PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
           WhiteList whitelist = playerlist.func_152599_k();
@@ -676,7 +679,7 @@
           for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(playerlist.func_181057_v())) {
              if (!whitelist.func_152705_a(serverplayerentity.func_146103_bH())) {
                 serverplayerentity.field_71135_a.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.not_whitelisted"));
-@@ -1442,6 +1645,31 @@
+@@ -1442,6 +1647,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
@@ -708,7 +711,7 @@
     public void func_223711_a(Path p_223711_1_) throws IOException {
        Path path = p_223711_1_.resolve("levels");
  
-@@ -1570,6 +1798,10 @@
+@@ -1570,6 +1800,10 @@
        return this.field_240768_i_;
     }
  
@@ -719,7 +722,7 @@
     public DynamicRegistries func_244267_aX() {
        return this.field_240767_f_;
     }
-@@ -1578,4 +1810,85 @@
+@@ -1578,4 +1812,85 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return null;
     }
