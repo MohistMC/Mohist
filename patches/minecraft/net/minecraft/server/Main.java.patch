@@ -8,7 +8,15 @@
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-@@ -71,6 +72,8 @@
+@@ -31,6 +32,7 @@
+ import net.minecraft.server.management.PlayerProfileCache;
+ import net.minecraft.util.DefaultUncaughtExceptionHandler;
+ import net.minecraft.util.RegistryKey;
++import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.WorldOptimizer;
+ import net.minecraft.util.datafix.DataFixesManager;
+@@ -71,6 +73,8 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
@@ -17,7 +25,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -78,33 +81,38 @@
+@@ -78,33 +82,38 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -63,15 +71,33 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -116,6 +124,7 @@
+@@ -115,7 +124,25 @@
+          }
  
           ResourcePackList resourcepacklist = new ResourcePackList(new ServerPackFinder(), new FolderPackFinder(saveformat$levelsave.func_237285_a_(FolderName.field_237251_g_).toFile(), IPackNameDecorator.field_232627_c_));
++         // CraftBukkit start
++         File bukkitDataPackFolder = new File(saveformat$levelsave.func_237285_a_(FolderName.field_237251_g_).toFile(), "bukkit");
++         if (!bukkitDataPackFolder.exists()) {
++            bukkitDataPackFolder.mkdirs();
++         }
++         File mcMeta = new File(bukkitDataPackFolder, "pack.mcmeta");
++         try {
++            com.google.common.io.Files.write("{\n"
++                    + "    \"pack\": {\n"
++                    + "        \"description\": \"Data pack for resources provided by Bukkit plugins\",\n"
++                    + "        \"pack_format\": " + SharedConstants.func_215069_a().getPackVersion() + "\n"
++                    + "    }\n"
++                    + "}\n", mcMeta, com.google.common.base.Charsets.UTF_8);
++         } catch (java.io.IOException ex) {
++            throw new RuntimeException("Could not initialize Bukkit datapack", ex);
++         }
++         // CraftBukkit end
           DatapackCodec datapackcodec1 = MinecraftServer.func_240772_a_(resourcepacklist, datapackcodec == null ? DatapackCodec.field_234880_a_ : datapackcodec, flag);
 +         DatapackCodecUtils.putDatapackConfig(datapackcodec1);
           CompletableFuture<DataPackRegistries> completablefuture = DataPackRegistries.func_240961_a_(resourcepacklist.func_232623_f_(), Commands.EnvironmentType.DEDICATED, serverpropertiesprovider.func_219034_a().field_225395_K, Util.func_215072_e(), Runnable::run);
  
           DataPackRegistries datapackregistries;
-@@ -142,6 +151,8 @@
+@@ -142,6 +169,8 @@
                 dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
              }
  
@@ -80,16 +106,17 @@
              iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
           }
  
-@@ -161,7 +172,7 @@
+@@ -159,16 +188,13 @@
+             dedicatedserver1.func_71208_b(optionset.valueOf(optionspec11));
+             dedicatedserver1.func_71204_b(optionset.has(optionspec2));
              dedicatedserver1.func_213208_c(optionset.valueOf(optionspec12));
-             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec13).contains("nogui");
-             if (flag1 && !GraphicsEnvironment.isHeadless()) {
+-            boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec13).contains("nogui");
+-            if (flag1 && !GraphicsEnvironment.isHeadless()) {
 -               dedicatedserver1.func_120011_ar();
-+               //dedicatedserver1.setGuiEnabled();
-             }
+-            }
  
              return dedicatedserver1;
-@@ -169,6 +180,7 @@
+          });
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);
