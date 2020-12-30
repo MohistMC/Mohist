@@ -47,7 +47,6 @@ public class MohistMCStart {
             DefaultLibraries.run();
             startInstallation();
         }
-        DefaultLibraries.loadDefaultLibs();
         CustomLibraries.loadCustomLibs();
         new JarLoader().loadJar(InstallUtils.extra);
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();

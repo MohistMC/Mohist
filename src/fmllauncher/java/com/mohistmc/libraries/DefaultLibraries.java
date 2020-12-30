@@ -30,6 +30,7 @@ public class DefaultLibraries {
 
                 try {
                     UpdateUtils.downloadFile(u, lib);
+                    if(lib.getName().endsWith(".jar")) new JarLoader().loadJar(lib);
                     fail.remove(u);
                 } catch (Exception e) {
                     System.out.println(i18n.get("file.download.nook", u));
@@ -65,11 +66,5 @@ public class DefaultLibraries {
         }
         b.close();
         return temp;
-    }
-
-    public static void loadDefaultLibs() throws Exception {
-        for (File lib : getDefaultLibs().keySet())
-            if(lib.exists() && lib.getName().endsWith(".jar") && !MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName()))
-                new JarLoader().loadJar(lib);
     }
 }
