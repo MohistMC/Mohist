@@ -470,7 +470,7 @@
 -                           livingentity.func_233627_a_(0.4F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
 -                           livingentity.func_70097_a(DamageSource.func_76365_a(this), f3);
 +                           // CraftBukkit start - Only apply knockback if the damage hits
-+                           if (livingentity.func_70097_a(DamageSource.func_76365_a(this).sweep(), f4)) {
++                           if (livingentity.func_70097_a(DamageSource.func_76365_a(this).sweep(), f3)) {
 +                              livingentity.func_233627_a_(0.4F, (double) MathHelper.func_76126_a(this.field_70177_z * ((float) Math.PI / 180F)), (double) (-MathHelper.func_76134_b(this.field_70177_z * ((float) Math.PI / 180F))));
 +                           }
 +                           // CraftBukkit end
