@@ -25,7 +25,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -78,33 +82,38 @@
+@@ -78,51 +82,74 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -33,7 +33,7 @@
 +         ServerEula servereula = new ServerEula(path1);
  
 +         if (!servereula.func_154346_a()) {
-+            field_240759_a_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
++            field_240759_a_.info(com.mohistmc.util.i18n.i18n.get("main.1"));
 +            return;
 +         }
 +
@@ -49,7 +49,8 @@
 -         Path path1 = Paths.get("eula.txt");
 -         ServerEula servereula = new ServerEula(path1);
           if (optionset.has(optionspec1)) {
-             field_240759_a_.info("Initialized '{}' and '{}'", path.toAbsolutePath(), path1.toAbsolutePath());
+-            field_240759_a_.info("Initialized '{}' and '{}'", path.toAbsolutePath(), path1.toAbsolutePath());
++            field_240759_a_.info(com.mohistmc.util.i18n.i18n.get("main.2", path.toAbsolutePath(), path1.toAbsolutePath()));
              return;
           }
  
@@ -71,7 +72,11 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -115,7 +124,25 @@
+          DatapackCodec datapackcodec = saveformat$levelsave.func_237297_e_();
+          boolean flag = optionset.has(optionspec6);
+          if (flag) {
+-            field_240759_a_.warn("Safe mode active, only vanilla datapack will be loaded");
++            field_240759_a_.warn(com.mohistmc.util.i18n.i18n.get("main.3"));
           }
  
           ResourcePackList resourcepacklist = new ResourcePackList(new ServerPackFinder(), new FolderPackFinder(saveformat$levelsave.func_237285_a_(FolderName.field_237251_g_).toFile(), IPackNameDecorator.field_232627_c_));
@@ -97,6 +102,14 @@
           CompletableFuture<DataPackRegistries> completablefuture = DataPackRegistries.func_240961_a_(resourcepacklist.func_232623_f_(), Commands.EnvironmentType.DEDICATED, serverpropertiesprovider.func_219034_a().field_225395_K, Util.func_215072_e(), Runnable::run);
  
           DataPackRegistries datapackregistries;
+          try {
+             datapackregistries = completablefuture.get();
+          } catch (Exception exception) {
+-            field_240759_a_.warn("Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode", (Throwable)exception);
++            field_240759_a_.warn(com.mohistmc.util.i18n.i18n.get("main.4", (Throwable)exception));
+             resourcepacklist.close();
+             return;
+          }
 @@ -142,6 +169,8 @@
                 dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
              }
@@ -106,7 +119,7 @@
              iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
           }
  
-@@ -159,16 +188,13 @@
+@@ -159,28 +188,25 @@
              dedicatedserver1.func_71208_b(optionset.valueOf(optionspec11));
              dedicatedserver1.func_71204_b(optionset.has(optionspec2));
              dedicatedserver1.func_213208_c(optionset.valueOf(optionspec12));
@@ -124,3 +137,26 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_240759_a_));
+          Runtime.getRuntime().addShutdownHook(thread);
+       } catch (Exception exception1) {
+-         field_240759_a_.fatal("Failed to start the minecraft server", (Throwable)exception1);
++         field_240759_a_.fatal(com.mohistmc.util.i18n.i18n.get("main.5", (Throwable)exception1));
+       }
+ 
+    }
+ 
+    private static void func_240761_a_(SaveFormat.LevelSave p_240761_0_, DataFixer p_240761_1_, boolean p_240761_2_, BooleanSupplier p_240761_3_, ImmutableSet<RegistryKey<World>> p_240761_4_) {
+-      field_240759_a_.info("Forcing world upgrade!");
++      field_240759_a_.info(com.mohistmc.util.i18n.i18n.get("main.6"));
+       WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
+       ITextComponent itextcomponent = null;
+ 
+@@ -194,7 +220,7 @@
+          int i = worldoptimizer.func_212211_j();
+          if (i > 0) {
+             int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
+-            field_240759_a_.info("{}% completed ({} / {} chunks)...", MathHelper.func_76141_d((float)j / (float)i * 100.0F), j, i);
++            field_240759_a_.info(com.mohistmc.util.i18n.i18n.get("main.7", MathHelper.func_76141_d((float)j / (float)i * 100.0F), j, i));
+          }
+ 
+          if (!p_240761_3_.getAsBoolean()) {

@@ -1,0 +1,32 @@
+--- a/net/minecraft/data/SNBTToNBTConverter.java
++++ b/net/minecraft/data/SNBTToNBTConverter.java
+@@ -95,9 +95,9 @@
+ 
+          return new SNBTToNBTConverter.TaskResult(p_229446_2_, abyte, s2, s1);
+       } catch (CommandSyntaxException commandsyntaxexception) {
+-         field_200424_a.error("Couldn't convert {} from SNBT to NBT at {} as it's invalid SNBT", p_229446_2_, p_229446_1_, commandsyntaxexception);
++         field_200424_a.error(com.mohistmc.util.i18n.i18n.get("snbttonbtconverter.1", p_229446_2_, p_229446_1_, commandsyntaxexception));
+       } catch (IOException ioexception) {
+-         field_200424_a.error("Couldn't convert {} from SNBT to NBT at {}", p_229446_2_, p_229446_1_, ioexception);
++         field_200424_a.error(com.mohistmc.util.i18n.i18n.get("snbttonbtconverter.2", p_229446_2_, p_229446_1_, ioexception));
+       }
+ 
+       return null;
+@@ -110,7 +110,7 @@
+          try {
+             FileUtils.write(path.toFile(), p_229444_2_.field_240515_c_, StandardCharsets.UTF_8);
+          } catch (IOException ioexception) {
+-            field_200424_a.error("Couldn't write structure SNBT {} at {}", p_229444_2_.field_229449_a_, path, ioexception);
++            field_200424_a.error(com.mohistmc.util.i18n.i18n.get("snbttonbtconverter.3", p_229444_2_.field_229449_a_, path, ioexception));
+          }
+       }
+ 
+@@ -127,7 +127,7 @@
+ 
+          p_229444_1_.func_208316_a(path1, p_229444_2_.field_229451_c_);
+       } catch (IOException ioexception1) {
+-         field_200424_a.error("Couldn't write structure {} at {}", p_229444_2_.field_229449_a_, path1, ioexception1);
++         field_200424_a.error(com.mohistmc.util.i18n.i18n.get("snbttonbtconverter.4", p_229444_2_.field_229449_a_, path1, ioexception1));
+       }
+ 
+    }

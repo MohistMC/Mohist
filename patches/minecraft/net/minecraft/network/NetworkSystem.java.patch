@@ -15,7 +15,7 @@
     });
     private final MinecraftServer field_151273_d;
     public volatile boolean field_151277_a;
-@@ -58,6 +59,7 @@
+@@ -58,17 +59,18 @@
     }
  
     public void func_151265_a(@Nullable InetAddress p_151265_1_, int p_151265_2_) throws IOException {
@@ -23,6 +23,19 @@
        synchronized(this.field_151274_e) {
           Class<? extends ServerSocketChannel> oclass;
           LazyValue<? extends EventLoopGroup> lazyvalue;
+          if (Epoll.isAvailable() && this.field_151273_d.func_181035_ah()) {
+             oclass = EpollServerSocketChannel.class;
+             lazyvalue = field_181141_b;
+-            field_151275_b.info("Using epoll channel type");
++            field_151275_b.info(com.mohistmc.util.i18n.i18n.get("networksystem.1"));
+          } else {
+             oclass = NioServerSocketChannel.class;
+             lazyvalue = field_151276_c;
+-            field_151275_b.info("Using default channel type");
++            field_151275_b.info(com.mohistmc.util.i18n.i18n.get("networksystem.2"));
+          }
+ 
+          this.field_151274_e.add((new ServerBootstrap()).channel(oclass).childHandler(new ChannelInitializer<Channel>() {
 @@ -78,14 +80,14 @@
                 } catch (ChannelException channelexception) {
                 }
@@ -40,6 +53,15 @@
        }
     }
  
+@@ -114,7 +116,7 @@
+          try {
+             channelfuture.channel().close().sync();
+          } catch (InterruptedException interruptedexception) {
+-            field_151275_b.error("Interrupted whilst closing channel");
++            field_151275_b.error(com.mohistmc.util.i18n.i18n.get("networksystem.3"));
+          }
+       }
+ 
 @@ -122,6 +124,13 @@
  
     public void func_151269_c() {
@@ -54,6 +76,15 @@
           Iterator<NetworkManager> iterator = this.field_151272_f.iterator();
  
           while(iterator.hasNext()) {
+@@ -135,7 +144,7 @@
+                         throw new ReportedException(CrashReport.func_85055_a(exception, "Ticking memory connection"));
+                      }
+ 
+-                     field_151275_b.warn("Failed to handle packet for {}", networkmanager.func_74430_c(), exception);
++                     field_151275_b.warn(com.mohistmc.util.i18n.i18n.get("networksystem.4", networkmanager.func_74430_c(), exception));
+                      ITextComponent itextcomponent = new StringTextComponent("Internal server error");
+                      networkmanager.func_201058_a(new SDisconnectPacket(itextcomponent), (p_210474_2_) -> {
+                         networkmanager.func_150718_a(itextcomponent);
 @@ -143,6 +152,10 @@
                       networkmanager.func_150721_g();
                    }

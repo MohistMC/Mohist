@@ -24,7 +24,15 @@
        Multimap<String, String> multimap = validationtracker.func_227527_a_();
        if (!multimap.isEmpty()) {
           multimap.forEach((p_229440_0_, p_229440_1_) -> {
-@@ -81,6 +76,20 @@
+@@ -74,13 +69,27 @@
+             try {
+                IDataProvider.func_218426_a(field_218442_c, p_200398_1_, LootTableManager.func_215301_a(p_229441_3_), path1);
+             } catch (IOException ioexception) {
+-               field_218441_b.error("Couldn't save loot table {}", path1, ioexception);
++               field_218441_b.error(com.mohistmc.util.i18n.i18n.get("loottableprovider.1", path1, ioexception));
+             }
+ 
+          });
        }
     }
  

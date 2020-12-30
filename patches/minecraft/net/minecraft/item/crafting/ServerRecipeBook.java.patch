@@ -25,3 +25,18 @@
        p_194081_2_.field_71135_a.func_147359_a(new SRecipeBookPacket(p_194081_1_, p_194081_3_, Collections.emptyList(), this.func_242139_a()));
     }
  
+@@ -96,12 +98,12 @@
+             ResourceLocation resourcelocation = new ResourceLocation(s);
+             Optional<? extends IRecipe<?>> optional = p_223417_3_.func_215367_a(resourcelocation);
+             if (!optional.isPresent()) {
+-               field_192828_d.error("Tried to load unrecognized recipe: {} removed now.", (Object)resourcelocation);
++               field_192828_d.error(com.mohistmc.util.i18n.i18n.get("serverrecipebook.1", (Object)resourcelocation));
+             } else {
+                p_223417_2_.accept(optional.get());
+             }
+          } catch (ResourceLocationException resourcelocationexception) {
+-            field_192828_d.error("Tried to load improperly formatted recipe: {} removed now.", (Object)s);
++            field_192828_d.error(com.mohistmc.util.i18n.i18n.get("serverrecipebook.2", (Object)s));
+          }
+       }
+ 

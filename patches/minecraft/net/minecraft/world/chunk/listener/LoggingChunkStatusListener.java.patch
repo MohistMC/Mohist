@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
++++ b/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
+@@ -34,13 +34,13 @@
+       int i = this.func_219511_c();
+       if (Util.func_211177_b() > this.field_219516_e) {
+          this.field_219516_e += 500L;
+-         field_219512_a.info((new TranslationTextComponent("menu.preparingSpawn", MathHelper.func_76125_a(i, 0, 100))).getString());
++         field_219512_a.info(com.mohistmc.util.i18n.i18n.get("loggingchunkstatuslistener.2", MathHelper.func_76125_a(i, 0, 100)));
+       }
+ 
+    }
+ 
+    public void func_219510_b() {
+-      field_219512_a.info("Time elapsed: {} ms", (long)(Util.func_211177_b() - this.field_219515_d));
++      field_219512_a.info(com.mohistmc.util.i18n.i18n.get("loggingchunkstatuslistener.1", (long)(Util.func_211177_b() - this.field_219515_d)));
+       this.field_219516_e = Long.MAX_VALUE;
+    }
+ 

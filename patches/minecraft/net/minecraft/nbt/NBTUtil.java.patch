@@ -1,0 +1,11 @@
+--- a/net/minecraft/nbt/NBTUtil.java
++++ b/net/minecraft/nbt/NBTUtil.java
+@@ -207,7 +207,7 @@
+       if (optional.isPresent()) {
+          return p_193590_0_.func_206870_a(p_193590_1_, optional.get());
+       } else {
+-         field_193591_a.warn("Unable to read property: {} with value: {} for blockstate: {}", p_193590_2_, p_193590_3_.func_74779_i(p_193590_2_), p_193590_4_.toString());
++         field_193591_a.warn(com.mohistmc.util.i18n.i18n.get("nbtutil.1", p_193590_2_, p_193590_3_.func_74779_i(p_193590_2_), p_193590_4_.toString()));
+          return p_193590_0_;
+       }
+    }

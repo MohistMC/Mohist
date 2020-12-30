@@ -28,14 +28,17 @@
        try {
           CompoundNBT compoundnbt = p_237335_1_.func_189511_e(new CompoundNBT());
           File file1 = File.createTempFile(p_237335_1_.func_189512_bd() + "-", ".dat", this.field_237333_c_);
-@@ -31,6 +36,7 @@
+@@ -31,8 +36,9 @@
           File file2 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat");
           File file3 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat_old");
           Util.func_240977_a_(file2, file1, file3);
 +         net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_237335_1_, field_237333_c_, p_237335_1_.func_189512_bd());
        } catch (Exception exception) {
-          field_237332_b_.warn("Failed to save player data for {}", (Object)p_237335_1_.func_200200_C_().getString());
+-         field_237332_b_.warn("Failed to save player data for {}", (Object)p_237335_1_.func_200200_C_().getString());
++         field_237332_b_.warn(com.mohistmc.util.i18n.i18n.get("playerdata.1", (Object)p_237335_1_.func_200200_C_().getString()));
        }
+ 
+    }
 @@ -43,21 +49,64 @@
  
        try {
@@ -62,7 +65,8 @@
 +         }
 +         // Spigot End
        } catch (Exception exception) {
-          field_237332_b_.warn("Failed to load player data for {}", (Object)p_237336_1_.func_200200_C_().getString());
+-         field_237332_b_.warn("Failed to load player data for {}", (Object)p_237336_1_.func_200200_C_().getString());
++         field_237332_b_.warn(com.mohistmc.util.i18n.i18n.get("playerdata.2", (Object)p_237336_1_.func_200200_C_().getString()));
        }
  
        if (compoundnbt != null) {

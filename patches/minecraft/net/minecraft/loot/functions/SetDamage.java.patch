@@ -1,0 +1,11 @@
+--- a/net/minecraft/loot/functions/SetDamage.java
++++ b/net/minecraft/loot/functions/SetDamage.java
+@@ -32,7 +32,7 @@
+          float f = 1.0F - this.field_186566_b.func_186507_b(p_215859_2_.func_216032_b());
+          p_215859_1_.func_196085_b(MathHelper.func_76141_d(f * (float)p_215859_1_.func_77958_k()));
+       } else {
+-         field_186565_a.warn("Couldn't set damage of loot item {}", (Object)p_215859_1_);
++         field_186565_a.warn(com.mohistmc.util.i18n.i18n.get("setdamage.1", (Object)p_215859_1_));
+       }
+ 
+       return p_215859_1_;

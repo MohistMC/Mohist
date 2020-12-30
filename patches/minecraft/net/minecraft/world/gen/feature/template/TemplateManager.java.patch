@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/gen/feature/template/TemplateManager.java
++++ b/net/minecraft/world/gen/feature/template/TemplateManager.java
+@@ -72,7 +72,7 @@
+       } catch (FileNotFoundException filenotfoundexception) {
+          return null;
+       } catch (Throwable throwable) {
+-         field_195431_a.error("Couldn't load structure {}: {}", p_209201_1_, throwable.toString());
++         field_195431_a.error(com.mohistmc.util.i18n.i18n.get("templatemanager.1", p_209201_1_, throwable.toString()));
+          return null;
+       }
+    }
+@@ -89,7 +89,7 @@
+          } catch (FileNotFoundException filenotfoundexception) {
+             return null;
+          } catch (IOException ioexception) {
+-            field_195431_a.error("Couldn't load structure from {}", path, ioexception);
++            field_195431_a.error(com.mohistmc.util.i18n.i18n.get("templatemanager.2", path, ioexception));
+             return null;
+          }
+       }
+@@ -123,7 +123,7 @@
+             try {
+                Files.createDirectories(Files.exists(path1) ? path1.toRealPath() : path1);
+             } catch (IOException ioexception) {
+-               field_195431_a.error("Failed to create parent directory: {}", (Object)path1);
++               field_195431_a.error(com.mohistmc.util.i18n.i18n.get("templatemanager.3", (Object)path1));
+                return false;
+             }
+ 

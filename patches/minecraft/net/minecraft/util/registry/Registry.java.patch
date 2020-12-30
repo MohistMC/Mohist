@@ -175,6 +175,15 @@
        return TreeDecoratorType.field_227426_b_;
     });
     public static final Registry<FeatureSizeType<?>> field_239702_ay_ = func_239746_a_(field_239663_A_, () -> {
+@@ -305,7 +309,7 @@
+    public static <T extends MutableRegistry<?>> void func_239738_a_(MutableRegistry<T> p_239738_0_) {
+       p_239738_0_.forEach((p_239739_1_) -> {
+          if (p_239739_1_.func_148742_b().isEmpty()) {
+-            field_212616_e.error("Registry '{}' was empty after loading", (Object)p_239738_0_.func_177774_c(p_239739_1_));
++            field_212616_e.error(com.mohistmc.util.i18n.i18n.get("registry.1", (Object)p_239738_0_.func_177774_c(p_239739_1_)));
+             if (SharedConstants.field_206244_b) {
+                throw new IllegalStateException("Registry: '" + p_239738_0_.func_177774_c(p_239739_1_) + "' is empty, not allowed, fix me!");
+             }
 @@ -323,18 +327,34 @@
        return func_239742_a_(p_239746_0_, Lifecycle.experimental(), p_239746_1_);
     }
@@ -210,3 +219,12 @@
     private static <T, R extends MutableRegistry<T>> R func_239743_a_(RegistryKey<? extends Registry<T>> p_239743_0_, R p_239743_1_, Supplier<T> p_239743_2_, Lifecycle p_239743_3_) {
        ResourceLocation resourcelocation = p_239743_0_.func_240901_a_();
        field_218376_a.put(resourcelocation, p_239743_2_);
+@@ -444,7 +464,7 @@
+       WorldGenRegistries.func_243661_a();
+       field_218376_a.forEach((p_239747_0_, p_239747_1_) -> {
+          if (p_239747_1_.get() == null) {
+-            field_212616_e.error("Unable to bootstrap registry '{}'", (Object)p_239747_0_);
++            field_212616_e.error(com.mohistmc.util.i18n.i18n.get("registry.2", (Object)p_239747_0_));
+          }
+ 
+       });

@@ -487,6 +487,15 @@
           int k = MathHelper.func_76128_c(p_217464_1_.func_226281_cx_() / 16.0D);
           if (!p_217464_1_.field_70175_ag || p_217464_1_.field_70176_ah != i || p_217464_1_.field_70162_ai != j || p_217464_1_.field_70164_aj != k) {
              if (p_217464_1_.field_70175_ag && this.func_217354_b(p_217464_1_.field_70176_ah, p_217464_1_.field_70164_aj)) {
+@@ -658,7 +775,7 @@
+ 
+             if (!p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) {
+                if (p_217464_1_.field_70175_ag) {
+-                  field_147491_a.warn("Entity {} left loaded chunk area", (Object)p_217464_1_);
++                  field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.1", (Object)p_217464_1_));
+                }
+ 
+                p_217464_1_.field_70175_ag = false;
 @@ -678,6 +795,7 @@
     public void func_217445_a(@Nullable IProgressUpdate p_217445_1_, boolean p_217445_2_, boolean p_217445_3_) {
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
@@ -529,14 +538,18 @@
     public void func_217460_e(Entity p_217460_1_) {
        boolean flag = p_217460_1_.field_98038_p;
        p_217460_1_.field_98038_p = true;
-@@ -777,6 +906,7 @@
+@@ -777,9 +906,10 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217448_1_, this))) return;
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
-          field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
+-         field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
++         field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.2", (Object)p_217448_1_.func_110124_au().toString()));
+          entity.func_213319_R();
+          this.func_217434_e((ServerPlayerEntity)entity);
+       }
 @@ -795,18 +925,24 @@
     }
  
@@ -548,7 +561,7 @@
 +
 +   private boolean addEntity0(Entity entityIn, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      if (entityIn.field_70128_L) {
-+         field_147491_a.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.func_200718_a(entityIn.func_200600_R()));
++         field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.3", (Object)EntityType.func_200718_a(entityIn.func_200600_R())));
           return false;
 -      } else if (this.func_217478_l(p_72838_1_)) {
 +      } else if (this.func_217478_l(entityIn)) {
@@ -576,6 +589,15 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
+@@ -827,7 +964,7 @@
+       if (entity == null) {
+          return false;
+       } else {
+-         field_147491_a.warn("Trying to add entity with duplicated UUID {}. Existing {}#{}, new: {}#{}", uuid, EntityType.func_200718_a(entity.func_200600_R()), entity.func_145782_y(), EntityType.func_200718_a(p_217478_1_.func_200600_R()), p_217478_1_.func_145782_y());
++         field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.4", uuid, EntityType.func_200718_a(entity.func_200600_R()), entity.func_145782_y(), EntityType.func_200718_a(p_217478_1_.func_200600_R()), p_217478_1_.func_145782_y()));
+          return true;
+       }
+    }
 @@ -851,15 +988,30 @@
     }
  

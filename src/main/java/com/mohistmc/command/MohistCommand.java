@@ -3,12 +3,12 @@ package com.mohistmc.command;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.configuration.MohistConfig;
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import net.minecraft.command.impl.GiveCommand;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -77,7 +77,7 @@ public class MohistCommand extends Command {
                 }
                 break;
             case "lang":
-                sender.sendMessage(ChatColor.GREEN +Message.getLocale());
+                sender.sendMessage(ChatColor.GREEN + i18n.getLocale());
                 break;
             case "item":
                 if (args.length == 1) {

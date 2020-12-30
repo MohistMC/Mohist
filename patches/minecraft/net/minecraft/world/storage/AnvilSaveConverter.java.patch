@@ -1,0 +1,59 @@
+--- a/net/minecraft/world/storage/AnvilSaveConverter.java
++++ b/net/minecraft/world/storage/AnvilSaveConverter.java
+@@ -41,7 +41,7 @@
+       File file1 = p_237330_0_.func_237291_a_(World.field_234918_g_);
+       File file2 = p_237330_0_.func_237291_a_(World.field_234919_h_);
+       File file3 = p_237330_0_.func_237291_a_(World.field_234920_i_);
+-      field_151480_b.info("Scanning folders...");
++      field_151480_b.info(com.mohistmc.util.i18n.i18n.get("anvilsaveconverter.1"));
+       func_215789_a(file1, list);
+       if (file2.exists()) {
+          func_215789_a(file2, list1);
+@@ -52,7 +52,7 @@
+       }
+ 
+       int i = list.size() + list1.size() + list2.size();
+-      field_151480_b.info("Total conversion count is {}", (int)i);
++      field_151480_b.info(com.mohistmc.util.i18n.i18n.get("anvilsaveconverter.2", (int)i));
+       DynamicRegistries.Impl dynamicregistries$impl = DynamicRegistries.func_239770_b_();
+       WorldSettingsImport<INBT> worldsettingsimport = WorldSettingsImport.func_244335_a(NBTDynamicOps.field_210820_a, IResourceManager.Instance.INSTANCE, dynamicregistries$impl);
+       IServerConfiguration iserverconfiguration = p_237330_0_.func_237284_a_(worldsettingsimport, DatapackCodec.field_234880_a_);
+@@ -76,11 +76,11 @@
+    private static void func_237329_a_(SaveFormat.LevelSave p_237329_0_) {
+       File file1 = p_237329_0_.func_237285_a_(FolderName.field_237249_e_).toFile();
+       if (!file1.exists()) {
+-         field_151480_b.warn("Unable to create level.dat_mcr backup");
++         field_151480_b.warn(com.mohistmc.util.i18n.i18n.get("anvilsaveconverter.3"));
+       } else {
+          File file2 = new File(file1.getParent(), "level.dat_mcr");
+          if (!file1.renameTo(file2)) {
+-            field_151480_b.warn("Unable to create level.dat_mcr backup");
++            field_151480_b.warn(com.mohistmc.util.i18n.i18n.get("anvilsaveconverter.4"));
+          }
+ 
+       }
+@@ -110,13 +110,13 @@
+                   CompoundNBT compoundnbt;
+                   try (DataInputStream datainputstream = regionfile.func_222666_a(chunkpos)) {
+                      if (datainputstream == null) {
+-                        field_151480_b.warn("Failed to fetch input stream for chunk {}", (Object)chunkpos);
++                        field_151480_b.warn(com.mohistmc.util.i18n.i18n.get("anvilsaveconverter.5", (Object)chunkpos));
+                         continue;
+                      }
+ 
+                      compoundnbt = CompressedStreamTools.func_74794_a(datainputstream);
+                   } catch (IOException ioexception) {
+-                     field_151480_b.warn("Failed to read data for chunk {}", chunkpos, ioexception);
++                     field_151480_b.warn(com.mohistmc.util.i18n.i18n.get("anvilsaveconverter.6", chunkpos, ioexception));
+                      continue;
+                   }
+ 
+@@ -140,7 +140,7 @@
+             }
+          }
+       } catch (IOException ioexception1) {
+-         field_151480_b.error("Failed to upgrade region file {}", p_242982_2_, ioexception1);
++         field_151480_b.error(com.mohistmc.util.i18n.i18n.get("anvilsaveconverter.7", p_242982_2_, ioexception1));
+       }
+ 
+    }

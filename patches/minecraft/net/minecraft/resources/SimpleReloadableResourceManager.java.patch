@@ -1,0 +1,11 @@
+--- a/net/minecraft/resources/SimpleReloadableResourceManager.java
++++ b/net/minecraft/resources/SimpleReloadableResourceManager.java
+@@ -128,7 +128,7 @@
+          try {
+             this.func_199021_a(iresourcepack);
+          } catch (Exception exception) {
+-            field_199012_a.error("Failed to add resource pack {}", iresourcepack.func_195762_a(), exception);
++            field_199012_a.error(com.mohistmc.util.i18n.i18n.get("simplereloadableresourcemanager.1", iresourcepack.func_195762_a(), exception));
+             return new SimpleReloadableResourceManager.FailedPackReloader(new SimpleReloadableResourceManager.FailedPackException(iresourcepack, exception));
+          }
+       }

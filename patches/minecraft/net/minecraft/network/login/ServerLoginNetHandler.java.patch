@@ -40,7 +40,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -72,6 +85,20 @@
+@@ -72,29 +85,73 @@
  
     }
  
@@ -48,12 +48,12 @@
 +   public void disconnect(String s) {
 +      try {
 +         ITextComponent ichatbasecomponent = new StringTextComponent(s);
-+         field_147332_c.info("Disconnecting {}: {}", this.func_147317_d(), s);
++         field_147332_c.info(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.1", this.func_147317_d(), s));
 +         this.field_147333_a.func_179290_a(new SDisconnectLoginPacket(ichatbasecomponent));
 +         this.field_147333_a.func_150718_a(ichatbasecomponent);
 +      }
 +      catch (Exception exception) {
-+         field_147332_c.error("Error whilst disconnecting player", exception);
++         field_147332_c.error(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.2", exception));
 +      }
 +   }
 +   // CraftBukkit end
@@ -61,7 +61,17 @@
     public NetworkManager func_147298_b() {
        return this.field_147333_a;
     }
-@@ -87,14 +114,44 @@
+ 
+    public void func_194026_b(ITextComponent p_194026_1_) {
+       try {
+-         field_147332_c.info("Disconnecting {}: {}", this.func_147317_d(), p_194026_1_.getString());
++         field_147332_c.info(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.3", this.func_147317_d(), p_194026_1_.getString()));
+          this.field_147333_a.func_179290_a(new SDisconnectLoginPacket(p_194026_1_));
+          this.field_147333_a.func_150718_a(p_194026_1_);
+       } catch (Exception exception) {
+-         field_147332_c.error("Error whilst disconnecting player", (Throwable)exception);
++         field_147332_c.error(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.4", (Throwable)exception));
+       }
  
     }
  
@@ -111,7 +121,7 @@
        } else {
           this.field_147328_g = ServerLoginNetHandler.State.ACCEPTED;
           if (this.field_147327_f.func_175577_aI() >= 0 && !this.field_147333_a.func_150731_c()) {
-@@ -107,9 +164,9 @@
+@@ -107,16 +164,16 @@
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
           if (serverplayerentity != null) {
              this.field_147328_g = ServerLoginNetHandler.State.DELAY_ACCEPT;
@@ -123,6 +133,14 @@
           }
        }
  
+    }
+ 
+    public void func_147231_a(ITextComponent p_147231_1_) {
+-      field_147332_c.info("{} lost connection: {}", this.func_147317_d(), p_147231_1_.getString());
++      field_147332_c.info(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.5", this.func_147317_d(), p_147231_1_.getString()));
+    }
+ 
+    public String func_147317_d() {
 @@ -130,7 +187,21 @@
           this.field_147328_g = ServerLoginNetHandler.State.KEY;
           this.field_147333_a.func_179290_a(new SEncryptionRequestPacket("", this.field_147327_f.func_71250_E().getPublic().getEncoded(), this.field_147330_e));
@@ -182,14 +200,14 @@
 +
 +                  new LoginHandler().fireEvents();
 +               } else if (field_147327_f.func_71264_H()) {
-+                  field_147332_c.warn("Failed to verify username but will let them in anyway!");
++                  field_147332_c.warn(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.6"));
 +                  field_147337_i = func_152506_a(gameprofile);
 +                  field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
                 } else {
 -                  ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unverified_username"));
 -                  ServerLoginNetHandler.field_147332_c.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
 +                  func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unverified_username"));
-+                  field_147332_c.error("Username '{}' tried to join with an invalid session", (Object) gameprofile.getName());
++                  field_147332_c.error(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.7", (Object) gameprofile.getName()));
                 }
              } catch (AuthenticationUnavailableException authenticationunavailableexception) {
 -               if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
@@ -197,14 +215,14 @@
 -                  ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
 -                  ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
 +               if (field_147327_f.func_71264_H()) {
-+                  field_147332_c.warn("Authentication servers are down but will let them in anyway!");
++                  field_147332_c.warn(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.8"));
 +                  field_147337_i = func_152506_a(gameprofile);
 +                  field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
                 } else {
 -                  ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.authservers_down"));
 -                  ServerLoginNetHandler.field_147332_c.error("Couldn't verify username because servers are unavailable");
 +                  func_194026_b(new TranslationTextComponent("multiplayer.disconnect.authservers_down"));
-+                  field_147332_c.error("Couldn't verify username because servers are unavailable");
++                  field_147332_c.error(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.9"));
                 }
 +               // CraftBukkit start - catch all exceptions
 +            } catch (Exception exception) {
@@ -260,7 +278,7 @@
 +            }
 +         }
 +         // CraftBukkit end
-+         field_147332_c.info("UUID of player {} is {}", field_147337_i.getName(), field_147337_i.getId());
++         field_147332_c.info(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.10", field_147337_i.getName(), field_147337_i.getId()));
 +         field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
 +      }
 +   }

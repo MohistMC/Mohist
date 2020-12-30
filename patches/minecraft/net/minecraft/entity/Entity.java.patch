@@ -566,6 +566,15 @@
           return p_189511_1_;
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Saving entity NBT");
+@@ -1450,7 +1688,7 @@
+                   try {
+                      this.func_200203_b(ITextComponent.Serializer.func_240643_a_(s));
+                   } catch (Exception exception) {
+-                     field_184243_a.warn("Failed to parse entity custom name {}", s, exception);
++                     field_184243_a.warn(com.mohistmc.util.i18n.i18n.get("entity.1", s, exception));
+                   }
+                }
+ 
 @@ -1458,6 +1696,9 @@
                 this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
                 this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));

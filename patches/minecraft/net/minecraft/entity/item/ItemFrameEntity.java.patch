@@ -135,3 +135,12 @@
           this.func_184185_a(SoundEvents.field_187620_cL, 1.0F, 1.0F);
        }
  
+@@ -305,7 +330,7 @@
+       if (compoundnbt != null && !compoundnbt.isEmpty()) {
+          ItemStack itemstack = ItemStack.func_199557_a(compoundnbt);
+          if (itemstack.func_190926_b()) {
+-            field_195052_c.warn("Unable to load item from: {}", (Object)compoundnbt);
++            field_195052_c.warn(com.mohistmc.util.i18n.i18n.get("itemframeentity.1", (Object)compoundnbt));
+          }
+ 
+          ItemStack itemstack1 = this.func_82335_i();

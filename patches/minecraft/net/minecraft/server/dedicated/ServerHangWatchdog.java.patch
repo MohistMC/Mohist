@@ -1,6 +1,13 @@
 --- a/net/minecraft/server/dedicated/ServerHangWatchdog.java
 +++ b/net/minecraft/server/dedicated/ServerHangWatchdog.java
-@@ -40,7 +40,7 @@
+@@ -35,12 +35,12 @@
+          long j = Util.func_211177_b();
+          long k = j - i;
+          if (k > this.field_180250_c) {
+-            field_180251_a.fatal("A single server tick took {} seconds (should be max {})", String.format(Locale.ROOT, "%.2f", (float)k / 1000.0F), String.format(Locale.ROOT, "%.2f", 0.05F));
+-            field_180251_a.fatal("Considering it to be crashed, server will forcibly shutdown.");
++            field_180251_a.fatal(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.1", 0.05F));
++            field_180251_a.fatal(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.2"));
              ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
              ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
              StringBuilder stringbuilder = new StringBuilder();
@@ -9,3 +16,15 @@
  
              for(ThreadInfo threadinfo : athreadinfo) {
                 if (threadinfo.getThreadId() == this.field_180249_b.func_213170_ax().getId()) {
+@@ -67,9 +67,9 @@
+             Bootstrap.func_179870_a("Crash report:\n" + crashreport.func_71502_e());
+             File file1 = new File(new File(this.field_180249_b.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
+             if (crashreport.func_147149_a(file1)) {
+-               field_180251_a.error("This crash report has been saved to: {}", (Object)file1.getAbsolutePath());
++               field_180251_a.error(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.3", (Object)file1.getAbsolutePath()));
+             } else {
+-               field_180251_a.error("We were unable to save this crash report to disk.");
++               field_180251_a.error(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.4"));
+             }
+ 
+             this.func_180248_a();

@@ -1,0 +1,29 @@
+--- a/net/minecraft/resources/ResourcePack.java
++++ b/net/minecraft/resources/ResourcePack.java
+@@ -55,7 +55,7 @@
+    protected abstract boolean func_195768_c(String p_195768_1_);
+ 
+    protected void func_195769_d(String p_195769_1_) {
+-      field_195772_b.warn("ResourcePack: ignored non-lowercase namespace: {} in {}", p_195769_1_, this.field_195771_a);
++      field_195772_b.warn(com.mohistmc.util.i18n.i18n.get("resourcepack.1", p_195769_1_, this.field_195771_a));
+    }
+ 
+    @Nullable
+@@ -74,7 +74,7 @@
+       try (BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(p_195770_1_, StandardCharsets.UTF_8))) {
+          jsonobject = JSONUtils.func_212743_a(bufferedreader);
+       } catch (JsonParseException | IOException ioexception) {
+-         field_195772_b.error("Couldn't load {} metadata", p_195770_0_.func_110483_a(), ioexception);
++         field_195772_b.error(com.mohistmc.util.i18n.i18n.get("resourcepack.2", p_195770_0_.func_110483_a(), ioexception));
+          return (T)null;
+       }
+ 
+@@ -84,7 +84,7 @@
+          try {
+             return p_195770_0_.func_195812_a(JSONUtils.func_152754_s(jsonobject, p_195770_0_.func_110483_a()));
+          } catch (JsonParseException jsonparseexception) {
+-            field_195772_b.error("Couldn't load {} metadata", p_195770_0_.func_110483_a(), jsonparseexception);
++            field_195772_b.error(com.mohistmc.util.i18n.i18n.get("resourcepack.3", p_195770_0_.func_110483_a(), jsonparseexception));
+             return (T)null;
+          }
+       }

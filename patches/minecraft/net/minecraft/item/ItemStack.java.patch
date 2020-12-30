@@ -68,7 +68,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,34 +119,65 @@
+@@ -109,41 +119,72 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -142,6 +142,14 @@
     }
  
     public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
+       try {
+          return new ItemStack(p_199557_0_);
+       } catch (RuntimeException runtimeexception) {
+-         field_199558_c.debug("Tried to load invalid item: {}", p_199557_0_, runtimeexception);
++         field_199558_c.debug(com.mohistmc.util.i18n.i18n.get("itemstack.1", p_199557_0_, runtimeexception));
+          return field_190927_a;
+       }
+    }
 @@ -151,7 +192,7 @@
     public boolean func_190926_b() {
        if (this == field_190927_a) {

@@ -44,8 +44,12 @@
        this.field_76645_j = new ClassInheritanceMultiMap[16];
        this.field_76637_e = p_i225781_1_;
        this.field_212816_F = p_i225781_2_;
-@@ -119,9 +121,24 @@
-             field_150817_t.warn("Could not set level chunk sections, array length is {} instead of {}", p_i225781_9_.length, this.field_76652_q.length);
+@@ -116,12 +118,27 @@
+          if (this.field_76652_q.length == p_i225781_9_.length) {
+             System.arraycopy(p_i225781_9_, 0, this.field_76652_q, 0, this.field_76652_q.length);
+          } else {
+-            field_150817_t.warn("Could not set level chunk sections, array length is {} instead of {}", p_i225781_9_.length, this.field_76652_q.length);
++            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.1", p_i225781_9_.length, this.field_76652_q.length));
           }
        }
 +      this.gatherCapabilities();
@@ -169,6 +173,15 @@
                 } else {
                    tileentity1.func_145836_u();
                 }
+@@ -308,7 +333,7 @@
+       int i = MathHelper.func_76128_c(p_76612_1_.func_226277_ct_() / 16.0D);
+       int j = MathHelper.func_76128_c(p_76612_1_.func_226281_cx_() / 16.0D);
+       if (i != this.field_212816_F.field_77276_a || j != this.field_212816_F.field_77275_b) {
+-         field_150817_t.warn("Wrong location! ({}, {}) should be ({}, {}), {}", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_);
++         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.2", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_));
+          p_76612_1_.field_70128_L = true;
+       }
+ 
 @@ -321,11 +346,13 @@
           k = this.field_76645_j.length - 1;
        }
@@ -371,7 +384,7 @@
     }
  
     public void func_177409_g(boolean p_177409_1_) {
-@@ -704,9 +790,8 @@
+@@ -704,12 +790,11 @@
        BlockState blockstate = this.func_180495_p(p_212815_1_);
        TileEntity tileentity;
        if ("DUMMY".equals(p_212815_2_.func_74779_i("id"))) {
@@ -382,7 +395,20 @@
 +            tileentity = blockstate.createTileEntity(this.field_76637_e);
           } else {
              tileentity = null;
-             field_150817_t.warn("Tried to load a DUMMY block entity @ {} but found not block entity block {} at location", p_212815_1_, blockstate);
+-            field_150817_t.warn("Tried to load a DUMMY block entity @ {} but found not block entity block {} at location", p_212815_1_, blockstate);
++            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.3", p_212815_1_, blockstate));
+          }
+       } else {
+          tileentity = TileEntity.func_235657_b_(blockstate, p_212815_2_);
+@@ -719,7 +804,7 @@
+          tileentity.func_226984_a_(this.field_76637_e, p_212815_1_);
+          this.func_150813_a(tileentity);
+       } else {
+-         field_150817_t.warn("Tried to load a block entity for block {} but failed at location {}", blockstate, p_212815_1_);
++         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.4", blockstate, p_212815_1_));
+       }
+ 
+       return tileentity;
 @@ -795,4 +880,30 @@
        QUEUED,
        CHECK;

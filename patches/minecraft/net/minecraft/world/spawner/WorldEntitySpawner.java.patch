@@ -113,6 +113,15 @@
                                return;
                             }
  
+@@ -233,7 +284,7 @@
+             return (MobEntity)entity;
+          }
+       } catch (Exception exception) {
+-         field_209383_a.warn("Failed to create mob", (Throwable)exception);
++         field_209383_a.warn(com.mohistmc.util.i18n.i18n.get("worldentityspawner.1", (Throwable)exception));
+          return null;
+       }
+    }
 @@ -253,6 +304,7 @@
           return null;
        } else {
@@ -151,7 +160,15 @@
        }
     }
  
-@@ -355,9 +412,10 @@
+@@ -348,16 +405,17 @@
+                      try {
+                         entity = mobspawninfo$spawners.field_242588_c.func_200721_a(p_77191_0_.func_201672_e());
+                      } catch (Exception exception) {
+-                        field_209383_a.warn("Failed to create mob", (Throwable)exception);
++                        field_209383_a.warn(com.mohistmc.util.i18n.i18n.get("worldentityspawner.2", (Throwable)exception));
+                         continue;
+                      }
+ 
                       entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;

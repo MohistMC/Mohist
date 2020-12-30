@@ -13,7 +13,7 @@ public class i18n {
         return rb.getString(key);
     }
 
-    public static String get(String key, Object[] f) {
+    public static String get(String key, Object... f) {
         return new MessageFormat(get(key)).format(f);
     }
 

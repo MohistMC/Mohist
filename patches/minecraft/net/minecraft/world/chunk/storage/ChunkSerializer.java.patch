@@ -12,6 +12,15 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.SharedConstants;
  import net.minecraft.util.math.BlockPos;
+@@ -64,7 +61,7 @@
+       CompoundNBT compoundnbt = p_222656_4_.func_74775_l("Level");
+       ChunkPos chunkpos = new ChunkPos(compoundnbt.func_74762_e("xPos"), compoundnbt.func_74762_e("zPos"));
+       if (!Objects.equals(p_222656_3_, chunkpos)) {
+-         field_222658_a.error("Chunk file at {} is in the wrong location; relocating. (Expected {}, got {})", p_222656_3_, p_222656_3_, chunkpos);
++         field_222658_a.error(com.mohistmc.util.i18n.i18n.get("chunkserializer.1", p_222656_3_, p_222656_3_, chunkpos));
+       }
+ 
+       BiomeContainer biomecontainer = new BiomeContainer(p_222656_0_.func_241828_r().func_243612_b(Registry.field_239720_u_), p_222656_3_, biomeprovider, compoundnbt.func_150297_b("Biomes", 11) ? compoundnbt.func_74759_k("Biomes") : null);
 @@ -131,7 +128,14 @@
  
           ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, biomecontainer, upgradedata, iticklist, iticklist1, k1, achunksection, (p_222648_1_) -> {
@@ -120,3 +129,21 @@
  
     }
  
+@@ -419,7 +445,7 @@
+          String s1 = s.toLowerCase(Locale.ROOT);
+          Structure<?> structure = Structure.field_236365_a_.get(s1);
+          if (structure == null) {
+-            field_222658_a.error("Unknown structure start: {}", (Object)s1);
++            field_222658_a.error(com.mohistmc.util.i18n.i18n.get("chunkserializer.2", (Object)s1));
+          } else {
+             StructureStart<?> structurestart = Structure.func_236393_a_(p_235967_0_, compoundnbt.func_74775_l(s), p_235967_2_);
+             if (structurestart != null) {
+@@ -439,7 +465,7 @@
+          map.put(Structure.field_236365_a_.get(s.toLowerCase(Locale.ROOT)), new LongOpenHashSet(Arrays.stream(compoundnbt.func_197645_o(s)).filter((p_227074_2_) -> {
+             ChunkPos chunkpos = new ChunkPos(p_227074_2_);
+             if (chunkpos.func_226661_a_(p_227075_0_) > 8) {
+-               field_222658_a.warn("Found invalid structure reference [ {} @ {} ] for chunk {}.", s, chunkpos, p_227075_0_);
++               field_222658_a.warn(com.mohistmc.util.i18n.i18n.get("chunkserializer.3", s, chunkpos, p_227075_0_));
+                return false;
+             } else {
+                return true;

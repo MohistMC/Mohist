@@ -1,0 +1,41 @@
+--- a/net/minecraft/profiler/Profiler.java
++++ b/net/minecraft/profiler/Profiler.java
+@@ -46,7 +46,7 @@
+ 
+    public void func_219894_a() {
+       if (this.field_219916_j) {
+-         field_151234_b.error("Profiler tick already started - missing endTick()?");
++         field_151234_b.error(com.mohistmc.util.i18n.i18n.get("profiler.1"));
+       } else {
+          this.field_219916_j = true;
+          this.field_219915_i = "";
+@@ -57,7 +57,7 @@
+ 
+    public void func_219897_b() {
+       if (!this.field_219916_j) {
+-         field_151234_b.error("Profiler tick already ended - missing startTick()?");
++         field_151234_b.error(com.mohistmc.util.i18n.i18n.get("profiler.2"));
+       } else {
+          this.func_76319_b();
+          this.field_219916_j = false;
+@@ -72,7 +72,7 @@
+ 
+    public void func_76320_a(String p_76320_1_) {
+       if (!this.field_219916_j) {
+-         field_151234_b.error("Cannot push '{}' to profiler if profiler tick hasn't started - missing startTick()?", (Object)p_76320_1_);
++         field_151234_b.error(com.mohistmc.util.i18n.i18n.get("profiler.3", (Object)p_76320_1_));
+       } else {
+          if (!this.field_219915_i.isEmpty()) {
+             this.field_219915_i = this.field_219915_i + '\u001e';
+@@ -91,9 +91,9 @@
+ 
+    public void func_76319_b() {
+       if (!this.field_219916_j) {
+-         field_151234_b.error("Cannot pop from profiler if profiler tick hasn't started - missing startTick()?");
++         field_151234_b.error(com.mohistmc.util.i18n.i18n.get("profiler.4"));
+       } else if (this.field_76326_c.isEmpty()) {
+-         field_151234_b.error("Tried to pop one too many times! Mismatched push() and pop()?");
++         field_151234_b.error(com.mohistmc.util.i18n.i18n.get("profiler.5"));
+       } else {
+          long i = Util.func_211178_c();
+          long j = this.field_76326_c.removeLong(this.field_76326_c.size() - 1);

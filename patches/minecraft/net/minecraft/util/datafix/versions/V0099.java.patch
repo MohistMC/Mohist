@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/datafix/versions/V0099.java
++++ b/net/minecraft/util/datafix/versions/V0099.java
+@@ -275,7 +275,7 @@
+             String s = p_209869_0_.get("id").asString("");
+             String s1 = p_209869_1_.get(NamespacedSchema.func_206477_f(s));
+             if (s1 == null) {
+-               field_206692_c.warn("Unable to resolve BlockEntity for ItemStack: {}", (Object)s);
++               field_206692_c.warn(com.mohistmc.util.i18n.i18n.get("v0099.1", (Object)s));
+                return p_209870_2_;
+             } else {
+                return p_209870_2_.set("id", p_209869_0_.createString(s1));

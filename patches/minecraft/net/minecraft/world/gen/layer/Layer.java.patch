@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/layer/Layer.java
++++ b/net/minecraft/world/gen/layer/Layer.java
+@@ -30,7 +30,7 @@
+             if (SharedConstants.field_206244_b) {
+                throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Unknown biome id: " + i));
+             } else {
+-               field_215741_a.warn("Unknown biome id: ", (int)i);
++               field_215741_a.warn(com.mohistmc.util.i18n.i18n.get("layer.1", (int)i));
+                return p_242936_1_.func_230516_a_(BiomeRegistry.func_244203_a(0));
+             }
+          } else {

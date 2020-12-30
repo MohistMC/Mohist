@@ -132,7 +132,7 @@
              IFormattableTextComponent iformattabletextcomponent = new StringTextComponent(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
              if (field_197061_a.isDebugEnabled()) {
 -               field_197061_a.error("Command exception: {}", p_197059_2_, exception);
-+               field_197061_a.error("Command exception: {}", command, exception);
++               field_197061_a.error(com.mohistmc.util.i18n.i18n.get("commands.1", command, exception));
                 StackTraceElement[] astacktraceelement = exception.getStackTrace();
  
                 for(int i = 0; i < Math.min(astacktraceelement.length, 3); ++i) {

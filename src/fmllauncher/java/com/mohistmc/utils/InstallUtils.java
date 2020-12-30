@@ -24,20 +24,21 @@ public class InstallUtils {
         copyFileFromJar(lzma, "data/server.lzma");
         copyFileFromJar(universalJar, "data/forge-1.16.4-" + forgeVer + "-universal.jar");
 
-        ProcessBuilder processBuilder = new ProcessBuilder(new ArrayList<>(Arrays.asList("java", "-jar", "MohistInstallChecker.jar", "\"" + libPath + "\"", forgeVer, mcpVer)));
-        processBuilder.directory(new File(libPath + "com/mohistmc/installation/"));
-        Process process = processBuilder.start();
+        ProcessBuilder p = new ProcessBuilder(new ArrayList<>(Arrays.asList("java", "-jar", "MohistInstallChecker.jar", "\"" + libPath + "\"", forgeVer, mcpVer)));
+        p.directory(new File(libPath + "com/mohistmc/installation/"));
+        p.redirectError(ProcessBuilder.Redirect.INHERIT);
+        Process proc = p.start();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null)
             if (line.startsWith("="))
                 System.out.println(i18n.get(line.replaceFirst("=", "")));
             else System.out.println(line);
 
-        process.waitFor();
+        proc.waitFor();
         reader.close();
-        process.destroy();
+        proc.destroy();
     }
 
     private static void copyFileFromJar(File file, String pathInJar) throws Exception {

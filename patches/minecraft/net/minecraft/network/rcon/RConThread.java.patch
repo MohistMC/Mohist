@@ -1,0 +1,31 @@
+--- a/net/minecraft/network/rcon/RConThread.java
++++ b/net/minecraft/network/rcon/RConThread.java
+@@ -26,7 +26,7 @@
+          this.field_72618_c = new Thread(this, this.field_164003_c + " #" + field_164004_h.incrementAndGet());
+          this.field_72618_c.setUncaughtExceptionHandler(new DefaultWithNameUncaughtExceptionHandler(field_199680_h));
+          this.field_72618_c.start();
+-         field_199680_h.info("Thread {} started", (Object)this.field_164003_c);
++         field_199680_h.info(com.mohistmc.util.i18n.i18n.get("rconthread.1", (Object)this.field_164003_c));
+          return true;
+       }
+    }
+@@ -41,16 +41,16 @@
+                this.field_72618_c.join(1000L);
+                ++i;
+                if (i >= 5) {
+-                  field_199680_h.warn("Waited {} seconds attempting force stop!", (int)i);
++                  field_199680_h.warn(com.mohistmc.util.i18n.i18n.get("rconthread.2", (int)i));
+                } else if (this.field_72618_c.isAlive()) {
+-                  field_199680_h.warn("Thread {} ({}) failed to exit after {} second(s)", this, this.field_72618_c.getState(), i, new Exception("Stack:"));
++                  field_199680_h.warn(com.mohistmc.util.i18n.i18n.get("rconthread.3", this, this.field_72618_c.getState(), i, new Exception("Stack:")));
+                   this.field_72618_c.interrupt();
+                }
+             } catch (InterruptedException interruptedexception) {
+             }
+          }
+ 
+-         field_199680_h.info("Thread {} stopped", (Object)this.field_164003_c);
++         field_199680_h.info(com.mohistmc.util.i18n.i18n.get("rconthread.4", (Object)this.field_164003_c));
+          this.field_72618_c = null;
+       }
+    }

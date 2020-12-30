@@ -1,0 +1,48 @@
+--- a/net/minecraft/util/WorldOptimizer.java
++++ b/net/minecraft/util/WorldOptimizer.java
+@@ -59,7 +59,7 @@
+       this.field_219960_q = new DimensionSavedDataManager(new File(this.field_212221_c.func_237291_a_(World.field_234918_g_), "data"), p_i231486_2_);
+       this.field_212223_e = field_212220_b.newThread(this::func_212216_o);
+       this.field_212223_e.setUncaughtExceptionHandler((p_219956_1_, p_219956_2_) -> {
+-         field_212219_a.error("Error upgrading world", p_219956_2_);
++         field_212219_a.error(com.mohistmc.util.i18n.i18n.get("worldoptimizer.1", p_219956_2_));
+          this.field_212236_r = new TranslationTextComponent("optimizeWorld.stage.failed");
+          this.field_212225_g = true;
+       });
+@@ -123,7 +123,7 @@
+                         CompoundNBT compoundnbt2 = compoundnbt1.func_74775_l("Level");
+                         ChunkPos chunkpos1 = new ChunkPos(compoundnbt2.func_74762_e("xPos"), compoundnbt2.func_74762_e("zPos"));
+                         if (!chunkpos1.equals(chunkpos)) {
+-                           field_212219_a.warn("Chunk {} has invalid position {}", chunkpos, chunkpos1);
++                           field_212219_a.warn(com.mohistmc.util.i18n.i18n.get("worldoptimizer.2", chunkpos, chunkpos1));
+                         }
+ 
+                         boolean flag2 = j < SharedConstants.func_215069_a().getWorldVersion();
+@@ -145,9 +145,9 @@
+                         throw reportedexception;
+                      }
+ 
+-                     field_212219_a.error("Error upgrading chunk {}", chunkpos, throwable);
++                     field_212219_a.error(com.mohistmc.util.i18n.i18n.get("worldoptimizer.3", chunkpos, throwable));
+                   } catch (IOException ioexception1) {
+-                     field_212219_a.error("Error upgrading chunk {}", chunkpos, ioexception1);
++                     field_212219_a.error(com.mohistmc.util.i18n.i18n.get("worldoptimizer.4", chunkpos, ioexception1));
+                   }
+ 
+                   if (flag1) {
+@@ -176,13 +176,13 @@
+             try {
+                chunkloader1.close();
+             } catch (IOException ioexception) {
+-               field_212219_a.error("Error upgrading chunk", (Throwable)ioexception);
++               field_212219_a.error(com.mohistmc.util.i18n.i18n.get("worldoptimizer.5", (Throwable)ioexception));
+             }
+          }
+ 
+          this.field_219960_q.func_212775_b();
+          i = Util.func_211177_b() - i;
+-         field_212219_a.info("World optimizaton finished after {} ms", (long)i);
++         field_212219_a.info(com.mohistmc.util.i18n.i18n.get("worldoptimizer.6", (long)i));
+          this.field_212225_g = true;
+       }
+    }

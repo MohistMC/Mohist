@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/gen/feature/DungeonsFeature.java
 +++ b/net/minecraft/world/gen/feature/DungeonsFeature.java
+@@ -113,7 +113,7 @@
+          if (tileentity instanceof MobSpawnerTileEntity) {
+             ((MobSpawnerTileEntity)tileentity).func_145881_a().func_200876_a(this.func_201043_a(p_241855_3_));
+          } else {
+-            field_175918_a.error("Failed to fetch mob spawner entity at ({}, {}, {})", p_241855_4_.func_177958_n(), p_241855_4_.func_177956_o(), p_241855_4_.func_177952_p());
++            field_175918_a.error(com.mohistmc.util.i18n.i18n.get("dungeonsfeature.1", p_241855_4_.func_177958_n(), p_241855_4_.func_177956_o(), p_241855_4_.func_177952_p()));
+          }
+ 
+          return true;
 @@ -123,6 +123,6 @@
     }
  

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/gen/FlatGenerationSettings.java
 +++ b/net/minecraft/world/gen/FlatGenerationSettings.java
+@@ -86,7 +86,7 @@
+       this.field_82655_a.addAll(p_i242012_3_);
+       this.func_82645_d();
+       if (!p_i242012_6_.isPresent()) {
+-         field_211404_q.error("Unknown biome, defaulting to plains");
++         field_211404_q.error(com.mohistmc.util.i18n.i18n.get("flatgenerationsettings.1"));
+          this.field_82654_c = () -> {
+             return p_i242012_1_.func_243576_d(Biomes.field_76772_c);
+          };
 @@ -174,7 +174,7 @@
           }
        }

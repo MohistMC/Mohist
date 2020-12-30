@@ -35,3 +35,12 @@
        stringbuilder.append("// ");
        stringbuilder.append(func_71503_h());
        stringbuilder.append("\n\n");
+@@ -181,7 +173,7 @@
+             this.field_71510_d = p_147149_1_;
+             return true;
+          } catch (Throwable throwable) {
+-            field_147150_a.error("Could not save crash report to {}", p_147149_1_, throwable);
++            field_147150_a.error(com.mohistmc.util.i18n.i18n.get("crashreport.1", p_147149_1_, throwable));
+             flag = false;
+          } finally {
+             IOUtils.closeQuietly(writer);
