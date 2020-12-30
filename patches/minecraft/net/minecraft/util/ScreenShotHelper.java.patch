@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/ScreenShotHelper.java
 +++ b/net/minecraft/util/ScreenShotHelper.java
-@@ -50,13 +50,23 @@
+@@ -50,15 +50,25 @@
           file2 = new File(file1, p_228051_1_);
        }
  
@@ -25,5 +25,8 @@
 +            else
 +               p_228051_5_.accept(new TranslationTextComponent("screenshot.success", itextcomponent));
           } catch (Exception exception) {
-             field_148261_a.warn("Couldn't save screenshot", (Throwable)exception);
+-            field_148261_a.warn("Couldn't save screenshot", (Throwable)exception);
++            field_148261_a.warn(com.mohistmc.util.i18n.i18n.get("screenshothelper.1", (Throwable)exception));
              p_228051_5_.accept(new TranslationTextComponent("screenshot.failure", exception.getMessage()));
+          } finally {
+             nativeimage.close();

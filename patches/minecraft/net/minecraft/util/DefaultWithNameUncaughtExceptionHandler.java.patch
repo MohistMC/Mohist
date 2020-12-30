@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/DefaultWithNameUncaughtExceptionHandler.java
++++ b/net/minecraft/util/DefaultWithNameUncaughtExceptionHandler.java
+@@ -11,7 +11,7 @@
+    }
+ 
+    public void uncaughtException(Thread p_uncaughtException_1_, Throwable p_uncaughtException_2_) {
+-      this.field_201710_a.error("Caught previously unhandled exception :");
++      this.field_201710_a.error(com.mohistmc.util.i18n.i18n.get("defaultwithnameuncaughtexceptionhandler.1"));
+       this.field_201710_a.error(p_uncaughtException_1_.getName(), p_uncaughtException_2_);
+    }
+ }

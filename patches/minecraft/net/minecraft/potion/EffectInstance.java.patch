@@ -9,7 +9,7 @@
     private static final Logger field_180155_a = LogManager.getLogger();
     private final Effect field_188420_b;
     private int field_76460_b;
-@@ -64,6 +64,7 @@
+@@ -64,11 +64,12 @@
        this.field_82724_e = p_230117_1_.field_82724_e;
        this.field_188421_h = p_230117_1_.field_188421_h;
        this.field_205349_i = p_230117_1_.field_205349_i;
@@ -17,6 +17,12 @@
     }
  
     public boolean func_199308_a(EffectInstance p_199308_1_) {
+       if (this.field_188420_b != p_199308_1_.field_188420_b) {
+-         field_180155_a.warn("This method should only be called for matching effects!");
++         field_180155_a.warn(com.mohistmc.util.i18n.i18n.get("effectinstance.1"));
+       }
+ 
+       boolean flag = false;
 @@ -112,7 +113,7 @@
     }
  

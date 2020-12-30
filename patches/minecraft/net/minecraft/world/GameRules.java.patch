@@ -18,6 +18,15 @@
           this.field_223566_a = func_223563_b(p_223553_1_);
        }
  
+@@ -305,7 +305,7 @@
+             try {
+                return Integer.parseInt(p_223563_0_);
+             } catch (NumberFormatException numberformatexception) {
+-               GameRules.field_223622_y.warn("Failed to parse integer {}", (Object)p_223563_0_);
++               GameRules.field_223622_y.warn(com.mohistmc.util.i18n.i18n.get("gamerules.1", (Object)p_223563_0_));
+             }
+          }
+ 
 @@ -410,14 +410,14 @@
           this.func_223556_a(p_223554_1_.getSource().func_197028_i());
        }

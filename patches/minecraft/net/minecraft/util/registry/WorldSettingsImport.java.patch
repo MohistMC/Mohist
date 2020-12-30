@@ -1,5 +1,17 @@
 --- a/net/minecraft/util/registry/WorldSettingsImport.java
 +++ b/net/minecraft/util/registry/WorldSettingsImport.java
+@@ -95,9 +95,9 @@
+       for(ResourceLocation resourcelocation : collection) {
+          String s1 = resourcelocation.func_110623_a();
+          if (!s1.endsWith(".json")) {
+-            field_240870_b_.warn("Skipping resource {} since it is not a json file", (Object)resourcelocation);
++            field_240870_b_.warn(com.mohistmc.util.i18n.i18n.get("worldsettingsimport.1", (Object)resourcelocation));
+          } else if (!s1.startsWith(s)) {
+-            field_240870_b_.warn("Skipping resource {} since it does not have a registry name prefix", (Object)resourcelocation);
++            field_240870_b_.warn(com.mohistmc.util.i18n.i18n.get("worldsettingsimport.2", (Object)resourcelocation));
+          } else {
+             String s2 = s1.substring(s.length(), s1.length() - ".json".length());
+             ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s2);
 @@ -190,6 +190,7 @@
                 ) {
                    JsonParser jsonparser = new JsonParser();
@@ -8,6 +20,15 @@
                    return p_241879_4_.parse(p_241879_1_, jsonelement).map((p_244347_0_) -> {
                       return Pair.of(p_244347_0_, OptionalInt.empty());
                    });
+@@ -213,7 +214,7 @@
+             DataResult<JsonElement> dataresult = p_244352_3_.encodeStart(WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, p_244352_1_), p_244352_5_);
+             Optional<PartialResult<JsonElement>> optional = dataresult.error();
+             if (optional.isPresent()) {
+-               WorldSettingsImport.field_240870_b_.error("Error adding element: {}", (Object)optional.get().message());
++               WorldSettingsImport.field_240870_b_.error(com.mohistmc.util.i18n.i18n.get("worldsettingsimport.3", (Object)optional.get().message()));
+             } else {
+                this.field_244349_a.put(p_244352_2_, dataresult.result().get());
+                this.field_244350_b.put(p_244352_2_, p_244352_4_);
 @@ -231,6 +232,7 @@
  
           public <E> DataResult<Pair<E, OptionalInt>> func_241879_a(DynamicOps<JsonElement> p_241879_1_, RegistryKey<? extends Registry<E>> p_241879_2_, RegistryKey<E> p_241879_3_, Decoder<E> p_241879_4_) {

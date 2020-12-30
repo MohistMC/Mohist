@@ -26,3 +26,12 @@
              commandblocktileentity.func_184250_a(flag);
              if (!flag1 && !commandblocktileentity.func_184254_e() && commandblocktileentity.func_184251_i() != CommandBlockTileEntity.Mode.SEQUENCE) {
                 if (flag) {
+@@ -207,7 +219,7 @@
+ 
+       if (i <= 0) {
+          int j = Math.max(gamerules.func_223592_c(GameRules.field_223619_v), 0);
+-         field_193388_c.warn("Command Block chain tried to execute more than {} steps!", (int)j);
++         field_193388_c.warn(com.mohistmc.util.i18n.i18n.get("commandblockblock.1", (int)j));
+       }
+ 
+    }

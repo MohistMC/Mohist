@@ -33,7 +33,13 @@
        this.field_216128_f = p_i51265_3_;
        this.field_216129_g = LootFunctionManager.func_216241_a(p_i51265_3_);
     }
-@@ -75,6 +79,7 @@
+@@ -70,11 +74,12 @@
+ 
+          p_216114_1_.func_186490_b(this);
+       } else {
+-         field_186465_b.warn("Detected infinite loop in loot tables");
++         field_186465_b.warn(com.mohistmc.util.i18n.i18n.get("loottable.1"));
+       }
  
     }
  
@@ -60,7 +66,7 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -101,8 +107,21 @@
+@@ -101,14 +107,27 @@
     }
  
     public void func_216118_a(IInventory p_216118_1_, LootContext p_216118_2_) {
@@ -83,6 +89,13 @@
 +      // CraftBukkit end
        List<Integer> list1 = this.func_186459_a(p_216118_1_, random);
        this.func_186463_a(list, list1.size(), random);
+ 
+       for(ItemStack itemstack : list) {
+          if (list1.isEmpty()) {
+-            field_186465_b.warn("Tried to over-fill a container");
++            field_186465_b.warn(com.mohistmc.util.i18n.i18n.get("loottable.2"));
+             return;
+          }
  
 @@ -173,6 +192,41 @@
        return new LootTable.Builder();

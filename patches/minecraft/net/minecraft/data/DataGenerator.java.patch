@@ -13,14 +13,26 @@
     }
  
     public Collection<Path> func_200389_a() {
-@@ -38,6 +39,7 @@
+@@ -37,15 +38,16 @@
+       Stopwatch stopwatch1 = Stopwatch.createUnstarted();
  
        for(IDataProvider idataprovider : this.field_200396_d) {
-          field_200393_a.info("Starting provider: {}", (Object)idataprovider.func_200397_b());
+-         field_200393_a.info("Starting provider: {}", (Object)idataprovider.func_200397_b());
++         field_200393_a.info(com.mohistmc.util.i18n.i18n.get("datagenerator.1", (Object)idataprovider.func_200397_b()));
 +         net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + idataprovider.func_200397_b());
           stopwatch1.start();
           idataprovider.func_200398_a(directorycache);
           stopwatch1.stop();
+-         field_200393_a.info("{} finished after {} ms", idataprovider.func_200397_b(), stopwatch1.elapsed(TimeUnit.MILLISECONDS));
++         field_200393_a.info(com.mohistmc.util.i18n.i18n.get("datagenerator.2", idataprovider.func_200397_b(), stopwatch1.elapsed(TimeUnit.MILLISECONDS)));
+          stopwatch1.reset();
+       }
+ 
+-      field_200393_a.info("All providers took: {} ms", (long)stopwatch.elapsed(TimeUnit.MILLISECONDS));
++      field_200393_a.info(com.mohistmc.util.i18n.i18n.get("datagenerator.3", (long)stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+       directorycache.func_208317_a();
+    }
+ 
 @@ -53,6 +55,14 @@
        this.field_200396_d.add(p_200390_1_);
     }

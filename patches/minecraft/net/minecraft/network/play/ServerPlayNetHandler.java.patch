@@ -193,7 +193,7 @@
        if (this.field_184344_B && !this.field_147369_b.func_70608_bn()) {
           if (++this.field_147365_f > 80) {
 -            field_147370_c.warn("{} was kicked for floating too long!", (Object)this.field_147369_b.func_200200_C_().getString());
-+            field_147370_c.warn("{} was kicked for floating too long!", (Object)this.field_147369_b.func_195047_I_());
++            field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.1", (Object)this.field_147369_b.func_195047_I_()));
              this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.flying"));
              return;
           }
@@ -202,7 +202,7 @@
           if (this.field_184345_D && this.field_147369_b.func_184208_bv().func_184179_bs() == this.field_147369_b) {
              if (++this.field_184346_E > 80) {
 -               field_147370_c.warn("{} was kicked for floating a vehicle too long!", (Object)this.field_147369_b.func_200200_C_().getString());
-+               field_147370_c.warn("{} was kicked for floating a vehicle too long!", (Object)this.field_147369_b.func_195047_I_());
++               field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.2", (Object)this.field_147369_b.func_195047_I_()));
                 this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.flying"));
                 return;
              }
@@ -290,6 +290,15 @@
  
     private <T> void func_244533_a(T p_244533_1_, Consumer<T> p_244533_2_, BiFunction<IChatFilter, T, CompletableFuture<Optional<T>>> p_244533_3_) {
        ThreadTaskExecutor<?> threadtaskexecutor = this.field_147369_b.func_71121_q().func_73046_m();
+@@ -302,7 +420,7 @@
+          if (this.func_147298_b().func_150724_d()) {
+             p_244533_2_.accept(p_244545_2_);
+          } else {
+-            field_147370_c.debug("Ignoring packet due to disconnection");
++            field_147370_c.debug(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.3"));
+          }
+ 
+       };
 @@ -352,21 +470,50 @@
           Entity entity = this.field_147369_b.func_184208_bv();
           if (entity != this.field_147369_b && entity.func_184179_bs() == this.field_147369_b && entity == this.field_184355_r) {
@@ -346,7 +355,7 @@
 +            speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
 +            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.func_217264_d()) { // Spigot
 +               // CraftBukkit end
-+               field_147370_c.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.func_200200_C_().getString(), this.field_147369_b.func_195047_I_(), d6, d7, d8);
++               field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.4", entity.func_200200_C_().getString(), this.field_147369_b.func_195047_I_(), d6, d7, d8));
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
@@ -358,7 +367,7 @@
 +            if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
                 flag1 = true;
 -               field_147370_c.warn("{} (vehicle of {}) moved wrongly! {}", entity.func_200200_C_().getString(), this.field_147369_b.func_200200_C_().getString(), Math.sqrt(d10));
-+               field_147370_c.warn("{} (vehicle of {}) moved wrongly! {}", entity.func_200200_C_().getString(), this.field_147369_b.func_195047_I_(), Math.sqrt(d10));
++               field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.5", entity.func_200200_C_().getString(), this.field_147369_b.func_195047_I_(), Math.sqrt(d10)));
              }
 +            Location curPos = this.getPlayer().getLocation(); // Spigot
  
@@ -586,7 +595,7 @@
 +                     this.lastTick = (int) (System.currentTimeMillis() / 50);
 +
 +                     if (i > Math.max(this.allowedPlayerTicks, 5)) {
-+                        field_147370_c.debug("{} is sending move packets too frequently ({} packets since last tick)", this.field_147369_b.func_195047_I_(), i);
++                        field_147370_c.debug(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.6", this.field_147369_b.func_195047_I_(), i));
                          i = 1;
                       }
  
@@ -607,7 +616,7 @@
 -                           field_147370_c.warn("{} moved too quickly! {},{},{}", this.field_147369_b.func_200200_C_().getString(), d7, d8, d9);
 +                        if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.func_217264_d()) { // Spigot
 +                           // CraftBukkit end
-+                           field_147370_c.warn("{} moved too quickly! {},{},{}", this.field_147369_b.func_195047_I_(), d7, d8, d9);
++                           field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.7", this.field_147369_b.func_195047_I_(), d7, d8, d9));
                             this.func_147364_a(this.field_147369_b.func_226277_ct_(), this.field_147369_b.func_226278_cu_(), this.field_147369_b.func_226281_cx_(), this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
                             return;
                          }
@@ -627,7 +636,7 @@
 +                     if (!this.field_147369_b.func_184850_K() && d11 > org.spigotmc.SpigotConfig.movedWronglyThreshold  && !this.field_147369_b.func_70608_bn() && !this.field_147369_b.field_71134_c.func_73083_d() && this.field_147369_b.field_71134_c.func_73081_b() != GameType.SPECTATOR) { // Spigot
                          flag1 = true;
 -                        field_147370_c.warn("{} moved wrongly!", (Object)this.field_147369_b.func_200200_C_().getString());
-+                        field_147370_c.warn("{} moved wrongly!", (Object)this.field_147369_b.func_195047_I_());
++                        field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.8", (Object)this.field_147369_b.func_195047_I_()));
                       }
  
                       this.field_147369_b.func_70080_a(d4, d5, d6, f, f1);
@@ -973,7 +982,7 @@
  
     public void func_184340_a(CSteerBoatPacket p_184340_1_) {
        PacketThreadUtil.func_218796_a(p_184340_1_, this, this.field_147369_b.func_71121_q());
-@@ -1010,16 +1496,30 @@
+@@ -1010,18 +1496,32 @@
     }
  
     public void func_147231_a(ITextComponent p_147231_1_) {
@@ -989,7 +998,7 @@
 +         this.processedDisconnect = true;
 +      }
 +      // CraftBukkit end
-+      field_147370_c.info("{} lost connection: {}", this.field_147369_b.func_195047_I_(), p_147231_1_.getString());
++      field_147370_c.info(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.9", this.field_147369_b.func_195047_I_(), p_147231_1_.getString()));
 +      // CraftBukkit start - Replace vanilla quit message handling with our own.
 +       /*
 +      this.server.refreshStatusNextTick();
@@ -1008,8 +1017,11 @@
 +      }
 +      // CraftBukkit end
        if (this.func_217264_d()) {
-          field_147370_c.info("Stopping singleplayer server as player logged out");
+-         field_147370_c.info("Stopping singleplayer server as player logged out");
++         field_147370_c.info(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.10"));
           this.field_147367_d.func_71263_m(false);
+       }
+ 
 @@ -1044,6 +1544,15 @@
           }
        }
@@ -1048,7 +1060,7 @@
           this.field_147369_b.func_143004_u();
        } else {
 -         field_147370_c.warn("{} tried to set an invalid carried item", (Object)this.field_147369_b.func_200200_C_().getString());
-+         field_147370_c.warn("{} tried to set an invalid carried item", (Object)this.field_147369_b.func_195047_I_());
++         field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.11", (Object)this.field_147369_b.func_195047_I_()));
 +         this.disconnect("Invalid hotbar selection (Hacking?)"); // CraftBukkit
        }
     }
@@ -1433,7 +1445,7 @@
 +               } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK) {
 +                  if (entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity || entity instanceof AbstractArrowEntity || entity == this.field_147369_b && !field_147369_b.func_175149_v()) { // CraftBukkit
 +                     this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_entity_attacked"));
-+                     field_147370_c.warn("Player {} tried to attack an invalid entity", (Object) this.field_147369_b.func_195047_I_());
++                     field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.12", (Object) this.field_147369_b.func_195047_I_()));
 +                     return;
 +                  }
  
@@ -1868,7 +1880,7 @@
 -         if (!signtileentity.func_145914_a() || signtileentity.func_145911_b() != this.field_147369_b) {
 -            field_147370_c.warn("Player {} just tried to change non-editable sign", (Object)this.field_147369_b.func_200200_C_().getString());
 +         if (!signtileentity.func_145914_a() || signtileentity.signEditor == null || !signtileentity.signEditor.equals(this.field_147369_b.func_110124_au())) {
-+            field_147370_c.warn("Player {} just tried to change non-editable sign", (Object)this.field_147369_b.func_195047_I_());
++            field_147370_c.warn(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.13", (Object)this.field_147369_b.func_195047_I_()));
 +            this.func_147359_a(tileentity.func_189518_D_()); // CraftBukkit
              return;
           }
@@ -1957,7 +1969,7 @@
 +               }
 +            }
 +         } catch (Exception ex) {
-+            field_147370_c.error("Couldn't register custom payload", ex);
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.14", ex));
 +            this.disconnect("Invalid payload REGISTER!");
 +         }
 +      }
@@ -1970,7 +1982,7 @@
 +               }
 +            }
 +         } catch (Exception ex) {
-+            field_147370_c.error("Couldn't unregister custom payload", ex);
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.15", ex));
 +            this.disconnect("Invalid payload UNREGISTER!");
 +         }
 +      } else {
@@ -1980,7 +1992,7 @@
 +            this.craftServer.getMessenger().dispatchIncomingMessage(this.field_147369_b.getBukkitEntity(), p_147349_1_.field_149562_a.toString(), data);
 +         }
 +         catch (Exception ex) {
-+            field_147370_c.error("Couldn't dispatch custom payload", ex);
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.16", ex));
 +            this.disconnect("Invalid custom payload!");
 +         }
 +      }

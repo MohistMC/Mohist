@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/boss/dragon/phase/ChargingPlayerPhase.java
++++ b/net/minecraft/entity/boss/dragon/phase/ChargingPlayerPhase.java
+@@ -17,7 +17,7 @@
+ 
+    public void func_188659_c() {
+       if (this.field_188670_c == null) {
+-         field_188669_b.warn("Aborting charge player as no target was set.");
++         field_188669_b.warn(com.mohistmc.util.i18n.i18n.get("chargingplayerphase.1"));
+          this.field_188661_a.func_184670_cT().func_188758_a(PhaseType.field_188741_a);
+       } else if (this.field_188671_d > 0 && this.field_188671_d++ >= 10) {
+          this.field_188661_a.func_184670_cT().func_188758_a(PhaseType.field_188741_a);

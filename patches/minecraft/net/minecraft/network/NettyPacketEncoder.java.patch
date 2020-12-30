@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/NettyPacketEncoder.java
++++ b/net/minecraft/network/NettyPacketEncoder.java
+@@ -25,7 +25,7 @@
+       } else {
+          Integer integer = protocoltype.func_179246_a(this.field_152500_c, p_encode_2_);
+          if (field_150798_a.isDebugEnabled()) {
+-            field_150798_a.debug(field_150797_b, "OUT: [{}:{}] {}", p_encode_1_.channel().attr(NetworkManager.field_150739_c).get(), integer, p_encode_2_.getClass().getName());
++            field_150798_a.debug(com.mohistmc.util.i18n.i18n.get("nettypacketencoder.1", p_encode_1_.channel().attr(NetworkManager.field_150739_c).get(), integer, p_encode_2_.getClass().getName()));
+          }
+ 
+          if (integer == null) {

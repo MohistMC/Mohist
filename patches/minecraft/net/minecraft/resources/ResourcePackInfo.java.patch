@@ -8,7 +8,26 @@
     private final IPackNameDecorator field_232611_k_;
  
     @Nullable
-@@ -53,7 +54,12 @@
+@@ -37,7 +38,7 @@
+       try (IResourcePack iresourcepack = p_195793_2_.get()) {
+          PackMetadataSection packmetadatasection = iresourcepack.func_195760_a(PackMetadataSection.field_198964_a);
+          if (p_195793_1_ && packmetadatasection == null) {
+-            field_195799_a.error("Broken/missing pack.mcmeta detected, fudging it into existance. Please check that your launcher has downloaded all assets for the game correctly!");
++            field_195799_a.error(com.mohistmc.util.i18n.i18n.get("resourcepackinfo.1"));
+             packmetadatasection = field_212500_b;
+          }
+ 
+@@ -45,15 +46,20 @@
+             return p_195793_3_.create(p_195793_0_, p_195793_1_, p_195793_2_, iresourcepack, packmetadatasection, p_195793_4_, p_195793_5_);
+          }
+ 
+-         field_195799_a.warn("Couldn't find pack meta for pack {}", (Object)p_195793_0_);
++         field_195799_a.warn(com.mohistmc.util.i18n.i18n.get("resourcepackinfo.2", (Object)p_195793_0_));
+       } catch (IOException ioexception) {
+-         field_195799_a.warn("Couldn't get pack info for: {}", (Object)ioexception.toString());
++         field_195799_a.warn(com.mohistmc.util.i18n.i18n.get("resourcepackinfo.3", (Object)ioexception.toString()));
+       }
+ 
        return null;
     }
  

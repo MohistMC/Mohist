@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/management/UserList.java
 +++ b/net/minecraft/server/management/UserList.java
+@@ -42,7 +42,7 @@
+       try {
+          this.func_152678_f();
+       } catch (IOException ioexception) {
+-         field_152693_a.warn("Could not save the list after adding a user.", (Throwable)ioexception);
++         field_152693_a.warn(com.mohistmc.util.i18n.i18n.get("userlist.1", (Throwable)ioexception));
+       }
+ 
+    }
 @@ -50,7 +50,7 @@
     @Nullable
     public V func_152683_b(K p_152683_1_) {
@@ -9,6 +18,15 @@
     }
  
     public void func_152684_c(K p_152684_1_) {
+@@ -59,7 +59,7 @@
+       try {
+          this.func_152678_f();
+       } catch (IOException ioexception) {
+-         field_152693_a.warn("Could not save the list after removing a user.", (Throwable)ioexception);
++         field_152693_a.warn(com.mohistmc.util.i18n.i18n.get("userlist.2", (Throwable)ioexception));
+       }
+ 
+    }
 @@ -72,6 +72,12 @@
        return this.field_152696_d.keySet().toArray(new String[this.field_152696_d.size()]);
     }

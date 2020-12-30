@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/chunk/storage/IOWorker.java
++++ b/net/minecraft/world/chunk/storage/IOWorker.java
+@@ -54,7 +54,7 @@
+                CompoundNBT compoundnbt = this.field_227084_e_.func_219099_e(p_227090_1_);
+                return Either.left(compoundnbt);
+             } catch (Exception exception) {
+-               field_227080_a_.warn("Failed to read chunk {}", p_227090_1_, exception);
++               field_227080_a_.warn(com.mohistmc.util.i18n.i18n.get("ioworker.1", p_227090_1_, exception));
+                return Either.right(exception);
+             }
+          }
+@@ -85,7 +85,7 @@
+                this.field_227084_e_.func_235987_a_();
+                return Either.left((Void)null);
+             } catch (Exception exception) {
+-               field_227080_a_.warn("Failed to synchronized chunks", (Throwable)exception);
++               field_227080_a_.warn(com.mohistmc.util.i18n.i18n.get("ioworker.2", (Throwable)exception));
+                return Either.right(exception);
+             }
+          });
+@@ -123,7 +123,7 @@
+          this.field_227084_e_.func_219100_a(p_227091_1_, p_227091_2_.field_227113_a_);
+          p_227091_2_.field_227114_b_.complete((Void)null);
+       } catch (Exception exception) {
+-         field_227080_a_.error("Failed to store chunk {}", p_227091_1_, exception);
++         field_227080_a_.error(com.mohistmc.util.i18n.i18n.get("ioworker.3", p_227091_1_, exception));
+          p_227091_2_.field_227114_b_.completeExceptionally(exception);
+       }
+ 
+@@ -154,7 +154,7 @@
+          try {
+             this.field_227084_e_.close();
+          } catch (Exception exception) {
+-            field_227080_a_.error("Failed to close storage", (Throwable)exception);
++            field_227080_a_.error(com.mohistmc.util.i18n.i18n.get("ioworker.4", (Throwable)exception));
+          }
+ 
+       }

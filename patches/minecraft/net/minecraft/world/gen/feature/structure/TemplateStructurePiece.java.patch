@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/gen/feature/structure/TemplateStructurePiece.java
++++ b/net/minecraft/world/gen/feature/structure/TemplateStructurePiece.java
+@@ -75,10 +75,10 @@
+                   if (blockstate1 != null) {
+                      blockstate = blockstate1;
+                   } else {
+-                     field_214825_d.error("Error while parsing blockstate {} in jigsaw block @ {}", s, template$blockinfo1.field_186242_a);
++                     field_214825_d.error(com.mohistmc.util.i18n.i18n.get("templatestructurepiece.1", s, template$blockinfo1.field_186242_a));
+                   }
+                } catch (CommandSyntaxException commandsyntaxexception) {
+-                  field_214825_d.error("Error while parsing blockstate {} in jigsaw block @ {}", s, template$blockinfo1.field_186242_a);
++                  field_214825_d.error(com.mohistmc.util.i18n.i18n.get("templatestructurepiece.2", s, template$blockinfo1.field_186242_a));
+                }
+ 
+                p_230383_1_.func_180501_a(template$blockinfo1.field_186242_a, blockstate, 3);

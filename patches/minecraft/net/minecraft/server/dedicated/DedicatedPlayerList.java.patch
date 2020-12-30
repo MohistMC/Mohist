@@ -1,0 +1,74 @@
+--- a/net/minecraft/server/dedicated/DedicatedPlayerList.java
++++ b/net/minecraft/server/dedicated/DedicatedPlayerList.java
+@@ -52,7 +52,7 @@
+       try {
+          this.func_72363_f().func_152678_f();
+       } catch (IOException ioexception) {
+-         field_164439_d.warn("Failed to save ip banlist: ", (Throwable)ioexception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.1", (Throwable)ioexception));
+       }
+ 
+    }
+@@ -61,7 +61,7 @@
+       try {
+          this.func_152608_h().func_152678_f();
+       } catch (IOException ioexception) {
+-         field_164439_d.warn("Failed to save user banlist: ", (Throwable)ioexception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.2", (Throwable)ioexception));
+       }
+ 
+    }
+@@ -70,7 +70,7 @@
+       try {
+          this.func_72363_f().func_152679_g();
+       } catch (IOException ioexception) {
+-         field_164439_d.warn("Failed to load ip banlist: ", (Throwable)ioexception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.3", (Throwable)ioexception));
+       }
+ 
+    }
+@@ -79,7 +79,7 @@
+       try {
+          this.func_152608_h().func_152679_g();
+       } catch (IOException ioexception) {
+-         field_164439_d.warn("Failed to load user banlist: ", (Throwable)ioexception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.4", (Throwable)ioexception));
+       }
+ 
+    }
+@@ -88,7 +88,7 @@
+       try {
+          this.func_152603_m().func_152679_g();
+       } catch (Exception exception) {
+-         field_164439_d.warn("Failed to load operators list: ", (Throwable)exception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.5", (Throwable)exception));
+       }
+ 
+    }
+@@ -97,7 +97,7 @@
+       try {
+          this.func_152603_m().func_152678_f();
+       } catch (Exception exception) {
+-         field_164439_d.warn("Failed to save operators list: ", (Throwable)exception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.6", (Throwable)exception));
+       }
+ 
+    }
+@@ -106,7 +106,7 @@
+       try {
+          this.func_152599_k().func_152679_g();
+       } catch (Exception exception) {
+-         field_164439_d.warn("Failed to load white-list: ", (Throwable)exception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.7", (Throwable)exception));
+       }
+ 
+    }
+@@ -115,7 +115,7 @@
+       try {
+          this.func_152599_k().func_152678_f();
+       } catch (Exception exception) {
+-         field_164439_d.warn("Failed to save white-list: ", (Throwable)exception);
++         field_164439_d.warn(com.mohistmc.util.i18n.i18n.get("dedicatedplayerlist.8", (Throwable)exception));
+       }
+ 
+    }

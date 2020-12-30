@@ -8,7 +8,13 @@
        func_208310_b(p_200398_1_, Advancement.Builder.func_200278_a().func_200275_a("impossible", new ImpossibleTrigger.Instance()).func_200273_b(), path.resolve("data/minecraft/advancements/recipes/root.json"));
     }
  
-@@ -81,7 +82,7 @@
+@@ -76,12 +77,12 @@
+ 
+          p_208311_0_.func_208316_a(p_208311_2_, s1);
+       } catch (IOException ioexception) {
+-         field_200411_a.error("Couldn't save recipe {}", p_208311_2_, ioexception);
++         field_200411_a.error(com.mohistmc.util.i18n.i18n.get("recipeprovider.1", p_208311_2_, ioexception));
+       }
  
     }
  
@@ -17,7 +23,13 @@
        try {
           String s = field_200412_b.toJson((JsonElement)p_208310_1_);
           String s1 = field_208307_a.hashUnencodedChars(s).toString();
-@@ -100,7 +101,7 @@
+@@ -95,12 +96,12 @@
+ 
+          p_208310_0_.func_208316_a(p_208310_2_, s1);
+       } catch (IOException ioexception) {
+-         field_200411_a.error("Couldn't save recipe advancement {}", p_208310_2_, ioexception);
++         field_200411_a.error(com.mohistmc.util.i18n.i18n.get("recipeprovider.2", p_208310_2_, ioexception));
+       }
  
     }
  

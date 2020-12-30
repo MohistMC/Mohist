@@ -184,6 +184,15 @@
           }
        }
  
+@@ -686,7 +770,7 @@
+       if (pathpoint1 == pathpoint4) {
+          return null;
+       } else {
+-         field_184675_bH.debug("Failed to find path from {} to {}", p_184666_1_, p_184666_2_);
++         field_184675_bH.debug(com.mohistmc.util.i18n.i18n.get("enderdragonentity.1", p_184666_1_, p_184666_2_));
+          if (p_184666_3_ != null) {
+             p_184666_3_.field_75841_h = pathpoint1;
+             pathpoint1 = p_184666_3_;
 @@ -712,6 +796,7 @@
     public void func_213281_b(CompoundNBT p_213281_1_) {
        super.func_213281_b(p_213281_1_);

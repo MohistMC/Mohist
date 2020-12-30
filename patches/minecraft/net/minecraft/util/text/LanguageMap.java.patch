@@ -1,7 +1,11 @@
 --- a/net/minecraft/util/text/LanguageMap.java
 +++ b/net/minecraft/util/text/LanguageMap.java
-@@ -40,7 +40,8 @@
-          field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);
+@@ -37,10 +37,11 @@
+       try (InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")) {
+          func_240593_a_(inputstream, biconsumer);
+       } catch (JsonParseException | IOException ioexception) {
+-         field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);
++         field_201045_a.error(com.mohistmc.util.i18n.i18n.get("languagemap.1", (Throwable)ioexception));
        }
  
 -      final Map<String, String> map = builder.build();

@@ -17,7 +17,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,13 +46,22 @@
+@@ -47,31 +46,54 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -30,19 +30,28 @@
  
           try {
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
-+               field_199521_c.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++               field_199521_c.debug(com.mohistmc.util.i18n.i18n.get("recipemanager.1", resourcelocation));
 +               continue;
 +            }
              IRecipe<?> irecipe = func_215377_a(resourcelocation, JSONUtils.func_151210_l(entry.getValue(), "top element"));
 +            if (irecipe == null) {
-+               field_199521_c.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
++               field_199521_c.info(com.mohistmc.util.i18n.i18n.get("recipemanager.2", resourcelocation));
 +               continue;
 +            }
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, irecipe);
-@@ -68,10 +76,24 @@
-       field_199521_c.info("Loaded {} recipes", (int)map.size());
+          } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
+-            field_199521_c.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
++            field_199521_c.error(com.mohistmc.util.i18n.i18n.get("recipemanager.3", resourcelocation, jsonparseexception));
+          }
+       }
+ 
+       this.field_199522_d = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (p_223400_0_) -> {
+          return p_223400_0_.getValue().build();
+       }));
+-      field_199521_c.info("Loaded {} recipes", (int)map.size());
++      field_199521_c.info(com.mohistmc.util.i18n.i18n.get("recipemanager.4", (int)map.size()));
     }
  
 +   // CraftBukkit start

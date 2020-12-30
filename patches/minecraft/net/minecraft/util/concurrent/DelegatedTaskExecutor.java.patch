@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/concurrent/DelegatedTaskExecutor.java
++++ b/net/minecraft/util/concurrent/DelegatedTaskExecutor.java
+@@ -120,7 +120,7 @@
+             try {
+                this.field_213155_d.execute(this);
+             } catch (RejectedExecutionException rejectedexecutionexception) {
+-               field_213153_b.error("Cound not schedule mailbox", (Throwable)rejectedexecutionexception);
++               field_213153_b.error(com.mohistmc.util.i18n.i18n.get("delegatedtaskexecutor.1", (Throwable)rejectedexecutionexception));
+             }
+          }
+       }

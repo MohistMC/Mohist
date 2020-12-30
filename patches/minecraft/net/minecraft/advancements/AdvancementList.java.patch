@@ -1,6 +1,31 @@
 --- a/net/minecraft/advancements/AdvancementList.java
 +++ b/net/minecraft/advancements/AdvancementList.java
-@@ -96,7 +96,8 @@
+@@ -29,7 +29,7 @@
+          this.func_192090_a(advancement);
+       }
+ 
+-      field_192091_a.info("Forgot about advancement {}", (Object)p_192090_1_.func_192067_g());
++      field_192091_a.info(com.mohistmc.util.i18n.i18n.get("advancementlist.1", (Object)p_192090_1_.func_192067_g()));
+       this.field_192092_b.remove(p_192090_1_.func_192067_g());
+       if (p_192090_1_.func_192070_b() == null) {
+          this.field_192093_c.remove(p_192090_1_);
+@@ -50,7 +50,7 @@
+       for(ResourceLocation resourcelocation : p_192085_1_) {
+          Advancement advancement = this.field_192092_b.get(resourcelocation);
+          if (advancement == null) {
+-            field_192091_a.warn("Told to remove advancement {} but I don't know what that is", (Object)resourcelocation);
++            field_192091_a.warn(com.mohistmc.util.i18n.i18n.get("advancementlist.2", (Object)resourcelocation));
+          } else {
+             this.func_192090_a(advancement);
+          }
+@@ -90,13 +90,14 @@
+ 
+          if (!flag) {
+             for(Entry<ResourceLocation, Advancement.Builder> entry1 : p_192083_1_.entrySet()) {
+-               field_192091_a.error("Couldn't load advancement {}: {}", entry1.getKey(), entry1.getValue());
++               field_192091_a.error(com.mohistmc.util.i18n.i18n.get("advancementlist.3", entry1.getKey(), entry1.getValue()));
+             }
+             break;
           }
        }
  

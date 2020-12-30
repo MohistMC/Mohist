@@ -1,0 +1,15 @@
+--- a/net/minecraft/data/NBTToSNBTConverter.java
++++ b/net/minecraft/data/NBTToSNBTConverter.java
+@@ -54,10 +54,10 @@
+             bufferedwriter.write(s);
+          }
+ 
+-         field_200418_a.info("Converted {} from NBT to SNBT", (Object)p_229443_1_);
++         field_200418_a.info(com.mohistmc.util.i18n.i18n.get("nbttosnbtconverter.1", (Object)p_229443_1_));
+          return path;
+       } catch (IOException ioexception) {
+-         field_200418_a.error("Couldn't convert {} from NBT to SNBT at {}", p_229443_1_, p_229443_0_, ioexception);
++         field_200418_a.error(com.mohistmc.util.i18n.i18n.get("nbttosnbtconverter.2", p_229443_1_, p_229443_0_, ioexception));
+          return null;
+       }
+    }

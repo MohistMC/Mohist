@@ -9,3 +9,12 @@
        Dynamic<?> dynamic = func_210048_b(p_199194_1_);
        field_199200_b[p_199194_0_] = dynamic;
        int i = p_199194_0_ >> 4;
+@@ -79,7 +79,7 @@
+       try {
+          return new Dynamic<>(NBTDynamicOps.field_210820_a, JsonToNBT.func_180713_a(p_210048_0_.replace('\'', '"')));
+       } catch (Exception exception) {
+-         field_199199_a.error("Parsing {}", p_210048_0_, exception);
++         field_199199_a.error(com.mohistmc.util.i18n.i18n.get("blockstateflatteningmap.1", p_210048_0_, exception));
+          throw new RuntimeException(exception);
+       }
+    }

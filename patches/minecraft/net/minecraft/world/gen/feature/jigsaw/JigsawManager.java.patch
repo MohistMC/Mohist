@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/gen/feature/jigsaw/JigsawManager.java
++++ b/net/minecraft/world/gen/feature/jigsaw/JigsawManager.java
+@@ -242,10 +242,10 @@
+                      }
+                   }
+                } else {
+-                  JigsawManager.field_214892_b.warn("Empty or none existent fallback pool: {}", (Object)resourcelocation1);
++                  JigsawManager.field_214892_b.warn(com.mohistmc.util.i18n.i18n.get("jigsawmanager.1", (Object)resourcelocation1));
+                }
+             } else {
+-               JigsawManager.field_214892_b.warn("Empty or none existent pool: {}", (Object)resourcelocation);
++               JigsawManager.field_214892_b.warn(com.mohistmc.util.i18n.i18n.get("jigsawmanager.2", (Object)resourcelocation));
+             }
+          }
+ 

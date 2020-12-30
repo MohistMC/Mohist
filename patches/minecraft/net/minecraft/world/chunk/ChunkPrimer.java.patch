@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/chunk/ChunkPrimer.java
 +++ b/net/minecraft/world/chunk/ChunkPrimer.java
+@@ -81,7 +81,7 @@
+          if (this.field_201661_i.length == p_i49941_3_.length) {
+             System.arraycopy(p_i49941_3_, 0, this.field_201661_i, 0, this.field_201661_i.length);
+          } else {
+-            field_201653_a.warn("Could not set level chunk sections, array length is {} instead of {}", p_i49941_3_.length, this.field_201661_i.length);
++            field_201653_a.warn(com.mohistmc.util.i18n.i18n.get("chunkprimer.1", p_i49941_3_.length, this.field_201661_i.length));
+          }
+       }
+ 
 @@ -138,13 +138,13 @@
           if (this.field_201661_i[j >> 4] == Chunk.field_186036_a && p_177436_2_.func_203425_a(Blocks.field_150350_a)) {
              return p_177436_2_;

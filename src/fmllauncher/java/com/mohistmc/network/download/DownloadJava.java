@@ -64,7 +64,7 @@ public class DownloadJava {
         if (!javabin.exists()) {
             java.mkdirs();
             java.createNewFile();
-            System.out.println(i18n.get("customjava.dl", new Object[]{os()}));
+            System.out.println(i18n.get("customjava.dl", os()));
             UpdateUtils.downloadFile(URL, javadl);
             unzip(new FileInputStream(javadl), java.toPath());
             javadl.delete();
@@ -76,7 +76,7 @@ public class DownloadJava {
         launchArgs.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
         launchArgs.add("launchedWithCustomJava8");
         command.addAll(launchArgs);
-        System.out.println(i18n.get("customjava.run", new Object[]{os(), command}));
+        System.out.println(i18n.get("customjava.run", os(), command));
         UpdateUtils.restartServer(command, true);
     }
 

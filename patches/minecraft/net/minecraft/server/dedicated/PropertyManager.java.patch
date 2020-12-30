@@ -9,12 +9,24 @@
  
     public PropertyManager(Properties p_i50717_1_) {
        this.field_73672_b = p_i50717_1_;
-@@ -39,7 +39,7 @@
+@@ -31,7 +31,7 @@
+       try (InputStream inputstream = Files.newInputStream(p_218969_0_)) {
+          properties.load(inputstream);
+       } catch (IOException ioexception) {
+-         field_164440_a.error("Failed to load properties from file: " + p_218969_0_);
++         field_164440_a.error(com.mohistmc.util.i18n.i18n.get("propertymanager.1" ,p_218969_0_));
+       }
+ 
+       return properties;
+@@ -39,9 +39,9 @@
  
     public void func_218970_c(Path p_218970_1_) {
        try (OutputStream outputstream = Files.newOutputStream(p_218970_1_)) {
 -         this.field_73672_b.store(outputstream, "Minecraft server properties");
 +         net.minecraftforge.common.util.SortedProperties.store(field_73672_b, outputstream, "Minecraft server properties");
        } catch (IOException ioexception) {
-          field_164440_a.error("Failed to store properties to file: " + p_218970_1_);
+-         field_164440_a.error("Failed to store properties to file: " + p_218970_1_);
++         field_164440_a.error(com.mohistmc.util.i18n.i18n.get("propertymanager.1" ,p_218970_1_));
        }
+ 
+    }

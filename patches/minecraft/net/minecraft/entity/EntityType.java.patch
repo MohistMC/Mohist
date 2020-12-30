@@ -80,7 +80,23 @@
           return t;
        }
     }
-@@ -504,14 +527,23 @@
+@@ -443,7 +466,7 @@
+       }), (p_220329_1_) -> {
+          p_220329_1_.func_70020_e(p_220330_0_);
+       }, () -> {
+-         field_200731_aJ.warn("Skipping Entity with id {}", (Object)p_220330_0_.func_74779_i("id"));
++         field_200731_aJ.warn(com.mohistmc.util.i18n.i18n.get("entitytype.1", (Object)p_220330_0_.func_74779_i("id")));
+       });
+    }
+ 
+@@ -498,20 +521,29 @@
+       try {
+          return func_220330_a(p_220343_0_, p_220343_1_);
+       } catch (RuntimeException runtimeexception) {
+-         field_200731_aJ.warn("Exception loading entity: ", (Throwable)runtimeexception);
++         field_200731_aJ.warn(com.mohistmc.util.i18n.i18n.get("entitytype.2", (Throwable)runtimeexception));
+          return Optional.empty();
+       }
     }
  
     public int func_233602_m_() {

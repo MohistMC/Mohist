@@ -5,7 +5,7 @@
  import java.nio.file.Path;
  import java.util.Properties;
 +
-+import com.mohistmc.util.i18n.Message;
++import com.mohistmc.util.i18n.i18n;
  import net.minecraft.util.SharedConstants;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -44,7 +44,7 @@
 +            properties.load(inputstream);
 +            return Boolean.parseBoolean(properties.getProperty("eula", "false"));
 +        } catch (Exception exception) {
-+            field_154349_a.warn(Message.get("pluginscommand.notload", this.field_154350_b));
++            field_154349_a.warn(i18n.get("pluginscommand.notload", this.field_154350_b));
 +            this.func_154348_b();
 +            return false;
 +        }
@@ -71,9 +71,9 @@
 +            try (OutputStream outputstream = Files.newOutputStream(this.field_154350_b)) {
 +                Properties properties = new Properties();
 +                properties.setProperty("eula", "false");
-+                properties.store(outputstream, Message.get("eula"));
++                properties.store(outputstream, i18n.get("eula"));
 +            } catch (Exception exception) {
-+                field_154349_a.warn(Message.get("failed.save", this.field_154350_b, exception));
++                field_154349_a.warn(i18n.get("failed.save", this.field_154350_b, exception));
 +            }
  
 -      }

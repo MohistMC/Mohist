@@ -1,7 +1,9 @@
 package com.mohistmc;
 
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.network.download.DownloadLibraries;
+import com.mohistmc.libraries.CustomLibraries;
+import com.mohistmc.libraries.DefaultLibraries;
+import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
 import static com.mohistmc.utils.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.utils.EulaUtil.writeInfos;
@@ -29,6 +31,9 @@ public class MohistMCStart {
     public static void main(String[] args) throws Exception {
         MohistConfigUtil.copyMohistConfig();
 
+        if (MohistConfigUtil.bMohist("use_custom_java8", "false"))
+            DownloadJava.run(args);
+
         if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
@@ -39,9 +44,11 @@ public class MohistMCStart {
                     "                                                    \n" + "\n" +
                     "                                      " + i18n.get("mohist.launch.welcomemessage"));
         if (MohistConfigUtil.bMohist("check_libraries", "true")) {
-            DownloadLibraries.run();
+            DefaultLibraries.run();
             startInstallation();
         }
+        DefaultLibraries.loadDefaultLibs();
+        CustomLibraries.loadCustomLibs();
         new JarLoader().loadJar(InstallUtils.extra);
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
         if (!hasAcceptedEULA()) {

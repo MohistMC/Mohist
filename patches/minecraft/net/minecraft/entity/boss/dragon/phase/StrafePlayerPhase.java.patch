@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/boss/dragon/phase/StrafePlayerPhase.java
++++ b/net/minecraft/entity/boss/dragon/phase/StrafePlayerPhase.java
+@@ -27,7 +27,7 @@
+ 
+    public void func_188659_c() {
+       if (this.field_188693_f == null) {
+-         field_188689_b.warn("Skipping player strafe phase because no player was found");
++         field_188689_b.warn(com.mohistmc.util.i18n.i18n.get("strafeplayerphase.1"));
+          this.field_188661_a.func_184670_cT().func_188758_a(PhaseType.field_188741_a);
+       } else {
+          if (this.field_188691_d != null && this.field_188691_d.func_75879_b()) {

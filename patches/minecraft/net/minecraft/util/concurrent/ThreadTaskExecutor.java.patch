@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/concurrent/ThreadTaskExecutor.java
++++ b/net/minecraft/util/concurrent/ThreadTaskExecutor.java
+@@ -135,7 +135,7 @@
+       try {
+          p_213166_1_.run();
+       } catch (Exception exception) {
+-         field_213172_c.fatal("Error executing task on {}", this.func_213142_bd(), exception);
++         field_213172_c.fatal(com.mohistmc.util.i18n.i18n.get("threadtaskexecutor.1", this.func_213142_bd(), exception));
+       }
+ 
+    }

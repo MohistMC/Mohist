@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/AdvancementProvider.java
++++ b/net/minecraft/data/AdvancementProvider.java
+@@ -41,7 +41,7 @@
+             try {
+                IDataProvider.func_218426_a(field_204024_b, p_200398_1_, p_204017_3_.func_192075_a().func_200273_b(), path1);
+             } catch (IOException ioexception) {
+-               field_204023_a.error("Couldn't save advancement {}", path1, ioexception);
++               field_204023_a.error(com.mohistmc.util.i18n.i18n.get("advancementprovider.1", path1, ioexception));
+             }
+ 
+          }

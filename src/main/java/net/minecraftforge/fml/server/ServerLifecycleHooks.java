@@ -144,8 +144,8 @@ public class ServerLifecycleHooks
     public static boolean handleServerLogin(final CHandshakePacket packet, final NetworkManager manager) {
         if (!allowLogins.get())
         {
-            StringTextComponent text = new StringTextComponent("Server is still starting! Please wait before reconnecting.");
-            LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getUnformattedComponentText());
+            StringTextComponent text = new StringTextComponent(com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.1"));
+            LOGGER.info(SERVERHOOKS,com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.2", text.getUnformattedComponentText()));
             manager.sendPacket(new SDisconnectLoginPacket(text));
             manager.closeChannel(text);
             return false;
@@ -156,12 +156,12 @@ public class ServerLifecycleHooks
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
             if (connectionType == ConnectionType.MODDED && versionNumber != FMLNetworkConstants.FMLNETVERSION) {
-                rejectConnection(manager, connectionType, "This modded server is not network compatible with your modded client. Please verify your Forge version closely matches the server. Got net version "+ versionNumber + " this server is net version "+FMLNetworkConstants.FMLNETVERSION);
+                rejectConnection(manager, connectionType, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.3", versionNumber, FMLNetworkConstants.FMLNETVERSION));
                 return false;
             }
 
             if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
-                rejectConnection(manager, connectionType, "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
+                rejectConnection(manager, connectionType, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.4"));
                 return false;
             }
         }
@@ -176,7 +176,7 @@ public class ServerLifecycleHooks
 
     private static void rejectConnection(final NetworkManager manager, ConnectionType type, String message) {
         manager.setConnectionState(ProtocolType.LOGIN);
-        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: {}", type, message);
+        LOGGER.info(SERVERHOOKS, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.5", type, message));
         StringTextComponent text = new StringTextComponent(message);
         manager.sendPacket(new SDisconnectLoginPacket(text));
         manager.closeChannel(text);
@@ -206,7 +206,7 @@ public class ServerLifecycleHooks
                 continue;
             }
             packSetter.accept(e.getValue(), packInfo);
-            LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
+            LOGGER.debug(CORE, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.6", name, e.getKey().getFilePath()));
             consumer.accept(packInfo);
         }
     }

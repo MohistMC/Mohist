@@ -1,0 +1,10 @@
+--- a/net/minecraft/util/LoggingPrintStream.java
++++ b/net/minecraft/util/LoggingPrintStream.java
+@@ -24,6 +24,6 @@
+    }
+ 
+    protected void func_179882_a(@Nullable String p_179882_1_) {
+-      field_179884_a.info("[{}]: {}", this.field_179883_b, p_179882_1_);
++      field_179884_a.info(com.mohistmc.util.i18n.i18n.get("loggingprintstream.1", this.field_179883_b, p_179882_1_));
+    }
+ }

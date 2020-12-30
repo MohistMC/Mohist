@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/MinecraftVersion.java
++++ b/net/minecraft/util/MinecraftVersion.java
+@@ -49,7 +49,7 @@
+    public static GameVersion func_214957_a() {
+       try (InputStream inputstream = MinecraftVersion.class.getResourceAsStream("/version.json")) {
+          if (inputstream == null) {
+-            field_214958_a.warn("Missing version information!");
++            field_214958_a.warn(com.mohistmc.util.i18n.i18n.get("minecraftversion.1"));
+             return field_240808_a_;
+          } else {
+             MinecraftVersion minecraftversion;

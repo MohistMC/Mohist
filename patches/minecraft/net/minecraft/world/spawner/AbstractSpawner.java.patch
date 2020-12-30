@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/AbstractSpawner.java
 +++ b/net/minecraft/world/spawner/AbstractSpawner.java
-@@ -31,22 +31,22 @@
+@@ -31,35 +31,36 @@
  
  public abstract class AbstractSpawner {
     private static final Logger field_209160_a = LogManager.getLogger();
@@ -31,7 +31,14 @@
        String s = this.field_98282_f.func_185277_b().func_74779_i("id");
  
        try {
-@@ -60,6 +60,7 @@
+          return StringUtils.func_151246_b(s) ? null : new ResourceLocation(s);
+       } catch (ResourceLocationException resourcelocationexception) {
+          BlockPos blockpos = this.func_177221_b();
+-         field_209160_a.warn("Invalid entity id '{}' at spawner {}:[{},{},{}]", s, this.func_98271_a().func_234923_W_().func_240901_a_(), blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
++         field_209160_a.warn(com.mohistmc.util.i18n.i18n.get("abstractspawner.1", s, this.func_98271_a().func_234923_W_().func_240901_a_(), blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p()));
+          return null;
+       }
+    }
  
     public void func_200876_a(EntityType<?> p_200876_1_) {
        this.field_98282_f.func_185277_b().func_74778_a("id", Registry.field_212629_r.func_177774_c(p_200876_1_).toString());

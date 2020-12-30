@@ -16,7 +16,13 @@
  
  @OnlyIn(Dist.CLIENT)
  public class IntegratedServer extends MinecraftServer {
-@@ -56,9 +58,10 @@
+@@ -51,14 +53,15 @@
+    }
+ 
+    public boolean func_71197_b() {
+-      field_147148_h.info("Starting integrated minecraft server version " + SharedConstants.func_215069_a().getName());
++      field_147148_h.info(com.mohistmc.util.i18n.i18n.get("integratedserver.4", SharedConstants.func_215069_a().getName()));
+       this.func_71229_d(true);
        this.func_71188_g(true);
        this.func_71245_h(true);
        this.func_244801_P();
@@ -29,6 +35,24 @@
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
+@@ -67,7 +70,7 @@
+       IProfiler iprofiler = this.func_213185_aS();
+       if (!flag && this.field_71348_o) {
+          iprofiler.func_76320_a("autoSave");
+-         field_147148_h.info("Saving and pausing game...");
++         field_147148_h.info(com.mohistmc.util.i18n.i18n.get("integratedserver.1"));
+          this.func_184103_al().func_72389_g();
+          this.func_213211_a(false, false, false);
+          iprofiler.func_76319_b();
+@@ -77,7 +80,7 @@
+          super.func_71217_p(p_71217_1_);
+          int i = Math.max(2, this.field_71349_l.field_71474_y.field_151451_c + -1);
+          if (i != this.func_184103_al().func_72395_o()) {
+-            field_147148_h.info("Changing view distance to {}, from {}", i, this.func_184103_al().func_72395_o());
++            field_147148_h.info(com.mohistmc.util.i18n.i18n.get("integratedserver.2", i, this.func_184103_al().func_72395_o()));
+             this.func_184103_al().func_217884_a(i);
+          }
+ 
 @@ -92,6 +95,11 @@
        return true;
     }
@@ -41,6 +65,15 @@
     public File func_71238_n() {
        return this.field_71349_l.field_71412_D;
     }
+@@ -143,7 +151,7 @@
+    public boolean func_195565_a(GameType p_195565_1_, boolean p_195565_2_, int p_195565_3_) {
+       try {
+          this.func_147137_ag().func_151265_a((InetAddress)null, p_195565_3_);
+-         field_147148_h.info("Started serving on {}", (int)p_195565_3_);
++         field_147148_h.info(com.mohistmc.util.i18n.i18n.get("integratedserver.3", (int)p_195565_3_));
+          this.field_195580_l = p_195565_3_;
+          this.field_71345_q = new LanServerPingThread(this.func_71273_Y(), p_195565_3_ + "");
+          this.field_71345_q.start();
 @@ -172,6 +180,7 @@
     }
  

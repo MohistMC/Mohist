@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import com.mohistmc.util.i18n.Message;
 
 public class MohistConfig extends ConfigBase {
 

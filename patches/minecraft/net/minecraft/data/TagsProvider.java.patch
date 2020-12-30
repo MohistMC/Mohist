@@ -37,7 +37,15 @@
  
              try {
                 String s = field_200437_e.toJson((JsonElement)jsonobject);
-@@ -74,20 +86,36 @@
+@@ -67,27 +79,43 @@
+ 
+                p_200398_1_.func_208316_a(path, s1);
+             } catch (IOException ioexception) {
+-               field_200436_d.error("Couldn't save tags to {}", path, ioexception);
++               field_200436_d.error(com.mohistmc.util.i18n.i18n.get("tagsprovider.1", path, ioexception));
+             }
+ 
+          }
        });
     }
  

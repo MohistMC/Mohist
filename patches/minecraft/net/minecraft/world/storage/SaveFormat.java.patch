@@ -8,7 +8,23 @@
  import net.minecraft.world.DimensionType;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
-@@ -182,6 +183,10 @@
+@@ -129,7 +130,7 @@
+                try {
+                   flag = SessionLockManager.func_232999_b_(file1.toPath());
+                } catch (Exception exception) {
+-                  field_215785_a.warn("Failed to read {} lock", file1, exception);
++                  field_215785_a.warn(com.mohistmc.util.i18n.i18n.get("saveformat.1", file1, exception));
+                   continue;
+                }
+ 
+@@ -176,12 +177,16 @@
+          Dynamic<INBT> dynamic = p_237272_1_.update(DefaultTypeReferences.LEVEL.func_219816_a(), new Dynamic<>(NBTDynamicOps.field_210820_a, compoundnbt1), i, SharedConstants.func_215069_a().getWorldVersion());
+          return dynamic.get("DataPacks").result().map(SaveFormat::func_237258_a_).orElse(DatapackCodec.field_234880_a_);
+       } catch (Exception exception) {
+-         field_215785_a.error("Exception reading {}", p_237272_0_, exception);
++         field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.2", p_237272_0_, exception));
+          return null;
+       }
     }
  
     private static BiFunction<File, DataFixer, ServerWorldInfo> func_237270_b_(DynamicOps<INBT> p_237270_0_, DatapackCodec p_237270_1_) {
@@ -19,7 +35,7 @@
        return (p_242976_2_, p_242976_3_) -> {
           try {
              CompoundNBT compoundnbt = CompressedStreamTools.func_244263_a(p_242976_2_);
-@@ -193,7 +198,10 @@
+@@ -193,9 +198,12 @@
              Pair<DimensionGeneratorSettings, Lifecycle> pair = func_237259_a_(dynamic, p_242976_3_, i);
              VersionData versiondata = VersionData.func_237324_a_(dynamic);
              WorldSettings worldsettings = WorldSettings.func_234951_a_(dynamic, p_237270_1_);
@@ -29,8 +45,20 @@
 +                net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataLoad(levelSave, info, compoundnbt);
 +            return info;
           } catch (Exception exception) {
-             field_215785_a.error("Exception reading {}", p_242976_2_, exception);
+-            field_215785_a.error("Exception reading {}", p_242976_2_, exception);
++            field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.3", p_242976_2_, exception));
              return null;
+          }
+       };
+@@ -221,7 +229,7 @@
+                return new WorldSummary(worldsettings, versiondata, p_237267_1_.getName(), flag, p_237267_2_, file1);
+             }
+          } catch (Exception exception) {
+-            field_215785_a.error("Exception reading {}", p_242977_3_, exception);
++            field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.4", p_242977_3_, exception));
+             return null;
+          }
+       };
 @@ -255,18 +263,29 @@
     }
  
@@ -84,7 +112,16 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              CompressedStreamTools.func_244264_a(compoundnbt1, file2);
-@@ -352,6 +373,10 @@
+@@ -342,7 +363,7 @@
+             File file4 = new File(file1, "level.dat");
+             Util.func_240977_a_(file4, file2, file3);
+          } catch (Exception exception) {
+-            SaveFormat.field_215785_a.error("Failed to save level {}", file1, exception);
++            SaveFormat.field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.5", file1, exception));
+          }
+ 
+       }
+@@ -352,19 +373,23 @@
           return this.field_237279_c_.resolve("icon.png").toFile();
        }
  
@@ -95,3 +132,27 @@
        @OnlyIn(Dist.CLIENT)
        public void func_237299_g_() throws IOException {
           this.func_237301_i_();
+          final Path path = this.field_237279_c_.resolve("session.lock");
+ 
+          for(int i = 1; i <= 5; ++i) {
+-            SaveFormat.field_215785_a.info("Attempt {}...", (int)i);
++            SaveFormat.field_215785_a.info(com.mohistmc.util.i18n.i18n.get("saveformat.6", (int)i));
+ 
+             try {
+                Files.walkFileTree(this.field_237279_c_, new SimpleFileVisitor<Path>() {
+                   public FileVisitResult visitFile(Path p_visitFile_1_, BasicFileAttributes p_visitFile_2_) throws IOException {
+                      if (!p_visitFile_1_.equals(path)) {
+-                        SaveFormat.field_215785_a.debug("Deleting {}", (Object)p_visitFile_1_);
++                        SaveFormat.field_215785_a.debug(com.mohistmc.util.i18n.i18n.get("saveformat.7", (Object)p_visitFile_1_));
+                         Files.delete(p_visitFile_1_);
+                      }
+ 
+@@ -391,7 +416,7 @@
+                   throw ioexception;
+                }
+ 
+-               SaveFormat.field_215785_a.warn("Failed to delete {}", this.field_237279_c_, ioexception);
++               SaveFormat.field_215785_a.warn(com.mohistmc.util.i18n.i18n.get("saveformat.8", this.field_237279_c_, ioexception));
+ 
+                try {
+                   Thread.sleep(500L);

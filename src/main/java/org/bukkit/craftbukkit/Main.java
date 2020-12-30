@@ -1,19 +1,11 @@
 package org.bukkit.craftbukkit;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import static java.util.Arrays.asList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.mohistmc.util.i18n.Message;
+import static java.util.Arrays.asList;
+
 import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import net.minecrell.terminalconsole.TerminalConsoleAppender;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 
 public class Main extends OptionParser {
 

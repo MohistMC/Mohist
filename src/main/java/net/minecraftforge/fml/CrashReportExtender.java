@@ -103,9 +103,9 @@ public class CrashReportExtender
         final File file1 = new File(topLevelDir, "crash-reports");
         final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-fml.txt");
         if (crashReport.saveToFile(file2)) {
-            logger.fatal("Crash report saved to {}", file2);
+            logger.fatal(com.mohistmc.util.i18n.i18n.get("crashreportextender.1", file2));
         } else {
-            logger.fatal("Failed to save crash report");
+            logger.fatal(com.mohistmc.util.i18n.i18n.get("crashreportextender.2"));
         }
         System.out.print(crashReport.getCompleteReport());
         return file2;

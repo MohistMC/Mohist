@@ -1,0 +1,11 @@
+--- a/net/minecraft/village/PointOfInterestData.java
++++ b/net/minecraft/village/PointOfInterestData.java
+@@ -96,7 +96,7 @@
+          field_218255_a.error("POI data mismatch: never registered at " + p_218248_1_);
+       } else {
+          this.field_218257_c.get(pointofinterest.func_218260_g()).remove(pointofinterest);
+-         field_218255_a.debug("Removed POI of type {} @ {}", pointofinterest::func_218260_g, pointofinterest::func_218261_f);
++         field_218255_a.debug(com.mohistmc.util.i18n.i18n.get("pointofinterestdata.1", pointofinterest.func_218260_g(), pointofinterest.func_218261_f()));
+          this.field_218258_d.run();
+       }
+    }

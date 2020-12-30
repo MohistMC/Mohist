@@ -130,7 +130,7 @@
        this.field_72400_f = p_i231425_1_;
        this.field_232639_s_ = p_i231425_2_;
        this.field_72405_c = p_i231425_4_;
-@@ -125,6 +172,14 @@
+@@ -125,11 +172,19 @@
        String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
        playerprofilecache.func_152649_a(gameprofile);
        CompoundNBT compoundnbt = this.func_72380_a(p_72355_2_);
@@ -145,10 +145,17 @@
        RegistryKey<World> registrykey = compoundnbt != null ? DimensionType.func_236025_a_(new Dynamic<>(NBTDynamicOps.field_210820_a, compoundnbt.func_74781_a("Dimension"))).resultOrPartial(field_148546_d::error).orElse(World.field_234918_g_) : World.field_234918_g_;
        ServerWorld serverworld = this.field_72400_f.func_71218_a(registrykey);
        ServerWorld serverworld1;
+       if (serverworld == null) {
+-         field_148546_d.warn("Unknown respawn dimension {}, defaulting to overworld", (Object)registrykey);
++         field_148546_d.warn(com.mohistmc.util.i18n.i18n.get("playerlist.1", (Object)registrykey));
+          serverworld1 = this.field_72400_f.func_241755_D_();
+       } else {
+          serverworld1 = serverworld;
 @@ -142,20 +197,36 @@
           s1 = p_72355_1_.func_74430_c().toString();
        }
  
+-      field_148546_d.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_72355_2_.func_200200_C_().getString(), s1, p_72355_2_.func_145782_y(), p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_());
 +      // Spigot start - spawn location event
 +      Player bukkitPlayer = p_72355_2_.getBukkitEntity();
 +      PlayerSpawnLocationEvent ev = new PlayerSpawnLocationEvent(bukkitPlayer, bukkitPlayer.getLocation());
@@ -159,7 +166,7 @@
 +      p_72355_2_.func_70080_a(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 +      // Spigot end
 +
-       field_148546_d.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_72355_2_.func_200200_C_().getString(), s1, p_72355_2_.func_145782_y(), p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_());
++      field_148546_d.info(com.mohistmc.util.i18n.i18n.get("playerlist.2", p_72355_2_.func_200200_C_().getString(), s1, p_72355_2_.func_145782_y(), p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_()));
        IWorldInfo iworldinfo = serverworld1.func_72912_H();
        this.func_72381_a(p_72355_2_, (ServerPlayerEntity)null, serverworld1);
        ServerPlayNetHandler serverplaynethandler = new ServerPlayNetHandler(this.field_72400_f, p_72355_1_, p_72355_2_);
@@ -256,6 +263,15 @@
           });
           if (entity1 != null) {
              UUID uuid;
+@@ -214,7 +322,7 @@
+             }
+ 
+             if (!p_72355_2_.func_184218_aH()) {
+-               field_148546_d.warn("Couldn't reattach entity to player");
++               field_148546_d.warn(com.mohistmc.util.i18n.i18n.get("playerlist.3"));
+                serverworld1.func_217467_h(entity1);
+ 
+                for(Entity entity2 : entity1.func_184182_bu()) {
 @@ -225,9 +333,10 @@
        }
  
@@ -276,10 +292,12 @@
        p_212504_1_.func_175723_af().func_177737_a(new IBorderListener() {
           public void func_177694_a(WorldBorder p_177694_1_, double p_177694_2_) {
              PlayerList.this.func_148540_a(new SWorldBorderPacket(p_177694_1_, SWorldBorderPacket.Action.SET_SIZE));
-@@ -285,6 +395,7 @@
+@@ -284,7 +394,8 @@
+       if (p_72380_1_.func_200200_C_().getString().equals(this.field_72400_f.func_71214_G()) && compoundnbt != null) {
           compoundnbt1 = compoundnbt;
           p_72380_1_.func_70020_e(compoundnbt);
-          field_148546_d.debug("loading single player");
+-         field_148546_d.debug("loading single player");
++         field_148546_d.debug(com.mohistmc.util.i18n.i18n.get("playerlist.4"));
 +         net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_72380_1_, this.field_72412_k, p_72380_1_.func_110124_au().toString());
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
@@ -293,7 +311,7 @@
        this.field_72412_k.func_237335_a_(p_72391_1_);
        ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
        if (serverstatisticsmanager != null) {
-@@ -306,9 +419,27 @@
+@@ -306,14 +419,32 @@
  
     }
  
@@ -321,6 +339,12 @@
        this.func_72391_b(p_72367_1_);
        if (p_72367_1_.func_184218_aH()) {
           Entity entity = p_72367_1_.func_184208_bv();
+          if (entity.func_200601_bK()) {
+-            field_148546_d.debug("Removing player mount");
++            field_148546_d.debug(com.mohistmc.util.i18n.i18n.get("playerlist.5"));
+             p_72367_1_.func_184210_p();
+             serverworld.func_217467_h(entity);
+             entity.field_70128_L = true;
 @@ -330,7 +461,8 @@
        p_72367_1_.func_213319_R();
        serverworld.func_217434_e(p_72367_1_);

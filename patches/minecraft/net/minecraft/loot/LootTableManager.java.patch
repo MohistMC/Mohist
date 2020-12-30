@@ -8,7 +8,12 @@
     private final LootPredicateManager field_227507_d_;
  
     public LootTableManager(LootPredicateManager p_i225887_1_) {
-@@ -36,8 +37,8 @@
+@@ -32,15 +33,15 @@
+       Builder<ResourceLocation, LootTable> builder = ImmutableMap.builder();
+       JsonElement jsonelement = p_212853_1_.remove(LootTables.field_186419_a);
+       if (jsonelement != null) {
+-         field_186525_a.warn("Datapack tried to redefine {} loot table, ignoring", (Object)LootTables.field_186419_a);
++         field_186525_a.warn(com.mohistmc.util.i18n.i18n.get("loottablemanager.1", (Object)LootTables.field_186419_a));
        }
  
        p_212853_1_.forEach((p_237403_1_, p_237403_2_) -> {
@@ -18,7 +23,11 @@
 +            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(field_186526_b, p_237403_1_, p_237403_2_, res == null || !res.func_199026_d().equals("Default"), this);
              builder.put(p_237403_1_, loottable);
           } catch (Exception exception) {
-             field_186525_a.error("Couldn't parse loot table {}", p_237403_1_, exception);
+-            field_186525_a.error("Couldn't parse loot table {}", p_237403_1_, exception);
++            field_186525_a.error(com.mohistmc.util.i18n.i18n.get("loottablemanager.2", p_237403_1_, exception));
+          }
+ 
+       });
 @@ -54,6 +55,11 @@
           field_186525_a.warn("Found validation problem in " + p_215303_0_ + ": " + p_215303_1_);
        });

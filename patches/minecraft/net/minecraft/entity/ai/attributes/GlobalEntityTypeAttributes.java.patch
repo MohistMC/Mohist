@@ -22,3 +22,12 @@
     }
  
     public static void func_233834_a_() {
+@@ -90,7 +96,7 @@
+          if (SharedConstants.field_206244_b) {
+             throw new IllegalStateException("Entity " + p_233836_0_ + " has no attributes");
+          } else {
+-            field_233832_a_.error("Entity {} has no attributes", (Object)p_233836_0_);
++            field_233832_a_.error(com.mohistmc.util.i18n.i18n.get("globalentitytypeattributes.1", (Object)p_233836_0_));
+          }
+       });
+    }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/profiler/FilledProfileResult.java
++++ b/net/minecraft/profiler/FilledProfileResult.java
+@@ -160,7 +160,7 @@
+          writer.write(this.func_219929_a(this.func_219924_f(), this.func_219925_g()));
+          return true;
+       } catch (Throwable throwable) {
+-         field_219930_a.error("Could not save profiler results to {}", p_219919_1_, throwable);
++         field_219930_a.error(com.mohistmc.util.i18n.i18n.get("filledprofileresult.1", p_219919_1_, throwable));
+          flag = false;
+       } finally {
+          IOUtils.closeQuietly(writer);

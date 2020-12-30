@@ -1,0 +1,11 @@
+--- a/net/minecraft/scoreboard/ScoreboardSaveData.java
++++ b/net/minecraft/scoreboard/ScoreboardSaveData.java
+@@ -146,7 +146,7 @@
+ 
+    public CompoundNBT func_189551_b(CompoundNBT p_189551_1_) {
+       if (this.field_96507_a == null) {
+-         field_151481_a.warn("Tried to save scoreboard without having a scoreboard...");
++         field_151481_a.warn(com.mohistmc.util.i18n.i18n.get("scoreboardsavedata.1"));
+          return p_189551_1_;
+       } else {
+          p_189551_1_.func_218657_a("Objectives", this.func_96505_b());

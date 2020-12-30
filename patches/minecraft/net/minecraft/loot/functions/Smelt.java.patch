@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/functions/Smelt.java
 +++ b/net/minecraft/loot/functions/Smelt.java
-@@ -34,7 +34,7 @@
+@@ -34,12 +34,12 @@
              ItemStack itemstack = optional.get().func_77571_b();
              if (!itemstack.func_190926_b()) {
                 ItemStack itemstack1 = itemstack.func_77946_l();
@@ -9,3 +9,9 @@
                 return itemstack1;
              }
           }
+ 
+-         field_186574_a.warn("Couldn't smelt {} because there is no smelting recipe", (Object)p_215859_1_);
++         field_186574_a.warn(com.mohistmc.util.i18n.i18n.get("smelt.1", (Object)p_215859_1_));
+          return p_215859_1_;
+       }
+    }

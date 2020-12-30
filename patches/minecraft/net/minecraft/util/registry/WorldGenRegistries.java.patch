@@ -24,3 +24,12 @@
     private static <T> Registry<T> func_243665_a(RegistryKey<? extends Registry<T>> p_243665_0_, Lifecycle p_243665_1_, Supplier<T> p_243665_2_) {
        return func_243666_a(p_243665_0_, new SimpleRegistry<>(p_243665_0_, p_243665_1_), p_243665_2_, p_243665_1_);
     }
+@@ -83,7 +87,7 @@
+    static {
+       field_243659_k.forEach((p_243668_0_, p_243668_1_) -> {
+          if (p_243668_1_.get() == null) {
+-            field_243649_a.error("Unable to bootstrap registry '{}'", (Object)p_243668_0_);
++            field_243649_a.error(com.mohistmc.util.i18n.i18n.get("worldgenregistries.1", (Object)p_243668_0_));
+          }
+ 
+       });

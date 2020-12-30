@@ -132,7 +132,7 @@ public class VersionChecker
             {
                 if (!FMLConfig.runVersionCheck())
                 {
-                    LOGGER.info("Global Forge version check system disabled, no further processing.");
+                    LOGGER.info(com.mohistmc.util.i18n.i18n.get("versionchecker.1"));
                     return;
                 }
 
@@ -182,13 +182,13 @@ public class VersionChecker
                 try
                 {
                     URL url = mod.getUpdateURL();
-                    LOGGER.info("[{}] Starting version check at {}", mod.getModId(), url.toString());
+                    LOGGER.info(com.mohistmc.util.i18n.i18n.get("versionchecker.2", mod.getModId(), url.toString()));
 
                     InputStream con = openUrlStream(url);
                     String data = new String(ByteStreams.toByteArray(con), StandardCharsets.UTF_8);
                     con.close();
 
-                    LOGGER.debug("[{}] Received version check data:\n{}", mod.getModId(), data);
+                    LOGGER.debug(com.mohistmc.util.i18n.i18n.get("versionchecker.3", mod.getModId(), data));
 
 
                     @SuppressWarnings("unchecked")
@@ -240,7 +240,7 @@ public class VersionChecker
                     else
                         status = BETA;
 
-                    LOGGER.info("[{}] Found status: {} Current: {} Target: {}", mod.getModId(), status, current, target);
+                    LOGGER.info(com.mohistmc.util.i18n.i18n.get("versionchecker.4", mod.getModId(), status, current, target));
 
                     changes = new LinkedHashMap<>();
                     @SuppressWarnings("unchecked")

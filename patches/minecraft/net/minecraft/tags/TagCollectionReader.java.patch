@@ -1,0 +1,35 @@
+--- a/net/minecraft/tags/TagCollectionReader.java
++++ b/net/minecraft/tags/TagCollectionReader.java
+@@ -59,20 +59,20 @@
+                   ) {
+                      JsonObject jsonobject = JSONUtils.func_193839_a(field_242218_b, reader, JsonObject.class);
+                      if (jsonobject == null) {
+-                        field_242217_a.error("Couldn't load {} tag list {} from {} in data pack {} as it is empty or null", this.field_242222_f, resourcelocation1, resourcelocation, iresource.func_199026_d());
++                        field_242217_a.error(com.mohistmc.util.i18n.i18n.get("tagcollectionreader.1", this.field_242222_f, resourcelocation1, resourcelocation, iresource.func_199026_d()));
+                      } else {
+                         map.computeIfAbsent(resourcelocation1, (p_242229_0_) -> {
+                            return ITag.Builder.func_200047_a();
+                         }).func_232956_a_(jsonobject, iresource.func_199026_d());
+                      }
+                   } catch (RuntimeException | IOException ioexception) {
+-                     field_242217_a.error("Couldn't read {} tag list {} from {} in data pack {}", this.field_242222_f, resourcelocation1, resourcelocation, iresource.func_199026_d(), ioexception);
++                     field_242217_a.error(com.mohistmc.util.i18n.i18n.get("tagcollectionreader.2", this.field_242222_f, resourcelocation1, resourcelocation, iresource.func_199026_d(), ioexception));
+                   } finally {
+                      IOUtils.closeQuietly((Closeable)iresource);
+                   }
+                }
+             } catch (IOException ioexception1) {
+-               field_242217_a.error("Couldn't read {} tag list {} from {}", this.field_242222_f, resourcelocation1, resourcelocation, ioexception1);
++               field_242217_a.error(com.mohistmc.util.i18n.i18n.get("tagcollectionreader.3", this.field_242222_f, resourcelocation1, resourcelocation, ioexception1));
+             }
+          }
+ 
+@@ -107,7 +107,7 @@
+       }
+ 
+       p_242226_1_.forEach((p_242227_3_, p_242227_4_) -> {
+-         field_242217_a.error("Couldn't load {} tag {} as it is missing following references: {}", this.field_242222_f, p_242227_3_, p_242227_4_.func_232963_b_(function, function1).map(Objects::toString).collect(Collectors.joining(",")));
++         field_242217_a.error(com.mohistmc.util.i18n.i18n.get("tagcollectionreader.4", this.field_242222_f, p_242227_3_, p_242227_4_.func_232963_b_(function, function1).map(Objects::toString).collect(Collectors.joining(","))));
+       });
+       return ITagCollection.func_242202_a(map);
+    }

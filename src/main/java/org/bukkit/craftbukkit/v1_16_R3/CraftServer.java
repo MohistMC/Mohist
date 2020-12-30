@@ -4,13 +4,11 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
-import com.mohistmc.util.i18n.Message;
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -21,36 +19,6 @@ import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
@@ -81,7 +49,6 @@ import net.minecraft.server.management.UserListEntry;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.datafix.DataFixesManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
@@ -89,58 +56,25 @@ import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraft.village.VillageSiege;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.Dimension;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameType;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.TicketType;
-import net.minecraft.world.spawner.CatSpawner;
-import net.minecraft.world.spawner.ISpecialSpawner;
-import net.minecraft.world.spawner.PatrolSpawner;
-import net.minecraft.world.spawner.PhantomSpawner;
-import net.minecraft.world.spawner.WanderingTraderSpawner;
-import net.minecraft.world.storage.MapData;
-import net.minecraft.world.storage.MapDecoration;
-import net.minecraft.world.storage.PlayerData;
-import net.minecraft.world.storage.SaveFormat;
-import net.minecraft.world.storage.ServerWorldInfo;
+import net.minecraft.world.spawner.*;
+import net.minecraft.world.storage.*;
 import org.apache.commons.lang.Validate;
-import org.bukkit.BanList;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Keyed;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.StructureType;
-import org.bukkit.UnsafeValues;
-import org.bukkit.Warning.WarningState;
+import org.bukkit.*;
 import org.bukkit.World;
+import org.bukkit.Warning.WarningState;
 import org.bukkit.World.Environment;
-import org.bukkit.WorldCreator;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
-import org.bukkit.boss.KeyedBossBar;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandException;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.boss.*;
+import org.bukkit.command.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.craftbukkit.Main;
 import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R3.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_16_R3.boss.CraftKeyedBossbar;
@@ -150,19 +84,7 @@ import org.bukkit.craftbukkit.v1_16_R3.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.generator.CraftChunkData;
 import org.bukkit.craftbukkit.v1_16_R3.help.SimpleHelpMap;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftBlastingRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftCampfireRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftFurnaceRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemFactory;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMerchantCustom;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftShapedRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftShapelessRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftSmithingRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftSmokingRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftStonecuttingRecipe;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.RecipeIterator;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.*;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.v1_16_R3.map.CraftMapView;
 import org.bukkit.craftbukkit.v1_16_R3.metadata.EntityMetadataStore;
@@ -174,12 +96,7 @@ import org.bukkit.craftbukkit.v1_16_R3.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.v1_16_R3.tag.CraftBlockTag;
 import org.bukkit.craftbukkit.v1_16_R3.tag.CraftFluidTag;
 import org.bukkit.craftbukkit.v1_16_R3.tag.CraftItemTag;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftIconCache;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
-import org.bukkit.craftbukkit.v1_16_R3.util.DatFileFilter;
-import org.bukkit.craftbukkit.v1_16_R3.util.Versioning;
+import org.bukkit.craftbukkit.v1_16_R3.util.*;
 import org.bukkit.craftbukkit.v1_16_R3.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -193,30 +110,12 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.help.HelpMap;
-import org.bukkit.inventory.BlastingRecipe;
-import org.bukkit.inventory.CampfireRecipe;
-import org.bukkit.inventory.ComplexRecipe;
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.SmithingRecipe;
-import org.bukkit.inventory.SmokingRecipe;
-import org.bukkit.inventory.StonecuttingRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginLoadOrder;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.ServicesManager;
-import org.bukkit.plugin.SimplePluginManager;
-import org.bukkit.plugin.SimpleServicesManager;
+import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
@@ -227,6 +126,17 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
@@ -358,7 +268,7 @@ public final class CraftServer implements Server {
         try {
             configuration.save(getConfigFile());
         } catch (IOException ex) {
-            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, Message.get("bukkit.save.failedg", getConfigFile()), ex);
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, i18n.get("bukkit.save.failedg", getConfigFile()), ex);
         }
     }
 
@@ -366,7 +276,7 @@ public final class CraftServer implements Server {
         try {
             commandsConfiguration.save(getCommandsConfigFile());
         } catch (IOException ex) {
-            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, Message.get("bukkit.save.failedg", getCommandsConfigFile()), ex);
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, i18n.get("bukkit.save.failedg", getCommandsConfigFile()), ex);
         }
     }
 
@@ -380,11 +290,11 @@ public final class CraftServer implements Server {
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
             for (Plugin plugin : plugins) {
                 try {
-                    String message = Message.get("bukkit.loading", plugin.getDescription().getFullName());
+                    String message = i18n.get("bukkit.loading", plugin.getDescription().getFullName());
                     plugin.getLogger().info(message);
                     plugin.onLoad();
                 } catch (Throwable ex) {
-                    Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, Message.get("bukkit.plugin.load.failed", ex.getMessage(), plugin.getDescription().getFullName()), ex);
+                    Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, i18n.get("bukkit.plugin.load.failed", ex.getMessage(), plugin.getDescription().getFullName()), ex);
                 }
             }
         } else {
@@ -483,7 +393,7 @@ public final class CraftServer implements Server {
                 try {
                     pluginManager.addPermission(perm, false);
                 } catch (IllegalArgumentException ex) {
-                    getLogger().log(Level.WARNING, Message.get("bukkit.plugin.permission.already.registered", plugin.getDescription().getFullName(), perm.getName()), ex);
+                    getLogger().log(Level.WARNING, i18n.get("bukkit.plugin.permission.already.registered", plugin.getDescription().getFullName(), perm.getName()), ex);
                 }
             }
             pluginManager.dirtyPermissibles();
@@ -517,7 +427,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public Player getPlayer(final String name) {
-        Validate.notNull(name, Message.get("bukkit.name.notnull"));
+        Validate.notNull(name, i18n.get("bukkit.name.notnull"));
 
         Player found = getPlayerExact(name);
         // Try for an exact match first.
@@ -543,7 +453,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public Player getPlayerExact(String name) {
-        Validate.notNull(name, Message.get("bukkit.name.notnull"));
+        Validate.notNull(name, i18n.get("bukkit.name.notnull"));
 
         ServerPlayerEntity player = playerList.getPlayerByUsername(name);
         return (player != null) ? player.getBukkitEntity() : null;
@@ -572,7 +482,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public List<Player> matchPlayer(String partialName) {
-        Validate.notNull(partialName, Message.get("bukkit.partialname.notnull"));
+        Validate.notNull(partialName, i18n.get("bukkit.partialname.notnull"));
 
         List<Player> matchedPlayers = new ArrayList<Player>();
 
@@ -744,7 +654,7 @@ public final class CraftServer implements Server {
             this.playerCommandState = true;
             return dispatchCommand(sender, serverCommand.command);
         } catch (Exception ex) {
-            getLogger().log(Level.WARNING, Message.get("bukkit.command.parsing.failed", serverCommand.command), ex);
+            getLogger().log(Level.WARNING, i18n.get("bukkit.command.parsing.failed", serverCommand.command), ex);
             return false;
         } finally {
             this.playerCommandState = false;
@@ -753,8 +663,8 @@ public final class CraftServer implements Server {
 
     @Override
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
-        Validate.notNull(sender, Message.get("bukkit.sender.notnull"));
-        Validate.notNull(commandLine, Message.get("bukkit.commandline.notnull"));
+        Validate.notNull(sender, i18n.get("bukkit.sender.notnull"));
+        Validate.notNull(commandLine, i18n.get("bukkit.commandline.notnull"));
 
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
@@ -796,12 +706,12 @@ public final class CraftServer implements Server {
         try {
             playerList.getBannedIPs().readSavedFile();
         } catch (IOException ex) {
-            logger.log(Level.WARNING, Message.get("pluginscommand.notload", "banned-ips.json, " + ex.getMessage()));
+            logger.log(Level.WARNING, i18n.get("pluginscommand.notload", "banned-ips.json, " + ex.getMessage()));
         }
         try {
             playerList.getBannedPlayers().readSavedFile();
         } catch (IOException ex) {
-            logger.log(Level.WARNING, Message.get("pluginscommand.notload", "banned-players.json, " + ex.getMessage()));
+            logger.log(Level.WARNING, i18n.get("pluginscommand.notload", "banned-players.json, " + ex.getMessage()));
         }
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
@@ -866,7 +776,7 @@ public final class CraftServer implements Server {
             if (plugin.getDescription().getAuthors().size() > 0) {
                 author = plugin.getDescription().getAuthors().get(0);
             }
-            getLogger().log(Level.SEVERE, Message.get(
+            getLogger().log(Level.SEVERE, i18n.get(
                     "bukkit.plugin.nag.author",
                     author,
                     plugin.getDescription().getName()

@@ -1,0 +1,132 @@
+--- a/net/minecraft/util/Util.java
++++ b/net/minecraft/util/Util.java
+@@ -104,9 +104,9 @@
+             ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(p_240981_1_) {
+                protected void onTermination(Throwable p_onTermination_1_) {
+                   if (p_onTermination_1_ != null) {
+-                     Util.field_195650_a.warn("{} died", this.getName(), p_onTermination_1_);
++                     Util.field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.1", this.getName(), p_onTermination_1_));
+                   } else {
+-                     Util.field_195650_a.debug("{} shutdown", (Object)this.getName());
++                     Util.field_195650_a.debug(com.mohistmc.util.i18n.i18n.get("util.2", (Object)this.getName()));
+                   }
+ 
+                   super.onTermination(p_onTermination_1_);
+@@ -185,7 +185,7 @@
+          System.exit(-1);
+       }
+ 
+-      field_195650_a.error(String.format("Caught exception in thread %s", p_240983_0_), p_240983_1_);
++      field_195650_a.error(com.mohistmc.util.i18n.i18n.get(String.format("util.3", p_240983_0_), p_240983_1_));
+    }
+ 
+    @Nullable
+@@ -200,7 +200,7 @@
+       try {
+          type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(SharedConstants.func_215069_a().getWorldVersion())).getChoiceType(p_240990_0_, p_240990_1_);
+       } catch (IllegalArgumentException illegalargumentexception) {
+-         field_195650_a.error("No data fixer registered for {}", (Object)p_240990_1_);
++         field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.4", (Object)p_240990_1_));
+          if (SharedConstants.field_206244_b) {
+             throw illegalargumentexception;
+          }
+@@ -329,12 +329,12 @@
+ 
+    public static <T extends Throwable> T func_229757_c_(T p_229757_0_) {
+       if (SharedConstants.field_206244_b) {
+-         field_195650_a.error("Trying to throw a fatal exception, pausing in IDE", p_229757_0_);
++         field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.5", p_229757_0_));
+ 
+          while(true) {
+             try {
+                Thread.sleep(1000L);
+-               field_195650_a.error("paused");
++               field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.6"));
+             } catch (InterruptedException interruptedexception) {
+                return p_229757_0_;
+             }
+@@ -367,7 +367,7 @@
+                Files.move(p_244363_0_, p_244363_1_);
+                return true;
+             } catch (IOException ioexception) {
+-               Util.field_195650_a.error("Failed to rename", (Throwable)ioexception);
++               Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.7", (Throwable)ioexception));
+                return false;
+             }
+          }
+@@ -385,7 +385,7 @@
+                Files.deleteIfExists(p_244362_0_);
+                return true;
+             } catch (IOException ioexception) {
+-               Util.field_195650_a.warn("Failed to delete", (Throwable)ioexception);
++               Util.field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.8", (Throwable)ioexception));
+                return false;
+             }
+          }
+@@ -423,7 +423,7 @@
+    private static boolean func_244365_a(BooleanSupplier... p_244365_0_) {
+       for(BooleanSupplier booleansupplier : p_244365_0_) {
+          if (!booleansupplier.getAsBoolean()) {
+-            field_195650_a.warn("Failed to execute {}", (Object)booleansupplier);
++            field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.9", (Object)booleansupplier));
+             return false;
+          }
+       }
+@@ -437,10 +437,10 @@
+             return true;
+          }
+ 
+-         field_195650_a.error("Failed to {}, retrying {}/{}", p_244359_1_, i, p_244359_0_);
++         field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.10", p_244359_1_, i, p_244359_0_));
+       }
+ 
+-      field_195650_a.error("Failed to {}, aborting, progress might be lost", (Object)p_244359_1_);
++      field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.11", (Object)p_244359_1_));
+       return false;
+    }
+ 
+@@ -504,7 +504,7 @@
+                try {
+                   Thread.sleep(2147483647L);
+                } catch (InterruptedException interruptedexception) {
+-                  Util.field_195650_a.warn("Timer hack thread interrupted, that really should not happen");
++                  Util.field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.12"));
+                   return;
+                }
+             }
+@@ -576,7 +576,7 @@
+             process.getErrorStream().close();
+             process.getOutputStream().close();
+          } catch (IOException | PrivilegedActionException privilegedactionexception) {
+-            Util.field_195650_a.error("Couldn't open url '{}'", p_195639_1_, privilegedactionexception);
++            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.13", p_195639_1_, privilegedactionexception));
+          }
+ 
+       }
+@@ -586,7 +586,7 @@
+          try {
+             this.func_195639_a(p_195642_1_.toURL());
+          } catch (MalformedURLException malformedurlexception) {
+-            Util.field_195650_a.error("Couldn't open uri '{}'", p_195642_1_, malformedurlexception);
++            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.14", p_195642_1_, malformedurlexception));
+          }
+ 
+       }
+@@ -596,7 +596,7 @@
+          try {
+             this.func_195639_a(p_195641_1_.toURI().toURL());
+          } catch (MalformedURLException malformedurlexception) {
+-            Util.field_195650_a.error("Couldn't open file '{}'", p_195641_1_, malformedurlexception);
++            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.15", p_195641_1_, malformedurlexception));
+          }
+ 
+       }
+@@ -616,7 +616,7 @@
+          try {
+             this.func_195639_a((new URI(p_195640_1_)).toURL());
+          } catch (MalformedURLException | IllegalArgumentException | URISyntaxException urisyntaxexception) {
+-            Util.field_195650_a.error("Couldn't open uri '{}'", p_195640_1_, urisyntaxexception);
++            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.16", p_195640_1_, urisyntaxexception));
+          }
+ 
+       }

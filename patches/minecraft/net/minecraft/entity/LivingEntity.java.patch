@@ -246,6 +246,15 @@
        if (p_70037_1_.func_150297_b("Health", 99)) {
           this.func_70606_j(p_70037_1_.func_74760_g("Health"));
        }
+@@ -635,7 +702,7 @@
+          ScorePlayerTeam scoreplayerteam = this.field_70170_p.func_96441_U().func_96508_e(s);
+          boolean flag = scoreplayerteam != null && this.field_70170_p.func_96441_U().func_197901_a(this.func_189512_bd(), scoreplayerteam);
+          if (!flag) {
+-            field_184243_a.warn("Unable to add mob to team \"{}\" (that team probably doesn't exist)", (Object)s);
++            field_184243_a.warn(com.mohistmc.util.i18n.i18n.get("livingentity.1", (Object)s));
+          }
+       }
+ 
 @@ -658,9 +725,32 @@
  
     }

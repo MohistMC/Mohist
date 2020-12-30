@@ -1,0 +1,88 @@
+--- a/net/minecraft/world/chunk/storage/RegionFile.java
++++ b/net/minecraft/world/chunk/storage/RegionFile.java
+@@ -61,7 +61,7 @@
+          int i = this.field_76719_c.read(this.field_227126_f_, 0L);
+          if (i != -1) {
+             if (i != 8192) {
+-               field_227122_a_.warn("Region file {} has truncated header: {}", p_i231894_1_, i);
++               field_227122_a_.warn(com.mohistmc.util.i18n.i18n.get("regionfile.1", p_i231894_1_, i));
+             }
+ 
+             long j = Files.size(p_i231894_1_);
+@@ -72,13 +72,13 @@
+                   int i1 = func_227142_b_(l);
+                   int j1 = func_227131_a_(l);
+                   if (i1 < 2) {
+-                     field_227122_a_.warn("Region file {} has invalid sector at index: {}; sector {} overlaps with header", p_i231894_1_, k, i1);
++                     field_227122_a_.warn(com.mohistmc.util.i18n.i18n.get("regionfile.2", p_i231894_1_, k, i1));
+                      this.field_76716_d.put(k, 0);
+                   } else if (j1 == 0) {
+-                     field_227122_a_.warn("Region file {} has an invalid sector at index: {}; size has to be > 0", p_i231894_1_, k);
++                     field_227122_a_.warn(com.mohistmc.util.i18n.i18n.get("regionfile.3", p_i231894_1_, k));
+                      this.field_76716_d.put(k, 0);
+                   } else if ((long)i1 * 4096L > j) {
+-                     field_227122_a_.warn("Region file {} has an invalid sector at index: {}; sector {} is out of bounds", p_i231894_1_, k, i1);
++                     field_227122_a_.warn(com.mohistmc.util.i18n.i18n.get("regionfile.4", p_i231894_1_, k, i1));
+                      this.field_76716_d.put(k, 0);
+                   } else {
+                      this.field_227128_i_.func_227120_a_(i1, j1);
+@@ -108,27 +108,27 @@
+          this.field_76719_c.read(bytebuffer, (long)(j * 4096));
+          ((Buffer)bytebuffer).flip();
+          if (bytebuffer.remaining() < 5) {
+-            field_227122_a_.error("Chunk {} header is truncated: expected {} but read {}", p_222666_1_, l, bytebuffer.remaining());
++            field_227122_a_.error(com.mohistmc.util.i18n.i18n.get("regionfile.5", p_222666_1_, l, bytebuffer.remaining()));
+             return null;
+          } else {
+             int i1 = bytebuffer.getInt();
+             byte b0 = bytebuffer.get();
+             if (i1 == 0) {
+-               field_227122_a_.warn("Chunk {} is allocated, but stream is missing", (Object)p_222666_1_);
++               field_227122_a_.warn(com.mohistmc.util.i18n.i18n.get("regionfile.6", (Object)p_222666_1_));
+                return null;
+             } else {
+                int j1 = i1 - 1;
+                if (func_227130_a_(b0)) {
+                   if (j1 != 0) {
+-                     field_227122_a_.warn("Chunk has both internal and external streams");
++                     field_227122_a_.warn(com.mohistmc.util.i18n.i18n.get("regionfile.7"));
+                   }
+ 
+                   return this.func_227133_a_(p_222666_1_, func_227141_b_(b0));
+                } else if (j1 > bytebuffer.remaining()) {
+-                  field_227122_a_.error("Chunk {} stream is truncated: expected {} but read {}", p_222666_1_, j1, bytebuffer.remaining());
++                  field_227122_a_.error(com.mohistmc.util.i18n.i18n.get("regionfile.8", p_222666_1_, j1, bytebuffer.remaining()));
+                   return null;
+                } else if (j1 < 0) {
+-                  field_227122_a_.error("Declared size {} of chunk {} is negative", i1, p_222666_1_);
++                  field_227122_a_.error(com.mohistmc.util.i18n.i18n.get("regionfile.9", i1, p_222666_1_));
+                   return null;
+                } else {
+                   return this.func_227134_a_(p_222666_1_, b0, func_227137_a_(bytebuffer, j1));
+@@ -150,7 +150,7 @@
+    private DataInputStream func_227134_a_(ChunkPos p_227134_1_, byte p_227134_2_, InputStream p_227134_3_) throws IOException {
+       RegionFileVersion regionfileversion = RegionFileVersion.func_227166_a_(p_227134_2_);
+       if (regionfileversion == null) {
+-         field_227122_a_.error("Chunk {} has invalid chunk stream version {}", p_227134_1_, p_227134_2_);
++         field_227122_a_.error(com.mohistmc.util.i18n.i18n.get("regionfile.10", p_227134_1_, p_227134_2_));
+          return null;
+       } else {
+          return new DataInputStream(new BufferedInputStream(regionfileversion.func_227168_a_(p_227134_3_)));
+@@ -161,7 +161,7 @@
+    private DataInputStream func_227133_a_(ChunkPos p_227133_1_, byte p_227133_2_) throws IOException {
+       Path path = this.func_227145_e_(p_227133_1_);
+       if (!Files.isRegularFile(path)) {
+-         field_227122_a_.error("External chunk path {} is not file", (Object)path);
++         field_227122_a_.error(com.mohistmc.util.i18n.i18n.get("regionfile.11", (Object)path));
+          return null;
+       } else {
+          return this.func_227134_a_(p_227133_1_, p_227133_2_, Files.newInputStream(path));
+@@ -255,7 +255,7 @@
+       RegionFile.ICompleteCallback regionfile$icompletecallback;
+       if (j1 >= 256) {
+          Path path = this.func_227145_e_(p_227135_1_);
+-         field_227122_a_.warn("Saving oversized chunk {} ({} bytes} to external file {}", p_227135_1_, i1, path);
++         field_227122_a_.warn(com.mohistmc.util.i18n.i18n.get("regionfile.12", p_227135_1_, i1, path));
+          j1 = 1;
+          k1 = this.field_227128_i_.func_227119_a_(j1);
+          regionfile$icompletecallback = this.func_227138_a_(path, p_227135_2_);

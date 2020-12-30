@@ -75,6 +75,15 @@
     public ChunkManager(ServerWorld p_i232602_1_, SaveFormat.LevelSave p_i232602_2_, DataFixer p_i232602_3_, TemplateManager p_i232602_4_, Executor p_i232602_5_, ThreadTaskExecutor<Runnable> p_i232602_6_, IChunkLightProvider p_i232602_7_, ChunkGenerator p_i232602_8_, IChunkStatusListener p_i232602_9_, Supplier<DimensionSavedDataManager> p_i232602_10_, int p_i232602_11_, boolean p_i232602_12_) {
        super(new File(p_i232602_2_.func_237291_a_(p_i232602_1_.func_234923_W_()), "region"), p_i232602_3_, p_i232602_12_);
        this.field_219269_w = p_i232602_4_;
+@@ -343,7 +369,7 @@
+             return true;
+          });
+          this.func_227079_i_();
+-         field_219250_d.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)this.field_219270_x.getName());
++         field_219250_d.info(com.mohistmc.util.i18n.i18n.get("chunkmanager.1", (Object)this.field_219270_x.getName()));
+       } else {
+          this.field_219252_f.values().stream().filter(ChunkHolder::func_219289_k).forEach((p_222965_1_) -> {
+             IChunk ichunk = p_222965_1_.func_219302_f().getNow((IChunk)null);
 @@ -357,6 +383,8 @@
  
     }
@@ -122,6 +131,27 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
+@@ -482,7 +522,7 @@
+                   return Either.left(ichunk);
+                }
+ 
+-               field_219250_d.error("Chunk file at {} is missing level data, skipping", (Object)p_223172_1_);
++               field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.2", (Object)p_223172_1_));
+             }
+          } catch (ReportedException reportedexception) {
+             Throwable throwable = reportedexception.getCause();
+@@ -491,9 +531,9 @@
+                throw reportedexception;
+             }
+ 
+-            field_219250_d.error("Couldn't load chunk {}", p_223172_1_, throwable);
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.3", p_223172_1_, throwable));
+          } catch (Exception exception) {
+-            field_219250_d.error("Couldn't load chunk {}", p_223172_1_, exception);
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.4", p_223172_1_, exception));
+          }
+ 
+          this.func_241089_g_(p_223172_1_);
 @@ -588,7 +628,14 @@
  
                 for(int j = 0; j < i; ++j) {
@@ -146,7 +176,7 @@
              }
  
              return chunk;
-@@ -678,6 +726,7 @@
+@@ -678,11 +726,12 @@
  
              this.field_219255_i.func_217381_Z().func_230035_c_("chunkSave");
              CompoundNBT compoundnbt = ChunkSerializer.func_222645_a(this.field_219255_i, p_219229_1_);
@@ -154,6 +184,21 @@
              this.func_219100_a(chunkpos, compoundnbt);
              this.func_241088_a_(chunkpos, chunkstatus.func_202129_d());
              return true;
+          } catch (Exception exception) {
+-            field_219250_d.error("Failed to save chunk {},{}", chunkpos.field_77276_a, chunkpos.field_77275_b, exception);
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.5", chunkpos.field_77276_a, chunkpos.field_77275_b, exception));
+             return false;
+          }
+       }
+@@ -701,7 +750,7 @@
+                return false;
+             }
+          } catch (Exception exception) {
+-            field_219250_d.error("Failed to read chunk {}", p_241090_1_, exception);
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.6", p_241090_1_, exception));
+             this.func_241089_g_(p_241090_1_);
+             return false;
+          }
 @@ -734,6 +783,7 @@
  
     protected void func_219199_a(ServerPlayerEntity p_219199_1_, ChunkPos p_219199_2_, IPacket<?>[] p_219199_3_, boolean p_219199_4_, boolean p_219199_5_) {
