@@ -24,7 +24,7 @@
  
     public SaplingBlock(Tree p_i48337_1_, AbstractBlock.Properties p_i48337_2_) {
        super(p_i48337_2_);
-@@ -28,8 +34,29 @@
+@@ -28,8 +34,30 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -36,6 +36,7 @@
 +         // CraftBukkit end
           this.func_226942_a_(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_);
 +         // CraftBukkit start
++         p_225542_2_.captureTreeGeneration = false;
 +         if(p_225542_2_.capturedBlockStates.size() > 0){
 +            TreeType treeType = SaplingBlock.treeType;
 +            SaplingBlock.treeType = null;
@@ -55,7 +56,7 @@
        }
  
     }
-@@ -38,6 +65,7 @@
+@@ -38,6 +66,7 @@
        if (p_226942_3_.func_177229_b(field_176479_b) == 0) {
           p_226942_1_.func_180501_a(p_226942_2_, p_226942_3_.func_235896_a_(field_176479_b), 4);
        } else {
