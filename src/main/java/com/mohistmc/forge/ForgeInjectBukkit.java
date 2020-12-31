@@ -1,5 +1,8 @@
 package com.mohistmc.forge;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableMap;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
@@ -36,6 +39,13 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import java.util.Map;
 
 public class ForgeInjectBukkit {
+
+    public static BiMap<RegistryKey<DimensionType>, World.Environment> environment =
+            HashBiMap.create(ImmutableMap.<RegistryKey<DimensionType>, World.Environment>builder()
+                    .put(DimensionType.OVERWORLD, World.Environment.NORMAL)
+                    .put(DimensionType.THE_NETHER, World.Environment.NETHER)
+                    .put(DimensionType.THE_END, World.Environment.THE_END)
+                    .build());
 
     public static void init(){
         addEnumMaterialInItems();
@@ -132,12 +142,13 @@ public class ForgeInjectBukkit {
         Registry<DimensionType> registry = MinecraftServer.getServer().func_244267_aX().getRegistry(Registry.DIMENSION_TYPE_KEY);
         for (Map.Entry<RegistryKey<DimensionType>, DimensionType> entry : registry.getEntries()) {
             RegistryKey<DimensionType> key = entry.getKey();
-            ResourceLocation resourceLocation = key.getRegistryName();
-            if (!resourceLocation.getNamespace().equals("minecraft")) {
+            World.Environment environment1 = environment.get(key);
+            if (environment1 == null) {
                 String name = Material.normalizeName(key.getLocation().toString());
                 int id = i - 1;
-                World.Environment environment = MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
-                MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment);
+                environment1 = MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+                environment.put(key, environment1);
+                MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment1);
                 i++;
             }
         }

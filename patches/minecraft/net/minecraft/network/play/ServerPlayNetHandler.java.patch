@@ -442,7 +442,7 @@
              this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
              this.field_147369_b.func_71000_j(this.field_147369_b.func_226277_ct_() - d0, this.field_147369_b.func_226278_cu_() - d1, this.field_147369_b.func_226281_cx_() - d2);
              this.field_184345_D = d7 >= -0.03125D && !this.field_147367_d.func_71231_X() && this.func_241162_a_(entity);
-@@ -410,13 +618,13 @@
+@@ -410,7 +618,7 @@
     }
  
     private boolean func_241162_a_(Entity p_241162_1_) {
@@ -451,14 +451,6 @@
     }
  
     public void func_184339_a(CConfirmTeleportPacket p_184339_1_) {
-       PacketThreadUtil.func_218796_a(p_184339_1_, this, this.field_147369_b.func_71121_q());
--      if (p_184339_1_.func_186987_a() == this.field_184363_z) {
--         this.field_147369_b.func_70080_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
-+      if (p_184339_1_.func_186987_a() == this.field_184363_z && this.field_184362_y != null) { // CraftBukkit
-+         this.field_147369_b.func_70012_b(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
-          this.field_184352_o = this.field_184362_y.field_72450_a;
-          this.field_184353_p = this.field_184362_y.field_72448_b;
-          this.field_184354_q = this.field_184362_y.field_72449_c;
 @@ -425,6 +633,7 @@
           }
  

@@ -86,11 +86,16 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
-@@ -138,15 +122,25 @@
- import net.minecraft.world.storage.MapData;
- import net.minecraft.world.storage.MapIdTracker;
- import net.minecraft.world.storage.SaveFormat;
-+import net.minecraft.world.storage.ServerWorldInfo;
+@@ -133,27 +117,32 @@
+ import net.minecraft.world.raid.RaidManager;
+ import net.minecraft.world.spawner.ISpecialSpawner;
+ import net.minecraft.world.spawner.WorldEntitySpawner;
+-import net.minecraft.world.storage.DimensionSavedDataManager;
+-import net.minecraft.world.storage.IServerWorldInfo;
+-import net.minecraft.world.storage.MapData;
+-import net.minecraft.world.storage.MapIdTracker;
+-import net.minecraft.world.storage.SaveFormat;
++import net.minecraft.world.storage.*;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
@@ -114,7 +119,15 @@
     private final Map<UUID, Entity> field_175741_N = Maps.newHashMap();
     private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
     private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
-@@ -173,16 +167,37 @@
+    private final ServerChunkProvider field_241102_C_;
+    boolean field_217492_a;
+    private final MinecraftServer field_73061_a;
+-   private final IServerWorldInfo field_241103_E_;
++   public final IServerWorldInfo field_241103_E_;
+    public boolean field_73058_d;
+    private boolean field_73068_P;
+    private int field_80004_Q;
+@@ -173,9 +162,31 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -122,6 +135,7 @@
  
 +   // CraftBukkit start
 +   private int tickPosition;
++   public ServerWorldInfo worldDataServer;
 +   public final SaveFormat.LevelSave convertable;
 +   public final UUID uuid;
 +
@@ -134,25 +148,18 @@
        super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
 +      this.pvpMode = p_i241885_1_.func_71219_W();
 +      convertable = p_i241885_3_;
-+      uuid = WorldUUID.getUUID(p_i241885_3_.field_237279_c_.toFile());
++      uuid = WorldUUID.getUUID(p_i241885_3_.func_237291_a_(this.func_234923_W_()));
++      if (p_i241885_4_ instanceof ServerWorldInfo) {
++         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
++      }
++      if (generator != null) {
++         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
++      }
 +      // CraftBukkit end
        this.field_241107_Q_ = p_i241885_13_;
        this.field_73061_a = p_i241885_1_;
        this.field_241104_N_ = p_i241885_12_;
-+      // CraftBukkit start
-       this.field_241103_E_ = p_i241885_4_;
-+      if (generator != null) {
-+         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
-+      }
-+
-       this.field_241102_C_ = new ServerChunkProvider(this, p_i241885_3_, p_i241885_1_.func_195563_aC(), p_i241885_1_.func_240792_aT_(), p_i241885_2_, p_i241885_8_, p_i241885_1_.func_184103_al().func_72395_o(), p_i241885_1_.func_230540_aS_(), p_i241885_7_, () -> {
-          return p_i241885_1_.func_241755_D_().func_217481_x();
-       });
-+      // CraftBukkit end
-       this.field_85177_Q = new Teleporter(this);
-       this.func_72966_v();
-       this.func_72947_a();
-@@ -200,9 +215,39 @@
+@@ -200,9 +211,39 @@
        } else {
           this.field_241105_O_ = null;
        }
@@ -192,7 +199,7 @@
     public void func_241113_a_(int p_241113_1_, int p_241113_2_, boolean p_241113_3_, boolean p_241113_4_) {
        this.field_241103_E_.func_230391_a_(p_241113_1_);
        this.field_241103_E_.func_76080_g(p_241113_2_);
-@@ -211,6 +256,7 @@
+@@ -211,6 +252,7 @@
        this.field_241103_E_.func_76069_a(p_241113_4_);
     }
  
@@ -200,7 +207,7 @@
     public Biome func_225604_a_(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
        return this.func_72863_F().func_201711_g().func_202090_b().func_225526_b_(p_225604_1_, p_225604_2_, p_225604_3_);
     }
-@@ -288,35 +334,70 @@
+@@ -288,35 +330,70 @@
           this.field_73004_o = MathHelper.func_76131_a(this.field_73004_o, 0.0F, 1.0F);
        }
  
@@ -285,7 +292,7 @@
           if (this.func_82736_K().func_223586_b(GameRules.field_223617_t)) {
              this.func_73051_P();
           }
-@@ -327,23 +408,28 @@
+@@ -327,23 +404,28 @@
        iprofiler.func_219895_b("chunkSource");
        this.func_72863_F().func_217207_a(p_72835_1_);
        iprofiler.func_219895_b("tickPending");
@@ -315,7 +322,7 @@
           if (this.field_241105_O_ != null) {
              this.field_241105_O_.func_186105_b();
           }
-@@ -351,18 +437,22 @@
+@@ -351,18 +433,22 @@
           this.field_217492_a = true;
           ObjectIterator<Entry<Entity>> objectiterator = this.field_217498_x.int2ObjectEntrySet().iterator();
  
@@ -338,7 +345,7 @@
                    this.func_217391_K();
                    break label164;
                 }
-@@ -370,13 +460,15 @@
+@@ -370,13 +456,15 @@
                 Entry<Entity> entry = objectiterator.next();
                 entity1 = entry.getValue();
                 Entity entity2 = entity1.func_184187_bx();
@@ -358,7 +365,7 @@
  
                 iprofiler.func_76320_a("checkDespawn");
                 if (!entity1.field_70128_L) {
-@@ -404,7 +496,7 @@
+@@ -404,7 +492,7 @@
              if (entity1.field_70128_L) {
                 this.func_217454_n(entity1);
                 objectiterator.remove();
@@ -367,7 +374,7 @@
              }
  
              iprofiler.func_76319_b();
-@@ -460,13 +552,13 @@
+@@ -460,13 +548,13 @@
                 skeletonhorseentity.func_190691_p(true);
                 skeletonhorseentity.func_70873_a(0);
                 skeletonhorseentity.func_70107_b((double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p());
@@ -383,7 +390,7 @@
           }
        }
  
-@@ -475,12 +567,13 @@
+@@ -475,12 +563,13 @@
           BlockPos blockpos2 = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, this.func_217383_a(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.func_177977_b();
           Biome biome = this.func_226691_t_(blockpos2);
@@ -399,7 +406,7 @@
           }
  
           if (flag && this.func_226691_t_(blockpos3).func_201851_b() == Biome.RainType.RAIN) {
-@@ -544,7 +637,7 @@
+@@ -544,7 +633,7 @@
           int j = 0;
  
           for(ServerPlayerEntity serverplayerentity : this.field_217491_A) {
@@ -408,7 +415,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -561,10 +654,22 @@
+@@ -561,10 +650,22 @@
     }
  
     private void func_73051_P() {
@@ -433,7 +440,7 @@
     }
  
     public void func_82742_i() {
-@@ -591,6 +696,14 @@
+@@ -591,6 +692,14 @@
        if (!(p_217479_1_ instanceof PlayerEntity) && !this.func_72863_F().func_217204_a(p_217479_1_)) {
           this.func_217464_b(p_217479_1_);
        } else {
@@ -448,7 +455,7 @@
           p_217479_1_.func_226286_f_(p_217479_1_.func_226277_ct_(), p_217479_1_.func_226278_cu_(), p_217479_1_.func_226281_cx_());
           p_217479_1_.field_70126_B = p_217479_1_.field_70177_z;
           p_217479_1_.field_70127_C = p_217479_1_.field_70125_A;
-@@ -598,10 +711,12 @@
+@@ -598,10 +707,12 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
@@ -462,7 +469,7 @@
              iprofiler.func_76319_b();
           }
  
-@@ -611,6 +726,7 @@
+@@ -611,6 +722,7 @@
                 this.func_217459_a(p_217479_1_, entity);
              }
           }
@@ -470,7 +477,7 @@
  
        }
     }
-@@ -629,6 +745,7 @@
+@@ -629,6 +741,7 @@
                 });
                 iprofiler.func_230035_c_("tickPassenger");
                 p_217459_2_.func_70098_U();
@@ -478,7 +485,7 @@
                 iprofiler.func_76319_b();
              }
  
-@@ -649,7 +766,7 @@
+@@ -649,7 +762,7 @@
        if (p_217464_1_.func_233578_ci_()) {
           this.func_217381_Z().func_76320_a("chunkCheck");
           int i = MathHelper.func_76128_c(p_217464_1_.func_226277_ct_() / 16.0D);
@@ -487,7 +494,7 @@
           int k = MathHelper.func_76128_c(p_217464_1_.func_226281_cx_() / 16.0D);
           if (!p_217464_1_.field_70175_ag || p_217464_1_.field_70176_ah != i || p_217464_1_.field_70162_ai != j || p_217464_1_.field_70164_aj != k) {
              if (p_217464_1_.field_70175_ag && this.func_217354_b(p_217464_1_.field_70176_ah, p_217464_1_.field_70164_aj)) {
-@@ -658,7 +775,7 @@
+@@ -658,7 +771,7 @@
  
              if (!p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) {
                 if (p_217464_1_.field_70175_ag) {
@@ -496,7 +503,7 @@
                 }
  
                 p_217464_1_.field_70175_ag = false;
-@@ -678,6 +795,7 @@
+@@ -678,6 +791,7 @@
     public void func_217445_a(@Nullable IProgressUpdate p_217445_1_, boolean p_217445_2_, boolean p_217445_3_) {
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
        if (!p_217445_3_) {
@@ -504,7 +511,7 @@
           if (p_217445_1_ != null) {
              p_217445_1_.func_200210_a(new TranslationTextComponent("menu.savingLevel"));
           }
-@@ -687,6 +805,7 @@
+@@ -687,6 +801,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
@@ -512,7 +519,7 @@
           serverchunkprovider.func_217210_a(p_217445_2_);
        }
     }
-@@ -743,13 +862,23 @@
+@@ -743,13 +858,23 @@
     }
  
     public boolean func_217376_c(Entity p_217376_1_) {
@@ -538,7 +545,7 @@
     public void func_217460_e(Entity p_217460_1_) {
        boolean flag = p_217460_1_.field_98038_p;
        p_217460_1_.field_98038_p = true;
-@@ -777,9 +906,10 @@
+@@ -777,9 +902,10 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -550,7 +557,7 @@
           entity.func_213319_R();
           this.func_217434_e((ServerPlayerEntity)entity);
        }
-@@ -795,18 +925,24 @@
+@@ -795,18 +921,24 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
@@ -581,7 +588,7 @@
              return true;
           }
        }
-@@ -816,6 +952,7 @@
+@@ -816,6 +948,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -589,7 +596,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -827,7 +964,7 @@
+@@ -827,7 +960,7 @@
        if (entity == null) {
           return false;
        } else {
@@ -598,7 +605,7 @@
           return true;
        }
     }
-@@ -851,15 +988,30 @@
+@@ -851,15 +984,30 @@
     }
  
     public boolean func_242106_g(Entity p_242106_1_) {
@@ -631,7 +638,7 @@
        this.field_147483_b.addAll(p_217466_1_.func_177434_r().values());
        ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = p_217466_1_.func_177429_s();
        int i = aclassinheritancemultimap.length;
-@@ -879,12 +1031,41 @@
+@@ -879,12 +1027,41 @@
  
     }
  
@@ -674,7 +681,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -894,10 +1075,19 @@
+@@ -894,10 +1071,19 @@
        }
  
        this.func_96441_U().func_181140_a(p_217484_1_);
@@ -694,7 +701,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -913,20 +1103,31 @@
+@@ -913,20 +1099,31 @@
  
           this.field_175741_N.put(p_217465_1_.func_110124_au(), p_217465_1_);
           this.func_72863_F().func_217230_c(p_217465_1_);
@@ -727,7 +734,7 @@
        }
     }
  
-@@ -939,17 +1140,47 @@
+@@ -939,17 +1136,47 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -777,7 +784,7 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayerentity.field_71135_a.func_147359_a(new SAnimateBlockBreakPacket(p_175715_1_, p_175715_2_, p_175715_3_));
              }
-@@ -959,10 +1190,20 @@
+@@ -959,10 +1186,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -798,7 +805,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.func_234923_W_(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -997,9 +1238,17 @@
+@@ -997,9 +1234,17 @@
     }
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
@@ -819,7 +826,7 @@
        if (p_230546_12_ == Explosion.Mode.NONE) {
           explosion.func_180342_d();
        }
-@@ -1054,12 +1303,19 @@
+@@ -1054,12 +1299,19 @@
     }
  
     public <T extends IParticleData> int func_195598_a(T p_195598_1_, double p_195598_2_, double p_195598_4_, double p_195598_6_, int p_195598_8_, double p_195598_9_, double p_195598_11_, double p_195598_13_, double p_195598_15_) {
@@ -841,7 +848,7 @@
              ++i;
           }
        }
-@@ -1131,7 +1387,13 @@
+@@ -1131,7 +1383,13 @@
     @Nullable
     public MapData func_217406_a(String p_217406_1_) {
        return this.func_73046_m().func_241755_D_().func_217481_x().func_215753_b(() -> {
@@ -856,7 +863,7 @@
        }, p_217406_1_);
     }
  
-@@ -1333,6 +1595,11 @@
+@@ -1333,6 +1591,11 @@
  
     public void func_230547_a_(BlockPos p_230547_1_, Block p_230547_2_) {
        if (!this.func_234925_Z_()) {
@@ -868,7 +875,7 @@
           this.func_195593_d(p_230547_1_, p_230547_2_);
        }
  
-@@ -1399,15 +1666,44 @@
+@@ -1399,15 +1662,44 @@
     }
  
     public static void func_241121_a_(ServerWorld p_241121_0_) {

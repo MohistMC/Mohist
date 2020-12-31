@@ -87,7 +87,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.Ticket;
 import net.minecraft.world.server.TicketManager;
 import net.minecraft.world.server.TicketType;
-import net.minecraft.world.storage.FolderName;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Bukkit;
@@ -758,7 +757,7 @@ public class CraftWorld implements World {
 
     @Override
     public String getName() {
-        return world.getServer().getServerConfiguration().getWorldName();
+        return world.field_241103_E_.getWorldName();
     }
 
     @Override
@@ -1889,7 +1888,7 @@ public class CraftWorld implements World {
 
     @Override
     public File getWorldFolder() {
-        return world.convertable.resolveFilePath(FolderName.DOT).toFile().getParentFile();
+        return world.convertable.getDimensionFolder(this.world.getDimensionKey());
     }
 
     @Override
