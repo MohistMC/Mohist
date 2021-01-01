@@ -952,15 +952,6 @@
           ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, serverworld, itemstack, hand);
           if (actionresulttype.func_226247_b_()) {
              this.field_147369_b.func_226292_a_(hand, true);
-@@ -989,7 +1471,7 @@
-          for(ServerWorld serverworld : this.field_147367_d.func_212370_w()) {
-             Entity entity = p_175088_1_.func_179727_a(serverworld);
-             if (entity != null) {
--               this.field_147369_b.func_200619_a(serverworld, entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), entity.field_70177_z, entity.field_70125_A);
-+               this.field_147369_b.teleport(serverworld, entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), entity.field_70177_z, entity.field_70125_A, TeleportCause.SPECTATE); // CraftBukkit
-                return;
-             }
-          }
 @@ -997,8 +1479,12 @@
  
     }
