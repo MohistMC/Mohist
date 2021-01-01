@@ -68,10 +68,10 @@ public class DeferredWorkQueue
 
     void runTasks() {
         if (tasks.isEmpty()) return;
-        LOGGER.debug(LOADING, "Dispatching synchronous work after {}: {} jobs", modLoadingStage, tasks.size());
+        LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("deferredworkqueue.1", modLoadingStage, tasks.size()));
         StopWatch globalTimer = StopWatch.createStarted();
         tasks.forEach(t->makeRunnable(t, Runnable::run));
-        LOGGER.debug(LOADING, "Synchronous work queue completed in {}", globalTimer);
+        LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("deferredworkqueue.2", globalTimer));
     }
 
     private static void makeRunnable(TaskInfo ti, Executor executor) {
@@ -80,7 +80,7 @@ public class DeferredWorkQueue
             ti.task.run();
             timer.stop();
             if (timer.elapsed(TimeUnit.SECONDS) >= 1) {
-                LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", ti.owner.getModId(), timer);
+                LOGGER.warn(LOADING, com.mohistmc.util.i18n.i18n.get("deferredworkqueue.3", ti.owner.getModId(), timer));
             }
         });
     }

@@ -235,7 +235,7 @@ public class ForgeTagHandler
      */
     public static Map<ResourceLocation, TagCollectionReader<?>> createCustomTagTypeReaders()
     {
-        LOGGER.debug("Gathering custom tag collection reader from types.");
+        LOGGER.debug(com.mohistmc.util.i18n.i18n.get("forgetaghandler.1"));
         ImmutableMap.Builder<ResourceLocation, TagCollectionReader<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
         {
@@ -288,7 +288,7 @@ public class ForgeTagHandler
         resetCachedTagCollections(false, false);
         if (!customTagTypes.isEmpty())
         {
-            LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
+            LOGGER.debug(com.mohistmc.util.i18n.i18n.get("forgetaghandler.2", customTagTypes.size()));
         }
         return ITagCollectionSupplier.getTagCollectionSupplier(blockTags, itemTags, fluidTags, entityTypeTags);
     }
