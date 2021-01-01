@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_16_R3.entity;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import java.util.Locale;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
@@ -8,8 +9,10 @@ import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
@@ -106,10 +109,10 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Profession.valueOf(Registry.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT));
+        return nms.getRegistryName().getNamespace().equals(NamespacedKey.MINECRAFT) ? Profession.valueOf(Registry.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT)) : Profession.valueOf(ForgeInjectBukkit.normalizeName(nms.getRegistryName().toString()));
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
-        return Registry.VILLAGER_PROFESSION.getOrDefault(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
+        return !ForgeInjectBukkit.profession.containsKey(bukkit) ? Registry.VILLAGER_PROFESSION.getOrDefault(CraftNamespacedKey.toMinecraft(bukkit.getKey())) : ForgeRegistries.PROFESSIONS.getValue(ForgeInjectBukkit.profession.get(bukkit));
     }
 }

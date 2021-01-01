@@ -8,9 +8,12 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.MohistEnumHelper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
 import net.minecraft.server.MinecraftServer;
@@ -31,6 +34,7 @@ import org.bukkit.craftbukkit.v1_16_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Villager;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
@@ -47,6 +51,8 @@ public class ForgeInjectBukkit {
                     .put(DimensionType.THE_END, World.Environment.THE_END)
                     .build());
 
+    public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
+
     public static void init(){
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
@@ -55,6 +61,7 @@ public class ForgeInjectBukkit {
         addEnumPotion();
         addEnumPattern();
         addEnumEntity();
+        addEnumVillagerProfession();
     }
 
 
@@ -194,5 +201,21 @@ public class ForgeInjectBukkit {
         }
         Permission permission = new Permission(name, desc, permissionDefault);
         DefaultPermissions.registerPermission(permission, false);
+    }
+
+    public static void addEnumVillagerProfession() {
+        for (VillagerProfession villagerProfession : ForgeRegistries.PROFESSIONS) {
+            ResourceLocation resourceLocation = villagerProfession.getRegistryName();
+            String name = normalizeName(resourceLocation.toString());
+            if(!resourceLocation.getNamespace().equals("minecraft")) {
+                Villager.Profession vp = MohistEnumHelper.addEnum0(Villager.Profession.class, name, new Class[0]);
+                profession.put(vp, resourceLocation);
+                MohistMC.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
+            }
+        }
+    }
+
+    public static String normalizeName(String name) {
+        return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
     }
 }
