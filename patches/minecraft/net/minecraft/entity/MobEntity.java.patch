@@ -1,6 +1,12 @@
 --- a/net/minecraft/entity/MobEntity.java
 +++ b/net/minecraft/entity/MobEntity.java
-@@ -6,6 +6,7 @@
+@@ -1,11 +1,13 @@
+ package net.minecraft.entity;
+ 
+ import com.google.common.collect.Maps;
++import com.mohistmc.MohistMC;
+ import java.util.Arrays;
+ import java.util.Map;
  import java.util.Optional;
  import java.util.Random;
  import java.util.UUID;
@@ -8,7 +14,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.AbstractSkullBlock;
  import net.minecraft.block.Blocks;
-@@ -26,6 +27,7 @@
+@@ -26,6 +28,7 @@
  import net.minecraft.entity.item.LeashKnotEntity;
  import net.minecraft.entity.monster.IMob;
  import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +22,7 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.inventory.EquipmentSlotType;
  import net.minecraft.item.ArmorItem;
-@@ -65,7 +67,6 @@
+@@ -65,7 +68,6 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.DifficultyInstance;
@@ -24,7 +30,7 @@
  import net.minecraft.world.IServerWorld;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
-@@ -73,6 +74,15 @@
+@@ -73,6 +75,15 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -40,7 +46,7 @@
  
  public abstract class MobEntity extends LivingEntity {
     private static final DataParameter<Byte> field_184654_a = EntityDataManager.func_187226_a(MobEntity.class, DataSerializers.field_187191_a);
-@@ -83,19 +93,19 @@
+@@ -83,19 +94,19 @@
     protected JumpController field_70767_i;
     private final BodyController field_70762_j;
     protected PathNavigator field_70699_by;
@@ -68,7 +74,7 @@
     @Nullable
     private Entity field_110168_bw;
     private int field_213400_bI;
-@@ -104,6 +114,8 @@
+@@ -104,6 +115,8 @@
     private BlockPos field_213401_bK = BlockPos.field_177992_a;
     private float field_213402_bL = -1.0F;
  
@@ -77,7 +83,7 @@
     protected MobEntity(EntityType<? extends MobEntity> p_i48576_1_, World p_i48576_2_) {
        super(p_i48576_1_, p_i48576_2_);
        this.field_70714_bg = new GoalSelector(p_i48576_2_.func_234924_Y_());
-@@ -119,7 +131,6 @@
+@@ -119,7 +132,6 @@
        if (p_i48576_2_ != null && !p_i48576_2_.field_72995_K) {
           this.func_184651_r();
        }
@@ -85,7 +91,7 @@
     }
  
     protected void func_184651_r() {
-@@ -197,9 +208,43 @@
+@@ -197,9 +209,40 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
@@ -101,9 +107,6 @@
 +      if (fireEvent) {
 +         if (reason == EntityTargetEvent.TargetReason.UNKNOWN && this.func_70638_az() != null && entitylivingbaseIn == null) {
 +            reason = (this.func_70638_az().func_70089_S() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED);
-+         }
-+         if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
-+            this.field_70170_p.getCBServer().getLogger().log(Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
 +         }
 +         CraftLivingEntity ctarget = null;
 +         if (entitylivingbaseIn != null) {
@@ -130,7 +133,7 @@
     public boolean func_213358_a(EntityType<?> p_213358_1_) {
        return p_213358_1_ != EntityType.field_200811_y;
     }
-@@ -395,15 +440,26 @@
+@@ -395,15 +438,26 @@
           p_213281_1_.func_74757_a("NoAI", this.func_175446_cd());
        }
  
@@ -159,7 +162,7 @@
        if (p_70037_1_.func_150297_b("ArmorItems", 9)) {
           ListNBT listnbt = p_70037_1_.func_150295_c("ArmorItems", 10);
  
-@@ -447,6 +503,11 @@
+@@ -447,6 +501,11 @@
        }
  
        this.func_94061_f(p_70037_1_.func_74767_n("NoAI"));
@@ -171,7 +174,7 @@
     }
  
     protected void func_213354_a(DamageSource p_213354_1_, boolean p_213354_2_) {
-@@ -462,7 +523,7 @@
+@@ -462,7 +521,7 @@
        return this.field_184659_bA == null ? this.func_184647_J() : this.field_184659_bA;
     }
  
@@ -180,7 +183,7 @@
        return super.func_213346_cF();
     }
  
-@@ -486,7 +547,7 @@
+@@ -486,7 +545,7 @@
     public void func_70636_d() {
        super.func_70636_d();
        this.field_70170_p.func_217381_Z().func_76320_a("looting");
@@ -189,7 +192,7 @@
           for(ItemEntity itementity : this.field_70170_p.func_217357_a(ItemEntity.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D))) {
              if (!itementity.field_70128_L && !itementity.func_92059_d().func_190926_b() && !itementity.func_174874_s() && this.func_230293_i_(itementity.func_92059_d())) {
                 this.func_175445_a(itementity);
-@@ -499,7 +560,7 @@
+@@ -499,7 +558,7 @@
  
     protected void func_175445_a(ItemEntity p_175445_1_) {
        ItemStack itemstack = p_175445_1_.func_92059_d();
@@ -198,7 +201,7 @@
           this.func_233630_a_(p_175445_1_);
           this.func_71001_a(p_175445_1_, itemstack.func_190916_E());
           p_175445_1_.func_70106_y();
-@@ -508,13 +569,27 @@
+@@ -508,13 +567,27 @@
     }
  
     public boolean func_233665_g_(ItemStack p_233665_1_) {
@@ -227,7 +230,7 @@
           }
  
           this.func_233657_b_(equipmentslottype, p_233665_1_);
-@@ -639,17 +714,25 @@
+@@ -639,17 +712,25 @@
           this.func_70106_y();
        } else if (!this.func_104002_bU() && !this.func_213392_I()) {
           Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
@@ -255,7 +258,7 @@
                 this.func_70106_y();
              } else if (d0 < (double)l) {
                 this.field_70708_bq = 0;
-@@ -663,6 +746,7 @@
+@@ -663,6 +744,7 @@
  
     protected final void func_70626_be() {
        ++this.field_70708_bq;
@@ -263,7 +266,7 @@
        this.field_70170_p.func_217381_Z().func_76320_a("sensing");
        this.field_70723_bA.func_75523_a();
        this.field_70170_p.func_217381_Z().func_76319_b();
-@@ -879,6 +963,8 @@
+@@ -879,6 +961,8 @@
     }
  
     public static EquipmentSlotType func_184640_d(ItemStack p_184640_0_) {
@@ -272,7 +275,7 @@
        Item item = p_184640_0_.func_77973_b();
        if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof BlockItem) || !(((BlockItem)item).func_179223_d() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
-@@ -886,7 +972,7 @@
+@@ -886,7 +970,7 @@
           } else if (item == Items.field_185160_cR) {
              return EquipmentSlotType.CHEST;
           } else {
@@ -281,7 +284,7 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
-@@ -1008,11 +1094,11 @@
+@@ -1008,11 +1092,11 @@
     }
  
     public boolean func_98052_bS() {
@@ -295,7 +298,7 @@
     }
  
     public boolean func_213365_e(ItemStack p_213365_1_) {
-@@ -1028,6 +1114,12 @@
+@@ -1028,6 +1112,12 @@
        if (!this.func_70089_S()) {
           return ActionResultType.PASS;
        } else if (this.func_110166_bE() == p_184230_1_) {
@@ -308,7 +311,7 @@
           this.func_110160_i(true, !p_184230_1_.field_71075_bZ.field_75098_d);
           return ActionResultType.func_233537_a_(this.field_70170_p.field_72995_K);
        } else {
-@@ -1044,6 +1136,12 @@
+@@ -1044,6 +1134,12 @@
     private ActionResultType func_233661_c_(PlayerEntity p_233661_1_, Hand p_233661_2_) {
        ItemStack itemstack = p_233661_1_.func_184586_b(p_233661_2_);
        if (itemstack.func_77973_b() == Items.field_151058_ca && this.func_184652_a(p_233661_1_)) {
@@ -321,7 +324,7 @@
           this.func_110162_b(p_233661_1_, true);
           itemstack.func_190918_g(1);
           return ActionResultType.func_233537_a_(this.field_70170_p.field_72995_K);
-@@ -1108,13 +1206,21 @@
+@@ -1108,13 +1204,21 @@
        return this.field_213402_bL != -1.0F;
     }
  
@@ -343,7 +346,7 @@
           t.func_82227_f(this.func_70631_g_());
           t.func_94061_f(this.func_175446_cd());
           if (this.func_145818_k_()) {
-@@ -1140,13 +1246,17 @@
+@@ -1140,13 +1244,17 @@
              }
           }
  
@@ -363,7 +366,7 @@
           this.func_70106_y();
           return t;
        }
-@@ -1159,6 +1269,7 @@
+@@ -1159,6 +1267,7 @@
  
        if (this.field_110168_bw != null) {
           if (!this.func_70089_S() || !this.field_110168_bw.func_70089_S()) {
@@ -371,7 +374,7 @@
              this.func_110160_i(true, true);
           }
  
-@@ -1175,7 +1286,9 @@
+@@ -1175,7 +1284,9 @@
           this.field_110168_bw = null;
           this.field_110170_bx = null;
           if (!this.field_70170_p.field_72995_K && p_110160_2_) {
@@ -381,7 +384,7 @@
           }
  
           if (!this.field_70170_p.field_72995_K && p_110160_1_ && this.field_70170_p instanceof ServerWorld) {
-@@ -1229,6 +1342,7 @@
+@@ -1229,6 +1340,7 @@
     public boolean func_184205_a(Entity p_184205_1_, boolean p_184205_2_) {
        boolean flag = super.func_184205_a(p_184205_1_, p_184205_2_);
        if (flag && this.func_110167_bD()) {
@@ -389,7 +392,7 @@
           this.func_110160_i(true, true);
        }
  
-@@ -1347,7 +1461,13 @@
+@@ -1347,7 +1459,13 @@
  
        int i = EnchantmentHelper.func_90036_a(this);
        if (i > 0) {
@@ -404,7 +407,7 @@
        }
  
        boolean flag = p_70652_1_.func_70097_a(DamageSource.func_76358_a(this), f);
-@@ -1403,6 +1523,7 @@
+@@ -1403,6 +1521,7 @@
  
     protected void func_241204_bJ_() {
        super.func_241204_bJ_();
