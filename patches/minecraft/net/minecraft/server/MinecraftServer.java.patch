@@ -508,7 +508,7 @@
           CrashReport crashreport;
           if (throwable1 instanceof ReportedException) {
              crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
-@@ -657,19 +799,23 @@
+@@ -657,20 +799,24 @@
  
           File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
           if (crashreport.func_147149_a(file1)) {
@@ -531,10 +531,11 @@
           } finally {
 +            org.spigotmc.WatchdogThread.doStop(); // Spigot
 +            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
-+            MohistThreadBox.METRICS.shutdown();
              this.func_71240_o();
++            MohistThreadBox.METRICS.shutdown();
           }
  
+       }
 @@ -678,9 +824,16 @@
     }
  

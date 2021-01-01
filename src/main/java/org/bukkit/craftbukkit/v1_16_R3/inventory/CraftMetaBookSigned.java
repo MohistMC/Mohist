@@ -10,6 +10,7 @@ import net.minecraft.util.text.ITextComponent.Serializer;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.SerializableMeta;
+import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BookMeta;
 
@@ -21,61 +22,30 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
     }
 
     CraftMetaBookSigned(CompoundNBT tag) {
-        super(tag, false);
-
-        boolean resolved = true;
-        if (tag.contains(RESOLVED.NBT)) {
-            resolved = tag.getBoolean(RESOLVED.NBT);
-        }
-
-        if (tag.contains(BOOK_PAGES.NBT)) {
-            ListNBT pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
-
-            for (int i = 0; i < Math.min(pages.size(), MAX_PAGES); i++) {
-                String page = pages.getString(i);
-                if (resolved) {
-                    try {
-                        this.pages.add(Serializer.getComponentFromJson(page));
-                        continue;
-                    } catch (Exception e) {
-                        // Ignore and treat as an old book
-                    }
-                }
-                addPage(page);
-            }
-        }
+        super(tag);
     }
 
     CraftMetaBookSigned(Map<String, Object> map) {
         super(map);
     }
 
+    protected String deserializePage(String pageData) {
+        return CraftChatMessage.fromJSONOrStringToJSON(pageData, false, true, MAX_PAGE_LENGTH, false);
+    }
+
+    @Override
+    protected String convertPlainPageToData(String page) {
+        return CraftChatMessage.fromStringToJSON(page, true);
+    }
+
+    @Override
+    protected String convertDataToPlainPage(String pageData) {
+        return CraftChatMessage.fromJSONComponent(pageData);
+    }
+
     @Override
     void applyToItem(CompoundNBT itemData) {
-        super.applyToItem(itemData, false);
-
-        if (hasTitle()) {
-            itemData.putString(BOOK_TITLE.NBT, this.title);
-        }
-
-        if (hasAuthor()) {
-            itemData.putString(BOOK_AUTHOR.NBT, this.author);
-        }
-
-        if (hasPages()) {
-            ListNBT list = new ListNBT();
-            for (ITextComponent page : pages) {
-                list.add(StringNBT.valueOf(
-                        Serializer.toJson(page)
-                ));
-            }
-            itemData.put(BOOK_PAGES.NBT, list);
-        }
-        itemData.putBoolean(RESOLVED.NBT, true);
-
-        if (generation != null) {
-            itemData.putInt(GENERATION.NBT, generation);
-        }
+        super.applyToItem(itemData);
     }
 
     @Override

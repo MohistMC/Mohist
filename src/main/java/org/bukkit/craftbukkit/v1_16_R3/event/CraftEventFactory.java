@@ -1297,40 +1297,11 @@ public class CraftEventFactory {
                     itemInHand.setItem(Items.WRITTEN_BOOK);
                 }
                 CraftMetaBook meta = (CraftMetaBook) editBookEvent.getNewBookMeta();
-                List<ITextComponent> pages = meta.pages;
-                for (int i = 0; i < pages.size(); i++) {
-                    pages.set(i, stripEvents(pages.get(i)));
-                }
                 CraftItemStack.setItemMeta(itemInHand, meta);
             }
         }
 
         return itemInHand;
-    }
-
-    private static ITextComponent stripEvents(ITextComponent c) {
-        Style modi = c.getStyle();
-        if (modi != null) {
-            modi = modi.setClickEvent(null);
-            modi = modi.setHoverEvent(null);
-        }
-        if (c instanceof TranslationTextComponent) {
-            TranslationTextComponent cm = (TranslationTextComponent) c;
-            Object[] oo = cm.getFormatArgs();
-            for (int i = 0; i < oo.length; i++) {
-                Object o = oo[i];
-                if (o instanceof ITextComponent) {
-                    oo[i] = stripEvents((ITextComponent) o);
-                }
-            }
-        }
-        List<ITextComponent> ls = c.getSiblings();
-        if (ls != null) {
-            for (int i = 0; i < ls.size(); i++) {
-                ls.set(i, stripEvents(ls.get(i)));
-            }
-        }
-        return c.copyRaw().setStyle(modi);
     }
 
     public static PlayerUnleashEntityEvent callPlayerUnleashEntityEvent(MobEntity entity, PlayerEntity player) {
