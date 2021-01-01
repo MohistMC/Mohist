@@ -49,7 +49,7 @@ public class FMLModContainer extends ModContainer
     public FMLModContainer(IModInfo info, String className, ClassLoader modClassLoader, ModFileScanData modFileScanResults)
     {
         super(info);
-        LOGGER.debug(LOADING,"Creating FMLModContainer instance for {} with classLoader {} & {}", className, modClassLoader, getClass().getClassLoader());
+        LOGGER.debug(LOADING,com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.1", className, modClassLoader, getClass().getClassLoader()));
         this.scanResults = modFileScanResults;
         activityMap.put(ModLoadingStage.CONSTRUCT, this::constructMod);
         this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).markerType(IModBusEvent.class).build();
@@ -59,11 +59,11 @@ public class FMLModContainer extends ModContainer
         try
         {
             modClass = Class.forName(className, true, modClassLoader);
-            LOGGER.debug(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
+            LOGGER.debug(LOADING,com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.2", modClass.getName(), modClass.getClassLoader()));
         }
         catch (Throwable e)
         {
-            LOGGER.error(LOADING, "Failed to load class {}", className, e);
+            LOGGER.error(LOADING, com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.3", className), e);
             throw new ModLoadingException(info, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmodclass", e);
         }
     }
@@ -77,21 +77,21 @@ public class FMLModContainer extends ModContainer
     {
         try
         {
-            LOGGER.debug(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
+            LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.4", getModId(), modClass.getName()));
             this.modInstance = modClass.newInstance();
-            LOGGER.debug(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
+            LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.4", getModId(), modClass.getName()));
         }
         catch (Throwable e)
         {
-            LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            LOGGER.error(LOADING,com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.5", getModId(), modClass.getName()), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
         try {
-            LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
+            LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.6", getModId()));
             AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
-            LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
+            LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.11", getModId()));
         } catch (Throwable e) {
-            LOGGER.error(LOADING,"Failed to register automatic subscribers. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            LOGGER.error(LOADING,com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.7", getModId(), modClass.getName()), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
     }
@@ -116,11 +116,11 @@ public class FMLModContainer extends ModContainer
     @Override
     protected <T extends Event & IModBusEvent> void acceptEvent(final T e) {
         try {
-            LOGGER.debug(LOADING, "Firing event for modid {} : {}", this.getModId(), e);
+            LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.8", this.getModId()), e);
             this.eventBus.post(e);
-            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), e);
+            LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.9", this.getModId()), e);
         } catch (Throwable t) {
-            LOGGER.error(LOADING,"Caught exception during event {} dispatch for modid {}", e, this.getModId(), t);
+            LOGGER.error(LOADING,com.mohistmc.util.i18n.i18n.get("fmlmodcontainer.10", e, this.getModId()), t);
             throw new ModLoadingException(modInfo, modLoadingStage, "fml.modloading.errorduringevent", t);
         }
     }

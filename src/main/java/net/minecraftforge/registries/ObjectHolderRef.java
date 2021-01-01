@@ -151,7 +151,7 @@ public class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
 
         if (thing == null)
         {
-            LOGGER.debug("Unable to lookup {} for {}. This means the object wasn't registered. It's likely just mod options.", injectedObject, field);
+            LOGGER.debug(com.mohistmc.util.i18n.i18n.get("objectholderref.1", injectedObject, field));
             return;
         }
         try
@@ -160,7 +160,7 @@ public class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         }
         catch (IllegalArgumentException | ReflectiveOperationException e)
         {
-            LOGGER.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
+            LOGGER.warn(com.mohistmc.util.i18n.i18n.get("objectholderref.2", this.field, thing, this.injectedObject, e));
         }
     }
 

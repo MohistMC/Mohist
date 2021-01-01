@@ -121,14 +121,14 @@ public class ModLoader
                 .filter(modFileInfo -> modFileInfo.getMods().stream().noneMatch(thisModInfo -> this.loadingExceptions.stream().map(ModLoadingException::getModInfo).anyMatch(otherInfo -> otherInfo == thisModInfo))) //Ignore files where any other mod already encountered an error
                 .map(modFileInfo -> new ModLoadingException(null, ModLoadingStage.VALIDATE, "fml.modloading.missinglicense", null, modFileInfo.getFile()))
                 .forEach(this.loadingExceptions::add);
-        LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.init());
+        LOGGER.debug(CORE, com.mohistmc.util.i18n.i18n.get("modloader.1", FMLNetworkConstants.init()));
         CrashReportExtender.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
-        CrashReportExtender.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
-        CrashReportExtender.registerCrashCallable("ModLauncher naming", FMLLoader::getNaming);
-        CrashReportExtender.registerCrashCallable("ModLauncher services", this::computeModLauncherServiceList);
+        CrashReportExtender.registerCrashCallable(com.mohistmc.util.i18n.i18n.get("modloader.2"), FMLLoader::launcherHandlerName);
+        CrashReportExtender.registerCrashCallable(com.mohistmc.util.i18n.i18n.get("modloader.3"), FMLLoader::getNaming);
+        CrashReportExtender.registerCrashCallable(com.mohistmc.util.i18n.i18n.get("modloader.4"), this::computeModLauncherServiceList);
         CrashReportExtender.registerCrashCallable("FML", ForgeVersion::getSpec);
         CrashReportExtender.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
-        CrashReportExtender.registerCrashCallable("FML Language Providers", this::computeLanguageList);
+        CrashReportExtender.registerCrashCallable(com.mohistmc.util.i18n.i18n.get("modloader.5"), this::computeLanguageList);
     }
 
     private String computeLanguageList() {
@@ -167,7 +167,7 @@ public class ModLoader
                 .collect(Collectors.toList()),
                 loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
-            LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
+            LOGGER.fatal(CORE, com.mohistmc.util.i18n.i18n.get("modloader.6", loadingExceptions.get(0)));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
@@ -179,7 +179,7 @@ public class ModLoader
                 flatMap(Collection::stream).
                 collect(Collectors.toList());
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
+            LOGGER.fatal(CORE, com.mohistmc.util.i18n.i18n.get("modloader.7", loadingExceptions.get(0)));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
@@ -227,7 +227,7 @@ public class ModLoader
 
     private void dispatchAndHandleError(ModLoadingStage state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker) {
         if (!isLoadingStateValid()) {
-            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            LOGGER.error(com.mohistmc.util.i18n.i18n.get("modloader.8", state));
             return;
         }
         waitForTransition(state, syncExecutor, ticker, state.buildTransition(syncExecutor, parallelExecutor));
@@ -235,7 +235,7 @@ public class ModLoader
 
     private void dispatchAndHandleError(ModLoadingStage state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
         if (!isLoadingStateValid()) {
-            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            LOGGER.error(com.mohistmc.util.i18n.i18n.get("modloader.8", state));
             return;
         }
         waitForTransition(state, syncExecutor, ticker, state.buildTransition(syncExecutor, parallelExecutor, preSyncTask, postSyncTask));
@@ -254,7 +254,7 @@ public class ModLoader
                     .filter(obj -> !(obj instanceof ModLoadingException))
                     .collect(Collectors.toList());
             if (!notModLoading.isEmpty()) {
-                LOGGER.fatal("Encountered non-modloading exceptions!", e);
+                LOGGER.fatal(com.mohistmc.util.i18n.i18n.get("modloader.9"), e);
                 throw e;
             }
 
@@ -262,7 +262,7 @@ public class ModLoader
                     .filter(ModLoadingException.class::isInstance)
                     .map(ModLoadingException.class::cast)
                     .collect(Collectors.toList());
-            LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", state, modLoadingExceptions.size());
+            LOGGER.fatal(LOADING,com.mohistmc.util.i18n.i18n.get("modloader.10", state, modLoadingExceptions.size()));
             throw new LoadingFailedException(modLoadingExceptions);
         }
     }
@@ -271,7 +271,7 @@ public class ModLoader
     {
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
-        LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
+        LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("modloader.11", ModContainer.class.getClassLoader()));
         final List<ModContainer> containers = modFile.getScanResult().getTargets()
                 .entrySet()
                 .stream()
@@ -279,10 +279,10 @@ public class ModLoader
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         if (containers.size() != modInfoMap.size()) {
-            LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
+            LOGGER.fatal(LOADING,com.mohistmc.util.i18n.i18n.get("modloader.12",
                     modFile.getFilePath(),
                     containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList()),
-                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList()));
+                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList())));
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         // remove errored mod containers
@@ -315,7 +315,7 @@ public class ModLoader
 
     public <T extends Event & IModBusEvent> void runEventGenerator(Function<ModContainer, T> generator) {
         if (!loadingStateValid) {
-            LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
+            LOGGER.error(com.mohistmc.util.i18n.i18n.get("modloader.13"));
             return;
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
@@ -323,7 +323,7 @@ public class ModLoader
 
     public <T extends Event & IModBusEvent> void postEvent(T e) {
         if (!loadingStateValid) {
-            LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
+            LOGGER.error(com.mohistmc.util.i18n.i18n.get("modloader.14", e.getClass().getName()));
             return;
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
