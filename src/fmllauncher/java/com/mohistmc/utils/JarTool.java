@@ -35,7 +35,7 @@ public class JarTool {
         return getFile().getName();
     }
 
-    private static File getFile() {
+    public static File getFile() {
 
         String path = JarTool.class.getProtectionDomain().getCodeSource()
                 .getLocation().getFile();
