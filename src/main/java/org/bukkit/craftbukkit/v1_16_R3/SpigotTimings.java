@@ -106,7 +106,7 @@ public class SpigotTimings {
         String entityType = entity.getClass().getName();
         CustomTimingsHandler result = tileEntityTypeTimingMap.get(entityType);
         if (result == null) {
-            result = new CustomTimingsHandler("** tickTileEntity - " + entity.getClass().getSimpleName(), tickTileEntityTimer);
+            result = new CustomTimingsHandler("** tickTileEntity - " + entityType, tickTileEntityTimer);
             tileEntityTypeTimingMap.put(entityType, result);
         }
         return result;
