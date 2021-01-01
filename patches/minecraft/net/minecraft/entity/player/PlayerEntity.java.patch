@@ -826,6 +826,15 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
+@@ -1720,7 +1932,7 @@
+    }
+ 
+    public String func_195047_I_() {
+-      return this.func_146103_bH().getName();
++      return this.func_146103_bH().getName() == null ? this.func_146103_bH().getId().toString() : this.func_110124_au().toString();
+    }
+ 
+    public float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
 @@ -1841,7 +2053,7 @@
        return this.field_70180_af.func_187225_a(field_192032_bt);
     }
