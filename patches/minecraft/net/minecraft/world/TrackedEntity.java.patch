@@ -142,7 +142,7 @@
           this.field_219461_c.field_70133_I = false;
        }
  
-@@ -187,31 +226,43 @@
+@@ -187,17 +226,31 @@
     public void func_219454_a(ServerPlayerEntity p_219454_1_) {
        this.field_219461_c.func_184203_c(p_219454_1_);
        p_219454_1_.func_152339_d(this.field_219461_c);
@@ -150,15 +150,22 @@
     }
  
     public void func_219455_b(ServerPlayerEntity p_219455_1_) {
--      this.func_219452_a(p_219455_1_.field_71135_a::func_147359_a);
-+      this.sendSpawnPackets(p_219455_1_.field_71135_a::func_147359_a, p_219455_1_); // CraftBukkit - add player
++      sendSpawnPacketsPlayer = p_219455_1_;
+       this.func_219452_a(p_219455_1_.field_71135_a::func_147359_a);
        this.field_219461_c.func_184178_b(p_219455_1_);
        p_219455_1_.func_184848_d(this.field_219461_c);
 +      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.field_219461_c, p_219455_1_);
     }
  
--   public void func_219452_a(Consumer<IPacket<?>> p_219452_1_) {
-+   public void sendSpawnPackets(Consumer<IPacket<?>> packetConsumer, ServerPlayerEntity serverPlayerEntity) { // CraftBukkit - add player
++   public void a(Consumer<IPacket<?>> packetConsumer, ServerPlayerEntity player) {
++      sendSpawnPacketsPlayer = player;
++      func_219452_a(packetConsumer);
++   }
++
++   ServerPlayerEntity sendSpawnPacketsPlayer;
+    public void func_219452_a(Consumer<IPacket<?>> p_219452_1_) {
++      ServerPlayerEntity serverPlayerEntity = sendSpawnPacketsPlayer;
++      sendSpawnPacketsPlayer = null;
        if (this.field_219461_c.field_70128_L) {
 -         field_219459_a.warn("Fetching packet for removed entity " + this.field_219461_c);
 +         // CraftBukkit start - Remove useless error spam, just return
@@ -168,14 +175,7 @@
        }
  
        IPacket<?> ipacket = this.field_219461_c.func_213297_N();
-       this.field_219470_l = MathHelper.func_76141_d(this.field_219461_c.func_70079_am() * 256.0F / 360.0F);
--      p_219452_1_.accept(ipacket);
-+      packetConsumer.accept(ipacket);
-       if (!this.field_219461_c.func_184212_Q().func_187228_d()) {
--         p_219452_1_.accept(new SEntityMetadataPacket(this.field_219461_c.func_145782_y(), this.field_219461_c.func_184212_Q(), true));
-+         packetConsumer.accept(new SEntityMetadataPacket(this.field_219461_c.func_145782_y(), this.field_219461_c.func_184212_Q(), true));
-       }
- 
+@@ -210,6 +263,13 @@
        boolean flag = this.field_219463_e;
        if (this.field_219461_c instanceof LivingEntity) {
           Collection<ModifiableAttributeInstance> collection = ((LivingEntity)this.field_219461_c).func_233645_dx_().func_233789_b_();
@@ -187,62 +187,21 @@
 +         // CraftBukkit end
 +
           if (!collection.isEmpty()) {
--            p_219452_1_.accept(new SEntityPropertiesPacket(this.field_219461_c.func_145782_y(), collection));
-+            packetConsumer.accept(new SEntityPropertiesPacket(this.field_219461_c.func_145782_y(), collection));
+             p_219452_1_.accept(new SEntityPropertiesPacket(this.field_219461_c.func_145782_y(), collection));
           }
- 
-          if (((LivingEntity)this.field_219461_c).func_184613_cA()) {
-@@ -221,7 +272,7 @@
- 
-       this.field_219471_m = this.field_219461_c.func_213322_ci();
-       if (flag && !(ipacket instanceof SSpawnMobPacket)) {
--         p_219452_1_.accept(new SEntityVelocityPacket(this.field_219461_c.func_145782_y(), this.field_219471_m));
-+         packetConsumer.accept(new SEntityVelocityPacket(this.field_219461_c.func_145782_y(), this.field_219471_m));
-       }
- 
-       if (this.field_219461_c instanceof LivingEntity) {
-@@ -235,30 +286,35 @@
-          }
- 
-          if (!list.isEmpty()) {
--            p_219452_1_.accept(new SEntityEquipmentPacket(this.field_219461_c.func_145782_y(), list));
-+            packetConsumer.accept(new SEntityEquipmentPacket(this.field_219461_c.func_145782_y(), list));
+@@ -239,6 +299,11 @@
           }
        }
  
 +      // CraftBukkit start - Fix for nonsensical head yaw
 +      this.field_219470_l = MathHelper.func_76141_d(this.field_219461_c.func_70079_am() * 256.0F / 360.0F);
-+      packetConsumer.accept(new SEntityHeadLookPacket(this.field_219461_c, (byte) field_219470_l));
++      p_219452_1_.accept(new SEntityHeadLookPacket(this.field_219461_c, (byte) field_219470_l));
 +      // CraftBukkit end
 +
        if (this.field_219461_c instanceof LivingEntity) {
           LivingEntity livingentity = (LivingEntity)this.field_219461_c;
  
-          for(EffectInstance effectinstance : livingentity.func_70651_bq()) {
--            p_219452_1_.accept(new SPlayEntityEffectPacket(this.field_219461_c.func_145782_y(), effectinstance));
-+            packetConsumer.accept(new SPlayEntityEffectPacket(this.field_219461_c.func_145782_y(), effectinstance));
-          }
-       }
- 
-       if (!this.field_219461_c.func_184188_bt().isEmpty()) {
--         p_219452_1_.accept(new SSetPassengersPacket(this.field_219461_c));
-+         packetConsumer.accept(new SSetPassengersPacket(this.field_219461_c));
-       }
- 
-       if (this.field_219461_c.func_184218_aH()) {
--         p_219452_1_.accept(new SSetPassengersPacket(this.field_219461_c.func_184187_bx()));
-+         packetConsumer.accept(new SSetPassengersPacket(this.field_219461_c.func_184187_bx()));
-       }
- 
-       if (this.field_219461_c instanceof MobEntity) {
-          MobEntity mobentity = (MobEntity)this.field_219461_c;
-          if (mobentity.func_110167_bD()) {
--            p_219452_1_.accept(new SMountEntityPacket(mobentity, mobentity.func_110166_bE()));
-+            packetConsumer.accept(new SMountEntityPacket(mobentity, mobentity.func_110166_bE()));
-          }
-       }
- 
-@@ -273,6 +329,11 @@
+@@ -273,6 +338,11 @@
        if (this.field_219461_c instanceof LivingEntity) {
           Set<ModifiableAttributeInstance> set = ((LivingEntity)this.field_219461_c).func_233645_dx_().func_233778_a_();
           if (!set.isEmpty()) {

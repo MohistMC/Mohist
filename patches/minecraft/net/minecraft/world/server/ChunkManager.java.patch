@@ -238,18 +238,29 @@
           int j = entitytype.func_220332_l();
           if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
              throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
-@@ -1077,15 +1139,15 @@
+@@ -1077,6 +1139,20 @@
        });
     }
  
--   class EntityTracker {
-+   public class EntityTracker {
++   public void removeTracker(ChunkManager tracker, ServerPlayerEntity playerEntity, int entityId) {
++      ChunkManager.EntityTracker entry = tracker.field_219272_z.get(entityId);
++      if (entry != null) {
++         entry.func_219399_a(playerEntity);
++      }
++   }
++
++   public void updateTrackingState(ChunkManager tracker, ServerPlayerEntity playerEntity, int entityId) {
++      ChunkManager.EntityTracker entry = tracker.field_219272_z.get(entityId);
++      if (entry != null && !entry.field_219406_f.contains(playerEntity)) {
++         entry.func_219400_b(playerEntity);
++      }
++   }
++
+    class EntityTracker {
        private final TrackedEntity field_219402_b;
        private final Entity field_219403_c;
-       private final int field_219404_d;
-       private SectionPos field_219405_e;
--      private final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
-+      public final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
+@@ -1085,7 +1161,7 @@
+       private final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
  
        public EntityTracker(Entity p_i50468_2_, int p_i50468_3_, int p_i50468_4_, boolean p_i50468_5_) {
 -         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
@@ -257,7 +268,7 @@
           this.field_219403_c = p_i50468_2_;
           this.field_219404_d = p_i50468_3_;
           this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);
-@@ -1134,7 +1196,7 @@
+@@ -1134,7 +1210,7 @@
  
        public void func_219400_b(ServerPlayerEntity p_219400_1_) {
           if (p_219400_1_ != this.field_219403_c) {
@@ -266,7 +277,7 @@
              int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
              boolean flag = vector3d.field_72450_a >= (double)(-i) && vector3d.field_72450_a <= (double)i && vector3d.field_72449_c >= (double)(-i) && vector3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
              if (flag) {
-@@ -1147,6 +1209,16 @@
+@@ -1147,6 +1223,16 @@
                    }
                 }
  

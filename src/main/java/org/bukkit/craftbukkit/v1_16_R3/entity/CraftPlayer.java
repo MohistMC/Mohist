@@ -1091,10 +1091,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         // Remove this player from the hidden player's EntityTrackerEntry
         ChunkManager tracker = ((ServerWorld) entity.world).getChunkProvider().chunkManager;
         ServerPlayerEntity other = ((CraftPlayer) player).getHandle();
-        ChunkManager.EntityTracker entry = tracker.entities.get(other.getEntityId());
-        if (entry != null) {
-            entry.removeTracker(getHandle());
-        }
+        tracker.removeTracker(tracker, getHandle(), other.getEntityId());
 
         // Remove the hidden player from this player user list, if they're on it
         if (other.sentListPacket) {
@@ -1133,13 +1130,8 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
         ChunkManager tracker = ((ServerWorld) entity.world).getChunkProvider().chunkManager;
         ServerPlayerEntity other = ((CraftPlayer) player).getHandle();
-
         getHandle().connection.sendPacket(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, other));
-
-        ChunkManager.EntityTracker entry = tracker.entities.get(other.getEntityId());
-        if (entry != null && !entry.trackingPlayers.contains(getHandle())) {
-            entry.updateTrackingState(getHandle());
-        }
+        tracker.updateTrackingState(tracker, getHandle(), other.getEntityId());
     }
 
     public void removeDisconnectingPlayer(Player player) {
