@@ -38,6 +38,8 @@ import org.bukkit.util.permissions.DefaultPermissions;
 
 public class ForgeInjectBukkit {
 
+    public static Map<Biome, net.minecraft.world.biome.Biome> biomeMap = new HashMap<>();
+
     public static void init() {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
@@ -122,10 +124,11 @@ public class ForgeInjectBukkit {
     public static void addEnumBiome() {
         List<String> map = new ArrayList<>();
         for (Map.Entry<ResourceLocation, net.minecraft.world.biome.Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
-            String biomeName = entry.getKey().getResourcePath().toUpperCase(java.util.Locale.ENGLISH);
+            String biomeName = entry.getValue().getRegistryName().getResourcePath().toUpperCase(java.util.Locale.ENGLISH);
             if (!entry.getKey().getResourceDomain().equals("minecraft") && !map.contains(biomeName)) {
                 map.add(biomeName);
-                EnumHelper.addEnum(Biome.class, biomeName, new Class[0]);
+                Biome biome = EnumHelper.addEnum(Biome.class, biomeName, new Class[0]);
+                biomeMap.put(biome, entry.getValue());
             }
         }
         map.clear();
