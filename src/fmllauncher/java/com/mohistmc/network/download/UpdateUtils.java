@@ -3,16 +3,12 @@ package com.mohistmc.network.download;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
-import static com.mohistmc.config.MohistConfigUtil.bMohist;
-import static com.mohistmc.network.download.NetworkUtil.getConn;
-import static com.mohistmc.network.download.NetworkUtil.getInput;
-import com.mohistmc.utils.JarLoader;
+import com.mohistmc.utils.JarTool;
 import com.mohistmc.utils.i18n.i18n;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -20,13 +16,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+
+import static com.mohistmc.config.MohistConfigUtil.bMohist;
+import static com.mohistmc.network.download.NetworkUtil.getConn;
+import static com.mohistmc.network.download.NetworkUtil.getInput;
 
 public class UpdateUtils {
 
@@ -48,7 +42,7 @@ public class UpdateUtils {
             else {
                 System.out.println(i18n.get("update.detect", build_number, jar_sha, time));
                 if (bMohist("check_update_auto_download", "false"))
-                    downloadFile("mhttps://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", getMohistJar());
+                    downloadFile("mhttps://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", JarTool.getFile());
             }
         } catch (Throwable e) {
             System.out.println(i18n.get("check.update.noci"));
@@ -75,20 +69,9 @@ public class UpdateUtils {
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
-        if (URL.startsWith("mhttps"))
-            restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())), true);
         System.out.println(i18n.get("download.file.ok", f.getName()));
-    }
-
-    public static File getMohistJar() {
-        try {
-            String path = UpdateUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
-            if (path.contains("!/")) path = path.split("!/")[0].split("jar:file:/")[1];
-            return new File(path);
-        } catch (Exception e) {
-            System.out.println("Can't found the Mohist jar !");
-        }
-        return null;
+        if (URL.startsWith("mhttps"))
+            restartServer(new ArrayList<>(Arrays.asList("java", "-jar", JarTool.getJarName())), true);
     }
 
     public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
