@@ -474,7 +474,7 @@
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
          if (this.func_180431_b(p_70097_1_))
-@@ -641,13 +839,15 @@
+@@ -641,12 +839,14 @@
  
      private boolean func_175400_cq()
      {
@@ -487,37 +487,33 @@
 -    public Entity func_184204_a(int p_184204_1_)
 +    public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter)
      {
--        this.field_184851_cj = true;
 +        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_) || this.func_70608_bn()) return this; // CraftBukkit - SPIGOT-3154
-+        // this.invulnerableDimensionChange = true; // CraftBukkit - Moved down and into PlayerList#changeDimension
+         this.field_184851_cj = true;
  
          if (this.field_71093_bK == 0 && p_184204_1_ == -1)
-         {
-@@ -658,8 +858,9 @@
+@@ -658,7 +858,7 @@
              this.field_193110_cw = null;
          }
  
 -        if (this.field_71093_bK == 1 && p_184204_1_ == 1)
 +        if (this.field_71093_bK == 1 && p_184204_1_ == 1 && teleporter.isVanilla())
          {
-+            this.field_184851_cj = true; // CraftBukkit - Moved down from above
              this.field_70170_p.func_72900_e(this);
  
-             if (!this.field_71136_j)
-@@ -678,7 +879,11 @@
+@@ -678,7 +878,11 @@
                  p_184204_1_ = 1;
              }
  
 -            this.field_71133_b.func_184103_al().func_187242_a(this, p_184204_1_);
-+            // this.mcServer.getPlayerList().transferPlayerToDimension(this, dimensionIn, teleporter);
-+			// CraftBukkit start
++			// Mohist start
 +            PlayerTeleportEvent.TeleportCause cause = (this.field_71093_bK == 1 || p_184204_1_ == 1) ? PlayerTeleportEvent.TeleportCause.END_PORTAL : ((this.field_71093_bK == -1 || p_184204_1_ == -1) ? PlayerTeleportEvent.TeleportCause.NETHER_PORTAL : PlayerTeleportEvent.TeleportCause.MOD);
-+            this.field_71133_b.func_184103_al().transferPlayerToDimension(this, p_184204_1_, teleporter,cause); // check all this // Cauldron
-+			// CraftBukkit end
++            this.field_71133_b.func_184103_al().putTeleportCause(cause);
++            this.field_71133_b.func_184103_al().transferPlayerToDimension(this, p_184204_1_, teleporter);
++            // Mohist end
              this.field_71135_a.func_147359_a(new SPacketEffect(1032, BlockPos.field_177992_a, 0, false));
              this.field_71144_ck = -1;
              this.field_71149_ch = -1.0F;
-@@ -737,6 +942,7 @@
+@@ -737,6 +941,7 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -525,7 +521,7 @@
          if (this.func_70608_bn())
          {
              this.func_71121_q().func_73039_n().func_151248_b(this, new SPacketAnimation(this, 2));
-@@ -808,7 +1014,7 @@
+@@ -808,7 +1013,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -534,7 +530,7 @@
          {
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
-@@ -830,6 +1036,12 @@
+@@ -830,6 +1035,12 @@
          this.field_71135_a.func_147359_a(new SPacketSignEditorOpen(p_175141_1_.func_174877_v()));
      }
  
@@ -547,7 +543,7 @@
      public void func_71117_bO()
      {
          this.field_71139_cq = this.field_71139_cq % 100 + 1;
-@@ -837,22 +1049,53 @@
+@@ -837,22 +1048,53 @@
  
      public void func_180468_a(IInteractionObject p_180468_1_)
      {
@@ -603,7 +599,7 @@
          if (p_71007_1_ instanceof ILootContainer && ((ILootContainer)p_71007_1_).func_184276_b() != null && this.func_175149_v())
          {
              this.func_146105_b((new TextComponentTranslation("container.spectatorCantOpen", new Object[0])).func_150255_a((new Style()).func_150238_a(TextFormatting.RED)), true);
-@@ -872,6 +1115,7 @@
+@@ -872,6 +1114,7 @@
                  {
                      this.field_71135_a.func_147359_a(new SPacketChat(new TextComponentTranslation("container.isLocked", new Object[] {p_71007_1_.func_145748_c_()}), ChatType.GAME_INFO));
                      this.field_71135_a.func_147359_a(new SPacketSoundEffect(SoundEvents.field_187654_U, SoundCategory.BLOCKS, this.field_70165_t, this.field_70163_u, this.field_70161_v, 1.0F, 1.0F));
@@ -611,7 +607,7 @@
                      return;
                  }
              }
-@@ -881,25 +1125,36 @@
+@@ -881,25 +1124,36 @@
              if (p_71007_1_ instanceof IInteractionObject)
              {
                  this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, ((IInteractionObject)p_71007_1_).func_174875_k(), p_71007_1_.func_145748_c_(), p_71007_1_.func_70302_i_()));
@@ -651,7 +647,7 @@
          IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
          ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
          this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
-@@ -916,6 +1171,13 @@
+@@ -916,6 +1170,13 @@
  
      public void func_184826_a(AbstractHorse p_184826_1_, IInventory p_184826_2_)
      {
@@ -665,7 +661,7 @@
          if (this.field_71070_bA != this.field_71069_bz)
          {
              this.func_71053_j();
-@@ -923,7 +1185,8 @@
+@@ -923,7 +1184,8 @@
  
          this.func_71117_bO();
          this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "EntityHorse", p_184826_2_.func_145748_c_(), p_184826_2_.func_70302_i_(), p_184826_1_.func_145782_y()));
@@ -675,7 +671,7 @@
          this.field_71070_bA.field_75152_c = this.field_71139_cq;
          this.field_71070_bA.func_75132_a(this);
      }
-@@ -971,6 +1234,12 @@
+@@ -971,6 +1233,12 @@
      {
          this.field_71135_a.func_147359_a(new SPacketWindowItems(p_71110_1_.field_75152_c, p_71110_2_));
          this.field_71135_a.func_147359_a(new SPacketSetSlot(-1, -1, this.field_71071_by.func_70445_o()));
@@ -688,7 +684,7 @@
      }
  
      public void func_71112_a(Container p_71112_1_, int p_71112_2_, int p_71112_3_)
-@@ -988,6 +1257,7 @@
+@@ -988,6 +1256,7 @@
  
      public void func_71053_j()
      {
@@ -696,7 +692,7 @@
          this.field_71135_a.func_147359_a(new SPacketCloseWindow(this.field_71070_bA.field_75152_c));
          this.func_71128_l();
      }
-@@ -1003,6 +1273,7 @@
+@@ -1003,6 +1272,7 @@
      public void func_71128_l()
      {
          this.field_71070_bA.func_75134_a(this);
@@ -704,7 +700,7 @@
          this.field_71070_bA = this.field_71069_bz;
      }
  
-@@ -1062,6 +1333,10 @@
+@@ -1062,6 +1332,10 @@
  
          for (ResourceLocation resourcelocation : p_193102_1_)
          {
@@ -715,7 +711,7 @@
              list.add(CraftingManager.func_193373_a(resourcelocation));
          }
  
-@@ -1092,8 +1367,16 @@
+@@ -1092,8 +1366,16 @@
      public void func_71118_n()
      {
          this.field_71149_ch = -1.0E8F;
@@ -732,7 +728,7 @@
      public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_)
      {
          this.field_71135_a.func_147359_a(new SPacketChat(p_146105_1_, p_146105_2_ ? ChatType.GAME_INFO : ChatType.CHAT));
-@@ -1138,12 +1421,29 @@
+@@ -1138,12 +1420,29 @@
          this.field_71144_ck = -1;
          this.field_71149_ch = -1.0F;
          this.field_71146_ci = -1;
@@ -763,7 +759,7 @@
      }
  
      protected void func_70670_a(PotionEffect p_70670_1_)
-@@ -1211,6 +1511,15 @@
+@@ -1211,6 +1510,15 @@
  
      public void func_71033_a(GameType p_71033_1_)
      {
@@ -779,7 +775,7 @@
          this.field_71134_c.func_73076_a(p_71033_1_);
          this.field_71135_a.func_147359_a(new SPacketChangeGameState(3, (float)p_71033_1_.func_77148_a()));
  
-@@ -1243,36 +1552,26 @@
+@@ -1243,36 +1551,26 @@
          this.field_71135_a.func_147359_a(new SPacketChat(p_145747_1_));
      }
  
@@ -832,7 +828,7 @@
      }
  
      public String func_71114_r()
-@@ -1285,6 +1584,14 @@
+@@ -1285,6 +1583,14 @@
  
      public void func_147100_a(CPacketClientSettings p_147100_1_)
      {
@@ -847,7 +843,7 @@
          this.field_71148_cg = p_147100_1_.func_149524_c();
          this.field_71143_cn = p_147100_1_.func_149523_e();
          this.field_71140_co = p_147100_1_.func_149520_f();
-@@ -1292,7 +1599,7 @@
+@@ -1292,7 +1598,7 @@
          this.func_184212_Q().func_187227_b(field_184828_bq, Byte.valueOf((byte)(p_147100_1_.func_186991_f() == EnumHandSide.LEFT ? 0 : 1)));
      }
  
@@ -856,7 +852,7 @@
      {
          return this.field_71143_cn;
      }
-@@ -1367,7 +1674,7 @@
+@@ -1367,7 +1673,7 @@
          if (entity != this.field_175401_bS)
          {
              this.field_71135_a.func_147359_a(new SPacketCamera(this.field_175401_bS));
@@ -865,7 +861,7 @@
          }
      }
  
-@@ -1375,7 +1682,12 @@
+@@ -1375,7 +1681,12 @@
      {
          if (this.field_71088_bW > 0 && !this.field_184851_cj)
          {
@@ -879,7 +875,7 @@
          }
      }
  
-@@ -1399,7 +1711,8 @@
+@@ -1399,7 +1710,8 @@
      @Nullable
      public ITextComponent func_175396_E()
      {
@@ -889,7 +885,7 @@
      }
  
      public void func_184609_a(EnumHand p_184609_1_)
-@@ -1420,13 +1733,16 @@
+@@ -1420,13 +1732,16 @@
  
      public void func_184847_M()
      {
@@ -909,7 +905,7 @@
      }
  
      public PlayerAdvancements func_192039_O()
-@@ -1439,4 +1755,148 @@
+@@ -1439,4 +1754,148 @@
      {
          return this.field_193110_cw;
      }
