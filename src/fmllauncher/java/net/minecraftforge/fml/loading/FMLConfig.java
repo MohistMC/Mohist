@@ -61,12 +61,12 @@ public class FMLConfig
         }
         catch (ParsingException e)
         {
-            throw new RuntimeException("Failed to load FML config from " + configFile.toString(), e);
+            throw new RuntimeException(com.mohistmc.utils.i18n.i18n.get("fmlconfig.1") + configFile.toString(), e);
         }
         if (!configSpec.isCorrect(configData)) {
-            LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
+            LOGGER.warn(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.2", configFile));
             configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
-                    LOGGER.warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
+                    LOGGER.warn(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.3", path, incorrectValue, correctedValue)));
         }
         configData.save();
     }
@@ -75,11 +75,11 @@ public class FMLConfig
     {
         final Path configFile = FMLPaths.FMLCONFIG.get();
         INSTANCE.loadFrom(configFile);
-        LOGGER.trace(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
-        LOGGER.trace(CORE, "Splash screen is {}", FMLConfig::splashScreenEnabled);
-        LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig::loadingThreadCount);
-        LOGGER.trace(CORE, "Version check is {}", FMLConfig::runVersionCheck);
-        LOGGER.trace(CORE, "Default config paths at {}", FMLConfig::defaultConfigPath);
+        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.4", FMLPaths.FMLCONFIG.get()));
+        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.5", FMLConfig.splashScreenEnabled()));
+        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.6", FMLConfig.loadingThreadCount()));
+        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.7", FMLConfig.runVersionCheck()));
+        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.8", FMLConfig.defaultConfigPath()));
         FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()), "default config directory");
     }
 

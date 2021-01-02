@@ -83,9 +83,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         this.childConfig = config;
         if (config != null && !isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
+            LogManager.getLogger().warn(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.2"), configName);
             correct(config, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", DOT_JOINER.join( path ), incorrectValue, correctedValue));
+                    LogManager.getLogger().warn(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.3", DOT_JOINER.join( path ), incorrectValue, correctedValue)));
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
             }

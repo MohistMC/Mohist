@@ -21,13 +21,13 @@ public class SpigotCommand extends Command {
         if (!testPermission(sender)) return true;
 
         if (args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+            sender.sendMessage(ChatColor.RED + com.mohistmc.util.i18n.i18n.get("spigotcommand.4") + usageMessage);
             return false;
         }
 
         if (args[0].equals("reload")) {
-            Command.broadcastCommandMessage(sender, ChatColor.RED + "Please note that this command is not supported and may cause issues.");
-            Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
+            Command.broadcastCommandMessage(sender, ChatColor.RED + com.mohistmc.util.i18n.i18n.get("spigotcommand.1"));
+            Command.broadcastCommandMessage(sender, ChatColor.RED + com.mohistmc.util.i18n.i18n.get("spigotcommand.2"));
 
             MinecraftServer console = MinecraftServer.getServer();
             SpigotConfig.init((File) console.options.valueOf("spigot-settings"));
@@ -36,7 +36,7 @@ public class SpigotCommand extends Command {
             }
             console.server.reloadCount++;
 
-            Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Reload complete.");
+            Command.broadcastCommandMessage(sender, ChatColor.GREEN + com.mohistmc.util.i18n.i18n.get("spigotcommand.3"));
         }
 
         return true;
