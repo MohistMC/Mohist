@@ -19,7 +19,7 @@
 
 package net.minecraftforge.server;
 
-import com.mohistmc.utils.i18n.i18n;
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
 import cpw.mods.modlauncher.Launcher;
 
@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.Optional;

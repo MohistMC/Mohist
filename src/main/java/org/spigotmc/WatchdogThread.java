@@ -5,6 +5,8 @@ import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 
@@ -61,28 +63,28 @@ public class WatchdogThread extends Thread
             {
                 Logger log = Bukkit.getServer().getLogger();
                 log.log( Level.SEVERE, "------------------------------" );
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.1" ));
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.2" ));
-                log.log( Level.SEVERE, "\t "+com.mohistmc.util.i18n.i18n.get("watchdogthread.3" ));
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.4" ));
-                log.log( Level.SEVERE, "\t "+com.mohistmc.util.i18n.i18n.get("watchdogthread.5" ));
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.6" ));
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.7" ));
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.8" + Bukkit.getServer().getVersion() ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.1" ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.2" ));
+                log.log( Level.SEVERE, "\t "+ i18n.get("watchdogthread.3" ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.4" ));
+                log.log( Level.SEVERE, "\t "+ i18n.get("watchdogthread.5" ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.6" ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.7" ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.8" + " "+Bukkit.getServer().getVersion() ));
                 //
                 if ( net.minecraft.world.World.lastPhysicsProblem != null )
                 {
                     log.log( Level.SEVERE, "------------------------------" );
-                    log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.9" ));
+                    log.log( Level.SEVERE, i18n.get("watchdogthread.9" ));
                     log.log( Level.SEVERE, "near " + net.minecraft.world.World.lastPhysicsProblem );
                 }
                 //
                 log.log( Level.SEVERE, "------------------------------" );
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.10" ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.10" ));
                 dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
                 log.log( Level.SEVERE, "------------------------------" );
                 //
-                log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.11" ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.11" ));
                 ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads( true, true );
                 for ( ThreadInfo thread : threads )
                 {
@@ -111,17 +113,17 @@ public class WatchdogThread extends Thread
     {
         log.log( Level.SEVERE, "------------------------------" );
         //
-        log.log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("watchdogthread.12" ) + thread.getThreadName() );
+        log.log( Level.SEVERE, i18n.get("watchdogthread.12" ) + thread.getThreadName() );
         log.log( Level.SEVERE, "\tPID: " + thread.getThreadId()
-                + " | " + com.mohistmc.util.i18n.i18n.get("watchdogthread.13" ) + thread.isSuspended()
-                + " | " + com.mohistmc.util.i18n.i18n.get("watchdogthread.14" ) + thread.isInNative()
-                + " | " + com.mohistmc.util.i18n.i18n.get("watchdogthread.15" ) + thread.getThreadState() );
+                + " | " + i18n.get("watchdogthread.13" ) + thread.isSuspended()
+                + " | " + i18n.get("watchdogthread.14" ) + thread.isInNative()
+                + " | " + i18n.get("watchdogthread.15" ) + thread.getThreadState() );
         if ( thread.getLockedMonitors().length != 0 )
         {
-            log.log( Level.SEVERE, "\t" + com.mohistmc.util.i18n.i18n.get("watchdogthread.16" ));
+            log.log( Level.SEVERE, "\t" + i18n.get("watchdogthread.16" ));
             for ( MonitorInfo monitor : thread.getLockedMonitors() )
             {
-                log.log( Level.SEVERE, "\t\t" + com.mohistmc.util.i18n.i18n.get("watchdogthread.17" )+ monitor.getLockedStackFrame() );
+                log.log( Level.SEVERE, "\t\t" + i18n.get("watchdogthread.17" )+ monitor.getLockedStackFrame() );
             }
         }
         log.log( Level.SEVERE, "\tStack:" );

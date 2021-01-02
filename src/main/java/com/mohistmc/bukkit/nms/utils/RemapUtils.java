@@ -1,11 +1,8 @@
 package com.mohistmc.bukkit.nms.utils;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.nms.model.ClassMapping;
-import com.mohistmc.util.JarTool;
+
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;

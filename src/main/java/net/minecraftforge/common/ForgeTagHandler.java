@@ -33,6 +33,8 @@ import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
@@ -235,7 +237,7 @@ public class ForgeTagHandler
      */
     public static Map<ResourceLocation, TagCollectionReader<?>> createCustomTagTypeReaders()
     {
-        LOGGER.debug(com.mohistmc.util.i18n.i18n.get("forgetaghandler.1"));
+        LOGGER.debug(i18n.get("forgetaghandler.1"));
         ImmutableMap.Builder<ResourceLocation, TagCollectionReader<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
         {
@@ -288,7 +290,7 @@ public class ForgeTagHandler
         resetCachedTagCollections(false, false);
         if (!customTagTypes.isEmpty())
         {
-            LOGGER.debug(com.mohistmc.util.i18n.i18n.get("forgetaghandler.2", customTagTypes.size()));
+            LOGGER.debug(i18n.get("forgetaghandler.2", customTagTypes.size()));
         }
         return ITagCollectionSupplier.getTagCollectionSupplier(blockTags, itemTags, fluidTags, entityTypeTags);
     }

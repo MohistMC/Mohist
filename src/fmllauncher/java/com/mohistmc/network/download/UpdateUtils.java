@@ -3,8 +3,8 @@ package com.mohistmc.network.download;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.utils.JarTool;
-import com.mohistmc.utils.i18n.i18n;
+import com.mohistmc.util.JarTool;
+import com.mohistmc.util.i18n.i18n;
 
 import java.io.File;
 import java.io.IOException;

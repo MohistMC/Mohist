@@ -1,7 +1,8 @@
-package com.mohistmc.utils;
+package com.mohistmc.util;
 
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.utils.i18n.i18n;
+import com.mohistmc.util.i18n.i18n;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;

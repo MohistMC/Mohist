@@ -2,10 +2,10 @@ package com.mohistmc.libraries;
 
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.UpdateUtils;
-import com.mohistmc.utils.JarLoader;
-import com.mohistmc.utils.JarTool;
-import com.mohistmc.utils.MD5Util;
-import com.mohistmc.utils.i18n.i18n;
+import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.JarTool;
+import com.mohistmc.util.MD5Util;
+import com.mohistmc.util.i18n.i18n;
 
 import java.io.BufferedReader;
 import java.io.File;

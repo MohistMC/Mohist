@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.fml.DistExecutor;
@@ -144,8 +145,8 @@ public class ServerLifecycleHooks
     public static boolean handleServerLogin(final CHandshakePacket packet, final NetworkManager manager) {
         if (!allowLogins.get())
         {
-            StringTextComponent text = new StringTextComponent(com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.1"));
-            LOGGER.info(SERVERHOOKS,com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.2", text.getUnformattedComponentText()));
+            StringTextComponent text = new StringTextComponent(i18n.get("serverlifecyclehooks.1"));
+            LOGGER.info(SERVERHOOKS, i18n.get("serverlifecyclehooks.2", text.getUnformattedComponentText()));
             manager.sendPacket(new SDisconnectLoginPacket(text));
             manager.closeChannel(text);
             return false;
@@ -156,12 +157,12 @@ public class ServerLifecycleHooks
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
             if (connectionType == ConnectionType.MODDED && versionNumber != FMLNetworkConstants.FMLNETVERSION) {
-                rejectConnection(manager, connectionType, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.3", versionNumber, FMLNetworkConstants.FMLNETVERSION));
+                rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.3", versionNumber, FMLNetworkConstants.FMLNETVERSION));
                 return false;
             }
 
             if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
-                rejectConnection(manager, connectionType, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.4"));
+                rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.4"));
                 return false;
             }
         }
@@ -176,7 +177,7 @@ public class ServerLifecycleHooks
 
     private static void rejectConnection(final NetworkManager manager, ConnectionType type, String message) {
         manager.setConnectionState(ProtocolType.LOGIN);
-        LOGGER.info(SERVERHOOKS, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.5", type, message));
+        LOGGER.info(SERVERHOOKS, i18n.get("serverlifecyclehooks.5", type, message));
         StringTextComponent text = new StringTextComponent(message);
         manager.sendPacket(new SDisconnectLoginPacket(text));
         manager.closeChannel(text);
@@ -206,7 +207,7 @@ public class ServerLifecycleHooks
                 continue;
             }
             packSetter.accept(e.getValue(), packInfo);
-            LOGGER.debug(CORE, com.mohistmc.util.i18n.i18n.get("serverlifecyclehooks.6", name, e.getKey().getFilePath()));
+            LOGGER.debug(CORE, i18n.get("serverlifecyclehooks.6", name, e.getKey().getFilePath()));
             consumer.accept(packInfo);
         }
     }

@@ -28,6 +28,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
@@ -68,10 +69,10 @@ public class DeferredWorkQueue
 
     void runTasks() {
         if (tasks.isEmpty()) return;
-        LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("deferredworkqueue.1", modLoadingStage, tasks.size()));
+        LOGGER.debug(LOADING, i18n.get("deferredworkqueue.1", modLoadingStage, tasks.size()));
         StopWatch globalTimer = StopWatch.createStarted();
         tasks.forEach(t->makeRunnable(t, Runnable::run));
-        LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("deferredworkqueue.2", globalTimer));
+        LOGGER.debug(LOADING, i18n.get("deferredworkqueue.2", globalTimer));
     }
 
     private static void makeRunnable(TaskInfo ti, Executor executor) {
@@ -80,7 +81,7 @@ public class DeferredWorkQueue
             ti.task.run();
             timer.stop();
             if (timer.elapsed(TimeUnit.SECONDS) >= 1) {
-                LOGGER.warn(LOADING, com.mohistmc.util.i18n.i18n.get("deferredworkqueue.3", ti.owner.getModId(), timer));
+                LOGGER.warn(LOADING, i18n.get("deferredworkqueue.3", ti.owner.getModId(), timer));
             }
         });
     }

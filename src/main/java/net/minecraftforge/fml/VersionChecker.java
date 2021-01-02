@@ -21,6 +21,7 @@ package net.minecraftforge.fml;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -132,7 +133,7 @@ public class VersionChecker
             {
                 if (!FMLConfig.runVersionCheck())
                 {
-                    LOGGER.info(com.mohistmc.util.i18n.i18n.get("versionchecker.1"));
+                    LOGGER.info(i18n.get("versionchecker.1"));
                     return;
                 }
 
@@ -182,13 +183,13 @@ public class VersionChecker
                 try
                 {
                     URL url = mod.getUpdateURL();
-                    LOGGER.info(com.mohistmc.util.i18n.i18n.get("versionchecker.2", mod.getModId(), url.toString()));
+                    LOGGER.info(i18n.get("versionchecker.2", mod.getModId(), url.toString()));
 
                     InputStream con = openUrlStream(url);
                     String data = new String(ByteStreams.toByteArray(con), StandardCharsets.UTF_8);
                     con.close();
 
-                    LOGGER.debug(com.mohistmc.util.i18n.i18n.get("versionchecker.3", mod.getModId(), data));
+                    LOGGER.debug(i18n.get("versionchecker.3", mod.getModId(), data));
 
 
                     @SuppressWarnings("unchecked")
@@ -240,7 +241,7 @@ public class VersionChecker
                     else
                         status = BETA;
 
-                    LOGGER.info(com.mohistmc.util.i18n.i18n.get("versionchecker.4", mod.getModId(), status, current, target));
+                    LOGGER.info(i18n.get("versionchecker.4", mod.getModId(), status, current, target));
 
                     changes = new LinkedHashMap<>();
                     @SuppressWarnings("unchecked")
@@ -266,7 +267,7 @@ public class VersionChecker
                 }
                 catch (Exception e)
                 {
-                    LOGGER.warn(com.mohistmc.util.i18n.i18n.get("versionchecker.5"), e);
+                    LOGGER.warn(i18n.get("versionchecker.5"), e);
                     status = FAILED;
                 }
                 results.put(mod, new CheckResult(status, target, changes, display_url));

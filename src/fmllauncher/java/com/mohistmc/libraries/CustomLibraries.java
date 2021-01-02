@@ -1,7 +1,7 @@
 package com.mohistmc.libraries;
 
-import com.mohistmc.utils.JarLoader;
-import com.mohistmc.utils.JarTool;
+import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.JarTool;
 
 import java.io.File;
 

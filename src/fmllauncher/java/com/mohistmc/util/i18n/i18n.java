@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 public class i18n {
-    public static ResourceBundle rb = ResourceBundle.getBundle("assets.mohist.lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
+    public static ResourceBundle rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
 
     public static String get(String key) {
         return rb.getString(key);
