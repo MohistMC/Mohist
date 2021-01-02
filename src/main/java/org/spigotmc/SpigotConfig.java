@@ -33,15 +33,15 @@ public class SpigotConfig
 {
 
     private static File CONFIG_FILE;
-    private static final String HEADER = "This is the main configuration file for Spigot.\n"
-            + "As you can see, there's tons to configure. Some options may impact gameplay, so use\n"
-            + "with caution, and make sure you know what each option does before configuring.\n"
-            + "For a reference for any variable inside this file, check out the Spigot wiki at\n"
+    private static final String HEADER = com.mohistmc.util.i18n.i18n.get("spigotconfig.1")+"\n"
+            + com.mohistmc.util.i18n.i18n.get("spigotconfig.2")+"\n"
+            + com.mohistmc.util.i18n.i18n.get("spigotconfig.3")+"\n"
+            + com.mohistmc.util.i18n.i18n.get("spigotconfig.4")+"\n"
             + "http://www.spigotmc.org/wiki/spigot-configuration/\n"
+            + com.mohistmc.util.i18n.i18n.get("spigotconfig.5")+"\n"
             + "\n"
-            + "If you need help with the configuration or have any questions related to Spigot,\n"
-            + "join us at the IRC or drop by our forums and leave a post.\n"
             + "\n"
+            + com.mohistmc.util.i18n.i18n.get("spigotconfig.6")+"\n"
             + "IRC: #spigot @ irc.spi.gt ( http://www.spigotmc.org/pages/irc/ )\n"
             + "Forums: http://www.spigotmc.org/\n";
     /*========================================================================*/
@@ -61,7 +61,7 @@ public class SpigotConfig
         {
         } catch ( InvalidConfigurationException ex )
         {
-            Bukkit.getLogger().log( Level.SEVERE, "Could not load spigot.yml, please correct your syntax errors", ex );
+            Bukkit.getLogger().log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("spigotconfig.7"), ex );
             throw Throwables.propagate( ex );
         }
 
@@ -101,7 +101,7 @@ public class SpigotConfig
                         throw Throwables.propagate( ex.getCause() );
                     } catch ( Exception ex )
                     {
-                        Bukkit.getLogger().log( Level.SEVERE, "Error invoking " + method, ex );
+                        Bukkit.getLogger().log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("spigotconfig.22") + method, ex );
                     }
                 }
             }
@@ -112,7 +112,7 @@ public class SpigotConfig
             config.save( CONFIG_FILE );
         } catch ( IOException ex )
         {
-            Bukkit.getLogger().log( Level.SEVERE, "Could not save " + CONFIG_FILE, ex );
+            Bukkit.getLogger().log( Level.SEVERE, com.mohistmc.util.i18n.i18n.get("spigotconfig.21") + CONFIG_FILE, ex );
         }
     }
 
@@ -179,8 +179,8 @@ public class SpigotConfig
     public static String whitelistMessage;
     public static String unknownCommandMessage;
     public static String serverFullMessage;
-    public static String outdatedClientMessage = "Outdated client! Please use {0}";
-    public static String outdatedServerMessage = "Outdated server! I\'m still on {0}";
+    public static String outdatedClientMessage = com.mohistmc.util.i18n.i18n.get("spigotconfig.19");
+    public static String outdatedServerMessage = com.mohistmc.util.i18n.i18n.get("spigotconfig.20");
     private static String transform(String s)
     {
         return ChatColor.translateAlternateColorCodes( '&', s ).replaceAll( "\\\\n", "\n" );
@@ -193,9 +193,9 @@ public class SpigotConfig
             set( "messages.outdated-server", outdatedServerMessage );
         }
 
-        whitelistMessage = transform( getString( "messages.whitelist", "You are not whitelisted on this server!" ) );
-        unknownCommandMessage = transform( getString( "messages.unknown-command", "Unknown command. Type \"/help\" for help." ) );
-        serverFullMessage = transform( getString( "messages.server-full", "The server is full!" ) );
+        whitelistMessage = transform( getString( "messages.whitelist", com.mohistmc.util.i18n.i18n.get("spigotconfig.16") ) );
+        unknownCommandMessage = transform( getString( "messages.unknown-command", com.mohistmc.util.i18n.i18n.get("spigotconfig.17")) );
+        serverFullMessage = transform( getString( "messages.server-full", com.mohistmc.util.i18n.i18n.get("spigotconfig.18") ) );
         outdatedClientMessage = transform( getString( "messages.outdated-client", outdatedClientMessage ) );
         outdatedServerMessage = transform( getString( "messages.outdated-server", outdatedServerMessage ) );
     }
@@ -209,7 +209,7 @@ public class SpigotConfig
         timeoutTime = getInt( "settings.timeout-time", timeoutTime );
         restartOnCrash = getBoolean( "settings.restart-on-crash", restartOnCrash );
         restartScript = getString( "settings.restart-script", restartScript );
-        restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
+        restartMessage = transform( getString( "messages.restart", com.mohistmc.util.i18n.i18n.get("spigotconfig.15") ) );
         commands.put( "restart", new RestartCommand( "restart" ) );
         WatchdogThread.doStart( timeoutTime, restartOnCrash );
     }
@@ -219,7 +219,7 @@ public class SpigotConfig
         if ( version < 4 )
         {
             set( "settings.bungeecord", false );
-            System.out.println( "Oudated config, disabling BungeeCord support!" );
+            System.out.println( com.mohistmc.util.i18n.i18n.get("spigotconfig.14") );
         }
         bungee = getBoolean( "settings.bungeecord", false );
     }
@@ -228,7 +228,7 @@ public class SpigotConfig
     {
         int count = getInt( "settings.netty-threads", 4 );
         System.setProperty( "io.netty.eventLoopThreads", Integer.toString( count ) );
-        Bukkit.getLogger().log( Level.INFO, "Using {0} threads for Netty based IO", count );
+        Bukkit.getLogger().log( Level.INFO, com.mohistmc.util.i18n.i18n.get("spigotconfig.8", count) );
     }
 
     public static boolean disableStatSaving;
@@ -251,13 +251,13 @@ public class SpigotConfig
                     ResourceLocation key = new ResourceLocation( name );
                     if ( Registry.CUSTOM_STAT.getKey( key ) == null )
                     {
-                        Bukkit.getLogger().log(Level.WARNING, "Ignoring non existent stats.forced-stats " + name);
+                        Bukkit.getLogger().log(Level.WARNING, com.mohistmc.util.i18n.i18n.get("spigotconfig.9" + name));
                         continue;
                     }
                     forcedStats.put( key, section.getInt( name ) );
                 } catch (Exception ex)
                 {
-                    Bukkit.getLogger().log(Level.WARNING, "Ignoring invalid stats.forced-stats " + name);
+                    Bukkit.getLogger().log(Level.WARNING, com.mohistmc.util.i18n.i18n.get("spigotconfig.10" + name));
                 }
             }
         }
@@ -272,7 +272,7 @@ public class SpigotConfig
     private static void playerSample()
     {
         playerSample = getInt( "settings.sample-count", 12 );
-        System.out.println( "Server Ping Player Sample Count: " + playerSample );
+        System.out.println( com.mohistmc.util.i18n.i18n.get("spigotconfig.11") + playerSample );
     }
 
     public static int playerShuffle;
@@ -361,10 +361,10 @@ public class SpigotConfig
 
         if ( LogManager.getRootLogger().isTraceEnabled() )
         {
-            Bukkit.getLogger().info( "Debug logging is enabled" );
+            Bukkit.getLogger().info( com.mohistmc.util.i18n.i18n.get("spigotconfig.12") );
         } else
         {
-            Bukkit.getLogger().info( "Debug logging is disabled" );
+            Bukkit.getLogger().info( com.mohistmc.util.i18n.i18n.get("spigotconfig.13" ));
         }
     }
 
