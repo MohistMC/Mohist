@@ -107,7 +107,7 @@ public class SpigotWorldConfig
             log( "Cannot set " + crop + " growth to zero, defaulting to 100" );
             modifier = 100;
         }
-        log( crop + com.mohistmc.util.i18n.i18n.get("spigotworldconfig.8") + " " + modifier + "%" );
+        log( crop + " " +com.mohistmc.util.i18n.i18n.get("spigotworldconfig.8") + " " + modifier + "%" );
 
         return modifier;
     }
