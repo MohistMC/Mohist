@@ -1,6 +1,8 @@
 package org.spigotmc;
 
 import java.io.File;
+
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.server.ServerWorld;
 import org.bukkit.ChatColor;
@@ -21,13 +23,13 @@ public class SpigotCommand extends Command {
         if (!testPermission(sender)) return true;
 
         if (args.length != 1) {
-            sender.sendMessage(ChatColor.RED + com.mohistmc.util.i18n.i18n.get("spigotcommand.4") + usageMessage);
+            sender.sendMessage(ChatColor.RED + i18n.get("spigotcommand.4") + " "+ usageMessage);
             return false;
         }
 
         if (args[0].equals("reload")) {
-            Command.broadcastCommandMessage(sender, ChatColor.RED + com.mohistmc.util.i18n.i18n.get("spigotcommand.1"));
-            Command.broadcastCommandMessage(sender, ChatColor.RED + com.mohistmc.util.i18n.i18n.get("spigotcommand.2"));
+            Command.broadcastCommandMessage(sender, ChatColor.RED + i18n.get("spigotcommand.1"));
+            Command.broadcastCommandMessage(sender, ChatColor.RED + i18n.get("spigotcommand.2"));
 
             MinecraftServer console = MinecraftServer.getServer();
             SpigotConfig.init((File) console.options.valueOf("spigot-settings"));
@@ -36,7 +38,7 @@ public class SpigotCommand extends Command {
             }
             console.server.reloadCount++;
 
-            Command.broadcastCommandMessage(sender, ChatColor.GREEN + com.mohistmc.util.i18n.i18n.get("spigotcommand.3"));
+            Command.broadcastCommandMessage(sender, ChatColor.GREEN + i18n.get("spigotcommand.3"));
         }
 
         return true;

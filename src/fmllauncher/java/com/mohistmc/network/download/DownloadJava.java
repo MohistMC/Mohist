@@ -1,8 +1,10 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
+import com.mohistmc.util.i18n.i18n;
+
 import static com.mohistmc.config.MohistConfigUtil.bMohist;
-import com.mohistmc.utils.i18n.i18n;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

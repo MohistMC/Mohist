@@ -23,14 +23,11 @@ import com.electronwill.nightconfig.core.ConfigSpec;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
@@ -61,12 +58,12 @@ public class FMLConfig
         }
         catch (ParsingException e)
         {
-            throw new RuntimeException(com.mohistmc.utils.i18n.i18n.get("fmlconfig.1") + configFile.toString(), e);
+            throw new RuntimeException(com.mohistmc.util.i18n.i18n.get("fmlconfig.1") + configFile.toString(), e);
         }
         if (!configSpec.isCorrect(configData)) {
-            LOGGER.warn(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.2", configFile));
+            LOGGER.warn(CORE, com.mohistmc.util.i18n.i18n.get("fmlconfig.2", configFile));
             configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
-                    LOGGER.warn(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.3", path, incorrectValue, correctedValue)));
+                    LOGGER.warn(CORE, com.mohistmc.util.i18n.i18n.get("fmlconfig.3", path, incorrectValue, correctedValue)));
         }
         configData.save();
     }
@@ -75,11 +72,11 @@ public class FMLConfig
     {
         final Path configFile = FMLPaths.FMLCONFIG.get();
         INSTANCE.loadFrom(configFile);
-        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.4", FMLPaths.FMLCONFIG.get()));
-        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.5", FMLConfig.splashScreenEnabled()));
-        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.6", FMLConfig.loadingThreadCount()));
-        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.7", FMLConfig.runVersionCheck()));
-        LOGGER.trace(CORE, com.mohistmc.utils.i18n.i18n.get("fmlconfig.8", FMLConfig.defaultConfigPath()));
+        LOGGER.trace(CORE, com.mohistmc.util.i18n.i18n.get("fmlconfig.4", FMLPaths.FMLCONFIG.get()));
+        LOGGER.trace(CORE, com.mohistmc.util.i18n.i18n.get("fmlconfig.5", FMLConfig.splashScreenEnabled()));
+        LOGGER.trace(CORE, com.mohistmc.util.i18n.i18n.get("fmlconfig.6", FMLConfig.loadingThreadCount()));
+        LOGGER.trace(CORE, com.mohistmc.util.i18n.i18n.get("fmlconfig.7", FMLConfig.runVersionCheck()));
+        LOGGER.trace(CORE, com.mohistmc.util.i18n.i18n.get("fmlconfig.8", FMLConfig.defaultConfigPath()));
         FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()), "default config directory");
     }
 

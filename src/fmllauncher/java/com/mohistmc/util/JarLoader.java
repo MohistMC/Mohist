@@ -1,4 +1,4 @@
-package com.mohistmc.utils;
+package com.mohistmc.util;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;

@@ -5,12 +5,13 @@ import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
-import static com.mohistmc.utils.EulaUtil.hasAcceptedEULA;
-import static com.mohistmc.utils.EulaUtil.writeInfos;
-import com.mohistmc.utils.InstallUtils;
-import static com.mohistmc.utils.InstallUtils.startInstallation;
-import com.mohistmc.utils.JarLoader;
-import com.mohistmc.utils.i18n.i18n;
+import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
+import static com.mohistmc.util.EulaUtil.writeInfos;
+import com.mohistmc.util.InstallUtils;
+import static com.mohistmc.util.InstallUtils.startInstallation;
+import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.i18n.i18n;
+
 import java.util.Scanner;
 import static net.minecraftforge.server.ServerMain.startMohistServer;
 

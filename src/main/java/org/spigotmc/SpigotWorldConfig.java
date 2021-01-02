@@ -1,6 +1,8 @@
 package org.spigotmc;
 
 import java.util.List;
+
+import com.mohistmc.util.i18n.i18n;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -22,7 +24,7 @@ public class SpigotWorldConfig
     {
         this.verbose = getBoolean( "verbose", true );
 
-        log( "-------- "+com.mohistmc.util.i18n.i18n.get("spigotworldconfig.1", worldName)+" --------" );
+        log( "-------- "+ i18n.get("spigotworldconfig.1", worldName)+" --------" );
         SpigotConfig.readConfig( SpigotWorldConfig.class, this );
     }
 
@@ -105,7 +107,7 @@ public class SpigotWorldConfig
             log( "Cannot set " + crop + " growth to zero, defaulting to 100" );
             modifier = 100;
         }
-        log( crop + com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.8") + modifier + "%" );
+        log( crop + com.mohistmc.util.i18n.i18n.get("spigotworldconfig.8") + " " + modifier + "%" );
 
         return modifier;
     }
@@ -133,14 +135,14 @@ public class SpigotWorldConfig
     private void itemMerge()
     {
         itemMerge = getDouble("merge-radius.item", 2.5 );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.7") + itemMerge );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.7") + " " +  itemMerge );
     }
 
     public double expMerge;
     private void expMerge()
     {
         expMerge = getDouble("merge-radius.exp", 3.0 );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.6") + expMerge );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.6") + " " + expMerge );
     }
 
     public int viewDistance;
@@ -159,21 +161,21 @@ public class SpigotWorldConfig
         }
 
         viewDistance = Math.max( Math.min( viewDistance,  32 ), 3 );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.5") + viewDistance );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.5") + " " + viewDistance );
     }
 
     public byte mobSpawnRange;
     private void mobSpawnRange()
     {
         mobSpawnRange = (byte) getInt( "mob-spawn-range", 6 );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.4") + mobSpawnRange );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.4") +" " +  mobSpawnRange );
     }
 
     public int itemDespawnRate;
     private void itemDespawnRate()
     {
         itemDespawnRate = getInt( "item-despawn-rate", 6000 );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.3") + itemDespawnRate );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.3") +" " +  itemDespawnRate );
     }
 
     public int animalActivationRange = 32;
@@ -188,7 +190,7 @@ public class SpigotWorldConfig
         raiderActivationRange = getInt( "entity-activation-range.raiders", raiderActivationRange );
         miscActivationRange = getInt( "entity-activation-range.misc", miscActivationRange );
         tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.2")+"An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.2")+" An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers );
     }
 
     public int playerTrackingRange = 48;
@@ -203,7 +205,7 @@ public class SpigotWorldConfig
         monsterTrackingRange = getInt( "entity-tracking-range.monsters", monsterTrackingRange );
         miscTrackingRange = getInt( "entity-tracking-range.misc", miscTrackingRange );
         otherTrackingRange = getInt( "entity-tracking-range.other", otherTrackingRange );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.9")+"Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Other " + otherTrackingRange );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.9")+" Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Other " + otherTrackingRange );
     }
 
     public int hopperTransfer;
@@ -219,7 +221,7 @@ public class SpigotWorldConfig
         }
         hopperCheck = getInt( "ticks-per.hopper-check", 1 );
         hopperAmount = getInt( "hopper-amount", 1 );
-        log(com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.10", hopperTransfer, hopperCheck, hopperAmount));
+        log(com.mohistmc.util.i18n.i18n.get("spigotworldconfig.10", hopperTransfer, hopperCheck, hopperAmount));
     }
 
     public int arrowDespawnRate;
@@ -228,28 +230,28 @@ public class SpigotWorldConfig
     {
         arrowDespawnRate = getInt( "arrow-despawn-rate", 1200  );
         tridentDespawnRate = getInt( "trident-despawn-rate", arrowDespawnRate  );
-        log(com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.11", arrowDespawnRate, tridentDespawnRate));
+        log(com.mohistmc.util.i18n.i18n.get("spigotworldconfig.11", arrowDespawnRate, tridentDespawnRate));
     }
 
     public boolean zombieAggressiveTowardsVillager;
     private void zombieAggressiveTowardsVillager()
     {
         zombieAggressiveTowardsVillager = getBoolean( "zombie-aggressive-towards-villager", true );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.12") + zombieAggressiveTowardsVillager );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.12") + " " + zombieAggressiveTowardsVillager );
     }
 
     public boolean nerfSpawnerMobs;
     private void nerfSpawnerMobs()
     {
         nerfSpawnerMobs = getBoolean( "nerf-spawner-mobs", false );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.13") + nerfSpawnerMobs );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.13") + " " + nerfSpawnerMobs );
     }
 
     public boolean enableZombiePigmenPortalSpawns;
     private void enableZombiePigmenPortalSpawns()
     {
         enableZombiePigmenPortalSpawns = getBoolean( "enable-zombie-pigmen-portal-spawns", true );
-        log( com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.14") + enableZombiePigmenPortalSpawns );
+        log( com.mohistmc.util.i18n.i18n.get("spigotworldconfig.14") +" " +  enableZombiePigmenPortalSpawns );
     }
 
     public int dragonDeathSoundRadius;
@@ -304,7 +306,7 @@ public class SpigotWorldConfig
         mansionSeed = getInt( "seed-mansion", 10387319 );
         fossilSeed = getInt( "seed-fossil", 14357921 );
         portalSeed = getInt( "seed-portal", 34222645 );
-        log(com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.15", villageSeed,
+        log(com.mohistmc.util.i18n.i18n.get("spigotworldconfig.15", villageSeed,
                 desertSeed,
                 iglooSeed,
                 jungleSeed,
@@ -370,7 +372,7 @@ public class SpigotWorldConfig
     {
         tileMaxTickTime = getInt("max-tick-time.tile", 50);
         entityMaxTickTime = getInt("max-tick-time.entity", 50);
-        log(com.mohistmc.utils.i18n.i18n.get("spigotworldconfig.16", tileMaxTickTime, entityMaxTickTime));
+        log(com.mohistmc.util.i18n.i18n.get("spigotworldconfig.16", tileMaxTickTime, entityMaxTickTime));
     }
 
     public double squidSpawnRangeMin;

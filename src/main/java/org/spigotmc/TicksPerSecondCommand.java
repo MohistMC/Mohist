@@ -1,8 +1,7 @@
 package org.spigotmc;
 
-import com.google.common.base.Joiner;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.server.MinecraftServer;
-import com.google.common.collect.Iterables;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,14 +25,14 @@ public class TicksPerSecondCommand extends Command
             return true;
         }
 
-        StringBuilder sb = new StringBuilder( ChatColor.GOLD + com.mohistmc.util.i18n.i18n.get("tickspersecondcommand.1") );
+        StringBuilder sb = new StringBuilder( ChatColor.GOLD + i18n.get("tickspersecondcommand.1") );
         for ( double tps : MinecraftServer.getServer().recentTps )
         {
             sb.append( format( tps ) );
             sb.append( ", " );
         }
         sender.sendMessage( sb.substring( 0, sb.length() - 2 ) );
-        sender.sendMessage(ChatColor.GOLD + com.mohistmc.util.i18n.i18n.get("tickspersecondcommand.2") + ChatColor.GREEN + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)) + "/" + (Runtime.getRuntime().totalMemory() / (1024 * 1024)) + " mb (Max: "
+        sender.sendMessage(ChatColor.GOLD + i18n.get("tickspersecondcommand.2") + " "+ ChatColor.GREEN + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)) + "/" + (Runtime.getRuntime().totalMemory() / (1024 * 1024)) + " mb (Max: "
                 + (Runtime.getRuntime().maxMemory() / (1024 * 1024)) + " mb)");
 
         return true;

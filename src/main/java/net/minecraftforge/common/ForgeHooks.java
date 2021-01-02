@@ -40,6 +40,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
@@ -265,7 +266,7 @@ public class ForgeHooks
             result = state.getPickBlock(target, world, pos, player);
 
             if (result.isEmpty())
-                LOGGER.warn(com.mohistmc.util.i18n.i18n.get("forgehooks.1", target.getType(), state.getBlock().getRegistryName()));
+                LOGGER.warn(i18n.get("forgehooks.1", target.getType(), state.getBlock().getRegistryName()));
         }
         else if (target.getType() == RayTraceResult.Type.ENTITY)
         {
@@ -273,7 +274,7 @@ public class ForgeHooks
             result = entity.getPickedResult(target);
 
             if (result.isEmpty())
-                LOGGER.warn(com.mohistmc.util.i18n.i18n.get("forgehooks.1", target.getType(), entity.getType().getRegistryName()));
+                LOGGER.warn(i18n.get("forgehooks.1", target.getType(), entity.getType().getRegistryName()));
         }
 
         if (result.isEmpty())

@@ -27,6 +27,7 @@ import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 
@@ -151,7 +152,7 @@ public class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
 
         if (thing == null)
         {
-            LOGGER.debug(com.mohistmc.util.i18n.i18n.get("objectholderref.1", injectedObject, field));
+            LOGGER.debug(i18n.get("objectholderref.1", injectedObject, field));
             return;
         }
         try
@@ -160,7 +161,7 @@ public class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         }
         catch (IllegalArgumentException | ReflectiveOperationException e)
         {
-            LOGGER.warn(com.mohistmc.util.i18n.i18n.get("objectholderref.2", this.field, thing, this.injectedObject, e));
+            LOGGER.warn(i18n.get("objectholderref.2", this.field, thing, this.injectedObject, e));
         }
     }
 

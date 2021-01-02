@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -51,7 +52,7 @@ public class AutomaticEventSubscriber
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
         if (scanData == null) return;
-        LOGGER.debug(LOADING,com.mohistmc.util.i18n.i18n.get("automaticeventsubscriber.1", mod.getModId()));
+        LOGGER.debug(LOADING, i18n.get("automaticeventsubscriber.1", mod.getModId()));
         List<ModFileScanData.AnnotationData> ebsTargets = scanData.getAnnotations().stream().
                 filter(annotationData -> AUTO_SUBSCRIBER.equals(annotationData.getAnnotationType())).
                 collect(Collectors.toList());
@@ -71,12 +72,12 @@ public class AutomaticEventSubscriber
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
                 {
-                    LOGGER.debug(LOADING, com.mohistmc.util.i18n.i18n.get("automaticeventsubscriber.2", ad.getClassType().getClassName(), busTarget));
+                    LOGGER.debug(LOADING, i18n.get("automaticeventsubscriber.2", ad.getClassType().getClassName(), busTarget));
                     busTarget.bus().get().register(Class.forName(ad.getClassType().getClassName(), true, loader));
                 }
                 catch (ClassNotFoundException e)
                 {
-                    LOGGER.fatal(LOADING, com.mohistmc.util.i18n.i18n.get("automaticeventsubscriber.3", ad.getClassType(), e));
+                    LOGGER.fatal(LOADING, i18n.get("automaticeventsubscriber.3", ad.getClassType(), e));
                     throw new RuntimeException(e);
                 }
             }
