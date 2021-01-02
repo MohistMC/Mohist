@@ -55,24 +55,6 @@
              }
              else
              {
-@@ -138,7 +138,7 @@
- 
-         if (enumfacing$axis == EnumFacing.Axis.X)
-         {
--            BlockPortal.Size blockportal$size = new BlockPortal.Size(p_189540_2_, p_189540_3_, EnumFacing.Axis.X);
-+            Size blockportal$size = new Size(p_189540_2_, p_189540_3_, EnumFacing.Axis.X);
- 
-             if (!blockportal$size.func_150860_b() || blockportal$size.field_150864_e < blockportal$size.field_150868_h * blockportal$size.field_150862_g)
-             {
-@@ -147,7 +147,7 @@
-         }
-         else if (enumfacing$axis == EnumFacing.Axis.Z)
-         {
--            BlockPortal.Size blockportal$size1 = new BlockPortal.Size(p_189540_2_, p_189540_3_, EnumFacing.Axis.Z);
-+            Size blockportal$size1 = new Size(p_189540_2_, p_189540_3_, EnumFacing.Axis.Z);
- 
-             if (!blockportal$size1.func_150860_b() || blockportal$size1.field_150864_e < blockportal$size1.field_150868_h * blockportal$size1.field_150862_g)
-             {
 @@ -216,6 +216,8 @@
      {
          if (!p_180634_4_.func_184218_aH() && !p_180634_4_.func_184207_aI() && p_180634_4_.func_184222_aU())
@@ -82,22 +64,6 @@
              p_180634_4_.func_181015_d(p_180634_2_);
          }
      }
-@@ -304,13 +306,13 @@
-     public BlockPattern.PatternHelper func_181089_f(World p_181089_1_, BlockPos p_181089_2_)
-     {
-         EnumFacing.Axis enumfacing$axis = EnumFacing.Axis.Z;
--        BlockPortal.Size blockportal$size = new BlockPortal.Size(p_181089_1_, p_181089_2_, EnumFacing.Axis.X);
-+        Size blockportal$size = new Size(p_181089_1_, p_181089_2_, EnumFacing.Axis.X);
-         LoadingCache<BlockPos, BlockWorldState> loadingcache = BlockPattern.func_181627_a(p_181089_1_, true);
- 
-         if (!blockportal$size.func_150860_b())
-         {
-             enumfacing$axis = EnumFacing.Axis.X;
--            blockportal$size = new BlockPortal.Size(p_181089_1_, p_181089_2_, EnumFacing.Axis.Z);
-+            blockportal$size = new Size(p_181089_1_, p_181089_2_, EnumFacing.Axis.Z);
-         }
- 
-         if (!blockportal$size.func_150860_b())
 @@ -370,6 +372,7 @@
              private BlockPos field_150861_f;
              private int field_150862_g;

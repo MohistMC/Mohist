@@ -24,7 +24,6 @@ public class CraftTravelAgent extends Teleporter implements TravelAgent {
     @Override
     public Location findOrCreate(Location target) {
         WorldServer worldServer = ((CraftWorld) target.getWorld()).getHandle();
-
         Location found = this.findPortal(target);
         if (found == null) {
             if (this.getCanCreatePortal() && this.createPortal(target)) {
@@ -40,7 +39,10 @@ public class CraftTravelAgent extends Teleporter implements TravelAgent {
     @Override
     public Location findPortal(Location location) {
         Teleporter pta = ((CraftWorld) location.getWorld()).getHandle().getDefaultTeleporter();
-        BlockPos found = pta.findPortal(location.getX(), location.getY(), location.getZ(), this.getSearchRadius());
+        BlockPos found = pta.findPortal(location.getX(), location.getY(), location.getZ(), 10);
+        if (found == null) {
+            found = pta.findPortal(location.getX(), location.getY(), location.getZ(), this.getSearchRadius());
+        }
         return found != null ? new Location(location.getWorld(), found.getX(), found.getY(), found.getZ(), location.getYaw(), location.getPitch()) : null;
     }
 
