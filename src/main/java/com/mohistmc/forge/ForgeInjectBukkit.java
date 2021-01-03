@@ -146,7 +146,7 @@ public class ForgeInjectBukkit {
 
     public static void addEnumEnvironment() {
         int i = World.Environment.values().length;
-        Registry<DimensionType> registry = MinecraftServer.getServer().func_244267_aX().getRegistry(Registry.DIMENSION_TYPE_KEY);
+        Registry<DimensionType> registry = MinecraftServer.getServer().func_244267_aX().func_230520_a_();
         for (Map.Entry<RegistryKey<DimensionType>, DimensionType> entry : registry.getEntries()) {
             RegistryKey<DimensionType> key = entry.getKey();
             World.Environment environment1 = environment.get(key);
