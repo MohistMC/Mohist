@@ -136,7 +136,7 @@
        super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
 +      this.pvpMode = p_i241885_1_.func_71219_W();
 +      convertable = p_i241885_3_;
-+      uuid = WorldUUID.getUUID(p_i241885_3_.func_237291_a_(this.func_234923_W_()));
++      uuid = WorldUUID.getUUID(p_i241885_3_.field_237279_c_.toFile());
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
 +      }
