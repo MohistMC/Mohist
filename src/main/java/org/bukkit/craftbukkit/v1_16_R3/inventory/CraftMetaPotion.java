@@ -38,6 +38,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     private PotionData type = new PotionData(PotionType.UNCRAFTABLE, false, false);
     private List<PotionEffect> customEffects;
     private Color color;
+    private String customTag = null;
 
     CraftMetaPotion(CraftMetaItem meta) {
         super(meta);
@@ -47,6 +48,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         CraftMetaPotion potionMeta = (CraftMetaPotion) meta;
         this.type = potionMeta.type;
         this.color = potionMeta.color;
+        this.customTag = potionMeta.customTag;
         if (potionMeta.hasCustomEffects()) {
             this.customEffects = new ArrayList<PotionEffect>(potionMeta.customEffects);
         }
@@ -56,6 +58,9 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         super(tag);
         if (tag.contains(DEFAULT_POTION.NBT)) {
             type = CraftPotionUtil.toBukkit(tag.getString(DEFAULT_POTION.NBT));
+            if (type.isUncraftable()) {
+                customTag = tag.getString(DEFAULT_POTION.NBT);
+            }
         }
         if (tag.contains(POTION_COLOR.NBT)) {
             try {
@@ -90,7 +95,9 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     CraftMetaPotion(Map<String, Object> map) {
         super(map);
         type = CraftPotionUtil.toBukkit(SerializableMeta.getString(map, DEFAULT_POTION.BUKKIT, true));
-
+        if (type.isUncraftable()) {
+            customTag = SerializableMeta.getString(map, DEFAULT_POTION.BUKKIT + "_Mg", true);
+        }
         Color color = SerializableMeta.getObject(Color.class, map, POTION_COLOR.BUKKIT, true);
         if (color != null) {
             setColor(color);
@@ -113,7 +120,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
-        tag.putString(DEFAULT_POTION.NBT, CraftPotionUtil.fromBukkit(type));
+        tag.putString(DEFAULT_POTION.NBT, type.isUncraftable() && customTag != null ? customTag : CraftPotionUtil.fromBukkit(type));
 
         if (hasColor()) {
             tag.putInt(POTION_COLOR.NBT, color.asRGB());
@@ -142,7 +149,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     }
 
     boolean isPotionEmpty() {
-        return (type.getType() == PotionType.UNCRAFTABLE) && !(hasCustomEffects() || hasColor());
+        return (type.getType() == PotionType.UNCRAFTABLE) && !(hasCustomEffects() || hasColor()) && !hasCustomTag();
     }
 
     @Override
@@ -165,6 +172,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         if (this.customEffects != null) {
             clone.customEffects = new ArrayList<PotionEffect>(this.customEffects);
         }
+        clone.customTag = customTag;
         return clone;
     }
 
@@ -182,6 +190,10 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     @Override
     public boolean hasCustomEffects() {
         return customEffects != null;
+    }
+
+    public boolean hasCustomTag() {
+        return customTag != null;
     }
 
     @Override
@@ -299,8 +311,10 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     int applyHash() {
         final int original;
         int hash = original = super.applyHash();
-        if (type.getType() != PotionType.UNCRAFTABLE) {
+        if (!type.isUncraftable()) {
             hash = 73 * hash + type.hashCode();
+        } else if (hasCustomTag()) {
+            hash = 73 * hash + customTag.hashCode();
         }
         if (hasColor()) {
             hash = 73 * hash + color.hashCode();
@@ -334,10 +348,11 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
-        if (type.getType() != PotionType.UNCRAFTABLE) {
+        if (!type.isUncraftable()) {
             builder.put(DEFAULT_POTION.BUKKIT, CraftPotionUtil.fromBukkit(type));
+        } else if (hasCustomTag()) {
+            builder.put(DEFAULT_POTION.BUKKIT + "_Mg", customTag);
         }
-
         if (hasColor()) {
             builder.put(POTION_COLOR.BUKKIT, getColor());
         }
