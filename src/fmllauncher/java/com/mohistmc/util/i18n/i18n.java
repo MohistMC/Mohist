@@ -39,12 +39,8 @@ public class i18n {
         return rb.getLocale().toString();
     }
 
-    public static boolean isLang(String lang) {
-        return isTimezone("Asia/Shanghai") || getLocale().contains(lang) || getCountry().contains(lang);
-    }
-
-    public static boolean isTimezone(String timezone) {
+    public static boolean isCN() {
         TimeZone timeZone = TimeZone.getDefault();
-        return timeZone.getID().equals(timezone);
+        return timeZone.getID().equals("Asia/Shanghai") || getLocale().contains("CN") || getCountry().contains("CN");
     }
 }
