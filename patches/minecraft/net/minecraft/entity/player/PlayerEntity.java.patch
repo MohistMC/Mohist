@@ -831,7 +831,7 @@
  
     public String func_195047_I_() {
 -      return this.func_146103_bH().getName();
-+      return this.func_146103_bH().getName() != null ? this.func_146103_bH().getName() : this.func_110124_au().toString();
++      return this.func_146103_bH() != null ? this.func_146103_bH().getName() : this.func_110124_au().toString();
     }
  
     public float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
