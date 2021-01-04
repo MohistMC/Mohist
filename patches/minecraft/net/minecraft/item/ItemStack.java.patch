@@ -68,7 +68,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,41 +119,72 @@
+@@ -109,41 +119,66 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -100,12 +100,6 @@
 +   // CraftBukkit end
 +
     private void func_190923_F() {
-+      // CraftBukkit start
-+      if (this.field_190928_g && this == ItemStack.field_190927_a) {
-+         throw new AssertionError((Object)"TRAP");
-+      }
-+      // CraftBukkit stop
-+
        this.field_190928_g = false;
        this.field_190928_g = this.func_190926_b();
     }
@@ -150,7 +144,7 @@
           return field_190927_a;
        }
     }
-@@ -151,7 +192,7 @@
+@@ -151,7 +186,7 @@
     public boolean func_190926_b() {
        if (this == field_190927_a) {
           return true;
@@ -159,7 +153,7 @@
           return this.field_77994_a <= 0;
        } else {
           return true;
-@@ -167,20 +208,34 @@
+@@ -167,20 +202,34 @@
     }
  
     public Item func_77973_b() {
@@ -200,7 +194,7 @@
           }
  
           return actionresulttype;
-@@ -206,12 +261,15 @@
+@@ -206,12 +255,15 @@
        if (this.field_77990_d != null) {
           p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
        }
@@ -218,7 +212,7 @@
     }
  
     public boolean func_77985_e() {
-@@ -219,7 +277,7 @@
+@@ -219,7 +271,7 @@
     }
  
     public boolean func_77984_f() {
@@ -227,7 +221,7 @@
           CompoundNBT compoundnbt = this.func_77978_p();
           return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
        } else {
-@@ -228,19 +286,19 @@
+@@ -228,19 +280,19 @@
     }
  
     public boolean func_77951_h() {
@@ -251,7 +245,7 @@
     }
  
     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
-@@ -258,6 +316,19 @@
+@@ -258,6 +310,19 @@
              }
  
              p_96631_1_ -= j;
@@ -271,7 +265,7 @@
              if (p_96631_1_ <= 0) {
                 return false;
              }
-@@ -276,9 +347,17 @@
+@@ -276,9 +341,17 @@
     public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
        if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
           if (this.func_77984_f()) {
@@ -289,7 +283,7 @@
                 this.func_190918_g(1);
                 if (p_222118_2_ instanceof PlayerEntity) {
                    ((PlayerEntity)p_222118_2_).func_71029_a(Stats.field_199088_e.func_199076_b(item));
-@@ -308,7 +387,7 @@
+@@ -308,7 +381,7 @@
     }
  
     public boolean func_150998_b(BlockState p_150998_1_) {
@@ -298,7 +292,7 @@
     }
  
     public ActionResultType func_111282_a_(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
-@@ -319,7 +398,7 @@
+@@ -319,7 +392,7 @@
        if (this.func_190926_b()) {
           return field_190927_a;
        } else {
@@ -307,7 +301,7 @@
           itemstack.func_190915_d(this.func_190921_D());
           if (this.field_77990_d != null) {
              itemstack.field_77990_d = this.field_77990_d.func_74737_b();
-@@ -336,7 +415,7 @@
+@@ -336,7 +409,7 @@
           if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
              return false;
           } else {
@@ -316,7 +310,7 @@
           }
        } else {
           return false;
-@@ -359,7 +438,7 @@
+@@ -359,7 +432,7 @@
        } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
           return false;
        } else {
@@ -325,7 +319,7 @@
        }
     }
  
-@@ -435,7 +514,17 @@
+@@ -435,7 +508,17 @@
        return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
     }
  
@@ -343,7 +337,7 @@
     public CompoundNBT func_77978_p() {
        return this.field_77990_d;
     }
-@@ -479,7 +568,7 @@
+@@ -479,7 +562,7 @@
  
     public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
        this.field_77990_d = p_77982_1_;
@@ -352,7 +346,7 @@
           this.func_196085_b(this.func_77952_i());
        }
  
-@@ -673,6 +762,7 @@
+@@ -673,6 +756,7 @@
           }
        }
  
@@ -360,7 +354,7 @@
        return list;
     }
  
-@@ -795,6 +885,12 @@
+@@ -795,6 +879,12 @@
     }
  
     public void func_82841_c(int p_82841_1_) {
@@ -373,7 +367,7 @@
        this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
     }
  
-@@ -817,9 +913,10 @@
+@@ -817,9 +907,10 @@
              }
           }
        } else {
@@ -385,7 +379,7 @@
        return multimap;
     }
  
-@@ -839,6 +936,14 @@
+@@ -839,6 +930,14 @@
        listnbt.add(compoundnbt);
     }
  
@@ -400,7 +394,7 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -954,6 +1059,35 @@
+@@ -954,6 +1053,35 @@
        return this.func_77973_b().func_219971_r();
     }
  
