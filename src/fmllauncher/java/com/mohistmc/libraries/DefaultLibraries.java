@@ -20,6 +20,7 @@ public class DefaultLibraries {
     public static void run() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
         String url = "https://maven.mohistmc.com/";
+        if (i18n.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
         LinkedHashMap<File, String> libs = getDefaultLibs();
 
         for (File lib : getDefaultLibs().keySet()) {
