@@ -12,24 +12,6 @@
                    }
  
                    super.onTermination(p_onTermination_1_);
-@@ -185,7 +185,7 @@
-          System.exit(-1);
-       }
- 
--      field_195650_a.error(String.format("Caught exception in thread %s", p_240983_0_), p_240983_1_);
-+      field_195650_a.error(com.mohistmc.util.i18n.i18n.get(String.format("util.3", p_240983_0_), p_240983_1_));
-    }
- 
-    @Nullable
-@@ -200,7 +200,7 @@
-       try {
-          type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(SharedConstants.func_215069_a().getWorldVersion())).getChoiceType(p_240990_0_, p_240990_1_);
-       } catch (IllegalArgumentException illegalargumentexception) {
--         field_195650_a.error("No data fixer registered for {}", (Object)p_240990_1_);
-+         field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.4", (Object)p_240990_1_));
-          if (SharedConstants.field_206244_b) {
-             throw illegalargumentexception;
-          }
 @@ -329,12 +329,12 @@
  
     public static <T extends Throwable> T func_229757_c_(T p_229757_0_) {
@@ -94,39 +76,3 @@
                    return;
                 }
              }
-@@ -576,7 +576,7 @@
-             process.getErrorStream().close();
-             process.getOutputStream().close();
-          } catch (IOException | PrivilegedActionException privilegedactionexception) {
--            Util.field_195650_a.error("Couldn't open url '{}'", p_195639_1_, privilegedactionexception);
-+            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.13", p_195639_1_, privilegedactionexception));
-          }
- 
-       }
-@@ -586,7 +586,7 @@
-          try {
-             this.func_195639_a(p_195642_1_.toURL());
-          } catch (MalformedURLException malformedurlexception) {
--            Util.field_195650_a.error("Couldn't open uri '{}'", p_195642_1_, malformedurlexception);
-+            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.14", p_195642_1_, malformedurlexception));
-          }
- 
-       }
-@@ -596,7 +596,7 @@
-          try {
-             this.func_195639_a(p_195641_1_.toURI().toURL());
-          } catch (MalformedURLException malformedurlexception) {
--            Util.field_195650_a.error("Couldn't open file '{}'", p_195641_1_, malformedurlexception);
-+            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.15", p_195641_1_, malformedurlexception));
-          }
- 
-       }
-@@ -616,7 +616,7 @@
-          try {
-             this.func_195639_a((new URI(p_195640_1_)).toURL());
-          } catch (MalformedURLException | IllegalArgumentException | URISyntaxException urisyntaxexception) {
--            Util.field_195650_a.error("Couldn't open uri '{}'", p_195640_1_, urisyntaxexception);
-+            Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.16", p_195640_1_, urisyntaxexception));
-          }
- 
-       }

@@ -508,7 +508,7 @@
           CrashReport crashreport;
           if (throwable1 instanceof ReportedException) {
              crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
-@@ -657,20 +799,24 @@
+@@ -657,19 +799,23 @@
  
           File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
           if (crashreport.func_147149_a(file1)) {
@@ -529,13 +529,12 @@
 -            field_147145_h.error("Exception stopping the server", throwable);
 +            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.19", throwable));
           } finally {
-+            org.spigotmc.WatchdogThread.doStop(); // Spigot
 +            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
-             this.func_71240_o();
++            org.spigotmc.WatchdogThread.doStop(); // Spigot
 +            MohistThreadBox.METRICS.shutdown();
+             this.func_71240_o();
           }
  
-       }
 @@ -678,9 +824,16 @@
     }
  
