@@ -66,27 +66,21 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -101,14 +107,27 @@
-    }
- 
+@@ -103,12 +109,23 @@
     public void func_216118_a(IInventory p_216118_1_, LootContext p_216118_2_) {
--      List<ItemStack> list = this.func_216113_a(p_216118_2_);
--      Random random = p_216118_2_.func_216032_b();
-+      // CraftBukkit start
-+      this.fillInventory(p_216118_1_, p_216118_2_, false);
-+   }
-+
-+   public void fillInventory(IInventory p_216118_1_, LootContext context, boolean plugin) {
-+      // CraftBukkit end
-+      List<ItemStack> list = this.func_216113_a(context);
-+      Random random = context.func_216032_b();
-+      // CraftBukkit start
-+      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_216118_1_, this, context, list, plugin);
-+      if (event.isCancelled()) {
-+         return;
+       List<ItemStack> list = this.func_216113_a(p_216118_2_);
+       Random random = p_216118_2_.func_216032_b();
++      // Mohist start
++      if (p_216118_2_.func_216033_a(LootParameters.field_237457_g_) && p_216118_2_.func_216033_a(LootParameters.field_216281_a)) {
++         // CraftBukkit start
++         LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_216118_1_, this, p_216118_2_, list, false);
++         if (event.isCancelled()) {
++            return;
++         }
++         list = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(Collectors.toList());
++         // CraftBukkit end
 +      }
-+      list = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(Collectors.toList());
-+      // CraftBukkit end
++      // Mohist end
        List<Integer> list1 = this.func_186459_a(p_216118_1_, random);
        this.func_186463_a(list, list1.size(), random);
  
@@ -97,7 +91,39 @@
              return;
           }
  
-@@ -173,6 +192,41 @@
+@@ -118,7 +135,31 @@
+             p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), itemstack);
+          }
+       }
++   }
+ 
++   public void fillInventory(IInventory p_216118_1_, LootContext context, boolean plugin) {
++      List<ItemStack> list = this.func_216113_a(context);
++      Random random = context.func_216032_b();
++      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_216118_1_, this, context, list, plugin);
++      if (event.isCancelled()) {
++         return;
++      }
++      list = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(Collectors.toList());
++      List<Integer> list1 = this.func_186459_a(p_216118_1_, random);
++      this.func_186463_a(list, list1.size(), random);
++
++      for(ItemStack itemstack : list) {
++         if (list1.isEmpty()) {
++            field_186465_b.warn(com.mohistmc.util.i18n.i18n.get("loottable.2"));
++            return;
++         }
++
++         if (itemstack.func_190926_b()) {
++            p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), ItemStack.field_190927_a);
++         } else {
++            p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), itemstack);
++         }
++      }
+    }
+ 
+    private void func_186463_a(List<ItemStack> p_186463_1_, int p_186463_2_, Random p_186463_3_) {
+@@ -173,6 +214,41 @@
        return new LootTable.Builder();
     }
  
@@ -139,7 +165,7 @@
     public static class Builder implements ILootFunctionConsumer<LootTable.Builder> {
        private final List<LootPool> field_216041_a = Lists.newArrayList();
        private final List<ILootFunction> field_216042_b = Lists.newArrayList();
-@@ -227,7 +281,7 @@
+@@ -227,7 +303,7 @@
              }
           }
  
