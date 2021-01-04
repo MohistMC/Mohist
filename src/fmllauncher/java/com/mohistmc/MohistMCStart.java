@@ -30,9 +30,10 @@ public class MohistMCStart {
     }
 
     public static void main(String[] args) throws Exception {
+        float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
         MohistConfigUtil.copyMohistConfig();
 
-        if (MohistConfigUtil.bMohist("use_custom_java8", "false"))
+        if (javaVersion > 54.0 && MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run(args);
 
         if (MohistConfigUtil.bMohist("show_logo", "true"))
