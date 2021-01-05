@@ -633,19 +633,17 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Entity being loaded");
-@@ -1544,8 +1826,24 @@
+@@ -1544,8 +1826,23 @@
        } else if (this.field_70170_p.field_72995_K) {
           return null;
        } else {
--         ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_);
 +         // CraftBukkit start - Capture drops for death event
 +         if (this instanceof LivingEntity && !((LivingEntity) this).forceDrops) {
 +            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.asCraftMirror(p_70099_1_));
 +            return null;
 +         }
 +         // CraftBukkit end
-+         ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_.func_77946_l());
-+         p_70099_1_.func_190920_e(0); // Paper - destroy this item - if this ever leaks due to game bugs, ensure it doesn't dupe
+          ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_);
           itementity.func_174869_p();
 +         // CraftBukkit start
 +         EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
@@ -659,7 +657,7 @@
           this.field_70170_p.func_217376_c(itementity);
           return itementity;
        }
-@@ -1582,6 +1880,7 @@
+@@ -1582,6 +1879,7 @@
  
     public void func_70098_U() {
        this.func_213317_d(Vector3d.field_186680_a);
@@ -667,7 +665,7 @@
        this.func_70071_h_();
        if (this.func_184218_aH()) {
           this.func_184187_bx().func_184232_k(this);
-@@ -1627,6 +1926,7 @@
+@@ -1627,6 +1925,7 @@
           }
        }
  
@@ -675,7 +673,7 @@
        if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
           if (this.func_184218_aH()) {
              this.func_184210_p();
-@@ -1634,7 +1934,7 @@
+@@ -1634,7 +1933,7 @@
  
           this.func_213301_b(Pose.STANDING);
           this.field_184239_as = p_184205_1_;
@@ -684,7 +682,7 @@
           return true;
        } else {
           return false;
-@@ -1659,8 +1959,9 @@
+@@ -1659,8 +1958,9 @@
     public void func_233575_bb_() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
@@ -695,7 +693,7 @@
        }
  
     }
-@@ -1669,26 +1970,84 @@
+@@ -1669,26 +1969,84 @@
        this.func_233575_bb_();
     }
  
@@ -789,7 +787,7 @@
     }
  
     protected boolean func_184219_q(Entity p_184219_1_) {
-@@ -1747,7 +2106,13 @@
+@@ -1747,7 +2105,13 @@
                 this.field_70170_p.func_217381_Z().func_76320_a("portal");
                 this.field_82153_h = i;
                 this.func_242279_ag();
@@ -804,7 +802,7 @@
                 this.field_70170_p.func_217381_Z().func_76319_b();
              }
  
-@@ -1816,6 +2181,7 @@
+@@ -1816,6 +2180,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -812,7 +810,7 @@
     public boolean func_205710_ba() {
        return true;
     }
-@@ -1870,6 +2236,13 @@
+@@ -1870,6 +2235,13 @@
     }
  
     public void func_204711_a(boolean p_204711_1_) {
@@ -826,7 +824,7 @@
        this.func_70052_a(4, p_204711_1_);
     }
  
-@@ -1912,15 +2285,19 @@
+@@ -1912,15 +2284,19 @@
        return this.func_96124_cp() != null ? this.func_96124_cp().func_142054_a(p_184194_1_) : false;
     }
  
@@ -849,7 +847,7 @@
        byte b0 = this.field_70180_af.func_187225_a(field_184240_ax);
        if (p_70052_2_) {
           this.field_70180_af.func_187227_b(field_184240_ax, (byte)(b0 | 1 << p_70052_1_));
-@@ -1939,16 +2316,53 @@
+@@ -1939,16 +2315,53 @@
     }
  
     public void func_70050_g(int p_70050_1_) {
@@ -906,7 +904,7 @@
     }
  
     public void func_203002_i(boolean p_203002_1_) {
-@@ -2032,7 +2446,7 @@
+@@ -2032,7 +2445,7 @@
     }
  
     protected ITextComponent func_225513_by_() {
@@ -915,7 +913,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2087,32 +2501,71 @@
+@@ -2087,32 +2500,71 @@
  
     @Nullable
     public Entity func_241206_a_(ServerWorld p_241206_1_) {
@@ -995,7 +993,7 @@
           }
        } else {
           return null;
-@@ -2125,8 +2578,13 @@
+@@ -2125,8 +2577,13 @@
  
     @Nullable
     protected PortalInfo func_241829_a(ServerWorld p_241829_1_) {
@@ -1009,7 +1007,7 @@
        if (!flag && !flag1) {
           boolean flag2 = p_241829_1_.func_234923_W_() == World.field_234919_h_;
           if (this.field_70170_p.func_234923_W_() != World.field_234919_h_ && !flag2) {
-@@ -2139,7 +2597,16 @@
+@@ -2139,7 +2596,16 @@
              double d3 = Math.min(2.9999872E7D, worldborder.func_177733_e() - 16.0D);
              double d4 = DimensionType.func_242715_a(this.field_70170_p.func_230315_m_(), p_241829_1_.func_230315_m_());
              BlockPos blockpos1 = new BlockPos(MathHelper.func_151237_a(this.func_226277_ct_() * d4, d0, d2), this.func_226278_cu_(), MathHelper.func_151237_a(this.func_226281_cx_() * d4, d1, d3));
@@ -1027,7 +1025,7 @@
                 BlockState blockstate = this.field_70170_p.func_180495_p(this.field_242271_ac);
                 Direction.Axis direction$axis;
                 Vector3d vector3d;
-@@ -2154,7 +2621,7 @@
+@@ -2154,7 +2620,7 @@
                    vector3d = new Vector3d(0.5D, 0.0D, 0.0D);
                 }
  
@@ -1036,7 +1034,7 @@
              }).orElse((PortalInfo)null);
           }
        } else {
-@@ -2165,7 +2632,16 @@
+@@ -2165,7 +2631,16 @@
              blockpos = p_241829_1_.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, p_241829_1_.func_241135_u_());
           }
  
@@ -1054,7 +1052,7 @@
        }
     }
  
-@@ -2173,12 +2649,31 @@
+@@ -2173,6 +2648,25 @@
        return PortalSize.func_242973_a(p_241839_2_, p_241839_1_, this.func_213303_ch(), this.func_213305_a(this.func_213283_Z()));
     }
  
@@ -1080,14 +1078,7 @@
     protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
        return p_241830_1_.func_85176_s().func_242957_a(p_241830_2_, p_241830_3_);
     }
- 
-    public boolean func_184222_aU() {
--      return true;
-+      return func_70089_S() && valid; // Paper
-    }
- 
-    public float func_180428_a(Explosion p_180428_1_, IBlockReader p_180428_2_, BlockPos p_180428_3_, BlockState p_180428_4_, FluidState p_180428_5_, float p_180428_6_) {
-@@ -2320,9 +2815,10 @@
+@@ -2320,9 +2814,10 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
@@ -1100,7 +1091,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2371,7 +2867,31 @@
+@@ -2371,7 +2866,31 @@
     }
  
     public void func_174826_a(AxisAlignedBB p_174826_1_) {
@@ -1133,7 +1124,7 @@
     }
  
     protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
-@@ -2513,7 +3033,7 @@
+@@ -2513,7 +3032,7 @@
     }
  
     public Stream<Entity> func_226276_cg_() {
@@ -1142,7 +1133,7 @@
     }
  
     public boolean func_200601_bK() {
-@@ -2594,7 +3114,7 @@
+@@ -2594,7 +3113,7 @@
        return SoundCategory.NEUTRAL;
     }
  
@@ -1151,7 +1142,7 @@
        return 1;
     }
  
-@@ -2796,6 +3316,7 @@
+@@ -2796,6 +3315,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -1159,7 +1150,7 @@
  
     }
  
-@@ -2811,4 +3332,63 @@
+@@ -2811,4 +3331,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
