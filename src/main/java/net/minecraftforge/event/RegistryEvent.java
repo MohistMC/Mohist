@@ -122,14 +122,12 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             return this.registry;
         }
 
-
         /*
          * This used to be fired on the Mod specific bus, and we could tell which mod was asking for mappings.
          * It no longer is, so this method is useless and just returns getAllMappings.
          * TODO: Ask cpw how if he wants to re-enable the ModBus rethrow.
          */
         @Deprecated
-
         public ImmutableList<Mapping<T>> getMappings()
         {
             return this.activeMod == null ? getAllMappings() : getMappings(this.activeMod.getModId());
@@ -138,6 +136,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
         public ImmutableList<Mapping<T>> getMappings(String modid)
         {
             return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getNamespace().equals(modid)).collect(Collectors.toList()));
+        }
 
         public ImmutableList<Mapping<T>> getAllMappings()
         {
