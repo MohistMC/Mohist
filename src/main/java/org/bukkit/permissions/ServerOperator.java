@@ -1,3 +1,4 @@
+
 package org.bukkit.permissions;
 
 import org.bukkit.entity.Player;

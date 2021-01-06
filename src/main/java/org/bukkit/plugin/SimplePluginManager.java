@@ -158,11 +158,11 @@ public final class SimplePluginManager implements PluginManager {
             File replacedFile = plugins.put(description.getName(), file);
             if (replacedFile != null) {
                 server.getLogger().severe(String.format(
-                    "Ambiguous plugin name `%s' for files `%s' and `%s' in `%s'",
-                    description.getName(),
-                    file.getPath(),
-                    replacedFile.getPath(),
-                    directory.getPath()
+                        "Ambiguous plugin name `%s' for files `%s' and `%s' in `%s'",
+                        description.getName(),
+                        file.getPath(),
+                        replacedFile.getPath(),
+                        directory.getPath()
                 ));
             }
 
@@ -256,7 +256,7 @@ public final class SimplePluginManager implements PluginManager {
                         if (loadedPlugins.contains(dependency)) {
                             dependencyIterator.remove();
 
-                        // We have a dependency not found
+                            // We have a dependency not found
                         } else if (!plugins.containsKey(dependency) && !pluginsProvided.containsKey(dependency)) {
                             missingDependency = false;
                             pluginIterator.remove();
@@ -264,9 +264,9 @@ public final class SimplePluginManager implements PluginManager {
                             dependencies.remove(plugin);
 
                             server.getLogger().log(
-                                Level.SEVERE,
-                                "Could not load '" + entry.getValue().getPath() + "' in folder '" + directory.getPath() + "'",
-                                new UnknownDependencyException("Unknown dependency " + dependency + ". Please download and install " + dependency + " to run this plugin."));
+                                    Level.SEVERE,
+                                    "Could not load '" + entry.getValue().getPath() + "' in folder '" + directory.getPath() + "'",
+                                    new UnknownDependencyException("Unknown dependency " + dependency + ". Please download and install " + dependency + " to run this plugin."));
                             break;
                         }
                     }
@@ -598,7 +598,7 @@ public final class SimplePluginManager implements PluginManager {
                             plugin.getDescription().getAuthors(),
                             plugin.getDescription().getFullName(),
                             ex.getMessage()
-                            ));
+                    ));
                 }
             } catch (Throwable ex) {
                 server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex);

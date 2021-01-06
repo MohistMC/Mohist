@@ -4,8 +4,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Extends RegisteredListener to include timing information
@@ -16,12 +14,12 @@ public class TimedRegisteredListener extends RegisteredListener {
     private Class<? extends Event> eventClass;
     private boolean multiple = false;
 
-    public TimedRegisteredListener(@NotNull final Listener pluginListener, @NotNull final EventExecutor eventExecutor, @NotNull final EventPriority eventPriority, @NotNull final Plugin registeredPlugin, final boolean listenCancelled) {
+    public TimedRegisteredListener(final Listener pluginListener, final EventExecutor eventExecutor, final EventPriority eventPriority, final Plugin registeredPlugin, final boolean listenCancelled) {
         super(pluginListener, eventExecutor, eventPriority, registeredPlugin, listenCancelled);
     }
 
     @Override
-    public void callEvent(@NotNull Event event) throws EventException {
+    public void callEvent(Event event) throws EventException {
         if (event.isAsynchronous()) {
             super.callEvent(event);
             return;
@@ -39,8 +37,7 @@ public class TimedRegisteredListener extends RegisteredListener {
         totalTime += System.nanoTime() - start;
     }
 
-    @NotNull
-    private static Class<?> getCommonSuperclass(@NotNull Class<?> class1, @NotNull Class<?> class2) {
+    private static Class<?> getCommonSuperclass(Class<?> class1, Class<?> class2) {
         while (!class1.isAssignableFrom(class2)) {
             class1 = class1.getSuperclass();
         }
@@ -84,7 +81,6 @@ public class TimedRegisteredListener extends RegisteredListener {
      *
      * @return the event class handled by this RegisteredListener
      */
-    @Nullable
     public Class<? extends Event> getEventClass() {
         return eventClass;
     }

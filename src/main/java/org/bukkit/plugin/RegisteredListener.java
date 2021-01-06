@@ -1,11 +1,6 @@
 package org.bukkit.plugin;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.event.*;
 
 /**
  * Stores relevant information for plugin listeners
@@ -17,7 +12,7 @@ public class RegisteredListener {
     private final EventExecutor executor;
     private final boolean ignoreCancelled;
 
-    public RegisteredListener(@NotNull final Listener listener, @NotNull final EventExecutor executor, @NotNull final EventPriority priority, @NotNull final Plugin plugin, final boolean ignoreCancelled) {
+    public RegisteredListener(final Listener listener, final EventExecutor executor, final EventPriority priority, final Plugin plugin, final boolean ignoreCancelled) {
         this.listener = listener;
         this.priority = priority;
         this.plugin = plugin;
@@ -30,7 +25,6 @@ public class RegisteredListener {
      *
      * @return Registered Listener
      */
-    @NotNull
     public Listener getListener() {
         return listener;
     }
@@ -40,7 +34,6 @@ public class RegisteredListener {
      *
      * @return Registered Plugin
      */
-    @NotNull
     public Plugin getPlugin() {
         return plugin;
     }
@@ -50,7 +43,6 @@ public class RegisteredListener {
      *
      * @return Registered Priority
      */
-    @NotNull
     public EventPriority getPriority() {
         return priority;
     }
@@ -61,7 +53,7 @@ public class RegisteredListener {
      * @param event The event
      * @throws EventException If an event handler throws an exception.
      */
-    public void callEvent(@NotNull final Event event) throws EventException {
+    public void callEvent(final Event event) throws EventException {
         if (event instanceof Cancellable) {
             if (((Cancellable) event).isCancelled() && isIgnoringCancelled()) {
                 return;

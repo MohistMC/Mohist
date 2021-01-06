@@ -2,8 +2,6 @@ package org.bukkit.permissions;
 
 import java.util.Set;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents an object that may be assigned permissions
@@ -17,7 +15,7 @@ public interface Permissible extends ServerOperator {
      * @param name Name of the permission
      * @return true if the permission is set, otherwise false
      */
-    public boolean isPermissionSet(@NotNull String name);
+    public boolean isPermissionSet(String name);
 
     /**
      * Checks if this object contains an override for the specified {@link
@@ -26,7 +24,7 @@ public interface Permissible extends ServerOperator {
      * @param perm Permission to check
      * @return true if the permission is set, otherwise false
      */
-    public boolean isPermissionSet(@NotNull Permission perm);
+    public boolean isPermissionSet(Permission perm);
 
     /**
      * Gets the value of the specified permission, if set.
@@ -37,7 +35,7 @@ public interface Permissible extends ServerOperator {
      * @param name Name of the permission
      * @return Value of the permission
      */
-    public boolean hasPermission(@NotNull String name);
+    public boolean hasPermission(String name);
 
     /**
      * Gets the value of the specified permission, if set.
@@ -48,7 +46,7 @@ public interface Permissible extends ServerOperator {
      * @param perm Permission to get
      * @return Value of the permission
      */
-    public boolean hasPermission(@NotNull Permission perm);
+    public boolean hasPermission(Permission perm);
 
     /**
      * Adds a new {@link PermissionAttachment} with a single permission by
@@ -60,8 +58,7 @@ public interface Permissible extends ServerOperator {
      * @param value Value of the permission
      * @return The PermissionAttachment that was just created
      */
-    @NotNull
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin, @NotNull String name, boolean value);
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value);
 
     /**
      * Adds a new empty {@link PermissionAttachment} to this object
@@ -70,8 +67,7 @@ public interface Permissible extends ServerOperator {
      *     or disabled
      * @return The PermissionAttachment that was just created
      */
-    @NotNull
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin);
+    public PermissionAttachment addAttachment(Plugin plugin);
 
     /**
      * Temporarily adds a new {@link PermissionAttachment} with a single
@@ -85,8 +81,7 @@ public interface Permissible extends ServerOperator {
      *     after
      * @return The PermissionAttachment that was just created
      */
-    @Nullable
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin, @NotNull String name, boolean value, int ticks);
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks);
 
     /**
      * Temporarily adds a new empty {@link PermissionAttachment} to this
@@ -98,8 +93,7 @@ public interface Permissible extends ServerOperator {
      *     after
      * @return The PermissionAttachment that was just created
      */
-    @Nullable
-    public PermissionAttachment addAttachment(@NotNull Plugin plugin, int ticks);
+    public PermissionAttachment addAttachment(Plugin plugin, int ticks);
 
     /**
      * Removes the given {@link PermissionAttachment} from this object
@@ -108,7 +102,7 @@ public interface Permissible extends ServerOperator {
      * @throws IllegalArgumentException Thrown when the specified attachment
      *     isn't part of this object
      */
-    public void removeAttachment(@NotNull PermissionAttachment attachment);
+    public void removeAttachment(PermissionAttachment attachment);
 
     /**
      * Recalculates the permissions for this object, if the attachments have
@@ -124,6 +118,5 @@ public interface Permissible extends ServerOperator {
      *
      * @return Set of currently effective permissions
      */
-    @NotNull
     public Set<PermissionAttachmentInfo> getEffectivePermissions();
 }
