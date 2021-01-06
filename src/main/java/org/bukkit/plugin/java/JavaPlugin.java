@@ -1,19 +1,13 @@
 package org.bukkit.plugin.java;
 
 import com.google.common.base.Charsets;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -25,8 +19,6 @@ import org.bukkit.plugin.PluginBase;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a Java plugin
@@ -52,7 +44,7 @@ public abstract class JavaPlugin extends PluginBase {
         ((PluginClassLoader) classLoader).initialize(this);
     }
 
-    protected JavaPlugin(@NotNull final JavaPluginLoader loader, @NotNull final PluginDescriptionFile description, @NotNull final File dataFolder, @NotNull final File file) {
+    protected JavaPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
         final ClassLoader classLoader = this.getClass().getClassLoader();
         if (classLoader instanceof PluginClassLoader) {
             throw new IllegalStateException("Cannot use initialization constructor at runtime");
@@ -61,12 +53,63 @@ public abstract class JavaPlugin extends PluginBase {
     }
 
     /**
+     * This method provides fast access to the plugin that has {@link #getProvidingPlugin(Class) provided} the given plugin class, which is usually the plugin that implemented it.
+     * <p>
+     * An exception to this would be if plugin's jar that contained the class does not extend the class, where the intended plugin would have resided in a different jar / classloader.
+     *
+     * @param <T> a class that extends JavaPlugin
+     * @param clazz the class desired
+     * @return the plugin that provides and implements said class
+     * @throws IllegalArgumentException if clazz is null
+     * @throws IllegalArgumentException if clazz does not extend {@link JavaPlugin}
+     * @throws IllegalStateException if clazz was not provided by a plugin, for example, if called with
+     * <code>JavaPlugin.getPlugin(JavaPlugin.class)</code>
+     * @throws IllegalStateException if called from the static initializer for given JavaPlugin
+     * @throws ClassCastException if plugin that provided the class does not extend the class
+     */
+    public static <T extends JavaPlugin> T getPlugin(Class<T> clazz) {
+        Validate.notNull(clazz, "Null class cannot have a plugin");
+        if (!JavaPlugin.class.isAssignableFrom(clazz)) {
+            throw new IllegalArgumentException(clazz + " does not extend " + JavaPlugin.class);
+        }
+        final ClassLoader cl = clazz.getClassLoader();
+        if (!(cl instanceof PluginClassLoader)) {
+            throw new IllegalArgumentException(clazz + " is not initialized by " + PluginClassLoader.class);
+        }
+        JavaPlugin plugin = ((PluginClassLoader) cl).plugin;
+        if (plugin == null) {
+            throw new IllegalStateException("Cannot get plugin for " + clazz + " from a static initializer");
+        }
+        return clazz.cast(plugin);
+    }
+
+    /**
+     * This method provides fast access to the plugin that has provided the given class.
+     *
+     * @param clazz a class belonging to a plugin
+     * @return the plugin that provided the class
+     * @throws IllegalArgumentException if the class is not provided by a JavaPlugin
+     * @throws IllegalArgumentException if class is null
+     * @throws IllegalStateException if called from the static initializer for given JavaPlugin
+     */
+    public static JavaPlugin getProvidingPlugin(Class<?> clazz) {
+        Validate.notNull(clazz, "Null class cannot have a plugin");
+        final ClassLoader cl = clazz.getClassLoader();
+        if (!(cl instanceof PluginClassLoader)) {
+            throw new IllegalArgumentException(clazz + " is not provided by " + PluginClassLoader.class);
+        }
+        JavaPlugin plugin = ((PluginClassLoader) cl).plugin;
+        if (plugin == null) {
+            throw new IllegalStateException("Cannot get plugin for " + clazz + " from a static initializer");
+        }
+        return plugin;
+    }
+    /**
      * Returns the folder that the plugin data's files are located in. The
      * folder may not yet exist.
      *
      * @return The folder.
      */
-    @NotNull
     @Override
     public final File getDataFolder() {
         return dataFolder;
@@ -77,7 +120,6 @@ public abstract class JavaPlugin extends PluginBase {
      *
      * @return PluginLoader that controls this plugin
      */
-    @NotNull
     @Override
     public final PluginLoader getPluginLoader() {
         return loader;
@@ -88,7 +130,6 @@ public abstract class JavaPlugin extends PluginBase {
      *
      * @return Server running this plugin
      */
-    @NotNull
     @Override
     public final Server getServer() {
         return server;
@@ -106,11 +147,27 @@ public abstract class JavaPlugin extends PluginBase {
     }
 
     /**
+     * Sets the enabled state of this plugin
+     *
+     * @param enabled true if enabled, otherwise false
+     */
+    protected final void setEnabled(final boolean enabled) {
+        if (isEnabled != enabled) {
+            isEnabled = enabled;
+
+            if (isEnabled) {
+                onEnable();
+            } else {
+                onDisable();
+            }
+        }
+    }
+
+    /**
      * Returns the file which contains this plugin
      *
      * @return File containing this plugin
      */
-    @NotNull
     protected File getFile() {
         return file;
     }
@@ -120,13 +177,11 @@ public abstract class JavaPlugin extends PluginBase {
      *
      * @return Contents of the plugin.yaml file
      */
-    @NotNull
     @Override
     public final PluginDescriptionFile getDescription() {
         return description;
     }
 
-    @NotNull
     @Override
     public FileConfiguration getConfig() {
         if (newConfig == null) {
@@ -145,13 +200,14 @@ public abstract class JavaPlugin extends PluginBase {
      * @throws IllegalArgumentException if file is null
      * @see ClassLoader#getResourceAsStream(String)
      */
-    @Nullable
-    protected final Reader getTextResource(@NotNull String file) {
+    @SuppressWarnings("deprecation")
+    protected final Reader getTextResource(String file) {
         final InputStream in = getResource(file);
 
         return in == null ? null : new InputStreamReader(in, Charsets.UTF_8);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void reloadConfig() {
         newConfig = YamlConfiguration.loadConfiguration(configFile);
@@ -181,7 +237,7 @@ public abstract class JavaPlugin extends PluginBase {
     }
 
     @Override
-    public void saveResource(@NotNull String resourcePath, boolean replace) {
+    public void saveResource(String resourcePath, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
@@ -218,9 +274,8 @@ public abstract class JavaPlugin extends PluginBase {
         }
     }
 
-    @Nullable
     @Override
-    public InputStream getResource(@NotNull String filename) {
+    public InputStream getResource(String filename) {
         if (filename == null) {
             throw new IllegalArgumentException("Filename cannot be null");
         }
@@ -245,30 +300,13 @@ public abstract class JavaPlugin extends PluginBase {
      *
      * @return ClassLoader holding this plugin
      */
-    @NotNull
     protected final ClassLoader getClassLoader() {
         return classLoader;
     }
 
-    /**
-     * Sets the enabled state of this plugin
-     *
-     * @param enabled true if enabled, otherwise false
-     */
-    protected final void setEnabled(final boolean enabled) {
-        if (isEnabled != enabled) {
-            isEnabled = enabled;
-
-            if (isEnabled) {
-                onEnable();
-            } else {
-                onDisable();
-            }
-        }
-    }
 
 
-    final void init(@NotNull PluginLoader loader, @NotNull Server server, @NotNull PluginDescriptionFile description, @NotNull File dataFolder, @NotNull File file, @NotNull ClassLoader classLoader) {
+    final void init(PluginLoader loader, Server server, PluginDescriptionFile description, File dataFolder, File file, ClassLoader classLoader) {
         this.loader = loader;
         this.server = server;
         this.file = file;
@@ -283,7 +321,7 @@ public abstract class JavaPlugin extends PluginBase {
      * {@inheritDoc}
      */
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return false;
     }
 
@@ -291,8 +329,7 @@ public abstract class JavaPlugin extends PluginBase {
      * {@inheritDoc}
      */
     @Override
-    @Nullable
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         return null;
     }
 
@@ -304,8 +341,7 @@ public abstract class JavaPlugin extends PluginBase {
      * @param name name or alias of the command
      * @return the plugin command if found, otherwise null
      */
-    @Nullable
-    public PluginCommand getCommand(@NotNull String name) {
+    public PluginCommand getCommand(String name) {
         String alias = name.toLowerCase(java.util.Locale.ENGLISH);
         PluginCommand command = getServer().getPluginCommand(alias);
 
@@ -329,9 +365,8 @@ public abstract class JavaPlugin extends PluginBase {
     @Override
     public void onEnable() {}
 
-    @Nullable
     @Override
-    public ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return null;
     }
 
@@ -345,81 +380,14 @@ public abstract class JavaPlugin extends PluginBase {
         this.naggable = canNag;
     }
 
-    @NotNull
     @Override
-    public Logger getLogger() {
+    public final Logger getLogger() {
         return logger;
     }
 
-    @NotNull
     @Override
     public String toString() {
         return description.getFullName();
     }
 
-    /**
-     * This method provides fast access to the plugin that has {@link
-     * #getProvidingPlugin(Class) provided} the given plugin class, which is
-     * usually the plugin that implemented it.
-     * <p>
-     * An exception to this would be if plugin's jar that contained the class
-     * does not extend the class, where the intended plugin would have
-     * resided in a different jar / classloader.
-     *
-     * @param <T> a class that extends JavaPlugin
-     * @param clazz the class desired
-     * @return the plugin that provides and implements said class
-     * @throws IllegalArgumentException if clazz is null
-     * @throws IllegalArgumentException if clazz does not extend {@link
-     *     JavaPlugin}
-     * @throws IllegalStateException if clazz was not provided by a plugin,
-     *     for example, if called with
-     *     <code>JavaPlugin.getPlugin(JavaPlugin.class)</code>
-     * @throws IllegalStateException if called from the static initializer for
-     *     given JavaPlugin
-     * @throws ClassCastException if plugin that provided the class does not
-     *     extend the class
-     */
-    @NotNull
-    public static <T extends JavaPlugin> T getPlugin(@NotNull Class<T> clazz) {
-        Validate.notNull(clazz, "Null class cannot have a plugin");
-        if (!JavaPlugin.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException(clazz + " does not extend " + JavaPlugin.class);
-        }
-        final ClassLoader cl = clazz.getClassLoader();
-        if (!(cl instanceof PluginClassLoader)) {
-            throw new IllegalArgumentException(clazz + " is not initialized by " + PluginClassLoader.class);
-        }
-        JavaPlugin plugin = ((PluginClassLoader) cl).plugin;
-        if (plugin == null) {
-            throw new IllegalStateException("Cannot get plugin for " + clazz + " from a static initializer");
-        }
-        return clazz.cast(plugin);
-    }
-
-    /**
-     * This method provides fast access to the plugin that has provided the
-     * given class.
-     *
-     * @param clazz a class belonging to a plugin
-     * @return the plugin that provided the class
-     * @throws IllegalArgumentException if the class is not provided by a
-     *     JavaPlugin
-     * @throws IllegalArgumentException if class is null
-     * @throws IllegalStateException if called from the static initializer for
-     *     given JavaPlugin
-     */
-    @NotNull
-    public static JavaPlugin getProvidingPlugin(@NotNull Class<?> clazz) {
-        Validate.notNull(clazz, "Null class cannot have a plugin");
-        final ClassLoader cl = clazz.getClassLoader();
-        if (!(cl instanceof PluginClassLoader)) {
-            throw new IllegalArgumentException(clazz + " is not provided by " + PluginClassLoader.class);
-        }
-        JavaPlugin plugin = ((PluginClassLoader) cl).plugin;
-        if (plugin == null) {
-            throw new IllegalStateException("Cannot get plugin for " + clazz + " from a static initializer");
-        }
-        return plugin;
-    }
 }
