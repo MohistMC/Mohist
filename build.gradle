@@ -179,8 +179,8 @@ project(':forge') {
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
-//update forge 1.16.4-35-1-31
-    version = '1.16.4-35.1.31'
+
+    version = '1.16.4-35.1.32'
     println('Forge Version: ' + version)
 
     patcher {
