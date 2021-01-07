@@ -3,52 +3,139 @@ package com.mohistmc.util;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.i18n.i18n;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.jar.JarFile;
 
 public class InstallUtils {
-    public static String forgeVer = MohistMCStart.getForgeVersion();
-    public static String mcpVer = MohistMCStart.getMCPVersion();
+    private static final PrintStream origin = System.out;
+    public static String forgeVer = MohistMCStart.class.getPackage().getSpecificationVersion();
+    public static String mcpVer = MohistMCStart.class.getPackage().getSpecificationTitle();
     public static String libPath = JarTool.getJarDir() + "/libraries/";
-    public static File universalJar = new File(libPath + "net/minecraftforge/forge/1.16.4-" + forgeVer + "/forge-1.16.4-" + forgeVer + "-universal.jar");
+
+    public static String forgeStart = libPath + "net/minecraftforge/forge/1.16.4-" + forgeVer + "/forge-1.16.4-" + forgeVer;
+    public static File universalJar = new File(forgeStart + "-universal.jar");
+    public static File serverJar = new File(forgeStart + "-server.jar");
+
     public static File lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
-    public static File extra = new File(libPath + "net/minecraft/server/1.16.4-" + mcpVer + "/server-1.16.4-" + mcpVer + "-extra.jar");
+    public static File installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
+
+    public static String otherStart = libPath + "net/minecraft/server/1.16.4-" + mcpVer + "/server-1.16.4-" + mcpVer;
+    public static File extra = new File(otherStart + "-extra.jar");
+    public static File slim = new File(otherStart + "-slim.jar");
+    public static File srg = new File(otherStart + "-srg.jar");
+
+    public static String mcpStart = libPath + "/de/oceanlabs/mcp/mcp_config/1.16.4-" + mcpVer + "/mcp_config-1.16.4-" + mcpVer;
+    public static File mcpZip = new File(mcpStart + ".zip");
+    public static File mcpTxt = new File(mcpStart + "-mappings.txt");
 
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
         copyFileFromJar(lzma, "data/server.lzma");
         copyFileFromJar(universalJar, "data/forge-1.16.4-" + forgeVer + "-universal.jar");
 
-        ProcessBuilder p = new ProcessBuilder(new ArrayList<>(Arrays.asList("java", "-jar", "MohistInstallChecker.jar", "\"" + libPath + "\"", forgeVer, mcpVer)));
-        p.directory(new File(libPath + "com/mohistmc/installation/"));
-        p.redirectError(ProcessBuilder.Redirect.INHERIT);
-        Process proc = p.start();
+        if(forgeVer == null || mcpVer == null) {
+            System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
+            System.exit(0);
+        }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null)
-            if (line.startsWith("="))
-                System.out.println(i18n.get(line.replaceFirst("=", "")));
-            else System.out.println(line);
+        if(mcpZip.exists()) {
+            if(!mcpTxt.exists()) {
 
-        proc.waitFor();
-        reader.close();
-        proc.destroy();
+                // MAKE THE MAPPINGS TXT FILE
+
+                System.out.println(i18n.get("installation.mcp"));
+                mute();
+                run("net.minecraftforge.installertools.ConsoleTool", new ArrayList<>(Arrays.asList("--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings")), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "/net/minecraftforge/installertools/1.1.11/installertools-1.1.11.jar", libPath + "/net/md-5/SpecialSource/1.8.5/SpecialSource-1.8.5.jar", libPath + "/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar", libPath + "/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar", libPath + "/de/siegmar/fastcsv/1.0.2/fastcsv-1.0.2.jar", libPath + "/org/ow2/asm/asm-commons/6.1.1/asm-commons-6.1.1.jar", libPath + "/com/google/guava/guava/20.0/guava-20.0.jar", libPath + "/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar", libPath + "/org/ow2/asm/asm-analysis/6.1.1/asm-analysis-6.1.1.jar", libPath + "/org/ow2/asm/asm-tree/6.1.1/asm-tree-6.1.1.jar", libPath + "/org/ow2/asm/asm/6.1.1/asm-6.1.1.jar"))));
+                unmute();
+            }
+        } else {
+            System.out.println(i18n.get("installation.mcpfilemissing"));
+            System.exit(0);
+        }
+
+        if(isCorrupted(extra)) extra.delete();
+        if(isCorrupted(slim)) slim.delete();
+        if(isCorrupted(srg)) srg.delete();
+
+        if(!slim.exists() || !extra.exists()) {
+            System.out.println(i18n.get("installation.jars"));
+            mute();
+            run("net.minecraftforge.jarsplitter.ConsoleTool", new ArrayList<>(Arrays.asList("--input", libPath + "/minecraft_server.1.16.4.jar", "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mcpTxt.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "/net/minecraftforge/jarsplitter/1.1.2/jarsplitter-1.1.2.jar", libPath + "/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar"))));
+            unmute();
+        }
+
+        if(!srg.exists()) {
+            System.out.println(i18n.get("installation.srgjar"));
+            run("net.md_5.specialsource.SpecialSource", new ArrayList<>(Arrays.asList("--in-jar", slim.getAbsolutePath(), "--out-jar", srg.getAbsolutePath(), "--srg-in", mcpTxt.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "/net/md-5/SpecialSource/1.8.5/SpecialSource-1.8.5.jar", libPath + "/org/ow2/asm/asm-commons/6.1.1/asm-commons-6.1.1.jar", libPath + "/net/sf/jopt-simple/jopt-simple/4.9/jopt-simple-4.9.jar", libPath + "/com/google/guava/guava/20.0/guava-20.0.jar", libPath + "/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar", libPath + "/org/ow2/asm/asm-analysis/6.1.1/asm-analysis-6.1.1.jar", libPath + "/org/ow2/asm/asm-tree/6.1.1/asm-tree-6.1.1.jar", libPath + "/org/ow2/asm/asm/6.1.1/asm-6.1.1.jar"))));
+        }
+
+        if(!installInfo.exists() || !serverJar.exists() || !Files.readAllLines(installInfo.toPath()).get(0).equals(MD5Util.getMd5(serverJar))) {
+            System.out.println(i18n.get("installation.forgejar"));
+            mute();
+            run("net.minecraftforge.binarypatcher.ConsoleTool", new ArrayList<>(Arrays.asList("--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "/net/minecraftforge/binarypatcher/1.0.12/binarypatcher-1.0.12.jar", libPath + "/commons-io/commons-io/2.4/commons-io-2.4.jar", libPath + "/com/google/guava/guava/25.1-jre/guava-25.1-jre.jar", libPath + "/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar", libPath + "/com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar", libPath + "/com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar", libPath + "/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar", libPath + "/org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar", libPath + "/com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar", libPath + "/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar", libPath + "/org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar", libPath + "/trove/trove/1.0.2/trove-1.0.2.jar"))));
+            unmute();
+            FileWriter fw = new FileWriter(installInfo);
+            fw.write(MD5Util.getMd5(serverJar));
+            fw.close();
+        }
+
+        System.out.println(i18n.get("installation.finished"));
+    }
+
+    private static void run(String mainClass, List<String> args, List<URL> classPath) throws Exception {
+        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[classPath.size()]), null)).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[args.size()]));
+    }
+
+    private static List<URL> stringToUrl(List<String> strs) throws Exception {
+        List<URL> temp = new ArrayList<>();
+        for (String t : strs)
+            temp.add(new File(t).toURI().toURL());
+        return temp;
+    }
+
+    /*
+    THIS IS TO NOT SPAM CONSOLE WHEN IT WILL PRINT A LOT OF THINGS
+     */
+    private static void mute() throws Exception {
+        File out = new File(libPath + "/com/mohistmc/installation/installationLogs.txt");
+        if(!out.exists()) {
+            out.getParentFile().mkdirs();
+            out.createNewFile();
+        }
+        System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(out))));
+    }
+
+    private static void unmute() {
+        System.setOut(origin);
     }
 
     private static void copyFileFromJar(File file, String pathInJar) throws Exception {
         InputStream is = MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar);
-        if (!file.exists() || !MD5Util.getMd5(file).equals(MD5Util.getMd5(is))) {
+        if(!file.exists() || !MD5Util.getMd5(file).equals(MD5Util.getMd5(is)) || file.length() <= 1) {
             file.getParentFile().mkdirs();
             file.createNewFile();
-            Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if(is != null) Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else {
+                System.out.println("[Mohist] The file " + file.getName() + " doesn't exists in the Mohist jar !");
+                System.exit(0);
+            }
         }
     }
 
+    private static boolean isCorrupted(File f) {
+        try {
+            JarFile j = new JarFile(f);
+            j.close();
+            return false;
+        } catch (IOException e) {
+            return true;
+        }
+    }
 }

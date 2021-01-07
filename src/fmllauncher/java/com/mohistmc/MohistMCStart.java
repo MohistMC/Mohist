@@ -21,19 +21,10 @@ public class MohistMCStart {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
     }
 
-    public static String getForgeVersion() {
-        return (MohistMCStart.class.getPackage().getSpecificationVersion() != null) ? MohistMCStart.class.getPackage().getSpecificationVersion() : "unknown";
-    }
-
-    public static String getMCPVersion() {
-        return (MohistMCStart.class.getPackage().getSpecificationTitle() != null) ? MohistMCStart.class.getPackage().getSpecificationTitle() : "unknown";
-    }
-
     public static void main(String[] args) throws Exception {
-        float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
         MohistConfigUtil.copyMohistConfig();
 
-        if (javaVersion > 54.0 && MohistConfigUtil.bMohist("use_custom_java8", "false"))
+        if (Float.parseFloat(System.getProperty("java.class.version")) > 54.0 && MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run(args);
 
         if (MohistConfigUtil.bMohist("show_logo", "true"))
