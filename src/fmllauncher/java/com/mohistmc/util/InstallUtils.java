@@ -90,7 +90,15 @@ public class InstallUtils {
     }
 
     private static void run(String mainClass, List<String> args, List<URL> classPath) throws Exception {
-        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[classPath.size()]), null)).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[args.size()]));
+        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[classPath.size()]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[args.size()]));
+    }
+
+    private static ClassLoader getParentClassloader() {
+        try {
+            return (ClassLoader) ClassLoader.class.getDeclaredMethod("getPlatformClassLoader").invoke(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static List<URL> stringToUrl(List<String> strs) throws Exception {
