@@ -28,15 +28,7 @@
     public ServerWorldLightManager func_212863_j_() {
        return this.field_217242_h;
     }
-@@ -119,15 +129,17 @@
-          for(int j = 0; j < 4; ++j) {
-             if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
-                IChunk ichunk = this.field_222877_p[j];
--               if (ichunk != null || !p_212849_4_) {
-+               if (ichunk != null) { // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
-                   return ichunk;
-                }
-             }
+@@ -126,8 +136,10 @@
           }
  
           iprofiler.func_230035_c_("getChunkCacheMiss");
@@ -140,9 +132,12 @@
           this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
           int l = this.field_217240_d.func_219358_b();
           WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = WorldEntitySpawner.func_234964_a_(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_);
-@@ -355,11 +399,13 @@
+@@ -353,13 +397,15 @@
+                if (optional1.isPresent()) {
+                   Chunk chunk = optional1.get();
                    ChunkPos chunkpos = p_241099_7_.func_219277_h();
-                   if (!this.field_217237_a.func_219243_d(chunkpos)) {
+-                  if (!this.field_217237_a.func_219243_d(chunkpos)) {
++                  if (!this.field_217237_a.func_219243_d(chunkpos) || field_217237_a.func_219246_e().shouldForceTicks(chunkpos.func_201841_a())) {
                       chunk.func_177415_c(chunk.func_177416_w() + j);
 -                     if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l())) {
 +                     if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l()) && !this.field_217237_a.isOutsideOfRange(chunkpos, true)) { // Spigot
