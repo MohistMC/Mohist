@@ -80,5 +80,9 @@ public enum TreeType {
     /**
      * Large warped fungus native to the nether
      */
-    WARPED_FUNGUS
+    WARPED_FUNGUS,
+    /**
+     * Forge mods tree
+     */
+    FORGE_MODS
 }
