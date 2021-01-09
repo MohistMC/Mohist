@@ -180,7 +180,7 @@
        }
 -
 +      // CraftBukkit start - add fields and methods
-+      this.craftServer = p_i1530_1_.server;
++      this.craftServer = p_i1530_1_ != null ? p_i1530_1_.server : null;
     }
  
     public void func_73660_a() {
