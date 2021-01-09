@@ -230,7 +230,7 @@
           }
  
           this.func_233657_b_(equipmentslottype, p_233665_1_);
-@@ -639,17 +712,25 @@
+@@ -639,6 +712,14 @@
           this.func_70106_y();
        } else if (!this.func_104002_bU() && !this.func_213392_I()) {
           Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
@@ -245,19 +245,6 @@
           if (entity != null) {
              double d0 = entity.func_70068_e(this);
              int i = this.func_200600_R().func_220339_d().func_233671_f_();
-             int j = i * i;
--            if (d0 > (double)j && this.func_213397_c(d0)) {
-+            if (d0 > (double)j) { // CraftBukkit - remove canDespawn() check
-                this.func_70106_y();
-             }
- 
-             int k = this.func_200600_R().func_220339_d().func_233672_g_();
-             int l = k * k;
--            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > (double)l && this.func_213397_c(d0)) {
-+            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > (double)l) { // CraftBukkit - remove canDespawn() check
-                this.func_70106_y();
-             } else if (d0 < (double)l) {
-                this.field_70708_bq = 0;
 @@ -663,6 +744,7 @@
  
     protected final void func_70626_be() {
