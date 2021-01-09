@@ -20,12 +20,12 @@ public class DefaultLibraries {
     public static void run() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
         String url = "https://maven.mohistmc.com/";
-        if (i18n.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
         LinkedHashMap<File, String> libs = getDefaultLibs();
 
         for (File lib : getDefaultLibs().keySet()) {
             if((!lib.exists() || !MD5Util.getMd5(lib).equals(libs.get(lib)) && !MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName()))) {
                 lib.getParentFile().mkdirs();
+                if (i18n.isCN() && !lib.getName().contains("mcp_config")) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
                 String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
                 System.out.println(i18n.get("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 57 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
 
