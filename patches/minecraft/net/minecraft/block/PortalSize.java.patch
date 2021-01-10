@@ -63,7 +63,7 @@
     }
  
     public boolean func_208508_f() {
-@@ -188,18 +212,22 @@
+@@ -188,18 +212,24 @@
     }
  
     public static PortalInfo func_242963_a(ServerWorld p_242963_0_, TeleportationRepositioner.Result p_242963_1_, Direction.Axis p_242963_2_, Vector3d p_242963_3_, EntitySize p_242963_4_, Vector3d p_242963_5_, float p_242963_6_, float p_242963_7_) {
@@ -93,6 +93,8 @@
        boolean flag = direction$axis == Direction.Axis.X;
        Vector3d vector3d1 = new Vector3d((double)blockpos.func_177958_n() + (flag ? d2 : d4), (double)blockpos.func_177956_o() + d3, (double)blockpos.func_177952_p() + (flag ? d4 : d2));
 -      return new PortalInfo(vector3d1, vector3d, p_242963_6_ + (float)i, p_242963_7_);
-+      return new PortalInfo(vector3d1, vector3d, rotationYaw + (float)i, rotationPitch, world, portalEventInfo); // CraftBukkit
++      PortalInfo portalInfo = new PortalInfo(vector3d1, vector3d, rotationYaw + (float)i, rotationPitch);
++      portalInfo.putCB(world, portalEventInfo);
++      return portalInfo; // CraftBukkit
     }
  }

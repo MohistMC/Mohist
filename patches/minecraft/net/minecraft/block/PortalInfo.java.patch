@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PortalInfo.java
 +++ b/net/minecraft/block/PortalInfo.java
-@@ -1,17 +1,25 @@
+@@ -1,13 +1,23 @@
  package net.minecraft.block;
  
  import net.minecraft.util.math.vector.Vector3d;
@@ -13,21 +13,14 @@
     public final float field_242960_c;
     public final float field_242961_d;
 +   // CraftBukkit start
-+   public final ServerWorld world;
-+   public final CraftPortalEvent portalEventInfo;
++   public ServerWorld world;
++   public CraftPortalEvent portalEventInfo;
  
--   public PortalInfo(Vector3d p_i242042_1_, Vector3d p_i242042_2_, float p_i242042_3_, float p_i242042_4_) {
--      this.field_222505_a = p_i242042_1_;
--      this.field_222506_b = p_i242042_2_;
--      this.field_242960_c = p_i242042_3_;
--      this.field_242961_d = p_i242042_4_;
-+   public PortalInfo(Vector3d pos, Vector3d motion, float rotationYaw, float rotationPitch, ServerWorld world, CraftPortalEvent portalEventInfo) {
++   public void putCB(ServerWorld world, CraftPortalEvent portalEventInfo) {
 +      this.world = world;
 +      this.portalEventInfo = portalEventInfo;
-+      // CraftBukkit end
-+      this.field_222505_a = pos;
-+      this.field_222506_b = motion;
-+      this.field_242960_c = rotationYaw;
-+      this.field_242961_d = rotationPitch;
-    }
- }
++   }
++
+    public PortalInfo(Vector3d p_i242042_1_, Vector3d p_i242042_2_, float p_i242042_3_, float p_i242042_4_) {
+       this.field_222505_a = p_i242042_1_;
+       this.field_222506_b = p_i242042_2_;
