@@ -318,6 +318,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     if (entity instanceof SnowGolemEntity) { return new CraftSnowman(server, (SnowGolemEntity) entity); }
                     else if (entity instanceof IronGolemEntity) { return new CraftIronGolem(server, (IronGolemEntity) entity); }
                     else if (entity instanceof ShulkerEntity) { return new CraftShulker(server, (ShulkerEntity) entity); }
+                    else { return new CraftGolem(server, (GolemEntity) entity); }
                 }
                 else if (entity instanceof AbstractVillagerEntity) {
                     if (entity instanceof VillagerEntity) { return new CraftVillager(server, (VillagerEntity) entity); }
