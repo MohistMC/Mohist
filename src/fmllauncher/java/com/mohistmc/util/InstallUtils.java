@@ -76,15 +76,35 @@ public class InstallUtils {
             run("net.md_5.specialsource.SpecialSource", new ArrayList<>(Arrays.asList("--in-jar", slim.getAbsolutePath(), "--out-jar", srg.getAbsolutePath(), "--srg-in", mcpTxt.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "/net/md-5/SpecialSource/1.8.5/SpecialSource-1.8.5.jar", libPath + "/org/ow2/asm/asm-commons/6.1.1/asm-commons-6.1.1.jar", libPath + "/net/sf/jopt-simple/jopt-simple/4.9/jopt-simple-4.9.jar", libPath + "/com/google/guava/guava/20.0/guava-20.0.jar", libPath + "/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar", libPath + "/org/ow2/asm/asm-analysis/6.1.1/asm-analysis-6.1.1.jar", libPath + "/org/ow2/asm/asm-tree/6.1.1/asm-tree-6.1.1.jar", libPath + "/org/ow2/asm/asm/6.1.1/asm-6.1.1.jar"))));
         }
 
-        if(!installInfo.exists() || !serverJar.exists() || !Files.readAllLines(installInfo.toPath()).get(0).equals(MD5Util.getMd5(serverJar))) {
+        String storedServerMD5 = null;
+        String storedMohistMD5 = null;
+        String serverMD5 = MD5Util.getMd5(serverJar);
+        String mohistMD5 = MD5Util.getMd5(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+
+        if(installInfo.exists()) {
+            List<String> infoLines = Files.readAllLines(installInfo.toPath());
+            if(infoLines.size() > 0)
+                storedServerMD5 = infoLines.get(0);
+            if(infoLines.size() > 1)
+                storedMohistMD5 = infoLines.get(1);
+        }
+
+        if(!serverJar.exists()
+        || storedServerMD5 == null
+        || storedMohistMD5 == null
+        || !storedServerMD5.equals(serverMD5)
+        || !storedMohistMD5.equals(mohistMD5)) {
             System.out.println(i18n.get("installation.forgejar"));
             mute();
             run("net.minecraftforge.binarypatcher.ConsoleTool", new ArrayList<>(Arrays.asList("--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "/net/minecraftforge/binarypatcher/1.0.12/binarypatcher-1.0.12.jar", libPath + "/commons-io/commons-io/2.4/commons-io-2.4.jar", libPath + "/com/google/guava/guava/25.1-jre/guava-25.1-jre.jar", libPath + "/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar", libPath + "/com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar", libPath + "/com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar", libPath + "/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar", libPath + "/org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar", libPath + "/com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar", libPath + "/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar", libPath + "/org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar", libPath + "/trove/trove/1.0.2/trove-1.0.2.jar"))));
             unmute();
-            FileWriter fw = new FileWriter(installInfo);
-            fw.write(MD5Util.getMd5(serverJar));
-            fw.close();
+            serverMD5 = MD5Util.getMd5(serverJar);
         }
+
+        FileWriter fw = new FileWriter(installInfo);
+        fw.write(serverMD5 + "\n");
+        fw.write(mohistMD5);
+        fw.close();
 
         System.out.println(i18n.get("installation.finished"));
     }
