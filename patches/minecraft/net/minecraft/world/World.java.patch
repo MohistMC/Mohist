@@ -238,7 +238,7 @@
              }
  
 +            // CraftBukkit start
-+            if (blockSnapshot == null || !this.captureBlockStates) {// Don't notify clients or update physics while capturing blockstates
++            if (blockSnapshot == null && !this.captureBlockStates) {// Don't notify clients or update physics while capturing blockstates
 +               // Modularize client and physic updates
 +               // Spigot start
 +               try {
