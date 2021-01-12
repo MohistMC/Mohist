@@ -351,6 +351,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     private boolean handleClientSideCustomPacket(SPacketCustomPayload msg, ChannelHandlerContext context)
     {
         String channelName = msg.getChannelName();
+        player.getBukkitEntity().addChannel(channelName); // Cauldron - register channel for bukkit player
         if ("FML|MP".equals(channelName))
         {
             boolean result = handleMultiPartCustomPacket(msg, context);
@@ -382,6 +383,9 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.CLIENT))
         {
             FMLProxyPacket proxy = new FMLProxyPacket(msg);
+            byte[] data = new byte[msg.getBufferData().readableBytes()];
+            msg.getBufferData().readBytes(data);
+            serverHandler.getCraftServer().getMessenger().dispatchIncomingMessage(player.getBukkitEntity(), msg.getChannelName(), data); // pass msg to bukkit
             proxy.setDispatcher(this);
             context.fireChannelRead(proxy);
             return true;

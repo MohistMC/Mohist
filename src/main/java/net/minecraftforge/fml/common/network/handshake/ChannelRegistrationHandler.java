@@ -44,23 +44,22 @@ public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLP
             msg.payload().readBytes(data);
             String channels = new String(data, StandardCharsets.UTF_8);
             String[] split = channels.split("\0");
-            Set<String> channelSet = ImmutableSet.copyOf(split);
-            FMLCommonHandler.instance().fireNetRegistrationEvent(manager, channelSet, msg.channel(), side);
-            msg.payload().release();
             // Cauldron start - register bukkit channels for players
-            NetHandlerPlayServer dispatcher = (NetHandlerPlayServer)ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get().getNetHandler();
-            CraftPlayer player = dispatcher.getPlayer();
+            NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+            CraftPlayer player = dispatcher.player.getBukkitEntity();
             if (msg.channel().equals("REGISTER")) {
-                for (String channel : channelSet) {
+                for (String channel : split) {
                     player.addChannel(channel);
-                    // player.addChannel(operatechannel);
                 }
             } else {
-                for (String channel : channelSet) {
+                for (String channel : split) {
                     player.removeChannel(channel);
                 }
             }
             // Cauldron end
+            Set<String> channelSet = ImmutableSet.copyOf(split);
+            FMLCommonHandler.instance().fireNetRegistrationEvent(manager, channelSet, msg.channel(), side);
+            msg.payload().release();
         }
         else
         {
