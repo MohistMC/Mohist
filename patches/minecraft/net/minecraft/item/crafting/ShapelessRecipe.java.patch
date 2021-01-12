@@ -93,7 +93,7 @@
 -      return i == this.field_77579_b.size() && recipeitemhelper.func_194116_a(this, (IntList)null);
 +      //return i == this.recipeItems.size() && (isSimple ? recipeitemhelper.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.recipeItems) != null);
 +      // Paper start
-+      if (matchedProvided.isEmpty() || matchedIngredients.isEmpty()) {
++      if (isSimple && (matchedProvided.isEmpty() || matchedIngredients.isEmpty())) {
 +         return false;
 +      }
 +      java.util.List<Ingredient> ingredients = new java.util.ArrayList<>(this.field_77579_b);
