@@ -921,7 +921,7 @@
              return true;
          }
          else
-@@ -1136,10 +1363,15 @@
+@@ -1136,10 +1363,14 @@
  
      public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
@@ -937,11 +937,10 @@
 +                return explosion;
 +            }
 +        }catch(Exception e){return null;}
-+        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
          if (!p_72885_10_)
          {
              explosion.func_180342_d();
-@@ -1182,7 +1414,8 @@
+@@ -1182,7 +1413,8 @@
              {
                  if (this.func_147485_a(blockeventdata))
                  {
@@ -951,7 +950,7 @@
                  }
              }
  
-@@ -1208,27 +1441,31 @@
+@@ -1208,27 +1440,31 @@
  
          if (this.field_73003_n != this.field_73004_o)
          {
@@ -989,7 +988,7 @@
          }
      }
  
-@@ -1265,12 +1502,20 @@
+@@ -1265,12 +1501,20 @@
  
      public void func_180505_a(EnumParticleTypes p_180505_1_, boolean p_180505_2_, double p_180505_3_, double p_180505_5_, double p_180505_7_, int p_180505_9_, double p_180505_10_, double p_180505_12_, double p_180505_14_, double p_180505_16_, int... p_180505_18_)
      {
@@ -1012,7 +1011,7 @@
          }
      }
  
-@@ -1323,6 +1568,11 @@
+@@ -1323,6 +1567,11 @@
          return this.field_193036_D;
      }
  
