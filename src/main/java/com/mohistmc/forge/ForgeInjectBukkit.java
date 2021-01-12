@@ -10,7 +10,6 @@ import com.mohistmc.util.MohistEnumHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
@@ -27,6 +26,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.block.banner.PatternType;
@@ -68,7 +68,7 @@ public class ForgeInjectBukkit {
     public static void addEnumMaterialInItems(){
         for (Map.Entry<RegistryKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
             ResourceLocation resourceLocation = entry.getValue().getRegistryName();
-            if(!resourceLocation.getNamespace().equals("minecraft")) {
+            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 // inject item materials into Bukkit for FML
                 String materialName = Material.normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
                 Item item = entry.getValue();
@@ -87,7 +87,7 @@ public class ForgeInjectBukkit {
     public static void addEnumMaterialsInBlocks(){
         for (Map.Entry<RegistryKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
             ResourceLocation resourceLocation = entry.getValue().getRegistryName();
-            if(!resourceLocation.getNamespace().equals("minecraft")) {
+            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 // inject block materials into Bukkit for FML
                 String materialName = Material.normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_BLOCK__", "");
                 Block block = entry.getValue();
@@ -124,9 +124,10 @@ public class ForgeInjectBukkit {
         List<String> map = new ArrayList<>();
         for (Map.Entry<RegistryKey<Biome>, Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
             String biomeName = entry.getValue().getRegistryName().getNamespace();
-            if (!biomeName.equals("minecraft") && !map.contains(biomeName)) {
+            if (!biomeName.equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
                 map.add(biomeName);
-                MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
+                org.bukkit.block.Biome biome = MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
+                MohistMC.LOGGER.debug("Save-BIOME:" + biome.name() + " - " + biomeName);
             }
         }
         map.clear();
@@ -170,18 +171,20 @@ public class ForgeInjectBukkit {
     }
 
     public static void addEnumEntity() {
-        Map<String, EntityType> NAME_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
-        Map<Short, EntityType> ID_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
+        Map<String, EntityType> NAME_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
+        Map<Short, EntityType> ID_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
 
         for (Map.Entry<RegistryKey<net.minecraft.entity.EntityType<?>>, net.minecraft.entity.EntityType<?>> entity : ForgeRegistries.ENTITIES.getEntries()) {
-            String name = entity.getValue().getRegistryName().getNamespace();
-            String entityType = name.toUpperCase();
-            int typeId = name.hashCode();
-            EntityType bukkitType = MohistEnumHelper.addEnum0(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, name, CraftCustomEntity.class, typeId, false);
-
-            NAME_MAP.put(name.toLowerCase(), bukkitType);
-            ID_MAP.put((short)typeId, bukkitType);
-            ServerAPI.entityTypeMap.put(entity.getValue(), entityType);
+            ResourceLocation resourceLocation = entity.getValue().getRegistryName();
+            String name = resourceLocation.getNamespace();
+            if (!name.equals(NamespacedKey.MINECRAFT)) {
+                String entityType = Material.normalizeName(resourceLocation.toString());
+                int typeId = entityType.hashCode();
+                EntityType bukkitType = MohistEnumHelper.addEnum0(EntityType.class, entityType, new Class[]{String.class, Class.class, Integer.TYPE, Boolean.TYPE}, entityType.toLowerCase(), CraftCustomEntity.class, typeId, false);
+                NAME_MAP.put(entityType.toLowerCase(), bukkitType);
+                ID_MAP.put((short) typeId, bukkitType);
+                ServerAPI.entityTypeMap.put(entity.getValue(), entityType);
+            }
         }
     }
 
