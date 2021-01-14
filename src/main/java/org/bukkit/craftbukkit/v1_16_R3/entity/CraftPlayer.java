@@ -67,6 +67,8 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.MapDecoration;
+import net.minecraftforge.common.util.ITeleporter;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
@@ -689,11 +691,18 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
 
         // Check if the fromWorld and toWorld are the same.
-        if (fromWorld == toWorld) {
+        /* if (fromWorld == toWorld) {
             entity.connection.teleport(to);
         } else {
             server.getHandle().moveToWorld(entity, toWorld, true, to, true);
-        }
+        } */
+
+        // Current implementation of 'moveToWorld' does not
+        // work properly. Luckily, 'changeDimension' with
+        // dummy teleporter does the same thing, but right.
+        if (fromWorld != toWorld)
+            entity.changeDimension(toWorld, new ITeleporter() {});
+        entity.connection.teleport(to);
         return true;
     }
 
