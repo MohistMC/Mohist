@@ -36,6 +36,7 @@ public final class WorldUUID {
                 }
             }
         }
+        baseDir.mkdirs();
         UUID uuid = UUID.randomUUID();
         DataOutputStream dos = null;
         try {
