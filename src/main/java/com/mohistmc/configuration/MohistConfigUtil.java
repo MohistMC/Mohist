@@ -1,6 +1,7 @@
 package com.mohistmc.configuration;
 
 import com.mohistmc.MohistMC;
+import com.mohistmc.util.NumberUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
