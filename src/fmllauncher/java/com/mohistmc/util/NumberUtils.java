@@ -2,6 +2,10 @@ package com.mohistmc.util;
 
 public class NumberUtils {
 
+    public static boolean isNumber(String s) {
+        return isDouble(s) || isInteger(s);
+    }
+
     public static boolean isInteger(String value) {
         try {
             Integer.parseInt(value);
