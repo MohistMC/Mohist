@@ -16,7 +16,8 @@ public class i18n {
     }
 
     public static String get(String key, Object... f) {
-        return new MessageFormat(get(key)).format(Arrays.toString(f));
+        Object o = Arrays.toString(f);
+        return new MessageFormat(get(key)).format(o);
     }
 
     public static String getLocale(int key) {
