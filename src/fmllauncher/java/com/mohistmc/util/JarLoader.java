@@ -21,7 +21,7 @@ public class JarLoader {
 
     public void loadJar(File path) throws Exception {
         ClassLoader cl = ClassLoader.getSystemClassLoader();
-        if (!path.getName().equals("minecraft_server.1.16.4.jar") || !isASM611(path.getName())) {
+        if (!path.getName().equals("minecraft_server.1.16.4.jar")) {
             if (!(cl instanceof URLClassLoader)) {
                 // If Java 9 or higher use Instrumentation
                 //System.out.println(path);
@@ -34,9 +34,5 @@ public class JarLoader {
                 //System.out.println(path);
             }
         }
-    }
-
-    public boolean isASM611(String asm) {
-        return asm.equals("asm-6.1.1.jar") || asm.equals("asm-commons-6.1.1.jar") || asm.equals("asm-tree-6.1.1.jar") || asm.equals("asm-analysis-6.1.1.jar");
     }
 }
