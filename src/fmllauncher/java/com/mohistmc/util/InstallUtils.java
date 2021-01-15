@@ -19,26 +19,26 @@ public class InstallUtils {
     public static String mcpVer = MohistMCStart.class.getPackage().getSpecificationTitle();
     public static String libPath = JarTool.getJarDir() + "/libraries/";
 
-    public static String forgeStart = libPath + "net/minecraftforge/forge/1.16.4-" + forgeVer + "/forge-1.16.4-" + forgeVer;
+    public static String forgeStart = libPath + "net/minecraftforge/forge/1.16.5-" + forgeVer + "/forge-1.16.5-" + forgeVer;
     public static File universalJar = new File(forgeStart + "-universal.jar");
     public static File serverJar = new File(forgeStart + "-server.jar");
 
     public static File lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
     public static File installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
 
-    public static String otherStart = libPath + "net/minecraft/server/1.16.4-" + mcpVer + "/server-1.16.4-" + mcpVer;
+    public static String otherStart = libPath + "net/minecraft/server/1.16.5-" + mcpVer + "/server-1.16.5-" + mcpVer;
     public static File extra = new File(otherStart + "-extra.jar");
     public static File slim = new File(otherStart + "-slim.jar");
     public static File srg = new File(otherStart + "-srg.jar");
 
-    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.16.4-" + mcpVer + "/mcp_config-1.16.4-" + mcpVer;
+    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.16.5-" + mcpVer + "/mcp_config-1.16.5-" + mcpVer;
     public static File mcpZip = new File(mcpStart + ".zip");
     public static File mcpTxt = new File(mcpStart + "-mappings.txt");
 
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
         copyFileFromJar(lzma, "data/server.lzma");
-        copyFileFromJar(universalJar, "data/forge-1.16.4-" + forgeVer + "-universal.jar");
+        copyFileFromJar(universalJar, "data/forge-1.16.5-" + forgeVer + "-universal.jar");
 
         if(forgeVer == null || mcpVer == null) {
             System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
@@ -67,7 +67,7 @@ public class InstallUtils {
         if(!slim.exists() || !extra.exists()) {
             System.out.println(i18n.get("installation.jars"));
             mute();
-            run("net.minecraftforge.jarsplitter.ConsoleTool", new ArrayList<>(Arrays.asList("--input", libPath + "minecraft_server.1.16.4.jar", "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mcpTxt.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "net/minecraftforge/jarsplitter/1.1.2/jarsplitter-1.1.2.jar", libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar"))));
+            run("net.minecraftforge.jarsplitter.ConsoleTool", new ArrayList<>(Arrays.asList("--input", libPath + "minecraft_server.1.16.5.jar", "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mcpTxt.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "net/minecraftforge/jarsplitter/1.1.2/jarsplitter-1.1.2.jar", libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar"))));
             unmute();
         }
 
