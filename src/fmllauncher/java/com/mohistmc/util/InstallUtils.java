@@ -31,7 +31,7 @@ public class InstallUtils {
     public static File slim = new File(otherStart + "-slim.jar");
     public static File srg = new File(otherStart + "-srg.jar");
 
-    public static String mcpStart = libPath + "/de/oceanlabs/mcp/mcp_config/1.16.4-" + mcpVer + "/mcp_config-1.16.4-" + mcpVer;
+    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.16.4-" + mcpVer + "/mcp_config-1.16.4-" + mcpVer;
     public static File mcpZip = new File(mcpStart + ".zip");
     public static File mcpTxt = new File(mcpStart + "-mappings.txt");
 
