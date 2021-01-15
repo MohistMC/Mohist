@@ -2,7 +2,10 @@ package com.mohistmc.util.i18n;
 
 import com.mohistmc.config.MohistConfigUtil;
 
+import com.mohistmc.util.NumberUtils;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -15,7 +18,7 @@ public class i18n {
     }
 
     public static String get(String key, Object... f) {
-        return new MessageFormat(key).format(f);
+        return new MessageFormat(get(key)).format(Arrays.stream(f).map(o1 -> NumberUtils.isNumber(String.valueOf(o1)) ? String.valueOf(BigDecimal.valueOf(Double.parseDouble(String.valueOf(o1)))) : String.valueOf(o1)).toArray());
     }
 
     public static String getLocale(int key) {
