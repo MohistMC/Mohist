@@ -457,19 +457,6 @@ project(':forge') {
         binary = jar.archivePath
         excs = patcher.excs
     }
-    
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs]){}
-
-    task checkPatchesAndFix(type: CheckPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
-    task checkPatches(type: CheckPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
-    }
-    project(':forge').getTasks().getByName('genPatches').finalizedBy(checkPatches)
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
