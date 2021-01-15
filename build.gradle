@@ -50,8 +50,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20201028-1.16.3'
-    MC_VERSION = '1.16.4'
-    MCP_VERSION = '20201102.104115'
+    MC_VERSION = '1.16.5'
+    MCP_VERSION = '20210115.111550'
 }
 
 project(':mcp') {
@@ -169,7 +169,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '35.1' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '36.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -180,7 +180,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.4-35.1.37'
+    version = '1.16.5-36.0.0'
     println('Forge Version: ' + version)
 
     patcher {
@@ -327,15 +327,15 @@ project(':forge') {
                 'Specification-Vendor'  : 'Mohist-Community',
                 'Specification-Version':  project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Title'  : 'Mohist',
-                'Implementation-Version': '1.16.4-' + JenkinsNumber(),
+                'Implementation-Version': '1.16.5-' + JenkinsNumber(),
                 'Implementation-Vendor' : 'Mohist-Community'
             ] as LinkedHashMap,
             'org/bukkit/craftbukkit/v1_16_R3/': [
                 'Specification-Title'   : MCP_VERSION,
                 'Specification-Vendor'  : 'SpigotMC',
-                'Specification-Version':  '1.16.4',
+                'Specification-Version':  '1.16.5',
                 'Implementation-Title'  : 'Spigot',
-                'Implementation-Version': '1.16.4-' + JenkinsNumber(),
+                'Implementation-Version': '1.16.5-' + JenkinsNumber(),
                 'Implementation-Vendor' : 'SpigotMC'
             ] as LinkedHashMap
         ]
@@ -752,7 +752,7 @@ project(':forge') {
         classifier = 'server'
         extension = 'jar'
         baseName = 'mohist'
-        version = "1.16.4-"+JenkinsNumber()
+        version = "1.16.5-"+JenkinsNumber()
         destinationDir = file('build/libs')
         from sourceSets.fmllauncher.output
         doFirst {
@@ -911,7 +911,7 @@ task setup() {
 
 def JenkinsNumber() {
     try {
-        def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/api/json").openConnection()
+        def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.5/api/json").openConnection()
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
         conn.connect()
         def root = conn.content.text

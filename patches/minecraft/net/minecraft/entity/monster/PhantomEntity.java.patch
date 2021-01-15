@@ -8,12 +8,7 @@
  
  public class PhantomEntity extends FlyingEntity implements IMob {
     private static final DataParameter<Integer> field_203035_a = EntityDataManager.func_187226_a(PhantomEntity.class, DataSerializers.field_187192_b);
-@@ -214,11 +215,11 @@
-             this.field_203142_b = 60;
-             List<PlayerEntity> list = PhantomEntity.this.field_70170_p.func_217373_a(this.field_220842_b, PhantomEntity.this, PhantomEntity.this.func_174813_aQ().func_72314_b(16.0D, 64.0D, 16.0D));
-             if (!list.isEmpty()) {
--               list.sort(Comparator.comparing(Entity::func_226278_cu_).reversed());
-+               list.sort(Comparator.<Entity, Double>comparing(Entity::func_226278_cu_).reversed());
+@@ -218,7 +219,7 @@
  
                 for(PlayerEntity playerentity : list) {
                    if (PhantomEntity.this.func_213344_a(playerentity, EntityPredicate.field_221016_a)) {
