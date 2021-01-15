@@ -791,7 +791,7 @@ project(':forge') {
         }
     }
     
-    [universalJar, mohistJar, installerJar].each { t ->
+    [universalJar, launcherJar, mohistJar, installerJar].each { t ->
         task "sign${t.name.capitalize()}"(type: SignJar, dependsOn: t) {
             onlyIf {
                 JAR_SIGNER != null && t.state.failure == null
