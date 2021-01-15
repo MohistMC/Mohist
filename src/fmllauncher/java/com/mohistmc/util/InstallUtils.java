@@ -90,10 +90,10 @@ public class InstallUtils {
         }
 
         if(!serverJar.exists()
-        || storedServerMD5 == null
-        || storedMohistMD5 == null
-        || !storedServerMD5.equals(serverMD5)
-        || !storedMohistMD5.equals(mohistMD5)) {
+                || storedServerMD5 == null
+                || storedMohistMD5 == null
+                || !storedServerMD5.equals(serverMD5)
+                || !storedMohistMD5.equals(mohistMD5)) {
             System.out.println(i18n.get("installation.forgejar"));
             mute();
             run("net.minecraftforge.binarypatcher.ConsoleTool", new ArrayList<>(Arrays.asList("--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "net/minecraftforge/binarypatcher/1.0.12/binarypatcher-1.0.12.jar", libPath + "commons-io/commons-io/2.4/commons-io-2.4.jar", libPath + "com/google/guava/guava/25.1-jre/guava-25.1-jre.jar", libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar", libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar", libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar", libPath + "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar", libPath + "org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar", libPath + "com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar", libPath + "com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar", libPath + "org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar", libPath + "trove/trove/1.0.2/trove-1.0.2.jar"))));
