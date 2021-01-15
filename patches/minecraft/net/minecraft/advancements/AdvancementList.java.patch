@@ -31,7 +31,7 @@
  
 -      field_192091_a.info("Loaded {} advancements", (int)this.field_192092_b.size());
 +      net.minecraftforge.common.AdvancementLoadFix.buildSortedTrees(this.field_192093_c);
-+      //LOGGER.info("Loaded {} advancements", (int)this.advancements.size()); // CraftBukkit - moved to AdvancementManager#reload
++      field_192091_a.info(com.mohistmc.util.i18n.i18n.get("recipemanager.4", (int)this.field_192092_b.size()));
     }
  
     @OnlyIn(Dist.CLIENT)

@@ -17,7 +17,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,31 +46,54 @@
+@@ -47,31 +46,53 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -51,7 +51,6 @@
           return p_223400_0_.getValue().build();
        }));
 -      field_199521_c.info("Loaded {} recipes", (int)map.size());
-+      field_199521_c.info(com.mohistmc.util.i18n.i18n.get("recipemanager.4", (int)map.size()));
     }
  
 +   // CraftBukkit start
@@ -76,7 +75,7 @@
     }
  
     public <C extends IInventory, T extends IRecipe<C>> List<T> func_241447_a_(IRecipeType<T> p_241447_1_) {
-@@ -147,4 +169,14 @@
+@@ -147,4 +168,14 @@
        });
        this.field_199522_d = ImmutableMap.copyOf(map);
     }
