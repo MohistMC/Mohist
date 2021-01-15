@@ -18,7 +18,7 @@ public class NumberUtils {
     public static boolean isDouble(String value) {
         try {
             Double.parseDouble(value);
-            return value.contains(".");
+            return true;
         } catch (NumberFormatException e) {
             return false;
         }

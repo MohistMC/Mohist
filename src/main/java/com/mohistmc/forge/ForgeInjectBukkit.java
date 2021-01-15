@@ -53,6 +53,7 @@ public class ForgeInjectBukkit {
                     .build());
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
+    public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
 
     public static void init(){
         addEnumMaterialInItems();
@@ -225,6 +226,7 @@ public class ForgeInjectBukkit {
             String name = normalizeName(resourceLocation.getPath());
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 org.bukkit.attribute.Attribute ab = MohistEnumHelper.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class}, resourceLocation.getPath());
+                attributemap.put(ab, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
             }
         }
