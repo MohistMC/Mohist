@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
@@ -62,6 +63,7 @@ public class ForgeInjectBukkit {
         addEnumPattern();
         addEnumEntity();
         addEnumVillagerProfession();
+        addEnumAttribute();
     }
 
 
@@ -209,10 +211,21 @@ public class ForgeInjectBukkit {
         for (VillagerProfession villagerProfession : ForgeRegistries.PROFESSIONS) {
             ResourceLocation resourceLocation = villagerProfession.getRegistryName();
             String name = normalizeName(resourceLocation.toString());
-            if(!resourceLocation.getNamespace().equals("minecraft")) {
+            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 Villager.Profession vp = MohistEnumHelper.addEnum0(Villager.Profession.class, name, new Class[0]);
                 profession.put(vp, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
+            }
+        }
+    }
+
+    public static void addEnumAttribute() {
+        for (Attribute attribute : ForgeRegistries.ATTRIBUTES) {
+            ResourceLocation resourceLocation = attribute.getRegistryName();
+            String name = normalizeName(resourceLocation.getPath());
+            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                org.bukkit.attribute.Attribute ab = MohistEnumHelper.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class}, resourceLocation.getPath());
+                MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
             }
         }
     }
