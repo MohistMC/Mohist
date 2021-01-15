@@ -412,25 +412,25 @@ project(':forge') {
     }
     
     // We apply the bin patches we just created to make a jar that is JUST our changes
-	['Client', 'Server', 'Joined'].each { side ->
-		def gen = tasks.getByName("gen${side}BinPatches")
-		gen.tool = BINPATCH_TOOL
-		task "apply${side}BinPatches"(type: ApplyBinPatches, dependsOn: gen) {
-			clean = { gen.cleanJar }
-			input = gen.output
-			tool = BINPATCH_TOOL
-		}
-		if (side != 'Joined') {
-			// Create SRG named Vanilla jars, using the SpecialSource we have in the installer
-			task "create${side}SRG"(type: RenameJar, dependsOn: gen) {
-				tool = SPECIAL_SOURCE + ':shaded'
-				args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
-				mappings = { gen.srg }
-				input = { gen.cleanJar }
-				output = file("build/create${name}SRG/output.jar")
-			}
-		}
-	}
+    ['Client', 'Server', 'Joined'].each { side ->
+        def gen = tasks.getByName("gen${side}BinPatches")
+        gen.tool = BINPATCH_TOOL
+        task "apply${side}BinPatches"(type: ApplyBinPatches, dependsOn: gen) {
+            clean = { gen.cleanJar }
+            input = gen.output
+            tool = BINPATCH_TOOL
+        }
+        if (side != 'Joined') {
+            // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
+            task "create${side}SRG"(type: RenameJar, dependsOn: gen) {
+                tool = SPECIAL_SOURCE + ':shaded'
+                args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
+                mappings = { gen.srg }
+                input = { gen.cleanJar }
+                output = file("build/create${name}SRG/output.jar")
+            }
+        }
+    }
     
     task downloadLibraries(type: DownloadLibrariesTask, dependsOn: ':mcp:setupMCP') {
         input = VERSION_JSON
@@ -442,23 +442,34 @@ project(':forge') {
         input { genJoinedBinPatches.cleanJar }
         doFirst { downloadLibraries.libraries.each{ addLibrary(it) } }
     }
-	
+    
     task checkATs(type: CheckATs, dependsOn: extractInheritance) {
         inheritance = extractInheritance.output
-		ats = patcher.accessTransformers
+        ats = patcher.accessTransformers
     }
-	
+    
     task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
         inheritance = extractInheritance.output
-		sass = patcher.sideAnnotationStrippers
+        sass = patcher.sideAnnotationStrippers
     }
-	
+    
     task checkExcs(type: CheckExcs, dependsOn: jar) {
         binary = jar.archivePath
-		excs = patcher.excs
+        excs = patcher.excs
     }
-	
-	task checkAll(dependsOn: [checkATs, checkSAS, checkExcs]){}
+    
+    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs]){}
+
+    task checkPatchesAndFix(type: CheckPatches) {
+        patchDir = file("$rootDir/patches")
+        autoFix = true
+    }
+
+    task checkPatches(type: CheckPatches) {
+        patchDir = file("$rootDir/patches")
+        autoFix = false
+    }
+    project(':forge').getTasks().getByName('genPatches').finalizedBy(checkPatches)
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
@@ -911,13 +922,17 @@ task setup() {
 }
 
 def JenkinsNumber() {
-    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/api/json").openConnection()
-    conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
-    conn.connect()
-    def root = conn.content.text
-    def jsonSluper = new JsonSlurper()
+    try {
+        def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.4/api/json").openConnection()
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
+        conn.connect()
+        def root = conn.content.text
+        def jsonSluper = new JsonSlurper()
 
-    String data = jsonSluper.parseText(root)
-    def number = data.substring(data.indexOf("number")).split(",")
-    return Integer.valueOf(number[0].replace("number=", "")).intValue()
+        String data = jsonSluper.parseText(root)
+        def number = data.substring(data.indexOf("number")).split(",")
+        return Integer.valueOf(number[0].replace("number=", "")).intValue()
+    } catch (Exception e1) {
+        return 'dev'
+    }
 }

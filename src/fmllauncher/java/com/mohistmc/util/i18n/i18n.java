@@ -3,6 +3,7 @@ package com.mohistmc.util.i18n;
 import com.mohistmc.config.MohistConfigUtil;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -15,7 +16,7 @@ public class i18n {
     }
 
     public static String get(String key, Object... f) {
-        return new MessageFormat(get(key)).format(f);
+        return new MessageFormat(get(key)).format(Arrays.toString(f));
     }
 
     public static String getLocale(int key) {

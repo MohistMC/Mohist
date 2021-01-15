@@ -22,7 +22,7 @@ public class SpigotWorldConfig
 
     public void init()
     {
-        this.verbose = getBoolean( "verbose", true );
+        this.verbose = getBoolean( "verbose", false );
 
         log( "-------- "+ i18n.get("spigotworldconfig.1", worldName)+" --------" );
         SpigotConfig.readConfig( SpigotWorldConfig.class, this );

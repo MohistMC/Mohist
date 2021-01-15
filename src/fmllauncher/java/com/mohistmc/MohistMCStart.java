@@ -3,7 +3,6 @@ package com.mohistmc;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
@@ -23,9 +22,6 @@ public class MohistMCStart {
 
     public static void main(String[] args) throws Exception {
         MohistConfigUtil.copyMohistConfig();
-
-        if (Float.parseFloat(System.getProperty("java.class.version")) > 54.0 && MohistConfigUtil.bMohist("use_custom_java8", "false"))
-            DownloadJava.run(args);
 
         if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +
