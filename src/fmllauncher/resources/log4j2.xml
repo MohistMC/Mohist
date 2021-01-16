@@ -37,7 +37,6 @@
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
         <Logger level="info" name="com.mojang"/>
         <Logger level="info" name="net.minecraft"/>
-        <Logger level="info" name="cpw.mods.modlauncher.ClassTransformer"/>
         <Root level="all">
             <AppenderRef ref="Console" level="INFO"/>
             <AppenderRef ref="File" level="ALL"/>
