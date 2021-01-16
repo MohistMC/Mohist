@@ -1,4 +1,5 @@
 <div align="center">
+<img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.16.5</h1>
 
 # <font color=red>Warning: At present, the main work is to fix the compatibility of mods, please do not send issues about plugins</font>
