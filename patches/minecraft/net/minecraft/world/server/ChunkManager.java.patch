@@ -93,37 +93,7 @@
     protected void func_219204_a(BooleanSupplier p_219204_1_) {
        IProfiler iprofiler = this.field_219255_i.func_217381_Z();
        iprofiler.func_76320_a("poi");
-@@ -372,16 +400,27 @@
-    private void func_223155_b(BooleanSupplier p_223155_1_) {
-       LongIterator longiterator = this.field_219261_o.iterator();
- 
--      for(int i = 0; longiterator.hasNext() && (p_223155_1_.getAsBoolean() || i < 200 || this.field_219261_o.size() > 2000); longiterator.remove()) {
-+      // Spigot start
-+      org.spigotmc.SlackActivityAccountant activityAccountant = this.field_219255_i.func_73046_m().slackActivityAccountant;
-+      activityAccountant.startActivity(0.5);
-+      int targetSize = (int) (this.field_219261_o.size() * UNLOAD_QUEUE_RESIZE_FACTOR);
-+      // Spigot end
-+      while (longiterator.hasNext()) { // Spigot
-          long j = longiterator.nextLong();
-+         longiterator.remove(); // Spigot
-          ChunkHolder chunkholder = this.field_219251_e.remove(j);
-          if (chunkholder != null) {
-             this.field_219253_g.put(j, chunkholder);
-             this.field_219262_p = true;
--            ++i;
-+            // Spigot start
-+            if (!p_223155_1_.getAsBoolean() && this.field_219261_o.size() <= targetSize && activityAccountant.activityTimeIsExhausted()) {
-+               break;
-+            }
-+            // Spigot end
-             this.func_219212_a(j, chunkholder);
-          }
-       }
-+      activityAccountant.endActivity(); // Spigot
- 
-       Runnable runnable;
-       while((p_223155_1_.getAsBoolean() || this.field_223181_A.size() > 2000) && (runnable = this.field_223181_A.poll()) != null) {
-@@ -400,6 +439,7 @@
+@@ -400,6 +428,7 @@
              if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
                 if (p_219185_5_ instanceof Chunk) {
                    ((Chunk)p_219185_5_).func_177417_c(false);
@@ -131,7 +101,7 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
-@@ -482,7 +522,7 @@
+@@ -482,7 +511,7 @@
                    return Either.left(ichunk);
                 }
  
@@ -140,7 +110,7 @@
              }
           } catch (ReportedException reportedexception) {
              Throwable throwable = reportedexception.getCause();
-@@ -491,9 +531,9 @@
+@@ -491,9 +520,9 @@
                 throw reportedexception;
              }
  
@@ -152,23 +122,7 @@
           }
  
           this.func_241089_g_(p_223172_1_);
-@@ -588,7 +628,14 @@
- 
-                for(int j = 0; j < i; ++j) {
-                   for(Entity entity : aclassinheritancemultimap[j]) {
--                     if (!(entity instanceof PlayerEntity) && !this.field_219255_i.func_217440_f(entity)) {
-+                     // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+                     boolean needsRemoval = false;
-+                     if (chunk.needsDecoration && !this.field_219255_i.func_73046_m().getServer().func_230538_V_() && entity instanceof NPC) {
-+                        entity.func_70106_y();
-+                        needsRemoval = true;
-+                     }
-+                     if (!(entity instanceof PlayerEntity) && (needsRemoval || !this.field_219255_i.func_217440_f(entity))) {
-+                        // CraftBukkit end
-                         if (list == null) {
-                            list = Lists.newArrayList(entity);
-                         } else {
-@@ -601,6 +648,7 @@
+@@ -601,6 +630,7 @@
                 if (list != null) {
                    list.forEach(chunk::func_76622_b);
                 }
@@ -176,7 +130,7 @@
              }
  
              return chunk;
-@@ -678,11 +726,12 @@
+@@ -678,11 +708,12 @@
  
              this.field_219255_i.func_217381_Z().func_230035_c_("chunkSave");
              CompoundNBT compoundnbt = ChunkSerializer.func_222645_a(this.field_219255_i, p_219229_1_);
@@ -190,7 +144,7 @@
              return false;
           }
        }
-@@ -701,7 +750,7 @@
+@@ -701,7 +732,7 @@
                 return false;
              }
           } catch (Exception exception) {
@@ -199,7 +153,7 @@
              this.func_241089_g_(p_241090_1_);
              return false;
           }
-@@ -734,6 +783,7 @@
+@@ -734,6 +765,7 @@
  
     protected void func_219199_a(ServerPlayerEntity p_219199_1_, ChunkPos p_219199_2_, IPacket<?>[] p_219199_3_, boolean p_219199_4_, boolean p_219199_5_) {
        if (p_219199_1_.field_70170_p == this.field_219255_i) {
@@ -207,7 +161,7 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
-@@ -806,9 +856,20 @@
+@@ -806,9 +838,20 @@
     }
  
     boolean func_219243_d(ChunkPos p_219243_1_) {
@@ -230,7 +184,7 @@
        });
     }
  
-@@ -945,6 +1006,7 @@
+@@ -945,6 +988,7 @@
        if (!(p_219210_1_ instanceof EnderDragonPartEntity)) {
           EntityType<?> entitytype = p_219210_1_.func_200600_R();
           int i = entitytype.func_233602_m_() * 16;
@@ -238,7 +192,7 @@
           int j = entitytype.func_220332_l();
           if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
              throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
-@@ -1077,6 +1139,20 @@
+@@ -1077,6 +1121,20 @@
        });
     }
  
@@ -259,16 +213,15 @@
     class EntityTracker {
        private final TrackedEntity field_219402_b;
        private final Entity field_219403_c;
-@@ -1085,7 +1161,7 @@
-       private final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
+@@ -1086,6 +1144,7 @@
  
        public EntityTracker(Entity p_i50468_2_, int p_i50468_3_, int p_i50468_4_, boolean p_i50468_5_) {
--         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
-+         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a, field_219406_f); // CraftBukkit
+          this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
++         this.field_219402_b.setTrackedPlayers(field_219406_f);
           this.field_219403_c = p_i50468_2_;
           this.field_219404_d = p_i50468_3_;
           this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);
-@@ -1134,7 +1210,7 @@
+@@ -1134,7 +1193,7 @@
  
        public void func_219400_b(ServerPlayerEntity p_219400_1_) {
           if (p_219400_1_ != this.field_219403_c) {
@@ -277,7 +230,7 @@
              int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
              boolean flag = vector3d.field_72450_a >= (double)(-i) && vector3d.field_72450_a <= (double)i && vector3d.field_72449_c >= (double)(-i) && vector3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
              if (flag) {
-@@ -1147,6 +1223,16 @@
+@@ -1147,6 +1206,16 @@
                    }
                 }
  
