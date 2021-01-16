@@ -383,8 +383,8 @@ project(':forge') {
 
         // bukkit
         installer 'commons-lang:commons-lang:2.6'
-        installer 'org.yaml:snakeyaml:1.26'
-        compile 'org.jetbrains:annotations-java5:19.0.0'
+        installer 'org.yaml:snakeyaml:1.27'
+        compile 'org.jetbrains:annotations-java5:20.1.0'
         // craftbukkit
         installer 'org.fusesource.jansi:jansi:1.18'
         installer 'jline:jline:2.14.6'
@@ -394,7 +394,7 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-iostreams:2.11.2'
         installer 'net.md-5:SpecialSource:1.8.5'
         // spigot
-        installer 'net.md-5:bungeecord-chat:1.16-R0.3'
+        installer 'net.md-5:bungeecord-chat:1.16-R0.4'
 
         // paper
         //installer 'co.aikar:cleaner:1.0-SNAPSHOT'

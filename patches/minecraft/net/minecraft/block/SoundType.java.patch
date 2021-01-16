@@ -1,15 +1,7 @@
 --- a/net/minecraft/block/SoundType.java
 +++ b/net/minecraft/block/SoundType.java
-@@ -53,12 +53,13 @@
-    public static final SoundType field_235599_U_ = new SoundType(1.0F, 1.0F, SoundEvents.field_232707_eX_, SoundEvents.field_232721_fb_, SoundEvents.field_232720_fa_, SoundEvents.field_232709_eZ_, SoundEvents.field_232708_eY_);
-    public final float field_185860_m;
-    public final float field_185861_n;
--   private final SoundEvent field_185862_o;
-+   public final SoundEvent field_185862_o;
-    private final SoundEvent field_185863_p;
-    private final SoundEvent field_185864_q;
--   private final SoundEvent field_185865_r;
-+   public final SoundEvent field_185865_r;
+@@ -59,6 +59,7 @@
+    private final SoundEvent field_185865_r;
     private final SoundEvent field_185866_s;
  
 +   @Deprecated // Forge: Use {@link net.minecraftforge.common.util.ForgeSoundType} instead for suppliers

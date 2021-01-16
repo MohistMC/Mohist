@@ -25,36 +25,36 @@ public class CraftSoundGroup implements SoundGroup {
 
     @Override
     public float getVolume() {
-        return getHandle().volume; // PAIL rename volume
+        return getHandle().getVolume();
     }
 
     @Override
     public float getPitch() {
-        return getHandle().pitch; // PAIL rename pitch
+        return getHandle().getPitch();
     }
 
     @Override
     public Sound getBreakSound() {
-        return CraftSound.getBukkit(getHandle().breakSound);
+        return CraftSound.getBukkit(getHandle().getBreakSound());
     }
 
     @Override
     public Sound getStepSound() {
-        return CraftSound.getBukkit(getHandle().getStepSound()); // PAIL rename getStepSound
+        return CraftSound.getBukkit(getHandle().getStepSound());
     }
 
     @Override
     public Sound getPlaceSound() {
-        return CraftSound.getBukkit(getHandle().getPlaceSound()); // PAIL rename getPlaceSound
+        return CraftSound.getBukkit(getHandle().getPlaceSound());
     }
 
     @Override
     public Sound getHitSound() {
-        return CraftSound.getBukkit(getHandle().hitSound);
+        return CraftSound.getBukkit(getHandle().getHitSound());
     }
 
     @Override
     public Sound getFallSound() {
-        return CraftSound.getBukkit(getHandle().getFallSound()); // PAIL rename getFallSound
+        return CraftSound.getBukkit(getHandle().getFallSound());
     }
 }

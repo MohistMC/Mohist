@@ -34,7 +34,7 @@
        this.field_186527_c = immutablemap;
 +      // CraftBukkit start - build a reversed registry map
 +      ImmutableMap.Builder<LootTable, ResourceLocation> lootTableToKeyBuilder = ImmutableMap.builder();
-+      this.field_186527_c.forEach((lootTable, key) -> lootTableToKeyBuilder.put(key, lootTable)); // PAIL rename keyToLootTable
++      this.field_186527_c.forEach((lootTable, key) -> lootTableToKeyBuilder.put(key, lootTable));
 +      this.lootTableToKey = lootTableToKeyBuilder.build();
 +      // CraftBukkit end
     }
