@@ -3,6 +3,7 @@ package com.mohistmc.command;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.configuration.TickConfig;
 import com.mohistmc.util.i18n.i18n;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,8 +92,11 @@ public class MohistCommand extends Command {
                 }
                 break;
             case "reload":
-                MohistConfig.instance.load();
-                sender.sendMessage(ChatColor.GREEN + "mohist.yml reload complete.");
+                if (MohistConfig.instance != null)
+                    MohistConfig.instance.load();
+                TickConfig.ENTITIES.reloadConfig();
+                TickConfig.TILES.reloadConfig();
+                sender.sendMessage(ChatColor.GREEN + "mohist-config directory reload complete.");
                 break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
