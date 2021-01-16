@@ -70,7 +70,7 @@ public class WatchdogThread extends Thread
                 log.log( Level.SEVERE, "\t "+ i18n.get("watchdogthread.5" ));
                 log.log( Level.SEVERE, i18n.get("watchdogthread.6" ));
                 log.log( Level.SEVERE, i18n.get("watchdogthread.7" ));
-                log.log( Level.SEVERE, i18n.get("watchdogthread.8" + " "+Bukkit.getServer().getVersion() ));
+                log.log( Level.SEVERE, i18n.get("watchdogthread.8") + " " + Bukkit.getServer().getVersion());
                 //
                 if ( net.minecraft.world.World.lastPhysicsProblem != null )
                 {
