@@ -619,11 +619,10 @@ public enum Material {
 
     public static Material getMaterial(final int id) {
         if (byId.length > id && id >= 0) {
-            Material material = byId[id];
-            if (ItemAPI.isBlockByID(id) && material.isForgeBlock()) {
-                return getBlockMaterial(material.getBlockID());
+            if (ItemAPI.isBlockByID(id)) {
+                return getBlockMaterial(ItemAPI.getModBlockByItem(ItemAPI.isBlockByBlockID(id)));
             }
-            return material;
+            return byId[id];
         } else {
             return null;
         }

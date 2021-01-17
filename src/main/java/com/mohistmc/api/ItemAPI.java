@@ -199,11 +199,20 @@ public class ItemAPI {
         return MODNAME_MAP.getOrDefault(id, "unknown");
     }
 
-    public static boolean isBlockByID(int itemId) {
-        return ITEM_BLOCK.containsKey(itemId);
+    public static boolean isBlockByID(int id) {
+        for (Map.Entry<Integer, Integer> a : ITEM_BLOCK.entrySet()) {
+            if (a.getValue() == id) {
+                return true;
+            }
+        }
+        return ITEM_BLOCK.containsKey(id);
     }
 
     public static int getModBlockByItem(int itemId) {
         return ITEM_BLOCK.getOrDefault(itemId, 0);
+    }
+
+    public static int isBlockByBlockID(int blockid) {
+        return ITEM_BLOCK.entrySet().stream().filter(a -> a.getValue() == blockid).findFirst().map(Map.Entry::getKey).orElse(blockid);
     }
 }
