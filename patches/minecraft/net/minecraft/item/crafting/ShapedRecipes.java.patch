@@ -77,16 +77,13 @@
              {
                  int k = i - p_77573_2_;
                  int l = j - p_77573_3_;
-@@ -379,4 +378,83 @@
+@@ -379,4 +378,80 @@
              return new ItemStack(item, j, i);
          }
      }
 +
 +    @Override
-+    public Recipe toBukkitRecipe() {
-+        if (this.field_77577_c < 1 || this.field_77577_c > 3 || this.field_77576_b < 1 || this.field_77576_b > 3) {
-+            return new CustomModRecipe((IRecipe) this, this.getRegistryName());
-+        }
++    public org.bukkit.inventory.ShapedRecipe toBukkitRecipe() {
 +        CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77575_e);
 +        CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
 +        switch (this.field_77577_c) {

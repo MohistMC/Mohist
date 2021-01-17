@@ -200,12 +200,7 @@ public class ItemAPI {
     }
 
     public static boolean isBlockByID(int id) {
-        for (Map.Entry<Integer, Integer> a : ITEM_BLOCK.entrySet()) {
-            if (a.getValue() == id) {
-                return true;
-            }
-        }
-        return ITEM_BLOCK.containsKey(id);
+        return ITEM_BLOCK.entrySet().stream().anyMatch(a -> a.getValue() == id) || ITEM_BLOCK.containsKey(id);
     }
 
     public static int getModBlockByItem(int itemId) {

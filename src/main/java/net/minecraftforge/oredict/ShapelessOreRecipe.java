@@ -40,6 +40,9 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftShapelessRecipe;
+import org.bukkit.craftbukkit.v1_12_R1.util.CraftNamespacedKey;
 import org.bukkit.inventory.Recipe;
 import com.mohistmc.recipe.CustomModRecipe;
 
@@ -50,7 +53,6 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
     protected NonNullList<Ingredient> input = NonNullList.create();
     protected ResourceLocation group;
     protected boolean isSimple = true;
-	private Recipe bukkitRecip;
 
     public ShapelessOreRecipe(ResourceLocation group, Block result, Object... recipe){ this(group, new ItemStack(result), recipe); }
     public ShapelessOreRecipe(ResourceLocation group, Item  result, Object... recipe){ this(group, new ItemStack(result), recipe); }
@@ -161,14 +163,24 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
 
 
     @Override
-    public Recipe toBukkitRecipe() {
-        if (bukkitRecip == null)
-            bukkitRecip = new CustomModRecipe(this, this.getRegistryName());
-        return this.bukkitRecip;
+    public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
+        CraftItemStack result = CraftItemStack.asCraftMirror(this.output);
+        CraftShapelessRecipe recipe = new CraftShapelessRecipe(CraftNamespacedKey.fromMinecraft(this.getRegistryName()), result);
+        for (Ingredient list : this.input) {
+            if (list != null) {
+                ItemStack[] matchingStacks = list.getMatchingStacks();
+                if (matchingStacks.length > 0) {
+                    ItemStack stack = matchingStacks[0];
+                    recipe.addIngredient(org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getMaterial(stack.getItem()), (matchingStacks.length) > 1 ? 32767 : stack.getMetadata());
+                }
+            }
+        }
+        return recipe;
     }
 
+    public ResourceLocation key;
     @Override
     public void setKey(ResourceLocation key) {
-
+        this.key = key;
     }
 }
