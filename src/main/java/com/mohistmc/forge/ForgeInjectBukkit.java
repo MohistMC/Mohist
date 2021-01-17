@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.ResourceLocation;
@@ -68,6 +69,11 @@ public class ForgeInjectBukkit {
                     ItemAPI.MODNAME_MAP.put(material.name(), modid);
                     // <bukkit_id, modid>
                     ItemAPI.MODID_MAP.put(id, modid);
+                    if (item instanceof ItemBlock) {
+                        Block block = ((ItemBlock) item).getBlock();
+                        int bid = Block.getIdFromBlock(block);
+                        ItemAPI.ITEM_BLOCK.put(id, bid);
+                    }
                     MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
                 }
             }

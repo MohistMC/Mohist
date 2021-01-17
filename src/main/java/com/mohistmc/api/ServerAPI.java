@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -39,5 +40,9 @@ public class ServerAPI {
 
     public static MinecraftServer getNMSServer() {
         return MinecraftServer.getServerInst();
+    }
+
+    public static World getMainWorld(){
+        return getNMSServer().getEntityWorld();
     }
 }

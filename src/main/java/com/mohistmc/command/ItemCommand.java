@@ -19,8 +19,7 @@ public class ItemCommand {
             // item name and i18n name
             player.sendMessage(ChatColor.GRAY + "Name - " + ChatColor.GREEN + itemStack.getType().toString());
             // mcp and bukkit
-            player.sendMessage(ChatColor.GRAY + "ID - " + ChatColor.GREEN + Item.getIdFromItem(item) + ":" + itemStack.getDurability() + " ("
-                    + itemStack.getTypeId() + ":" + itemStack.getDurability() + ")");
+            player.sendMessage(ChatColor.GRAY + "ID - " + ChatColor.GREEN + Item.getIdFromItem(item) + ":" + itemStack.getDurability() + " (" + itemStack.getTypeId() + ":" + itemStack.getDurability() + ")");
             if (item instanceof ItemBlock) {
                 player.sendMessage(ChatColor.GRAY + "Block ID - " + ChatColor.GREEN + Block.getIdFromBlock(Block.getBlockFromItem(item)));
             }

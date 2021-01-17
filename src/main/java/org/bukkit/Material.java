@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+import com.mohistmc.api.ItemAPI;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Map;
@@ -618,12 +619,18 @@ public enum Material {
 
     public static Material getMaterial(final int id) {
         if (byId.length > id && id >= 0) {
-            return byId[id];
+            Material material = byId[id];
+            if (ItemAPI.isBlockByID(id) && material.isForgeBlock()) {
+                return getBlockMaterial(material.getBlockID());
+            }
+            return material;
         } else {
             return null;
         }
     }
 
+    //TODO: Get through the above getMaterial(int id)?
+    @Deprecated
     public static Material getBlockMaterial(final int id) {
         if (blockById.length > id && id >= 0) {
             return blockById[id];

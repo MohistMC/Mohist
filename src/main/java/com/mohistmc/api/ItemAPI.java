@@ -29,6 +29,7 @@ public class ItemAPI {
     public static Map<String, String> MODNAME_MAP = new ConcurrentHashMap();
     public static Map<Integer, String> MODID_MAP = new ConcurrentHashMap();
     public static List<ResourceLocation> vanilla_item = new ArrayList<>();
+    public static Map<Integer, Integer> ITEM_BLOCK = new ConcurrentHashMap();
 
     public static net.minecraft.item.ItemStack toNMSItem(Material materialcb) {
         ItemStack itemStackcb = new ItemStack(materialcb);
@@ -191,10 +192,18 @@ public class ItemAPI {
     }
 
     public static String getModid(String name) {
-        return MODNAME_MAP.containsKey(name) ? MODNAME_MAP.get(name) : "unknown";
+        return MODNAME_MAP.getOrDefault(name, "unknown");
     }
 
     public static String getModid(int id) {
-        return MODNAME_MAP.containsKey(id) ? MODNAME_MAP.get(id) : "unknown";
+        return MODNAME_MAP.getOrDefault(id, "unknown");
+    }
+
+    public static boolean isBlockByID(int itemId) {
+        return ITEM_BLOCK.containsKey(itemId);
+    }
+
+    public static int getModBlockByItem(int itemId) {
+        return ITEM_BLOCK.getOrDefault(itemId, 0);
     }
 }
