@@ -219,8 +219,10 @@ public final class CraftLegacy {
     }
 
     public static Material[] values() {
-        Material[] values = Material.values();
-        return Arrays.copyOfRange(values, Material.LEGACY_AIR.ordinal(), values.length);
+        Material[] materials = Material.values();
+        Material[] legacyWithForge = new Material[materials.length - CraftMagicNumbers.LEGACY_FIRST_POS];
+        System.arraycopy(materials, CraftMagicNumbers.LEGACY_FIRST_POS, legacyWithForge, 0, legacyWithForge.length);
+        return legacyWithForge;
     }
 
     public static Material valueOf(String name) {
@@ -236,9 +238,10 @@ public final class CraftLegacy {
     }
 
     public static int ordinal(Material material) {
-        Preconditions.checkArgument(material.isLegacy(), "ordinal on modern Material");
+        // Mohist: Forge Materials are modern, so remove the check
+        // Preconditions.checkArgument(material.isLegacy(), "ordinal on modern Material");
 
-        return material.ordinal() - Material.LEGACY_AIR.ordinal();
+        return material.ordinal() - CraftMagicNumbers.LEGACY_FIRST_POS;
     }
 
     public static String name(Material material) {
