@@ -89,6 +89,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
     private static final Map<Material, net.minecraft.fluid.Fluid> MATERIAL_FLUID = new HashMap<>();
 
+    // Mohist: Legacy Material first/last ordinals
+    public static final int LEGACY_FIRST_POS;
+    public static final int LEGACY_LAST_POS;
+
     static {
         for (Block block : Registry.BLOCK) {
             BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getKey(block).getPath().toUpperCase(Locale.ROOT)));
@@ -102,8 +106,15 @@ public final class CraftMagicNumbers implements UnsafeValues {
             FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getKey(fluid))));
         }
 
+        Integer legacyFirstPos = null;
+        Integer legacyLastPos = null;
         for (Material material : Material.values()) {
             if (material.isLegacy()) {
+                int ord = material.ordinal();
+                if (legacyFirstPos == null) {
+                    legacyFirstPos = ord;
+                }
+                legacyLastPos = ord;
                 continue;
             }
 
@@ -118,6 +129,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 MATERIAL_FLUID.put(material, fluid);
             });
         }
+
+        LEGACY_FIRST_POS = legacyFirstPos;
+        LEGACY_LAST_POS = legacyLastPos;
     }
 
     public static Material getMaterial(Block block) {
