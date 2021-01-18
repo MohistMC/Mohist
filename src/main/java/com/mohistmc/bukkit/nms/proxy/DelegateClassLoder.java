@@ -16,22 +16,22 @@ public class DelegateClassLoder extends ClassLoader{
         super(parent);
     }
 
-    public final Class<?> defineClassMohsit(byte[] b, int off, int len) throws ClassFormatError {
-        return defineClassMohsit(null, b, off, len, null);
+    public final Class<?> defineClassMohist(byte[] b, int off, int len) throws ClassFormatError {
+        return defineClassMohist(null, b, off, len, null);
     }
 
-    public final Class<?> defineClassMohsit(String name, byte[] b, int off, int len) throws ClassFormatError {
-        return defineClassMohsit(name, b, off, len, null);
+    public final Class<?> defineClassMohist(String name, byte[] b, int off, int len) throws ClassFormatError {
+        return defineClassMohist(name, b, off, len, null);
     }
 
-    public final Class<?> defineClassMohsit(String name, java.nio.ByteBuffer b, ProtectionDomain protectionDomain) throws ClassFormatError {
+    public final Class<?> defineClassMohist(String name, java.nio.ByteBuffer b, ProtectionDomain protectionDomain) throws ClassFormatError {
         if (!b.isDirect() && b.hasArray()) {
             return remappedFindClass(name, b.array(), protectionDomain);
         }
         return defineClass(name, b, protectionDomain);
     }
 
-    public final Class<?> defineClassMohsit(String name, byte[] b, int off, int len, ProtectionDomain protectionDomain) throws ClassFormatError {
+    public final Class<?> defineClassMohist(String name, byte[] b, int off, int len, ProtectionDomain protectionDomain) throws ClassFormatError {
         if (off == 0) {
             return remappedFindClass(name, b, protectionDomain);
         }
