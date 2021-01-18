@@ -27,8 +27,11 @@ public final class CraftLegacy {
     }
 
     public static Material[] modern_values() {
-        Material[] values = Material.values();
-        return Arrays.copyOfRange(values, 0, Material.LEGACY_AIR.ordinal());
+        Material[] materials = Material.values();
+        Material[] modernWithForge = new Material[materials.length - (CraftMagicNumbers.LEGACY_LAST_POS - CraftMagicNumbers.LEGACY_FIRST_POS + 1)];
+        System.arraycopy(materials, 0, modernWithForge, 0, CraftMagicNumbers.LEGACY_FIRST_POS);
+        System.arraycopy(materials, CraftMagicNumbers.LEGACY_LAST_POS + 1, modernWithForge, CraftMagicNumbers.LEGACY_FIRST_POS, materials.length - CraftMagicNumbers.LEGACY_LAST_POS - 1);
+        return modernWithForge;
     }
 
     public static int modern_ordinal(Material material) {
@@ -37,6 +40,12 @@ public final class CraftLegacy {
             throw new NoSuchFieldError("Legacy field ordinal: " + material);
         }
 
-        return material.ordinal();
+        int ord = material.ordinal();
+        if (ord > CraftMagicNumbers.LEGACY_LAST_POS) {
+            return CraftMagicNumbers.LEGACY_FIRST_POS + ord - CraftMagicNumbers.LEGACY_LAST_POS - 1;
+        }
+        else {
+            return ord;
+        }
     }
 }
