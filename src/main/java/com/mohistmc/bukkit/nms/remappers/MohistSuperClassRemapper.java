@@ -66,7 +66,7 @@ public class MohistSuperClassRemapper {
                             } else {
                                 VirtualMethodClass = defineClass.get((insn.owner + ";" + insn.name));
                                 if (VirtualMethodClass != null) {
-                                    insn.name += "Mohsit";
+                                    insn.name += "Mohist";
                                     insn.owner = Type.getInternalName(VirtualMethodClass);
                                 }
                             }
