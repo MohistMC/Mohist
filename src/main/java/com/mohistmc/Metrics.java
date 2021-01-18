@@ -1,5 +1,7 @@
 package com.mohistmc;
 
+import com.mohistmc.api.ServerAPI;
+import com.mohistmc.common.async.MohistThreadBox;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -24,8 +26,6 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import com.mohistmc.api.ServerAPI;
-import com.mohistmc.common.async.MohistThreadBox;
 import org.spigotmc.SpigotConfig;
 
 /**
