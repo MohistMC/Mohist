@@ -44,6 +44,7 @@ public class MohistMCStart {
             while (!"true".equals(new Scanner(System.in).next())) ;
             writeInfos();
         }
+        AutoDeletePlugins.jar();
         startMohistServer(args);
     }
 }
