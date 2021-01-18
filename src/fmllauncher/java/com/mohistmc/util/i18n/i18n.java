@@ -1,7 +1,6 @@
 package com.mohistmc.util.i18n;
 
 import com.mohistmc.config.MohistConfigUtil;
-
 import com.mohistmc.util.NumberUtils;
 import java.math.BigDecimal;
 import java.text.MessageFormat;

@@ -11,7 +11,6 @@ import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
 import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 

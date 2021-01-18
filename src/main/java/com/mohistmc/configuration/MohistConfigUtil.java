@@ -1,12 +1,12 @@
 package com.mohistmc.configuration;
 
 import com.mohistmc.MohistMC;
+import com.mohistmc.util.FileUtil;
 import com.mohistmc.util.NumberUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import com.mohistmc.util.FileUtil;
 
 public class MohistConfigUtil {
     public static File mohistyml = new File("mohist-config", "mohist.yml");

@@ -10,6 +10,7 @@ import com.mohistmc.util.MohistEnumHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -40,8 +41,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.permissions.DefaultPermissions;
-
-import java.util.Map;
 
 public class ForgeInjectBukkit {
 

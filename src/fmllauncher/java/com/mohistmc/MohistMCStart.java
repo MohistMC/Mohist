@@ -10,7 +10,6 @@ import com.mohistmc.util.InstallUtils;
 import static com.mohistmc.util.InstallUtils.startInstallation;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.i18n.i18n;
-
 import java.util.Scanner;
 import static net.minecraftforge.server.ServerMain.startMohistServer;
 
