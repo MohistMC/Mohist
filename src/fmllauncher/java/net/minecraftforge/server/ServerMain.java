@@ -19,6 +19,7 @@
 
 package net.minecraftforge.server;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
 import cpw.mods.modlauncher.Launcher;
@@ -34,11 +35,12 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class ServerMain {
-    public static void startMohistServer(String[] args) {
+    public static void main(String[] args) {
         try {
+            MohistMCStart.main();
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
-        } catch (ClassNotFoundException cnfe) {
+        } catch (Exception cnfe) {
             System.err.println(i18n.get("mohist.start.server.error"));
             System.exit(1);
         }
