@@ -11,7 +11,6 @@ import static com.mohistmc.util.InstallUtils.startInstallation;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.i18n.i18n;
 import java.util.Scanner;
-import static net.minecraftforge.server.ServerMain.startMohistServer;
 
 public class MohistMCStart {
 
@@ -19,7 +18,7 @@ public class MohistMCStart {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main() throws Exception {
         MohistConfigUtil.copyMohistConfig();
 
         if (MohistConfigUtil.bMohist("show_logo", "true"))
@@ -44,6 +43,5 @@ public class MohistMCStart {
             writeInfos();
         }
         AutoDeletePlugins.jar();
-        startMohistServer(args);
     }
 }

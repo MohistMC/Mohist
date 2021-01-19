@@ -8,7 +8,15 @@
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-@@ -31,6 +32,7 @@
+@@ -11,6 +12,7 @@
+ import java.net.Proxy;
+ import java.nio.file.Path;
+ import java.nio.file.Paths;
++import static java.util.Arrays.asList;
+ import java.util.Optional;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.function.BooleanSupplier;
+@@ -31,6 +33,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
  import net.minecraft.util.RegistryKey;
@@ -16,16 +24,39 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -71,6 +73,8 @@
+@@ -71,58 +74,106 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
++      optionparser.acceptsAll(asList("b", "bukkit-settings"), "File for bukkit settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("bukkit.yml"))
++              .describedAs("Yml file");
  
++      optionparser.acceptsAll(asList("C", "commands-settings"), "File for command settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("commands.yml"))
++              .describedAs("Yml file");
++      optionparser.acceptsAll(asList("S", "spigot-settings"), "File for spigot settings")
++                .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("spigot.yml"))
++              .describedAs("Yml file");
++      optionparser.acceptsAll(asList("P", "plugins"), "Plugin directory to use")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("plugins"))
++              .describedAs("Plugin directory");
++
++
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -78,51 +82,74 @@
++         MinecraftServer.options = optionset;
+          if (optionset.has(optionspec7)) {
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -110,7 +141,7 @@
              resourcepacklist.close();
              return;
           }
-@@ -142,6 +169,8 @@
+@@ -142,6 +193,8 @@
                 dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
              }
  
@@ -119,7 +150,7 @@
              iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
           }
  
-@@ -159,28 +188,25 @@
+@@ -159,28 +212,25 @@
              dedicatedserver1.func_71208_b(optionset.valueOf(optionspec11));
              dedicatedserver1.func_71204_b(optionset.has(optionspec2));
              dedicatedserver1.func_213208_c(optionset.valueOf(optionspec12));
@@ -151,7 +182,7 @@
        WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
        ITextComponent itextcomponent = null;
  
-@@ -194,7 +220,7 @@
+@@ -194,7 +244,7 @@
           int i = worldoptimizer.func_212211_j();
           if (i > 0) {
              int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
