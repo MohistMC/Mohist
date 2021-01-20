@@ -1,14 +1,15 @@
 package com.mohistmc.entity;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 
 public class CraftCustomFakePlayer extends CraftPlayer {
 
-    public CraftCustomFakePlayer(CraftServer server, ServerPlayerEntity entity) {
-        super(server, entity);
+    public CraftCustomFakePlayer(CraftServer server, PlayerEntity entity) {
+        super(server, FakePlayerFactory.get(server.getServer().getWorld(entity.world.getDimensionKey()), entity.getGameProfile()));
     }
 
     @Override
