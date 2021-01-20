@@ -24,7 +24,7 @@
  
     public SaplingBlock(Tree p_i48337_1_, AbstractBlock.Properties p_i48337_2_) {
        super(p_i48337_2_);
-@@ -28,8 +34,30 @@
+@@ -28,8 +34,32 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -49,14 +49,16 @@
 +               p_225542_2_.getCBServer().getPluginManager().callEvent(event);
 +            }
 +            if(event == null || !event.isCancelled()){
-+               blocks.forEach(org.bukkit.block.BlockState::update);
++               for (org.bukkit.block.BlockState block : blocks) {
++                  block.update(true);
++               }
 +            }
 +         }
 +         // CraftBukkit stop
        }
  
     }
-@@ -38,6 +66,7 @@
+@@ -38,6 +68,7 @@
        if (p_226942_3_.func_177229_b(field_176479_b) == 0) {
           p_226942_1_.func_180501_a(p_226942_2_, p_226942_3_.func_235896_a_(field_176479_b), 4);
        } else {
