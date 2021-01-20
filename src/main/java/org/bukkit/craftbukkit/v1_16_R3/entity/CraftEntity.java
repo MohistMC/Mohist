@@ -202,14 +202,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
          * Order is *EXTREMELY* important -- keep it right! =D
          */
         // CHECKSTYLE:OFF
-        if (entity instanceof FakePlayer) {
-            return new CraftCustomFakePlayer(server, (FakePlayer) entity);
-        }
         if (entity instanceof LivingEntity) {
             // Players
             if (entity instanceof PlayerEntity) {
                 if (entity instanceof ServerPlayerEntity) { return new CraftPlayer(server, (ServerPlayerEntity) entity); }
-                else { return new CraftHumanEntity(server, (PlayerEntity) entity); }
+                else { return new CraftCustomFakePlayer(server, (PlayerEntity) entity); }
             }
             // Water Animals
             else if (entity instanceof WaterMobEntity) {
