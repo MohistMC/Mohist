@@ -33,7 +33,7 @@ public class UpdateUtils {
         System.out.println(i18n.get("update.stopcheck"));
 
         try {
-            JsonElement root = new JsonParser().parse(new InputStreamReader(getInput("https://mohistmc.com/api/1.16.5/latest")));
+            JsonElement root = new JsonParser().parse(new InputStreamReader(getInput("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.5/lastSuccessfulBuild/api/json")));
 
             String jar_sha = MohistMCStart.getVersion();
             String build_number = "1.16.5-" + root.getAsJsonObject().get("number").toString();

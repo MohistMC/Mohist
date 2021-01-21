@@ -17,7 +17,22 @@
                 this.func_193101_c(p_230254_1_);
                 this.func_233687_w_(true);
                 this.field_70170_p.func_72960_a(this, (byte)7);
-@@ -579,7 +580,7 @@
+@@ -551,7 +552,13 @@
+          LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_220806_a.field_70170_p)).func_216015_a(LootParameters.field_237457_g_, this.field_220806_a.func_213303_ch()).func_216015_a(LootParameters.field_216281_a, this.field_220806_a).func_216023_a(random);
+ 
+          for(ItemStack itemstack : loottable.func_216113_a(lootcontext$builder.func_216022_a(LootParameterSets.field_216264_e))) {
+-            this.field_220806_a.field_70170_p.func_217376_c(new ItemEntity(this.field_220806_a.field_70170_p, (double)blockpos$mutable.func_177958_n() - (double)MathHelper.func_76126_a(this.field_220806_a.field_70761_aq * ((float)Math.PI / 180F)), (double)blockpos$mutable.func_177956_o(), (double)blockpos$mutable.func_177952_p() + (double)MathHelper.func_76134_b(this.field_220806_a.field_70761_aq * ((float)Math.PI / 180F)), itemstack));
++            ItemEntity itemEntity = new ItemEntity(this.field_220806_a.field_70170_p, (double)blockpos$mutable.func_177958_n() - (double)MathHelper.func_76126_a(this.field_220806_a.field_70761_aq * ((float)Math.PI / 180F)), (double)blockpos$mutable.func_177956_o(), (double)blockpos$mutable.func_177952_p() + (double)MathHelper.func_76134_b(this.field_220806_a.field_70761_aq * ((float)Math.PI / 180F)), itemstack);
++            org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.field_220806_a.getBukkitEntity(), (org.bukkit.entity.Item) itemEntity.getBukkitEntity());
++            itemEntity.field_70170_p.getCBServer().getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               return;
++            }
++            this.field_220806_a.field_70170_p.func_217376_c(itemEntity);
+          }
+ 
+       }
+@@ -579,7 +586,7 @@
  
     static class TemptGoal extends net.minecraft.entity.ai.goal.TemptGoal {
        @Nullable
