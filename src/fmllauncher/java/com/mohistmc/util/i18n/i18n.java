@@ -21,12 +21,12 @@ public class i18n {
     }
 
     public static String getLocale(int key) {
-        String locale = MohistConfigUtil.sMohist("lang", "xx");
+        String locale = MohistConfigUtil.sMohist("lang", "xx_XX");
         if (locale.length() == 5) {
             if (key == 1) return locale.substring(0, 2);
             if (key == 2) return locale.substring(3, 5);
         }
-        return "xx";
+        return "xx_XX";
     }
 
     public static String getLanguage() {
