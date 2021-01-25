@@ -1116,39 +1116,7 @@
          this.field_70180_af.func_187227_b(field_184242_az, p_96094_1_);
      }
  
-@@ -2800,7 +3157,30 @@
- 
-     public void func_174826_a(AxisAlignedBB p_174826_1_)
-     {
--        this.field_70121_D = p_174826_1_;
-+        // Compatible with StudentlyAdditions #https://github.com/Ellpeck/ActuallyAdditions/blob/1.12.2/src/main/java/de/ellpeck/actuallyadditions/mod/entity/EntityWorm.java#L34
-+        if (p_174826_1_ == null) {
-+            this.field_70121_D = p_174826_1_;
-+        }
-+        // CraftBukkit start - block invalid bounding boxes
-+        double a = p_174826_1_.field_72340_a,
-+                b = p_174826_1_.field_72338_b,
-+                c = p_174826_1_.field_72339_c,
-+                d = p_174826_1_.field_72336_d,
-+                e = p_174826_1_.field_72337_e,
-+                f = p_174826_1_.field_72334_f;
-+        double len = p_174826_1_.field_72336_d - p_174826_1_.field_72340_a;
-+        if (len < 0) d = a;
-+        if (len > 64) d = a + 64.0;
-+
-+        len = p_174826_1_.field_72337_e - p_174826_1_.field_72338_b;
-+        if (len < 0) e = b;
-+        if (len > 64) e = b + 64.0;
-+
-+        len = p_174826_1_.field_72334_f - p_174826_1_.field_72339_c;
-+        if (len < 0) f = c;
-+        if (len > 64) f = c + 64.0;
-+        this.field_70121_D = new AxisAlignedBB(a, b, c, d, e, f);
-+        // CraftBukkit end
-     }
- 
-     public float func_70047_e()
-@@ -2859,11 +3239,11 @@
+@@ -2859,11 +3216,11 @@
  
      public void func_174794_a(CommandResultStats.Type p_174794_1_, int p_174794_2_)
      {
@@ -1164,7 +1132,7 @@
  
      @Nullable
      public MinecraftServer func_184102_h()
-@@ -2901,6 +3281,217 @@
+@@ -2901,6 +3258,217 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -1382,7 +1350,7 @@
      public void func_184178_b(EntityPlayerMP p_184178_1_)
      {
      }
-@@ -3069,7 +3660,7 @@
+@@ -3069,7 +3637,7 @@
          return SoundCategory.NEUTRAL;
      }
  
