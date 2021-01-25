@@ -163,8 +163,8 @@
        }
  
 +      public AbstractBlock.Properties lootFrom(java.util.function.Supplier<? extends Block> blockIn) {
-+         this.lootTableSupplier = () -> blockIn.get().func_220068_i();
-+         return this;
++          this.lootTableSupplier = () -> blockIn.get().func_220068_i();
++          return this;
 +      }
 +
        public AbstractBlock.Properties func_235859_g_() {
