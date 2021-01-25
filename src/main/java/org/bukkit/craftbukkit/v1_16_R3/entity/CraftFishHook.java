@@ -5,6 +5,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 
@@ -81,5 +82,47 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
     public void setBiteChance(double chance) {
         Validate.isTrue(chance >= 0 && chance <= 1, "The bite chance must be between 0 and 1.");
         this.biteChance = chance;
+    }
+
+    @Override
+    public boolean isInOpenWater() {
+        return getHandle().func_234605_g_();
+    }
+
+    @Override
+    public Entity getHookedEntity() {
+        net.minecraft.entity.Entity hooked = getHandle().caughtEntity;
+        return (hooked != null) ? hooked.getBukkitEntity() : null;
+    }
+
+    @Override
+    public void setHookedEntity(Entity entity) {
+        FishingBobberEntity hook = getHandle();
+
+        hook.caughtEntity = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
+        hook.getDataManager().set(FishingBobberEntity.DATA_HOOKED_ENTITY, hook.caughtEntity != null ? hook.caughtEntity.getEntityId() + 1 : 0);
+    }
+
+    @Override
+    public boolean pullHookedEntity() {
+        FishingBobberEntity hook = getHandle();
+        if (hook.caughtEntity == null) {
+            return false;
+        }
+
+        hook.bringInHookedEntity();
+        return true;
+    }
+
+    @Override
+    public HookState getState() {
+        String name = String.valueOf(getHandle().currentState);
+        if (name.equals("FLYING")) {
+            return HookState.UNHOOKED;
+        }
+        if (name.equals("HOOKED_IN_ENTITY")) {
+            return HookState.HOOKED_ENTITY;
+        }
+        return HookState.valueOf(name); //TODO mohist
     }
 }
