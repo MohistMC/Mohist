@@ -1,6 +1,5 @@
 package com.mohistmc.bukkit.nms.proxy;
 
-
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
 import com.mohistmc.bukkit.nms.utils.ReflectionUtils;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
@@ -25,14 +24,22 @@ public class ProxyClass {
         if (clazz.getName().startsWith("net.minecraft.")) {
             name = RemapUtils.mapMethodName(clazz, name, parameterTypes);
         }
-        return clazz.getDeclaredMethod(name, parameterTypes);
+        try {
+            return clazz.getDeclaredMethod(name, parameterTypes);
+        } catch (NoClassDefFoundError e) {
+            throw new NoSuchMethodException(e.toString());
+        }
     }
 
     public static Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
         if (clazz.getName().startsWith("net.minecraft.")) {
             name = RemapUtils.mapMethodName(clazz, name, parameterTypes);
         }
-        return clazz.getMethod(name, parameterTypes);
+        try {
+            return clazz.getMethod(name, parameterTypes);
+        } catch (NoClassDefFoundError e) {
+            throw new NoSuchMethodException(e.toString());
+        }
     }
 
     public static Field getDeclaredField(Class<?> clazz, String name) throws NoSuchFieldException, SecurityException {
