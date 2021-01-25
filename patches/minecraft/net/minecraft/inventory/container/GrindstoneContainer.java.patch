@@ -27,7 +27,7 @@
  
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
-+   private Player player;
++   private Player cbPlayer;
 +
 +   @Override
 +   public CraftInventoryView getBukkitView() {
@@ -35,7 +35,7 @@
 +         return bukkitEntity;
 +      }
 +      CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.field_217014_d, this.field_217013_c);
-+      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      bukkitEntity = new CraftInventoryView(this.cbPlayer, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -47,7 +47,7 @@
           this.func_75146_a(new Slot(p_i50081_2_, k, 8 + k * 18, 142));
        }
  
-+      player = (Player) p_i50081_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
++      cbPlayer = (Player) p_i50081_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
     }
  
     public void func_75130_a(IInventory p_75130_1_) {
