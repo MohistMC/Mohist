@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/FishingBobberEntity.java
 +++ b/net/minecraft/entity/projectile/FishingBobberEntity.java
-@@ -43,6 +43,9 @@
+@@ -43,12 +43,15 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -10,7 +10,21 @@
  
  public class FishingBobberEntity extends ProjectileEntity {
     private final Random field_234596_b_ = new Random();
-@@ -61,6 +64,12 @@
+    private boolean field_234597_c_;
+    private int field_234598_d_;
+-   private static final DataParameter<Integer> field_184528_c = EntityDataManager.func_187226_a(FishingBobberEntity.class, DataSerializers.field_187192_b);
++   public static final DataParameter<Integer> field_184528_c = EntityDataManager.func_187226_a(FishingBobberEntity.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Boolean> field_234599_f_ = EntityDataManager.func_187226_a(FishingBobberEntity.class, DataSerializers.field_187198_h);
+    private int field_146049_av;
+    private int field_146045_ax;
+@@ -56,11 +59,17 @@
+    private int field_146038_az;
+    private float field_146054_aA;
+    private boolean field_234595_aq_ = true;
+-   private Entity field_146043_c;
+-   private FishingBobberEntity.State field_190627_av = FishingBobberEntity.State.FLYING;
++   public Entity field_146043_c;
++   public FishingBobberEntity.State field_190627_av = FishingBobberEntity.State.FLYING;
     private final int field_191518_aw;
     private final int field_191519_ax;
  
@@ -173,6 +187,15 @@
        } else {
           return 0;
        }
+@@ -455,7 +521,7 @@
+       super.func_70103_a(p_70103_1_);
+    }
+ 
+-   protected void func_184527_k() {
++   public void func_184527_k() {
+       Entity entity = this.func_234616_v_();
+       if (entity != null) {
+          Vector3d vector3d = (new Vector3d(entity.func_226277_ct_() - this.func_226277_ct_(), entity.func_226278_cu_() - this.func_226278_cu_(), entity.func_226281_cx_() - this.func_226281_cx_())).func_186678_a(0.1D);
 @@ -467,8 +533,9 @@
        return false;
     }

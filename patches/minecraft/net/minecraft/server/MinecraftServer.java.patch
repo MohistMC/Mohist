@@ -522,7 +522,7 @@
 +            org.spigotmc.WatchdogThread.doStop(); // Spigot
 +            MohistThreadBox.METRICS.shutdown();
              this.func_71240_o();
-+            System.exit(0);
++            LogManager.shutdown();
           }
  
        }
