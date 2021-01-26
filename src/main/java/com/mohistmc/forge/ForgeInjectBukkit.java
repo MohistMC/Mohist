@@ -237,8 +237,8 @@ public class ForgeInjectBukkit {
 
     public static void addEnumArt() {
         int i = Art.values().length;
-        HashMap<String, Art> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "BY_NAME");
-        HashMap<Integer, Art> BY_ID = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "BY_ID");
+        HashMap<String, Art> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(Art.class, null, "BY_NAME");
+        HashMap<Integer, Art> BY_ID = ObfuscationReflectionHelper.getPrivateValue(Art.class, null, "BY_ID");
         for (PaintingType entry : ForgeRegistries.PAINTING_TYPES) {
             int width = entry.getWidth();
             int height = entry.getHeight();
