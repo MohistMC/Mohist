@@ -1,14 +1,5 @@
 --- a/net/minecraft/server/gui/MinecraftServerGui.java
 +++ b/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -77,7 +77,7 @@
-          this.add(this.func_120018_d(), "Center");
-          this.add(this.func_120019_b(), "West");
-       } catch (Exception exception) {
--         field_164248_b.error("Couldn't build server GUI", (Throwable)exception);
-+         field_164248_b.error(com.mohistmc.util.i18n.i18n.get("minecraftservergui.1", (Throwable)exception));
-       }
- 
-    }
 @@ -137,8 +137,10 @@
        return jpanel;
     }
