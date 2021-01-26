@@ -14,6 +14,7 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
@@ -27,6 +28,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
+import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -53,6 +55,7 @@ public class ForgeInjectBukkit {
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
+    public static Map<PaintingType, Art> artMap = new HashMap<>();
 
     public static void init(){
         addEnumMaterialInItems();
@@ -64,6 +67,7 @@ public class ForgeInjectBukkit {
         addEnumEntity();
         addEnumVillagerProfession();
         addEnumAttribute();
+        addEnumArt();
     }
 
 
@@ -227,6 +231,27 @@ public class ForgeInjectBukkit {
                 org.bukkit.attribute.Attribute ab = MohistEnumHelper.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class}, resourceLocation.getPath());
                 attributemap.put(ab, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
+            }
+        }
+    }
+
+    public static void addEnumArt() {
+        int i = Art.values().length;
+        HashMap<String, Art> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "BY_NAME");
+        HashMap<Integer, Art> BY_ID = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "BY_ID");
+        for (PaintingType entry : ForgeRegistries.PAINTING_TYPES) {
+            int width = entry.getWidth();
+            int height = entry.getHeight();
+            ResourceLocation resourceLocation = entry.getRegistryName();
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                String name = normalizeName(resourceLocation.toString());
+                int id = i - 1;
+                Art art = MohistEnumHelper.addEnum(Art.class, name, new Class[]{Integer.TYPE, Integer.TYPE, Integer.TYPE}, new Object[]{id, width, height});
+                artMap.put(entry, art);
+                BY_NAME.put(name, art);
+                BY_ID.put(id, art);
+                MohistMC.LOGGER.debug("Registered forge PaintingType as Art {}", art);
+                i++;
             }
         }
     }
