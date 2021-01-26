@@ -83,25 +83,7 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -105,15 +130,8 @@
-       CompoundNBT compoundnbt = p_219985_3_.func_77978_p();
-       if (compoundnbt != null) {
-          CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("BlockStateTag");
--         StateContainer<Block, BlockState> statecontainer = p_219985_4_.func_177230_c().func_176194_O();
--
--         for(String s : compoundnbt1.func_150296_c()) {
--            Property<?> property = statecontainer.func_185920_a(s);
--            if (property != null) {
--               String s1 = compoundnbt1.func_74781_a(s).func_150285_a_();
--               blockstate = func_219988_a(blockstate, property, s1);
--            }
--         }
-+         // CraftBukkit start
-+         blockstate = getBlockState(blockstate, compoundnbt1);
-       }
- 
-       if (blockstate != p_219985_4_) {
-@@ -123,6 +141,22 @@
+@@ -123,6 +148,22 @@
        return blockstate;
     }
  
@@ -124,7 +106,7 @@
     private static <T extends Comparable<T>> BlockState func_219988_a(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
        return p_219988_1_.func_185929_b(p_219988_2_).map((p_219986_2_) -> {
           return p_219988_0_.func_206870_a(p_219988_1_, p_219986_2_);
-@@ -132,7 +166,13 @@
+@@ -132,7 +173,13 @@
     protected boolean func_195944_a(BlockItemUseContext p_195944_1_, BlockState p_195944_2_) {
        PlayerEntity playerentity = p_195944_1_.func_195999_j();
        ISelectionContext iselectioncontext = playerentity == null ? ISelectionContext.func_216377_a() : ISelectionContext.func_216374_a(playerentity);
@@ -139,7 +121,7 @@
     }
  
     protected boolean func_219987_d() {
-@@ -152,7 +192,7 @@
+@@ -152,7 +199,7 @@
           if (compoundnbt != null) {
              TileEntity tileentity = p_179224_0_.func_175625_s(p_179224_2_);
              if (tileentity != null) {
@@ -148,7 +130,7 @@
                    return false;
                 }
  
-@@ -192,10 +232,18 @@
+@@ -192,10 +239,18 @@
     }
  
     public Block func_179223_d() {
