@@ -3,10 +3,13 @@ package org.bukkit.craftbukkit.v1_16_R3;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.mohistmc.forge.ForgeInjectBukkit;
+import java.util.Map;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import org.bukkit.Art;
+import org.bukkit.NamespacedKey;
 
 public class CraftArt {
     private static final BiMap<PaintingType, Art> artwork;
@@ -14,7 +17,11 @@ public class CraftArt {
     static {
         ImmutableBiMap.Builder<PaintingType, Art> artworkBuilder = ImmutableBiMap.builder();
         for (ResourceLocation key : Registry.MOTIVE.keySet()) {
-            artworkBuilder.put(Registry.MOTIVE.getOrDefault(key), Art.getByName(key.getPath()));
+            if (key.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                artworkBuilder.put(Registry.MOTIVE.getOrDefault(key), Art.getByName(key.getPath()));
+            } else {
+                ForgeInjectBukkit.artMap.forEach(artworkBuilder::put);
+            }
         }
 
         artwork = artworkBuilder.build();
