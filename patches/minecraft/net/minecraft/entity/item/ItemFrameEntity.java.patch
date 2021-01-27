@@ -95,15 +95,6 @@
              this.func_146065_b(p_70097_1_.func_76346_g(), false);
              this.func_184185_a(SoundEvents.field_187629_cO, 1.0F, 1.0F);
           }
-@@ -216,7 +231,7 @@
-    }
- 
-    private void func_110131_b(ItemStack p_110131_1_) {
--      if (p_110131_1_.func_77973_b() == Items.field_151098_aY) {
-+      if (p_110131_1_.func_77973_b() instanceof net.minecraft.item.FilledMapItem) {
-          MapData mapdata = FilledMapItem.func_195950_a(p_110131_1_, this.field_70170_p);
-          mapdata.func_212441_a(this.field_174861_a, this.func_145782_y());
-          mapdata.func_76186_a(true);
 @@ -234,14 +249,24 @@
     }
  
