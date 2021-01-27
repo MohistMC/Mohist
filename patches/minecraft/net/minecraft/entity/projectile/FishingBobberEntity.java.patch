@@ -37,17 +37,6 @@
     private FishingBobberEntity(World p_i50219_1_, PlayerEntity p_i50219_2_, int p_i50219_3_, int p_i50219_4_) {
        super(EntityType.field_200730_aI, p_i50219_1_);
        this.field_70158_ak = true;
-@@ -233,8 +242,8 @@
-    private boolean func_234600_a_(PlayerEntity p_234600_1_) {
-       ItemStack itemstack = p_234600_1_.func_184614_ca();
-       ItemStack itemstack1 = p_234600_1_.func_184592_cb();
--      boolean flag = itemstack.func_77973_b() == Items.field_151112_aM;
--      boolean flag1 = itemstack1.func_77973_b() == Items.field_151112_aM;
-+      boolean flag = itemstack.func_77973_b() instanceof net.minecraft.item.FishingRodItem;
-+      boolean flag1 = itemstack1.func_77973_b() instanceof net.minecraft.item.FishingRodItem;
-       if (!p_234600_1_.field_70128_L && p_234600_1_.func_70089_S() && (flag || flag1) && !(this.func_70068_e(p_234600_1_) > 1024.0D)) {
-          return false;
-       } else {
 @@ -288,6 +297,10 @@
              this.field_146040_ay = 0;
              this.field_146038_az = 0;
