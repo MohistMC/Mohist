@@ -238,7 +238,8 @@ public abstract class InventoryView {
             return null;
         }
         Preconditions.checkArgument(rawSlot >= 0, "Negative, non outside slot %s", rawSlot);
-        Preconditions.checkArgument(rawSlot < countSlots(), "Slot %s greater than inventory slot count", rawSlot);
+        // Mohist: Improve compatibility with inventories added by mods
+        // Preconditions.checkArgument(rawSlot < countSlots(), "Slot %s greater than inventory slot count", rawSlot);
 
         if (rawSlot < getTopInventory().getSize()) {
             return getTopInventory();
