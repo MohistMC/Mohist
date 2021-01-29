@@ -181,8 +181,11 @@
           if (!collection.isEmpty()) {
              p_219452_1_.accept(new SEntityPropertiesPacket(this.field_219461_c.func_145782_y(), collection));
           }
-@@ -239,6 +303,11 @@
+@@ -237,8 +301,14 @@
+          if (!list.isEmpty()) {
+             p_219452_1_.accept(new SEntityEquipmentPacket(this.field_219461_c.func_145782_y(), list));
           }
++         ((LivingEntity) this.field_219461_c).func_241353_q_(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
        }
  
 +      // CraftBukkit start - Fix for nonsensical head yaw
@@ -193,7 +196,7 @@
        if (this.field_219461_c instanceof LivingEntity) {
           LivingEntity livingentity = (LivingEntity)this.field_219461_c;
  
-@@ -273,6 +342,11 @@
+@@ -273,6 +343,11 @@
        if (this.field_219461_c instanceof LivingEntity) {
           Set<ModifiableAttributeInstance> set = ((LivingEntity)this.field_219461_c).func_233645_dx_().func_233778_a_();
           if (!set.isEmpty()) {
