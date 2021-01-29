@@ -39,7 +39,7 @@
           });
        } catch (FileNotFoundException filenotfoundexception) {
 +         // Spigot Start
-+      } catch (com.google.gson.JsonSyntaxException ex) {
++      } catch (com.google.gson.JsonSyntaxException | NullPointerException ex) {
 +         UserList.field_152693_a.warn(com.mohistmc.util.i18n.i18n.get( "playerprofilecache.1" ));
 +         this.field_152665_g.delete();
 +         // Spigot End
