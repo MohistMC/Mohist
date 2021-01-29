@@ -9,3 +9,17 @@
     private TemptGoal field_234306_bA_;
     private PanicGoal field_234307_bB_;
  
+@@ -274,7 +274,12 @@
+       BlockState blockstate = this.field_70170_p.func_180495_p(this.func_233580_cy_());
+       BlockState blockstate1 = this.func_233568_aJ_();
+       boolean flag = blockstate.func_235714_a_(BlockTags.field_232881_aw_) || blockstate1.func_235714_a_(BlockTags.field_232881_aw_) || this.func_233571_b_(FluidTags.field_206960_b) > 0.0D;
+-      this.func_234319_t_(!flag);
++      // CraftBukkit start
++      if (!flag ^ this.func_234315_eI_()) {
++         org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callStriderTemperatureChangeEvent(this, !flag);
++         this.func_234319_t_(!flag);
++      }
++      // CraftBukkit end
+       super.func_70071_h_();
+       this.func_234318_eL_();
+       this.func_145775_I();
