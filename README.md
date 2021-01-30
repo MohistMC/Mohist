@@ -29,7 +29,7 @@
 Progress
 ------
 
-- [x] Rectify Forge (7728dde36)
+- [x] Rectify Forge (aeaebf578)
 - [x] Start patch 
   * CraftBukkit(80491462)  
   * Bukkit(1b5ad2af)  
