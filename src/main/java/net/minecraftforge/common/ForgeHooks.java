@@ -140,6 +140,7 @@ import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
@@ -554,28 +555,8 @@ public class ForgeHooks
 
     public static int onBlockBreakEvent(World world, GameType gameType, ServerPlayerEntity entityPlayer, BlockPos pos)
     {
-        // Logic from tryHarvestBlock for pre-canceling the event
-        boolean preCancelEvent = false;
-        ItemStack itemstack = entityPlayer.getHeldItemMainhand();
-        if (!itemstack.isEmpty() && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
-        {
-            preCancelEvent = true;
-        }
-
-        if (gameType.hasLimitedInteractions())
-        {
-            if (gameType == GameType.SPECTATOR)
-                preCancelEvent = true;
-
-            if (!entityPlayer.isAllowEdit())
-            {
-                if (itemstack.isEmpty() || !itemstack.canDestroy(world.getTags(), new CachedBlockInfo(world, pos, false)))
-                    preCancelEvent = true;
-            }
-        }
-
         // Tell client the block is gone immediately then process events
-        if (world.getTileEntity(pos) == null)
+        if (world.getTileEntity(pos) == null && !(entityPlayer instanceof FakePlayer)) // Cauldron - don't send packets to fakeplayers
         {
             entityPlayer.connection.sendPacket(new SChangeBlockPacket(DUMMY_WORLD, pos));
         }
@@ -583,11 +564,11 @@ public class ForgeHooks
         // Post the block break event
         BlockState state = world.getBlockState(pos);
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
-        event.setCanceled(preCancelEvent);
+        // event.setCanceled(preCancelEvent);
         MinecraftForge.EVENT_BUS.post(event);
 
         // Handle if the event is canceled
-        if (event.isCanceled())
+        if (event.isCanceled() && !(entityPlayer instanceof FakePlayer)) // Cauldron - don't send packets to fakeplayers
         {
             // Let the client know the block still exists
             entityPlayer.connection.sendPacket(new SChangeBlockPacket(world, pos));
@@ -612,6 +593,7 @@ public class ForgeHooks
         World world = context.getWorld();
 
         PlayerEntity player = context.getPlayer();
+        BlockPos pos = context.getPos();
         if (player != null && !player.abilities.allowEdit && !itemstack.canPlaceOn(world.getTags(), new CachedBlockInfo(world, context.getPos(), false)))
             return ActionResultType.PASS;
 
@@ -624,6 +606,16 @@ public class ForgeHooks
 
         if (!(itemstack.getItem() instanceof BucketItem)) // if not bucket
             world.captureBlockSnapshots = true;
+        // Cauldron start
+        if (itemstack.getItem() instanceof net.minecraft.item.DyeItem && itemstack.getDamage() == 15){
+            Block block = world.getBlockState(pos).getBlock();
+            if (block != null && (block instanceof net.minecraft.block.SaplingBlock || block instanceof net.minecraft.block.MushroomBlock)) {
+                {
+                    world.captureTreeGeneration = true;
+                }
+            }
+            // Cauldron end
+        }
 
         ItemStack copy = itemstack.copy();
         ActionResultType ret = itemstack.getItem().onItemUse(context);
