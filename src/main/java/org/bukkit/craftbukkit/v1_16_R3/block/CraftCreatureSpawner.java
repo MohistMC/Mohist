@@ -21,7 +21,8 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerTileEn
     @Override
     public EntityType getSpawnedType() {
         ResourceLocation key = this.getSnapshot().getSpawnerBaseLogic().getEntityId();
-        return (key == null) ? EntityType.PIG : EntityType.fromName(key.getPath());
+        EntityType type = (key == null) ? EntityType.PIG : EntityType.fromName(key.getPath());
+        return (type == null) ? EntityType.PIG : type;
     }
 
     @Override
