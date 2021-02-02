@@ -27,7 +27,7 @@
        ProxyBlockSource proxyblocksource = new ProxyBlockSource(p_176439_1_, p_176439_2_);
        DispenserTileEntity dispensertileentity = proxyblocksource.func_150835_j();
        int i = dispensertileentity.func_146017_i();
-@@ -37,15 +42,30 @@
+@@ -37,15 +42,49 @@
           p_176439_1_.func_217379_c(1001, p_176439_2_, 0);
        } else {
           ItemStack itemstack = dispensertileentity.func_70301_a(i);
@@ -48,7 +48,26 @@
 +               if (iinventory instanceof DoubleInventory) {
 +                  destinationInventory = new CraftInventoryDoubleChest((DoubleInventory) iinventory);
 +               } else {
++                  // Mohist start - support mod inventories, with no owners
 +                  destinationInventory = InventoryOwner.get(iinventory).getInventory();
++                  try {
++                     if (iinventory.getOwner().getInventory() != null) {
++                        destinationInventory = InventoryOwner.get(iinventory).getInventory();
++                     } else {
++                        // TODO: create a mod inventory for passing to the event, instead of null
++                        destinationInventory = null;
++                     }
++                  }catch (AbstractMethodError e) { // fixes openblocks AbstractMethodError
++                     if (iinventory instanceof TileEntity) {
++                        org.bukkit.inventory.InventoryHolder holder = com.mohistmc.inventory.InventoryOwner.get(((net.minecraft.tileentity.TileEntity)iinventory));
++                        if (holder != null) {
++                           destinationInventory = holder.getInventory();
++                        } else {
++                           destinationInventory = null;
++                        }
++                     }
++                  }
++                  // Mohist end
 +               }
 +               InventoryMoveItemEvent event = new InventoryMoveItemEvent(dispensertileentity.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
 +               p_176439_1_.getCBServer().getPluginManager().callEvent(event);

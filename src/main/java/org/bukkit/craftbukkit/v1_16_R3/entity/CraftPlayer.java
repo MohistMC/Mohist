@@ -167,6 +167,10 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     @Override
     public boolean isOnline() {
+        if (this.getHandle() instanceof net.minecraftforge.common.util.FakePlayer)
+        {
+            return true;
+        }
         return server.getPlayer(getUniqueId()) != null;
     }
 
