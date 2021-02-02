@@ -90,6 +90,7 @@ public class FMLLoader
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
         final String version = LauncherVersion.getVersion();
+
         LOGGER.debug(CORE,"FML {} loading", version);
         final Package modLauncherPackage = ITransformationService.class.getPackage();
         LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
