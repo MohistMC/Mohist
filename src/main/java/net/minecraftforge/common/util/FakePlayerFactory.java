@@ -56,12 +56,24 @@ public class FakePlayerFactory
      */
     public static FakePlayer get(ServerWorld world, GameProfile username)
     {
-        if (!fakePlayers.containsKey(username))
-        {
-            FakePlayer fakePlayer = new FakePlayer(world, username);
-            fakePlayers.put(username, fakePlayer);
+        // Cauldron start - Refactored below to avoid a hashCode check with a null GameProfile ID
+        if (username == null || username.getName() == null) {
+            return null;
+        }
+        for (Map.Entry<GameProfile, FakePlayer> mapEntry : fakePlayers.entrySet()) {
+            GameProfile gameprofile = mapEntry.getKey();
+            if (gameprofile.getName().equals(username.getName())) {
+                return mapEntry.getValue();
+            }
         }
 
+        FakePlayer fakePlayer = new FakePlayer(world, username);
+        if (username.getId() == null) // GameProfile hashCode check will fail with a null ID
+        {
+            username = new GameProfile(UUID.randomUUID(), username.getName()); // Create new GameProfile with random UUID
+        }
+        // Cauldron end
+        fakePlayers.put(username, fakePlayer);
         return fakePlayers.get(username);
     }
 
