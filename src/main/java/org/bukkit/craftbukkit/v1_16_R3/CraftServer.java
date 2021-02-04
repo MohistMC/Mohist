@@ -175,6 +175,7 @@ public final class CraftServer implements Server {
     public boolean ignoreVanillaPermissions = false;
     private final List<CraftPlayer> playerView;
     public int reloadCount;
+    private static CraftServer server;
 
     static {
         ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
@@ -1950,6 +1951,10 @@ public final class CraftServer implements Server {
         }
 
         return new ArrayList<Entity>(Lists.transform(nms, (entity) -> entity.getBukkitEntity()));
+    }
+
+    public static CraftServer getInstance() {
+        return server;
     }
 
     @Deprecated
