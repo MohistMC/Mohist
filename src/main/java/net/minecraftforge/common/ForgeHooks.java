@@ -555,6 +555,26 @@ public class ForgeHooks
 
     public static int onBlockBreakEvent(World world, GameType gameType, ServerPlayerEntity entityPlayer, BlockPos pos)
     {
+        // Logic from tryHarvestBlock for pre-canceling the event
+        boolean preCancelEvent = false;
+        ItemStack itemstack = entityPlayer.getHeldItemMainhand();
+        if (!itemstack.isEmpty() && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
+        {
+            preCancelEvent = true;
+        }
+
+        if (gameType.hasLimitedInteractions())
+        {
+            if (gameType == GameType.SPECTATOR)
+                preCancelEvent = true;
+
+            if (!entityPlayer.isAllowEdit())
+            {
+                if (itemstack.isEmpty() || !itemstack.canDestroy(world.getTags(), new CachedBlockInfo(world, pos, false)))
+                    preCancelEvent = true;
+            }
+        }
+
         // Tell client the block is gone immediately then process events
         if (world.getTileEntity(pos) == null && !(entityPlayer instanceof FakePlayer)) // Cauldron - don't send packets to fakeplayers
         {
