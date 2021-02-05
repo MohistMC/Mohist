@@ -1,16 +1,6 @@
 --- a/net/minecraft/client/shader/Framebuffer.java
 +++ b/net/minecraft/client/shader/Framebuffer.java
-@@ -10,7 +10,8 @@
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
--@OnlyIn(Dist.CLIENT)
-+//Mohist Allow ProtocolLib to use the client class
-+//@OnlyIn(Dist.CLIENT)
- public class Framebuffer {
-    public int field_147622_a;
-    public int field_147620_b;
-@@ -118,7 +119,10 @@
+@@ -118,7 +118,10 @@
           GlStateManager.func_227677_b_(3553, 10242, 10496);
           GlStateManager.func_227677_b_(3553, 10243, 10496);
           GlStateManager.func_227677_b_(3553, 34892, 0);
@@ -21,7 +11,7 @@
        }
  
        this.func_147607_a(9728);
-@@ -127,7 +131,14 @@
+@@ -127,7 +130,14 @@
        GlStateManager.func_227727_h_(FramebufferConstants.field_227592_a_, this.field_147616_f);
        GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227594_c_, 3553, this.field_147617_g, 0);
        if (this.field_147619_e) {
@@ -36,7 +26,7 @@
        }
  
        this.func_147611_b();
-@@ -281,6 +292,32 @@
+@@ -281,6 +291,32 @@
        this.func_147609_e();
     }
  
