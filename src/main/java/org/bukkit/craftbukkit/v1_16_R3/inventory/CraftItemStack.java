@@ -92,7 +92,7 @@ public final class CraftItemStack extends ItemStack {
     /**
      * Mirror
      */
-    public CraftItemStack(net.minecraft.item.ItemStack item) {
+    private CraftItemStack(net.minecraft.item.ItemStack item) {
         this.handle = item;
     }
 

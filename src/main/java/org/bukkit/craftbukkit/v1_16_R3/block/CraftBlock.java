@@ -607,15 +607,7 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isEmpty() {
-        // Cauldron start - support custom air blocks
-        if (getNMS().isAir()) {
-            return true;
-        }
-        if (!(getWorld() instanceof CraftWorld)) {
-            return false;
-        }
-        return ((CraftWorld) getWorld()).getHandle().isAirBlock(new BlockPos(getX(), getY(), getZ()));
-        // Cauldron end
+        return getNMS().isAir();
     }
 
     @Override
