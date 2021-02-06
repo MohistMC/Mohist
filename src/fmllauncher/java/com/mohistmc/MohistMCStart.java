@@ -9,6 +9,7 @@ import static com.mohistmc.util.EulaUtil.writeInfos;
 import com.mohistmc.util.InstallUtils;
 import static com.mohistmc.util.InstallUtils.startInstallation;
 import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.i18n;
 import java.util.Scanner;
 
