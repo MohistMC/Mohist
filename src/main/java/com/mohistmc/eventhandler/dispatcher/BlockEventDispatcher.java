@@ -1,4 +1,4 @@
-package com.mohistmc.eventhandler;
+package com.mohistmc.eventhandler.dispatcher;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
