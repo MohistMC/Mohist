@@ -80,9 +80,12 @@ public class UpdateUtils {
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
+        /* NOT THREAD SAFE & USELESS. DEPRECATED
         if (URL.startsWith("mhttps"))
             restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())));
         else System.out.println(Message.getFormatString("file.download.ok", new Object[]{f.getName()}));
+        */
+        System.out.println(Message.getFormatString("file.download.ok", new Object[]{f.getName()}));
     }
 
     public static File getMohistJar() {
