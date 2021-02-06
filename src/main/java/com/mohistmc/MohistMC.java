@@ -36,6 +36,7 @@ public class MohistMC {
                     "                                                    \n" + "\n");
             System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
         }
+        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
@@ -53,7 +54,6 @@ public class MohistMC {
             EulaUtil.writeInfos();
         }
 
-        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) AutoDeletePlugins.jar();
         if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) AutoDeleteMods.jar();
         FastWorkBenchConf.changeConf();

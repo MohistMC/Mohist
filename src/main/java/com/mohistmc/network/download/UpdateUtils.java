@@ -80,9 +80,7 @@ public class UpdateUtils {
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
-        if (URL.startsWith("mhttps"))
-            restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())));
-        else System.out.println(Message.getFormatString("file.download.ok", new Object[]{f.getName()}));
+        System.out.println(Message.getFormatString("file.download.ok", new Object[]{f.getName()}));
     }
 
     public static File getMohistJar() {
@@ -96,6 +94,7 @@ public class UpdateUtils {
         return null;
     }
 
+    /* NOT THREAD SAFE & USELESS. DEPRECATED
     public static void restartServer(ArrayList<String> cmd) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
         processBuilder.redirectInput(ProcessBuilder.Redirect.INHERIT);
@@ -104,7 +103,7 @@ public class UpdateUtils {
         process.waitFor();
         Thread.sleep(2000);
         System.exit(0);
-    }
+    }*/
 
     public static String getSize(long size) {
         return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
