@@ -13,7 +13,7 @@ public class RecipeUtils {
     public static Recipe toBukkitRecipe(IRecipe recipe) {
         try {
             return recipe == null ? null : recipe.toBukkitRecipe();
-        } catch (AbstractMethodError ex) {
+        } catch (IllegalArgumentException | AbstractMethodError ex) {
             return new CustomModRecipe(recipe, recipe.getRegistryName());
         }
     }
