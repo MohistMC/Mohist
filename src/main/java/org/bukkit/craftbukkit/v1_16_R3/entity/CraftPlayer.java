@@ -1821,6 +1821,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
     };
 
+    @Override
     public Player.Spigot spigot()
     {
         return spigot;
