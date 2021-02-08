@@ -182,6 +182,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.GameMode;
+import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
 public class ForgeHooks
@@ -1110,11 +1112,28 @@ public class ForgeHooks
 
     public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity)
     {
-        if (entity.canTrample(state, pos, fallDistance))
-        {
+        boolean isCancelled = false;
+        if (entity.canTrample(state, pos, fallDistance)) {
             BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
             MinecraftForge.EVENT_BUS.post(event);
-            return !event.isCanceled();
+            isCancelled = event.isCanceled();
+            // CraftBukkit start - Interact soil
+            org.bukkit.event.Cancellable cancellable = null;
+            if (entity instanceof PlayerEntity) {
+                cancellable = CraftEventFactory.callPlayerInteractEvent((PlayerEntity) entity, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
+            } else {
+                cancellable = new EntityInteractEvent(entity.getBukkitEntity(), world.getCBWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
+                world.getCBServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
+                if (cancellable != null && cancellable.isCancelled()) {
+                    isCancelled = true;
+                }
+
+                if (CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.DIRT.getDefaultState()).isCancelled()) {
+                    isCancelled = true;
+                }
+                // CraftBukkit end
+                return !isCancelled;
+            }
         }
         return false;
     }
