@@ -913,7 +913,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2087,32 +2500,77 @@
+@@ -2087,32 +2500,72 @@
  
     @Nullable
     public Entity func_241206_a_(ServerWorld p_241206_1_) {
@@ -944,11 +944,6 @@
 +            return null;
 +         }
 +         // CraftBukkit end
-+         // Mohist - silently remove the entity so it can be magically transported to another world(need test)
-+         if (!(this instanceof LivingEntity) && this.field_70175_ag && this.field_70170_p.func_217354_b(this.field_70176_ah, this.field_70164_aj)) {
-+            this.field_70170_p.func_212866_a_(this.field_70176_ah, this.field_70164_aj).func_76622_b(this);
-+            this.field_70170_p.field_147482_g.remove(this);
-+         }
           this.field_70170_p.func_217381_Z().func_76320_a("reposition");
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
 +         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, server, this::func_241829_a) : new PortalInfo(new Vector3d(location.func_177958_n(), location.func_177956_o(), location.func_177952_p()), Vector3d.field_186680_a, this.field_70177_z, this.field_70125_A);
@@ -999,7 +994,7 @@
           }
        } else {
           return null;
-@@ -2125,8 +2583,13 @@
+@@ -2125,8 +2578,13 @@
  
     @Nullable
     protected PortalInfo func_241829_a(ServerWorld p_241829_1_) {
@@ -1013,7 +1008,7 @@
        if (!flag && !flag1) {
           boolean flag2 = p_241829_1_.func_234923_W_() == World.field_234919_h_;
           if (this.field_70170_p.func_234923_W_() != World.field_234919_h_ && !flag2) {
-@@ -2139,7 +2602,16 @@
+@@ -2139,7 +2597,16 @@
              double d3 = Math.min(2.9999872E7D, worldborder.func_177733_e() - 16.0D);
              double d4 = DimensionType.func_242715_a(this.field_70170_p.func_230315_m_(), p_241829_1_.func_230315_m_());
              BlockPos blockpos1 = new BlockPos(MathHelper.func_151237_a(this.func_226277_ct_() * d4, d0, d2), this.func_226278_cu_(), MathHelper.func_151237_a(this.func_226281_cx_() * d4, d1, d3));
@@ -1031,7 +1026,7 @@
                 BlockState blockstate = this.field_70170_p.func_180495_p(this.field_242271_ac);
                 Direction.Axis direction$axis;
                 Vector3d vector3d;
-@@ -2154,7 +2626,7 @@
+@@ -2154,7 +2621,7 @@
                    vector3d = new Vector3d(0.5D, 0.0D, 0.0D);
                 }
  
@@ -1040,7 +1035,7 @@
              }).orElse((PortalInfo)null);
           }
        } else {
-@@ -2165,7 +2637,18 @@
+@@ -2165,7 +2632,18 @@
              blockpos = p_241829_1_.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, p_241829_1_.func_241135_u_());
           }
  
@@ -1060,7 +1055,7 @@
        }
     }
  
-@@ -2173,6 +2656,25 @@
+@@ -2173,6 +2651,25 @@
        return PortalSize.func_242973_a(p_241839_2_, p_241839_1_, this.func_213303_ch(), this.func_213305_a(this.func_213283_Z()));
     }
  
@@ -1086,7 +1081,7 @@
     protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
        return p_241830_1_.func_85176_s().func_242957_a(p_241830_2_, p_241830_3_);
     }
-@@ -2320,9 +2822,10 @@
+@@ -2320,9 +2817,10 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
@@ -1099,7 +1094,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2371,7 +2874,31 @@
+@@ -2371,7 +2869,31 @@
     }
  
     public void func_174826_a(AxisAlignedBB p_174826_1_) {
@@ -1132,7 +1127,7 @@
     }
  
     protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
-@@ -2513,7 +3040,7 @@
+@@ -2513,7 +3035,7 @@
     }
  
     public Stream<Entity> func_226276_cg_() {
@@ -1141,7 +1136,7 @@
     }
  
     public boolean func_200601_bK() {
-@@ -2594,7 +3121,7 @@
+@@ -2594,7 +3116,7 @@
        return SoundCategory.NEUTRAL;
     }
  
@@ -1150,7 +1145,7 @@
        return 1;
     }
  
-@@ -2796,6 +3323,7 @@
+@@ -2796,6 +3318,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -1158,7 +1153,7 @@
  
     }
  
-@@ -2811,4 +3339,63 @@
+@@ -2811,4 +3334,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
