@@ -23,6 +23,7 @@
  
 -public abstract class TileEntity {
 +public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity {
++   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.getTileEntityTimings(this); // Spigot
 +   // CraftBukkit start - data containers
 +   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 +   public CraftPersistentDataContainer persistentDataContainer;
@@ -40,7 +41,6 @@
     private BlockState field_195045_e;
     private boolean field_222816_g;
 +   private CompoundNBT customTileData;
-+   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.getTileEntityTimings(this); // Spigot
  
     public TileEntity(TileEntityType<?> p_i48289_1_) {
 +      super(TileEntity.class);
