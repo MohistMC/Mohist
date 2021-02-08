@@ -142,7 +142,6 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -390,7 +389,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof ProjectileEntity) { return new CraftCustomProjectileEntity(server, (ProjectileEntity) entity); }
         else if (entity instanceof ProjectileItemEntity) { return new CraftCustomThrowableProjectile(server, (ProjectileItemEntity) entity); }
         else if (entity instanceof AbstractRaiderEntity) { return new CraftCustomRaider(server, (AbstractRaiderEntity) entity); }
-        else if (entity instanceof AbstractMinecartEntity) { return new CraftCustomMinecart(server, (AbstractMinecartEntity) entity); }
         else {return new CraftCustomEntity(server, entity);}
         // CHECKSTYLE:ON
 
@@ -1050,6 +1048,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     };
 
+    @Override
     public Spigot spigot()
     {
         return spigot;
