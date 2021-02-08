@@ -155,6 +155,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -1061,7 +1062,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     };
 
-    @Override
     public Spigot spigot()
     {
         return spigot;
