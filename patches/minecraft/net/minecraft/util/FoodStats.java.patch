@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/FoodStats.java
 +++ b/net/minecraft/util/FoodStats.java
-@@ -1,26 +1,38 @@
+@@ -1,25 +1,35 @@
  package net.minecraft.util;
  
  import net.minecraft.entity.player.PlayerEntity;
@@ -28,65 +28,55 @@
  
     public FoodStats() {
 -      this.field_75125_b = 5.0F;
-+      //throw new AssertionError("Whoopsie, we missed the bukkit.");
-+      this.entityhuman = null;
-    }
-+   // CraftBukkit start - throw an error
- 
++      throw new AssertionError("Whoopsie, we missed the bukkit.");
++   } // CraftBukkit start - throw an error
++
 +   // CraftBukkit start - added EntityHuman constructor
 +   public FoodStats(PlayerEntity entityhuman) {
 +      org.apache.commons.lang.Validate.notNull(entityhuman);
 +      this.entityhuman = entityhuman;
-+   }
+    }
 +   // CraftBukkit end
-+
+ 
     public void func_75122_a(int p_75122_1_, float p_75122_2_) {
        this.field_75127_a = Math.min(p_75122_1_ + this.field_75127_a, 20);
-       this.field_75125_b = Math.min(this.field_75125_b + (float)p_75122_1_ * p_75122_2_ * 2.0F, (float)this.field_75127_a);
-@@ -29,7 +41,22 @@
+@@ -29,7 +39,16 @@
     public void func_221410_a(Item p_221410_1_, ItemStack p_221410_2_) {
        if (p_221410_1_.func_219971_r()) {
           Food food = p_221410_1_.func_219967_s();
 -         this.func_75122_a(food.func_221466_a(), food.func_221469_b());
 +         // CraftBukkit start
-+         if (entityhuman == null)
-+         {
-+            this.func_75122_a(food.func_221466_a(),food.func_221469_b());
-+         }
-+         else {
-+            int oldFoodLevel = field_75127_a;
-+            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, food.func_221466_a() + oldFoodLevel, p_221410_2_);
++         int oldFoodLevel = field_75127_a;
++         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, food.func_221466_a() + oldFoodLevel, p_221410_2_);
 +
-+            if (!event.isCancelled()) {
-+               this.func_75122_a(event.getFoodLevel() - oldFoodLevel, food.func_221469_b());
-+            }
-+
-+            ((ServerPlayerEntity) entityhuman).getBukkitEntity().sendHealthUpdate();
-+            // CraftBukkit end
++         if (!event.isCancelled()) {
++            this.func_75122_a(event.getFoodLevel() - oldFoodLevel, food.func_221469_b());
 +         }
++
++         ((ServerPlayerEntity) entityhuman).getBukkitEntity().sendHealthUpdate();
++         // CraftBukkit end
        }
  
     }
-@@ -42,7 +69,17 @@
+@@ -42,7 +61,16 @@
           if (this.field_75125_b > 0.0F) {
              this.field_75125_b = Math.max(this.field_75125_b - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
 -            this.field_75127_a = Math.max(this.field_75127_a - 1, 0);
++            // this.foodLevel = Math.max(this.foodLevel - 1, 0);
 +            // CraftBukkit start
-+            if (entityhuman == null) {
-+               this.field_75127_a = Math.max(this.field_75127_a - 1, 0);
-+            } else {
-+               org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.field_75127_a - 1, 0));
-+                  if (!event.isCancelled()) {
-+                     this.field_75127_a = event.getFoodLevel();
-+                  }
-+                  ((ServerPlayerEntity) entityhuman).field_71135_a.func_147359_a(new SUpdateHealthPacket(((ServerPlayerEntity) entityhuman).getBukkitEntity().getScaledHealth(), this.field_75127_a, this.field_75125_b));
-+               // CraftBukkit end
++            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.field_75127_a - 1, 0));
++
++            if (!event.isCancelled()) {
++               this.field_75127_a = event.getFoodLevel();
 +            }
++
++            ((ServerPlayerEntity) entityhuman).field_71135_a.func_147359_a(new SUpdateHealthPacket(((ServerPlayerEntity)entityhuman).getBukkitEntity().getScaledHealth(), this.field_75127_a, this.field_75125_b));
++            // CraftBukkit end
           }
        }
  
-@@ -51,15 +88,15 @@
+@@ -51,15 +79,15 @@
           ++this.field_75123_d;
           if (this.field_75123_d >= 10) {
              float f = Math.min(this.field_75125_b, 6.0F);
@@ -101,7 +91,7 @@
 -            p_75118_1_.func_70691_i(1.0F);
 -            this.func_75113_a(6.0F);
 +            p_75118_1_.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
-+            this.func_75113_a(entityhuman == null ? 6.0F : entityhuman.field_70170_p.spigotConfig.regenExhaustion); // Spigot - Change to use configurable value
++            this.func_75113_a(entityhuman.field_70170_p.spigotConfig.regenExhaustion); // Spigot - Change to use configurable value
              this.field_75123_d = 0;
           }
        } else if (this.field_75127_a <= 0) {

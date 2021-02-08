@@ -303,13 +303,14 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
-+      // CraftBukkit start - fire PlayerDeathEvent //Mohist - Better handler inventory of player
-+      if (this.field_70729_aU || net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) {
-+         return;
-+      }
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
        boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
 -      if (flag) {
 -         ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
++      // CraftBukkit start - fire PlayerDeathEvent
++      if (this.field_70729_aU) {
++         return;
++      }
 +      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.field_71071_by.func_70302_i_());
 +      boolean keepInventory = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223600_c) || this.func_175149_v();
 +      if (!keepInventory) {
@@ -319,7 +320,6 @@
 +            }
 +         }
 +      }
-+
 +      // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
 +      this.func_213354_a(p_70645_1_, this.field_110153_bc > 0);
 +      loot.addAll(this.drops);
