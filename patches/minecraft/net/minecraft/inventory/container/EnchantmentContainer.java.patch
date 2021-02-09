@@ -49,7 +49,7 @@
  
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
-+   private Player player;
++   private Player player_bukkit;
 +   // CraftBukkit end
 +
     public EnchantmentContainer(int p_i50085_1_, PlayerInventory p_i50085_2_) {
@@ -69,7 +69,7 @@
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 1));
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 2));
 +      // CraftBukkit start
-+      player = (Player) p_i50086_2_.field_70458_d.getBukkitEntity();
++      player_bukkit = (Player) p_i50086_2_.field_70458_d.getBukkitEntity();
 +      // CraftBukkit end
     }
  
@@ -131,7 +131,7 @@
 +                  org.bukkit.enchantments.Enchantment enchantment = (this.field_185001_h[j] >= 0) ? org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(Registry.field_212628_q.func_177774_c(Registry.field_212628_q.func_148745_a(this.field_185001_h[j])))) : null;
 +                  offers[j] = (enchantment != null) ? new EnchantmentOffer(enchantment, this.field_185002_i[j], this.field_75167_g[j]) : null;
 +               }
-+               PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player, this.getBukkitView(), field_217006_g.getLocation().getBlock(), item, offers, power);
++               PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player_bukkit, this.getBukkitView(), field_217006_g.getLocation().getBlock(), item, offers, power);
 +               event.setCancelled(!itemstack.func_77956_u());
 +               p_217002_2_.getCBServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {
@@ -250,7 +250,7 @@
 +         return bukkitEntity;
 +      }
 +      CraftInventoryEnchanting inventory = new CraftInventoryEnchanting(this.field_75168_e);
-+      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      bukkitEntity = new CraftInventoryView(this.player_bukkit, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
