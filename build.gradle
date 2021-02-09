@@ -735,6 +735,7 @@ project(':forge') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
+                        'Premain-Class': 'com.mohistmc.util.JarLoader',
                         'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
                         'Main-Class': 'net.minecraftforge.server.ServerMain',
                         'Class-Path': classpath.toString(),
@@ -805,6 +806,7 @@ project(':forge') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
+                            'Premain-Class': 'com.mohistmc.util.JarLoader',
                             'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
                             'Main-Class': 'net.minecraftforge.server.ServerMain',
                             'Class-Path': classpath.toString(),
