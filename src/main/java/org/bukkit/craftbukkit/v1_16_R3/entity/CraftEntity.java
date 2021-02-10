@@ -389,7 +389,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof ProjectileEntity) { return new CraftCustomProjectileEntity(server, (ProjectileEntity) entity); }
         else if (entity instanceof ProjectileItemEntity) { return new CraftCustomThrowableProjectile(server, (ProjectileItemEntity) entity); }
         else if (entity instanceof AbstractRaiderEntity) { return new CraftCustomRaider(server, (AbstractRaiderEntity) entity); }
-        else if (entity instanceof AbstractMinecartEntity) { return new CraftCustomMinecart(server, (AbstractMinecartEntity) entity); }
+        else if (entity instanceof AbstractMinecartEntity) { return new CraftCustomMinecraft(server, (AbstractMinecartEntity) entity); }
+        else if (entity instanceof ContainerMinecartEntity) { return new CraftCustomMinecartContainer(server, (ContainerMinecartEntity) entity); }
         else {return new CraftCustomEntity(server, entity);}
         // CHECKSTYLE:ON
 
