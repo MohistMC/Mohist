@@ -70,7 +70,7 @@ project(':clean') {
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-    
+
     repositories {
         mavenLocal()
         maven {
@@ -78,7 +78,7 @@ project(':clean') {
             url 'https://repo.maven.apache.org/maven2/'
         }
     }
-    
+
     dependencies {
         implementation 'net.minecraftforge:forgespi:2.0.+'
     }
@@ -113,7 +113,7 @@ project(':clean') {
     }
 }
 
-project(':forge') {    
+project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
@@ -180,7 +180,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.5-36.0.13'
+    version = '1.16.5-36.0.22'
     println('Forge Version: ' + version)
 
     patcher {
@@ -263,13 +263,13 @@ project(':forge') {
                 mods {
                     forge { source sourceSets.main }
                 }
-                
+
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
                         '--existing', sourceSets.main.resources.srcDirs[0]
             }
         }
     }
-    
+
     ext {
         MANIFESTS = [
             '/': [
@@ -343,7 +343,7 @@ project(':forge') {
             ] as LinkedHashMap
         ]
     }
-    
+
     applyPatches {
         canonicalizeAccess true
         canonicalizeWhitespace true
@@ -413,7 +413,7 @@ project(':forge') {
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
-    
+
     // We apply the bin patches we just created to make a jar that is JUST our changes
     ['Client', 'Server', 'Joined'].each { side ->
         def gen = tasks.getByName("gen${side}BinPatches")
@@ -433,12 +433,12 @@ project(':forge') {
             output = file("build/create${name}SRG/output.jar")
         }
     }
-    
+
     task downloadLibraries(type: DownloadLibrariesTask, dependsOn: ':mcp:setupMCP') {
         input = VERSION_JSON
         output = rootProject.file('build/libraries/')
     }
-    
+
     task extractInheritance(type: ExtractInheritance, dependsOn: [genJoinedBinPatches, downloadLibraries]) {
         tool = INSTALLER_TOOLS + ':fatjar'
         input { genJoinedBinPatches.cleanJar }
@@ -485,12 +485,12 @@ project(':forge') {
         inheritance = extractInheritance.output
         ats = patcher.accessTransformers
     }
-    
+
     task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
         inheritance = extractInheritance.output
         sass = patcher.sideAnnotationStrippers
     }
-    
+
     task checkExcs(type: CheckExcs, dependsOn: jar) {
         binary = jar.archivePath
         excs = patcher.excs
@@ -517,7 +517,7 @@ project(':forge') {
         outputs.file output
         doLast {
             def json_vanilla = vanilla.json()
-            def json = [            
+            def json = [
                 _comment_: comment,
                 id: id,
                 time: timestamp,
@@ -541,15 +541,15 @@ project(':forge') {
                                 size: launcherJar.archivePath.length()
                             ]
                         ]
-                    ] 
+                    ]
                 ]
             ]
-            
+
             def artifacts = getArtifacts(project, project.configurations.installer, false)
             artifacts.each { key, lib ->
                 json.libraries.add(lib)
             }
-            
+
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
@@ -687,13 +687,13 @@ project(':forge') {
             ]
             getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
             json.libraries = libs.values().sort{a,b -> a.name.compareTo(b.name)}
-            
+
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
-    
+
     ['client', 'server'].each { side ->
-        ['slim', 'extra'].each { type -> 
+        ['slim', 'extra'].each { type ->
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
                 artifact = "net.minecraft:${side}:${MC_VERSION}-${MCP_VERSION}:${type}"
@@ -702,7 +702,7 @@ project(':forge') {
             installerJson.inputs.file(tasks.getByName(name).output)
         }
     }
-    
+
     universalJar {
 
 		duplicatesStrategy = 'exclude'
@@ -719,7 +719,7 @@ project(':forge') {
             }
         }
     }
-    
+
     task launcherJar(type: Jar) {
         baseName 'mohist'
         classifier 'launcher'
@@ -731,7 +731,7 @@ project(':forge') {
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
             classpath += "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
-            
+
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
@@ -754,12 +754,12 @@ project(':forge') {
             }
         }
     }
-    
+
     task downloadInstaller(type: DownloadMavenArtifact) {
         artifact = 'net.minecraftforge:installer:2.0.+:shrunk'
         changing = true
     }
-    
+
     task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar', 'signLauncherJar']) {
         baseName 'mohist'
         classifier = 'installer'
@@ -831,7 +831,7 @@ project(':forge') {
             into "/data/"
         }
     }
-    
+
     [universalJar, launcherJar, mohistJar, installerJar].each { t ->
         task "sign${t.name.capitalize()}"(type: SignJar, dependsOn: t) {
             onlyIf {
@@ -850,7 +850,7 @@ project(':forge') {
         }
         t.finalizedBy(tasks.getByName("sign${t.name.capitalize()}"))
     }
-    
+
     userdevConfig {
         def artifacts = getArtifacts(project, project.configurations.installer, true)
         artifacts.each { key, lib ->
@@ -932,9 +932,9 @@ project(':forge') {
     applyRangeMap {
         setSources sourceSets.userdev.java.srcDirs
     }
-    
+
     tasks.eclipse.dependsOn('genEclipseRuns')
-    
+
     if (project.hasProperty('UPDATE_MAPPINGS')) {
         extractRangeMap {
             sources sourceSets.test.java.srcDirs

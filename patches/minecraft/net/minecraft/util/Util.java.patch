@@ -12,6 +12,15 @@
                    }
  
                    super.onTermination(p_onTermination_1_);
+@@ -200,7 +200,7 @@
+       try {
+          type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(SharedConstants.func_215069_a().getWorldVersion())).getChoiceType(p_240990_0_, p_240990_1_);
+       } catch (IllegalArgumentException illegalargumentexception) {
+-         field_195650_a.error("No data fixer registered for {}", (Object)p_240990_1_);
++         field_195650_a.debug("No data fixer registered for {}", (Object)p_240990_1_);
+          if (SharedConstants.field_206244_b) {
+             throw illegalargumentexception;
+          }
 @@ -329,12 +329,12 @@
  
     public static <T extends Throwable> T func_229757_c_(T p_229757_0_) {

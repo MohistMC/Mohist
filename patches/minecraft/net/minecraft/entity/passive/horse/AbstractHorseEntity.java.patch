@@ -125,7 +125,7 @@
        this.field_110294_bI = true;
        this.func_110220_cK();
        this.func_205715_ee();
-@@ -1010,4 +1035,22 @@
+@@ -1010,4 +1035,23 @@
        this.func_230273_eI_();
        return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
     }
@@ -143,8 +143,9 @@
 +   protected void invalidateCaps() {
 +      super.invalidateCaps();
 +      if (itemHandler != null) {
-+         itemHandler.invalidate();
++         net.minecraftforge.common.util.LazyOptional<?> oldHandler = itemHandler;
 +         itemHandler = null;
++         oldHandler.invalidate();
 +      }
 +   }
  }
