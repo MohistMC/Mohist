@@ -35,7 +35,17 @@
     protected void func_70088_a() {
        super.func_70088_a();
        this.field_70180_af.func_187214_a(field_184760_bA, false);
-@@ -273,7 +294,7 @@
+@@ -133,7 +154,8 @@
+          this.func_175547_a(DyeColor.func_196056_a(p_70037_1_.func_74762_e("CollarColor")));
+       }
+ 
+-      this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
++      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
++         this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
+    }
+ 
+    protected SoundEvent func_184639_G() {
+@@ -273,7 +295,7 @@
           return false;
        } else {
           Entity entity = p_70097_1_.func_76346_g();
@@ -44,7 +54,7 @@
           if (entity != null && !(entity instanceof PlayerEntity) && !(entity instanceof AbstractArrowEntity)) {
              p_70097_2_ = (p_70097_2_ + 1.0F) / 2.0F;
           }
-@@ -295,7 +316,7 @@
+@@ -295,7 +317,7 @@
        super.func_70903_f(p_70903_1_);
        if (p_70903_1_) {
           this.func_110148_a(Attributes.field_233818_a_).func_111128_a(20.0D);
@@ -53,7 +63,7 @@
        } else {
           this.func_110148_a(Attributes.field_233818_a_).func_111128_a(8.0D);
        }
-@@ -316,7 +337,7 @@
+@@ -316,7 +338,7 @@
                    itemstack.func_190918_g(1);
                 }
  
@@ -62,7 +72,7 @@
                 return ActionResultType.SUCCESS;
              }
  
-@@ -326,7 +347,7 @@
+@@ -326,7 +348,7 @@
                    this.func_233687_w_(!this.func_233685_eM_());
                    this.field_70703_bu = false;
                    this.field_70699_by.func_75499_g();
@@ -71,7 +81,7 @@
                    return ActionResultType.SUCCESS;
                 }
  
-@@ -347,7 +368,8 @@
+@@ -347,7 +369,8 @@
                 itemstack.func_190918_g(1);
              }
  

@@ -62,3 +62,11 @@
     }
  
     public static boolean func_234351_b_(EntityType<ZombifiedPiglinEntity> p_234351_0_, IWorld p_234351_1_, SpawnReason p_234351_2_, BlockPos p_234351_3_, Random p_234351_4_) {
+@@ -173,6 +184,7 @@
+ 
+    public void func_70037_a(CompoundNBT p_70037_1_) {
+       super.func_70037_a(p_70037_1_);
++      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
+       this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
+    }
+ 

@@ -35,7 +35,17 @@
     private BeeEntity.PollinateGoal field_226370_bJ_;
     private BeeEntity.FindBeehiveGoal field_226371_bK_;
     private BeeEntity.FindFlowerGoal field_226372_bL_;
-@@ -201,7 +203,7 @@
+@@ -184,7 +186,8 @@
+       this.field_226363_bC_ = p_70037_1_.func_74762_e("TicksSincePollination");
+       this.field_226364_bD_ = p_70037_1_.func_74762_e("CannotEnterHiveTicks");
+       this.field_226365_bE_ = p_70037_1_.func_74762_e("CropsGrownSincePollination");
+-      this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
++      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
++         this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
+    }
+ 
+    public boolean func_70652_k(Entity p_70652_1_) {
+@@ -201,7 +204,7 @@
              }
  
              if (i > 0) {
@@ -44,7 +54,7 @@
              }
           }
  
-@@ -425,7 +427,7 @@
+@@ -425,7 +428,7 @@
           return false;
        } else {
           TileEntity tileentity = this.field_70170_p.func_175625_s(this.field_226369_bI_);
@@ -53,7 +63,7 @@
        }
     }
  
-@@ -433,7 +435,7 @@
+@@ -433,7 +436,7 @@
        return this.func_226456_v_(8);
     }
  
@@ -62,7 +72,7 @@
        if (p_226447_1_) {
           this.func_226426_eu_();
        }
-@@ -445,7 +447,7 @@
+@@ -445,7 +448,7 @@
        return this.func_226456_v_(4);
     }
  
@@ -71,7 +81,7 @@
        this.func_226404_d_(4, p_226449_1_);
     }
  
-@@ -588,7 +590,7 @@
+@@ -588,7 +591,7 @@
  
        protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
           if (p_220793_1_ instanceof BeeEntity && this.field_75299_d.func_70685_l(p_220793_2_)) {
@@ -80,7 +90,7 @@
           }
  
        }
-@@ -871,7 +873,7 @@
+@@ -871,7 +874,7 @@
                       }
                    }
  
