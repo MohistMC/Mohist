@@ -22,6 +22,7 @@ public class FastWorkBenchConf {
                 } else lines = lines + t + "\n";
             }
         } else if (fastbench) {
+            f.getParentFile().mkdir();
             Files.copy(MohistMC.class.getClassLoader().getResourceAsStream("fastbench.cfg"), new File("config/fastbench.cfg").toPath(), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("[Mohist] Fixed FastWorkBench mod config to make it work.");
         }
