@@ -7,7 +7,6 @@ import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 9:16 PM
  */
@@ -22,7 +21,6 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
-     *
      * @param access
      * @param name
      * @param desc
@@ -36,7 +34,6 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
-     *
      * @param version
      * @param access
      * @param name
@@ -50,7 +47,6 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
-     *
      * @param access
      * @param name
      * @param desc
@@ -64,7 +60,6 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
-     *
      * @param mv
      * @return
      */
