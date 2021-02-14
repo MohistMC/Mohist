@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.reader.ReaderException;
 
 /**
- *
  * @author pyz
  * @date 2019/7/9 10:36 AM
  */
