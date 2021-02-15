@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
+<img src="https://mohistmc.com/mohist-min.png">
   <h1>Mohist 1.12.2</h1>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
