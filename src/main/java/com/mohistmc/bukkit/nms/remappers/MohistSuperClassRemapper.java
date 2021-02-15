@@ -16,7 +16,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
-
 public class MohistSuperClassRemapper {
 
     public static Map<String, Class<?>> superClassMap = Maps.newHashMap();
@@ -32,8 +31,7 @@ public class MohistSuperClassRemapper {
         boolean isDefineClass = false;
         Class<?> superClass = MohistSuperClassRemapper.superClassMap.get(node.superName);
         if (superClass != null) {
-            if (superClass == DelegateClassLoder.class)
-                defineClass.put(node.name + ";defineClass", DelegateClassLoder.class);
+            if (superClass == DelegateClassLoder.class) defineClass.put(node.name + ";defineClass", DelegateClassLoder.class);
             node.superName = superClass.getName().replace('.', '/');
             isDefineClass = true;
         }

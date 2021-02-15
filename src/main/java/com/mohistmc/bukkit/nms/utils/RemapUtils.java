@@ -10,7 +10,6 @@ import com.mohistmc.bukkit.nms.remappers.MohistSuperClassRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectRemapper;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
@@ -26,42 +25,35 @@ import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
 
 /**
+ *
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */
 public class RemapUtils {
 
-    private static final List<Remapper> remappers = new ArrayList<>();
     public static MohistJarMapping jarMapping;
     public static MohistJarRemapper jarRemapper;
+    private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
 
     public static void init() {
         jarMapping = new MohistJarMapping();
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
-        jarMapping.packages.put("org/bukkit/craftbukkit/libs/joptsimple/", "joptsimple/");
-        jarMapping.packages.put("red/mohist/api", "com/mohistmc/api");
-        jarMapping.packages.put("red/mohist/bukkit/nms", "com/mohistmc/bukkit/nms");
-        jarMapping.classes.put("red/mohist/Mohist", "com/mohistmc/MohistMC");
-        jarMapping.classes.put("catserver/api/bukkit/event/ForgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "forgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent", "event");
-        jarMapping.registerMethodMapping("org/bukkit/Bukkit", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Bukkit", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
-        jarMapping.registerMethodMapping("org/bukkit/Server", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Server", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
-        jarMapping.registerMethodMapping("org/bukkit/craftbukkit/v1_16_R3/CraftServer", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/craftbukkit/v1_16_R3/CraftServer", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
-        jarMapping.registerMethodMapping("catserver/api/bukkit/event/ForgeEvent", "getForgeEvent", "()Lnet/minecraftforge/fml/common/eventhandler/Event;", "com/mohistmc/api/event/BukkitHookForgeEvent", "getEvent", "()Lnet/minecraftforge/fml/common/eventhandler/Event;");
+        jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
+        jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
         relocations.put("net.minecraft.server", "net.minecraft.server.v1_16_R3");
-
         try {
-            jarMapping.loadMappings(new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/nms.srg"))), new MavenShade(relocations), null, false);
-        } catch (IOException e) {
+            jarMapping.loadMappings(
+                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
+                    new MavenShade(relocations),
+                    null, false);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
         jarRemapper = new MohistJarRemapper(jarMapping);
         remappers.add(jarRemapper);
         remappers.add(new ReflectRemapper());
