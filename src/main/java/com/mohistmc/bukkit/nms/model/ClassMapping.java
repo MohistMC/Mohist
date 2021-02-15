@@ -6,10 +6,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ *
  * @author pyz
  * @date 2019/7/7 12:04 PM
  */
 public class ClassMapping {
+    private String nmsSrcName;
+    private String nmsSimpleName;
+    private String nmsName;
+    private String mcpSrcName;
+    private String mcpName;
+    private String mcpSimpleName;
     private final BiMap<String, String> fieldMapping = HashBiMap.create();
     /**
      * args nmsMethodName mcpMethodName
@@ -27,24 +34,6 @@ public class ClassMapping {
      * args mcpMethodName nmsMethodName
      */
     private final Map<String, Map<String, String>> inverseSrcMethodMapping = new HashMap<>();
-    private String nmsSrcName;
-    private String nmsSimpleName;
-    private String nmsName;
-    private String mcpSrcName;
-    private String mcpName;
-    private String mcpSimpleName;
-
-    public Map<String, Map<String, String>> getSrcMethodMapping() {
-        return srcMethodMapping;
-    }
-
-    public Map<String, Map<String, String>> getInverseSrcMethodMapping() {
-        return inverseSrcMethodMapping;
-    }
-
-    public String getNmsSrcName() {
-        return nmsSrcName;
-    }
 
     public void setNmsSrcName(String nmsSrcName) {
         nmsSrcName = nmsSrcName.intern();
@@ -58,18 +47,6 @@ public class ClassMapping {
         this.nmsName = this.nmsSrcName.replace('/', '.').intern();
     }
 
-    public String getNmsSimpleName() {
-        return nmsSimpleName;
-    }
-
-    public String getNmsName() {
-        return nmsName;
-    }
-
-    public String getMcpSrcName() {
-        return mcpSrcName;
-    }
-
     public void setMcpSrcName(String mcpSrcName) {
         mcpSrcName = mcpSrcName.intern();
         this.mcpSrcName = mcpSrcName;
@@ -81,6 +58,30 @@ public class ClassMapping {
             this.mcpSimpleName = this.mcpSrcName.substring(this.mcpSrcName.lastIndexOf('/') + 1).intern();
         }
         this.mcpName = this.mcpSrcName.replace('/', '.').intern();
+    }
+
+    public Map<String, Map<String, String>> getSrcMethodMapping() {
+        return srcMethodMapping;
+    }
+
+    public Map<String, Map<String, String>> getInverseSrcMethodMapping() {
+        return inverseSrcMethodMapping;
+    }
+
+    public String getNmsSrcName() {
+        return nmsSrcName;
+    }
+
+    public String getNmsSimpleName() {
+        return nmsSimpleName;
+    }
+
+    public String getNmsName() {
+        return nmsName;
+    }
+
+    public String getMcpSrcName() {
+        return mcpSrcName;
     }
 
     public String getMcpName() {

@@ -16,17 +16,27 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 import org.objectweb.asm.tree.ClassNode;
 
 /**
+ *
  * @author pyz
  * @date 2019/7/3 10:38 PM
  */
 public class MohistJarRemapper extends CustomRemapper {
 
-    public final MohistJarMapping jarMapping;
-    private final int writerFlags = COMPUTE_MAXS;
     private RemapperProcessor preProcessor;
+    public final MohistJarMapping jarMapping;
     private RemapperProcessor postProcessor;
+    private final int writerFlags = COMPUTE_MAXS;
     private int readerFlags = 0;
     private boolean copyResources = true;
+
+    @Override
+    public String mapSignature(String signature, boolean typeSignature) {
+        try {
+            return super.mapSignature(signature, typeSignature);
+        } catch (Exception e) {
+            return signature;
+        }
+    }
 
     public MohistJarRemapper(RemapperProcessor preProcessor, MohistJarMapping jarMapping, RemapperProcessor postProcessor) {
         this.preProcessor = preProcessor;
@@ -40,6 +50,27 @@ public class MohistJarRemapper extends CustomRemapper {
 
     public MohistJarRemapper(MohistJarMapping jarMapping) {
         this.jarMapping = jarMapping;
+    }
+
+    /**
+     * Enable or disable API-only generation.
+     *
+     * If enabled, only symbols will be output to the remapped jar, suitable for
+     * use as a library. Code and resources will be excluded.
+     */
+    public void setGenerateAPI(boolean generateAPI) {
+        if (generateAPI) {
+            readerFlags |= ClassReader.SKIP_CODE;
+            copyResources = false;
+        } else {
+            readerFlags &= ~ClassReader.SKIP_CODE;
+            copyResources = true;
+        }
+    }
+
+    @Override
+    public String map(String typeName) {
+        return mapTypeName(typeName, jarMapping.packages, jarMapping.byNMSSrcName, typeName);
     }
 
     public static String mapTypeName(String typeName, Map<String, String> packageMap, Map<String, ClassMapping> classMap, String defaultIfUnmapped) {
@@ -105,36 +136,6 @@ public class MohistJarRemapper extends CustomRemapper {
         }
 
         return className.substring(oldPackage.length());
-    }
-
-    @Override
-    public String mapSignature(String signature, boolean typeSignature) {
-        try {
-            return super.mapSignature(signature, typeSignature);
-        } catch (Exception e) {
-            return signature;
-        }
-    }
-
-    /**
-     * Enable or disable API-only generation.
-     * <p>
-     * If enabled, only symbols will be output to the remapped jar, suitable for
-     * use as a library. Code and resources will be excluded.
-     */
-    public void setGenerateAPI(boolean generateAPI) {
-        if (generateAPI) {
-            readerFlags |= ClassReader.SKIP_CODE;
-            copyResources = false;
-        } else {
-            readerFlags &= ~ClassReader.SKIP_CODE;
-            copyResources = true;
-        }
-    }
-
-    @Override
-    public String map(String typeName) {
-        return mapTypeName(typeName, jarMapping.packages, jarMapping.byNMSSrcName, typeName);
     }
 
     @Override

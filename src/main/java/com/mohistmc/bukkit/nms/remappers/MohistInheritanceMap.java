@@ -18,6 +18,7 @@ import net.md_5.specialsource.JarRemapper;
 import net.md_5.specialsource.provider.InheritanceProvider;
 
 /**
+ *
  * @author pyz
  * @date 2019/7/4 9:44 AM
  */
