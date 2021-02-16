@@ -68,7 +68,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,41 +119,66 @@
+@@ -109,41 +119,69 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -78,6 +78,7 @@
 +      super(ItemStack.class);
 +      this.capNBT = capNBT;
        this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
++      this.delegate = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j().delegate;
        this.field_77994_a = p_i48204_2_;
 -      if (this.field_151002_e != null && this.field_151002_e.func_77645_m()) {
 +      if (this.field_151002_e != null && this.field_151002_e.isDamageable(this)) {
@@ -113,7 +114,9 @@
 +   // CraftBukkit start - break into own method
 +   private void load(CompoundNBT compound) {
 +      this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
++      Item rawItem =
 +      this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(compound.func_74779_i("id")));
++      this.delegate = rawItem.delegate;
 +      this.field_77994_a = compound.func_74771_c("Count");
 +      if (compound.func_150297_b("tag", 10)) {
 +         // CraftBukkit start - make defensive copy as this data may be coming from the save thread
@@ -144,16 +147,7 @@
           return field_190927_a;
        }
     }
-@@ -151,7 +186,7 @@
-    public boolean func_190926_b() {
-       if (this == field_190927_a) {
-          return true;
--      } else if (this.func_77973_b() != null && this.func_77973_b() != Items.field_190931_a) {
-+      } else if (this.getItemRaw() != null && this.getItemRaw() != Items.field_190931_a) {
-          return this.field_77994_a <= 0;
-       } else {
-          return true;
-@@ -167,20 +202,34 @@
+@@ -167,20 +205,34 @@
     }
  
     public Item func_77973_b() {
@@ -194,7 +188,7 @@
           }
  
           return actionresulttype;
-@@ -206,12 +255,15 @@
+@@ -206,12 +258,15 @@
        if (this.field_77990_d != null) {
           p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
        }
@@ -212,7 +206,7 @@
     }
  
     public boolean func_77985_e() {
-@@ -219,7 +271,7 @@
+@@ -219,7 +274,7 @@
     }
  
     public boolean func_77984_f() {
@@ -221,7 +215,7 @@
           CompoundNBT compoundnbt = this.func_77978_p();
           return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
        } else {
-@@ -228,19 +280,19 @@
+@@ -228,19 +283,19 @@
     }
  
     public boolean func_77951_h() {
@@ -245,7 +239,7 @@
     }
  
     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
-@@ -258,6 +310,19 @@
+@@ -258,6 +313,19 @@
              }
  
              p_96631_1_ -= j;
@@ -265,7 +259,7 @@
              if (p_96631_1_ <= 0) {
                 return false;
              }
-@@ -276,9 +341,17 @@
+@@ -276,9 +344,17 @@
     public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
        if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
           if (this.func_77984_f()) {
@@ -283,7 +277,7 @@
                 this.func_190918_g(1);
                 if (p_222118_2_ instanceof PlayerEntity) {
                    ((PlayerEntity)p_222118_2_).func_71029_a(Stats.field_199088_e.func_199076_b(item));
-@@ -308,7 +381,7 @@
+@@ -308,7 +384,7 @@
     }
  
     public boolean func_150998_b(BlockState p_150998_1_) {
@@ -292,7 +286,7 @@
     }
  
     public ActionResultType func_111282_a_(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
-@@ -319,7 +392,7 @@
+@@ -319,7 +395,7 @@
        if (this.func_190926_b()) {
           return field_190927_a;
        } else {
@@ -301,7 +295,7 @@
           itemstack.func_190915_d(this.func_190921_D());
           if (this.field_77990_d != null) {
              itemstack.field_77990_d = this.field_77990_d.func_74737_b();
-@@ -336,7 +409,7 @@
+@@ -336,7 +412,7 @@
           if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
              return false;
           } else {
@@ -310,7 +304,7 @@
           }
        } else {
           return false;
-@@ -359,7 +432,7 @@
+@@ -359,7 +435,7 @@
        } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
           return false;
        } else {
@@ -319,7 +313,7 @@
        }
     }
  
-@@ -435,7 +508,17 @@
+@@ -435,7 +511,17 @@
        return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
     }
  
@@ -337,7 +331,7 @@
     public CompoundNBT func_77978_p() {
        return this.field_77990_d;
     }
-@@ -479,7 +562,7 @@
+@@ -479,7 +565,7 @@
  
     public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
        this.field_77990_d = p_77982_1_;
@@ -346,7 +340,7 @@
           this.func_196085_b(this.func_77952_i());
        }
  
-@@ -673,6 +756,7 @@
+@@ -673,6 +759,7 @@
           }
        }
  
@@ -354,7 +348,7 @@
        return list;
     }
  
-@@ -795,6 +879,12 @@
+@@ -795,6 +882,12 @@
     }
  
     public void func_82841_c(int p_82841_1_) {
@@ -367,7 +361,7 @@
        this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
     }
  
-@@ -817,9 +907,10 @@
+@@ -817,9 +910,10 @@
              }
           }
        } else {
@@ -379,7 +373,7 @@
        return multimap;
     }
  
-@@ -839,6 +930,14 @@
+@@ -839,6 +933,13 @@
        listnbt.add(compoundnbt);
     }
  
@@ -387,14 +381,13 @@
 +   @Deprecated
 +   public void setItem(Item item) {
 +      this.field_151002_e = item;
-+      this.delegate = item.delegate; // Mohist
 +   }
 +   // CraftBukkit end
 +
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -954,6 +1053,35 @@
+@@ -954,6 +1055,24 @@
        return this.func_77973_b().func_219971_r();
     }
  
@@ -409,22 +402,11 @@
 +    * Set up forge's ItemStack additions.
 +    */
 +   private void forgeInit() {
-+      Item item = getItemRaw();
-+      if (item != null) {
-+         this.delegate = item.delegate;
-+         net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
++      if (this.delegate != null) {
++         net.minecraftforge.common.capabilities.ICapabilityProvider provider = field_151002_e.initCapabilities(this, this.capNBT);
 +         this.gatherCapabilities(provider);
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
-+   }
-+
-+   /**
-+    * Internal call to get the actual item, not the delegate.
-+    * In all other methods, FML replaces calls to this.item with the item delegate.
-+    */
-+   @Nullable
-+   private Item getItemRaw() {
-+       return this.field_151002_e;
 +   }
 +
     public SoundEvent func_226629_F_() {

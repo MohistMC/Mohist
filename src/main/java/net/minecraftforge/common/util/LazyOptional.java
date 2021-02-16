@@ -29,6 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +59,11 @@ import net.minecraftforge.common.capabilities.Capability;
 public class LazyOptional<T>
 {
     private final NonNullSupplier<T> supplier;
-    private AtomicReference<T> resolved;
+    private final Object lock = new Object();
+    // null -> not resolved yet
+    // non-null and contains non-null value -> resolved
+    // non-null and contains null -> resolved, but supplier returned null (contract violation)
+    private Mutable<T> resolved;
     private Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
 
@@ -105,24 +111,23 @@ public class LazyOptional<T>
 
     private @Nullable T getValue()
     {
-        if (!isValid)
+        if (!isValid || supplier == null)
             return null;
-        if (resolved != null)
-            return resolved.get();
-
-        if (supplier != null)
+        if (resolved == null)
         {
-            resolved = new AtomicReference<>(null);
-            T temp = supplier.get();
-            if (temp == null)
+            synchronized (lock)
             {
-                LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
-                return null;
+                // resolved == null: Double checked locking to prevent two threads from resolving
+                if (resolved == null)
+                {
+                    T temp = supplier.get();
+                    if (temp == null)
+                        LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
+                    resolved = new MutableObject<>(temp);
+                }
             }
-            resolved.set(temp);
-            return resolved.get();
         }
-        return null;
+        return resolved.getValue();
     }
     
     private T getValueUnsafe()

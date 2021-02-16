@@ -167,7 +167,7 @@ public class GameData
         // Worldgen
         makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
         makeRegistry(SURFACE_BUILDERS, c(SurfaceBuilder.class)).disableSaving().disableSync().create();
-        makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
+        makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(DECORATORS, c(Placement.class)).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
         makeRegistry(STRUCTURE_FEATURES, c(Structure.class)).disableSaving().disableSync().create();
@@ -177,7 +177,7 @@ public class GameData
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 
         // Dynamic Worldgen
-        makeRegistry(BIOMES, Biome.class).create();
+        makeRegistry(BIOMES, Biome.class).disableSync().create();
 
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
@@ -382,12 +382,15 @@ public class GameData
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
     }
 
+    @SuppressWarnings("deprecation")
     public static CompletableFuture<List<Throwable>> checkForRevertToVanilla(final Executor executor, final CompletableFuture<List<Throwable>> listCompletableFuture) {
         return listCompletableFuture.whenCompleteAsync((errors, except) -> {
             if (except != null) {
                 LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
+            } else {
+                net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
     }
