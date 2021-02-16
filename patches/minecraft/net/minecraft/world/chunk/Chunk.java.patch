@@ -9,7 +9,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ReportedException;
-@@ -57,20 +57,21 @@
+@@ -57,8 +57,9 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -20,13 +20,12 @@
     private static final Logger field_150817_t = LogManager.getLogger();
     @Nullable
     public static final ChunkSection field_186036_a = null;
-    private final ChunkSection[] field_76652_q = new ChunkSection[16];
+@@ -66,11 +67,11 @@
     private BiomeContainer field_76651_r;
     private final Map<BlockPos, CompoundNBT> field_201618_i = Maps.newHashMap();
--   private boolean field_76636_d;
+    private boolean field_76636_d;
 -   private final World field_76637_e;
 -   private final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
-+   public boolean field_76636_d;
 +   public final World field_76637_e;
 +   public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
     private final UpgradeData field_196967_n;
