@@ -841,6 +841,8 @@ public class CraftEventFactory {
                 cause = DamageCause.MELTING;
             } else if (source == POISON) {
                 cause = DamageCause.POISON;
+            } else if (source == DamageSource.LIGHTNING_BOLT) {
+                cause = DamageCause.LIGHTNING;
             } else if (source == DamageSource.GENERIC) {
                 cause = DamageCause.CUSTOM;
             } else {

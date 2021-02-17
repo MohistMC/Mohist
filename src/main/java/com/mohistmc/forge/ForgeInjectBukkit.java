@@ -20,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
@@ -65,6 +66,7 @@ public class ForgeInjectBukkit {
         addEnumPotion();
         addEnumPattern();
         addEnumEntity();
+        addEnumTileEntity();
         addEnumVillagerProfession();
         addEnumAttribute();
         addEnumArt();
@@ -252,6 +254,23 @@ public class ForgeInjectBukkit {
                 BY_ID.put(id, art);
                 MohistMC.LOGGER.debug("Registered forge PaintingType as Art {}", art);
                 i++;
+            }
+        }
+    }
+
+    public static void addEnumTileEntity() {
+        Map<String, EntityType> NAME_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
+        Map<Short, EntityType> ID_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
+
+        for (Map.Entry<RegistryKey<TileEntityType<?>>, TileEntityType<?>> entity : ForgeRegistries.TILE_ENTITIES.getEntries()) {
+            ResourceLocation resourceLocation = entity.getValue().getRegistryName();
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                String entityType = normalizeName(resourceLocation.toString());
+                int typeId = entityType.hashCode();
+                EntityType bukkitType = MohistEnumHelper.addEnum0(EntityType.class, entityType, new Class[]{String.class, Class.class, Integer.TYPE, Boolean.TYPE}, entityType.toLowerCase(), CraftCustomEntity.class, typeId, false);
+                NAME_MAP.put(entityType.toLowerCase(), bukkitType);
+                ID_MAP.put((short) typeId, bukkitType);
+                ServerAPI.tileEntityTypeMap.put(entity.getValue(), entityType);
             }
         }
     }
