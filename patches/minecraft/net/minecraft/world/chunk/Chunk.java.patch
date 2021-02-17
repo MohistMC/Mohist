@@ -382,7 +382,17 @@
        for(int i = 0; i < this.field_76652_q.length; ++i) {
           ChunkSection chunksection = this.field_76652_q[i];
           if ((p_227073_4_ & 1 << i) == 0) {
-@@ -598,7 +689,7 @@
+@@ -592,13 +683,17 @@
+       return this.field_76645_j;
+    }
+ 
++   public List<Entity>[] getEntitySlices() {
++      return getEntitySlices();
++   }
++
+    public CompoundNBT func_201579_g(BlockPos p_201579_1_) {
+       return this.field_201618_i.get(p_201579_1_);
+    }
  
     public Stream<BlockPos> func_217304_m() {
        return StreamSupport.stream(BlockPos.func_191531_b(this.field_212816_F.func_180334_c(), 0, this.field_212816_F.func_180333_d(), this.field_212816_F.func_180332_e(), 255, this.field_212816_F.func_180330_f()).spliterator(), false).filter((p_217312_1_) -> {
@@ -391,7 +401,7 @@
        });
     }
  
-@@ -615,7 +706,7 @@
+@@ -615,7 +710,7 @@
     }
  
     public boolean func_201593_f() {
@@ -400,7 +410,7 @@
     }
  
     public void func_177409_g(boolean p_177409_1_) {
-@@ -704,12 +795,11 @@
+@@ -704,12 +799,11 @@
        BlockState blockstate = this.func_180495_p(p_212815_1_);
        TileEntity tileentity;
        if ("DUMMY".equals(p_212815_2_.func_74779_i("id"))) {
@@ -416,7 +426,7 @@
           }
        } else {
           tileentity = TileEntity.func_235657_b_(blockstate, p_212815_2_);
-@@ -719,7 +809,7 @@
+@@ -719,7 +813,7 @@
           tileentity.func_226984_a_(this.field_76637_e, p_212815_1_);
           this.func_150813_a(tileentity);
        } else {
@@ -425,7 +435,7 @@
        }
  
        return tileentity;
-@@ -795,4 +885,30 @@
+@@ -795,4 +889,30 @@
        QUEUED,
        CHECK;
     }
