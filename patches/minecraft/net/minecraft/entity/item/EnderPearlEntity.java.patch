@@ -53,7 +53,7 @@
 +                     serverplayerentity.field_71135_a.teleport(teleportEvent.getTo());
 +                     entity.field_70143_R = 0.0f;
 +                     CraftEventFactory.entityDamage = this;
-+                     entity.func_70097_a(DamageSource.field_76379_h, 5);
++                     entity.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());//Mohist - fix ignoring damage custom ender teleport damage
 +                     CraftEventFactory.entityDamage = null;
 +                  }
 +                  // CraftBukkit end
