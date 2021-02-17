@@ -787,10 +787,12 @@ public class CraftEventFactory {
 
             if (source instanceof IndirectEntityDamageSource) {
                 damager = ((IndirectEntityDamageSource) source).getProximateDamageSource();
-                if (damager.getBukkitEntity() instanceof ThrownPotion) {
-                    cause = DamageCause.MAGIC;
-                } else if (damager.getBukkitEntity() instanceof Projectile) {
-                    cause = DamageCause.PROJECTILE;
+                if (damager != null) { //Mohist - fix npe
+                    if (damager.getBukkitEntity() instanceof ThrownPotion) {
+                        cause = DamageCause.MAGIC;
+                    } else if (damager.getBukkitEntity() instanceof Projectile) {
+                        cause = DamageCause.PROJECTILE;
+                    }
                 }
             } else if ("thorns".equals(source.damageType)) {
                 cause = DamageCause.THORNS;
