@@ -1561,7 +1561,10 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     }
 
     public void sendHealthUpdate() {
-        getHandle().connection.sendPacket(new SUpdateHealthPacket(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
+        // Mohist - compat for Forge
+        if (getHandle().connection != null) {
+            getHandle().connection.sendPacket(new SUpdateHealthPacket(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
+        }
     }
 
     public void injectScaledMaxHealth(Collection<ModifiableAttributeInstance> collection, boolean force) {

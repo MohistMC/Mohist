@@ -8,16 +8,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
-import net.minecraft.tileentity.BarrelTileEntity;
-import net.minecraft.tileentity.BlastFurnaceTileEntity;
-import net.minecraft.tileentity.BrewingStandTileEntity;
-import net.minecraft.tileentity.DispenserTileEntity;
-import net.minecraft.tileentity.DropperTileEntity;
-import net.minecraft.tileentity.IHopper;
-import net.minecraft.tileentity.LecternTileEntity;
-import net.minecraft.tileentity.ShulkerBoxTileEntity;
-import net.minecraft.tileentity.SmokerTileEntity;
+import net.minecraft.tileentity.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -533,6 +524,11 @@ public class CraftInventory implements Inventory {
 
     @Override
     public Location getLocation() {
-        return inventory.getLocation();
+        if (inventory instanceof net.minecraft.tileentity.TileEntity) {//Mohist start - Compatible to get the Location of the TileEntity
+            TileEntity tileEntity = (TileEntity) inventory;
+            return new Location(tileEntity.getWorld().getCBWorld(), tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
+        } else {
+            return inventory.getLocation();
+        }
     }
 }
