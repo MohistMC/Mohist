@@ -154,7 +154,7 @@
           this.field_241105_O_ = null;
        }
 +      this.initCapabilities();
-+      this.world = new CraftWorld(this, generator, environment);
++      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;
 +      this.getCBServer().addWorld(this.getCBWorld()); // CraftBukkit
 +   }
