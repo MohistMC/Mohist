@@ -1,18 +1,25 @@
 --- a/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
-@@ -5,6 +5,9 @@
+@@ -4,8 +4,14 @@
+ import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Direction;
++import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
++import net.minecraft.world.server.ServerWorld;
+ 
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_16_R3.util.CraftVector;
 +import org.bukkit.event.block.BlockDispenseEvent;
- 
++
  public class DefaultDispenseItemBehavior implements IDispenseItemBehavior {
     public final ItemStack dispense(IBlockSource p_dispense_1_, ItemStack p_dispense_2_) {
-@@ -18,24 +21,65 @@
+       ItemStack itemstack = this.func_82487_b(p_dispense_1_, p_dispense_2_);
+@@ -16,26 +22,74 @@
+ 
+    protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
        Direction direction = p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a);
-       IPosition iposition = DispenserBlock.func_149939_a(p_82487_1_);
+-      IPosition iposition = DispenserBlock.func_149939_a(p_82487_1_);
        ItemStack itemstack = p_82487_2_.func_77979_a(1);
 -      func_82486_a(p_82487_1_.func_197524_h(), itemstack, 6, direction, iposition);
 +      // CraftBukkit start
@@ -23,18 +30,25 @@
        return p_82487_2_;
     }
  
--   public static void func_82486_a(World p_82486_0_, ItemStack p_82486_1_, int p_82486_2_, Direction p_82486_3_, IPosition p_82486_4_) {
++   // Mohist: Extend doDispense compatibility
++   // This one is called by Refined Storage (and possibly other mods)
+    public static void func_82486_a(World p_82486_0_, ItemStack p_82486_1_, int p_82486_2_, Direction p_82486_3_, IPosition p_82486_4_) {
 -      double d0 = p_82486_4_.func_82615_a();
 -      double d1 = p_82486_4_.func_82617_b();
 -      double d2 = p_82486_4_.func_82616_c();
 -      if (p_82486_3_.func_176740_k() == Direction.Axis.Y) {
-+   // CraftBukkit start - void -> boolean return, IPosition -> ISourceBlock last argument
++       doDispenseInternal(p_82486_0_, p_82486_1_, p_82486_2_, p_82486_3_, new ProxyBlockSource((ServerWorld) p_82486_0_, new BlockPos(p_82486_4_.func_82615_a(), p_82486_4_.func_82617_b(), p_82486_4_.func_82616_c())), p_82486_4_);
++   }
++
++   // This one is called by CraftBukkit
 +   public static boolean doDispense(World worldIn, ItemStack stack, int speed, Direction facing, IBlockSource source) {
++       return doDispenseInternal(worldIn, stack, speed, facing, source, DispenserBlock.func_149939_a(source));
++   }
++
++   private static boolean doDispenseInternal(World worldIn, ItemStack stack, int speed, Direction facing, IBlockSource source, IPosition position) {
 +      if (stack.func_190926_b()) {
 +         return true;
 +      }
-+      IPosition position = DispenserBlock.func_149939_a(source);
-+      // CraftBukkit end
 +      double d0 = position.func_82615_a();
 +      double d1 = position.func_82617_b();
 +      double d2 = position.func_82616_c();
