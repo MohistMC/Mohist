@@ -78,7 +78,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         }
     }
 
-    protected final @Nullable CompoundNBT serializeCaps()
+    public final @Nullable CompoundNBT serializeCaps()
     {
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)
@@ -88,7 +88,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         return null;
     }
 
-    protected final void deserializeCaps(CompoundNBT tag)
+    public final void deserializeCaps(CompoundNBT tag)
     {
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)

@@ -278,6 +278,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     private int damage;
 
     private static final Set<String> HANDLED_TAGS = Sets.newHashSet();
+    private static final Set<String> CRAFTMETA_TAGS = Sets.newHashSet();
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 
     private CompoundNBT internalTag;
@@ -381,6 +382,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         Set<String> keys = tag.keySet();
         for (String key : keys) {
             if (!getHandledTags().contains(key)) {
+                unhandledTags.put(key, tag.get(key));
+            } else if (getClass() == CraftMetaItem.class && getCraftMetaTags().contains(key)) {
                 unhandledTags.put(key, tag.get(key));
             }
         }
@@ -524,6 +527,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 Set<String> keys = internalTag.keySet();
                 for (String key : keys) {
                     if (!getHandledTags().contains(key)) {
+                        unhandledTags.put(key, internalTag.get(key));
+                    } else if (getClass() == CraftMetaItem.class && getCraftMetaTags().contains(key)) {
                         unhandledTags.put(key, internalTag.get(key));
                     }
                 }
@@ -1421,6 +1426,32 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 ));
             }
             return HANDLED_TAGS;
+        }
+    }
+
+    public static Set<String> getCraftMetaTags() {
+        synchronized (CRAFTMETA_TAGS) {
+            if (CRAFTMETA_TAGS.isEmpty()) {
+                CRAFTMETA_TAGS.addAll(Arrays.asList(
+                        CraftMetaMap.MAP_SCALING.NBT,
+                        CraftMetaPotion.POTION_EFFECTS.NBT,
+                        CraftMetaPotion.DEFAULT_POTION.NBT,
+                        CraftMetaSkull.SKULL_OWNER.NBT,
+                        CraftMetaSkull.SKULL_PROFILE.NBT,
+                        CraftMetaSpawnEgg.ENTITY_TAG.NBT,
+                        CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
+                        CraftMetaBook.BOOK_TITLE.NBT,
+                        CraftMetaBook.BOOK_AUTHOR.NBT,
+                        CraftMetaBook.BOOK_PAGES.NBT,
+                        CraftMetaBook.RESOLVED.NBT,
+                        CraftMetaBook.GENERATION.NBT,
+                        CraftMetaFirework.FIREWORKS.NBT,
+                        CraftMetaEnchantedBook.STORED_ENCHANTMENTS.NBT,
+                        CraftMetaCharge.EXPLOSION.NBT,
+                        CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
+                        CraftMetaKnowledgeBook.BOOK_RECIPES.NBT));
+            }
+            return CRAFTMETA_TAGS;
         }
     }
 }
