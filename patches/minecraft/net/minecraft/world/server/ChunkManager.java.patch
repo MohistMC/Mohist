@@ -196,10 +196,11 @@
           int j = entitytype.func_220332_l();
           if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
              throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
-@@ -1077,6 +1121,20 @@
+@@ -1077,15 +1121,30 @@
        });
     }
  
+-   class EntityTracker {
 +   public void removeTracker(ChunkManager tracker, ServerPlayerEntity playerEntity, int entityId) {
 +      ChunkManager.EntityTracker entry = tracker.field_219272_z.get(entityId);
 +      if (entry != null) {
@@ -214,10 +215,13 @@
 +      }
 +   }
 +
-    class EntityTracker {
++   public class EntityTracker {
        private final TrackedEntity field_219402_b;
        private final Entity field_219403_c;
-@@ -1086,6 +1144,7 @@
+       private final int field_219404_d;
+       private SectionPos field_219405_e;
+-      private final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
++      public final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
  
        public EntityTracker(Entity p_i50468_2_, int p_i50468_3_, int p_i50468_4_, boolean p_i50468_5_) {
           this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
