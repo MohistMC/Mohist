@@ -39,7 +39,7 @@
     private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
  
 +   // CraftBukkit start
-+   public boolean checkReachable;
++   public boolean checkReachable = true;
 +   private ITextComponent title;
 +   // Mohist start
 +   public InventoryView bukkitView = null;
