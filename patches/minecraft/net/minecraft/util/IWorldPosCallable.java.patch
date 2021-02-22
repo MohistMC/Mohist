@@ -1,16 +1,32 @@
 --- a/net/minecraft/util/IWorldPosCallable.java
 +++ b/net/minecraft/util/IWorldPosCallable.java
-@@ -7,6 +7,19 @@
+@@ -3,10 +3,35 @@
+ import java.util.Optional;
+ import java.util.function.BiConsumer;
+ import java.util.function.BiFunction;
++
++import org.apache.logging.log4j.LogManager;
++
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
  public interface IWorldPosCallable {
 +
 +   // CraftBukkit start
 +   default World getWorld() {
-+      throw new UnsupportedOperationException("Not supported yet.");
++      LogManager.getLogger().warn("Mohist detected a call to getWorld() in dummy IWorldPosCallable.");
++      LogManager.getLogger().warn("This shouldn't be happening! See/Report stacktrace below:");
++      Thread.dumpStack();
++      // Mohist: Return first available world instead of exception
++      return MinecraftServer.getServer().func_212370_w().iterator().next();
 +   }
 +   default BlockPos getPosition() {
-+      throw new UnsupportedOperationException("Not supported yet.");
++      LogManager.getLogger().warn("Mohist detected a call to getPosition() in dummy IWorldPosCallable.");
++      LogManager.getLogger().warn("This shouldn't be happening! See/Report stacktrace below:");
++      Thread.dumpStack();
++      // Mohist: Return dummy blockpos instead of exception
++      return new BlockPos(0, 0, 0);
 +   }
 +   default org.bukkit.Location getLocation() {
 +      return new org.bukkit.Location(getWorld().getCBWorld(), getPosition().func_177958_n(), getPosition().func_177956_o(), getPosition().func_177952_p());
@@ -20,7 +36,7 @@
     IWorldPosCallable field_221489_a = new IWorldPosCallable() {
        public <T> Optional<T> func_221484_a(BiFunction<World, BlockPos, T> p_221484_1_) {
           return Optional.empty();
-@@ -15,6 +28,18 @@
+@@ -15,6 +40,18 @@
  
     static IWorldPosCallable func_221488_a(final World p_221488_0_, final BlockPos p_221488_1_) {
        return new IWorldPosCallable() {
