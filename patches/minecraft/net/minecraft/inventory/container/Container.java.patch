@@ -14,11 +14,12 @@
  import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -21,13 +24,17 @@
+@@ -21,13 +24,18 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Registry;
 +import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -34,12 +35,12 @@
     private final List<IntReferenceHolder> field_216964_d = Lists.newArrayList();
     @Nullable
     private final ContainerType<?> field_216965_e;
-@@ -40,6 +47,62 @@
+@@ -40,6 +48,64 @@
     private final List<IContainerListener> field_75149_d = Lists.newArrayList();
     private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
  
 +   // CraftBukkit start
-+   public boolean checkReachable;
++   public boolean checkReachable = true;
 +   private ITextComponent title;
 +   // Mohist start
 +   public InventoryView bukkitView = null;
@@ -84,12 +85,14 @@
 +   }
 +
 +   public final ITextComponent getTitle() {
-+      Preconditions.checkState(this.title != null, (Object) "Title not set");
++      // Mohist: null title -> empty title
++      if (this.title == null) {
++         this.title = new StringTextComponent("");
++      }
 +      return this.title;
 +   }
 +
 +   public final void setTitle(final ITextComponent title) {
-+      Preconditions.checkState(this.title == null, (Object) "Title already set");
 +      this.title = title;
 +   }
 +   // CraftBukkit end
@@ -97,7 +100,7 @@
     protected Container(@Nullable ContainerType<?> p_i50105_1_, int p_i50105_2_) {
        this.field_216965_e = p_i50105_1_;
        this.field_75152_c = p_i50105_2_;
-@@ -120,9 +183,11 @@
+@@ -120,9 +186,11 @@
           ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -109,7 +112,7 @@
              for(IContainerListener icontainerlistener : this.field_75149_d) {
                 icontainerlistener.func_71111_a(this, i, itemstack2);
              }
-@@ -500,14 +565,15 @@
+@@ -500,14 +568,15 @@
              ItemStack itemstack = slot.func_75211_c();
              if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
                 int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -129,7 +132,7 @@
                    slot.func_75218_e();
                    flag = true;
                 }
-@@ -608,7 +674,7 @@
+@@ -608,7 +677,7 @@
           p_94525_2_.func_190920_e(1);
           break;
        case 2:
