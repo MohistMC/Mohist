@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/server/ServerWorld.java
 +++ b/net/minecraft/world/server/ServerWorld.java
-@@ -6,6 +6,8 @@
+@@ -1,11 +1,15 @@
+ package net.minecraft.world.server;
+ 
++import com.destroystokyo.paper.util.maplist.IBlockDataList;
++import com.destroystokyo.paper.util.math.ThreadUnsafeRandom;
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.Iterables;
+ import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Queues;
  import com.google.common.collect.Sets;
@@ -9,7 +16,7 @@
  import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
-@@ -18,19 +20,12 @@
+@@ -18,19 +22,12 @@
  import java.io.Writer;
  import java.nio.file.Files;
  import java.nio.file.Path;
@@ -31,7 +38,7 @@
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
  import javax.annotation.Nonnull;
-@@ -39,6 +34,7 @@
+@@ -39,6 +36,7 @@
  import net.minecraft.block.BlockEventData;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -39,7 +46,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityClassification;
-@@ -51,6 +47,8 @@
+@@ -51,6 +49,8 @@
  import net.minecraft.entity.effect.LightningBoltEntity;
  import net.minecraft.entity.merchant.IReputationTracking;
  import net.minecraft.entity.merchant.IReputationType;
@@ -48,7 +55,7 @@
  import net.minecraft.entity.passive.AnimalEntity;
  import net.minecraft.entity.passive.WaterMobEntity;
  import net.minecraft.entity.passive.horse.SkeletonHorseEntity;
-@@ -59,6 +57,7 @@
+@@ -59,6 +59,7 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
@@ -56,7 +63,7 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.network.DebugPacketSender;
  import net.minecraft.network.IPacket;
-@@ -79,17 +78,7 @@
+@@ -79,17 +80,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.tags.ITagCollectionSupplier;
  import net.minecraft.tileentity.TileEntity;
@@ -75,7 +82,7 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
-@@ -133,27 +122,33 @@
+@@ -133,27 +124,33 @@
  import net.minecraft.world.raid.RaidManager;
  import net.minecraft.world.spawner.ISpecialSpawner;
  import net.minecraft.world.spawner.WorldEntitySpawner;
@@ -117,7 +124,7 @@
     public boolean field_73058_d;
     private boolean field_73068_P;
     private int field_80004_Q;
-@@ -173,9 +168,31 @@
+@@ -173,9 +170,31 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -149,7 +156,7 @@
        this.field_241107_Q_ = p_i241885_13_;
        this.field_73061_a = p_i241885_1_;
        this.field_241104_N_ = p_i241885_12_;
-@@ -200,9 +217,33 @@
+@@ -200,9 +219,33 @@
        } else {
           this.field_241105_O_ = null;
        }
@@ -183,7 +190,7 @@
     public void func_241113_a_(int p_241113_1_, int p_241113_2_, boolean p_241113_3_, boolean p_241113_4_) {
        this.field_241103_E_.func_230391_a_(p_241113_1_);
        this.field_241103_E_.func_76080_g(p_241113_2_);
-@@ -211,6 +252,7 @@
+@@ -211,6 +254,7 @@
        this.field_241103_E_.func_76069_a(p_241113_4_);
     }
  
@@ -191,7 +198,7 @@
     public Biome func_225604_a_(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
        return this.func_72863_F().func_201711_g().func_202090_b().func_225526_b_(p_225604_1_, p_225604_2_, p_225604_3_);
     }
-@@ -296,27 +338,39 @@
+@@ -296,27 +340,39 @@
           this.field_73061_a.func_184103_al().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.field_73017_q), this.func_234923_W_());
        }
  
@@ -240,7 +247,7 @@
           if (this.func_82736_K().func_223586_b(GameRules.field_223617_t)) {
              this.func_73051_P();
           }
-@@ -327,23 +381,28 @@
+@@ -327,23 +383,28 @@
        iprofiler.func_219895_b("chunkSource");
        this.func_72863_F().func_217207_a(p_72835_1_);
        iprofiler.func_219895_b("tickPending");
@@ -270,7 +277,7 @@
           if (this.field_241105_O_ != null) {
              this.field_241105_O_.func_186105_b();
           }
-@@ -351,18 +410,22 @@
+@@ -351,18 +412,22 @@
           this.field_217492_a = true;
           ObjectIterator<Entry<Entity>> objectiterator = this.field_217498_x.int2ObjectEntrySet().iterator();
  
@@ -293,7 +300,7 @@
                    this.func_217391_K();
                    break label164;
                 }
-@@ -395,7 +458,7 @@
+@@ -395,7 +460,7 @@
              }
  
              iprofiler.func_76320_a("tick");
@@ -302,7 +309,7 @@
                 this.func_217390_a(this::func_217479_a, entity1);
              }
  
-@@ -404,7 +467,7 @@
+@@ -404,7 +469,7 @@
              if (entity1.field_70128_L) {
                 this.func_217454_n(entity1);
                 objectiterator.remove();
@@ -311,7 +318,16 @@
              }
  
              iprofiler.func_76319_b();
-@@ -460,13 +523,13 @@
+@@ -443,6 +508,8 @@
+       });
+    }
+ 
++   private final ThreadUnsafeRandom randomTickRandom = new ThreadUnsafeRandom(); // Paper start - Optimise random block ticking
++
+    public void func_217441_a(Chunk p_217441_1_, int p_217441_2_) {
+       ChunkPos chunkpos = p_217441_1_.func_76632_l();
+       boolean flag = this.func_72896_J();
+@@ -460,13 +527,13 @@
                 skeletonhorseentity.func_190691_p(true);
                 skeletonhorseentity.func_70873_a(0);
                 skeletonhorseentity.func_70107_b((double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p());
@@ -327,7 +343,7 @@
           }
        }
  
-@@ -475,12 +538,13 @@
+@@ -475,12 +542,13 @@
           BlockPos blockpos2 = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, this.func_217383_a(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.func_177977_b();
           Biome biome = this.func_226691_t_(blockpos2);
@@ -343,7 +359,68 @@
           }
  
           if (flag && this.func_226691_t_(blockpos3).func_201851_b() == Biome.RainType.RAIN) {
-@@ -544,7 +608,7 @@
+@@ -488,32 +556,38 @@
+          }
+       }
+ 
+-      iprofiler.func_219895_b("tickBlocks");
++      // Paper start - Optimise random block ticking
++      iprofiler.func_76319_b();
+       if (p_217441_2_ > 0) {
+-         for(ChunkSection chunksection : p_217441_1_.func_76587_i()) {
+-            if (chunksection != Chunk.field_186036_a && chunksection.func_206915_b()) {
+-               int k = chunksection.func_222632_g();
+-
+-               for(int l = 0; l < p_217441_2_; ++l) {
+-                  BlockPos blockpos1 = this.func_217383_a(i, k, j, 15);
+-                  iprofiler.func_76320_a("randomTick");
+-                  BlockState blockstate = chunksection.func_177485_a(blockpos1.func_177958_n() - i, blockpos1.func_177956_o() - k, blockpos1.func_177952_p() - j);
+-                  if (blockstate.func_204519_t()) {
+-                     blockstate.func_227034_b_(this, blockpos1, this.field_73012_v);
+-                  }
+-
+-                  FluidState fluidstate = blockstate.func_204520_s();
+-                  if (fluidstate.func_206890_h()) {
+-                     fluidstate.func_206891_b(this, blockpos1, this.field_73012_v);
+-                  }
+-
+-                  iprofiler.func_76319_b();
+-               }
++         iprofiler.func_76320_a("randomTick");
++         ChunkSection[] sections = p_217441_1_.func_76587_i();
++         for (int sectionIndex = 0; sectionIndex < 16; ++sectionIndex) {
++            ChunkSection section = sections[sectionIndex];
++            if (section == null || section.tickableBlocks.size() == 0) {
++                continue;
+             }
++            int yPos = sectionIndex << 4;
++            for (int a = 0; a < p_217441_2_; ++a) {
++                int tickingBlocks = section.tickableBlocks.size();
++                int index = this.randomTickRandom.nextInt(16 * 16 * 16);
++                if (index >= tickingBlocks) {
++                    continue;
++                }
++                long raw = section.tickableBlocks.getRaw(index);
++                int location = IBlockDataList.getLocationFromRaw(raw);
++                int randomX = location & 15;
++                int randomY = ((location >>> (4 + 4)) & 255) | yPos;
++                int randomZ = (location >>> 4) & 15;
++                BlockPos pos = new BlockPos(i + randomX, randomY, j + randomZ);
++                BlockState state = IBlockDataList.getBlockDataFromRaw(raw);
++                state.func_227034_b_(this, pos, randomTickRandom);
++                // We drop the fluid tick since LAVA is ALREADY TICKED by the above method.
++                // TODO CHECK ON UPDATE
++            }
+          }
++         iprofiler.func_76319_b();
+       }
+-
+-      iprofiler.func_76319_b();
++      // Paper end
+    }
+ 
+    protected BlockPos func_175736_a(BlockPos p_175736_1_) {
+@@ -544,7 +618,7 @@
           int j = 0;
  
           for(ServerPlayerEntity serverplayerentity : this.field_217491_A) {
@@ -352,7 +429,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -561,10 +625,22 @@
+@@ -561,10 +635,22 @@
     }
  
     private void func_73051_P() {
@@ -377,7 +454,7 @@
     }
  
     public void func_82742_i() {
-@@ -591,6 +667,14 @@
+@@ -591,6 +677,14 @@
        if (!(p_217479_1_ instanceof PlayerEntity) && !this.func_72863_F().func_217204_a(p_217479_1_)) {
           this.func_217464_b(p_217479_1_);
        } else {
@@ -392,7 +469,7 @@
           p_217479_1_.func_226286_f_(p_217479_1_.func_226277_ct_(), p_217479_1_.func_226278_cu_(), p_217479_1_.func_226281_cx_());
           p_217479_1_.field_70126_B = p_217479_1_.field_70177_z;
           p_217479_1_.field_70127_C = p_217479_1_.field_70125_A;
-@@ -598,10 +682,12 @@
+@@ -598,10 +692,12 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
@@ -406,7 +483,7 @@
              iprofiler.func_76319_b();
           }
  
-@@ -611,6 +697,7 @@
+@@ -611,6 +707,7 @@
                 this.func_217459_a(p_217479_1_, entity);
              }
           }
@@ -414,7 +491,7 @@
  
        }
     }
-@@ -629,6 +716,7 @@
+@@ -629,6 +726,7 @@
                 });
                 iprofiler.func_230035_c_("tickPassenger");
                 p_217459_2_.func_70098_U();
@@ -422,7 +499,7 @@
                 iprofiler.func_76319_b();
              }
  
-@@ -649,7 +737,7 @@
+@@ -649,7 +747,7 @@
        if (p_217464_1_.func_233578_ci_()) {
           this.func_217381_Z().func_76320_a("chunkCheck");
           int i = MathHelper.func_76128_c(p_217464_1_.func_226277_ct_() / 16.0D);
@@ -431,7 +508,7 @@
           int k = MathHelper.func_76128_c(p_217464_1_.func_226281_cx_() / 16.0D);
           if (!p_217464_1_.field_70175_ag || p_217464_1_.field_70176_ah != i || p_217464_1_.field_70162_ai != j || p_217464_1_.field_70164_aj != k) {
              if (p_217464_1_.field_70175_ag && this.func_217354_b(p_217464_1_.field_70176_ah, p_217464_1_.field_70164_aj)) {
-@@ -658,7 +746,7 @@
+@@ -658,7 +756,7 @@
  
              if (!p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) {
                 if (p_217464_1_.field_70175_ag) {
@@ -440,7 +517,7 @@
                 }
  
                 p_217464_1_.field_70175_ag = false;
-@@ -678,6 +766,7 @@
+@@ -678,6 +776,7 @@
     public void func_217445_a(@Nullable IProgressUpdate p_217445_1_, boolean p_217445_2_, boolean p_217445_3_) {
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
        if (!p_217445_3_) {
@@ -448,7 +525,7 @@
           if (p_217445_1_ != null) {
              p_217445_1_.func_200210_a(new TranslationTextComponent("menu.savingLevel"));
           }
-@@ -687,6 +776,7 @@
+@@ -687,6 +786,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
@@ -456,7 +533,7 @@
           serverchunkprovider.func_217210_a(p_217445_2_);
        }
     }
-@@ -743,13 +833,23 @@
+@@ -743,13 +843,23 @@
     }
  
     public boolean func_217376_c(Entity p_217376_1_) {
@@ -482,7 +559,7 @@
     public void func_217460_e(Entity p_217460_1_) {
        boolean flag = p_217460_1_.field_98038_p;
        p_217460_1_.field_98038_p = true;
-@@ -777,9 +877,10 @@
+@@ -777,9 +887,10 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -494,7 +571,7 @@
           entity.func_213319_R();
           this.func_217434_e((ServerPlayerEntity)entity);
        }
-@@ -795,18 +896,24 @@
+@@ -795,18 +906,24 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
@@ -525,7 +602,7 @@
              return true;
           }
        }
-@@ -816,6 +923,7 @@
+@@ -816,6 +933,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -533,7 +610,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -827,7 +935,7 @@
+@@ -827,7 +945,7 @@
        if (entity == null) {
           return false;
        } else {
@@ -542,7 +619,7 @@
           return true;
        }
     }
-@@ -851,15 +959,30 @@
+@@ -851,15 +969,30 @@
     }
  
     public boolean func_242106_g(Entity p_242106_1_) {
@@ -575,7 +652,7 @@
        this.field_147483_b.addAll(p_217466_1_.func_177434_r().values());
        ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = p_217466_1_.func_177429_s();
        int i = aclassinheritancemultimap.length;
-@@ -879,12 +1002,41 @@
+@@ -879,12 +1012,41 @@
  
     }
  
@@ -618,7 +695,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -894,10 +1046,19 @@
+@@ -894,10 +1056,19 @@
        }
  
        this.func_96441_U().func_181140_a(p_217484_1_);
@@ -638,7 +715,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -913,20 +1074,31 @@
+@@ -913,20 +1084,31 @@
  
           this.field_175741_N.put(p_217465_1_.func_110124_au(), p_217465_1_);
           this.func_72863_F().func_217230_c(p_217465_1_);
@@ -671,7 +748,7 @@
        }
     }
  
-@@ -939,17 +1111,47 @@
+@@ -939,17 +1121,47 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -721,7 +798,7 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayerentity.field_71135_a.func_147359_a(new SAnimateBlockBreakPacket(p_175715_1_, p_175715_2_, p_175715_3_));
              }
-@@ -959,10 +1161,20 @@
+@@ -959,10 +1171,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -742,7 +819,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.func_234923_W_(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -997,9 +1209,17 @@
+@@ -997,9 +1219,17 @@
     }
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
@@ -763,7 +840,7 @@
        if (p_230546_12_ == Explosion.Mode.NONE) {
           explosion.func_180342_d();
        }
-@@ -1054,12 +1274,19 @@
+@@ -1054,12 +1284,19 @@
     }
  
     public <T extends IParticleData> int func_195598_a(T p_195598_1_, double p_195598_2_, double p_195598_4_, double p_195598_6_, int p_195598_8_, double p_195598_9_, double p_195598_11_, double p_195598_13_, double p_195598_15_) {
@@ -785,7 +862,7 @@
              ++i;
           }
        }
-@@ -1131,7 +1358,13 @@
+@@ -1131,7 +1368,13 @@
     @Nullable
     public MapData func_217406_a(String p_217406_1_) {
        return this.func_73046_m().func_241755_D_().func_217481_x().func_215753_b(() -> {
@@ -800,7 +877,7 @@
        }, p_217406_1_);
     }
  
-@@ -1333,6 +1566,11 @@
+@@ -1333,6 +1576,11 @@
  
     public void func_230547_a_(BlockPos p_230547_1_, Block p_230547_2_) {
        if (!this.func_234925_Z_()) {
@@ -812,7 +889,7 @@
           this.func_195593_d(p_230547_1_, p_230547_2_);
        }
  
-@@ -1399,15 +1637,44 @@
+@@ -1399,15 +1647,44 @@
     }
  
     public static void func_241121_a_(ServerWorld p_241121_0_) {
