@@ -51,24 +51,24 @@
        this.field_206918_e = 0;
 -      this.field_177488_d.func_225497_a((p_225496_1_, p_225496_2_) -> {
 +      // Paper start - Optimise random block ticking
-+      this.field_177488_d.forEachLocation((p_225496_1_, p_225496_2_) -> {
++      this.field_177488_d.forEachLocation((p_225496_1_, p_225496_2_, offdata) -> {
           FluidState fluidstate = p_225496_1_.func_204520_s();
           if (!p_225496_1_.func_196958_f()) {
 -            this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
-+            this.field_76682_b = (short)(this.field_76682_b + 1);
++            this.field_76682_b = (short)(this.field_76682_b + offdata);
              if (p_225496_1_.func_204519_t()) {
 -               this.field_76683_c = (short)(this.field_76683_c + p_225496_2_);
-+               this.field_76683_c = (short)(this.field_76683_c + 1);
++               this.field_76683_c = (short)(this.field_76683_c + offdata);
 +               this.tickableBlocks.add(p_225496_2_, p_225496_1_);
              }
           }
  
           if (!fluidstate.func_206888_e()) {
 -            this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
-+            this.field_76682_b = (short)(this.field_76682_b + 1);
++            this.field_76682_b = (short)(this.field_76682_b + offdata);
              if (fluidstate.func_206890_h()) {
 -               this.field_206918_e = (short)(this.field_206918_e + p_225496_2_);
-+               this.field_206918_e = (short)(this.field_206918_e + 1);
++               this.field_206918_e = (short)(this.field_206918_e + offdata);
              }
           }
  
