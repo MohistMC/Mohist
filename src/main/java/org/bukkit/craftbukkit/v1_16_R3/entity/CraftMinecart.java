@@ -7,13 +7,19 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-public abstract class CraftMinecart extends CraftVehicle implements Minecart {
+public class CraftMinecart extends CraftVehicle implements Minecart {
     public CraftMinecart(CraftServer server, AbstractMinecartEntity entity) {
         super(server, entity);
+    }
+
+    @Override
+    public EntityType getType() {
+        return EntityType.MINECART;
     }
 
     @Override
