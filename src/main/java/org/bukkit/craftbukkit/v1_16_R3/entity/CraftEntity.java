@@ -374,6 +374,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof SpawnerMinecartEntity) { return new CraftMinecartMobSpawner(server, (SpawnerMinecartEntity) entity); }
             else if (entity instanceof MinecartEntity) { return new CraftMinecartRideable(server, (MinecartEntity) entity); }
             else if (entity instanceof CommandBlockMinecartEntity) { return new CraftMinecartCommand(server, (CommandBlockMinecartEntity) entity); }
+            else { return new CraftMinecart(server, (AbstractMinecartEntity) entity); }
         } else if (entity instanceof HangingEntity) {
             if (entity instanceof PaintingEntity) { return new CraftPainting(server, (PaintingEntity) entity); }
             else if (entity instanceof ItemFrameEntity) { return new CraftItemFrame(server, (ItemFrameEntity) entity); }
@@ -393,8 +394,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof ContainerMinecartEntity) { return new CraftCustomMinecartContainer(server, (ContainerMinecartEntity) entity); }
         else {return new CraftCustomEntity(server, entity);}
         // CHECKSTYLE:ON
-
-        throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
     }
 
     @Override
