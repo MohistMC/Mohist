@@ -1297,11 +1297,13 @@ public class CraftEventFactory {
         // If they've got the same item in their hand, it'll need to be updated.
         if (itemInHand != null && itemInHand.getItem() == Items.WRITABLE_BOOK) {
             if (!editBookEvent.isCancelled()) {
-                if (editBookEvent.isSigning()) {
-                    itemInHand.setItem(Items.WRITTEN_BOOK);
-                }
-                CraftMetaBook meta = (CraftMetaBook) editBookEvent.getNewBookMeta();
-                CraftItemStack.setItemMeta(itemInHand, meta);
+                // Mohist start - Fix book signing (#981)
+                ItemStack book = editBookEvent.isSigning() ?
+                    new ItemStack(Items.WRITTEN_BOOK) : new ItemStack(Items.WRITABLE_BOOK);
+                CraftItemStack.setItemMeta(book, editBookEvent.getNewBookMeta());
+                player.inventory.setInventorySlotContents(player.inventory.currentItem, book);
+                player.sendContainerToPlayer(player.container);
+                // Mohist end
             }
         }
 
