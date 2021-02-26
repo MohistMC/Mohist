@@ -1,6 +1,16 @@
 --- a/net/minecraft/world/chunk/ChunkSection.java
 +++ b/net/minecraft/world/chunk/ChunkSection.java
-@@ -15,7 +15,7 @@
+@@ -2,6 +2,9 @@
+ 
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
++import com.destroystokyo.paper.util.maplist.IBlockDataList;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+@@ -15,12 +18,13 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkSection {
@@ -9,3 +19,61 @@
     private final int field_76684_a;
     private short field_76682_b;
     private short field_76683_c;
+    private short field_206918_e;
+    private final PalettedContainer<BlockState> field_177488_d;
++   public final IBlockDataList tickableBlocks = new IBlockDataList(); // Paper - Optimise random block ticking
+ 
+    public ChunkSection(int p_i49943_1_) {
+       this(p_i49943_1_, (short)0, (short)0, (short)0);
+@@ -68,6 +72,7 @@
+          --this.field_76682_b;
+          if (blockstate.func_204519_t()) {
+             --this.field_76683_c;
++            this.tickableBlocks.remove(p_177484_1_, p_177484_2_, p_177484_3_); // Paper - Optimise random block ticking
+          }
+       }
+ 
+@@ -79,6 +84,7 @@
+          ++this.field_76682_b;
+          if (p_177484_4_.func_204519_t()) {
+             ++this.field_76683_c;
++            this.tickableBlocks.add(p_177484_1_, p_177484_2_, p_177484_3_, p_177484_4_); // Paper - Optimise random block ticking
+          }
+       }
+ 
+@@ -114,26 +120,30 @@
+    }
+ 
+    public void func_76672_e() {
++      this.tickableBlocks.clear(); // Paper - Optimise random block ticking
+       this.field_76682_b = 0;
+       this.field_76683_c = 0;
+       this.field_206918_e = 0;
+-      this.field_177488_d.func_225497_a((p_225496_1_, p_225496_2_) -> {
++      // Paper start - Optimise random block ticking
++      this.field_177488_d.forEachLocation((p_225496_1_, p_225496_2_) -> {
+          FluidState fluidstate = p_225496_1_.func_204520_s();
+          if (!p_225496_1_.func_196958_f()) {
+-            this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
++            this.field_76682_b = (short)(this.field_76682_b + 1);
+             if (p_225496_1_.func_204519_t()) {
+-               this.field_76683_c = (short)(this.field_76683_c + p_225496_2_);
++               this.field_76683_c = (short)(this.field_76683_c + 1);
++               this.tickableBlocks.add(p_225496_2_, p_225496_1_);
+             }
+          }
+ 
+          if (!fluidstate.func_206888_e()) {
+-            this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
++            this.field_76682_b = (short)(this.field_76682_b + 1);
+             if (fluidstate.func_206890_h()) {
+-               this.field_206918_e = (short)(this.field_206918_e + p_225496_2_);
++               this.field_206918_e = (short)(this.field_206918_e + 1);
+             }
+          }
+ 
+       });
++      // Paper end
+    }
+ 
+    public PalettedContainer<BlockState> func_186049_g() {
