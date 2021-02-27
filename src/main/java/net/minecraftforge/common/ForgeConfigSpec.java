@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.ADD;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REMOVE;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REPLACE;
+import com.google.common.annotations.VisibleForTesting;
 import static net.minecraftforge.fml.Logging.CORE;
 
 import java.util.ArrayList;
@@ -90,6 +91,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 ((FileConfig) config).save();
             }
         }
+        this.afterReload();
     }
 
     public boolean isCorrecting() {
@@ -106,6 +108,22 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public UnmodifiableConfig getValues() {
         return this.values;
+    }
+
+    public void afterReload() {
+        this.resetCaches(getValues().valueMap().values());
+    }
+
+    private void resetCaches(final Iterable<Object> configValues) {
+        configValues.forEach(value -> {
+            if (value instanceof ConfigValue) {
+                final ConfigValue<?> configValue = (ConfigValue<?>) value;
+                configValue.clearCache();
+            } else if (value instanceof Config) {
+                final Config innerConfig = (Config) value;
+                this.resetCaches(innerConfig.valueMap().values());
+            }
+        });
     }
 
     public void save()
@@ -690,9 +708,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public static class ConfigValue<T>
     {
+        @VisibleForTesting
+        static boolean USE_CACHES = true;
+
         private final Builder parent;
         private final List<String> path;
         private final Supplier<T> defaultSupplier;
+
+        private T cachedValue = null;
 
         private ForgeConfigSpec spec;
 
@@ -714,7 +737,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
             if (spec.childConfig == null)
                 return defaultSupplier.get();
-            return getRaw(spec.childConfig, path, defaultSupplier);
+            if (USE_CACHES && cachedValue == null)
+                cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
+            else if (!USE_CACHES)
+                return getRaw(spec.childConfig, path, defaultSupplier);
+
+            return cachedValue;
         }
 
         protected T getRaw(Config config, List<String> path, Supplier<T> defaultSupplier)
@@ -739,6 +767,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Preconditions.checkNotNull(spec, "Cannot set config value before spec is built");
             Preconditions.checkNotNull(spec.childConfig, "Cannot set config value without assigned Config object present");
             spec.childConfig.set(path, value);
+            this.cachedValue = value;
+        }
+
+        public void clearCache() {
+            this.cachedValue = null;
         }
     }
 
