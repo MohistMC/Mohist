@@ -41,18 +41,18 @@
     }
  
     public void func_186009_b(PacketBuffer p_186009_1_) {
-@@ -233,8 +242,28 @@
+@@ -233,6 +242,18 @@
        });
     }
  
 +   // Paper start - Optimise random block ticking
-+   public void forEachLocation(PalettedContainer.ICountConsumerTriple<T> countConsumerIn) {
++   public void forEachLocation(PalettedContainer.ICountConsumer<T> countConsumerIn) {
 +      Int2IntMap int2intmap = new Int2IntOpenHashMap();
 +      this.field_186021_b.func_225421_a((p_225498_1_) -> {
 +         int2intmap.put(p_225498_1_, int2intmap.get(p_225498_1_) + 1);
 +      });
 +      int2intmap.int2IntEntrySet().forEach((p_225499_2_) -> {
-+         countConsumerIn.accept(this.field_186022_c.func_186039_a(p_225499_2_.getIntKey()), p_225499_2_.getIntKey(), p_225499_2_.getIntValue());
++         countConsumerIn.accept(this.field_186022_c.func_186039_a(p_225499_2_.getIntKey()), p_225499_2_.getIntKey());
 +      });
 +   }
 +   // Paper end
@@ -60,13 +60,3 @@
     @FunctionalInterface
     public interface ICountConsumer<T> {
        void accept(T p_accept_1_, int p_accept_2_);
-    }
-+
-+   // Mohist start - Fix phantom blocks after explosion
-+   @FunctionalInterface
-+   public interface ICountConsumerTriple<T> {
-+      void accept(T arg1, int arg2, int arg3);
-+   }
-+   // Mohist end
-+
- }
