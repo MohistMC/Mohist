@@ -1,21 +1,26 @@
 --- a/net/minecraft/inventory/IInventory.java
 +++ b/net/minecraft/inventory/IInventory.java
-@@ -4,6 +4,8 @@
+@@ -4,7 +4,11 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
 +import net.minecraft.item.crafting.IRecipe;
-+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
++import net.minecraft.util.NonNullList;
  
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
++
  public interface IInventory extends IClearable {
     int func_70302_i_();
-@@ -59,4 +61,29 @@
+ 
+@@ -59,4 +63,31 @@
  
        return false;
     }
 +
 +   // CraftBukkit start
-+   java.util.List<ItemStack> getContents();
++   default java.util.List<ItemStack> getContents() {
++       return new NonNullList<ItemStack>(); // Mohist - Fix double-click Lootr crash (#982)
++   }
 +
 +   void onOpen(CraftHumanEntity who);
 +
