@@ -7,6 +7,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.JarFile;
 
+import com.mohistmc.util.i18n.i18n;
+
 public class JarLoader {
 
     private static Instrumentation inst = null;
@@ -31,6 +33,11 @@ public class JarLoader {
             if (!(cl instanceof URLClassLoader)) {
                 // If Java 9 or higher use Instrumentation
                 //System.out.println(path);
+                if (inst == null) {
+                    System.out.println(i18n.get("jarloader.classpath1"));
+                    System.out.println(i18n.get("jarloader.classpath2"));
+                    System.exit(1);
+                }
                 inst.appendToSystemClassLoaderSearch(new JarFile(path));
             } else {
                 // If Java 8 or below fallback to old method
