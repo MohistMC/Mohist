@@ -11,10 +11,16 @@
     private final long[] field_222875_n = new long[4];
     private final ChunkStatus[] field_222876_o = new ChunkStatus[4];
     private final IChunk[] field_222877_p = new IChunk[4];
-@@ -80,6 +80,16 @@
+@@ -80,6 +80,22 @@
        this.func_222869_l();
     }
  
++   // Mohist start - Fix FAWE usage (#970, #989)
++   public ServerWorldLightManager getLightEngine() {
++       return this.field_217242_h;
++   }
++   // Mohist end
++
 +   // CraftBukkit start - properly implement isChunkLoaded
 +   public boolean isChunkLoaded(int chunkX, int chunkZ) {
 +      ChunkHolder chunk = this.field_217237_a.func_219220_a(ChunkPos.func_77272_a(chunkX, chunkZ));
@@ -28,7 +34,7 @@
     public ServerWorldLightManager func_212863_j_() {
        return this.field_217242_h;
     }
-@@ -126,8 +136,10 @@
+@@ -126,8 +142,10 @@
           }
  
           iprofiler.func_230035_c_("getChunkCacheMiss");
@@ -39,7 +45,7 @@
           IChunk ichunk1 = completablefuture.join().map((p_222874_0_) -> {
              return p_222874_0_;
           }, (p_222870_1_) -> {
-@@ -208,7 +220,15 @@
+@@ -208,7 +226,15 @@
        long i = chunkpos.func_201841_a();
        int j = 33 + ChunkStatus.func_222599_a(p_217233_3_);
        ChunkHolder chunkholder = this.func_217213_a(i);
@@ -56,7 +62,7 @@
           this.field_217240_d.func_219356_a(TicketType.field_219494_g, chunkpos, j, chunkpos);
           if (this.func_217224_a(chunkholder, j)) {
              IProfiler iprofiler = this.field_73251_h.func_217381_Z();
-@@ -226,7 +246,7 @@
+@@ -226,7 +252,7 @@
     }
  
     private boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
@@ -65,7 +71,7 @@
     }
  
     public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
-@@ -292,7 +312,7 @@
+@@ -292,7 +318,7 @@
        return this.func_222872_a(i, ChunkHolder::func_219296_a);
     }
  
@@ -74,7 +80,7 @@
        ChunkHolder chunkholder = this.func_217213_a(p_222872_1_);
        if (chunkholder == null) {
           return false;
-@@ -308,19 +328,43 @@
+@@ -308,19 +334,43 @@
     }
  
     public void close() throws IOException {
@@ -118,7 +124,7 @@
        this.field_73251_h.func_217381_Z().func_76319_b();
        this.func_222869_l();
     }
-@@ -331,11 +375,11 @@
+@@ -331,11 +381,11 @@
        this.field_217245_k = i;
        IWorldInfo iworldinfo = this.field_73251_h.func_72912_H();
        boolean flag = this.field_73251_h.func_234925_Z_();
@@ -132,7 +138,7 @@
           this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
           int l = this.field_217240_d.func_219358_b();
           WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = WorldEntitySpawner.func_234964_a_(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_);
-@@ -353,13 +397,15 @@
+@@ -353,13 +403,15 @@
                 if (optional1.isPresent()) {
                    Chunk chunk = optional1.get();
                    ChunkPos chunkpos = p_241099_7_.func_219277_h();
@@ -150,7 +156,7 @@
                    }
                 }
              }
-@@ -373,7 +419,9 @@
+@@ -373,7 +425,9 @@
           this.field_73251_h.func_217381_Z().func_76319_b();
        }
  
@@ -160,7 +166,7 @@
     }
  
     private void func_241098_a_(long p_241098_1_, Consumer<Chunk> p_241098_3_) {
-@@ -429,6 +477,14 @@
+@@ -429,6 +483,14 @@
        this.field_217240_d.func_219362_d(p_217222_1_, p_217222_2_, p_217222_3_, p_217222_4_);
     }
  
@@ -175,7 +181,7 @@
     public void func_217206_a(ChunkPos p_217206_1_, boolean p_217206_2_) {
        this.field_217240_d.func_219364_a(p_217206_1_, p_217206_2_);
     }
-@@ -507,11 +563,16 @@
+@@ -507,11 +569,16 @@
        }
  
        protected boolean func_213168_p() {
