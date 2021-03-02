@@ -810,6 +810,11 @@ public class CraftWorld implements World {
     }
 
     @Override
+    public long getGameTime() {
+        return world.worldInfo.getGameTime();
+    }
+
+    @Override
     public boolean createExplosion(double x, double y, double z, float power) {
         return createExplosion(x, y, z, power, false, true);
     }

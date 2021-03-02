@@ -26,7 +26,7 @@
     private boolean field_219329_x;
     private boolean field_244384_x;
  
-@@ -73,6 +74,17 @@
+@@ -73,6 +74,21 @@
        this.func_219292_a(p_i50716_2_);
     }
  
@@ -35,6 +35,10 @@
 +      if (!func_219286_c(this.field_219316_k).func_219065_a(LocationType.BORDER)) {
 +         return null; // note: using oldTicketLevel for isLoaded checks
 +      }
++      return this.getFullChunkUnchecked();
++   }
++
++   public Chunk getFullChunkUnchecked() {
 +      CompletableFuture<Either<IChunk, IChunkLoadingError>> statusFuture = this.func_219301_a(ChunkStatus.field_222617_m);
 +      Either<IChunk, IChunkLoadingError> either = (Either<IChunk, IChunkLoadingError>) statusFuture.getNow(null);
 +      return (either == null) ? null : (Chunk) either.left().orElse(null);
@@ -44,7 +48,7 @@
     public CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_219301_a(ChunkStatus p_219301_1_) {
        CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.field_219312_g.get(p_219301_1_.func_222584_c());
        return completablefuture == null ? field_219307_b : completablefuture;
-@@ -139,6 +151,8 @@
+@@ -139,6 +155,8 @@
        Chunk chunk = this.func_219298_c();
        if (chunk != null) {
           byte b0 = (byte)SectionPos.func_218159_a(p_244386_1_.func_177956_o());
@@ -53,7 +57,7 @@
           if (this.field_244383_q[b0] == null) {
              this.field_244382_p = true;
              this.field_244383_q[b0] = new ShortArraySet();
-@@ -204,7 +218,7 @@
+@@ -204,7 +222,7 @@
     }
  
     private void func_244385_a(World p_244385_1_, BlockPos p_244385_2_, BlockState p_244385_3_) {
@@ -62,7 +66,7 @@
           this.func_219305_a(p_244385_1_, p_244385_2_);
        }
  
-@@ -289,6 +303,31 @@
+@@ -289,6 +307,31 @@
        boolean flag1 = this.field_219317_l <= ChunkManager.field_219249_a;
        ChunkHolder.LocationType chunkholder$locationtype = func_219286_c(this.field_219316_k);
        ChunkHolder.LocationType chunkholder$locationtype1 = func_219286_c(this.field_219317_l);
@@ -94,7 +98,7 @@
        if (flag) {
           Either<IChunk, ChunkHolder.IChunkLoadingError> either = Either.right(new ChunkHolder.IChunkLoadingError() {
              public String toString() {
-@@ -352,6 +391,24 @@
+@@ -352,6 +395,24 @@
  
        this.field_219327_v.func_219066_a(this.field_219319_n, this::func_219281_j, this.field_219317_l, this::func_219275_d);
        this.field_219316_k = this.field_219317_l;

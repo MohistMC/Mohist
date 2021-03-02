@@ -5,7 +5,7 @@
     private final List<BeehiveTileEntity.Bee> field_226958_a_ = Lists.newArrayList();
     @Nullable
 -   private BlockPos field_226959_b_ = null;
-+   public BlockPos field_226959_b_ = null; // private->public CraftBukkit
++   public BlockPos field_226959_b_ = null;
 +   public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
  
     public BeehiveTileEntity() {
