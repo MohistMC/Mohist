@@ -38,6 +38,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.ServerPlayNetHandler;
+import net.minecraft.network.play.server.SAnimateBlockBreakPacket;
 import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.network.play.server.SChatPacket;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
@@ -548,6 +549,18 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         SChangeBlockPacket packet = new SChangeBlockPacket(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), ((CraftBlockData) block).getState());
 
         packet.state = ((CraftBlockData) block).getState();
+        getHandle().connection.sendPacket(packet);
+    }
+
+    @Override
+    public void sendBlockDamage(Location loc, float progress) {
+        Preconditions.checkArgument(loc != null, "loc must not be null");
+        Preconditions.checkArgument(progress >= 0.0 && progress <= 1.0, "progress must be between 0.0 and 1.0 (inclusive)");
+
+        if (getHandle().connection == null) return;
+
+        int stage = (int) (9 * progress); // There are 0 - 9 damage states
+        SAnimateBlockBreakPacket packet = new SAnimateBlockBreakPacket(getHandle().getEntityId(), new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), stage);
         getHandle().connection.sendPacket(packet);
     }
 

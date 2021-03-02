@@ -136,7 +136,15 @@
     private SortedArraySet<Ticket<?>> func_229848_e_(long p_229848_1_) {
        return this.field_219377_e.computeIfAbsent(p_229848_1_, (p_229851_0_) -> {
           return SortedArraySet.func_226172_a_(4);
-@@ -241,7 +315,30 @@
+@@ -203,6 +277,7 @@
+    public void func_219367_b(SectionPos p_219367_1_, ServerPlayerEntity p_219367_2_) {
+       long i = p_219367_1_.func_218155_u().func_201841_a();
+       ObjectSet<ServerPlayerEntity> objectset = this.field_219375_c.get(i);
++      if (objectset == null) return; // CraftBukkit - SPIGOT-6208
+       objectset.remove(p_219367_2_);
+       if (objectset.isEmpty()) {
+          this.field_219375_c.remove(i);
+@@ -241,7 +316,30 @@
     public String func_225412_c() {
        return this.field_219384_l.func_225396_a();
     }

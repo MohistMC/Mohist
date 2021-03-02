@@ -26,7 +26,7 @@
 +            org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.field_220806_a.getBukkitEntity(), (org.bukkit.entity.Item) itemEntity.getBukkitEntity());
 +            itemEntity.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
-+               return;
++               continue;
 +            }
 +            this.field_220806_a.field_70170_p.func_217376_c(itemEntity);
           }
