@@ -1,8 +1,26 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -463,9 +463,11 @@
+@@ -437,6 +437,11 @@
+             for(int j1 = -1; j1 <= 1; ++j1) {
+                if (l != 0 || j1 != 0) {
+                   p_237232_1_.func_181079_c(i + l, j + i1, k + j1);
++                  // Paper start - Do not load chunks for Pathfinding
++                  if (!p_237232_0_.isPosLoaded(p_237232_1_)) {
++                     return PathNodeType.BLOCKED;
++                  }
++                  // Paper end
+                   BlockState blockstate = p_237232_0_.func_180495_p(p_237232_1_);
+                   if (blockstate.func_203425_a(Blocks.field_150434_aF)) {
+                      return PathNodeType.DANGER_CACTUS;
+@@ -462,10 +467,17 @@
+    }
  
     protected static PathNodeType func_237238_b_(IBlockReader p_237238_0_, BlockPos p_237238_1_) {
++      // Paper start - Do not load chunks for Pathfinding
++      if (!p_237238_0_.isPosLoaded(p_237238_1_)) {
++         return PathNodeType.BLOCKED;
++      }
++      // Paper end
        BlockState blockstate = p_237238_0_.func_180495_p(p_237238_1_);
 +      PathNodeType type = blockstate.getAiPathNodeType(p_237238_0_, p_237238_1_);
 +      if (type != null) return type;
