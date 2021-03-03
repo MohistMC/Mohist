@@ -1,15 +1,22 @@
 --- a/net/minecraft/world/IBlockReader.java
 +++ b/net/minecraft/world/IBlockReader.java
-@@ -26,7 +26,7 @@
+@@ -25,8 +25,14 @@
+ 
     FluidState func_204610_c(BlockPos p_204610_1_);
  
++   // Mohist start - Add isPosLoaded method to IBlockReader
++   default boolean isPosLoaded(BlockPos pos) {
++      return false;
++   }
++   // Mohist end
++
     default int func_217298_h(BlockPos p_217298_1_) {
 -      return this.func_180495_p(p_217298_1_).func_185906_d();
 +      return this.func_180495_p(p_217298_1_).getLightValue(this, p_217298_1_);
     }
  
     default int func_201572_C() {
-@@ -41,19 +41,25 @@
+@@ -41,19 +47,25 @@
        return BlockPos.func_239581_a_(p_234853_1_).map(this::func_180495_p);
     }
  
@@ -28,7 +35,7 @@
 +      return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
 +   }
 +   // CraftBukkit end
-+   
++
     default BlockRayTraceResult func_217299_a(RayTraceContext p_217299_1_) {
        return func_217300_a(p_217299_1_, (p_217297_1_, p_217297_2_) -> {
 -         BlockState blockstate = this.func_180495_p(p_217297_2_);
