@@ -187,7 +187,7 @@
              return p_82487_2_;
           }
  
-@@ -318,9 +434,49 @@
+@@ -318,9 +434,48 @@
              BucketItem bucketitem = (BucketItem)p_82487_2_.func_77973_b();
              BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
              World world = p_82487_1_.func_197524_h();
@@ -228,8 +228,7 @@
 +               Item item = Items.field_151133_ar;
 +               p_82487_2_.func_190918_g(1);
 +               if (p_82487_2_.func_190926_b()) {
-+                  p_82487_2_.setItem(Items.field_151133_ar);
-+                  p_82487_2_.func_190920_e(1);
++                  p_82487_2_ = new ItemStack(Items.field_151133_ar); // Mohist - Fix liquid dispensing (#1011)
 +               } else if (((DispenserTileEntity) p_82487_1_.func_150835_j()).func_146019_a(new ItemStack(item)) < 0) {
 +                  this.field_239793_b_.dispense(p_82487_1_, new ItemStack(item));
 +               }
@@ -238,7 +237,7 @@
              } else {
                 return this.field_239793_b_.dispense(p_82487_1_, p_82487_2_);
              }
-@@ -341,11 +497,34 @@
+@@ -341,11 +496,34 @@
              BlockState blockstate = iworld.func_180495_p(blockpos);
              Block block = blockstate.func_177230_c();
              if (block instanceof IBucketPickupHandler) {
@@ -274,7 +273,7 @@
                    p_82487_2_.func_190918_g(1);
                    if (p_82487_2_.func_190926_b()) {
                       return new ItemStack(item);
-@@ -365,16 +544,43 @@
+@@ -365,16 +543,43 @@
        DispenserBlock.func_199774_a(Items.field_151033_d, new OptionalDispenseBehavior() {
           protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
              World world = p_82487_1_.func_197524_h();
@@ -321,7 +320,7 @@
                 world.func_217377_a(blockpos, false);
              } else {
                 this.func_239796_a_(false);
-@@ -392,12 +598,54 @@
+@@ -392,12 +597,54 @@
              this.func_239796_a_(true);
              World world = p_82487_1_.func_197524_h();
              BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
@@ -376,7 +375,7 @@
              return p_82487_2_;
           }
        });
-@@ -405,10 +653,35 @@
+@@ -405,10 +652,35 @@
           protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
              World world = p_82487_1_.func_197524_h();
              BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
@@ -414,7 +413,7 @@
              return p_82487_2_;
           }
        });
-@@ -428,6 +701,26 @@
+@@ -428,6 +700,26 @@
              World world = p_82487_1_.func_197524_h();
              Direction direction = p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a);
              BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(direction);
@@ -441,7 +440,7 @@
              if (world.func_175623_d(blockpos) && WitherSkeletonSkullBlock.func_196299_b(world, blockpos, p_82487_2_)) {
                 world.func_180501_a(blockpos, Blocks.field_196705_eO.func_176223_P().func_206870_a(SkullBlock.field_196294_a, Integer.valueOf(direction.func_176740_k() == Direction.Axis.Y ? 0 : direction.func_176734_d().func_176736_b() * 4)), 3);
                 TileEntity tileentity = world.func_175625_s(blockpos);
-@@ -449,6 +742,28 @@
+@@ -449,6 +741,28 @@
              World world = p_82487_1_.func_197524_h();
              BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
              CarvedPumpkinBlock carvedpumpkinblock = (CarvedPumpkinBlock)Blocks.field_196625_cS;
@@ -470,7 +469,7 @@
              if (world.func_175623_d(blockpos) && carvedpumpkinblock.func_196354_a(world, blockpos)) {
                 if (!world.field_72995_K) {
                    world.func_180501_a(blockpos, carvedpumpkinblock.func_176223_P(), 3);
-@@ -490,6 +805,28 @@
+@@ -490,6 +804,28 @@
              ServerWorld serverworld = p_82487_1_.func_197524_h();
              BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
              BlockState blockstate = serverworld.func_180495_p(blockpos);
