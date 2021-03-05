@@ -48,6 +48,7 @@ import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.network.VanillaPacketSplitter;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.command.EnumArgument;
@@ -173,6 +174,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         //VersionChecker.startVersionCheck();
 
         registerArgumentTypes();
+        VanillaPacketSplitter.register();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
