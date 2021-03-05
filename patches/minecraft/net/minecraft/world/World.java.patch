@@ -1396,7 +1396,7 @@
 +		{
 +            // CraftBukkit start
 +            if (capturedTileEntities.containsKey(p_175625_1_)) {
-+                return capturedTileEntities.get(p_175625_1_);
++                // return capturedTileEntities.get(pos); // Mohist - Remove intermediate tile caching (#931, #987)
 +            }
 +            // CraftBukkit end
              TileEntity tileentity2 = null;
