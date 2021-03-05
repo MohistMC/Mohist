@@ -44,9 +44,8 @@ public class CraftCrashReport implements ICrashReportDetail<Object> {
             }
             value.append("}");
         } catch (Throwable t) {
-            value.append("\n   Failed to handle CraftCrashReport:\n");
+            value.append("\n   Failed to handle CraftCrashReport: craftbukkit not runs\n");
             PrintWriter writer = new PrintWriter(value);
-            t.printStackTrace(writer);
             writer.flush();
         }
         return value.toString();
