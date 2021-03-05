@@ -42,14 +42,18 @@
     public MerchantOffer(CompoundNBT p_i50012_1_) {
        this.field_222223_a = ItemStack.func_199557_a(p_i50012_1_.func_74775_l("buy"));
        this.field_222224_b = ItemStack.func_199557_a(p_i50012_1_.func_74775_l("buyB"));
-@@ -72,6 +86,7 @@
+@@ -72,9 +86,10 @@
  
     public ItemStack func_222205_b() {
        int i = this.field_222223_a.func_190916_E();
 +      if (i <= 0) return ItemStack.field_190927_a; // CraftBukkit - SPIGOT-5476
        ItemStack itemstack = this.field_222223_a.func_77946_l();
        int j = Math.max(0, MathHelper.func_76141_d((float)(i * this.field_222230_h) * this.field_222231_i));
-       itemstack.func_190920_e(MathHelper.func_76125_a(i + j + this.field_222229_g, 1, this.field_222223_a.func_77973_b().func_77639_j()));
+-      itemstack.func_190920_e(MathHelper.func_76125_a(i + j + this.field_222229_g, 1, this.field_222223_a.func_77973_b().func_77639_j()));
++      itemstack.func_190920_e(MathHelper.func_76125_a(i + j + this.field_222229_g, 1, this.field_222223_a.func_77976_d()));
+       return itemstack;
+    }
+ 
 @@ -87,7 +102,7 @@
     }
  

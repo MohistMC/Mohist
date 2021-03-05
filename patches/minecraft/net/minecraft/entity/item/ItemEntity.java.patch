@@ -63,7 +63,7 @@
  
           this.field_70169_q = this.func_226277_ct_();
           this.field_70167_r = this.func_226278_cu_();
-@@ -104,7 +118,7 @@
+@@ -104,11 +118,11 @@
              }
           }
  
@@ -72,6 +72,11 @@
              this.func_213315_a(MoverType.SELF, this.func_213322_ci());
              float f1 = 0.98F;
              if (this.field_70122_E) {
+-               f1 = this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_())).func_177230_c().func_208618_m() * 0.98F;
++               f1 = this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_())).getSlipperiness(field_70170_p, new BlockPos(this.func_226277_ct_(), func_226278_cu_() - 1.0D, func_226281_cx_()), this) * 0.98F;
+             }
+ 
+             this.func_213317_d(this.func_213322_ci().func_216372_d((double)f1, 0.98D, (double)f1));
 @@ -132,9 +146,11 @@
              }
           }

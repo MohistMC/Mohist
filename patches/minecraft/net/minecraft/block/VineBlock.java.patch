@@ -80,11 +80,3 @@
                    }
                 }
              }
-@@ -322,4 +328,7 @@
-    public static BooleanProperty func_176267_a(Direction p_176267_0_) {
-       return field_196546_A.get(p_176267_0_);
-    }
-+
-+   @Override
-+   public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) { return true; }
- }
