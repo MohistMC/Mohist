@@ -8,7 +8,15 @@
  import com.google.gson.Gson;
  import com.google.gson.GsonBuilder;
  import com.google.gson.JsonElement;
-@@ -38,7 +37,7 @@
+@@ -12,6 +11,7 @@
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Comparator;
++import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Objects;
+@@ -38,7 +38,7 @@
  public class RecipeManager extends JsonReloadListener {
     private static final Gson field_223401_a = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger field_199521_c = LogManager.getLogger();
@@ -17,7 +25,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,31 +46,53 @@
+@@ -47,31 +47,62 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -59,7 +67,16 @@
 +      if (map.containsKey(irecipe.func_199560_c())) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.func_199560_c());
 +      }
-+      map.put(irecipe.func_199560_c(), irecipe);
++      // Mohist start - Fix Bukkit.addRecipe(...)
++      Map newmap = new HashMap();
++      newmap.putAll(map);
++      newmap.put(irecipe.func_199560_c(), irecipe);
++      newmap = ImmutableMap.copyOf(newmap);
++      Map newrecipes = new HashMap();
++      newrecipes.putAll(this.field_199522_d);
++      newrecipes.put(irecipe.func_222127_g(), newmap);
++      this.field_199522_d = ImmutableMap.copyOf(newrecipes);
++      // Mohist end
 +   }
 +   // CraftBukkit end
 +
@@ -75,7 +92,7 @@
     }
  
     public <C extends IInventory, T extends IRecipe<C>> List<T> func_241447_a_(IRecipeType<T> p_241447_1_) {
-@@ -147,4 +168,14 @@
+@@ -147,4 +178,14 @@
        });
        this.field_199522_d = ImmutableMap.copyOf(map);
     }
