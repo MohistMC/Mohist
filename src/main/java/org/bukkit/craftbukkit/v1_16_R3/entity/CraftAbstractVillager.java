@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_16_R3.entity;
 
 import java.util.List;
 import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMerchant;
@@ -20,7 +19,7 @@ public class CraftAbstractVillager extends CraftAgeable implements AbstractVilla
 
     @Override
     public AbstractVillagerEntity getHandle() {
-        return (VillagerEntity) entity;
+        return (AbstractVillagerEntity) entity; // Mohist - Fix villager class casting (#1023)
     }
 
     @Override
