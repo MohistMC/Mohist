@@ -15,7 +15,7 @@ import org.bukkit.inventory.InventoryHolder;
 public class InventoryOwner {
 
     public static InventoryHolder get(TileEntity te) {
-        return get(te.world, te.getPos());
+        return get(te.level, te.getBlockPos());
     }
 
     public static InventoryHolder get(IInventory inventory) {

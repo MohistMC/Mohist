@@ -14,7 +14,7 @@ public class BlockEventDispatcher {
     //For BlockBreakEvent
     @SubscribeEvent(receiveCanceled = true)
     public void onBreakBlockEvent(BlockEvent.BreakEvent event) {
-        if (!event.getWorld().isRemote()) {
+        if (!event.getWorld().isClientSide()) {
             CraftBlock craftBlock = CraftBlock.at(event.getWorld(), event.getPos());
             BlockBreakEvent breakEvent = new BlockBreakEvent(craftBlock, ((ServerPlayerEntity) event.getPlayer()).getBukkitEntity());
             breakEvent.setCancelled(event.isCanceled());

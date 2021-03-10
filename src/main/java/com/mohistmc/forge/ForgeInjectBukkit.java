@@ -48,9 +48,9 @@ public class ForgeInjectBukkit {
 
     public static BiMap<RegistryKey<DimensionType>, World.Environment> environment =
             HashBiMap.create(ImmutableMap.<RegistryKey<DimensionType>, World.Environment>builder()
-                    .put(DimensionType.OVERWORLD, World.Environment.NORMAL)
-                    .put(DimensionType.THE_NETHER, World.Environment.NETHER)
-                    .put(DimensionType.THE_END, World.Environment.THE_END)
+                    .put(DimensionType.OVERWORLD_LOCATION, World.Environment.NORMAL)
+                    .put(DimensionType.NETHER_LOCATION, World.Environment.NETHER)
+                    .put(DimensionType.END_LOCATION, World.Environment.THE_END)
                     .build());
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
@@ -78,7 +78,7 @@ public class ForgeInjectBukkit {
                 // inject item materials into Bukkit for FML
                 String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
                 Item item = entry.getValue();
-                int id = Item.getIdFromItem(item);
+                int id = Item.getId(item);
                 Material material = Material.addMaterial(materialName, id, false);
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
@@ -97,7 +97,7 @@ public class ForgeInjectBukkit {
                 // inject block materials into Bukkit for FML
                 String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_BLOCK__", "");
                 Block block = entry.getValue();
-                int id = Item.getIdFromItem(block.asItem());
+                int id = Item.getId(block.asItem());
                 Material material = Material.addMaterial(materialName, id, true);
                 CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
                 CraftMagicNumbers.MATERIAL_BLOCK.put(material, block);
@@ -153,12 +153,12 @@ public class ForgeInjectBukkit {
 
     public static void addEnumEnvironment() {
         int i = World.Environment.values().length;
-        Registry<DimensionType> registry = MinecraftServer.getServer().func_244267_aX().func_230520_a_();
-        for (Map.Entry<RegistryKey<DimensionType>, DimensionType> entry : registry.getEntries()) {
+        Registry<DimensionType> registry = MinecraftServer.getServer().registryHolder.dimensionTypes();
+        for (Map.Entry<RegistryKey<DimensionType>, DimensionType> entry : registry.entrySet()) {
             RegistryKey<DimensionType> key = entry.getKey();
             World.Environment environment1 = environment.get(key);
             if (environment1 == null) {
-                String name = normalizeName(key.getLocation().toString());
+                String name = normalizeName(key.location().toString());
                 int id = i - 1;
                 environment1 = MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
                 environment.put(key, environment1);
