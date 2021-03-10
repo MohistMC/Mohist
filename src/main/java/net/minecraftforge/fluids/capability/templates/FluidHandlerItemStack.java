@@ -219,7 +219,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
      */
     protected void setContainerToEmpty()
     {
-        container.removeChildTag(FLUID_NBT_KEY);
+        container.removeTagKey(FLUID_NBT_KEY);
     }
 
     @Override

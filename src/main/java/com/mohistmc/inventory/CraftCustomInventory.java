@@ -41,7 +41,7 @@ public class CraftCustomInventory implements InventoryHolder {
             return new CraftCustomInventory((ItemStackHandler) handler);
         }
         if (handler instanceof SlotItemHandler) {
-            return new CraftCustomInventory(((SlotItemHandler) handler).inventory);
+            return new CraftCustomInventory(((SlotItemHandler) handler).container);
         }
         if (handler instanceof InvWrapper) {
             return new CraftCustomInventory(((InvWrapper) handler).getInv());

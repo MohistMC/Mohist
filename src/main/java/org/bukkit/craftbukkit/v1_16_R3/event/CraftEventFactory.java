@@ -181,9 +181,9 @@ public class CraftEventFactory {
     private static boolean canBuild(ServerWorld world, Player player, int x, int z) {
         int spawnSize = Bukkit.getServer().getSpawnRadius();
 
-        if (world.getDimensionKey() != World.OVERWORLD) return true;
+        if (world.dimension() != World.OVERWORLD) return true;
         if (spawnSize <= 0) return true;
-        if (((CraftServer) Bukkit.getServer()).getHandle().getOppedPlayers().isEmpty()) return true;
+        if (((CraftServer) Bukkit.getServer()).getHandle().getOps().isEmpty()) return true;
         if (player.isOp()) return true;
 
         BlockPos chunkcoordinates = world.getSpawnPoint();
@@ -1292,7 +1292,7 @@ public class CraftEventFactory {
 
     public static ItemStack handleEditBookEvent(ServerPlayerEntity player, int itemInHandIndex, ItemStack itemInHand, ItemStack newBookItem) {
         PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(player.getBukkitEntity(), itemInHandIndex, (BookMeta) CraftItemStack.getItemMeta(itemInHand), (BookMeta) CraftItemStack.getItemMeta(newBookItem), newBookItem.getItem() == Items.WRITTEN_BOOK);
-        player.world.getCBServer().getPluginManager().callEvent(editBookEvent);
+        player.level.getCBServer().getPluginManager().callEvent(editBookEvent);
 
         // If they've got the same item in their hand, it'll need to be updated.
         if (itemInHand != null && itemInHand.getItem() == Items.WRITABLE_BOOK) {
@@ -1312,13 +1312,13 @@ public class CraftEventFactory {
 
     public static PlayerUnleashEntityEvent callPlayerUnleashEntityEvent(MobEntity entity, PlayerEntity player) {
         PlayerUnleashEntityEvent event = new PlayerUnleashEntityEvent(entity.getBukkitEntity(), (Player) player.getBukkitEntity());
-        entity.world.getCBServer().getPluginManager().callEvent(event);
+        entity.level.getCBServer().getPluginManager().callEvent(event);
         return event;
     }
 
     public static PlayerLeashEntityEvent callPlayerLeashEntityEvent(MobEntity entity, Entity leashHolder, PlayerEntity player) {
         PlayerLeashEntityEvent event = new PlayerLeashEntityEvent(entity.getBukkitEntity(), leashHolder.getBukkitEntity(), (Player) player.getBukkitEntity());
-        entity.world.getCBServer().getPluginManager().callEvent(event);
+        entity.level.getCBServer().getPluginManager().callEvent(event);
         return event;
     }
 
@@ -1378,13 +1378,13 @@ public class CraftEventFactory {
                 event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, material);
             }
         }
-        playerEntity.world.getCBServer().getPluginManager().callEvent(event);
+        playerEntity.level.getCBServer().getPluginManager().callEvent(event);
         return (Cancellable) event;
     }
 
     public static FireworkExplodeEvent callFireworkExplodeEvent(FireworkRocketEntity firework) {
         FireworkExplodeEvent event = new FireworkExplodeEvent((Firework) firework.getBukkitEntity());
-        firework.world.getCBServer().getPluginManager().callEvent(event);
+        firework.level.getCBServer().getPluginManager().callEvent(event);
         return event;
     }
 
@@ -1418,19 +1418,19 @@ public class CraftEventFactory {
     }
     public static EntityToggleGlideEvent callToggleGlideEvent(LivingEntity entity, boolean gliding) {
         EntityToggleGlideEvent event = new EntityToggleGlideEvent((org.bukkit.entity.LivingEntity) entity.getBukkitEntity(), gliding);
-        entity.world.getCBServer().getPluginManager().callEvent(event);
+        entity.level.getCBServer().getPluginManager().callEvent(event);
         return event;
     }
 
     public static EntityToggleSwimEvent callToggleSwimEvent(LivingEntity entity, boolean swimming) {
         EntityToggleSwimEvent event = new EntityToggleSwimEvent((org.bukkit.entity.LivingEntity) entity.getBukkitEntity(), swimming);
-        entity.world.getCBServer().getPluginManager().callEvent(event);
+        entity.level.getCBServer().getPluginManager().callEvent(event);
         return event;
     }
 
     public static AreaEffectCloudApplyEvent callAreaEffectCloudApplyEvent(AreaEffectCloudEntity cloud, List<org.bukkit.entity.LivingEntity> entities) {
         AreaEffectCloudApplyEvent event = new AreaEffectCloudApplyEvent((AreaEffectCloud) cloud.getBukkitEntity(), entities);
-        cloud.world.getCBServer().getPluginManager().callEvent(event);
+        cloud.level.getCBServer().getPluginManager().callEvent(event);
         return event;
     }
 
@@ -1542,18 +1542,18 @@ public class CraftEventFactory {
      * Raid events
      */
     public static boolean callRaidTriggerEvent(Raid raid, ServerPlayerEntity player) {
-        RaidTriggerEvent event = new RaidTriggerEvent(new CraftRaid(raid), raid.getWorld().getCBWorld(), player.getBukkitEntity());
+        RaidTriggerEvent event = new RaidTriggerEvent(new CraftRaid(raid), raid.getLevel().getCBWorld(), player.getBukkitEntity());
         Bukkit.getPluginManager().callEvent(event);
         return !event.isCancelled();
     }
 
     public static void callRaidFinishEvent(Raid raid, List<Player> players) {
-        RaidFinishEvent event = new RaidFinishEvent(new CraftRaid(raid), raid.getWorld().getCBWorld(), players);
+        RaidFinishEvent event = new RaidFinishEvent(new CraftRaid(raid), raid.getLevel().getCBWorld(), players);
         Bukkit.getPluginManager().callEvent(event);
     }
 
     public static void callRaidStopEvent(Raid raid, RaidStopEvent.Reason reason) {
-        RaidStopEvent event = new RaidStopEvent(new CraftRaid(raid), raid.getWorld().getCBWorld(), reason);
+        RaidStopEvent event = new RaidStopEvent(new CraftRaid(raid), raid.getLevel().getCBWorld(), reason);
         Bukkit.getPluginManager().callEvent(event);
     }
 
@@ -1563,12 +1563,12 @@ public class CraftEventFactory {
         for (AbstractRaiderEntity entityRaider : raiders) {
             craftRaiders.add((Raider) entityRaider.getBukkitEntity());
         }
-        RaidSpawnWaveEvent event = new RaidSpawnWaveEvent(new CraftRaid(raid), raid.getWorld().getCBWorld(), craftLeader, craftRaiders);
+        RaidSpawnWaveEvent event = new RaidSpawnWaveEvent(new CraftRaid(raid), raid.getLevel().getCBWorld(), craftLeader, craftRaiders);
         Bukkit.getPluginManager().callEvent(event);
     }
 
     public static LootGenerateEvent callLootGenerateEvent(IInventory inventory, LootTable lootTable, LootContext lootInfo, List<ItemStack> loot, boolean plugin) {
-        CraftWorld world = lootInfo.getWorld().getCBWorld();
+        CraftWorld world = lootInfo.getLevel().getCBWorld();
         Entity entity = lootInfo.get(LootParameters.THIS_ENTITY);
         NamespacedKey key = CraftNamespacedKey.fromMinecraft(world.getHandle().getServer().getLootTableManager().lootTableToKey.get(lootTable));
         CraftLootTable craftLootTable = new CraftLootTable(key, lootTable);

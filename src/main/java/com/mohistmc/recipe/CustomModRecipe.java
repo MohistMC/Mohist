@@ -33,7 +33,7 @@ public class CustomModRecipe implements Recipe, Keyed {
 
     @Override
     public ItemStack getResult() {
-        return CraftItemStack.asCraftMirror(iRecipe.getRecipeOutput());
+        return CraftItemStack.asCraftMirror(iRecipe.getResultItem());
     }
 
     @Override

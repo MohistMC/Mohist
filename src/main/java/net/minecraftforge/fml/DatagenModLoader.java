@@ -51,7 +51,7 @@ public class DatagenModLoader {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info(i18n.get("datagenmodloader.1", mods));
         runningDataGen = true;
-        Bootstrap.register();
+        Bootstrap.bootStrap();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
         if (!mods.contains("forge")) {

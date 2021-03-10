@@ -95,7 +95,7 @@ public class ForgeTagHandler
         {
             TagRegistry<T> tagRegistry = getTagRegistry(registry);
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
-            return tagRegistry.createTag(name.toString());
+            return tagRegistry.bind(name.toString());
         }
         return TagRegistry.createDelayedTag(registry.getRegistryName(), name);
     }
@@ -266,13 +266,13 @@ public class ForgeTagHandler
                 if (makeEmpty)
                 {
                     if (withOptional)
-                        builder.put(registryName, tagRegistry.reinjectOptionalTags(ITagCollection.getTagCollectionFromMap(Collections.emptyMap())));
+                        builder.put(registryName, tagRegistry.reinjectOptionalTags(ITagCollection.of(Collections.emptyMap())));
                     else
-                        builder.put(registryName, ITagCollection.getTagCollectionFromMap(Collections.emptyMap()));
+                        builder.put(registryName, ITagCollection.of(Collections.emptyMap()));
                 }
                 else
                 {
-                    builder.put(registryName, ITagCollection.getTagCollectionFromMap(tagRegistry.getTags().stream().distinct().collect(Collectors.toMap(INamedTag::getName, namedTag -> namedTag))));
+                    builder.put(registryName, ITagCollection.of(tagRegistry.getWrappers().stream().distinct().collect(Collectors.toMap(INamedTag::getName, namedTag -> namedTag))));
                 }
             }
         }
@@ -292,7 +292,7 @@ public class ForgeTagHandler
         {
             LOGGER.debug(i18n.get("forgetaghandler.2", customTagTypes.size()));
         }
-        return ITagCollectionSupplier.getTagCollectionSupplier(blockTags, itemTags, fluidTags, entityTypeTags);
+        return ITagCollectionSupplier.of(blockTags, itemTags, fluidTags, entityTypeTags);
     }
 
     /**
@@ -305,7 +305,7 @@ public class ForgeTagHandler
         ImmutableMap.Builder<ResourceLocation, ITagCollection<?>> builder = ImmutableMap.builder();
         for (TagCollectionReaderInfo info : tagCollectionReaders)
         {
-            builder.put(info.tagType, info.reader.buildTagCollectionFromMap(info.tagBuilders));
+            builder.put(info.tagType, info.reader.load(info.tagBuilders));
         }
         customTagTypes = builder.build();
     }
@@ -331,7 +331,7 @@ public class ForgeTagHandler
         CompletableFuture<List<TagCollectionReaderInfo>> customResults = CompletableFuture.completedFuture(new ArrayList<>());
         for (Map.Entry<ResourceLocation, TagCollectionReader<?>> entry : readers.entrySet())
         {
-            customResults = customResults.thenCombine(entry.getValue().readTagsFromManager(resourceManager, backgroundExecutor), (results, result) -> {
+            customResults = customResults.thenCombine(entry.getValue().prepare(resourceManager, backgroundExecutor), (results, result) -> {
                 results.add(new TagCollectionReaderInfo(entry.getKey(), entry.getValue(), result));
                 return results;
             });
@@ -370,7 +370,7 @@ public class ForgeTagHandler
             TagRegistry<?> tagRegistry = TagRegistryManager.get(registryName);
             if (tagRegistry != null)
             {
-                builder.put(registryName, ITagCollection.getTagCollectionFromMap(Collections.emptyMap()));
+                builder.put(registryName, ITagCollection.of(Collections.emptyMap()));
             }
         }
         return withSpecificCustom(tagCollectionSupplier, builder.build());
@@ -386,27 +386,27 @@ public class ForgeTagHandler
         return new ITagCollectionSupplier()
         {
             @Override
-            public ITagCollection<Block> getBlockTags()
+            public ITagCollection<Block> getBlocks()
             {
-                return tagCollectionSupplier.getBlockTags();
+                return tagCollectionSupplier.getBlocks();
             }
 
             @Override
-            public ITagCollection<Item> getItemTags()
+            public ITagCollection<Item> getItems()
             {
-                return tagCollectionSupplier.getItemTags();
+                return tagCollectionSupplier.getItems();
             }
 
             @Override
-            public ITagCollection<Fluid> getFluidTags()
+            public ITagCollection<Fluid> getFluids()
             {
-                return tagCollectionSupplier.getFluidTags();
+                return tagCollectionSupplier.getFluids();
             }
 
             @Override
-            public ITagCollection<EntityType<?>> getEntityTypeTags()
+            public ITagCollection<EntityType<?>> getEntityTypes()
             {
-                return tagCollectionSupplier.getEntityTypeTags();
+                return tagCollectionSupplier.getEntityTypes();
             }
 
             @Override
