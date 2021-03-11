@@ -36,7 +36,7 @@ public class CraftAttributeInstance implements AttributeInstance {
     @Override
     public Collection<AttributeModifier> getModifiers() {
         List<AttributeModifier> result = new ArrayList<AttributeModifier>();
-        for (net.minecraft.entity.ai.attributes.AttributeModifier nms : handle.getModifierListCopy()) {
+        for (net.minecraft.entity.ai.attributes.AttributeModifier nms : handle.getModifiers()) {
             result.add(convert(nms));
         }
 
@@ -46,7 +46,7 @@ public class CraftAttributeInstance implements AttributeInstance {
     @Override
     public void addModifier(AttributeModifier modifier) {
         Preconditions.checkArgument(modifier != null, "modifier");
-        handle.applyModifier(convert(modifier));
+        handle.addModifier(convert(modifier));
     }
 
     @Override
@@ -70,6 +70,6 @@ public class CraftAttributeInstance implements AttributeInstance {
     }
 
     public static AttributeModifier convert(net.minecraft.entity.ai.attributes.AttributeModifier nms) {
-        return new AttributeModifier(nms.getID(), nms.getName(), nms.getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+        return new AttributeModifier(nms.getId(), nms.getName(), nms.getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
     }
 }

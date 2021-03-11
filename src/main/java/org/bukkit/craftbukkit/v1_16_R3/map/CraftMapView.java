@@ -31,7 +31,7 @@ public final class CraftMapView implements MapView {
 
     @Override
     public int getId() {
-        String text = worldMap.getName();
+        String text = worldMap.getId();
         if (text.startsWith("map_")) {
             try {
                 return Integer.parseInt(text.substring("map_".length()));
@@ -61,34 +61,34 @@ public final class CraftMapView implements MapView {
     @Override
     public World getWorld() {
         RegistryKey<net.minecraft.world.World> dimension = worldMap.dimension;
-        ServerWorld world = MinecraftServer.getServer().getWorld(dimension);
+        ServerWorld world = MinecraftServer.getServer().getLevel(dimension);
 
         return (world == null) ? null : world.getCBWorld();
     }
 
     @Override
     public void setWorld(World world) {
-        worldMap.dimension = ((CraftWorld) world).getHandle().getDimensionKey();
+        worldMap.dimension = ((CraftWorld) world).getHandle().dimension();
     }
 
     @Override
     public int getCenterX() {
-        return worldMap.xCenter;
+        return worldMap.x;
     }
 
     @Override
     public int getCenterZ() {
-        return worldMap.zCenter;
+        return worldMap.z;
     }
 
     @Override
     public void setCenterX(int x) {
-        worldMap.xCenter = x;
+        worldMap.x = x;
     }
 
     @Override
     public void setCenterZ(int z) {
-        worldMap.zCenter = z;
+        worldMap.z = z;
     }
 
     @Override

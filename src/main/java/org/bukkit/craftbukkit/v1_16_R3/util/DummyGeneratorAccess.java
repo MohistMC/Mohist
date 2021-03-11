@@ -39,27 +39,27 @@ public class DummyGeneratorAccess implements IWorld {
     public static final IWorld INSTANCE = new DummyGeneratorAccess();
 
     @Override
-    public ITickList<Block> getPendingBlockTicks() {
-        return EmptyTickList.get();
+    public ITickList<Block> getBlockTicks() {
+        return EmptyTickList.empty();
     }
 
     @Override
-    public ITickList<Fluid> getPendingFluidTicks() {
-        return EmptyTickList.get();
+    public ITickList<Fluid> getLiquidTicks() {
+        return EmptyTickList.empty();
     }
 
     @Override
-    public IWorldInfo getWorldInfo() {
+    public IWorldInfo getLevelData() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public DifficultyInstance getDifficultyForLocation(BlockPos pos) {
+    public DifficultyInstance getCurrentDifficultyAt(BlockPos pos) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public AbstractChunkProvider getChunkProvider() {
+    public AbstractChunkProvider getChunkSource() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -79,7 +79,7 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public void playEvent(@Nullable PlayerEntity player, int type, BlockPos pos, int data) {
+    public void levelEvent(@Nullable PlayerEntity player, int type, BlockPos pos, int data) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -89,22 +89,22 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public DynamicRegistries func_241828_r() {
+    public DynamicRegistries registryAccess() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<Entity> getEntitiesInAABBexcluding(@Nullable Entity entityIn, AxisAlignedBB boundingBox, @Nullable Predicate<? super Entity> predicate) {
+    public List<Entity> getEntities(@Nullable Entity entityIn, AxisAlignedBB boundingBox, @Nullable Predicate<? super Entity> predicate) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T extends Entity> List<T> getEntitiesWithinAABB(Class<? extends T> clazz, AxisAlignedBB aabb, @Nullable Predicate<? super T> filter) {
+    public <T extends Entity> List<T> getEntitiesOfClass(Class<? extends T> clazz, AxisAlignedBB aabb, @Nullable Predicate<? super T> filter) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<? extends PlayerEntity> getPlayers() {
+    public List<? extends PlayerEntity> players() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -120,7 +120,7 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public int getSkylightSubtracted() {
+    public int getSkyDarken() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -130,12 +130,12 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public Biome getNoiseBiomeRaw(int x, int y, int z) {
+    public Biome getUncachedNoiseBiome(int x, int y, int z) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean isRemote() {
+    public boolean isClientSide() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -145,12 +145,12 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public DimensionType getDimensionType() {
+    public DimensionType dimensionType() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TileEntity getTileEntity(BlockPos blockposition) {
+    public TileEntity getBlockEntity(BlockPos blockposition) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -170,12 +170,12 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public boolean hasBlockState(BlockPos bp, Predicate<BlockState> prdct) {
+    public boolean isStateAtPosition(BlockPos bp, Predicate<BlockState> prdct) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean setBlockState(BlockPos pos, BlockState state, int flags, int recursionLeft) {
+    public boolean setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft) {
         return false;
     }
 
@@ -185,12 +185,12 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public float func_230487_a_(Direction p_230487_1_, boolean p_230487_2_) {
+    public float getShade(Direction p_230487_1_, boolean p_230487_2_) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public WorldLightManager getLightManager() {
+    public WorldLightManager getLightEngine() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

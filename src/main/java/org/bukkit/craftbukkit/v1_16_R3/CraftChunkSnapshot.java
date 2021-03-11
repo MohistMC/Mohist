@@ -66,7 +66,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
 
         Predicate<BlockState> nms = Predicates.equalTo(((CraftBlockData) block).getState());
         for (PalettedContainer<BlockState> palette : blockids) {
-            if (palette.func_235963_a_(nms)) {
+            if (palette.maybeHas(nms)) {
                 return true;
             }
         }
@@ -116,7 +116,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(hmap != null, "ChunkSnapshot created without height map. Please call getSnapshot with includeMaxblocky=true");
         CraftChunk.validateChunkCoordinates(x, 0, z);
 
-        return hmap.getHeight(x, z);
+        return hmap.getFirstAvailable(x, z);
     }
 
     @Override

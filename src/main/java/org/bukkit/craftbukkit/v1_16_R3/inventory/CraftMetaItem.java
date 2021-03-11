@@ -372,13 +372,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         }
         if (tag.contains(BUKKIT_CUSTOM_TAG.NBT)) {
             CompoundNBT compound = tag.getCompound(BUKKIT_CUSTOM_TAG.NBT);
-            Set<String> keys = compound.keySet();
+            Set<String> keys = compound.getAllKeys();
             for (String key : keys) {
                 persistentDataContainer.put(key, compound.get(key));
             }
         }
 
-        Set<String> keys = tag.keySet();
+        Set<String> keys = tag.getAllKeys();
         for (String key : keys) {
             if (!getHandledTags().contains(key)) {
                 unhandledTags.put(key, tag.get(key));

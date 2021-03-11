@@ -20,7 +20,7 @@ public class PlayerAPI {
      * @param player org.bukkit.entity.player
      */
     public static String getPing(Player player) {
-        return String.valueOf(getNMSPlayer(player).ping);
+        return String.valueOf(getNMSPlayer(player).latency);
     }
 
     public static ServerPlayerEntity getNMSPlayer(Player player) {
@@ -48,11 +48,11 @@ public class PlayerAPI {
 
     public static boolean isOp(PlayerEntity ep)
     {
-        return MinecraftServer.getServer().getPlayerList().canSendCommands(ep.getGameProfile());
+        return MinecraftServer.getServer().getPlayerList().isOp(ep.getGameProfile());
     }
 
     public static SocketAddress getRemoteAddress(Player player)
     {
-        return getNMSPlayer(player).connection.netManager.getRemoteAddress();
+        return getNMSPlayer(player).connection.connection.getRemoteAddress();
     }
 }

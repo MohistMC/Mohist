@@ -110,39 +110,39 @@ public final class CraftPersistentDataTypeRegistry {
             Primitives
          */
         if (Objects.equals(Byte.class, type)) {
-            return createAdapter(Byte.class, ByteNBT.class, ByteNBT::valueOf, ByteNBT::getByte);
+            return createAdapter(Byte.class, ByteNBT.class, ByteNBT::valueOf, ByteNBT::getAsByte);
         }
         if (Objects.equals(Short.class, type)) {
-            return createAdapter(Short.class, ShortNBT.class, ShortNBT::valueOf, ShortNBT::getShort);
+            return createAdapter(Short.class, ShortNBT.class, ShortNBT::valueOf, ShortNBT::getAsShort);
         }
         if (Objects.equals(Integer.class, type)) {
-            return createAdapter(Integer.class, IntNBT.class, IntNBT::valueOf, IntNBT::getInt);
+            return createAdapter(Integer.class, IntNBT.class, IntNBT::valueOf, IntNBT::getAsInt);
         }
         if (Objects.equals(Long.class, type)) {
-            return createAdapter(Long.class, LongNBT.class, LongNBT::valueOf, LongNBT::getLong);
+            return createAdapter(Long.class, LongNBT.class, LongNBT::valueOf, LongNBT::getAsLong);
         }
         if (Objects.equals(Float.class, type)) {
-            return createAdapter(Float.class, FloatNBT.class, FloatNBT::valueOf, FloatNBT::getFloat);
+            return createAdapter(Float.class, FloatNBT.class, FloatNBT::valueOf, FloatNBT::getAsFloat);
         }
         if (Objects.equals(Double.class, type)) {
-            return createAdapter(Double.class, DoubleNBT.class, DoubleNBT::valueOf, DoubleNBT::getDouble);
+            return createAdapter(Double.class, DoubleNBT.class, DoubleNBT::valueOf, DoubleNBT::getAsDouble);
         }
 
         /*
             String
          */
         if (Objects.equals(String.class, type)) {
-            return createAdapter(String.class, StringNBT.class, StringNBT::valueOf, StringNBT::getString);
+            return createAdapter(String.class, StringNBT.class, StringNBT::valueOf, StringNBT::getAsString);
         }
 
         /*
             Primitive Arrays
          */
         if (Objects.equals(byte[].class, type)) {
-            return createAdapter(byte[].class, ByteArrayNBT.class, array -> new ByteArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getByteArray(), n.size()));
+            return createAdapter(byte[].class, ByteArrayNBT.class, array -> new ByteArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getAsByteArray(), n.size()));
         }
         if (Objects.equals(int[].class, type)) {
-            return createAdapter(int[].class, IntArrayNBT.class, array -> new IntArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getIntArray(), n.size()));
+            return createAdapter(int[].class, IntArrayNBT.class, array -> new IntArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getAsIntArray(), n.size()));
         }
         if (Objects.equals(long[].class, type)) {
             return createAdapter(long[].class, LongArrayNBT.class, array -> new LongArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getAsLongArray(), n.size()));
@@ -165,7 +165,7 @@ public final class CraftPersistentDataTypeRegistry {
                         for (int i = 0; i < tag.size(); i++) {
                             CraftPersistentDataContainer container = new CraftPersistentDataContainer(this);
                             CompoundNBT compound = tag.getCompound(i);
-                            for (String key : compound.keySet()) {
+                            for (String key : compound.getAllKeys()) {
                                 container.put(key, compound.get(key));
                             }
                             containerArray[i] = container;
@@ -181,7 +181,7 @@ public final class CraftPersistentDataTypeRegistry {
         if (Objects.equals(PersistentDataContainer.class, type)) {
             return createAdapter(CraftPersistentDataContainer.class, CompoundNBT.class, CraftPersistentDataContainer::toTagCompound, tag -> {
                 CraftPersistentDataContainer container = new CraftPersistentDataContainer(this);
-                for (String key : tag.keySet()) {
+                for (String key : tag.getAllKeys()) {
                     container.put(key, tag.get(key));
                 }
                 return container;

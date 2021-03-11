@@ -12,7 +12,7 @@ public final class CraftNamespacedKey {
         if (string == null || string.isEmpty()) {
             return null;
         }
-        ResourceLocation minecraft = ResourceLocation.tryCreate(string);
+        ResourceLocation minecraft = ResourceLocation.tryParse(string);
         return (minecraft == null) ? null : fromMinecraft(minecraft);
     }
 

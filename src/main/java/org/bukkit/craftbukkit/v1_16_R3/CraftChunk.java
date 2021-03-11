@@ -41,13 +41,13 @@ public class CraftChunk implements Chunk {
     private final ServerWorld worldServer;
     private final int x;
     private final int z;
-    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getData();
+    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getStates();
     private static final byte[] emptyLight = new byte[2048];
 
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
         this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(chunk);
 
-        worldServer = (ServerWorld) getHandle().world;
+        worldServer = (ServerWorld) getHandle().level;
         x = getHandle().getPos().x;
         z = getHandle().getPos().z;
     }
@@ -108,14 +108,14 @@ public class CraftChunk implements Chunk {
         net.minecraft.world.chunk.Chunk chunk = getHandle();
 
         for (int i = 0; i < 16; i++) {
-            count += chunk.entityLists[i].size();
+            count += chunk.entitySections[i].size();
         }
 
         Entity[] entities = new Entity[count];
 
         for (int i = 0; i < 16; i++) {
 
-            for (Object obj : chunk.entityLists[i].toArray()) {
+            for (Object obj : chunk.entitySections[i].toArray()) {
                 if (!(obj instanceof net.minecraft.entity.Entity)) {
                     continue;
                 }
@@ -135,9 +135,9 @@ public class CraftChunk implements Chunk {
         int index = 0;
         net.minecraft.world.chunk.Chunk chunk = getHandle();
 
-        BlockState[] entities = new BlockState[chunk.tileEntities.size()];
+        BlockState[] entities = new BlockState[chunk.blockEntities.size()];
 
-        for (Object obj : chunk.tileEntities.keySet().toArray()) {
+        for (Object obj : chunk.blockEntities.keySet().toArray()) {
             if (!(obj instanceof BlockPos)) {
                 continue;
             }
@@ -223,7 +223,7 @@ public class CraftChunk implements Chunk {
 
         Predicate<net.minecraft.block.BlockState> nms = Predicates.equalTo(((CraftBlockData) block).getState());
         for (ChunkSection section : getHandle().getSections()) {
-            if (section != null && section.getData().func_235963_a_(nms)) {
+            if (section != null && section.getStates().maybeHas(nms)) {
                 return true;
             }
         }
@@ -254,22 +254,22 @@ public class CraftChunk implements Chunk {
                 sectionEmpty[i] = true;
             } else { // Not empty
                 CompoundNBT data = new CompoundNBT();
-                cs[i].getData().writeChunkPalette(data, "Palette", "BlockStates");
+                cs[i].getStates().write(data, "Palette", "BlockStates");
 
-                PalettedContainer blockids = new PalettedContainer<net.minecraft.block.BlockState>(ChunkSection.REGISTRY_PALETTE, net.minecraft.block.Block.BLOCK_STATE_IDS, NBTUtil::readBlockState, NBTUtil::writeBlockState, Blocks.AIR.getDefaultState()); // TODO: snapshot whole ChunkSection
-                blockids.readChunkPalette(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
+                PalettedContainer blockids = new PalettedContainer<net.minecraft.block.BlockState>(ChunkSection.GLOBAL_BLOCKSTATE_PALETTE, net.minecraft.block.Block.BLOCK_STATE_REGISTRY, NBTUtil::readBlockState, NBTUtil::writeBlockState, Blocks.AIR.defaultBlockState()); // TODO: snapshot whole ChunkSection
+                blockids.read(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
 
                 sectionBlockIDs[i] = blockids;
 
-                WorldLightManager lightengine = chunk.world.getChunkProvider().getLightManager();
-                NibbleArray skyLightArray = lightengine.getLightEngine(LightType.SKY).getData(SectionPos.of(x, i, z));
+                WorldLightManager lightengine = chunk.level.getChunkSource().getLightEngine();
+                NibbleArray skyLightArray = lightengine.getLayerListener(LightType.SKY).getDataLayerData(SectionPos.of(x, i, z));
                 if (skyLightArray == null) {
                     sectionSkyLights[i] = emptyLight;
                 } else {
                     sectionSkyLights[i] = new byte[2048];
                     System.arraycopy(skyLightArray.getData(), 0, sectionSkyLights[i], 0, 2048);
                 }
-                NibbleArray emitLightArray = lightengine.getLightEngine(LightType.BLOCK).getData(SectionPos.of(x, i, z));
+                NibbleArray emitLightArray = lightengine.getLayerListener(LightType.BLOCK).getDataLayerData(SectionPos.of(x, i, z));
                 if (emitLightArray == null) {
                     sectionEmitLights[i] = emptyLight;
                 } else {
@@ -283,7 +283,7 @@ public class CraftChunk implements Chunk {
 
         if (includeMaxBlockY) {
             hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
-            hmap.setDataArray(chunk.heightMap.get(Heightmap.Type.MOTION_BLOCKING).getDataArray());
+            hmap.setRawData(chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).getRawData());
         }
 
         BiomeContainer biome = null;
@@ -305,8 +305,8 @@ public class CraftChunk implements Chunk {
         BiomeContainer biome = null;
 
         if (includeBiome || includeBiomeTempRain) {
-            BiomeProvider wcm = world.getHandle().getChunkProvider().getChunkGenerator().getBiomeProvider();
-            biome = new BiomeContainer(world.getHandle().func_241828_r().getRegistry(Registry.BIOME_KEY), new ChunkPos(x, z), wcm);
+            BiomeProvider wcm = world.getHandle().getChunkSource().getGenerator().getBiomeSource();
+            biome = new BiomeContainer(world.getHandle().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY), new ChunkPos(x, z), wcm);
         }
 
         /* Fill with empty data */

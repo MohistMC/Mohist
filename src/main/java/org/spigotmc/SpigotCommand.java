@@ -33,7 +33,7 @@ public class SpigotCommand extends Command {
 
             MinecraftServer console = MinecraftServer.getServer();
             SpigotConfig.init((File) console.options.valueOf("spigot-settings"));
-            for (ServerWorld world : console.getWorlds()) {
+            for (ServerWorld world : console.getAllLevels()) {
                 world.spigotConfig.init();
             }
             console.server.reloadCount++;

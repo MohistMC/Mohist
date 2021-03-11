@@ -26,7 +26,7 @@ public class CraftNBTTagConfigSerializer {
     public static Object serialize(INBT base) {
         if (base instanceof CompoundNBT) {
             Map<String, Object> innerMap = new HashMap<>();
-            for (String key : ((CompoundNBT) base).keySet()) {
+            for (String key : ((CompoundNBT) base).getAllKeys()) {
                 innerMap.put(key, serialize(((CompoundNBT) base).get(key)));
             }
 
@@ -39,7 +39,7 @@ public class CraftNBTTagConfigSerializer {
 
             return baseList;
         } else if (base instanceof StringNBT) {
-            return base.getString();
+            return base.getAsString();
         } else if (base instanceof IntNBT) { // No need to check for doubles, those are covered by the double itself
             return base.toString() + "i";
         }
@@ -84,9 +84,9 @@ public class CraftNBTTagConfigSerializer {
                 INBT nbtBase = MOJANGSON_PARSER.type(string);
 
                 if (nbtBase instanceof IntNBT) { // If this returns an integer, it did not use our method from above
-                    return StringNBT.valueOf(nbtBase.getString()); // It then is a string that was falsely read as an int
+                    return StringNBT.valueOf(nbtBase.getAsString()); // It then is a string that was falsely read as an int
                 } else if (nbtBase instanceof DoubleNBT) {
-                    return StringNBT.valueOf(String.valueOf(((DoubleNBT) nbtBase).getDouble())); // Doubles add "d" at the end
+                    return StringNBT.valueOf(String.valueOf(((DoubleNBT) nbtBase).getAsDouble())); // Doubles add "d" at the end
                 } else {
                     return nbtBase;
                 }

@@ -241,7 +241,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public int getDataVersion() {
-        return SharedConstants.getVersion().getWorldVersion();
+        return SharedConstants.getCurrentVersion().getWorldVersion();
     }
 
     @Override
@@ -249,7 +249,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTag((CompoundNBT) JsonToNBT.getTagFromJson(arguments));
+            nmsStack.setTag((CompoundNBT) JsonToNBT.parseTag(arguments));
         } catch (CommandSyntaxException ex) {
             Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -260,7 +260,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     private static File getBukkitDataPackFolder() {
-        return new File(MinecraftServer.getServer().func_240776_a_(FolderName.DATAPACKS).toFile(), "bukkit");
+        return new File(MinecraftServer.getServer().getWorldPath(FolderName.DATAPACK_DIR).toFile(), "bukkit");
     }
 
     @Override
@@ -271,10 +271,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
         ResourceLocation minecraftkey = CraftNamespacedKey.toMinecraft(key);
 
         JsonElement jsonelement = AdvancementManager.GSON.fromJson(advancement, JsonElement.class);
-        JsonObject jsonobject = JSONUtils.getJsonObject(jsonelement, "advancement");
-        net.minecraft.advancements.Advancement.Builder nms = net.minecraft.advancements.Advancement.Builder.deserialize(jsonobject, new ConditionArrayParser(minecraftkey, MinecraftServer.getServer().func_229736_aP_()));
+        JsonObject jsonobject = JSONUtils.convertToJsonObject(jsonelement, "advancement");
+        net.minecraft.advancements.Advancement.Builder nms = net.minecraft.advancements.Advancement.Builder.fromJson(jsonobject, new ConditionArrayParser(minecraftkey, MinecraftServer.getServer().getPredicateManager()));
         if (nms != null) {
-            MinecraftServer.getServer().getAdvancementManager().advancementList.loadAdvancements(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
+            MinecraftServer.getServer().getAdvancements().advancements.add(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
             Advancement bukkit = Bukkit.getAdvancement(key);
 
             if (bukkit != null) {

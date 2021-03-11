@@ -22,6 +22,6 @@ public class CraftFluidTag extends CraftTag<Fluid, org.bukkit.Fluid> {
 
     @Override
     public Set<org.bukkit.Fluid> getValues() {
-        return Collections.unmodifiableSet(getHandle().getAllElements().stream().map(CraftMagicNumbers::getFluid).collect(Collectors.toSet()));
+        return Collections.unmodifiableSet(getHandle().getValues().stream().map(CraftMagicNumbers::getFluid).collect(Collectors.toSet()));
     }
 }

@@ -95,11 +95,11 @@ public class CraftPotionEffectType extends PotionEffectType {
 
     @Override
     public boolean isInstant() {
-        return handle.isInstant();
+        return handle.isInstantenous();
     }
 
     @Override
     public Color getColor() {
-        return Color.fromRGB(handle.getLiquidColor());
+        return Color.fromRGB(handle.getColor());
     }
 }

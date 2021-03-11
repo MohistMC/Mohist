@@ -68,13 +68,13 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         ScoreObjective objective = this.objective;
 
         for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
-            if (board.getObjectiveInDisplaySlot(i) == objective) {
-                board.setObjectiveInDisplaySlot(i, null);
+            if (board.getDisplayObjective(i) == objective) {
+                board.setDisplayObjective(i, null);
             }
         }
         if (slot != null) {
             int slotNumber = CraftScoreboardTranslations.fromBukkitSlot(slot);
-            board.setObjectiveInDisplaySlot(slotNumber, getHandle());
+            board.setDisplayObjective(slotNumber, getHandle());
         }
     }
 
@@ -85,7 +85,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         ScoreObjective objective = this.objective;
 
         for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
-            if (board.getObjectiveInDisplaySlot(i) == objective) {
+            if (board.getDisplayObjective(i) == objective) {
                 return CraftScoreboardTranslations.toBukkitSlot(i);
             }
         }
