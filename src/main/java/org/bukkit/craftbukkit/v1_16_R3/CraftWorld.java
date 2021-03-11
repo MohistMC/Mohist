@@ -601,9 +601,9 @@ public class CraftWorld implements World {
 
     @Override
     public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item) {
-        double xs = (world.rand.nextFloat() * 0.5F) + 0.25D;
-        double ys = (world.rand.nextFloat() * 0.5F) + 0.25D;
-        double zs = (world.rand.nextFloat() * 0.5F) + 0.25D;
+        double xs = (world.random.nextFloat() * 0.5F) + 0.25D;
+        double ys = (world.random.nextFloat() * 0.5F) + 0.25D;
+        double zs = (world.random.nextFloat() * 0.5F) + 0.25D;
         loc = loc.clone();
         loc.setX(loc.getX() + xs);
         loc.setY(loc.getY() + ys);
