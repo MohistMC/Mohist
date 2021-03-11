@@ -53,7 +53,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
                 for (int i = 0; i < list.size(); i++) {
                     CompoundNBT nbttagcompound1 = list.getCompound(i);
 
-                    chargedProjectiles.add(CraftItemStack.asCraftMirror(net.minecraft.item.ItemStack.read(nbttagcompound1)));
+                    chargedProjectiles.add(CraftItemStack.asCraftMirror(net.minecraft.item.ItemStack.of(nbttagcompound1)));
                 }
             }
         }

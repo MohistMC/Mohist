@@ -66,7 +66,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             // convert type of stored Id from String to UUID for backwards compatibility
             if (skullTag.contains("Id", CraftMagicNumbers.NBT.TAG_STRING)) {
                 UUID uuid = UUID.fromString(skullTag.getString("Id"));
-                skullTag.putUniqueId("Id", uuid);
+                skullTag.putUUID("Id", uuid);
             }
 
             this.setProfile(NBTUtil.readGameProfile(skullTag));

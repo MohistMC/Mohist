@@ -27,7 +27,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public int getSize() {
-        return getResultInventory().getSizeInventory() + getMatrixInventory().getSizeInventory();
+        return getResultInventory().getContainerSize() + getMatrixInventory().getContainerSize();
     }
 
     @Override
@@ -64,21 +64,21 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public CraftItemStack getItem(int index) {
-        if (index < getResultInventory().getSizeInventory()) {
-            net.minecraft.item.ItemStack item = getResultInventory().getStackInSlot(index);
+        if (index < getResultInventory().getContainerSize()) {
+            net.minecraft.item.ItemStack item = getResultInventory().getItem(index);
             return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
         } else {
-            net.minecraft.item.ItemStack item = getMatrixInventory().getStackInSlot(index - getResultInventory().getSizeInventory());
+            net.minecraft.item.ItemStack item = getMatrixInventory().getItem(index - getResultInventory().getContainerSize());
             return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
         }
     }
 
     @Override
     public void setItem(int index, ItemStack item) {
-        if (index < getResultInventory().getSizeInventory()) {
-            getResultInventory().setInventorySlotContents(index, CraftItemStack.asNMSCopy(item));
+        if (index < getResultInventory().getContainerSize()) {
+            getResultInventory().setItem(index, CraftItemStack.asNMSCopy(item));
         } else {
-            getMatrixInventory().setInventorySlotContents((index - getResultInventory().getSizeInventory()), CraftItemStack.asNMSCopy(item));
+            getMatrixInventory().setItem((index - getResultInventory().getContainerSize()), CraftItemStack.asNMSCopy(item));
         }
     }
 
@@ -91,22 +91,22 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public ItemStack getResult() {
-        net.minecraft.item.ItemStack item = getResultInventory().getStackInSlot(0);
+        net.minecraft.item.ItemStack item = getResultInventory().getItem(0);
         if (!item.isEmpty()) return CraftItemStack.asCraftMirror(item);
         return null;
     }
 
     @Override
     public void setMatrix(ItemStack[] contents) {
-        if (getMatrixInventory().getSizeInventory() > contents.length) {
-            throw new IllegalArgumentException("Invalid inventory size; expected " + getMatrixInventory().getSizeInventory() + " or less");
+        if (getMatrixInventory().getContainerSize() > contents.length) {
+            throw new IllegalArgumentException("Invalid inventory size; expected " + getMatrixInventory().getContainerSize() + " or less");
         }
 
-        for (int i = 0; i < getMatrixInventory().getSizeInventory(); i++) {
+        for (int i = 0; i < getMatrixInventory().getContainerSize(); i++) {
             if (i < contents.length) {
-                getMatrixInventory().setInventorySlotContents(i, CraftItemStack.asNMSCopy(contents[i]));
+                getMatrixInventory().setItem(i, CraftItemStack.asNMSCopy(contents[i]));
             } else {
-                getMatrixInventory().setInventorySlotContents(i, net.minecraft.item.ItemStack.EMPTY);
+                getMatrixInventory().setItem(i, net.minecraft.item.ItemStack.EMPTY);
             }
         }
     }

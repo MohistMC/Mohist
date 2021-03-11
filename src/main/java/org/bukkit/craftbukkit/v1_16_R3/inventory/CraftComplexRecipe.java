@@ -17,7 +17,7 @@ public class CraftComplexRecipe implements CraftRecipe, ComplexRecipe {
 
     @Override
     public ItemStack getResult() {
-        return CraftItemStack.asCraftMirror(recipe.getRecipeOutput());
+        return CraftItemStack.asCraftMirror(recipe.getResultItem());
     }
 
     @Override

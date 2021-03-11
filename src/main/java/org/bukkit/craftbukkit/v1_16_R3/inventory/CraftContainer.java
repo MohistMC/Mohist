@@ -93,7 +93,7 @@ public class CraftContainer extends Container {
     }
 
     @Override
-    public boolean getCanCraft(PlayerEntity entityhuman) {
+    public boolean isSynched(PlayerEntity entityhuman) {
         if (cachedType == view.getType() && cachedSize == getSize() && cachedTitle.equals(view.getTitle())) {
             return true;
         }
@@ -108,13 +108,13 @@ public class CraftContainer extends Container {
             ContainerType<?> type = getNotchInventoryType(view.getTopInventory());
             IInventory top = ((CraftInventory) view.getTopInventory()).getInventory();
             PlayerInventory bottom = (PlayerInventory) ((CraftInventory) view.getBottomInventory()).getInventory();
-            this.inventoryItemStacks.clear();
-            this.inventorySlots.clear();
+            this.lastSlots.clear();
+            this.slots.clear();
             if (typeChanged) {
                 setupSlots(top, bottom, player.getHandle());
             }
             int size = getSize();
-            player.getHandle().connection.sendPacket(new SOpenWindowPacket(this.windowId, type, new StringTextComponent(cachedTitle)));
+            player.getHandle().connection.send(new SOpenWindowPacket(this.containerId, type, new StringTextComponent(cachedTitle)));
             player.updateInventory();
         }
         return true;
@@ -128,18 +128,18 @@ public class CraftContainer extends Container {
             case BARREL:
                 switch (inventory.getSize()) {
                     case 9:
-                        return ContainerType.GENERIC_9X1;
+                        return ContainerType.GENERIC_9x1;
                     case 18:
-                        return ContainerType.GENERIC_9X2;
+                        return ContainerType.GENERIC_9x2;
                     case 27:
-                        return ContainerType.GENERIC_9X3;
+                        return ContainerType.GENERIC_9x3;
                     case 36:
                     case 41: // PLAYER
-                        return ContainerType.GENERIC_9X4;
+                        return ContainerType.GENERIC_9x4;
                     case 45:
-                        return ContainerType.GENERIC_9X5;
+                        return ContainerType.GENERIC_9x5;
                     case 54:
-                        return ContainerType.GENERIC_9X6;
+                        return ContainerType.GENERIC_9x6;
                     default:
                         throw new IllegalArgumentException("Unsupported custom inventory size " + inventory.getSize());
                 }
@@ -148,7 +148,7 @@ public class CraftContainer extends Container {
             case FURNACE:
                 return ContainerType.FURNACE;
             case DISPENSER:
-                return ContainerType.GENERIC_3X3;
+                return ContainerType.GENERIC_3x3;
             case ENCHANTING:
                 return ContainerType.ENCHANTMENT;
             case BREWING:
@@ -162,7 +162,7 @@ public class CraftContainer extends Container {
             case HOPPER:
                 return ContainerType.HOPPER;
             case DROPPER:
-                return ContainerType.GENERIC_3X3;
+                return ContainerType.GENERIC_3x3;
             case SHULKER_BOX:
                 return ContainerType.SHULKER_BOX;
             case BLAST_FURNACE:
@@ -185,7 +185,7 @@ public class CraftContainer extends Container {
                 throw new IllegalArgumentException("Can't open a " + inventory.getType() + " inventory!");
             default:
                 // TODO: If it reaches the default case, should we throw an error?
-                return ContainerType.GENERIC_9X3;
+                return ContainerType.GENERIC_9x3;
         }
     }
 
@@ -198,7 +198,7 @@ public class CraftContainer extends Container {
             case CHEST:
             case ENDER_CHEST:
             case BARREL:
-                delegate = new ChestContainer(ContainerType.GENERIC_9X3, windowId, bottom, top, top.getSizeInventory() / 9);
+                delegate = new ChestContainer(ContainerType.GENERIC_9x3, windowId, bottom, top, top.getContainerSize() / 9);
                 break;
             case DISPENSER:
             case DROPPER:
@@ -259,8 +259,8 @@ public class CraftContainer extends Container {
         }
 
         if (delegate != null) {
-            this.inventoryItemStacks = delegate.inventoryItemStacks;
-            this.inventorySlots = delegate.inventorySlots;
+            this.lastSlots = delegate.lastSlots;
+            this.slots = delegate.slots;
         }
 
         // SPIGOT-4598 - we should still delegate the shift click handler
@@ -295,12 +295,12 @@ public class CraftContainer extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity entityhuman, int i) {
-        return (delegate != null) ? delegate.transferStackInSlot(entityhuman, i) : super.transferStackInSlot(entityhuman, i);
+    public ItemStack quickMoveStack(PlayerEntity entityhuman, int i) {
+        return (delegate != null) ? delegate.quickMoveStack(entityhuman, i) : super.quickMoveStack(entityhuman, i);
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity entity) {
+    public boolean stillValid(PlayerEntity entity) {
         return true;
     }
 

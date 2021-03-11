@@ -24,12 +24,12 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public ItemStack[] getStorageContents() {
-        return asCraftMirror(getInventory().mainInventory);
+        return asCraftMirror(getInventory().items);
     }
 
     @Override
     public ItemStack getItemInMainHand() {
-        return CraftItemStack.asCraftMirror(getInventory().getCurrentItem());
+        return CraftItemStack.asCraftMirror(getInventory().getSelected());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public ItemStack getItemInOffHand() {
-        return CraftItemStack.asCraftMirror(getInventory().offHandInventory.get(0));
+        return CraftItemStack.asCraftMirror(getInventory().offhand.get(0));
     }
 
     @Override
@@ -103,14 +103,14 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         // to reverse the order of the index from 8. That means we need 0 to correspond to 8, 1 to correspond to 7,
         // 2 to correspond to 6, and 3 to correspond to 5. We do this simply by taking the result of (index - 36) and
         // subtracting that value from 8.
-        if (index < PlayerInventory.getHotbarSize()) {
+        if (index < PlayerInventory.getSelectionSize()) {
             index += 36;
         } else if (index > 39) {
             index += 5; // Off hand
         } else if (index > 35) {
             index = 8 - (index - 36);
         }
-        player.connection.sendPacket(new SSetSlotPacket(player.container.windowId, index, CraftItemStack.asNMSCopy(item)));
+        player.connection.send(new SSetSlotPacket(player.containerMenu.containerId, index, CraftItemStack.asNMSCopy(item)));
     }
 
     @Override
@@ -170,14 +170,14 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public int getHeldItemSlot() {
-        return getInventory().currentItem;
+        return getInventory().selected;
     }
 
     @Override
     public void setHeldItemSlot(int slot) {
-        Validate.isTrue(slot >= 0 && slot < PlayerInventory.getHotbarSize(), "Slot is not between 0 and 8 inclusive");
-        this.getInventory().currentItem = slot;
-        ((CraftPlayer) this.getHolder()).getHandle().connection.sendPacket(new SHeldItemChangePacket(slot));
+        Validate.isTrue(slot >= 0 && slot < PlayerInventory.getSelectionSize(), "Slot is not between 0 and 8 inclusive");
+        this.getInventory().selected = slot;
+        ((CraftPlayer) this.getHolder()).getHandle().connection.send(new SHeldItemChangePacket(slot));
     }
 
     @Override
@@ -242,7 +242,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public ItemStack[] getArmorContents() {
-        return asCraftMirror(getInventory().armorInventory);
+        return asCraftMirror(getInventory().armor);
     }
 
     private void setSlots(ItemStack[] items, int baseSlot, int length) {
@@ -262,22 +262,22 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public void setStorageContents(ItemStack[] items) throws IllegalArgumentException {
-        setSlots(items, 0, getInventory().mainInventory.size());
+        setSlots(items, 0, getInventory().items.size());
     }
 
     @Override
     public void setArmorContents(ItemStack[] items) {
-        setSlots(items, getInventory().mainInventory.size(), getInventory().armorInventory.size());
+        setSlots(items, getInventory().items.size(), getInventory().armor.size());
     }
 
     @Override
     public ItemStack[] getExtraContents() {
-        return asCraftMirror(getInventory().offHandInventory);
+        return asCraftMirror(getInventory().offhand);
     }
 
     @Override
     public void setExtraContents(ItemStack[] items) {
-        setSlots(items, getInventory().mainInventory.size() + getInventory().armorInventory.size(), getInventory().offHandInventory.size());
+        setSlots(items, getInventory().items.size() + getInventory().armor.size(), getInventory().offhand.size());
     }
 
     @Override
