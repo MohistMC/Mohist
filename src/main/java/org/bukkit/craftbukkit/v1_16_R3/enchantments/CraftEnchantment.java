@@ -31,7 +31,7 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        switch (target.type) {
+        switch (target.category) {
             case ARMOR:
                 return EnchantmentTarget.ARMOR;
             case ARMOR_FEET:
@@ -67,7 +67,7 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean isTreasure() {
-        return target.isTreasureEnchantment();
+        return target.isTreasureOnly();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean canEnchantItem(ItemStack item) {
-        return target.canApply(CraftItemStack.asNMSCopy(item));
+        return target.canEnchant(CraftItemStack.asNMSCopy(item));
     }
 
     @Override

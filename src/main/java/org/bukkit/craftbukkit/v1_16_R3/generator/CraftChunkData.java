@@ -122,11 +122,11 @@ public final class CraftChunkData implements ChunkGenerator.ChunkData {
 
     public net.minecraft.block.BlockState getTypeId(int x, int y, int z) {
         if (x != (x & 0xf) || y < 0 || y >= maxHeight || z != (z & 0xf)) {
-            return Blocks.AIR.getDefaultState();
+            return Blocks.AIR.defaultBlockState();
         }
         ChunkSection section = getChunkSection(y, false);
         if (section == null) {
-            return Blocks.AIR.getDefaultState();
+            return Blocks.AIR.defaultBlockState();
         } else {
             return section.getBlockState(x, y & 0xf, z);
         }
@@ -144,7 +144,7 @@ public final class CraftChunkData implements ChunkGenerator.ChunkData {
         ChunkSection section = getChunkSection(y, true);
         section.setBlockState(x, y & 0xf, z, type);
 
-        if (type.getBlock().hasTileEntity(type.getBlock().getDefaultState())) {
+        if (type.getBlock().hasTileEntity(type.getBlock().defaultBlockState())) {
             if (tiles == null) {
                 tiles = new HashSet<>();
             }

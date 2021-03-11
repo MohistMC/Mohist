@@ -39,7 +39,7 @@ public final class CraftChatMessage {
     }
 
     public static ChatColor getColor(TextFormatting format) {
-        return ChatColor.getByChar(format.formattingCode);
+        return ChatColor.getByChar(format.code);
     }
 
     private static final class StringMessage {
@@ -47,7 +47,7 @@ public final class CraftChatMessage {
         // Separate pattern with no group 3, new lines are part of previous string
         private static final Pattern INCREMENTAL_PATTERN_KEEP_NEWLINES = Pattern.compile("(" + String.valueOf(ChatColor.COLOR_CHAR) + "[0-9a-fk-orx])|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(ChatColor.COLOR_CHAR) + " ]|$))))", Pattern.CASE_INSENSITIVE);
         // ChatColor.b does not explicitly reset, its more of empty
-        private static final Style RESET = Style.EMPTY.setBold(false).setItalic(false).setUnderlined(false).setStrikethrough(false).setObfuscated(false);
+        private static final Style RESET = Style.EMPTY.withBold(false).withItalic(false).setUnderlined(false).setStrikethrough(false).setObfuscated(false);
 
         private final List<ITextComponent> list = new ArrayList<ITextComponent>();
         private IFormattableTextComponent currentChatComponent = new StringTextComponent("");
@@ -89,16 +89,16 @@ public final class CraftChatMessage {
                         hex.append(c);
 
                         if (hex.length() == 7) {
-                            modifier = modifier.setColor(Color.fromHex(hex.toString()));
+                            modifier = modifier.withColor(Color.parseColor(hex.toString()));
                             hex = null;
                         }
-                    } else if (format.isFancyStyling() && format != TextFormatting.RESET) {
+                    } else if (format.isFormat() && format != TextFormatting.RESET) {
                         switch (format) {
                         case BOLD:
-                            modifier = modifier.setBold(Boolean.TRUE);
+                            modifier = modifier.withBold(Boolean.TRUE);
                             break;
                         case ITALIC:
-                            modifier = modifier.setItalic(Boolean.TRUE);
+                            modifier = modifier.withItalic(Boolean.TRUE);
                             break;
                         case STRIKETHROUGH:
                             modifier = modifier.setStrikethrough(Boolean.TRUE);
@@ -113,7 +113,7 @@ public final class CraftChatMessage {
                             throw new AssertionError("Unexpected message format");
                         }
                     } else { // Color resets formatting
-                        modifier = RESET.setFormatting(format);
+                        modifier = RESET.withColor(format);
                     }
                     needsAdd = true;
                     break;
@@ -124,9 +124,9 @@ public final class CraftChatMessage {
                         if (!(match.startsWith("http://") || match.startsWith("https://"))) {
                             match = "http://" + match;
                         }
-                        modifier = modifier.setClickEvent(new ClickEvent(Action.OPEN_URL, match));
+                        modifier = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                         appendNewComponent(matcher.end(groupId));
-                        modifier = modifier.setClickEvent((ClickEvent) null);
+                        modifier = modifier.withClickEvent((ClickEvent) null);
                     }
                     break;
                 case 3:
@@ -193,7 +193,7 @@ public final class CraftChatMessage {
     public static ITextComponent fromJSON(String jsonMessage) throws JsonParseException {
         // Note: This also parses plain Strings to text components.
         // Note: An empty message (empty, or only consisting of whitespace) results in null rather than a parse exception.
-        return ITextComponent.Serializer.getComponentFromJson(jsonMessage);
+        return ITextComponent.Serializer.fromJson(jsonMessage);
     }
 
     public static ITextComponent fromJSONOrNull(String jsonMessage) {
@@ -320,7 +320,7 @@ public final class CraftChatMessage {
                         out.append(color.format);
                     } else {
                         out.append(ChatColor.COLOR_CHAR).append("x");
-                        for (char magic : color.getName().substring(1).toCharArray()) {
+                        for (char magic : color.serialize().substring(1).toCharArray()) {
                             out.append(ChatColor.COLOR_CHAR).append(magic);
                         }
                     }
@@ -330,27 +330,27 @@ public final class CraftChatMessage {
                     hadFormat = false;
                 }
             }
-            if (modi.getBold()) {
+            if (modi.isBold()) {
                 out.append(TextFormatting.BOLD);
                 hadFormat = true;
             }
-            if (modi.getItalic()) {
+            if (modi.isItalic()) {
                 out.append(TextFormatting.ITALIC);
                 hadFormat = true;
             }
-            if (modi.getUnderlined()) {
+            if (modi.isUnderlined()) {
                 out.append(TextFormatting.UNDERLINE);
                 hadFormat = true;
             }
-            if (modi.getStrikethrough()) {
+            if (modi.isStrikethrough()) {
                 out.append(TextFormatting.STRIKETHROUGH);
                 hadFormat = true;
             }
-            if (modi.getObfuscated()) {
+            if (modi.isObfuscated()) {
                 out.append(TextFormatting.OBFUSCATED);
                 hadFormat = true;
             }
-            c.func_230533_b_((x) -> {
+            c.visitSelf((x) -> {
                 out.append(x);
                 return Optional.empty();
             });
@@ -388,7 +388,7 @@ public final class CraftChatMessage {
                     extras.add(prev);
 
                     StringTextComponent link = new StringTextComponent(matcher.group());
-                    Style linkModi = modifier.setClickEvent(new ClickEvent(Action.OPEN_URL, match));
+                    Style linkModi = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     link.setStyle(linkModi);
                     extras.add(link);
 
@@ -415,7 +415,7 @@ public final class CraftChatMessage {
         }
 
         if (component instanceof TranslationTextComponent) {
-            Object[] subs = ((TranslationTextComponent) component).getFormatArgs();
+            Object[] subs = ((TranslationTextComponent) component).getArgs();
             for (int i = 0; i < subs.length; i++) {
                 Object comp = subs[i];
                 if (comp instanceof ITextComponent) {

@@ -48,9 +48,9 @@ public class CraftBossBar implements BossBar {
 
     private void initialize() {
         this.flags = new HashMap<>();
-        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::shouldDarkenSky, handle::setDarkenSky));
-        this.flags.put(BarFlag.PLAY_BOSS_MUSIC, new FlagContainer(handle::shouldPlayEndBossMusic, handle::setPlayEndBossMusic));
-        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::shouldCreateFog, handle::setCreateFog));
+        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::shouldDarkenScreen, handle::setDarkenScreen));
+        this.flags.put(BarFlag.PLAY_BOSS_MUSIC, new FlagContainer(handle::shouldPlayBossMusic, handle::setPlayBossMusic));
+        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::shouldCreateWorldFog, handle::setCreateWorldFog));
     }
 
     private BarColor convertColor(BossInfo.Color color) {
@@ -103,7 +103,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setTitle(String title) {
         handle.name = CraftChatMessage.fromString(title, true)[0];
-        handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_NAME);
+        handle.broadcast(SUpdateBossInfoPacket.Operation.UPDATE_NAME);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setColor(BarColor color) {
         handle.color = convertColor(color);
-        handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_STYLE);
+        handle.broadcast(SUpdateBossInfoPacket.Operation.UPDATE_STYLE);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setStyle(BarStyle style) {
         handle.overlay = convertStyle(style);
-        handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_STYLE);
+        handle.broadcast(SUpdateBossInfoPacket.Operation.UPDATE_STYLE);
     }
 
     @Override
