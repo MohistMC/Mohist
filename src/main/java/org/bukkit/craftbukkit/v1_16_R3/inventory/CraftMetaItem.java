@@ -421,7 +421,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 // entry is not an actual CompoundNBT. getCompound returns empty CompoundNBT in that case
                 continue;
             }
-            net.minecraft.entity.ai.attributes.AttributeModifier nmsModifier = net.minecraft.entity.ai.attributes.AttributeModifier.read(entry);
+            net.minecraft.entity.ai.attributes.AttributeModifier nmsModifier = net.minecraft.entity.ai.attributes.AttributeModifier.load(entry);
             if (nmsModifier == null) {
                 continue;
             }
@@ -447,7 +447,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
                 EquipmentSlot slot = null;
                 try {
-                    slot = CraftEquipmentSlot.getSlot(EquipmentSlotType.fromString(slotName.toLowerCase(Locale.ROOT)));
+                    slot = CraftEquipmentSlot.getSlot(EquipmentSlotType.byName(slotName.toLowerCase(Locale.ROOT)));
                 } catch (IllegalArgumentException ex) {
                     // SPIGOT-4551 - Slot is invalid, should really match nothing but this is undefined behaviour anyway
                 }
@@ -521,7 +521,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             try {
                 internalTag = CompressedStreamTools.readCompressed(buf);
                 deserializeInternal(internalTag, map);
-                Set<String> keys = internalTag.keySet();
+                Set<String> keys = internalTag.getAllKeys();
                 for (String key : keys) {
                     if (!getHandledTags().contains(key)) {
                         unhandledTags.put(key, internalTag.get(key));
@@ -703,7 +703,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 continue;
             }
             net.minecraft.entity.ai.attributes.AttributeModifier nmsModifier = CraftAttributeInstance.convert(entry.getValue());
-            CompoundNBT sub = nmsModifier.write();
+            CompoundNBT sub = nmsModifier.save();
             if (sub.isEmpty()) {
                 continue;
             }
@@ -922,7 +922,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public BlockData getBlockData(Material material) {
-        return CraftBlockData.fromData(BlockItem.getBlockState(CraftMagicNumbers.getBlock(material).getDefaultState(), blockData));
+        return CraftBlockData.fromData(BlockItem.getBlockState(CraftMagicNumbers.getBlock(material).defaultBlockState(), blockData));
     }
 
     @Override

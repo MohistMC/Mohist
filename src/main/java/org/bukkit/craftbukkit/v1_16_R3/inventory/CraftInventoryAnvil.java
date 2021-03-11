@@ -24,17 +24,17 @@ public class CraftInventoryAnvil extends CraftResultInventory implements AnvilIn
 
     @Override
     public String getRenameText() {
-        return container.repairedItemName;
+        return container.itemName;
     }
 
     @Override
     public int getRepairCost() {
-        return container.maximumCost.get();
+        return container.cost.get();
     }
 
     @Override
     public void setRepairCost(int i) {
-        container.maximumCost.set(i);
+        container.cost.set(i);
     }
 
     @Override

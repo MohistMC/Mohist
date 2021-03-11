@@ -158,14 +158,14 @@ public final class CraftItemStack extends ItemStack {
     public void setDurability(final short durability) {
         // Ignore damage if item is null
         if (handle != null) {
-            handle.setDamage(durability);
+            handle.setDamageValue(durability);
         }
     }
 
     @Override
     public short getDurability() {
         if (handle != null) {
-            return (short) handle.getDamage();
+            return (short) handle.getDamageValue();
         } else {
             return -1;
         }
@@ -227,7 +227,7 @@ public final class CraftItemStack extends ItemStack {
         if (handle == null) {
             return 0;
         }
-        return EnchantmentHelper.getEnchantmentLevel(CraftEnchantment.getRaw(ench), handle);
+        return EnchantmentHelper.getItemEnchantmentLevel(CraftEnchantment.getRaw(ench), handle);
     }
 
     @Override
@@ -281,7 +281,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static Map<Enchantment, Integer> getEnchantments(net.minecraft.item.ItemStack item) {
-        ListNBT list = (item != null && item.isEnchanted()) ? item.getEnchantmentTagList() : null;
+        ListNBT list = (item != null && item.isEnchanted()) ? item.getEnchantmentTags() : null;
 
         if (list == null || list.size() == 0) {
             return ImmutableMap.of();
@@ -303,7 +303,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static ListNBT getEnchantmentList(net.minecraft.item.ItemStack item) {
-        return (item != null && item.isEnchanted()) ? item.getEnchantmentTagList() : null;
+        return (item != null && item.isEnchanted()) ? item.getEnchantmentTags() : null;
     }
 
     @Override
@@ -580,8 +580,8 @@ public final class CraftItemStack extends ItemStack {
         ((CraftMetaItem) itemMeta).applyToItem(tag);
         item.convertStack(((CraftMetaItem) itemMeta).getVersion());
         // SpigotCraft#463 this is required now by the Vanilla client, so mimic ItemStack constructor in ensuring it
-        if (item.getItem() != null && item.getItem().isDamageable()) {
-            item.setDamage(item.getDamage());
+        if (item.getItem() != null && item.getItem().canBeDepleted()) {
+            item.setDamageValue(item.getDamageValue());
         }
 
         return true;

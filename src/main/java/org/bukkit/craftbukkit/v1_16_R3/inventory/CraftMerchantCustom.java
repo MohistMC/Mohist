@@ -49,15 +49,15 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public void setCustomer(PlayerEntity entityhuman) {
+        public void setTradingPlayer(PlayerEntity entityhuman) {
             this.tradingPlayer = entityhuman;
             if (entityhuman != null) {
-                this.tradingWorld = entityhuman.world;
+                this.tradingWorld = entityhuman.level;
             }
         }
 
         @Override
-        public PlayerEntity getCustomer() {
+        public PlayerEntity getTradingPlayer() {
             return this.tradingPlayer;
         }
 
@@ -67,18 +67,18 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public void setClientSideOffers(@Nullable MerchantOffers offers) {
+        public void overrideOffers(@Nullable MerchantOffers offers) {
 
         }
 
         @Override
-        public void onTrade(MerchantOffer merchantrecipe) {
+        public void notifyTrade(MerchantOffer merchantrecipe) {
             // increase recipe's uses
             merchantrecipe.increaseUses();
         }
 
         @Override
-        public void verifySellingItem(ItemStack stack) {
+        public void notifyTradeUpdated(ItemStack stack) {
 
         }
 
@@ -87,27 +87,27 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public World getWorld() {
+        public World getLevel() {
             return this.tradingWorld;
         }
 
         @Override
-        public int getXp() {
+        public int getVillagerXp() {
             return 0; // xp
         }
 
         @Override
-        public void setXP(int i) {
+        public void overrideXp(int i) {
         }
 
         @Override
-        public boolean hasXPBar() {
+        public boolean showProgressBar() {
             return false; // is-regular-villager flag (hides some gui elements: xp bar, name suffix)
         }
 
         @Override
-        public SoundEvent getYesSound() {
-            return SoundEvents.ENTITY_VILLAGER_YES;
+        public SoundEvent getNotifyTradeSound() {
+            return SoundEvents.VILLAGER_YES;
         }
     }
 }
