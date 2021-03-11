@@ -54,7 +54,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
 
     @Override
     public Block getBlock() {
-        return dispenserBlock.getWorld().getCBWorld().getBlockAt(dispenserBlock.getPos().getX(), dispenserBlock.getPos().getY(), dispenserBlock.getPos().getZ());
+        return dispenserBlock.getLevel().getCBWorld().getBlockAt(dispenserBlock.getBlockPos().getX(), dispenserBlock.getBlockPos().getY(), dispenserBlock.getBlockPos().getZ());
     }
 
     @Override
@@ -66,68 +66,68 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity) {
         Validate.isTrue(getBlock().getType() == Material.DISPENSER, "Block is no longer dispenser");
         // Copied from DispenserBlock.dispense()
-        ProxyBlockSource isourceblock = new ProxyBlockSource((ServerWorld) dispenserBlock.getWorld(), dispenserBlock.getPos());
+        ProxyBlockSource isourceblock = new ProxyBlockSource((ServerWorld) dispenserBlock.getLevel(), dispenserBlock.getBlockPos());
         // Copied from DispenseTaskProjectile
         IPosition iposition = DispenserBlock.getDispensePosition(isourceblock);
-        Direction enumdirection = (Direction) isourceblock.getBlockState().get(DispenserBlock.FACING);
-        net.minecraft.world.World world = dispenserBlock.getWorld();
+        Direction enumdirection = (Direction) isourceblock.getBlockState().getValue(DispenserBlock.FACING);
+        net.minecraft.world.World world = dispenserBlock.getLevel();
         net.minecraft.entity.Entity launch = null;
 
         if (Snowball.class.isAssignableFrom(projectile)) {
-            launch = new SnowballEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+            launch = new SnowballEntity(world, iposition.x(), iposition.y(), iposition.z());
         } else if (Egg.class.isAssignableFrom(projectile)) {
-            launch = new EggEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+            launch = new EggEntity(world, iposition.x(), iposition.y(), iposition.z());
         } else if (EnderPearl.class.isAssignableFrom(projectile)) {
             launch = new EnderPearlEntity(world, null);
-            launch.setPosition(iposition.getX(), iposition.getY(), iposition.getZ());
+            launch.setPos(iposition.x(), iposition.y(), iposition.z());
         } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
-            launch = new ExperienceBottleEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+            launch = new ExperienceBottleEntity(world, iposition.x(), iposition.y(), iposition.z());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             if (LingeringPotion.class.isAssignableFrom(projectile)) {
-                launch = new PotionEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new PotionEntity(world, iposition.x(), iposition.y(), iposition.z());
                 ((PotionEntity) launch).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.LINGERING_POTION, 1)));
             } else {
-                launch = new PotionEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new PotionEntity(world, iposition.x(), iposition.y(), iposition.z());
                 ((PotionEntity) launch).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.SPLASH_POTION, 1)));
             }
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new ArrowEntity(world, iposition.x(), iposition.y(), iposition.z());
                 ((ArrowEntity) launch).setType(CraftPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
-                launch = new SpectralArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new SpectralArrowEntity(world, iposition.x(), iposition.y(), iposition.z());
             } else {
-                launch = new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new ArrowEntity(world, iposition.x(), iposition.y(), iposition.z());
             }
-            ((AbstractArrowEntity) launch).pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
+            ((AbstractArrowEntity) launch).pickup = AbstractArrowEntity.PickupStatus.ALLOWED;
             ((AbstractArrowEntity) launch).projectileSource = this;
         } else if (Fireball.class.isAssignableFrom(projectile)) {
-            double d0 = iposition.getX() + (double) ((float) enumdirection.getXOffset() * 0.3F);
-            double d1 = iposition.getY() + (double) ((float) enumdirection.getYOffset() * 0.3F);
-            double d2 = iposition.getZ() + (double) ((float) enumdirection.getZOffset() * 0.3F);
-            Random random = world.rand;
-            double d3 = random.nextGaussian() * 0.05D + (double) enumdirection.getXOffset();
-            double d4 = random.nextGaussian() * 0.05D + (double) enumdirection.getYOffset();
-            double d5 = random.nextGaussian() * 0.05D + (double) enumdirection.getZOffset();
+            double d0 = iposition.x() + (double) ((float) enumdirection.getStepX() * 0.3F);
+            double d1 = iposition.y() + (double) ((float) enumdirection.getStepY() * 0.3F);
+            double d2 = iposition.z() + (double) ((float) enumdirection.getStepZ() * 0.3F);
+            Random random = world.random;
+            double d3 = random.nextGaussian() * 0.05D + (double) enumdirection.getStepX();
+            double d4 = random.nextGaussian() * 0.05D + (double) enumdirection.getStepY();
+            double d5 = random.nextGaussian() * 0.05D + (double) enumdirection.getStepZ();
 
             if (SmallFireball.class.isAssignableFrom(projectile)) {
                 launch = new SmallFireballEntity(world, null, d0, d1, d2);
             } else if (WitherSkull.class.isAssignableFrom(projectile)) {
                 launch = EntityType.WITHER_SKULL.create(world);
-                launch.setPosition(d0, d1, d2);
+                launch.setPos(d0, d1, d2);
                 double d6 = (double) MathHelper.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((DamagingProjectileEntity) launch).accelerationX = d3 / d6 * 0.1D;
-                ((DamagingProjectileEntity) launch).accelerationY = d4 / d6 * 0.1D;
-                ((DamagingProjectileEntity) launch).accelerationZ = d5 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).xPower = d3 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).yPower = d4 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).zPower = d5 / d6 * 0.1D;
             } else {
                 launch = EntityType.FIREBALL.create(world);
-                launch.setPosition(d0, d1, d2);
+                launch.setPos(d0, d1, d2);
                 double d6 = (double) MathHelper.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((DamagingProjectileEntity) launch).accelerationX = d3 / d6 * 0.1D;
-                ((DamagingProjectileEntity) launch).accelerationY = d4 / d6 * 0.1D;
-                ((DamagingProjectileEntity) launch).accelerationZ = d5 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).xPower = d3 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).yPower = d4 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).zPower = d5 / d6 * 0.1D;
             }
 
             ((DamagingProjectileEntity) launch).projectileSource = this;
@@ -148,14 +148,14 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
                 b *= 1.25F;
             }
             // Copied from DispenseTaskProjectile
-            ((ProjectileEntity) launch).shoot((double) enumdirection.getXOffset(), (double) ((float) enumdirection.getYOffset() + 0.1F), (double) enumdirection.getZOffset(), b, a);
+            ((ProjectileEntity) launch).shoot((double) enumdirection.getStepX(), (double) ((float) enumdirection.getStepY() + 0.1F), (double) enumdirection.getStepZ(), b, a);
         }
 
         if (velocity != null) {
             ((T) launch.getBukkitEntity()).setVelocity(velocity);
         }
 
-        world.addEntity(launch);
+        world.addFreshEntity(launch);
         return (T) launch.getBukkitEntity();
     }
 }

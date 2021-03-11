@@ -121,15 +121,15 @@ public class ActivationRange
         maxRange = Math.max( maxRange, miscActivationRange );
         maxRange = Math.min( ( world.spigotConfig.viewDistance << 4 ) - 8, maxRange );
 
-        for ( PlayerEntity player : world.getPlayers() )
+        for ( PlayerEntity player : world.players() )
         {
 
             player.activatedTick = MinecraftServer.currentTick;
-            maxBB = player.getBoundingBox().grow( maxRange, 256, maxRange );
-            ActivationType.MISC.boundingBox = player.getBoundingBox().grow( miscActivationRange, 256, miscActivationRange );
-            ActivationType.RAIDER.boundingBox = player.getBoundingBox().grow( raiderActivationRange, 256, raiderActivationRange );
-            ActivationType.ANIMAL.boundingBox = player.getBoundingBox().grow( animalActivationRange, 256, animalActivationRange );
-            ActivationType.MONSTER.boundingBox = player.getBoundingBox().grow( monsterActivationRange, 256, monsterActivationRange );
+            maxBB = player.getBoundingBox().inflate( maxRange, 256, maxRange );
+            ActivationType.MISC.boundingBox = player.getBoundingBox().inflate( miscActivationRange, 256, miscActivationRange );
+            ActivationType.RAIDER.boundingBox = player.getBoundingBox().inflate( raiderActivationRange, 256, raiderActivationRange );
+            ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate( animalActivationRange, 256, animalActivationRange );
+            ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate( monsterActivationRange, 256, monsterActivationRange );
 
             int i = MathHelper.floor( maxBB.minX / 16.0D );
             int j = MathHelper.floor( maxBB.maxX / 16.0D );
@@ -157,7 +157,7 @@ public class ActivationRange
      */
     private static void activateChunkEntities(Chunk chunk)
     {
-        for ( ClassInheritanceMultiMap<Entity> slice : chunk.entityLists )
+        for ( ClassInheritanceMultiMap<Entity> slice : chunk.entitySections )
         {
             for ( Entity entity : (Collection<Entity>) slice )
             {
@@ -187,7 +187,7 @@ public class ActivationRange
     public static boolean checkEntityImmunities(Entity entity)
     {
         // quick checks.
-        if ( entity.inWater || entity.fire > 0 )
+        if ( entity.wasTouchingWater || entity.remainingFireTicks > 0 )
         {
             return true;
         }
@@ -205,11 +205,11 @@ public class ActivationRange
         if ( entity instanceof LivingEntity )
         {
             LivingEntity living = (LivingEntity) entity;
-            if ( /*TODO: Missed mapping? living.attackTicks > 0 || */ living.hurtTime > 0 || living.activePotionsMap.size() > 0 )
+            if ( /*TODO: Missed mapping? living.attackTicks > 0 || */ living.hurtTime > 0 || living.activeEffects.size() > 0 )
             {
                 return true;
             }
-            if ( entity instanceof CreatureEntity && ( (CreatureEntity) entity ).getAttackTarget() != null )
+            if ( entity instanceof CreatureEntity && ( (CreatureEntity) entity ).getTarget() != null )
             {
                 return true;
             }
@@ -220,16 +220,16 @@ public class ActivationRange
             if ( entity instanceof AnimalEntity )
             {
                 AnimalEntity animal = (AnimalEntity) entity;
-                if ( animal.isChild() || animal.isInLove() )
+                if ( animal.isBaby() || animal.isInLove() )
                 {
                     return true;
                 }
-                if ( entity instanceof SheepEntity && ( (SheepEntity) entity ).getSheared() )
+                if ( entity instanceof SheepEntity && ( (SheepEntity) entity ).isSheared() )
                 {
                     return true;
                 }
             }
-            if (entity instanceof CreeperEntity && ((CreeperEntity) entity).hasIgnited()) { // isExplosive
+            if (entity instanceof CreeperEntity && ((CreeperEntity) entity).isIgnited()) { // isExplosive
                 return true;
             }
         }
@@ -246,7 +246,7 @@ public class ActivationRange
     {
         SpigotTimings.checkIfActiveTimer.startTiming();
         // Never safe to skip fireworks or entities not yet added to chunk
-        if ( !entity.addedToChunk || entity instanceof FireworkRocketEntity ) {
+        if ( !entity.inChunk || entity instanceof FireworkRocketEntity ) {
             SpigotTimings.checkIfActiveTimer.stopTiming();
             return true;
         }
@@ -267,7 +267,7 @@ public class ActivationRange
                 isActive = true;
             }
             // Add a little performance juice to active entities. Skip 1/4 if not immune.
-        } else if ( !entity.defaultActivationState && entity.ticksExisted % 4 == 0 && !checkEntityImmunities( entity ) )
+        } else if ( !entity.defaultActivationState && entity.tickCount % 4 == 0 && !checkEntityImmunities( entity ) )
         {
             isActive = false;
         }

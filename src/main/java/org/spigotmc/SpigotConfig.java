@@ -339,11 +339,11 @@ public class SpigotConfig
     private static void attributeMaxes()
     {
         maxHealth = getDouble( "settings.attribute.maxHealth.max", maxHealth );
-        ( (RangedAttribute) Attributes.MAX_HEALTH ).maximumValue = maxHealth;
+        ( (RangedAttribute) Attributes.MAX_HEALTH ).maxValue = maxHealth;
         movementSpeed = getDouble( "settings.attribute.movementSpeed.max", movementSpeed );
-        ( (RangedAttribute) Attributes.MOVEMENT_SPEED ).maximumValue = movementSpeed;
+        ( (RangedAttribute) Attributes.MOVEMENT_SPEED ).maxValue = movementSpeed;
         attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );
-        ( (RangedAttribute) Attributes.ATTACK_DAMAGE ).maximumValue = attackDamage;
+        ( (RangedAttribute) Attributes.ATTACK_DAMAGE ).maxValue = attackDamage;
     }
 
     public static boolean debug;

@@ -18,7 +18,7 @@ public class CraftArt {
         ImmutableBiMap.Builder<PaintingType, Art> artworkBuilder = ImmutableBiMap.builder();
         for (ResourceLocation key : Registry.MOTIVE.keySet()) {
             if (key.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                artworkBuilder.put(Registry.MOTIVE.getOrDefault(key), Art.getByName(key.getPath()));
+                artworkBuilder.put(Registry.MOTIVE.get(key), Art.getByName(key.getPath()));
             } else {
                 ForgeInjectBukkit.artMap.forEach(artworkBuilder::put);
             }

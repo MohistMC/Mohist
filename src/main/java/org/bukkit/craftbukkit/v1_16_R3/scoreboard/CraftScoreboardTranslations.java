@@ -16,11 +16,11 @@ final class CraftScoreboardTranslations {
     private CraftScoreboardTranslations() {}
 
     static DisplaySlot toBukkitSlot(int i) {
-        return SLOTS.inverse().get(Scoreboard.getObjectiveDisplaySlot(i));
+        return SLOTS.inverse().get(Scoreboard.getDisplaySlotName(i));
     }
 
     static int fromBukkitSlot(DisplaySlot slot) {
-        return Scoreboard.getObjectiveDisplaySlotNumber(SLOTS.get(slot));
+        return Scoreboard.getDisplaySlotByName(SLOTS.get(slot));
     }
 
     static RenderType toBukkitRender(ScoreCriteria.RenderType display) {

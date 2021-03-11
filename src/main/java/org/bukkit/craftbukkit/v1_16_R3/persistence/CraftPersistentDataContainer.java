@@ -132,7 +132,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
     }
 
     public void putAll(CompoundNBT compound) {
-        for (String key : compound.keySet()) {
+        for (String key : compound.getAllKeys()) {
             this.customDataTags.put(key, compound.get(key));
         }
     }

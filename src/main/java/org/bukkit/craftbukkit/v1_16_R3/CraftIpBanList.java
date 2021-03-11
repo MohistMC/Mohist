@@ -24,7 +24,7 @@ public class CraftIpBanList implements org.bukkit.BanList {
     public org.bukkit.BanEntry getBanEntry(String target) {
         Validate.notNull(target, "Target cannot be null");
 
-        IPBanEntry entry = (IPBanEntry) list.getEntry(target);
+        IPBanEntry entry = (IPBanEntry) list.get(target);
         if (entry == null) {
             return null;
         }
@@ -40,10 +40,10 @@ public class CraftIpBanList implements org.bukkit.BanList {
             StringUtils.isBlank(source) ? null : source, expires,
             StringUtils.isBlank(reason) ? null : reason);
 
-        list.addEntry(entry);
+        list.add(entry);
 
         try {
-            list.writeChanges();
+            list.save();
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-ips.json, {0}", ex.getMessage());
         }
@@ -54,8 +54,8 @@ public class CraftIpBanList implements org.bukkit.BanList {
     @Override
     public Set<org.bukkit.BanEntry> getBanEntries() {
         ImmutableSet.Builder<org.bukkit.BanEntry> builder = ImmutableSet.builder();
-        for (String target : list.getKeys()) {
-            builder.add(new CraftIpBanEntry(target, (IPBanEntry) list.getEntry(target), list));
+        for (String target : list.getUserList()) {
+            builder.add(new CraftIpBanEntry(target, (IPBanEntry) list.get(target), list));
         }
 
         return builder.build();
@@ -72,6 +72,6 @@ public class CraftIpBanList implements org.bukkit.BanList {
     public void pardon(String target) {
         Validate.notNull(target, "Target cannot be null");
 
-        list.removeEntry(target);
+        list.remove(target);
     }
 }

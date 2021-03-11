@@ -71,7 +71,7 @@ public final class CraftLegacy {
 
         if (material.isBlock()) {
             Block block = CraftMagicNumbers.getBlock(material);
-            BlockState blockData = block.getDefaultState();
+            BlockState blockData = block.defaultBlockState();
 
             // Try exact match first
             mappedData = dataToMaterial.get(blockData);
@@ -105,11 +105,11 @@ public final class CraftLegacy {
         // Fallback to any block
         Block convertedBlock = materialToBlock.get(materialData);
         if (convertedBlock != null) {
-            return convertedBlock.getDefaultState();
+            return convertedBlock.defaultBlockState();
         }
 
         // Return air
-        return Blocks.AIR.getDefaultState();
+        return Blocks.AIR.defaultBlockState();
     }
 
     public static Item fromLegacyData(Material material, short data) {
@@ -315,7 +315,7 @@ public final class CraftLegacy {
         SPAWN_EGGS.put((byte) EntityType.ZOMBIFIED_PIGLIN.getTypeId(), Material.ZOMBIFIED_PIGLIN_SPAWN_EGG);
         SPAWN_EGGS.put((byte) EntityType.ZOMBIE_VILLAGER.getTypeId(), Material.ZOMBIE_VILLAGER_SPAWN_EGG);
 
-        Bootstrap.register();
+        Bootstrap.bootStrap();
 
         for (Material material : Material.values()) {
             if (!material.isLegacy()) {
@@ -326,7 +326,7 @@ public final class CraftLegacy {
             if (material.isBlock()) {
                 for (byte data = 0; data < 16; data++) {
                     MaterialData matData = new MaterialData(material, data);
-                    Dynamic blockTag = BlockStateFlatteningMap.getFixedNBTForID(material.getId() << 4 | data);
+                    Dynamic blockTag = BlockStateFlatteningMap.getTag(material.getId() << 4 | data);
                     blockTag = DataFixesManager.getDataFixer().update(TypeReferences.BLOCK_STATE, blockTag, 100, CraftMagicNumbers.INSTANCE.getDataVersion());
                     // TODO: better skull conversion, chests
                     if (blockTag.get("Name").asString("").contains("%%FILTER_ME%%")) {
@@ -334,17 +334,17 @@ public final class CraftLegacy {
                     }
 
                     String name = blockTag.get("Name").asString("");
-                    Block block = Registry.BLOCK.getOrDefault(new ResourceLocation(name));
+                    Block block = Registry.BLOCK.get(new ResourceLocation(name));
                     if (block == null) {
                         continue;
                     }
-                    BlockState blockData = block.getDefaultState();
-                    StateContainer states = block.getStateContainer();
+                    BlockState blockData = block.defaultBlockState();
+                    StateContainer states = block.getStateDefinition();
 
                     Optional<CompoundNBT> propMap = blockTag.getElement("Properties").result();
                     if (propMap.isPresent()) {
                         CompoundNBT properties = propMap.get();
-                        for (String dataKey : properties.keySet()) {
+                        for (String dataKey : properties.getAllKeys()) {
                             Property state = states.getProperty(dataKey);
 
                             if (state == null) {
@@ -355,11 +355,11 @@ public final class CraftLegacy {
                             }
 
                             Preconditions.checkState(!properties.getString(dataKey).isEmpty(), "Empty data string");
-                            Optional opt = state.parseValue(properties.getString(dataKey));
+                            Optional opt = state.getValue(properties.getString(dataKey));
                             if (!opt.isPresent()) {
                                 throw new IllegalStateException("No state value " + properties.getString(dataKey) + " for " + dataKey);
                             }
-                            blockData = blockData.with(state, (Comparable) opt.get());
+                            blockData = blockData.setValue(state, (Comparable) opt.get());
                         }
                     }
 
@@ -411,7 +411,7 @@ public final class CraftLegacy {
                 }
 
                 // Preconditions.checkState(newId.contains("minecraft:"), "Unknown new material for " + matData);
-                Item newMaterial = Registry.ITEM.getOrDefault(new ResourceLocation(newId));
+                Item newMaterial = Registry.ITEM.get(new ResourceLocation(newId));
 
                 if (newMaterial == Items.AIR) {
                     continue;

@@ -249,7 +249,7 @@ public final class CraftServer implements Server {
         ambientSpawn = configuration.getInt("spawn-limits.ambient");
         console.autosavePeriod = configuration.getInt("ticks-per.autosave");
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
-        TicketType.PLUGIN.lifespan = configuration.getInt("chunk-gc.period-in-ticks");
+        TicketType.PLUGIN.timeout = configuration.getInt("chunk-gc.period-in-ticks");
         minimumAPI = configuration.getString("settings.minimum-api");
         loadIcon();
     }
@@ -993,15 +993,15 @@ public final class CraftServer implements Server {
 
         ServerWorld handle = ((CraftWorld) world).getHandle();
 
-        if (!(console.worlds.containsKey(handle.getTypeKey()))) {
+        if (!(console.levels.containsKey(handle.getTypeKey()))) {
             return false;
         }
 
-        if (handle.getDimensionKey() == net.minecraft.world.World.OVERWORLD) {
+        if (handle.dimension() == net.minecraft.world.World.OVERWORLD) {
             return false;
         }
 
-        if (handle.getPlayers().size() > 0) {
+        if (handle.players().size() > 0) {
             return false;
         }
 
@@ -1025,7 +1025,7 @@ public final class CraftServer implements Server {
 
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
-        console.worlds.remove(handle.getTypeKey());
+        console.levels.remove(handle.getTypeKey());
         return true;
     }
 
@@ -1269,7 +1269,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public CraftMapView getMap(int id) {
-        MapData worldmap = console.getWorld(net.minecraft.world.World.OVERWORLD).getMapData("map_" + id);
+        MapData worldmap = console.getLevel(net.minecraft.world.World.OVERWORLD).getMapData("map_" + id);
         if (worldmap == null) {
             return null;
         }

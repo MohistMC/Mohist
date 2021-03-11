@@ -34,9 +34,9 @@ public class CraftBanner extends CraftBlockEntityState<BannerTileEntity> impleme
         base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
         patterns = new ArrayList<Pattern>();
 
-        if (banner.patterns != null) {
-            for (int i = 0; i < banner.patterns.size(); i++) {
-                CompoundNBT p = (CompoundNBT) banner.patterns.get(i);
+        if (banner.itemPatterns != null) {
+            for (int i = 0; i < banner.itemPatterns.size(); i++) {
+                CompoundNBT p = (CompoundNBT) banner.itemPatterns.get(i);
                 patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.getInt("Color")), PatternType.getByIdentifier(p.getString("Pattern"))));
             }
         }
@@ -102,6 +102,6 @@ public class CraftBanner extends CraftBlockEntityState<BannerTileEntity> impleme
             compound.putString("Pattern", p.getPattern().getIdentifier());
             newPatterns.add(compound);
         }
-        banner.patterns = newPatterns;
+        banner.itemPatterns = newPatterns;
     }
 }

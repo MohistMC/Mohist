@@ -25,7 +25,7 @@ public class CraftEffect {
                 break;
             case RECORD_PLAY:
                 Validate.isTrue(data == Material.AIR || ((Material) data).isRecord(), "Invalid record type!");
-                datavalue = Item.getIdFromItem(CraftMagicNumbers.getItem((Material) data));
+                datavalue = Item.getId(CraftMagicNumbers.getItem((Material) data));
                 break;
             case SMOKE:
                 switch ((BlockFace) data) {
@@ -59,7 +59,7 @@ public class CraftEffect {
                 break;
             case STEP_SOUND:
                 Validate.isTrue(((Material) data).isBlock(), "Material is not a block!");
-                datavalue = Block.getStateId(CraftMagicNumbers.getBlock((Material) data).getDefaultState());
+                datavalue = Block.getId(CraftMagicNumbers.getBlock((Material) data).defaultBlockState());
                 break;
             default:
                 datavalue = 0;

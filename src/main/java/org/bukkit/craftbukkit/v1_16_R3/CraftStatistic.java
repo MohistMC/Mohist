@@ -33,7 +33,7 @@ public enum CraftStatistic {
     WALK_ONE_CM(Stats.WALK_ONE_CM),
     WALK_ON_WATER_ONE_CM(Stats.WALK_ON_WATER_ONE_CM),
     FALL_ONE_CM(Stats.FALL_ONE_CM),
-    SNEAK_TIME(Stats.SNEAK_TIME),
+    SNEAK_TIME(Stats.CROUCH_TIME),
     CLIMB_ONE_CM(Stats.CLIMB_ONE_CM),
     FLY_ONE_CM(Stats.FLY_ONE_CM),
     WALK_UNDER_WATER_ONE_CM(Stats.WALK_UNDER_WATER_ONE_CM),
@@ -96,9 +96,9 @@ public enum CraftStatistic {
     RAID_WIN(Stats.RAID_WIN),
     INTERACT_WITH_ANVIL(Stats.INTERACT_WITH_ANVIL),
     INTERACT_WITH_GRINDSTONE(Stats.INTERACT_WITH_GRINDSTONE),
-    TARGET_HIT(Stats.field_232863_aD_),
-    INTERACT_WITH_SMITHING_TABLE(Stats.field_232864_aE_),
-    STRIDER_ONE_CM(Stats.field_232862_C_);
+    TARGET_HIT(Stats.TARGET_HIT),
+    INTERACT_WITH_SMITHING_TABLE(Stats.INTERACT_WITH_SMITHING_TABLE),
+    STRIDER_ONE_CM(Stats.STRIDER_ONE_CM);
     private final ResourceLocation ResourceLocation;
     private final org.bukkit.Statistic bukkit;
     private static final BiMap<ResourceLocation, org.bukkit.Statistic> statistics;
@@ -121,7 +121,7 @@ public enum CraftStatistic {
 
     public static org.bukkit.Statistic getBukkitStatistic(net.minecraft.stats.Stat<?> statistic) {
         Registry statRegistry = statistic.getType().getRegistry();
-        ResourceLocation nmsKey = Registry.STATS.getKey(statistic.getType());
+        ResourceLocation nmsKey = Registry.STAT_TYPE.getKey(statistic.getType());
 
         if (statRegistry == Registry.CUSTOM_STAT) {
             nmsKey = (ResourceLocation) statistic.getValue();
@@ -167,7 +167,7 @@ public enum CraftStatistic {
 
     public static net.minecraft.stats.Stat getEntityStatistic(org.bukkit.Statistic stat, EntityType entity) {
         if (entity.getName() != null) {
-            net.minecraft.entity.EntityType<?> nmsEntity = Registry.ENTITY_TYPE.getOrDefault(new ResourceLocation(entity.getName()));
+            net.minecraft.entity.EntityType<?> nmsEntity = Registry.ENTITY_TYPE.get(new ResourceLocation(entity.getName()));
 
             if (stat == org.bukkit.Statistic.KILL_ENTITY) {
                 return net.minecraft.stats.Stats.ENTITY_KILLED.get(nmsEntity);

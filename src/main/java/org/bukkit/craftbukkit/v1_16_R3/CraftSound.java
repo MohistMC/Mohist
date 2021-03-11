@@ -11,14 +11,14 @@ import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
 public class CraftSound {
 
     public static SoundEvent getSoundEffect(String s) {
-        SoundEvent effect = Registry.SOUND_EVENT.getOrDefault(new ResourceLocation(s));
+        SoundEvent effect = Registry.SOUND_EVENT.get(new ResourceLocation(s));
         Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
 
         return effect;
     }
 
     public static SoundEvent getSoundEffect(Sound s) {
-        SoundEvent effect = Registry.SOUND_EVENT.getOrDefault(CraftNamespacedKey.toMinecraft(s.getKey()));
+        SoundEvent effect = Registry.SOUND_EVENT.get(CraftNamespacedKey.toMinecraft(s.getKey()));
         Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
 
         return effect;

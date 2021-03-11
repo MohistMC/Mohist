@@ -31,7 +31,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
             return null;
         }
 
-        ProfileBanEntry entry = (ProfileBanEntry) list.getEntry(profile);
+        ProfileBanEntry entry = (ProfileBanEntry) list.get(profile);
         if (entry == null) {
             return null;
         }
@@ -52,10 +52,10 @@ public class CraftProfileBanList implements org.bukkit.BanList {
                 StringUtils.isBlank(source) ? null : source, expires,
                 StringUtils.isBlank(reason) ? null : reason);
 
-        list.addEntry(entry);
+        list.add(entry);
 
         try {
-            list.writeChanges();
+            list.save();
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-players.json, {0}", ex.getMessage());
         }
@@ -68,7 +68,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
         ImmutableSet.Builder<org.bukkit.BanEntry> builder = ImmutableSet.builder();
 
         for (UserListEntry entry : list.getEntries()) {
-            GameProfile profile = (GameProfile) entry.getValue();
+            GameProfile profile = (GameProfile) entry.getUser();
             builder.add(new CraftProfileBanEntry(profile, (ProfileBanEntry) entry, list));
         }
 
@@ -92,7 +92,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
         Validate.notNull(target, "Target cannot be null");
 
         GameProfile profile = getProfile(target);
-        list.removeEntry(profile);
+        list.remove(profile);
     }
 
     private GameProfile getProfile(String target) {
@@ -104,6 +104,6 @@ public class CraftProfileBanList implements org.bukkit.BanList {
             //
         }
 
-        return (uuid != null) ? MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(uuid) : MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(target);
+        return (uuid != null) ? MinecraftServer.getServer().getProfileCache().get(uuid) : MinecraftServer.getServer().getProfileCache().get(target);
     }
 }

@@ -19,7 +19,7 @@ public final class CraftRayTraceResult {
     public static RayTraceResult fromNMS(World world, net.minecraft.util.math.RayTraceResult nmsHitResult) {
         if (nmsHitResult == null || nmsHitResult.getType() == net.minecraft.util.math.RayTraceResult.Type.MISS) return null;
 
-        Vector3d nmsHitPos = nmsHitResult.getHitVec();
+        Vector3d nmsHitPos = nmsHitResult.getLocation();
         Vector hitPosition = new Vector(nmsHitPos.x, nmsHitPos.y, nmsHitPos.z);
         BlockFace hitBlockFace = null;
 
@@ -32,8 +32,8 @@ public final class CraftRayTraceResult {
         BlockPos nmsBlockPos = null;
         if (nmsHitResult.getType() == net.minecraft.util.math.RayTraceResult.Type.BLOCK) {
             BlockRayTraceResult blockHitResult = (BlockRayTraceResult) nmsHitResult;
-            hitBlockFace = CraftBlock.notchToBlockFace(blockHitResult.getFace());
-            nmsBlockPos = blockHitResult.getPos();
+            hitBlockFace = CraftBlock.notchToBlockFace(blockHitResult.getDirection());
+            nmsBlockPos = blockHitResult.getBlockPos();
         }
         if (nmsBlockPos != null && world != null) {
             hitBlock = world.getBlockAt(nmsBlockPos.getX(), nmsBlockPos.getY(), nmsBlockPos.getZ());
