@@ -29,13 +29,13 @@ public class CraftEvokerFangs extends CraftEntity implements EvokerFangs {
 
     @Override
     public LivingEntity getOwner() {
-        net.minecraft.entity.LivingEntity owner = getHandle().getCaster();
+        net.minecraft.entity.LivingEntity owner = getHandle().getOwner();
 
         return (owner == null) ? null : (LivingEntity) owner.getBukkitEntity();
     }
 
     @Override
     public void setOwner(LivingEntity owner) {
-        getHandle().setCaster(owner == null ? null : ((CraftLivingEntity) owner).getHandle());
+        getHandle().setOwner(owner == null ? null : ((CraftLivingEntity) owner).getHandle());
     }
 }

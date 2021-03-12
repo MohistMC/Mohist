@@ -112,7 +112,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public Particle getParticle() {
-        return CraftParticle.toBukkit(getHandle().getParticleData());
+        return CraftParticle.toBukkit(getHandle().getParticle());
     }
 
     @Override
@@ -122,7 +122,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public <T> void setParticle(Particle particle, T data) {
-        getHandle().setParticleData(CraftParticle.toNMS(particle, data));
+        getHandle().setParticle(CraftParticle.toNMS(particle, data));
     }
 
     @Override
@@ -132,7 +132,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public void setColor(Color color) {
-        getHandle().setColor(color.asRGB());
+        getHandle().setFixedColor(color.asRGB());
     }
 
     @Override
@@ -140,7 +140,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
         int effectId = effect.getType().getId();
         EffectInstance existing = null;
         for (EffectInstance mobEffect : getHandle().effects) {
-            if (Effect.getId(mobEffect.getPotion()) == effectId) {
+            if (Effect.getId(mobEffect.getEffect()) == effectId) {
                 existing = mobEffect;
             }
         }
@@ -173,7 +173,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
     @Override
     public boolean hasCustomEffect(PotionEffectType type) {
         for (EffectInstance effect : getHandle().effects) {
-            if (CraftPotionUtil.equals(effect.getPotion(), type)) {
+            if (CraftPotionUtil.equals(effect.getEffect(), type)) {
                 return true;
             }
         }
@@ -190,7 +190,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
         int effectId = effect.getId();
         EffectInstance existing = null;
         for (EffectInstance mobEffect : getHandle().effects) {
-            if (Effect.getId(mobEffect.getPotion()) == effectId) {
+            if (Effect.getId(mobEffect.getEffect()) == effectId) {
                 existing = mobEffect;
             }
         }

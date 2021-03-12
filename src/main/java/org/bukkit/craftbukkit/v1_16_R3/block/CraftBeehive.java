@@ -25,29 +25,29 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveTileEntity> imple
 
     @Override
     public Location getFlower() {
-        BlockPos flower = getSnapshot().flowerPos;
+        BlockPos flower = getSnapshot().savedFlowerPos;
         return (flower == null) ? null : new Location(getWorld(), flower.getX(), flower.getY(), flower.getZ());
     }
 
     @Override
     public void setFlower(Location location) {
         Preconditions.checkArgument(location == null || this.getWorld().equals(location.getWorld()), "Flower must be in same world");
-        getSnapshot().flowerPos = (location == null) ? null : new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        getSnapshot().savedFlowerPos = (location == null) ? null : new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
     public boolean isFull() {
-        return getSnapshot().isFullOfBees();
+        return getSnapshot().isFull();
     }
 
     @Override
     public boolean isSedated() {
-        return isPlaced() && getTileEntity().isSmoked();
+        return isPlaced() && getTileEntity().isSedated();
     }
 
     @Override
     public int getEntityCount() {
-        return getSnapshot().getBeeCount();
+        return getSnapshot().getOccupantCount();
     }
 
     @Override
@@ -80,6 +80,6 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveTileEntity> imple
     public void addEntity(Bee entity) {
         Preconditions.checkArgument(entity != null, "Entity must not be null");
 
-        getSnapshot().tryEnterHive(((CraftBee) entity).getHandle(), false);
+        getSnapshot().addOccupant(((CraftBee) entity).getHandle(), false);
     }
 }

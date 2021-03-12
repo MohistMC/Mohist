@@ -19,11 +19,11 @@ public class CraftFirework extends CraftProjectile implements Firework {
     public CraftFirework(CraftServer server, FireworkRocketEntity entity) {
         super(server, entity);
 
-        ItemStack item = getHandle().getDataManager().get(FireworkRocketEntity.FIREWORK_ITEM);
+        ItemStack item = getHandle().getEntityData().get(FireworkRocketEntity.DATA_ID_FIREWORKS_ITEM);
 
         if (item.isEmpty()) {
             item = new ItemStack(Items.FIREWORK_ROCKET);
-            getHandle().getDataManager().set(FireworkRocketEntity.FIREWORK_ITEM, item);
+            getHandle().getEntityData().set(FireworkRocketEntity.DATA_ID_FIREWORKS_ITEM, item);
         }
 
         this.item = CraftItemStack.asCraftMirror(item);
@@ -61,7 +61,7 @@ public class CraftFirework extends CraftProjectile implements Firework {
         // Copied from FireworkRocketEntity constructor, update firework lifetime/power
         getHandle().lifetime = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
 
-        getHandle().getDataManager().markDirty(FireworkRocketEntity.FIREWORK_ITEM);
+        getHandle().getEntityData().markDirty(FireworkRocketEntity.DATA_ID_FIREWORKS_ITEM);
     }
 
     @Override
@@ -71,11 +71,11 @@ public class CraftFirework extends CraftProjectile implements Firework {
 
     @Override
     public boolean isShotAtAngle() {
-        return getHandle().func_213889_i();
+        return getHandle().isShotAtAngle();
     }
 
     @Override
     public void setShotAtAngle(boolean shotAtAngle) {
-        getHandle().getDataManager().set(FireworkRocketEntity.field_213895_d, shotAtAngle);
+        getHandle().getEntityData().set(FireworkRocketEntity.DATA_SHOT_AT_ANGLE, shotAtAngle);
     }
 }

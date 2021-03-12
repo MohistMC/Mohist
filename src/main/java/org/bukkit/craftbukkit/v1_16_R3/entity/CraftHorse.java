@@ -28,24 +28,24 @@ public class CraftHorse extends CraftAbstractHorse implements Horse {
 
     @Override
     public Color getColor() {
-        return Color.values()[getHandle().func_234239_eK_().getId()];
+        return Color.values()[getHandle().getVariant().getId()];
     }
 
     @Override
     public void setColor(Color color) {
         Validate.notNull(color, "Color cannot be null");
-        getHandle().func_234238_a_(CoatColors.func_234254_a_(color.ordinal()), getHandle().func_234240_eM_());
+        getHandle().setVariantAndMarkings(CoatColors.byId(color.ordinal()), getHandle().getMarkings());
     }
 
     @Override
     public Style getStyle() {
-        return Style.values()[getHandle().func_234240_eM_().getId()];
+        return Style.values()[getHandle().getMarkings().getId()];
     }
 
     @Override
     public void setStyle(Style style) {
         Validate.notNull(style, "Style cannot be null");
-        getHandle().func_234238_a_(getHandle().func_234239_eK_(), CoatTypes.func_234248_a_(style.ordinal()));
+        getHandle().setVariantAndMarkings(getHandle().getVariant(), CoatTypes.byId(style.ordinal()));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class CraftHorse extends CraftAbstractHorse implements Horse {
 
     @Override
     public HorseInventory getInventory() {
-        return new CraftInventoryHorse(getHandle().horseChest);
+        return new CraftInventoryHorse(getHandle().inventory);
     }
 
     @Override

@@ -28,18 +28,18 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
 
     @Override
     public String getCommand() {
-        return getHandle().getCommandBlockLogic().getCommand();
+        return getHandle().getCommandBlock().getCommand();
     }
 
     @Override
     public void setCommand(String command) {
-        getHandle().getCommandBlockLogic().setCommand(command != null ? command : "");
-        getHandle().getDataManager().set(CommandBlockMinecartEntity.COMMAND, getHandle().getCommandBlockLogic().getCommand());
+        getHandle().getCommandBlock().setCommand(command != null ? command : "");
+        getHandle().getEntityData().set(CommandBlockMinecartEntity.DATA_ID_COMMAND_NAME, getHandle().getCommandBlock().getCommand());
     }
 
     @Override
     public void setName(String name) {
-        getHandle().getCommandBlockLogic().setName(CraftChatMessage.fromStringOrNull(name));
+        getHandle().getCommandBlock().setName(CraftChatMessage.fromStringOrNull(name));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
 
     @Override
     public String getName() {
-        return CraftChatMessage.fromComponent(getHandle().getCommandBlockLogic().getName());
+        return CraftChatMessage.fromComponent(getHandle().getCommandBlock().getName());
     }
 
     @Override

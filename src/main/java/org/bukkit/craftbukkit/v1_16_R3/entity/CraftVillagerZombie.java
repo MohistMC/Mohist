@@ -46,7 +46,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
     @Override
     public void setVillagerProfession(Villager.Profession profession) {
         Validate.notNull(profession);
-        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(Registry.VILLAGER_PROFESSION.getOrDefault(new ResourceLocation(profession.name().toLowerCase(Locale.ROOT)))));
+        getHandle().setVillagerData(getHandle().getVillagerData().setProfession(Registry.VILLAGER_PROFESSION.get(new ResourceLocation(profession.name().toLowerCase(Locale.ROOT)))));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
     @Override
     public void setVillagerType(Villager.Type type) {
         Validate.notNull(type);
-        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.getOrDefault(CraftNamespacedKey.toMinecraft(type.getKey()))));
+        getHandle().setVillagerData(getHandle().getVillagerData().setType(Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
     @Override
@@ -76,10 +76,10 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
     public void setConversionTime(int time) {
         if (time < 0) {
             getHandle().conversionTime = -1;
-            getHandle().getDataManager().set(ZombieVillagerEntity.CONVERTING, false);
+            getHandle().getEntityData().set(ZombieVillagerEntity.DATA_CONVERTING_ID, false);
             getHandle().persistenceRequired = false; // CraftBukkit - SPIGOT-4684 update persistence
-            getHandle().converstionStarter = null;
-            getHandle().removeEffect(Effects.STRENGTH, EntityPotionEffectEvent.Cause.CONVERSION);
+            getHandle().conversionStarter = null;
+            getHandle().removeEffect(Effects.DAMAGE_BOOST, EntityPotionEffectEvent.Cause.CONVERSION);
         } else {
             getHandle().startConverting((UUID) null, time);
         }
@@ -87,12 +87,12 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
     @Override
     public OfflinePlayer getConversionPlayer() {
-        return (getHandle().converstionStarter == null) ? null : Bukkit.getOfflinePlayer(getHandle().converstionStarter);
+        return (getHandle().conversionStarter == null) ? null : Bukkit.getOfflinePlayer(getHandle().conversionStarter);
     }
 
     @Override
     public void setConversionPlayer(OfflinePlayer conversionPlayer) {
         if (!this.isConverting()) return;
-        getHandle().converstionStarter = (conversionPlayer == null) ? null : conversionPlayer.getUniqueId();
+        getHandle().conversionStarter = (conversionPlayer == null) ? null : conversionPlayer.getUniqueId();
     }
 }

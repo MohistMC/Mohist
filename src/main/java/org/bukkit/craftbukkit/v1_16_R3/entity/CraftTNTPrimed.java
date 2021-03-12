@@ -60,7 +60,7 @@ public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
 
     @Override
     public Entity getSource() {
-        LivingEntity source = getHandle().getTntPlacedBy();
+        LivingEntity source = getHandle().getOwner();
 
         return (source != null) ? source.getBukkitEntity() : null;
     }
@@ -68,9 +68,9 @@ public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
     @Override
     public void setSource(Entity source) {
         if (source instanceof LivingEntity) {
-            getHandle().tntPlacedBy = ((CraftLivingEntity) source).getHandle();
+            getHandle().owner = ((CraftLivingEntity) source).getHandle();
         } else {
-            getHandle().tntPlacedBy = null;
+            getHandle().owner = null;
         }
     }
 }

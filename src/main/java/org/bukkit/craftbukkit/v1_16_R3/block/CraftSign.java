@@ -28,8 +28,8 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
         if (lines == null) {
             // Lazy initialization:
             SignTileEntity sign = this.getSnapshot();
-            lines = new String[sign.signText.length];
-            System.arraycopy(revertComponents(sign.signText), 0, lines, 0, lines.length);
+            lines = new String[sign.messages.length];
+            System.arraycopy(revertComponents(sign.messages), 0, lines, 0, lines.length);
             originalLines = new String[lines.length];
             System.arraycopy(lines, 0, originalLines, 0, originalLines.length);
         }
@@ -58,12 +58,12 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
 
     @Override
     public DyeColor getColor() {
-        return DyeColor.getByWoolData((byte) getSnapshot().getTextColor().getId());
+        return DyeColor.getByWoolData((byte) getSnapshot().getColor().getId());
     }
 
     @Override
     public void setColor(DyeColor color) {
-        getSnapshot().setTextColor(net.minecraft.item.DyeColor.byId(color.getWoolData()));
+        getSnapshot().setColor(net.minecraft.item.DyeColor.byId(color.getWoolData()));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
                 if (line.equals(originalLines[i])) {
                     continue; // The line contents are still the same, skip.
                 }
-                sign.signText[i] = CraftChatMessage.fromString(line)[0];
+                sign.messages[i] = CraftChatMessage.fromString(line)[0];
             }
         }
     }

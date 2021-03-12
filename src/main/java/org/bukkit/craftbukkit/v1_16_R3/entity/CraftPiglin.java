@@ -13,12 +13,12 @@ public class CraftPiglin extends CraftPiglinAbstract implements Piglin {
 
     @Override
     public boolean isAbleToHunt() {
-        return getHandle().field_234407_bB_;
+        return getHandle().cannotHunt;
     }
 
     @Override
     public void setIsAbleToHunt(boolean flag) {
-        getHandle().field_234407_bB_ = flag;
+        getHandle().cannotHunt = flag;
     }
 
     @Override

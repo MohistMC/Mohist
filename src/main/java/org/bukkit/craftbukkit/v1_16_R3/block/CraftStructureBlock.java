@@ -30,13 +30,13 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
 
     @Override
     public String getStructureName() {
-        return getSnapshot().getName();
+        return getSnapshot().getStructureName();
     }
 
     @Override
     public void setStructureName(String name) {
         Preconditions.checkArgument(name != null, "Structure Name cannot be null");
-        getSnapshot().setName(name);
+        getSnapshot().setStructureName(name);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
 
     @Override
     public BlockVector getRelativePosition() {
-        return new BlockVector(getSnapshot().position.getX(), getSnapshot().position.getY(), getSnapshot().position.getZ());
+        return new BlockVector(getSnapshot().structurePos.getX(), getSnapshot().structurePos.getY(), getSnapshot().structurePos.getZ());
     }
 
     @Override
@@ -66,12 +66,12 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
         Validate.isTrue(isBetween(vector.getBlockX(), -MAX_SIZE, MAX_SIZE), "Structure Size (X) must be between -" + MAX_SIZE + " and " + MAX_SIZE);
         Validate.isTrue(isBetween(vector.getBlockY(), -MAX_SIZE, MAX_SIZE), "Structure Size (Y) must be between -" + MAX_SIZE + " and " + MAX_SIZE);
         Validate.isTrue(isBetween(vector.getBlockZ(), -MAX_SIZE, MAX_SIZE), "Structure Size (Z) must be between -" + MAX_SIZE + " and " + MAX_SIZE);
-        getSnapshot().position = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+        getSnapshot().structurePos = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
     }
 
     @Override
     public BlockVector getStructureSize() {
-        return new BlockVector(getSnapshot().size.getX(), getSnapshot().size.getY(), getSnapshot().size.getZ());
+        return new BlockVector(getSnapshot().structureSize.getX(), getSnapshot().structureSize.getY(), getSnapshot().structureSize.getZ());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
         Validate.isTrue(isBetween(vector.getBlockX(), 0, MAX_SIZE), "Structure Size (X) must be between 0 and " + MAX_SIZE);
         Validate.isTrue(isBetween(vector.getBlockY(), 0, MAX_SIZE), "Structure Size (Y) must be between 0 and " + MAX_SIZE);
         Validate.isTrue(isBetween(vector.getBlockZ(), 0, MAX_SIZE), "Structure Size (Z) must be between 0 and " + MAX_SIZE);
-        getSnapshot().size = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+        getSnapshot().structureSize = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
     }
 
     @Override
@@ -167,13 +167,13 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
     public void setMetadata(String metadata) {
         Validate.notNull(metadata, "Structure metadata cannot be null");
         if (getUsageMode() == UsageMode.DATA) {
-            getSnapshot().metadata = metadata;
+            getSnapshot().metaData = metadata;
         }
     }
 
     @Override
     public String getMetadata() {
-        return getSnapshot().metadata;
+        return getSnapshot().metaData;
     }
 
     @Override

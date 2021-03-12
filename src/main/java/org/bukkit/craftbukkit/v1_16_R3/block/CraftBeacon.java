@@ -57,7 +57,7 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconTileEntity> impleme
 
     @Override
     public void setPrimaryEffect(PotionEffectType effect) {
-        this.getSnapshot().primaryEffect = (effect != null) ? Effect.get(effect.getId()) : null;
+        this.getSnapshot().primaryPower = (effect != null) ? Effect.byId(effect.getId()) : null;
     }
 
     @Override
@@ -67,13 +67,13 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconTileEntity> impleme
 
     @Override
     public void setSecondaryEffect(PotionEffectType effect) {
-        this.getSnapshot().secondaryEffect = (effect != null) ? Effect.get(effect.getId()) : null;
+        this.getSnapshot().secondaryPower = (effect != null) ? Effect.byId(effect.getId()) : null;
     }
 
     @Override
     public String getCustomName() {
         BeaconTileEntity beacon = this.getSnapshot();
-        return beacon.customName != null ? CraftChatMessage.fromComponent(beacon.customName) : null;
+        return beacon.name != null ? CraftChatMessage.fromComponent(beacon.name) : null;
     }
 
     @Override
@@ -83,16 +83,16 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconTileEntity> impleme
 
     @Override
     public boolean isLocked() {
-        return !this.getSnapshot().lockCode.lock.isEmpty();
+        return !this.getSnapshot().lockKey.key.isEmpty();
     }
 
     @Override
     public String getLock() {
-        return this.getSnapshot().lockCode.lock;
+        return this.getSnapshot().lockKey.key;
     }
 
     @Override
     public void setLock(String key) {
-        this.getSnapshot().lockCode = (key == null) ? LockCode.EMPTY_CODE : new LockCode(key);
+        this.getSnapshot().lockKey = (key == null) ? LockCode.NO_LOCK : new LockCode(key);
     }
 }

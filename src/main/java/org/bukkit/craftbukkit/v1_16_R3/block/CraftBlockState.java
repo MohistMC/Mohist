@@ -39,7 +39,7 @@ public class CraftBlockState implements BlockState {
 
     public CraftBlockState(Material material) {
         world = null;
-        data = CraftMagicNumbers.getBlock(material).getDefaultState();
+        data = CraftMagicNumbers.getBlock(material).defaultBlockState();
         position = BlockPos.ZERO;
     }
 
@@ -128,7 +128,7 @@ public class CraftBlockState implements BlockState {
         Preconditions.checkArgument(type.isBlock(), "Material must be a block!");
 
         if (this.getType() != type) {
-            this.data = CraftMagicNumbers.getBlock(type).getDefaultState();
+            this.data = CraftMagicNumbers.getBlock(type).defaultBlockState();
         }
     }
 
@@ -181,7 +181,7 @@ public class CraftBlockState implements BlockState {
 
         net.minecraft.block.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
-        world.getHandle().notifyBlockUpdate(
+        world.getHandle().sendBlockUpdated(
                 position,
                 block.getNMS(),
                 newBlock,
@@ -190,7 +190,7 @@ public class CraftBlockState implements BlockState {
 
         // Update levers etc
         if (false && applyPhysics && getData() instanceof Attachable) { // Call does not map to new API
-            world.getHandle().notifyNeighborsOfStateChange(position.offset(CraftBlock.blockFaceToNotch(((Attachable) getData()).getAttachedFace())), newBlock.getBlock());
+            world.getHandle().updateNeighborsAt(position.relative(CraftBlock.blockFaceToNotch(((Attachable) getData()).getAttachedFace())), newBlock.getBlock());
         }
 
         return true;

@@ -26,7 +26,7 @@ public abstract class CraftRaider extends CraftMonster implements Raider {
 
     @Override
     public Block getPatrolTarget() {
-        return getHandle().getPatrolTarget() == null ? null : CraftBlock.at(getHandle().world, getHandle().getPatrolTarget());
+        return getHandle().getPatrolTarget() == null ? null : CraftBlock.at(getHandle().level, getHandle().getPatrolTarget());
     }
 
     @Override
@@ -42,12 +42,12 @@ public abstract class CraftRaider extends CraftMonster implements Raider {
 
     @Override
     public boolean isPatrolLeader() {
-        return getHandle().isLeader();
+        return getHandle().isPatrolLeader();
     }
 
     @Override
     public void setPatrolLeader(boolean leader) {
-        getHandle().setLeader(leader);
+        getHandle().setPatrolLeader(leader);
     }
 
     @Override

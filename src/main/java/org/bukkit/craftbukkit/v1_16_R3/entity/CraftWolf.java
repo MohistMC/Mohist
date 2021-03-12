@@ -13,15 +13,15 @@ public class CraftWolf extends CraftTameableAnimal implements Wolf {
 
     @Override
     public boolean isAngry() {
-        return getHandle().func_233678_J__();
+        return getHandle().isAngry();
     }
 
     @Override
     public void setAngry(boolean angry) {
         if (angry) {
-            getHandle().func_230258_H__();
+            getHandle().startPersistentAngerTimer();
         } else {
-            getHandle().func_241356_K__();
+            getHandle().stopBeingAngry();
         }
     }
 

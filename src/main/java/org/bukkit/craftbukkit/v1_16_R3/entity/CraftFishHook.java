@@ -70,7 +70,7 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
         FishingBobberEntity hook = getHandle();
 
         if (this.biteChance == -1) {
-            if (hook.world.isRainingAt(new BlockPos(MathHelper.floor(hook.getPosX()), MathHelper.floor(hook.getPosY()) + 1, MathHelper.floor(hook.getPosZ())))) {
+            if (hook.level.isRainingAt(new BlockPos(MathHelper.floor(hook.getX()), MathHelper.floor(hook.getY()) + 1, MathHelper.floor(hook.getZ())))) {
                 return 1 / 300.0;
             }
             return 1 / 500.0;
@@ -86,12 +86,12 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
 
     @Override
     public boolean isInOpenWater() {
-        return getHandle().func_234605_g_();
+        return getHandle().isOpenWaterFishing();
     }
 
     @Override
     public Entity getHookedEntity() {
-        net.minecraft.entity.Entity hooked = getHandle().caughtEntity;
+        net.minecraft.entity.Entity hooked = getHandle().hookedIn;
         return (hooked != null) ? hooked.getBukkitEntity() : null;
     }
 
@@ -99,14 +99,14 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
     public void setHookedEntity(Entity entity) {
         FishingBobberEntity hook = getHandle();
 
-        hook.caughtEntity = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
-        hook.getDataManager().set(FishingBobberEntity.DATA_HOOKED_ENTITY, hook.caughtEntity != null ? hook.caughtEntity.getEntityId() + 1 : 0);
+        hook.hookedIn = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
+        hook.getEntityData().set(FishingBobberEntity.DATA_HOOKED_ENTITY, hook.hookedIn != null ? hook.hookedIn.getId() + 1 : 0);
     }
 
     @Override
     public boolean pullHookedEntity() {
         FishingBobberEntity hook = getHandle();
-        if (hook.caughtEntity == null) {
+        if (hook.hookedIn == null) {
             return false;
         }
 

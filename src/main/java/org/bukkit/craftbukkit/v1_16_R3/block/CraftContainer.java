@@ -19,23 +19,23 @@ public abstract class CraftContainer<T extends LockableTileEntity> extends Craft
 
     @Override
     public boolean isLocked() {
-        return !this.getSnapshot().code.lock.isEmpty();
+        return !this.getSnapshot().lockKey.key.isEmpty();
     }
 
     @Override
     public String getLock() {
-        return this.getSnapshot().code.lock;
+        return this.getSnapshot().lockKey.key;
     }
 
     @Override
     public void setLock(String key) {
-        this.getSnapshot().code = (key == null) ? LockCode.EMPTY_CODE : new LockCode(key);
+        this.getSnapshot().lockKey = (key == null) ? LockCode.NO_LOCK : new LockCode(key);
     }
 
     @Override
     public String getCustomName() {
         T container = this.getSnapshot();
-        return container.customName != null ? CraftChatMessage.fromComponent(container.getCustomName()) : null;
+        return container.name != null ? CraftChatMessage.fromComponent(container.getCustomName()) : null;
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class CraftContainer<T extends LockableTileEntity> extends Craft
     public void applyTo(T container) {
         super.applyTo(container);
 
-        if (this.getSnapshot().customName == null) {
+        if (this.getSnapshot().name == null) {
             container.setCustomName(null);
         }
     }
