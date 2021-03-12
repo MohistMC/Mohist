@@ -47,7 +47,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     @Override
     public void setProfession(Profession profession) {
         Validate.notNull(profession);
-        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(CraftVillager.bukkitToNmsProfession(profession)));
+        getHandle().setVillagerData(getHandle().getVillagerData().setProfession(CraftVillager.bukkitToNmsProfession(profession)));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     @Override
     public void setVillagerType(Type type) {
         Validate.notNull(type);
-        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.getOrDefault(CraftNamespacedKey.toMinecraft(type.getKey()))));
+        getHandle().setVillagerData(getHandle().getVillagerData().setType(Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
     @Override
@@ -70,19 +70,19 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     public void setVillagerLevel(int level) {
         Preconditions.checkArgument(1 <= level && level <= 5, "level must be between [1, 5]");
 
-        getHandle().setVillagerData(getHandle().getVillagerData().withLevel(level));
+        getHandle().setVillagerData(getHandle().getVillagerData().setLevel(level));
     }
 
     @Override
     public int getVillagerExperience() {
-        return getHandle().getXp();
+        return getHandle().getVillagerXp();
     }
 
     @Override
     public void setVillagerExperience(int experience) {
         Preconditions.checkArgument(experience >= 0, "Experience must be positive");
 
-        getHandle().setXp(experience);
+        getHandle().setVillagerXp(experience);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
         Preconditions.checkArgument(location.getWorld().equals(getWorld()), "Cannot sleep across worlds");
 
         BlockPos position = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        BlockState iblockdata = getHandle().world.getBlockState(position);
+        BlockState iblockdata = getHandle().level.getBlockState(position);
         if (!(iblockdata.getBlock() instanceof BedBlock)) {
             return false;
         }
@@ -105,7 +105,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     public void wakeup() {
         Preconditions.checkState(isSleeping(), "Cannot wakeup if not sleeping");
 
-        getHandle().wakeUp();
+        getHandle().stopSleeping();
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
@@ -113,6 +113,6 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
-        return !ForgeInjectBukkit.profession.containsKey(bukkit) ? Registry.VILLAGER_PROFESSION.getOrDefault(CraftNamespacedKey.toMinecraft(bukkit.getKey())) : ForgeRegistries.PROFESSIONS.getValue(ForgeInjectBukkit.profession.get(bukkit));
+        return !ForgeInjectBukkit.profession.containsKey(bukkit) ? Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey())) : ForgeRegistries.PROFESSIONS.getValue(ForgeInjectBukkit.profession.get(bukkit));
     }
 }

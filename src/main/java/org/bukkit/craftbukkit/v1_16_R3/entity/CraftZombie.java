@@ -31,12 +31,12 @@ public class CraftZombie extends CraftMonster implements Zombie {
 
     @Override
     public boolean isBaby() {
-        return getHandle().isChild();
+        return getHandle().isBaby();
     }
 
     @Override
     public void setBaby(boolean flag) {
-        getHandle().setChild(flag);
+        getHandle().setBaby(flag);
     }
 
     @Override
@@ -61,34 +61,34 @@ public class CraftZombie extends CraftMonster implements Zombie {
 
     @Override
     public boolean isConverting() {
-        return getHandle().isDrowning();
+        return getHandle().isUnderWaterConverting();
     }
 
     @Override
     public int getConversionTime() {
         Preconditions.checkState(isConverting(), "Entity not converting");
 
-        return getHandle().drownedConversionTime;
+        return getHandle().conversionTime;
     }
 
     @Override
     public void setConversionTime(int time) {
         if (time < 0) {
-            getHandle().drownedConversionTime = -1;
-            getHandle().getDataManager().set(ZombieEntity.DROWNING, false);
+            getHandle().conversionTime = -1;
+            getHandle().getEntityData().set(ZombieEntity.DATA_DROWNED_CONVERSION_ID, false);
         } else {
-            getHandle().startDrowning(time);
+            getHandle().startUnderWaterConversion(time);
         }
     }
 
     @Override
     public int getAge() {
-        return getHandle().isChild() ? -1 : 0;
+        return getHandle().isBaby() ? -1 : 0;
     }
 
     @Override
     public void setAge(int i) {
-        getHandle().setChild(i < 0);
+        getHandle().setBaby(i < 0);
     }
 
     @Override
@@ -102,17 +102,17 @@ public class CraftZombie extends CraftMonster implements Zombie {
 
     @Override
     public void setBaby() {
-        getHandle().setChild(true);
+        getHandle().setBaby(true);
     }
 
     @Override
     public void setAdult() {
-        getHandle().setChild(false);
+        getHandle().setBaby(false);
     }
 
     @Override
     public boolean isAdult() {
-        return !getHandle().isChild();
+        return !getHandle().isBaby();
     }
 
     @Override

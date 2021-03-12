@@ -29,11 +29,11 @@ public class CraftEvoker extends CraftSpellcaster implements Evoker {
 
     @Override
     public Evoker.Spell getCurrentSpell() {
-        return Evoker.Spell.values()[getHandle().getSpellType().ordinal()];
+        return Evoker.Spell.values()[getHandle().getCurrentSpell().ordinal()];
     }
 
     @Override
     public void setCurrentSpell(Evoker.Spell spell) {
-        getHandle().setSpellType(spell == null ? SpellcastingIllagerEntity.SpellType.NONE : SpellcastingIllagerEntity.SpellType.getFromId(spell.ordinal()));
+        getHandle().setIsCastingSpell(spell == null ? SpellcastingIllagerEntity.SpellType.NONE : SpellcastingIllagerEntity.SpellType.byId(spell.ordinal()));
     }
 }

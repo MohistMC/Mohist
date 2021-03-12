@@ -186,7 +186,7 @@ public class CraftEventFactory {
         if (((CraftServer) Bukkit.getServer()).getHandle().getOps().isEmpty()) return true;
         if (player.isOp()) return true;
 
-        BlockPos chunkcoordinates = world.getSpawnPoint();
+        BlockPos chunkcoordinates = world.getSharedSpawnPos();
 
         int distanceFromSpawn = Math.max(Math.abs(x - chunkcoordinates.getX()), Math.abs(z - chunkcoordinates.getZ()));
         return distanceFromSpawn > spawnSize;
@@ -219,7 +219,7 @@ public class CraftEventFactory {
             }
         }, t -> PlayerBedEnterEvent.BedEnterResult.OK).map(java.util.function.Function.identity(), java.util.function.Function.identity());
 
-        PlayerBedEnterEvent event = new PlayerBedEnterEvent((Player) player.getBukkitEntity(), CraftBlock.at(player.world, bed), bedEnterResult);
+        PlayerBedEnterEvent event = new PlayerBedEnterEvent((Player) player.getBukkitEntity(), CraftBlock.at(player.level, bed), bedEnterResult);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         Event.Result result = event.useBed();
@@ -325,13 +325,13 @@ public class CraftEventFactory {
 
         if (!event.isCancelled()) {
             for (ItemEntity item : items) {
-                item.world.addEntity(item);
+                item.level.addFreshEntity(item);
             }
         }
     }
 
     public static EntityPlaceEvent callEntityPlaceEvent(ItemUseContext itemactioncontext, Entity entity) {
-        return callEntityPlaceEvent(itemactioncontext.getWorld(), itemactioncontext.getPos(), itemactioncontext.getFace(), itemactioncontext.getPlayer(), entity);
+        return callEntityPlaceEvent(itemactioncontext.getLevel(), itemactioncontext.getClickedPos(), itemactioncontext.getClickedFace(), itemactioncontext.getPlayer(), entity);
     }
 
     public static EntityPlaceEvent callEntityPlaceEvent(World world, BlockPos clickPosition, Direction clickedFace, PlayerEntity human, Entity entity) {
@@ -340,7 +340,7 @@ public class CraftEventFactory {
         BlockFace blockFace = CraftBlock.notchToBlockFace(clickedFace);
 
         EntityPlaceEvent event = new EntityPlaceEvent(entity.getBukkitEntity(), who, blockClicked, blockFace);
-        entity.world.getCBServer().getPluginManager().callEvent(event);
+        entity.level.getCBServer().getPluginManager().callEvent(event);
 
         return event;
     }
@@ -510,7 +510,7 @@ public class CraftEventFactory {
             boolean isNpc = entity instanceof NPC;
 
             if (spawnReason != CreatureSpawnEvent.SpawnReason.CUSTOM) {
-                if (isAnimal && !world.getCBWorld().getAllowAnimals() || isMonster && !world.getCBWorld().getAllowMonsters() || isNpc && !world.getServer().getServer().func_230538_V_()) {
+                if (isAnimal && !world.getCBWorld().getAllowAnimals() || isMonster && !world.getCBWorld().getAllowMonsters() || isNpc && !world.getServer().getServer().areNpcsEnabled() ) {
                     entity.removed = true;
                     return false;
                 }
@@ -529,12 +529,12 @@ public class CraftEventFactory {
             ExperienceOrbEntity xp = (ExperienceOrbEntity) entity;
             double radius = world.spigotConfig.expMerge;
             if (radius > 0) {
-                List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(entity, entity.getBoundingBox().grow(radius, radius, radius));
+                List<Entity> entities = world.getEntities(entity, entity.getBoundingBox().inflate(radius, radius, radius));
                 for (Entity e : entities) {
                     if (e instanceof ExperienceOrbEntity) {
                         ExperienceOrbEntity loopItem = (ExperienceOrbEntity) e;
                         if (!loopItem.removed) {
-                            xp.xpValue += loopItem.xpValue;
+                            xp.value += loopItem.value;
                             loopItem.remove();
                         }
                     }
@@ -546,11 +546,11 @@ public class CraftEventFactory {
         }
 
         if (event != null && (event.isCancelled() || entity.removed)) {
-            Entity vehicle = entity.getRidingEntity();
+            Entity vehicle = entity.getVehicle();
             if (vehicle != null) {
                 vehicle.removed = true;
             }
-            for (Entity passenger : entity.getRecursivePassengers()) {
+            for (Entity passenger : entity.getIndirectPassengers()) {
                 passenger.removed = true;
             }
             entity.removed = true;
@@ -782,7 +782,7 @@ public class CraftEventFactory {
             }
             return event;
         } else if (source instanceof EntityDamageSource) {
-            Entity damager = source.getTrueSource();
+            Entity damager = source.getEntity();
             DamageCause cause = (source.isSweep()) ? DamageCause.ENTITY_SWEEP_ATTACK : DamageCause.ENTITY_ATTACK;
 
             if (source instanceof IndirectEntityDamageSource) {
@@ -794,7 +794,7 @@ public class CraftEventFactory {
                         cause = DamageCause.PROJECTILE;
                     }
                 }
-            } else if ("thorns".equals(source.damageType)) {
+            } else if ("thorns".equals(source.msgId)) {
                 cause = DamageCause.THORNS;
             }
 
@@ -918,7 +918,7 @@ public class CraftEventFactory {
             cause = DamageCause.FLY_INTO_WALL;
         } else if (source == DamageSource.CRAMMING) {
             cause = DamageCause.CRAMMING;
-        } else if (source == DamageSource.DRYOUT) {
+        } else if (source == DamageSource.DRY_OUT) {
             cause = DamageCause.DRYOUT;
         } else if (source == DamageSource.GENERIC) {
             cause = DamageCause.CUSTOM;
@@ -1075,7 +1075,7 @@ public class CraftEventFactory {
     }
 
     public static EntityChangeBlockEvent callEntityChangeBlockEvent(Entity entity, BlockPos position, net.minecraft.block.BlockState newBlock, boolean cancelled) {
-        Block block = entity.world.getCBWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
+        Block block = entity.level.getCBWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
 
         EntityChangeBlockEvent event = new EntityChangeBlockEvent(entity.getBukkitEntity(), block, CraftBlockData.fromData(newBlock));
         event.setCancelled(cancelled);
@@ -1103,7 +1103,7 @@ public class CraftEventFactory {
 
     public static EntityBreakDoorEvent callEntityBreakDoorEvent(Entity entity, BlockPos pos) {
         org.bukkit.entity.Entity entity1 = entity.getBukkitEntity();
-        Block block = CraftBlock.at(entity.world, pos);
+        Block block = CraftBlock.at(entity.level, pos);
 
         EntityBreakDoorEvent event = new EntityBreakDoorEvent((org.bukkit.entity.LivingEntity) entity1, block);
         entity1.getServer().getPluginManager().callEvent(event);
@@ -1116,14 +1116,14 @@ public class CraftEventFactory {
     }
 
     public static Container callInventoryOpenEvent(ServerPlayerEntity player, Container container, boolean cancelled) {
-        if (player.openContainer != player.container) { // fire INVENTORY_CLOSE if one already open
-            player.connection.processCloseWindow(new CCloseWindowPacket(player.openContainer.windowId));
+        if (player.containerMenu != player.inventoryMenu) { // fire INVENTORY_CLOSE if one already open
+            player.connection.handleContainerClose(new CCloseWindowPacket(player.containerMenu.containerId));
         }
 
-        CraftServer server = player.world.getCBServer();
+        CraftServer server = player.level.getCBServer();
         CraftPlayer craftPlayer = player.getBukkitEntity();
         try {
-            player.openContainer.transferTo(container, craftPlayer);
+            player.containerMenu.transferTo(container, craftPlayer);
         } catch (AbstractMethodError e) {
         }
 
@@ -1134,11 +1134,11 @@ public class CraftEventFactory {
         }
 
         if (event.isCancelled()) {
-            container.transferTo(player.openContainer, craftPlayer);
+            container.transferTo(player.containerMenu, craftPlayer);
             if (!cancelled) { // fire INVENTORY_CLOSE if one already open
-                player.openContainer = container; // make sure the right container is processed
-                player.closeScreen();
-                player.openContainer = player.container;
+                player.containerMenu = container; // make sure the right container is processed
+                player.closeContainer();
+                player.containerMenu = player.inventoryMenu;
             }
             return null;
         }
@@ -1174,8 +1174,8 @@ public class CraftEventFactory {
         BlockFace hitFace = null;
         if (position.getType() == RayTraceResult.Type.BLOCK) {
             BlockRayTraceResult positionBlock = (BlockRayTraceResult) position;
-            hitBlock = CraftBlock.at(entity.world, positionBlock.getPos());
-            hitFace = CraftBlock.notchToBlockFace(positionBlock.getFace());
+            hitBlock = CraftBlock.at(entity.level, positionBlock.getBlockPos());
+            hitFace = CraftBlock.notchToBlockFace(positionBlock.getDirection());
         }
 
         org.bukkit.entity.Entity hitEntity = null;
@@ -1184,7 +1184,7 @@ public class CraftEventFactory {
         }
 
         ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity(), hitEntity, hitBlock, hitFace);
-        entity.world.getCBServer().getPluginManager().callEvent(event);
+        entity.level.getCBServer().getPluginManager().callEvent(event);
     }
 
     public static ExpBottleEvent callExpBottleEvent(Entity entity, int exp) {
@@ -1256,7 +1256,7 @@ public class CraftEventFactory {
         }
 
         if (igniter instanceof ProjectileEntity) {
-            Entity shooter = ((ProjectileEntity) igniter).func_234616_v_();
+            Entity shooter = ((ProjectileEntity) igniter).getOwner();
             if (shooter != null) {
                 bukkitIgniter = shooter.getBukkitEntity();
             }
@@ -1269,7 +1269,7 @@ public class CraftEventFactory {
 
     public static BlockIgniteEvent callBlockIgniteEvent(World world, int x, int y, int z, net.minecraft.world.Explosion explosion) {
         org.bukkit.World bukkitWorld = world.getCBWorld();
-        org.bukkit.entity.Entity igniter = explosion.exploder == null ? null : explosion.exploder.getBukkitEntity();
+        org.bukkit.entity.Entity igniter = explosion.source == null ? null : explosion.source.getBukkitEntity();
 
         BlockIgniteEvent event = new BlockIgniteEvent(bukkitWorld.getBlockAt(x, y, z), BlockIgniteEvent.IgniteCause.EXPLOSION, igniter);
         world.getCBServer().getPluginManager().callEvent(event);
@@ -1283,11 +1283,11 @@ public class CraftEventFactory {
     }
 
     public static void handleInventoryCloseEvent(PlayerEntity human) {
-        InventoryCloseEvent event = new InventoryCloseEvent(human.openContainer.getBukkitView());
-        if (human.openContainer.getBukkitView() != null) {
-            human.world.getCBServer().getPluginManager().callEvent(event);
+        InventoryCloseEvent event = new InventoryCloseEvent(human.containerMenu.getBukkitView());
+        if (human.containerMenu.getBukkitView() != null) {
+            human.level.getCBServer().getPluginManager().callEvent(event);
         }
-        human.openContainer.transferTo(human.container, human.getBukkitEntity());
+        human.containerMenu.transferTo(human.inventoryMenu, human.getBukkitEntity());
     }
 
     public static ItemStack handleEditBookEvent(ServerPlayerEntity player, int itemInHandIndex, ItemStack itemInHand, ItemStack newBookItem) {
@@ -1301,8 +1301,8 @@ public class CraftEventFactory {
                 ItemStack book = editBookEvent.isSigning() ?
                     new ItemStack(Items.WRITTEN_BOOK) : new ItemStack(Items.WRITABLE_BOOK);
                 CraftItemStack.setItemMeta(book, editBookEvent.getNewBookMeta());
-                player.inventory.setInventorySlotContents(player.inventory.currentItem, book);
-                player.sendContainerToPlayer(player.container);
+                player.inventory.setItem(player.inventory.selected, book);
+                player.refreshContainer(player.inventoryMenu);
                 // Mohist end
             }
         }
@@ -1446,7 +1446,7 @@ public class CraftEventFactory {
         CraftItemStack bredWithStack = bredWith == null ? null : CraftItemStack.asCraftMirror(bredWith).clone();
 
         EntityBreedEvent event = new EntityBreedEvent((org.bukkit.entity.LivingEntity) child.getBukkitEntity(), (org.bukkit.entity.LivingEntity) mother.getBukkitEntity(), (org.bukkit.entity.LivingEntity) father.getBukkitEntity(), breederEntity, bredWithStack, experience);
-        child.world.getCBServer().getPluginManager().callEvent(event);
+        child.level.getCBServer().getPluginManager().callEvent(event);
         return event;
     }
 
@@ -1569,8 +1569,8 @@ public class CraftEventFactory {
 
     public static LootGenerateEvent callLootGenerateEvent(IInventory inventory, LootTable lootTable, LootContext lootInfo, List<ItemStack> loot, boolean plugin) {
         CraftWorld world = lootInfo.getLevel().getCBWorld();
-        Entity entity = lootInfo.get(LootParameters.THIS_ENTITY);
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(world.getHandle().getServer().getLootTableManager().lootTableToKey.get(lootTable));
+        Entity entity = lootInfo.getParamOrNull(LootParameters.THIS_ENTITY);
+        NamespacedKey key = CraftNamespacedKey.fromMinecraft(world.getHandle().getServer().getLootTables().lootTableToKey.get(lootTable));
         CraftLootTable craftLootTable = new CraftLootTable(key, lootTable);
         List<org.bukkit.inventory.ItemStack> bukkitLoot = loot.stream().map(CraftItemStack::asCraftMirror).collect(Collectors.toCollection(ArrayList::new));
 

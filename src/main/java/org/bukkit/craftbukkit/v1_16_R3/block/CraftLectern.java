@@ -30,7 +30,7 @@ public class CraftLectern extends CraftBlockEntityState<LecternTileEntity> imple
 
     @Override
     public Inventory getSnapshotInventory() {
-        return new CraftInventoryLectern(this.getSnapshot().inventory);
+        return new CraftInventoryLectern(this.getSnapshot().bookAccess);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CraftLectern extends CraftBlockEntityState<LecternTileEntity> imple
             return this.getSnapshotInventory();
         }
 
-        return new CraftInventoryLectern(this.getTileEntity().inventory);
+        return new CraftInventoryLectern(this.getTileEntity().bookAccess);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CraftLectern extends CraftBlockEntityState<LecternTileEntity> imple
         boolean result = super.update(force, applyPhysics);
 
         if (result && this.isPlaced() && this.getType() == Material.LECTERN) {
-            LecternBlock.pulse(this.world.getHandle(), this.getPosition(), this.getHandle());
+            LecternBlock.signalPageChange(this.world.getHandle(), this.getPosition(), this.getHandle());
         }
 
         return result;

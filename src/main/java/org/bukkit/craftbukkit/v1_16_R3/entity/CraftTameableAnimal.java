@@ -19,14 +19,14 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
 
     public UUID getOwnerUUID() {
         try {
-            return getHandle().getOwnerId();
+            return getHandle().getOwnerUUID();
         } catch (IllegalArgumentException ex) {
             return null;
         }
     }
 
     public void setOwnerUUID(UUID uuid) {
-        getHandle().setOwnerId(uuid);
+        getHandle().setOwnerUUID(uuid);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
 
     @Override
     public boolean isTamed() {
-        return getHandle().isTamed();
+        return getHandle().isTame();
     }
 
     @Override
@@ -62,19 +62,19 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
 
     @Override
     public void setTamed(boolean tame) {
-        getHandle().setTamed(tame);
+        getHandle().setTame(tame);
         if (!tame) {
             setOwnerUUID(null);
         }
     }
 
     public boolean isSitting() {
-        return getHandle().isSitting();
+        return getHandle().isOrderedToSit();
     }
 
     public void setSitting(boolean sitting) {
-        getHandle().setSleeping(sitting);
-        getHandle().func_233687_w_(sitting);
+        getHandle().setInSittingPose(sitting);
+        getHandle().setOrderedToSit(sitting);
     }
 
     @Override

@@ -19,37 +19,37 @@ public class CraftCampfire extends CraftBlockEntityState<CampfireTileEntity> imp
 
     @Override
     public int getSize() {
-        return getSnapshot().getInventory().size();
+        return getSnapshot().getItems().size();
     }
 
     @Override
     public ItemStack getItem(int index) {
-        net.minecraft.item.ItemStack item = getSnapshot().getInventory().get(index);
+        net.minecraft.item.ItemStack item = getSnapshot().getItems().get(index);
         return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
     }
 
     @Override
     public void setItem(int index, ItemStack item) {
-        getSnapshot().getInventory().set(index, CraftItemStack.asNMSCopy(item));
+        getSnapshot().getItems().set(index, CraftItemStack.asNMSCopy(item));
     }
 
     @Override
     public int getCookTime(int index) {
-        return getSnapshot().cookingTimes[index];
+        return getSnapshot().cookingProgress[index];
     }
 
     @Override
     public void setCookTime(int index, int cookTime) {
-        getSnapshot().cookingTimes[index] = cookTime;
+        getSnapshot().cookingProgress[index] = cookTime;
     }
 
     @Override
     public int getCookTimeTotal(int index) {
-        return getSnapshot().cookingTotalTimes[index];
+        return getSnapshot().cookingTime[index];
     }
 
     @Override
     public void setCookTimeTotal(int index, int cookTimeTotal) {
-        getSnapshot().cookingTotalTimes[index] = cookTimeTotal;
+        getSnapshot().cookingTime[index] = cookTimeTotal;
     }
 }

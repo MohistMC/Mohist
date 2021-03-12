@@ -51,22 +51,22 @@ public class CraftItem extends CraftEntity implements Item {
 
     @Override
     public void setOwner(UUID uuid) {
-        item.setOwnerId(uuid);
+        item.setOwner(uuid);
     }
 
     @Override
     public UUID getOwner() {
-        return item.getOwnerId();
+        return item.getOwner();
     }
 
     @Override
     public void setThrower(UUID uuid) {
-        item.setThrowerId(uuid);
+        item.setThrower(uuid);
     }
 
     @Override
     public UUID getThrower() {
-        return item.getThrowerId();
+        return item.getThrower();
     }
 
     @Override

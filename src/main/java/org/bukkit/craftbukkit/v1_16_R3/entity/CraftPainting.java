@@ -19,7 +19,7 @@ public class CraftPainting extends CraftHanging implements Painting {
 
     @Override
     public Art getArt() {
-        PaintingType art = getHandle().art;
+        PaintingType art = getHandle().motive;
         return CraftArt.NotchToBukkit(art);
     }
 
@@ -31,13 +31,13 @@ public class CraftPainting extends CraftHanging implements Painting {
     @Override
     public boolean setArt(Art art, boolean force) {
         PaintingEntity painting = this.getHandle();
-        PaintingType oldArt = painting.art;
-        painting.art = CraftArt.BukkitToNotch(art);
-        painting.updateFacingWithBoundingBox(painting.getHorizontalFacing());
-        if (!force && !painting.onValidSurface()) {
+        PaintingType oldArt = painting.motive;
+        painting.motive = CraftArt.BukkitToNotch(art);
+        painting.setDirection(painting.getDirection());
+        if (!force && !painting.survives()) {
             // Revert painting since it doesn't fit
-            painting.art = oldArt;
-            painting.updateFacingWithBoundingBox(painting.getHorizontalFacing());
+            painting.motive = oldArt;
+            painting.setDirection(painting.getDirection());
             return false;
         }
         this.update();
@@ -57,12 +57,12 @@ public class CraftPainting extends CraftHanging implements Painting {
     private void update() {
         ServerWorld world = ((CraftWorld) getWorld()).getHandle();
         PaintingEntity painting = net.minecraft.entity.EntityType.PAINTING.create(world);
-        painting.hangingPosition = getHandle().hangingPosition;
-        painting.art = getHandle().art;
-        painting.updateFacingWithBoundingBox(getHandle().getHorizontalFacing());
+        painting.pos = getHandle().pos;
+        painting.motive = getHandle().motive;
+        painting.setDirection(getHandle().getDirection());
         getHandle().remove();
-        getHandle().velocityChanged = true; // because this occurs when the painting is broken, so it might be important
-        world.addEntity(painting);
+        getHandle().hurtMarked = true; // because this occurs when the painting is broken, so it might be important
+        world.addFreshEntity(painting);
         this.entity = painting;
     }
 

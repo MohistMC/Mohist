@@ -18,21 +18,21 @@ public class CraftCommandBlock extends CraftBlockEntityState<CommandBlockTileEnt
 
     @Override
     public String getCommand() {
-        return getSnapshot().getCommandBlockLogic().getCommand();
+        return getSnapshot().getCommandBlock().getCommand();
     }
 
     @Override
     public void setCommand(String command) {
-        getSnapshot().getCommandBlockLogic().setCommand(command != null ? command : "");
+        getSnapshot().getCommandBlock().setCommand(command != null ? command : "");
     }
 
     @Override
     public String getName() {
-        return CraftChatMessage.fromComponent(getSnapshot().getCommandBlockLogic().getName());
+        return CraftChatMessage.fromComponent(getSnapshot().getCommandBlock().getName());
     }
 
     @Override
     public void setName(String name) {
-        getSnapshot().getCommandBlockLogic().setName(CraftChatMessage.fromStringOrNull(name != null ? name : "@"));
+        getSnapshot().getCommandBlock().setName(CraftChatMessage.fromStringOrNull(name != null ? name : "@"));
     }
 }

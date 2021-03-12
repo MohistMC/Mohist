@@ -13,53 +13,53 @@ public class CraftPiglinAbstract extends CraftMonster implements PiglinAbstract 
 
     @Override
     public boolean isImmuneToZombification() {
-        return getHandle().func_242335_eK();
+        return getHandle().isImmuneToZombification();
     }
 
     @Override
     public void setImmuneToZombification(boolean flag) {
-        getHandle().func_242340_t(flag);
+        getHandle().setImmuneToZombification(flag);
     }
 
     @Override
     public int getConversionTime() {
         Preconditions.checkState(isConverting(), "Entity not converting");
-        return getHandle().field_242334_c;
+        return getHandle().timeInOverworld;
     }
 
     @Override
     public void setConversionTime(int time) {
         if (time < 0) {
-            getHandle().field_242334_c = -1;
-            getHandle().func_242340_t(false);
+            getHandle().timeInOverworld = -1;
+            getHandle().setImmuneToZombification(false);
         } else {
-            getHandle().field_242334_c = time;
+            getHandle().timeInOverworld = time;
         }
     }
 
     @Override
     public boolean isConverting() {
-        return getHandle().func_242336_eL();
+        return getHandle().isConverting();
     }
 
     @Override
     public boolean isBaby() {
-        return getHandle().isChild();
+        return getHandle().isBaby();
     }
 
     @Override
     public void setBaby(boolean flag) {
-        getHandle().setChild(flag);
+        getHandle().setBaby(flag);
     }
 
     @Override
     public int getAge() {
-        return getHandle().isChild() ? -1 : 0;
+        return getHandle().isBaby() ? -1 : 0;
     }
 
     @Override
     public void setAge(int i) {
-        getHandle().setChild(i < 0);
+        getHandle().setBaby(i < 0);
     }
 
     @Override
@@ -73,17 +73,17 @@ public class CraftPiglinAbstract extends CraftMonster implements PiglinAbstract 
 
     @Override
     public void setBaby() {
-        getHandle().setChild(true);
+        getHandle().setBaby(true);
     }
 
     @Override
     public void setAdult() {
-        getHandle().setChild(false);
+        getHandle().setBaby(false);
     }
 
     @Override
     public boolean isAdult() {
-        return !getHandle().isChild();
+        return !getHandle().isBaby();
     }
 
     @Override

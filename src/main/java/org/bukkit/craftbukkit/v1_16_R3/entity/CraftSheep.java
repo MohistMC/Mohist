@@ -13,17 +13,17 @@ public class CraftSheep extends CraftAnimals implements Sheep {
 
     @Override
     public DyeColor getColor() {
-        return DyeColor.getByWoolData((byte) getHandle().getFleeceColor().getId());
+        return DyeColor.getByWoolData((byte) getHandle().getColor().getId());
     }
 
     @Override
     public void setColor(DyeColor color) {
-        getHandle().setFleeceColor(net.minecraft.item.DyeColor.byId(color.getWoolData()));
+        getHandle().setColor(net.minecraft.item.DyeColor.byId(color.getWoolData()));
     }
 
     @Override
     public boolean isSheared() {
-        return getHandle().getSheared();
+        return getHandle().isSheared();
     }
 
     @Override

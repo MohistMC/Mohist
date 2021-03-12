@@ -11,12 +11,12 @@ public class CraftAgeable extends CraftCreature implements Ageable {
 
     @Override
     public int getAge() {
-        return getHandle().getGrowingAge();
+        return getHandle().getAge();
     }
 
     @Override
     public void setAge(int age) {
-        getHandle().setGrowingAge(age);
+        getHandle().setAge(age);
     }
 
     @Override

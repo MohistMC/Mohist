@@ -150,7 +150,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     @Override
     public boolean isOp() {
-        return server.getHandle().canSendCommands(getProfile());
+        return server.getHandle().isOp(getProfile());
     }
 
     @Override
@@ -158,9 +158,9 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         if (value == isOp()) return;
 
         if (value) {
-            server.getHandle().addOp(getProfile());
+            server.getHandle().op(getProfile());
         } else {
-            server.getHandle().removeOp(getProfile());
+            server.getHandle().deop(getProfile());
         }
 
         perm.recalculatePermissions();
@@ -175,7 +175,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     public InetSocketAddress getAddress() {
         if (getHandle().connection == null) return null;
 
-        SocketAddress addr = getHandle().connection.netManager.getRemoteAddress();
+        SocketAddress addr = getHandle().connection.connection.getRemoteAddress();
         if (addr instanceof InetSocketAddress) {
             return (InetSocketAddress) addr;
         } else {
@@ -197,7 +197,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         if (getHandle().connection == null) return;
 
         for (ITextComponent component : CraftChatMessage.fromString(message)) {
-            getHandle().connection.send(new SChatPacket(component, ChatType.SYSTEM, Util.DUMMY_UUID));
+            getHandle().connection.send(new SChatPacket(component, ChatType.SYSTEM, Util.NIL_UUID));
         }
     }
 
