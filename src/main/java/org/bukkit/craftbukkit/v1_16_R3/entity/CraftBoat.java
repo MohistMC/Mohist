@@ -19,7 +19,7 @@ public class CraftBoat extends CraftVehicle implements Boat {
 
     @Override
     public void setWoodType(TreeSpecies species) {
-        getHandle().setBoatType(getBoatType(species));
+        getHandle().setType(getBoatType(species));
     }
 
     @Override

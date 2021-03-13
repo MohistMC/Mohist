@@ -33,23 +33,23 @@ public class CraftEnderSignal extends CraftEntity implements EnderSignal {
 
     @Override
     public Location getTargetLocation() {
-        return new Location(getWorld(), getHandle().targetX, getHandle().targetY, getHandle().targetZ, getHandle().rotationYaw, getHandle().rotationPitch);
+        return new Location(getWorld(), getHandle().tx, getHandle().ty, getHandle().tz, getHandle().yRot, getHandle().xRot);
     }
 
     @Override
     public void setTargetLocation(Location location) {
         Preconditions.checkArgument(getWorld().equals(location.getWorld()), "Cannot target EnderSignal across worlds");
-        getHandle().moveTowards(new BlockPos(location.getX(), location.getY(), location.getZ()));
+        getHandle().signalTo(new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
 
     @Override
     public boolean getDropItem() {
-        return getHandle().shatterOrDrop;
+        return getHandle().surviveAfterDeath;
     }
 
     @Override
     public void setDropItem(boolean shouldDropItem) {
-        getHandle().shatterOrDrop = shouldDropItem;
+        getHandle().surviveAfterDeath = shouldDropItem;
     }
 
     @Override
@@ -59,16 +59,16 @@ public class CraftEnderSignal extends CraftEntity implements EnderSignal {
 
     @Override
     public void setItem(ItemStack item) {
-        getHandle().func_213863_b(item != null ? CraftItemStack.asNMSCopy(item) : Items.ENDER_EYE.getDefaultInstance());
+        getHandle().setItem(item != null ? CraftItemStack.asNMSCopy(item) : Items.ENDER_EYE.getDefaultInstance());
     }
 
     @Override
     public int getDespawnTimer() {
-        return getHandle().despawnTimer;
+        return getHandle().life;
     }
 
     @Override
     public void setDespawnTimer(int time) {
-        getHandle().despawnTimer = time;
+        getHandle().life = time;
     }
 }

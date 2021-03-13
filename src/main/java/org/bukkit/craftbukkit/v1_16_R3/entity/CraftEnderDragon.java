@@ -24,7 +24,7 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
     public Set<ComplexEntityPart> getParts() {
         Builder<ComplexEntityPart> builder = ImmutableSet.builder();
 
-        for (EnderDragonPartEntity part : getHandle().dragonParts) {
+        for (EnderDragonPartEntity part : getHandle().subEntities) {
             builder.add((ComplexEntityPart) part.getBukkitEntity());
         }
 
@@ -48,7 +48,7 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
 
     @Override
     public Phase getPhase() {
-        return Phase.values()[getHandle().getDataManager().get(EnderDragonEntity.PHASE)];
+        return Phase.values()[getHandle().getEntityData().get(EnderDragonEntity.DATA_PHASE)];
     }
 
     @Override
@@ -71,11 +71,11 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
 
     @Override
     public DragonBattle getDragonBattle() {
-        return new CraftDragonBattle(getHandle().getFightManager());
+        return new CraftDragonBattle(getHandle().getDragonFight());
     }
 
     @Override
     public int getDeathAnimationTicks() {
-        return getHandle().deathTicks; // PAIL rename deathAnimationTicks
+        return getHandle().dragonDeathTime; // PAIL rename deathAnimationTicks
     }
 }

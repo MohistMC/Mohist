@@ -27,11 +27,11 @@ public class CraftBat extends CraftAmbient implements Bat {
 
     @Override
     public boolean isAwake() {
-        return !getHandle().getIsBatHanging();
+        return !getHandle().isResting();
     }
 
     @Override
     public void setAwake(boolean state) {
-        getHandle().setIsBatHanging(!state);
+        getHandle().setResting(!state);
     }
 }

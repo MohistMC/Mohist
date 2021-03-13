@@ -69,7 +69,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     public CustomChunkGenerator(ServerWorld world, net.minecraft.world.gen.ChunkGenerator delegate, ChunkGenerator generator) {
-        super(delegate.getBiomeProvider(), delegate.func_235957_b_());
+        super(delegate.getBiomeSource(), delegate.getSettings());
 
         this.world = world;
         this.delegate = delegate;
@@ -77,18 +77,18 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     @Override
-    public void func_242706_a(Registry<net.minecraft.world.biome.Biome> p_242706_1_, IChunk p_242706_2_) {
+    public void createBiomes(Registry<net.minecraft.world.biome.Biome> p_242706_1_, IChunk p_242706_2_) {
         // Don't allow the server to override any custom biomes that have been set
     }
 
     @Override
-    public BiomeProvider getBiomeProvider() {
-        return delegate.getBiomeProvider();
+    public BiomeProvider getBiomeSource() {
+        return delegate.getBiomeSource();
     }
 
     @Override
-    public void func_235953_a_(ISeedReader p_235953_1_, StructureManager p_235953_2_, IChunk p_235953_3_) {
-        delegate.func_235953_a_(p_235953_1_, p_235953_2_, p_235953_3_);
+    public void createReferences(ISeedReader p_235953_1_, StructureManager p_235953_2_, IChunk p_235953_3_) {
+        delegate.createReferences(p_235953_1_, p_235953_2_, p_235953_3_);
     }
 
     @Override
@@ -97,14 +97,14 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     @Override
-    public void generateSurface(WorldGenRegion p_225551_1_, IChunk p_225551_2_) {
+    public void buildSurfaceAndBedrock(WorldGenRegion p_225551_1_, IChunk p_225551_2_) {
         // Call the bukkit ChunkGenerator before structure generation so correct biome information is available.
         int x = p_225551_2_.getPos().x;
         int z = p_225551_2_.getPos().z;
         random.setSeed((long) x * 341873128712L + (long) z * 132897987541L);
 
         // Get default biome data for chunk
-        CustomBiomeGrid biomegrid = new CustomBiomeGrid(new BiomeContainer(world.func_241828_r().getRegistry(Registry.BIOME_KEY), p_225551_2_.getPos(), this.getBiomeProvider()));
+        CustomBiomeGrid biomegrid = new CustomBiomeGrid(new BiomeContainer(world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY), p_225551_2_.getPos(), this.getBiomeSource()));
 
         ChunkData data;
         if (generator.isParallelCapable()) {
@@ -142,77 +142,77 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
                 int tz = pos.getZ();
                 Block block = craftData.getTypeId(tx, ty, tz).getBlock();
 
-                if (block.isTileEntityProvider()) {
-                    TileEntity tile = ((ITileEntityProvider) block).createNewTileEntity(world);
-                    p_225551_2_.addTileEntity(new BlockPos((x << 4) + tx, ty, (z << 4) + tz), tile);
+                if (block.isEntityBlock()) {
+                    TileEntity tile = ((ITileEntityProvider) block).newBlockEntity(world);
+                    p_225551_2_.setBlockEntity(new BlockPos((x << 4) + tx, ty, (z << 4) + tz), tile);
                 }
             }
         }
     }
 
     @Override
-    public void func_242707_a(DynamicRegistries p_242707_1_, StructureManager p_242707_2_, IChunk p_242707_3_, TemplateManager p_242707_4_, long p_242707_5_) {
+    public void createStructures(DynamicRegistries p_242707_1_, StructureManager p_242707_2_, IChunk p_242707_3_, TemplateManager p_242707_4_, long p_242707_5_) {
         if (generator.shouldGenerateStructures()) {
             // Still need a way of getting the biome of this chunk to pass to createStructures
             // Using default biomes for now.
-            delegate.func_242707_a(p_242707_1_, p_242707_2_, p_242707_3_, p_242707_4_, p_242707_5_);
+            delegate.createStructures(p_242707_1_, p_242707_2_, p_242707_3_, p_242707_4_, p_242707_5_);
         }
 
     }
 
     @Override
-    public void func_230350_a_(long p_230350_1_, BiomeManager p_230350_3_, IChunk p_230350_4_, Carving p_230350_5_) {
+    public void applyCarvers(long p_230350_1_, BiomeManager p_230350_3_, IChunk p_230350_4_, Carving p_230350_5_) {
         if (generator.shouldGenerateCaves()) {
-            delegate.func_230350_a_(p_230350_1_, p_230350_3_, p_230350_4_, p_230350_5_);
+            delegate.applyCarvers(p_230350_1_, p_230350_3_, p_230350_4_, p_230350_5_);
         }
     }
 
     @Override
-    public void func_230352_b_(IWorld p_230352_1_, StructureManager p_230352_2_, IChunk p_230352_3_) {
+    public void fillFromNoise(IWorld p_230352_1_, StructureManager p_230352_2_, IChunk p_230352_3_) {
 		// Disable vanilla generation
     }
 
     @Override
-    public int getHeight(int p_222529_1_, int p_222529_2_, Type heightmapType) {
-        return delegate.getHeight(p_222529_1_, p_222529_2_, heightmapType);
+    public int getBaseHeight(int p_222529_1_, int p_222529_2_, Type heightmapType) {
+        return delegate.getBaseHeight(p_222529_1_, p_222529_2_, heightmapType);
     }
 
     @Override
-    public void func_230351_a_(WorldGenRegion p_230351_1_, StructureManager p_230351_2_) {
+    public void applyBiomeDecoration(WorldGenRegion p_230351_1_, StructureManager p_230351_2_) {
         if (generator.shouldGenerateDecorations()) {
-            delegate.func_230351_a_(p_230351_1_, p_230351_2_);
+            delegate.applyBiomeDecoration(p_230351_1_, p_230351_2_);
         }
     }
 
     @Override
-    public void func_230354_a_(WorldGenRegion p_230354_1_) {
+    public void spawnOriginalMobs(WorldGenRegion p_230354_1_) {
         if (generator.shouldGenerateMobs()) {
-            delegate.func_230354_a_(p_230354_1_);
+            delegate.spawnOriginalMobs(p_230354_1_);
         }
     }
 
     @Override
-    public int getGroundHeight() {
-        return delegate.getGroundHeight();
+    public int getSpawnHeight() {
+        return delegate.getSpawnHeight();
     }
 
     @Override
-    public int getMaxBuildHeight() {
-        return delegate.getMaxBuildHeight();
+    public int getGenDepth() {
+        return delegate.getGenDepth();
     }
 
     @Override
-    public IBlockReader func_230348_a_(int p_230348_1_, int p_230348_2_) {
-        return delegate.func_230348_a_(p_230348_1_, p_230348_2_);
+    public IBlockReader getBaseColumn(int p_230348_1_, int p_230348_2_) {
+        return delegate.getBaseColumn(p_230348_1_, p_230348_2_);
     }
 
     @Override
-    protected Codec<? extends net.minecraft.world.gen.ChunkGenerator> func_230347_a_() {
+    protected Codec<? extends net.minecraft.world.gen.ChunkGenerator> codec() {
         throw new UnsupportedOperationException("Cannot serialize CustomChunkGenerator");
     }
 
     @Override
-    public net.minecraft.world.gen.ChunkGenerator func_230349_a_(long p_230349_1_) {
+    public net.minecraft.world.gen.ChunkGenerator withSeed(long p_230349_1_) {
         return null;
     }
 }

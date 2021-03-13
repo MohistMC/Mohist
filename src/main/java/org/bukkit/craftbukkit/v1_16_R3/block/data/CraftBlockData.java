@@ -60,7 +60,7 @@ public class CraftBlockData implements BlockData {
      * @return the matching Bukkit type
      */
     protected <B extends Enum<B>> B get(EnumProperty<?> nms, Class<B> bukkit) {
-        return toBukkit(state.get(nms), bukkit);
+        return toBukkit(state.getValue(nms), bukkit);
     }
 
     /**
@@ -76,7 +76,7 @@ public class CraftBlockData implements BlockData {
     protected <B extends Enum<B>> Set<B> getValues(EnumProperty<?> nms, Class<B> bukkit) {
         ImmutableSet.Builder<B> values = ImmutableSet.builder();
 
-        for (Enum<?> e : nms.getAllowedValues()) {
+        for (Enum<?> e : nms.getPossibleValues()) {
             values.add(toBukkit(e, bukkit));
         }
 
@@ -93,7 +93,7 @@ public class CraftBlockData implements BlockData {
      */
     protected <B extends Enum<B>, N extends Enum<N> & IStringSerializable> void set(EnumProperty<N> nms, Enum<B> bukkit) {
         this.parsedStates = null;
-        this.state = this.state.with(nms, toNMS(bukkit, nms.getValueClass()));
+        this.state = this.state.setValue(nms, toNMS(bukkit, nms.getValueClass()));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class CraftBlockData implements BlockData {
         clone.parsedStates = null;
 
         for (Property parsed : craft.parsedStates.keySet()) {
-            clone.state = clone.state.with(parsed, craft.state.get(parsed));
+            clone.state = clone.state.setValue(parsed, craft.state.getValue(parsed));
         }
 
         return clone;
@@ -178,7 +178,7 @@ public class CraftBlockData implements BlockData {
      */
     protected <T extends Comparable<T>> T get(Property<T> ibs) {
         // Straight integer or boolean getter
-        return this.state.get(ibs);
+        return this.state.getValue(ibs);
     }
 
     /**
@@ -192,7 +192,7 @@ public class CraftBlockData implements BlockData {
     public <T extends Comparable<T>, V extends T> void set(Property<T> ibs, V v) {
         // Straight integer or boolean setter
         this.parsedStates = null;
-        this.state = this.state.with(ibs, v);
+        this.state = this.state.setValue(ibs, v);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class CraftBlockData implements BlockData {
 
         if (!states.isEmpty()) {
             stateString.append('[');
-            stateString.append(states.entrySet().stream().map(StateHolder.field_235890_a_).collect(Collectors.joining(",")));
+            stateString.append(states.entrySet().stream().map(StateHolder.PROPERTY_ENTRY_TO_STRING_FUNCTION).collect(Collectors.joining(",")));
             stateString.append(']');
         }
 
@@ -303,9 +303,9 @@ public class CraftBlockData implements BlockData {
         for (Block instance : Registry.BLOCK) {
             if (instance.getClass() == block) {
                 if (state == null) {
-                    state = instance.getStateContainer().getProperty(name);
+                    state = instance.getStateDefinition().getProperty(name);
                 } else {
-                    Property<?> newState = instance.getStateContainer().getProperty(name);
+                    Property<?> newState = instance.getStateDefinition().getProperty(name);
 
                     Preconditions.checkState(state == newState, "State mistmatch %s,%s", state, newState);
                 }
@@ -501,7 +501,7 @@ public class CraftBlockData implements BlockData {
                 throw new IllegalArgumentException("Could not parse data: " + data, ex);
             }
         } else {
-            blockData = block.getDefaultState();
+            blockData = block.defaultBlockState();
         }
 
         CraftBlockData craft = fromData(blockData);
