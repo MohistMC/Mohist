@@ -3,7 +3,7 @@
 <div align="center">
   <h1>Mohist 1.12.2</h1>
 
-### Сервер гибрид Майнкрафт Forge, поддерживающий Paper/Spigot/Bukkit API, которые ранее известный как Thermos/Cauldron/MCPC+
+### Сервер гибрид Майнкрафт Forge, поддерживающий Paper/Spigot/Bukkit API, которые ранее известны как Thermos/Cauldron/MCPC+
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohist-Community%2Fjob%2FMohist-1.12.2)](https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2)
 [![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars&logo=github)](https://github.com/Mohist-Community/Mohist/stargazers)
