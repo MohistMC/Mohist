@@ -9,7 +9,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 public class CraftCustomFakePlayer extends CraftPlayer {
 
     public CraftCustomFakePlayer(CraftServer server, PlayerEntity entity) {
-        super(server, FakePlayerFactory.get(server.getServer().getWorld(entity.world.getDimensionKey()), entity.getGameProfile()));
+        super(server, FakePlayerFactory.get(server.getServer().getLevel(entity.level.dimension()), entity.getGameProfile()));
     }
 
     @Override

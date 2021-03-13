@@ -43,14 +43,14 @@ public class CraftBee extends CraftAnimals implements Bee {
 
     @Override
     public Location getFlower() {
-        BlockPos flower = getHandle().getFlowerPos();
+        BlockPos flower = getHandle().getSavedFlowerPos();
         return (flower == null) ? null : new Location(getWorld(), flower.getX(), flower.getY(), flower.getZ());
     }
 
     @Override
     public void setFlower(Location location) {
         Preconditions.checkArgument(location == null || this.getWorld().equals(location.getWorld()), "Flower must be in same world");
-        getHandle().setFlowerPos(location == null ? null : new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+        getHandle().setSavedFlowerPos(location == null ? null : new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
     }
 
     @Override
@@ -75,12 +75,12 @@ public class CraftBee extends CraftAnimals implements Bee {
 
     @Override
     public int getAnger() {
-        return getHandle().getAngerTime();
+        return getHandle().getRemainingPersistentAngerTime();
     }
 
     @Override
     public void setAnger(int anger) {
-        getHandle().setAngerTime(anger);
+        getHandle().setRemainingPersistentAngerTime(anger);
     }
 
     @Override

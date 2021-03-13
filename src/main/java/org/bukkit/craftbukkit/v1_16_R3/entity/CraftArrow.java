@@ -20,23 +20,23 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
     @Override
     public void setKnockbackStrength(int knockbackStrength) {
         Validate.isTrue(knockbackStrength >= 0, "Knockback cannot be negative");
-        getHandle().setKnockbackStrength(knockbackStrength);
+        getHandle().setKnockback(knockbackStrength);
     }
 
     @Override
     public int getKnockbackStrength() {
-        return getHandle().knockbackStrength;
+        return getHandle().knockback;
     }
 
     @Override
     public double getDamage() {
-        return getHandle().getDamage();
+        return getHandle().getBaseDamage();
     }
 
     @Override
     public void setDamage(double damage) {
         Preconditions.checkArgument(damage >= 0, "Damage must be positive");
-        getHandle().setDamage(damage);
+        getHandle().setBaseDamage(damage);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
 
     @Override
     public boolean isCritical() {
-        return getHandle().getIsCritical();
+        return getHandle().isCritArrow();
     }
 
     @Override
     public void setCritical(boolean critical) {
-        getHandle().setIsCritical(critical);
+        getHandle().setCritArrow(critical);
     }
 
     @Override
@@ -69,9 +69,9 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
     @Override
     public void setShooter(ProjectileSource shooter) {
         if (shooter instanceof Entity) {
-            getHandle().setShooter(((CraftEntity) shooter).getHandle());
+            getHandle().setOwner(((CraftEntity) shooter).getHandle());
         } else {
-            getHandle().setShooter(null);
+            getHandle().setOwner(null);
         }
         getHandle().projectileSource = shooter;
     }
@@ -87,19 +87,19 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
             return null;
         }
 
-        BlockPos pos = getHandle().getPosition();
+        BlockPos pos = getHandle().blockPosition();
         return getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override
     public PickupStatus getPickupStatus() {
-        return PickupStatus.values()[getHandle().pickupStatus.ordinal()];
+        return PickupStatus.values()[getHandle().pickup.ordinal()];
     }
 
     @Override
     public void setPickupStatus(PickupStatus status) {
         Preconditions.checkNotNull(status, "status");
-        getHandle().pickupStatus = AbstractArrowEntity.PickupStatus.getByOrdinal(status.ordinal());
+        getHandle().pickup = AbstractArrowEntity.PickupStatus.byOrdinal(status.ordinal());
     }
 
     @Override
@@ -107,12 +107,12 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
         super.setTicksLived(value);
 
         // Second field for AbstractArrowEntity
-        getHandle().ticksInGround = value;
+        getHandle().life = value;
     }
 
     @Override
     public boolean isShotFromCrossbow() {
-        return getHandle().getShotFromCrossbow();
+        return getHandle().shotFromCrossbow();
     }
 
     @Override

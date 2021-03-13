@@ -25,12 +25,12 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     @Override
     public boolean setFacingDirection(BlockFace face, boolean force) {
         HangingEntity hanging = getHandle();
-        Direction oldDir = hanging.getHorizontalFacing();
+        Direction oldDir = hanging.getDirection();
         Direction newDir = CraftBlock.blockFaceToNotch(face);
 
-        getHandle().updateFacingWithBoundingBox(newDir);
-        if (!force && !hanging.onValidSurface()) {
-            hanging.updateFacingWithBoundingBox(oldDir);
+        getHandle().setDirection(newDir);
+        if (!force && !hanging.survives()) {
+            hanging.setDirection(oldDir);
             return false;
         }
 
@@ -43,15 +43,15 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         ItemFrameEntity old = this.getHandle();
 
         ServerWorld world = ((CraftWorld) getWorld()).getHandle();
-        BlockPos position = old.getHangingPosition();
-        Direction direction = old.getHorizontalFacing();
-        ItemStack item = old.getDisplayedItem() != null ? old.getDisplayedItem().copy() : null;
+        BlockPos position = old.getPos();
+        Direction direction = old.getDirection();
+        ItemStack item = old.getItem() != null ? old.getItem().copy() : null;
 
         old.remove();
 
         ItemFrameEntity frame = new ItemFrameEntity(world,position,direction);
         frame.setItem(item, true, false);
-        world.addEntity(frame);
+        world.addFreshEntity(frame);
         this.entity = frame;
     }
 
@@ -67,18 +67,18 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
 
     @Override
     public org.bukkit.inventory.ItemStack getItem() {
-        return CraftItemStack.asBukkitCopy(getHandle().getDisplayedItem());
+        return CraftItemStack.asBukkitCopy(getHandle().getItem());
     }
 
     @Override
     public float getItemDropChance() {
-        return getHandle().itemDropChance;
+        return getHandle().dropChance;
     }
 
     @Override
     public void setItemDropChance(float chance) {
         Preconditions.checkArgument(0.0 <= chance && chance <= 1.0, "Chance outside range [0, 1]");
-        getHandle().itemDropChance = chance;
+        getHandle().dropChance = chance;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     @Override
     public void setRotation(Rotation rotation) {
         Validate.notNull(rotation, "Rotation cannot be null");
-        getHandle().setItemRotation(toInteger(rotation));
+        getHandle().setRotation(toInteger(rotation));
     }
 
     static int toInteger(Rotation rotation) {
