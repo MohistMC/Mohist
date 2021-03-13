@@ -5,7 +5,7 @@
  
     private PathNodeType func_237230_a_(MobEntity p_237230_1_, int p_237230_2_, int p_237230_3_, int p_237230_4_) {
 +      // Mohist start - Do not load chunks for Pathfinding (additional)
-+      if (!p_237230_1_.field_70170_p.isPosLoaded(new BlockPos(p_237230_2_, p_237230_3_, p_237230_4_))) {
++      if (!this.field_176169_a.isPosLoaded(new BlockPos(p_237230_2_, p_237230_3_, p_237230_4_))) {
 +         return PathNodeType.BLOCKED;
 +      }
 +      // Mohist end
