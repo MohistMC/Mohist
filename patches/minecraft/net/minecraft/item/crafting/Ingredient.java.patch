@@ -15,9 +15,10 @@
 -   private ItemStack[] field_193371_b;
 +   public ItemStack[] field_193371_b;
     private IntList field_194140_c;
-+   private final boolean isSimple;
- 
+-
 -   protected Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {
++   private final boolean isSimple;
++
 +   public boolean exact; // Bukkit
 +
 +   public Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {

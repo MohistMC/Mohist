@@ -54,10 +54,11 @@
        this.field_70180_af.func_187227_b(field_213449_bz, p_213446_1_.field_221098_c);
     }
  
-@@ -235,6 +243,51 @@
+@@ -234,6 +242,51 @@
+ 
        return mooshroomentity$type2;
     }
- 
++
 +   @Override
 +   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, World world, BlockPos pos) {
 +      return func_230262_K__();
@@ -102,7 +103,6 @@
 +      return java.util.Collections.emptyList();
 +   }
 +
-+
+ 
     public static enum Type {
        RED("red", Blocks.field_150337_Q.func_176223_P()),
-       BROWN("brown", Blocks.field_150338_P.func_176223_P());

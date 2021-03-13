@@ -12,7 +12,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.MerchantOffer;
-@@ -9,15 +13,67 @@
+@@ -9,14 +13,66 @@
  import net.minecraft.util.NonNullList;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -30,7 +30,7 @@
 -   private int field_70473_e;
 +   public int field_70473_e; // private->public CraftBukkit
     private int field_214027_e;
- 
++
 +   // CraftBukkit start - add fields and methods
 +   public List<HumanEntity> transaction = new ArrayList<>();
 +   private int maxStack = MAX_STACK;
@@ -77,7 +77,6 @@
 +   }
 +
 +   // CraftBukkit end
-+
+ 
     public MerchantInventory(IMerchant p_i50071_1_) {
        this.field_70476_a = p_i50071_1_;
-    }

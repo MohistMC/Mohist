@@ -92,10 +92,11 @@
        private final ITag.Builder field_240528_a_;
        private final Registry<T> field_240529_b_;
        private final String field_240530_c_;
-@@ -115,5 +151,18 @@
+@@ -114,6 +150,19 @@
+             this.field_240528_a_.func_232961_a_(p_240533_1_, this.field_240530_c_);
           });
           return this;
-       }
++      }
 +
 +      public TagsProvider.Builder<T> add(ITag.ITagEntry tag) {
 +          field_240528_a_.func_232955_a_(tag, field_240530_c_);
@@ -108,6 +109,6 @@
 +
 +      public String getModID() {
 +          return field_240530_c_;
-+      }
+       }
     }
  }

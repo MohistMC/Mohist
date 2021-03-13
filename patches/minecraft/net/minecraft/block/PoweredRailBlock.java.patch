@@ -64,12 +64,13 @@
           }
        case COUNTERCLOCKWISE_90:
           switch((RailShape)p_185499_1_.func_177229_b(field_176568_b)) {
-@@ -255,4 +272,8 @@
+@@ -254,5 +271,9 @@
+ 
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_176568_b, field_176569_M);
-    }
++   }
 +
 +   public boolean isActivatorRail() {
 +      return isActivator;
-+   }
+    }
  }

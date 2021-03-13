@@ -146,9 +146,11 @@
        this.func_219452_a(p_219455_1_.field_71135_a::func_147359_a);
        this.field_219461_c.func_184178_b(p_219455_1_);
        p_219455_1_.func_184848_d(this.field_219461_c);
+-   }
+-
 +      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.field_219461_c, p_219455_1_);
-    }
- 
++   }
++
 +   public void a(Consumer<IPacket<?>> packetConsumer, ServerPlayerEntity player) {
 +      sendSpawnPacketsPlayer = player;
 +      func_219452_a(packetConsumer);
@@ -181,21 +183,20 @@
           if (!collection.isEmpty()) {
              p_219452_1_.accept(new SEntityPropertiesPacket(this.field_219461_c.func_145782_y(), collection));
           }
-@@ -237,8 +301,14 @@
+@@ -237,7 +301,13 @@
           if (!list.isEmpty()) {
              p_219452_1_.accept(new SEntityEquipmentPacket(this.field_219461_c.func_145782_y(), list));
           }
 +         ((LivingEntity) this.field_219461_c).func_241353_q_(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
        }
- 
++
 +      // CraftBukkit start - Fix for nonsensical head yaw
 +      this.field_219470_l = MathHelper.func_76141_d(this.field_219461_c.func_70079_am() * 256.0F / 360.0F);
 +      p_219452_1_.accept(new SEntityHeadLookPacket(this.field_219461_c, (byte) field_219470_l));
 +      // CraftBukkit end
-+
+ 
        if (this.field_219461_c instanceof LivingEntity) {
           LivingEntity livingentity = (LivingEntity)this.field_219461_c;
- 
 @@ -273,6 +343,11 @@
        if (this.field_219461_c instanceof LivingEntity) {
           Set<ModifiableAttributeInstance> set = ((LivingEntity)this.field_219461_c).func_233645_dx_().func_233778_a_();

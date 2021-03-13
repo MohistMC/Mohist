@@ -52,6 +52,8 @@
           ItemEntity itementity = new ItemEntity(p_180635_0_, (double)p_180635_1_.func_177958_n() + d0, (double)p_180635_1_.func_177956_o() + d1, (double)p_180635_1_.func_177952_p() + d2, p_180635_2_);
           itementity.func_174869_p();
 -         p_180635_0_.func_217376_c(itementity);
+-      }
+-   }
 +         // CraftBukkit start
 +         if(p_180635_0_.captureDrops != null) {
 +            p_180635_0_.captureDrops.add(itementity);
@@ -59,9 +61,9 @@
 +            p_180635_0_.func_217376_c(itementity);
 +         }
 +         // CraftBukkit end
-       }
-    }
- 
++      }
++   }
++
 +   // CraftBukkit start
 +   public int getExpDrop(BlockState iblockdata, ServerWorld worldserver, BlockPos blockposition, ItemStack itemstack) {
 +      int bonusLevel = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, itemstack);
@@ -82,7 +84,7 @@
 +   }
 +   // Spigot end
 +
-+
+ 
     public void func_180637_b(ServerWorld p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
 -      if (p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
 +      if (p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180637_1_.restoringBlockSnapshots) {
@@ -139,10 +141,11 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -410,6 +447,78 @@
+@@ -409,6 +446,78 @@
+    protected Block func_230328_p_() {
        return this;
     }
- 
++
 +   /* ======================================== FORGE START =====================================*/
 +   protected Random RANDOM = new Random();
 +   private net.minecraftforge.common.ToolType harvestTool;
@@ -214,7 +217,6 @@
 +      });
 +  }
 +   /* ========================================= FORGE END ======================================*/
-+
+ 
     public static final class RenderSideCacheKey {
        private final BlockState field_212164_a;
-       private final BlockState field_212165_b;

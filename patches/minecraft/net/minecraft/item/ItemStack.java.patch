@@ -86,9 +86,10 @@
        }
  
        this.func_190923_F();
+-   }
 +      this.forgeInit();
-    }
- 
++   }
++
 +   // CraftBukkit start - Called to run this stack through the data converter to handle older storage methods and serialized items
 +   public void convertStack(int version) {
 +      if (version > 0 && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
@@ -99,18 +100,12 @@
 +      }
 +   }
 +   // CraftBukkit end
-+
+ 
     private void func_190923_F() {
        this.field_190928_g = false;
        this.field_190928_g = this.func_190926_b();
     }
  
--   private ItemStack(CompoundNBT p_i47263_1_) {
--      this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
--      this.field_77994_a = p_i47263_1_.func_74771_c("Count");
--      if (p_i47263_1_.func_150297_b("tag", 10)) {
--         this.field_77990_d = p_i47263_1_.func_74775_l("tag");
--         this.func_77973_b().func_179215_a(p_i47263_1_);
 +   // CraftBukkit start - break into own method
 +   private void load(CompoundNBT compound) {
 +      this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
@@ -123,14 +118,25 @@
 +         this.field_77990_d = compound.func_74775_l("tag").func_74737_b();
 +         this.func_77973_b().func_179215_a(this.field_77990_d);
 +         // CraftBukkit end
-       }
- 
-       if (this.func_77973_b().func_77645_m()) {
-          this.func_196085_b(this.func_77952_i());
-       }
++      }
++
++      if (this.func_77973_b().func_77645_m()) {
++         this.func_196085_b(this.func_77952_i());
++      }
 +   }
- 
-+   private ItemStack(CompoundNBT p_i47263_1_) {
++
+    private ItemStack(CompoundNBT p_i47263_1_) {
+-      this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
+-      this.field_77994_a = p_i47263_1_.func_74771_c("Count");
+-      if (p_i47263_1_.func_150297_b("tag", 10)) {
+-         this.field_77990_d = p_i47263_1_.func_74775_l("tag");
+-         this.func_77973_b().func_179215_a(p_i47263_1_);
+-      }
+-
+-      if (this.func_77973_b().func_77645_m()) {
+-         this.func_196085_b(this.func_77952_i());
+-      }
+-
 +      super(ItemStack.class);
 +      this.load(p_i47263_1_);
 +      // CraftBukkit stop
@@ -313,12 +319,12 @@
        }
     }
  
-@@ -435,7 +511,17 @@
+@@ -435,6 +511,16 @@
        return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
     }
  
 +   // CraftBukkit start
-    @Nullable
++   @Nullable
 +   private CompoundNBT getTagClone() {
 +      return this.field_77990_d == null ? null : this.field_77990_d.func_74737_b();
 +   }
@@ -327,10 +333,9 @@
 +   }
 +   // CraftBukkit end
 +
-+   @Nullable
+    @Nullable
     public CompoundNBT func_77978_p() {
        return this.field_77990_d;
-    }
 @@ -479,7 +565,7 @@
  
     public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
@@ -387,10 +392,12 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -954,6 +1055,24 @@
-       return this.func_77973_b().func_219971_r();
-    }
+@@ -952,6 +1053,24 @@
  
+    public boolean func_222117_E() {
+       return this.func_77973_b().func_219971_r();
++   }
++
 +   // FORGE START
 +   public void deserializeNBT(CompoundNBT nbt) {
 +      final ItemStack itemStack = ItemStack.func_199557_a(nbt);
@@ -407,8 +414,6 @@
 +         this.gatherCapabilities(provider);
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
-+   }
-+
-    public SoundEvent func_226629_F_() {
-       return this.func_77973_b().func_225520_U__();
     }
+ 
+    public SoundEvent func_226629_F_() {

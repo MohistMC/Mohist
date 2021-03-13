@@ -481,11 +481,6 @@ project(':forge') {
 
     task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
 
-    genPatches {
-        //finalizedBy checkPatches
-        autoHeader true
-    }
-
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
         inputs.file { launcherJar.archivePath }

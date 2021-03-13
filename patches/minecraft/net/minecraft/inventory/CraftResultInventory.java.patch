@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/CraftResultInventory.java
 +++ b/net/minecraft/inventory/CraftResultInventory.java
-@@ -1,16 +1,65 @@
+@@ -1,15 +1,64 @@
  package net.minecraft.inventory;
  
 +import java.util.ArrayList;
@@ -19,7 +19,7 @@
     private final NonNullList<ItemStack> field_70467_a = NonNullList.func_191197_a(1, ItemStack.field_190927_a);
     @Nullable
     private IRecipe<?> field_193057_b;
- 
++
 +   // CraftBukkit start
 +
 +   private int maxStack = MAX_STACK;
@@ -62,7 +62,6 @@
 +      return null;
 +   }
 +   // CraftBukkit end
-+
+ 
     public int func_70302_i_() {
        return 1;
-    }

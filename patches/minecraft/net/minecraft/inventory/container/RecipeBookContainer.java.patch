@@ -11,14 +11,14 @@
     public RecipeBookContainer(ContainerType<?> p_i50067_1_, int p_i50067_2_) {
        super(p_i50067_1_, p_i50067_2_);
     }
-@@ -33,6 +35,10 @@
+@@ -32,6 +34,10 @@
+ 
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
- 
++
 +   public java.util.List<net.minecraft.client.util.RecipeBookCategories> getRecipeBookCategories() {
 +      return net.minecraft.client.util.RecipeBookCategories.func_243236_a(this.func_241850_m());
 +   }
-+
+ 
     @OnlyIn(Dist.CLIENT)
     public abstract RecipeBookCategory func_241850_m();
- }

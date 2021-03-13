@@ -90,14 +90,15 @@
     public SkullTileEntity() {
        super(TileEntityType.field_200985_p);
     }
-@@ -88,9 +149,37 @@
+@@ -88,8 +149,36 @@
  
     @Nullable
     public SUpdateTileEntityPacket func_189518_D_() {
 -      return new SUpdateTileEntityPacket(this.field_174879_c, 4, this.func_189517_E_());
+-   }
 +      return new SUpdateTileEntityPacket(this.field_174879_c, 4, sanitizeTileEntityUUID(this.func_189517_E_())); // Paper
-    }
- 
++   }
++
 +    // Paper start
 +    public static CompoundNBT sanitizeTileEntityUUID(CompoundNBT cmp) {
 +       CompoundNBT owner = cmp.func_74775_l("Owner");
@@ -125,10 +126,9 @@
 +      owner.func_186854_a("Id", UUID.randomUUID());
 +   }
 +   // Paper end
-+
+ 
     public CompoundNBT func_189517_E_() {
        return this.func_189515_b(new CompoundNBT());
-    }
 @@ -101,32 +190,71 @@
     }
  
@@ -211,12 +211,12 @@
 +         callback.apply(input);
        }
 +      return Futures.immediateFuture(input);
-    }
++   }
 +   // Spigot end
 +
 +   @Nullable
 +   public static GameProfile func_174884_b(@Nullable GameProfile p_174884_0_)
 +   {
 +      return com.google.common.util.concurrent.Futures.getUnchecked(updateGameProfile(p_174884_0_, com.google.common.base.Predicates.alwaysTrue(), true));
-+   }
+    }
  }

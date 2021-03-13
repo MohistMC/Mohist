@@ -21,13 +21,14 @@
              world.func_184133_a(playerentity, blockpos, SoundEvents.field_187771_eN, SoundCategory.BLOCKS, 1.0F, 1.0F);
              blockstate2 = blockstate1;
           } else if (blockstate.func_177230_c() instanceof CampfireBlock && blockstate.func_177229_b(CampfireBlock.field_220101_b)) {
-@@ -67,4 +67,9 @@
+@@ -66,5 +66,10 @@
+             return ActionResultType.PASS;
           }
        }
-    }
++   }
 +
 +   @javax.annotation.Nullable
 +   public static BlockState getShovelPathingState(BlockState originalState) {
 +      return field_195955_e.get(originalState.func_177230_c());
-+   }
+    }
  }

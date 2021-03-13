@@ -7,7 +7,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.entity.Entity;
-@@ -27,14 +28,62 @@
+@@ -27,13 +28,61 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -24,7 +24,7 @@
 -   private long field_184291_d;
 +   public ResourceLocation field_184290_c;
 +   public long field_184291_d;
- 
++
 +   // CraftBukkit start
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
@@ -68,10 +68,9 @@
 +   }
 +
 +   // CraftBukkit end
-+
+ 
     protected ContainerMinecartEntity(EntityType<?> p_i48536_1_, World p_i48536_2_) {
        super(p_i48536_1_, p_i48536_2_);
-    }
 @@ -118,17 +167,18 @@
     }
  

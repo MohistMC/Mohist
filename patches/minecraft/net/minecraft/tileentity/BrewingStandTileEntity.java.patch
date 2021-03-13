@@ -178,10 +178,11 @@
           }
        }
     }
-@@ -267,4 +341,27 @@
+@@ -266,5 +340,28 @@
+ 
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new BrewingStandContainer(p_213906_1_, p_213906_2_, this, this.field_213954_a);
-    }
++   }
 +
 +   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
 +           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
@@ -204,5 +205,5 @@
 +      super.invalidateCaps();
 +      for (int x = 0; x < handlers.length; x++)
 +        handlers[x].invalidate();
-+   }
+    }
  }

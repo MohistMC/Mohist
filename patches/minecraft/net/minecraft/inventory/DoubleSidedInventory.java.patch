@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/DoubleSidedInventory.java
 +++ b/net/minecraft/inventory/DoubleSidedInventory.java
-@@ -1,12 +1,67 @@
+@@ -1,11 +1,66 @@
  package net.minecraft.inventory;
  
 +import java.util.ArrayList;
@@ -15,7 +15,7 @@
  public class DoubleSidedInventory implements IInventory {
 -   private final IInventory field_70477_b;
 -   private final IInventory field_70478_c;
- 
++
 +   public final IInventory field_70477_b; // private->public CraftBukkit
 +   public final IInventory field_70478_c; // private->public CraftBukkit
 +
@@ -66,7 +66,6 @@
 +      return field_70477_b.getLocation();
 +   }
 +   // CraftBukkit end
-+
+ 
     public DoubleSidedInventory(IInventory p_i50399_1_, IInventory p_i50399_2_) {
        if (p_i50399_1_ == null) {
-          p_i50399_1_ = p_i50399_2_;

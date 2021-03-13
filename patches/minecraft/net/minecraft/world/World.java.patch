@@ -86,7 +86,7 @@
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
- 
++
 +   // CraftBukkit start Added the following
 +   private RegistryKey<DimensionType> typeKey;
 +   public CraftWorld craftWorld;//Mohist - compat for Forge
@@ -130,7 +130,7 @@
 +      generator = gen;
 +      environment = env;
 +   }
-+
+ 
     protected World(ISpawnWorldInfo p_i241925_1_, RegistryKey<World> p_i241925_2_, final DimensionType p_i241925_3_, Supplier<IProfiler> p_i241925_4_, boolean p_i241925_5_, boolean p_i241925_6_, long p_i241925_7_) {
 +      super(World.class);
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().field_71310_m.func_237291_a_(p_i241925_2_).getName()); // Spigot
@@ -578,16 +578,22 @@
           TileEntity tileentity = null;
           if (this.field_147481_N) {
 -            tileentity = this.func_189508_F(p_175625_1_);
-+            tileentity = this.func_189508_F(pos);
-          }
- 
-          if (tileentity == null) {
+-         }
+-
+-         if (tileentity == null) {
 -            tileentity = this.func_175726_f(p_175625_1_).func_177424_a(p_175625_1_, Chunk.CreateEntityType.IMMEDIATE);
-+            tileentity = this.func_175726_f(pos).func_177424_a(pos, Chunk.CreateEntityType.IMMEDIATE);
-          }
- 
-          if (tileentity == null) {
+-         }
+-
+-         if (tileentity == null) {
 -            tileentity = this.func_189508_F(p_175625_1_);
++            tileentity = this.func_189508_F(pos);
++         }
++
++         if (tileentity == null) {
++            tileentity = this.func_175726_f(pos).func_177424_a(pos, Chunk.CreateEntityType.IMMEDIATE);
++         }
++
++         if (tileentity == null) {
 +            tileentity = this.func_189508_F(pos);
           }
  

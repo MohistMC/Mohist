@@ -8,13 +8,14 @@
  
  public class NPCMerchant implements IMerchant {
     private final MerchantInventory field_70937_a;
-@@ -67,4 +68,9 @@
+@@ -66,5 +67,10 @@
+ 
     public SoundEvent func_213714_ea() {
        return SoundEvents.field_187915_go;
-    }
++   }
 +
 +   @Override
 +   public CraftMerchant getCraftMerchant() {
 +      return null;
-+   }
+    }
  }

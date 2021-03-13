@@ -33,8 +33,8 @@
        super(p_i49025_2_);
        this.field_77876_a = p_i49025_1_;
 +      this.fluidSupplier = p_i49025_1_.delegate;
-    }
- 
++   }
++
 +   /**
 +    * @param supplier A fluid supplier such as {@link net.minecraftforge.fml.RegistryObject<Fluid>}
 +    */
@@ -42,8 +42,8 @@
 +      super(builder);
 +      this.field_77876_a = null;
 +      this.fluidSupplier = supplier;
-+   }
-+
+    }
+ 
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
        RayTraceResult raytraceresult = func_219968_a(p_77659_1_, p_77659_2_, this.field_77876_a == Fluids.field_204541_a ? RayTraceContext.FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
@@ -169,7 +169,7 @@
 +      SoundEvent soundevent = this.field_77876_a.getAttributes().getEmptySound();
 +      if(soundevent == null) soundevent = this.field_77876_a.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187627_L : SoundEvents.field_187624_K;
        p_203791_2_.func_184133_a(p_203791_1_, p_203791_3_, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
-    }
++   }
 +
 +   @Override
 +   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.CompoundNBT nbt) {
@@ -185,5 +185,5 @@
 +   private boolean canBlockContainFluid(World worldIn, BlockPos posIn, BlockState blockstate)
 +   {
 +      return blockstate.func_177230_c() instanceof ILiquidContainer && ((ILiquidContainer)blockstate.func_177230_c()).func_204510_a(worldIn, posIn, blockstate, this.field_77876_a);
-+   }
+    }
  }

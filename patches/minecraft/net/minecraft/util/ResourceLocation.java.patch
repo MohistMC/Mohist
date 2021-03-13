@@ -21,16 +21,16 @@
        if (!func_217858_d(this.field_110626_a)) {
           throw new ResourceLocationException("Non [a-z0-9_.-] character in namespace of location: " + this.field_110626_a + ':' + this.field_110625_b);
        } else if (!func_217856_c(this.field_110625_b)) {
-@@ -112,6 +117,12 @@
-       return i;
-    }
+@@ -110,6 +115,12 @@
+       }
  
+       return i;
++   }
++
 +   // Normal compare sorts by path first, this compares namespace first.
 +   public int compareNamespaced(ResourceLocation o) {
 +      int ret = this.field_110626_a.compareTo(o.field_110626_a);
 +      return ret != 0 ? ret : this.field_110625_b.compareTo(o.field_110625_b);
-+   }
-+
-    public static ResourceLocation func_195826_a(StringReader p_195826_0_) throws CommandSyntaxException {
-       int i = p_195826_0_.getCursor();
+    }
  
+    public static ResourceLocation func_195826_a(StringReader p_195826_0_) throws CommandSyntaxException {

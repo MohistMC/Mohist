@@ -95,7 +95,7 @@
                 }
              }
           }
-@@ -122,20 +135,30 @@
+@@ -122,19 +135,29 @@
           for(int i2 = -1; i2 < 4; ++i2) {
              if (k1 == -1 || k1 == 2 || i2 == -1 || i2 == 3) {
                 blockpos$mutable.func_239621_a_(blockpos, k1 * direction.func_82601_c(), i2, k1 * direction.func_82599_e());
@@ -115,7 +115,7 @@
 +            blockList.func_180501_a(blockpos$mutable, blockstate, 18); // CraftBukkit
           }
        }
- 
++
 +      // CraftBukkit start
 +      org.bukkit.World bworld = this.field_85192_a.getCBWorld();
 +      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.NETHER_PAIR);
@@ -125,7 +125,6 @@
 +      }
 +      blockList.updateList();
 +      // CraftBukkit end
-+
+ 
        return Optional.of(new TeleportationRepositioner.Result(blockpos.func_185334_h(), 2, 3));
     }
- 

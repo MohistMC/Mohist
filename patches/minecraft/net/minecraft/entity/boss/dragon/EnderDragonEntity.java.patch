@@ -210,10 +210,11 @@
     }
  
     public void func_70623_bb() {
-@@ -842,4 +927,14 @@
+@@ -841,5 +926,15 @@
+ 
     public boolean func_184222_aU() {
        return false;
-    }
++   }
 +
 +   @Override
 +   public boolean isMultipartEntity() {
@@ -223,5 +224,5 @@
 +   @Override
 +   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
 +      return this.field_70977_g;
-+   }
+    }
  }

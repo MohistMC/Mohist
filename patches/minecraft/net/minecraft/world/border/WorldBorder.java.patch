@@ -16,18 +16,16 @@
  
     public boolean func_177746_a(BlockPos p_177746_1_) {
        return (double)(p_177746_1_.func_177958_n() + 1) > this.func_177726_b() && (double)p_177746_1_.func_177958_n() < this.func_177728_d() && (double)(p_177746_1_.func_177952_p() + 1) > this.func_177736_c() && (double)p_177746_1_.func_177952_p() < this.func_177733_e();
-@@ -133,9 +135,14 @@
+@@ -133,7 +135,12 @@
     }
  
     public void func_177737_a(IBorderListener p_177737_1_) {
 +      if (this.field_177758_a.contains(p_177737_1_)) return; // CraftBukkit
        this.field_177758_a.add(p_177737_1_);
-    }
- 
-+   public void removeListener(IBorderListener listener) {
-+      this.field_177758_a.remove(listener);
 +   }
 +
++   public void removeListener(IBorderListener listener) {
++      this.field_177758_a.remove(listener);
+    }
+ 
     public void func_177725_a(int p_177725_1_) {
-       this.field_177762_h = p_177725_1_;
-       this.field_212674_i.func_212652_j();

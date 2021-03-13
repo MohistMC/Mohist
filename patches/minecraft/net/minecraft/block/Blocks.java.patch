@@ -17,10 +17,11 @@
     public static final Block field_150319_E = func_222382_a("detector_rail", new DetectorRailBlock(AbstractBlock.Properties.func_200945_a(Material.field_151594_q).func_200942_a().func_200943_b(0.7F).func_200947_a(SoundType.field_185852_e)));
     public static final Block field_150320_F = func_222382_a("sticky_piston", func_235432_a_(true));
     public static final Block field_196553_aF = func_222382_a("cobweb", new WebBlock(AbstractBlock.Properties.func_200945_a(Material.field_151569_G).func_200942_a().func_235861_h_().func_200943_b(4.0F)));
-@@ -937,15 +938,4 @@
+@@ -936,16 +937,5 @@
+ 
     public static void func_235419_a_() {
        Block.field_176229_d.forEach(AbstractBlock.AbstractBlockState::func_215692_c);
-    }
+-   }
 -
 -   static {
 -      for(Block block : Registry.field_212618_g) {
@@ -31,5 +32,5 @@
 -         block.func_220068_i();
 -      }
 -
--   }
+    }
  }

@@ -232,10 +232,11 @@
           TileEntity tileentity = p_145893_0_.func_175625_s(blockpos);
           if (tileentity instanceof IInventory) {
              iinventory = (IInventory)tileentity;
-@@ -404,4 +518,13 @@
+@@ -403,5 +517,14 @@
+ 
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new HopperContainer(p_213906_1_, p_213906_2_, this);
-    }
++   }
 +
 +   @Override
 +   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
@@ -244,5 +245,5 @@
 +
 +   public long getLastUpdateTime() {
 +      return this.field_190578_g;
-+   }
+    }
  }

@@ -59,15 +59,17 @@
 +                        if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, world, (float)entity.func_226277_ct_(), (float)entity.func_226278_cu_(), (float)entity.func_226281_cx_(), this, SpawnReason.SPAWNER))
                             ((MobEntity)entity).func_213386_a(serverworld, world.func_175649_E(entity.func_233580_cy_()), SpawnReason.SPAWNER, (ILivingEntityData)null, (CompoundNBT)null);
                          }
+-                     }
+-
+-                     if (!serverworld.func_242106_g(entity)) {
 +                        // Spigot Start
 +                        if ( mobentity.field_70170_p.spigotConfig.nerfSpawnerMobs )
 +                        {
 +                           mobentity.aware = false;
 +                        }
 +                        // Spigot End
-                      }
- 
--                     if (!serverworld.func_242106_g(entity)) {
++                     }
++
 +                     // Spigot Start
 +                     if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callSpawnerSpawnEvent(entity, blockpos).isCancelled()) {
 +                        Entity vehicle = entity.func_184187_bx();
@@ -85,13 +87,14 @@
                          this.func_98273_j();
                          return;
                       }
-@@ -283,4 +304,9 @@
+@@ -282,5 +303,10 @@
+    @OnlyIn(Dist.CLIENT)
     public double func_177223_e() {
        return this.field_98284_d;
-    }
++   }
 +
 +   @Nullable
 +   public Entity getSpawnerEntity() {
 +      return null;
-+   }
+    }
  }

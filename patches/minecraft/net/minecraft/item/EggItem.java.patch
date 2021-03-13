@@ -25,9 +25,9 @@
 +               ((ServerPlayerEntity) p_77659_2_).getBukkitEntity().updateInventory();
 +            }
 +            return ActionResult.func_226251_d_(itemstack);
-       }
-+         // CraftBukkit end
 +      }
++         // CraftBukkit end
+       }
  
 +      p_77659_1_.func_184148_a((PlayerEntity)null, p_77659_2_.func_226277_ct_(), p_77659_2_.func_226278_cu_(), p_77659_2_.func_226281_cx_(), SoundEvents.field_187511_aA, SoundCategory.PLAYERS, 0.5F, 0.4F / (field_77697_d.nextFloat() * 0.4F + 0.8F)); // CraftBukkit - from above
        p_77659_2_.func_71029_a(Stats.field_75929_E.func_199076_b(this));

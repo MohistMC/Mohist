@@ -44,7 +44,7 @@
        this.field_76645_j = new ClassInheritanceMultiMap[16];
        this.field_76637_e = p_i225781_1_;
        this.field_212816_F = p_i225781_2_;
-@@ -116,12 +118,27 @@
+@@ -116,11 +118,26 @@
           if (this.field_76652_q.length == p_i225781_9_.length) {
              System.arraycopy(p_i225781_9_, 0, this.field_76652_q, 0, this.field_76652_q.length);
           } else {
@@ -52,12 +52,14 @@
 +            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.1", p_i225781_9_.length, this.field_76652_q.length));
           }
        }
+-
+-   }
 +      this.gatherCapabilities();
- 
++
 +      // CraftBukkit start
 +      this.bukkitChunk = new CraftChunk(this);
-    }
- 
++   }
++
 +   public org.bukkit.Chunk bukkitChunk;
 +   public org.bukkit.Chunk getBukkitChunk() {
 +      return bukkitChunk;
@@ -69,10 +71,9 @@
 +   private static final org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry();
 +   public final org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +   // CraftBukkit end
-+
+ 
     public Chunk(World p_i49947_1_, ChunkPrimer p_i49947_2_) {
        this(p_i49947_1_, p_i49947_2_.func_76632_l(), p_i49947_2_.func_225549_i_(), p_i49947_2_.func_196966_y(), p_i49947_2_.func_205218_i_(), p_i49947_2_.func_212247_j(), p_i49947_2_.func_177416_w(), p_i49947_2_.func_76587_i(), (Consumer<Chunk>)null);
- 
 @@ -153,6 +170,7 @@
  
        this.func_217305_b(p_i49947_2_.func_217310_r());
@@ -218,14 +219,14 @@
     }
  
     @Nullable
-@@ -366,8 +399,18 @@
+@@ -366,7 +399,17 @@
  
     @Nullable
     public TileEntity func_177424_a(BlockPos p_177424_1_, Chunk.CreateEntityType p_177424_2_) {
 -      TileEntity tileentity = this.field_150816_i.get(p_177424_1_);
 +      // CraftBukkit start
 +      TileEntity tileentity = field_76637_e.capturedTileEntities.get(p_177424_1_);
-       if (tileentity == null) {
++      if (tileentity == null) {
 +         tileentity = (TileEntity) this.field_150816_i.get(p_177424_1_);
 +      }
 +      // CraftBukkit end
@@ -234,10 +235,9 @@
 +         field_150816_i.remove(p_177424_1_);
 +         tileentity = null;
 +      }
-+      if (tileentity == null) {
+       if (tileentity == null) {
           CompoundNBT compoundnbt = this.field_201618_i.remove(p_177424_1_);
           if (compoundnbt != null) {
-             TileEntity tileentity1 = this.func_212815_a(p_177424_1_, compoundnbt);
 @@ -382,9 +425,6 @@
              tileentity = this.func_177422_i(p_177424_1_);
              this.field_76637_e.func_175690_a(p_177424_1_, tileentity);
@@ -435,10 +435,11 @@
        }
  
        return tileentity;
-@@ -795,4 +889,30 @@
+@@ -794,5 +888,31 @@
+       IMMEDIATE,
        QUEUED,
        CHECK;
-    }
++   }
 +
 +   /**
 +    * <strong>FOR INTERNAL USE ONLY</strong>
@@ -464,5 +465,5 @@
 +   @Override
 +   public World getWorldForge() {
 +      return func_177412_p();
-+   }
+    }
  }

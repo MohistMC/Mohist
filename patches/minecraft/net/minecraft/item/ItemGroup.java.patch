@@ -70,10 +70,11 @@
        return this.field_78033_n < 6;
     }
  
-@@ -219,4 +239,59 @@
+@@ -218,5 +238,60 @@
+          item.func_150895_a(this, p_78018_1_);
        }
  
-    }
++   }
 +
 +   public int getTabPage() {
 +      return field_78033_n < 12 ? 0 : ((field_78033_n - 12) / 10) + 1;
@@ -128,5 +129,5 @@
 +      }
 +      field_78032_a[index] = newGroup;
 +      return index;
-+   }
+    }
  }

@@ -91,7 +91,7 @@
     }
  
     protected void func_184651_r() {
-@@ -197,9 +209,45 @@
+@@ -197,7 +209,43 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
@@ -103,8 +103,8 @@
 +      } else {
 +         this.setGoalTarget(p_70624_1_, EntityTargetEvent.TargetReason.UNKNOWN, true);
 +      }
-    }
- 
++   }
++
 +   public boolean setGoalTarget(LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) {
 +      if (this.func_70638_az() == entitylivingbaseIn) {
 +         return false;
@@ -133,11 +133,9 @@
 +      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
 +      return true;
 +      // CraftBukkit end
-+   }
-+
-    public boolean func_213358_a(EntityType<?> p_213358_1_) {
-       return p_213358_1_ != EntityType.field_200811_y;
     }
+ 
+    public boolean func_213358_a(EntityType<?> p_213358_1_) {
 @@ -395,15 +443,26 @@
           p_213281_1_.func_74757_a("NoAI", this.func_175446_cd());
        }
@@ -151,13 +149,15 @@
 +      // CraftBukkit start - If looting or persistence is false only use it if it was set after we started using it
        if (p_70037_1_.func_150297_b("CanPickUpLoot", 1)) {
 -         this.func_98053_h(p_70037_1_.func_74767_n("CanPickUpLoot"));
+-      }
+-
+-      this.field_82179_bU = p_70037_1_.func_74767_n("PersistenceRequired");
 +         boolean data = p_70037_1_.func_74767_n("CanPickUpLoot");
 +         if (isLevelAtLeast(p_70037_1_, 1) || data) {
 +            this.func_98053_h(data);
 +         }
-       }
- 
--      this.field_82179_bU = p_70037_1_.func_74767_n("PersistenceRequired");
++      }
++
 +      boolean data = p_70037_1_.func_74767_n("PersistenceRequired");
 +      if (isLevelAtLeast(p_70037_1_, 1) || data) {
 +         this.field_82179_bU = data;
@@ -202,7 +202,7 @@
     protected void func_175445_a(ItemEntity p_175445_1_) {
        ItemStack itemstack = p_175445_1_.func_92059_d();
 -      if (this.func_233665_g_(itemstack)) {
-+      if (this.func_233665_g_(itemstack, p_175445_1_)) { // CraftBukkit - add Item
++      if (this.equipItemIfPossible(itemstack, p_175445_1_)) { // CraftBukkit - add Item
           this.func_233630_a_(p_175445_1_);
           this.func_71001_a(p_175445_1_, itemstack.func_190916_E());
           p_175445_1_.func_70106_y();
@@ -211,10 +211,10 @@
  
     public boolean func_233665_g_(ItemStack p_233665_1_) {
 +      // CraftBukkit start - add item
-+      return this.func_233665_g_(p_233665_1_, null);
++      return this.equipItemIfPossible(p_233665_1_, null);
 +   }
 +
-+   public boolean func_233665_g_(ItemStack p_233665_1_, ItemEntity entityitem) {
++   public boolean equipItemIfPossible(ItemStack p_233665_1_, ItemEntity entityitem) {
 +      // CraftBukkit end
        EquipmentSlotType equipmentslottype = func_184640_d(p_233665_1_);
        ItemStack itemstack = this.func_184582_a(equipmentslottype);
@@ -323,11 +323,11 @@
 +   // CraftBukkit start
     @Nullable
     public <T extends MobEntity> T func_233656_b_(EntityType<T> p_233656_1_, boolean p_233656_2_) {
-+      return func_233656_b_(p_233656_1_, p_233656_2_, EntityTransformEvent.TransformReason.UNKNOWN, CreatureSpawnEvent.SpawnReason.DEFAULT);
++      return convertTo(p_233656_1_, p_233656_2_, EntityTransformEvent.TransformReason.UNKNOWN, CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
 +   @Nullable
-+   public <T extends MobEntity> T func_233656_b_(EntityType<T> p_233656_1_, boolean p_233656_2_, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
++   public <T extends MobEntity> T convertTo(EntityType<T> p_233656_1_, boolean p_233656_2_, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      // CraftBukkit end
        if (this.field_70128_L) {
           return (T)null;

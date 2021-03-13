@@ -35,7 +35,7 @@
  
  public class Explosion {
     private static final ExplosionContext field_242407_a = new ExplosionContext();
-@@ -52,13 +58,16 @@
+@@ -52,12 +58,15 @@
     private final double field_77285_c;
     private final double field_77282_d;
     @Nullable
@@ -47,12 +47,11 @@
     private final List<BlockPos> field_77281_g = Lists.newArrayList();
     private final Map<PlayerEntity, Vector3d> field_77288_k = Maps.newHashMap();
 +   private final Vector3d position;
- 
-+   public boolean wasCanceled = false; // CraftBukkit - add field
 +
++   public boolean wasCanceled = false; // CraftBukkit - add field
+ 
     @OnlyIn(Dist.CLIENT)
     public Explosion(World p_i45752_1_, @Nullable Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_) {
-       this(p_i45752_1_, p_i45752_2_, p_i45752_3_, p_i45752_5_, p_i45752_7_, p_i45752_9_, false, Explosion.Mode.DESTROY, p_i45752_10_);
 @@ -78,7 +87,7 @@
     public Explosion(World p_i231610_1_, @Nullable Entity p_i231610_2_, @Nullable DamageSource p_i231610_3_, @Nullable ExplosionContext p_i231610_4_, double p_i231610_5_, double p_i231610_7_, double p_i231610_9_, float p_i231610_11_, boolean p_i231610_12_, Explosion.Mode p_i231610_13_) {
        this.field_77287_j = p_i231610_1_;

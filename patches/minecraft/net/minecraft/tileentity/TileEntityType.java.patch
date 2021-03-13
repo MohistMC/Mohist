@@ -26,18 +26,18 @@
        }
  
        Type<?> type = Util.func_240976_a_(TypeReferences.field_211294_j, p_200966_0_);
-@@ -75,6 +76,14 @@
+@@ -73,6 +74,14 @@
+       this.field_200995_z = p_i51497_1_;
+       this.field_223046_I = p_i51497_2_;
        this.field_206867_C = p_i51497_3_;
-    }
- 
++   }
++
 +   public java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
 +   }
 +
 +   public boolean isIn(net.minecraft.tags.ITag<TileEntityType<?>> tag) {
 +      return tag.func_230235_a_(this);
-+   }
-+
+    }
+ 
     @Nullable
-    public T func_200968_a() {
-       return this.field_200995_z.get();

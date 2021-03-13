@@ -59,8 +59,9 @@
           return p_223400_0_.getValue().build();
        }));
 -      field_199521_c.info("Loaded {} recipes", (int)map.size());
-    }
- 
+-   }
++   }
++
 +   // CraftBukkit start
 +   public void addRecipe(final IRecipe<?> irecipe) {
 +      final Map<ResourceLocation, IRecipe<?>> map = this.field_199522_d.get(irecipe.func_222127_g());
@@ -79,7 +80,7 @@
 +      // Mohist end
 +   }
 +   // CraftBukkit end
-+
+ 
     public <C extends IInventory, T extends IRecipe<C>> Optional<T> func_215371_a(IRecipeType<T> p_215371_1_, C p_215371_2_, World p_215371_3_) {
 -      return this.func_215366_a(p_215371_1_).values().stream().flatMap((p_215372_3_) -> {
 +      // CraftBukkit start

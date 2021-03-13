@@ -52,13 +52,14 @@
        this.field_78531_r.func_213239_aq().func_219895_b("hand");
        if (this.field_175074_C) {
           RenderSystem.clear(256, Minecraft.field_142025_a);
-@@ -709,4 +719,9 @@
+@@ -708,5 +718,10 @@
+ 
     public OverlayTexture func_228385_m_() {
        return this.field_228375_t_;
-    }
++   }
 +
 +   @Override
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
 +      return net.minecraftforge.resource.VanillaResourceType.SHADERS;
-+   }
+    }
  }

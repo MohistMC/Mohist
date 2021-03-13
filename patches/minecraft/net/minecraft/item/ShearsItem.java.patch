@@ -8,10 +8,11 @@
  
  public class ShearsItem extends Item {
     public ShearsItem(Item.Properties p_i48471_1_) {
-@@ -34,4 +35,31 @@
+@@ -33,5 +34,32 @@
+       } else {
           return 15.0F;
        }
-    }
++   }
 +
 +   @Override
 +   public net.minecraft.util.ActionResultType func_111207_a(ItemStack stack, net.minecraft.entity.player.PlayerEntity playerIn, LivingEntity entity, net.minecraft.util.Hand hand) {
@@ -38,5 +39,5 @@
 +         return net.minecraft.util.ActionResultType.SUCCESS;
 +      }
 +      return net.minecraft.util.ActionResultType.PASS;
-+   }
+    }
  }

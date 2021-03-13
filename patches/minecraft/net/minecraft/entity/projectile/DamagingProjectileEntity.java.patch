@@ -15,14 +15,15 @@
  
     protected DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> p_i50173_1_, World p_i50173_2_) {
        super(p_i50173_1_, p_i50173_2_);
-@@ -37,8 +40,23 @@
+@@ -37,7 +40,22 @@
           this.field_70230_d = p_i50174_12_ / d0 * 0.1D;
        }
  
+-   }
 +      // CraftBukkit start - Added setDirection method
 +      this.setDirection(p_i50174_8_, p_i50174_10_, p_i50174_12_);
-    }
- 
++   }
++
 +   // CraftBukkit - start
 +   public void setDirection(double x, double y, double z) {
 +      // CraftBukkit end
@@ -35,10 +36,9 @@
 +      this.field_70230_d = z / d3 * 0.1;
 +   }
 +   // CraftBukkit - end
-+
+ 
     public DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> p_i50175_1_, LivingEntity p_i50175_2_, double p_i50175_3_, double p_i50175_5_, double p_i50175_7_, World p_i50175_9_) {
        this(p_i50175_1_, p_i50175_2_.func_226277_ct_(), p_i50175_2_.func_226278_cu_(), p_i50175_2_.func_226281_cx_(), p_i50175_3_, p_i50175_5_, p_i50175_7_, p_i50175_9_);
-       this.func_212361_a(p_i50175_2_);
 @@ -68,8 +86,14 @@
           }
  

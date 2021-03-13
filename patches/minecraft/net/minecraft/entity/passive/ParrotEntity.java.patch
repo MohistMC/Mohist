@@ -41,7 +41,7 @@
           return false;
        } else {
 -         this.func_233687_w_(false);
-+         //this.func_233687_w_(false); // CraftBukkit - moved into EntityLiving.damageEntity(DamageSource, float)
++         //this.setOrderedToSit(false); // CraftBukkit - moved into EntityLiving.damageEntity(DamageSource, float)
           return super.func_70097_a(p_70097_1_, p_70097_2_);
        }
     }

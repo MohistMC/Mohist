@@ -66,10 +66,26 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -103,12 +109,23 @@
+@@ -103,22 +109,57 @@
     public void func_216118_a(IInventory p_216118_1_, LootContext p_216118_2_) {
        List<ItemStack> list = this.func_216113_a(p_216118_2_);
        Random random = p_216118_2_.func_216032_b();
+-      List<Integer> list1 = this.func_186459_a(p_216118_1_, random);
+-      this.func_186463_a(list, list1.size(), random);
+-
+-      for(ItemStack itemstack : list) {
+-         if (list1.isEmpty()) {
+-            field_186465_b.warn("Tried to over-fill a container");
+-            return;
+-         }
+-
+-         if (itemstack.func_190926_b()) {
+-            p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), ItemStack.field_190927_a);
+-         } else {
+-            p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), itemstack);
+-         }
+-      }
+-
 +      // Mohist start
 +      if (p_216118_2_.func_216033_a(LootParameters.field_237457_g_) && p_216118_2_.func_216033_a(LootParameters.field_216281_a)) {
 +         // CraftBukkit start
@@ -81,22 +97,23 @@
 +         // CraftBukkit end
 +      }
 +      // Mohist end
-       List<Integer> list1 = this.func_186459_a(p_216118_1_, random);
-       this.func_186463_a(list, list1.size(), random);
- 
-       for(ItemStack itemstack : list) {
-          if (list1.isEmpty()) {
--            field_186465_b.warn("Tried to over-fill a container");
++      List<Integer> list1 = this.func_186459_a(p_216118_1_, random);
++      this.func_186463_a(list, list1.size(), random);
++
++      for(ItemStack itemstack : list) {
++         if (list1.isEmpty()) {
 +            field_186465_b.warn(com.mohistmc.util.i18n.i18n.get("loottable.2"));
-             return;
-          }
- 
-@@ -118,7 +135,31 @@
-             p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), itemstack);
-          }
-       }
++            return;
++         }
++
++         if (itemstack.func_190926_b()) {
++            p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), ItemStack.field_190927_a);
++         } else {
++            p_216118_1_.func_70299_a(list1.remove(list1.size() - 1), itemstack);
++         }
++      }
 +   }
- 
++
 +   public void fillInventory(IInventory p_216118_1_, LootContext context, boolean plugin) {
 +      List<ItemStack> list = this.func_216113_a(context);
 +      Random random = context.func_216032_b();

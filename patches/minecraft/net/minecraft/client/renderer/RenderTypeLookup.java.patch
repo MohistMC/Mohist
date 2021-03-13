@@ -42,7 +42,7 @@
           if (!Minecraft.func_238218_y_()) {
              return Atlases.func_228785_j_();
           } else {
-@@ -317,11 +320,60 @@
+@@ -317,9 +320,58 @@
        }
     }
  
@@ -50,8 +50,8 @@
     public static RenderType func_228391_a_(FluidState p_228391_0_) {
        RenderType rendertype = field_228387_b_.get(p_228391_0_.func_206886_c());
        return rendertype != null ? rendertype : RenderType.func_228639_c_();
-    }
- 
++   }
++
 +   // FORGE START
 +
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
@@ -98,8 +98,6 @@
 +
 +   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
 +      fluidRenderChecks.put(fluid.delegate, predicate);
-+   }
-+
-    public static void func_228393_a_(boolean p_228393_0_) {
-       field_228388_c_ = p_228393_0_;
     }
+ 
+    public static void func_228393_a_(boolean p_228393_0_) {

@@ -35,7 +35,7 @@
           func_234536_x_(p_234470_0_);
        } else {
 -         boolean flag = p_234470_0_.func_233665_g_(itemstack);
-+         boolean flag = p_234470_0_.func_233665_g_(itemstack, p_234470_1_); // CraftBukkit
++         boolean flag = p_234470_0_.equipItemIfPossible(itemstack, p_234470_1_); // CraftBukkit
           if (!flag) {
              func_234498_c_(p_234470_0_, itemstack);
           }

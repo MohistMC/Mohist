@@ -40,15 +40,16 @@
     }
  
     public TicketType<T> func_219479_a() {
-@@ -59,4 +64,11 @@
+@@ -58,5 +63,12 @@
+    protected boolean func_223182_a(long p_223182_1_) {
        long i = this.field_219480_a.func_223184_b();
        return i != 0L && p_223182_1_ - this.field_219483_d > i;
-    }
++   }
 +
 +   /* ======================================== FORGE START =====================================*/
 +   private final boolean forceTicks;
 +
 +   public boolean isForceTicks() {
 +      return forceTicks;
-+   }
+    }
  }

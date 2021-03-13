@@ -13,7 +13,7 @@
     }
  
     public Collection<Path> func_200389_a() {
-@@ -37,15 +38,16 @@
+@@ -37,20 +38,29 @@
        Stopwatch stopwatch1 = Stopwatch.createUnstarted();
  
        for(IDataProvider idataprovider : this.field_200396_d) {
@@ -33,18 +33,16 @@
        directorycache.func_208317_a();
     }
  
-@@ -53,6 +55,14 @@
+    public void func_200390_a(IDataProvider p_200390_1_) {
        this.field_200396_d.add(p_200390_1_);
-    }
- 
++   }
++
 +   public List<IDataProvider> getProviders() {
 +       return this.providerView;
 +   }
 +
 +   public void addInput(Path value) {
 +      this.field_200394_b.add(value);
-+   }
-+
-    static {
-       Bootstrap.func_151354_b();
     }
+ 
+    static {

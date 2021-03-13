@@ -91,7 +91,7 @@
  
           this.field_70160_al |= this.func_233566_aG_();
           if (!this.field_70170_p.field_72995_K) {
-@@ -144,13 +160,47 @@
+@@ -144,12 +160,46 @@
              }
           }
  
@@ -115,7 +115,7 @@
  
        }
     }
- 
++
 +   // Spigot start - copied from above
 +   @Override
 +   public void inactiveTick() {
@@ -136,10 +136,9 @@
 +      }
 +   }
 +   // Spigot end
-+
+ 
     private void func_203043_v() {
        Vector3d vector3d = this.func_213322_ci();
-       this.func_213293_j(vector3d.field_72450_a * (double)0.99F, vector3d.field_72448_b + (double)(vector3d.field_72448_b < (double)0.06F ? 5.0E-4F : 0.0F), vector3d.field_72449_c * (double)0.99F);
 @@ -163,7 +213,10 @@
  
     private void func_85054_d() {

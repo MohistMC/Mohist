@@ -9,6 +9,23 @@
     private final Matrix4f field_227976_a_;
     private boolean field_227977_b_;
     @Nullable
+@@ -50,14 +50,14 @@
+       return field_227982_g_;
+    }
+ 
+-   public TransformationMatrix func_227985_a_(TransformationMatrix p_227985_1_) {
++   public TransformationMatrix compose(TransformationMatrix p_227985_1_) {
+       Matrix4f matrix4f = this.func_227988_c_();
+       matrix4f.func_226595_a_(p_227985_1_.func_227988_c_());
+       return new TransformationMatrix(matrix4f);
+    }
+ 
+    @Nullable
+-   public TransformationMatrix func_227987_b_() {
++   public TransformationMatrix inverse() {
+       if (this == field_227982_g_) {
+          return this;
+       } else {
 @@ -133,4 +133,32 @@
     public int hashCode() {
        return Objects.hash(this.field_227976_a_);

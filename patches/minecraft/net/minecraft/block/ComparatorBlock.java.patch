@@ -27,10 +27,11 @@
              p_176462_1_.func_180501_a(p_176462_2_, p_176462_3_.func_206870_a(field_196348_c, Boolean.valueOf(true)), 2);
           }
  
-@@ -154,4 +165,16 @@
+@@ -153,5 +164,17 @@
+ 
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_185512_D, field_176463_b, field_196348_c);
-    }
++   }
 +
 +   @Override
 +   public boolean getWeakChanges(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos) {
@@ -42,5 +43,5 @@
 +      if (pos.func_177956_o() == neighbor.func_177956_o() && world instanceof World && !((World)world).func_201670_d()) {
 +         state.func_215697_a((World)world, pos, world.func_180495_p(neighbor).func_177230_c(), neighbor, false);
 +      }
-+   }
+    }
  }

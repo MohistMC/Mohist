@@ -42,7 +42,7 @@
                 return null;
              }
           }
-@@ -237,13 +237,18 @@
+@@ -237,11 +237,16 @@
     }
  
     public List<MobSpawnInfo.Spawners> func_202279_e() {
@@ -53,13 +53,11 @@
     public List<MobSpawnInfo.Spawners> func_214469_f() {
 -      return ImmutableList.of();
 +      return getSpawnList(net.minecraft.entity.EntityClassification.CREATURE);
-    }
- 
++   }
++
 +   @Override
 +   public final List<MobSpawnInfo.Spawners> getSpawnList(net.minecraft.entity.EntityClassification classification) {
 +      return net.minecraftforge.common.world.StructureSpawnManager.getSpawnList(getStructure(), classification);
-+   }
-+
-    public interface IStartFactory<C extends IFeatureConfig> {
-       StructureStart<C> create(Structure<C> p_create_1_, int p_create_2_, int p_create_3_, MutableBoundingBox p_create_4_, int p_create_5_, long p_create_6_);
     }
+ 
+    public interface IStartFactory<C extends IFeatureConfig> {

@@ -8,7 +8,7 @@
  
  public class CropsBlock extends BushBlock implements IGrowable {
     public static final IntegerProperty field_176488_a = BlockStateProperties.field_208170_W;
-@@ -61,13 +62,27 @@
+@@ -61,12 +62,26 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -29,15 +29,14 @@
 +               modifier = p_225542_2_.spigotConfig.potatoModifier;
 +            } else {
 +               modifier = p_225542_2_.spigotConfig.wheatModifier;
-             }
++            }
 +            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt((int) ((100.0F / modifier) * (25.0F / f)) + 1) == 0)) {
 +               // Spigot end
 +               CraftEventFactory.handleBlockFormEvent(p_225542_2_, p_225542_3_, this.func_185528_e(i + 1), 2); // CraftBukkit
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
-+            }
+             }
           }
        }
- 
 @@ -80,7 +95,7 @@
           i = j;
        }

@@ -71,7 +71,7 @@
           return chunkprimer1;
        }
     }
-@@ -290,17 +297,32 @@
+@@ -290,16 +297,31 @@
        ListNBT listnbt2 = new ListNBT();
        if (p_222645_1_.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
           Chunk chunk = (Chunk)p_222645_1_;
@@ -94,16 +94,15 @@
 +                  LogManager.getLogger().error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", entity.func_200600_R(), e);
 +               }
              }
-          }
++         }
 +         try {
 +             final CompoundNBT capTag = chunk.writeCapsToNBT();
 +             if (capTag != null) compoundnbt1.func_218657_a("ForgeCaps", capTag);
 +         } catch (Exception exception) {
 +             LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
-+         }
+          }
        } else {
           ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
-          listnbt2.addAll(chunkprimer.func_201652_l());
 @@ -364,6 +386,7 @@
     private static void func_222650_a(CompoundNBT p_222650_0_, Chunk p_222650_1_) {
        ListNBT listnbt = p_222650_0_.func_150295_c("Entities", 10);

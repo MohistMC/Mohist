@@ -69,14 +69,14 @@
     protected boolean field_204230_bP;
     public final PlayerAbilities field_71075_bZ = new PlayerAbilities();
     public int field_71068_ca;
-@@ -150,7 +164,20 @@
+@@ -150,6 +164,19 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
     public FishingBobberEntity field_71104_cf;
 +   private final java.util.Collection<IFormattableTextComponent> prefixes = new java.util.LinkedList<>();
 +   private final java.util.Collection<IFormattableTextComponent> suffixes = new java.util.LinkedList<>();
 +   @Nullable private Pose forcedPose;
- 
++
 +   // CraftBukkit start
 +   public boolean fauxSleeping;
 +   public int oldLevel = -1;
@@ -86,10 +86,9 @@
 +      return (CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
-+
+ 
     public PlayerEntity(World p_i241920_1_, BlockPos p_i241920_2_, float p_i241920_3_, GameProfile p_i241920_4_) {
        super(EntityType.field_200729_aH, p_i241920_1_);
-       this.func_184221_a(func_146094_a(p_i241920_4_));
 @@ -175,7 +202,7 @@
     }
  
@@ -308,13 +307,14 @@
 +         }
        } else {
 -         return !team.func_142054_a(team1) ? true : team.func_96665_g();
+-      }
 +         // This should never be called, but is implemented anyway
 +         org.bukkit.OfflinePlayer thisPlayer = p_96122_1_.field_70170_p.getCBServer().getOfflinePlayer(p_96122_1_.func_195047_I_());
 +         team = p_96122_1_.field_70170_p.getCBServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
 +         if (team == null || team.allowFriendlyFire()) {
 +            return true;
 +         }
-       }
++      }
 +
 +      if (this instanceof ServerPlayerEntity) {
 +         return !team.hasPlayer(((ServerPlayerEntity) this).getBukkitEntity());
@@ -844,10 +844,11 @@
        this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
     }
  
-@@ -1987,4 +2186,62 @@
+@@ -1986,5 +2185,63 @@
+       public ITextComponent func_221259_a() {
           return this.field_221260_g;
        }
-    }
++   }
 +
 +   // =========== FORGE START ==============//
 +   public Collection<IFormattableTextComponent> getPrefixes() {
@@ -905,5 +906,5 @@
 +   @Nullable
 +   public Pose getForcedPose() {
 +      return this.forcedPose;
-+   }
+    }
  }

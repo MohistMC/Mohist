@@ -111,22 +111,20 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -133,8 +164,15 @@
+@@ -133,6 +164,13 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
 +      this.invalidateCaps();
 +      requestModelDataUpdate();
-    }
- 
++   }
++
 +   @Override
 +   public void onChunkUnloaded() {
 +      this.invalidateCaps();
-+   }
-+
-    public void func_145829_t() {
-       this.field_145846_f = false;
     }
+ 
+    public void func_145829_t() {
 @@ -175,6 +213,13 @@
        return this.field_200663_e;
     }

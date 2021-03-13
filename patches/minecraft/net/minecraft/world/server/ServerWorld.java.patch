@@ -121,8 +121,9 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
+-
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
- 
++
 +   // CraftBukkit start
 +   private int tickPosition;
 +   public ServerWorldInfo worldDataServer;
@@ -149,23 +150,25 @@
        this.field_241107_Q_ = p_i241885_13_;
        this.field_73061_a = p_i241885_1_;
        this.field_241104_N_ = p_i241885_12_;
-@@ -200,9 +217,40 @@
+@@ -200,8 +217,39 @@
        } else {
           this.field_241105_O_ = null;
        }
+-
+-   }
 +      this.initCapabilities();
 +      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;
 +      this.getCBServer().addWorld(this.getCBWorld()); // CraftBukkit
 +   }
- 
++
 +   // Mohist start - Add isPosLoaded method to IBlockReader
 +   @Override
 +   public boolean isPosLoaded(BlockPos pos) {
 +      return this.getChunkIfLoaded(MathHelper.func_76128_c(pos.func_177958_n() / 16.0), MathHelper.func_76128_c(pos.func_177952_p() / 16.0)) != null;
-    }
++   }
 +   // Mohist end
- 
++
 +   // CraftBukkit start
 +   @Override
 +   public TileEntity getTileEntity(BlockPos pos, boolean validate) {
@@ -186,10 +189,9 @@
 +      return found;
 +   }
 +   // CraftBukkit end
-+
+ 
     public void func_241113_a_(int p_241113_1_, int p_241113_2_, boolean p_241113_3_, boolean p_241113_4_) {
        this.field_241103_E_.func_230391_a_(p_241113_1_);
-       this.field_241103_E_.func_76080_g(p_241113_2_);
 @@ -211,6 +259,7 @@
        this.field_241103_E_.func_76069_a(p_241113_4_);
     }
@@ -465,32 +467,30 @@
           serverchunkprovider.func_217210_a(p_217445_2_);
        }
     }
-@@ -743,13 +841,23 @@
+@@ -743,11 +841,21 @@
     }
  
     public boolean func_217376_c(Entity p_217376_1_) {
 -      return this.func_72838_d(p_217376_1_);
 +      // CraftBukkit start
 +      return this.addEntity0(p_217376_1_, CreatureSpawnEvent.SpawnReason.DEFAULT);
-    }
- 
-+   public boolean addEntity(Entity entityIn, CreatureSpawnEvent.SpawnReason reason) {
-+      return this.addEntity0(entityIn, reason);
 +   }
 +
++   public boolean addEntity(Entity entityIn, CreatureSpawnEvent.SpawnReason reason) {
++      return this.addEntity0(entityIn, reason);
+    }
+ 
     public boolean func_217470_d(Entity p_217470_1_) {
 -      return this.func_72838_d(p_217470_1_);
 +      return this.addEntitySerialized(p_217470_1_, CreatureSpawnEvent.SpawnReason.DEFAULT);
-    }
- 
++   }
++
 +   public boolean addEntitySerialized(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
 +      return this.addEntity0(entity, reason);
 +      // CraftBukkit end
-+   }
-+
+    }
+ 
     public void func_217460_e(Entity p_217460_1_) {
-       boolean flag = p_217460_1_.field_98038_p;
-       p_217460_1_.field_98038_p = true;
 @@ -777,9 +885,10 @@
     }
  
@@ -693,7 +693,7 @@
 +      this.removeEntity(p_217434_1_, keepData);
        this.func_72854_c();
     }
- 
++
 +   // CraftBukkit start
 +   public boolean strikeLightning(Entity entitylightning) {
 +      return this.strikeLightning(entitylightning, LightningStrikeEvent.Cause.UNKNOWN);
@@ -707,7 +707,7 @@
 +      return this.func_217376_c(entitylightning);
 +   }
 +   // CraftBukkit end
-+
+ 
     public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_) {
        for(ServerPlayerEntity serverplayerentity : this.field_73061_a.func_184103_al().func_181057_v()) {
 +         // CraftBukkit start
@@ -826,10 +826,10 @@
  
     public static void func_241121_a_(ServerWorld p_241121_0_) {
 +      // CraftBukkit start
-+      ServerWorld.func_241121_a_(p_241121_0_, null);
++      ServerWorld.makeObsidianPlatform(p_241121_0_, null);
 +   }
 +
-+   public static void func_241121_a_(ServerWorld worldserver, Entity entity) {
++   public static void makeObsidianPlatform(ServerWorld worldserver, Entity entity) {
 +      // CraftBukkit end
        BlockPos blockpos = field_241108_a_;
        int i = blockpos.func_177958_n();
@@ -853,7 +853,7 @@
 +         blockList.updateList();
 +      }
 +      // CraftBukkit end
-    }
++   }
 +
 +   protected void initCapabilities() {
 +      this.gatherCapabilities();
@@ -867,5 +867,5 @@
 +
 +   public IServerWorldInfo getServerWorldInfo(){
 +      return this.func_73046_m().func_240793_aU_().func_230407_G_();
-+   }
+    }
  }

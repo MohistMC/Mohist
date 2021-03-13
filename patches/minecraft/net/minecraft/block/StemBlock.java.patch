@@ -52,14 +52,15 @@
        if (i == 7) {
           blockstate.func_227034_b_(p_225535_1_, p_225535_3_, p_225535_1_.field_73012_v);
        }
-@@ -97,4 +105,10 @@
+@@ -96,5 +104,11 @@
+ 
     public StemGrownBlock func_208486_d() {
        return this.field_149877_a;
-    }
++   }
 +
 +   //FORGE START
 +   @Override
 +   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
 +      return net.minecraftforge.common.PlantType.CROP;
-+   }
+    }
  }

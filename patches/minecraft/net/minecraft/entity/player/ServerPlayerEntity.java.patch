@@ -110,18 +110,19 @@
     public ServerPlayerEntity(MinecraftServer p_i45285_1_, ServerWorld p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_) {
        super(p_i45285_2_, p_i45285_2_.func_241135_u_(), p_i45285_2_.func_242107_v(), p_i45285_3_);
        p_i45285_4_.field_73090_b = this;
-@@ -185,8 +223,46 @@
+@@ -185,7 +223,45 @@
        this.field_70138_W = 1.0F;
        this.func_205734_a(p_i45285_2_);
        this.field_244528_co = p_i45285_1_.func_244435_a(this);
+-   }
 +
 +      // CraftBukkit start
 +      this.displayName = this.func_195047_I_();
 +      this.canPickUpLoot_vanilla = true;
 +      this.maxHealthCache = this.func_110138_aP();
 +      this.initialized = true;
-    }
- 
++   }
++
 +   // Yes, this doesn't match Vanilla, but it's the best we can do for now.
 +   // If this is an issue, PRs are welcome
 +   public final BlockPos getSpawnPoint(ServerWorld worldserver) {
@@ -153,10 +154,9 @@
 +      return blockposition;
 +   }
 +   // CraftBukkit end
-+
+ 
     private void func_205734_a(ServerWorld p_205734_1_) {
        BlockPos blockpos = p_205734_1_.func_241135_u_();
-       if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.func_73046_m().func_240793_aU_().func_76077_q() != GameType.ADVENTURE) {
 @@ -234,6 +310,7 @@
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
@@ -517,7 +517,7 @@
                 this.field_71135_a.func_147359_a(new SPlayEntityEffectPacket(this.func_145782_y(), effectinstance));
              }
  
-@@ -670,12 +891,32 @@
+@@ -670,11 +891,31 @@
              this.field_71144_ck = -1;
              this.field_71149_ch = -1.0F;
              this.field_71146_ci = -1;
@@ -532,7 +532,7 @@
           return this;
        }
     }
- 
++
 +   // CraftBukkit start
 +   @Override
 +   protected CraftPortalEvent callPortalEvent(Entity entity, ServerWorld exitWorldServer, BlockPos exitPosition, TeleportCause cause, int searchRadius, int creationRadius) {
@@ -546,18 +546,17 @@
 +      return new CraftPortalEvent(event);
 +   }
 +   // CraftBukkit end
-+
+ 
     private void func_242110_a(ServerWorld p_242110_1_, BlockPos p_242110_2_) {
        BlockPos.Mutable blockpos$mutable = p_242110_2_.func_239590_i_();
- 
 @@ -690,22 +931,22 @@
  
     }
  
 -   protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
 -      Optional<TeleportationRepositioner.Result> optional = super.func_241830_a(p_241830_1_, p_241830_2_, p_241830_3_);
-+   protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_, int radius, boolean canCreatePortal, int createRadius) { // CraftBukkit
-+      Optional<TeleportationRepositioner.Result> optional = super.func_241830_a(p_241830_1_, p_241830_2_, p_241830_3_, radius, canCreatePortal, createRadius); // CraftBukkit
++   protected Optional<TeleportationRepositioner.Result> getExitPortal(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_, int radius, boolean canCreatePortal, int createRadius) { // CraftBukkit
++      Optional<TeleportationRepositioner.Result> optional = super.getExitPortal(p_241830_1_, p_241830_2_, p_241830_3_, radius, canCreatePortal, createRadius); // CraftBukkit
        if (optional.isPresent()) {
           return optional;
        } else {
@@ -726,7 +725,7 @@
     }
  
 +   // CraftBukkit start
-+   public int nextContainerCounter() {
++   public int nextContainerCounterCB() {
 +      this.field_71139_cq = this.field_71139_cq % 100 + 1;
 +      return field_71139_cq;
 +   }
@@ -780,8 +779,12 @@
     }
  
     public void func_184826_a(AbstractHorseEntity p_184826_1_, IInventory p_184826_2_) {
+-      if (this.field_71070_bA != this.field_71069_bz) {
+-         this.func_71053_j();
+-      }
+-
 +      // CraftBukkit start - Inventory open hook
-+      this.nextContainerCounter();
+       this.func_71117_bO();
 +      Container container = new HorseInventoryContainer(this.field_71139_cq, this.field_71071_by, p_184826_2_, p_184826_1_);
 +      container.setTitle(p_184826_1_.func_145748_c_());
 +      container = CraftEventFactory.callInventoryOpenEvent(this, container);
@@ -791,11 +794,10 @@
 +      }
 +      // CraftBukkit end
 +
-       if (this.field_71070_bA != this.field_71069_bz) {
-          this.func_71053_j();
-       }
- 
--      this.func_71117_bO();
++      if (this.field_71070_bA != this.field_71069_bz) {
++         this.func_71053_j();
++      }
++
 +      // this.getNextWindowId(); // CraftBukkit - Moved up
        this.field_71135_a.func_147359_a(new SOpenHorseWindowPacket(this.field_71139_cq, p_184826_2_.func_70302_i_(), p_184826_1_.func_145782_y()));
 -      this.field_71070_bA = new HorseInventoryContainer(this.field_71139_cq, this.field_71071_by, p_184826_2_, p_184826_1_);
@@ -850,13 +852,14 @@
     }
  
     public int func_195065_a(Collection<IRecipe<?>> p_195065_1_) {
-@@ -1030,8 +1390,17 @@
+@@ -1030,7 +1390,16 @@
  
     public void func_71118_n() {
        this.field_71149_ch = -1.0E8F;
+-   }
 +      this.field_71144_ck = -1; // CraftBukkit - Added to reset
-    }
- 
++   }
++
 +   // CraftBukkit start - Support multi-line messages
 +   public void sendMessage(UUID uuid, ITextComponent[] ichatbasecomponent) {
 +      for (ITextComponent component : ichatbasecomponent) {
@@ -864,10 +867,9 @@
 +      }
 +   }
 +   // CraftBukkit end
-+
+ 
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
        this.field_71135_a.func_147359_a(new SChatPacket(p_146105_1_, p_146105_2_ ? ChatType.GAME_INFO : ChatType.CHAT, Util.field_240973_b_));
-    }
 @@ -1079,12 +1448,19 @@
        this.field_71144_ck = -1;
        this.field_71149_ch = -1.0F;
@@ -917,7 +919,7 @@
        this.field_71140_co = p_147100_1_.func_149520_f();
        this.func_184212_Q().func_187227_b(field_184827_bp, (byte)p_147100_1_.func_149521_d());
        this.func_184212_Q().func_187227_b(field_184828_bq, (byte)(p_147100_1_.func_186991_f() == HandSide.LEFT ? 0 : 1));
-+      this.language = p_147100_1_.getLanguage();
++      this.language = p_147100_1_.func_149524_c();
     }
  
     public ChatVisibility func_147096_v() {
@@ -1004,7 +1006,7 @@
     @Nullable
     public IChatFilter func_244529_Q() {
        return this.field_244528_co;
-    }
++   }
 +
 +   // CraftBukkit start - Add per-player time and weather.
 +   public long timeOffset = 0;
@@ -1127,5 +1129,5 @@
 +
 +   public boolean initialized() {
 +      return this.initialized;
-+   }
+    }
  }

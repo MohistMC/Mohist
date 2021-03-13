@@ -37,10 +37,11 @@
              this.field_71174_a.func_147297_a(new CEntityActionPacket(this, CEntityActionPacket.Action.START_FALL_FLYING));
           }
        }
-@@ -975,4 +982,16 @@
+@@ -974,5 +981,17 @@
+       } else {
           return super.func_241843_o(p_241843_1_);
        }
-    }
++   }
 +
 +   public void updateSyncFields(ClientPlayerEntity old) {
 +      this.field_175172_bI = old.field_175172_bI;
@@ -52,5 +53,5 @@
 +      this.field_228351_cj_ = old.field_228351_cj_;
 +      this.field_175171_bO = old.field_175171_bO;
 +      this.field_175168_bP = old.field_175168_bP;
-+   }
+    }
  }

@@ -95,16 +95,16 @@
           if (p_223366_4_.nextInt(10) == 0 && flag && p_223366_3_.func_177956_o() < 40) {
              return func_223315_a(p_223366_0_, p_223366_1_, p_223366_2_, p_223366_3_, p_223366_4_);
           }
-@@ -324,6 +346,12 @@
+@@ -323,6 +345,12 @@
+    public EntitySize func_213305_a(Pose p_213305_1_) {
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }
- 
++
 +   /**
 +    * Called when the slime spawns particles on landing, see onUpdate.
 +    * Return true to prevent the spawning of the default particles.
 +    */
 +   protected boolean spawnCustomParticles() { return false; }
-+
+ 
     static class AttackGoal extends Goal {
        private final SlimeEntity field_179466_a;
-       private int field_179465_b;

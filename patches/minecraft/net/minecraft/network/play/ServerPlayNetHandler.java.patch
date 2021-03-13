@@ -372,7 +372,7 @@
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
-@@ -385,19 +542,80 @@
+@@ -385,18 +542,79 @@
              d8 = d5 - entity.func_226281_cx_();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag1 = false;
@@ -393,7 +393,7 @@
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
- 
++
 +            // CraftBukkit start - fire PlayerMoveEvent
 +            Player player = this.getPlayer();
 +            // Spigot Start
@@ -451,10 +451,9 @@
 +               }
 +            }
 +            // CraftBukkit end
-+
+ 
              this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
              this.field_147369_b.func_71000_j(this.field_147369_b.func_226277_ct_() - d0, this.field_147369_b.func_226278_cu_() - d1, this.field_147369_b.func_226281_cx_() - d2);
-             this.field_184345_D = d7 >= -0.03125D && !this.field_147367_d.func_71231_X() && this.func_241162_a_(entity);
 @@ -410,7 +628,7 @@
     }
  
@@ -969,7 +968,7 @@
 +         }
 +         // CraftBukkit end
 +         // Paper start
-+         itemstack = this.field_147369_b.getItemInHand(hand);
++         itemstack = this.field_147369_b.func_184586_b(hand);
 +         if (itemstack.func_190926_b()) return;
 +         // Paper end
           ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, serverworld, itemstack, hand);
@@ -1008,7 +1007,7 @@
 +      // CraftBukkit start - Replace vanilla quit message handling with our own.
 +       /*
 +      this.server.refreshStatusNextTick();
-+      this.server.getPlayerList().func_232641_a_((new TranslationTextComponent("multiplayer.player.left", this.player.getDisplayName())).mergeStyle(TextFormatting.YELLOW), ChatType.SYSTEM, Util.DUMMY_UUID);
++      this.server.getPlayerList().broadcastMessage((new TranslationTextComponent("multiplayer.player.left", this.player.getDisplayName())).mergeStyle(TextFormatting.YELLOW), ChatType.SYSTEM, Util.DUMMY_UUID);
 +      this.player.disconnect();
 +      this.server.getPlayerList().playerLoggedOut(this.player);
 +     */
@@ -1172,6 +1171,8 @@
 -         this.field_147374_l += 20;
 -         if (this.field_147374_l > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
 -            this.func_194028_b(new TranslationTextComponent("disconnect.spam"));
+-         }
+-
 +    //    this.chatSpamThresholdCount += 20;
 +    //    if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile())) {
 +    //       this.disconnect(new TranslationTextComponent("disconnect.spam"));
@@ -1209,15 +1210,15 @@
 +               this.func_194028_b(new TranslationTextComponent("disconnect.spam", new Object[0]));
 +            }
 +            // CraftBukkit end
-          }
++         }
 +      }
 +         }
- 
++
 +   // CraftBukkit start - add method
 +   public void chat(String s, boolean async) {
 +      if (s.isEmpty() || this.field_147369_b.func_147096_v() == ChatVisibility.HIDDEN) {
 +         return;
-       }
++      }
 +      if (!async && s.startsWith("/")) {
 +         this.func_147361_d(s);
 +      } else if (this.field_147369_b.func_147096_v() == ChatVisibility.SYSTEM) {
@@ -1279,7 +1280,7 @@
 +               }
 +            }
 +         }
-+      }
+       }
     }
 +   // CraftBukkit end
  
@@ -1471,10 +1472,10 @@
                 }
              }
           }
--      }
- 
 +
-+      }
++
+       }
+-
     }
  
     public void func_147342_a(CClientStatusPacket p_147342_1_) {
@@ -1879,7 +1880,7 @@
        if (serverworld.func_175667_e(blockpos)) {
           BlockState blockstate = serverworld.func_180495_p(blockpos);
           TileEntity tileentity = serverworld.func_175625_s(blockpos);
-@@ -1365,15 +2495,33 @@
+@@ -1365,14 +2495,32 @@
           }
  
           SignTileEntity signtileentity = (SignTileEntity)tileentity;
@@ -1893,6 +1894,7 @@
  
 -         for(int i = 0; i < p_244542_2_.size(); ++i) {
 -            signtileentity.func_212365_a(i, new StringTextComponent(p_244542_2_.get(i)));
+-         }
 +         String[] astring = p_147343_1_.func_187017_b();
 +
 +         // CraftBukkit start
@@ -1904,8 +1906,8 @@
 +
 +         for(int i = 0; i < astring.length; ++i) {
 +            lines[i] = SharedConstants.filterAllowedChatCharacters(astring[i]); // Paper - Replaced with anvil color stripping method to stop exploits that allow colored signs to be created.
-          }
- 
++         }
++
 +         SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), this.craftServer.getPlayer(this.field_147369_b), lines);
 +         this.craftServer.getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
@@ -1913,10 +1915,9 @@
 +            signtileentity.field_145916_j = false;
 +         }
 +         // CraftBukkit end
-+
+ 
           signtileentity.func_70296_d();
           serverworld.func_184138_a(blockpos, blockstate, blockstate, 3);
-       }
 @@ -1381,6 +2529,7 @@
     }
  

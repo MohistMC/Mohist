@@ -27,26 +27,26 @@
     private int field_175494_bm;
  
     public CreeperEntity(EntityType<? extends CreeperEntity> p_i50213_1_, World p_i50213_2_) {
-@@ -194,9 +197,18 @@
+@@ -194,8 +197,17 @@
  
     public void func_241841_a(ServerWorld p_241841_1_, LightningBoltEntity p_241841_2_) {
        super.func_241841_a(p_241841_1_, p_241841_2_);
 -      this.field_70180_af.func_187227_b(field_184714_b, true);
+-   }
 +      // CraftBukkit start
 +      if (CraftEventFactory.callCreeperPowerEvent(this, p_241841_2_, CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
 +         return;
 +      }
 +      this.setPowered(true);
-    }
- 
++   }
++
 +   public void setPowered(boolean powered) {
 +      this.field_70180_af.func_187227_b(field_184714_b, powered);
 +   }
 +   // CraftBukkit end
-+
+ 
     protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
-       if (itemstack.func_77973_b() == Items.field_151033_d) {
 @@ -214,14 +226,22 @@
        }
     }

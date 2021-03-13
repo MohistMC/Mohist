@@ -1,17 +1,16 @@
 --- a/net/minecraft/inventory/IInventory.java
 +++ b/net/minecraft/inventory/IInventory.java
-@@ -4,7 +4,11 @@
+@@ -4,6 +4,10 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
 +import net.minecraft.item.crafting.IRecipe;
 +import net.minecraft.util.NonNullList;
- 
-+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
 +
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
+ 
  public interface IInventory extends IClearable {
     int func_70302_i_();
- 
 @@ -59,4 +63,31 @@
  
        return false;

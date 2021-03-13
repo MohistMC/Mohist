@@ -74,14 +74,14 @@
     public SaveFormat.LevelSave func_237274_c_(String p_237274_1_) throws IOException {
 -      return new SaveFormat.LevelSave(p_237274_1_);
 +      return new SaveFormat.LevelSave(p_237274_1_, null);
-    }
- 
++   }
++
 +   // CraftBukkit start
 +   public SaveFormat.LevelSave getLevelSave(String saveName, RegistryKey<Dimension> dimensionType) throws IOException {
 +      return new SaveFormat.LevelSave(saveName, dimensionType);
 +      // CraftBukkit end
-+   }
-+
+    }
+ 
     public class LevelSave implements AutoCloseable {
        private final SessionLockManager field_237278_b_;
 -      private final Path field_237279_c_;

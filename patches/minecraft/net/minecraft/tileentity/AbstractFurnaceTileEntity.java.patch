@@ -148,7 +148,7 @@
              }
           }
        } else {
-@@ -295,12 +346,36 @@
+@@ -295,11 +346,35 @@
           ItemStack itemstack = this.field_214012_a.get(0);
           ItemStack itemstack1 = p_214007_1_.func_77571_b();
           ItemStack itemstack2 = this.field_214012_a.get(2);
@@ -156,6 +156,7 @@
 -            this.field_214012_a.set(2, itemstack1.func_77946_l());
 -         } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
 -            itemstack2.func_190917_f(1);
+-         }
 +
 +         // CraftBukkit start - fire FurnaceSmeltEvent
 +         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
@@ -164,7 +165,7 @@
 +         this.field_145850_b.getCBServer().getPluginManager().callEvent(furnaceSmeltEvent);
 +         if (furnaceSmeltEvent.isCancelled()) {
 +            return;
-          }
++         }
 +         result = furnaceSmeltEvent.getResult();
 +         itemstack1 = CraftItemStack.asNMSCopy(result);
 +         if (!itemstack1.func_190926_b()) {
@@ -176,7 +177,7 @@
 +               return;
 +            }
 +         }
- 
++
 +         /*
 +         if (itemstack2.isEmpty()) {
 +            this.items.set(2, itemstack1.copy());
@@ -185,10 +186,9 @@
 +         }
 +          */
 +         // CraftBukkit end
-+
+ 
           if (!this.field_145850_b.field_72995_K) {
              this.func_193056_a(p_214007_1_);
-          }
 @@ -318,7 +393,7 @@
           return 0;
        } else {
@@ -267,10 +267,11 @@
        }
  
     }
-@@ -474,4 +563,27 @@
+@@ -473,5 +562,28 @@
+          p_194018_1_.func_194112_a(itemstack);
        }
  
-    }
++   }
 +
 +   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
 +           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
@@ -293,5 +294,5 @@
 +      super.invalidateCaps();
 +      for (int x = 0; x < handlers.length; x++)
 +        handlers[x].invalidate();
-+   }
+    }
  }
