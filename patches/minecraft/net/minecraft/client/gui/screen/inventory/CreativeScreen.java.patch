@@ -253,10 +253,11 @@
        this.func_238474_b_(p_238808_1_, l, i1, j, k, 28, 32);
        this.field_230707_j_.field_77023_b = 100.0F;
        l = l + 6;
-@@ -884,6 +967,22 @@
+@@ -883,6 +966,22 @@
+ 
        public boolean func_82869_a(PlayerEntity p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
-       }
++      }
 +
 +      @Override
 +      public int getSlotIndex() {
@@ -272,7 +273,6 @@
 +      public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
 +         this.field_148332_b.setBackground(atlas, sprite);
 +         return this;
-+      }
+       }
     }
  
-    @OnlyIn(Dist.CLIENT)

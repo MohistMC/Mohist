@@ -24,7 +24,7 @@
        Multimap<String, String> multimap = validationtracker.func_227527_a_();
        if (!multimap.isEmpty()) {
           multimap.forEach((p_229440_0_, p_229440_1_) -> {
-@@ -74,13 +69,27 @@
+@@ -74,11 +69,25 @@
              try {
                 IDataProvider.func_218426_a(field_218442_c, p_200398_1_, LootTableManager.func_215301_a(p_229441_3_), path1);
              } catch (IOException ioexception) {
@@ -34,8 +34,8 @@
  
           });
        }
-    }
- 
++   }
++
 +   protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
 +      return field_218444_e;
 +   }
@@ -48,8 +48,6 @@
 +      map.forEach((p_218436_2_, p_218436_3_) -> {
 +         LootTableManager.func_227508_a_(validationtracker, p_218436_2_, p_218436_3_);
 +      });
-+   }
-+
-    private static Path func_218439_a(Path p_218439_0_, ResourceLocation p_218439_1_) {
-       return p_218439_0_.resolve("data/" + p_218439_1_.func_110624_b() + "/loot_tables/" + p_218439_1_.func_110623_a() + ".json");
     }
+ 
+    private static Path func_218439_a(Path p_218439_0_, ResourceLocation p_218439_1_) {

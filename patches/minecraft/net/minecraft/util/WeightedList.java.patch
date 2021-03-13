@@ -9,10 +9,12 @@
 +   // Paper start - add useClone option
     public WeightedList() {
 -      this(Lists.newArrayList());
-+      this(true);
-    }
- 
+-   }
+-
 -   private WeightedList(List<WeightedList.Entry<U>> p_i231541_1_) {
++      this(true);
++   }
++
 +   public WeightedList(boolean isUnsafe) {
 +      this(Lists.newArrayList(), isUnsafe);
 +   }

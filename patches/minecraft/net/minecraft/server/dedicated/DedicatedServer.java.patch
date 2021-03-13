@@ -65,12 +65,8 @@
 +            // CraftBukkit start
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
--
--            String s1;
 +            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
-             try {
--               while(!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l() && (s1 = bufferedreader.readLine()) != null) {
--                  DedicatedServer.this.func_195581_a(s1, DedicatedServer.this.func_195573_aM());
++            try {
 +               System.in.available();
 +            } catch (IOException ex) {
 +               return;
@@ -81,7 +77,11 @@
 +               // CraftBukkit start - JLine disabling compatibility
 +               while (!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l()) {
 +                  s3 = bufferedreader.readLine();
-+
+ 
+-            String s1;
+-            try {
+-               while(!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l() && (s1 = bufferedreader.readLine()) != null) {
+-                  DedicatedServer.this.func_195581_a(s1, DedicatedServer.this.func_195573_aM());
 +                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
 +                  if (s3 == null) {
 +                     try {
@@ -207,17 +207,17 @@
 -            field_155771_h.info("Starting remote control listener");
 +            field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.16"));
              this.field_71339_n = MainThread.func_242130_a(this);
-+            this.remoteConsole = new org.bukkit.craftbukkit.v1_16_R3.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
-          }
- 
+-         }
+-
 -         if (this.func_175593_aQ() > 0L) {
 -            Thread thread1 = new Thread(new ServerHangWatchdog(this));
 -            thread1.setUncaughtExceptionHandler(new DefaultWithNameUncaughtExceptionHandler(field_155771_h));
 -            thread1.setName("Server Watchdog");
 -            thread1.setDaemon(true);
 -            thread1.start();
--         }
--
++            this.remoteConsole = new org.bukkit.craftbukkit.v1_16_R3.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
+          }
+ 
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
 +         // <3 you Grum for this, saves us ~30 patch files! --^
           if (serverproperties.field_241079_P_) {

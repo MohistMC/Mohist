@@ -38,10 +38,12 @@
           }
  
           for(SoundCategory soundcategory : SoundCategory.values()) {
-@@ -760,6 +766,23 @@
-       p_198017_1_.func_198985_a(set);
-    }
+@@ -758,6 +764,23 @@
+       }
  
+       p_198017_1_.func_198985_a(set);
++   }
++
 +   private void setForgeKeybindProperties() {
 +      net.minecraftforge.client.settings.KeyConflictContext inGame = net.minecraftforge.client.settings.KeyConflictContext.IN_GAME;
 +      field_74351_w.setKeyConflictContext(inGame);
@@ -57,8 +59,6 @@
 +      field_74323_J.setKeyConflictContext(inGame);
 +      field_151457_aa.setKeyConflictContext(inGame);
 +      field_151458_ab.setKeyConflictContext(inGame);
-+   }
-+
-    public PointOfView func_243230_g() {
-       return this.field_243228_bb;
     }
+ 
+    public PointOfView func_243230_g() {

@@ -34,13 +34,15 @@
     private int field_213935_i = -1;
     @Nullable
 -   private Effect field_146013_m;
-+   public Effect field_146013_m; // private->public CraftBukkit
-    @Nullable
+-   @Nullable
 -   private Effect field_146010_n;
-+   public Effect field_146010_n; // private->public CraftBukkit
-    @Nullable
+-   @Nullable
 -   private ITextComponent field_146008_p;
 -   private LockCode field_213936_m = LockCode.field_180162_a;
++   public Effect field_146013_m; // private->public CraftBukkit
++   @Nullable
++   public Effect field_146010_n; // private->public CraftBukkit
++   @Nullable
 +   public ITextComponent field_146008_p; // private->public CraftBukkit
 +   public LockCode field_213936_m = LockCode.field_180162_a; // private->public CraftBukkit
     private final IIntArray field_213937_n = new IIntArray() {
@@ -52,11 +54,11 @@
  
 +   // CraftBukkit start - add fields and methods
 +   public PotionEffect getPrimaryEffect() {
-+      return (this.field_146013_m != null) ? CraftPotionUtil.toBukkit(new EffectInstance(this.field_146013_m, getLevel(), getAmplification(), true, true)) : null;
++      return (this.field_146013_m != null) ? CraftPotionUtil.toBukkit(new EffectInstance(this.field_146013_m, getLevelCB(), getAmplification(), true, true)) : null;
 +   }
 +
 +   public PotionEffect getSecondaryEffect() {
-+      return (hasSecondaryEffect()) ? CraftPotionUtil.toBukkit(new EffectInstance(this.field_146010_n, getLevel(), getAmplification(), true, true)) : null;
++      return (hasSecondaryEffect()) ? CraftPotionUtil.toBukkit(new EffectInstance(this.field_146010_n, getLevelCB(), getAmplification(), true, true)) : null;
 +   }
 +   // CraftBukkit end
 +
@@ -87,7 +89,7 @@
 +      return b0;
 +   }
 +
-+   private int getLevel() {
++   private int getLevelCB() {
 +      int i = (9 + this.field_146012_l * 2) * 20;
 +      return i;
 +   }
@@ -127,21 +129,23 @@
 -            i = 1;
 -         }
 +         byte b0 = getAmplification();
-+         int i = getLevel();
++         int i = getLevelCB();
  
           int j = (9 + this.field_146012_l * 2) * 20;
 -         AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.field_174879_c)).func_186662_g(d0).func_72321_a(0.0D, (double)this.field_145850_b.func_217301_I(), 0.0D);
 -         List<PlayerEntity> list = this.field_145850_b.func_217357_a(PlayerEntity.class, axisalignedbb);
-+         List<PlayerEntity> list = getHumansInRange();
- 
+-
 -         for(PlayerEntity playerentity : list) {
 -            playerentity.func_195064_c(new EffectInstance(this.field_146013_m, j, i, true, true));
 -         }
-+         applyEffect(list, this.field_146013_m, i, b0);
- 
+-
 -         if (this.field_146012_l >= 4 && this.field_146013_m != this.field_146010_n && this.field_146010_n != null) {
 -            for(PlayerEntity playerentity1 : list) {
 -               playerentity1.func_195064_c(new EffectInstance(this.field_146010_n, j, 0, true, true));
++         List<PlayerEntity> list = getHumansInRange();
++
++         applyEffect(list, this.field_146013_m, i, b0);
++
 +         if (hasSecondaryEffect()) {
 +            applyEffect(list, this.field_146010_n, i, 0);
              }

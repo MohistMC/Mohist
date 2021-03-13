@@ -71,12 +71,12 @@
 +      // CraftBukkit start
 +      player_bukkit = (Player) p_i50086_2_.field_70458_d.getBukkitEntity();
 +      // CraftBukkit end
-    }
- 
-+   private float getPower(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos) {
-+      return world.func_180495_p(pos).getEnchantPowerBonus(world, pos);
 +   }
 +
++   private float getPower(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos) {
++      return world.func_180495_p(pos).getEnchantPowerBonus(world, pos);
+    }
+ 
     public void func_75130_a(IInventory p_75130_1_) {
        if (p_75130_1_ == this.field_75168_e) {
           ItemStack itemstack = p_75130_1_.func_70301_a(0);
@@ -92,13 +92,13 @@
 -                        if (p_217002_2_.func_180495_p(p_217002_3_.func_177982_a(l * 2, 0, k * 2)).func_203425_a(Blocks.field_150342_X)) {
 -                           ++j;
 -                        }
-+                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 0, k * 2));
-+                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 1, k * 2));
- 
+-
 -                        if (p_217002_2_.func_180495_p(p_217002_3_.func_177982_a(l * 2, 1, k * 2)).func_203425_a(Blocks.field_150342_X)) {
 -                           ++j;
 -                        }
--
++                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 0, k * 2));
++                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 1, k * 2));
+ 
                          if (l != 0 && k != 0) {
 -                           if (p_217002_2_.func_180495_p(p_217002_3_.func_177982_a(l * 2, 0, k)).func_203425_a(Blocks.field_150342_X)) {
 -                              ++j;
@@ -123,7 +123,7 @@
                       }
                    }
                 }
- 
++
 +               // CraftBukkit start
 +               CraftItemStack item = CraftItemStack.asCraftMirror(itemstack);
 +               org.bukkit.enchantments.EnchantmentOffer[] offers = new EnchantmentOffer[3];
@@ -155,7 +155,7 @@
 +                  }
 +               }
 +               // CraftBukkit end
-+
+ 
                 this.field_75169_l.setSeed((long)this.field_178149_f.func_221495_b());
  
                 for(int i1 = 0; i1 < 3; ++i1) {

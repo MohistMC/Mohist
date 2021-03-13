@@ -24,14 +24,15 @@
              if (playerentity != null) {
                 p_195939_1_.func_195996_i().func_222118_a(1, playerentity, (p_220040_1_) -> {
                    p_220040_1_.func_213334_d(p_195939_1_.func_221531_n());
-@@ -52,4 +52,10 @@
+@@ -51,5 +51,11 @@
+       } else {
           return ActionResultType.PASS;
        }
-    }
++   }
 +
 +   @javax.annotation.Nullable
 +   public static BlockState getAxeStrippingState(BlockState originalState) {
 +      Block block = field_203176_a.get(originalState.func_177230_c());
 +      return block != null ? block.func_176223_P().func_206870_a(RotatedPillarBlock.field_176298_M, originalState.func_177229_b(RotatedPillarBlock.field_176298_M)) : null;
-+   }
+    }
  }

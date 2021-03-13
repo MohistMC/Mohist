@@ -17,7 +17,7 @@
  
     public LongSet func_212438_a() {
        return this.field_212439_a;
-    }
++   }
 +
 +   /* ======================================== FORGE START =====================================*/
 +   private net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<net.minecraft.util.math.BlockPos> blockForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
@@ -29,5 +29,5 @@
 +
 +   public net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<java.util.UUID> getEntityForcedChunks() {
 +      return this.entityForcedChunks;
-+   }
+    }
  }

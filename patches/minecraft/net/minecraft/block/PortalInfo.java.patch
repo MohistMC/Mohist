@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PortalInfo.java
 +++ b/net/minecraft/block/PortalInfo.java
-@@ -1,13 +1,23 @@
+@@ -1,12 +1,22 @@
  package net.minecraft.block;
  
  import net.minecraft.util.math.vector.Vector3d;
@@ -15,12 +15,11 @@
 +   // CraftBukkit start
 +   public ServerWorld world;
 +   public CraftPortalEvent portalEventInfo;
- 
++
 +   public void putCB(ServerWorld world, CraftPortalEvent portalEventInfo) {
 +      this.world = world;
 +      this.portalEventInfo = portalEventInfo;
 +   }
-+
+ 
     public PortalInfo(Vector3d p_i242042_1_, Vector3d p_i242042_2_, float p_i242042_3_, float p_i242042_4_) {
        this.field_222505_a = p_i242042_1_;
-       this.field_222506_b = p_i242042_2_;

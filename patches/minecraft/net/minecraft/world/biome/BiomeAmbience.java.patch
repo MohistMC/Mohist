@@ -9,7 +9,7 @@
        NONE("none") {
           @OnlyIn(Dist.CLIENT)
           public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
-@@ -226,18 +226,37 @@
+@@ -226,16 +226,35 @@
        };
  
        private final String field_242543_e;
@@ -27,8 +27,8 @@
  
        private GrassColorModifier(String p_i241940_3_) {
           this.field_242543_e = p_i241940_3_;
-       }
- 
++      }
++
 +      private ColorModifier delegate;
 +      private GrassColorModifier(String name, ColorModifier delegate) {
 +         this(name);
@@ -44,8 +44,6 @@
 +      @FunctionalInterface
 +      public interface ColorModifier {
 +         int modifyGrassColor(double x, double z, int color);
-+      }
-+
-       public String func_242547_b() {
-          return this.field_242543_e;
        }
+ 
+       public String func_242547_b() {

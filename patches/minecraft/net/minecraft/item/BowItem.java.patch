@@ -79,14 +79,14 @@
        if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
           return ActionResult.func_226251_d_(itemstack);
        } else {
-@@ -112,6 +140,10 @@
-       return field_220007_a;
-    }
+@@ -110,6 +138,10 @@
  
-+   public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
-+      return arrow;
+    public Predicate<ItemStack> func_220004_b() {
+       return field_220007_a;
 +   }
 +
-    public int func_230305_d_() {
-       return 15;
++   public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
++      return arrow;
     }
+ 
+    public int func_230305_d_() {

@@ -22,10 +22,11 @@
           }
  
           p_225628_1_.func_227860_a_();
-@@ -54,4 +54,29 @@
+@@ -53,5 +53,30 @@
+          this.field_188357_c.func_225598_a_(p_225628_1_, ivertexbuilder, p_225628_3_, OverlayTexture.field_229196_a_, 1.0F, 1.0F, 1.0F, 1.0F);
           p_225628_1_.func_227865_b_();
        }
-    }
++   }
 +
 +   /**
 +    * Determines if the ElytraLayer should render.
@@ -50,5 +51,5 @@
 +    */
 +   public ResourceLocation getElytraTexture(ItemStack stack, T entity) {
 +      return field_188355_a;
-+   }
+    }
  }

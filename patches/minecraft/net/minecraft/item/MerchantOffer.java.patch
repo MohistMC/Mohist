@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MerchantOffer.java
 +++ b/net/minecraft/item/MerchantOffer.java
-@@ -3,19 +3,33 @@
+@@ -3,18 +3,32 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.NBTUtil;
  import net.minecraft.util.math.MathHelper;
@@ -25,7 +25,7 @@
 -   private int field_222232_j = 1;
 +   public float field_222231_i; // private->public CraftBukkit
 +   public int field_222232_j = 1; // private->public CraftBukkit
- 
++
 +   // CraftBukkit start
 +   private CraftMerchantRecipe bukkitHandle; // CraftBukkit
 +
@@ -38,10 +38,9 @@
 +      this.bukkitHandle = bukkit;
 +   }
 +   // CraftBukkit end
-+
+ 
     public MerchantOffer(CompoundNBT p_i50012_1_) {
        this.field_222223_a = ItemStack.func_199557_a(p_i50012_1_.func_74775_l("buy"));
-       this.field_222224_b = ItemStack.func_199557_a(p_i50012_1_.func_74775_l("buyB"));
 @@ -72,9 +86,10 @@
  
     public ItemStack func_222205_b() {

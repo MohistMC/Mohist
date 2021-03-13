@@ -82,16 +82,16 @@
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_228348_3_, p_228348_5_, p_228348_7_, p_228348_9_, p_228348_11_, p_228348_13_) -> {
-@@ -434,6 +448,12 @@
-       return String.valueOf(this.field_78876_b.values().stream().mapToInt(Collection::size).sum());
-    }
+@@ -432,6 +446,12 @@
  
+    public String func_78869_b() {
+       return String.valueOf(this.field_78876_b.values().stream().mapToInt(Collection::size).sum());
++   }
++
 +   public void addBlockHitEffects(BlockPos pos, net.minecraft.util.math.BlockRayTraceResult target) {
 +      BlockState state = field_78878_a.func_180495_p(pos);
 +      if (!state.addHitEffects(field_78878_a, target, this))
 +         func_180532_a(pos, target.func_216354_b());
-+   }
-+
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    class AnimatedSpriteImpl implements IAnimatedSprite {
-       private List<TextureAtlasSprite> field_217594_b;

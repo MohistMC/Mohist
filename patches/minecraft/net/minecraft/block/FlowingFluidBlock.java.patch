@@ -17,14 +17,14 @@
     public FlowingFluidBlock(FlowingFluid p_i49014_1_, AbstractBlock.Properties p_i49014_2_) {
        super(p_i49014_2_);
        this.field_204517_c = p_i49014_1_;
-@@ -45,8 +47,21 @@
+@@ -45,6 +47,19 @@
  
        this.field_212565_c.add(p_i49014_1_.func_207207_a(8, true));
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176367_b, Integer.valueOf(0)));
 +      fluidStateCacheInitialized = true;
 +      supplier = p_i49014_1_.delegate;
-    }
- 
++   }
++
 +   /**
 +    * @param supplier A fluid supplier such as {@link net.minecraftforge.fml.RegistryObject<Fluid>}
 +    */
@@ -34,11 +34,9 @@
 +      this.field_212565_c = Lists.newArrayList();
 +      this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176367_b, Integer.valueOf(0)));
 +      this.supplier = supplier;
-+   }
-+
-    public VoxelShape func_220071_b(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
-       return p_220071_4_.func_216378_a(field_235510_c_, p_220071_3_, true) && p_220071_1_.func_177229_b(field_176367_b) == 0 && p_220071_4_.func_230426_a_(p_220071_2_.func_204610_c(p_220071_3_.func_177984_a()), this.field_204517_c) ? field_235510_c_ : VoxelShapes.func_197880_a();
     }
+ 
+    public VoxelShape func_220071_b(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
 @@ -69,6 +84,7 @@
  
     public FluidState func_204507_t(BlockState p_204507_1_) {
@@ -72,10 +70,12 @@
                    return false;
                 }
              }
-@@ -153,4 +175,23 @@
+@@ -151,6 +173,25 @@
+          return this.field_204517_c;
+       } else {
           return Fluids.field_204541_a;
-       }
-    }
++      }
++   }
 +
 +   // Forge start
 +   private final java.util.function.Supplier<? extends Fluid> supplier;
@@ -93,6 +93,6 @@
 +
 +         this.field_212565_c.add(getFluid().func_207207_a(8, true));
 +         fluidStateCacheInitialized = true;
-+      }
-+   }
+       }
+    }
  }

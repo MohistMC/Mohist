@@ -14,6 +14,9 @@
  import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.server.ServerWorld;
+-
+-public class LecternTileEntity extends TileEntity implements IClearable, INamedContainerProvider {
+-   private final IInventory field_214048_a = new IInventory() {
 +import org.bukkit.Location;
 +import org.bukkit.block.Lectern;
 +import org.bukkit.command.CommandSender;
@@ -21,9 +24,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
- 
--public class LecternTileEntity extends TileEntity implements IClearable, INamedContainerProvider {
--   private final IInventory field_214048_a = new IInventory() {
++
 +public class LecternTileEntity extends TileEntity implements IClearable, INamedContainerProvider, ICommandSource { // CraftBukkit - ICommandSource
 +   // CraftBukkit start - add fields and methods
 +   public final IInventory field_214048_a = new LecternInventory();

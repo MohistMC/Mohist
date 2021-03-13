@@ -56,10 +56,11 @@
     }
  
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
-@@ -98,4 +104,14 @@
+@@ -97,5 +103,15 @@
+ 
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return false;
-    }
++   }
 +
 +   @Override
 +   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
@@ -69,5 +70,5 @@
 +   @Override
 +   public BlockState getPlant(IBlockReader world, BlockPos pos) {
 +      return func_176223_P();
-+   }
+    }
  }

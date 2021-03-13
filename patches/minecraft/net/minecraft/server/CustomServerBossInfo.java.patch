@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/CustomServerBossInfo.java
 +++ b/net/minecraft/server/CustomServerBossInfo.java
-@@ -16,6 +16,8 @@
+@@ -16,12 +16,25 @@
  import net.minecraft.util.text.event.HoverEvent;
  import net.minecraft.world.BossInfo;
  import net.minecraft.world.server.ServerBossInfo;
@@ -9,10 +9,10 @@
  
  public class CustomServerBossInfo extends ServerBossInfo {
     private final ResourceLocation field_201373_h;
-@@ -23,6 +25,17 @@
+    private final Set<UUID> field_201374_i = Sets.newHashSet();
     private int field_201375_j;
     private int field_201376_k = 100;
- 
++
 +   // CraftBukkit start
 +   private KeyedBossBar bossBar;
 +
@@ -23,7 +23,6 @@
 +      return bossBar;
 +   }
 +   // CraftBukkit end
-+
+ 
     public CustomServerBossInfo(ResourceLocation p_i48620_1_, ITextComponent p_i48620_2_) {
        super(p_i48620_2_, BossInfo.Color.WHITE, BossInfo.Overlay.PROGRESS);
-       this.field_201373_h = p_i48620_1_;

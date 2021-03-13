@@ -33,15 +33,16 @@
        return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
     }
  
-@@ -32,4 +42,11 @@
+@@ -31,5 +41,12 @@
+ 
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return p_196266_4_ == PathType.AIR && !this.field_235688_at_ ? true : super.func_196266_a(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);
-    }
++   }
 +
 +   @Override
 +   public BlockState getPlant(IBlockReader world, BlockPos pos) {
 +      BlockState state = world.func_180495_p(pos);
 +      if (state.func_177230_c() != this) return func_176223_P();
 +      return state;
-+   }
+    }
  }

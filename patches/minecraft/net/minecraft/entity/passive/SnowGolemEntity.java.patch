@@ -48,10 +48,11 @@
           this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_230254_1_, (p_213622_1_) -> {
-@@ -190,4 +190,20 @@
+@@ -189,5 +189,21 @@
+    @OnlyIn(Dist.CLIENT)
     public Vector3d func_241205_ce_() {
        return new Vector3d(0.0D, (double)(0.75F * this.func_70047_e()), (double)(this.func_213311_cf() * 0.4F));
-    }
++   }
 +
 +   @Override
 +   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, World world, BlockPos pos) {
@@ -67,5 +68,5 @@
 +         return java.util.Collections.singletonList(new ItemStack(Items.field_221689_cG));
 +      }
 +      return java.util.Collections.emptyList();
-+   }
+    }
  }

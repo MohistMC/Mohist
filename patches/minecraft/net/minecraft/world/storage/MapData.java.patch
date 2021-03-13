@@ -41,13 +41,13 @@
     public final Map<String, MapDecoration> field_76203_h = Maps.newLinkedHashMap();
     private final Map<String, MapFrame> field_212442_l = Maps.newHashMap();
 +   private org.bukkit.craftbukkit.v1_16_R3.map.RenderData vanillaRender = new org.bukkit.craftbukkit.v1_16_R3.map.RenderData(); // Paper
- 
++
 +   // CraftBukkit start
 +   public final CraftMapView mapView;
 +   private CraftServer server;
 +   private UUID uniqueId = null;
 +   // CraftBukkit end
-+
+ 
     public MapData(String p_i2140_1_) {
        super(p_i2140_1_);
 +      // CraftBukkit start

@@ -21,15 +21,16 @@
           return false;
        });
     }
-@@ -53,4 +58,11 @@
+@@ -52,5 +57,12 @@
+ 
     public boolean func_216378_a(VoxelShape p_216378_1_, BlockPos p_216378_2_, boolean p_216378_3_) {
        return this.field_216381_c > (double)p_216378_2_.func_177956_o() + p_216378_1_.func_197758_c(Direction.Axis.Y) - (double)1.0E-5F;
-    }
++   }
 +
 +   private final @javax.annotation.Nullable Entity entity;
 +
 +   @Override
 +   public @javax.annotation.Nullable Entity getEntity() {
 +      return entity;
-+   }
+    }
  }

@@ -42,10 +42,11 @@
        StructureSeparationSettings structureseparationsettings = this.field_222543_d.func_236197_a_(p_242705_1_.field_236268_b_);
        if (structureseparationsettings != null) {
           StructureStart<?> structurestart1 = p_242705_1_.func_242771_a(p_242705_2_, this, this.field_222542_c, p_242705_5_, p_242705_6_, p_242705_8_, p_242705_9_, i, structureseparationsettings);
-@@ -282,6 +294,79 @@
+@@ -281,6 +293,79 @@
+       }
  
     }
- 
++
 +   // Spigot start
 +   private volatile boolean injected;
 +   private void updateStructureSettings(World world, DimensionStructuresSettings settings) {
@@ -118,7 +119,6 @@
 +      }
 +   }
 +   // Spigot end
-+
+ 
     public abstract void func_230352_b_(IWorld p_230352_1_, StructureManager p_230352_2_, IChunk p_230352_3_);
  
-    public int func_230356_f_() {

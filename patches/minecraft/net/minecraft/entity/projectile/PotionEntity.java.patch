@@ -49,7 +49,7 @@
        if (!list.isEmpty()) {
           for(LivingEntity livingentity : list) {
              if (livingentity.func_184603_cC()) {
-@@ -131,24 +140,50 @@
+@@ -131,23 +140,49 @@
                       d1 = 1.0D;
                    }
  
@@ -64,13 +64,18 @@
 -                        }
 -                     }
 -                  }
+-               }
+-            }
+-         }
+-      }
+-
 +                  // CraftBukkit start
 +                  affected.put((org.bukkit.entity.LivingEntity) livingentity.getBukkitEntity(), d1);
-                }
-             }
-          }
-       }
- 
++               }
++            }
++         }
++      }
++
 +      org.bukkit.event.entity.PotionSplashEvent event = CraftEventFactory.callPotionSplashEvent(this, affected);
 +      if (!event.isCancelled() && list != null && !list.isEmpty()) { // do not process effects if there are no effects to process
 +         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
@@ -106,11 +111,10 @@
 +         }
 +      }
     }
- 
 +
+ 
     private void func_190542_a(ItemStack p_190542_1_, Potion p_190542_2_) {
        AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
-       Entity entity = this.func_234616_v_();
 @@ -171,7 +206,14 @@
           areaeffectcloudentity.func_184482_a(compoundnbt.func_74762_e("CustomPotionColor"));
        }

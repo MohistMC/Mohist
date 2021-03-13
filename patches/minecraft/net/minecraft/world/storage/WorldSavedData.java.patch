@@ -19,7 +19,7 @@
  
           this.func_76186_a(false);
        }
-    }
++   }
 +
 +   @Override
 +   public void deserializeNBT(CompoundNBT nbt) {
@@ -29,5 +29,5 @@
 +   @Override
 +   public CompoundNBT serializeNBT() {
 +      return func_189551_b(new CompoundNBT());
-+   }
+    }
  }

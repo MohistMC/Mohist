@@ -36,12 +36,13 @@
           jsonobject.addProperty("type", "unknown");
        }
  
-@@ -220,4 +220,8 @@
+@@ -219,5 +219,9 @@
+          this.field_197480_b = p_i48088_2_;
           this.field_197481_c = p_i48088_3_;
        }
-    }
++   }
 +   @javax.annotation.Nullable public static ResourceLocation getId(ArgumentType<?> type) {
 +      Entry<?> entry = func_201040_a(type);
 +      return entry == null ? null : entry.field_197481_c;
-+   }
+    }
  }

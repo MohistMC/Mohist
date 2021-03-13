@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/FoodStats.java
 +++ b/net/minecraft/util/FoodStats.java
-@@ -1,26 +1,38 @@
+@@ -1,25 +1,37 @@
  package net.minecraft.util;
  
  import net.minecraft.entity.player.PlayerEntity;
@@ -28,21 +28,21 @@
  
     public FoodStats() {
 -      this.field_75125_b = 5.0F;
+-   }
 +      //throw new AssertionError("Whoopsie, we missed the bukkit.");
 +      this.entityhuman = null;
-    }
++   }
 +   // CraftBukkit start - throw an error
- 
++
 +   // CraftBukkit start - added EntityHuman constructor
 +   public FoodStats(PlayerEntity entityhuman) {
 +      org.apache.commons.lang.Validate.notNull(entityhuman);
 +      this.entityhuman = entityhuman;
 +   }
 +   // CraftBukkit end
-+
+ 
     public void func_75122_a(int p_75122_1_, float p_75122_2_) {
        this.field_75127_a = Math.min(p_75122_1_ + this.field_75127_a, 20);
-       this.field_75125_b = Math.min(this.field_75125_b + (float)p_75122_1_ * p_75122_2_ * 2.0F, (float)this.field_75127_a);
 @@ -29,7 +41,22 @@
     public void func_221410_a(Item p_221410_1_, ItemStack p_221410_2_) {
        if (p_221410_1_.func_219971_r()) {

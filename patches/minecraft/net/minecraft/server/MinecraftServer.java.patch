@@ -150,7 +150,7 @@
     private final TemplateManager field_240765_ak_;
 -   protected final IServerConfiguration field_240768_i_;
 +   protected IServerConfiguration field_240768_i_;
- 
++
 +   // CraftBukkit start
 +   public DatapackCodec datapackconfiguration;
 +   public CraftServer server;
@@ -170,7 +170,7 @@
 +   public final double[] recentTps = new double[ 3 ];
 +   public final SlackActivityAccountant slackActivityAccountant = new SlackActivityAccountant();
 +   // Spigot end
-+
+ 
     public static <S extends MinecraftServer> S func_240784_a_(Function<Thread, S> p_240784_0_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
 -      Thread thread = new Thread(() -> {
@@ -285,24 +285,26 @@
  
 -      this.field_211151_aa = Util.func_211177_b() + 10L;
 -      this.func_213202_o();
+-
+-      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
+-         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
+-         if (forcedchunkssavedata != null) {
+-            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
+-
+-            while(longiterator.hasNext()) {
+-               long i = longiterator.nextLong();
+-               ChunkPos chunkpos = new ChunkPos(i);
+-               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
 +      // CraftBukkit start
 +      //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
 +      this.executeModerately();
 +      for (ServerWorld serverworld1 : this.field_71305_c.values()) {
 +         if (serverworld1.getCBWorld().getKeepSpawnInMemory()) {
 +            ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
- 
--      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
--         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
--         if (forcedchunkssavedata != null) {
--            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
++
 +            if (forcedchunkssavedata != null) {
 +               LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
- 
--            while(longiterator.hasNext()) {
--               long i = longiterator.nextLong();
--               ChunkPos chunkpos = new ChunkPos(i);
--               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++
 +               while (longiterator.hasNext()) {
 +                  long i = longiterator.nextLong();
 +                  ChunkPos chunkpos = new ChunkPos(i);
@@ -416,8 +418,9 @@
           this.field_71310_m.close();
        } catch (IOException ioexception) {
 -         field_147145_h.error("Failed to unlock level {}", this.field_71310_m.func_237282_a_(), ioexception);
+-      }
 +         field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.11", this.field_71310_m.func_237282_a_(), ioexception));
-       }
++      }
 +      // Spigot start
 +      if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
 +         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.12"));
@@ -437,14 +440,14 @@
        }
  
     }
- 
++
 +   // Spigot Start
 +   private static double calcTps(double avg, double exp, double tps)
 +   {
 +      return ( avg * exp ) + ( tps * ( 1 - exp ) );
 +   }
 +   // Spigot End
-+
+ 
     protected void func_240802_v_() {
 +
        try {
@@ -539,24 +542,24 @@
           }
  
        }
-@@ -678,9 +821,16 @@
+@@ -678,8 +821,15 @@
     }
  
     private boolean func_212379_aT() {
 -      return this.func_213182_bg() || Util.func_211177_b() < (this.field_213214_ac ? this.field_213213_ab : this.field_211151_aa);
+-   }
 +      // CraftBukkit start
 +      return this.forceTicks || this.func_213182_bg() || Util.func_211177_b() < (this.field_213214_ac ? this.field_213213_ab : this.field_211151_aa);
-    }
- 
++   }
++
 +   private void executeModerately() {
 +      this.func_213160_bf();
 +      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
-+
+ 
     protected void func_213202_o() {
        this.func_213160_bf();
-       this.func_213161_c(() -> {
 @@ -688,7 +838,7 @@
        });
     }

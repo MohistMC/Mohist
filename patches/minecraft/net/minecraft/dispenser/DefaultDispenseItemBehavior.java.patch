@@ -1,20 +1,19 @@
 --- a/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
-@@ -4,8 +4,14 @@
+@@ -4,7 +4,13 @@
  import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Direction;
 +import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
 +import net.minecraft.world.server.ServerWorld;
- 
++
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_16_R3.util.CraftVector;
 +import org.bukkit.event.block.BlockDispenseEvent;
-+
+ 
  public class DefaultDispenseItemBehavior implements IDispenseItemBehavior {
     public final ItemStack dispense(IBlockSource p_dispense_1_, ItemStack p_dispense_2_) {
-       ItemStack itemstack = this.func_82487_b(p_dispense_1_, p_dispense_2_);
 @@ -16,26 +22,74 @@
  
     protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {

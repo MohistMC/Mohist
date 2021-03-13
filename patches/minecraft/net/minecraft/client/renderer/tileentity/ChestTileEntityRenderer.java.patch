@@ -9,12 +9,13 @@
           IVertexBuilder ivertexbuilder = rendermaterial.func_229311_a_(p_225616_4_, RenderType::func_228638_b_);
           if (flag1) {
              if (chesttype == ChestType.LEFT) {
-@@ -123,4 +123,8 @@
+@@ -122,5 +122,9 @@
+       p_228871_3_.func_228308_a_(p_228871_1_, p_228871_2_, p_228871_7_, p_228871_8_);
        p_228871_4_.func_228308_a_(p_228871_1_, p_228871_2_, p_228871_7_, p_228871_8_);
        p_228871_5_.func_228308_a_(p_228871_1_, p_228871_2_, p_228871_7_, p_228871_8_);
-    }
++   }
 +
 +   protected RenderMaterial getMaterial(T tileEntity, ChestType chestType) {
 +      return Atlases.func_228771_a_(tileEntity, chestType, this.field_147509_j);
-+   }
+    }
  }

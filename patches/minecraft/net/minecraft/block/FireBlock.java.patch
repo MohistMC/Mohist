@@ -140,8 +140,6 @@
 -         if (p_176536_4_.nextInt(p_176536_5_ + 10) < 5 && !p_176536_1_.func_175727_C(p_176536_2_)) {
 -            int j = Math.min(p_176536_5_ + p_176536_4_.nextInt(5) / 4, 15);
 -            p_176536_1_.func_180501_a(p_176536_2_, this.func_235494_a_(p_176536_1_, p_176536_2_, j), 3);
--         } else {
--            p_176536_1_.func_217377_a(p_176536_2_, false);
 +   private void tryCatchFire(World worldIn, BlockPos pos, int chance, Random random, int age, Direction face, BlockPos sourceposition) { // CraftBukkit add sourceposition
 +      int i = worldIn.func_180495_p(pos).getFlammability(worldIn, pos, face);
 +      if (random.nextInt(chance) < i) {
@@ -154,20 +152,22 @@
 +         worldIn.getCBServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
-          }
++         }
 +         // CraftBukkit end
++
++         if (random.nextInt(age + 10) < 5 && !worldIn.func_175727_C(pos)) {
++            int j = Math.min(age + random.nextInt(5) / 4, 15);
++            worldIn.func_180501_a(pos, this.func_235494_a_(worldIn, pos, j), 3);
+          } else {
+-            p_176536_1_.func_217377_a(p_176536_2_, false);
++            worldIn.func_217377_a(pos, false);
+          }
  
 -         Block block = blockstate.func_177230_c();
 -         if (block instanceof TNTBlock) {
 -            TNTBlock tntblock = (TNTBlock)block;
 -            TNTBlock.func_196534_a(p_176536_1_, p_176536_2_);
-+         if (random.nextInt(age + 10) < 5 && !worldIn.func_175727_C(pos)) {
-+            int j = Math.min(age + random.nextInt(5) / 4, 15);
-+            worldIn.func_180501_a(pos, this.func_235494_a_(worldIn, pos, j), 3);
-+         } else {
-+            worldIn.func_217377_a(pos, false);
-          }
-+
+-         }
 +         blockstate.catchFire(worldIn, pos, face, null);
        }
  
@@ -197,15 +197,15 @@
     protected boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }
-@@ -269,10 +303,23 @@
+@@ -269,8 +303,21 @@
     }
  
     private void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {
 +      if (p_180686_1_ == Blocks.field_150350_a) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
        this.field_149849_a.put(p_180686_1_, p_180686_2_);
        this.field_149848_b.put(p_180686_1_, p_180686_3_);
-    }
- 
++   }
++
 +   /**
 +    * Side sensitive version that calls the block function.
 +    *
@@ -216,8 +216,6 @@
 +    */
 +   public boolean canCatchFire(IBlockReader world, BlockPos pos, Direction face) {
 +      return world.func_180495_p(pos).isFlammable(world, pos, face);
-+   }
-+
+    }
+ 
     public static void func_149843_e() {
-       FireBlock fireblock = (FireBlock)Blocks.field_150480_ab;
-       fireblock.func_180686_a(Blocks.field_196662_n, 5, 20);

@@ -50,7 +50,7 @@
        } else {
           Entity entity = p_70097_1_.func_76346_g();
 -         this.func_233687_w_(false);
-+         // this.func_233687_w_(false);   // CraftBukkit - moved into EntityLiving.damageEntity(DamageSource, float)
++         // this.setOrderedToSit(false);   // CraftBukkit - moved into EntityLiving.damageEntity(DamageSource, float)
           if (entity != null && !(entity instanceof PlayerEntity) && !(entity instanceof AbstractArrowEntity)) {
              p_70097_2_ = (p_70097_2_ + 1.0F) / 2.0F;
           }

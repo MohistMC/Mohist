@@ -122,14 +122,14 @@
              func_220059_a(blockstate1, p_176319_1_, blockpos2, tileentity);
              p_176319_1_.func_180501_a(blockpos2, Blocks.field_150350_a.func_176223_P(), 18);
              ablockstate[j++] = blockstate1;
-@@ -337,6 +395,10 @@
-       return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
-    }
+@@ -335,6 +393,10 @@
  
-+   public BlockState rotate(BlockState state, net.minecraft.world.IWorld world, BlockPos pos, Rotation direction) {
-+       return state.func_177229_b(field_176320_b) ? state : super.rotate(state, world, pos, direction);
+    public BlockState func_185499_a(BlockState p_185499_1_, Rotation p_185499_2_) {
+       return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
 +   }
 +
-    public BlockState func_185471_a(BlockState p_185471_1_, Mirror p_185471_2_) {
-       return p_185471_1_.func_185907_a(p_185471_2_.func_185800_a(p_185471_1_.func_177229_b(field_176387_N)));
++   public BlockState rotate(BlockState state, net.minecraft.world.IWorld world, BlockPos pos, Rotation direction) {
++       return state.func_177229_b(field_176320_b) ? state : super.rotate(state, world, pos, direction);
     }
+ 
+    public BlockState func_185471_a(BlockState p_185471_1_, Mirror p_185471_2_) {

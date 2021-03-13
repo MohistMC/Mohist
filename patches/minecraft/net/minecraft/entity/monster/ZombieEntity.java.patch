@@ -85,7 +85,7 @@
        }
  
     }
-@@ -268,12 +280,16 @@
+@@ -268,11 +280,15 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }
  
@@ -94,16 +94,15 @@
              int j = MathHelper.func_76128_c(this.func_226278_cu_());
              int k = MathHelper.func_76128_c(this.func_226281_cx_());
 -            ZombieEntity zombieentity = new ZombieEntity(this.field_70170_p);
- 
++
 +         net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, field_70170_p, i, j, k, livingentity, this.func_110148_a(Attributes.field_233829_l_).func_111126_e());
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW  ||
 +            livingentity != null && this.field_70170_p.func_175659_aa() == Difficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(Attributes.field_233829_l_).func_111126_e() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
 +            ZombieEntity zombieentity = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : EntityType.field_200725_aD.func_200721_a(this.field_70170_p);
-+
+ 
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-                int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
 @@ -284,9 +300,10 @@
                 if (WorldEntitySpawner.func_209382_a(entityspawnplacementregistry$placementtype, this.field_70170_p, blockpos, entitytype) && EntitySpawnPlacementRegistry.func_223515_a(entitytype, serverworld, SpawnReason.REINFORCEMENT, blockpos, this.field_70170_p.field_73012_v)) {
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
@@ -144,7 +143,7 @@
           VillagerEntity villagerentity = (VillagerEntity)p_241847_2_;
 -         ZombieVillagerEntity zombievillagerentity = villagerentity.func_233656_b_(EntityType.field_200727_aF, false);
 +         // CraftBukkit start
-+         ZombieVillagerEntity zombievillagerentity = villagerentity.func_233656_b_(EntityType.field_200727_aF, false, EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION);
++         ZombieVillagerEntity zombievillagerentity = villagerentity.convertTo(EntityType.field_200727_aF, false, EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION);
 +         if (zombievillagerentity == null) {
 +            return;
 +         }

@@ -85,7 +85,7 @@
           this.field_217850_G.put(triple, ibakedmodel);
           return ibakedmodel;
        }
-@@ -524,6 +551,10 @@
+@@ -524,11 +551,19 @@
        return this.field_225367_M;
     }
  
@@ -96,14 +96,12 @@
     @OnlyIn(Dist.CLIENT)
     static class BlockStateDefinitionException extends RuntimeException {
        public BlockStateDefinitionException(String p_i49526_1_) {
-@@ -531,6 +562,10 @@
+          super(p_i49526_1_);
        }
-    }
- 
-+   public SpriteMap getSpriteMap() {
-+      return this.field_229322_z_;
 +   }
 +
++   public SpriteMap getSpriteMap() {
++      return this.field_229322_z_;
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    static class ModelListWrapper {
-       private final List<IUnbakedModel> field_225339_a;

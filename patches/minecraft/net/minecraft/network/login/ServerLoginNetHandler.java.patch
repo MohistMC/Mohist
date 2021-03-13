@@ -70,11 +70,14 @@
           this.field_147333_a.func_150718_a(p_194026_1_);
        } catch (Exception exception) {
 -         field_147332_c.error("Error whilst disconnecting player", (Throwable)exception);
+-      }
+-
+-   }
 +         field_147332_c.error(com.mohistmc.util.i18n.i18n.get("serverloginnethandler.4", (Throwable)exception));
-       }
- 
-    }
- 
++      }
++
++   }
++
 +   // Spigot start
 +   public void initUUID()
 +   {
@@ -98,7 +101,7 @@
 +      }
 +   }
 +   // Spigot end
-+
+ 
     public void func_147326_c() {
 -      if (!this.field_147337_i.isComplete()) {
 -         this.field_147337_i = this.func_152506_a(this.field_147337_i);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/Inventory.java
 +++ b/net/minecraft/inventory/Inventory.java
-@@ -10,17 +10,72 @@
+@@ -10,15 +10,70 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.ListNBT;
  import net.minecraft.util.NonNullList;
@@ -63,15 +63,13 @@
 -      this.field_70481_b = p_i50397_1_;
 -      this.field_70482_c = NonNullList.func_191197_a(p_i50397_1_, ItemStack.field_190927_a);
 +      this(p_i50397_1_, null);
-    }
- 
++   }
++
 +   public Inventory(int numSlots, org.bukkit.inventory.InventoryHolder owner) {
 +      this.bukkitOwner = owner;
 +      // CraftBukkit end
 +      this.field_70481_b = numSlots;
 +      this.field_70482_c = NonNullList.func_191197_a(numSlots, ItemStack.field_190927_a);
-+   }
-+
+    }
+ 
     public Inventory(ItemStack... p_i50398_1_) {
-       this.field_70481_b = p_i50398_1_.length;
-       this.field_70482_c = NonNullList.func_193580_a(ItemStack.field_190927_a, p_i50398_1_);

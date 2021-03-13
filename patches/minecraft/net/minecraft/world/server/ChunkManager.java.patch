@@ -238,10 +238,11 @@
              int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
              boolean flag = vector3d.field_72450_a >= (double)(-i) && vector3d.field_72450_a <= (double)i && vector3d.field_72449_c >= (double)(-i) && vector3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
              if (flag) {
-@@ -1147,6 +1206,16 @@
+@@ -1146,6 +1205,16 @@
+                      flag1 = ChunkManager.func_219215_b(chunkpos, p_219400_1_, false) <= ChunkManager.this.field_219247_A;
                    }
                 }
- 
++
 +               // CraftBukkit start - respect vanish API
 +               if (this.field_219403_c instanceof ServerPlayerEntity) {
 +                  Player craftPlayer = ((ServerPlayerEntity) this.field_219403_c).getBukkitEntity();
@@ -251,7 +252,6 @@
 +               }
 +               p_219400_1_.field_71130_g.remove(Integer.valueOf(this.field_219403_c.func_145782_y()));
 +               // CraftBukkit end
-+
+ 
                 if (flag1 && this.field_219406_f.add(p_219400_1_)) {
                    this.field_219402_b.func_219455_b(p_219400_1_);
-                }

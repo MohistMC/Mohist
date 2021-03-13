@@ -26,6 +26,10 @@
  
 -   public LecternContainer(int p_i50075_1_) {
 -      this(p_i50075_1_, new Inventory(1), new IntArray(1));
+-   }
+-
+-   public LecternContainer(int p_i50076_1_, IInventory p_i50076_2_, IIntArray p_i50076_3_) {
+-      super(ContainerType.field_221523_q, p_i50076_1_);
 +   // CraftBukkit start
 +   @Override
 +   public CraftInventoryView getBukkitView() {
@@ -35,10 +39,8 @@
 +      CraftInventoryLectern inventory = new CraftInventoryLectern(this.field_217018_c);
 +      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
-    }
- 
--   public LecternContainer(int p_i50076_1_, IInventory p_i50076_2_, IIntArray p_i50076_3_) {
--      super(ContainerType.field_221523_q, p_i50076_1_);
++   }
++
 +   // CraftBukkit start - add player
 +   public LecternContainer(int i, PlayerInventory playerinventory) {
 +      this(i, new net.minecraft.inventory.Inventory(1), new IntArray(1), playerinventory);

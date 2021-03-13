@@ -68,15 +68,15 @@
           this.field_145850_b.func_175641_c(this.field_174879_c, this.func_195044_w().func_177230_c(), 1, this.field_190598_h);
           if (this.field_190598_h <= 0) {
              this.field_145850_b.func_184133_a((PlayerEntity)null, this.field_174879_c, SoundEvents.field_191261_fA, SoundCategory.BLOCKS, 0.5F, this.field_145850_b.field_73012_v.nextFloat() * 0.1F + 0.9F);
-@@ -284,6 +324,11 @@
-       return this.field_190599_i == ShulkerBoxTileEntity.AnimationStatus.CLOSED;
-    }
+@@ -282,6 +322,11 @@
  
+    public boolean func_235676_l_() {
+       return this.field_190599_i == ShulkerBoxTileEntity.AnimationStatus.CLOSED;
++   }
++
 +   @Override
 +   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
 +      return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
-+   }
-+
+    }
+ 
     public static enum AnimationStatus {
-       CLOSED,
-       OPENING,

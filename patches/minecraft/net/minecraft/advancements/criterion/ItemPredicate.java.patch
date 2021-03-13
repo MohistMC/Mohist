@@ -21,18 +21,18 @@
           MinMaxBounds.IntBound minmaxbounds$intbound = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("count"));
           MinMaxBounds.IntBound minmaxbounds$intbound1 = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("durability"));
           if (jsonobject.has("data")) {
-@@ -204,6 +211,14 @@
+@@ -202,6 +209,14 @@
+       } else {
+          return new ItemPredicate[0];
        }
-    }
- 
++   }
++
 +   public static void register(ResourceLocation name, java.util.function.Function<JsonObject, ItemPredicate> deserializer) {
 +      custom_predicates.put(name, deserializer);
 +   }
 +
 +   public static Map<ResourceLocation, java.util.function.Function<JsonObject, ItemPredicate>> getPredicates() {
 +      return unmod_predicates;
-+   }
-+
+    }
+ 
     public static class Builder {
-       private final List<EnchantmentPredicate> field_200312_a = Lists.newArrayList();
-       private final List<EnchantmentPredicate> field_226657_b_ = Lists.newArrayList();

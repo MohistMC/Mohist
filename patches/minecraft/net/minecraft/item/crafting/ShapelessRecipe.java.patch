@@ -8,7 +8,7 @@
  import net.minecraft.inventory.CraftingInventory;
  import net.minecraft.item.ItemStack;
  import net.minecraft.network.PacketBuffer;
-@@ -11,20 +12,38 @@
+@@ -11,19 +12,37 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
@@ -28,9 +28,10 @@
        this.field_194138_c = p_i48161_2_;
        this.field_77580_a = p_i48161_3_;
        this.field_77579_b = p_i48161_4_;
+-   }
 +      this.isSimple = p_i48161_4_.stream().allMatch(Ingredient::isSimple);
-    }
- 
++   }
++
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
@@ -43,10 +44,9 @@
 +      return recipe;
 +   }
 +   // CraftBukkit end
-+
+ 
     public ResourceLocation func_199560_c() {
        return this.field_199562_a;
-    }
 @@ -33,7 +52,7 @@
        return IRecipeSerializer.field_222158_b;
     }
@@ -73,6 +73,10 @@
           if (!itemstack.func_190926_b()) {
 -            ++i;
 -            recipeitemhelper.func_221264_a(itemstack, 1);
+-         }
+-      }
+-
+-      return i == this.field_77579_b.size() && recipeitemhelper.func_194116_a(this, (IntList)null);
 +            if (isSimple) {
 +               // Paper start
 +               itemstack = itemstack.func_77946_l();
@@ -87,10 +91,9 @@
 +            } else {
 +               inputs.add(itemstack);
 +            }
-          }
-       }
- 
--      return i == this.field_77579_b.size() && recipeitemhelper.func_194116_a(this, (IntList)null);
++         }
++      }
++
 +      //return i == this.recipeItems.size() && (isSimple ? recipeitemhelper.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.recipeItems) != null);
 +      // Paper start
 +      if (isSimple && (matchedProvided.isEmpty() || matchedIngredients.isEmpty())) {

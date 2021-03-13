@@ -4,12 +4,13 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
+-
+-public class ShapedRecipe implements ICraftingRecipe {
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftRecipe;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.RecipeChoice;
- 
--public class ShapedRecipe implements ICraftingRecipe {
++
 +public class ShapedRecipe implements ICraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingInventory> {
 +   static int MAX_WIDTH = 3;
 +   static int MAX_HEIGHT = 3;

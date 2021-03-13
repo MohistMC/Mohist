@@ -20,13 +20,14 @@
           if (blockstate != null) {
              PlayerEntity playerentity = p_195939_1_.func_195999_j();
              world.func_184133_a(playerentity, blockpos, SoundEvents.field_187693_cj, SoundCategory.BLOCKS, 1.0F, 1.0F);
-@@ -47,4 +49,9 @@
+@@ -46,5 +48,10 @@
+       }
  
        return ActionResultType.PASS;
-    }
++   }
 +
 +   @javax.annotation.Nullable
 +   public static BlockState getHoeTillingState(BlockState originalState) {
 +      return field_195973_b.get(originalState.func_177230_c());
-+   }
+    }
  }

@@ -26,12 +26,13 @@
              p_229093_1_.func_227860_a_();
              double d3 = d0 + MathHelper.func_219803_d((double)p_229093_4_, enderdragonpartentity.field_70142_S, enderdragonpartentity.func_226277_ct_());
              double d4 = d1 + MathHelper.func_219803_d((double)p_229093_4_, enderdragonpartentity.field_70137_T, enderdragonpartentity.func_226278_cu_());
-@@ -450,4 +453,8 @@
+@@ -449,5 +452,9 @@
+ 
     public FontRenderer func_78716_a() {
        return this.field_78736_p;
-    }
++   }
 +
 +   public Map<String, PlayerRenderer> getSkinMap() {
 +      return (Map<String, PlayerRenderer>) java.util.Collections.unmodifiableMap(field_178636_l);
-+   }
+    }
  }

@@ -21,6 +21,14 @@
 -                  endermiteentity.func_70012_b(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), entity.field_70177_z, entity.field_70125_A);
 -                  this.field_70170_p.func_217376_c(endermiteentity);
 -               }
+-
+-               if (entity.func_184218_aH()) {
+-                  entity.func_184210_p();
+-               }
+-
+-               entity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
+-               entity.field_70143_R = 0.0F;
+-               entity.func_70097_a(DamageSource.field_76379_h, 5.0F);
 +               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 5.0F);
 +               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size
 +                  // CraftBukkit start - Fire PlayerTeleportEvent
@@ -28,16 +36,10 @@
 +                  org.bukkit.Location location = getBukkitEntity().getLocation();
 +                  location.setPitch(player.getLocation().getPitch());
 +                  location.setYaw(player.getLocation().getYaw());
- 
--               if (entity.func_184218_aH()) {
--                  entity.func_184210_p();
--               }
++
 +                  PlayerTeleportEvent teleportEvent = new PlayerTeleportEvent(player, player.getLocation(), location, TeleportCause.ENDER_PEARL);
 +                  Bukkit.getPluginManager().callEvent(teleportEvent);
- 
--               entity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
--               entity.field_70143_R = 0.0F;
--               entity.func_70097_a(DamageSource.field_76379_h, 5.0F);
++
 +                  if (!teleportEvent.isAsynchronous() && !serverplayerentity.field_71135_a.isDisconnected()) {
 +                     if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
 +                        EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);

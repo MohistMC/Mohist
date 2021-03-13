@@ -69,10 +69,10 @@
     public static PortalInfo func_242963_a(ServerWorld p_242963_0_, TeleportationRepositioner.Result p_242963_1_, Direction.Axis p_242963_2_, Vector3d p_242963_3_, EntitySize p_242963_4_, Vector3d p_242963_5_, float p_242963_6_, float p_242963_7_) {
 -      BlockPos blockpos = p_242963_1_.field_243679_a;
 -      BlockState blockstate = p_242963_0_.func_180495_p(blockpos);
-+       return func_242963_a(p_242963_0_, p_242963_1_, p_242963_2_, p_242963_3_, p_242963_4_, p_242963_5_, p_242963_6_, p_242963_7_, null); // TODO Mohist
++       return createPortalInfo(p_242963_0_, p_242963_1_, p_242963_2_, p_242963_3_, p_242963_4_, p_242963_5_, p_242963_6_, p_242963_7_, null); // TODO Mohist
 +   }
 +
-+   public static PortalInfo func_242963_a(ServerWorld world, TeleportationRepositioner.Result result, Direction.Axis axis, Vector3d offsetVector, EntitySize size, Vector3d motion, float rotationYaw, float rotationPitch, CraftPortalEvent portalEventInfo) {
++   public static PortalInfo createPortalInfo(ServerWorld world, TeleportationRepositioner.Result result, Direction.Axis axis, Vector3d offsetVector, EntitySize size, Vector3d motion, float rotationYaw, float rotationPitch, CraftPortalEvent portalEventInfo) {
 +      BlockPos blockpos = result.field_243679_a;
 +      BlockState blockstate = world.func_180495_p(blockpos);
        Direction.Axis direction$axis = blockstate.func_177229_b(BlockStateProperties.field_208199_z);

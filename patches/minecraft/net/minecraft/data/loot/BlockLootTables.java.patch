@@ -24,14 +24,14 @@
           ResourceLocation resourcelocation = block.func_220068_i();
           if (resourcelocation != LootTables.field_186419_a && set.add(resourcelocation)) {
              LootTable.Builder loottable$builder = this.field_218581_i.remove(resourcelocation);
-@@ -1095,6 +1099,10 @@
-       return func_218562_a(p_239829_0_, DoorBlock.field_176523_O, DoubleBlockHalf.LOWER);
-    }
+@@ -1093,6 +1097,10 @@
  
-+   protected Iterable<Block> getKnownBlocks() {
-+       return Registry.field_212618_g;
+    public static LootTable.Builder func_239829_a_(Block p_239829_0_) {
+       return func_218562_a(p_239829_0_, DoorBlock.field_176523_O, DoubleBlockHalf.LOWER);
 +   }
 +
++   protected Iterable<Block> getKnownBlocks() {
++       return Registry.field_212618_g;
+    }
+ 
     public void func_218547_a(Block p_218547_1_) {
-       this.func_218522_a(p_218547_1_, (p_241751_0_) -> {
-          return func_218523_c(((FlowerPotBlock)p_241751_0_).func_220276_d());

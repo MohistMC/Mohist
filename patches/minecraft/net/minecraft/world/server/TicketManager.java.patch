@@ -44,7 +44,7 @@
           return true;
        } else {
           if (!this.field_219387_o.isEmpty()) {
-@@ -143,8 +157,24 @@
+@@ -143,6 +157,22 @@
           this.field_219378_f.func_215491_b(p_219347_1_, p_219347_3_.func_219477_b(), true);
        }
  
@@ -52,9 +52,9 @@
 +          SortedArraySet<Ticket<?>> tickets = forcedTickets.computeIfAbsent(p_219347_1_, e -> SortedArraySet.func_226172_a_(4));
 +          tickets.func_226175_a_(ticket);
 +      }
-    }
- 
-+   private boolean addTicket(long chunkPosIn, Ticket<?> ticketIn) { // CraftBukkit - void -> boolean
++   }
++
++   private boolean addTicketCB(long chunkPosIn, Ticket<?> ticketIn) { // CraftBukkit - void -> boolean
 +      SortedArraySet<Ticket<?>> sortedarrayset = this.func_229848_e_(chunkPosIn);
 +      int i = func_229844_a_(sortedarrayset);
 +      Ticket<?> ticket = sortedarrayset.func_226175_a_(ticketIn);
@@ -64,15 +64,14 @@
 +      }
 +
 +      return ticketIn == ticket; // CraftBukkit
-+   }
-+
+    }
+ 
     private void func_219349_b(long p_219349_1_, Ticket<?> p_219349_3_) {
-       SortedArraySet<Ticket<?>> sortedarrayset = this.func_229848_e_(p_219349_1_);
-       if (sortedarrayset.remove(p_219349_3_)) {
-@@ -155,8 +185,36 @@
+@@ -155,7 +185,35 @@
        }
  
        this.field_219378_f.func_215491_b(p_219349_1_, func_229844_a_(sortedarrayset), false);
+-   }
 +	  
 +	  if (p_219349_3_.isForceTicks()) {
 +          SortedArraySet<Ticket<?>> tickets = forcedTickets.get(p_219349_1_);
@@ -80,9 +79,9 @@
 +              tickets.remove(p_219349_3_);
 +          }
 +	  }
-    }
- 
-+   public boolean removeTicket(long chunkPosIn, Ticket<?> ticketIn) { // CraftBukkit - void -> boolean
++   }
++
++   public boolean removeTicketCB(long chunkPosIn, Ticket<?> ticketIn) { // CraftBukkit - void -> boolean
 +      SortedArraySet<Ticket<?>> sortedarrayset = this.func_229848_e_(chunkPosIn);
 +      boolean removed = false; // CraftBukkit
 +      if (sortedarrayset.remove(ticketIn)) {
@@ -99,13 +98,12 @@
 +
 +   // CraftBukkit - start
 +   public <T> boolean addTicketAtLevel(TicketType<T> ticketType, ChunkPos chunkcoordintpair, int level, T identifier) {
-+      return this.addTicket(chunkcoordintpair.func_201841_a(), new Ticket<>(ticketType, level, identifier));
++      return this.addTicketCB(chunkcoordintpair.func_201841_a(), new Ticket<>(ticketType, level, identifier));
 +   }
 +   // CraftBukkit - end
-+
+ 
     public <T> void func_219356_a(TicketType<T> p_219356_1_, ChunkPos p_219356_2_, int p_219356_3_, T p_219356_4_) {
        this.func_219347_a(p_219356_2_.func_201841_a(), new Ticket<>(p_219356_1_, p_219356_3_, p_219356_4_));
-    }
 @@ -166,6 +224,14 @@
        this.func_219349_b(p_219345_2_.func_201841_a(), ticket);
     }
@@ -114,7 +112,7 @@
 +   // CraftBukkit - start
 +   public <T> boolean removeTicketAtLevel(TicketType<T> type, ChunkPos pos, int level, T value) {
 +      Ticket<T> ticket = new Ticket<>(type, level, value);
-+      return this.removeTicket(pos.func_201841_a(), ticket);
++      return this.removeTicketCB(pos.func_201841_a(), ticket);
 +   }
 +   // CraftBukkit - end
 +
@@ -144,7 +142,7 @@
        objectset.remove(p_219367_2_);
        if (objectset.isEmpty()) {
           this.field_219375_c.remove(i);
-@@ -241,7 +316,30 @@
+@@ -241,6 +316,29 @@
     public String func_225412_c() {
        return this.field_219384_l.func_225396_a();
     }
@@ -153,7 +151,7 @@
 +       SortedArraySet<Ticket<?>> tickets = forcedTickets.get(chunkPos);
 +       return tickets != null && !tickets.isEmpty();
 +   }
- 
++
 +   // CraftBukkit start
 +   public <T> void removeAllTicketsFor(TicketType<T> ticketType, int ticketLevel, T ticketIdentifier) {
 +      Ticket<T> target = new Ticket<>(ticketType, ticketLevel, ticketIdentifier);
@@ -171,7 +169,6 @@
 +      }
 +   }
 +   // CraftBukkit end
-+
+ 
     class ChunkTicketTracker extends ChunkDistanceGraph {
        public ChunkTicketTracker() {
-          super(ChunkManager.field_219249_a + 2, 16, 256);

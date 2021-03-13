@@ -34,10 +34,13 @@
     }
  
     public void func_151368_a(LivingEntity p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
-@@ -139,6 +148,24 @@
-       return true;
+@@ -136,6 +145,24 @@
     }
  
+    public boolean func_230310_i_() {
++      return true;
++   }
++
 +   /**
 +    * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
 +    * applies for <i>all possible</i> enchantments.
@@ -53,9 +56,6 @@
 +    * @return false to disable the vanilla feature
 +    */
 +   public boolean isAllowedOnBooks() {
-+      return true;
-+   }
-+
-    public static enum Rarity {
-       COMMON(10),
-       UNCOMMON(5),
+       return true;
+    }
+ 

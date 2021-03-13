@@ -74,7 +74,7 @@
  
     protected float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
        return 0.95F * p_213348_2_.field_220316_b;
-    }
++   }
 +
 +   @Override
 +   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, World world, BlockPos pos) {
@@ -96,5 +96,5 @@
 +         return items;
 +      }
 +      return java.util.Collections.emptyList();
-+   }
+    }
  }

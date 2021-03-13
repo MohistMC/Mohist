@@ -530,18 +530,18 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2470,6 +2422,14 @@
-       this.field_175617_aL.func_229355_a_(p_228020_1_);
-    }
+@@ -2468,6 +2420,14 @@
  
+    public void func_228020_b_(int p_228020_1_) {
+       this.field_175617_aL.func_229355_a_(p_228020_1_);
++   }
++
 +   public ItemColors getItemColors() {
 +      return this.field_184128_aI;
 +   }
 +
 +   public SearchTreeManager getSearchTreeManager() {
 +      return this.field_193995_ae;
-+   }
-+
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    public static final class PackManager implements AutoCloseable {
-       private final ResourcePackList field_238221_a_;

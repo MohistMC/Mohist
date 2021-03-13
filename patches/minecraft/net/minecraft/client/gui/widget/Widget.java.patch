@@ -20,10 +20,11 @@
     public void func_230986_a_(float p_230986_1_) {
        this.field_230695_q_ = p_230986_1_;
     }
-@@ -233,4 +237,17 @@
+@@ -232,5 +236,18 @@
+ 
     protected void func_230996_d_(boolean p_230996_1_) {
        this.field_230686_c_ = p_230996_1_;
-    }
++   }
 +
 +   public static final int UNSET_FG_COLOR = -1;
 +   protected int packedFGColor = UNSET_FG_COLOR;
@@ -36,5 +37,5 @@
 +   }
 +   public void clearFGColor() {
 +      this.packedFGColor = UNSET_FG_COLOR;
-+   }
+    }
  }

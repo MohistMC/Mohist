@@ -17,10 +17,11 @@
  
  public class DispenserTileEntity extends LockableLootTileEntity {
     private static final Random field_174913_f = new Random();
-@@ -29,6 +33,41 @@
+@@ -28,6 +32,41 @@
+    public int func_70302_i_() {
        return 9;
     }
- 
++
 +   // CraftBukkit start
 +   private List<HumanEntity> transaction = new ArrayList<>();
 +   private int maxStack = MAX_STACK;
@@ -55,7 +56,6 @@
 +      this.maxStack = size;
 +   }
 +   // CraftBukkit end
-+
+ 
     public int func_146017_i() {
        this.func_184281_d((PlayerEntity)null);
-       int i = -1;

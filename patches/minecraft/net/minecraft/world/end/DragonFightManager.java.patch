@@ -157,13 +157,14 @@
              endercrystalentity.func_184516_a((BlockPos)null);
           }
        }
+-
 +   }
- 
++
 +   public void addPlayer(ServerPlayerEntity player) {
 +      this.field_186109_c.func_186760_a(player);
-    }
++   }
 +
 +   public void removePlayer(ServerPlayerEntity player) {
 +      this.field_186109_c.func_186761_b(player);
-+   }
+    }
  }

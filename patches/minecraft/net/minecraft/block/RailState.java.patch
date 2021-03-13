@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/RailState.java
 +++ b/net/minecraft/block/RailState.java
-@@ -15,17 +15,31 @@
+@@ -15,16 +15,30 @@
     private BlockState field_196923_d;
     private final boolean field_208513_e;
     private final List<BlockPos> field_196924_e = Lists.newArrayList();
@@ -18,7 +18,7 @@
 +      this.canMakeSlopes = this.field_196922_c.canMakeSlopes(field_196923_d, p_i47755_1_, p_i47755_2_);
        this.func_208509_a(railshape);
     }
- 
++
 +   public final World getWorld() { return this.field_196920_a; } // Paper - OBFHELPER
 +
 +   public final BlockPos getPos() { return this.field_196921_b; } // Paper - OBFHELPER
@@ -30,10 +30,9 @@
 +      return this.getWorld().func_180495_p(this.getPos()).func_177230_c() == this.getRailState().func_177230_c();
 +   }
 +    // Paper end - prevent desync
-+
+ 
     public List<BlockPos> func_196907_a() {
        return this.field_196924_e;
-    }
 @@ -142,6 +156,11 @@
     }
  

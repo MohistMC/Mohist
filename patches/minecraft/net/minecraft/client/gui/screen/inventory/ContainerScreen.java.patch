@@ -152,10 +152,12 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -589,6 +604,18 @@
-       return this.field_147002_h;
-    }
+@@ -587,6 +602,18 @@
  
+    public T func_212873_a_() {
+       return this.field_147002_h;
++   }
++
 +   @javax.annotation.Nullable
 +   public Slot getSlotUnderMouse() { return this.field_147006_u; }
 +   public int getGuiLeft() { return field_147003_i; }
@@ -166,8 +168,6 @@
 +   protected int slotColor = -2130706433;
 +   public int getSlotColor(int index) {
 +      return slotColor;
-+   }
-+
+    }
+ 
     public void func_231175_as__() {
-       this.field_230706_i_.field_71439_g.func_71053_j();
-       super.func_231175_as__();

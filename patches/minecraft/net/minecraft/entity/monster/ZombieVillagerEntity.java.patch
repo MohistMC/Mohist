@@ -77,7 +77,7 @@
     private void func_213791_a(ServerWorld p_213791_1_) {
 -      VillagerEntity villagerentity = this.func_233656_b_(EntityType.field_200756_av, false);
 +      // CraftBukkit start
-+      VillagerEntity villagerentity = this.func_233656_b_(EntityType.field_200756_av, false,  EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED);
++      VillagerEntity villagerentity = this.convertTo(EntityType.field_200756_av, false,  EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED);
 +      if (villagerentity == null) {
 +         ((ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
 +         return;

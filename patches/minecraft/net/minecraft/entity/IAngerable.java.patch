@@ -9,12 +9,12 @@
        this.func_230260_a__(0);
     }
  
-@@ -114,6 +114,8 @@
+@@ -113,6 +113,8 @@
+    void func_230246_e_(@Nullable PlayerEntity p_230246_1_);
  
     void func_70624_b(@Nullable LivingEntity p_70624_1_);
- 
-+   boolean setGoalTarget(LivingEntity entityliving, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
 +
++   boolean setGoalTarget(LivingEntity entityliving, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
+ 
     @Nullable
     LivingEntity func_70638_az();
- }

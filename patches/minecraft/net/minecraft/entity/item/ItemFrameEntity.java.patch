@@ -95,7 +95,7 @@
              this.func_146065_b(p_70097_1_.func_76346_g(), false);
              this.func_184185_a(SoundEvents.field_187629_cO, 1.0F, 1.0F);
           }
-@@ -234,14 +249,24 @@
+@@ -234,14 +249,19 @@
     }
  
     public void func_174864_a(ItemStack p_174864_1_, boolean p_174864_2_) {
@@ -104,11 +104,6 @@
 -         p_174864_1_.func_190920_e(1);
 -         p_174864_1_.func_234695_a_(this);
 +      this.setItem(p_174864_1_, p_174864_2_, true);
-+   }
-+
-+   public void setItem(ItemStack stack, final boolean p_174864_2_) {
-+      // CraftBukkit start
-+      this.setItem(stack, p_174864_2_, true);
 +   }
 +
 +   public void setItem(ItemStack stack, boolean p_174864_2_, boolean playSound) {
@@ -126,7 +121,7 @@
           this.func_184185_a(SoundEvents.field_187620_cL, 1.0F, 1.0F);
        }
  
-@@ -305,7 +330,7 @@
+@@ -305,7 +325,7 @@
        if (compoundnbt != null && !compoundnbt.isEmpty()) {
           ItemStack itemstack = ItemStack.func_199557_a(compoundnbt);
           if (itemstack.func_190926_b()) {

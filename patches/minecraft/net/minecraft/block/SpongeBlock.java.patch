@@ -62,10 +62,11 @@
                    ++i;
                    if (j < 6) {
                       queue.add(new Tuple<>(blockpos1, j + 1));
-@@ -80,6 +88,40 @@
+@@ -79,6 +87,40 @@
+             break;
           }
        }
- 
++
 +      // CraftBukkit start
 +      List<CraftBlockState> blocks = blockList.getList(); // Is a clone
 +      if (!blocks.isEmpty()) {
@@ -99,7 +100,6 @@
 +         }
 +      }
 +      // CraftBukkit end
-+
+ 
        return i > 0;
     }
- }

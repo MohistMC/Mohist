@@ -105,12 +105,13 @@
     public String[] func_237334_a_() {
        String[] astring = this.field_237333_c_.list();
        if (astring == null) {
-@@ -72,4 +121,8 @@
+@@ -71,5 +120,9 @@
+       }
  
        return astring;
-    }
++   }
 +
 +   public File getPlayerDataFolder() {
 +      return field_237333_c_;
-+   }
+    }
  }
