@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ import net.minecraft.util.ResourceLocation;
 public class LootTableIdCondition implements ILootCondition
 {
     // TODO Forge Registry at some point?
-    public static final LootConditionType LOOT_TABLE_ID = new LootConditionType(new Serializer());
+    public static final LootConditionType LOOT_TABLE_ID = new LootConditionType(new LootTableIdCondition.Serializer());
     public static final ResourceLocation UNKNOWN_LOOT_TABLE = new ResourceLocation("forge", "unknown_loot_table");
 
     private final ResourceLocation targetLootTableId;
@@ -59,7 +59,7 @@ public class LootTableIdCondition implements ILootCondition
         return new Builder(targetLootTableId);
     }
 
-    public static class Builder implements IBuilder
+    public static class Builder implements ILootCondition.IBuilder
     {
         private final ResourceLocation targetLootTableId;
 

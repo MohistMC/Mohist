@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -121,9 +121,9 @@ public final class TransformationHelper
     public static boolean epsilonEquals(Vector4f v1, Vector4f v2, float epsilon)
     {
         return MathHelper.abs(v1.x()-v2.x()) < epsilon &&
-                MathHelper.abs(v1.y()-v2.y()) < epsilon &&
-                MathHelper.abs(v1.z()-v2.z()) < epsilon &&
-                MathHelper.abs(v1.w()-v2.w()) < epsilon;
+               MathHelper.abs(v1.y()-v2.y()) < epsilon &&
+               MathHelper.abs(v1.z()-v2.z()) < epsilon &&
+               MathHelper.abs(v1.w()-v2.w()) < epsilon;
     }
 
     public static class Deserializer implements JsonDeserializer<TransformationMatrix>

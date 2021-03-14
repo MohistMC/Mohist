@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,7 @@ public class AdvancementLoadFix {
     private static Map<Advancement, List<Advancement>> roots;
 
     public static void loadVisibility(final PlayerAdvancements playerAdvancements, final Set<Advancement> visible, final Set<Advancement> visibilityChanged, final Map<Advancement, AdvancementProgress> progress, final Set<Advancement> progressChanged, final Predicate<Advancement> shouldBeVisible) {
-        LOGGER.debug("Using new advancement loading for {}", playerAdvancements);
+        LOGGER.info("Using new advancement loading for {}", playerAdvancements);
         if (roots == null) throw new RuntimeException("Why did the advancements not load yet?!");
         final Set<Advancement> set = new HashSet<>();
         for(Map.Entry<Advancement, AdvancementProgress> entry : progress.entrySet()) {
