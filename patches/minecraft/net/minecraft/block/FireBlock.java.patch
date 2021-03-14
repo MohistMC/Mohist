@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FireBlock.java
 +++ b/net/minecraft/block/FireBlock.java
-@@ -24,6 +24,10 @@
+@@ -24,6 +_,10 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -11,7 +11,7 @@
  
  public class FireBlock extends AbstractFireBlock {
     public static final IntegerProperty field_176543_a = BlockStateProperties.field_208171_X;
-@@ -78,7 +82,18 @@
+@@ -78,7 +_,18 @@
     }
  
     public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
@@ -31,7 +31,7 @@
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-@@ -92,13 +107,13 @@
+@@ -92,13 +_,13 @@
     protected BlockState func_196448_a(IBlockReader p_196448_1_, BlockPos p_196448_2_) {
        BlockPos blockpos = p_196448_2_.func_177977_b();
        BlockState blockstate = p_196448_1_.func_180495_p(blockpos);
@@ -47,7 +47,7 @@
              }
           }
  
-@@ -117,14 +132,14 @@
+@@ -117,14 +_,14 @@
        p_225534_2_.func_205220_G_().func_205360_a(p_225534_3_, this, func_235495_a_(p_225534_2_.field_73012_v));
        if (p_225534_2_.func_82736_K().func_223586_b(GameRules.field_223598_a)) {
           if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
@@ -65,7 +65,7 @@
           } else {
              int j = Math.min(15, i + p_225534_4_.nextInt(3) / 2);
              if (i != j) {
-@@ -136,26 +151,28 @@
+@@ -136,26 +_,28 @@
                 if (!this.func_196447_a(p_225534_2_, p_225534_3_)) {
                    BlockPos blockpos = p_225534_3_.func_177977_b();
                    if (!p_225534_2_.func_180495_p(blockpos).func_224755_d(p_225534_2_, blockpos, Direction.UP) || i > 3) {
@@ -103,7 +103,7 @@
              BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -177,7 +194,14 @@
+@@ -177,7 +_,14 @@
  
                             if (i2 > 0 && p_225534_4_.nextInt(k1) <= i2 && (!p_225534_2_.func_72896_J() || !this.func_176537_d(p_225534_2_, blockpos$mutable))) {
                                int j2 = Math.min(15, i + p_225534_4_.nextInt(5) / 4);
@@ -119,7 +119,7 @@
                             }
                          }
                       }
-@@ -193,30 +217,39 @@
+@@ -193,30 +_,39 @@
        return p_176537_1_.func_175727_C(p_176537_2_) || p_176537_1_.func_175727_C(p_176537_2_.func_177976_e()) || p_176537_1_.func_175727_C(p_176537_2_.func_177974_f()) || p_176537_1_.func_175727_C(p_176537_2_.func_177978_c()) || p_176537_1_.func_175727_C(p_176537_2_.func_177968_d());
     }
  
@@ -172,7 +172,7 @@
        }
  
     }
-@@ -228,7 +261,7 @@
+@@ -228,7 +_,7 @@
  
     private boolean func_196447_a(IBlockReader p_196447_1_, BlockPos p_196447_2_) {
        for(Direction direction : Direction.values()) {
@@ -181,7 +181,7 @@
              return true;
           }
        }
-@@ -244,13 +277,14 @@
+@@ -244,13 +_,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(direction));
@@ -197,7 +197,7 @@
     protected boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }
-@@ -269,8 +303,21 @@
+@@ -269,8 +_,21 @@
     }
  
     private void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {

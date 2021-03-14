@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/text/event/HoverEvent.java
 +++ b/net/minecraft/util/text/event/HoverEvent.java
-@@ -308,7 +308,7 @@
+@@ -308,7 +_,7 @@
                    CompoundNBT compoundnbt = JsonToNBT.func_180713_a(s);
                    return new HoverEvent.ItemHover(item, i, compoundnbt);
                 } catch (CommandSyntaxException commandsyntaxexception) {
@@ -9,7 +9,7 @@
                 }
              }
  
-@@ -322,7 +322,7 @@
+@@ -322,7 +_,7 @@
              CompoundNBT compoundnbt = JsonToNBT.func_180713_a(p_240695_0_.getString());
              return new HoverEvent.ItemHover(ItemStack.func_199557_a(compoundnbt));
           } catch (CommandSyntaxException commandsyntaxexception) {

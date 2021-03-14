@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/GameRules.java
 +++ b/net/minecraft/world/GameRules.java
-@@ -196,7 +196,7 @@
+@@ -196,7 +_,7 @@
           return Boolean.toString(this.field_223575_a);
        }
  
@@ -9,7 +9,7 @@
           this.field_223575_a = Boolean.parseBoolean(p_223553_1_);
        }
  
-@@ -286,7 +286,7 @@
+@@ -286,7 +_,7 @@
           return Integer.toString(this.field_223566_a);
        }
  
@@ -18,7 +18,7 @@
           this.field_223566_a = func_223563_b(p_223553_1_);
        }
  
-@@ -305,7 +305,7 @@
+@@ -305,7 +_,7 @@
              try {
                 return Integer.parseInt(p_223563_0_);
              } catch (NumberFormatException numberformatexception) {
@@ -27,7 +27,7 @@
              }
           }
  
-@@ -410,14 +410,14 @@
+@@ -410,14 +_,14 @@
           this.func_223556_a(p_223554_1_.getSource().func_197028_i());
        }
  

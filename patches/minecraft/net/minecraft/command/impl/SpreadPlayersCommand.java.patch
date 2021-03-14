@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/impl/SpreadPlayersCommand.java
 +++ b/net/minecraft/command/impl/SpreadPlayersCommand.java
-@@ -28,6 +28,8 @@
+@@ -28,6 +_,8 @@
  import net.minecraft.util.math.vector.Vector2f;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.IBlockReader;
@@ -9,7 +9,7 @@
  import net.minecraft.world.server.ServerWorld;
  
  public class SpreadPlayersCommand {
-@@ -238,7 +240,7 @@
+@@ -238,7 +_,7 @@
  
        public int func_198710_a(IBlockReader p_198710_1_, int p_198710_2_) {
           BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(this.field_198713_a, (double)(p_198710_2_ + 1), this.field_198714_b);
@@ -18,7 +18,7 @@
           blockpos$mutable.func_189536_c(Direction.DOWN);
  
           boolean flag2;
-@@ -257,7 +259,7 @@
+@@ -257,7 +_,7 @@
  
        public boolean func_241074_b_(IBlockReader p_241074_1_, int p_241074_2_) {
           BlockPos blockpos = new BlockPos(this.field_198713_a, (double)(this.func_198710_a(p_241074_1_, p_241074_2_) - 1), this.field_198714_b);
@@ -27,7 +27,7 @@
           Material material = blockstate.func_185904_a();
           return blockpos.func_177956_o() < p_241074_2_ && !material.func_76224_d() && material != Material.field_151581_o;
        }
-@@ -266,5 +268,12 @@
+@@ -266,5 +_,12 @@
           this.field_198713_a = MathHelper.func_82716_a(p_198711_1_, p_198711_2_, p_198711_6_);
           this.field_198714_b = MathHelper.func_82716_a(p_198711_1_, p_198711_4_, p_198711_8_);
        }

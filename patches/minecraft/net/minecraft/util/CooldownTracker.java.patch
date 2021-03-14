@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/CooldownTracker.java
 +++ b/net/minecraft/util/CooldownTracker.java
-@@ -10,8 +10,8 @@
+@@ -10,8 +_,8 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class CooldownTracker {
@@ -11,7 +11,7 @@
  
     public boolean func_185141_a(Item p_185141_1_) {
        return this.func_185143_a(p_185141_1_, 0.0F) > 0.0F;
-@@ -61,9 +61,9 @@
+@@ -61,9 +_,9 @@
     protected void func_185146_c(Item p_185146_1_) {
     }
  

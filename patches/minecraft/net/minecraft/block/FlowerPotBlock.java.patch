@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FlowerPotBlock.java
 +++ b/net/minecraft/block/FlowerPotBlock.java
-@@ -24,10 +24,33 @@
+@@ -24,10 +_,33 @@
     protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
     private final Block field_196452_c;
  
@@ -37,7 +37,7 @@
     }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-@@ -41,7 +64,7 @@
+@@ -41,7 +_,7 @@
     public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
        ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
        Item item = itemstack.func_77973_b();
@@ -46,7 +46,7 @@
        boolean flag = block == Blocks.field_150350_a;
        boolean flag1 = this.field_196452_c == Blocks.field_150350_a;
        if (flag != flag1) {
-@@ -59,7 +82,7 @@
+@@ -59,7 +_,7 @@
                 p_225533_4_.func_71019_a(itemstack1, false);
              }
  
@@ -55,7 +55,7 @@
           }
  
           return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
-@@ -77,10 +100,27 @@
+@@ -77,10 +_,27 @@
     }
  
     public Block func_220276_d() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -53,9 +53,10 @@
+@@ -53,9 +_,10 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.RayTraceContext;
  import net.minecraft.util.math.vector.Vector3d;
@@ -12,7 +12,7 @@
  
  public class EndermanEntity extends MonsterEntity implements IAngerable {
     private static final UUID field_110192_bp = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
-@@ -98,9 +99,18 @@
+@@ -98,9 +_,18 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
@@ -33,7 +33,7 @@
           this.field_184721_by = 0;
           this.field_70180_af.func_187227_b(field_184719_bw, false);
           this.field_70180_af.func_187227_b(field_226535_bx_, false);
-@@ -113,6 +123,7 @@
+@@ -113,6 +_,7 @@
           }
        }
  
@@ -41,7 +41,7 @@
     }
  
     protected void func_70088_a() {
-@@ -181,12 +192,13 @@
+@@ -181,12 +_,13 @@
        }
  
        this.func_195406_b(blockstate);
@@ -57,7 +57,7 @@
           return false;
        } else {
           Vector3d vector3d = p_70821_1_.func_70676_i(1.0F).func_72432_b();
-@@ -265,7 +277,9 @@
+@@ -265,7 +_,9 @@
        boolean flag = blockstate.func_185904_a().func_76230_c();
        boolean flag1 = blockstate.func_204520_s().func_206884_a(FluidTags.field_206959_a);
        if (flag && !flag1) {
@@ -68,7 +68,7 @@
           if (flag2 && !this.func_174814_R()) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);
-@@ -429,7 +443,7 @@
+@@ -429,7 +_,7 @@
        public boolean func_75250_a() {
           if (this.field_179475_a.func_195405_dq() == null) {
              return false;
@@ -77,7 +77,7 @@
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
-@@ -449,16 +463,19 @@
+@@ -449,16 +_,19 @@
           BlockState blockstate2 = this.field_179475_a.func_195405_dq();
           if (blockstate2 != null) {
              blockstate2 = Block.func_199770_b(blockstate2, this.field_179475_a.field_70170_p, blockpos);
@@ -102,7 +102,7 @@
        }
     }
  
-@@ -500,7 +517,7 @@
+@@ -500,7 +_,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
              return false;
@@ -111,7 +111,7 @@
              return false;
           } else {
              return this.field_179473_a.func_70681_au().nextInt(20) == 0;
-@@ -521,10 +538,13 @@
+@@ -521,10 +_,13 @@
           BlockRayTraceResult blockraytraceresult = world.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, this.field_179473_a));
           boolean flag = blockraytraceresult.func_216350_a().equals(blockpos);
           if (block.func_203417_a(BlockTags.field_201151_l) && flag) {

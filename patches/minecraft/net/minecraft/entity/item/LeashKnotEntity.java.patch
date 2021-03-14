@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/LeashKnotEntity.java
 +++ b/net/minecraft/entity/item/LeashKnotEntity.java
-@@ -8,8 +8,10 @@
+@@ -8,8 +_,10 @@
  import net.minecraft.entity.MobEntity;
  import net.minecraft.entity.Pose;
  import net.minecraft.entity.player.PlayerEntity;
@@ -11,7 +11,7 @@
  import net.minecraft.network.play.server.SSpawnObjectPacket;
  import net.minecraft.tags.BlockTags;
  import net.minecraft.util.ActionResultType;
-@@ -21,8 +23,10 @@
+@@ -21,8 +_,10 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
@@ -22,7 +22,7 @@
  
  public class LeashKnotEntity extends HangingEntity {
     public LeashKnotEntity(EntityType<? extends LeashKnotEntity> p_i50223_1_, World p_i50223_2_) {
-@@ -45,6 +49,8 @@
+@@ -45,6 +_,8 @@
  
     protected void func_174856_o() {
        this.func_226288_n_((double)this.field_174861_a.func_177958_n() + 0.5D, (double)this.field_174861_a.func_177956_o() + 0.5D, (double)this.field_174861_a.func_177952_p() + 0.5D);
@@ -31,7 +31,7 @@
     }
  
     public void func_174859_a(Direction p_174859_1_) {
-@@ -87,19 +93,39 @@
+@@ -87,19 +_,39 @@
  
           for(MobEntity mobentity : list) {
              if (mobentity.func_110166_bE() == p_184230_1_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/LootTable.java
 +++ b/net/minecraft/loot/LootTable.java
-@@ -15,6 +15,7 @@
+@@ -15,6 +_,7 @@
  import java.util.Random;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
@@ -8,7 +8,7 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.item.ItemStack;
  import net.minecraft.loot.functions.ILootFunction;
-@@ -25,19 +26,22 @@
+@@ -25,19 +_,22 @@
  import org.apache.commons.lang3.ArrayUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -33,7 +33,7 @@
        this.field_216128_f = p_i51265_3_;
        this.field_216129_g = LootFunctionManager.func_216241_a(p_i51265_3_);
     }
-@@ -70,11 +74,12 @@
+@@ -70,11 +_,12 @@
  
           p_216114_1_.func_186490_b(this);
        } else {
@@ -47,7 +47,7 @@
     public void func_216120_b(LootContext p_216120_1_, Consumer<ItemStack> p_216120_2_) {
        this.func_216114_a(p_216120_1_, func_216124_a(p_216120_2_));
     }
-@@ -82,6 +87,7 @@
+@@ -82,6 +_,7 @@
     public List<ItemStack> func_216113_a(LootContext p_216113_1_) {
        List<ItemStack> list = Lists.newArrayList();
        this.func_216120_b(p_216113_1_, list::add);
@@ -55,7 +55,7 @@
        return list;
     }
  
-@@ -90,8 +96,8 @@
+@@ -90,8 +_,8 @@
     }
  
     public void func_227506_a_(ValidationTracker p_227506_1_) {
@@ -66,7 +66,7 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -103,22 +109,57 @@
+@@ -103,22 +_,57 @@
     public void func_216118_a(IInventory p_216118_1_, LootContext p_216118_2_) {
        List<ItemStack> list = this.func_216113_a(p_216118_2_);
        Random random = p_216118_2_.func_216032_b();
@@ -140,7 +140,7 @@
     }
  
     private void func_186463_a(List<ItemStack> p_186463_1_, int p_186463_2_, Random p_186463_3_) {
-@@ -173,6 +214,48 @@
+@@ -173,6 +_,48 @@
        return new LootTable.Builder();
     }
  
@@ -189,7 +189,7 @@
     public static class Builder implements ILootFunctionConsumer<LootTable.Builder> {
        private final List<LootPool> field_216041_a = Lists.newArrayList();
        private final List<ILootFunction> field_216042_b = Lists.newArrayList();
-@@ -227,7 +310,7 @@
+@@ -227,7 +_,7 @@
              }
           }
  

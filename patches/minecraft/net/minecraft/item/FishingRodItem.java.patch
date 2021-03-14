@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/FishingRodItem.java
 +++ b/net/minecraft/item/FishingRodItem.java
-@@ -6,10 +6,12 @@
+@@ -6,10 +_,12 @@
  import net.minecraft.entity.projectile.FishingBobberEntity;
  import net.minecraft.stats.Stats;
  import net.minecraft.util.ActionResult;
@@ -13,7 +13,7 @@
  
  public class FishingRodItem extends Item implements IVanishable {
     public FishingRodItem(Item.Properties p_i48494_1_) {
-@@ -28,11 +30,22 @@
+@@ -28,11 +_,22 @@
  
           p_77659_1_.func_184148_a((PlayerEntity)null, p_77659_2_.func_226277_ct_(), p_77659_2_.func_226278_cu_(), p_77659_2_.func_226281_cx_(), SoundEvents.field_193780_J, SoundCategory.NEUTRAL, 1.0F, 0.4F / (field_77697_d.nextFloat() * 0.4F + 0.8F));
        } else {

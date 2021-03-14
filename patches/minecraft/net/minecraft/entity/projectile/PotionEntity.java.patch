@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/PotionEntity.java
 +++ b/net/minecraft/entity/projectile/PotionEntity.java
-@@ -1,9 +1,12 @@
+@@ -1,9 +_,12 @@
  package net.minecraft.entity.projectile;
  
 +import java.util.HashMap;
@@ -13,7 +13,7 @@
  import net.minecraft.block.CampfireBlock;
  import net.minecraft.entity.AreaEffectCloudEntity;
  import net.minecraft.entity.Entity;
-@@ -11,6 +14,7 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.entity.IRendersAsItem;
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +21,7 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.Items;
-@@ -31,6 +35,9 @@
+@@ -31,6 +_,9 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -31,7 +31,7 @@
  
  @OnlyIn(
     value = Dist.CLIENT,
-@@ -90,7 +97,7 @@
+@@ -90,7 +_,7 @@
           boolean flag = potion == Potions.field_185230_b && list.isEmpty();
           if (flag) {
              this.func_190545_n();
@@ -40,7 +40,7 @@
              if (this.func_184544_n()) {
                 this.func_190542_a(itemstack, potion);
              } else {
-@@ -121,6 +128,8 @@
+@@ -121,6 +_,8 @@
     private void func_213888_a(List<EffectInstance> p_213888_1_, @Nullable Entity p_213888_2_) {
        AxisAlignedBB axisalignedbb = this.func_174813_aQ().func_72314_b(4.0D, 2.0D, 4.0D);
        List<LivingEntity> list = this.field_70170_p.func_217357_a(LivingEntity.class, axisalignedbb);
@@ -49,7 +49,7 @@
        if (!list.isEmpty()) {
           for(LivingEntity livingentity : list) {
              if (livingentity.func_184603_cC()) {
-@@ -131,23 +140,49 @@
+@@ -131,23 +_,49 @@
                       d1 = 1.0D;
                    }
  
@@ -115,7 +115,7 @@
  
     private void func_190542_a(ItemStack p_190542_1_, Potion p_190542_2_) {
        AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
-@@ -171,7 +206,14 @@
+@@ -171,7 +_,14 @@
           areaeffectcloudentity.func_184482_a(compoundnbt.func_74762_e("CustomPotionColor"));
        }
  
@@ -131,7 +131,7 @@
     }
  
     private boolean func_184544_n() {
-@@ -181,11 +223,19 @@
+@@ -181,11 +_,19 @@
     private void func_184542_a(BlockPos p_184542_1_, Direction p_184542_2_) {
        BlockState blockstate = this.field_70170_p.func_180495_p(p_184542_1_);
        if (blockstate.func_235714_a_(BlockTags.field_232872_am_)) {

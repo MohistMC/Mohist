@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -1,9 +1,11 @@
+@@ -1,9 +_,11 @@
  package net.minecraft.tileentity;
  
 +import com.mohistmc.inventory.InventoryOwner;
@@ -12,7 +12,7 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
-@@ -15,20 +17,33 @@
+@@ -15,20 +_,33 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -49,7 +49,7 @@
     }
  
     @Nullable
-@@ -47,6 +62,15 @@
+@@ -47,6 +_,15 @@
  
     public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
        this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
@@ -65,7 +65,7 @@
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -62,6 +86,13 @@
+@@ -62,6 +_,13 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -79,7 +79,7 @@
           return p_189516_1_;
        }
     }
-@@ -73,7 +104,7 @@
+@@ -73,7 +_,7 @@
           try {
              return p_213134_1_.func_200968_a();
           } catch (Throwable throwable) {
@@ -88,7 +88,7 @@
              return null;
           }
        }).map((p_235656_3_) -> {
-@@ -81,11 +112,11 @@
+@@ -81,11 +_,11 @@
              p_235656_3_.func_230337_a_(p_235657_0_, p_235657_1_);
              return p_235656_3_;
           } catch (Throwable throwable) {
@@ -102,7 +102,7 @@
           return null;
        });
     }
-@@ -94,7 +125,7 @@
+@@ -94,7 +_,7 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
@@ -111,7 +111,7 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -133,6 +164,13 @@
+@@ -133,6 +_,13 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -125,7 +125,7 @@
     }
  
     public void func_145829_t() {
-@@ -175,6 +213,13 @@
+@@ -175,6 +_,13 @@
        return this.field_200663_e;
     }
  
@@ -139,7 +139,7 @@
     public void func_222814_r() {
        if (!this.field_222816_g) {
           this.field_222816_g = true;
-@@ -183,4 +228,10 @@
+@@ -183,4 +_,10 @@
           }, this::func_174877_v);
        }
     }

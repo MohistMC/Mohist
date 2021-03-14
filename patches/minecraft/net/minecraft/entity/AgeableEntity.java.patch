@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/AgeableEntity.java
 +++ b/net/minecraft/entity/AgeableEntity.java
-@@ -16,11 +16,36 @@
+@@ -16,11 +_,36 @@
     protected int field_175504_a;
     protected int field_175502_b;
     protected int field_175503_c;
@@ -37,7 +37,7 @@
     public ILivingEntityData func_213386_a(IServerWorld p_213386_1_, DifficultyInstance p_213386_2_, SpawnReason p_213386_3_, @Nullable ILivingEntityData p_213386_4_, @Nullable CompoundNBT p_213386_5_) {
        if (p_213386_4_ == null) {
           p_213386_4_ = new AgeableEntity.AgeableData(true);
-@@ -95,12 +120,14 @@
+@@ -95,12 +_,14 @@
        super.func_213281_b(p_213281_1_);
        p_213281_1_.func_74768_a("Age", this.func_70874_b());
        p_213281_1_.func_74768_a("ForcedAge", this.field_175502_b);
@@ -52,7 +52,7 @@
     }
  
     public void func_184206_a(DataParameter<?> p_184206_1_) {
-@@ -113,7 +140,7 @@
+@@ -113,7 +_,7 @@
  
     public void func_70636_d() {
        super.func_70636_d();

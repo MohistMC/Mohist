@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/EggEntity.java
 +++ b/net/minecraft/entity/projectile/EggEntity.java
-@@ -1,8 +1,11 @@
+@@ -1,8 +_,11 @@
  package net.minecraft.entity.projectile;
  
 +import net.minecraft.entity.Entity;
@@ -12,7 +12,7 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.Items;
  import net.minecraft.particles.ItemParticleData;
-@@ -13,6 +16,12 @@
+@@ -13,6 +_,12 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,7 +25,7 @@
  
  public class EggEntity extends ProjectileItemEntity {
     public EggEntity(EntityType<? extends EggEntity> p_i50154_1_, World p_i50154_2_) {
-@@ -47,18 +56,38 @@
+@@ -47,18 +_,38 @@
     protected void func_70227_a(RayTraceResult p_70227_1_) {
        super.func_70227_a(p_70227_1_);
        if (!this.field_70170_p.field_72995_K) {

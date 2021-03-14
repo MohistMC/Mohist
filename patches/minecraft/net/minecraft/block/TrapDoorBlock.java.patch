@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/TrapDoorBlock.java
 +++ b/net/minecraft/block/TrapDoorBlock.java
-@@ -22,6 +22,7 @@
+@@ -22,6 +_,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
@@ -8,7 +8,7 @@
  
  public class TrapDoorBlock extends HorizontalBlock implements IWaterLoggable {
     public static final BooleanProperty field_176283_b = BlockStateProperties.field_208193_t;
-@@ -101,6 +102,17 @@
+@@ -101,6 +_,17 @@
        if (!p_220069_2_.field_72995_K) {
           boolean flag = p_220069_2_.func_175640_z(p_220069_3_);
           if (flag != p_220069_1_.func_177229_b(field_196381_c)) {
@@ -26,7 +26,7 @@
              if (p_220069_1_.func_177229_b(field_176283_b) != flag) {
                 p_220069_1_ = p_220069_1_.func_206870_a(field_176283_b, Boolean.valueOf(flag));
                 this.func_185731_a((PlayerEntity)null, p_220069_2_, p_220069_3_, flag);
-@@ -147,4 +159,17 @@
+@@ -147,4 +_,17 @@
  
        return super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
     }

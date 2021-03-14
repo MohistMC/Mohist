@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/JukeboxBlock.java
 +++ b/net/minecraft/block/JukeboxBlock.java
-@@ -55,12 +55,18 @@
+@@ -55,12 +_,18 @@
     public void func_176431_a(IWorld p_176431_1_, BlockPos p_176431_2_, BlockState p_176431_3_, ItemStack p_176431_4_) {
        TileEntity tileentity = p_176431_1_.func_175625_s(p_176431_2_);
        if (tileentity instanceof JukeboxTileEntity) {

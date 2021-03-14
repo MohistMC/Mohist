@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/StriderEntity.java
 +++ b/net/minecraft/entity/passive/StriderEntity.java
-@@ -75,7 +75,7 @@
+@@ -75,7 +_,7 @@
     private static final DataParameter<Integer> field_234310_bw_ = EntityDataManager.func_187226_a(StriderEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Boolean> field_234311_bx_ = EntityDataManager.func_187226_a(StriderEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<Boolean> field_234312_by_ = EntityDataManager.func_187226_a(StriderEntity.class, DataSerializers.field_187198_h);
@@ -9,7 +9,7 @@
     private TemptGoal field_234306_bA_;
     private PanicGoal field_234307_bB_;
  
-@@ -274,7 +274,12 @@
+@@ -274,7 +_,12 @@
        BlockState blockstate = this.field_70170_p.func_180495_p(this.func_233580_cy_());
        BlockState blockstate1 = this.func_233568_aJ_();
        boolean flag = blockstate.func_235714_a_(BlockTags.field_232881_aw_) || blockstate1.func_235714_a_(BlockTags.field_232881_aw_) || this.func_233571_b_(FluidTags.field_206960_b) > 0.0D;

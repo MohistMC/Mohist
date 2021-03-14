@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/ChestTileEntity.java
 +++ b/net/minecraft/tileentity/ChestTileEntity.java
-@@ -1,7 +1,9 @@
+@@ -1,7 +_,9 @@
  package net.minecraft.tileentity;
  
 +import java.util.List;
@@ -10,7 +10,7 @@
  import net.minecraft.block.ChestBlock;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.PlayerInventory;
-@@ -27,6 +29,8 @@
+@@ -27,6 +_,8 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -19,7 +19,7 @@
  
  @OnlyIn(
     value = Dist.CLIENT,
-@@ -36,8 +40,9 @@
+@@ -36,8 +_,9 @@
     private NonNullList<ItemStack> field_145985_p = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
     protected float field_145989_m;
     protected float field_145986_n;
@@ -30,7 +30,7 @@
  
     protected ChestTileEntity(TileEntityType<?> p_i48287_1_) {
        super(p_i48287_1_);
-@@ -51,6 +56,42 @@
+@@ -51,6 +_,42 @@
        return 27;
     }
  
@@ -73,7 +73,7 @@
     protected ITextComponent func_213907_g() {
        return new TranslationTextComponent("container.chest");
     }
-@@ -81,6 +122,12 @@
+@@ -81,6 +_,12 @@
        this.field_145987_o = func_213977_a(this.field_145850_b, this, this.field_145983_q, i, j, k, this.field_145987_o);
        this.field_145986_n = this.field_145989_m;
        float f = 0.1F;
@@ -86,7 +86,7 @@
        if (this.field_145987_o > 0 && this.field_145989_m == 0.0F) {
           this.func_195483_a(SoundEvents.field_187657_V);
        }
-@@ -133,7 +180,7 @@
+@@ -133,7 +_,7 @@
        return i;
     }
  
@@ -95,7 +95,7 @@
        ChestType chesttype = this.func_195044_w().func_177229_b(ChestBlock.field_196314_b);
        if (chesttype != ChestType.LEFT) {
           double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D;
-@@ -163,8 +210,20 @@
+@@ -163,8 +_,20 @@
           if (this.field_145987_o < 0) {
              this.field_145987_o = 0;
           }
@@ -116,7 +116,7 @@
           this.func_195482_p();
        }
  
-@@ -172,7 +231,18 @@
+@@ -172,7 +_,18 @@
  
     public void func_174886_c(PlayerEntity p_174886_1_) {
        if (!p_174886_1_.func_175149_v()) {
@@ -135,7 +135,7 @@
           this.func_195482_p();
        }
  
-@@ -202,7 +272,7 @@
+@@ -202,7 +_,7 @@
  
     public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
        BlockState blockstate = p_195481_0_.func_180495_p(p_195481_1_);
@@ -144,7 +144,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -221,4 +291,47 @@
+@@ -221,4 +_,47 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/HTTPUtil.java
 +++ b/net/minecraft/util/HTTPUtil.java
-@@ -75,7 +75,7 @@
+@@ -75,7 +_,7 @@
                       return null;
                    }
  
@@ -9,7 +9,7 @@
                    FileUtils.deleteQuietly(p_180192_0_);
                 } else if (p_180192_0_.getParentFile() != null) {
                    p_180192_0_.getParentFile().mkdirs();
-@@ -106,7 +106,7 @@
+@@ -106,7 +_,7 @@
                    }
  
                    if (Thread.interrupted()) {

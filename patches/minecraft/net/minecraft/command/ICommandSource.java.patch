@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/ICommandSource.java
 +++ b/net/minecraft/command/ICommandSource.java
-@@ -2,6 +2,7 @@
+@@ -2,6 +_,7 @@
  
  import java.util.UUID;
  import net.minecraft.util.text.ITextComponent;
@@ -8,7 +8,7 @@
  
  public interface ICommandSource {
     ICommandSource field_213139_a_ = new ICommandSource() {
-@@ -19,6 +20,13 @@
+@@ -19,6 +_,13 @@
        public boolean func_195041_r_() {
           return false;
        }
@@ -22,7 +22,7 @@
     };
  
     void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_);
-@@ -28,4 +36,6 @@
+@@ -28,4 +_,6 @@
     boolean func_195040_b();
  
     boolean func_195041_r_();

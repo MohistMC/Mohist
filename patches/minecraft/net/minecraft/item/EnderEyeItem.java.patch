@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/EnderEyeItem.java
 +++ b/net/minecraft/item/EnderEyeItem.java
-@@ -9,6 +9,7 @@
+@@ -9,6 +_,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.entity.projectile.EyeOfEnderEntity;
@@ -8,7 +8,7 @@
  import net.minecraft.stats.Stats;
  import net.minecraft.util.ActionResult;
  import net.minecraft.util.ActionResultType;
-@@ -52,7 +53,25 @@
+@@ -52,7 +_,25 @@
                    }
                 }
  
@@ -35,7 +35,7 @@
              }
  
              return ActionResultType.CONSUME;
-@@ -75,7 +94,11 @@
+@@ -75,7 +_,11 @@
                 EyeOfEnderEntity eyeofenderentity = new EyeOfEnderEntity(p_77659_1_, p_77659_2_.func_226277_ct_(), p_77659_2_.func_226283_e_(0.5D), p_77659_2_.func_226281_cx_());
                 eyeofenderentity.func_213863_b(itemstack);
                 eyeofenderentity.func_180465_a(blockpos);

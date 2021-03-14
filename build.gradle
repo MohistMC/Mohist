@@ -484,17 +484,7 @@ project(':forge') {
 
     task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
 
-    task checkPatchesAndFix(type: CheckPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
-    task checkPatches(type: CheckPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
-    }
     genPatches {
-        finalizedBy checkPatches
         autoHeader true
     }
 

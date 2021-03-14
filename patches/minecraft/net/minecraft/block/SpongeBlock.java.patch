@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SpongeBlock.java
 +++ b/net/minecraft/block/SpongeBlock.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.block;
  
  import com.google.common.collect.Lists;
@@ -8,7 +8,7 @@
  import java.util.Queue;
  import net.minecraft.block.material.Material;
  import net.minecraft.fluid.FluidState;
-@@ -11,6 +12,9 @@
+@@ -11,6 +_,9 @@
  import net.minecraft.util.Tuple;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
@@ -18,7 +18,7 @@
  
  public class SpongeBlock extends Block {
     public SpongeBlock(AbstractBlock.Properties p_i48325_1_) {
-@@ -41,6 +45,8 @@
+@@ -41,6 +_,8 @@
        queue.add(new Tuple<>(p_176312_2_, 0));
        int i = 0;
  
@@ -27,7 +27,7 @@
        while(!queue.isEmpty()) {
           Tuple<BlockPos, Integer> tuple = queue.poll();
           BlockPos blockpos = tuple.func_76341_a();
-@@ -48,25 +54,27 @@
+@@ -48,25 +_,27 @@
  
           for(Direction direction : Direction.values()) {
              BlockPos blockpos1 = blockpos.func_177972_a(direction);
@@ -62,7 +62,7 @@
                    ++i;
                    if (j < 6) {
                       queue.add(new Tuple<>(blockpos1, j + 1));
-@@ -79,6 +87,40 @@
+@@ -79,6 +_,40 @@
              break;
           }
        }

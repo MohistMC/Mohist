@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/TripWireHookBlock.java
 +++ b/net/minecraft/block/TripWireHookBlock.java
-@@ -24,6 +24,7 @@
+@@ -24,6 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class TripWireHookBlock extends Block {
     public static final DirectionProperty field_176264_a = HorizontalBlock.field_185512_D;
-@@ -136,6 +137,15 @@
+@@ -136,6 +_,15 @@
           this.func_176262_b(p_176260_1_, blockpos1, direction1);
           this.func_180694_a(p_176260_1_, blockpos1, flag2, flag3, flag, flag1);
        }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NetworkSystem.java
 +++ b/net/minecraft/network/NetworkSystem.java
-@@ -41,11 +41,12 @@
+@@ -41,11 +_,12 @@
  
  public class NetworkSystem {
     private static final Logger field_151275_b = LogManager.getLogger();
@@ -15,7 +15,7 @@
     });
     private final MinecraftServer field_151273_d;
     public volatile boolean field_151277_a;
-@@ -58,17 +59,18 @@
+@@ -58,17 +_,18 @@
     }
  
     public void func_151265_a(@Nullable InetAddress p_151265_1_, int p_151265_2_) throws IOException {
@@ -36,7 +36,7 @@
           }
  
           this.field_151274_e.add((new ServerBootstrap()).channel(oclass).childHandler(new ChannelInitializer<Channel>() {
-@@ -78,14 +80,14 @@
+@@ -78,14 +_,14 @@
                 } catch (ChannelException channelexception) {
                 }
  
@@ -53,7 +53,7 @@
        }
     }
  
-@@ -114,7 +116,7 @@
+@@ -114,7 +_,7 @@
           try {
              channelfuture.channel().close().sync();
           } catch (InterruptedException interruptedexception) {
@@ -62,7 +62,7 @@
           }
        }
  
-@@ -122,6 +124,13 @@
+@@ -122,6 +_,13 @@
  
     public void func_151269_c() {
        synchronized(this.field_151272_f) {
@@ -76,7 +76,7 @@
           Iterator<NetworkManager> iterator = this.field_151272_f.iterator();
  
           while(iterator.hasNext()) {
-@@ -135,7 +144,7 @@
+@@ -135,7 +_,7 @@
                          throw new ReportedException(CrashReport.func_85055_a(exception, "Ticking memory connection"));
                       }
  
@@ -85,7 +85,7 @@
                       ITextComponent itextcomponent = new StringTextComponent("Internal server error");
                       networkmanager.func_201058_a(new SDisconnectPacket(itextcomponent), (p_210474_2_) -> {
                          networkmanager.func_150718_a(itextcomponent);
-@@ -143,6 +152,10 @@
+@@ -143,6 +_,10 @@
                       networkmanager.func_150721_g();
                    }
                 } else {
@@ -96,7 +96,7 @@
                    iterator.remove();
                    networkmanager.func_179293_l();
                 }
-@@ -155,4 +168,15 @@
+@@ -155,4 +_,15 @@
     public MinecraftServer func_151267_d() {
        return this.field_151273_d;
     }

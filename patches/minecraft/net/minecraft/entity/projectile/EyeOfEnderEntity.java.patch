@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/EyeOfEnderEntity.java
 +++ b/net/minecraft/entity/projectile/EyeOfEnderEntity.java
-@@ -28,11 +28,11 @@
+@@ -28,11 +_,11 @@
  )
  public class EyeOfEnderEntity extends Entity implements IRendersAsItem {
     private static final DataParameter<ItemStack> field_213864_b = EntityDataManager.func_187226_a(EyeOfEnderEntity.class, DataSerializers.field_187196_f);
@@ -17,7 +17,7 @@
  
     public EyeOfEnderEntity(EntityType<? extends EyeOfEnderEntity> p_i50169_1_, World p_i50169_2_) {
        super(p_i50169_1_, p_i50169_2_);
-@@ -45,7 +45,7 @@
+@@ -45,7 +_,7 @@
     }
  
     public void func_213863_b(ItemStack p_213863_1_) {
@@ -26,7 +26,7 @@
           this.func_184212_Q().func_187227_b(field_213864_b, Util.func_200696_a(p_213863_1_.func_77946_l(), (p_213862_0_) -> {
              p_213862_0_.func_190920_e(1);
           }));
-@@ -174,7 +174,7 @@
+@@ -174,7 +_,7 @@
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
        ItemStack itemstack = ItemStack.func_199557_a(p_70037_1_.func_74775_l("Item"));

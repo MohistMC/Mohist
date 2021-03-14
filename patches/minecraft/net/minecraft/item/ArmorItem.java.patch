@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ArmorItem.java
 +++ b/net/minecraft/item/ArmorItem.java
-@@ -23,6 +23,8 @@
+@@ -23,6 +_,8 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
@@ -9,7 +9,7 @@
  
  public class ArmorItem extends Item implements IArmorVanishable {
     private static final UUID[] field_185084_n = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
-@@ -47,6 +49,29 @@
+@@ -47,6 +_,29 @@
           LivingEntity livingentity = list.get(0);
           EquipmentSlotType equipmentslottype = MobEntity.func_184640_d(p_226626_1_);
           ItemStack itemstack = p_226626_1_.func_77979_a(1);
@@ -39,7 +39,7 @@
           livingentity.func_184201_a(equipmentslottype, itemstack);
           if (livingentity instanceof MobEntity) {
              ((MobEntity)livingentity).func_184642_a(equipmentslottype, 2.0F);
-@@ -69,7 +94,7 @@
+@@ -69,7 +_,7 @@
        UUID uuid = field_185084_n[p_i48534_2_.func_188454_b()];
        builder.put(Attributes.field_233826_i_, new AttributeModifier(uuid, "Armor modifier", (double)this.field_77879_b, AttributeModifier.Operation.ADDITION));
        builder.put(Attributes.field_233827_j_, new AttributeModifier(uuid, "Armor toughness", (double)this.field_189415_e, AttributeModifier.Operation.ADDITION));

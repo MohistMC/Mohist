@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/MinecraftVersion.java
 +++ b/net/minecraft/util/MinecraftVersion.java
-@@ -49,7 +49,7 @@
+@@ -49,7 +_,7 @@
     public static GameVersion func_214957_a() {
        try (InputStream inputstream = MinecraftVersion.class.getResourceAsStream("/version.json")) {
           if (inputstream == null) {

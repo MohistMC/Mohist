@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/EnchantmentContainer.java
 +++ b/net/minecraft/inventory/container/EnchantmentContainer.java
-@@ -1,9 +1,11 @@
+@@ -1,9 +_,11 @@
  package net.minecraft.inventory.container;
  
  import java.util.List;
@@ -12,7 +12,7 @@
  import net.minecraft.enchantment.EnchantmentData;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.player.PlayerEntity;
-@@ -23,6 +25,16 @@
+@@ -23,6 +_,16 @@
  import net.minecraft.util.registry.Registry;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,7 +29,7 @@
  
  public class EnchantmentContainer extends Container {
     private final IInventory field_75168_e = new Inventory(2) {
-@@ -30,6 +42,13 @@
+@@ -30,6 +_,13 @@
           super.func_70296_d();
           EnchantmentContainer.this.func_75130_a(this);
        }
@@ -43,7 +43,7 @@
     };
     private final IWorldPosCallable field_217006_g;
     private final Random field_75169_l = new Random();
-@@ -38,6 +57,11 @@
+@@ -38,6 +_,11 @@
     public final int[] field_185001_h = new int[]{-1, -1, -1};
     public final int[] field_185002_i = new int[]{-1, -1, -1};
  
@@ -55,7 +55,7 @@
     public EnchantmentContainer(int p_i50085_1_, PlayerInventory p_i50085_2_) {
        this(p_i50085_1_, p_i50085_2_, IWorldPosCallable.field_221489_a);
     }
-@@ -56,7 +80,7 @@
+@@ -56,7 +_,7 @@
        });
        this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47) {
           public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -64,7 +64,7 @@
           }
        });
  
-@@ -80,56 +104,80 @@
+@@ -80,56 +_,80 @@
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 0));
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 1));
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 2));
@@ -170,7 +170,7 @@
                 }
  
                 for(int j1 = 0; j1 < 3; ++j1) {
-@@ -168,9 +216,24 @@
+@@ -168,9 +_,24 @@
           this.field_217006_g.func_221486_a((p_217003_6_, p_217003_7_) -> {
              ItemStack itemstack2 = itemstack;
              List<EnchantmentData> list = this.func_178148_a(itemstack, p_75140_2_, this.field_75167_g[p_75140_2_]);
@@ -197,7 +197,7 @@
                 if (flag) {
                    itemstack2 = new ItemStack(Items.field_151134_bR);
                    CompoundNBT compoundnbt = itemstack.func_77978_p();
-@@ -181,15 +244,28 @@
+@@ -181,15 +_,28 @@
                    this.field_75168_e.func_70299_a(0, itemstack2);
                 }
  
@@ -230,7 +230,7 @@
                 if (!p_75140_1_.field_71075_bZ.field_75098_d) {
                    itemstack1.func_190918_g(i);
                    if (itemstack1.func_190926_b()) {
-@@ -242,6 +318,7 @@
+@@ -242,6 +_,7 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
@@ -238,7 +238,7 @@
        return func_216963_a(this.field_217006_g, p_75145_1_, Blocks.field_150381_bn);
     }
  
-@@ -289,4 +366,16 @@
+@@ -289,4 +_,16 @@
  
        return itemstack;
     }

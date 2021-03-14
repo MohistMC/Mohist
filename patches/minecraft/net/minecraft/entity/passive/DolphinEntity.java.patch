@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/DolphinEntity.java
 +++ b/net/minecraft/entity/passive/DolphinEntity.java
-@@ -69,6 +69,8 @@
+@@ -69,6 +_,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class DolphinEntity extends WaterMobEntity {
     private static final DataParameter<BlockPos> field_208014_b = EntityDataManager.func_187226_a(DolphinEntity.class, DataSerializers.field_187200_j);
-@@ -221,6 +223,12 @@
+@@ -221,6 +_,12 @@
        if (this.func_184582_a(EquipmentSlotType.MAINHAND).func_190926_b()) {
           ItemStack itemstack = p_175445_1_.func_92059_d();
           if (this.func_175448_a(itemstack)) {
@@ -22,7 +22,7 @@
              this.func_233630_a_(p_175445_1_);
              this.func_184201_a(EquipmentSlotType.MAINHAND, itemstack);
              this.field_82174_bp[EquipmentSlotType.MAINHAND.func_188454_b()] = 2.0F;
-@@ -485,7 +493,7 @@
+@@ -485,7 +_,7 @@
        }
  
        public boolean func_75250_a() {
@@ -31,7 +31,7 @@
        }
  
        public boolean func_75253_b() {
-@@ -582,7 +590,7 @@
+@@ -582,7 +_,7 @@
        }
  
        public void func_75249_e() {
@@ -40,7 +40,7 @@
        }
  
        public void func_75251_c() {
-@@ -599,7 +607,7 @@
+@@ -599,7 +_,7 @@
           }
  
           if (this.field_206836_c.func_203007_ba() && this.field_206836_c.field_70170_p.field_73012_v.nextInt(6) == 0) {

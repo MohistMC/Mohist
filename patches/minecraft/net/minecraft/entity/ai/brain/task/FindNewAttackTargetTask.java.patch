@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/FindNewAttackTargetTask.java
 +++ b/net/minecraft/entity/ai/brain/task/FindNewAttackTargetTask.java
-@@ -9,6 +9,9 @@
+@@ -9,6 +_,9 @@
  import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
  import net.minecraft.util.EntityPredicates;
  import net.minecraft.world.server.ServerWorld;
@@ -10,7 +10,7 @@
  
  public class FindNewAttackTargetTask<E extends MobEntity> extends Task<E> {
     private final Predicate<LivingEntity> field_233981_b_;
-@@ -57,6 +60,17 @@
+@@ -57,6 +_,17 @@
     }
  
     private void func_233987_d_(E p_233987_1_) {

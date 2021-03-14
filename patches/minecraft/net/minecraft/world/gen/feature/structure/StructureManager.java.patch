@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/StructureManager.java
 +++ b/net/minecraft/world/gen/feature/structure/StructureManager.java
-@@ -8,6 +8,7 @@
+@@ -8,6 +_,7 @@
  import net.minecraft.util.math.SectionPos;
  import net.minecraft.world.IStructureReader;
  import net.minecraft.world.IWorld;
@@ -8,7 +8,7 @@
  import net.minecraft.world.chunk.ChunkStatus;
  import net.minecraft.world.gen.WorldGenRegion;
  import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
-@@ -65,4 +66,10 @@
+@@ -65,4 +_,10 @@
           });
        }).findFirst(), StructureStart.field_214630_a);
     }

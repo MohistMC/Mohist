@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/AbstractBlock.java
 +++ b/net/minecraft/block/AbstractBlock.java
-@@ -60,13 +60,14 @@
+@@ -60,13 +_,14 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -17,7 +17,7 @@
     protected final float field_149765_K;
     protected final float field_226886_f_;
     protected final float field_226887_g_;
-@@ -87,6 +88,8 @@
+@@ -87,6 +_,8 @@
        this.field_226887_g_ = p_i241196_1_.field_226894_k_;
        this.field_208621_p = p_i241196_1_.field_208772_j;
        this.field_235684_aB_ = p_i241196_1_;
@@ -26,7 +26,7 @@
     }
  
     @Deprecated
-@@ -129,7 +132,7 @@
+@@ -129,7 +_,7 @@
  
     @Deprecated
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
@@ -35,7 +35,7 @@
           p_196243_2_.func_175713_t(p_196243_3_);
        }
  
-@@ -191,7 +194,7 @@
+@@ -191,7 +_,7 @@
  
     @Deprecated
     public boolean func_196253_a(BlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
@@ -44,7 +44,7 @@
     }
  
     @Deprecated
-@@ -294,8 +297,8 @@
+@@ -294,8 +_,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -55,7 +55,7 @@
        }
     }
  
-@@ -321,14 +324,14 @@
+@@ -321,14 +_,14 @@
        return 0;
     }
  
@@ -72,7 +72,7 @@
        }
  
        return this.field_220085_g;
-@@ -346,6 +349,14 @@
+@@ -346,6 +_,14 @@
        return this.field_235684_aB_.field_235800_b_.apply(this.func_230328_p_().func_176223_P());
     }
  
@@ -87,7 +87,7 @@
     public abstract static class AbstractBlockState extends StateHolder<Block, BlockState> {
        private final int field_215708_d;
        private final boolean field_215709_e;
-@@ -424,18 +435,24 @@
+@@ -424,18 +_,24 @@
           return this.field_215709_e;
        }
  
@@ -113,7 +113,7 @@
        public BlockState func_185907_a(Rotation p_185907_1_) {
           return this.func_177230_c().func_185499_a(this.func_230340_p_(), p_185907_1_);
        }
-@@ -802,8 +819,11 @@
+@@ -802,8 +_,11 @@
        private ResourceLocation field_222381_j;
        private boolean field_226895_m_ = true;
        private boolean field_235813_o_;
@@ -126,7 +126,7 @@
        };
        private AbstractBlock.IPositionPredicate field_235815_q_ = (p_235853_0_, p_235853_1_, p_235853_2_) -> {
           return p_235853_0_.func_185904_a().func_76218_k() && p_235853_0_.func_235785_r_(p_235853_1_, p_235853_2_);
-@@ -863,6 +883,8 @@
+@@ -863,6 +_,8 @@
           abstractblock$properties.field_226895_m_ = p_200950_0_.field_235684_aB_.field_226895_m_;
           abstractblock$properties.field_235813_o_ = p_200950_0_.field_235684_aB_.field_235813_o_;
           abstractblock$properties.field_235806_h_ = p_200950_0_.field_235684_aB_.field_235806_h_;
@@ -135,7 +135,7 @@
           return abstractblock$properties;
        }
  
-@@ -877,6 +899,24 @@
+@@ -877,6 +_,24 @@
           return this;
        }
  
@@ -160,7 +160,7 @@
        public AbstractBlock.Properties func_200941_a(float p_200941_1_) {
           this.field_200961_i = p_200941_1_;
           return this;
-@@ -932,9 +972,15 @@
+@@ -932,9 +_,15 @@
           return this;
        }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/FilledMapItem.java
 +++ b/net/minecraft/item/FilledMapItem.java
-@@ -33,6 +33,8 @@
+@@ -33,6 +_,8 @@
  import net.minecraft.world.storage.MapData;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class FilledMapItem extends AbstractMapItem {
     public FilledMapItem(Item.Properties p_i48482_1_) {
-@@ -52,6 +54,16 @@
+@@ -52,6 +_,16 @@
  
     @Nullable
     public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
@@ -26,7 +26,7 @@
        MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
        if (mapdata == null && p_195950_1_ instanceof ServerWorld) {
           mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.func_234923_W_());
-@@ -62,7 +74,7 @@
+@@ -62,7 +_,7 @@
  
     public static int func_195949_f(ItemStack p_195949_0_) {
        CompoundNBT compoundnbt = p_195949_0_.func_77978_p();
@@ -35,7 +35,7 @@
     }
  
     private static MapData func_195951_a(ItemStack p_195951_0_, World p_195951_1_, int p_195951_2_, int p_195951_3_, int p_195951_4_, boolean p_195951_5_, boolean p_195951_6_, RegistryKey<World> p_195951_7_) {
-@@ -71,6 +83,11 @@
+@@ -71,6 +_,11 @@
        mapdata.func_237241_a_(p_195951_2_, p_195951_3_, p_195951_4_, p_195951_5_, p_195951_6_, p_195951_7_);
        p_195951_1_.func_217399_a(mapdata);
        p_195951_0_.func_196082_o().func_74768_a("map", i);
@@ -47,7 +47,7 @@
        return mapdata;
     }
  
-@@ -226,7 +243,7 @@
+@@ -226,7 +_,7 @@
  
              for(int l = 0; l < 128 * i; ++l) {
                 for(int i1 = 0; i1 < 128 * i; ++i1) {

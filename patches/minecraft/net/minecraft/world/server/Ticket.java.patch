@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/Ticket.java
 +++ b/net/minecraft/world/server/Ticket.java
-@@ -5,13 +5,18 @@
+@@ -5,13 +_,18 @@
  public final class Ticket<T> implements Comparable<Ticket<?>> {
     private final TicketType<T> field_219480_a;
     private final int field_219481_b;
@@ -20,7 +20,7 @@
     }
  
     public int compareTo(Ticket<?> p_compareTo_1_) {
-@@ -31,16 +36,16 @@
+@@ -31,16 +_,16 @@
           return false;
        } else {
           Ticket<?> ticket = (Ticket)p_equals_1_;
@@ -40,7 +40,7 @@
     }
  
     public TicketType<T> func_219479_a() {
-@@ -58,5 +63,12 @@
+@@ -58,5 +_,12 @@
     protected boolean func_223182_a(long p_223182_1_) {
        long i = this.field_219480_a.func_223184_b();
        return i != 0L && p_223182_1_ - this.field_219483_d > i;

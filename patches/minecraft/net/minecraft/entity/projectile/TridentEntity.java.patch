@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/TridentEntity.java
 +++ b/net/minecraft/entity/projectile/TridentEntity.java
-@@ -24,11 +24,12 @@
+@@ -24,11 +_,12 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -14,7 +14,7 @@
     private boolean field_203051_au;
     public int field_203052_f;
  
-@@ -148,7 +149,7 @@
+@@ -148,7 +_,7 @@
              LightningBoltEntity lightningboltentity = EntityType.field_200728_aG.func_200721_a(this.field_70170_p);
              lightningboltentity.func_233576_c_(Vector3d.func_237492_c_(blockpos));
              lightningboltentity.func_204809_d(entity1 instanceof ServerPlayerEntity ? (ServerPlayerEntity)entity1 : null);

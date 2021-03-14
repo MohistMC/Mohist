@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/fixes/ChunkPaletteFormat.java
 +++ b/net/minecraft/util/datafix/fixes/ChunkPaletteFormat.java
-@@ -554,7 +554,7 @@
+@@ -554,7 +_,7 @@
                 int j4 = p_233150_1_.get("z").asInt(0) - this.field_199231_e & 15;
                 int k4 = i4 << 8 | j4 << 4 | l3;
                 if (this.field_199232_f.put(k4, p_233150_1_) != null) {

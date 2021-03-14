@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/AnimalEntity.java
 +++ b/net/minecraft/entity/passive/AnimalEntity.java
-@@ -18,7 +18,6 @@
+@@ -18,7 +_,6 @@
  import net.minecraft.pathfinding.PathNodeType;
  import net.minecraft.stats.Stats;
  import net.minecraft.util.ActionResultType;
@@ -8,7 +8,7 @@
  import net.minecraft.util.Hand;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.GameRules;
-@@ -28,10 +27,13 @@
+@@ -28,10 +_,13 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,7 +24,7 @@
  
     protected AnimalEntity(EntityType<? extends AnimalEntity> p_i48568_1_, World p_i48568_2_) {
        super(p_i48568_1_, p_i48568_2_);
-@@ -65,14 +67,18 @@
+@@ -65,14 +_,18 @@
  
     }
  
@@ -47,7 +47,7 @@
  
     public float func_205022_a(BlockPos p_205022_1_, IWorldReader p_205022_2_) {
        return p_205022_2_.func_180495_p(p_205022_1_.func_177977_b()).func_203425_a(Blocks.field_196658_i) ? 10.0F : p_205022_2_.func_205052_D(p_205022_1_) - 0.5F;
-@@ -153,9 +159,17 @@
+@@ -153,9 +_,17 @@
     }
  
     public void func_146082_f(@Nullable PlayerEntity p_146082_1_) {
@@ -66,7 +66,7 @@
        }
  
        this.field_70170_p.func_72960_a(this, (byte)18);
-@@ -199,12 +213,37 @@
+@@ -199,12 +_,37 @@
  
     public void func_234177_a_(ServerWorld p_234177_1_, AnimalEntity p_234177_2_) {
        AgeableEntity ageableentity = this.func_241840_a(p_234177_1_, p_234177_2_);
@@ -104,7 +104,7 @@
           if (serverplayerentity != null) {
              serverplayerentity.func_195066_a(Stats.field_151186_x);
              CriteriaTriggers.field_192134_n.func_192168_a(serverplayerentity, this, p_234177_2_, ageableentity);
-@@ -216,10 +255,14 @@
+@@ -216,10 +_,14 @@
           p_234177_2_.func_70875_t();
           ageableentity.func_82227_f(true);
           ageableentity.func_70012_b(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 0.0F, 0.0F);

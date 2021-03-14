@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/world/DimensionRenderInfo.java
 +++ b/net/minecraft/client/world/DimensionRenderInfo.java
-@@ -26,6 +26,10 @@
+@@ -26,6 +_,10 @@
     private final DimensionRenderInfo.FogType field_241680_e_;
     private final boolean field_241681_f_;
     private final boolean field_239212_e_;
@@ -11,7 +11,7 @@
  
     public DimensionRenderInfo(float p_i241259_1_, boolean p_i241259_2_, DimensionRenderInfo.FogType p_i241259_3_, boolean p_i241259_4_, boolean p_i241259_5_) {
        this.field_239210_c_ = p_i241259_1_;
-@@ -80,6 +84,35 @@
+@@ -80,6 +_,35 @@
  
     public boolean func_239217_c_() {
        return this.field_239212_e_;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CauldronBlock.java
 +++ b/net/minecraft/block/CauldronBlock.java
-@@ -30,7 +30,7 @@
+@@ -30,7 +_,7 @@
  import net.minecraft.util.math.shapes.VoxelShapes;
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
@@ -9,7 +9,7 @@
  public class CauldronBlock extends Block {
     public static final IntegerProperty field_176591_a = BlockStateProperties.field_208130_ae;
     private static final VoxelShape field_196403_b = func_208617_a(2.0D, 4.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-@@ -53,8 +53,13 @@
+@@ -53,8 +_,13 @@
        int i = p_196262_1_.func_177229_b(field_176591_a);
        float f = (float)p_196262_3_.func_177956_o() + (6.0F + (float)(3 * i)) / 16.0F;
        if (!p_196262_2_.field_72995_K && p_196262_4_.func_70027_ad() && i > 0 && p_196262_4_.func_226278_cu_() <= (double)f) {
@@ -24,7 +24,7 @@
        }
  
     }
-@@ -68,18 +73,27 @@
+@@ -68,18 +_,27 @@
           Item item = itemstack.func_77973_b();
           if (item == Items.field_151131_as) {
              if (i < 3 && !p_225533_2_.field_72995_K) {
@@ -53,7 +53,7 @@
                 if (!p_225533_4_.field_71075_bZ.field_75098_d) {
                    itemstack.func_190918_g(1);
                    if (itemstack.func_190926_b()) {
-@@ -90,13 +104,18 @@
+@@ -90,13 +_,18 @@
                 }
  
                 p_225533_4_.func_195066_a(Stats.field_188078_L);
@@ -73,7 +73,7 @@
                 if (!p_225533_4_.field_71075_bZ.field_75098_d) {
                    ItemStack itemstack4 = PotionUtils.func_185188_a(new ItemStack(Items.field_151068_bn), Potions.field_185230_b);
                    p_225533_4_.func_195066_a(Stats.field_188078_L);
-@@ -111,12 +130,17 @@
+@@ -111,12 +_,17 @@
                 }
  
                 p_225533_2_.func_184133_a((PlayerEntity)null, p_225533_3_, SoundEvents.field_187615_H, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -92,7 +92,7 @@
                 if (!p_225533_4_.field_71075_bZ.field_75098_d) {
                    ItemStack itemstack3 = new ItemStack(Items.field_151069_bo);
                    p_225533_4_.func_195066_a(Stats.field_188078_L);
-@@ -127,7 +151,8 @@
+@@ -127,7 +_,8 @@
                 }
  
                 p_225533_2_.func_184133_a((PlayerEntity)null, p_225533_3_, SoundEvents.field_191241_J, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -102,7 +102,7 @@
              }
  
              return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
-@@ -135,8 +160,13 @@
+@@ -135,8 +_,13 @@
              if (i > 0 && item instanceof IDyeableArmorItem) {
                 IDyeableArmorItem idyeablearmoritem = (IDyeableArmorItem)item;
                 if (idyeablearmoritem.func_200883_f_(itemstack) && !p_225533_2_.field_72995_K) {
@@ -117,7 +117,7 @@
                    p_225533_4_.func_195066_a(Stats.field_188079_M);
                    return ActionResultType.SUCCESS;
                 }
-@@ -144,13 +174,18 @@
+@@ -144,13 +_,18 @@
  
              if (i > 0 && item instanceof BannerItem) {
                 if (BannerTileEntity.func_175113_c(itemstack) > 0 && !p_225533_2_.field_72995_K) {
@@ -137,7 +137,7 @@
                    }
  
                    if (itemstack.func_190926_b()) {
-@@ -185,18 +220,36 @@
+@@ -185,18 +_,36 @@
        }
     }
  

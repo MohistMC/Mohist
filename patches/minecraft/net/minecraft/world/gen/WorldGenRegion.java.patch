@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
-@@ -9,7 +9,6 @@
+@@ -9,7 +_,6 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -8,7 +8,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.fluid.Fluid;
-@@ -123,8 +122,8 @@
+@@ -123,8 +_,8 @@
        if (!p_217353_4_) {
           return null;
        } else {
@@ -19,7 +19,7 @@
           if (ichunk != null) {
              throw (RuntimeException)Util.func_229757_c_(new RuntimeException(String.format("Chunk is not of correct status. Expecting %s, got %s | %s %s", p_217353_3_, ichunk.func_201589_g(), p_217353_1_, p_217353_2_)));
           } else {
-@@ -173,11 +172,11 @@
+@@ -173,11 +_,11 @@
  
     public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
        BlockState blockstate = this.func_180495_p(p_241212_1_);
@@ -33,7 +33,7 @@
              Block.func_220054_a(blockstate, this.field_201689_f, p_241212_1_, tileentity, p_241212_3_, ItemStack.field_190927_a);
           }
  
-@@ -197,11 +196,11 @@
+@@ -197,11 +_,11 @@
           if (compoundnbt != null) {
              if ("DUMMY".equals(compoundnbt.func_74779_i("id"))) {
                 Block block = blockstate.func_177230_c();
@@ -47,7 +47,7 @@
              } else {
                 tileentity = TileEntity.func_235657_b_(blockstate, compoundnbt);
              }
-@@ -212,8 +211,8 @@
+@@ -212,8 +_,8 @@
              }
           }
  
@@ -58,7 +58,7 @@
           }
  
           return null;
-@@ -228,9 +227,9 @@
+@@ -228,9 +_,9 @@
        }
  
        Block block = p_241211_2_.func_177230_c();
@@ -70,7 +70,7 @@
           } else {
              CompoundNBT compoundnbt = new CompoundNBT();
              compoundnbt.func_74768_a("x", p_241211_1_.func_177958_n());
-@@ -239,7 +238,7 @@
+@@ -239,7 +_,7 @@
              compoundnbt.func_74778_a("id", "DUMMY");
              ichunk.func_201591_a(compoundnbt);
           }
@@ -79,7 +79,7 @@
           ichunk.func_177425_e(p_241211_1_);
        }
  
-@@ -255,9 +254,16 @@
+@@ -255,9 +_,16 @@
     }
  
     public boolean func_217376_c(Entity p_217376_1_) {

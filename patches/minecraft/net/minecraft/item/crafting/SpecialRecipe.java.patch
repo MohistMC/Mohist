@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/SpecialRecipe.java
 +++ b/net/minecraft/item/crafting/SpecialRecipe.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +_,8 @@
  
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.ResourceLocation;
@@ -9,7 +9,7 @@
  
  public abstract class SpecialRecipe implements ICraftingRecipe {
     private final ResourceLocation field_199563_a;
-@@ -14,11 +16,18 @@
+@@ -14,11 +_,18 @@
        return this.field_199563_a;
     }
  

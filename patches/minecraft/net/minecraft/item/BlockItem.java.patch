@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BlockItem.java
 +++ b/net/minecraft/item/BlockItem.java
-@@ -11,20 +11,24 @@
+@@ -11,20 +_,24 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
@@ -26,7 +26,7 @@
  
  public class BlockItem extends Item {
     @Deprecated
-@@ -49,6 +53,9 @@
+@@ -49,6 +_,9 @@
              return ActionResultType.FAIL;
           } else {
              BlockState blockstate = this.func_195945_b(blockitemusecontext);
@@ -36,7 +36,7 @@
              if (blockstate == null) {
                 return ActionResultType.FAIL;
              } else if (!this.func_195941_b(blockitemusecontext, blockstate)) {
-@@ -64,14 +71,26 @@
+@@ -64,14 +_,26 @@
                    blockstate1 = this.func_219985_a(blockpos, world, itemstack, blockstate1);
                    this.func_195943_a(blockpos, world, playerentity, itemstack, blockstate1);
                    block.func_180633_a(world, blockpos, blockstate1, playerentity, itemstack);
@@ -66,7 +66,7 @@
                    itemstack.func_190918_g(1);
                 }
  
-@@ -81,10 +100,16 @@
+@@ -81,10 +_,16 @@
        }
     }
  
@@ -83,7 +83,7 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -123,6 +148,22 @@
+@@ -123,6 +_,22 @@
        return blockstate;
     }
  
@@ -106,7 +106,7 @@
     private static <T extends Comparable<T>> BlockState func_219988_a(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
        return p_219988_1_.func_185929_b(p_219988_2_).map((p_219986_2_) -> {
           return p_219988_0_.func_206870_a(p_219988_1_, p_219986_2_);
-@@ -132,7 +173,13 @@
+@@ -132,7 +_,13 @@
     protected boolean func_195944_a(BlockItemUseContext p_195944_1_, BlockState p_195944_2_) {
        PlayerEntity playerentity = p_195944_1_.func_195999_j();
        ISelectionContext iselectioncontext = playerentity == null ? ISelectionContext.func_216377_a() : ISelectionContext.func_216374_a(playerentity);
@@ -121,7 +121,7 @@
     }
  
     protected boolean func_219987_d() {
-@@ -152,7 +199,7 @@
+@@ -152,7 +_,7 @@
           if (compoundnbt != null) {
              TileEntity tileentity = p_179224_0_.func_175625_s(p_179224_2_);
              if (tileentity != null) {
@@ -130,7 +130,7 @@
                    return false;
                 }
  
-@@ -192,10 +239,18 @@
+@@ -192,10 +_,18 @@
     }
  
     public Block func_179223_d() {

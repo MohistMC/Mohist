@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/TurtleEntity.java
 +++ b/net/minecraft/entity/passive/TurtleEntity.java
-@@ -61,6 +61,7 @@
+@@ -61,6 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class TurtleEntity extends AnimalEntity {
     private static final DataParameter<BlockPos> field_203030_by = EntityDataManager.func_187226_a(TurtleEntity.class, DataSerializers.field_187200_j);
-@@ -282,7 +283,9 @@
+@@ -282,7 +_,9 @@
     protected void func_175500_n() {
        super.func_175500_n();
        if (!this.func_70631_g_() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
@@ -18,7 +18,7 @@
        }
  
     }
-@@ -306,7 +309,9 @@
+@@ -306,7 +_,9 @@
     }
  
     public void func_241841_a(ServerWorld p_241841_1_, LightningBoltEntity p_241841_2_) {
@@ -28,7 +28,7 @@
     }
  
     static class GoHomeGoal extends Goal {
-@@ -429,8 +434,12 @@
+@@ -429,8 +_,12 @@
                 this.field_203122_f.func_203015_s(true);
              } else if (this.field_203122_f.field_203028_bF > 200) {
                 World world = this.field_203122_f.field_70170_p;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -8,8 +8,10 @@
+@@ -8,8 +_,10 @@
  import net.minecraft.item.crafting.ServerRecipePlacer;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -11,7 +11,7 @@
     public RecipeBookContainer(ContainerType<?> p_i50067_1_, int p_i50067_2_) {
        super(p_i50067_1_, p_i50067_2_);
     }
-@@ -32,6 +34,10 @@
+@@ -32,6 +_,10 @@
  
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();

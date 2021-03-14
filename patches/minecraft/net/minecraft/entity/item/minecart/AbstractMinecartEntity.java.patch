@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
-@@ -47,8 +47,14 @@
+@@ -47,8 +_,14 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,7 +16,7 @@
     private static final DataParameter<Integer> field_184265_a = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Integer> field_184266_b = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Float> field_184267_c = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187193_c);
-@@ -89,6 +95,18 @@
+@@ -89,6 +_,18 @@
     private double field_70507_ar;
     @OnlyIn(Dist.CLIENT)
     private double field_70506_as;
@@ -35,7 +35,7 @@
  
     protected AbstractMinecartEntity(EntityType<?> p_i48538_1_, World p_i48538_2_) {
        super(p_i48538_1_, p_i48538_2_);
-@@ -138,7 +156,7 @@
+@@ -138,7 +_,7 @@
     }
  
     public boolean func_70104_M() {
@@ -44,7 +44,7 @@
     }
  
     protected Vector3d func_241839_a(Direction.Axis p_241839_1_, TeleportationRepositioner.Result p_241839_2_) {
-@@ -205,12 +223,30 @@
+@@ -205,12 +_,30 @@
           if (this.func_180431_b(p_70097_1_)) {
              return false;
           } else {
@@ -75,7 +75,7 @@
                 this.func_184226_ay();
                 if (flag && !this.func_145818_k_()) {
                    this.func_70106_y();
-@@ -264,6 +300,14 @@
+@@ -264,6 +_,14 @@
     }
  
     public void func_70071_h_() {
@@ -90,7 +90,7 @@
        if (this.func_70496_j() > 0) {
           this.func_70497_h(this.func_70496_j() - 1);
        }
-@@ -307,9 +351,9 @@
+@@ -307,9 +_,9 @@
  
           BlockPos blockpos = new BlockPos(i, j, k);
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -102,7 +102,7 @@
                 this.func_96095_a(i, j, k, blockstate.func_177229_b(PoweredRailBlock.field_176569_M));
              }
           } else {
-@@ -334,21 +378,59 @@
+@@ -334,21 +_,59 @@
           }
  
           this.func_70101_b(this.field_70177_z, this.field_70125_A);
@@ -165,7 +165,7 @@
                    entity.func_70108_f(this);
                 }
              }
-@@ -365,23 +447,34 @@
+@@ -365,23 +_,34 @@
     }
  
     protected double func_174898_m() {
@@ -204,7 +204,7 @@
        }
  
     }
-@@ -396,29 +489,29 @@
+@@ -396,29 +_,29 @@
        boolean flag = false;
        boolean flag1 = false;
        AbstractRailBlock abstractrailblock = (AbstractRailBlock)p_180460_2_.func_177230_c();
@@ -240,7 +240,7 @@
           ++d1;
        }
  
-@@ -449,7 +542,7 @@
+@@ -449,7 +_,7 @@
           }
        }
  
@@ -249,7 +249,7 @@
           double d22 = Math.sqrt(func_213296_b(this.func_213322_ci()));
           if (d22 < 0.03D) {
              this.func_213317_d(Vector3d.field_186680_a);
-@@ -478,10 +571,7 @@
+@@ -478,10 +_,7 @@
        d0 = d23 + d4 * d14;
        d2 = d10 + d5 * d14;
        this.func_70107_b(d0, d1, d2);
@@ -261,7 +261,7 @@
        if (vector3i.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vector3i.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vector3i.func_177952_p()) {
           this.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + (double)vector3i.func_177956_o(), this.func_226281_cx_());
        } else if (vector3i1.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vector3i1.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vector3i1.func_177952_p()) {
-@@ -509,7 +599,10 @@
+@@ -509,7 +_,10 @@
           this.func_213293_j(d26 * (double)(j - p_180460_1_.func_177958_n()), vector3d5.field_72448_b, d26 * (double)(i - p_180460_1_.func_177952_p()));
        }
  
@@ -273,7 +273,7 @@
           Vector3d vector3d6 = this.func_213322_ci();
           double d27 = Math.sqrt(func_213296_b(vector3d6));
           if (d27 > 0.01D) {
-@@ -548,7 +641,7 @@
+@@ -548,7 +_,7 @@
     }
  
     protected void func_94101_h() {
@@ -282,7 +282,7 @@
        this.func_213317_d(this.func_213322_ci().func_216372_d(d0, 0.0D, d0));
     }
  
-@@ -564,7 +657,7 @@
+@@ -564,7 +_,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (AbstractRailBlock.func_208487_j(blockstate)) {
@@ -291,7 +291,7 @@
           p_70495_3_ = (double)j;
           if (railshape.func_208092_c()) {
              p_70495_3_ = (double)(j + 1);
-@@ -603,7 +696,7 @@
+@@ -603,7 +_,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (AbstractRailBlock.func_208487_j(blockstate)) {
@@ -300,7 +300,7 @@
           Pair<Vector3i, Vector3i> pair = func_226573_a_(railshape);
           Vector3i vector3i = pair.getFirst();
           Vector3i vector3i1 = pair.getSecond();
-@@ -666,9 +759,21 @@
+@@ -666,9 +_,21 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
@@ -322,7 +322,7 @@
                 double d0 = p_70108_1_.func_226277_ct_() - this.func_226277_ct_();
                 double d1 = p_70108_1_.func_226281_cx_() - this.func_226281_cx_();
                 double d2 = d0 * d0 + d1 * d1;
-@@ -701,11 +806,11 @@
+@@ -701,11 +_,11 @@
  
                       Vector3d vector3d2 = this.func_213322_ci();
                       Vector3d vector3d3 = p_70108_1_.func_213322_ci();
@@ -336,7 +336,7 @@
                          p_70108_1_.func_213317_d(vector3d3.func_216372_d(0.2D, 1.0D, 0.2D));
                          p_70108_1_.func_70024_g(vector3d2.field_72450_a + d0, 0.0D, vector3d2.field_72449_c + d1);
                          this.func_213317_d(vector3d2.func_216372_d(0.95D, 1.0D, 0.95D));
-@@ -810,6 +915,62 @@
+@@ -810,6 +_,62 @@
     public IPacket<?> func_213297_N() {
        return new SSpawnObjectPacket(this);
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/ItemFrameEntity.java
 +++ b/net/minecraft/entity/item/ItemFrameEntity.java
-@@ -35,13 +35,14 @@
+@@ -35,13 +_,14 @@
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -17,7 +17,7 @@
  
     public ItemFrameEntity(EntityType<? extends ItemFrameEntity> p_i50224_1_, World p_i50224_2_) {
        super(p_i50224_1_, p_i50224_2_);
-@@ -61,7 +62,7 @@
+@@ -61,7 +_,7 @@
        this.func_184212_Q().func_187214_a(field_184526_d, 0);
     }
  
@@ -26,7 +26,7 @@
        Validate.notNull(p_174859_1_);
        this.field_174860_b = p_174859_1_;
        if (p_174859_1_.func_176740_k().func_176722_c()) {
-@@ -79,16 +80,25 @@
+@@ -79,16 +_,25 @@
  
     protected void func_174856_o() {
        if (this.field_174860_b != null) {
@@ -62,7 +62,7 @@
           case X:
              d4 = 1.0D;
              break;
-@@ -97,14 +107,14 @@
+@@ -97,14 +_,14 @@
              break;
           case Z:
              d6 = 1.0D;
@@ -83,7 +83,7 @@
  
     public boolean func_70518_d() {
        if (this.field_234259_an_) {
-@@ -147,6 +157,11 @@
+@@ -147,6 +_,11 @@
           return false;
        } else if (!p_70097_1_.func_94541_c() && !this.func_82335_i().func_190926_b()) {
           if (!this.field_70170_p.field_72995_K) {
@@ -95,7 +95,7 @@
              this.func_146065_b(p_70097_1_.func_76346_g(), false);
              this.func_184185_a(SoundEvents.field_187629_cO, 1.0F, 1.0F);
           }
-@@ -234,14 +249,19 @@
+@@ -234,14 +_,19 @@
     }
  
     public void func_174864_a(ItemStack p_174864_1_, boolean p_174864_2_) {
@@ -121,7 +121,7 @@
           this.func_184185_a(SoundEvents.field_187620_cL, 1.0F, 1.0F);
        }
  
-@@ -305,7 +325,7 @@
+@@ -305,7 +_,7 @@
        if (compoundnbt != null && !compoundnbt.isEmpty()) {
           ItemStack itemstack = ItemStack.func_199557_a(compoundnbt);
           if (itemstack.func_190926_b()) {

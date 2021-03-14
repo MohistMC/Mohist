@@ -1,6 +1,6 @@
 --- a/net/minecraft/crash/CrashReportCategory.java
 +++ b/net/minecraft/crash/CrashReportCategory.java
-@@ -100,8 +100,10 @@
+@@ -100,8 +_,10 @@
        if (astacktraceelement.length <= 0) {
           return 0;
        } else {
@@ -13,7 +13,7 @@
           return this.field_85075_d.length;
        }
     }
-@@ -145,17 +147,17 @@
+@@ -145,17 +_,17 @@
  
        if (this.field_85075_d != null && this.field_85075_d.length > 0) {
           p_85072_1_.append("\nStacktrace:");

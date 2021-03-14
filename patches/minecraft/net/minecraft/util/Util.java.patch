@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/Util.java
 +++ b/net/minecraft/util/Util.java
-@@ -104,9 +104,9 @@
+@@ -104,9 +_,9 @@
              ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(p_240981_1_) {
                 protected void onTermination(Throwable p_onTermination_1_) {
                    if (p_onTermination_1_ != null) {
@@ -12,7 +12,7 @@
                    }
  
                    super.onTermination(p_onTermination_1_);
-@@ -200,7 +200,7 @@
+@@ -200,7 +_,7 @@
        try {
           type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(SharedConstants.func_215069_a().getWorldVersion())).getChoiceType(p_240990_0_, p_240990_1_);
        } catch (IllegalArgumentException illegalargumentexception) {
@@ -21,7 +21,7 @@
           if (SharedConstants.field_206244_b) {
              throw illegalargumentexception;
           }
-@@ -329,12 +329,12 @@
+@@ -329,12 +_,12 @@
  
     public static <T extends Throwable> T func_229757_c_(T p_229757_0_) {
        if (SharedConstants.field_206244_b) {
@@ -36,7 +36,7 @@
              } catch (InterruptedException interruptedexception) {
                 return p_229757_0_;
              }
-@@ -367,7 +367,7 @@
+@@ -367,7 +_,7 @@
                 Files.move(p_244363_0_, p_244363_1_);
                 return true;
              } catch (IOException ioexception) {
@@ -45,7 +45,7 @@
                 return false;
              }
           }
-@@ -385,7 +385,7 @@
+@@ -385,7 +_,7 @@
                 Files.deleteIfExists(p_244362_0_);
                 return true;
              } catch (IOException ioexception) {
@@ -54,7 +54,7 @@
                 return false;
              }
           }
-@@ -423,7 +423,7 @@
+@@ -423,7 +_,7 @@
     private static boolean func_244365_a(BooleanSupplier... p_244365_0_) {
        for(BooleanSupplier booleansupplier : p_244365_0_) {
           if (!booleansupplier.getAsBoolean()) {
@@ -63,7 +63,7 @@
              return false;
           }
        }
-@@ -437,10 +437,10 @@
+@@ -437,10 +_,10 @@
              return true;
           }
  
@@ -76,7 +76,7 @@
        return false;
     }
  
-@@ -504,7 +504,7 @@
+@@ -504,7 +_,7 @@
                 try {
                    Thread.sleep(2147483647L);
                 } catch (InterruptedException interruptedexception) {

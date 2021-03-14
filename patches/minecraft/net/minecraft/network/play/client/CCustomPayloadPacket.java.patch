@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/client/CCustomPayloadPacket.java
 +++ b/net/minecraft/network/play/client/CCustomPayloadPacket.java
-@@ -9,10 +9,10 @@
+@@ -9,10 +_,10 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -14,7 +14,7 @@
  
     public CCustomPayloadPacket() {
     }
-@@ -35,7 +35,7 @@
+@@ -35,7 +_,7 @@
  
     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
        p_148840_1_.func_192572_a(this.field_149562_a);

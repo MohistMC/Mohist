@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/status/ServerStatusNetHandler.java
 +++ b/net/minecraft/network/status/ServerStatusNetHandler.java
-@@ -1,12 +1,19 @@
+@@ -1,12 +_,19 @@
  package net.minecraft.network.status;
  
 +import com.mojang.authlib.GameProfile;
@@ -20,7 +20,7 @@
  import net.minecraft.util.text.TranslationTextComponent;
  
  public class ServerStatusNetHandler implements IServerStatusNetHandler {
-@@ -32,8 +39,38 @@
+@@ -32,8 +_,38 @@
           this.field_147313_b.func_150718_a(field_183007_a);
        } else {
           this.field_183008_d = true;

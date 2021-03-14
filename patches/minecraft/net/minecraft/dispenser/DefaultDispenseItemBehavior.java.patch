@@ -1,6 +1,6 @@
 --- a/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
-@@ -4,7 +4,13 @@
+@@ -4,7 +_,13 @@
  import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Direction;
@@ -14,7 +14,7 @@
  
  public class DefaultDispenseItemBehavior implements IDispenseItemBehavior {
     public final ItemStack dispense(IBlockSource p_dispense_1_, ItemStack p_dispense_2_) {
-@@ -16,26 +22,74 @@
+@@ -16,26 +_,74 @@
  
     protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
        Direction direction = p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a);

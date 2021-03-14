@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/IBlockReader.java
 +++ b/net/minecraft/world/IBlockReader.java
-@@ -25,8 +25,14 @@
+@@ -25,8 +_,14 @@
  
     FluidState func_204610_c(BlockPos p_204610_1_);
  
@@ -16,7 +16,7 @@
     }
  
     default int func_201572_C() {
-@@ -41,19 +47,25 @@
+@@ -41,19 +_,25 @@
        return BlockPos.func_239581_a_(p_234853_1_).map(this::func_180495_p);
     }
  

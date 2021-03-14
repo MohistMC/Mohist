@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/storage/IOWorker.java
 +++ b/net/minecraft/world/chunk/storage/IOWorker.java
-@@ -54,7 +54,7 @@
+@@ -54,7 +_,7 @@
                 CompoundNBT compoundnbt = this.field_227084_e_.func_219099_e(p_227090_1_);
                 return Either.left(compoundnbt);
              } catch (Exception exception) {
@@ -9,7 +9,7 @@
                 return Either.right(exception);
              }
           }
-@@ -85,7 +85,7 @@
+@@ -85,7 +_,7 @@
                 this.field_227084_e_.func_235987_a_();
                 return Either.left((Void)null);
              } catch (Exception exception) {
@@ -18,7 +18,7 @@
                 return Either.right(exception);
              }
           });
-@@ -123,7 +123,7 @@
+@@ -123,7 +_,7 @@
           this.field_227084_e_.func_219100_a(p_227091_1_, p_227091_2_.field_227113_a_);
           p_227091_2_.field_227114_b_.complete((Void)null);
        } catch (Exception exception) {
@@ -27,7 +27,7 @@
           p_227091_2_.field_227114_b_.completeExceptionally(exception);
        }
  
-@@ -154,7 +154,7 @@
+@@ -154,7 +_,7 @@
           try {
              this.field_227084_e_.close();
           } catch (Exception exception) {

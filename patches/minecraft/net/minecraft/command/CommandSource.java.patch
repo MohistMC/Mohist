@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/CommandSource.java
 +++ b/net/minecraft/command/CommandSource.java
-@@ -7,6 +7,7 @@
+@@ -7,6 +_,7 @@
  import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
  import com.mojang.brigadier.suggestion.Suggestions;
  import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -8,7 +8,7 @@
  import java.util.Collection;
  import java.util.Set;
  import java.util.concurrent.CompletableFuture;
-@@ -37,7 +38,7 @@
+@@ -37,7 +_,7 @@
  public class CommandSource implements ISuggestionProvider {
     public static final SimpleCommandExceptionType field_197039_a = new SimpleCommandExceptionType(new TranslationTextComponent("permissions.requires.player"));
     public static final SimpleCommandExceptionType field_197040_b = new SimpleCommandExceptionType(new TranslationTextComponent("permissions.requires.entity"));
@@ -17,7 +17,7 @@
     private final Vector3d field_197042_d;
     private final ServerWorld field_197043_e;
     private final int field_197044_f;
-@@ -51,6 +52,8 @@
+@@ -51,6 +_,8 @@
     private final EntityAnchorArgument.Type field_201011_m;
     private final Vector2f field_201012_n;
  
@@ -26,7 +26,7 @@
     public CommandSource(ICommandSource p_i49552_1_, Vector3d p_i49552_2_, Vector2f p_i49552_3_, ServerWorld p_i49552_4_, int p_i49552_5_, String p_i49552_6_, ITextComponent p_i49552_7_, MinecraftServer p_i49552_8_, @Nullable Entity p_i49552_9_) {
        this(p_i49552_1_, p_i49552_2_, p_i49552_3_, p_i49552_4_, p_i49552_5_, p_i49552_6_, p_i49552_7_, p_i49552_8_, p_i49552_9_, false, (p_197032_0_, p_197032_1_, p_197032_2_) -> {
        }, EntityAnchorArgument.Type.FEET);
-@@ -142,9 +145,22 @@
+@@ -142,9 +_,22 @@
     }
  
     public boolean func_197034_c(int p_197034_1_) {
@@ -49,7 +49,7 @@
     public Vector3d func_197036_d() {
        return this.field_197042_d;
     }
-@@ -207,7 +223,7 @@
+@@ -207,7 +_,7 @@
           }
        }
  
@@ -58,7 +58,7 @@
           this.field_197047_i.func_145747_a(itextcomponent, Util.field_240973_b_);
        }
  
-@@ -254,4 +270,10 @@
+@@ -254,4 +_,10 @@
     public DynamicRegistries func_241861_q() {
        return this.field_197047_i.func_244267_aX();
     }

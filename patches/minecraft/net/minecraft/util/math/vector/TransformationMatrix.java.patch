@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/vector/TransformationMatrix.java
 +++ b/net/minecraft/util/math/vector/TransformationMatrix.java
-@@ -9,7 +9,7 @@
+@@ -9,7 +_,7 @@
  import org.apache.commons.lang3.tuple.Triple;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     private final Matrix4f field_227976_a_;
     private boolean field_227977_b_;
     @Nullable
-@@ -50,14 +50,14 @@
+@@ -50,14 +_,14 @@
        return field_227982_g_;
     }
  
@@ -26,7 +26,7 @@
        if (this == field_227982_g_) {
           return this;
        } else {
-@@ -133,4 +133,32 @@
+@@ -133,4 +_,32 @@
     public int hashCode() {
        return Objects.hash(this.field_227976_a_);
     }

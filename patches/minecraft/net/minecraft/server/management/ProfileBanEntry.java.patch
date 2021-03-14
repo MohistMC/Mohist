@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/management/ProfileBanEntry.java
 +++ b/net/minecraft/server/management/ProfileBanEntry.java
-@@ -2,6 +2,7 @@
+@@ -2,6 +_,7 @@
  
  import com.google.gson.JsonObject;
  import com.mojang.authlib.GameProfile;
@@ -8,7 +8,7 @@
  import java.util.Date;
  import java.util.Objects;
  import java.util.UUID;
-@@ -36,19 +37,45 @@
+@@ -36,19 +_,45 @@
     }
  
     private static GameProfile func_152648_b(JsonObject p_152648_0_) {

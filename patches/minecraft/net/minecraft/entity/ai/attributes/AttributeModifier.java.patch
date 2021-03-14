@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/attributes/AttributeModifier.java
 +++ b/net/minecraft/entity/ai/attributes/AttributeModifier.java
-@@ -87,7 +87,7 @@
+@@ -87,7 +_,7 @@
           AttributeModifier.Operation attributemodifier$operation = AttributeModifier.Operation.func_220372_a(p_233800_0_.func_74762_e("Operation"));
           return new AttributeModifier(uuid, p_233800_0_.func_74779_i("Name"), p_233800_0_.func_74769_h("Amount"), attributemodifier$operation);
        } catch (Exception exception) {

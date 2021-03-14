@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/entity/item/FallingBlockEntity.java
-@@ -8,7 +8,6 @@
+@@ -8,7 +_,6 @@
  import net.minecraft.block.Blocks;
  import net.minecraft.block.ConcretePowderBlock;
  import net.minecraft.block.FallingBlock;
@@ -8,7 +8,7 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -40,13 +39,14 @@
+@@ -40,13 +_,14 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,7 +24,7 @@
     private int field_145815_h = 40;
     private float field_145816_i = 2.0F;
     public CompoundNBT field_145810_d;
-@@ -94,13 +94,18 @@
+@@ -94,13 +_,18 @@
     }
  
     public void func_70071_h_() {
@@ -44,7 +44,7 @@
                 this.field_70170_p.func_217377_a(blockpos, false);
              } else if (!this.field_70170_p.field_72995_K) {
                 this.func_70106_y();
-@@ -113,6 +118,11 @@
+@@ -113,6 +_,11 @@
           }
  
           this.func_213315_a(MoverType.SELF, this.func_213322_ci());
@@ -56,7 +56,7 @@
           if (!this.field_70170_p.field_72995_K) {
              BlockPos blockpos1 = this.func_233580_cy_();
              boolean flag = this.field_175132_d.func_177230_c() instanceof ConcretePowderBlock;
-@@ -148,12 +158,18 @@
+@@ -148,12 +_,18 @@
                             this.field_175132_d = this.field_175132_d.func_206870_a(BlockStateProperties.field_208198_y, Boolean.valueOf(true));
                          }
  
@@ -76,7 +76,7 @@
                                TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
                                if (tileentity != null) {
                                   CompoundNBT compoundnbt = tileentity.func_189515_b(new CompoundNBT());
-@@ -195,7 +211,9 @@
+@@ -195,7 +_,9 @@
              DamageSource damagesource = flag ? DamageSource.field_82728_o : DamageSource.field_82729_p;
  
              for(Entity entity : list) {

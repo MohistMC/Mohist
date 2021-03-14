@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/SkullItem.java
 +++ b/net/minecraft/item/SkullItem.java
-@@ -4,6 +4,7 @@
+@@ -4,6 +_,7 @@
  import java.util.UUID;
  import net.minecraft.block.Block;
  import net.minecraft.nbt.CompoundNBT;
@@ -8,7 +8,7 @@
  import net.minecraft.nbt.NBTUtil;
  import net.minecraft.tileentity.SkullTileEntity;
  import net.minecraft.util.text.ITextComponent;
-@@ -40,10 +41,26 @@
+@@ -40,10 +_,26 @@
        super.func_179215_a(p_179215_1_);
        if (p_179215_1_.func_150297_b("SkullOwner", 8) && !StringUtils.isBlank(p_179215_1_.func_74779_i("SkullOwner"))) {
           GameProfile gameprofile = new GameProfile((UUID)null, p_179215_1_.func_74779_i("SkullOwner"));

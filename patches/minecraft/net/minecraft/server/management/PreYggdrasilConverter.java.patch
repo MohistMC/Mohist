@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/management/PreYggdrasilConverter.java
 +++ b/net/minecraft/server/management/PreYggdrasilConverter.java
-@@ -19,6 +19,8 @@
+@@ -19,6 +_,8 @@
  import java.util.UUID;
  import javax.annotation.Nullable;
  import net.minecraft.entity.player.PlayerEntity;
@@ -9,7 +9,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.util.StringUtils;
-@@ -53,7 +55,7 @@
+@@ -53,7 +_,7 @@
        }).toArray((p_201149_0_) -> {
           return new String[p_201149_0_];
        });
@@ -18,7 +18,7 @@
           p_152717_0_.func_152359_aw().findProfilesByNames(astring, Agent.MINECRAFT, p_152717_2_);
        } else {
           for(String s : astring) {
-@@ -72,7 +74,7 @@
+@@ -72,7 +_,7 @@
              try {
                 banlist.func_152679_g();
              } catch (IOException ioexception1) {
@@ -27,7 +27,7 @@
              }
           }
  
-@@ -84,7 +86,7 @@
+@@ -84,7 +_,7 @@
                    p_152724_0_.func_152358_ax().func_152649_a(p_onProfileLookupSucceeded_1_);
                    String[] astring = map.get(p_onProfileLookupSucceeded_1_.getName().toLowerCase(Locale.ROOT));
                    if (astring == null) {
@@ -36,7 +36,7 @@
                       throw new PreYggdrasilConverter.ConversionError("Profile not in the conversionlist");
                    } else {
                       Date date = astring.length > 1 ? PreYggdrasilConverter.func_152713_b(astring[1], (Date)null) : null;
-@@ -96,7 +98,7 @@
+@@ -96,7 +_,7 @@
                 }
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
@@ -45,7 +45,7 @@
                    if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException)) {
                       throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
                    }
-@@ -107,10 +109,10 @@
+@@ -107,10 +_,10 @@
              func_152727_c(field_152729_b);
              return true;
           } catch (IOException ioexception) {
@@ -58,7 +58,7 @@
              return false;
           }
        } else {
-@@ -125,7 +127,7 @@
+@@ -125,7 +_,7 @@
              try {
                 ipbanlist.func_152679_g();
              } catch (IOException ioexception1) {
@@ -67,7 +67,7 @@
              }
           }
  
-@@ -146,7 +148,7 @@
+@@ -146,7 +_,7 @@
              func_152727_c(field_152728_a);
              return true;
           } catch (IOException ioexception) {
@@ -76,7 +76,7 @@
              return false;
           }
        } else {
-@@ -161,7 +163,7 @@
+@@ -161,7 +_,7 @@
              try {
                 oplist.func_152679_g();
              } catch (IOException ioexception1) {
@@ -85,7 +85,7 @@
              }
           }
  
-@@ -174,7 +176,7 @@
+@@ -174,7 +_,7 @@
                 }
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
@@ -94,7 +94,7 @@
                    if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException)) {
                       throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
                    }
-@@ -185,10 +187,10 @@
+@@ -185,10 +_,10 @@
              func_152727_c(field_152730_c);
              return true;
           } catch (IOException ioexception) {
@@ -107,7 +107,7 @@
              return false;
           }
        } else {
-@@ -203,7 +205,7 @@
+@@ -203,7 +_,7 @@
              try {
                 whitelist.func_152679_g();
              } catch (IOException ioexception1) {
@@ -116,7 +116,7 @@
              }
           }
  
-@@ -216,7 +218,7 @@
+@@ -216,7 +_,7 @@
                 }
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
@@ -125,7 +125,7 @@
                    if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException)) {
                       throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
                    }
-@@ -227,10 +229,10 @@
+@@ -227,10 +_,10 @@
              func_152727_c(field_152731_d);
              return true;
           } catch (IOException ioexception) {
@@ -138,7 +138,7 @@
              return false;
           }
        } else {
-@@ -253,7 +255,7 @@
+@@ -253,7 +_,7 @@
                 }
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
@@ -147,7 +147,7 @@
                 }
              };
              func_152717_a(p_187473_0_, Lists.newArrayList(p_187473_1_), profilelookupcallback);
-@@ -302,7 +304,7 @@
+@@ -302,7 +_,7 @@
                 }
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
@@ -156,7 +156,7 @@
                    if (p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException) {
                       String s2 = this.func_152744_a(p_onProfileLookupFailed_1_);
                       this.func_152743_a(file3, s2, s2);
-@@ -314,6 +316,28 @@
+@@ -314,6 +_,28 @@
                 private void func_152743_a(File p_152743_1_, String p_152743_2_, String p_152743_3_) {
                    File file5 = new File(file1, p_152743_2_ + ".dat");
                    File file6 = new File(p_152743_1_, p_152743_3_ + ".dat");
@@ -185,7 +185,7 @@
                    PreYggdrasilConverter.func_152711_b(p_152743_1_);
                    if (!file5.renameTo(file6)) {
                       throw new PreYggdrasilConverter.ConversionError("Could not convert file for " + p_152743_2_);
-@@ -340,7 +364,7 @@
+@@ -340,7 +_,7 @@
              func_152717_a(p_152723_0_, Lists.newArrayList(astring), profilelookupcallback);
              return true;
           } catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror) {
@@ -194,7 +194,7 @@
              return false;
           }
        } else {
-@@ -387,22 +411,22 @@
+@@ -387,22 +_,22 @@
        if (!flag && !flag1 && !flag2 && !flag3) {
           return true;
        } else {
@@ -223,7 +223,7 @@
           }
  
           return false;
-@@ -414,9 +438,9 @@
+@@ -414,9 +_,9 @@
        if (!file1.exists() || !file1.isDirectory() || file1.list().length <= 0 && file1.delete()) {
           return true;
        } else {

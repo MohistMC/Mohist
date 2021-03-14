@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/ChunkGenerator.java
 +++ b/net/minecraft/world/gen/ChunkGenerator.java
-@@ -23,6 +23,7 @@
+@@ -23,6 +_,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.ISeedReader;
  import net.minecraft.world.IWorld;
@@ -8,7 +8,7 @@
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.biome.BiomeContainer;
  import net.minecraft.world.biome.BiomeGenerationSettings;
-@@ -173,6 +174,7 @@
+@@ -173,6 +_,7 @@
  
           return blockpos;
        } else {
@@ -16,7 +16,7 @@
           StructureSeparationSettings structureseparationsettings = this.field_222543_d.func_236197_a_(p_235956_2_);
           return structureseparationsettings == null ? null : p_235956_2_.func_236388_a_(p_235956_1_, p_235956_1_.func_241112_a_(), p_235956_3_, p_235956_4_, p_235956_5_, p_235956_1_.func_72905_C(), structureseparationsettings);
        }
-@@ -228,7 +230,16 @@
+@@ -228,7 +_,16 @@
        this.func_242705_a(StructureFeatures.field_244145_k, p_242707_1_, p_242707_2_, p_242707_3_, p_242707_4_, p_242707_5_, chunkpos, biome);
  
        for(Supplier<StructureFeature<?, ?>> supplier : biome.func_242440_e().func_242487_a()) {
@@ -34,7 +34,7 @@
        }
  
     }
-@@ -236,6 +247,7 @@
+@@ -236,6 +_,7 @@
     private void func_242705_a(StructureFeature<?, ?> p_242705_1_, DynamicRegistries p_242705_2_, StructureManager p_242705_3_, IChunk p_242705_4_, TemplateManager p_242705_5_, long p_242705_6_, ChunkPos p_242705_8_, Biome p_242705_9_) {
        StructureStart<?> structurestart = p_242705_3_.func_235013_a_(SectionPos.func_218156_a(p_242705_4_.func_76632_l(), 0), p_242705_1_.field_236268_b_, p_242705_4_);
        int i = structurestart != null ? structurestart.func_227457_j_() : 0;
@@ -42,7 +42,7 @@
        StructureSeparationSettings structureseparationsettings = this.field_222543_d.func_236197_a_(p_242705_1_.field_236268_b_);
        if (structureseparationsettings != null) {
           StructureStart<?> structurestart1 = p_242705_1_.func_242771_a(p_242705_2_, this, this.field_222542_c, p_242705_5_, p_242705_6_, p_242705_8_, p_242705_9_, i, structureseparationsettings);
-@@ -281,6 +293,79 @@
+@@ -281,6 +_,79 @@
        }
  
     }

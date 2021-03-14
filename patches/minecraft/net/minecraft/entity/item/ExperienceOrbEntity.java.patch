@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/ExperienceOrbEntity.java
 +++ b/net/minecraft/entity/item/ExperienceOrbEntity.java
-@@ -5,6 +5,7 @@
+@@ -5,6 +_,7 @@
  import net.minecraft.enchantment.Enchantments;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
@@ -8,7 +8,7 @@
  import net.minecraft.entity.MoverType;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.inventory.EquipmentSlotType;
-@@ -20,6 +21,11 @@
+@@ -20,6 +_,11 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,7 +20,7 @@
  
  public class ExperienceOrbEntity extends Entity {
     public int field_70533_a;
-@@ -51,6 +57,7 @@
+@@ -51,6 +_,7 @@
  
     public void func_70071_h_() {
        super.func_70071_h_();
@@ -28,7 +28,7 @@
        if (this.field_70532_c > 0) {
           --this.field_70532_c;
        }
-@@ -86,7 +93,22 @@
+@@ -86,7 +_,22 @@
           this.field_80001_f = null;
        }
  
@@ -52,7 +52,7 @@
           Vector3d vector3d = new Vector3d(this.field_80001_f.func_226277_ct_() - this.func_226277_ct_(), this.field_80001_f.func_226278_cu_() + (double)this.field_80001_f.func_70047_e() / 2.0D - this.func_226278_cu_(), this.field_80001_f.func_226281_cx_() - this.func_226281_cx_());
           double d1 = vector3d.func_189985_c();
           if (d1 < 64.0D) {
-@@ -98,7 +120,8 @@
+@@ -98,7 +_,8 @@
        this.func_213315_a(MoverType.SELF, this.func_213322_ci());
        float f = 0.98F;
        if (this.field_70122_E) {
@@ -62,7 +62,7 @@
        }
  
        this.func_213317_d(this.func_213322_ci().func_216372_d((double)f, 0.98D, (double)f));
-@@ -123,6 +146,7 @@
+@@ -123,6 +_,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -70,7 +70,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {
-@@ -151,15 +175,22 @@
+@@ -151,15 +_,22 @@
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
           if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0) {
@@ -96,7 +96,7 @@
                 }
              }
  
-@@ -211,6 +242,56 @@
+@@ -211,6 +_,56 @@
     }
  
     public static int func_70527_a(int p_70527_0_) {

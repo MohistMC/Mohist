@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/ShulkerBoxTileEntity.java
 +++ b/net/minecraft/tileentity/ShulkerBoxTileEntity.java
-@@ -30,6 +30,8 @@
+@@ -30,6 +_,8 @@
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class ShulkerBoxTileEntity extends LockableLootTileEntity implements ISidedInventory, ITickableTileEntity {
     private static final int[] field_190595_a = IntStream.range(0, 27).toArray();
-@@ -42,6 +44,42 @@
+@@ -42,6 +_,42 @@
     private DyeColor field_190602_l;
     private boolean field_204400_o;
  
@@ -52,7 +52,7 @@
     public ShulkerBoxTileEntity(@Nullable DyeColor p_i47242_1_) {
        super(TileEntityType.field_200993_x);
        this.field_190602_l = p_i47242_1_;
-@@ -192,6 +230,7 @@
+@@ -192,6 +_,7 @@
           }
  
           ++this.field_190598_h;
@@ -60,7 +60,7 @@
           this.field_145850_b.func_175641_c(this.field_174879_c, this.func_195044_w().func_177230_c(), 1, this.field_190598_h);
           if (this.field_190598_h == 1) {
              this.field_145850_b.func_184133_a((PlayerEntity)null, this.field_174879_c, SoundEvents.field_191262_fB, SoundCategory.BLOCKS, 0.5F, this.field_145850_b.field_73012_v.nextFloat() * 0.1F + 0.9F);
-@@ -203,6 +242,7 @@
+@@ -203,6 +_,7 @@
     public void func_174886_c(PlayerEntity p_174886_1_) {
        if (!p_174886_1_.func_175149_v()) {
           --this.field_190598_h;
@@ -68,7 +68,7 @@
           this.field_145850_b.func_175641_c(this.field_174879_c, this.func_195044_w().func_177230_c(), 1, this.field_190598_h);
           if (this.field_190598_h <= 0) {
              this.field_145850_b.func_184133_a((PlayerEntity)null, this.field_174879_c, SoundEvents.field_191261_fA, SoundCategory.BLOCKS, 0.5F, this.field_145850_b.field_73012_v.nextFloat() * 0.1F + 0.9F);
-@@ -282,6 +322,11 @@
+@@ -282,6 +_,11 @@
  
     public boolean func_235676_l_() {
        return this.field_190599_i == ShulkerBoxTileEntity.AnimationStatus.CLOSED;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/NetherPortalBlock.java
 +++ b/net/minecraft/block/NetherPortalBlock.java
-@@ -26,6 +26,8 @@
+@@ -26,6 +_,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class NetherPortalBlock extends Block {
     public static final EnumProperty<Direction.Axis> field_176550_a = BlockStateProperties.field_208199_z;
-@@ -48,13 +50,14 @@
+@@ -48,13 +_,14 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -26,7 +26,7 @@
              if (entity != null) {
                 entity.func_242279_ag();
              }
-@@ -72,6 +75,10 @@
+@@ -72,6 +_,10 @@
  
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
        if (!p_196262_4_.func_184218_aH() && !p_196262_4_.func_184207_aI() && p_196262_4_.func_184222_aU()) {

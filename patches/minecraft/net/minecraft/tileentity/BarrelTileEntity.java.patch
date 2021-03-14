@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BarrelTileEntity.java
 +++ b/net/minecraft/tileentity/BarrelTileEntity.java
-@@ -1,5 +1,7 @@
+@@ -1,5 +_,7 @@
  package net.minecraft.tileentity;
  
 +import java.util.ArrayList;
@@ -8,7 +8,7 @@
  import net.minecraft.block.BarrelBlock;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -17,8 +19,47 @@
+@@ -17,8 +_,47 @@
  import net.minecraft.util.math.vector.Vector3i;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
@@ -56,7 +56,7 @@
     private NonNullList<ItemStack> field_213966_a = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
     private int field_213967_b;
  
-@@ -76,7 +117,7 @@
+@@ -76,7 +_,7 @@
  
           ++this.field_213967_b;
           BlockState blockstate = this.func_195044_w();
@@ -65,7 +65,7 @@
           if (!flag) {
              this.func_213965_a(blockstate, SoundEvents.field_219602_O);
              this.func_213963_a(blockstate, true);
-@@ -121,11 +162,11 @@
+@@ -121,11 +_,11 @@
  
     }
  

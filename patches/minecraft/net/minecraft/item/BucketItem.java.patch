@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -12,10 +12,12 @@
+@@ -12,10 +_,12 @@
  import net.minecraft.fluid.FlowingFluid;
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.Fluids;
@@ -13,7 +13,7 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.DrinkHelper;
  import net.minecraft.util.Hand;
-@@ -28,18 +30,38 @@
+@@ -28,18 +_,38 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
@@ -52,7 +52,7 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -53,11 +75,23 @@
+@@ -53,11 +_,23 @@
              if (this.field_77876_a == Fluids.field_204541_a) {
                 BlockState blockstate1 = p_77659_1_.func_180495_p(blockpos);
                 if (blockstate1.func_177230_c() instanceof IBucketPickupHandler) {
@@ -78,7 +78,7 @@
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
                       }
-@@ -69,8 +103,8 @@
+@@ -69,8 +_,8 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
                 BlockState blockstate = p_77659_1_.func_180495_p(blockpos);
@@ -89,7 +89,7 @@
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
                       CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)p_77659_2_, blockpos2, itemstack);
-@@ -96,40 +130,55 @@
+@@ -96,40 +_,55 @@
     }
  
     public boolean func_180616_a(@Nullable PlayerEntity p_180616_1_, World p_180616_2_, BlockPos p_180616_3_, @Nullable BlockRayTraceResult p_180616_4_) {
@@ -161,7 +161,7 @@
                 return true;
              }
           }
-@@ -137,7 +186,24 @@
+@@ -137,7 +_,24 @@
     }
  
     protected void func_203791_b(@Nullable PlayerEntity p_203791_1_, IWorld p_203791_2_, BlockPos p_203791_3_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/CowEntity.java
 +++ b/net/minecraft/entity/passive/CowEntity.java
-@@ -29,6 +29,9 @@
+@@ -29,6 +_,9 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -10,7 +10,7 @@
  
  public class CowEntity extends AnimalEntity {
     public CowEntity(EntityType<? extends CowEntity> p_i48567_1_, World p_i48567_2_) {
-@@ -73,8 +76,14 @@
+@@ -73,8 +_,14 @@
     public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
        if (itemstack.func_77973_b() == Items.field_151133_ar && !this.func_70631_g_()) {

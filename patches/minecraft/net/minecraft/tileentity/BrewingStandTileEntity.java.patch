@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BrewingStandTileEntity.java
 +++ b/net/minecraft/tileentity/BrewingStandTileEntity.java
-@@ -1,6 +1,8 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.tileentity;
  
 +import java.util.ArrayList;
@@ -9,7 +9,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.BrewingStandBlock;
-@@ -16,22 +18,67 @@
+@@ -16,22 +_,67 @@
  import net.minecraft.item.Items;
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.potion.PotionBrewing;
@@ -79,7 +79,7 @@
     protected final IIntArray field_213954_a = new IIntArray() {
        public int func_221476_a(int p_221476_1_) {
           switch(p_221476_1_) {
-@@ -85,17 +132,32 @@
+@@ -85,17 +_,32 @@
     public void func_73660_a() {
        ItemStack itemstack = this.field_145945_j.get(4);
        if (this.field_184278_m <= 0 && itemstack.func_77973_b() == Items.field_151065_br) {
@@ -115,7 +115,7 @@
           if (flag2 && flag) {
              this.func_145940_l();
              this.func_70296_d();
-@@ -146,6 +208,7 @@
+@@ -146,6 +_,7 @@
  
     private boolean func_145934_k() {
        ItemStack itemstack = this.field_145945_j.get(3);
@@ -123,7 +123,7 @@
        if (itemstack.func_190926_b()) {
           return false;
        } else if (!PotionBrewing.func_185205_a(itemstack)) {
-@@ -163,22 +226,33 @@
+@@ -163,22 +_,33 @@
     }
  
     private void func_145940_l() {
@@ -162,7 +162,7 @@
  
        this.field_145945_j.set(3, itemstack);
        this.field_145850_b.func_217379_c(1035, blockpos, 0);
-@@ -229,13 +303,13 @@
+@@ -229,13 +_,13 @@
  
     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
        if (p_94041_1_ == 3) {
@@ -178,7 +178,7 @@
           }
        }
     }
-@@ -266,5 +340,28 @@
+@@ -266,5 +_,28 @@
  
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new BrewingStandContainer(p_213906_1_, p_213906_2_, this, this.field_213954_a);

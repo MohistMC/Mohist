@@ -1,6 +1,6 @@
 --- a/net/minecraft/profiler/Profiler.java
 +++ b/net/minecraft/profiler/Profiler.java
-@@ -46,7 +46,7 @@
+@@ -46,7 +_,7 @@
  
     public void func_219894_a() {
        if (this.field_219916_j) {
@@ -9,7 +9,7 @@
        } else {
           this.field_219916_j = true;
           this.field_219915_i = "";
-@@ -57,7 +57,7 @@
+@@ -57,7 +_,7 @@
  
     public void func_219897_b() {
        if (!this.field_219916_j) {
@@ -18,7 +18,7 @@
        } else {
           this.func_76319_b();
           this.field_219916_j = false;
-@@ -72,7 +72,7 @@
+@@ -72,7 +_,7 @@
  
     public void func_76320_a(String p_76320_1_) {
        if (!this.field_219916_j) {
@@ -27,7 +27,7 @@
        } else {
           if (!this.field_219915_i.isEmpty()) {
              this.field_219915_i = this.field_219915_i + '\u001e';
-@@ -91,9 +91,9 @@
+@@ -91,9 +_,9 @@
  
     public void func_76319_b() {
        if (!this.field_219916_j) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/Potion.java
 +++ b/net/minecraft/potion/Potion.java
-@@ -6,7 +6,8 @@
+@@ -6,7 +_,8 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.Registry;
  
@@ -10,7 +10,7 @@
     private final String field_185179_d;
     private final ImmutableList<EffectInstance> field_185180_e;
  
-@@ -21,6 +22,14 @@
+@@ -21,6 +_,14 @@
     public Potion(@Nullable String p_i46740_1_, EffectInstance... p_i46740_2_) {
        this.field_185179_d = p_i46740_1_;
        this.field_185180_e = ImmutableList.copyOf(p_i46740_2_);

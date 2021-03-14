@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/WeightedPressurePlateBlock.java
 +++ b/net/minecraft/block/WeightedPressurePlateBlock.java
-@@ -11,6 +11,8 @@
+@@ -11,6 +_,8 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
@@ -9,7 +9,7 @@
  
  public class WeightedPressurePlateBlock extends AbstractPressurePlateBlock {
     public static final IntegerProperty field_176579_a = BlockStateProperties.field_208136_ak;
-@@ -23,7 +25,25 @@
+@@ -23,7 +_,25 @@
     }
  
     protected int func_180669_e(World p_180669_1_, BlockPos p_180669_2_) {

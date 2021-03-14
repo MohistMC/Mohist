@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/SkullTileEntity.java
 +++ b/net/minecraft/tileentity/SkullTileEntity.java
-@@ -1,16 +1,33 @@
+@@ -1,16 +_,33 @@
  package net.minecraft.tileentity;
  
 +import com.google.common.base.Predicate;
@@ -34,7 +34,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.StringUtils;
  import net.minecraftforge.api.distmarker.Dist;
-@@ -22,10 +39,54 @@
+@@ -22,10 +_,54 @@
     @Nullable
     private static MinecraftSessionService field_184299_k;
     @Nullable
@@ -90,7 +90,7 @@
     public SkullTileEntity() {
        super(TileEntityType.field_200985_p);
     }
-@@ -88,8 +149,36 @@
+@@ -88,8 +_,36 @@
  
     @Nullable
     public SUpdateTileEntityPacket func_189518_D_() {
@@ -129,7 +129,7 @@
  
     public CompoundNBT func_189517_E_() {
        return this.func_189515_b(new CompoundNBT());
-@@ -101,32 +190,71 @@
+@@ -101,32 +_,71 @@
     }
  
     private void func_152109_d() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PistonBlock.java
 +++ b/net/minecraft/block/PistonBlock.java
-@@ -1,7 +1,9 @@
+@@ -1,7 +_,9 @@
  package net.minecraft.block;
  
 +import com.google.common.collect.ImmutableList;
@@ -10,7 +10,7 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Map.Entry;
-@@ -29,6 +31,9 @@
+@@ -29,6 +_,9 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -20,7 +20,7 @@
  
  public class PistonBlock extends DirectionalBlock {
     public static final BooleanProperty field_176320_b = BlockStateProperties.field_208181_h;
-@@ -116,6 +121,17 @@
+@@ -116,6 +_,17 @@
              }
           }
  
@@ -38,7 +38,7 @@
           p_176316_1_.func_175641_c(p_176316_2_, this, i, direction.func_176745_a());
        }
  
-@@ -158,6 +174,7 @@
+@@ -158,6 +_,7 @@
        }
  
        if (p_189539_4_ == 0) {
@@ -46,7 +46,7 @@
           if (!this.func_176319_a(p_189539_2_, p_189539_3_, direction, true)) {
              return false;
           }
-@@ -165,6 +182,7 @@
+@@ -165,6 +_,7 @@
           p_189539_2_.func_180501_a(p_189539_3_, p_189539_1_.func_206870_a(field_176320_b, Boolean.valueOf(true)), 67);
           p_189539_2_.func_184133_a((PlayerEntity)null, p_189539_3_, SoundEvents.field_187715_dR, SoundCategory.BLOCKS, 0.5F, p_189539_2_.field_73012_v.nextFloat() * 0.25F + 0.6F);
        } else if (p_189539_4_ == 1 || p_189539_4_ == 2) {
@@ -54,7 +54,7 @@
           TileEntity tileentity1 = p_189539_2_.func_175625_s(p_189539_3_.func_177972_a(direction));
           if (tileentity1 instanceof PistonTileEntity) {
              ((PistonTileEntity)tileentity1).func_145866_f();
-@@ -204,6 +222,7 @@
+@@ -204,6 +_,7 @@
           p_189539_2_.func_184133_a((PlayerEntity)null, p_189539_3_, SoundEvents.field_187712_dQ, SoundCategory.BLOCKS, 0.5F, p_189539_2_.field_73012_v.nextFloat() * 0.15F + 0.6F);
        }
  
@@ -62,7 +62,7 @@
        return true;
     }
  
-@@ -234,7 +253,7 @@
+@@ -234,7 +_,7 @@
                    return false;
                 }
  
@@ -71,7 +71,7 @@
              }
           } else {
              return false;
-@@ -270,10 +289,49 @@
+@@ -270,10 +_,49 @@
           Direction direction = p_176319_4_ ? p_176319_3_ : p_176319_3_.func_176734_d();
           int j = 0;
  
@@ -122,7 +122,7 @@
              func_220059_a(blockstate1, p_176319_1_, blockpos2, tileentity);
              p_176319_1_.func_180501_a(blockpos2, Blocks.field_150350_a.func_176223_P(), 18);
              ablockstate[j++] = blockstate1;
-@@ -335,6 +393,10 @@
+@@ -335,6 +_,10 @@
  
     public BlockState func_185499_a(BlockState p_185499_1_, Rotation p_185499_2_) {
        return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));

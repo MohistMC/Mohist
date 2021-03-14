@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BambooBlock.java
 +++ b/net/minecraft/block/BambooBlock.java
-@@ -23,6 +23,7 @@
+@@ -23,6 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class BambooBlock extends Block implements IGrowable {
     protected static final VoxelShape field_220261_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 16.0D, 11.0D);
-@@ -100,10 +101,11 @@
+@@ -100,10 +_,11 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
        if (p_225542_1_.func_177229_b(field_220266_f) == 0) {
@@ -22,7 +22,7 @@
              }
           }
  
-@@ -165,13 +167,17 @@
+@@ -165,13 +_,17 @@
        BlockPos blockpos = p_220258_3_.func_177979_c(2);
        BlockState blockstate1 = p_220258_2_.func_180495_p(blockpos);
        BambooLeaves bambooleaves = BambooLeaves.NONE;
@@ -42,7 +42,7 @@
                 }
              }
           } else {
-@@ -182,6 +188,15 @@
+@@ -182,6 +_,15 @@
        int i = p_220258_1_.func_177229_b(field_220264_d) != 1 && !blockstate1.func_203425_a(Blocks.field_222405_kQ) ? 0 : 1;
        int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
        p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);

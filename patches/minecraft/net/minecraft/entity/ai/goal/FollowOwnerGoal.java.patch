@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/FollowOwnerGoal.java
 +++ b/net/minecraft/entity/ai/goal/FollowOwnerGoal.java
-@@ -12,6 +12,9 @@
+@@ -12,6 +_,9 @@
  import net.minecraft.pathfinding.WalkNodeProcessor;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.IWorldReader;
@@ -10,7 +10,7 @@
  
  public class FollowOwnerGoal extends Goal {
     private final TameableEntity field_75338_d;
-@@ -113,7 +116,17 @@
+@@ -113,7 +_,17 @@
        } else if (!this.func_226329_a_(new BlockPos(p_226328_1_, p_226328_2_, p_226328_3_))) {
           return false;
        } else {

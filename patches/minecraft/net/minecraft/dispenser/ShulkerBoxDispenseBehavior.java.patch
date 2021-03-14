@@ -1,6 +1,6 @@
 --- a/net/minecraft/dispenser/ShulkerBoxDispenseBehavior.java
 +++ b/net/minecraft/dispenser/ShulkerBoxDispenseBehavior.java
-@@ -7,6 +7,8 @@
+@@ -7,6 +_,8 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Direction;
  import net.minecraft.util.math.BlockPos;
@@ -9,7 +9,7 @@
  
  public class ShulkerBoxDispenseBehavior extends OptionalDispenseBehavior {
     protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
-@@ -16,6 +18,32 @@
+@@ -16,6 +_,32 @@
           Direction direction = p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a);
           BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(direction);
           Direction direction1 = p_82487_1_.func_197524_h().func_175623_d(blockpos.func_177977_b()) ? direction : Direction.UP;

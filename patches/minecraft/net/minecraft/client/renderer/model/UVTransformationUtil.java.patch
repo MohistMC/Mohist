@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/UVTransformationUtil.java
 +++ b/net/minecraft/client/renderer/model/UVTransformationUtil.java
-@@ -27,7 +27,7 @@
+@@ -27,7 +_,7 @@
     });
     public static final EnumMap<Direction, TransformationMatrix> field_229377_b_ = Util.func_200696_a(Maps.newEnumMap(Direction.class), (p_229381_0_) -> {
        for(Direction direction : Direction.values()) {
@@ -9,7 +9,7 @@
        }
  
     });
-@@ -41,12 +41,12 @@
+@@ -41,12 +_,12 @@
  
     public static TransformationMatrix func_229380_a_(TransformationMatrix p_229380_0_, Direction p_229380_1_, Supplier<String> p_229380_2_) {
        Direction direction = Direction.func_229385_a_(p_229380_0_.func_227988_c_(), p_229380_1_);

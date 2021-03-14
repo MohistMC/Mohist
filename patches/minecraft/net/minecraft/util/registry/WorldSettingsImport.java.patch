@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/registry/WorldSettingsImport.java
 +++ b/net/minecraft/util/registry/WorldSettingsImport.java
-@@ -95,9 +95,9 @@
+@@ -95,9 +_,9 @@
        for(ResourceLocation resourcelocation : collection) {
           String s1 = resourcelocation.func_110623_a();
           if (!s1.endsWith(".json")) {
@@ -12,7 +12,7 @@
           } else {
              String s2 = s1.substring(s.length(), s1.length() - ".json".length());
              ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s2);
-@@ -190,6 +190,7 @@
+@@ -190,6 +_,7 @@
                 ) {
                    JsonParser jsonparser = new JsonParser();
                    JsonElement jsonelement = jsonparser.parse(reader);
@@ -20,7 +20,7 @@
                    return p_241879_4_.parse(p_241879_1_, jsonelement).map((p_244347_0_) -> {
                       return Pair.of(p_244347_0_, OptionalInt.empty());
                    });
-@@ -213,7 +214,7 @@
+@@ -213,7 +_,7 @@
              DataResult<JsonElement> dataresult = p_244352_3_.encodeStart(WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, p_244352_1_), p_244352_5_);
              Optional<PartialResult<JsonElement>> optional = dataresult.error();
              if (optional.isPresent()) {
@@ -29,7 +29,7 @@
              } else {
                 this.field_244349_a.put(p_244352_2_, dataresult.result().get());
                 this.field_244350_b.put(p_244352_2_, p_244352_4_);
-@@ -231,6 +232,7 @@
+@@ -231,6 +_,7 @@
  
           public <E> DataResult<Pair<E, OptionalInt>> func_241879_a(DynamicOps<JsonElement> p_241879_1_, RegistryKey<? extends Registry<E>> p_241879_2_, RegistryKey<E> p_241879_3_, Decoder<E> p_241879_4_) {
              JsonElement jsonelement = this.field_244349_a.get(p_241879_3_);

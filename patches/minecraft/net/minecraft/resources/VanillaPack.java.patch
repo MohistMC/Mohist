@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/VanillaPack.java
 +++ b/net/minecraft/resources/VanillaPack.java
-@@ -53,7 +53,7 @@
+@@ -53,7 +_,7 @@
                    p_217809_0_.put(resourcepacktype, filesystem);
                 }
              } catch (IOException | URISyntaxException urisyntaxexception) {
@@ -9,7 +9,7 @@
              }
           }
  
-@@ -120,7 +120,7 @@
+@@ -120,7 +_,7 @@
        try {
           URL url1 = VanillaPack.class.getResource("/" + p_225637_1_.func_198956_a() + "/.mcassetsroot");
           if (url1 == null) {
@@ -18,7 +18,7 @@
              return set;
           }
  
-@@ -133,11 +133,11 @@
+@@ -133,11 +_,11 @@
              Path path1 = field_217810_e.get(p_225637_1_).getPath("/" + p_225637_1_.func_198956_a());
              func_229867_a_(set, p_225637_4_, "minecraft", path1, p_225637_3_, p_225637_5_);
           } else {
@@ -32,7 +32,7 @@
        }
  
        return set;
-@@ -171,7 +171,7 @@
+@@ -171,7 +_,7 @@
  
        try {
           URL url = VanillaPack.class.getResource(s);
@@ -41,7 +41,7 @@
        } catch (IOException ioexception) {
           return VanillaPack.class.getResourceAsStream(s);
        }
-@@ -187,7 +187,7 @@
+@@ -187,7 +_,7 @@
  
     @Nullable
     protected InputStream func_200010_a(String p_200010_1_) {
@@ -50,7 +50,7 @@
     }
  
     public boolean func_195764_b(ResourcePackType p_195764_1_, ResourceLocation p_195764_2_) {
-@@ -225,5 +225,19 @@
+@@ -225,5 +_,19 @@
     }
  
     public void close() {

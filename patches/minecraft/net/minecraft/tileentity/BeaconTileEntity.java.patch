@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BeaconTileEntity.java
 +++ b/net/minecraft/tileentity/BeaconTileEntity.java
-@@ -3,6 +3,7 @@
+@@ -3,6 +_,7 @@
  import com.google.common.collect.ImmutableList;
  import com.google.common.collect.Lists;
  import java.util.Arrays;
@@ -8,7 +8,7 @@
  import java.util.List;
  import java.util.Set;
  import java.util.stream.Collectors;
-@@ -11,7 +12,6 @@
+@@ -11,7 +_,6 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -16,7 +16,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.PlayerInventory;
  import net.minecraft.entity.player.ServerPlayerEntity;
-@@ -37,21 +37,24 @@
+@@ -37,21 +_,24 @@
  import net.minecraft.world.gen.Heightmap;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -48,7 +48,7 @@
     private final IIntArray field_213937_n = new IIntArray() {
        public int func_221476_a(int p_221476_1_) {
           switch(p_221476_1_) {
-@@ -89,6 +92,16 @@
+@@ -89,6 +_,16 @@
        }
     };
  
@@ -65,7 +65,7 @@
     public BeaconTileEntity() {
        super(TileEntityType.field_200984_o);
     }
-@@ -112,8 +125,8 @@
+@@ -112,8 +_,8 @@
        for(int i1 = 0; i1 < 10 && blockpos.func_177956_o() <= l; ++i1) {
           BlockState blockstate = this.field_145850_b.func_180495_p(blockpos);
           Block block = blockstate.func_177230_c();
@@ -76,7 +76,7 @@
              if (this.field_213934_g.size() <= 1) {
                 beacontileentity$beamsegment = new BeaconTileEntity.BeamSegment(afloat);
                 this.field_213934_g.add(beacontileentity$beamsegment);
-@@ -203,30 +216,65 @@
+@@ -203,30 +_,65 @@
        super.func_145843_s();
     }
  
@@ -157,7 +157,7 @@
  
     public void func_205736_a(SoundEvent p_205736_1_) {
        this.field_145850_b.func_184133_a((PlayerEntity)null, this.field_174879_c, p_205736_1_, SoundCategory.BLOCKS, 1.0F, 1.0F);
-@@ -263,8 +311,11 @@
+@@ -263,8 +_,11 @@
  
     public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
        super.func_230337_a_(p_230337_1_, p_230337_2_);

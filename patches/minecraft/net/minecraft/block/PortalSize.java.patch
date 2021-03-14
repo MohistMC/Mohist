@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PortalSize.java
 +++ b/net/minecraft/block/PortalSize.java
-@@ -13,10 +13,14 @@
+@@ -13,10 +_,14 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.server.ServerWorld;
@@ -16,7 +16,7 @@
     };
     private final IWorld field_150867_a;
     private final Direction.Axis field_150865_b;
-@@ -26,6 +30,7 @@
+@@ -26,6 +_,7 @@
     private BlockPos field_150861_f;
     private int field_150862_g;
     private int field_150868_h;
@@ -24,7 +24,7 @@
  
     public static Optional<PortalSize> func_242964_a(IWorld p_242964_0_, BlockPos p_242964_1_, Direction.Axis p_242964_2_) {
        return func_242965_a(p_242964_0_, p_242964_1_, (p_242968_0_) -> {
-@@ -84,6 +89,7 @@
+@@ -84,6 +_,7 @@
           BlockState blockstate = this.field_150867_a.func_180495_p(blockpos$mutable);
           if (!func_196900_a(blockstate)) {
              if (field_242962_a.test(blockstate, this.field_150867_a, blockpos$mutable)) {
@@ -32,7 +32,7 @@
                 return i;
              }
              break;
-@@ -151,11 +157,29 @@
+@@ -151,11 +_,29 @@
        return this.field_150861_f != null && this.field_150868_h >= 2 && this.field_150868_h <= 21 && this.field_150862_g >= 3 && this.field_150862_g <= 21;
     }
  
@@ -63,7 +63,7 @@
     }
  
     public boolean func_208508_f() {
-@@ -188,18 +212,24 @@
+@@ -188,18 +_,24 @@
     }
  
     public static PortalInfo func_242963_a(ServerWorld p_242963_0_, TeleportationRepositioner.Result p_242963_1_, Direction.Axis p_242963_2_, Vector3d p_242963_3_, EntitySize p_242963_4_, Vector3d p_242963_5_, float p_242963_6_, float p_242963_7_) {

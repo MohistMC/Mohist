@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/LeverBlock.java
 +++ b/net/minecraft/block/LeverBlock.java
-@@ -21,6 +21,7 @@
+@@ -21,6 +_,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,7 +8,7 @@
  
  public class LeverBlock extends HorizontalFaceBlock {
     public static final BooleanProperty field_176359_b = BlockStateProperties.field_208194_u;
-@@ -81,6 +82,18 @@
+@@ -81,6 +_,18 @@
  
           return ActionResultType.SUCCESS;
        } else {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/PlayerContainer.java
 +++ b/net/minecraft/inventory/container/PlayerContainer.java
-@@ -14,8 +14,11 @@
+@@ -14,8 +_,11 @@
  import net.minecraft.item.crafting.RecipeBookCategory;
  import net.minecraft.item.crafting.RecipeItemHelper;
  import net.minecraft.util.ResourceLocation;
@@ -12,7 +12,7 @@
  
  public class PlayerContainer extends RecipeBookContainer<CraftingInventory> {
     public static final ResourceLocation field_226615_c_ = new ResourceLocation("textures/atlas/blocks.png");
-@@ -26,15 +29,30 @@
+@@ -26,15 +_,30 @@
     public static final ResourceLocation field_226620_h_ = new ResourceLocation("item/empty_armor_slot_shield");
     private static final ResourceLocation[] field_200829_h = new ResourceLocation[]{field_226619_g_, field_226618_f_, field_226617_e_, field_226616_d_};
     private static final EquipmentSlotType[] field_185003_h = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
@@ -45,7 +45,7 @@
        this.func_75146_a(new CraftingResultSlot(p_i1819_1_.field_70458_d, this.field_75181_e, this.field_75179_f, 0, 154, 28));
  
        for(int i = 0; i < 2; ++i) {
-@@ -51,7 +69,7 @@
+@@ -51,7 +_,7 @@
              }
  
              public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -54,7 +54,7 @@
              }
  
              public boolean func_82869_a(PlayerEntity p_82869_1_) {
-@@ -98,7 +116,7 @@
+@@ -98,7 +_,7 @@
     }
  
     public void func_75130_a(IInventory p_75130_1_) {
@@ -63,7 +63,7 @@
     }
  
     public void func_75134_a(PlayerEntity p_75134_1_) {
-@@ -203,4 +221,16 @@
+@@ -203,4 +_,16 @@
     public RecipeBookCategory func_241850_m() {
        return RecipeBookCategory.CRAFTING;
     }

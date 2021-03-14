@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/FarmerWorkTask.java
 +++ b/net/minecraft/entity/ai/brain/task/FarmerWorkTask.java
-@@ -35,7 +35,7 @@
+@@ -35,7 +_,7 @@
     private void func_234016_a_(ServerWorld p_234016_1_, VillagerEntity p_234016_2_, GlobalPos p_234016_3_, BlockState p_234016_4_) {
        BlockPos blockpos = p_234016_3_.func_218180_b();
        if (p_234016_4_.func_177229_b(ComposterBlock.field_220298_a) == 8) {
@@ -9,7 +9,7 @@
        }
  
        int i = 20;
-@@ -57,7 +57,7 @@
+@@ -57,7 +_,7 @@
                 i -= l1;
  
                 for(int i2 = 0; i2 < l1; ++i2) {

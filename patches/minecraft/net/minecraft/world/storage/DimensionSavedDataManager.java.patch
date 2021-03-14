@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/DimensionSavedDataManager.java
 +++ b/net/minecraft/world/storage/DimensionSavedDataManager.java
-@@ -20,7 +20,7 @@
+@@ -20,7 +_,7 @@
  
  public class DimensionSavedDataManager {
     private static final Logger field_212776_a = LogManager.getLogger();
@@ -9,7 +9,7 @@
     private final DataFixer field_215758_c;
     private final File field_215759_d;
  
-@@ -47,9 +47,13 @@
+@@ -47,9 +_,13 @@
     @Nullable
     public <T extends WorldSavedData> T func_215753_b(Supplier<T> p_215753_1_, String p_215753_2_) {
        WorldSavedData worldsaveddata = this.field_212778_c.get(p_215753_2_);
@@ -23,7 +23,7 @@
        }
  
        return (T)worldsaveddata;
-@@ -66,7 +70,7 @@
+@@ -66,7 +_,7 @@
              return t;
           }
        } catch (Exception exception) {

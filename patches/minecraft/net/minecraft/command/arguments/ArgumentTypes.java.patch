@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/arguments/ArgumentTypes.java
 +++ b/net/minecraft/command/arguments/ArgumentTypes.java
-@@ -101,7 +101,7 @@
+@@ -101,7 +_,7 @@
     public static <T extends ArgumentType<?>> void func_197484_a(PacketBuffer p_197484_0_, T p_197484_1_) {
        ArgumentTypes.Entry<T> entry = (Entry<T>) func_201040_a(p_197484_1_);
        if (entry == null) {
@@ -9,7 +9,7 @@
           p_197484_0_.func_192572_a(new ResourceLocation(""));
        } else {
           p_197484_0_.func_192572_a(entry.field_197481_c);
-@@ -114,7 +114,7 @@
+@@ -114,7 +_,7 @@
        ResourceLocation resourcelocation = p_197486_0_.func_192575_l();
        ArgumentTypes.Entry<?> entry = func_197482_a(resourcelocation);
        if (entry == null) {
@@ -18,7 +18,7 @@
           return null;
        } else {
           return entry.field_197480_b.func_197071_b(p_197486_0_);
-@@ -124,7 +124,7 @@
+@@ -124,7 +_,7 @@
     private static <T extends ArgumentType<?>> void func_201042_a(JsonObject p_201042_0_, T p_201042_1_) {
        ArgumentTypes.Entry<T> entry = (Entry<T>) func_201040_a(p_201042_1_);
        if (entry == null) {
@@ -27,7 +27,7 @@
           p_201042_0_.addProperty("type", "unknown");
        } else {
           p_201042_0_.addProperty("type", "argument");
-@@ -147,7 +147,7 @@
+@@ -147,7 +_,7 @@
        } else if (p_200388_1_ instanceof ArgumentCommandNode) {
           func_201042_a(jsonobject, ((ArgumentCommandNode)p_200388_1_).getType());
        } else {
@@ -36,7 +36,7 @@
           jsonobject.addProperty("type", "unknown");
        }
  
-@@ -219,5 +219,9 @@
+@@ -219,5 +_,9 @@
           this.field_197480_b = p_i48088_2_;
           this.field_197481_c = p_i48088_3_;
        }

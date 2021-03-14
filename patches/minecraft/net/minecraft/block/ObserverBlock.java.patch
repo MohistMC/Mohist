@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/ObserverBlock.java
 +++ b/net/minecraft/block/ObserverBlock.java
-@@ -13,6 +13,7 @@
+@@ -13,6 +_,7 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class ObserverBlock extends DirectionalBlock {
     public static final BooleanProperty field_190963_a = BlockStateProperties.field_208194_u;
-@@ -36,8 +37,18 @@
+@@ -36,8 +_,18 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (p_225534_1_.func_177229_b(field_190963_a)) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/login/ServerLoginNetHandler.java
 +++ b/net/minecraft/network/login/ServerLoginNetHandler.java
-@@ -29,10 +29,16 @@
+@@ -29,10 +_,16 @@
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
  import net.minecraft.util.text.ITextComponent;
@@ -17,7 +17,7 @@
  
  public class ServerLoginNetHandler implements IServerLoginNetHandler {
     private static final AtomicInteger field_147331_b = new AtomicInteger(0);
-@@ -47,6 +53,7 @@
+@@ -47,6 +_,7 @@
     private final String field_147334_j = "";
     private SecretKey field_147335_k;
     private ServerPlayerEntity field_181025_l;
@@ -25,7 +25,7 @@
  
     public ServerLoginNetHandler(MinecraftServer p_i45298_1_, NetworkManager p_i45298_2_) {
        this.field_147327_f = p_i45298_1_;
-@@ -55,7 +62,13 @@
+@@ -55,7 +_,13 @@
     }
  
     public void func_73660_a() {
@@ -40,7 +40,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -72,29 +85,73 @@
+@@ -72,29 +_,73 @@
  
     }
  
@@ -124,7 +124,7 @@
        } else {
           this.field_147328_g = ServerLoginNetHandler.State.ACCEPTED;
           if (this.field_147327_f.func_175577_aI() >= 0 && !this.field_147333_a.func_150731_c()) {
-@@ -107,16 +164,16 @@
+@@ -107,16 +_,16 @@
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
           if (serverplayerentity != null) {
              this.field_147328_g = ServerLoginNetHandler.State.DELAY_ACCEPT;
@@ -144,7 +144,7 @@
     }
  
     public String func_147317_d() {
-@@ -130,7 +187,21 @@
+@@ -130,7 +_,21 @@
           this.field_147328_g = ServerLoginNetHandler.State.KEY;
           this.field_147333_a.func_179290_a(new SEncryptionRequestPacket("", this.field_147327_f.func_71250_E().getPublic().getEncoded(), this.field_147330_e));
        } else {
@@ -167,7 +167,7 @@
        }
  
     }
-@@ -138,7 +209,6 @@
+@@ -138,7 +_,6 @@
     public void func_147315_a(CEncryptionResponsePacket p_147315_1_) {
        Validate.validState(this.field_147328_g == ServerLoginNetHandler.State.KEY, "Unexpected key packet");
        PrivateKey privatekey = this.field_147327_f.func_71250_E().getPrivate();
@@ -175,7 +175,7 @@
        final String s;
        try {
           if (!Arrays.equals(this.field_147330_e, p_147315_1_.func_149299_b(privatekey))) {
-@@ -154,48 +224,95 @@
+@@ -154,48 +_,95 @@
        } catch (CryptException cryptexception) {
           throw new IllegalStateException("Protocol error", cryptexception);
        }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/storage/RegionSectionCache.java
 +++ b/net/minecraft/world/chunk/storage/RegionSectionCache.java
-@@ -107,7 +107,7 @@
+@@ -107,7 +_,7 @@
        try {
           return this.field_227173_b_.func_227090_a_(p_223138_1_);
        } catch (IOException ioexception) {
@@ -9,7 +9,7 @@
           return null;
        }
     }
-@@ -151,7 +151,7 @@
+@@ -151,7 +_,7 @@
        if (inbt instanceof CompoundNBT) {
           this.field_227173_b_.func_227093_a_(p_219117_1_, (CompoundNBT)inbt);
        } else {
@@ -18,7 +18,7 @@
        }
  
     }
-@@ -185,7 +185,7 @@
+@@ -185,7 +_,7 @@
        if (optional != null && optional.isPresent()) {
           this.field_219122_d.add(p_219116_1_);
        } else {

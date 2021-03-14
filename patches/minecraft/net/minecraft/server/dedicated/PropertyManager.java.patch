@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/PropertyManager.java
 +++ b/net/minecraft/server/dedicated/PropertyManager.java
-@@ -19,7 +19,7 @@
+@@ -19,7 +_,7 @@
  
  public abstract class PropertyManager<T extends PropertyManager<T>> {
     private static final Logger field_164440_a = LogManager.getLogger();
@@ -9,7 +9,7 @@
  
     public PropertyManager(Properties p_i50717_1_) {
        this.field_73672_b = p_i50717_1_;
-@@ -31,7 +31,7 @@
+@@ -31,7 +_,7 @@
        try (InputStream inputstream = Files.newInputStream(p_218969_0_)) {
           properties.load(inputstream);
        } catch (IOException ioexception) {
@@ -18,7 +18,7 @@
        }
  
        return properties;
-@@ -39,9 +39,9 @@
+@@ -39,9 +_,9 @@
  
     public void func_218970_c(Path p_218970_1_) {
        try (OutputStream outputstream = Files.newOutputStream(p_218970_1_)) {

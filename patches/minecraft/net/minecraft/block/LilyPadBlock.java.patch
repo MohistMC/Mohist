@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/LilyPadBlock.java
 +++ b/net/minecraft/block/LilyPadBlock.java
-@@ -11,6 +11,7 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class LilyPadBlock extends BushBlock {
     protected static final VoxelShape field_185523_a = Block.func_208617_a(1.0D, 0.0D, 1.0D, 15.0D, 1.5D, 15.0D);
-@@ -21,7 +22,7 @@
+@@ -21,7 +_,7 @@
  
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
        super.func_196262_a(p_196262_1_, p_196262_2_, p_196262_3_, p_196262_4_);

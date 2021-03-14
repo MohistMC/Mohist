@@ -1,13 +1,13 @@
 --- a/net/minecraft/inventory/container/ChestContainer.java
 +++ b/net/minecraft/inventory/container/ChestContainer.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.inventory.container;
  
 +import net.minecraft.block.ChestBlock.DoubleInventory;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.PlayerInventory;
  import net.minecraft.inventory.IInventory;
-@@ -7,11 +8,35 @@
+@@ -7,11 +_,35 @@
  import net.minecraft.item.ItemStack;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -43,7 +43,7 @@
     private ChestContainer(ContainerType<?> p_i50091_1_, int p_i50091_2_, PlayerInventory p_i50091_3_, int p_i50091_4_) {
        this(p_i50091_1_, p_i50091_2_, p_i50091_3_, new Inventory(9 * p_i50091_4_), p_i50091_4_);
     }
-@@ -53,6 +78,9 @@
+@@ -53,6 +_,9 @@
        func_216962_a(p_i50092_4_, p_i50092_5_ * 9);
        this.field_75155_e = p_i50092_4_;
        this.field_75154_f = p_i50092_5_;
@@ -53,7 +53,7 @@
        p_i50092_4_.func_174889_b(p_i50092_3_.field_70458_d);
        int i = (this.field_75154_f - 4) * 18;
  
-@@ -75,6 +103,7 @@
+@@ -75,6 +_,7 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {

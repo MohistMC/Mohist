@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/CreatureEntity.java
 +++ b/net/minecraft/entity/CreatureEntity.java
-@@ -7,6 +7,8 @@
+@@ -7,6 +_,8 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
@@ -9,7 +9,7 @@
  
  public abstract class CreatureEntity extends MobEntity {
     protected CreatureEntity(EntityType<? extends CreatureEntity> p_i48575_1_, World p_i48575_2_) {
-@@ -37,6 +39,7 @@
+@@ -37,6 +_,7 @@
           float f = this.func_70032_d(entity);
           if (this instanceof TameableEntity && ((TameableEntity)this).func_233684_eK_()) {
              if (f > 10.0F) {
@@ -17,7 +17,7 @@
                 this.func_110160_i(true, true);
              }
  
-@@ -45,6 +48,7 @@
+@@ -45,6 +_,7 @@
  
           this.func_142017_o(f);
           if (f > 10.0F) {

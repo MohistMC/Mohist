@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/CreeperEntity.java
 +++ b/net/minecraft/entity/monster/CreeperEntity.java
-@@ -34,11 +34,14 @@
+@@ -34,11 +_,14 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.Explosion;
@@ -16,7 +16,7 @@
  
  @OnlyIn(
     value = Dist.CLIENT,
-@@ -50,8 +53,8 @@
+@@ -50,8 +_,8 @@
     private static final DataParameter<Boolean> field_184715_c = EntityDataManager.func_187226_a(CreeperEntity.class, DataSerializers.field_187198_h);
     private int field_70834_e;
     private int field_70833_d;
@@ -27,7 +27,7 @@
     private int field_175494_bm;
  
     public CreeperEntity(EntityType<? extends CreeperEntity> p_i50213_1_, World p_i50213_2_) {
-@@ -194,8 +197,17 @@
+@@ -194,8 +_,17 @@
  
     public void func_241841_a(ServerWorld p_241841_1_, LightningBoltEntity p_241841_2_) {
        super.func_241841_a(p_241841_1_, p_241841_2_);
@@ -47,7 +47,7 @@
  
     protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
-@@ -214,14 +226,22 @@
+@@ -214,14 +_,22 @@
        }
     }
  
@@ -73,7 +73,7 @@
        }
  
     }
-@@ -230,6 +250,7 @@
+@@ -230,6 +_,7 @@
        Collection<EffectInstance> collection = this.func_70651_bq();
        if (!collection.isEmpty()) {
           AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
@@ -81,7 +81,7 @@
           areaeffectcloudentity.func_184483_a(2.5F);
           areaeffectcloudentity.func_184495_b(-0.5F);
           areaeffectcloudentity.func_184485_d(10);
-@@ -240,7 +261,7 @@
+@@ -240,7 +_,7 @@
              areaeffectcloudentity.func_184496_a(new EffectInstance(effectinstance));
           }
  

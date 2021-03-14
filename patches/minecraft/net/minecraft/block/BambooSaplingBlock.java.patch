@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BambooSaplingBlock.java
 +++ b/net/minecraft/block/BambooSaplingBlock.java
-@@ -17,6 +17,7 @@
+@@ -17,6 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class BambooSaplingBlock extends Block implements IGrowable {
     protected static final VoxelShape field_220088_a = Block.func_208617_a(4.0D, 0.0D, 4.0D, 12.0D, 12.0D, 12.0D);
-@@ -78,6 +79,6 @@
+@@ -78,6 +_,6 @@
     }
  
     protected void func_220087_a(World p_220087_1_, BlockPos p_220087_2_) {

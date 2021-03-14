@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/AnvilSaveConverter.java
 +++ b/net/minecraft/world/storage/AnvilSaveConverter.java
-@@ -41,7 +41,7 @@
+@@ -41,7 +_,7 @@
        File file1 = p_237330_0_.func_237291_a_(World.field_234918_g_);
        File file2 = p_237330_0_.func_237291_a_(World.field_234919_h_);
        File file3 = p_237330_0_.func_237291_a_(World.field_234920_i_);
@@ -9,7 +9,7 @@
        func_215789_a(file1, list);
        if (file2.exists()) {
           func_215789_a(file2, list1);
-@@ -52,7 +52,7 @@
+@@ -52,7 +_,7 @@
        }
  
        int i = list.size() + list1.size() + list2.size();
@@ -18,7 +18,7 @@
        DynamicRegistries.Impl dynamicregistries$impl = DynamicRegistries.func_239770_b_();
        WorldSettingsImport<INBT> worldsettingsimport = WorldSettingsImport.func_244335_a(NBTDynamicOps.field_210820_a, IResourceManager.Instance.INSTANCE, dynamicregistries$impl);
        IServerConfiguration iserverconfiguration = p_237330_0_.func_237284_a_(worldsettingsimport, DatapackCodec.field_234880_a_);
-@@ -76,11 +76,11 @@
+@@ -76,11 +_,11 @@
     private static void func_237329_a_(SaveFormat.LevelSave p_237329_0_) {
        File file1 = p_237329_0_.func_237285_a_(FolderName.field_237249_e_).toFile();
        if (!file1.exists()) {
@@ -32,7 +32,7 @@
           }
  
        }
-@@ -110,13 +110,13 @@
+@@ -110,13 +_,13 @@
                    CompoundNBT compoundnbt;
                    try (DataInputStream datainputstream = regionfile.func_222666_a(chunkpos)) {
                       if (datainputstream == null) {
@@ -48,7 +48,7 @@
                       continue;
                    }
  
-@@ -140,7 +140,7 @@
+@@ -140,7 +_,7 @@
              }
           }
        } catch (IOException ioexception1) {
