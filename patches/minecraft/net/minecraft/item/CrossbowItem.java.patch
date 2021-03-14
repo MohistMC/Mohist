@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/CrossbowItem.java
 +++ b/net/minecraft/item/CrossbowItem.java
-@@ -99,6 +99,12 @@
+@@ -99,6 +_,12 @@
              itemstack1 = itemstack.func_77946_l();
           }
  
@@ -13,7 +13,7 @@
           if (!func_220023_a(p_220021_0_, p_220021_1_, itemstack, k > 0, flag)) {
              return false;
           }
-@@ -209,10 +215,25 @@
+@@ -209,10 +_,25 @@
              projectileentity.func_70186_c((double)vector3f.func_195899_a(), (double)vector3f.func_195900_b(), (double)vector3f.func_195902_c(), p_220016_7_, p_220016_8_);
           }
  

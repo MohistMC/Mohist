@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/DebugLoggingPrintStream.java
 +++ b/net/minecraft/server/DebugLoggingPrintStream.java
-@@ -11,6 +11,6 @@
+@@ -11,6 +_,6 @@
     protected void func_179882_a(String p_179882_1_) {
        StackTraceElement[] astacktraceelement = Thread.currentThread().getStackTrace();
        StackTraceElement stacktraceelement = astacktraceelement[Math.min(3, astacktraceelement.length)];

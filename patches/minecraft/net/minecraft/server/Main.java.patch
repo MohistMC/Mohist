@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.server;
  
  import com.google.common.collect.ImmutableSet;
@@ -8,7 +8,7 @@
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-@@ -11,6 +12,7 @@
+@@ -11,6 +_,7 @@
  import java.net.Proxy;
  import java.nio.file.Path;
  import java.nio.file.Paths;
@@ -16,7 +16,7 @@
  import java.util.Optional;
  import java.util.concurrent.CompletableFuture;
  import java.util.function.BooleanSupplier;
-@@ -31,6 +33,7 @@
+@@ -31,6 +_,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
  import net.minecraft.util.RegistryKey;
@@ -24,7 +24,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -52,6 +55,8 @@
+@@ -52,6 +_,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -33,7 +33,7 @@
  public class Main {
     private static final Logger field_240759_a_ = LogManager.getLogger();
  
-@@ -71,31 +76,57 @@
+@@ -71,31 +_,57 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
@@ -99,7 +99,7 @@
              return;
           }
  
-@@ -105,24 +136,46 @@
+@@ -105,24 +_,46 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
           String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
@@ -148,7 +148,7 @@
              resourcepacklist.close();
              return;
           }
-@@ -142,6 +195,8 @@
+@@ -142,6 +_,8 @@
                 dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
              }
  
@@ -157,7 +157,7 @@
              iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
           }
  
-@@ -159,28 +214,25 @@
+@@ -159,28 +_,25 @@
              dedicatedserver1.func_71208_b(optionset.valueOf(optionspec11));
              dedicatedserver1.func_71204_b(optionset.has(optionspec2));
              dedicatedserver1.func_213208_c(optionset.valueOf(optionspec12));
@@ -189,7 +189,7 @@
        WorldOptimizer worldoptimizer = new WorldOptimizer(p_240761_0_, p_240761_1_, p_240761_4_, p_240761_2_);
        ITextComponent itextcomponent = null;
  
-@@ -194,7 +246,7 @@
+@@ -194,7 +_,7 @@
           int i = worldoptimizer.func_212211_j();
           if (i > 0) {
              int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();

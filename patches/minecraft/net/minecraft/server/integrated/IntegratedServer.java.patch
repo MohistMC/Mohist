@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -13,6 +13,7 @@
+@@ -13,6 +_,7 @@
  import net.minecraft.client.ClientBrandRetriever;
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.multiplayer.LanServerPingThread;
@@ -8,7 +8,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.profiler.IProfiler;
-@@ -31,6 +32,7 @@
+@@ -31,6 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -16,7 +16,7 @@
  
  @OnlyIn(Dist.CLIENT)
  public class IntegratedServer extends MinecraftServer {
-@@ -56,9 +58,10 @@
+@@ -56,9 +_,10 @@
        this.func_71188_g(true);
        this.func_71245_h(true);
        this.func_244801_P();
@@ -28,7 +28,7 @@
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
-@@ -92,6 +95,11 @@
+@@ -92,6 +_,11 @@
        return true;
     }
  
@@ -40,7 +40,7 @@
     public File func_71238_n() {
        return this.field_71349_l.field_71412_D;
     }
-@@ -172,6 +180,7 @@
+@@ -172,6 +_,7 @@
     }
  
     public void func_71263_m(boolean p_71263_1_) {

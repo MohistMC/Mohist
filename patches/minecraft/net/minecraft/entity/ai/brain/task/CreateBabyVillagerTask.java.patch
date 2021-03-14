@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/CreateBabyVillagerTask.java
 +++ b/net/minecraft/entity/ai/brain/task/CreateBabyVillagerTask.java
-@@ -102,6 +102,11 @@
+@@ -102,6 +_,11 @@
  
     private Optional<VillagerEntity> func_242307_b(ServerWorld p_242307_1_, VillagerEntity p_242307_2_, VillagerEntity p_242307_3_) {
        VillagerEntity villagerentity = p_242307_2_.func_241840_a(p_242307_1_, p_242307_3_);
@@ -12,7 +12,7 @@
        if (villagerentity == null) {
           return Optional.empty();
        } else {
-@@ -109,7 +114,7 @@
+@@ -109,7 +_,7 @@
           p_242307_3_.func_70873_a(6000);
           villagerentity.func_70873_a(-24000);
           villagerentity.func_70012_b(p_242307_2_.func_226277_ct_(), p_242307_2_.func_226278_cu_(), p_242307_2_.func_226281_cx_(), 0.0F, 0.0F);

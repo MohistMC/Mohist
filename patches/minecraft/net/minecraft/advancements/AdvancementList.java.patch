@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/AdvancementList.java
 +++ b/net/minecraft/advancements/AdvancementList.java
-@@ -29,7 +29,7 @@
+@@ -29,7 +_,7 @@
           this.func_192090_a(advancement);
        }
  
@@ -9,7 +9,7 @@
        this.field_192092_b.remove(p_192090_1_.func_192067_g());
        if (p_192090_1_.func_192070_b() == null) {
           this.field_192093_c.remove(p_192090_1_);
-@@ -50,7 +50,7 @@
+@@ -50,7 +_,7 @@
        for(ResourceLocation resourcelocation : p_192085_1_) {
           Advancement advancement = this.field_192092_b.get(resourcelocation);
           if (advancement == null) {
@@ -18,7 +18,7 @@
           } else {
              this.func_192090_a(advancement);
           }
-@@ -90,13 +90,14 @@
+@@ -90,13 +_,14 @@
  
           if (!flag) {
              for(Entry<ResourceLocation, Advancement.Builder> entry1 : p_192083_1_.entrySet()) {

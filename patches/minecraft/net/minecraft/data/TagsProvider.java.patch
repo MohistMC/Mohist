@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/TagsProvider.java
 +++ b/net/minecraft/data/TagsProvider.java
-@@ -28,10 +28,28 @@
+@@ -28,10 +_,28 @@
     protected final DataGenerator field_200433_a;
     protected final Registry<T> field_200435_c;
     protected final Map<ResourceLocation, ITag.Builder> field_200434_b = Maps.newLinkedHashMap();
@@ -29,7 +29,7 @@
     }
  
     protected abstract void func_200432_c();
-@@ -47,12 +65,14 @@
+@@ -47,12 +_,14 @@
           return this.field_200435_c.func_241873_b(p_240527_1_).orElse((T)null);
        };
        this.field_200434_b.forEach((p_240524_4_, p_240524_5_) -> {
@@ -45,7 +45,7 @@
  
              try {
                 String s = field_200437_e.toJson((JsonElement)jsonobject);
-@@ -67,27 +87,43 @@
+@@ -67,27 +_,43 @@
  
                 p_200398_1_.func_208316_a(path, s1);
              } catch (IOException ioexception) {
@@ -92,7 +92,7 @@
        private final ITag.Builder field_240528_a_;
        private final Registry<T> field_240529_b_;
        private final String field_240530_c_;
-@@ -114,6 +150,19 @@
+@@ -114,6 +_,19 @@
              this.field_240528_a_.func_232961_a_(p_240533_1_, this.field_240530_c_);
           });
           return this;

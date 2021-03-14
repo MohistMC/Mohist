@@ -1,6 +1,6 @@
 --- a/net/minecraft/stats/ServerStatisticsManager.java
 +++ b/net/minecraft/stats/ServerStatisticsManager.java
-@@ -43,28 +43,37 @@
+@@ -43,28 +_,37 @@
     public ServerStatisticsManager(MinecraftServer p_i45306_1_, File p_i45306_2_) {
        this.field_150890_c = p_i45306_1_;
        this.field_150887_d = p_i45306_2_;
@@ -41,7 +41,7 @@
        super.func_150873_a(p_150873_1_, p_150873_2_, p_150873_3_);
        this.field_150888_e.add(p_150873_2_);
     }
-@@ -80,7 +89,7 @@
+@@ -80,7 +_,7 @@
           jsonreader.setLenient(false);
           JsonElement jsonelement = Streams.parse(jsonreader);
           if (jsonelement.isJsonNull()) {
@@ -50,7 +50,7 @@
              return;
           }
  
-@@ -103,21 +112,21 @@
+@@ -103,21 +_,21 @@
                             Util.func_215077_a(this.func_219728_a(p_219731_3_, s1), (p_219730_3_) -> {
                                this.field_150875_a.put(p_219730_3_, compoundnbt2.func_74762_e(s1));
                             }, () -> {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/Structure.java
 +++ b/net/minecraft/world/gen/feature/structure/Structure.java
-@@ -38,7 +38,7 @@
+@@ -38,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     public static final BiMap<String, Structure<?>> field_236365_a_ = HashBiMap.create();
     private static final Map<Structure<?>, GenerationStage.Decoration> field_236385_u_ = Maps.newHashMap();
     private static final Logger field_208204_b = LogManager.getLogger();
-@@ -94,7 +94,7 @@
+@@ -94,7 +_,7 @@
        } else {
           Structure<?> structure = Registry.field_218361_B.func_82594_a(new ResourceLocation(s.toLowerCase(Locale.ROOT)));
           if (structure == null) {
@@ -18,7 +18,7 @@
              return null;
           } else {
              int i = p_236393_1_.func_74762_e("ChunkX");
-@@ -113,20 +113,20 @@
+@@ -113,20 +_,20 @@
                    ResourceLocation resourcelocation1 = field_242784_x.getOrDefault(resourcelocation, resourcelocation);
                    IStructurePieceType istructurepiecetype = Registry.field_218362_C.func_82594_a(resourcelocation1);
                    if (istructurepiecetype == null) {
@@ -42,7 +42,7 @@
                 return null;
              }
           }
-@@ -237,11 +237,16 @@
+@@ -237,11 +_,16 @@
     }
  
     public List<MobSpawnInfo.Spawners> func_202279_e() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/ChunkManager.java
 +++ b/net/minecraft/world/server/ChunkManager.java
-@@ -12,6 +12,7 @@
+@@ -12,6 +_,7 @@
  import it.unimi.dsi.fastutil.longs.Long2ByteMap;
  import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
  import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
@@ -8,7 +8,7 @@
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
  import it.unimi.dsi.fastutil.longs.LongSet;
-@@ -55,6 +56,7 @@
+@@ -55,6 +_,7 @@
  import net.minecraft.network.play.server.SUpdateChunkPositionPacket;
  import net.minecraft.network.play.server.SUpdateLightPacket;
  import net.minecraft.profiler.IProfiler;
@@ -16,7 +16,7 @@
  import net.minecraft.util.CSVWriter;
  import net.minecraft.util.ClassInheritanceMultiMap;
  import net.minecraft.util.Util;
-@@ -91,12 +93,14 @@
+@@ -91,12 +_,14 @@
  import org.apache.commons.lang3.mutable.MutableBoolean;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -32,7 +32,7 @@
     private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219253_g = new Long2ObjectLinkedOpenHashMap<>();
     private final LongSet field_219254_h = new LongOpenHashSet();
     private final ServerWorld field_219255_i;
-@@ -110,17 +114,39 @@
+@@ -110,17 +_,39 @@
     private final ChunkTaskPriorityQueueSorter field_219263_q;
     private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219264_r;
     private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219265_s;
@@ -75,7 +75,7 @@
     public ChunkManager(ServerWorld p_i232602_1_, SaveFormat.LevelSave p_i232602_2_, DataFixer p_i232602_3_, TemplateManager p_i232602_4_, Executor p_i232602_5_, ThreadTaskExecutor<Runnable> p_i232602_6_, IChunkLightProvider p_i232602_7_, ChunkGenerator p_i232602_8_, IChunkStatusListener p_i232602_9_, Supplier<DimensionSavedDataManager> p_i232602_10_, int p_i232602_11_, boolean p_i232602_12_) {
        super(new File(p_i232602_2_.func_237291_a_(p_i232602_1_.func_234923_W_()), "region"), p_i232602_3_, p_i232602_12_);
        this.field_219269_w = p_i232602_4_;
-@@ -343,7 +369,7 @@
+@@ -343,7 +_,7 @@
              return true;
           });
           this.func_227079_i_();
@@ -84,7 +84,7 @@
        } else {
           this.field_219252_f.values().stream().filter(ChunkHolder::func_219289_k).forEach((p_222965_1_) -> {
              IChunk ichunk = p_222965_1_.func_219302_f().getNow((IChunk)null);
-@@ -357,6 +383,8 @@
+@@ -357,6 +_,8 @@
  
     }
  
@@ -93,7 +93,7 @@
     protected void func_219204_a(BooleanSupplier p_219204_1_) {
        IProfiler iprofiler = this.field_219255_i.func_217381_Z();
        iprofiler.func_76320_a("poi");
-@@ -400,6 +428,7 @@
+@@ -400,6 +_,7 @@
              if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
                 if (p_219185_5_ instanceof Chunk) {
                    ((Chunk)p_219185_5_).func_177417_c(false);
@@ -101,7 +101,7 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
-@@ -482,7 +511,7 @@
+@@ -482,7 +_,7 @@
                    return Either.left(ichunk);
                 }
  
@@ -110,7 +110,7 @@
              }
           } catch (ReportedException reportedexception) {
              Throwable throwable = reportedexception.getCause();
-@@ -491,9 +520,9 @@
+@@ -491,9 +_,9 @@
                 throw reportedexception;
              }
  
@@ -122,7 +122,7 @@
           }
  
           this.func_241089_g_(p_223172_1_);
-@@ -601,6 +630,7 @@
+@@ -601,6 +_,7 @@
                 if (list != null) {
                    list.forEach(chunk::func_76622_b);
                 }
@@ -130,7 +130,7 @@
              }
  
              return chunk;
-@@ -678,11 +708,12 @@
+@@ -678,11 +_,12 @@
  
              this.field_219255_i.func_217381_Z().func_230035_c_("chunkSave");
              CompoundNBT compoundnbt = ChunkSerializer.func_222645_a(this.field_219255_i, p_219229_1_);
@@ -144,7 +144,7 @@
              return false;
           }
        }
-@@ -701,7 +732,7 @@
+@@ -701,7 +_,7 @@
                 return false;
              }
           } catch (Exception exception) {
@@ -153,7 +153,7 @@
              this.func_241089_g_(p_241090_1_);
              return false;
           }
-@@ -734,6 +765,7 @@
+@@ -734,6 +_,7 @@
  
     protected void func_219199_a(ServerPlayerEntity p_219199_1_, ChunkPos p_219199_2_, IPacket<?>[] p_219199_3_, boolean p_219199_4_, boolean p_219199_5_) {
        if (p_219199_1_.field_70170_p == this.field_219255_i) {
@@ -161,7 +161,7 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
-@@ -806,9 +838,20 @@
+@@ -806,9 +_,20 @@
     }
  
     boolean func_219243_d(ChunkPos p_219243_1_) {
@@ -184,7 +184,7 @@
        });
     }
  
-@@ -942,9 +985,10 @@
+@@ -942,9 +_,10 @@
     }
  
     protected void func_219210_a(Entity p_219210_1_) {
@@ -196,7 +196,7 @@
           int j = entitytype.func_220332_l();
           if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
              throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
-@@ -1077,15 +1121,30 @@
+@@ -1077,15 +_,30 @@
        });
     }
  
@@ -229,7 +229,7 @@
           this.field_219403_c = p_i50468_2_;
           this.field_219404_d = p_i50468_3_;
           this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);
-@@ -1134,7 +1193,7 @@
+@@ -1134,7 +_,7 @@
  
        public void func_219400_b(ServerPlayerEntity p_219400_1_) {
           if (p_219400_1_ != this.field_219403_c) {
@@ -238,7 +238,7 @@
              int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
              boolean flag = vector3d.field_72450_a >= (double)(-i) && vector3d.field_72450_a <= (double)i && vector3d.field_72449_c >= (double)(-i) && vector3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
              if (flag) {
-@@ -1146,6 +1205,16 @@
+@@ -1146,6 +_,16 @@
                       flag1 = ChunkManager.func_219215_b(chunkpos, p_219400_1_, false) <= ChunkManager.this.field_219247_A;
                    }
                 }

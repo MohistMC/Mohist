@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/merchant/villager/AbstractVillagerEntity.java
 +++ b/net/minecraft/entity/merchant/villager/AbstractVillagerEntity.java
-@@ -36,14 +36,29 @@
+@@ -36,14 +_,29 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -31,7 +31,7 @@
  
     public AbstractVillagerEntity(EntityType<? extends AbstractVillagerEntity> p_i50185_1_, World p_i50185_2_) {
        super(p_i50185_1_, p_i50185_2_);
-@@ -165,9 +180,9 @@
+@@ -165,9 +_,9 @@
     }
  
     @Nullable
@@ -43,7 +43,7 @@
     }
  
     protected void func_213750_eg() {
-@@ -234,10 +249,19 @@
+@@ -234,10 +_,19 @@
           VillagerTrades.ITrade villagertrades$itrade = p_213717_2_[integer];
           MerchantOffer merchantoffer = villagertrades$itrade.func_221182_a(this, this.field_70146_Z);
           if (merchantoffer != null) {

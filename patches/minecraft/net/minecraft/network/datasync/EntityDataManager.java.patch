@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/datasync/EntityDataManager.java
 +++ b/net/minecraft/network/datasync/EntityDataManager.java
-@@ -15,12 +15,15 @@
+@@ -15,12 +_,15 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ReportedException;
  import net.minecraft.entity.Entity;
@@ -16,7 +16,7 @@
  
  public class EntityDataManager {
     private static final Logger field_190303_a = LogManager.getLogger();
-@@ -36,11 +39,13 @@
+@@ -36,11 +_,13 @@
     }
  
     public static <T> DataParameter<T> func_187226_a(Class<? extends Entity> p_187226_0_, IDataSerializer<T> p_187226_1_) {
@@ -32,7 +32,7 @@
              }
           } catch (ClassNotFoundException classnotfoundexception) {
           }
-@@ -123,8 +128,18 @@
+@@ -123,8 +_,18 @@
           dataentry.func_187208_a(true);
           this.field_187237_f = true;
        }

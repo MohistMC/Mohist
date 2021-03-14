@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/ZombifiedPiglinEntity.java
 +++ b/net/minecraft/entity/monster/ZombifiedPiglinEntity.java
-@@ -4,6 +4,7 @@
+@@ -4,6 +_,7 @@
  import java.util.UUID;
  import javax.annotation.Nullable;
  import net.minecraft.block.Blocks;
@@ -8,7 +8,7 @@
  import net.minecraft.entity.EntityType;
  import net.minecraft.entity.IAngerable;
  import net.minecraft.entity.LivingEntity;
-@@ -36,6 +37,7 @@
+@@ -36,6 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -16,7 +16,7 @@
  
  public class ZombifiedPiglinEntity extends ZombieEntity implements IAngerable {
     private static final UUID field_234344_b_ = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
-@@ -133,7 +135,7 @@
+@@ -133,7 +_,7 @@
        }).filter((p_241406_1_) -> {
           return !p_241406_1_.func_184191_r(this.func_70638_az());
        }).forEach((p_241405_1_) -> {
@@ -25,7 +25,7 @@
        });
     }
  
-@@ -141,21 +143,30 @@
+@@ -141,21 +_,30 @@
        this.func_184185_a(SoundEvents.field_232847_rN_, this.func_70599_aP() * 2.0F, this.func_70647_i() * 1.8F);
     }
  
@@ -62,7 +62,7 @@
     }
  
     public static boolean func_234351_b_(EntityType<ZombifiedPiglinEntity> p_234351_0_, IWorld p_234351_1_, SpawnReason p_234351_2_, BlockPos p_234351_3_, Random p_234351_4_) {
-@@ -173,6 +184,7 @@
+@@ -173,6 +_,7 @@
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
        super.func_70037_a(p_70037_1_);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/dispenser/BeehiveDispenseBehavior.java
 +++ b/net/minecraft/dispenser/BeehiveDispenseBehavior.java
-@@ -17,13 +17,36 @@
+@@ -17,13 +_,36 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -38,7 +38,7 @@
           if (this.func_239795_a_() && p_82487_2_.func_96631_a(1, world.func_201674_k(), (ServerPlayerEntity)null)) {
              p_82487_2_.func_190920_e(0);
           }
-@@ -47,11 +70,16 @@
+@@ -47,11 +_,16 @@
        return false;
     }
  

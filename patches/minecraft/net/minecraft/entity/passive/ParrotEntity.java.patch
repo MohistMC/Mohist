@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/ParrotEntity.java
 +++ b/net/minecraft/entity/passive/ParrotEntity.java
-@@ -62,6 +62,8 @@
+@@ -62,6 +_,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class ParrotEntity extends ShoulderRidingEntity implements IFlyingAnimal {
     private static final DataParameter<Integer> field_192013_bG = EntityDataManager.func_187226_a(ParrotEntity.class, DataSerializers.field_187192_b);
-@@ -237,7 +239,7 @@
+@@ -237,7 +_,7 @@
           }
  
           if (!this.field_70170_p.field_72995_K) {
@@ -18,7 +18,7 @@
                 this.func_193101_c(p_230254_1_);
                 this.field_70170_p.func_72960_a(this, (byte)7);
              } else {
-@@ -251,7 +253,7 @@
+@@ -251,7 +_,7 @@
              itemstack.func_190918_g(1);
           }
  
@@ -27,7 +27,7 @@
           if (p_230254_1_.func_184812_l_() || !this.func_190530_aW()) {
              this.func_70097_a(DamageSource.func_76365_a(p_230254_1_), Float.MAX_VALUE);
           }
-@@ -349,7 +351,7 @@
+@@ -349,7 +_,7 @@
     }
  
     public boolean func_70104_M() {
@@ -36,7 +36,7 @@
     }
  
     protected void func_82167_n(Entity p_82167_1_) {
-@@ -362,7 +364,7 @@
+@@ -362,7 +_,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {

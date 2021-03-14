@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/layer/BiomeLayer.java
 +++ b/net/minecraft/world/gen/layer/BiomeLayer.java
-@@ -10,12 +10,13 @@
+@@ -10,12 +_,13 @@
     private static final int[] field_202746_t = new int[]{4, 3, 5, 1};
     private static final int[] field_202747_u = new int[]{12, 12, 12, 30};
     private int[] field_151623_c = field_202744_r;
@@ -18,7 +18,7 @@
     }
  
     public int func_202726_a(INoiseRandom p_202726_1_, int p_202726_2_) {
-@@ -28,26 +29,39 @@
+@@ -28,26 +_,39 @@
                 return p_202726_1_.func_202696_a(3) == 0 ? 39 : 38;
              }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/ExperienceBottleEntity.java
 +++ b/net/minecraft/entity/item/ExperienceBottleEntity.java
-@@ -9,6 +9,7 @@
+@@ -9,6 +_,7 @@
  import net.minecraft.potion.Potions;
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.world.World;
@@ -8,7 +8,7 @@
  
  public class ExperienceBottleEntity extends ProjectileItemEntity {
     public ExperienceBottleEntity(EntityType<? extends ExperienceBottleEntity> p_i50152_1_, World p_i50152_2_) {
-@@ -34,8 +35,17 @@
+@@ -34,8 +_,17 @@
     protected void func_70227_a(RayTraceResult p_70227_1_) {
        super.func_70227_a(p_70227_1_);
        if (!this.field_70170_p.field_72995_K) {

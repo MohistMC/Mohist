@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/server/SMultiBlockChangePacket.java
 +++ b/net/minecraft/network/play/server/SMultiBlockChangePacket.java
-@@ -5,6 +5,7 @@
+@@ -5,6 +_,7 @@
  import java.util.function.BiConsumer;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
@@ -8,7 +8,7 @@
  import net.minecraft.client.network.play.IClientPlayNetHandler;
  import net.minecraft.network.IPacket;
  import net.minecraft.network.PacketBuffer;
-@@ -31,7 +32,7 @@
+@@ -31,7 +_,7 @@
  
        for(short short1 : p_i242085_2_) {
           this.field_244306_b[i] = short1;

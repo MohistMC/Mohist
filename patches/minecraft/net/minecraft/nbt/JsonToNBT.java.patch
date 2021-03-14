@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/JsonToNBT.java
 +++ b/net/minecraft/nbt/JsonToNBT.java
-@@ -77,7 +77,7 @@
+@@ -77,7 +_,7 @@
        }
     }
  
@@ -9,7 +9,7 @@
        try {
           if (field_193617_c.matcher(p_193596_1_).matches()) {
              return FloatNBT.func_229689_a_(Float.parseFloat(p_193596_1_.substring(0, p_193596_1_.length() - 1)));
-@@ -201,7 +201,7 @@
+@@ -201,7 +_,7 @@
        }
     }
  

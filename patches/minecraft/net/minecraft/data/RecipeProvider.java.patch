@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/RecipeProvider.java
 +++ b/net/minecraft/data/RecipeProvider.java
-@@ -59,6 +59,7 @@
+@@ -59,6 +_,7 @@
  
           }
        });
@@ -8,7 +8,7 @@
        func_208310_b(p_200398_1_, Advancement.Builder.func_200278_a().func_200275_a("impossible", new ImpossibleTrigger.Instance()).func_200273_b(), path.resolve("data/minecraft/advancements/recipes/root.json"));
     }
  
-@@ -76,12 +77,12 @@
+@@ -76,12 +_,12 @@
  
           p_208311_0_.func_208316_a(p_208311_2_, s1);
        } catch (IOException ioexception) {
@@ -23,7 +23,7 @@
        try {
           String s = field_200412_b.toJson((JsonElement)p_208310_1_);
           String s1 = field_208307_a.hashUnencodedChars(s).toString();
-@@ -95,12 +96,12 @@
+@@ -95,12 +_,12 @@
  
           p_208310_0_.func_208316_a(p_208310_2_, s1);
        } catch (IOException ioexception) {

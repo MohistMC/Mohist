@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -2,10 +2,12 @@
+@@ -2,10 +_,12 @@
  
  import com.google.common.base.Strings;
  import com.google.common.collect.Lists;
@@ -13,7 +13,7 @@
  import java.io.BufferedReader;
  import java.io.IOException;
  import java.io.InputStreamReader;
-@@ -35,14 +37,16 @@
+@@ -35,14 +_,16 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerPropertiesProvider;
  import net.minecraft.server.gui.MinecraftServerGui;
@@ -31,7 +31,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.DynamicRegistries;
-@@ -55,17 +59,24 @@
+@@ -55,17 +_,24 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
@@ -58,7 +58,7 @@
     @Nullable
     private MinecraftServerGui field_213225_q;
     @Nullable
-@@ -81,28 +92,65 @@
+@@ -81,28 +_,65 @@
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -132,7 +132,7 @@
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
-@@ -120,7 +168,7 @@
+@@ -120,7 +_,7 @@
        super.func_143006_e(serverproperties.field_219005_R.get());
        this.func_205741_k(serverproperties.field_219017_k);
        this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
@@ -141,7 +141,7 @@
        InetAddress inetaddress = null;
        if (!this.func_71211_k().isEmpty()) {
           inetaddress = InetAddress.getByName(this.func_71211_k());
-@@ -131,22 +179,22 @@
+@@ -131,22 +_,22 @@
        }
  
        this.func_244801_P();
@@ -172,7 +172,7 @@
        }
  
        if (this.func_152368_aE()) {
-@@ -157,45 +205,44 @@
+@@ -157,45 +_,44 @@
           return false;
        } else {
           this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
@@ -231,7 +231,7 @@
     }
  
     public boolean func_230537_U_() {
-@@ -216,21 +263,21 @@
+@@ -216,21 +_,21 @@
        if (!serverproperties.field_218989_B.isEmpty()) {
           s = serverproperties.field_218989_B;
           if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
@@ -257,7 +257,7 @@
        }
  
        return s;
-@@ -280,7 +327,6 @@
+@@ -280,7 +_,6 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -265,7 +265,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -303,11 +349,21 @@
+@@ -303,11 +_,21 @@
     }
  
     public void func_71333_ah() {
@@ -288,7 +288,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -410,7 +466,7 @@
+@@ -410,7 +_,7 @@
        return this.func_213221_d_().field_219003_P;
     }
  
@@ -297,7 +297,7 @@
        return this.func_213221_d_().field_219004_Q;
     }
  
-@@ -423,7 +479,7 @@
+@@ -423,7 +_,7 @@
  
        for(int i = 0; !flag && i <= 2; ++i) {
           if (i > 0) {
@@ -306,7 +306,7 @@
              this.func_152369_aG();
           }
  
-@@ -434,7 +490,7 @@
+@@ -434,7 +_,7 @@
  
        for(int j = 0; !flag1 && j <= 2; ++j) {
           if (j > 0) {
@@ -315,7 +315,7 @@
              this.func_152369_aG();
           }
  
-@@ -445,7 +501,7 @@
+@@ -445,7 +_,7 @@
  
        for(int k = 0; !flag2 && k <= 2; ++k) {
           if (k > 0) {
@@ -324,7 +324,7 @@
              this.func_152369_aG();
           }
  
-@@ -456,7 +512,7 @@
+@@ -456,7 +_,7 @@
  
        for(int l = 0; !flag3 && l <= 2; ++l) {
           if (l > 0) {
@@ -333,7 +333,7 @@
              this.func_152369_aG();
           }
  
-@@ -467,7 +523,7 @@
+@@ -467,7 +_,7 @@
  
        for(int i1 = 0; !flag4 && i1 <= 2; ++i1) {
           if (i1 > 0) {
@@ -342,7 +342,7 @@
              this.func_152369_aG();
           }
  
-@@ -489,13 +545,39 @@
+@@ -489,13 +_,39 @@
     }
  
     public String func_71258_A() {
@@ -384,7 +384,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -515,6 +597,11 @@
+@@ -515,6 +_,11 @@
        return false;
     }
  
@@ -396,7 +396,7 @@
     public int func_230512_b_(int p_230512_1_) {
        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
     }
-@@ -531,4 +618,10 @@
+@@ -531,4 +_,10 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
     }

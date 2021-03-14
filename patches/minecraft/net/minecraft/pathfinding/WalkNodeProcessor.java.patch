@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -386,6 +386,11 @@
+@@ -386,6 +_,11 @@
     }
  
     private PathNodeType func_237230_a_(MobEntity p_237230_1_, int p_237230_2_, int p_237230_3_, int p_237230_4_) {
@@ -12,7 +12,7 @@
        return this.field_237226_k_.computeIfAbsent(BlockPos.func_218276_a(p_237230_2_, p_237230_3_, p_237230_4_), (p_237229_5_) -> {
           return this.func_186319_a(this.field_176169_a, p_237230_2_, p_237230_3_, p_237230_4_, p_237230_1_, this.field_176168_c, this.field_176165_d, this.field_176166_e, this.func_186324_d(), this.func_186323_c());
        });
-@@ -437,6 +442,11 @@
+@@ -437,6 +_,11 @@
              for(int j1 = -1; j1 <= 1; ++j1) {
                 if (l != 0 || j1 != 0) {
                    p_237232_1_.func_181079_c(i + l, j + i1, k + j1);
@@ -24,7 +24,7 @@
                    BlockState blockstate = p_237232_0_.func_180495_p(p_237232_1_);
                    if (blockstate.func_203425_a(Blocks.field_150434_aF)) {
                       return PathNodeType.DANGER_CACTUS;
-@@ -462,10 +472,17 @@
+@@ -462,10 +_,17 @@
     }
  
     protected static PathNodeType func_237238_b_(IBlockReader p_237238_0_, BlockPos p_237238_1_) {

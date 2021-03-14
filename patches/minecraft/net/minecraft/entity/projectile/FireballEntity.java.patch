@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/FireballEntity.java
 +++ b/net/minecraft/entity/projectile/FireballEntity.java
-@@ -12,6 +12,7 @@
+@@ -12,6 +_,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,7 +8,7 @@
  
  public class FireballEntity extends AbstractFireballEntity {
     public int field_92057_e = 1;
-@@ -23,17 +24,26 @@
+@@ -23,17 +_,26 @@
     @OnlyIn(Dist.CLIENT)
     public FireballEntity(World p_i1768_1_, double p_i1768_2_, double p_i1768_4_, double p_i1768_6_, double p_i1768_8_, double p_i1768_10_, double p_i1768_12_) {
        super(EntityType.field_200767_G, p_i1768_2_, p_i1768_4_, p_i1768_6_, p_i1768_8_, p_i1768_10_, p_i1768_12_, p_i1768_1_);
@@ -37,7 +37,7 @@
           this.func_70106_y();
        }
  
-@@ -60,7 +70,8 @@
+@@ -60,7 +_,8 @@
     public void func_70037_a(CompoundNBT p_70037_1_) {
        super.func_70037_a(p_70037_1_);
        if (p_70037_1_.func_150297_b("ExplosionPower", 99)) {

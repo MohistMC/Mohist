@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/entity/projectile/FireworkRocketEntity.java
-@@ -30,17 +30,18 @@
+@@ -30,17 +_,18 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,7 +22,7 @@
     private LivingEntity field_191513_e;
  
     public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_i50164_1_, World p_i50164_2_) {
-@@ -82,6 +83,21 @@
+@@ -82,6 +_,21 @@
        this.func_212361_a(p_i231582_3_);
     }
  
@@ -44,7 +44,7 @@
     protected void func_70088_a() {
        this.field_70180_af.func_187214_a(field_184566_a, ItemStack.field_190927_a);
        this.field_70180_af.func_187214_a(field_191512_b, OptionalInt.empty());
-@@ -151,9 +167,19 @@
+@@ -151,9 +_,19 @@
        }
  
        if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
@@ -65,7 +65,7 @@
     }
  
     private void func_213893_k() {
-@@ -165,7 +191,11 @@
+@@ -165,7 +_,11 @@
     protected void func_213868_a(EntityRayTraceResult p_213868_1_) {
        super.func_213868_a(p_213868_1_);
        if (!this.field_70170_p.field_72995_K) {
@@ -78,7 +78,7 @@
        }
     }
  
-@@ -173,7 +203,11 @@
+@@ -173,7 +_,11 @@
        BlockPos blockpos = new BlockPos(p_230299_1_.func_216350_a());
        this.field_70170_p.func_180495_p(blockpos).func_196950_a(this.field_70170_p, blockpos, this);
        if (!this.field_70170_p.func_201670_d() && this.func_213894_l()) {
@@ -91,7 +91,7 @@
        }
  
        super.func_230299_a_(p_230299_1_);
-@@ -197,7 +231,9 @@
+@@ -197,7 +_,9 @@
  
        if (f > 0.0F) {
           if (this.field_191513_e != null) {
@@ -101,7 +101,7 @@
           }
  
           double d0 = 5.0D;
-@@ -218,7 +254,9 @@
+@@ -218,7 +_,9 @@
  
                 if (flag) {
                    float f1 = f * (float)Math.sqrt((5.0D - (double)this.func_70032_d(livingentity)) / 5.0D);

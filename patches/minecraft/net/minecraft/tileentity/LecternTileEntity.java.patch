@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/LecternTileEntity.java
 +++ b/net/minecraft/tileentity/LecternTileEntity.java
-@@ -1,5 +1,9 @@
+@@ -1,5 +_,9 @@
  package net.minecraft.tileentity;
  
 +import java.util.ArrayList;
@@ -10,7 +10,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.LecternBlock;
-@@ -25,9 +29,58 @@
+@@ -25,9 +_,58 @@
  import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.server.ServerWorld;
@@ -72,7 +72,7 @@
        public int func_70302_i_() {
           return 1;
        }
-@@ -36,13 +89,13 @@
+@@ -36,13 +_,13 @@
           return LecternTileEntity.this.field_214050_c.func_190926_b();
        }
  
@@ -91,7 +91,7 @@
              if (LecternTileEntity.this.field_214050_c.func_190926_b()) {
                 LecternTileEntity.this.func_214042_s();
              }
-@@ -53,8 +106,8 @@
+@@ -53,8 +_,8 @@
           }
        }
  
@@ -102,7 +102,7 @@
              ItemStack itemstack = LecternTileEntity.this.field_214050_c;
              LecternTileEntity.this.field_214050_c = ItemStack.field_190927_a;
              LecternTileEntity.this.func_214042_s();
-@@ -64,26 +117,34 @@
+@@ -64,26 +_,34 @@
           }
        }
  
@@ -142,7 +142,7 @@
           return false;
        }
  
-@@ -91,13 +152,13 @@
+@@ -91,13 +_,13 @@
        }
     };
     private final IIntArray field_214049_b = new IIntArray() {
@@ -161,7 +161,7 @@
           }
  
        }
-@@ -140,7 +201,7 @@
+@@ -140,7 +_,7 @@
        this.func_70296_d();
     }
  
@@ -170,7 +170,7 @@
        int i = MathHelper.func_76125_a(p_214035_1_, 0, this.field_214052_h - 1);
        if (i != this.field_214051_g) {
           this.field_214051_g = i;
-@@ -167,6 +228,34 @@
+@@ -167,6 +_,34 @@
        return p_214047_1_;
     }
  
@@ -205,7 +205,7 @@
     private CommandSource func_214039_a(@Nullable PlayerEntity p_214039_1_) {
        String s;
        ITextComponent itextcomponent;
-@@ -179,7 +268,8 @@
+@@ -179,7 +_,8 @@
        }
  
        Vector3d vector3d = Vector3d.func_237489_a_(this.field_174879_c);
@@ -215,7 +215,7 @@
     }
  
     public boolean func_183000_F() {
-@@ -213,7 +303,7 @@
+@@ -213,7 +_,7 @@
     }
  
     public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/CampfireTileEntity.java
 +++ b/net/minecraft/tileentity/CampfireTileEntity.java
-@@ -5,6 +5,7 @@
+@@ -5,6 +_,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.CampfireBlock;
@@ -8,7 +8,7 @@
  import net.minecraft.inventory.IClearable;
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
-@@ -21,11 +22,14 @@
+@@ -21,11 +_,14 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
@@ -25,7 +25,7 @@
  
     public CampfireTileEntity() {
        super(TileEntityType.field_222488_F);
-@@ -64,7 +68,23 @@
+@@ -64,7 +_,23 @@
                    return p_213979_1_.func_77572_b(iinventory);
                 }).orElse(itemstack);
                 BlockPos blockpos = this.func_174877_v();

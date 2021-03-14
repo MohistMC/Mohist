@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -2,7 +2,6 @@
+@@ -2,7 +_,6 @@
  
  import com.google.common.collect.ImmutableMap;
  import com.google.common.collect.Maps;
@@ -8,7 +8,7 @@
  import com.google.gson.Gson;
  import com.google.gson.GsonBuilder;
  import com.google.gson.JsonElement;
-@@ -12,6 +11,7 @@
+@@ -12,6 +_,7 @@
  import java.util.Collection;
  import java.util.Collections;
  import java.util.Comparator;
@@ -16,7 +16,7 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Objects;
-@@ -38,7 +38,7 @@
+@@ -38,7 +_,7 @@
  public class RecipeManager extends JsonReloadListener {
     private static final Gson field_223401_a = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger field_199521_c = LogManager.getLogger();
@@ -25,7 +25,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,31 +47,62 @@
+@@ -47,31 +_,62 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -93,7 +93,7 @@
     }
  
     public <C extends IInventory, T extends IRecipe<C>> List<T> func_241447_a_(IRecipeType<T> p_241447_1_) {
-@@ -147,4 +178,14 @@
+@@ -147,4 +_,14 @@
        });
        this.field_199522_d = ImmutableMap.copyOf(map);
     }

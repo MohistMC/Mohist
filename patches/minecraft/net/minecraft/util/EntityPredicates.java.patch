@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/EntityPredicates.java
 +++ b/net/minecraft/util/EntityPredicates.java
-@@ -41,7 +41,7 @@
+@@ -41,7 +_,7 @@
        Team team = p_200823_0_.func_96124_cp();
        Team.CollisionRule team$collisionrule = team == null ? Team.CollisionRule.ALWAYS : team.func_186681_k();
        return (Predicate<Entity>)(team$collisionrule == Team.CollisionRule.NEVER ? Predicates.alwaysFalse() : field_180132_d.and((p_233586_3_) -> {

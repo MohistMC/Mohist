@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/EatGrassGoal.java
 +++ b/net/minecraft/entity/ai/goal/EatGrassGoal.java
-@@ -10,6 +10,7 @@
+@@ -10,6 +_,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
@@ -8,7 +8,7 @@
  
  public class EatGrassGoal extends Goal {
     private static final Predicate<BlockState> field_179505_b = BlockStateMatcher.func_177638_a(Blocks.field_150349_c);
-@@ -59,7 +60,8 @@
+@@ -59,7 +_,8 @@
        if (this.field_151502_a == 4) {
           BlockPos blockpos = this.field_151500_b.func_233580_cy_();
           if (field_179505_b.test(this.field_151501_c.func_180495_p(blockpos))) {
@@ -18,7 +18,7 @@
                 this.field_151501_c.func_175655_b(blockpos, false);
              }
  
-@@ -67,7 +69,8 @@
+@@ -67,7 +_,8 @@
           } else {
              BlockPos blockpos1 = blockpos.func_177977_b();
              if (this.field_151501_c.func_180495_p(blockpos1).func_203425_a(Blocks.field_196658_i)) {

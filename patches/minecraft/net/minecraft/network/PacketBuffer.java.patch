@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
-@@ -29,6 +29,7 @@
+@@ -29,6 +_,7 @@
  import net.minecraft.nbt.INBT;
  import net.minecraft.nbt.NBTDynamicOps;
  import net.minecraft.nbt.NBTSizeTracker;
@@ -8,7 +8,7 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
-@@ -38,8 +39,9 @@
+@@ -38,8 +_,9 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -19,7 +19,7 @@
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -292,7 +294,16 @@
+@@ -292,7 +_,16 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
@@ -37,7 +37,7 @@
           this.writeBoolean(false);
        } else {
           this.writeBoolean(true);
-@@ -300,8 +311,21 @@
+@@ -300,8 +_,21 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
@@ -61,7 +61,7 @@
           }
  
           this.func_150786_a(compoundnbt);
-@@ -317,7 +341,12 @@
+@@ -317,7 +_,12 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);

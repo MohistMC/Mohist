@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/gui/MinecraftServerGui.java
 +++ b/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -137,8 +137,10 @@
+@@ -137,8 +_,10 @@
        return jpanel;
     }
  
@@ -11,7 +11,7 @@
     }
  
     public void func_219050_b() {
-@@ -152,7 +154,11 @@
+@@ -152,7 +_,11 @@
        this.field_219051_e.forEach(Runnable::run);
     }
  
@@ -23,7 +23,7 @@
        if (!SwingUtilities.isEventDispatchThread()) {
           SwingUtilities.invokeLater(() -> {
              this.func_164247_a(p_164247_1_, p_164247_2_, p_164247_3_);
-@@ -166,7 +172,7 @@
+@@ -166,7 +_,7 @@
           }
  
           try {

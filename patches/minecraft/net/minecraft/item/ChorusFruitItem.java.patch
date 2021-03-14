@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ChorusFruitItem.java
 +++ b/net/minecraft/item/ChorusFruitItem.java
-@@ -8,6 +8,9 @@
+@@ -8,6 +_,9 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
@@ -10,7 +10,7 @@
  
  public class ChorusFruitItem extends Item {
     public ChorusFruitItem(Item.Properties p_i50053_1_) {
-@@ -25,6 +28,21 @@
+@@ -25,6 +_,21 @@
              double d3 = p_77654_3_.func_226277_ct_() + (p_77654_3_.func_70681_au().nextDouble() - 0.5D) * 16.0D;
              double d4 = MathHelper.func_151237_a(p_77654_3_.func_226278_cu_() + (double)(p_77654_3_.func_70681_au().nextInt(16) - 8), 0.0D, (double)(p_77654_2_.func_234938_ad_() - 1));
              double d5 = p_77654_3_.func_226281_cx_() + (p_77654_3_.func_70681_au().nextDouble() - 0.5D) * 16.0D;

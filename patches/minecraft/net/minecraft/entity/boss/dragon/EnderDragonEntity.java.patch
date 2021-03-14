@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/boss/dragon/EnderDragonEntity.java
 +++ b/net/minecraft/entity/boss/dragon/EnderDragonEntity.java
-@@ -21,16 +21,23 @@
+@@ -21,16 +_,23 @@
  import net.minecraft.entity.item.ExperienceOrbEntity;
  import net.minecraft.entity.monster.IMob;
  import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +24,7 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.EntityDamageSource;
  import net.minecraft.util.EntityPredicates;
-@@ -41,6 +48,8 @@
+@@ -41,6 +_,8 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
@@ -33,7 +33,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraft.world.end.DragonFightManager;
-@@ -51,6 +60,10 @@
+@@ -51,6 +_,10 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -44,7 +44,7 @@
  
  public class EnderDragonEntity extends MobEntity implements IMob {
     private static final Logger field_184675_bH = LogManager.getLogger();
-@@ -58,7 +71,7 @@
+@@ -58,7 +_,7 @@
     private static final EntityPredicate field_213405_bO = (new EntityPredicate()).func_221013_a(64.0D);
     public final double[][] field_70979_e = new double[64][3];
     public int field_70976_f = -1;
@@ -53,7 +53,7 @@
     public final EnderDragonPartEntity field_70986_h;
     private final EnderDragonPartEntity field_184673_bv;
     private final EnderDragonPartEntity field_70987_i;
-@@ -83,6 +96,8 @@
+@@ -83,6 +_,8 @@
     private final int[] field_184681_bN = new int[24];
     private final PathHeap field_184682_bO = new PathHeap();
  
@@ -62,7 +62,7 @@
     public EnderDragonEntity(EntityType<? extends EnderDragonEntity> p_i50230_1_, World p_i50230_2_) {
        super(EntityType.field_200802_p, p_i50230_2_);
        this.field_70986_h = new EnderDragonPartEntity(this, "head", 1.0F, 1.0F);
-@@ -210,7 +225,7 @@
+@@ -210,7 +_,7 @@
                 }
  
                 Vector3d vector3d = iphase.func_188650_g();
@@ -71,7 +71,7 @@
                    double d8 = vector3d.field_72450_a - this.func_226277_ct_();
                    double d9 = vector3d.field_72448_b - this.func_226278_cu_();
                    double d10 = vector3d.field_72449_c - this.func_226281_cx_();
-@@ -337,7 +352,14 @@
+@@ -337,7 +_,14 @@
           if (this.field_70992_bH.field_70128_L) {
              this.field_70992_bH = null;
           } else if (this.field_70173_aa % 10 == 0 && this.func_110143_aJ() < this.func_110138_aP()) {
@@ -87,7 +87,7 @@
           }
        }
  
-@@ -402,15 +424,22 @@
+@@ -402,15 +_,22 @@
        boolean flag = false;
        boolean flag1 = false;
  
@@ -113,7 +113,7 @@
                    } else {
                       flag = true;
                    }
-@@ -419,6 +448,44 @@
+@@ -419,6 +_,44 @@
           }
        }
  
@@ -158,7 +158,7 @@
        if (flag1) {
           BlockPos blockpos1 = new BlockPos(i + this.field_70146_Z.nextInt(l - i + 1), j + this.field_70146_Z.nextInt(i1 - j + 1), k + this.field_70146_Z.nextInt(j1 - k + 1));
           this.field_70170_p.func_217379_c(2008, blockpos1, 0);
-@@ -507,7 +574,24 @@
+@@ -507,7 +_,24 @@
           }
  
           if (this.field_70995_bG == 1 && !this.func_174814_R()) {
@@ -184,7 +184,7 @@
           }
        }
  
-@@ -686,7 +770,7 @@
+@@ -686,7 +_,7 @@
        if (pathpoint1 == pathpoint4) {
           return null;
        } else {
@@ -193,7 +193,7 @@
           if (p_184666_3_ != null) {
              p_184666_3_.field_75841_h = pathpoint1;
              pathpoint1 = p_184666_3_;
-@@ -712,6 +796,7 @@
+@@ -712,6 +_,7 @@
     public void func_213281_b(CompoundNBT p_213281_1_) {
        super.func_213281_b(p_213281_1_);
        p_213281_1_.func_74768_a("DragonPhase", this.field_184677_bJ.func_188756_a().func_188652_i().func_188740_b());
@@ -201,7 +201,7 @@
     }
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
-@@ -719,7 +804,7 @@
+@@ -719,7 +_,7 @@
        if (p_70037_1_.func_74764_b("DragonPhase")) {
           this.field_184677_bJ.func_188758_a(PhaseType.func_188738_a(p_70037_1_.func_74762_e("DragonPhase")));
        }
@@ -210,7 +210,7 @@
     }
  
     public void func_70623_bb() {
-@@ -841,5 +926,15 @@
+@@ -841,5 +_,15 @@
  
     public boolean func_184222_aU() {
        return false;

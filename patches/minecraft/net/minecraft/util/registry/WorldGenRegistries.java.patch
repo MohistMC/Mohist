@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/registry/WorldGenRegistries.java
 +++ b/net/minecraft/util/registry/WorldGenRegistries.java
-@@ -44,16 +44,20 @@
+@@ -44,16 +_,20 @@
     public static final Registry<StructureProcessorList> field_243655_g = func_243667_a(Registry.field_243554_aw, () -> {
        return ProcessorLists.field_244102_b;
     });
@@ -24,7 +24,7 @@
     private static <T> Registry<T> func_243665_a(RegistryKey<? extends Registry<T>> p_243665_0_, Lifecycle p_243665_1_, Supplier<T> p_243665_2_) {
        return func_243666_a(p_243665_0_, new SimpleRegistry<>(p_243665_0_, p_243665_1_), p_243665_2_, p_243665_1_);
     }
-@@ -83,7 +87,7 @@
+@@ -83,7 +_,7 @@
     static {
        field_243659_k.forEach((p_243668_0_, p_243668_1_) -> {
           if (p_243668_1_.get() == null) {

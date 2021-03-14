@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/ServerRecipeBook.java
 +++ b/net/minecraft/item/crafting/ServerRecipeBook.java
-@@ -16,6 +16,7 @@
+@@ -16,6 +_,7 @@
  import net.minecraft.util.ResourceLocationException;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -8,7 +8,7 @@
  
  public class ServerRecipeBook extends RecipeBook {
     private static final Logger field_192828_d = LogManager.getLogger();
-@@ -26,7 +27,7 @@
+@@ -26,7 +_,7 @@
  
        for(IRecipe<?> irecipe : p_197926_1_) {
           ResourceLocation resourcelocation = irecipe.func_199560_c();
@@ -17,7 +17,7 @@
              this.func_209118_a(resourcelocation);
              this.func_209120_c(resourcelocation);
              list.add(resourcelocation);
-@@ -57,6 +58,7 @@
+@@ -57,6 +_,7 @@
     }
  
     private void func_194081_a(SRecipeBookPacket.State p_194081_1_, ServerPlayerEntity p_194081_2_, List<ResourceLocation> p_194081_3_) {
@@ -25,7 +25,7 @@
        p_194081_2_.field_71135_a.func_147359_a(new SRecipeBookPacket(p_194081_1_, p_194081_3_, Collections.emptyList(), this.func_242139_a()));
     }
  
-@@ -96,12 +98,12 @@
+@@ -96,12 +_,12 @@
              ResourceLocation resourcelocation = new ResourceLocation(s);
              Optional<? extends IRecipe<?>> optional = p_223417_3_.func_215367_a(resourcelocation);
              if (!optional.isPresent()) {

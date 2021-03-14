@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/IRecipe.java
 +++ b/net/minecraft/item/crafting/IRecipe.java
-@@ -21,9 +21,9 @@
+@@ -21,9 +_,9 @@
        NonNullList<ItemStack> nonnulllist = NonNullList.func_191197_a(p_179532_1_.func_70302_i_(), ItemStack.field_190927_a);
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
@@ -13,7 +13,7 @@
           }
        }
  
-@@ -51,4 +51,6 @@
+@@ -51,4 +_,6 @@
     IRecipeSerializer<?> func_199559_b();
  
     IRecipeType<?> func_222127_g();

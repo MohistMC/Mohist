@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
-@@ -19,9 +19,11 @@
+@@ -19,9 +_,11 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -13,7 +13,7 @@
     private static final DataParameter<ITextComponent> field_184274_b = EntityDataManager.func_187226_a(CommandBlockMinecartEntity.class, DataSerializers.field_187195_e);
     private final CommandBlockLogic field_145824_a = new CommandBlockMinecartEntity.MinecartCommandLogic();
     private int field_145823_b;
-@@ -73,6 +75,8 @@
+@@ -73,6 +_,8 @@
     }
  
     public ActionResultType func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
@@ -22,7 +22,7 @@
        return this.field_145824_a.func_175574_a(p_184230_1_);
     }
  
-@@ -116,5 +120,12 @@
+@@ -116,5 +_,12 @@
        public CommandSource func_195042_h() {
           return new CommandSource(this, CommandBlockMinecartEntity.this.func_213303_ch(), CommandBlockMinecartEntity.this.func_189653_aC(), this.func_195043_d(), 2, this.func_207404_l().getString(), CommandBlockMinecartEntity.this.func_145748_c_(), this.func_195043_d().func_73046_m(), CommandBlockMinecartEntity.this);
        }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/trees/Tree.java
 +++ b/net/minecraft/block/trees/Tree.java
-@@ -4,13 +4,16 @@
+@@ -4,13 +_,16 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -17,7 +17,7 @@
  
  public abstract class Tree {
     @Nullable
-@@ -21,6 +24,7 @@
+@@ -21,6 +_,7 @@
        if (configuredfeature == null) {
           return false;
        } else {
@@ -25,7 +25,7 @@
           p_230339_1_.func_180501_a(p_230339_3_, Blocks.field_150350_a.func_176223_P(), 4);
           configuredfeature.field_222738_b.func_227373_a_();
           if (configuredfeature.func_242765_a(p_230339_1_, p_230339_2_, p_230339_5_, p_230339_3_)) {
-@@ -41,4 +45,47 @@
+@@ -41,4 +_,47 @@
  
        return false;
     }

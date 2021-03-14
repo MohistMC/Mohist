@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/EntityClassification.java
 +++ b/net/minecraft/entity/EntityClassification.java
-@@ -6,7 +6,7 @@
+@@ -6,7 +_,7 @@
  import java.util.stream.Collectors;
  import net.minecraft.util.IStringSerializable;
  
@@ -9,7 +9,7 @@
     MONSTER("monster", 70, false, false, 128),
     CREATURE("creature", 10, true, true, 128),
     AMBIENT("ambient", 15, true, false, 128),
-@@ -14,7 +14,7 @@
+@@ -14,7 +_,7 @@
     WATER_AMBIENT("water_ambient", 20, true, false, 64),
     MISC("misc", -1, true, true, 128);
  
@@ -18,7 +18,7 @@
     private static final Map<String, EntityClassification> field_220364_f = Arrays.stream(values()).collect(Collectors.toMap(EntityClassification::func_220363_a, (p_220362_0_) -> {
        return p_220362_0_;
     }));
-@@ -55,6 +55,16 @@
+@@ -55,6 +_,16 @@
  
     public boolean func_82705_e() {
        return this.field_82707_i;

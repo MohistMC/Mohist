@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/IWorldPosCallable.java
 +++ b/net/minecraft/util/IWorldPosCallable.java
-@@ -3,10 +3,35 @@
+@@ -3,10 +_,35 @@
  import java.util.Optional;
  import java.util.function.BiConsumer;
  import java.util.function.BiFunction;
@@ -36,7 +36,7 @@
     IWorldPosCallable field_221489_a = new IWorldPosCallable() {
        public <T> Optional<T> func_221484_a(BiFunction<World, BlockPos, T> p_221484_1_) {
           return Optional.empty();
-@@ -15,6 +40,18 @@
+@@ -15,6 +_,18 @@
  
     static IWorldPosCallable func_221488_a(final World p_221488_0_, final BlockPos p_221488_1_) {
        return new IWorldPosCallable() {

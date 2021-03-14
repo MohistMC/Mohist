@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CoralWallFanBlock.java
 +++ b/net/minecraft/block/CoralWallFanBlock.java
-@@ -7,6 +7,7 @@
+@@ -7,6 +_,7 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class CoralWallFanBlock extends DeadCoralWallFanBlock {
     private final Block field_211886_c;
-@@ -22,6 +23,11 @@
+@@ -22,6 +_,11 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (!func_212557_b_(p_225534_1_, p_225534_2_, p_225534_3_)) {

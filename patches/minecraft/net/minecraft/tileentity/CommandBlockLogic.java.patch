@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/CommandBlockLogic.java
 +++ b/net/minecraft/tileentity/CommandBlockLogic.java
-@@ -22,6 +22,7 @@
+@@ -22,6 +_,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,7 +8,7 @@
  
  public abstract class CommandBlockLogic implements ICommandSource {
     private static final SimpleDateFormat field_145766_a = new SimpleDateFormat("HH:mm:ss");
-@@ -34,6 +35,11 @@
+@@ -34,6 +_,11 @@
     private ITextComponent field_145762_d;
     private String field_145763_e = "";
     private ITextComponent field_145761_f = field_226655_c_;

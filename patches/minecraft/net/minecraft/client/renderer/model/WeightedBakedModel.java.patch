@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/WeightedBakedModel.java
 +++ b/net/minecraft/client/renderer/model/WeightedBakedModel.java
-@@ -12,7 +12,7 @@
+@@ -12,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     private final int field_177567_a;
     private final List<WeightedBakedModel.WeightedModel> field_177565_b;
     private final IBakedModel field_177566_c;
-@@ -23,14 +23,20 @@
+@@ -23,14 +_,20 @@
        this.field_177566_c = (p_i46073_1_.get(0)).field_185281_b;
     }
  
@@ -32,7 +32,7 @@
     public boolean func_177556_c() {
        return this.field_177566_c.func_177556_c();
     }
-@@ -47,8 +53,16 @@
+@@ -47,8 +_,16 @@
        return this.field_177566_c.func_177554_e();
     }
  

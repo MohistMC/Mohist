@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FlowingFluidBlock.java
 +++ b/net/minecraft/block/FlowingFluidBlock.java
-@@ -26,13 +26,15 @@
+@@ -26,13 +_,15 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,7 +17,7 @@
     public FlowingFluidBlock(FlowingFluid p_i49014_1_, AbstractBlock.Properties p_i49014_2_) {
        super(p_i49014_2_);
        this.field_204517_c = p_i49014_1_;
-@@ -45,6 +47,19 @@
+@@ -45,6 +_,19 @@
  
        this.field_212565_c.add(p_i49014_1_.func_207207_a(8, true));
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176367_b, Integer.valueOf(0)));
@@ -37,7 +37,7 @@
     }
  
     public VoxelShape func_220071_b(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
-@@ -69,6 +84,7 @@
+@@ -69,6 +_,7 @@
  
     public FluidState func_204507_t(BlockState p_204507_1_) {
        int i = p_204507_1_.func_177229_b(field_176367_b);
@@ -45,7 +45,7 @@
        return this.field_212565_c.get(Math.min(i, 8));
     }
  
-@@ -120,14 +136,20 @@
+@@ -120,14 +_,20 @@
                 BlockPos blockpos = p_204515_2_.func_177972_a(direction);
                 if (p_204515_1_.func_204610_c(blockpos).func_206884_a(FluidTags.field_206959_a)) {
                    Block block = p_204515_1_.func_204610_c(p_204515_2_).func_206889_d() ? Blocks.field_150343_Z : Blocks.field_150347_e;
@@ -70,7 +70,7 @@
                    return false;
                 }
              }
-@@ -151,6 +173,25 @@
+@@ -151,6 +_,25 @@
           return this.field_204517_c;
        } else {
           return Fluids.field_204541_a;

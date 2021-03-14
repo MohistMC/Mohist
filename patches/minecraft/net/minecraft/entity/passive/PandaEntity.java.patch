@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/PandaEntity.java
 +++ b/net/minecraft/entity/passive/PandaEntity.java
-@@ -61,6 +61,8 @@
+@@ -61,6 +_,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class PandaEntity extends AnimalEntity {
     private static final DataParameter<Integer> field_213609_bA = EntityDataManager.func_187226_a(PandaEntity.class, DataSerializers.field_187192_b);
-@@ -492,7 +494,7 @@
+@@ -492,7 +_,7 @@
     }
  
     protected void func_175445_a(ItemEntity p_175445_1_) {
@@ -18,7 +18,7 @@
           this.func_233630_a_(p_175445_1_);
           ItemStack itemstack = p_175445_1_.func_92059_d();
           this.func_184201_a(EquipmentSlotType.MAINHAND, itemstack);
-@@ -928,7 +930,7 @@
+@@ -928,7 +_,7 @@
  
        protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
           if (p_220793_1_ instanceof PandaEntity && ((PandaEntity)p_220793_1_).func_213398_dR()) {

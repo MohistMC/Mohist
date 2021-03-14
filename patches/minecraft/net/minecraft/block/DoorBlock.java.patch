@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/DoorBlock.java
 +++ b/net/minecraft/block/DoorBlock.java
-@@ -32,6 +32,7 @@
+@@ -32,6 +_,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,7 +8,7 @@
  
  public class DoorBlock extends Block {
     public static final DirectionProperty field_176520_a = HorizontalBlock.field_185512_D;
-@@ -177,8 +178,21 @@
+@@ -177,8 +_,21 @@
     }
  
     public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/SaveFormat.java
 +++ b/net/minecraft/world/storage/SaveFormat.java
-@@ -49,6 +49,7 @@
+@@ -49,6 +_,7 @@
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.registry.RegistryLookupCodec;
  import net.minecraft.util.text.TranslationTextComponent;
@@ -8,7 +8,7 @@
  import net.minecraft.world.DimensionType;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
-@@ -95,7 +96,7 @@
+@@ -95,7 +_,7 @@
           }
        }
  
@@ -17,7 +17,7 @@
        DataResult<DimensionGeneratorSettings> dataresult = DimensionGeneratorSettings.field_236201_a_.parse(dynamic1);
        return Pair.of(dataresult.resultOrPartial(Util.func_240982_a_("WorldGenSettings: ", field_215785_a::error)).orElseGet(() -> {
           Registry<DimensionType> registry = RegistryLookupCodec.func_244331_a(Registry.field_239698_ad_).codec().parse(dynamic1).resultOrPartial(Util.func_240982_a_("Dimension type registry: ", field_215785_a::error)).orElseThrow(() -> {
-@@ -129,7 +130,7 @@
+@@ -129,7 +_,7 @@
                 try {
                    flag = SessionLockManager.func_232999_b_(file1.toPath());
                 } catch (Exception exception) {
@@ -26,7 +26,7 @@
                    continue;
                 }
  
-@@ -176,12 +177,16 @@
+@@ -176,12 +_,16 @@
           Dynamic<INBT> dynamic = p_237272_1_.update(DefaultTypeReferences.LEVEL.func_219816_a(), new Dynamic<>(NBTDynamicOps.field_210820_a, compoundnbt1), i, SharedConstants.func_215069_a().getWorldVersion());
           return dynamic.get("DataPacks").result().map(SaveFormat::func_237258_a_).orElse(DatapackCodec.field_234880_a_);
        } catch (Exception exception) {
@@ -44,7 +44,7 @@
        return (p_242976_2_, p_242976_3_) -> {
           try {
              CompoundNBT compoundnbt = CompressedStreamTools.func_244263_a(p_242976_2_);
-@@ -193,9 +198,12 @@
+@@ -193,9 +_,12 @@
              Pair<DimensionGeneratorSettings, Lifecycle> pair = func_237259_a_(dynamic, p_242976_3_, i);
              VersionData versiondata = VersionData.func_237324_a_(dynamic);
              WorldSettings worldsettings = WorldSettings.func_234951_a_(dynamic, p_237270_1_);
@@ -59,7 +59,7 @@
              return null;
           }
        };
-@@ -221,7 +229,7 @@
+@@ -221,7 +_,7 @@
                 return new WorldSummary(worldsettings, versiondata, p_237267_1_.getName(), flag, p_237267_2_, file1);
              }
           } catch (Exception exception) {
@@ -68,7 +68,7 @@
              return null;
           }
        };
-@@ -255,18 +263,29 @@
+@@ -255,18 +_,29 @@
     }
  
     public SaveFormat.LevelSave func_237274_c_(String p_237274_1_) throws IOException {
@@ -103,7 +103,7 @@
           this.field_237278_b_ = SessionLockManager.func_232998_a_(this.field_237279_c_);
        }
  
-@@ -314,7 +333,7 @@
+@@ -314,7 +_,7 @@
        @Nullable
        public IServerConfiguration func_237284_a_(DynamicOps<INBT> p_237284_1_, DatapackCodec p_237284_2_) {
           this.func_237301_i_();
@@ -112,7 +112,7 @@
        }
  
        @Nullable
-@@ -335,6 +354,8 @@
+@@ -335,6 +_,8 @@
           CompoundNBT compoundnbt1 = new CompoundNBT();
           compoundnbt1.func_218657_a("Data", compoundnbt);
  
@@ -121,7 +121,7 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              CompressedStreamTools.func_244264_a(compoundnbt1, file2);
-@@ -342,7 +363,7 @@
+@@ -342,7 +_,7 @@
              File file4 = new File(file1, "level.dat");
              Util.func_240977_a_(file4, file2, file3);
           } catch (Exception exception) {
@@ -130,7 +130,7 @@
           }
  
        }
-@@ -352,19 +373,23 @@
+@@ -352,19 +_,23 @@
           return this.field_237279_c_.resolve("icon.png").toFile();
        }
  
@@ -156,7 +156,7 @@
                          Files.delete(p_visitFile_1_);
                       }
  
-@@ -391,7 +416,7 @@
+@@ -391,7 +_,7 @@
                    throw ioexception;
                 }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
 +++ b/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
-@@ -36,16 +36,24 @@
+@@ -36,16 +_,24 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
@@ -28,7 +28,7 @@
     protected final IIntArray field_214013_b = new IIntArray() {
        public int func_221476_a(int p_221476_1_) {
           switch(p_221476_1_) {
-@@ -86,11 +94,43 @@
+@@ -86,11 +_,43 @@
     private final Object2IntOpenHashMap<ResourceLocation> field_214022_n = new Object2IntOpenHashMap<>();
     protected final IRecipeType<? extends AbstractCookingRecipe> field_214014_c;
  
@@ -72,7 +72,7 @@
     public static Map<Item, Integer> func_214001_f() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        func_213996_a(map, Items.field_151129_at, 20000);
-@@ -184,13 +224,13 @@
+@@ -184,13 +_,13 @@
        return this.field_214018_j > 0;
     }
  
@@ -90,7 +90,7 @@
        this.field_214019_k = this.func_213997_a(this.field_214012_a.get(1));
        CompoundNBT compoundnbt = p_230337_2_.func_74775_l("RecipesUsed");
  
-@@ -202,9 +242,9 @@
+@@ -202,9 +_,9 @@
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
        super.func_189515_b(p_189515_1_);
@@ -103,7 +103,7 @@
        ItemStackHelper.func_191282_a(p_189515_1_, this.field_214012_a);
        CompoundNBT compoundnbt = new CompoundNBT();
        this.field_214022_n.forEach((p_235643_1_, p_235643_2_) -> {
-@@ -226,16 +266,27 @@
+@@ -226,16 +_,27 @@
           if (this.func_214006_r() || !itemstack.func_190926_b() && !this.field_214012_a.get(0).func_190926_b()) {
              IRecipe<?> irecipe = this.field_145850_b.func_199532_z().func_215371_a((IRecipeType<AbstractCookingRecipe>)this.field_214014_c, this, this.field_145850_b).orElse(null);
              if (!this.func_214006_r() && this.func_214008_b(irecipe)) {
@@ -135,7 +135,7 @@
                       }
                    }
                 }
-@@ -279,10 +330,10 @@
+@@ -279,10 +_,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
@@ -148,7 +148,7 @@
              }
           }
        } else {
-@@ -295,11 +346,35 @@
+@@ -295,11 +_,35 @@
           ItemStack itemstack = this.field_214012_a.get(0);
           ItemStack itemstack1 = p_214007_1_.func_77571_b();
           ItemStack itemstack2 = this.field_214012_a.get(2);
@@ -189,7 +189,7 @@
  
           if (!this.field_145850_b.field_72995_K) {
              this.func_193056_a(p_214007_1_);
-@@ -318,7 +393,7 @@
+@@ -318,7 +_,7 @@
           return 0;
        } else {
           Item item = p_213997_1_.func_77973_b();
@@ -198,7 +198,7 @@
        }
     }
  
-@@ -327,7 +402,7 @@
+@@ -327,7 +_,7 @@
     }
  
     public static boolean func_213991_b(ItemStack p_213991_0_) {
@@ -207,7 +207,7 @@
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
-@@ -434,36 +509,50 @@
+@@ -434,36 +_,50 @@
     public void func_201560_d(PlayerEntity p_201560_1_) {
     }
  
@@ -267,7 +267,7 @@
        }
  
     }
-@@ -473,5 +562,28 @@
+@@ -473,5 +_,28 @@
           p_194018_1_.func_194112_a(itemstack);
        }
  

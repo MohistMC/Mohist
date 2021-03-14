@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/EnderCrystalEntity.java
 +++ b/net/minecraft/entity/item/EnderCrystalEntity.java
-@@ -21,6 +21,8 @@
+@@ -21,6 +_,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class EnderCrystalEntity extends Entity {
     private static final DataParameter<Optional<BlockPos>> field_184521_b = EntityDataManager.func_187226_a(EnderCrystalEntity.class, DataSerializers.field_187201_k);
-@@ -52,7 +54,11 @@
+@@ -52,7 +_,11 @@
        if (this.field_70170_p instanceof ServerWorld) {
           BlockPos blockpos = this.func_233580_cy_();
           if (((ServerWorld)this.field_70170_p).func_241110_C_() != null && this.field_70170_p.func_180495_p(blockpos).func_196958_f()) {
@@ -22,7 +22,7 @@
           }
        }
  
-@@ -88,9 +94,22 @@
+@@ -88,9 +_,22 @@
           return false;
        } else {
           if (!this.field_70128_L && !this.field_70170_p.field_72995_K) {

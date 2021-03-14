@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/rcon/ClientThread.java
 +++ b/net/minecraft/network/rcon/ClientThread.java
-@@ -89,11 +89,11 @@
+@@ -89,11 +_,11 @@
           } catch (IOException ioexception) {
              return;
           } catch (Exception exception1) {
@@ -14,7 +14,7 @@
              this.field_72619_a = false;
           }
        }
-@@ -116,13 +116,14 @@
+@@ -116,13 +_,14 @@
     }
  
     private void func_72655_a(int p_72655_1_, String p_72655_2_) throws IOException {
@@ -34,7 +34,7 @@
        } while(0 != i);
  
     }
-@@ -137,7 +138,7 @@
+@@ -137,7 +_,7 @@
        try {
           this.field_72659_h.close();
        } catch (IOException ioexception) {

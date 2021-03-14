@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/AbstractSkeletonEntity.java
 +++ b/net/minecraft/entity/monster/AbstractSkeletonEntity.java
-@@ -37,6 +37,7 @@
+@@ -37,6 +_,7 @@
  import net.minecraft.item.Items;
  import net.minecraft.item.ShootableItem;
  import net.minecraft.nbt.CompoundNBT;
@@ -8,7 +8,7 @@
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.BlockPos;
-@@ -45,6 +46,7 @@
+@@ -45,6 +_,7 @@
  import net.minecraft.world.DifficultyInstance;
  import net.minecraft.world.IServerWorld;
  import net.minecraft.world.World;
@@ -16,7 +16,7 @@
  
  public abstract class AbstractSkeletonEntity extends MonsterEntity implements IRangedAttackMob {
     private final RangedBowAttackGoal<AbstractSkeletonEntity> field_85037_d = new RangedBowAttackGoal<>(this, 1.0D, 20, 15.0F);
-@@ -173,13 +175,26 @@
+@@ -173,13 +_,26 @@
     public void func_82196_d(LivingEntity p_82196_1_, float p_82196_2_) {
        ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
        AbstractArrowEntity abstractarrowentity = this.func_213624_b(itemstack, p_82196_2_);

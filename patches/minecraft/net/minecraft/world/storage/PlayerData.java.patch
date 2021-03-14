@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/PlayerData.java
 +++ b/net/minecraft/world/storage/PlayerData.java
-@@ -2,8 +2,11 @@
+@@ -2,8 +_,11 @@
  
  import com.mojang.datafixers.DataFixer;
  import java.io.File;
@@ -12,7 +12,7 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.CompressedStreamTools;
  import net.minecraft.nbt.NBTUtil;
-@@ -11,6 +14,7 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.util.datafix.DefaultTypeReferences;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -20,7 +20,7 @@
  
  public class PlayerData {
     private static final Logger field_237332_b_ = LogManager.getLogger();
-@@ -24,6 +28,7 @@
+@@ -24,6 +_,7 @@
     }
  
     public void func_237335_a_(PlayerEntity p_237335_1_) {
@@ -28,7 +28,7 @@
        try {
           CompoundNBT compoundnbt = p_237335_1_.func_189511_e(new CompoundNBT());
           File file1 = File.createTempFile(p_237335_1_.func_189512_bd() + "-", ".dat", this.field_237333_c_);
-@@ -31,8 +36,9 @@
+@@ -31,8 +_,9 @@
           File file2 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat");
           File file3 = new File(this.field_237333_c_, p_237335_1_.func_189512_bd() + ".dat_old");
           Util.func_240977_a_(file2, file1, file3);
@@ -39,7 +39,7 @@
        }
  
     }
-@@ -43,21 +49,64 @@
+@@ -43,21 +_,64 @@
  
        try {
           File file1 = new File(this.field_237333_c_, p_237336_1_.func_189512_bd() + ".dat");
@@ -105,7 +105,7 @@
     public String[] func_237334_a_() {
        String[] astring = this.field_237333_c_.list();
        if (astring == null) {
-@@ -71,5 +120,9 @@
+@@ -71,5 +_,9 @@
        }
  
        return astring;

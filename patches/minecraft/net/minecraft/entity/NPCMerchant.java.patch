@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/NPCMerchant.java
 +++ b/net/minecraft/entity/NPCMerchant.java
-@@ -12,6 +12,7 @@
+@@ -12,6 +_,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,7 +8,7 @@
  
  public class NPCMerchant implements IMerchant {
     private final MerchantInventory field_70937_a;
-@@ -66,5 +67,10 @@
+@@ -66,5 +_,10 @@
  
     public SoundEvent func_213714_ea() {
        return SoundEvents.field_187915_go;

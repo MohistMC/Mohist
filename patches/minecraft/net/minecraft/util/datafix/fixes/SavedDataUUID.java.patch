@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/fixes/SavedDataUUID.java
 +++ b/net/minecraft/util/datafix/fixes/SavedDataUUID.java
-@@ -19,7 +19,7 @@
+@@ -19,7 +_,7 @@
                       return p_233390_0_.update("HeroesOfTheVillage", (p_233391_0_) -> {
                          return p_233391_0_.createList(p_233391_0_.asStream().map((p_233392_0_) -> {
                             return func_233065_d_(p_233392_0_, "UUIDMost", "UUIDLeast").orElseGet(() -> {

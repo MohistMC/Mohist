@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/management/UserList.java
 +++ b/net/minecraft/server/management/UserList.java
-@@ -42,7 +42,7 @@
+@@ -42,7 +_,7 @@
        try {
           this.func_152678_f();
        } catch (IOException ioexception) {
@@ -9,7 +9,7 @@
        }
  
     }
-@@ -50,7 +50,7 @@
+@@ -50,7 +_,7 @@
     @Nullable
     public V func_152683_b(K p_152683_1_) {
        this.func_152680_h();
@@ -18,7 +18,7 @@
     }
  
     public void func_152684_c(K p_152684_1_) {
-@@ -59,7 +59,7 @@
+@@ -59,7 +_,7 @@
        try {
           this.func_152678_f();
        } catch (IOException ioexception) {
@@ -27,7 +27,7 @@
        }
  
     }
-@@ -72,6 +72,12 @@
+@@ -72,6 +_,12 @@
        return this.field_152696_d.keySet().toArray(new String[this.field_152696_d.size()]);
     }
  
@@ -40,7 +40,7 @@
     public boolean func_152690_d() {
        return this.field_152696_d.size() < 1;
     }
-@@ -130,6 +136,13 @@
+@@ -130,6 +_,13 @@
                    this.field_152696_d.put(this.func_152681_a(userlistentry.func_152640_f()), (V)userlistentry);
                 }
              }

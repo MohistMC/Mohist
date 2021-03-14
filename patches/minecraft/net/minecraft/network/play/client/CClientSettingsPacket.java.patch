@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/client/CClientSettingsPacket.java
 +++ b/net/minecraft/network/play/client/CClientSettingsPacket.java
-@@ -10,8 +10,8 @@
+@@ -10,8 +_,8 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class CClientSettingsPacket implements IPacket<IServerPlayNetHandler> {
@@ -11,7 +11,7 @@
     private ChatVisibility field_149529_c;
     private boolean field_149526_d;
     private int field_179711_e;
-@@ -66,5 +66,9 @@
+@@ -66,5 +_,9 @@
  
     public HandSide func_186991_f() {
        return this.field_186992_f;

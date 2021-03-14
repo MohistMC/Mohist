@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/HangingEntityItem.java
 +++ b/net/minecraft/item/HangingEntityItem.java
-@@ -10,6 +10,8 @@
+@@ -10,6 +_,8 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
@@ -9,7 +9,7 @@
  
  public class HangingEntityItem extends Item {
     private final EntityType<? extends HangingEntity> field_220001_a;
-@@ -47,6 +49,16 @@
+@@ -47,6 +_,16 @@
  
           if (hangingentity.func_70518_d()) {
              if (!world.field_72995_K) {

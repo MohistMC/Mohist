@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/InteractWithDoorTask.java
 +++ b/net/minecraft/entity/ai/brain/task/InteractWithDoorTask.java
-@@ -55,6 +55,13 @@
+@@ -55,6 +_,13 @@
        if (blockstate.func_235714_a_(BlockTags.field_200152_g)) {
           DoorBlock doorblock = (DoorBlock)blockstate.func_177230_c();
           if (!doorblock.func_242664_h(blockstate)) {
@@ -14,7 +14,7 @@
              doorblock.func_242663_a(p_212831_1_, blockstate, blockpos, true);
           }
  
-@@ -66,6 +73,13 @@
+@@ -66,6 +_,13 @@
        if (blockstate1.func_235714_a_(BlockTags.field_200152_g)) {
           DoorBlock doorblock1 = (DoorBlock)blockstate1.func_177230_c();
           if (!doorblock1.func_242664_h(blockstate1)) {

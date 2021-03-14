@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/registry/Bootstrap.java
 +++ b/net/minecraft/util/registry/Bootstrap.java
-@@ -22,6 +22,9 @@
+@@ -22,6 +_,9 @@
  import net.minecraft.tags.TagRegistryManager;
  import net.minecraft.util.LoggingPrintStream;
  import net.minecraft.util.SharedConstants;
@@ -10,7 +10,7 @@
  import net.minecraft.util.text.LanguageMap;
  import net.minecraft.world.GameRules;
  import org.apache.logging.log4j.LogManager;
-@@ -48,7 +51,68 @@
+@@ -48,7 +_,68 @@
                 IDispenseItemBehavior.func_218401_c();
                 ArgumentTypes.func_197483_a();
                 TagRegistryManager.func_242197_b();
@@ -79,7 +79,7 @@
              }
           }
        }
-@@ -103,7 +167,6 @@
+@@ -103,7 +_,6 @@
              Commands.func_242986_b();
           }
  

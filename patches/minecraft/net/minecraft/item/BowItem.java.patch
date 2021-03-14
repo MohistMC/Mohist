@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BowItem.java
 +++ b/net/minecraft/item/BowItem.java
-@@ -6,6 +6,7 @@
+@@ -6,6 +_,7 @@
  import net.minecraft.enchantment.IVanishable;
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.player.PlayerEntity;
@@ -8,7 +8,7 @@
  import net.minecraft.entity.projectile.AbstractArrowEntity;
  import net.minecraft.stats.Stats;
  import net.minecraft.util.ActionResult;
-@@ -24,18 +25,23 @@
+@@ -24,18 +_,23 @@
           PlayerEntity playerentity = (PlayerEntity)p_77615_3_;
           boolean flag = playerentity.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
           ItemStack itemstack = playerentity.func_213356_f(p_77615_1_);
@@ -34,7 +34,7 @@
                    abstractarrowentity.func_234612_a_(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrowentity.func_70243_d(true);
-@@ -55,6 +61,15 @@
+@@ -55,6 +_,15 @@
                       abstractarrowentity.func_70015_d(100);
                    }
  
@@ -50,7 +50,7 @@
                    p_77615_1_.func_222118_a(1, playerentity, (p_220009_1_) -> {
                       p_220009_1_.func_213334_d(playerentity.func_184600_cs());
                    });
-@@ -62,7 +77,16 @@
+@@ -62,7 +_,16 @@
                       abstractarrowentity.field_70251_a = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
                    }
  
@@ -68,7 +68,7 @@
                 }
  
                 p_77615_2_.func_184148_a((PlayerEntity)null, playerentity.func_226277_ct_(), playerentity.func_226278_cu_(), playerentity.func_226281_cx_(), SoundEvents.field_187737_v, SoundCategory.PLAYERS, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-@@ -100,6 +124,10 @@
+@@ -100,6 +_,10 @@
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
        boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
@@ -79,7 +79,7 @@
        if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
           return ActionResult.func_226251_d_(itemstack);
        } else {
-@@ -110,6 +138,10 @@
+@@ -110,6 +_,10 @@
  
     public Predicate<ItemStack> func_220004_b() {
        return field_220007_a;

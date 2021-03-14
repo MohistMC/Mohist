@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/management/PlayerProfileCache.java
 +++ b/net/minecraft/server/management/PlayerProfileCache.java
-@@ -37,6 +37,7 @@
+@@ -37,6 +_,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -8,7 +8,7 @@
  
  public class PlayerProfileCache {
     private static final Logger field_242114_a = LogManager.getLogger();
-@@ -106,7 +107,7 @@
+@@ -106,7 +_,7 @@
        Date date = calendar.getTime();
        PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = new PlayerProfileCache.ProfileEntry(p_152649_1_, date);
        this.func_242118_a(playerprofilecache$profileentry);
@@ -17,7 +17,7 @@
     }
  
     private long func_242123_d() {
-@@ -130,14 +131,14 @@
+@@ -130,14 +_,14 @@
           playerprofilecache$profileentry.func_242126_a(this.func_242123_d());
           gameprofile = playerprofilecache$profileentry.func_152668_a();
        } else {
@@ -34,7 +34,7 @@
           this.func_152658_c();
        }
  
-@@ -177,6 +178,11 @@
+@@ -177,6 +_,11 @@
  
           });
        } catch (FileNotFoundException filenotfoundexception) {
@@ -46,7 +46,7 @@
        } catch (JsonParseException | IOException ioexception) {
           field_242114_a.warn("Failed to load profile cache {}", this.field_152665_g, ioexception);
        }
-@@ -187,7 +193,7 @@
+@@ -187,7 +_,7 @@
     public void func_152658_c() {
        JsonArray jsonarray = new JsonArray();
        DateFormat dateformat = func_242124_e();

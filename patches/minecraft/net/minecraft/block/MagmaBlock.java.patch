@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/MagmaBlock.java
 +++ b/net/minecraft/block/MagmaBlock.java
-@@ -15,6 +15,7 @@
+@@ -15,6 +_,7 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class MagmaBlock extends Block {
     public MagmaBlock(AbstractBlock.Properties p_i48366_1_) {
-@@ -23,7 +24,9 @@
+@@ -23,7 +_,9 @@
  
     public void func_176199_a(World p_176199_1_, BlockPos p_176199_2_, Entity p_176199_3_) {
        if (!p_176199_3_.func_230279_az_() && p_176199_3_ instanceof LivingEntity && !EnchantmentHelper.func_189869_j((LivingEntity)p_176199_3_)) {

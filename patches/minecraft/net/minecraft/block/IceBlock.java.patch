@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/IceBlock.java
 +++ b/net/minecraft/block/IceBlock.java
-@@ -13,6 +13,7 @@
+@@ -13,6 +_,7 @@
  import net.minecraft.world.LightType;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class IceBlock extends BreakableBlock {
     public IceBlock(AbstractBlock.Properties p_i48375_1_) {
-@@ -43,6 +44,11 @@
+@@ -43,6 +_,11 @@
     }
  
     protected void func_196454_d(BlockState p_196454_1_, World p_196454_2_, BlockPos p_196454_3_) {

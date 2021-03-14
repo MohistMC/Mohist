@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/ChangeJobTask.java
 +++ b/net/minecraft/entity/ai/brain/task/ChangeJobTask.java
-@@ -7,6 +7,9 @@
+@@ -7,6 +_,9 @@
  import net.minecraft.entity.merchant.villager.VillagerEntity;
  import net.minecraft.entity.merchant.villager.VillagerProfession;
  import net.minecraft.world.server.ServerWorld;
@@ -10,7 +10,7 @@
  
  public class ChangeJobTask extends Task<VillagerEntity> {
     public ChangeJobTask() {
-@@ -19,7 +22,13 @@
+@@ -19,7 +_,13 @@
     }
  
     protected void func_212831_a_(ServerWorld p_212831_1_, VillagerEntity p_212831_2_, long p_212831_3_) {

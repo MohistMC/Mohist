@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/WeightedList.java
 +++ b/net/minecraft/util/WeightedList.java
-@@ -14,12 +14,21 @@
+@@ -14,12 +_,21 @@
  public class WeightedList<U> {
     protected final List<WeightedList.Entry<U>> field_220658_a;
     private final Random field_220659_b = new Random();
@@ -26,7 +26,7 @@
        this.field_220658_a = Lists.newArrayList(p_i231541_1_);
     }
  
-@@ -39,13 +48,16 @@
+@@ -39,13 +_,16 @@
     }
  
     public WeightedList<U> func_226314_a_(Random p_226314_1_) {

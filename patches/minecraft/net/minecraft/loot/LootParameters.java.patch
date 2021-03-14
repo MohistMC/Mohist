@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/LootParameters.java
 +++ b/net/minecraft/loot/LootParameters.java
-@@ -7,6 +7,7 @@
+@@ -7,6 +_,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.ResourceLocation;
@@ -8,7 +8,7 @@
  import net.minecraft.util.math.vector.Vector3d;
  
  public class LootParameters {
-@@ -15,11 +16,15 @@
+@@ -15,11 +_,15 @@
     public static final LootParameter<DamageSource> field_216283_c = func_216280_a("damage_source");
     public static final LootParameter<Entity> field_216284_d = func_216280_a("killer_entity");
     public static final LootParameter<Entity> field_216285_e = func_216280_a("direct_killer_entity");

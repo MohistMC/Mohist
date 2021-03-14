@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/AreaEffectCloudEntity.java
 +++ b/net/minecraft/entity/AreaEffectCloudEntity.java
-@@ -25,12 +25,16 @@
+@@ -25,12 +_,16 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionUtils;
  import net.minecraft.potion.Potions;
@@ -17,7 +17,7 @@
  
  public class AreaEffectCloudEntity extends Entity {
     private static final Logger field_195060_a = LogManager.getLogger();
-@@ -39,15 +43,15 @@
+@@ -39,15 +_,15 @@
     private static final DataParameter<Boolean> field_184500_c = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<IParticleData> field_184501_d = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_198166_i);
     private Potion field_184502_e = Potions.field_185229_a;
@@ -39,7 +39,7 @@
     private LivingEntity field_184512_ay;
     private UUID field_184513_az;
  
-@@ -113,6 +117,22 @@
+@@ -113,6 +_,22 @@
  
     }
  
@@ -62,7 +62,7 @@
     public int func_184492_k() {
        return this.func_184212_Q().func_187225_a(field_184499_b);
     }
-@@ -146,10 +166,27 @@
+@@ -146,10 +_,27 @@
        this.field_184505_h = p_184486_1_;
     }
  
@@ -90,7 +90,7 @@
        if (this.field_70170_p.field_72995_K) {
           IParticleData iparticledata = this.func_195058_l();
           if (flag) {
-@@ -217,6 +254,7 @@
+@@ -217,6 +_,7 @@
           if (this.field_70173_aa % 5 == 0) {
              Iterator<Entry<Entity, Integer>> iterator = this.field_184504_g.entrySet().iterator();
  
@@ -98,7 +98,7 @@
              while(iterator.hasNext()) {
                 Entry<Entity, Integer> entry = iterator.next();
                 if (this.field_70173_aa >= entry.getValue()) {
-@@ -242,13 +280,24 @@
+@@ -242,13 +_,24 @@
                          double d1 = livingentity.func_226281_cx_() - this.func_226281_cx_();
                          double d2 = d0 * d0 + d1 * d1;
                          if (d2 <= (double)(f * f)) {
@@ -124,7 +124,7 @@
                                }
                             }
  
-@@ -325,7 +374,7 @@
+@@ -325,7 +_,7 @@
           try {
              this.func_195059_a(ParticleArgument.func_197189_a(new StringReader(p_70037_1_.func_74779_i("Particle"))));
           } catch (CommandSyntaxException commandsyntaxexception) {

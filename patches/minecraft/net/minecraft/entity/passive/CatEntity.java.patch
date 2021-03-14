@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/CatEntity.java
 +++ b/net/minecraft/entity/passive/CatEntity.java
-@@ -67,6 +67,7 @@
+@@ -67,6 +_,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,7 +8,7 @@
  
  public class CatEntity extends TameableEntity {
     private static final Ingredient field_213426_bE = Ingredient.func_199804_a(Items.field_196086_aW, Items.field_196087_aX);
-@@ -402,7 +403,7 @@
+@@ -402,7 +_,7 @@
              }
           } else if (this.func_70877_b(itemstack)) {
              this.func_175505_a(p_230254_1_, itemstack);
@@ -17,7 +17,7 @@
                 this.func_193101_c(p_230254_1_);
                 this.func_233687_w_(true);
                 this.field_70170_p.func_72960_a(this, (byte)7);
-@@ -551,7 +552,13 @@
+@@ -551,7 +_,13 @@
           LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_220806_a.field_70170_p)).func_216015_a(LootParameters.field_237457_g_, this.field_220806_a.func_213303_ch()).func_216015_a(LootParameters.field_216281_a, this.field_220806_a).func_216023_a(random);
  
           for(ItemStack itemstack : loottable.func_216113_a(lootcontext$builder.func_216022_a(LootParameterSets.field_216264_e))) {
@@ -32,7 +32,7 @@
           }
  
        }
-@@ -579,7 +586,7 @@
+@@ -579,7 +_,7 @@
  
     static class TemptGoal extends net.minecraft.entity.ai.goal.TemptGoal {
        @Nullable

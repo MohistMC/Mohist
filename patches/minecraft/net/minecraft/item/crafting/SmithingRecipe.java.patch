@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/SmithingRecipe.java
 +++ b/net/minecraft/item/crafting/SmithingRecipe.java
-@@ -9,6 +9,11 @@
+@@ -9,6 +_,11 @@
  import net.minecraft.util.JSONUtils;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
@@ -12,7 +12,7 @@
  
  public class SmithingRecipe implements IRecipe<IInventory> {
     private final Ingredient field_234837_a_;
-@@ -65,7 +70,16 @@
+@@ -65,7 +_,16 @@
        return IRecipeType.field_234827_g_;
     }
  

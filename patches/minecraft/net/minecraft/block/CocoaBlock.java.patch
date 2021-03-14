@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CocoaBlock.java
 +++ b/net/minecraft/block/CocoaBlock.java
-@@ -17,6 +17,7 @@
+@@ -17,6 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class CocoaBlock extends HorizontalBlock implements IGrowable {
     public static final IntegerProperty field_176501_a = BlockStateProperties.field_208167_T;
-@@ -35,10 +36,11 @@
+@@ -35,10 +_,11 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -23,7 +23,7 @@
           }
        }
  
-@@ -95,7 +97,7 @@
+@@ -95,7 +_,7 @@
     }
  
     public void func_225535_a_(ServerWorld p_225535_1_, Random p_225535_2_, BlockPos p_225535_3_, BlockState p_225535_4_) {

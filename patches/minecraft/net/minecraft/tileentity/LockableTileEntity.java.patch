@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/LockableTileEntity.java
 +++ b/net/minecraft/tileentity/LockableTileEntity.java
-@@ -16,8 +16,8 @@
+@@ -16,8 +_,8 @@
  import net.minecraft.world.LockCode;
  
  public abstract class LockableTileEntity extends TileEntity implements IInventory, INamedContainerProvider, INameable {
@@ -11,7 +11,7 @@
  
     protected LockableTileEntity(TileEntityType<?> p_i48285_1_) {
        super(p_i48285_1_);
-@@ -81,4 +81,29 @@
+@@ -81,4 +_,29 @@
     }
  
     protected abstract Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_);

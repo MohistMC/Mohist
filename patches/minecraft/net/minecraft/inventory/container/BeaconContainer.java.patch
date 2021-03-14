@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/BeaconContainer.java
 +++ b/net/minecraft/inventory/container/BeaconContainer.java
-@@ -3,6 +3,7 @@
+@@ -3,6 +_,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.Blocks;
  import net.minecraft.entity.player.PlayerEntity;
@@ -8,7 +8,7 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-@@ -13,6 +14,9 @@
+@@ -13,6 +_,9 @@
  import net.minecraft.util.IntArray;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,7 +18,7 @@
  
  public class BeaconContainer extends Container {
     private final IInventory field_82866_e = new Inventory(1) {
-@@ -28,6 +32,11 @@
+@@ -28,6 +_,11 @@
     private final IWorldPosCallable field_216971_e;
     private final IIntArray field_216972_f;
  
@@ -30,7 +30,7 @@
     public BeaconContainer(int p_i50099_1_, IInventory p_i50099_2_) {
        this(p_i50099_1_, p_i50099_2_, new IntArray(3), IWorldPosCallable.field_221489_a);
     }
-@@ -35,6 +44,7 @@
+@@ -35,6 +_,7 @@
     public BeaconContainer(int p_i50100_1_, IInventory p_i50100_2_, IIntArray p_i50100_3_, IWorldPosCallable p_i50100_4_) {
        super(ContainerType.field_221515_i, p_i50100_1_);
        func_216959_a(p_i50100_3_, 3);
@@ -38,7 +38,7 @@
        this.field_216972_f = p_i50100_3_;
        this.field_216971_e = p_i50100_4_;
        this.field_82864_f = new BeaconContainer.BeaconSlot(this.field_82866_e, 0, 136, 110);
-@@ -67,6 +77,7 @@
+@@ -67,6 +_,7 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
@@ -46,7 +46,7 @@
        return func_216963_a(this.field_216971_e, p_75145_1_, Blocks.field_150461_bJ);
     }
  
-@@ -75,6 +86,18 @@
+@@ -75,6 +_,18 @@
        this.func_75142_b();
     }
  
@@ -65,7 +65,7 @@
     public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
        ItemStack itemstack = ItemStack.field_190927_a;
        Slot slot = this.field_75151_b.get(p_82846_2_);
-@@ -87,10 +110,8 @@
+@@ -87,10 +_,8 @@
              }
  
              slot.func_75220_a(itemstack1, itemstack);

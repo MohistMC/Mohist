@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BushBlock.java
 +++ b/net/minecraft/block/BushBlock.java
-@@ -6,8 +6,9 @@
+@@ -6,8 +_,9 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
@@ -11,7 +11,7 @@
     public BushBlock(AbstractBlock.Properties p_i48437_1_) {
        super(p_i48437_1_);
     }
-@@ -17,11 +18,20 @@
+@@ -17,11 +_,20 @@
     }
  
     public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
@@ -33,7 +33,7 @@
        return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
     }
  
-@@ -31,5 +41,12 @@
+@@ -31,5 +_,12 @@
  
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return p_196266_4_ == PathType.AIR && !this.field_235688_at_ ? true : super.func_196266_a(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);

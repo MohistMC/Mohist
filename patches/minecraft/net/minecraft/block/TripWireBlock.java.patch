@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/TripWireBlock.java
 +++ b/net/minecraft/block/TripWireBlock.java
-@@ -20,6 +20,8 @@
+@@ -20,6 +_,8 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -9,7 +9,7 @@
  
  public class TripWireBlock extends Block {
     public static final BooleanProperty field_176293_a = BlockStateProperties.field_208194_u;
-@@ -121,6 +123,36 @@
+@@ -121,6 +_,36 @@
              }
           }
        }

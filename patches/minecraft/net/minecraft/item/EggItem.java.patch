@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/EggItem.java
 +++ b/net/minecraft/item/EggItem.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.item;
  
  import net.minecraft.entity.player.PlayerEntity;
@@ -8,7 +8,7 @@
  import net.minecraft.entity.projectile.EggEntity;
  import net.minecraft.stats.Stats;
  import net.minecraft.util.ActionResult;
-@@ -16,14 +17,22 @@
+@@ -16,14 +_,22 @@
  
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);

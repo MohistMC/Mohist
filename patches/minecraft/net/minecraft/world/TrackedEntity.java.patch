@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/TrackedEntity.java
 +++ b/net/minecraft/world/TrackedEntity.java
-@@ -4,6 +4,7 @@
+@@ -4,6 +_,7 @@
  import com.mojang.datafixers.util.Pair;
  import java.util.Collection;
  import java.util.Collections;
@@ -8,7 +8,7 @@
  import java.util.List;
  import java.util.Set;
  import java.util.function.Consumer;
-@@ -37,6 +38,9 @@
+@@ -37,6 +_,9 @@
  import net.minecraft.world.storage.MapData;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@
  
  public class TrackedEntity {
     private static final Logger field_219459_a = LogManager.getLogger();
-@@ -58,7 +62,15 @@
+@@ -58,7 +_,15 @@
     private boolean field_219475_q;
     private boolean field_219476_r;
  
@@ -34,7 +34,7 @@
        this.field_219460_b = p_i50704_1_;
        this.field_219464_f = p_i50704_5_;
        this.field_219461_c = p_i50704_2_;
-@@ -75,24 +87,25 @@
+@@ -75,24 +_,25 @@
        List<Entity> list = this.field_219461_c.func_184188_bt();
        if (!list.equals(this.field_219474_p)) {
           this.field_219474_p = list;
@@ -70,7 +70,7 @@
           this.func_219457_c();
        }
  
-@@ -119,6 +132,18 @@
+@@ -119,6 +_,18 @@
              IPacket<?> ipacket1 = null;
              boolean flag4 = flag3 || this.field_219472_n % 60 == 0;
              boolean flag = Math.abs(l - this.field_219468_j) >= 1 || Math.abs(k1 - this.field_219469_k) >= 1;
@@ -89,7 +89,7 @@
              if (this.field_219472_n > 0 || this.field_219461_c instanceof AbstractArrowEntity) {
                 long i = SEntityPacket.func_218743_a(vector3d.field_72450_a);
                 long j = SEntityPacket.func_218743_a(vector3d.field_72448_b);
-@@ -155,14 +180,16 @@
+@@ -155,14 +_,16 @@
              }
  
              this.func_219457_c();
@@ -109,7 +109,7 @@
  
              this.field_219475_q = false;
           }
-@@ -178,7 +205,23 @@
+@@ -178,7 +_,23 @@
  
        ++this.field_219472_n;
        if (this.field_219461_c.field_70133_I) {
@@ -134,7 +134,7 @@
           this.field_219461_c.field_70133_I = false;
        }
  
-@@ -187,17 +230,31 @@
+@@ -187,17 +_,31 @@
     public void func_219454_a(ServerPlayerEntity p_219454_1_) {
        this.field_219461_c.func_184203_c(p_219454_1_);
        p_219454_1_.func_152339_d(this.field_219461_c);
@@ -169,7 +169,7 @@
        }
  
        IPacket<?> ipacket = this.field_219461_c.func_213297_N();
-@@ -210,6 +267,13 @@
+@@ -210,6 +_,13 @@
        boolean flag = this.field_219463_e;
        if (this.field_219461_c instanceof LivingEntity) {
           Collection<ModifiableAttributeInstance> collection = ((LivingEntity)this.field_219461_c).func_233645_dx_().func_233789_b_();
@@ -183,7 +183,7 @@
           if (!collection.isEmpty()) {
              p_219452_1_.accept(new SEntityPropertiesPacket(this.field_219461_c.func_145782_y(), collection));
           }
-@@ -237,7 +301,13 @@
+@@ -237,7 +_,13 @@
           if (!list.isEmpty()) {
              p_219452_1_.accept(new SEntityEquipmentPacket(this.field_219461_c.func_145782_y(), list));
           }
@@ -197,7 +197,7 @@
  
        if (this.field_219461_c instanceof LivingEntity) {
           LivingEntity livingentity = (LivingEntity)this.field_219461_c;
-@@ -273,6 +343,11 @@
+@@ -273,6 +_,11 @@
        if (this.field_219461_c instanceof LivingEntity) {
           Set<ModifiableAttributeInstance> set = ((LivingEntity)this.field_219461_c).func_233645_dx_().func_233778_a_();
           if (!set.isEmpty()) {

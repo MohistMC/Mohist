@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/rcon/RConThread.java
 +++ b/net/minecraft/network/rcon/RConThread.java
-@@ -26,7 +26,7 @@
+@@ -26,7 +_,7 @@
           this.field_72618_c = new Thread(this, this.field_164003_c + " #" + field_164004_h.incrementAndGet());
           this.field_72618_c.setUncaughtExceptionHandler(new DefaultWithNameUncaughtExceptionHandler(field_199680_h));
           this.field_72618_c.start();
@@ -9,7 +9,7 @@
           return true;
        }
     }
-@@ -41,16 +41,16 @@
+@@ -41,16 +_,16 @@
                 this.field_72618_c.join(1000L);
                 ++i;
                 if (i >= 5) {

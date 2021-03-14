@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/ServerHangWatchdog.java
 +++ b/net/minecraft/server/dedicated/ServerHangWatchdog.java
-@@ -35,12 +35,12 @@
+@@ -35,12 +_,12 @@
           long j = Util.func_211177_b();
           long k = j - i;
           if (k > this.field_180250_c) {
@@ -16,7 +16,7 @@
  
              for(ThreadInfo threadinfo : athreadinfo) {
                 if (threadinfo.getThreadId() == this.field_180249_b.func_213170_ax().getId()) {
-@@ -67,9 +67,9 @@
+@@ -67,9 +_,9 @@
              Bootstrap.func_179870_a("Crash report:\n" + crashreport.func_71502_e());
              File file1 = new File(new File(this.field_180249_b.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
              if (crashreport.func_147149_a(file1)) {

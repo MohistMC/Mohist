@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/raid/RaidManager.java
 +++ b/net/minecraft/world/raid/RaidManager.java
-@@ -24,9 +24,10 @@
+@@ -24,9 +_,10 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.WorldSavedData;
@@ -12,7 +12,7 @@
     private final ServerWorld field_215176_b;
     private int field_215177_c;
     private int field_215178_d;
-@@ -108,19 +109,32 @@
+@@ -108,19 +_,32 @@
              Raid raid = this.func_215168_a(p_215170_1_.func_71121_q(), blockpos1);
              boolean flag = false;
              if (!raid.func_221301_k()) {

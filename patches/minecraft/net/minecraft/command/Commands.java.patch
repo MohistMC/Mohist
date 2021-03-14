@@ -1,13 +1,13 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.command;
  
 +import com.google.common.base.Joiner;
  import com.google.common.collect.Maps;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
-@@ -11,6 +12,8 @@
+@@ -11,6 +_,8 @@
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
  import com.mojang.brigadier.tree.CommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
@@ -16,7 +16,7 @@
  import java.util.Map;
  import java.util.Set;
  import java.util.function.Predicate;
-@@ -102,12 +105,15 @@
+@@ -102,12 +_,15 @@
  import net.minecraft.util.text.event.HoverEvent;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -32,7 +32,7 @@
        AdvancementCommand.func_198199_a(this.field_197062_b);
        AttributeCommand.func_241003_a_(this.field_197062_b);
        ExecuteCommand.func_198378_a(this.field_197062_b);
-@@ -186,35 +192,81 @@
+@@ -186,35 +_,81 @@
        if (p_i232148_1_.field_237219_d_) {
           PublishCommand.func_198581_a(this.field_197062_b);
        }
@@ -121,7 +121,7 @@
                 });
                 if (j > 10) {
                    iformattabletextcomponent1.func_240702_b_("...");
-@@ -227,12 +279,12 @@
+@@ -227,12 +_,12 @@
                 }
  
                 iformattabletextcomponent1.func_230529_a_((new TranslationTextComponent("command.context.here")).func_240701_a_(new TextFormatting[]{TextFormatting.RED, TextFormatting.ITALIC}));
@@ -136,7 +136,7 @@
                 StackTraceElement[] astacktraceelement = exception.getStackTrace();
  
                 for(int i = 0; i < Math.min(astacktraceelement.length, 3); ++i) {
-@@ -240,12 +292,12 @@
+@@ -240,12 +_,12 @@
                 }
              }
  
@@ -152,7 +152,7 @@
              }
  
              return 0;
-@@ -253,20 +305,44 @@
+@@ -253,20 +_,44 @@
  
           return 0;
        } finally {

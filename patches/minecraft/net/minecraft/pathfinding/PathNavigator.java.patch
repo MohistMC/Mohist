@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/PathNavigator.java
 +++ b/net/minecraft/pathfinding/PathNavigator.java
-@@ -11,6 +11,7 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.entity.MobEntity;
  import net.minecraft.entity.ai.attributes.Attributes;
  import net.minecraft.network.DebugPacketSender;
@@ -8,7 +8,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
-@@ -142,9 +143,30 @@
+@@ -142,9 +_,30 @@
        return this.func_75484_a(this.func_225466_a(p_75492_1_, p_75492_3_, p_75492_5_, 1), p_75492_7_);
     }
  
@@ -40,7 +40,7 @@
     }
  
     public boolean func_75484_a(@Nullable Path p_75484_1_, double p_75484_2_) {
-@@ -208,9 +230,9 @@
+@@ -208,9 +_,9 @@
        Vector3d vector3d = this.func_75502_i();
        this.field_188561_o = this.field_75515_a.func_213311_cf() > 0.75F ? this.field_75515_a.func_213311_cf() / 2.0F : 0.75F - this.field_75515_a.func_213311_cf() / 2.0F;
        Vector3i vector3i = this.field_75514_c.func_242948_g();

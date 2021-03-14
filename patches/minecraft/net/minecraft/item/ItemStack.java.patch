@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ItemStack.java
 +++ b/net/minecraft/item/ItemStack.java
-@@ -7,16 +7,17 @@
+@@ -7,16 +_,17 @@
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
  import com.mojang.serialization.Codec;
@@ -19,7 +19,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
-@@ -44,6 +45,8 @@
+@@ -44,6 +_,8 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.INBT;
  import net.minecraft.nbt.ListNBT;
@@ -28,7 +28,7 @@
  import net.minecraft.stats.Stats;
  import net.minecraft.tags.BlockTags;
  import net.minecraft.tags.ITag;
-@@ -56,6 +59,7 @@
+@@ -56,6 +_,7 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.Util;
@@ -36,7 +36,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.text.IFormattableTextComponent;
-@@ -71,8 +75,11 @@
+@@ -71,8 +_,11 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -49,7 +49,7 @@
     public static final Codec<ItemStack> field_234691_a_ = RecordCodecBuilder.create((p_234698_0_) -> {
        return p_234698_0_.group(Registry.field_212630_s.fieldOf("id").forGetter((p_234706_0_) -> {
           return p_234706_0_.field_151002_e;
-@@ -82,6 +89,9 @@
+@@ -82,6 +_,9 @@
           return Optional.ofNullable(p_234704_0_.field_77990_d);
        })).apply(p_234698_0_, ItemStack::new);
     });
@@ -59,7 +59,7 @@
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack field_190927_a = new ItemStack((Item)null);
     public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
-@@ -91,7 +101,7 @@
+@@ -91,7 +_,7 @@
     private int field_77994_a;
     private int field_77992_b;
     @Deprecated
@@ -68,7 +68,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,41 +119,69 @@
+@@ -109,41 +_,69 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -153,7 +153,7 @@
           return field_190927_a;
        }
     }
-@@ -167,20 +205,34 @@
+@@ -167,20 +_,34 @@
     }
  
     public Item func_77973_b() {
@@ -194,7 +194,7 @@
           }
  
           return actionresulttype;
-@@ -206,12 +258,15 @@
+@@ -206,12 +_,15 @@
        if (this.field_77990_d != null) {
           p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
        }
@@ -212,7 +212,7 @@
     }
  
     public boolean func_77985_e() {
-@@ -219,7 +274,7 @@
+@@ -219,7 +_,7 @@
     }
  
     public boolean func_77984_f() {
@@ -221,7 +221,7 @@
           CompoundNBT compoundnbt = this.func_77978_p();
           return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
        } else {
-@@ -228,19 +283,19 @@
+@@ -228,19 +_,19 @@
     }
  
     public boolean func_77951_h() {
@@ -245,7 +245,7 @@
     }
  
     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
-@@ -258,6 +313,19 @@
+@@ -258,6 +_,19 @@
              }
  
              p_96631_1_ -= j;
@@ -265,7 +265,7 @@
              if (p_96631_1_ <= 0) {
                 return false;
              }
-@@ -276,9 +344,17 @@
+@@ -276,9 +_,17 @@
     public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
        if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
           if (this.func_77984_f()) {
@@ -283,7 +283,7 @@
                 this.func_190918_g(1);
                 if (p_222118_2_ instanceof PlayerEntity) {
                    ((PlayerEntity)p_222118_2_).func_71029_a(Stats.field_199088_e.func_199076_b(item));
-@@ -308,7 +384,7 @@
+@@ -308,7 +_,7 @@
     }
  
     public boolean func_150998_b(BlockState p_150998_1_) {
@@ -292,7 +292,7 @@
     }
  
     public ActionResultType func_111282_a_(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
-@@ -319,7 +395,7 @@
+@@ -319,7 +_,7 @@
        if (this.func_190926_b()) {
           return field_190927_a;
        } else {
@@ -301,7 +301,7 @@
           itemstack.func_190915_d(this.func_190921_D());
           if (this.field_77990_d != null) {
              itemstack.field_77990_d = this.field_77990_d.func_74737_b();
-@@ -336,7 +412,7 @@
+@@ -336,7 +_,7 @@
           if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
              return false;
           } else {
@@ -310,7 +310,7 @@
           }
        } else {
           return false;
-@@ -359,7 +435,7 @@
+@@ -359,7 +_,7 @@
        } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
           return false;
        } else {
@@ -319,7 +319,7 @@
        }
     }
  
-@@ -435,6 +511,16 @@
+@@ -435,6 +_,16 @@
        return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
     }
  
@@ -336,7 +336,7 @@
     @Nullable
     public CompoundNBT func_77978_p() {
        return this.field_77990_d;
-@@ -479,7 +565,7 @@
+@@ -479,7 +_,7 @@
  
     public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
        this.field_77990_d = p_77982_1_;
@@ -345,7 +345,7 @@
           this.func_196085_b(this.func_77952_i());
        }
  
-@@ -673,6 +759,7 @@
+@@ -673,6 +_,7 @@
           }
        }
  
@@ -353,7 +353,7 @@
        return list;
     }
  
-@@ -795,6 +882,12 @@
+@@ -795,6 +_,12 @@
     }
  
     public void func_82841_c(int p_82841_1_) {
@@ -366,7 +366,7 @@
        this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
     }
  
-@@ -817,9 +910,10 @@
+@@ -817,9 +_,10 @@
              }
           }
        } else {
@@ -378,7 +378,7 @@
        return multimap;
     }
  
-@@ -839,6 +933,13 @@
+@@ -839,6 +_,13 @@
        listnbt.add(compoundnbt);
     }
  
@@ -392,7 +392,7 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -952,6 +1053,24 @@
+@@ -952,6 +_,24 @@
  
     public boolean func_222117_E() {
        return this.func_77973_b().func_219971_r();

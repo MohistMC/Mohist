@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CakeBlock.java
 +++ b/net/minecraft/block/CakeBlock.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.block;
  
  import net.minecraft.entity.player.PlayerEntity;
@@ -8,7 +8,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.pathfinding.PathType;
  import net.minecraft.state.IntegerProperty;
-@@ -52,7 +53,17 @@
+@@ -52,7 +_,17 @@
           return ActionResultType.PASS;
        } else {
           p_226911_4_.func_195066_a(Stats.field_188076_J);

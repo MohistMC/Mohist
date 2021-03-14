@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/fish/PufferfishEntity.java
 +++ b/net/minecraft/entity/passive/fish/PufferfishEntity.java
-@@ -24,6 +24,7 @@
+@@ -24,6 +_,7 @@
  import net.minecraft.util.SoundEvent;
  import net.minecraft.util.SoundEvents;
  import net.minecraft.world.World;
@@ -8,7 +8,7 @@
  
  public class PufferfishEntity extends AbstractFishEntity {
     private static final DataParameter<Integer> field_203716_b = EntityDataManager.func_187226_a(PufferfishEntity.class, DataSerializers.field_187192_b);
-@@ -126,7 +127,7 @@
+@@ -126,7 +_,7 @@
     private void func_205719_a(MobEntity p_205719_1_) {
        int i = this.func_203715_dA();
        if (p_205719_1_.func_70097_a(DamageSource.func_76358_a(this), (float)(1 + i))) {
@@ -17,7 +17,7 @@
           this.func_184185_a(SoundEvents.field_203830_gs, 1.0F, 1.0F);
        }
  
-@@ -139,7 +140,7 @@
+@@ -139,7 +_,7 @@
              ((ServerPlayerEntity)p_70100_1_).field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241773_j_, 0.0F));
           }
  

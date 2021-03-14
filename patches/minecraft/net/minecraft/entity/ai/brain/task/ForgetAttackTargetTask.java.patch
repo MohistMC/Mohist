@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/ForgetAttackTargetTask.java
 +++ b/net/minecraft/entity/ai/brain/task/ForgetAttackTargetTask.java
-@@ -8,7 +8,11 @@
+@@ -8,7 +_,11 @@
  import net.minecraft.entity.MobEntity;
  import net.minecraft.entity.ai.brain.memory.MemoryModuleStatus;
  import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
@@ -12,7 +12,7 @@
  
  public class ForgetAttackTargetTask<E extends MobEntity> extends Task<E> {
     private final Predicate<E> field_233973_b_;
-@@ -42,6 +46,13 @@
+@@ -42,6 +_,13 @@
     }
  
     private void func_233976_a_(E p_233976_1_, LivingEntity p_233976_2_) {

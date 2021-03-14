@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -9,6 +9,8 @@
+@@ -9,6 +_,8 @@
  import java.util.stream.Stream;
  import javax.annotation.Nullable;
  import net.minecraft.client.util.ITooltipFlag;
@@ -9,7 +9,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.item.ExperienceOrbEntity;
-@@ -54,9 +56,10 @@
+@@ -54,9 +_,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -22,7 +22,7 @@
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
           return !VoxelShapes.func_197879_c(VoxelShapes.func_197868_b(), p_load_1_, IBooleanFunction.field_223236_g_);
-@@ -151,6 +154,8 @@
+@@ -151,6 +_,8 @@
        super(p_i48440_1_);
        StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
        this.func_206840_a(builder);
@@ -31,7 +31,7 @@
        this.field_176227_L = builder.func_235882_a_(Block::func_176223_P, BlockState::new);
        this.func_180632_j(this.field_176227_L.func_177621_b());
     }
-@@ -240,6 +245,7 @@
+@@ -240,6 +_,7 @@
  
     }
  
@@ -39,7 +39,7 @@
     public static void func_220059_a(BlockState p_220059_0_, IWorld p_220059_1_, BlockPos p_220059_2_, @Nullable TileEntity p_220059_3_) {
        if (p_220059_1_ instanceof ServerWorld) {
           func_220070_a(p_220059_0_, (ServerWorld)p_220059_1_, p_220059_2_, p_220059_3_).forEach((p_220061_2_) -> {
-@@ -261,19 +267,46 @@
+@@ -261,19 +_,46 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -91,7 +91,7 @@
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -283,6 +316,7 @@
+@@ -283,6 +_,7 @@
  
     }
  
@@ -99,7 +99,7 @@
     public float func_149638_a() {
        return this.field_235689_au_;
     }
-@@ -332,6 +366,7 @@
+@@ -332,6 +_,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -107,7 +107,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -363,6 +398,7 @@
+@@ -363,6 +_,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -115,7 +115,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -382,6 +418,7 @@
+@@ -382,6 +_,7 @@
        return this.field_196275_y;
     }
  
@@ -123,7 +123,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -391,7 +428,7 @@
+@@ -391,7 +_,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -132,7 +132,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -399,7 +436,7 @@
+@@ -399,7 +_,7 @@
     }
  
     public String toString() {
@@ -141,7 +141,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -409,6 +446,78 @@
+@@ -409,6 +_,78 @@
     protected Block func_230328_p_() {
        return this;
     }

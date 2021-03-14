@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/RabbitEntity.java
 +++ b/net/minecraft/entity/passive/RabbitEntity.java
-@@ -48,7 +48,6 @@
+@@ -48,7 +_,6 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.DifficultyInstance;
@@ -8,7 +8,7 @@
  import net.minecraft.world.IServerWorld;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
-@@ -57,6 +56,7 @@
+@@ -57,6 +_,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,7 +16,7 @@
  
  public class RabbitEntity extends AnimalEntity {
     private static final DataParameter<Integer> field_184773_bv = EntityDataManager.func_187226_a(RabbitEntity.class, DataSerializers.field_187192_b);
-@@ -71,10 +71,16 @@
+@@ -71,10 +_,16 @@
        super(p_i50247_1_, p_i50247_2_);
        this.field_70767_i = new RabbitEntity.JumpHelperController(this);
        this.field_70765_h = new RabbitEntity.MoveHelperController(this);
@@ -34,7 +34,7 @@
        this.field_70714_bg.func_75776_a(1, new SwimGoal(this));
        this.field_70714_bg.func_75776_a(1, new RabbitEntity.PanicGoal(this, 2.2D));
        this.field_70714_bg.func_75776_a(2, new BreedGoal(this, 0.8D));
-@@ -500,7 +506,7 @@
+@@ -500,7 +_,7 @@
  
        public boolean func_75250_a() {
           if (this.field_179496_a <= 0) {
@@ -43,7 +43,7 @@
                 return false;
              }
  
-@@ -527,9 +533,19 @@
+@@ -527,9 +_,19 @@
              if (this.field_179499_e && block instanceof CarrotBlock) {
                 Integer integer = blockstate.func_177229_b(CarrotBlock.field_176488_a);
                 if (integer == 0) {

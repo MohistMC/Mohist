@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/SignTileEntity.java
 +++ b/net/minecraft/tileentity/SignTileEntity.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.tileentity;
  
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -8,7 +8,7 @@
  import java.util.function.Function;
  import javax.annotation.Nullable;
  import net.minecraft.block.BlockState;
-@@ -23,13 +24,15 @@
+@@ -23,13 +_,15 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,7 +27,7 @@
  
     public SignTileEntity() {
        super(TileEntityType.field_200978_i);
-@@ -43,6 +46,12 @@
+@@ -43,6 +_,12 @@
           p_189515_1_.func_74778_a("Text" + (i + 1), s);
        }
  
@@ -40,7 +40,7 @@
        p_189515_1_.func_74778_a("Color", this.field_214073_l.func_176762_d());
        return p_189515_1_;
     }
-@@ -52,17 +61,36 @@
+@@ -52,17 +_,36 @@
        super.func_230337_a_(p_230337_1_, p_230337_2_);
        this.field_214073_l = DyeColor.func_204271_a(p_230337_2_.func_74779_i("Color"), DyeColor.BLACK);
  
@@ -85,7 +85,7 @@
           }
  
           this.field_212367_h[i] = null;
-@@ -118,6 +146,7 @@
+@@ -118,6 +_,7 @@
  
     public void func_145912_a(PlayerEntity p_145912_1_) {
        this.field_145917_k = p_145912_1_;
@@ -93,7 +93,7 @@
     }
  
     public PlayerEntity func_145911_b() {
-@@ -138,10 +167,38 @@
+@@ -138,10 +_,38 @@
        return true;
     }
  

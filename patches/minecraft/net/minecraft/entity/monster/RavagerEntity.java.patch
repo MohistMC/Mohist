@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/RavagerEntity.java
 +++ b/net/minecraft/entity/monster/RavagerEntity.java
-@@ -4,6 +4,7 @@
+@@ -4,6 +_,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
@@ -8,7 +8,7 @@
  import net.minecraft.block.LeavesBlock;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -37,12 +38,12 @@
+@@ -37,12 +_,12 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
@@ -22,7 +22,7 @@
  
  public class RavagerEntity extends AbstractRaiderEntity {
     private static final Predicate<Entity> field_213690_b = (p_213685_0_) -> {
-@@ -134,14 +135,14 @@
+@@ -134,14 +_,14 @@
              this.func_110148_a(Attributes.field_233821_d_).func_111128_a(MathHelper.func_219803_d(0.1D, d1, d0));
           }
  

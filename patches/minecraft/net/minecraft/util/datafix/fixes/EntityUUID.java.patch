@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/fixes/EntityUUID.java
 +++ b/net/minecraft/util/datafix/fixes/EntityUUID.java
-@@ -67,7 +67,7 @@
+@@ -67,7 +_,7 @@
           return p_233235_0_.update("memories", (p_233236_0_) -> {
              return p_233236_0_.update("minecraft:angry_at", (p_233237_0_) -> {
                 return func_233058_a_(p_233237_0_, "value", "value").orElseGet(() -> {
@@ -9,7 +9,7 @@
                    return p_233237_0_;
                 });
              });
-@@ -101,7 +101,7 @@
+@@ -101,7 +_,7 @@
        Optional<Dynamic<?>> optional = p_233224_0_.get("TrustedUUIDs").result().map((p_233219_1_) -> {
           return p_233224_0_.createList(p_233219_1_.asStream().map((p_233233_0_) -> {
              return func_233054_a_(p_233233_0_).orElseGet(() -> {

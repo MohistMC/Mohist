@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BeehiveTileEntity.java
 +++ b/net/minecraft/tileentity/BeehiveTileEntity.java
-@@ -26,7 +26,8 @@
+@@ -26,7 +_,8 @@
  public class BeehiveTileEntity extends TileEntity implements ITickableTileEntity {
     private final List<BeehiveTileEntity.Bee> field_226958_a_ = Lists.newArrayList();
     @Nullable
@@ -10,7 +10,7 @@
  
     public BeehiveTileEntity() {
        super(TileEntityType.field_226985_G_);
-@@ -59,7 +60,7 @@
+@@ -59,7 +_,7 @@
     }
  
     public boolean func_226970_h_() {
@@ -19,7 +19,7 @@
     }
  
     public void func_226963_a_(@Nullable PlayerEntity p_226963_1_, BlockState p_226963_2_, BeehiveTileEntity.State p_226963_3_) {
-@@ -70,7 +71,7 @@
+@@ -70,7 +_,7 @@
                 BeeEntity beeentity = (BeeEntity)entity;
                 if (p_226963_1_.func_213303_ch().func_72436_e(entity.func_213303_ch()) <= 16.0D) {
                    if (!this.func_226972_k_()) {
@@ -28,7 +28,7 @@
                    } else {
                       beeentity.func_226450_t_(400);
                    }
-@@ -82,9 +83,15 @@
+@@ -82,9 +_,15 @@
     }
  
     private List<Entity> func_226965_a_(BlockState p_226965_1_, BeehiveTileEntity.State p_226965_2_) {
@@ -45,7 +45,7 @@
        });
        return list;
     }
-@@ -110,7 +117,19 @@
+@@ -110,7 +_,19 @@
     }
  
     public void func_226962_a_(Entity p_226962_1_, boolean p_226962_2_, int p_226962_3_) {
@@ -66,7 +66,7 @@
           p_226962_1_.func_184210_p();
           p_226962_1_.func_184226_ay();
           CompoundNBT compoundnbt = new CompoundNBT();
-@@ -132,8 +151,14 @@
+@@ -132,8 +_,14 @@
        }
     }
  
@@ -82,7 +82,7 @@
           return false;
        } else {
           BlockPos blockpos = this.func_174877_v();
-@@ -151,6 +176,17 @@
+@@ -151,6 +_,17 @@
                 return p_226960_0_;
              });
              if (entity != null) {
@@ -100,7 +100,7 @@
                 if (!entity.func_200600_R().func_220341_a(EntityTypeTags.field_226155_c_)) {
                    return false;
                 } else {
-@@ -180,16 +216,18 @@
+@@ -180,16 +_,18 @@
                          p_235651_3_.add(beeentity);
                       }
  
@@ -126,7 +126,7 @@
                 }
              } else {
                 return false;
-@@ -225,6 +263,13 @@
+@@ -225,6 +_,13 @@
              if (this.func_235651_a_(blockstate, beehivetileentity$bee, (List<Entity>)null, beehivetileentity$state)) {
                 iterator.remove();
              }
@@ -140,7 +140,7 @@
           }
        }
  
-@@ -261,6 +306,11 @@
+@@ -261,6 +_,11 @@
           this.field_226959_b_ = NBTUtil.func_186861_c(p_230337_2_.func_74775_l("FlowerPos"));
        }
  
@@ -152,7 +152,7 @@
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -269,6 +319,7 @@
+@@ -269,6 +_,7 @@
        if (this.func_226975_x_()) {
           p_189515_1_.func_218657_a("FlowerPos", NBTUtil.func_186859_a(this.field_226959_b_));
        }

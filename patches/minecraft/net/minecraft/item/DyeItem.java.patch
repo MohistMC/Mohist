@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/DyeItem.java
 +++ b/net/minecraft/item/DyeItem.java
-@@ -8,6 +8,9 @@
+@@ -8,6 +_,9 @@
  import net.minecraft.util.ActionResultType;
  import net.minecraft.util.Hand;
  
@@ -10,7 +10,7 @@
  public class DyeItem extends Item {
     private static final Map<DyeColor, DyeItem> field_195963_a = Maps.newEnumMap(DyeColor.class);
     private final DyeColor field_195964_b;
-@@ -23,7 +26,22 @@
+@@ -23,7 +_,22 @@
           SheepEntity sheepentity = (SheepEntity)p_111207_3_;
           if (sheepentity.func_70089_S() && !sheepentity.func_70892_o() && sheepentity.func_175509_cj() != this.field_195964_b) {
              if (!p_111207_2_.field_70170_p.field_72995_K) {

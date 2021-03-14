@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/biome/BiomeGenerationSettings.java
 +++ b/net/minecraft/world/biome/BiomeGenerationSettings.java
-@@ -47,6 +47,7 @@
+@@ -47,6 +_,7 @@
     });
     private final Supplier<ConfiguredSurfaceBuilder<?>> field_242482_d;
     private final Map<GenerationStage.Carving, List<Supplier<ConfiguredCarver<?>>>> field_242483_e;
@@ -8,7 +8,7 @@
     private final List<List<Supplier<ConfiguredFeature<?, ?>>>> field_242484_f;
     private final List<Supplier<StructureFeature<?, ?>>> field_242485_g;
     private final List<ConfiguredFeature<?, ?>> field_242486_h;
-@@ -59,10 +60,15 @@
+@@ -59,10 +_,15 @@
        this.field_242486_h = p_i241935_3_.stream().flatMap(Collection::stream).map(Supplier::get).flatMap(ConfiguredFeature::func_242768_d).filter((p_242490_0_) -> {
           return p_242490_0_.field_222737_a == Feature.field_227247_y_;
        }).collect(ImmutableList.toImmutableList());

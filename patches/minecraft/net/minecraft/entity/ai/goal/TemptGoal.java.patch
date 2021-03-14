@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/TemptGoal.java
 +++ b/net/minecraft/entity/ai/goal/TemptGoal.java
-@@ -3,11 +3,17 @@
+@@ -3,11 +_,17 @@
  import java.util.EnumSet;
  import net.minecraft.entity.CreatureEntity;
  import net.minecraft.entity.EntityPredicate;
@@ -18,7 +18,7 @@
  
  public class TemptGoal extends Goal {
     private static final EntityPredicate field_220762_c = (new EntityPredicate()).func_221013_a(10.0D).func_221008_a().func_221011_b().func_221009_d().func_221014_c();
-@@ -45,13 +51,27 @@
+@@ -45,13 +_,27 @@
           return false;
        } else {
           this.field_75289_h = this.field_75284_a.field_70170_p.func_217370_a(field_220762_c, this.field_75284_a);

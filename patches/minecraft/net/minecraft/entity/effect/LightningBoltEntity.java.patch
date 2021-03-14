@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/effect/LightningBoltEntity.java
 +++ b/net/minecraft/entity/effect/LightningBoltEntity.java
-@@ -11,6 +11,7 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.network.IPacket;
@@ -8,7 +8,7 @@
  import net.minecraft.network.play.server.SSpawnObjectPacket;
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
-@@ -22,14 +23,17 @@
+@@ -22,14 +_,17 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,7 +27,7 @@
  
     public LightningBoltEntity(EntityType<? extends LightningBoltEntity> p_i231491_1_, World p_i231491_2_) {
        super(p_i231491_1_, p_i231491_2_);
-@@ -53,13 +57,30 @@
+@@ -53,13 +_,30 @@
  
     public void func_70071_h_() {
        super.func_70071_h_();
@@ -60,7 +60,7 @@
           this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187752_dd, SoundCategory.WEATHER, 2.0F, 0.5F + this.field_70146_Z.nextFloat() * 0.2F);
        }
  
-@@ -75,14 +96,15 @@
+@@ -75,14 +_,15 @@
           }
        }
  
@@ -78,7 +78,7 @@
                 entity.func_241841_a((ServerWorld)this.field_70170_p, this);
              }
  
-@@ -99,14 +121,22 @@
+@@ -99,14 +_,22 @@
           BlockPos blockpos = this.func_233580_cy_();
           BlockState blockstate = AbstractFireBlock.func_235326_a_(this.field_70170_p, blockpos);
           if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {

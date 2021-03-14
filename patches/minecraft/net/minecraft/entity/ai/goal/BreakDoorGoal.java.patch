@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/BreakDoorGoal.java
 +++ b/net/minecraft/entity/ai/goal/BreakDoorGoal.java
-@@ -4,7 +4,6 @@
+@@ -4,7 +_,6 @@
  import net.minecraft.block.Block;
  import net.minecraft.entity.MobEntity;
  import net.minecraft.world.Difficulty;
@@ -8,7 +8,7 @@
  
  public class BreakDoorGoal extends InteractDoorGoal {
     private final Predicate<Difficulty> field_220699_g;
-@@ -29,7 +28,7 @@
+@@ -29,7 +_,7 @@
     public boolean func_75250_a() {
        if (!super.func_75250_a()) {
           return false;
@@ -17,7 +17,7 @@
           return false;
        } else {
           return this.func_220696_a(this.field_75356_a.field_70170_p.func_175659_aa()) && !this.func_195922_f();
-@@ -67,6 +66,12 @@
+@@ -67,6 +_,12 @@
        }
  
        if (this.field_75359_i == this.func_220697_f() && this.func_220696_a(this.field_75356_a.field_70170_p.func_175659_aa())) {

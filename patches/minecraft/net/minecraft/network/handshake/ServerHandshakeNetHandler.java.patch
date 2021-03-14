@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/handshake/ServerHandshakeNetHandler.java
 +++ b/net/minecraft/network/handshake/ServerHandshakeNetHandler.java
-@@ -1,5 +1,11 @@
+@@ -1,5 +_,11 @@
  package net.minecraft.network.handshake;
  
 +import java.net.InetAddress;
@@ -12,7 +12,7 @@
  import net.minecraft.network.NetworkManager;
  import net.minecraft.network.ProtocolType;
  import net.minecraft.network.handshake.client.CHandshakePacket;
-@@ -13,6 +19,12 @@
+@@ -13,6 +_,12 @@
  import net.minecraft.util.text.TranslationTextComponent;
  
  public class ServerHandshakeNetHandler implements IHandshakeNetHandler {
@@ -25,7 +25,7 @@
     private static final ITextComponent field_241169_a_ = new StringTextComponent("Ignoring status request");
     private final MinecraftServer field_147387_a;
     private final NetworkManager field_147386_b;
-@@ -23,21 +35,73 @@
+@@ -23,21 +_,73 @@
     }
  
     public void func_147383_a(CHandshakePacket p_147383_1_) {

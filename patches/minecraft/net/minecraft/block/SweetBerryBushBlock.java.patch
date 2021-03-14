@@ -1,13 +1,13 @@
 --- a/net/minecraft/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/block/SweetBerryBushBlock.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.block;
  
 +import java.util.Collections;
  import java.util.Random;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -23,6 +24,10 @@
+@@ -23,6 +_,10 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -18,7 +18,7 @@
  
  public class SweetBerryBushBlock extends BushBlock implements IGrowable {
     public static final IntegerProperty field_220125_a = BlockStateProperties.field_208168_U;
-@@ -52,8 +57,9 @@
+@@ -52,8 +_,9 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
        int i = p_225542_1_.func_177229_b(field_220125_a);
@@ -30,7 +30,7 @@
        }
  
     }
-@@ -65,7 +71,9 @@
+@@ -65,7 +_,9 @@
              double d0 = Math.abs(p_196262_4_.func_226277_ct_() - p_196262_4_.field_70142_S);
              double d1 = Math.abs(p_196262_4_.func_226281_cx_() - p_196262_4_.field_70136_U);
              if (d0 >= (double)0.003F || d1 >= (double)0.003F) {
@@ -40,7 +40,7 @@
              }
           }
  
-@@ -79,7 +87,15 @@
+@@ -79,7 +_,15 @@
           return ActionResultType.PASS;
        } else if (i > 1) {
           int j = 1 + p_225533_2_.field_73012_v.nextInt(2);

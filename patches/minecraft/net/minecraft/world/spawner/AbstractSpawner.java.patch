@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/AbstractSpawner.java
 +++ b/net/minecraft/world/spawner/AbstractSpawner.java
-@@ -31,35 +31,36 @@
+@@ -31,35 +_,36 @@
  
  public abstract class AbstractSpawner {
     private static final Logger field_209160_a = LogManager.getLogger();
@@ -46,7 +46,7 @@
     }
  
     private boolean func_98279_f() {
-@@ -131,16 +132,36 @@
+@@ -131,16 +_,36 @@
                       entity.func_70012_b(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), world.field_73012_v.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;
@@ -87,7 +87,7 @@
                          this.func_98273_j();
                          return;
                       }
-@@ -282,5 +303,10 @@
+@@ -282,5 +_,10 @@
     @OnlyIn(Dist.CLIENT)
     public double func_177223_e() {
        return this.field_98284_d;

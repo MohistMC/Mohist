@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/RedstoneLampBlock.java
 +++ b/net/minecraft/block/RedstoneLampBlock.java
-@@ -8,6 +8,7 @@
+@@ -8,6 +_,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class RedstoneLampBlock extends Block {
     public static final BooleanProperty field_196502_a = RedstoneTorchBlock.field_196528_a;
-@@ -29,6 +30,11 @@
+@@ -29,6 +_,11 @@
              if (flag) {
                 p_220069_2_.func_205220_G_().func_205360_a(p_220069_3_, this, 4);
              } else {
@@ -20,7 +20,7 @@
                 p_220069_2_.func_180501_a(p_220069_3_, p_220069_1_.func_235896_a_(field_196502_a), 2);
              }
           }
-@@ -38,6 +44,11 @@
+@@ -38,6 +_,11 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (p_225534_1_.func_177229_b(field_196502_a) && !p_225534_2_.func_175640_z(p_225534_3_)) {

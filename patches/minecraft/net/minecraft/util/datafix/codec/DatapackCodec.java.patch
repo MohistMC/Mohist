@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/codec/DatapackCodec.java
 +++ b/net/minecraft/util/datafix/codec/DatapackCodec.java
-@@ -18,7 +18,7 @@
+@@ -18,7 +_,7 @@
     private final List<String> field_234883_d_;
  
     public DatapackCodec(List<String> p_i231607_1_, List<String> p_i231607_2_) {
@@ -9,7 +9,7 @@
        this.field_234883_d_ = ImmutableList.copyOf(p_i231607_2_);
     }
  
-@@ -28,5 +28,9 @@
+@@ -28,5 +_,9 @@
  
     public List<String> func_234887_b_() {
        return this.field_234883_d_;

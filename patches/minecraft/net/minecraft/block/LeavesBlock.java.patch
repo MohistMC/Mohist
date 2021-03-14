@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/LeavesBlock.java
 +++ b/net/minecraft/block/LeavesBlock.java
-@@ -18,8 +18,9 @@
+@@ -18,8 +_,9 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -11,7 +11,7 @@
     public static final IntegerProperty field_208494_a = BlockStateProperties.field_208514_aa;
     public static final BooleanProperty field_208495_b = BlockStateProperties.field_208515_s;
  
-@@ -38,6 +39,13 @@
+@@ -38,6 +_,13 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
        if (!p_225542_1_.func_177229_b(field_208495_b) && p_225542_1_.func_177229_b(field_208494_a) == 7) {

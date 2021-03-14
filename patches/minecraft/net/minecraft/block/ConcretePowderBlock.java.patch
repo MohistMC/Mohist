@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/ConcretePowderBlock.java
 +++ b/net/minecraft/block/ConcretePowderBlock.java
-@@ -10,6 +10,8 @@
+@@ -10,6 +_,8 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,7 +9,7 @@
  
  public class ConcretePowderBlock extends FallingBlock {
     private final BlockState field_200294_a;
-@@ -21,7 +23,7 @@
+@@ -21,7 +_,7 @@
  
     public void func_176502_a_(World p_176502_1_, BlockPos p_176502_2_, BlockState p_176502_3_, BlockState p_176502_4_, FallingBlockEntity p_176502_5_) {
        if (func_230137_b_(p_176502_1_, p_176502_2_, p_176502_4_)) {
@@ -18,7 +18,7 @@
        }
  
     }
-@@ -30,7 +32,19 @@
+@@ -30,7 +_,19 @@
        IBlockReader iblockreader = p_196258_1_.func_195991_k();
        BlockPos blockpos = p_196258_1_.func_195995_a();
        BlockState blockstate = iblockreader.func_180495_p(blockpos);
@@ -39,7 +39,7 @@
     }
  
     private static boolean func_230137_b_(IBlockReader p_230137_0_, BlockPos p_230137_1_, BlockState p_230137_2_) {
-@@ -61,7 +75,18 @@
+@@ -61,7 +_,18 @@
     }
  
     public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {

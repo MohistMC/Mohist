@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/GrassBlock.java
 +++ b/net/minecraft/block/GrassBlock.java
-@@ -8,6 +8,7 @@
+@@ -8,6 +_,7 @@
  import net.minecraft.world.gen.feature.ConfiguredFeature;
  import net.minecraft.world.gen.feature.FlowersFeature;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class GrassBlock extends SpreadableSnowyDirtBlock implements IGrowable {
     public GrassBlock(AbstractBlock.Properties p_i48388_1_) {
-@@ -58,7 +59,7 @@
+@@ -58,7 +_,7 @@
              }
  
              if (blockstate1.func_196955_c(p_225535_1_, blockpos1)) {

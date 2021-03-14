@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/DungeonsFeature.java
 +++ b/net/minecraft/world/gen/feature/DungeonsFeature.java
-@@ -113,7 +113,7 @@
+@@ -113,7 +_,7 @@
           if (tileentity instanceof MobSpawnerTileEntity) {
              ((MobSpawnerTileEntity)tileentity).func_145881_a().func_200876_a(this.func_201043_a(p_241855_3_));
           } else {
@@ -9,7 +9,7 @@
           }
  
           return true;
-@@ -123,6 +123,6 @@
+@@ -123,6 +_,6 @@
     }
  
     private EntityType<?> func_201043_a(Random p_201043_1_) {

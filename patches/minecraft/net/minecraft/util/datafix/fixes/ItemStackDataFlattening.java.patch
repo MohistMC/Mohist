@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/fixes/ItemStackDataFlattening.java
 +++ b/net/minecraft/util/datafix/fixes/ItemStackDataFlattening.java
-@@ -372,7 +372,7 @@
+@@ -372,7 +_,7 @@
              if (field_199178_c.contains(optional.get().getSecond())) {
                 Typed<?> typed1 = p_206362_2_.getOrCreateTyped(opticfinder1);
                 Dynamic<?> dynamic1 = typed1.get(DSL.remainderFinder());

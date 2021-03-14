@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/ArrowEntity.java
 +++ b/net/minecraft/entity/projectile/ArrowEntity.java
-@@ -17,17 +17,31 @@
+@@ -17,17 +_,31 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionUtils;
  import net.minecraft.potion.Potions;
@@ -33,7 +33,7 @@
     public ArrowEntity(EntityType<? extends ArrowEntity> p_i50172_1_, World p_i50172_2_) {
        super(p_i50172_1_, p_i50172_2_);
     }
-@@ -122,11 +136,30 @@
+@@ -122,11 +_,30 @@
        }
     }
  
@@ -65,7 +65,7 @@
        this.field_191509_at = true;
        this.field_70180_af.func_187227_b(field_184559_f, p_191507_1_);
     }
-@@ -175,12 +208,12 @@
+@@ -175,12 +_,12 @@
        super.func_184548_a(p_184548_1_);
  
        for(EffectInstance effectinstance : this.field_184560_g.func_185170_a()) {

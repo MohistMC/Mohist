@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BoatItem.java
 +++ b/net/minecraft/item/BoatItem.java
-@@ -7,9 +7,11 @@
+@@ -7,9 +_,11 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.stats.Stats;
  import net.minecraft.util.ActionResult;
@@ -12,7 +12,7 @@
  import net.minecraft.util.math.RayTraceContext;
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.util.math.vector.Vector3d;
-@@ -45,6 +47,14 @@
+@@ -45,6 +_,14 @@
           }
  
           if (raytraceresult.func_216346_c() == RayTraceResult.Type.BLOCK) {
@@ -27,7 +27,7 @@
              BoatEntity boatentity = new BoatEntity(p_77659_1_, raytraceresult.func_216347_e().field_72450_a, raytraceresult.func_216347_e().field_72448_b, raytraceresult.func_216347_e().field_72449_c);
              boatentity.func_184458_a(this.field_185057_a);
              boatentity.field_70177_z = p_77659_2_.field_70177_z;
-@@ -52,7 +62,16 @@
+@@ -52,7 +_,16 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
                 if (!p_77659_1_.field_72995_K) {

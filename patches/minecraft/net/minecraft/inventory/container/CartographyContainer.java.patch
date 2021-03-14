@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/CartographyContainer.java
 +++ b/net/minecraft/inventory/container/CartographyContainer.java
-@@ -14,8 +14,28 @@
+@@ -14,8 +_,28 @@
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
  import net.minecraft.world.storage.MapData;
@@ -29,7 +29,7 @@
     private final IWorldPosCallable field_216999_d;
     private long field_226605_f_;
     public final IInventory field_216998_c = new Inventory(2) {
-@@ -23,12 +43,26 @@
+@@ -23,12 +_,26 @@
           CartographyContainer.this.func_75130_a(this);
           super.func_70296_d();
        }
@@ -56,7 +56,7 @@
     };
  
     public CartographyContainer(int p_i50093_1_, PlayerInventory p_i50093_2_) {
-@@ -80,9 +114,12 @@
+@@ -80,9 +_,12 @@
           this.func_75146_a(new Slot(p_i50094_2_, k, 8 + k * 18, 142));
        }
  

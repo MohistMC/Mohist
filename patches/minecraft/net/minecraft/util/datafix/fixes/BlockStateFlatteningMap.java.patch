@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/fixes/BlockStateFlatteningMap.java
 +++ b/net/minecraft/util/datafix/fixes/BlockStateFlatteningMap.java
-@@ -20,7 +20,7 @@
+@@ -20,7 +_,7 @@
        p_209419_0_.defaultReturnValue(-1);
     });
  
@@ -9,7 +9,7 @@
        Dynamic<?> dynamic = func_210048_b(p_199194_1_);
        field_199200_b[p_199194_0_] = dynamic;
        int i = p_199194_0_ >> 4;
-@@ -79,7 +79,7 @@
+@@ -79,7 +_,7 @@
        try {
           return new Dynamic<>(NBTDynamicOps.field_210820_a, JsonToNBT.func_180713_a(p_210048_0_.replace('\'', '"')));
        } catch (Exception exception) {

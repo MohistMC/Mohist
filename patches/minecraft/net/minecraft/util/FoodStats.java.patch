@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/FoodStats.java
 +++ b/net/minecraft/util/FoodStats.java
-@@ -1,25 +1,37 @@
+@@ -1,25 +_,37 @@
  package net.minecraft.util;
  
  import net.minecraft.entity.player.PlayerEntity;
@@ -43,7 +43,7 @@
  
     public void func_75122_a(int p_75122_1_, float p_75122_2_) {
        this.field_75127_a = Math.min(p_75122_1_ + this.field_75127_a, 20);
-@@ -29,7 +41,22 @@
+@@ -29,7 +_,22 @@
     public void func_221410_a(Item p_221410_1_, ItemStack p_221410_2_) {
        if (p_221410_1_.func_219971_r()) {
           Food food = p_221410_1_.func_219967_s();
@@ -67,7 +67,7 @@
        }
  
     }
-@@ -42,7 +69,17 @@
+@@ -42,7 +_,17 @@
           if (this.field_75125_b > 0.0F) {
              this.field_75125_b = Math.max(this.field_75125_b - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
@@ -86,7 +86,7 @@
           }
        }
  
-@@ -51,15 +88,15 @@
+@@ -51,15 +_,15 @@
           ++this.field_75123_d;
           if (this.field_75123_d >= 10) {
              float f = Math.min(this.field_75125_b, 6.0F);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CampfireBlock.java
 +++ b/net/minecraft/block/CampfireBlock.java
-@@ -39,7 +39,6 @@
+@@ -39,7 +_,6 @@
  import net.minecraft.util.math.shapes.ISelectionContext;
  import net.minecraft.util.math.shapes.VoxelShape;
  import net.minecraft.util.math.shapes.VoxelShapes;
@@ -8,7 +8,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
-@@ -181,9 +180,14 @@
+@@ -181,9 +_,14 @@
     public void func_220066_a(World p_220066_1_, BlockState p_220066_2_, BlockRayTraceResult p_220066_3_, ProjectileEntity p_220066_4_) {
        if (!p_220066_1_.field_72995_K && p_220066_4_.func_70027_ad()) {
           Entity entity = p_220066_4_.func_234616_v_();
@@ -24,7 +24,7 @@
              p_220066_1_.func_180501_a(blockpos, p_220066_2_.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)), 11);
           }
        }
-@@ -208,7 +212,7 @@
+@@ -208,7 +_,7 @@
              return true;
           }
  

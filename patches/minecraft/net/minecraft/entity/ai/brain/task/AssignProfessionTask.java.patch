@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/AssignProfessionTask.java
 +++ b/net/minecraft/entity/ai/brain/task/AssignProfessionTask.java
-@@ -11,6 +11,9 @@
+@@ -11,6 +_,9 @@
  import net.minecraft.util.math.GlobalPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.server.ServerWorld;
@@ -10,7 +10,7 @@
  
  public class AssignProfessionTask extends Task<VillagerEntity> {
     public AssignProfessionTask() {
-@@ -36,7 +39,13 @@
+@@ -36,7 +_,13 @@
                 return p_220389_1_.func_221149_b() == p_220390_0_;
              }).findFirst();
           }).ifPresent((p_220388_2_) -> {

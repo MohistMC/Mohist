@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/ComposterBlock.java
 +++ b/net/minecraft/block/ComposterBlock.java
-@@ -4,6 +4,7 @@
+@@ -4,6 +_,7 @@
  import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
  import java.util.Random;
  import javax.annotation.Nullable;
@@ -8,7 +8,7 @@
  import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.inventory.ISidedInventory;
-@@ -35,6 +36,8 @@
+@@ -35,6 +_,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,7 +17,7 @@
  
  public class ComposterBlock extends Block implements ISidedInventoryProvider {
     public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
-@@ -196,37 +199,53 @@
+@@ -196,37 +_,53 @@
  
           return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
        } else if (i == 8) {
@@ -87,7 +87,7 @@
        return blockstate;
     }
  
-@@ -237,16 +256,22 @@
+@@ -237,16 +_,22 @@
     }
  
     private static BlockState func_235487_b_(BlockState p_235487_0_, IWorld p_235487_1_, BlockPos p_235487_2_, ItemStack p_235487_3_) {
@@ -117,7 +117,7 @@
           }
  
           return blockstate;
-@@ -282,13 +307,15 @@
+@@ -282,13 +_,15 @@
        if (i == 8) {
           return new ComposterBlock.FullInventory(p_219966_1_, p_219966_2_, p_219966_3_, new ItemStack(Items.field_196106_bc));
        } else {
@@ -135,7 +135,7 @@
        }
  
        public int[] func_180463_a(Direction p_180463_1_) {
-@@ -315,6 +342,7 @@
+@@ -315,6 +_,7 @@
           this.field_213920_a = p_i50463_1_;
           this.field_213921_b = p_i50463_2_;
           this.field_213922_c = p_i50463_3_;
@@ -143,7 +143,7 @@
        }
  
        public int func_70297_j_() {
-@@ -334,8 +362,15 @@
+@@ -334,8 +_,15 @@
        }
  
        public void func_70296_d() {
@@ -161,7 +161,7 @@
        }
     }
  
-@@ -347,6 +382,7 @@
+@@ -347,6 +_,7 @@
  
        public PartialInventory(BlockState p_i50464_1_, IWorld p_i50464_2_, BlockPos p_i50464_3_) {
           super(1);

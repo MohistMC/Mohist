@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/block/ChorusFlowerBlock.java
-@@ -14,6 +14,7 @@
+@@ -14,6 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -8,7 +8,7 @@
  
  public class ChorusFlowerBlock extends Block {
     public static final IntegerProperty field_185607_a = BlockStateProperties.field_208169_V;
-@@ -40,7 +41,7 @@
+@@ -40,7 +_,7 @@
        BlockPos blockpos = p_225542_3_.func_177984_a();
        if (p_225542_2_.func_175623_d(blockpos) && blockpos.func_177956_o() < 256) {
           int i = p_225542_1_.func_177229_b(field_185607_a);
@@ -17,7 +17,7 @@
              boolean flag = false;
              boolean flag1 = false;
              BlockState blockstate = p_225542_2_.func_180495_p(p_225542_3_.func_177977_b());
-@@ -65,13 +66,17 @@
+@@ -65,13 +_,17 @@
                 if (j < 2 || j <= p_225542_4_.nextInt(flag1 ? 5 : 4)) {
                    flag = true;
                 }
@@ -38,7 +38,7 @@
              } else if (i < 4) {
                 int l = p_225542_4_.nextInt(4);
                 if (flag1) {
-@@ -84,20 +89,33 @@
+@@ -84,20 +_,33 @@
                    Direction direction = Direction.Plane.HORIZONTAL.func_179518_a(p_225542_4_);
                    BlockPos blockpos1 = p_225542_3_.func_177972_a(direction);
                    if (p_225542_2_.func_175623_d(blockpos1) && p_225542_2_.func_175623_d(blockpos1.func_177977_b()) && func_185604_a(p_225542_2_, blockpos1, direction.func_176734_d())) {
@@ -77,7 +77,7 @@
           }
        }
     }
-@@ -133,7 +151,7 @@
+@@ -133,7 +_,7 @@
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
        if (blockstate.func_177230_c() != this.field_196405_b && !blockstate.func_203425_a(Blocks.field_150377_bs)) {
@@ -86,7 +86,7 @@
              return false;
           } else {
              boolean flag = false;
-@@ -146,7 +164,7 @@
+@@ -146,7 +_,7 @@
                    }
  
                    flag = true;

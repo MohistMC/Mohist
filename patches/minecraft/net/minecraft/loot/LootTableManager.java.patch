@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/LootTableManager.java
 +++ b/net/minecraft/loot/LootTableManager.java
-@@ -17,6 +17,7 @@
+@@ -17,6 +_,7 @@
     private static final Logger field_186525_a = LogManager.getLogger();
     private static final Gson field_186526_b = LootSerializers.func_237388_c_().create();
     private Map<ResourceLocation, LootTable> field_186527_c = ImmutableMap.of();
@@ -8,7 +8,7 @@
     private final LootPredicateManager field_227507_d_;
  
     public LootTableManager(LootPredicateManager p_i225887_1_) {
-@@ -32,15 +33,15 @@
+@@ -32,15 +_,15 @@
        Builder<ResourceLocation, LootTable> builder = ImmutableMap.builder();
        JsonElement jsonelement = p_212853_1_.remove(LootTables.field_186419_a);
        if (jsonelement != null) {
@@ -28,7 +28,7 @@
           }
  
        });
-@@ -54,6 +55,11 @@
+@@ -54,6 +_,11 @@
           field_186525_a.warn("Found validation problem in " + p_215303_0_ + ": " + p_215303_1_);
        });
        this.field_186527_c = immutablemap;

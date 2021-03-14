@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/ResourcePackInfo.java
 +++ b/net/minecraft/resources/ResourcePackInfo.java
-@@ -30,6 +30,7 @@
+@@ -30,6 +_,7 @@
     private final ResourcePackInfo.Priority field_195805_g;
     private final boolean field_195806_h;
     private final boolean field_195807_i;
@@ -8,7 +8,7 @@
     private final IPackNameDecorator field_232611_k_;
  
     @Nullable
-@@ -37,7 +38,7 @@
+@@ -37,7 +_,7 @@
        try (IResourcePack iresourcepack = p_195793_2_.get()) {
           PackMetadataSection packmetadatasection = iresourcepack.func_195760_a(PackMetadataSection.field_198964_a);
           if (p_195793_1_ && packmetadatasection == null) {
@@ -17,7 +17,7 @@
              packmetadatasection = field_212500_b;
           }
  
-@@ -45,15 +46,20 @@
+@@ -45,15 +_,20 @@
              return p_195793_3_.create(p_195793_0_, p_195793_1_, p_195793_2_, iresourcepack, packmetadatasection, p_195793_4_, p_195793_5_);
           }
  
@@ -40,7 +40,7 @@
        this.field_195800_b = p_i231422_1_;
        this.field_195801_c = p_i231422_3_;
        this.field_195802_d = p_i231422_4_;
-@@ -63,10 +69,16 @@
+@@ -63,10 +_,16 @@
        this.field_195805_g = p_i231422_7_;
        this.field_195807_i = p_i231422_8_;
        this.field_232611_k_ = p_i231422_9_;
@@ -58,7 +58,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -113,6 +125,8 @@
+@@ -113,6 +_,8 @@
     public IPackNameDecorator func_232614_i_() {
        return this.field_232611_k_;
     }

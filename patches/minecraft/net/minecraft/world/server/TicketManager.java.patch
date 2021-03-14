@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/TicketManager.java
 +++ b/net/minecraft/world/server/TicketManager.java
-@@ -37,7 +37,7 @@
+@@ -37,7 +_,7 @@
     private static final Logger field_219373_a = LogManager.getLogger();
     private static final int field_219374_b = 33 + ChunkStatus.func_222599_a(ChunkStatus.field_222617_m) - 2;
     private final Long2ObjectMap<ObjectSet<ServerPlayerEntity>> field_219375_c = new Long2ObjectOpenHashMap<>();
@@ -9,7 +9,7 @@
     private final TicketManager.ChunkTicketTracker field_219378_f = new TicketManager.ChunkTicketTracker();
     private final TicketManager.PlayerChunkTracker field_219381_i = new TicketManager.PlayerChunkTracker(8);
     private final TicketManager.PlayerTicketTracker field_219382_j = new TicketManager.PlayerTicketTracker(33);
-@@ -49,6 +49,8 @@
+@@ -49,6 +_,8 @@
     private final Executor field_219388_p;
     private long field_219389_q;
  
@@ -18,7 +18,7 @@
     protected TicketManager(Executor p_i50707_1_, Executor p_i50707_2_) {
        ITaskExecutor<Runnable> itaskexecutor = ITaskExecutor.func_213140_a("player ticket throttler", p_i50707_2_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(itaskexecutor), p_i50707_1_, 4);
-@@ -98,10 +100,22 @@
+@@ -98,10 +_,22 @@
        }
  
        if (!this.field_219383_k.isEmpty()) {
@@ -44,7 +44,7 @@
           return true;
        } else {
           if (!this.field_219387_o.isEmpty()) {
-@@ -143,6 +157,22 @@
+@@ -143,6 +_,22 @@
           this.field_219378_f.func_215491_b(p_219347_1_, p_219347_3_.func_219477_b(), true);
        }
  
@@ -67,7 +67,7 @@
     }
  
     private void func_219349_b(long p_219349_1_, Ticket<?> p_219349_3_) {
-@@ -155,7 +185,35 @@
+@@ -155,7 +_,35 @@
        }
  
        this.field_219378_f.func_215491_b(p_219349_1_, func_229844_a_(sortedarrayset), false);
@@ -104,7 +104,7 @@
  
     public <T> void func_219356_a(TicketType<T> p_219356_1_, ChunkPos p_219356_2_, int p_219356_3_, T p_219356_4_) {
        this.func_219347_a(p_219356_2_.func_201841_a(), new Ticket<>(p_219356_1_, p_219356_3_, p_219356_4_));
-@@ -166,6 +224,14 @@
+@@ -166,6 +_,14 @@
        this.func_219349_b(p_219345_2_.func_201841_a(), ticket);
     }
  
@@ -119,7 +119,7 @@
     public <T> void func_219331_c(TicketType<T> p_219331_1_, ChunkPos p_219331_2_, int p_219331_3_, T p_219331_4_) {
        this.func_219347_a(p_219331_2_.func_201841_a(), new Ticket<>(p_219331_1_, 33 - p_219331_3_, p_219331_4_));
     }
-@@ -175,6 +241,14 @@
+@@ -175,6 +_,14 @@
        this.func_219349_b(p_219362_2_.func_201841_a(), ticket);
     }
  
@@ -134,7 +134,7 @@
     private SortedArraySet<Ticket<?>> func_229848_e_(long p_229848_1_) {
        return this.field_219377_e.computeIfAbsent(p_229848_1_, (p_229851_0_) -> {
           return SortedArraySet.func_226172_a_(4);
-@@ -203,6 +277,7 @@
+@@ -203,6 +_,7 @@
     public void func_219367_b(SectionPos p_219367_1_, ServerPlayerEntity p_219367_2_) {
        long i = p_219367_1_.func_218155_u().func_201841_a();
        ObjectSet<ServerPlayerEntity> objectset = this.field_219375_c.get(i);
@@ -142,7 +142,7 @@
        objectset.remove(p_219367_2_);
        if (objectset.isEmpty()) {
           this.field_219375_c.remove(i);
-@@ -241,6 +316,29 @@
+@@ -241,6 +_,29 @@
     public String func_225412_c() {
        return this.field_219384_l.func_225396_a();
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/LecternContainer.java
 +++ b/net/minecraft/inventory/container/LecternContainer.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.inventory.container;
  
  import net.minecraft.entity.player.PlayerEntity;
@@ -8,7 +8,7 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-@@ -8,17 +9,37 @@
+@@ -8,17 +_,37 @@
  import net.minecraft.util.IntArray;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -52,7 +52,7 @@
        func_216962_a(p_i50076_2_, 1);
        func_216959_a(p_i50076_3_, 1);
        this.field_217018_c = p_i50076_2_;
-@@ -30,6 +51,7 @@
+@@ -30,6 +_,7 @@
           }
        });
        this.func_216961_a(p_i50076_3_);
@@ -60,7 +60,7 @@
     }
  
     public boolean func_75140_a(PlayerEntity p_75140_1_, int p_75140_2_) {
-@@ -52,6 +74,14 @@
+@@ -52,6 +_,14 @@
                 return false;
              }
  
@@ -75,7 +75,7 @@
              ItemStack itemstack = this.field_217018_c.func_70304_b(0);
              this.field_217018_c.func_70296_d();
              if (!p_75140_1_.field_71071_by.func_70441_a(itemstack)) {
-@@ -71,6 +101,7 @@
+@@ -71,6 +_,7 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {

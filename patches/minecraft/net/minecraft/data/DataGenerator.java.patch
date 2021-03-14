@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/DataGenerator.java
 +++ b/net/minecraft/data/DataGenerator.java
-@@ -16,10 +16,11 @@
+@@ -16,10 +_,11 @@
     private final Collection<Path> field_200394_b;
     private final Path field_200395_c;
     private final List<IDataProvider> field_200396_d = Lists.newArrayList();
@@ -13,7 +13,7 @@
     }
  
     public Collection<Path> func_200389_a() {
-@@ -37,20 +38,29 @@
+@@ -37,20 +_,29 @@
        Stopwatch stopwatch1 = Stopwatch.createUnstarted();
  
        for(IDataProvider idataprovider : this.field_200396_d) {

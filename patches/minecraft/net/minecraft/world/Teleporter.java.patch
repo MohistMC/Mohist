@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/Teleporter.java
 +++ b/net/minecraft/world/Teleporter.java
-@@ -5,6 +5,7 @@
+@@ -5,6 +_,7 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.block.NetherPortalBlock;
@@ -8,7 +8,7 @@
  import net.minecraft.state.properties.BlockStateProperties;
  import net.minecraft.util.Direction;
  import net.minecraft.util.TeleportationRepositioner;
-@@ -19,7 +20,7 @@
+@@ -19,7 +_,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.server.TicketType;
  
@@ -17,7 +17,7 @@
     protected final ServerWorld field_85192_a;
  
     public Teleporter(ServerWorld p_i1963_1_) {
-@@ -27,13 +28,19 @@
+@@ -27,13 +_,19 @@
     }
  
     public Optional<TeleportationRepositioner.Result> func_242957_a(BlockPos p_242957_1_, boolean p_242957_2_) {
@@ -41,7 +41,7 @@
        }).thenComparingInt((p_242959_0_) -> {
           return p_242959_0_.func_218261_f().func_177956_o();
        })).filter((p_242958_1_) -> {
-@@ -50,16 +57,21 @@
+@@ -50,16 +_,21 @@
     }
  
     public Optional<TeleportationRepositioner.Result> func_242956_a(BlockPos p_242956_1_, Direction.Axis p_242956_2_) {
@@ -66,7 +66,7 @@
           int j = Math.min(i, this.field_85192_a.func_201676_a(Heightmap.Type.MOTION_BLOCKING, blockpos$mutable1.func_177958_n(), blockpos$mutable1.func_177952_p()));
           int k = 1;
           if (worldborder.func_177746_a(blockpos$mutable1) && worldborder.func_177746_a(blockpos$mutable1.func_189534_c(direction, 1))) {
-@@ -77,7 +89,7 @@
+@@ -77,7 +_,7 @@
                       if (j1 <= 0 || j1 >= 3) {
                          blockpos$mutable1.func_185336_p(l);
                          if (this.func_242955_a(blockpos$mutable1, blockpos$mutable, direction, 0)) {
@@ -75,7 +75,7 @@
                             if (this.func_242955_a(blockpos$mutable1, blockpos$mutable, direction, -1) && this.func_242955_a(blockpos$mutable1, blockpos$mutable, direction, 1) && (d0 == -1.0D || d0 > d2)) {
                                d0 = d2;
                                blockpos = blockpos$mutable1.func_185334_h();
-@@ -100,8 +112,9 @@
+@@ -100,8 +_,9 @@
           d0 = d1;
        }
  
@@ -86,7 +86,7 @@
           Direction direction1 = direction.func_176746_e();
           if (!worldborder.func_177746_a(blockpos)) {
              return Optional.empty();
-@@ -112,7 +125,7 @@
+@@ -112,7 +_,7 @@
                 for(int i3 = -1; i3 < 3; ++i3) {
                    BlockState blockstate1 = i3 < 0 ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P();
                    blockpos$mutable.func_239621_a_(blockpos, k2 * direction.func_82601_c() + l1 * direction1.func_82601_c(), i3, k2 * direction.func_82599_e() + l1 * direction1.func_82599_e());
@@ -95,7 +95,7 @@
                 }
              }
           }
-@@ -122,19 +135,29 @@
+@@ -122,19 +_,29 @@
           for(int i2 = -1; i2 < 4; ++i2) {
              if (k1 == -1 || k1 == 2 || i2 == -1 || i2 == 3) {
                 blockpos$mutable.func_239621_a_(blockpos, k1 * direction.func_82601_c(), i2, k1 * direction.func_82599_e());

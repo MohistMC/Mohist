@@ -1,6 +1,6 @@
 --- a/net/minecraft/fluid/FlowingFluid.java
 +++ b/net/minecraft/fluid/FlowingFluid.java
-@@ -29,6 +29,12 @@
+@@ -29,6 +_,12 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
@@ -13,7 +13,7 @@
  
  public abstract class FlowingFluid extends Fluid {
     public static final BooleanProperty field_207209_a = BlockStateProperties.field_208183_j;
-@@ -117,6 +123,14 @@
+@@ -117,6 +_,14 @@
           BlockState blockstate1 = p_205575_1_.func_180495_p(blockpos);
           FluidState fluidstate = this.func_205576_a(p_205575_1_, blockpos, blockstate1);
           if (this.func_205570_b(p_205575_1_, p_205575_2_, blockstate, Direction.DOWN, blockpos, blockstate1, p_205575_1_.func_204610_c(blockpos), fluidstate.func_206886_c())) {
@@ -28,7 +28,7 @@
              this.func_205574_a(p_205575_1_, blockpos, blockstate1, Direction.DOWN, fluidstate);
              if (this.func_207936_a(p_205575_1_, p_205575_2_) >= 3) {
                 this.func_207937_a(p_205575_1_, p_205575_2_, p_205575_3_, blockstate);
-@@ -143,6 +157,14 @@
+@@ -143,6 +_,14 @@
              BlockPos blockpos = p_207937_2_.func_177972_a(direction);
              BlockState blockstate = p_207937_1_.func_180495_p(blockpos);
              if (this.func_205570_b(p_207937_1_, p_207937_2_, p_207937_4_, direction, blockpos, blockstate, p_207937_1_.func_204610_c(blockpos), fluidstate.func_206886_c())) {
@@ -43,7 +43,7 @@
                 this.func_205574_a(p_207937_1_, blockpos, blockstate, direction, fluidstate);
              }
           }
-@@ -159,7 +181,7 @@
+@@ -159,7 +_,7 @@
           BlockState blockstate = p_205576_1_.func_180495_p(blockpos);
           FluidState fluidstate = blockstate.func_204520_s();
           if (fluidstate.func_206886_c().func_207187_a(this) && this.func_212751_a(direction, p_205576_1_, p_205576_2_, p_205576_3_, blockpos, blockstate)) {
@@ -52,7 +52,7 @@
                 ++j;
              }
  
-@@ -167,7 +189,7 @@
+@@ -167,7 +_,7 @@
           }
        }
  
@@ -61,7 +61,7 @@
           BlockState blockstate1 = p_205576_1_.func_180495_p(p_205576_2_.func_177977_b());
           FluidState fluidstate1 = blockstate1.func_204520_s();
           if (blockstate1.func_185904_a().func_76220_a() || this.func_211758_g(fluidstate1)) {
-@@ -397,11 +419,23 @@
+@@ -397,11 +_,23 @@
           int i = this.func_215667_a(p_207191_1_, p_207191_2_, p_207191_3_, fluidstate);
           if (fluidstate.func_206888_e()) {
              p_207191_3_ = fluidstate;
