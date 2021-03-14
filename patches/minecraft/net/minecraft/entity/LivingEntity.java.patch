@@ -845,7 +845,7 @@
              this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
           }
  
-@@ -1447,23 +_,179 @@
+@@ -1447,23 +_,181 @@
     }
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
@@ -998,7 +998,9 @@
 +         if (f > 0 || !human) {
 +            if (human) {
 +               // PAIL: Be sure to drag all this code from the EntityPlayer subclass each update.
++               ((PlayerEntity) this).withExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED);
 +               ((PlayerEntity) this).func_71020_j(damagesource.func_76345_d());
++               ((PlayerEntity) this).setDefaultExhaustionReason();
 +               if (f < 3.4028235E37F) {
 +                  ((PlayerEntity) this).func_195067_a(Stats.field_188112_z, Math.round(f * 10.0F));
 +               }
