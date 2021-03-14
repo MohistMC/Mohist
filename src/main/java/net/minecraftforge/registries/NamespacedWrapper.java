@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,8 +61,8 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
             value.setRegistryName(key.location());
 
         int realId = this.delegate.add(id, value);
-        //if (realId != id && id != -1)
-        //    LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+        if (realId != id && id != -1)
+            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
         return value;
     }
 

@@ -22,6 +22,7 @@ import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
+    id 'org.cadixdev.licenser' version '0.5.0'
     id 'org.ajoberstar.grgit' version '4.1.0'
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'eclipse'
@@ -109,6 +110,7 @@ project(':forge') {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'org.cadixdev.licenser'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(8)
     group = 'net.minecraftforge'
@@ -162,13 +164,14 @@ project(':forge') {
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
-        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
+        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.9.0'
+        SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.3'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.5-36.0.48'
+    version = '1.16.5-36.0.58'
     println('Forge Version: ' + version)
 
     patcher {
@@ -365,7 +368,7 @@ project(':forge') {
         installer 'org.spongepowered:mixin:0.8.2'
         // This is org.openjdk.nashorn:nashorn-core:15.1.1 repackaged so it doesn't crash on JREs < 15.
         // See: https://github.com/LexManos/NashornLegacyPackager
-        installer 'net.minecraftforge:nashorn-core-compat:15.1.1'
+        installer 'net.minecraftforge:nashorn-core-compat:15.1.1.1'
 
         // bukkit
         installer 'commons-lang:commons-lang:2.6'
@@ -409,7 +412,7 @@ project(':forge') {
         def srgTask = tasks.getByName(patcher.notchObf ? 'createMcp2Obf' : 'createMcp2Srg')
         // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
         task "create${side}SRG"(type: net.minecraftforge.gradle.userdev.tasks.RenameJar, dependsOn: srgTask) {
-            tool = SPECIAL_SOURCE + ':shaded'
+            tool = SPECIAL_SOURCE_MCP + ':shaded'
             args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
             mappings = { srgTask.output }
             input = { gen.cleanJar }
@@ -480,6 +483,20 @@ project(':forge') {
     }
 
     task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
+
+    task checkPatchesAndFix(type: CheckPatches) {
+        patchDir = file("$rootDir/patches")
+        autoFix = true
+    }
+
+    task checkPatches(type: CheckPatches) {
+        patchDir = file("$rootDir/patches")
+        autoFix = false
+    }
+    genPatches {
+        finalizedBy checkPatches
+        autoHeader true
+    }
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
@@ -646,8 +663,8 @@ project(':forge') {
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [
-                        jar: SPECIAL_SOURCE,
-                        classpath: getClasspath(project, libs, SPECIAL_SOURCE),
+                        jar: SPECIAL_SOURCE_MCP,
+                        classpath: getClasspath(project, libs, SPECIAL_SOURCE_MCP),
                         args: [
                             //'--stable', Java 9 Is borked, https://bugs.openjdk.java.net/browse/JDK-8184940 TODO: find a fix.
                             '--in-jar', '{MC_SLIM}',
@@ -885,10 +902,40 @@ project(':forge') {
         }
     }
 
+    license {
+        header = file("$rootDir/licenses/LICENSE-header.txt")
+
+        ext {
+            year = new Date().format("yyyy")
+        }
+
+        include 'net/minecraftforge/'
+        exclude 'net/minecraftforge/server/terminalconsole/'
+        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
+        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
+        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
+        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
+        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
+        exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
+
+        tasks {
+            main {
+                files = files("$rootDir/src/main/java")
+            }
+            test {
+                files = files("$rootDir/src/test/java")
+            }
+        }
+    }
+
     task userdevExtras(type:Jar) {
         dependsOn classes
         from sourceSets.userdev.output
         classifier 'userdev-temp'
+    }
+
+    reobfJar {
+        tool = SPECIAL_SOURCE + ':shaded'
     }
 
     task userdevExtrasReobf(type:TaskReobfuscateJar) {
@@ -896,6 +943,7 @@ project(':forge') {
         input = tasks.userdevExtras.archivePath
         classpath = project.configurations.compile
         srg = tasks.createMcp2Srg.output
+        tool = SPECIAL_SOURCE + ':shaded'
     }
 
     userdevJar {

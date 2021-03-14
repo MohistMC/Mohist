@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -788,7 +788,7 @@ public interface IForgeBlockState
      * @param pos The block position in world
      * @param player The player clicking the block
      * @param stack The stack being used by the player
-     * @param toolType The tool type The tool types to be considered when performing the action
+     * @param toolType The tool type to be considered when performing the action
      * @return The resulting state after the action has been performed
      */
     @Nullable

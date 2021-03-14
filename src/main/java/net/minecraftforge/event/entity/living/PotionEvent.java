@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -71,7 +71,7 @@ public class PotionEvent extends LivingEvent
         public PotionRemoveEvent(LivingEntity living, EffectInstance effect)
         {
             super(living, effect);
-            this.potion = effect.getEffect();
+            this.potion = effect.getEffect();            
         }
         
         /**
