@@ -1601,4 +1601,11 @@ public class CraftEventFactory {
 
         return event;
     }
+
+    public static EntityExhaustionEvent callPlayerExhaustionEvent(PlayerEntity humanEntity, EntityExhaustionEvent.ExhaustionReason exhaustionReason, float exhaustion) {
+        EntityExhaustionEvent event = new EntityExhaustionEvent(humanEntity.getBukkitEntity(), exhaustionReason, exhaustion);
+        Bukkit.getPluginManager().callEvent(event);
+
+        return event;
+    }
 }

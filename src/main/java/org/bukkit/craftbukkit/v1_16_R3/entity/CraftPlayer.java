@@ -1046,36 +1046,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         getHandle().connection.send(packet);
     }
 
-    @Override
-    public float getExhaustion() {
-        return getHandle().getFoodData().exhaustionLevel;
-    }
-
-    @Override
-    public void setExhaustion(float value) {
-        getHandle().getFoodData().exhaustionLevel = value;
-    }
-
-    @Override
-    public float getSaturation() {
-        return getHandle().getFoodData().saturationLevel;
-    }
-
-    @Override
-    public void setSaturation(float value) {
-        getHandle().getFoodData().saturationLevel = value;
-    }
-
-    @Override
-    public int getFoodLevel() {
-        return getHandle().getFoodData().foodLevel;
-    }
-
-    @Override
-    public void setFoodLevel(int value) {
-        getHandle().getFoodData().foodLevel = value;
-    }
-
     @Nullable
     private static WeakReference<Plugin> getPluginWeakReference(@Nullable Plugin plugin) {
         return (plugin == null) ? null : pluginWeakReferences.computeIfAbsent(plugin, WeakReference::new);
