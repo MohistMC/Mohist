@@ -52,7 +52,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
         @Override
         public void setBiome(int x, int z, Biome bio) {
-            for (int y = 0; y < world.getCBWorld().getMaxHeight(); y += 4) {
+            for (int y = 0; y < world.getWorld().getMaxHeight(); y += 4) {
                 setBiome(x, y, z, bio);
             }
         }
@@ -108,10 +108,10 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
         ChunkData data;
         if (generator.isParallelCapable()) {
-            data = generator.generateChunkData(this.world.getCBWorld(), random, x, z, biomegrid);
+            data = generator.generateChunkData(this.world.getWorld(), random, x, z, biomegrid);
         } else {
             synchronized (this) {
-                data = generator.generateChunkData(this.world.getCBWorld(), random, x, z, biomegrid);
+                data = generator.generateChunkData(this.world.getWorld(), random, x, z, biomegrid);
             }
         }
 

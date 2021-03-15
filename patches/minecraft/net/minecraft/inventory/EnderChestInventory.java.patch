@@ -20,7 +20,7 @@
 +
 +   @Override
 +   public Location getLocation() {
-+      return this.field_70488_a != null ?new Location(this.field_70488_a.func_145831_w().getCBWorld(), this.field_70488_a.func_174877_v().func_177958_n(), this.field_70488_a.func_174877_v().func_177956_o(), this.field_70488_a.func_174877_v().func_177952_p()) : null;
++      return this.field_70488_a != null ?new Location(this.field_70488_a.func_145831_w().getWorld(), this.field_70488_a.func_174877_v().func_177958_n(), this.field_70488_a.func_174877_v().func_177956_o(), this.field_70488_a.func_174877_v().func_177952_p()) : null;
 +   }
 +
 +   public EnderChestInventory(PlayerEntity owner) {

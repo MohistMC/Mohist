@@ -85,7 +85,7 @@
        if (this.field_184278_m <= 0 && itemstack.func_77973_b() == Items.field_151065_br) {
 -         this.field_184278_m = 20;
 +         // CraftBukkit start
-+         BrewingStandFuelEvent event = new BrewingStandFuelEvent(field_145850_b.getCBWorld().getBlockAt(this.field_174879_c.func_177958_n(), this.field_174879_c.func_177956_o(), this.field_174879_c.func_177952_p()), CraftItemStack.asCraftMirror(itemstack), 20);
++         BrewingStandFuelEvent event = new BrewingStandFuelEvent(field_145850_b.getWorld().getBlockAt(this.field_174879_c.func_177958_n(), this.field_174879_c.func_177956_o(), this.field_174879_c.func_177952_p()), CraftItemStack.asCraftMirror(itemstack), 20);
 +         this.field_145850_b.getCBServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
@@ -135,7 +135,7 @@
 +      // CraftBukkit start
 +      InventoryHolder owner = this.getOwner();
 +      if (owner != null) {
-+         BrewEvent event = new BrewEvent(field_145850_b.getCBWorld().getBlockAt(this.field_174879_c.func_177958_n(), this.field_174879_c.func_177956_o(), this.field_174879_c.func_177952_p()), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), this.field_184278_m);
++         BrewEvent event = new BrewEvent(field_145850_b.getWorld().getBlockAt(this.field_174879_c.func_177958_n(), this.field_174879_c.func_177956_o(), this.field_174879_c.func_177952_p()), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), this.field_184278_m);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;

@@ -51,10 +51,10 @@ public final class CapturedBlockState extends CraftBlockState {
     }
 
     public static CapturedBlockState getBlockState(World world, BlockPos pos, int flag) {
-        return new CapturedBlockState(world.getCBWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag, false);
+        return new CapturedBlockState(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag, false);
     }
 
     public static CapturedBlockState getTreeBlockState(World world, BlockPos pos, int flag) {
-        return new CapturedBlockState(world.getCBWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag, true);
+        return new CapturedBlockState(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag, true);
     }
 }

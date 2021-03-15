@@ -63,7 +63,7 @@ public final class CraftMapView implements MapView {
         RegistryKey<net.minecraft.world.World> dimension = worldMap.dimension;
         ServerWorld world = MinecraftServer.getServer().getLevel(dimension);
 
-        return (world == null) ? null : world.getCBWorld();
+        return (world == null) ? null : world.getWorld();
     }
 
     @Override

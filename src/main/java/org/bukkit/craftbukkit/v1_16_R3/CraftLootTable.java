@@ -126,7 +126,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
         if (position == null) {
             position = info.getParamOrNull(LootParameters.THIS_ENTITY).position(); // Every vanilla context has origin or this_entity, see LootParameters
         }
-        Location location = new Location(info.getLevel().getCBWorld(), position.x(), position.y(), position.z());
+        Location location = new Location(info.getLevel().getWorld(), position.x(), position.y(), position.z());
         LootContext.Builder contextBuilder = new LootContext.Builder(location);
 
         if (info.hasParam(LootParameters.KILLER_ENTITY)) {

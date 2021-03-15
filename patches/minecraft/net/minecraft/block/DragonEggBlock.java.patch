@@ -13,8 +13,8 @@
           BlockPos blockpos = p_196443_3_.func_177982_a(p_196443_2_.field_73012_v.nextInt(16) - p_196443_2_.field_73012_v.nextInt(16), p_196443_2_.field_73012_v.nextInt(8) - p_196443_2_.field_73012_v.nextInt(8), p_196443_2_.field_73012_v.nextInt(16) - p_196443_2_.field_73012_v.nextInt(16));
           if (p_196443_2_.func_180495_p(blockpos).func_196958_f()) {
 +            // CraftBukkit start
-+            org.bukkit.block.Block from = p_196443_2_.getCBWorld().getBlockAt(p_196443_3_.func_177958_n(),p_196443_3_.func_177956_o(),p_196443_3_.func_177952_p());
-+            org.bukkit.block.Block to = p_196443_2_.getCBWorld().getBlockAt(blockpos.func_177958_n(),blockpos.func_177956_o(),blockpos.func_177952_p());
++            org.bukkit.block.Block from = p_196443_2_.getWorld().getBlockAt(p_196443_3_.func_177958_n(),p_196443_3_.func_177956_o(),p_196443_3_.func_177952_p());
++            org.bukkit.block.Block to = p_196443_2_.getWorld().getBlockAt(blockpos.func_177958_n(),blockpos.func_177956_o(),blockpos.func_177952_p());
 +            BlockFromToEvent event = new BlockFromToEvent(from, to);
 +            p_196443_2_.getCBServer().getPluginManager().callEvent(event);
 +

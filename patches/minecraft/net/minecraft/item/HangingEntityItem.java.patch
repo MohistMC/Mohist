@@ -15,7 +15,7 @@
              if (!world.field_72995_K) {
 +               // CraftBukkit start - fire HangingPlaceEvent
 +               Player  who = (p_195939_1_.func_195999_j() == null) ? null : (Player) p_195939_1_.func_195999_j().getBukkitEntity();
-+               org.bukkit.block.Block blockClicked = world.getCBWorld().getBlockAt(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
++               org.bukkit.block.Block blockClicked = world.getWorld().getBlockAt(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
 +               org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock.notchToBlockFace(direction);
 +               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) ((HangingEntity) hangingentity).getBukkitEntity(), who, blockClicked, blockFace);
 +               world.getCBServer().getPluginManager().callEvent(event);

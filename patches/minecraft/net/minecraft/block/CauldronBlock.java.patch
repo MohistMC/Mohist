@@ -151,7 +151,7 @@
 +   private boolean changeLevel(World world, BlockPos blockposition, BlockState iblockdata, int i, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
 +      int newLevel = Integer.valueOf(MathHelper.func_76125_a(i, 0, 3));
 +      CauldronLevelChangeEvent event = new CauldronLevelChangeEvent(
-+              world.getCBWorld().getBlockAt(blockposition.func_177958_n(), blockposition.func_177956_o(), blockposition.func_177952_p()),
++              world.getWorld().getBlockAt(blockposition.func_177958_n(), blockposition.func_177956_o(), blockposition.func_177952_p()),
 +              (entity == null) ? null : entity.getBukkitEntity(), reason, iblockdata.func_177229_b(CauldronBlock.field_176591_a), newLevel
 +      );
 +      world.getCBServer().getPluginManager().callEvent(event);

@@ -117,7 +117,7 @@
        }
 +
 +      // CraftBukkit start
-+      org.bukkit.World bworld = this.field_85192_a.getCBWorld();
++      org.bukkit.World bworld = this.field_85192_a.getWorld();
 +      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.NETHER_PAIR);
 +      this.field_85192_a.getCBServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {

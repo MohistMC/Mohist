@@ -972,12 +972,12 @@ public final class CraftServer implements Server {
         internal.setSpawnSettings(true, true);
         console.levels.put(internal.dimension(), internal);
 
-        pluginManager.callEvent(new WorldInitEvent(internal.getCBWorld()));
+        pluginManager.callEvent(new WorldInitEvent(internal.getWorld()));
 
         getServer().loadSpawn(internal.getChunkSource().chunkMap.progressListener, internal);
 
-        pluginManager.callEvent(new WorldLoadEvent(internal.getCBWorld()));
-        return internal.getCBWorld();
+        pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
+        return internal.getWorld();
     }
 
     @Override
@@ -1005,7 +1005,7 @@ public final class CraftServer implements Server {
             return false;
         }
 
-        WorldUnloadEvent e = new WorldUnloadEvent(handle.getCBWorld());
+        WorldUnloadEvent e = new WorldUnloadEvent(handle.getWorld());
         pluginManager.callEvent(e);
 
         if (e.isCancelled()) {
@@ -1663,7 +1663,7 @@ public final class CraftServer implements Server {
             if (pos == null) {
                 completions = getCommandMap().tabComplete(player, message);
             } else {
-                completions = getCommandMap().tabComplete(player, message, new Location(world.getCBWorld(), pos.x, pos.y, pos.z));
+                completions = getCommandMap().tabComplete(player, message, new Location(world.getWorld(), pos.x, pos.y, pos.z));
             }
         } catch (CommandException ex) {
             player.sendMessage(ChatColor.RED + "An internal error occurred while attempting to tab-complete this command");

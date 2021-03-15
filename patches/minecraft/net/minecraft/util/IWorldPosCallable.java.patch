@@ -29,7 +29,7 @@
 +      return new BlockPos(0, 0, 0);
 +   }
 +   default org.bukkit.Location getLocation() {
-+      return new org.bukkit.Location(getWorld().getCBWorld(), getPosition().func_177958_n(), getPosition().func_177956_o(), getPosition().func_177952_p());
++      return new org.bukkit.Location(getWorld().getWorld(), getPosition().func_177958_n(), getPosition().func_177956_o(), getPosition().func_177952_p());
 +   }
 +   // CraftBukkit end
 +

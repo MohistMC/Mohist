@@ -14,7 +14,7 @@
        } else {
 +         // CraftBukkit start - Interact Lever
 +         boolean powered = p_225533_1_.func_177229_b(LeverBlock.field_176359_b); // Old powered state
-+         org.bukkit.block.Block block = p_225533_2_.getCBWorld().getBlockAt(p_225533_3_.func_177958_n(), p_225533_3_.func_177956_o(), p_225533_3_.func_177952_p());
++         org.bukkit.block.Block block = p_225533_2_.getWorld().getBlockAt(p_225533_3_.func_177958_n(), p_225533_3_.func_177956_o(), p_225533_3_.func_177952_p());
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);

@@ -29,7 +29,7 @@
 +         }
 +
 +         // CraftBukkit start - Entity in portal
-+         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_196262_4_.getBukkitEntity(), new org.bukkit.Location(p_196262_2_.getCBWorld(), p_196262_3_.func_177958_n(), p_196262_3_.func_177956_o(), p_196262_3_.func_177952_p()));
++         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_196262_4_.getBukkitEntity(), new org.bukkit.Location(p_196262_2_.getWorld(), p_196262_3_.func_177958_n(), p_196262_3_.func_177956_o(), p_196262_3_.func_177952_p()));
 +         p_196262_2_.getCBServer().getPluginManager().callEvent(event);
 +         if (p_196262_4_ instanceof ServerPlayerEntity) {
 +            ((ServerPlayerEntity) p_196262_4_).changeDimension(serverworld,serverworld.func_85176_s(), PlayerTeleportEvent.TeleportCause.END_PORTAL);

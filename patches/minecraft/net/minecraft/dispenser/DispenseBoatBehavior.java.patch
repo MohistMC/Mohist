@@ -16,7 +16,7 @@
        }
 +      // CraftBukkit start
 +      ItemStack itemstack2 = p_82487_2_.func_77979_a(1);
-+      org.bukkit.block.Block block = world.getCBWorld().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
++      org.bukkit.block.Block block = world.getWorld().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack2);
 +      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new Vector(d0, d1 + d3, d2));
 +      if (!DispenserBlock.eventFired) {

@@ -13,7 +13,7 @@
           boolean flag = p_220069_2_.func_175640_z(p_220069_3_);
           if (flag != p_220069_1_.func_177229_b(field_196381_c)) {
 +            // CraftBukkit start
-+            org.bukkit.World bworld = p_220069_2_.getCBWorld();
++            org.bukkit.World bworld = p_220069_2_.getWorld();
 +            org.bukkit.block.Block bblock = bworld.getBlockAt(p_220069_3_.func_177958_n(), p_220069_3_.func_177956_o(), p_220069_3_.func_177952_p());
 +            int power = bblock.getBlockPower();
 +            int oldPower = (Boolean) p_220069_1_.func_177229_b(field_176283_b) ? 15 : 0;

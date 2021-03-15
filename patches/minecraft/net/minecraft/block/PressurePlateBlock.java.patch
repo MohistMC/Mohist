@@ -16,7 +16,7 @@
 +
 +            // CraftBukkit start - Call interact event when turning on a pressure plate
 +            if (this.func_176576_e(p_180669_1_.func_180495_p(p_180669_2_)) == 0) {
-+               org.bukkit.World bworld = p_180669_1_.getCBWorld();
++               org.bukkit.World bworld = p_180669_1_.getWorld();
 +               org.bukkit.plugin.PluginManager manager = p_180669_1_.getCBServer().getPluginManager();
 +               org.bukkit.event.Cancellable cancellable;
 +               if (entity instanceof PlayerEntity) {

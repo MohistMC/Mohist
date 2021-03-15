@@ -159,7 +159,7 @@
 +      this.initCapabilities();
 +      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;
-+      this.getCBServer().addWorld(this.getCBWorld()); // CraftBukkit
++      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +   }
 +
 +   // Mohist start - Add isPosLoaded method to IBlockReader
@@ -230,7 +230,7 @@
 -         this.field_73068_P = false;
 +         // CraftBukkit start
 +         long l = this.field_72986_A.func_76073_f() + 24000L;
-+         TimeSkipEvent event = new TimeSkipEvent(this.getCBWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, (l - l % 24000L) - this.func_72820_D());
++         TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, (l - l % 24000L) - this.func_72820_D());
           if (this.func_82736_K().func_223586_b(GameRules.field_223607_j)) {
 -            long l = this.field_72986_A.func_76073_f() + 24000L;
 -            this.func_241114_a_(l - l % 24000L);
@@ -455,7 +455,7 @@
     public void func_217445_a(@Nullable IProgressUpdate p_217445_1_, boolean p_217445_2_, boolean p_217445_3_) {
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
        if (!p_217445_3_) {
-+         org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getCBWorld())); // CraftBukkit
++         org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getWorld())); // CraftBukkit
           if (p_217445_1_ != null) {
              p_217445_1_.func_200210_a(new TranslationTextComponent("menu.savingLevel"));
           }
@@ -699,7 +699,7 @@
 +      return this.strikeLightning(entitylightning, LightningStrikeEvent.Cause.UNKNOWN);
 +   }
 +   public boolean strikeLightning(Entity entitylightning, LightningStrikeEvent.Cause cause) {
-+      LightningStrikeEvent lightning = new LightningStrikeEvent(this.getCBWorld(), (org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
++      LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
 +      this.getCBServer().getPluginManager().callEvent(lightning);
 +      if (lightning.isCancelled()) {
 +         return false;
@@ -846,7 +846,7 @@
 -         p_241121_0_.func_175656_a(p_241122_1_, Blocks.field_150343_Z.func_176223_P());
 +         blockList.func_180501_a(p_241122_1_, Blocks.field_150343_Z.func_176223_P(), 3);
        });
-+      org.bukkit.World bworld = worldserver.getCBWorld();
++      org.bukkit.World bworld = worldserver.getWorld();
 +      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
 +      worldserver.getCBServer().getPluginManager().callEvent(portalEvent);
 +      if (!portalEvent.isCancelled()) {

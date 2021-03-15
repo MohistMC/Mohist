@@ -338,7 +338,7 @@
 +         // CraftBukkit start
 +         if (field_70123_F && getBukkitEntity() instanceof Vehicle) {
 +            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
-+            org.bukkit.block.Block bl = this.field_70170_p.getCBWorld().getBlockAt(MathHelper.func_76128_c(this.func_226277_ct_()), MathHelper.func_76128_c(this.func_226278_cu_()), MathHelper.func_76128_c(this.func_226281_cx_()));
++            org.bukkit.block.Block bl = this.field_70170_p.getWorld().getBlockAt(MathHelper.func_76128_c(this.func_226277_ct_()), MathHelper.func_76128_c(this.func_226278_cu_()), MathHelper.func_76128_c(this.func_226281_cx_()));
 +            if (p_213315_2_.field_72450_a > vector3d.field_72450_a) {
 +               bl = bl.getRelative(BlockFace.EAST);
 +            } else if (p_213315_2_.field_72450_a < vector3d.field_72450_a) {
@@ -521,8 +521,8 @@
           p_189511_1_.func_186854_a("UUID", this.func_110124_au());
 +         // CraftBukkit start
 +         // PAIL: Check above UUID reads 1.8 properly, ie: UUIDMost / UUIDLeast
-+         p_189511_1_.func_74772_a("WorldUUIDLeast", ((ServerWorld) this.field_70170_p).getCBWorld().getUID().getLeastSignificantBits());
-+         p_189511_1_.func_74772_a("WorldUUIDMost", ((ServerWorld) this.field_70170_p).getCBWorld().getUID().getMostSignificantBits());
++         p_189511_1_.func_74772_a("WorldUUIDLeast", ((ServerWorld) this.field_70170_p).getWorld().getUID().getLeastSignificantBits());
++         p_189511_1_.func_74772_a("WorldUUIDMost", ((ServerWorld) this.field_70170_p).getWorld().getUID().getMostSignificantBits());
 +         p_189511_1_.func_74768_a("Bukkit.updateLevel", CURRENT_LEVEL);
 +         if (!this.persist) {
 +            p_189511_1_.func_74757_a("Bukkit.persist", this.persist);
@@ -619,7 +619,7 @@
 +               bworld = server.getWorld(worldName);
 +            }
 +            if (bworld == null) {
-+               bworld = ((org.bukkit.craftbukkit.v1_16_R3.CraftServer) server).getServer().func_71218_a(World.field_234918_g_).getCBWorld();
++               bworld = ((org.bukkit.craftbukkit.v1_16_R3.CraftServer) server).getServer().func_71218_a(World.field_234918_g_).getWorld();
 +            }
 +            func_70029_a(bworld == null ? null : ((CraftWorld) bworld).getHandle());
 +         }
@@ -1066,7 +1066,7 @@
 +   protected CraftPortalEvent callPortalEvent(Entity entity, ServerWorld exitWorldServer, BlockPos exitPosition, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
 +      Location enter = bukkitEntity.getLocation();
-+      Location exit = new Location(exitWorldServer.getCBWorld(), exitPosition.func_177958_n(), exitPosition.func_177956_o(), exitPosition.func_177952_p());
++      Location exit = new Location(exitWorldServer.getWorld(), exitPosition.func_177958_n(), exitPosition.func_177956_o(), exitPosition.func_177952_p());
 +      EntityPortalEvent event = new EntityPortalEvent(bukkitEntity, enter, exit, searchRadius);
 +      event.getEntity().getServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !entity.func_70089_S()) {

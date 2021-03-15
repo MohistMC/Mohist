@@ -14,7 +14,7 @@
  
 +      // CraftBukkit start
 +      org.bukkit.plugin.PluginManager manager = p_225534_2_.getCBServer().getPluginManager();
-+      org.bukkit.block.Block block = p_225534_2_.getCBWorld().getBlockAt(p_225534_3_.func_177958_n(), p_225534_3_.func_177956_o(), p_225534_3_.func_177952_p());
++      org.bukkit.block.Block block = p_225534_2_.getWorld().getBlockAt(p_225534_3_.func_177958_n(), p_225534_3_.func_177956_o(), p_225534_3_.func_177952_p());
 +      int oldCurrent = ((Boolean) p_225534_1_.func_177229_b(field_196528_a)).booleanValue() ? 15 : 0;
 +      BlockRedstoneEvent event = new BlockRedstoneEvent(block, oldCurrent, oldCurrent);
 +      // CraftBukkit end

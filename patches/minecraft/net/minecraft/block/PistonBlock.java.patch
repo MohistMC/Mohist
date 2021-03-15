@@ -26,7 +26,7 @@
  
 +         // CraftBukkit start
 +         if (!this.field_150082_a) {
-+            org.bukkit.block.Block block = p_176316_1_.getCBWorld().getBlockAt(p_176316_2_.func_177958_n(), p_176316_2_.func_177956_o(), p_176316_2_.func_177952_p());
++            org.bukkit.block.Block block = p_176316_1_.getWorld().getBlockAt(p_176316_2_.func_177958_n(), p_176316_2_.func_177956_o(), p_176316_2_.func_177952_p());
 +            BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.of(), CraftBlock.notchToBlockFace(direction));
 +            p_176316_1_.getCBServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
@@ -76,7 +76,7 @@
           int j = 0;
  
 +         // CraftBukkit start
-+         final org.bukkit.block.Block bblock = p_176319_1_.getCBWorld().getBlockAt(p_176319_2_.func_177958_n(), p_176319_2_.func_177956_o(), p_176319_2_.func_177952_p());
++         final org.bukkit.block.Block bblock = p_176319_1_.getWorld().getBlockAt(p_176319_2_.func_177958_n(), p_176319_2_.func_177956_o(), p_176319_2_.func_177952_p());
 +         final List<BlockPos> moved = pistonblockstructurehelper.func_177254_c();
 +         final List<BlockPos> broken = pistonblockstructurehelper.func_177252_d();
 +         List<org.bukkit.block.Block> blocks = new AbstractList<org.bukkit.block.Block>() {

@@ -45,23 +45,23 @@
 +         switch (entityclassification) {
 +            case MONSTER:
 +               spawnThisTick = spawnMonsterThisTick;
-+               limit = p_234979_0_.getCBWorld().getMonsterSpawnLimit();
++               limit = p_234979_0_.getWorld().getMonsterSpawnLimit();
 +               break;
 +            case CREATURE:
 +               spawnThisTick = spawnAnimalThisTick;
-+               limit = p_234979_0_.getCBWorld().getAnimalSpawnLimit();
++               limit = p_234979_0_.getWorld().getAnimalSpawnLimit();
 +               break;
 +            case WATER_CREATURE:
 +               spawnThisTick = spawnWaterThisTick;
-+               limit = p_234979_0_.getCBWorld().getWaterAnimalSpawnLimit();
++               limit = p_234979_0_.getWorld().getWaterAnimalSpawnLimit();
 +               break;
 +            case AMBIENT:
 +               spawnThisTick = spawnAmbientThisTick;
-+               limit = p_234979_0_.getCBWorld().getAmbientSpawnLimit();
++               limit = p_234979_0_.getWorld().getAmbientSpawnLimit();
 +               break;
 +            case WATER_AMBIENT:
 +               spawnThisTick = spawnWaterAmbientThisTick;
-+               limit = p_234979_0_.getCBWorld().getWaterAmbientSpawnLimit();
++               limit = p_234979_0_.getWorld().getWaterAmbientSpawnLimit();
 +               break;
 +         }
 +

@@ -39,7 +39,7 @@
 -   public void func_150859_c() {
 +   // CraftBukkit start - return boolean
 +   public boolean placePortalBlocks() {
-+      org.bukkit.World bworld = this.field_150867_a.getMinecraftWorld().getCBWorld();
++      org.bukkit.World bworld = this.field_150867_a.getMinecraftWorld().getWorld();
 +
 +      // Copy below for loop
        BlockState blockstate = Blocks.field_150427_aO.func_176223_P().func_206870_a(NetherPortalBlock.field_176550_a, this.field_150865_b);

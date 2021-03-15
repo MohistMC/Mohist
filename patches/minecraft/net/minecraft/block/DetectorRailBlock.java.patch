@@ -21,7 +21,7 @@
           }
 +      // CraftBukkit start
 +      if (flag != flag1) {
-+         org.bukkit.block.Block block = p_176570_1_.getCBWorld().getBlockAt(p_176570_2_.func_177958_n(), p_176570_2_.func_177956_o(), p_176570_2_.func_177952_p());
++         org.bukkit.block.Block block = p_176570_1_.getWorld().getBlockAt(p_176570_2_.func_177958_n(), p_176570_2_.func_177956_o(), p_176570_2_.func_177952_p());
 +         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
 +         p_176570_1_.getCBServer().getPluginManager().callEvent(eventRedstone);
 +         flag1 = eventRedstone.getNewCurrent() > 0;

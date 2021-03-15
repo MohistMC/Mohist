@@ -123,7 +123,7 @@
           Collections.shuffle(this.field_77281_g, this.field_77287_j.field_73012_v);
  
 +         // CraftBukkit start
-+         org.bukkit.World bworld = this.field_77287_j.getCBWorld();
++         org.bukkit.World bworld = this.field_77287_j.getWorld();
 +         org.bukkit.entity.Entity explode = (this.field_77283_e == null) ? null : this.field_77283_e.getBukkitEntity();
 +         Location location = new Location(bworld, this.field_77284_b, this.field_77285_c, this.field_77282_d);
 +         List<org.bukkit.block.Block> blockList = Lists.newArrayList();

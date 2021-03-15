@@ -161,7 +161,7 @@
 +         // CraftBukkit start - fire FurnaceSmeltEvent
 +         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
 +         org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
-+         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(this.field_145850_b.getCBWorld().getBlockAt(field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p()), source, result);
++         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(this.field_145850_b.getWorld().getBlockAt(field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p()), source, result);
 +         this.field_145850_b.getCBServer().getPluginManager().callEvent(furnaceSmeltEvent);
 +         if (furnaceSmeltEvent.isCancelled()) {
 +            return;

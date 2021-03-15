@@ -31,7 +31,7 @@
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
        if (!p_196262_4_.func_184218_aH() && !p_196262_4_.func_184207_aI() && p_196262_4_.func_184222_aU()) {
 +         // CraftBukkit start - Entity in portal
-+         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_196262_4_.getBukkitEntity(), new org.bukkit.Location(p_196262_2_.getCBWorld(), p_196262_3_.func_177958_n(), p_196262_3_.func_177956_o(), p_196262_3_.func_177952_p()));
++         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_196262_4_.getBukkitEntity(), new org.bukkit.Location(p_196262_2_.getWorld(), p_196262_3_.func_177958_n(), p_196262_3_.func_177956_o(), p_196262_3_.func_177952_p()));
 +         p_196262_2_.getCBServer().getPluginManager().callEvent(event);
 +         // CraftBukkit end
           p_196262_4_.func_181015_d(p_196262_3_);

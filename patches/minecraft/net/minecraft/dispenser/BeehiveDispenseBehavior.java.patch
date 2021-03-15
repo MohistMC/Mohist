@@ -12,7 +12,7 @@
     protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
        World world = p_82487_1_.func_197524_h();
 +      // CraftBukkit start
-+      org.bukkit.block.Block bukkitBlock = world.getCBWorld().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
++      org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_82487_2_);
 +      BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
 +      if (!DispenserBlock.eventFired) {

@@ -776,7 +776,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
             Optional<Vector3d> spawnLoc = PlayerEntity.findRespawnPositionAndUseSpawnBlock(world, bed, getHandle().getRespawnAngle(), getHandle().isRespawnForced(), true);
             if (spawnLoc.isPresent()) {
                 Vector3d vec = spawnLoc.get();
-                return new Location(world.getCBWorld(), vec.x, vec.y, vec.z);
+                return new Location(world.getWorld(), vec.x, vec.y, vec.z);
             }
         }
         return null;

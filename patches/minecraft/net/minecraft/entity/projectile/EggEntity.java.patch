@@ -61,11 +61,11 @@
 +
 +            if (hatching) {
 +               for (int j = 0; j < i; j++) {
-+                  Entity entity = field_70170_p.getCBWorld().createEntity(new Location(field_70170_p.getCBWorld(), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, 0), hatchingType.getEntityClass());
++                  Entity entity = field_70170_p.getWorld().createEntity(new Location(field_70170_p.getWorld(), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, 0), hatchingType.getEntityClass());
 +                  if (entity.getBukkitEntity() instanceof Ageable) {
 +                     ((Ageable) entity.getBukkitEntity()).setBaby();
 +                  }
-+                  field_70170_p.getCBWorld().addEntity(entity, SpawnReason.EGG);
++                  field_70170_p.getWorld().addEntity(entity, SpawnReason.EGG);
 +               }
 +            }
 +            // CraftBukkit end

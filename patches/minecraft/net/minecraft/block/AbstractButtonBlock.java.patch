@@ -17,7 +17,7 @@
        } else {
 +         // CraftBukkit start
 +         boolean powered = ((Boolean) p_225533_1_.func_177229_b(field_176584_b));
-+         org.bukkit.block.Block block = p_225533_2_.getCBWorld().getBlockAt(p_225533_3_.func_177958_n(), p_225533_3_.func_177956_o(), p_225533_3_.func_177952_p());
++         org.bukkit.block.Block block = p_225533_2_.getWorld().getBlockAt(p_225533_3_.func_177958_n(), p_225533_3_.func_177956_o(), p_225533_3_.func_177952_p());
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +
@@ -36,7 +36,7 @@
              this.func_185616_e(p_225534_1_, p_225534_2_, p_225534_3_);
           } else {
 +            // CraftBukkit start
-+            org.bukkit.block.Block block = p_225534_2_.getCBWorld().getBlockAt(p_225534_3_.func_177958_n(), p_225534_3_.func_177956_o(), p_225534_3_.func_177952_p());
++            org.bukkit.block.Block block = p_225534_2_.getWorld().getBlockAt(p_225534_3_.func_177958_n(), p_225534_3_.func_177956_o(), p_225534_3_.func_177952_p());
 +
 +            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 15, 0);
 +            p_225534_2_.getCBServer().getPluginManager().callEvent(eventRedstone);
@@ -54,7 +54,7 @@
        boolean flag1 = p_185616_1_.func_177229_b(field_176584_b);
 +      // CraftBukkit start - Call interact event when arrows turn on wooden buttons
 +      if (flag1 != flag && flag) {
-+         org.bukkit.block.Block block = p_185616_2_.getCBWorld().getBlockAt(p_185616_3_.func_177958_n(), p_185616_3_.func_177956_o(), p_185616_3_.func_177952_p());
++         org.bukkit.block.Block block = p_185616_2_.getWorld().getBlockAt(p_185616_3_.func_177958_n(), p_185616_3_.func_177956_o(), p_185616_3_.func_177952_p());
 +         boolean allowed = false;
 +
 +         // If all of the events are cancelled block the button press, else allow
@@ -78,7 +78,7 @@
        if (flag != flag1) {
 +         // CraftBukkit start
 +         boolean powered = flag1;
-+         org.bukkit.block.Block block = p_185616_2_.getCBWorld().getBlockAt(p_185616_3_.func_177958_n(), p_185616_3_.func_177956_o(), p_185616_3_.func_177952_p());
++         org.bukkit.block.Block block = p_185616_2_.getWorld().getBlockAt(p_185616_3_.func_177958_n(), p_185616_3_.func_177956_o(), p_185616_3_.func_177952_p());
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +
