@@ -16,7 +16,7 @@
 +
 +
 +         // CraftBukkit start
-+         org.bukkit.block.Block bukkitBlock = p_82487_1_.func_197524_h().getCBWorld().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
++         org.bukkit.block.Block bukkitBlock = p_82487_1_.func_197524_h().getWorld().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_82487_2_);
 +
 +         BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p()));

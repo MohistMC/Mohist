@@ -489,7 +489,7 @@
 -            this.func_213846_b(serverworld);
 -            this.field_71134_c.func_73080_a(p_241206_1_);
 +               Location enter = this.getBukkitEntity().getLocation();
-+               Location exit = (server == null) ? null : new Location(server.getCBWorld(), portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c, portalinfo.field_242960_c, portalinfo.field_242961_d);
++               Location exit = (server == null) ? null : new Location(server.getWorld(), portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c, portalinfo.field_242960_c, portalinfo.field_242961_d);
 +               final PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, cause);
 +               Bukkit.getServer().getPluginManager().callEvent(tpEvent);
 +               if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
@@ -524,7 +524,7 @@
 +            func_226284_e_(false); // Paper - fix MC-10657
 +            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, registrykey, server.func_234923_W_());
 +            // CraftBukkit start
-+            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverworld.getCBWorld());
++            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverworld.getWorld());
 +            this.field_70170_p.getCBServer().getPluginManager().callEvent(changeEvent);
 +            // CraftBukkit end
           }
@@ -537,7 +537,7 @@
 +   @Override
 +   protected CraftPortalEvent callPortalEvent(Entity entity, ServerWorld exitWorldServer, BlockPos exitPosition, TeleportCause cause, int searchRadius, int creationRadius) {
 +      Location enter = this.getBukkitEntity().getLocation();
-+      Location exit = new Location(exitWorldServer.getCBWorld(), exitPosition.func_177958_n(), exitPosition.func_177956_o(), exitPosition.func_177952_p(), field_70177_z, field_70125_A);
++      Location exit = new Location(exitWorldServer.getWorld(), exitPosition.func_177958_n(), exitPosition.func_177956_o(), exitPosition.func_177952_p(), field_70177_z, field_70125_A);
 +      PlayerPortalEvent event = new PlayerPortalEvent(this.getBukkitEntity(), enter, exit, cause, searchRadius, true, creationRadius);
 +      Bukkit.getServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null) {
@@ -706,9 +706,9 @@
 +
 +      org.bukkit.block.Block bed;
 +      if (bedPosition != null) {
-+         bed = this.field_70170_p.getCBWorld().getBlockAt(bedPosition.func_177958_n(), bedPosition.func_177956_o(), bedPosition.func_177952_p());
++         bed = this.field_70170_p.getWorld().getBlockAt(bedPosition.func_177958_n(), bedPosition.func_177956_o(), bedPosition.func_177952_p());
 +      } else {
-+         bed = this.field_70170_p.getCBWorld().getBlockAt(player.getLocation());
++         bed = this.field_70170_p.getWorld().getBlockAt(player.getLocation());
 +      }
 +
 +      PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, true);
@@ -720,13 +720,21 @@
        if (this.func_70608_bn()) {
           this.func_71121_q().func_72863_F().func_217216_a(this, new SAnimateHandPacket(this, 2));
        }
+@@ -859,6 +_,7 @@
+ 
+    public void func_175141_a(SignTileEntity p_175141_1_) {
+       p_175141_1_.func_145912_a(this);
++      if (this.field_71135_a == null) return;
+       this.field_71135_a.func_147359_a(new SOpenSignMenuPacket(p_175141_1_.func_174877_v()));
+    }
+ 
 @@ -866,6 +_,13 @@
        this.field_71139_cq = this.field_71139_cq % 100 + 1;
     }
  
 +   // CraftBukkit start
 +   public int nextContainerCounterCB() {
-+      this.field_71139_cq = this.field_71139_cq % 100 + 1;
++      func_71117_bO();
 +      return field_71139_cq;
 +   }
 +   // CraftBukkit end

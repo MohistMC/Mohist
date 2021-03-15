@@ -14,7 +14,7 @@
        boolean flag1 = i > 0;
 +
 +      // CraftBukkit start - Interact Pressure Plate
-+      org.bukkit.World bworld = p_180666_1_.getCBWorld();
++      org.bukkit.World bworld = p_180666_1_.getWorld();
 +      org.bukkit.plugin.PluginManager manager = p_180666_1_.getCBServer().getPluginManager();
 +      if (flag != flag1) {
 +         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(p_180666_2_.func_177958_n(), p_180666_2_.func_177956_o(), p_180666_2_.func_177952_p()), p_180666_4_, i);

@@ -16,7 +16,7 @@
 -      if (p_220069_4_ != this && flag != p_220069_1_.func_177229_b(field_176522_N)) {
 +      // CraftBukkit start
 +      BlockPos otherHalf = p_220069_3_.func_177972_a(p_220069_1_.func_177229_b(field_176523_O) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN);
-+      org.bukkit.World bworld = p_220069_2_.getCBWorld();
++      org.bukkit.World bworld = p_220069_2_.getWorld();
 +      org.bukkit.block.Block bukkitBlock = bworld.getBlockAt(p_220069_3_.func_177958_n(), p_220069_3_.func_177956_o(), p_220069_3_.func_177952_p());
 +      org.bukkit.block.Block blockTop = bworld.getBlockAt(otherHalf.func_177958_n(), otherHalf.func_177956_o(), otherHalf.func_177952_p());
 +      int power = bukkitBlock.getBlockPower();

@@ -57,7 +57,7 @@
 +
 +               if (direction != null) {
 +                  // CraftBukkit start
-+                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(this.field_70170_p.getCBWorld(), blockpos1.func_177958_n(), blockpos1.func_177956_o(), blockpos1.func_177952_p()));
++                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(this.field_70170_p.getWorld(), blockpos1.func_177958_n(), blockpos1.func_177956_o(), blockpos1.func_177952_p()));
 +                  this.field_70170_p.getCBServer().getPluginManager().callEvent(teleport);
 +                  if (!teleport.isCancelled()) {
 +                     Location to = teleport.getTo();

@@ -29,9 +29,9 @@ public class InventoryOwner {
     public static InventoryHolder get(World world, BlockPos pos) {
         if (world == null) return null;
         // Spigot start
-        org.bukkit.block.Block block = world.getCBWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+        org.bukkit.block.Block block = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
         if (block == null) {
-            MohistMC.LOGGER.warn("No block for owner at %s %d %d %d", new Object[]{world.getCBWorld(), pos.getX(), pos.getY(), pos.getZ()});
+            MohistMC.LOGGER.warn("No block for owner at %s %d %d %d", new Object[]{world.getWorld(), pos.getX(), pos.getY(), pos.getZ()});
             return null;
         }
         // Spigot end

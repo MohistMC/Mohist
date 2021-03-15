@@ -229,10 +229,10 @@
 +               this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_16_R3.scoreboard.CraftScoreboardManager(this, serverworld1.func_96441_U());
 +            }
 +            if (serverworld1.generator != null) {
-+               serverworld1.getCBWorld().getPopulators().addAll(serverworld1.generator.getDefaultPopulators(serverworld1.getCBWorld()));
++               serverworld1.getWorld().getPopulators().addAll(serverworld1.generator.getDefaultPopulators(serverworld1.getWorld()));
 +            }
           }
-+         Bukkit.getPluginManager().callEvent(new WorldInitEvent(field_71305_c.get(registrykey).getCBWorld()));
++         Bukkit.getPluginManager().callEvent(new WorldInitEvent(field_71305_c.get(registrykey).getWorld()));
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(field_71305_c.get(registrykey)));
        }
 -
@@ -299,7 +299,7 @@
 +      //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
 +      this.executeModerately();
 +      for (ServerWorld serverworld1 : this.field_71305_c.values()) {
-+         if (serverworld1.getCBWorld().getKeepSpawnInMemory()) {
++         if (serverworld1.getWorld().getKeepSpawnInMemory()) {
 +            ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
 +
 +            if (forcedchunkssavedata != null) {
@@ -312,7 +312,7 @@
 +               }
              }
           }
-+         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverworld1.getCBWorld()));
++         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverworld1.getWorld()));
        }
  
 -      this.field_211151_aa = Util.func_211177_b() + 10L;
@@ -884,7 +884,7 @@
 +   public void initWorld(ServerWorld serverWorld, IServerWorldInfo worldInfo, IServerConfiguration saveData, DimensionGeneratorSettings generatorSettings) {
 +      boolean flag = generatorSettings.func_236227_h_();
 +      if (serverWorld.generator != null) {
-+         serverWorld.getCBWorld().getPopulators().addAll(serverWorld.generator.getDefaultPopulators(serverWorld.getCBWorld()));
++         serverWorld.getWorld().getPopulators().addAll(serverWorld.generator.getDefaultPopulators(serverWorld.getWorld()));
 +      }
 +      WorldBorder worldborder = serverWorld.func_175723_af();
 +      worldborder.func_235926_a_(worldInfo.func_230398_q_());
@@ -911,7 +911,7 @@
 +   public void loadSpawn(IChunkStatusListener listener, ServerWorld serverWorld) {
 +      this.markWorldsDirty();
 +      MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverWorld));
-+      if (!serverWorld.getCBWorld().getKeepSpawnInMemory()) {
++      if (!serverWorld.getWorld().getKeepSpawnInMemory()) {
 +         return;
 +      }
 +      this.forceTicks = true;

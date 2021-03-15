@@ -66,7 +66,7 @@
 +      itementity.func_213293_j(worldIn.field_73012_v.nextGaussian() * (double) 0.0075F * (double) speed + (double) facing.func_82601_c() * d3, worldIn.field_73012_v.nextGaussian() * (double) 0.0075F * (double) speed + (double) 0.2F, worldIn.field_73012_v.nextGaussian() * (double) 0.0075F * (double) speed + (double) facing.func_82599_e() * d3);
 +
 +      // CraftBukkit start
-+      org.bukkit.block.Block block = worldIn.getCBWorld().getBlockAt(source.func_180699_d().func_177958_n(), source.func_180699_d().func_177956_o(), source.func_180699_d().func_177952_p());
++      org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(source.func_180699_d().func_177958_n(), source.func_180699_d().func_177956_o(), source.func_180699_d().func_177952_p());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), CraftVector.toBukkit(itementity.func_213322_ci()));

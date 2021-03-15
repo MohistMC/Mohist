@@ -34,7 +34,7 @@
 +      // CraftBukkit start
 +      int oldPower = p_235547_3_.func_177229_b(field_176351_O).intValue();
 +      if (oldPower != i) {
-+         BlockRedstoneEvent event = new BlockRedstoneEvent(p_235547_1_.getCBWorld().getBlockAt(p_235547_2_.func_177958_n(), p_235547_2_.func_177956_o(), p_235547_2_.func_177952_p()), oldPower, i);
++         BlockRedstoneEvent event = new BlockRedstoneEvent(p_235547_1_.getWorld().getBlockAt(p_235547_2_.func_177958_n(), p_235547_2_.func_177956_o(), p_235547_2_.func_177952_p()), oldPower, i);
 +         p_235547_1_.getCBServer().getPluginManager().callEvent(event);
 +         i = event.getNewCurrent();
 +         // CraftBukkit end

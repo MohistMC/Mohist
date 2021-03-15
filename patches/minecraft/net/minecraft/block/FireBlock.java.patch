@@ -146,8 +146,8 @@
 +         BlockState blockstate = worldIn.func_180495_p(pos);
 +
 +         // CraftBukkit start
-+         org.bukkit.block.Block theBlock = worldIn.getCBWorld().getBlockAt(pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
-+         org.bukkit.block.Block sourceBlock = worldIn.getCBWorld().getBlockAt(sourceposition.func_177958_n(), sourceposition.func_177956_o(), sourceposition.func_177952_p());
++         org.bukkit.block.Block theBlock = worldIn.getWorld().getBlockAt(pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
++         org.bukkit.block.Block sourceBlock = worldIn.getWorld().getBlockAt(sourceposition.func_177958_n(), sourceposition.func_177956_o(), sourceposition.func_177952_p());
 +         BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
 +         worldIn.getCBServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {

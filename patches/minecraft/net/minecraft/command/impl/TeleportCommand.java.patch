@@ -16,7 +16,7 @@
              f = MathHelper.func_76131_a(f, -90.0F, 90.0F);
 +
 +            // CraftBukkit start - Teleport event
-+            Location to = new Location(p_201127_2_.getCBWorld(), p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
++            Location to = new Location(p_201127_2_.getWorld(), p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
 +            EntityTeleportEvent event = new EntityTeleportEvent(p_201127_1_.getBukkitEntity(), p_201127_1_.getBukkitEntity().getLocation(), to);
 +            p_201127_2_.getCBServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {

@@ -40,7 +40,7 @@
 +         if(p_225542_2_.capturedBlockStates.size() > 0){
 +            TreeType treeType = SaplingBlock.treeType;
 +            SaplingBlock.treeType = null;
-+            Location location = new Location(p_225542_2_.getCBWorld(), p_225542_3_.func_177958_n(), p_225542_3_.func_177956_o(), p_225542_3_.func_177952_p());
++            Location location = new Location(p_225542_2_.getWorld(), p_225542_3_.func_177958_n(), p_225542_3_.func_177956_o(), p_225542_3_.func_177952_p());
 +            List<org.bukkit.block.BlockState> blocks = new ArrayList<>(p_225542_2_.capturedBlockStates.values());
 +            p_225542_2_.capturedBlockStates.clear();
 +            StructureGrowEvent event = null;

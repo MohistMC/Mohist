@@ -99,7 +99,7 @@
  
 +      // CraftBukkit start
 +      org.bukkit.Server server = this.field_70170_p.getCBServer();
-+      org.bukkit.World bworld = this.field_70170_p.getCBWorld();
++      org.bukkit.World bworld = this.field_70170_p.getWorld();
 +
 +      Location to = new Location(bworld, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, this.field_70125_A);
 +      Vehicle vehicle = (Vehicle) this.getBukkitEntity();

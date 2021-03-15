@@ -14,7 +14,7 @@
              boolean flag1 = commandblocktileentity.func_184255_d();
 +
 +            // CraftBukkit start
-+            org.bukkit.block.Block bukkitBlock = p_220069_2_.getCBWorld().getBlockAt(p_220069_3_.func_177958_n(), p_220069_3_.func_177956_o(), p_220069_3_.func_177952_p());
++            org.bukkit.block.Block bukkitBlock = p_220069_2_.getWorld().getBlockAt(p_220069_3_.func_177958_n(), p_220069_3_.func_177956_o(), p_220069_3_.func_177952_p());
 +            int old = flag1 ? 15 : 0;
 +            int current = flag ? 15 : 0;
 +

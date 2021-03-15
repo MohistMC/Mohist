@@ -1140,7 +1140,7 @@ public class ForgeHooks
             if (entity instanceof PlayerEntity) {
                 cancellable = CraftEventFactory.callPlayerInteractEvent((PlayerEntity) entity, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
             } else {
-                cancellable = new EntityInteractEvent(entity.getBukkitEntity(), world.getCBWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
+                cancellable = new EntityInteractEvent(entity.getBukkitEntity(), world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
                 world.getCBServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
                 if (cancellable != null && cancellable.isCancelled()) {
                     isCancelled = true;

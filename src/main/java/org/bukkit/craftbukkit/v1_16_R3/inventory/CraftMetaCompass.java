@@ -131,7 +131,7 @@ public class CraftMetaCompass extends CraftMetaItem implements CompassMeta {
         }
         Optional<RegistryKey<net.minecraft.world.World>> key = net.minecraft.world.World.RESOURCE_KEY_CODEC.parse(NBTDynamicOps.INSTANCE, lodestoneWorld).result();
         ServerWorld worldServer = key.isPresent() ? MinecraftServer.getServer().getLevel(key.get()) : null;
-        World world = worldServer != null ? worldServer.getCBWorld() : null;
+        World world = worldServer != null ? worldServer.getWorld() : null;
         return new Location(world, lodestoneX, lodestoneY, lodestoneZ); // world may be null here, if the referenced world is not loaded
     }
 

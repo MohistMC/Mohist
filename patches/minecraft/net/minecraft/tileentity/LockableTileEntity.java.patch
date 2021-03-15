@@ -20,7 +20,7 @@
 +   @Override
 +   public org.bukkit.Location getLocation() {
 +      if (field_145850_b == null) return null;
-+      return new org.bukkit.Location(field_145850_b.getCBWorld(), field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p());
++      return new org.bukkit.Location(field_145850_b.getWorld(), field_174879_c.func_177958_n(), field_174879_c.func_177956_o(), field_174879_c.func_177952_p());
 +   }
 +   // CraftBukkit end
 +

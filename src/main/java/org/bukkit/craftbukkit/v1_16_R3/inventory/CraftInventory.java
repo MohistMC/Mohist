@@ -526,7 +526,7 @@ public class CraftInventory implements Inventory {
     public Location getLocation() {
         if (inventory instanceof net.minecraft.tileentity.TileEntity) {//Mohist start - Compatible to get the Location of the TileEntity
             TileEntity tileEntity = (TileEntity) inventory;
-            return new Location(tileEntity.getLevel().getCBWorld(), tileEntity.getBlockPos().getX(), tileEntity.getBlockPos().getY(), tileEntity.getBlockPos().getZ());
+            return new Location(tileEntity.getLevel().getWorld(), tileEntity.getBlockPos().getX(), tileEntity.getBlockPos().getY(), tileEntity.getBlockPos().getZ());
         } else {
             return inventory.getLocation();
         }

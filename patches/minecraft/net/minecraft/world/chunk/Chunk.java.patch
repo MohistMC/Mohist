@@ -301,7 +301,7 @@
 +            long zRand = random.nextLong() / 2L * 2L + 1L;
 +            random.setSeed((long) this.field_212816_F.field_77276_a * xRand + (long) this.field_212816_F.field_77275_b * zRand ^ ((ServerWorld) field_76637_e).func_72905_C());
 +
-+            org.bukkit.World world = this.field_76637_e.getCBWorld();
++            org.bukkit.World world = this.field_76637_e.getWorld();
 +            if (world != null) {
 +               this.field_76637_e.populating = true;
 +               try {

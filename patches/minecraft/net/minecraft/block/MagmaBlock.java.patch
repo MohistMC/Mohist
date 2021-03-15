@@ -12,7 +12,7 @@
  
     public void func_176199_a(World p_176199_1_, BlockPos p_176199_2_, Entity p_176199_3_) {
        if (!p_176199_3_.func_230279_az_() && p_176199_3_ instanceof LivingEntity && !EnchantmentHelper.func_189869_j((LivingEntity)p_176199_3_)) {
-+         CraftEventFactory.blockDamage = p_176199_1_.getCBWorld().getBlockAt(p_176199_2_.func_177958_n(), p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p()); // CraftBukkit
++         CraftEventFactory.blockDamage = p_176199_1_.getWorld().getBlockAt(p_176199_2_.func_177958_n(), p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p()); // CraftBukkit
           p_176199_3_.func_70097_a(DamageSource.field_190095_e, 1.0F);
 +         CraftEventFactory.blockDamage = null; // CraftBukkit
        }

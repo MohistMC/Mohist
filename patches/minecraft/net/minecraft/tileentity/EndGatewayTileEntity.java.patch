@@ -47,7 +47,7 @@
 +            // CraftBukkit start - Fire PlayerTeleportEvent
 +            if (p_195496_1_ instanceof ServerPlayerEntity) {
 +               org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer player = (CraftPlayer) p_195496_1_.getBukkitEntity();
-+               org.bukkit.Location location = new Location(field_145850_b.getCBWorld(), (double) blockpos.func_177958_n() + 0.5D, (double) blockpos.func_177956_o() + 0.5D, (double) blockpos.func_177952_p() + 0.5D);
++               org.bukkit.Location location = new Location(field_145850_b.getWorld(), (double) blockpos.func_177958_n() + 0.5D, (double) blockpos.func_177956_o() + 0.5D, (double) blockpos.func_177952_p() + 0.5D);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());
 +               PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.END_GATEWAY);

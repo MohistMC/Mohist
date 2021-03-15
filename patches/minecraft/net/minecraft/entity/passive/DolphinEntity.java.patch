@@ -27,7 +27,7 @@
  
        public boolean func_75250_a() {
 -         return this.field_208057_a.func_208011_dD() && this.field_208057_a.func_70086_ai() >= 100;
-+         return this.field_208057_a.func_208011_dD() && this.field_208057_a.func_70086_ai() >= 100 && this.field_208057_a.field_70170_p.getCBWorld().canGenerateStructures(); // MC-151364, SPIGOT-5494: hangs if generate-structures=false
++         return this.field_208057_a.func_208011_dD() && this.field_208057_a.func_70086_ai() >= 100 && this.field_208057_a.field_70170_p.getWorld().canGenerateStructures(); // MC-151364, SPIGOT-5494: hangs if generate-structures=false
        }
  
        public boolean func_75253_b() {

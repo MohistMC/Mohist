@@ -15,7 +15,7 @@
           ItemStack itemstack = p_226626_1_.func_77979_a(1);
 +         // CraftBukkit start
 +         World world = p_226626_0_.func_197524_h();
-+         org.bukkit.block.Block block = world.getCBWorld().getBlockAt(p_226626_0_.func_180699_d().func_177958_n(), p_226626_0_.func_180699_d().func_177956_o(), p_226626_0_.func_180699_d().func_177952_p());
++         org.bukkit.block.Block block = world.getWorld().getBlockAt(p_226626_0_.func_180699_d().func_177958_n(), p_226626_0_.func_180699_d().func_177956_o(), p_226626_0_.func_180699_d().func_177952_p());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_226626_1_);
 +         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity) livingentity.getBukkitEntity());
 +         if (!DispenserBlock.eventFired) {
