@@ -90,6 +90,26 @@
           }
  
        }
+@@ -636,6 +_,9 @@
+    }
+ 
+    class EnterBeehiveGoal extends BeeEntity.PassiveGoal {
++
++      private BeeEntity beeEntity = BeeEntity.this; // Mohist - Fix Resourceful Bees startup (#1055)
++
+       private EnterBeehiveGoal() {
+       }
+ 
+@@ -670,6 +_,9 @@
+    }
+ 
+    public class FindBeehiveGoal extends BeeEntity.PassiveGoal {
++
++      private BeeEntity beeEntity = BeeEntity.this; // Mohist - Fix Resourceful Bees startup (#1055)
++
+       private int field_226468_c_ = BeeEntity.this.field_70170_p.field_73012_v.nextInt(10);
+       private List<BlockPos> field_226469_d_ = Lists.newArrayList();
+       @Nullable
 @@ -871,7 +_,7 @@
                       }
                    }
@@ -99,3 +119,13 @@
                       BeeEntity.this.field_70170_p.func_217379_c(2005, blockpos, 0);
                       BeeEntity.this.field_70170_p.func_175656_a(blockpos, blockstate.func_206870_a(integerproperty, Integer.valueOf(blockstate.func_177229_b(integerproperty) + 1)));
                       BeeEntity.this.func_226421_eO_();
+@@ -1084,6 +_,9 @@
+    }
+ 
+    class UpdateBeehiveGoal extends BeeEntity.PassiveGoal {
++
++      private BeeEntity beeEntity = BeeEntity.this; // Mohist - Fix Resourceful Bees startup (#1055)
++
+       private UpdateBeehiveGoal() {
+       }
+ 
