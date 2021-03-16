@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/server/ServerWorld.java
 +++ b/net/minecraft/world/server/ServerWorld.java
-@@ -6,6 +_,8 @@
+@@ -6,6 +_,9 @@
  import com.google.common.collect.Maps;
  import com.google.common.collect.Queues;
  import com.google.common.collect.Sets;
++import com.mohistmc.config.MohistConfigUtil;
 +import com.mohistmc.configuration.TickConfig;
 +import com.mohistmc.inventory.CraftCustomInventory;
  import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
@@ -117,7 +118,7 @@
     public boolean field_73058_d;
     private boolean field_73068_P;
     private int field_80004_Q;
-@@ -173,9 +_,31 @@
+@@ -173,9 +_,53 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -129,6 +130,28 @@
 +   public ServerWorldInfo worldDataServer;
 +   public final SaveFormat.LevelSave convertable;
 +   public final UUID uuid;
++
++   // Mohist start - Add option to ignore empty time
++   private static final List<String> IGNORE_EMPTY_TIME_LIST;
++
++   static {
++       IGNORE_EMPTY_TIME_LIST = new ArrayList<>();
++       String ignoreEmptyTime = MohistConfigUtil.sMohist("ignore_empty_time", "all_worlds");
++       if (ignoreEmptyTime.contains(";")) {
++           for (String part : ignoreEmptyTime.split(";")) {
++               IGNORE_EMPTY_TIME_LIST.add(part);
++           }
++       }
++       else IGNORE_EMPTY_TIME_LIST.add(ignoreEmptyTime);
++   }
++
++   private final boolean ignoreEmptyTimeThis;
++
++   {
++       this.ignoreEmptyTimeThis = IGNORE_EMPTY_TIME_LIST.contains("all_worlds")
++           || IGNORE_EMPTY_TIME_LIST.contains(this.getServerWorldInfo().func_76065_j());
++   }
++   // Mohist end
 +
 +   public Chunk getChunkIfLoaded(int x, int z) {
 +      return this.field_241102_C_.func_217205_a(x, z, false);
@@ -274,7 +297,8 @@
           this.func_82742_i();
        }
  
-       if (flag3 || this.field_80004_Q++ < 300) {
+-      if (flag3 || this.field_80004_Q++ < 300) {
++      if (flag3 || this.field_80004_Q++ < 300 || this.ignoreEmptyTimeThis) { // Mohist - Add option to ignore empty time
 +         timings.tickEntities.startTiming(); // Spigot
           if (this.field_241105_O_ != null) {
              this.field_241105_O_.func_186105_b();
