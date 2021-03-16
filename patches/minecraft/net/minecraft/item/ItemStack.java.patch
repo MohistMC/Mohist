@@ -170,8 +170,8 @@
 +      return onItemUse(p_196084_1_, (c) -> func_77973_b().func_195939_a(p_196084_1_), p_196084_1_.func_221531_n());  // CraftBukkit - take hand
 +   }
 +
-+   public ActionResultType onItemUseFirst(ItemUseContext context) {
-+      return onItemUse(context, (c) -> func_77973_b().onItemUseFirst(this, context), context.func_221531_n());  // CraftBukkit - take hand
++   public ActionResultType onItemUseFirst(ItemUseContext p_196084_1_) {
++      return onItemUse(p_196084_1_, (c) -> func_77973_b().onItemUseFirst(this, p_196084_1_), p_196084_1_.func_221531_n());  // CraftBukkit - take hand
 +   }
 +
 +   private ActionResultType onItemUse(ItemUseContext p_196084_1_, java.util.function.Function<ItemUseContext, ActionResultType> callback) {

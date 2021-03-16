@@ -159,7 +159,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '36.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '36.1' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -171,7 +171,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.5-36.0.58'
+    version = '1.16.5-36.1.0'
     println('Forge Version: ' + version)
 
     patcher {
