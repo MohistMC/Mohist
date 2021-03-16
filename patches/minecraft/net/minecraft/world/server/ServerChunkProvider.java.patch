@@ -36,7 +36,15 @@
     public ServerWorldLightManager func_212863_j_() {
        return this.field_217242_h;
     }
-@@ -126,8 +_,10 @@
+@@ -119,15 +_,17 @@
+          for(int j = 0; j < 4; ++j) {
+             if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
+                IChunk ichunk = this.field_222877_p[j];
+-               if (ichunk != null || !p_212849_4_) {
++               if (ichunk != null/* || !p_212849_4_*/) { // Mohist - Don't return immediately if cached chunk is null
+                   return ichunk;
+                }
+             }
           }
  
           iprofiler.func_230035_c_("getChunkCacheMiss");
