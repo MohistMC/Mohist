@@ -147,7 +147,7 @@
     private int field_147375_m;
     private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
     private double field_184349_l;
-@@ -186,6 +_,35 @@
+@@ -186,6 +_,36 @@
     private int field_184347_F;
     private int field_184348_G;
  
@@ -161,6 +161,7 @@
 +   private static final int SURVIVAL_PLACE_DISTANCE_SQUARED = 6 * 6;
 +   private static final int CREATIVE_PLACE_DISTANCE_SQUARED = 7 * 7;
 +
++   public int chatSpamThresholdCount; // Mohist - Fix Quark item sharing (#1049)
 +   // Mohist start - Cache config option in ServerPlayNetHandler
 +   private static final boolean PREVENT_FROM_ENTERING_UNLOADED_CHUNKS
 +       = MohistConfigUtil.bMohist("prevent_from_entering_unloaded_chunks", "true");
