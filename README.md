@@ -2,6 +2,8 @@
 <img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.16.5</h1>
 
+# <font color=red>Warning: Because md_5 modified the package name of nms, our remapping system no longer works, please be patient and wait for the completion of the new system! </font>
+
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohist-Community%2Fjob%2FMohist-1.16.5)](https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.16.5)
@@ -34,7 +36,7 @@ Progress
   * Spigot(bff52619)  
   * Paper(2609a118)
 - [x] Beta release
-- [ ] The nms patch is compatible with mms - 40%
+- [ ] The nms patch is compatible with mms - 40% (old)
 
 Getting Help
 ------
