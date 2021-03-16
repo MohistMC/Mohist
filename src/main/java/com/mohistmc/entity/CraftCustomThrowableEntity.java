@@ -1,7 +1,6 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.ServerAPI;
-import net.minecraft.entity.projectile.ProjectileItemEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftProjectile;
@@ -18,10 +17,12 @@ public class CraftCustomThrowableEntity extends CraftProjectile {
         }
     }
 
+    // Mohist start - Fix Savage&Ravage cast exception
     @Override
-    public ProjectileItemEntity getHandle() {
-        return (ProjectileItemEntity) entity;
+    public ThrowableEntity getHandle() {
+        return (ThrowableEntity) entity;
     }
+    // Mohist end
 
     @Override
     public EntityType getType() {
