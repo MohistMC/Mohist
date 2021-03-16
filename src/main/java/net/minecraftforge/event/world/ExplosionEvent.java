@@ -20,6 +20,8 @@
 package net.minecraftforge.event.world;
 
 import com.mojang.authlib.GameProfile;
+
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -33,6 +35,10 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 
 /** ExplosionEvent triggers when an explosion happens in the world.<br>
@@ -127,12 +133,42 @@ public class ExplosionEvent extends Event
      */
     public static class Detonate extends ExplosionEvent
     {
-        private final List<Entity> entityList;
+        private List<Entity> entityList;
+        private EntityExplodeEvent event;
 
         public Detonate(World world, Explosion explosion, List<Entity> entityList)
         {
             super(world, explosion);
-            this.entityList = entityList;
+            org.bukkit.craftbukkit.v1_12_R1.CraftServer server = world.getServer();
+            org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity ce = null;
+            if(explosion.exploder != null && explosion.exploder instanceof EntityLivingBase)
+            {
+                ce = new org.bukkit.craftbukkit.v1_12_R1.entity.CraftTNTPrimed(server, new EntityTNTPrimed(world, explosion.x, explosion.y, explosion.z, (EntityLivingBase) explosion.exploder ));
+            }
+            if(ce == null)
+            {
+                ce = new org.bukkit.craftbukkit.v1_12_R1.entity.CraftTNTPrimed(server, new EntityTNTPrimed(world, explosion.x, explosion.y, explosion.z, exploder_fake ));
+            }
+            List<Block> bukkitBlocks = createBukkitBlocks(getAffectedBlocks(), Bukkit.getWorld(world.getWorld().getUID()));
+
+            event = new EntityExplodeEvent(ce, new Location(world.getWorld(), explosion.x, explosion.y, explosion.z),
+                    bukkitBlocks, 0f);
+            server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                explosion.clearAffectedBlockPositions();
+                entityList = new ArrayList<>();
+            } else {
+                this.entityList = entityList;
+            }
+        }
+
+
+        private List<Block> createBukkitBlocks(List<BlockPos> blocks, org.bukkit.World world) {
+            final ArrayList<Block> ret = new ArrayList<>();
+            for (BlockPos pos : blocks)
+                ret.add(world.getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
+
+            return ret;
         }
 
         /** return the list of blocks affected by the explosion. */
