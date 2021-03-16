@@ -2,7 +2,7 @@
 <img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.16.5</h1>
 
-# <font color=red>Warning: Because md_5 modified the package name of nms, our remapping system no longer works, please be patient and wait for the completion of the new system! </font>
+# <font color=red>Warning: Because md_5 modified the package name of nms, our remapping system no longer works, please be patient and wait for the completion of the new system!</font>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
