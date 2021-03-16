@@ -450,7 +450,7 @@
           if (!this.field_71136_j) {
              this.field_71136_j = true;
              this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.field_192040_cp ? 0.0F : 1.0F));
-@@ -633,36 +_,46 @@
+@@ -633,48 +_,79 @@
  
           return this;
        } else {
@@ -517,7 +517,8 @@
                 this.field_71135_a.func_147359_a(new SPlayEntityEffectPacket(this.func_145782_y(), effectinstance));
              }
  
-@@ -670,11 +_,31 @@
++            if (teleporter.playTeleportSound(this, serverworld, server))
+             this.field_71135_a.func_147359_a(new SPlaySoundEventPacket(1032, BlockPos.field_177992_a, 0, false));
              this.field_71144_ck = -1;
              this.field_71149_ch = -1.0F;
              this.field_71146_ci = -1;

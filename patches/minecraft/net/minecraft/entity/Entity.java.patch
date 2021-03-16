@@ -1083,13 +1083,12 @@
     protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
        return p_241830_1_.func_85176_s().func_242957_a(p_241830_2_, p_241830_3_);
     }
-@@ -2320,9 +_,10 @@
-    public void func_213323_x_() {
+@@ -2321,8 +_,10 @@
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
--      EntitySize entitysize1 = this.func_213305_a(pose);
-+      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, this.func_213305_a(pose), this.func_213316_a(pose, entitysize));
-+      EntitySize entitysize1 = sizeEvent.getNewSize();
+       EntitySize entitysize1 = this.func_213305_a(pose);
++      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose,  entitysize, entitysize1, this.func_213316_a(pose, entitysize));
++      entitysize1 = sizeEvent.getNewSize();
        this.field_213325_aI = entitysize1;
 -      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
 +      this.field_213326_aJ = sizeEvent.getNewEyeHeight();
@@ -1155,7 +1154,7 @@
  
     }
  
-@@ -2810,5 +_,64 @@
+@@ -2810,5 +_,72 @@
     @FunctionalInterface
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
@@ -1218,5 +1217,13 @@
 +   public void revive() {
 +      this.field_70128_L = false;
 +      this.reviveCaps();
++   }
++
++   // no AT because of overrides
++   /**
++    * Accessor method for {@link #getEyeHeight(Pose, EntitySize)}
++    */
++   public float getEyeHeightAccess(Pose pose, EntitySize size) {
++      return this.func_213316_a(pose, size);
     }
  }
