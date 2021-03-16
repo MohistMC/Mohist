@@ -147,7 +147,7 @@
     private int field_147375_m;
     private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
     private double field_184349_l;
-@@ -186,6 +_,30 @@
+@@ -186,6 +_,35 @@
     private int field_184347_F;
     private int field_184348_G;
  
@@ -160,6 +160,11 @@
 +   private int dropCount = 0;
 +   private static final int SURVIVAL_PLACE_DISTANCE_SQUARED = 6 * 6;
 +   private static final int CREATIVE_PLACE_DISTANCE_SQUARED = 7 * 7;
++
++   // Mohist start - Cache config option in ServerPlayNetHandler
++   private static final boolean PREVENT_FROM_ENTERING_UNLOADED_CHUNKS
++       = MohistConfigUtil.bMohist("prevent_from_entering_unloaded_chunks", "true");
++   // Mohist end
 +
 +   // Get position of last block hit for BlockDamageLevel.STOPPED
 +   private double lastPosX = Double.MAX_VALUE;
@@ -359,7 +364,7 @@
 +            speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
 +
 +            // Mohist start - Prevent from entering unloaded chunks
-+            if (MohistConfigUtil.bMohist("prevent_from_entering_unloaded_chunks", "true")
++            if (PREVENT_FROM_ENTERING_UNLOADED_CHUNKS
 +             && serverworld.getChunkIfLoaded((int) Math.floor(toX / 16.0), (int) Math.floor(toZ / 16.0)) == null) {
 +                this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
 +                return;
@@ -616,7 +621,7 @@
 +                     }
 +
 +                     // Mohist start - Prevent from entering unloaded chunks
-+                     if (MohistConfigUtil.bMohist("prevent_from_entering_unloaded_chunks", "true")
++                     if (PREVENT_FROM_ENTERING_UNLOADED_CHUNKS
 +                      && (prevX != toX || prevZ != toZ)
 +                      && serverworld.getChunkIfLoaded((int) Math.floor(toX / 16.0), (int) Math.floor(toZ / 16.0)) == null) {
 +                         this.internalTeleport(prevX, prevY, prevZ, prevYaw, prevPitch, Collections.emptySet());
