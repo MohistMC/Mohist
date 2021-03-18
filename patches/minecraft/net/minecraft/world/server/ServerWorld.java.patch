@@ -118,7 +118,7 @@
     public boolean field_73058_d;
     private boolean field_73068_P;
     private int field_80004_Q;
-@@ -173,9 +_,53 @@
+@@ -173,9 +_,60 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -150,6 +150,13 @@
 +   {
 +       this.ignoreEmptyTimeThis = IGNORE_EMPTY_TIME_LIST.contains("all_worlds")
 +           || IGNORE_EMPTY_TIME_LIST.contains(this.getServerWorldInfo().func_76065_j());
++   }
++   // Mohist end
++
++   // Mohist start - Fix entity collision (#1061)
++   @Override
++   public Stream<VoxelShape> func_230318_c_(@Nullable Entity p_230318_1_, AxisAlignedBB p_230318_2_, Predicate<Entity> p_230318_3_) {
++       return Stream.empty();
 +   }
 +   // Mohist end
 +
