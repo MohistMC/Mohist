@@ -272,12 +272,14 @@
        BlockPos blockpos = serverworld.func_241135_u_();
        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
        ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
-@@ -462,31 +_,39 @@
+@@ -461,32 +_,40 @@
+       this.field_211151_aa = Util.func_211177_b();
        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
-       while(serverchunkprovider.func_217229_b() != 441) {
+-      while(serverchunkprovider.func_217229_b() != 441) {
 -         this.field_211151_aa = Util.func_211177_b() + 10L;
 -         this.func_213202_o();
++      while(serverchunkprovider.func_217229_b() <= 441) { // Mohist - Fix Immersive Portals startup (#762)
 +         // CraftBukkit start
 +         this.executeModerately();
 +         // CraftBukkit end
@@ -923,7 +925,7 @@
 +      this.field_211151_aa = Util.func_211177_b();
 +      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 +
-+      while (serverchunkprovider.func_217229_b() != 441) {
++      while (serverchunkprovider.func_217229_b() <= 441) { // Mohist - Fix Immersive Portals startup (#762)
 +         this.executeModerately();
 +      }
 +
