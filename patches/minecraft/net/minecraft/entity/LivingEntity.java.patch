@@ -1268,7 +1268,7 @@
 +
 +   // CraftBukkit start - collidable API
 +   @Override
-+   public boolean func_241849_j(Entity entity) {
++   public boolean canCollideWithCB(Entity entity) {
 +      return func_70104_M() && this.collides != this.collidableExemptions.contains(entity.func_110124_au());
 +   }
 +   // CraftBukkit end
