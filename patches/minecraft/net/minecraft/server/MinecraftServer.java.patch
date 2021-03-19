@@ -279,7 +279,7 @@
 -      while(serverchunkprovider.func_217229_b() != 441) {
 -         this.field_211151_aa = Util.func_211177_b() + 10L;
 -         this.func_213202_o();
-+      while(serverchunkprovider.func_217229_b() <= 441) { // Mohist - Fix Immersive Portals startup (#762)
++      while(serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
 +         // CraftBukkit start
 +         this.executeModerately();
 +         // CraftBukkit end
@@ -925,7 +925,7 @@
 +      this.field_211151_aa = Util.func_211177_b();
 +      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 +
-+      while (serverchunkprovider.func_217229_b() <= 441) { // Mohist - Fix Immersive Portals startup (#762)
++      while (serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
 +         this.executeModerately();
 +      }
 +
