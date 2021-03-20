@@ -137,7 +137,7 @@
 +   public CraftAttributeMap craftAttributes;
 +   public boolean collides = true;
 +   public Set<UUID> collidableExemptions = new HashSet<>();
-+   public boolean canPickUpLoot_vanilla;
++   public boolean canPickUpLoot;
 +
 +   @Override
 +   public float getBukkitYaw() {

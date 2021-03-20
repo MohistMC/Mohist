@@ -225,14 +225,14 @@
 +         if (this.field_145804_b <= 0 && canHold > 0) {
 +            itemstack.func_190920_e(canHold);
 +            PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player)p_70100_1_.getBukkitEntity(), (org.bukkit.entity.Item)this.getBukkitEntity(), remaining);
-+            playerEvent.setCancelled(!p_70100_1_.canPickUpLoot_vanilla);
++            playerEvent.setCancelled(!p_70100_1_.canPickUpLoot);
 +            this.field_70170_p.getCBServer().getPluginManager().callEvent(playerEvent);
 +            if (playerEvent.isCancelled()) {
 +               itemstack.func_190920_e(i);
 +               return;
 +            }
 +            EntityPickupItemEvent entityEvent = new EntityPickupItemEvent(p_70100_1_.getBukkitEntity(), (org.bukkit.entity.Item)this.getBukkitEntity(), remaining);
-+            entityEvent.setCancelled(!p_70100_1_.canPickUpLoot_vanilla);
++            entityEvent.setCancelled(!p_70100_1_.canPickUpLoot);
 +            this.field_70170_p.getCBServer().getPluginManager().callEvent(entityEvent);
 +            if (entityEvent.isCancelled()) {
 +               itemstack.func_190920_e(i);
