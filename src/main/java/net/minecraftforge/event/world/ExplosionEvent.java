@@ -151,18 +151,24 @@ public class ExplosionEvent extends Event
             }
             List<Block> bukkitBlocks = createBukkitBlocks(getAffectedBlocks(), Bukkit.getWorld(world.getWorld().getUID()));
 
+            // we put the yield at 0 so bukkit is not handling the explosion otherwise drops might drop two times
             event = new EntityExplodeEvent(ce, new Location(world.getWorld(), explosion.x, explosion.y, explosion.z),
                     bukkitBlocks, 0f);
             server.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 explosion.clearAffectedBlockPositions();
-                entityList = new ArrayList<>();
+                this.entityList = new ArrayList<>();
             } else {
                 this.entityList = entityList;
             }
         }
 
-
+        /**
+         * This function allow us to get the Bukkit blocks from the forge position of blocks
+         * @param blocks The list of position of blocks
+         * @param world The world that the explosion occurred in
+         * @return A list of Bukkit Blocks that are impacted by the explosion
+         */
         private List<Block> createBukkitBlocks(List<BlockPos> blocks, org.bukkit.World world) {
             final ArrayList<Block> ret = new ArrayList<>();
             for (BlockPos pos : blocks)
