@@ -91,21 +91,17 @@
     }
  
     protected void func_184651_r() {
-@@ -197,7 +_,43 @@
+@@ -197,7 +_,39 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
 -      this.field_70696_bz = p_70624_1_;
-+      // CraftBukkit start //Mohist - Fix NPE caused by setAttackTarget(null)
-+      if (p_70624_1_ == null) {
-+         this.field_70696_bz = null;
-+         net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
-+      } else {
-+         this.setGoalTarget(p_70624_1_, EntityTargetEvent.TargetReason.UNKNOWN, true);
-+      }
++      //Craftbukkit start
++      this.setGoalTarget(p_70624_1_, EntityTargetEvent.TargetReason.UNKNOWN, true);
 +   }
 +
-+   public boolean setGoalTarget(LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) {
++   //LivingEntity can be null, more info in org.bukkit.event.entity.EnitityTargetEvent
++   public boolean setGoalTarget(@Nullable LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) {
 +      if (this.func_70638_az() == entitylivingbaseIn) {
 +         return false;
 +      }
