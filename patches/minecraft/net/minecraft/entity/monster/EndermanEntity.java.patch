@@ -12,35 +12,33 @@
  
  public class EndermanEntity extends MonsterEntity implements IAngerable {
     private static final UUID field_110192_bp = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
-@@ -98,9 +_,18 @@
+@@ -97,10 +_,13 @@
+       return MonsterEntity.func_234295_eP_().func_233815_a_(Attributes.field_233818_a_, 40.0D).func_233815_a_(Attributes.field_233821_d_, (double)0.3F).func_233815_a_(Attributes.field_233823_f_, 7.0D).func_233815_a_(Attributes.field_233819_b_, 64.0D);
     }
  
-    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+-   public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
 -      super.func_70624_b(p_70624_1_);
-+      // CraftBukkit start - fire event
-+      setAttackTarget(p_70624_1_, TargetReason.UNKNOWN, true);
-+   }
-+
-+   public boolean setAttackTarget(@Nullable LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
++   //Craftbukkit start
++   public boolean setGoalTarget(@Nullable LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
 +      if(!super.setGoalTarget(entitylivingbaseIn, reason, fireEvent)){
 +         return false;
 +      }
-+      entitylivingbaseIn = func_70638_az();
-+      // CraftBukkit end
        ModifiableAttributeInstance modifiableattributeinstance = this.func_110148_a(Attributes.field_233821_d_);
 -      if (p_70624_1_ == null) {
 +      if (entitylivingbaseIn == null) {
           this.field_184721_by = 0;
           this.field_70180_af.func_187227_b(field_184719_bw, false);
           this.field_70180_af.func_187227_b(field_226535_bx_, false);
-@@ -113,6 +_,7 @@
+@@ -113,7 +_,9 @@
           }
        }
  
 +      return true; // CraftBukkit
     }
++   // CraftBukkit end
  
     protected void func_70088_a() {
+       super.func_70088_a();
 @@ -181,12 +_,13 @@
        }
  
