@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistProxySelector;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.util.i18n.i18n;
 import com.mojang.authlib.GameProfile;
@@ -19,6 +20,7 @@ import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import java.net.ProxySelector;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
@@ -284,6 +286,7 @@ public final class CraftServer implements Server {
 
     public void loadPlugins() {
         RemapUtils.init();
+        ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) console.options.valueOf("plugins");
