@@ -1,5 +1,52 @@
 --- a/net/minecraft/world/GameRules.java
 +++ b/net/minecraft/world/GameRules.java
+@@ -15,6 +_,8 @@
+ import java.util.function.Function;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
++
++import io.papermc.paper.event.world.WorldGameRuleChangeEvent;
+ import net.minecraft.command.CommandSource;
+ import net.minecraft.command.Commands;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+@@ -26,6 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
+ 
+ public class GameRules {
+    private static final Logger field_223622_y = LogManager.getLogger();
+@@ -179,9 +_,26 @@
+          this.field_223575_a = p_i51535_2_;
+       }
+ 
+-      protected void func_223555_a(CommandContext<CommandSource> p_223555_1_, String p_223555_2_) {
+-         this.field_223575_a = BoolArgumentType.getBool(p_223555_1_, p_223555_2_);
+-      }
++      /* Original method
++      protected void updateFromArgument(CommandContext<CommandSource> p_223555_1_, String p_223555_2_) {
++         this.value = BoolArgumentType.getBool(p_223555_1_, p_223555_2_);
++      }
++      */
++
++      // Paper start
++      protected void updateFromArgument(CommandContext<CommandSource> context, String s, GameRules.RuleKey<BooleanValue> ruleKey) {
++         WorldGameRuleChangeEvent event = new WorldGameRuleChangeEvent(
++                 context.getSource().func_197023_e().getWorld(),
++                 context.getSource().getBukkitSender(),
++                 org.bukkit.GameRule.getByName(ruleKey.toString()),
++                 String.valueOf(BoolArgumentType.getBool(context, s)));
++         Bukkit.getServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return;
++         }
++         this.field_223575_a = Boolean.parseBoolean(event.getValue());
++      }
++      // Paper end
+ 
+       public boolean func_223572_a() {
+          return this.field_223575_a;
 @@ -196,7 +_,7 @@
           return Boolean.toString(this.field_223575_a);
        }
@@ -9,6 +56,36 @@
           this.field_223575_a = Boolean.parseBoolean(p_223553_1_);
        }
  
+@@ -274,9 +_,26 @@
+          this.field_223566_a = p_i51534_2_;
+       }
+ 
+-      protected void func_223555_a(CommandContext<CommandSource> p_223555_1_, String p_223555_2_) {
+-         this.field_223566_a = IntegerArgumentType.getInteger(p_223555_1_, p_223555_2_);
+-      }
++      /* Original method
++      protected void updateFromArgument(CommandContext<CommandSource> p_223555_1_, String p_223555_2_) {
++         this.value = IntegerArgumentType.getInteger(p_223555_1_, p_223555_2_);
++      }
++      */
++
++      // Paper start
++      protected void updateFromArgument(CommandContext<CommandSource> context, String s, GameRules.RuleKey<IntegerValue> ruleKey) {
++         WorldGameRuleChangeEvent event = new WorldGameRuleChangeEvent(
++                 context.getSource().func_197023_e().getWorld(),
++                 context.getSource().getBukkitSender(),
++                 org.bukkit.GameRule.getByName(ruleKey.toString()),
++                 String.valueOf(IntegerArgumentType.getInteger(context, s)));
++         Bukkit.getServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return;
++         }
++         this.field_223566_a = Integer.parseInt(event.getValue());
++      }
++      // Paper end
+ 
+       public int func_223560_a() {
+          return this.field_223566_a;
 @@ -286,7 +_,7 @@
           return Integer.toString(this.field_223566_a);
        }
@@ -27,11 +104,35 @@
              }
           }
  
-@@ -410,14 +_,14 @@
-          this.func_223556_a(p_223554_1_.getSource().func_197028_i());
+@@ -403,21 +_,31 @@
+          this.field_223558_a = p_i51530_1_;
        }
  
+-      protected abstract void func_223555_a(CommandContext<CommandSource> p_223555_1_, String p_223555_2_);
+-
+-      public void func_223554_b(CommandContext<CommandSource> p_223554_1_, String p_223554_2_) {
+-         this.func_223555_a(p_223554_1_, p_223554_2_);
+-         this.func_223556_a(p_223554_1_.getSource().func_197028_i());
+-      }
+-
 -      protected void func_223556_a(@Nullable MinecraftServer p_223556_1_) {
++      //protected abstract void updateFromArgument(CommandContext<CommandSource> p_223555_1_, String p_223555_2_);
++      protected abstract void updateFromArgument(CommandContext<CommandSource> context, String s, GameRules.RuleKey<T> ruleKey); // Paper
++
++      /* Original method
++      public void setFromArgument(CommandContext<CommandSource> p_223554_1_, String p_223554_2_) {
++         this.updateFromArgument(p_223554_1_, p_223554_2_);
++         this.onChanged(p_223554_1_.getSource().getServer());
++      }
++      */
++
++      // Paper start
++      public void setFromArgument(CommandContext<CommandSource> context, String s, GameRules.RuleKey<T> ruleKey) {
++         this.updateFromArgument(context, s, ruleKey);
++         this.func_223556_a(context.getSource().func_197028_i());
++      }
++      // Paper end
++
 +      public void func_223556_a(@Nullable MinecraftServer p_223556_1_) {
           if (p_223556_1_ != null) {
              this.field_223558_a.field_223584_c.accept(p_223556_1_, this.func_223213_e_());
