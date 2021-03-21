@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -2,13 +_,19 @@
+@@ -2,16 +_,23 @@
  
  import com.google.common.base.Splitter;
  import com.google.common.collect.ImmutableList;
@@ -20,6 +20,10 @@
  import io.netty.buffer.ByteBuf;
  import io.netty.buffer.ByteBufOutputStream;
  import io.netty.buffer.Unpooled;
++import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
+ import it.unimi.dsi.fastutil.longs.LongIterator;
+ import java.awt.image.BufferedImage;
+ import java.io.File;
 @@ -37,12 +_,12 @@
  import java.util.Date;
  import java.util.List;
@@ -755,7 +759,18 @@
  
        try {
           this.field_71292_I = CryptManager.func_75891_b();
-@@ -1273,6 +_,7 @@
+@@ -1266,6 +_,10 @@
+    }
+ 
+    public CompletableFuture<Void> func_240780_a_(Collection<String> p_240780_1_) {
++      return this.reloadServerResources(p_240780_1_, ServerResourcesReloadedEvent.Cause.PLUGIN);
++   }
++   // Paper - add cause
++   public CompletableFuture<Void> reloadServerResources(Collection<String> p_240780_1_, ServerResourcesReloadedEvent.Cause cause) {
+       CompletableFuture<Void> completablefuture = CompletableFuture.supplyAsync(() -> {
+          return p_240780_1_.stream().map(this.field_195577_ad::func_198981_a).filter(Objects::nonNull).map(ResourcePackInfo::func_195796_e).collect(ImmutableList.toImmutableList());
+       }, this).thenCompose((p_240775_1_) -> {
+@@ -1273,13 +_,22 @@
        }).thenAcceptAsync((p_240782_2_) -> {
           this.field_195576_ac.close();
           this.field_195576_ac = p_240782_2_;
@@ -763,7 +778,15 @@
           this.field_195577_ad.func_198985_a(p_240780_1_);
           this.field_240768_i_.func_230410_a_(func_240771_a_(this.field_195577_ad));
           p_240782_2_.func_240971_i_();
-@@ -1280,6 +_,7 @@
+-         this.func_184103_al().func_72389_g();
++         // Paper start
++         ServerResourcesReloadedEvent event = new ServerResourcesReloadedEvent(cause);
++         Bukkit.getServer().getPluginManager().callEvent(event);
++         if (Thread.currentThread() != this.field_175590_aa) {
++            return;
++         }
++         //this.getPlayerList().saveAll(); // Paper - we don't need to do this
++         // Paper end
           this.func_184103_al().func_193244_w();
           this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
           this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());

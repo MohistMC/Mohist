@@ -1,6 +1,13 @@
 --- a/net/minecraft/entity/player/ServerPlayerEntity.java
 +++ b/net/minecraft/entity/player/ServerPlayerEntity.java
-@@ -15,6 +_,7 @@
+@@ -11,10 +_,14 @@
+ import java.util.Random;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
++import io.papermc.paper.event.packet.PlayerChunkUnloadEvent;
+ import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.advancements.PlayerAdvancements;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -998,6 +1005,36 @@
        if (p_242111_2_ != null) {
           boolean flag = p_242111_2_.equals(this.field_241138_cr_) && p_242111_1_.equals(this.field_241137_cq_);
           if (p_242111_5_ && !flag) {
+@@ -1361,11 +_,29 @@
+    public void func_213844_a(ChunkPos p_213844_1_, IPacket<?> p_213844_2_, IPacket<?> p_213844_3_) {
+       this.field_71135_a.func_147359_a(p_213844_3_);
+       this.field_71135_a.func_147359_a(p_213844_2_);
++      // Paper start
++      if (PlayerChunkLoadEvent.getHandlerList().getRegisteredListeners().length > 0) {
++         PlayerChunkLoadEvent event = new PlayerChunkLoadEvent(
++                 this.getBukkitEntity().getWorld().getChunkAt(p_213844_1_.field_77276_a, p_213844_1_.field_77275_b),
++                 this.getBukkitEntity()
++         );
++         Bukkit.getServer().getPluginManager().callEvent(event);
++      }
++      // Paper end
+    }
+ 
+    public void func_213845_a(ChunkPos p_213845_1_) {
+       if (this.func_70089_S()) {
+          this.field_71135_a.func_147359_a(new SUnloadChunkPacket(p_213845_1_.field_77276_a, p_213845_1_.field_77275_b));
++         // Paper start
++         if (PlayerChunkUnloadEvent.getHandlerList().getRegisteredListeners().length > 0) {
++            PlayerChunkUnloadEvent event = new PlayerChunkUnloadEvent(
++                    this.getBukkitEntity().getWorld().getChunkAt(p_213845_1_.field_77276_a, p_213845_1_.field_77275_b),
++                    this.getBukkitEntity()
++            );
++            Bukkit.getServer().getPluginManager().callEvent(event);
++         }
++         // Paper end
+       }
+ 
+    }
 @@ -1391,6 +_,8 @@
        if (itementity == null) {
           return null;

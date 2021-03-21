@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/LivingEntity.java
 +++ b/net/minecraft/entity/LivingEntity.java
-@@ -8,19 +_,22 @@
+@@ -8,19 +_,24 @@
  import com.mojang.datafixers.util.Pair;
  import com.mojang.serialization.DataResult;
  import com.mojang.serialization.Dynamic;
@@ -18,6 +18,8 @@
 +import com.google.common.base.Function;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
++
++import io.papermc.paper.event.entity.EntityMoveEvent;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.BedBlock;
 -import net.minecraft.block.Block;
@@ -45,11 +47,12 @@
  import net.minecraft.nbt.ListNBT;
  import net.minecraft.nbt.NBTDynamicOps;
  import net.minecraft.network.IPacket;
-@@ -113,22 +_,34 @@
+@@ -113,22 +_,35 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import net.minecraftforge.common.ForgeHooks;
++import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 +import org.bukkit.craftbukkit.v1_16_R3.attribute.CraftAttributeMap;
@@ -1215,7 +1218,7 @@
        this.field_70170_p.func_217381_Z().func_76319_b();
        this.field_70170_p.func_217381_Z().func_76320_a("push");
        if (this.field_204807_bs > 0) {
-@@ -2420,7 +_,9 @@
+@@ -2420,8 +_,42 @@
           this.func_204801_a(axisalignedbb, this.func_174813_aQ());
        }
  
@@ -1223,8 +1226,41 @@
        this.func_85033_bc();
 +      SpigotTimings.timerEntityAICollision.stopTiming(); // Spigot
        this.field_70170_p.func_217381_Z().func_76319_b();
++      // Paper/Mohist start
++      if (this.field_70142_S != func_226277_ct_() || this.field_70137_T != func_226278_cu_() || this.field_70136_U != func_226281_cx_()
++              || this.func_195046_g(0.0F) != this.func_195046_g(1.0F)
++              || this.func_195050_f(0.0F) != this.func_195050_f(1.0F)) {
++         Location from = new Location(field_70170_p.getWorld(),
++                 this.field_70142_S,
++                 this.field_70137_T,
++                 this.field_70136_U,
++                 this.func_195046_g(0.0F),
++                 this.func_195050_f(0.0F));
++         Location to = new Location(field_70170_p.getWorld(),
++                 func_226277_ct_(),
++                 func_226278_cu_(),
++                 func_226281_cx_(),
++                 this.func_195046_g(1.0F),
++                 this.func_195050_f(1.0F));
++         EntityMoveEvent event = new EntityMoveEvent(
++                 (org.bukkit.entity.LivingEntity) this.getBukkitEntity(),
++                 from.clone(),
++                 to.clone());
++         Bukkit.getServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            this.func_70107_b(from.getX(), from.getY(), from.getZ());
++            this.func_70101_b(from.getYaw(), from.getPitch());
++         } else if (!to.equals(event.getTo())){
++            this.func_70107_b(event.getTo().getX(),
++                    event.getTo().getY(),
++                    event.getTo().getZ());
++            this.func_70101_b(event.getTo().getYaw(), event.getTo().getPitch());
++         }
++      }
++      // Paper/Mohist end
        if (!this.field_70170_p.field_72995_K && this.func_230270_dK_() && this.func_203008_ap()) {
           this.func_70097_a(DamageSource.field_76369_e, 1.0F);
+       }
 @@ -2436,6 +_,8 @@
        boolean flag = this.func_70083_f(7);
        if (flag && !this.field_70122_E && !this.func_184218_aH() && !this.func_70644_a(Effects.field_188424_y)) {
