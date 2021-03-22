@@ -26,6 +26,9 @@ import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.player.PlayerFishEvent;
 
 /**
  * This event is called when a player fishes an item.
@@ -40,6 +43,7 @@ public class ItemFishedEvent extends PlayerEvent
     private final NonNullList<ItemStack> stacks = NonNullList.create();
     private final EntityFishHook hook;
     private int rodDamage;
+    private PlayerFishEvent event;
 
     public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, EntityFishHook hook)
     {
@@ -47,6 +51,26 @@ public class ItemFishedEvent extends PlayerEvent
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;
+        Entity bukkitItem = getBukkitItem(stacks);
+        event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()), bukkitItem,
+                getBukkitHook(hook), bukkitItem != null ? PlayerFishEvent.State.CAUGHT_FISH : PlayerFishEvent.State.FAILED_ATTEMPT);
+    }
+
+    /**
+     * This method allow us to create a Bukkit ItemStack from a list of forge ItemStacks.
+     * It only handle the first one because for bukkit you can only catch one fish.
+     * @param stacks The list of fishes that has been caught
+     * @return A bukkit ItemStack
+     */
+    private Entity getBukkitItem(List<ItemStack> stacks) {
+        if (stacks == null || stacks.size() == 0)
+            return null;
+        else {
+            org.bukkit.inventory.ItemStack ret;
+            ItemStack forgeItemStack = stacks.get(0);
+
+            return ret;
+        }
     }
 
     /**
