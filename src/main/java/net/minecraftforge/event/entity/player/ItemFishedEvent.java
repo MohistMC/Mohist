@@ -22,12 +22,16 @@ package net.minecraftforge.event.entity.player;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import javax.annotation.Nonnegative;
+
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
+import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftFish;
+import org.bukkit.entity.Fish;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerFishEvent;
 
 /**
@@ -51,26 +55,13 @@ public class ItemFishedEvent extends PlayerEvent
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;
-        Entity bukkitItem = getBukkitItem(stacks);
-        event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()), bukkitItem,
-                getBukkitHook(hook), bukkitItem != null ? PlayerFishEvent.State.CAUGHT_FISH : PlayerFishEvent.State.FAILED_ATTEMPT);
-    }
+        event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()),
+                null,
+                new CraftFish((CraftServer) Bukkit.getServer(), hook),
+                stacks != null && stacks.size() > 0 ?
+                        PlayerFishEvent.State.CAUGHT_FISH :
+                        PlayerFishEvent.State.FAILED_ATTEMPT);
 
-    /**
-     * This method allow us to create a Bukkit ItemStack from a list of forge ItemStacks.
-     * It only handle the first one because for bukkit you can only catch one fish.
-     * @param stacks The list of fishes that has been caught
-     * @return A bukkit ItemStack
-     */
-    private Entity getBukkitItem(List<ItemStack> stacks) {
-        if (stacks == null || stacks.size() == 0)
-            return null;
-        else {
-            org.bukkit.inventory.ItemStack ret;
-            ItemStack forgeItemStack = stacks.get(0);
-
-            return ret;
-        }
     }
 
     /**
