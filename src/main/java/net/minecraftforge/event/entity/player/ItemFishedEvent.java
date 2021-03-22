@@ -55,13 +55,16 @@ public class ItemFishedEvent extends PlayerEvent
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;
+        CraftServer server = (CraftServer) Bukkit.getServer();
         event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()),
                 null,
-                new CraftFish((CraftServer) Bukkit.getServer(), hook),
+                new CraftFish(server, hook),
                 stacks != null && stacks.size() > 0 ?
                         PlayerFishEvent.State.CAUGHT_FISH :
                         PlayerFishEvent.State.FAILED_ATTEMPT);
-
+        server.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            this.setCanceled(true);
     }
 
     /**
