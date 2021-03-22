@@ -56,15 +56,32 @@ public class ItemFishedEvent extends PlayerEvent
         this.rodDamage = rodDamage;
         this.hook = hook;
         CraftServer server = (CraftServer) Bukkit.getServer();
-        event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()),
-                null,
-                new CraftFish(server, hook),
-                stacks != null && stacks.size() > 0 ?
-                        PlayerFishEvent.State.CAUGHT_FISH :
-                        PlayerFishEvent.State.FAILED_ATTEMPT);
-        server.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            this.setCanceled(true);
+        // We verify if the given hook is a vanilla hook or not. Because otherwise the vanilla event fire two times
+        if (!isVanillaHook(hook)) {
+            // TODO : The entity inside of the event is null, we need to find a way to get the Bukkit entity from
+            //  hook.caughtEntity
+            event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()),
+                    null,
+                    new CraftFish(server, hook),
+                    hook.caughtEntity != null ?
+                            PlayerFishEvent.State.CAUGHT_FISH :
+                            PlayerFishEvent.State.FAILED_ATTEMPT);
+            server.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                this.setCanceled(true);
+        }
+    }
+
+    /**
+     * This method allow us to check if the given hook is vanilla or not.
+     * It is not very optimised because it checks on the hands of the user.
+     * @return {@code true} if the hook used is vanilla {@code false} otherwise
+     */
+    private boolean isVanillaHook(EntityFishHook hook) {
+        ItemStack mainHand = hook.angler.getHeldItemMainhand();
+        ItemStack offHand = hook.angler.getHeldItemOffhand();
+        // TODO : other hand
+        return mainHand != null && mainHand.item.getItemStackDisplayName(mainHand).equals("Fishing Rod");
     }
 
     /**
