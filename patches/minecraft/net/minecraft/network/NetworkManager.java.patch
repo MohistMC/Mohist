@@ -13,11 +13,13 @@
  import net.minecraft.util.LazyValue;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.text.ITextComponent;
-@@ -63,7 +_,12 @@
+@@ -62,8 +_,13 @@
+    });
     private final PacketDirection field_179294_g;
     private final Queue<NetworkManager.QueuedPacket> field_150745_j = Queues.newConcurrentLinkedQueue();
-    private Channel field_150746_k;
+-   private Channel field_150746_k;
 -   private SocketAddress field_150743_l;
++   public Channel field_150746_k;
 +   public SocketAddress field_150743_l;
 +   // Spigot Start
 +   public java.util.UUID spoofedUUID;
