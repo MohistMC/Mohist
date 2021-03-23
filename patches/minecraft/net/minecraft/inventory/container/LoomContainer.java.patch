@@ -1,9 +1,17 @@
 --- a/net/minecraft/inventory/container/LoomContainer.java
 +++ b/net/minecraft/inventory/container/LoomContainer.java
-@@ -19,8 +_,28 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.inventory.container;
+ 
++import io.papermc.paper.event.player.PlayerLoomPatternSelectEvent;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.entity.player.PlayerInventory;
+@@ -19,8 +_,29 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryLoom;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
@@ -62,7 +70,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -109,6 +_,7 @@
+@@ -109,12 +_,35 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
@@ -70,6 +78,35 @@
        return func_216963_a(this.field_217033_c, p_75145_1_, Blocks.field_222421_lJ);
     }
  
+    public boolean func_75140_a(PlayerEntity p_75140_1_, int p_75140_2_) {
+       if (p_75140_2_ > 0 && p_75140_2_ <= BannerPattern.field_222481_P) {
+-         this.field_217034_d.func_221494_a(p_75140_2_);
++         //this.selectedBannerPatternIndex.set(p_75140_2_);
++         // Paper start
++         int ordinal = p_75140_2_;
++         PlayerLoomPatternSelectEvent event = new PlayerLoomPatternSelectEvent(
++                 (Player) p_75140_1_.getBukkitEntity(),
++                 (CraftInventoryLoom) getBukkitView().getTopInventory(),
++                 org.bukkit.block.banner.PatternType.getByIdentifier(
++                         BannerPattern.values()[p_75140_2_].func_190993_b())
++         );
++         Bukkit.getServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            ((Player) p_75140_1_.getBukkitEntity()).updateInventory();
++            return false;
++         }
++         for (BannerPattern nms : BannerPattern.values()) {
++            if (event.getPatternType().getIdentifier().equals(nms.func_190993_b())) {
++               ordinal = nms.ordinal();
++               break;
++            }
++         }
++         ((Player) p_75140_1_.getBukkitEntity()).updateInventory();
++         this.field_217034_d.func_221494_a(ordinal);
++         // Paper end
+          this.func_217031_j();
+          return true;
+       } else {
 @@ -224,6 +_,11 @@
              ListNBT listnbt;
              if (compoundnbt.func_150297_b("Patterns", 9)) {
