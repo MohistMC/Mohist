@@ -1,8 +1,9 @@
 --- a/net/minecraft/inventory/container/LecternContainer.java
 +++ b/net/minecraft/inventory/container/LecternContainer.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.inventory.container;
  
++import io.papermc.paper.event.player.PlayerLecternPageChangeEvent;
  import net.minecraft.entity.player.PlayerEntity;
 +import net.minecraft.entity.player.PlayerInventory;
  import net.minecraft.inventory.IInventory;
@@ -52,7 +53,7 @@
        func_216962_a(p_i50076_2_, 1);
        func_216959_a(p_i50076_3_, 1);
        this.field_217018_c = p_i50076_2_;
-@@ -30,6 +_,7 @@
+@@ -30,9 +_,12 @@
           }
        });
        this.func_216961_a(p_i50076_3_);
@@ -60,7 +61,57 @@
     }
  
     public boolean func_75140_a(PlayerEntity p_75140_1_, int p_75140_2_) {
-@@ -52,6 +_,14 @@
++      PlayerLecternPageChangeEvent paper_event;
++      CraftInventoryLectern bukkitLectern;
+       if (p_75140_2_ >= 100) {
+          int k = p_75140_2_ - 100;
+          this.func_75137_b(0, k);
+@@ -41,17 +_,57 @@
+          switch(p_75140_2_) {
+          case 1:
+             int j = this.field_217019_d.func_221476_a(0);
+-            this.func_75137_b(0, j - 1);
++            //this.setData(0, j - 1);
++            // Paper start
++            bukkitLectern = (CraftInventoryLectern) getBukkitView().getTopInventory();
++            paper_event = new PlayerLecternPageChangeEvent(
++                    (org.bukkit.entity.Player) p_75140_1_.getBukkitEntity(),
++                    bukkitLectern.getHolder(),
++                    bukkitLectern.getItem(0),
++                    PlayerLecternPageChangeEvent.PageChangeDirection.LEFT,
++                    j,
++                    j - 1
++            );
++            Bukkit.getServer().getPluginManager().callEvent(paper_event);
++            if (paper_event.isCancelled()) {
++               return false;
++            }
++            this.func_75137_b(0, paper_event.getNewPage());
++            // Paper end
+             return true;
+          case 2:
+             int i = this.field_217019_d.func_221476_a(0);
+-            this.func_75137_b(0, i + 1);
++            //this.setData(0, i + 1);
++            // Paper start
++            bukkitLectern = (CraftInventoryLectern) getBukkitView().getTopInventory();
++            paper_event = new PlayerLecternPageChangeEvent(
++                    (org.bukkit.entity.Player) p_75140_1_.getBukkitEntity(),
++                    bukkitLectern.getHolder(),
++                    bukkitLectern.getItem(0),
++                    PlayerLecternPageChangeEvent.PageChangeDirection.RIGHT,
++                    i,
++                    i + 1
++            );
++            Bukkit.getServer().getPluginManager().callEvent(paper_event);
++            if (paper_event.isCancelled()) {
++               return false;
++            }
++            this.func_75137_b(0, paper_event.getNewPage());
++            // Paper end
+             return true;
+          case 3:
+             if (!p_75140_1_.func_175142_cm()) {
                 return false;
              }
  
