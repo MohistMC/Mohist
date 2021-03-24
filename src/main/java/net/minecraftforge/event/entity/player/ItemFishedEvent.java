@@ -26,6 +26,7 @@ import javax.annotation.Nonnegative;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
@@ -80,9 +81,19 @@ public class ItemFishedEvent extends PlayerEvent
     private boolean isVanillaHook(EntityFishHook hook) {
         ItemStack mainHand = hook.angler.getHeldItemMainhand();
         ItemStack offHand = hook.angler.getHeldItemOffhand();
-        // TODO : other hand
-        return mainHand != null && mainHand.item.getItemStackDisplayName(mainHand).equals("Fishing Rod");
+        return isVanillaItem(mainHand) || isVanillaItem(offHand);
     }
+
+    /**
+     * This method allow us to check if the given item is vanilla or not
+     * @param item The ItemStack to verify
+     * @return {@code true} if the item is vanilla {@code false} otherwise
+     */
+    private boolean isVanillaItem(ItemStack item) {
+        ResourceLocation registry = item.item.getRegistryName();
+        return registry != null && registry.getResourceDomain().equals("minecraft");
+    }
+
 
     /**
      * Get the damage the rod will take.
