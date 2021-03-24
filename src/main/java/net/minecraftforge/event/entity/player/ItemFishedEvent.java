@@ -81,7 +81,7 @@ public class ItemFishedEvent extends PlayerEvent
     private boolean isVanillaHook(EntityFishHook hook) {
         ItemStack mainHand = hook.angler.getHeldItemMainhand();
         ItemStack offHand = hook.angler.getHeldItemOffhand();
-        return isVanillaItem(mainHand) || isVanillaItem(offHand);
+        return mainHand.item != null && isVanillaItem(mainHand) || offHand.item != null && isVanillaItem(offHand);
     }
 
     /**
