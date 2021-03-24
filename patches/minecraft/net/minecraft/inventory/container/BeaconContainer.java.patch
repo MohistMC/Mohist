@@ -1,17 +1,22 @@
 --- a/net/minecraft/inventory/container/BeaconContainer.java
 +++ b/net/minecraft/inventory/container/BeaconContainer.java
-@@ -3,6 +_,7 @@
+@@ -1,8 +_,11 @@
+ package net.minecraft.inventory.container;
+ 
  import javax.annotation.Nullable;
++
++import io.papermc.paper.event.player.PlayerChangeBeaconEffectEvent;
  import net.minecraft.block.Blocks;
  import net.minecraft.entity.player.PlayerEntity;
 +import net.minecraft.entity.player.PlayerInventory;
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-@@ -13,6 +_,9 @@
+@@ -13,6 +_,10 @@
  import net.minecraft.util.IntArray;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryBeacon;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
@@ -78,3 +83,29 @@
           } else if (p_82846_2_ >= 1 && p_82846_2_ < 28) {
              if (!this.func_75135_a(itemstack1, 28, 37, false)) {
                 return ItemStack.field_190927_a;
+@@ -138,9 +_,22 @@
+ 
+    public void func_216966_c(int p_216966_1_, int p_216966_2_) {
+       if (this.field_82864_f.func_75216_d()) {
+-         this.field_216972_f.func_221477_a(1, p_216966_1_);
+-         this.field_216972_f.func_221477_a(2, p_216966_2_);
+-         this.field_82864_f.func_75209_a(1);
++         // Paper start
++         PlayerChangeBeaconEffectEvent event = new PlayerChangeBeaconEffectEvent(
++                 (org.bukkit.entity.Player) this.player.field_70458_d.getBukkitEntity(),
++                 org.bukkit.potion.PotionEffectType.getById(p_216966_1_),
++                 org.bukkit.potion.PotionEffectType.getById(p_216966_2_),
++                 this.field_82866_e.getLocation().getBlock()
++         );
++         Bukkit.getServer().getPluginManager().callEvent(event);
++         if (!event.isCancelled()) {
++            this.field_216972_f.func_221477_a(1, event.getPrimary() == null ? 0 : event.getPrimary().getId());
++            this.field_216972_f.func_221477_a(2, event.getSecondary() == null ? 0 : event.getSecondary().getId());
++            if (event.willConsumeItem()) {
++               this.field_82864_f.func_75209_a(1);
++            }
++         }
++         // Paper end
+       }
+ 
+    }
