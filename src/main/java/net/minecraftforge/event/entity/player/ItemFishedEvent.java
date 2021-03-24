@@ -56,9 +56,9 @@ public class ItemFishedEvent extends PlayerEvent
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;
-        CraftServer server = (CraftServer) Bukkit.getServer();
         // We verify if the given hook is a vanilla hook or not. Because otherwise the vanilla event fire two times
         if (!isVanillaHook(hook)) {
+            CraftServer server = (CraftServer) Bukkit.getServer();
             // TODO : The entity inside of the event is null, we need to find a way to get the Bukkit entity from
             //  hook.caughtEntity
             event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()),
@@ -81,7 +81,11 @@ public class ItemFishedEvent extends PlayerEvent
     private boolean isVanillaHook(EntityFishHook hook) {
         ItemStack mainHand = hook.angler.getHeldItemMainhand();
         ItemStack offHand = hook.angler.getHeldItemOffhand();
-        return mainHand.item != null && isVanillaItem(mainHand) || offHand.item != null && isVanillaItem(offHand);
+        return
+                mainHand.item != null && mainHand.item.getUnlocalizedName().equals("item.fishingRod")
+                        && isVanillaItem(mainHand)
+                    || offHand.item != null && offHand.item.getUnlocalizedName().equals("item.fishingRod")
+                        && isVanillaItem(offHand);
     }
 
     /**
