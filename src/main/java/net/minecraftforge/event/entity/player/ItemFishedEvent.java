@@ -64,7 +64,7 @@ public class ItemFishedEvent extends PlayerEvent
             event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()),
                     null,
                     new CraftFish(server, hook),
-                    hook.caughtEntity != null ?
+                    stacks != null && stacks.size() > 0 ?
                             PlayerFishEvent.State.CAUGHT_FISH :
                             PlayerFishEvent.State.FAILED_ATTEMPT);
             server.getPluginManager().callEvent(event);
