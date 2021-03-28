@@ -36,40 +36,37 @@
        this.field_192390_i = p_i50090_2_.field_70458_d;
        this.func_75146_a(new CraftingResultSlot(p_i50090_2_.field_70458_d, this.field_75162_e, this.field_75160_f, 0, 124, 35));
  
-@@ -54,26 +_,27 @@
+@@ -54,6 +_,7 @@
  
     }
  
--   protected static void func_217066_a(int p_217066_0_, World p_217066_1_, PlayerEntity p_217066_2_, CraftingInventory p_217066_3_, CraftResultInventory p_217066_4_) {
--      if (!p_217066_1_.field_72995_K) {
--         ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_217066_2_;
-+   protected static void updateCraftingResult(int id, World world, PlayerEntity player, CraftingInventory inventory, CraftResultInventory inventoryResult, Container container) { // CraftBukkit
-+      if (!world.field_72995_K) {
-+         ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)player;
-          ItemStack itemstack = ItemStack.field_190927_a;
--         Optional<ICraftingRecipe> optional = p_217066_1_.func_73046_m().func_199529_aN().func_215371_a(IRecipeType.field_222149_a, p_217066_3_, p_217066_1_);
-+         Optional<ICraftingRecipe> optional = world.func_73046_m().func_199529_aN().func_215371_a(IRecipeType.field_222149_a, inventory, world);
-          if (optional.isPresent()) {
-             ICraftingRecipe icraftingrecipe = optional.get();
--            if (p_217066_4_.func_201561_a(p_217066_1_, serverplayerentity, icraftingrecipe)) {
--               itemstack = icraftingrecipe.func_77572_b(p_217066_3_);
-+            if (inventoryResult.func_201561_a(world, serverplayerentity, icraftingrecipe)) {
-+               itemstack = icraftingrecipe.func_77572_b(inventory);
++   protected static Container containerA;
+    protected static void func_217066_a(int p_217066_0_, World p_217066_1_, PlayerEntity p_217066_2_, CraftingInventory p_217066_3_, CraftResultInventory p_217066_4_) {
+       if (!p_217066_1_.field_72995_K) {
+          ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_217066_2_;
+@@ -65,15 +_,24 @@
+                itemstack = icraftingrecipe.func_77572_b(p_217066_3_);
              }
           }
-+         itemstack = CraftEventFactory.callPreCraftEvent(inventory, inventoryResult,itemstack, container.getBukkitView(), false); // CraftBukkit
++         itemstack = CraftEventFactory.callPreCraftEvent(p_217066_3_ , p_217066_4_, itemstack, containerA.getBukkitView(), false); // CraftBukkit
  
--         p_217066_4_.func_70299_a(0, itemstack);
--         serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(p_217066_0_, 0, itemstack));
-+         inventoryResult.func_70299_a(0, itemstack);
-+         serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(id, 0, itemstack));
+          p_217066_4_.func_70299_a(0, itemstack);
+          serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(p_217066_0_, 0, itemstack));
        }
     }
  
++   // Mohist start
++   protected static void a(int id, World world, PlayerEntity player, CraftingInventory inventory, CraftResultInventory inventoryResult, Container container) {
++      containerA = container;
++      func_217066_a(id, world, player, inventory, inventoryResult);
++      containerA = null;
++   }
++   // Mohist end
++
     public void func_75130_a(IInventory p_75130_1_) {
        this.field_217070_e.func_221486_a((p_217069_1_, p_217069_2_) -> {
 -         func_217066_a(this.field_75152_c, p_217069_1_, this.field_192390_i, this.field_75162_e, this.field_75160_f);
-+         updateCraftingResult(this.field_75152_c, p_217069_1_, this.field_192390_i, this.field_75162_e, this.field_75160_f, this); // CraftBukkit
++         a(this.field_75152_c, p_217069_1_, this.field_192390_i, this.field_75162_e, this.field_75160_f, this); // CraftBukkit
        });
     }
  
