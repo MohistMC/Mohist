@@ -88,10 +88,10 @@ public class SpigotTimings {
      * @return
      */
     public static CustomTimingsHandler getEntityTimings(Entity entity) {
-        String entityType = entity.getClass().getName();
+        String entityType = entity.getType().getRegistryName().toString();
         CustomTimingsHandler result = entityTypeTimingMap.get(entityType);
         if (result == null) {
-            result = new CustomTimingsHandler("** tickEntity - " + entity.getClass().getSimpleName(), activatedEntityTimer);
+            result = new CustomTimingsHandler("** tickEntity - " + entityType, activatedEntityTimer);
             entityTypeTimingMap.put(entityType, result);
         }
         return result;
@@ -103,7 +103,7 @@ public class SpigotTimings {
      * @return
      */
     public static CustomTimingsHandler getTileEntityTimings(TileEntity entity) {
-        String entityType = entity.getClass().getName();
+        String entityType = entity.getType().getRegistryName().toString();
         CustomTimingsHandler result = tileEntityTypeTimingMap.get(entityType);
         if (result == null) {
             result = new CustomTimingsHandler("** tickTileEntity - " + entityType, tickTileEntityTimer);
