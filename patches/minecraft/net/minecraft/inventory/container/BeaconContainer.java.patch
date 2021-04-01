@@ -12,7 +12,7 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-@@ -13,6 +_,10 @@
+@@ -13,6 +_,12 @@
  import net.minecraft.util.IntArray;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,6 +20,8 @@
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryBeacon;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
++import org.bukkit.entity.Player;
++import org.bukkit.potion.PotionEffectType;
  
  public class BeaconContainer extends Container {
     private final IInventory field_82866_e = new Inventory(1) {
@@ -83,7 +85,7 @@
           } else if (p_82846_2_ >= 1 && p_82846_2_ < 28) {
              if (!this.func_75135_a(itemstack1, 28, 37, false)) {
                 return ItemStack.field_190927_a;
-@@ -138,9 +_,22 @@
+@@ -138,9 +_,17 @@
  
     public void func_216966_c(int p_216966_1_, int p_216966_2_) {
        if (this.field_82864_f.func_75216_d()) {
@@ -91,19 +93,14 @@
 -         this.field_216972_f.func_221477_a(2, p_216966_2_);
 -         this.field_82864_f.func_75209_a(1);
 +         // Paper start
-+         PlayerChangeBeaconEffectEvent event = new PlayerChangeBeaconEffectEvent(
-+                 (org.bukkit.entity.Player) this.player.field_70458_d.getBukkitEntity(),
-+                 org.bukkit.potion.PotionEffectType.getById(p_216966_1_),
-+                 org.bukkit.potion.PotionEffectType.getById(p_216966_2_),
-+                 this.field_82866_e.getLocation().getBlock()
-+         );
-+         Bukkit.getServer().getPluginManager().callEvent(event);
-+         if (!event.isCancelled()) {
++         PlayerChangeBeaconEffectEvent event = new PlayerChangeBeaconEffectEvent((Player) this.player.field_70458_d.getBukkitEntity(), PotionEffectType.getById(p_216966_1_), PotionEffectType.getById(p_216966_2_), this.field_216971_e.getLocation().getBlock());
++         if (event.callEvent()) {
 +            this.field_216972_f.func_221477_a(1, event.getPrimary() == null ? 0 : event.getPrimary().getId());
 +            this.field_216972_f.func_221477_a(2, event.getSecondary() == null ? 0 : event.getSecondary().getId());
-+            if (event.willConsumeItem()) {
-+               this.field_82864_f.func_75209_a(1);
++            if (!event.willConsumeItem()) {
++               return;
 +            }
++            this.field_82864_f.func_75209_a(1);
 +         }
 +         // Paper end
        }
