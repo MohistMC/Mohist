@@ -58,7 +58,7 @@
                 if (blockstate1.func_177230_c() instanceof IBucketPickupHandler) {
 +                  // CraftBukkit start
 +                  Fluid dummyFluid = ((IBucketPickupHandler) blockstate1.func_177230_c()).func_204508_a(DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
-+                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerWorld) p_77659_1_, p_77659_2_, blockpos, blockpos, ((BlockRayTraceResult) raytraceresult).func_216354_b(), itemstack, dummyFluid.func_204524_b());
++                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(p_77659_1_, p_77659_2_, blockpos, blockpos, ((BlockRayTraceResult) raytraceresult).func_216354_b(), itemstack, dummyFluid.func_204524_b());
 +                  if (event.isCancelled()) {
 +                     ((ServerPlayerEntity) p_77659_2_).field_71135_a.func_147359_a(new SChangeBlockPacket(p_77659_1_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
 +                     ((ServerPlayerEntity) p_77659_2_).getBukkitEntity().updateInventory(); // SPIGOT-4541
@@ -110,7 +110,7 @@
 +         boolean flag1 = blockstate.func_196958_f() || flag || block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(worldIn, posIn, blockstate, this.field_77876_a);
 +         // CraftBukkit start
 +         if(player != null){
-+            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent((ServerWorld) worldIn, player, posIn, clicked, enumdirection, itemstack);
++            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(worldIn, player, posIn, clicked, enumdirection, itemstack);
 +            if(event.isCancelled()){
 +               ((ServerPlayerEntity) player).field_71135_a.func_147359_a(new SChangeBlockPacket(worldIn, posIn)); // SPIGOT-4238: needed when looking through entity
 +               ((ServerPlayerEntity) player).getBukkitEntity().updateInventory(); // SPIGOT-4541
