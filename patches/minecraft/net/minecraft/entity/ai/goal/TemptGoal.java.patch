@@ -1,23 +1,40 @@
 --- a/net/minecraft/entity/ai/goal/TemptGoal.java
 +++ b/net/minecraft/entity/ai/goal/TemptGoal.java
-@@ -3,11 +_,17 @@
+@@ -1,13 +_,18 @@
+ package net.minecraft.entity.ai.goal;
+ 
  import java.util.EnumSet;
++
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
++
  import net.minecraft.entity.CreatureEntity;
  import net.minecraft.entity.EntityPredicate;
 +import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.crafting.Ingredient;
- import net.minecraft.pathfinding.FlyingPathNavigator;
- import net.minecraft.pathfinding.GroundPathNavigator;
-+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTargetEvent;
-+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+-import net.minecraft.pathfinding.FlyingPathNavigator;
+-import net.minecraft.pathfinding.GroundPathNavigator;
  
  public class TemptGoal extends Goal {
     private static final EntityPredicate field_220762_c = (new EntityPredicate()).func_221013_a(10.0D).func_221008_a().func_221011_b().func_221009_d().func_221014_c();
+@@ -34,9 +_,11 @@
+       this.field_151484_k = p_i47823_5_;
+       this.field_75285_l = p_i47823_4_;
+       this.func_220684_a(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+-      if (!(p_i47823_1_.func_70661_as() instanceof GroundPathNavigator) && !(p_i47823_1_.func_70661_as() instanceof FlyingPathNavigator)) {
++      // Mohist start - Disable TemptGoal class validation
++      /* if (!(p_i47823_1_.getNavigation() instanceof GroundPathNavigator) && !(p_i47823_1_.getNavigation() instanceof FlyingPathNavigator)) {
+          throw new IllegalArgumentException("Unsupported mob type for TemptGoal");
+-      }
++      } */
++      // Mohist end
+    }
+ 
+    public boolean func_75250_a() {
 @@ -45,13 +_,27 @@
           return false;
        } else {
