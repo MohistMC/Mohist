@@ -2,17 +2,22 @@ package org.bukkit.craftbukkit.v1_16_R3;
 
 import java.util.HashMap;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.IServerWorldInfo;
-import net.minecraft.world.storage.ServerWorldInfo;
 import org.bukkit.craftbukkit.v1_16_R3.scheduler.CraftTask;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 import org.spigotmc.CustomTimingsHandler;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.IServerWorldInfo;
+
 public class SpigotTimings {
+
+    // Mohist start - Wrap Forge pre/post tick with timings
+    public static final CustomTimingsHandler forgePreServerTick = new CustomTimingsHandler("Forge Pre Server Tick");
+    public static final CustomTimingsHandler forgePostServerTick = new CustomTimingsHandler("Forge Post Server Tick");
+    // Mohist end
 
     public static final CustomTimingsHandler serverTickTimer = new CustomTimingsHandler("** Full Server Tick");
     public static final CustomTimingsHandler playerListTimer = new CustomTimingsHandler("Player List");
@@ -116,6 +121,12 @@ public class SpigotTimings {
      * Set of timers per world, to track world specific timings.
      */
     public static class WorldTimingsHandler {
+
+        // Mohist start - Wrap Forge pre/post tick with timings
+        public final CustomTimingsHandler forgePreWorldTick;
+        public final CustomTimingsHandler forgePostWorldTick;
+        // Mohist end
+
         public final CustomTimingsHandler mobSpawn;
         public final CustomTimingsHandler doChunkUnload;
         public final CustomTimingsHandler doTickPending;
@@ -138,6 +149,11 @@ public class SpigotTimings {
 
         public WorldTimingsHandler(World server) {
             String name = ((IServerWorldInfo) server.levelData).getLevelName() + " - ";
+
+            // Mohist start - Wrap Forge pre/post tick with timings
+            forgePreWorldTick = new CustomTimingsHandler(name + "Forge Pre World Tick");
+            forgePostWorldTick = new CustomTimingsHandler(name + "Forge Post World Tick");
+            // Mohist end
 
             mobSpawn = new CustomTimingsHandler("** " + name + "mobSpawn");
             doChunkUnload = new CustomTimingsHandler("** " + name + "doChunkUnload");
