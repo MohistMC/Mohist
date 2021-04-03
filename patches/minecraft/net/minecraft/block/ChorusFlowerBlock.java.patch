@@ -45,8 +45,8 @@
 -                     this.func_185602_a(p_225542_2_, blockpos1, i + 1);
 -                     flag2 = true;
 +                     // CraftBukkit start - add event
-+                     if (CraftEventFactory.handleBlockSpreadEvent(p_225542_2_, p_225542_3_, blockpos, this.func_176223_P().func_206870_a(ChorusFlowerBlock.field_185607_a, Integer.valueOf(i + 1)), 2)) {
-+                        this.func_185602_a(p_225542_2_, blockpos, i + 1);
++                     if (CraftEventFactory.handleBlockSpreadEvent(p_225542_2_, p_225542_3_, blockpos1, this.func_176223_P().func_206870_a(ChorusFlowerBlock.field_185607_a, Integer.valueOf(i + 1)), 2)) {
++                        this.func_185602_a(p_225542_2_, blockpos1, i + 1);
 +                        flag2 = true;
 +                     }
 +                     // CraftBukkit end
