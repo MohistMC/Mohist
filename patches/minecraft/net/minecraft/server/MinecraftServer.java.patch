@@ -1,30 +1,25 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -2,16 +_,23 @@
+@@ -1,18 +_,5 @@
+ package net.minecraft.server;
  
- import com.google.common.base.Splitter;
- import com.google.common.collect.ImmutableList;
-+import com.google.common.collect.ImmutableSet;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
- import com.google.common.collect.Sets;
-+import com.mohistmc.common.async.MohistThreadBox;
-+import com.mohistmc.forge.ForgeInjectBukkit;
-+import com.mohistmc.util.DatapackCodecUtils;
- import com.mojang.authlib.GameProfile;
- import com.mojang.authlib.GameProfileRepository;
- import com.mojang.authlib.minecraft.MinecraftSessionService;
- import com.mojang.datafixers.DataFixer;
-+import com.mojang.serialization.DynamicOps;
-+import com.mojang.serialization.Lifecycle;
- import io.netty.buffer.ByteBuf;
- import io.netty.buffer.ByteBufOutputStream;
- import io.netty.buffer.Unpooled;
-+import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
- import it.unimi.dsi.fastutil.longs.LongIterator;
+-import com.google.common.base.Splitter;
+-import com.google.common.collect.ImmutableList;
+-import com.google.common.collect.Lists;
+-import com.google.common.collect.Maps;
+-import com.google.common.collect.Sets;
+-import com.mojang.authlib.GameProfile;
+-import com.mojang.authlib.GameProfileRepository;
+-import com.mojang.authlib.minecraft.MinecraftSessionService;
+-import com.mojang.datafixers.DataFixer;
+-import io.netty.buffer.ByteBuf;
+-import io.netty.buffer.ByteBufOutputStream;
+-import io.netty.buffer.Unpooled;
+-import it.unimi.dsi.fastutil.longs.LongIterator;
  import java.awt.image.BufferedImage;
  import java.io.File;
-@@ -37,12 +_,12 @@
+ import java.io.IOException;
+@@ -37,19 +_,52 @@
  import java.util.Date;
  import java.util.List;
  import java.util.Map;
@@ -38,69 +33,62 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
  import java.util.concurrent.atomic.AtomicReference;
-@@ -50,6 +_,8 @@
+ import java.util.function.BooleanSupplier;
  import java.util.function.Function;
++
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
-+import joptsimple.OptionParser;
-+import joptsimple.OptionSet;
- import net.minecraft.advancements.AdvancementManager;
- import net.minecraft.advancements.FunctionManager;
- import net.minecraft.block.Block;
-@@ -65,6 +_,8 @@
- import net.minecraft.item.crafting.RecipeManager;
- import net.minecraft.loot.LootPredicateManager;
- import net.minecraft.loot.LootTableManager;
-+import net.minecraft.nbt.INBT;
-+import net.minecraft.nbt.NBTDynamicOps;
- import net.minecraft.network.NetworkSystem;
- import net.minecraft.network.ServerStatusResponse;
- import net.minecraft.network.play.server.SServerDifficultyPacket;
-@@ -81,6 +_,8 @@
- import net.minecraft.resources.ResourcePackList;
- import net.minecraft.scoreboard.ScoreboardSaveData;
- import net.minecraft.scoreboard.ServerScoreboard;
-+import net.minecraft.server.dedicated.DedicatedServer;
-+import net.minecraft.server.dedicated.ServerProperties;
- import net.minecraft.server.management.OpEntry;
- import net.minecraft.server.management.PlayerList;
- import net.minecraft.server.management.PlayerProfileCache;
-@@ -99,6 +_,7 @@
- import net.minecraft.util.Util;
- import net.minecraft.util.concurrent.RecursiveEventLoop;
- import net.minecraft.util.concurrent.TickDelayedTask;
-+import net.minecraft.util.datafix.DataFixesManager;
- import net.minecraft.util.datafix.codec.DatapackCodec;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.ChunkPos;
-@@ -108,6 +_,7 @@
- import net.minecraft.util.registry.DynamicRegistries;
- import net.minecraft.util.registry.Registry;
- import net.minecraft.util.registry.SimpleRegistry;
-+import net.minecraft.util.registry.WorldSettingsImport;
- import net.minecraft.util.text.ITextComponent;
- import net.minecraft.util.text.StringTextComponent;
- import net.minecraft.util.text.TranslationTextComponent;
-@@ -149,32 +_,42 @@
- import net.minecraft.world.storage.IWorldInfo;
- import net.minecraft.world.storage.PlayerData;
- import net.minecraft.world.storage.SaveFormat;
-+import net.minecraft.world.storage.ServerWorldInfo;
- import net.minecraft.world.storage.WorldSavedDataCallableSave;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.common.MinecraftForge;
- import org.apache.commons.lang3.Validate;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
++
++import org.apache.commons.lang3.Validate;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
-+import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 +import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 +import org.bukkit.event.server.ServerLoadEvent;
 +import org.bukkit.event.world.WorldInitEvent;
 +import org.bukkit.event.world.WorldLoadEvent;
++import org.spigotmc.CustomTimingsHandler;
 +import org.spigotmc.SlackActivityAccountant;
++
++import com.google.common.base.Splitter;
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.Lists;
++import com.google.common.collect.Maps;
++import com.google.common.collect.Sets;
++import com.mohistmc.common.async.MohistThreadBox;
++import com.mohistmc.forge.ForgeInjectBukkit;
++import com.mohistmc.util.DatapackCodecUtils;
++import com.mojang.authlib.GameProfile;
++import com.mojang.authlib.GameProfileRepository;
++import com.mojang.authlib.minecraft.MinecraftSessionService;
++import com.mojang.datafixers.DataFixer;
++
++import io.netty.buffer.ByteBuf;
++import io.netty.buffer.ByteBufOutputStream;
++import io.netty.buffer.Unpooled;
++import io.papermc.paper.event.server.ServerResourcesReloadedEvent;
++import it.unimi.dsi.fastutil.longs.LongIterator;
++import joptsimple.OptionSet;
+ import net.minecraft.advancements.AdvancementManager;
+ import net.minecraft.advancements.FunctionManager;
+ import net.minecraft.block.Block;
+@@ -81,6 +_,7 @@
+ import net.minecraft.resources.ResourcePackList;
+ import net.minecraft.scoreboard.ScoreboardSaveData;
+ import net.minecraft.scoreboard.ServerScoreboard;
++import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.management.OpEntry;
+ import net.minecraft.server.management.PlayerList;
+ import net.minecraft.server.management.PlayerProfileCache;
+@@ -152,29 +_,27 @@
+ import net.minecraft.world.storage.WorldSavedDataCallableSave;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+-import org.apache.commons.lang3.Validate;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
++import net.minecraftforge.common.MinecraftForge;
  
  public abstract class MinecraftServer extends RecursiveEventLoop<TickDelayedTask> implements ISnooperInfo, ICommandSource, AutoCloseable {
 -   private static final Logger field_147145_h = LogManager.getLogger();
@@ -584,7 +572,7 @@
           } finally {
              bytebuf.release();
           }
-@@ -767,10 +_,14 @@
+@@ -767,10 +_,16 @@
     }
  
     protected void func_71240_o() {
@@ -595,7 +583,9 @@
 +      SpigotTimings.serverTickTimer.startTiming(); // Spigot
 +      this.slackActivityAccountant.tickStarted(); // Spigot
        long i = Util.func_211178_c();
++      SpigotTimings.forgePreServerTick.startTiming(); // Mohist - Wrap Forge pre/post tick with timings
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
++      SpigotTimings.forgePreServerTick.stopTiming(); // Mohist - Wrap Forge pre/post tick with timings
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
@@ -631,15 +621,19 @@
           this.field_71307_n.func_76471_b();
        }
  
-@@ -812,50 +_,90 @@
+@@ -812,50 +_,96 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
 +      this.slackActivityAccountant.tickEnded(l); // Spigot
 +      SpigotTimings.serverTickTimer.stopTiming(); // Spigot
-+      org.spigotmc.CustomTimingsHandler.tick(); // Spigot
++      // Mohist start - Wrap Forge pre/post tick with timings
++      SpigotTimings.forgePostServerTick.startTiming();
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
++      SpigotTimings.forgePostServerTick.stopTiming();
++      CustomTimingsHandler.tick();
++      // Mohist end
     }
  
     protected void func_71190_q(BooleanSupplier p_71190_1_) {
@@ -675,8 +669,10 @@
 +		 SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
  
           this.field_71304_b.func_76320_a("tick");
+-
++         serverworld.timings.forgePreWorldTick.startTiming(); // Mohist - Wrap Forge pre/post tick with timings
 +         net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(serverworld);
- 
++         serverworld.timings.forgePreWorldTick.stopTiming(); // Mohist - Wrap Forge pre/post tick with timings
           try {
 +            serverworld.timings.doTick.startTiming(); // Spigot
              serverworld.func_72835_b(p_71190_1_);
@@ -694,10 +690,14 @@
              serverworld.func_72914_a(crashreport);
              throw new ReportedException(crashreport);
           }
+-
+-         this.field_71304_b.func_76319_b();
+-         this.field_71304_b.func_76319_b();
++         serverworld.timings.forgePostWorldTick.startTiming(); // Mohist - Wrap Forge pre/post tick with timings
 +         net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(serverworld);
- 
-          this.field_71304_b.func_76319_b();
-          this.field_71304_b.func_76319_b();
++         serverworld.timings.forgePostWorldTick.stopTiming(); // Mohist - Wrap Forge pre/post tick with timings
++         this.field_71304_b.func_76319_b();
++         this.field_71304_b.func_76319_b();
 +         perWorldTickTimes.computeIfAbsent(serverworld.func_234923_W_(), k -> new long[100])[this.field_71315_w % 100] = Util.func_211178_c() - tickStart;
 +         serverworld.explosionDensityCache.clear(); // Paper - Optimize explosions
        }
