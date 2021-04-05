@@ -1247,8 +1247,8 @@
 +                  String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
 +                  ServerPlayNetHandler.this.field_147367_d.console.sendMessage(message);
 +                  if (((LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
-+                     for (Object player : ServerPlayNetHandler.this.field_147367_d.func_184103_al().field_72404_b) {
-+                        ((ServerPlayerEntity) player).sendMessage(ServerPlayNetHandler.this.field_147369_b.func_110124_au(), CraftChatMessage.fromString(message));
++                     for (ServerPlayerEntity recipient : ServerPlayNetHandler.this.field_147367_d.func_184103_al().field_72404_b) {
++                        recipient.getBukkitEntity().sendMessage(ServerPlayNetHandler.this.field_147369_b.func_110124_au(), message);
 +                     }
 +                  } else {
 +                     for (Player player : queueEvent.getRecipients()) {
@@ -1277,8 +1277,8 @@
 +            s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
 +            field_147367_d.console.sendMessage(s);
 +            if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
-+               for (Object recipient : field_147367_d.func_184103_al().field_72404_b) {
-+                  ((ServerPlayerEntity) recipient).sendMessage(ServerPlayNetHandler.this.field_147369_b.func_110124_au(), CraftChatMessage.fromString(s));
++               for (ServerPlayerEntity recipient : field_147367_d.func_184103_al().field_72404_b) {
++                  recipient.getBukkitEntity().sendMessage(ServerPlayNetHandler.this.field_147369_b.func_110124_au(), s);
 +               }
 +            } else {
 +               for (Player recipient : event.getRecipients()) {
