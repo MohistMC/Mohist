@@ -34,7 +34,7 @@
        this.field_219460_b = p_i50704_1_;
        this.field_219464_f = p_i50704_5_;
        this.field_219461_c = p_i50704_2_;
-@@ -75,24 +_,25 @@
+@@ -75,24 +_,24 @@
        List<Entity> list = this.field_219461_c.func_184188_bt();
        if (!list.equals(this.field_219474_p)) {
           this.field_219474_p = list;
@@ -43,7 +43,6 @@
        }
  
 -      if (this.field_219461_c instanceof ItemFrameEntity && this.field_219472_n % 10 == 0) {
-+      // PAIL : rename
 +      if (this.field_219461_c instanceof ItemFrameEntity /*&& this.updateCounter % 10 == 0*/) { // CraftBukkit - Moved below, should always enter this block
           ItemFrameEntity itemframeentity = (ItemFrameEntity)this.field_219461_c;
           ItemStack itemstack = itemframeentity.func_82335_i();
