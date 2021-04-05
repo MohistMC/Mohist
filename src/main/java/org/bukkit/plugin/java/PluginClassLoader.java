@@ -75,6 +75,11 @@ public final class PluginClassLoader extends URLClassLoader {
         }
     }
 
+    static {
+        // require to remove synchronize with this instance
+        registerAsParallelCapable();
+    }
+
     @Override
     protected Object getClassLoadingLock(String className) {
         return launchClassLoader;
