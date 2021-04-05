@@ -12,7 +12,7 @@ import java.util.List;
 public class AutoDeletePlugins {
 
     public static List<String> deletelist = new ArrayList<>(Arrays.asList(
-        "aaaa.bbbb.cccc" // Until it is resolved, the plugin is not allowed
+        "com.comphenix.protocol.ProtocolLib" // Until it is resolved, the plug-in is not allowed
     ));
 
     public static void jar() throws Exception {
