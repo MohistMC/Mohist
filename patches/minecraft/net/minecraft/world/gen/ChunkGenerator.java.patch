@@ -26,24 +26,15 @@
  
  public abstract class ChunkGenerator {
     public static final Codec<ChunkGenerator> field_235948_a_ = Registry.field_239690_aB_.dispatchStable(ChunkGenerator::func_230347_a_, Function.identity());
-@@ -151,6 +_,35 @@
+@@ -151,6 +_,26 @@
  
     @Nullable
     public BlockPos func_235956_a_(ServerWorld p_235956_1_, Structure<?> p_235956_2_, BlockPos p_235956_3_, int p_235956_4_, boolean p_235956_5_) {
 +      // Paper start
 +      org.bukkit.World bukkitWorld = p_235956_1_.getWorld();
-+      org.bukkit.Location bukkitOrigin = new org.bukkit.Location(bukkitWorld,
-+              p_235956_3_.func_177958_n(),
-+              p_235956_3_.func_177956_o(),
-+              p_235956_3_.func_177952_p());
-+      StructureLocateEvent event = new StructureLocateEvent(bukkitWorld,
-+              bukkitOrigin,
-+              org.bukkit.StructureType.getStructureTypes().
-+                      get(p_235956_2_.func_143025_a()),
-+              p_235956_4_,
-+              p_235956_5_);
-+      Bukkit.getServer().getPluginManager().callEvent(event);
-+      if (event.isCancelled()) {
++      org.bukkit.Location bukkitOrigin = new org.bukkit.Location(bukkitWorld, p_235956_3_.func_177958_n(), p_235956_3_.func_177956_o(), p_235956_3_.func_177952_p());
++      StructureLocateEvent event = new StructureLocateEvent(bukkitWorld, bukkitOrigin, org.bukkit.StructureType.getStructureTypes().get(p_235956_2_.func_143025_a()), p_235956_4_, p_235956_5_);
++      if (!event.callEvent()) {
 +         return null;
 +      }
 +      // If event call set a final location, skip structure finding and just return set result.
