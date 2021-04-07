@@ -1858,6 +1858,11 @@ public class CraftWorld implements World {
     }
 
     @Override
+    public int getMinHeight() {
+        return 0;
+    }
+
+    @Override
     public int getMaxHeight() {
         return world.getHeight();
     }

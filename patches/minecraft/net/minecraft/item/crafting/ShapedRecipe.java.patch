@@ -28,7 +28,7 @@
     private final int field_77576_b;
     private final int field_77577_c;
     private final NonNullList<Ingredient> field_77574_d;
-@@ -38,6 +_,78 @@
+@@ -38,6 +_,76 @@
        this.field_77575_e = p_i48162_6_;
     }
  
@@ -37,68 +37,66 @@
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77575_e);
 +      CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
 +      recipe.setGroup(this.field_194137_e);
-+      Label_0342: {
-+         switch (this.field_77577_c) {
-+            case 1: {
-+               switch (this.field_77576_b) {
-+                  case 1: {
-+                     recipe.shape("a");
-+                     break;
-+                  }
-+                  case 2: {
-+                     recipe.shape("ab");
-+                     break;
-+                  }
-+                  case 3: {
-+                     recipe.shape("abc");
-+                     break;
-+                  }
++      switch (this.field_77577_c) {
++         case 1: {
++            switch (this.field_77576_b) {
++               case 1: {
++                  recipe.shape("a");
++                  break;
 +               }
-+               break;
-+            }
-+            case 2: {
-+               switch (this.field_77576_b) {
-+                  case 1: {
-+                     recipe.shape("a", "b");
-+                     break;
-+                  }
-+                  case 2: {
-+                     recipe.shape("ab", "cd");
-+                     break;
-+                  }
-+                  case 3: {
-+                     recipe.shape("abc", "def");
-+                     break;
-+                  }
++               case 2: {
++                  recipe.shape("ab");
++                  break;
 +               }
-+               break;
-+            }
-+            case 3: {
-+               switch (this.field_77576_b) {
-+                  case 1: {
-+                     recipe.shape("a", "b", "c");
-+                     break Label_0342;
-+                  }
-+                  case 2: {
-+                     recipe.shape("ab", "cd", "ef");
-+                     break Label_0342;
-+                  }
-+                  case 3: {
-+                     recipe.shape("abc", "def", "ghi");
-+                     break Label_0342;
-+                  }
++               case 3: {
++                  recipe.shape("abc");
++                  break;
 +               }
-+               break;
 +            }
++            break;
++         }
++         case 2: {
++            switch (this.field_77576_b) {
++               case 1: {
++                  recipe.shape("a", "b");
++                  break;
++               }
++               case 2: {
++                  recipe.shape("ab", "cd");
++                  break;
++               }
++               case 3: {
++                  recipe.shape("abc", "def");
++                  break;
++               }
++            }
++            break;
++         }
++         case 3: {
++            switch (this.field_77576_b) {
++               case 1: {
++                  recipe.shape("a", "b", "c");
++                  break;
++               }
++               case 2: {
++                  recipe.shape("ab", "cd", "ef");
++                  break;
++               }
++               case 3: {
++                  recipe.shape("abc", "def", "ghi");
++                  break;
++               }
++            }
++            break;
 +         }
 +      }
 +      char c = 'a';
-+      for (final Ingredient list : this.field_77574_d) {
++      for (Ingredient list : this.field_77574_d) {
 +         RecipeChoice choice = CraftRecipe.toBukkit(list);
 +         if (choice != null) {
 +            recipe.setIngredient(c, choice);
 +         }
-+         ++c;
++         c++;
 +      }
 +      return recipe;
 +   }
