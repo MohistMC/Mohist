@@ -8,10 +8,13 @@
  import net.minecraft.world.storage.IWorldInfo;
  
  public interface IWorld extends IBiomeReader, IDayTimeReader {
-@@ -53,4 +_,6 @@
+@@ -52,5 +_,9 @@
+ 
     default void func_217379_c(int p_217379_1_, BlockPos p_217379_2_, int p_217379_3_) {
        this.func_217378_a((PlayerEntity)null, p_217379_1_, p_217379_2_, p_217379_3_);
-    }
++   }
 +
-+   ServerWorld getMinecraftWorld(); // CraftBukkit
++   default ServerWorld getMinecraftWorld() {
++      return this.getMinecraftWorld();
+    }
  }
