@@ -6,28 +6,32 @@
 entity-tick-limit: 300
 hidejoinmodslist: false
 forge:
-  modswhitelist:
-    kickmessage: Use of unauthorized mods
-    list: aaaa@version,bbbb@version
-  enable_mods_whitelist: false
-  whitelist_mods_number: 0
-  disablechunkforcesystem: false
-  autounloadWorld_whitelist:
-    - 0
-    - 1
-    - -1
   modsblacklist:
-    list: []
+    enable: false
+    list: aaaa@version,bbbb@version
     kickmessage: Use of unauthorized mods
+  modswhitelist:
+    enable: false
+    mods_number: 0
+    list: minecraft@1.12.2,mcp@9.42,FML@8.0.99.99
+    kickmessage: Use of unauthorized mods
+  disablechunkforcesystem: false
+  autounloadworld:
+    enable: false
+    whitelist:
+      - 0
+      - 1
+      - -1
   version:
     major: 14
     minor: 23
     revision: 5
-    build: 2854
+    build: 2855
 mohist:
   use_custom_java8: false
   check_update: true
   server-type: FML
+  downloadfile_command_enabled: false
   lang: xx_XX
   console_name: Server
   CloseChatInConsole: false
@@ -40,28 +44,34 @@ mohist:
   watchdog_mohist: false
   watchdog_spigot: true
   showlogo: true
+  network_manage:
+    blacklist:
+      - "www.xxxxxx.com"
 eventCanceled:
   explosion: false
+  keepLevel: false
+  keepInventory: false
 consolecolor:
   info-time: b
-  trace-level: c
-  fatal-time: b
+  info-level: 2
   info-msg: r
+  warn-time: e
+  warn-msg: e
+  warn-level: e
+  trace-level: c
+  fatal-time: c
   error-level: c
   error-msg: c
-  info-level: 2
-  warn-time: b
   fatal-msg: c
-  error-time: b
-  trace-time: b
+  error-time: c
+  trace-time: c
   fatal-level: c
-  warn-msg: 3
-  warn-level: 2
   trace-msg: c
 libraries_black_list: aaaaa;bbbbbb
 world:
   stopserversaveworlds: false
   dimensionsNotLoaded: []
+  directory_in_client: true
 disable-announce-Advancements: false
 CloseChatInConsole: false
 settings:

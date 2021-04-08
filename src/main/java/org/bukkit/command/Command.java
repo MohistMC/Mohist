@@ -221,7 +221,7 @@ public abstract class Command {
         }
 
         if (permissionMessage == null) {
-            target.sendMessage(Message.getString("command.nopermission"));
+            target.sendMessage(Message.getFormatString("command.nopermission", new Object[]{ permission }));
         } else if (permissionMessage.length() != 0) {
             for (String line : permissionMessage.replace("<permission>", permission).split("\n")) {
                 target.sendMessage(line);

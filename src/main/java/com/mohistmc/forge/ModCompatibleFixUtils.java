@@ -14,7 +14,7 @@ public class ModCompatibleFixUtils {
      *
      * @param dim
      */
-    public static void fixPortalEnter (int dim) {
+    public static void fixPortalEnter(int dim) {
         for (Integer dimyml : MohistConfig.instance.dimensionsNotLoaded) {
             if (dimyml.intValue() == dim) {
                 return;

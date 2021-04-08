@@ -3,21 +3,21 @@ package com.mohistmc.command;
 import com.mohistmc.MohistThreadCost;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.configuration.MohistConfig;
 import com.mohistmc.util.i18n.Message;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.NumberInvalidException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.mohistmc.configuration.MohistConfig;
 
 public class MohistCommand extends Command {
+
+    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "give");
 
     public MohistCommand(String name) {
         super(name);
@@ -25,8 +25,6 @@ public class MohistCommand extends Command {
         this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item|reload|give]";
         this.setPermission("mohist.command.mohist");
     }
-
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "give");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -53,10 +51,7 @@ public class MohistCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.isOp() || !testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -85,14 +80,14 @@ public class MohistCommand extends Command {
                 MohistThreadCost.dumpThreadCpuTime();
                 break;
             case "lang":
-                sender.sendMessage(ChatColor.GREEN +Message.getLocale());
+                sender.sendMessage(ChatColor.GREEN + Message.getLocale());
                 break;
             case "item":
                 if (args.length == 1) {
                     sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
                     return false;
                 }
-                if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))){
+                if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))) {
                     ItemCommand.info(sender);
                 } else {
                     sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
@@ -109,7 +104,6 @@ public class MohistCommand extends Command {
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
         }
-
 
 
         return true;

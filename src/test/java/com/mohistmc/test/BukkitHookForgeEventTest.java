@@ -21,6 +21,10 @@ public class BukkitHookForgeEventTest implements Listener {
             ExplosionEvent.Detonate explosionEvent = (ExplosionEvent.Detonate)event.getEvent();
             explosionEvent.getAffectedBlocks().clear();
         }
+        if (event.getEvent() instanceof ExplosionEvent.Start) {
+            ExplosionEvent.Start explosionEvent = (ExplosionEvent.Start)event.getEvent();
+            explosionEvent.setCanceled(true);
+        }
     }
 
     @SubscribeEvent

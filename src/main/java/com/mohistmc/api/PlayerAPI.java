@@ -14,7 +14,7 @@ public class PlayerAPI {
     public static Map<EntityPlayerMP, String> modlist = new ConcurrentHashMap<>();
 
     /**
-     *  Get Player ping
+     * Get Player ping
      *
      * @param player org.bukkit.entity.player
      */
@@ -39,12 +39,11 @@ public class PlayerAPI {
         return modlist.get(getNMSPlayer(player)) == null ? "null" : modlist.get(getNMSPlayer(player));
     }
 
-    public static Boolean hasMod(Player player, String modid){
+    public static Boolean hasMod(Player player, String modid) {
         return getModlist(player).contains(modid);
     }
 
-    public static boolean isOp(EntityPlayer ep)
-    {
+    public static boolean isOp(EntityPlayer ep) {
         return MinecraftServer.getServerInst().getPlayerList().canSendCommands(ep.getGameProfile());
     }
 }

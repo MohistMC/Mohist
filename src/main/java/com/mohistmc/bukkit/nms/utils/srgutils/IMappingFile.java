@@ -39,6 +39,28 @@ public interface IMappingFile {
         return InternalUtils.load(in);
     }
 
+    Collection<? extends IPackage> getPackages();
+
+    IPackage getPackage(String original);
+
+    Collection<? extends IClass> getClasses();
+
+    IClass getClass(String original);
+
+    String remapPackage(String pkg);
+
+    String remapClass(String desc);
+
+    String remapDescriptor(String desc);
+
+    void write(Path path, Format format, boolean reversed) throws IOException;
+
+    IMappingFile reverse();
+
+    IMappingFile rename(IRenamer renamer);
+
+    IMappingFile chain(IMappingFile other);
+
     public enum Format {
         SRG(false),
         XSRG(false),
@@ -47,12 +69,9 @@ public interface IMappingFile {
         PG(true);
 
         private boolean ordered = true;
+
         private Format(boolean ordered) {
             this.ordered = ordered;
-        }
-
-        public boolean isOrdered() {
-            return this.ordered;
         }
 
         public static Format get(String name) {
@@ -62,37 +81,30 @@ public interface IMappingFile {
                     return value;
             return null;
         }
+
+        public boolean isOrdered() {
+            return this.ordered;
+        }
     }
-
-    Collection<? extends IPackage> getPackages();
-    IPackage getPackage(String original);
-
-    Collection<? extends IClass> getClasses();
-    IClass getClass(String original);
-
-    String remapPackage(String pkg);
-    String remapClass(String desc);
-    String remapDescriptor(String desc);
-
-    void write(Path path, Format format, boolean reversed) throws IOException;
-
-    IMappingFile reverse();
-    IMappingFile rename(IRenamer renamer);
-    IMappingFile chain(IMappingFile other);
 
     public interface INode {
         String getOriginal();
+
         String getMapped();
+
         String write(Format format, boolean reversed);
     }
 
-    public interface IPackage extends INode {}
+    public interface IPackage extends INode {
+    }
 
     public interface IClass extends INode {
         Collection<? extends IField> getFields();
+
         Collection<? extends IMethod> getMethods();
 
         String remapField(String field);
+
         String remapMethod(String name, String desc);
     }
 
@@ -103,12 +115,14 @@ public interface IMappingFile {
     public interface IField extends IOwnedNode<IClass> {
         @Nullable
         String getDescriptor();
+
         @Nullable
         String getMappedDescriptor();
     }
 
     public interface IMethod extends IOwnedNode<IClass> {
         String getDescriptor();
+
         String getMappedDescriptor();
     }
 }

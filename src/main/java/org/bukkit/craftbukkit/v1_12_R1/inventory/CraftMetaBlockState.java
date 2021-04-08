@@ -210,7 +210,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             case ENDER_CHEST:
                 return true;
         }
-        return false;
+        return type.isForgeBlock();
     }
 
     @Override

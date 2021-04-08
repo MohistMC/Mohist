@@ -1,25 +1,6 @@
 package com.mohistmc.bukkit.nms.utils;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.nms.model.ClassMapping;
-import com.mohistmc.util.JarTool;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.lang.invoke.MethodType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import net.md_5.specialsource.transformer.MavenShade;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.ClassRemapper;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.tree.ClassNode;
 import com.mohistmc.bukkit.nms.remappers.ClassRemapperSupplier;
 import com.mohistmc.bukkit.nms.remappers.MohistInheritanceMap;
 import com.mohistmc.bukkit.nms.remappers.MohistInheritanceProvider;
@@ -28,17 +9,31 @@ import com.mohistmc.bukkit.nms.remappers.MohistJarRemapper;
 import com.mohistmc.bukkit.nms.remappers.MohistSuperClassRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectRemapper;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import net.md_5.specialsource.transformer.MavenShade;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.tree.ClassNode;
 
 /**
- *
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */
 public class RemapUtils {
 
+    private static final List<Remapper> remappers = new ArrayList<>();
     public static MohistJarMapping jarMapping;
     public static MohistJarRemapper jarRemapper;
-    private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
 
     public static void init() {
@@ -50,8 +45,8 @@ public class RemapUtils {
         jarMapping.packages.put("red/mohist/bukkit/nms", "com/mohistmc/bukkit/nms");
         jarMapping.classes.put("red/mohist/Mohist", "com/mohistmc/MohistMC");
         jarMapping.classes.put("catserver/api/bukkit/event/ForgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","forgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent", "event");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "forgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent", "event");
         jarMapping.registerMethodMapping("org/bukkit/Bukkit", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Bukkit", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
         jarMapping.registerMethodMapping("org/bukkit/Server", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Server", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
         jarMapping.registerMethodMapping("org/bukkit/craftbukkit/v1_12_R1/CraftServer", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/craftbukkit/v1_12_R1/CraftServer", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
@@ -60,38 +55,13 @@ public class RemapUtils {
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
         relocations.put("net.minecraft.server", "net.minecraft.server.v1_12_R1");
+
         try {
-            String f = JarTool.getJarDir();
-            String f1 = f
-                    .replace("file:\\", "") // win
-                    .replace("file:/", "") // linux
-                    .replace("\\com\\mohistmc\\util", "") // win
-                    .replace("/com/mohistmc/util", ""); // linux
-            String jarname = f1.substring(f1.lastIndexOf("\\")+1,f1.lastIndexOf("."));
-            String jarname1 = f1.substring(f1.lastIndexOf("/")+1,f1.lastIndexOf("."));
-            String path = f1
-                    .replace("\\" + jarname + ".jar!", "")
-                    .replace("/" + jarname1 + ".jar!", "");
-            String fName;
-            String os = System.getProperty("os.name");
-            if (os.toLowerCase().startsWith("win")) {
-                fName = path + "/libraries/com/mohistmc/mappings/nms.srg";
-            } else {
-                fName = "/" + path + "/libraries/com/mohistmc/mappings/nms.srg";
-            }
-            File nms = new File(fName);
-            if (!nms.exists()) {
-                MohistMC.LOGGER.error("Unable to find remapping dependencies, please re-download the libraries file!");
-                FMLCommonHandler.instance().exitJava(1, true);
-            }
-            FileInputStream fos = new FileInputStream(nms);
-            jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(fos)),
-                    new MavenShade(relocations),
-                    null, false);
-        } catch (Exception e) {
+            jarMapping.loadMappings(new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/nms.srg"))), new MavenShade(relocations), null, false);
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
         jarRemapper = new MohistJarRemapper(jarMapping);
         remappers.add(jarRemapper);
         remappers.add(new ReflectRemapper());

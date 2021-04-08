@@ -74,6 +74,10 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
                 dispatcher.kickWithMessage(MohistConfig.instance.modsblacklistkickMessage.getValue());
                 return;
             }
+            if (!MohistForgeUtils.modswhittelist(client.modListAsString())) {
+                dispatcher.kickWithMessage(MohistConfig.instance.modswhitelistkickMessage.getValue());
+                return;
+            }
             dispatcher.setModList(client.modList());
             if (client.modListSize() > 0) {
                 PlayerAPI.mods.put(mp, client.modListSize());

@@ -171,7 +171,9 @@ import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState;
+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import com.mohistmc.MohistMC;
 
@@ -1214,12 +1216,31 @@ public class ForgeHooks {
 
     public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
     {
-
+        boolean isCancelled = false;
         if (entity.canTrample(world, state.getBlock(), pos, fallDistance))
         {
             BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
             MinecraftForge.EVENT_BUS.post(event);
-            return !event.isCanceled();
+            isCancelled = event.isCanceled();
+
+            // CraftBukkit start - Interact soil
+            org.bukkit.event.Cancellable cancellable;
+            if (entity instanceof EntityPlayer) {
+                cancellable = CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entity, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
+            } else {
+                cancellable = new EntityInteractEvent(entity.getBukkitEntity(), world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
+                world.getServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
+            }
+
+            if (cancellable.isCancelled()) {
+                isCancelled = true;
+            }
+
+            if (CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.DIRT, 0).isCancelled()) {
+                isCancelled = true;
+            }
+            // CraftBukkit end
+            return !isCancelled;
         }
         return false;
     }

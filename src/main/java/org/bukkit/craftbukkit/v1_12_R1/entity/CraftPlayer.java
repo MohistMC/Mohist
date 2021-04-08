@@ -1618,7 +1618,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void sendHealthUpdate() {
-        getHandle().connection.sendPacket(new SPacketUpdateHealth(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
+        // Mohist-617: Compatible with Auto Sieve of ExCompressum
+        if (getHandle().connection != null) {
+            getHandle().connection.sendPacket(new SPacketUpdateHealth(getScaledHealth(), getHandle().getFoodStats().getFoodLevel(), getHandle().getFoodStats().getSaturationLevel()));
+        }
     }
 
     public void injectScaledMaxHealth(Collection<IAttributeInstance> collection, boolean force) {
@@ -1782,6 +1785,42 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public Player.Spigot spigot() {
         return spigot;
+    }
+
+    @Override
+    public void sendMessage(BaseComponent component) {
+        sendMessage(new BaseComponent[]{component});
+    }
+
+    @Override
+    public void sendMessage(BaseComponent... components) {
+        if (getHandle().connection == null) {
+            return;
+        }
+
+        SPacketChat packet = new SPacketChat(null, ChatType.CHAT);
+        packet.components = components;
+        getHandle().connection.sendPacket(packet);
+    }
+
+    @Override
+    public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent component) {
+        sendMessage(position, new BaseComponent[]{component});
+    }
+
+    @Override
+    public void sendMessage(ChatMessageType position, BaseComponent... components) {
+        if (getHandle().connection == null) {
+            return;
+        }
+
+        SPacketChat packet = new SPacketChat(null, ChatType.byId((byte) position.ordinal()));
+        // Action bar doesn't render colours, replace colours with legacy section symbols
+        if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR) {
+            components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
+        }
+        packet.components = components;
+        getHandle().connection.sendPacket(packet);
     }
     // Spigot end
 

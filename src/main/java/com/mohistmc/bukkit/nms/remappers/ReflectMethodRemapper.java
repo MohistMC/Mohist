@@ -22,7 +22,6 @@ import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 8:51 PM
  */
@@ -30,6 +29,14 @@ public class ReflectMethodRemapper extends MethodRemapper {
 
     private static final Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
     private static final Map<String, Class<?>> virtualMethod = Maps.newHashMap();
+
+    public ReflectMethodRemapper(MethodVisitor mv, Remapper remapper) {
+        super(mv, remapper);
+    }
+
+    public ReflectMethodRemapper(int api, MethodVisitor mv, Remapper remapper) {
+        super(api, mv, remapper);
+    }
 
     public static void init() {
         registerMethodRemapper("java/lang/Class", "forName", Class.class, new Class[]{String.class}, ProxyClass.class);
@@ -67,14 +74,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findVirtual", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandles_Lookup.class);
 
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
-    }
-
-    public ReflectMethodRemapper(MethodVisitor mv, Remapper remapper) {
-        super(mv, remapper);
-    }
-
-    public ReflectMethodRemapper(int api, MethodVisitor mv, Remapper remapper) {
-        super(api, mv, remapper);
     }
 
     private static void registerMethodRemapper(String owner, String name, Class<?> returnType, Class<?>[] args, Class<?> remapOwner) {

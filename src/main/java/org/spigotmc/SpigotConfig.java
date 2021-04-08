@@ -46,7 +46,7 @@ public class SpigotConfig {
     public static YamlConfiguration config;
     public static boolean logCommands;
     public static int tabComplete;
-    public static int timeoutTime = 60;
+    public static int timeoutTime = 90;
     public static boolean bungee;
     public static boolean lateBind;
     public static boolean disableStatSaving;
@@ -70,7 +70,7 @@ public class SpigotConfig {
     public static List<String> disabledAdvancements;
     static int version;
     static Map<String, Command> commands;
-    private static File CONFIG_FILE;
+    public static File CONFIG_FILE;
 
     public static void init(File configFile) {
         CONFIG_FILE = configFile;
@@ -191,7 +191,7 @@ public class SpigotConfig {
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
         commands.put( "restart", new RestartCommand( "restart" ) );
-        if (MohistConfig.instance.getBoolean("mohist.watchdog_spigot")) {
+        if (MohistConfig.instance.watchdog_spigot.getValue()) {
             WatchdogThread.doStart(timeoutTime, restartOnCrash);
         }
     }

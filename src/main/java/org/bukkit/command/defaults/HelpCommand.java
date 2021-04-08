@@ -97,10 +97,7 @@ public class HelpCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
 
         String command;
         int pageNumber;

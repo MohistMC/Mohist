@@ -1,6 +1,5 @@
 package com.mohistmc.command;
 
-import com.mohistmc.util.i18n.Message;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -15,14 +14,14 @@ import org.bukkit.command.CommandSender;
 
 public class TileEntityCommand extends Command {
 
+    private List<String> params = Arrays.asList("reload", "dump-all", "dump-existing");
+
     public TileEntityCommand(String name) {
         super(name);
         this.description = "TileEntity tick limiting commands";
         this.usageMessage = "/tileentity [reload|dump-all|dump-existing]";
         this.setPermission("mohist.command.tileentity");
     }
-
-    private List<String> params = Arrays.asList("reload", "dump-all", "dump-existing");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -40,10 +39,7 @@ public class TileEntityCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.isOp() || !testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -69,7 +65,7 @@ public class TileEntityCommand extends Command {
 
                     MinecraftServer.LOGGER.info(
                             "Found TileEntity with name: " + com.mohistmc.util.TileEntity.sanitizeClassName(
-                                    ((Class)TileEntity.getRegisteredTileEntities().getObject(rl))
+                                    ((Class) TileEntity.getRegisteredTileEntities().getObject(rl))
                             )
                     );
                 }

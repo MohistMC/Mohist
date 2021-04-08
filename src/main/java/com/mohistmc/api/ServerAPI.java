@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -18,7 +19,7 @@ public class ServerAPI {
 
     // Don't count the default number of mods
     public static int getModSize() {
-        return mods.get("mods") == null ? 0 : mods.get("mods") - 4;
+        return mods.get("mods") == null ? 0 : mods.get("mods") - 5;
     }
 
     public static String getModList() {
@@ -33,11 +34,15 @@ public class ServerAPI {
         return Bukkit.getPluginManager().getPlugin(pluginname) != null;
     }
 
-    public static void registerBukkitEvents(Listener listener, Plugin plugin){
+    public static void registerBukkitEvents(Listener listener, Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
-    public static MinecraftServer getNMSServer(){
+    public static MinecraftServer getNMSServer() {
         return MinecraftServer.getServerInst();
+    }
+
+    public static World getMainWorld(){
+        return getNMSServer().getEntityWorld();
     }
 }

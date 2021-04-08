@@ -7,6 +7,8 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
@@ -14,6 +16,7 @@ import java.util.zip.GZIPOutputStream;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +28,8 @@ public class ItemAPI {
 
     public static Map<String, String> MODNAME_MAP = new ConcurrentHashMap();
     public static Map<Integer, String> MODID_MAP = new ConcurrentHashMap();
+    public static List<ResourceLocation> vanilla_item = new ArrayList<>();
+    public static Map<Integer, Integer> ITEM_BLOCK = new ConcurrentHashMap();
 
     public static net.minecraft.item.ItemStack toNMSItem(Material materialcb) {
         ItemStack itemStackcb = new ItemStack(materialcb);
@@ -116,14 +121,13 @@ public class ItemAPI {
     }
 
     /**
-     *
      * Get the byte of {@link org.bukkit.inventory.ItemStack}
      *
      * @param iStack
      * @return
      */
     public static byte[] getNBTBytes(ItemStack iStack) {
-        try{
+        try {
             net.minecraft.item.ItemStack is = CraftItemStack.asNMSCopy(iStack);
             NBTTagCompound itemCompound = new NBTTagCompound();
             itemCompound = is.writeToNBT(itemCompound);
@@ -135,20 +139,19 @@ public class ItemAPI {
                 dataOut.close();
             }
             return byteOut.toByteArray();
-        }catch(Exception e){
+        } catch (Exception e) {
             return new byte[0];
         }
     }
 
     /**
-     *
      * Parse byte as {@link org.bukkit.inventory.ItemStack}
      *
      * @param bytes
      * @return
      */
     public static ItemStack getItemStackInNBTBytes(byte[] bytes) {
-        try{
+        try {
             DataInputStream dataIn = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(bytes))));
             NBTTagCompound tag;
             try {
@@ -158,7 +161,7 @@ public class ItemAPI {
             }
             net.minecraft.item.ItemStack is = new net.minecraft.item.ItemStack(tag);
             return CraftItemStack.asBukkitCopy(is);
-        }catch(Exception e){
+        } catch (Exception e) {
             return new ItemStack(Material.AIR);
         }
     }
@@ -188,11 +191,23 @@ public class ItemAPI {
         return Material.getBlockMaterial(id);
     }
 
-    public static String getModid(String name){
-        return MODNAME_MAP.containsKey(name) ? MODNAME_MAP.get(name) : "unknown";
+    public static String getModid(String name) {
+        return MODNAME_MAP.getOrDefault(name, "unknown");
     }
 
-    public static String getModid(int id){
-        return MODNAME_MAP.containsKey(id) ? MODNAME_MAP.get(id) : "unknown";
+    public static String getModid(int id) {
+        return MODNAME_MAP.getOrDefault(id, "unknown");
+    }
+
+    public static boolean isBlockByID(int id) {
+        return ITEM_BLOCK.containsKey(id);
+    }
+
+    public static int getModBlockByItem(int itemId) {
+        return ITEM_BLOCK.getOrDefault(itemId, 0);
+    }
+
+    public static int isBlockByBlockID(int blockid) {
+        return ITEM_BLOCK.entrySet().stream().filter(a -> a.getValue() == blockid).findFirst().map(Map.Entry::getKey).orElse(blockid);
     }
 }

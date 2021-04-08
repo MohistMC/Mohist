@@ -111,7 +111,7 @@
      }
 +
 +    @Override
-+    public Recipe toBukkitRecipe() {
++    public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
 +        CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77580_a);
 +        CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
 +        for (Ingredient list : this.field_77579_b) {

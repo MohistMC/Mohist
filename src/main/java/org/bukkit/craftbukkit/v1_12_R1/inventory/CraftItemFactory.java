@@ -140,7 +140,7 @@ public final class CraftItemFactory implements ItemFactory {
             case ENDER_CHEST:
                 return new CraftMetaBlockState(meta, material);
             default:
-                return new CraftMetaItem(meta);
+                return meta instanceof CraftMetaBlockState ? new CraftMetaBlockState(meta, material) : new CraftMetaItem(meta);
         }
     }
 

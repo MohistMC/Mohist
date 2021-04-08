@@ -22,10 +22,18 @@ package net.minecraftforge.event.entity.player;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import javax.annotation.Nonnegative;
+
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftFish;
+import org.bukkit.entity.Fish;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerFishEvent;
 
 /**
  * This event is called when a player fishes an item.
@@ -40,6 +48,7 @@ public class ItemFishedEvent extends PlayerEvent
     private final NonNullList<ItemStack> stacks = NonNullList.create();
     private final EntityFishHook hook;
     private int rodDamage;
+    private PlayerFishEvent event;
 
     public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, EntityFishHook hook)
     {
@@ -47,7 +56,48 @@ public class ItemFishedEvent extends PlayerEvent
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;
+        // We verify if the given hook is a vanilla hook or not. Because otherwise the vanilla event fire two times
+        if (!isVanillaHook(hook)) {
+            CraftServer server = (CraftServer) Bukkit.getServer();
+            // TODO : The entity inside of the event is null, we need to find a way to get the Bukkit entity from
+            //  hook.caughtEntity
+            event = new PlayerFishEvent(Bukkit.getPlayer(hook.angler.getUniqueID()),
+                    null,
+                    new CraftFish(server, hook),
+                    stacks != null && stacks.size() > 0 ?
+                            PlayerFishEvent.State.CAUGHT_FISH :
+                            PlayerFishEvent.State.FAILED_ATTEMPT);
+            server.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                this.setCanceled(true);
+        }
     }
+
+    /**
+     * This method allow us to check if the given hook is vanilla or not.
+     * It is not very optimised because it checks on the hands of the user.
+     * @return {@code true} if the hook used is vanilla {@code false} otherwise
+     */
+    private boolean isVanillaHook(EntityFishHook hook) {
+        ItemStack mainHand = hook.angler.getHeldItemMainhand();
+        ItemStack offHand = hook.angler.getHeldItemOffhand();
+        return
+                mainHand.item != null && mainHand.item.getUnlocalizedName().equals("item.fishingRod")
+                        && isVanillaItem(mainHand)
+                    || offHand.item != null && offHand.item.getUnlocalizedName().equals("item.fishingRod")
+                        && isVanillaItem(offHand);
+    }
+
+    /**
+     * This method allow us to check if the given item is vanilla or not
+     * @param item The ItemStack to verify
+     * @return {@code true} if the item is vanilla {@code false} otherwise
+     */
+    private boolean isVanillaItem(ItemStack item) {
+        ResourceLocation registry = item.item.getRegistryName();
+        return registry != null && registry.getResourceDomain().equals("minecraft");
+    }
+
 
     /**
      * Get the damage the rod will take.

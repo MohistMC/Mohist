@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_12_R1.block;
 
+import com.mohistmc.forge.ForgeInjectBukkit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,6 +113,9 @@ public class CraftBlock implements Block {
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
         if (bio == null) {
             return null;
+        }
+        if (ForgeInjectBukkit.biomeMap.containsKey(bio)) {
+            return ForgeInjectBukkit.biomeMap.get(bio);
         }
 
         return net.minecraft.world.biome.Biome.REGISTRY.getObject(new ResourceLocation(bio.name().toLowerCase(java.util.Locale.ENGLISH)));

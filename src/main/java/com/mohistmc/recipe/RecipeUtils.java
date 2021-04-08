@@ -10,10 +10,10 @@ import org.bukkit.inventory.Recipe;
 public class RecipeUtils {
 
     // AbstractMethodError - handle custom recipe classes without Bukkit API equivalents
-    public static Recipe toBukkitRecipe(IRecipe recipe){
+    public static Recipe toBukkitRecipe(IRecipe recipe) {
         try {
             return recipe == null ? null : recipe.toBukkitRecipe();
-        } catch (AbstractMethodError ex) {
+        } catch (IllegalArgumentException | AbstractMethodError ex) {
             return new CustomModRecipe(recipe, recipe.getRegistryName());
         }
     }

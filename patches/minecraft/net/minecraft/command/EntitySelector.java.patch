@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/EntitySelector.java
 +++ ../src-work/minecraft/net/minecraft/command/EntitySelector.java
-@@ -121,9 +121,14 @@
+@@ -121,6 +121,11 @@
  
      public static <T extends Entity> List<T> func_179656_b(ICommandSender p_179656_0_, String p_179656_1_, Class <? extends T > p_179656_2_) throws CommandException
      {
@@ -11,11 +11,7 @@
 +    {
          Matcher matcher = field_82389_a.matcher(p_179656_1_);
  
--        if (matcher.matches() && p_179656_0_.func_70003_b(1, "@"))
-+        if (matcher.matches() && (p_179656_0_.func_70003_b(1, "@") || p_179656_0_.canUseCommand(1, "@", "minecraft")))
-         {
-             Map<String, String> map = func_82381_h(matcher.group(2));
- 
+         if (matcher.matches() && p_179656_0_.func_70003_b(1, "@"))
 @@ -153,6 +158,7 @@
                          list2.addAll(func_184951_f(map));
                          list2.addAll(func_180698_a(map, vec3d));

@@ -2,7 +2,6 @@ package com.mohistmc.configuration;
 
 import com.mohistmc.MohistMC;
 import com.mohistmc.util.NumberUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,7 +9,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Only used before the libraries file is loaded, yaml should be used later
+ */
 public class MohistConfigUtil {
+
     public static File mohistyml = new File("mohist-config", "mohist.yml");
 
     public static String getString(String s, String key, String defaultreturn) {
@@ -22,19 +25,19 @@ public class MohistConfigUtil {
         } else return defaultreturn;
     }
 
-  public static String getString(File f, String key, String defaultreturn) {
-    try {
-      StringBuilder s = new StringBuilder();
-      try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-        String l;
-        while ((l = br.readLine()) != null) if(!l.startsWith("#"))
-          s.append(l).append("\n");
-      }
-      return getString(s.toString(), key, defaultreturn);
-    } catch (IOException e) {
-      return defaultreturn;
+    public static String getString(File f, String key, String defaultreturn) {
+        try {
+            StringBuilder s = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                String l;
+                while ((l = br.readLine()) != null) if (!l.startsWith("#"))
+                    s.append(l).append("\n");
+            }
+            return getString(s.toString(), key, defaultreturn);
+        } catch (IOException e) {
+            return defaultreturn;
+        }
     }
-  }
 
     public static boolean getBoolean(File f, String key) {
         return Boolean.parseBoolean(getString(f, key, "true"));

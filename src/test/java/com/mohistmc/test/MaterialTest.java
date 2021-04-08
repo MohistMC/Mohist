@@ -1,5 +1,8 @@
 package com.mohistmc.test;
 
+import net.minecraft.world.MinecraftException;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,6 +39,15 @@ public class MaterialTest {
 
     public boolean debug2 (Material material) {
         return ItemAPI.getModid(material.name()).equals("IC2");
+    }
+
+    public static void savaDebug () {
+        WorldServer worldServer = DimensionManager.getWorld(0);
+        try {
+            worldServer.saveAllChunks(true, null);
+        } catch (MinecraftException e) {
+            e.printStackTrace();
+        }
     }
 
 }

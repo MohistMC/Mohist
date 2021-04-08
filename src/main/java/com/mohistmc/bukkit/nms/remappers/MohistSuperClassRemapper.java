@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.mohistmc.bukkit.nms.proxy.DelegateClassLoder;
 import com.mohistmc.bukkit.nms.proxy.DelegateURLClassLoder;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
+import com.mohistmc.bukkit.pluginfix.JavaScriptRemaper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ListIterator;
@@ -15,7 +16,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
-import com.mohistmc.bukkit.pluginfix.JavaScriptRemaper;
+
 public class MohistSuperClassRemapper {
 
     public static Map<String, Class<?>> superClassMap = Maps.newHashMap();
@@ -31,7 +32,8 @@ public class MohistSuperClassRemapper {
         boolean isDefineClass = false;
         Class<?> superClass = MohistSuperClassRemapper.superClassMap.get(node.superName);
         if (superClass != null) {
-            if (superClass == DelegateClassLoder.class) defineClass.put(node.name + ";defineClass", DelegateClassLoder.class);
+            if (superClass == DelegateClassLoder.class)
+                defineClass.put(node.name + ";defineClass", DelegateClassLoder.class);
             node.superName = superClass.getName().replace('.', '/');
             isDefineClass = true;
         }
@@ -66,7 +68,7 @@ public class MohistSuperClassRemapper {
                             } else {
                                 VirtualMethodClass = defineClass.get((insn.owner + ";" + insn.name));
                                 if (VirtualMethodClass != null) {
-                                    insn.name += "Mohsit";
+                                    insn.name += "Mohist";
                                     insn.owner = Type.getInternalName(VirtualMethodClass);
                                 }
                             }

@@ -1,11 +1,11 @@
 package com.mohistmc;
 
+import com.mohistmc.util.i18n.Message;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import com.mohistmc.util.i18n.Message;
 
 public class MohistThreadCost {
     static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();

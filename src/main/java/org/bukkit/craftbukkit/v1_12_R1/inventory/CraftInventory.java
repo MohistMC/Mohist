@@ -516,11 +516,15 @@ public class CraftInventory implements Inventory {
 
     @Override
     public Location getLocation() {
-        if (inventory instanceof net.minecraft.tileentity.TileEntity) {
-            TileEntity tileEntity = (TileEntity) inventory;
-            return new Location(tileEntity.getWorld().getWorld(), tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
-        } else {
+        try {
             return inventory.getLocation();
+        } catch (AbstractMethodError e) {
+            if (inventory instanceof net.minecraft.tileentity.TileEntity) {
+                TileEntity tileEntity = (TileEntity) inventory;
+                return new Location(tileEntity.getWorld().getWorld(), tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
+            }else{
+                return null;
+            }
         }
     }
 }

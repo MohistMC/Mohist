@@ -1,15 +1,18 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.MohistMC;
+import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ItemAPI;
+import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.i18n.Message;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +20,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.Material;
@@ -27,15 +31,17 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_12_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_12_R1.potion.CraftPotionEffectType;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Villager;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.permissions.DefaultPermissions;
-import com.mohistmc.entity.CraftCustomEntity;
 
 public class ForgeInjectBukkit {
 
-    public static void init(){
+    public static Map<Biome, net.minecraft.world.biome.Biome> biomeMap = new HashMap<>();
+
+    public static void init() {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumEnchantment();
@@ -43,12 +49,14 @@ public class ForgeInjectBukkit {
         addEnumBiome();
         addEnumPattern();
         addEnumEntity();
+        addEnumVillagerProfession();
     }
 
-    public static void addEnumMaterialInItems(){
+    public static void addEnumMaterialInItems() {
         for (Map.Entry<ResourceLocation, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
             ResourceLocation key = entry.getKey();
-            if(!key.getResourceDomain().equals("minecraft")) {
+            ItemAPI.vanilla_item.add(key);
+            if (!key.getResourceDomain().equals("minecraft")) {
                 // inject item materials into Bukkit for FML
                 String[] res = key.toString().split(":");
                 String modid = Material.normalizeName(res[0]);
@@ -61,16 +69,22 @@ public class ForgeInjectBukkit {
                     ItemAPI.MODNAME_MAP.put(material.name(), modid);
                     // <bukkit_id, modid>
                     ItemAPI.MODID_MAP.put(id, modid);
+                    if (item instanceof ItemBlock) {
+                        Block block = ((ItemBlock) item).getBlock();
+                        int bid = Block.getIdFromBlock(block);
+                        ItemAPI.ITEM_BLOCK.put(id, bid);
+                    }
                     MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
                 }
             }
         }
     }
 
-    public static void addEnumMaterialsInBlocks(){
+    public static void addEnumMaterialsInBlocks() {
         for (Map.Entry<ResourceLocation, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
             ResourceLocation key = entry.getKey();
-            if(!key.getResourceDomain().equals("minecraft")) {
+            BlockAPI.vanilla_block.add(key);
+            if (!key.getResourceDomain().equals("minecraft")) {
                 // inject block materials into Bukkit for FML
                 String[] res = key.toString().split(":");
                 String modid = Material.normalizeName(res[0]);
@@ -116,16 +130,17 @@ public class ForgeInjectBukkit {
     public static void addEnumBiome() {
         List<String> map = new ArrayList<>();
         for (Map.Entry<ResourceLocation, net.minecraft.world.biome.Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
-            String biomeName = entry.getKey().getResourcePath().toUpperCase(java.util.Locale.ENGLISH);
+            String biomeName = entry.getValue().getRegistryName().getResourcePath().toUpperCase(java.util.Locale.ENGLISH);
             if (!entry.getKey().getResourceDomain().equals("minecraft") && !map.contains(biomeName)) {
                 map.add(biomeName);
-                EnumHelper.addEnum(Biome.class, biomeName, new Class[0]);
+                Biome biome = EnumHelper.addEnum(Biome.class, biomeName, new Class[0]);
+                biomeMap.put(biome, entry.getValue());
             }
         }
         map.clear();
     }
 
-    public static void addEnumPattern(){
+    public static void addEnumPattern() {
         Map<String, PatternType> PATTERN_MAP = ObfuscationReflectionHelper.getPrivateValue(PatternType.class, null, "byString");
         for (BannerPattern bannerpattern : BannerPattern.values()) {
             String p_i47246_3_ = bannerpattern.name();
@@ -138,29 +153,28 @@ public class ForgeInjectBukkit {
     }
 
     public static World.Environment addEnumEnvironment(int id, String name) {
-        return (World.Environment)EnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+        return (World.Environment) EnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
     }
 
-    public static WorldType addEnumWorldType(String name)
-    {
-        WorldType worldType = EnumHelper.addEnum(WorldType.class, name, new Class [] { String.class }, name);
+    public static WorldType addEnumWorldType(String name) {
+        WorldType worldType = EnumHelper.addEnum(WorldType.class, name, new Class[]{String.class}, name);
         Map<String, WorldType> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
         BY_NAME.put(name.toUpperCase(), worldType);
         return worldType;
     }
 
     public static void addEnumEntity() {
-        Map<String, EntityType> NAME_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
-        Map<Short, EntityType> ID_MAP =  ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
+        Map<String, EntityType> NAME_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
+        Map<Short, EntityType> ID_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
 
         for (Map.Entry<String, Class<? extends Entity>> entity : EntityRegistry.entityClassMap.entrySet()) {
             String name = entity.getKey();
             String entityType = name.toUpperCase();
             int typeId = GameData.getEntityRegistry().getID(EntityRegistry.getEntry(entity.getValue()));
-            EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, name, CraftCustomEntity.class, typeId, false);
+            EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[]{String.class, Class.class, Integer.TYPE, Boolean.TYPE}, name, CraftCustomEntity.class, typeId, false);
 
             NAME_MAP.put(name.toLowerCase(), bukkitType);
-            ID_MAP.put((short)typeId, bukkitType);
+            ID_MAP.put((short) typeId, bukkitType);
         }
     }
 
@@ -179,6 +193,25 @@ public class ForgeInjectBukkit {
                 break;
         }
         Permission permission = new Permission(name, desc, permissionDefault);
-        DefaultPermissions.registerPermission(permission, false);
+        DefaultPermissions.registerPermission(permission);
+    }
+
+    public static void addEnumVillagerProfession() {
+        Map<Integer, VillagerRegistry.VillagerProfession> map = new TreeMap<>();
+        for (Map.Entry<ResourceLocation, VillagerRegistry.VillagerProfession> entry : ForgeRegistries.VILLAGER_PROFESSIONS.getEntries()) {
+            int id = VillagerRegistry.getId(entry.getValue());
+            map.put(id, entry.getValue());
+        }
+        for (Map.Entry<Integer, VillagerRegistry.VillagerProfession> entry : map.entrySet()) {
+            if (entry.getKey() > 5) {
+                String name = entry.getValue().getName().toString().replace(":", "_").toUpperCase();
+                VillagerRegistry.VillagerCareer career = entry.getValue().getCareer(entry.getKey());
+
+                Villager.Profession vp = EnumHelper.addEnum(Villager.Profession.class, name, new Class[]{Boolean.TYPE}, false);
+                Villager.Career vc = EnumHelper.addEnum(Villager.Career.class, career.getName().replace(".", "_").toUpperCase().toUpperCase(), new Class[]{Villager.Profession.class} , vp);
+                MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.villager", new Object[]{vp.name(), vc.name(), String.valueOf(vp.ordinal() - 2)}));
+            }
+        }
+
     }
 }

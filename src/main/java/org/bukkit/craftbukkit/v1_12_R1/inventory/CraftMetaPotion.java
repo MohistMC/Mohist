@@ -37,7 +37,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     private PotionData type = new PotionData(PotionType.UNCRAFTABLE, false, false);
     private List<PotionEffect> customEffects;
     private Color color;
-    private String customTag;
+    private String customTag = null;
 
     CraftMetaPotion(CraftMetaItem meta) {
         super(meta);
@@ -164,6 +164,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         if (this.customEffects != null) {
             clone.customEffects = new ArrayList<>(this.customEffects);
         }
+        clone.customTag = customTag;
         return clone;
     }
 

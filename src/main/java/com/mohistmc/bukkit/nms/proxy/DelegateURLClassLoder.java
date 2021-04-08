@@ -17,19 +17,19 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 /**
- *
  * @author pyz
  * @date 2019/7/1 8:41 PM
  */
 public class DelegateURLClassLoder extends URLClassLoader {
 
     public static final String desc = DelegateURLClassLoder.class.getName().replace('.', '/');
-    private final Map<String, Class<?>> classeCache = new HashMap<>();
     private static LaunchClassLoader launchClassLoader;
 
     static {
         launchClassLoader = (LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader();
     }
+
+    private final Map<String, Class<?>> classeCache = new HashMap<>();
 
     public DelegateURLClassLoder(final URL[] urls, final ClassLoader parent) {
         super(urls, parent);

@@ -8,13 +8,11 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
-@@ -20,9 +22,11 @@
- 
- public abstract class MapGenStructure extends MapGenBase
+@@ -22,7 +24,9 @@
  {
-+    private final Timing timing = MinecraftTimings.getStructureTiming(this); // Paper
      private MapGenStructureData field_143029_e;
      protected Long2ObjectMap<StructureStart> field_75053_d = new Long2ObjectOpenHashMap<StructureStart>(1024);
++    private final Timing timing = MinecraftTimings.getStructureTiming(this); // Paper
  
 +    public String getName() { return func_143025_a(); } // Paper // OBFHELPER
      public abstract String func_143025_a();

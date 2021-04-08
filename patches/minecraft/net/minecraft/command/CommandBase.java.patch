@@ -8,15 +8,6 @@
  
      protected static SyntaxErrorException func_184889_a(JsonParseException p_184889_0_)
      {
-@@ -88,7 +89,7 @@
- 
-     public boolean func_184882_a(MinecraftServer p_184882_1_, ICommandSender p_184882_2_)
-     {
--        return p_184882_2_.func_70003_b(this.func_82362_a(), this.func_71517_b());
-+        return p_184882_2_.func_70003_b(this.func_82362_a(), this.func_71517_b()) || p_184882_2_.canUseCommand(this.func_82362_a(), this.func_71517_b(), this.permissionNode);
-     }
- 
-     public List<String> func_184883_a(MinecraftServer p_184883_1_, ICommandSender p_184883_2_, String[] p_184883_3_, @Nullable BlockPos p_184883_4_)
 @@ -393,7 +394,7 @@
                  itextcomponent.func_150258_a(" ");
              }

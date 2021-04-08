@@ -10,7 +10,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.ow2.asm:asm:7.1'
         classpath 'org.ow2.asm:asm-tree:7.1'
-        classpath 'com.github.jponge:lzma-java:1.3' //Needed to compress deobf data
+        classpath 'com.github.jponge:lzma-java:1.3'
     }
 }
 
@@ -167,7 +167,7 @@ project(':mohist') {
                 environment 'MCP_MAPPINGS',     '{mcp_mappings}'
                 environment 'MCP_TO_SRG',       '{mcp_to_srg}'
                 environment 'FORGE_GROUP',      'net.minecraftforge'
-                environment 'FORGE_VERSION',    '14.23.5.2854'
+                environment 'FORGE_VERSION',    '14.23.5.2855'
             }
         }
     }
@@ -564,7 +564,6 @@ project(':mohist') {
             artifacts.each { key, lib ->
                 classpath.append("libraries/${lib.downloads.artifact.path} ")
             }
-            classpath += "libraries/net/minecraft/1.12.2/minecraft_server.${MC_VERSION}.jar"
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
@@ -642,7 +641,7 @@ project(':mohist') {
                 environment 'MCP_MAPPINGS',     '{mcp_mappings}'
                 environment 'MCP_TO_SRG',       '{mcp_to_srg}'
                 environment 'FORGE_GROUP',      "${project.group}"
-                environment 'FORGE_VERSION',    "14.23.5.2854"
+                environment 'FORGE_VERSION',    "14.23.5.2855"
             }
         }
     }
@@ -756,13 +755,17 @@ task setup() {
 }
 
 def JenkinsNumber() {
-    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/api/json").openConnection();
-    conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
-    conn.connect()
-    def root = conn.content.text
-    def jsonSluper = new JsonSlurper()
+    try {
+        def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/api/json").openConnection()
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
+        conn.connect()
+        def root = conn.content.text
+        def jsonSluper = new JsonSlurper()
 
-    String data = jsonSluper.parseText(root)
-    def number = data.substring(data.indexOf("number")).split(",")
-    return Integer.valueOf(number[0].replace("number=", "")).intValue()
+        String data = jsonSluper.parseText(root)
+        def number = data.substring(data.indexOf("number")).split(",")
+        return Integer.valueOf(number[0].replace("number=", "")).intValue()
+    } catch (Exception e1) {
+        return 'dev'
+    }
 }

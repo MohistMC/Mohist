@@ -44,6 +44,10 @@ import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftShapedRecipe;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftShapelessRecipe;
+import org.bukkit.craftbukkit.v1_12_R1.util.CraftNamespacedKey;
 import org.bukkit.inventory.Recipe;
 import com.mohistmc.recipe.CustomModRecipe;
 
@@ -61,7 +65,6 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     protected int height = 0;
     protected boolean mirrored = true;
     protected ResourceLocation group;
-	private Recipe bukkitRecip;
 
     public ShapedOreRecipe(ResourceLocation group, Block     result, Object... recipe){ this(group, new ItemStack(result), recipe); }
     public ShapedOreRecipe(ResourceLocation group, Item      result, Object... recipe){ this(group, new ItemStack(result), recipe); }
@@ -254,14 +257,67 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     }
 
     @Override
-    public Recipe toBukkitRecipe() {
-        if (bukkitRecip == null)
-            bukkitRecip = new CustomModRecipe(this, this.getRegistryName());
-        return this.bukkitRecip;
+    public org.bukkit.inventory.ShapedRecipe toBukkitRecipe() {
+        CraftItemStack result = CraftItemStack.asCraftMirror(this.output);
+        CraftShapedRecipe recipe = new CraftShapedRecipe(CraftNamespacedKey.fromMinecraft(this.getRegistryName()), result);
+        switch (this.getRecipeHeight()) {
+            case 1:
+                switch (this.getRecipeWidth()) {
+                    case 1:
+                        recipe.shape("a");
+                        break;
+                    case 2:
+                        recipe.shape("ab");
+                        break;
+                    case 3:
+                        recipe.shape("abc");
+                        break;
+                }
+                break;
+            case 2:
+                switch (this.getRecipeWidth()) {
+                    case 1:
+                        recipe.shape("a","b");
+                        break;
+                    case 2:
+                        recipe.shape("ab","cd");
+                        break;
+                    case 3:
+                        recipe.shape("abc","def");
+                        break;
+                }
+                break;
+            case 3:
+                switch (this.getRecipeWidth()) {
+                    case 1:
+                        recipe.shape("a","b","c");
+                        break;
+                    case 2:
+                        recipe.shape("ab","cd","ef");
+                        break;
+                    case 3:
+                        recipe.shape("abc","def","ghi");
+                        break;
+                }
+                break;
+        }
+        char c = 'a';
+        for (Ingredient list : this.input) {
+            if (list != null) {
+                ItemStack[] matchingStacks = list.getMatchingStacks();
+                if (matchingStacks.length > 0) {
+                    net.minecraft.item.ItemStack stack = matchingStacks[0];
+                    recipe.setIngredient(c, org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getMaterial(stack.getItem()), (matchingStacks.length) > 1 ? 32767 : stack.getMetadata());
+                }
+            }
+            c++;
+        }
+        return recipe;
     }
 
+    public ResourceLocation key;
     @Override
     public void setKey(ResourceLocation key) {
-
+        this.key = key;
     }
 }

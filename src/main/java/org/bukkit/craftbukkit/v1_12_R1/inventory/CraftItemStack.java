@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import org.apache.commons.lang3.Validate;
@@ -65,7 +66,7 @@ public final class CraftItemStack extends ItemStack {
             return net.minecraft.item.ItemStack.EMPTY;
         }
 
-        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability());
+        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(item, original.getAmount(), original.getDurability(), null);
         if (original.hasItemMeta()) {
             setItemMeta(stack, original.getItemMeta());
         }
@@ -219,7 +220,7 @@ public final class CraftItemStack extends ItemStack {
             case ENDER_CHEST:
                 return new CraftMetaBlockState(item.getTagCompound(), CraftMagicNumbers.getMaterial(item.getItem()));
             default:
-                return new CraftMetaItem(item.getTagCompound());
+                return item.getItem() instanceof ItemBlock ? new CraftMetaBlockState(item.getTagCompound(), CraftMagicNumbers.getMaterial(item.getItem())) : new CraftMetaItem(item.getTagCompound());
         }
     }
 
@@ -454,7 +455,7 @@ public final class CraftItemStack extends ItemStack {
         if (!(that.getTypeId() == getTypeId() && getDurability() == that.getDurability())) {
             return false;
         }
-        return hasItemMeta() ? that.hasItemMeta() && handle.getTagCompound().equals(that.handle.getTagCompound()) : !that.hasItemMeta();
+        return (hasItemMeta() ? that.hasItemMeta() && handle.getTagCompound().equals(that.handle.getTagCompound()) : !that.hasItemMeta()) && handle.areCapsCompatible(that.handle);
     }
 
     @Override

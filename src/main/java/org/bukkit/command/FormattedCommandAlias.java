@@ -1,5 +1,6 @@
 package org.bukkit.command;
 
+import com.mohistmc.util.i18n.Message;
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
 
@@ -30,7 +31,7 @@ public class FormattedCommandAlias extends Command {
                 if (throwable instanceof IllegalArgumentException) {
                     sender.sendMessage(throwable.getMessage());
                 } else {
-                    sender.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
+                    sender.sendMessage(org.bukkit.ChatColor.RED + Message.getString("minecraft.handleslashcommand"));
                 }
                 return false;
             }

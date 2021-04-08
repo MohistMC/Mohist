@@ -23,16 +23,15 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 8:16 PM
  */
 public class ASMUtils {
 
+    public static final String classLoaderdesc = "java/lang/ClassLoader";
     private static final Map<Integer, String> opcodeMap = new HashMap<>();
     private static final Map<Integer, String> typeMap = new HashMap<>();
     private static final Map<Integer, BiConsumer<String, AbstractInsnNode>> printerMap = new HashMap<>();
-    public static final String classLoaderdesc = "java/lang/ClassLoader";
 
     static {
         for (Field field : Opcodes.class.getDeclaredFields()) {

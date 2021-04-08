@@ -1,10 +1,20 @@
 package com.mohistmc.command;
 
+import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ChatComponentAPI;
+import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.HasteUtils;
-import com.mohistmc.util.i18n.Message;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -20,21 +30,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
 public class DumpCommand extends Command {
+    private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "bukkit_material", "vanilla_material");
+    private final List<String> tab_mode = Arrays.asList("file", "web");
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|bukkit_material|vanilla_material]";
         this.setPermission("mohist.command.dump");
     }
-
-    private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
-    private final List<String> tab_mode = Arrays.asList("file", "web");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -63,10 +67,7 @@ public class DumpCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.isOp() || !testPermission(sender)) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
+        if (!testPermission(sender)) return true;
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
@@ -101,8 +102,11 @@ public class DumpCommand extends Command {
                 case "worldtype":
                     dumpWorldType(sender, mode);
                     break;
-                case "material":
-                    dumpMaterial(sender, mode);
+                case "bukkit_material":
+                    dumpBukkitMaterial(sender, mode);
+                    break;
+                case "vanilla_material":
+                    dumpVanillaMaterial(sender, mode);
                     break;
                 default:
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -157,7 +161,7 @@ public class DumpCommand extends Command {
 
     private void dumpModsCommands(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
-        for(Map.Entry<String,String> m: ServerAPI.forgecmdper.entrySet()){
+        for (Map.Entry<String, String> m : ServerAPI.forgecmdper.entrySet()) {
             sb.append(m.getKey()).append(": ").append(m.getValue()).append("\n");
         }
         dump(sender, "modscommands", sb, mode);
@@ -171,7 +175,7 @@ public class DumpCommand extends Command {
         dump(sender, "biomes", sb, mode);
     }
 
-    private void dumpPattern(CommandSender sender, String mode){
+    private void dumpPattern(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
         for (PatternType patternType : PatternType.values()) {
             String key = patternType.getIdentifier();
@@ -180,17 +184,17 @@ public class DumpCommand extends Command {
         dump(sender, "pattern", sb, mode);
     }
 
-    private void dumpWorldGen(CommandSender sender, String mode){
+    private void dumpWorldGen(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : GameRegistry.worldGenMap.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                sb.append("worldgen-").append(value).append("-").append(key).append("\n");
+            String key = entry.getKey();
+            String value = entry.getValue();
+            sb.append("worldgen-").append(value).append("-").append(key).append("\n");
         }
         dump(sender, "worldgen", sb, mode);
     }
 
-    private void dumpWorldType(CommandSender sender, String mode){
+    private void dumpWorldType(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
         for (WorldType type : WorldType.values()) {
             String key = type.getName();
@@ -199,52 +203,63 @@ public class DumpCommand extends Command {
         dump(sender, "worldtype", sb, mode);
     }
 
-    private void dumpMaterial(CommandSender sender, String mode){
+    private void dumpBukkitMaterial(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
         for (Material material : Material.values()) {
             String key = material.name();
             sb.append(material).append("-").append(key).append("\n");
         }
-        dump(sender, "material", sb, mode);
+        dump(sender, "bukkit_material", sb, mode);
     }
 
-    private void dumpmsg(CommandSender sender, File file, String type){
+    private void dumpVanillaMaterial(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (ResourceLocation material : ItemAPI.vanilla_item) {
+            sb.append(material).append("\n");
+        }
+        for (ResourceLocation material : BlockAPI.vanilla_block) {
+            sb.append(material).append("\n");
+        }
+        dump(sender, "vanilla_material", sb, mode);
+    }
+
+    private void dumpmsg(CommandSender sender, File file, String type) {
         sender.sendMessage("Successfully dump " + type + ", output path: " + file.getAbsolutePath());
     }
 
-    private void dumpmsg(CommandSender sender, String web, String type){
+    private void dumpmsg(CommandSender sender, String web, String type) {
         sender.sendMessage("Successfully dump " + type + ", output path: " + web);
     }
 
-  private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
-    switch (mode) {
-      case "file":
-        saveToF("dump", type + "red", sb, sender);
-        break;
-      case "web":
-        try {
-          String url = HasteUtils.paste(sb.toString());
-          if(sender instanceof Player) {
-            Player p = (Player) sender;
-            ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
-          } else {
-            dumpmsg(sender, HasteUtils.paste(sb.toString()), type);
-          }
-        } catch (IOException e) {
-          sender.sendMessage("Failed to upload to hastebin.");
-          saveToF("dump", type + "red", sb, sender);
+    private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
+        switch (mode) {
+            case "file":
+                saveToF("dump", type + ".red", sb, sender);
+                break;
+            case "web":
+                try {
+                    String url = HasteUtils.pasteMohist(sb.toString());
+                    if (sender instanceof Player) {
+                        Player p = (Player) sender;
+                        ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
+                    } else {
+                        dumpmsg(sender, url, type);
+                    }
+                } catch (IOException e) {
+                    sender.sendMessage("Failed to upload to hastebin.");
+                    saveToF("dump", type + ".red", sb, sender);
+                }
+                break;
         }
-        break;
     }
-  }
 
-  private void saveToF(String parent, String child, StringBuilder sb, CommandSender sender) {
-    File file = new File(parent, child);
-    writeByteArrayToFile(file, sb);
-    dumpmsg(sender, file, child.replace(".red", ""));
-  }
+    private void saveToF(String parent, String child, StringBuilder sb, CommandSender sender) {
+        File file = new File(parent, child);
+        writeByteArrayToFile(file, sb);
+        dumpmsg(sender, file, child.replace(".red", ""));
+    }
 
-    protected void writeByteArrayToFile(File file, StringBuilder sb){
+    protected void writeByteArrayToFile(File file, StringBuilder sb) {
         try {
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {

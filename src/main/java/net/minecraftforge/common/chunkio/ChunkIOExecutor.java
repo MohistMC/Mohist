@@ -20,6 +20,7 @@
 package net.minecraftforge.common.chunkio;
 
 import com.google.common.collect.Maps;
+import com.mohistmc.configuration.MohistConfig;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -35,7 +36,7 @@ import net.minecraftforge.fml.common.FMLLog;
 
 public class ChunkIOExecutor
 {
-    private static final int BASE_THREADS = 2;
+    private static final int BASE_THREADS = Math.min(6, MohistConfig.instance.minChunkLoadThreads.getValue());
     private static final int PLAYERS_PER_THREAD = 50;
 
     private static final Map<QueuedChunk, ChunkIOProvider> tasks = Maps.newConcurrentMap();
