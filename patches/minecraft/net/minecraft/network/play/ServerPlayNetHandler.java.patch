@@ -1924,14 +1924,18 @@
  
           signtileentity.func_70296_d();
           serverworld.func_184138_a(blockpos, blockstate, blockstate, 3);
-@@ -1381,6 +_,7 @@
+@@ -1381,9 +_,10 @@
     }
  
     public void func_147353_a(CKeepAlivePacket p_147353_1_) {
 +      PacketThreadUtil.func_218796_a(p_147353_1_, this, this.field_147369_b.func_71121_q()); // CraftBukkit
        if (this.field_194403_g && p_147353_1_.func_149460_c() == this.field_194404_h) {
           int i = (int)(Util.func_211177_b() - this.field_194402_f);
-          this.field_147369_b.field_71138_i = (this.field_147369_b.field_71138_i * 3 + i) / 4;
+-         this.field_147369_b.field_71138_i = (this.field_147369_b.field_71138_i * 3 + i) / 4;
++         this.field_147369_b.setLatency((this.field_147369_b.field_71138_i * 3 + i) / 4);
+          this.field_194403_g = false;
+       } else if (!this.func_217264_d()) {
+          this.func_194028_b(new TranslationTextComponent("disconnect.timeout"));
 @@ -1393,7 +_,17 @@
  
     public void func_147348_a(CPlayerAbilitiesPacket p_147348_1_) {
