@@ -67,4 +67,32 @@ public class ProxyMethodHandles_Lookup {
         return MethodType.fromMethodDescriptorString(RemapUtils.remapMethodDesc(descriptor), classLoader);
     }
 
+    public static MethodHandle findGetter(MethodHandles.Lookup lookup, Class<?> clazz, String name, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+        if (clazz.getName().startsWith("net.minecraft.")) {
+            name = RemapUtils.mapFieldName(clazz, name);
+        }
+        return lookup.findGetter(clazz, name, type);
+    }
+
+    public static MethodHandle findSetter(MethodHandles.Lookup lookup, Class<?> clazz, String name, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+        if (clazz.getName().startsWith("net.minecraft.")) {
+            name = RemapUtils.mapFieldName(clazz, name);
+        }
+        return lookup.findSetter(clazz, name, type);
+    }
+
+    public static MethodHandle findStaticGetter(MethodHandles.Lookup lookup, Class<?> clazz, String name, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+        if (clazz.getName().startsWith("net.minecraft.")) {
+            name = RemapUtils.mapFieldName(clazz, name);
+        }
+        return lookup.findStaticGetter(clazz, name, type);
+    }
+
+    public static MethodHandle findStaticSetter(MethodHandles.Lookup lookup, Class<?> clazz, String name, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+        if (clazz.getName().startsWith("net.minecraft.")) {
+            name = RemapUtils.mapFieldName(clazz, name);
+        }
+        return lookup.findStaticSetter(clazz, name, type);
+    }
+
 }
