@@ -1,0 +1,24 @@
+--- a/net/minecraft/entity/ai/brain/sensor/SecondaryPositionSensor.java
++++ b/net/minecraft/entity/ai/brain/sensor/SecondaryPositionSensor.java
+@@ -1,9 +_,11 @@
+ package net.minecraft.entity.ai.brain.sensor;
+ 
+-import com.google.common.collect.ImmutableSet;
+-import com.google.common.collect.Lists;
+ import java.util.List;
+ import java.util.Set;
++
++import com.google.common.collect.ImmutableSet;
++import com.google.common.collect.Lists;
++
+ import net.minecraft.entity.ai.brain.Brain;
+ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
+ import net.minecraft.entity.merchant.villager.VillagerEntity;
+@@ -28,6 +_,7 @@
+          for(int k = -2; k <= 2; ++k) {
+             for(int l = -4; l <= 4; ++l) {
+                BlockPos blockpos1 = blockpos.func_177982_a(j, k, l);
++               if (!p_212872_1_.isPosLoaded(blockpos1)) continue; // Mohist - Block SecondaryPositionSensor Chunkloading
+                if (p_212872_2_.func_213700_eh().func_221130_b().func_221150_d().contains(p_212872_1_.func_180495_p(blockpos1).func_177230_c())) {
+                   list.add(GlobalPos.func_239648_a_(registrykey, blockpos1));
+                }
