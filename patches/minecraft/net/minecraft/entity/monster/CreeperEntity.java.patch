@@ -16,12 +16,14 @@
  
  @OnlyIn(
     value = Dist.CLIENT,
-@@ -50,8 +_,8 @@
+@@ -49,9 +_,9 @@
+    private static final DataParameter<Boolean> field_184714_b = EntityDataManager.func_187226_a(CreeperEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<Boolean> field_184715_c = EntityDataManager.func_187226_a(CreeperEntity.class, DataSerializers.field_187198_h);
     private int field_70834_e;
-    private int field_70833_d;
+-   private int field_70833_d;
 -   private int field_82225_f = 30;
 -   private int field_82226_g = 3;
++   public int field_70833_d;
 +   public int field_82225_f = 30;
 +   public int field_82226_g = 3;
     private int field_175494_bm;

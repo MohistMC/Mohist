@@ -496,11 +496,12 @@ public class CraftBlock implements Block {
             return null;
         }
 
-        return org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base)));
+        Biome biome = org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base)));
+        return (biome == null) ? Biome.CUSTOM : biome;
     }
 
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {
-        if (bio == null) {
+        if (bio == null || bio == Biome.CUSTOM) {
             return null;
         }
 

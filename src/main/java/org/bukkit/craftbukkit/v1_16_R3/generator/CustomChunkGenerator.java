@@ -64,6 +64,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
         @Override
         public void setBiome(int x, int y, int z, Biome bio) {
+            Preconditions.checkArgument(bio != Biome.CUSTOM, "Cannot set the biome to %s", bio);
             biome.setBiome(x >> 2, y >> 2, z >> 2, CraftBlock.biomeToBiomeBase((Registry<net.minecraft.world.biome.Biome>) biome.biomeRegistry, bio));
         }
     }

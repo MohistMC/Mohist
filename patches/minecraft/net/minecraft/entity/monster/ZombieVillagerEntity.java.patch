@@ -86,6 +86,16 @@
  
        for(EquipmentSlotType equipmentslottype : EquipmentSlotType.values()) {
           ItemStack itemstack = this.func_184582_a(equipmentslottype);
+@@ -189,7 +_,9 @@
+             } else {
+                double d0 = (double)this.func_205712_c(equipmentslottype);
+                if (d0 > 1.0D) {
++                  this.forceDrops = true; // CraftBukkit
+                   this.func_199701_a_(itemstack);
++                  this.forceDrops = false; // CraftBukkit
+                }
+             }
+          }
 @@ -214,11 +_,11 @@
           }
        }
