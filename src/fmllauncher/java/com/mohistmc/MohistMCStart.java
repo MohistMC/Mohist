@@ -48,10 +48,14 @@ public class MohistMCStart {
             while (!"true".equals(new Scanner(System.in).next())) ;
             writeInfos();
         }
-        AutoDeletePlugins.init();
-        AutoDeletePlugins.jar();
+        if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) {
+            AutoDeletePlugins.init();
+            AutoDeletePlugins.jar();
+        }
 
-        AutoDeleteMods.init();
-        AutoDeleteMods.jar();
+        if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) {
+            AutoDeleteMods.init();
+            AutoDeleteMods.jar();
+        }
     }
 }
