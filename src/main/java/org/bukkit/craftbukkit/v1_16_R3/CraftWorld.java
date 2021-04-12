@@ -950,6 +950,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setBiome(int x, int y, int z, Biome bio) {
+        Preconditions.checkArgument(bio != Biome.CUSTOM, "Cannot set the biome to %s", bio);
         net.minecraft.world.biome.Biome bb = CraftBlock.biomeToBiomeBase(getHandle().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY), bio);
         BlockPos pos = new BlockPos(x, 0, z);
         if (this.world.hasChunkAt(pos)) {
