@@ -1354,7 +1354,6 @@ public class CraftEventFactory {
         if (true) {
             org.bukkit.Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
             if (stat == null) {
-                System.err.println("Unhandled statistic: " + statistic);
                 return null;
             }
             switch (stat) {
