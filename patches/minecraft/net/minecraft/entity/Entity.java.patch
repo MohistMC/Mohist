@@ -1,27 +1,25 @@
 --- a/net/minecraft/entity/Entity.java
 +++ b/net/minecraft/entity/Entity.java
-@@ -22,7 +_,6 @@
- import net.minecraft.block.BlockRenderType;
- import net.minecraft.block.BlockState;
- import net.minecraft.block.Blocks;
--import net.minecraft.block.FenceGateBlock;
- import net.minecraft.block.HoneyBlock;
- import net.minecraft.block.PortalInfo;
- import net.minecraft.block.PortalSize;
-@@ -39,6 +_,7 @@
- import net.minecraft.entity.effect.LightningBoltEntity;
- import net.minecraft.entity.item.BoatEntity;
- import net.minecraft.entity.item.ItemEntity;
-+import net.minecraft.entity.passive.TameableEntity;
- import net.minecraft.entity.player.PlayerEntity;
- import net.minecraft.entity.player.ServerPlayerEntity;
- import net.minecraft.fluid.Fluid;
-@@ -108,17 +_,63 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
--
--public abstract class Entity implements INameable, ICommandSource {
+@@ -1,10 +_,5 @@
+ package net.minecraft.entity;
+ 
+-import com.google.common.collect.Iterables;
+-import com.google.common.collect.Lists;
+-import com.google.common.collect.Sets;
+-import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
+-import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+ import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.Collections;
+@@ -16,13 +_,48 @@
+ import java.util.UUID;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.stream.Stream;
++
+ import javax.annotation.Nullable;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.Server;
@@ -47,6 +45,38 @@
 +import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
 +import org.spigotmc.CustomTimingsHandler;
++
++import com.google.common.collect.Iterables;
++import com.google.common.collect.Lists;
++import com.google.common.collect.Sets;
++
++import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
++import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockRenderType;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+-import net.minecraft.block.FenceGateBlock;
+ import net.minecraft.block.HoneyBlock;
+ import net.minecraft.block.PortalInfo;
+ import net.minecraft.block.PortalSize;
+@@ -39,6 +_,7 @@
+ import net.minecraft.entity.effect.LightningBoltEntity;
+ import net.minecraft.entity.item.BoatEntity;
+ import net.minecraft.entity.item.ItemEntity;
++import net.minecraft.entity.passive.TameableEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.fluid.Fluid;
+@@ -106,19 +_,38 @@
+ import net.minecraft.world.server.TicketType;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+-
+-public abstract class Entity implements INameable, ICommandSource {
 +
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements INameable, ICommandSource, net.minecraftforge.common.extensions.IForgeEntity {
 +
@@ -453,10 +483,11 @@
        this.field_70170_p = p_70029_1_;
     }
  
-@@ -1117,6 +_,7 @@
+@@ -1117,6 +_,8 @@
        this.field_70167_r = p_242281_3_;
        this.field_70166_s = d1;
        this.func_70107_b(d0, p_242281_3_, d1);
++      if (Thread.currentThread() == MinecraftServer.getServer().field_175590_aa) // Mohist - Fix Ice&Fire worldgen deadlock
 +      field_70170_p.func_212866_a_((int) Math.floor(this.func_226277_ct_()) >> 4, (int) Math.floor(this.func_226281_cx_()) >> 4); // CraftBukkit
     }
  
