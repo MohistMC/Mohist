@@ -72,6 +72,7 @@ public class UpdateUtils {
         fc.close();
         rbc.close();
         System.out.println(i18n.get("download.file.ok", f.getName()));
+        percentage = 0;
         if (URL.startsWith("mhttps"))
             restartServer(new ArrayList<>(Arrays.asList("java", "-jar", JarTool.getJarName())), true);
     }
