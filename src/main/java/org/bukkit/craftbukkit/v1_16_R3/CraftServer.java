@@ -918,7 +918,7 @@ public final class CraftServer implements Server {
 
         SaveFormat.LevelSave worldSession;
         try {
-            worldSession = SaveFormat.createDefault(getWorldContainer().toPath()).getLevelSave(name, actualDimension);
+            worldSession = SaveFormat.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

@@ -161,7 +161,7 @@
           serverworld1 = this.field_72400_f.func_241755_D_();
        } else {
           serverworld1 = serverworld;
-@@ -142,20 +_,36 @@
+@@ -142,20 +_,35 @@
           s1 = p_72355_1_.func_74430_c().toString();
        }
  
@@ -187,7 +187,6 @@
        boolean flag = gamerules.func_223586_b(GameRules.field_226683_z_);
        boolean flag1 = gamerules.func_223586_b(GameRules.field_223612_o);
 -      serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), p_72355_2_.field_71134_c.func_241815_c_(), BiomeManager.func_235200_a_(serverworld1.func_72905_C()), iworldinfo.func_76093_s(), this.field_72400_f.func_240770_D_(), this.field_232639_s_, serverworld1.func_230315_m_(), serverworld1.func_234923_W_(), this.func_72352_l(), this.field_72402_d, flag1, !flag, serverworld1.func_234925_Z_(), serverworld1.func_241109_A_()));
-+      // Spigot - view distance
 +      serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), p_72355_2_.field_71134_c.func_241815_c_(), BiomeManager.func_235200_a_(serverworld1.func_72905_C()), iworldinfo.func_76093_s(), this.field_72400_f.func_240770_D_(), this.field_232639_s_, serverworld1.func_230315_m_(), serverworld1.func_234923_W_(), this.func_72352_l(), serverworld1.spigotConfig.viewDistance, flag1, !flag, serverworld1.func_234925_Z_(), serverworld1.func_241109_A_()));
        serverplaynethandler.func_147359_a(new SCustomPayloadPlayPacket(SCustomPayloadPlayPacket.field_209911_b, (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
        serverplaynethandler.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
@@ -201,11 +200,10 @@
        this.func_187243_f(p_72355_2_);
        p_72355_2_.func_147099_x().func_150877_d();
        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
-@@ -167,19 +_,55 @@
+@@ -167,19 +_,54 @@
        } else {
           iformattabletextcomponent = new TranslationTextComponent("multiplayer.player.joined.renamed", p_72355_2_.func_145748_c_(), s);
        }
-+      // CraftBukkit start
 +      iformattabletextcomponent.func_240699_a_(TextFormatting.YELLOW);
 +      String joinMessage = CraftChatMessage.fromComponent(iformattabletextcomponent);
  
@@ -216,7 +214,7 @@
 +      this.playersByName.put(p_72355_2_.func_195047_I_().toLowerCase(java.util.Locale.ROOT), p_72355_2_); // Spigot
        this.field_177454_f.put(p_72355_2_.func_110124_au(), p_72355_2_);
 -      this.func_148540_a(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, p_72355_2_));
-+      // this.sendPacketToAllPlayers(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, playerIn)); // CraftBukkit - replaced with loop below
++      // this.broadcastAll(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, p_72355_2_));
 +
 +      // CraftBukkit start
 +      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(cserver.getPlayer(p_72355_2_), joinMessage);
