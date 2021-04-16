@@ -68,19 +68,32 @@
              return null;
           }
        };
-@@ -255,18 +_,29 @@
+@@ -255,18 +_,41 @@
     }
  
     public SaveFormat.LevelSave func_237274_c_(String p_237274_1_) throws IOException {
 -      return new SaveFormat.LevelSave(p_237274_1_);
+-   }
 +      return new SaveFormat.LevelSave(p_237274_1_, null);
 +   }
 +
 +   // CraftBukkit start
-+   public SaveFormat.LevelSave getLevelSave(String saveName, RegistryKey<Dimension> dimensionType) throws IOException {
++   public SaveFormat.LevelSave createAccess(String saveName, RegistryKey<Dimension> dimensionType) throws IOException {
 +      return new SaveFormat.LevelSave(saveName, dimensionType);
-+      // CraftBukkit end
-    }
++   }
++
++   public static File getFolder(File file, RegistryKey<Dimension> dimensionType) {
++      if (dimensionType == Dimension.field_236053_b_) {
++         return file;
++      } else if (dimensionType == Dimension.field_236054_c_) {
++         return new File(file, "DIM-1");
++      } else if (dimensionType == Dimension.field_236055_d_) {
++         return new File(file, "DIM1");
++      } else {
++         return new File(file, "dimensions/" + dimensionType.func_240901_a_().func_110624_b() + "/" + dimensionType.func_240901_a_().func_110623_a());
++      }
++   }
++   // CraftBukkit end
  
     public class LevelSave implements AutoCloseable {
        private final SessionLockManager field_237278_b_;
