@@ -63,7 +63,7 @@ project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(11)
 
     repositories {
         mavenLocal()
@@ -112,7 +112,7 @@ project(':forge') {
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(11)
     group = 'net.minecraftforge'
 
     sourceSets {
