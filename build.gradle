@@ -985,6 +985,6 @@ def JenkinsNumber() {
         def number = data.substring(data.indexOf("number")).split(",")
         return Integer.valueOf(number[0].replace("number=", "")).intValue()
     } catch (Exception e1) {
-        return 'dev'
+        return 'dev-' + grgit.head().abbreviatedId
     }
 }
