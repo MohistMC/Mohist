@@ -1,7 +1,9 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -2,10 +_,12 @@
+@@ -1,11 +_,14 @@
+ package net.minecraft.server.dedicated;
  
++import co.aikar.timings.MinecraftTimings;
  import com.google.common.base.Strings;
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
@@ -13,24 +15,14 @@
  import java.io.BufferedReader;
  import java.io.IOException;
  import java.io.InputStreamReader;
-@@ -35,14 +_,16 @@
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.ServerPropertiesProvider;
- import net.minecraft.server.gui.MinecraftServerGui;
-+import net.minecraft.server.management.PlayerList;
- import net.minecraft.server.management.PlayerProfileCache;
+@@ -39,7 +_,6 @@
  import net.minecraft.server.management.PreYggdrasilConverter;
  import net.minecraft.tileentity.SkullTileEntity;
-+import net.minecraft.util.CryptManager;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
 -import net.minecraft.util.DefaultWithNameUncaughtExceptionHandler;
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.SharedConstants;
  import net.minecraft.util.Util;
-+import net.minecraft.util.datafix.codec.DatapackCodec;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.registry.DynamicRegistries;
 @@ -55,17 +_,24 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
@@ -40,7 +32,7 @@
  import org.apache.logging.log4j.Logger;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
++import org.bukkit.craftbukkit.v1_16_R3.util.Waitable;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.bukkit.plugin.Plugin;
@@ -269,7 +261,7 @@
     }
  
     public void func_71333_ah() {
-+      SpigotTimings.serverCommandTimer.startTiming(); // Spigot
++      MinecraftTimings.serverCommandTimer.startTiming(); // Spigot
        while(!this.field_71341_l.isEmpty()) {
           PendingCommand pendingcommand = this.field_71341_l.remove(0);
 -         this.func_195571_aL().func_197059_a(pendingcommand.field_73701_b, pendingcommand.field_73702_a);
@@ -284,7 +276,7 @@
 +         // CraftBukkit end
        }
  
-+      SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
++      MinecraftTimings.serverCommandTimer.stopTiming(); // Spigot
     }
  
     public boolean func_71262_S() {
@@ -342,7 +334,7 @@
              this.func_152369_aG();
           }
  
-@@ -489,13 +_,39 @@
+@@ -489,14 +_,70 @@
     }
  
     public String func_71258_A() {
@@ -369,6 +361,7 @@
     }
  
     public String func_71252_i(String p_71252_1_) {
++      Waitable[] waitableArray = new Waitable[1];
        this.field_184115_n.func_70007_b();
        this.func_213167_f(() -> {
 -         this.func_195571_aL().func_197059_a(this.field_184115_n.func_195540_f(), p_71252_1_);
@@ -378,12 +371,42 @@
 +         if (event.isCancelled()) {
 +            return;
 +         }
-+         PendingCommand serverCommand = new PendingCommand(event.getCommand(), this.field_184115_n.func_195540_f());
-+         this.server.dispatchServerCommand(this.remoteConsole, serverCommand);
++         // Paper start
++         if (p_71252_1_.toLowerCase().startsWith("timings") && p_71252_1_.toLowerCase().matches("timings (report|paste|get|merged|seperate)")) {
++            org.bukkit.command.BufferedCommandSender sender = new org.bukkit.command.BufferedCommandSender();
++            Waitable<String> waitable = new Waitable<String>() {
++               @Override
++               protected String evaluate() {
++                  return sender.getBuffer();
++               }
++            };
++            waitableArray[0] = waitable;
++            co.aikar.timings.Timings.generateReport(new co.aikar.timings.TimingsReportListener(sender, waitable));
++         } else {
++            // Paper end
++            PendingCommand serverCommand = new PendingCommand(event.getCommand(), this.field_184115_n.func_195540_f());
++            this.server.dispatchServerCommand(this.remoteConsole, serverCommand);
++         }
 +         // CraftBukkit end
        });
++         // Paper start
++      if (waitableArray[0] != null) {
++         //noinspection unchecked
++         Waitable<String> waitable = waitableArray[0];
++         try {
++            return waitable.get();
++         } catch (java.util.concurrent.ExecutionException e) {
++            throw new RuntimeException("Exception processing rcon command " + p_71252_1_, e.getCause());
++         } catch (InterruptedException e) {
++            Thread.currentThread().interrupt(); // Maintain interrupted state
++            throw new RuntimeException("Interrupted processing rcon command " + p_71252_1_, e);
++         }
++
++      }
++      // Paper end
        return this.field_184115_n.func_70008_c();
     }
+ 
 @@ -515,6 +_,11 @@
        return false;
     }

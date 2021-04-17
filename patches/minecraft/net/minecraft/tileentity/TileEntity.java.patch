@@ -1,8 +1,10 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -1,9 +_,11 @@
+@@ -1,9 +_,13 @@
  package net.minecraft.tileentity;
  
++import co.aikar.timings.MinecraftTimings;
++import co.aikar.timings.Timing;
 +import com.mohistmc.inventory.InventoryOwner;
  import javax.annotation.Nullable;
  import net.minecraft.block.BlockState;
@@ -40,7 +42,7 @@
     private BlockState field_195045_e;
     private boolean field_222816_g;
 +   private CompoundNBT customTileData;
-+   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.getTileEntityTimings(this); // Spigot
++   public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Spigot
  
     public TileEntity(TileEntityType<?> p_i48289_1_) {
 +      super(TileEntity.class);

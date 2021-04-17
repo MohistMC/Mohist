@@ -1806,6 +1806,14 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
             packet.components = components;
             getHandle().connection.send(packet);
         }
+
+        // Paper start
+        @Override
+        public int getPing()
+        {
+            return getHandle().latency;
+        }
+        // Paper end
     };
 
     @Override

@@ -36,7 +36,7 @@
     public ServerWorldLightManager func_212863_j_() {
        return this.field_217242_h;
     }
-@@ -119,15 +_,17 @@
+@@ -119,7 +_,7 @@
           for(int j = 0; j < 4; ++j) {
              if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
                 IChunk ichunk = this.field_222877_p[j];
@@ -45,13 +45,16 @@
                    return ichunk;
                 }
              }
-          }
+@@ -127,7 +_,11 @@
  
           iprofiler.func_230035_c_("getChunkCacheMiss");
-+         field_73251_h.timings.syncChunkLoadTimer.startTiming(); // Spigot
           CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.func_217233_c(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
-          this.field_217243_i.func_213161_c(completablefuture::isDone);
-+         field_73251_h.timings.syncChunkLoadTimer.stopTiming(); // Spigot
+-         this.field_217243_i.func_213161_c(completablefuture::isDone);
++         if (!completablefuture.isDone()) { // Paper
++            this.field_73251_h.timings.syncChunkLoad.startTiming(); // Paper
++            this.field_217243_i.func_213161_c(completablefuture::isDone);
++            this.field_73251_h.timings.syncChunkLoad.stopTiming(); // Paper
++         } // Paper
           IChunk ichunk1 = completablefuture.join().map((p_222874_0_) -> {
              return p_222874_0_;
           }, (p_222870_1_) -> {
@@ -90,7 +93,13 @@
        ChunkHolder chunkholder = this.func_217213_a(p_222872_1_);
        if (chunkholder == null) {
           return false;
-@@ -308,19 +_,43 @@
+@@ -304,23 +_,51 @@
+ 
+    public void func_217210_a(boolean p_217210_1_) {
+       this.func_217235_l();
++      try (co.aikar.timings.Timing timed = field_73251_h.timings.chunkSaveData.startTiming()) { // Paper - Timings
+       this.field_217237_a.func_219177_a(p_217210_1_);
++      } // Paper - Timings
     }
  
     public void close() throws IOException {
@@ -126,7 +135,9 @@
        this.func_217235_l();
 +      this.field_73251_h.timings.doChunkMap.stopTiming(); // Spigot
        this.field_73251_h.func_217381_Z().func_219895_b("chunks");
++      this.field_73251_h.timings.chunks.startTiming(); // Paper - timings
        this.func_217220_m();
++      this.field_73251_h.timings.chunks.stopTiming(); // Paper - timings
 +      this.field_73251_h.timings.doChunkUnload.startTiming(); // Spigot
        this.field_73251_h.func_217381_Z().func_219895_b("unload");
        this.field_217237_a.func_219204_a(p_217207_1_);
@@ -134,7 +145,7 @@
        this.field_73251_h.func_217381_Z().func_76319_b();
        this.func_222869_l();
     }
-@@ -331,11 +_,11 @@
+@@ -331,14 +_,16 @@
        this.field_217245_k = i;
        IWorldInfo iworldinfo = this.field_73251_h.func_72912_H();
        boolean flag = this.field_73251_h.func_234925_Z_();
@@ -146,9 +157,22 @@
 -         boolean flag2 = iworldinfo.func_82573_f() % 400L == 0L;
 +         boolean flag2 = iworldinfo.func_82573_f() % 400 == 0L; // TODO: Mohist - Refresh the velocity anomaly
           this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
++         this.field_73251_h.timings.countNaturalMobs.startTiming(); // Paper - timings
           int l = this.field_217240_d.func_219358_b();
           WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = WorldEntitySpawner.func_234964_a_(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_);
-@@ -353,13 +_,15 @@
++         this.field_73251_h.timings.countNaturalMobs.stopTiming(); // Paper - timings
+          this.field_241097_p_ = worldentityspawner$entitydensitymanager;
+          this.field_73251_h.func_217381_Z().func_76319_b();
+          List<ChunkHolder> list = Lists.newArrayList(this.field_217237_a.func_223491_f());
+@@ -347,26 +_,32 @@
+             Optional<Chunk> optional = p_241099_7_.func_219296_a().getNow(ChunkHolder.field_219308_c).left();
+             if (optional.isPresent()) {
+                this.field_73251_h.func_217381_Z().func_76320_a("broadcast");
++               this.field_73251_h.timings.broadcastChunkUpdates.startTiming(); // Paper - timings
+                p_241099_7_.func_219274_a(optional.get());
++               this.field_73251_h.timings.broadcastChunkUpdates.stopTiming(); // Paper - timings
+                this.field_73251_h.func_217381_Z().func_76319_b();
+                Optional<Chunk> optional1 = p_241099_7_.func_219297_b().getNow(ChunkHolder.field_219308_c).left();
                 if (optional1.isPresent()) {
                    Chunk chunk = optional1.get();
                    ChunkPos chunkpos = p_241099_7_.func_219277_h();
@@ -160,22 +184,22 @@
                          WorldEntitySpawner.func_234979_a_(this.field_73251_h, chunk, worldentityspawner$entitydensitymanager, this.field_217247_m, this.field_217246_l, flag2);
                       }
  
-+                     this.field_73251_h.timings.doTickTiles.startTiming(); // Spigot
++                     this.field_73251_h.timings.chunkTicks.startTiming(); // Spigot // Paper
                       this.field_73251_h.func_217441_a(chunk, k);
-+                     this.field_73251_h.timings.doTickTiles.stopTiming(); // Spigot
++                     this.field_73251_h.timings.chunkTicks.stopTiming(); // Spigot // Paper
                    }
                 }
              }
-@@ -373,7 +_,9 @@
+          });
+          this.field_73251_h.func_217381_Z().func_76320_a("customSpawners");
+          if (flag1) {
+-            this.field_73251_h.func_241123_a_(this.field_217246_l, this.field_217247_m);
++            try (co.aikar.timings.Timing ignored = this.field_73251_h.timings.miscMobSpawning.startTiming()) { // Paper - timings
++               this.field_73251_h.func_241123_a_(this.field_217246_l, this.field_217247_m);
++            }
+          }
+ 
           this.field_73251_h.func_217381_Z().func_76319_b();
-       }
- 
-+      this.field_73251_h.timings.tracker.startTiming(); // Spigot
-       this.field_217237_a.func_219169_g();
-+      this.field_73251_h.timings.tracker.stopTiming(); // Spigot
-    }
- 
-    private void func_241098_a_(long p_241098_1_, Consumer<Chunk> p_241098_3_) {
 @@ -429,6 +_,14 @@
        this.field_217240_d.func_219362_d(p_217222_1_, p_217222_2_, p_217222_3_, p_217222_4_);
     }

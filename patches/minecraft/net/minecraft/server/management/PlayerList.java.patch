@@ -1,8 +1,9 @@
 --- a/net/minecraft/server/management/PlayerList.java
 +++ b/net/minecraft/server/management/PlayerList.java
-@@ -1,23 +_,35 @@
+@@ -1,23 +_,36 @@
  package net.minecraft.server.management;
  
++import co.aikar.timings.MinecraftTimings;
 +import com.google.common.base.Predicate;
 +import com.google.common.collect.Iterables;
  import com.google.common.collect.Lists;
@@ -742,6 +743,19 @@
           if (serverplayerentity != p_148543_1_ && serverplayerentity.field_70170_p.func_234923_W_() == p_148543_10_) {
              double d0 = p_148543_2_ - serverplayerentity.func_226277_ct_();
              double d1 = p_148543_4_ - serverplayerentity.func_226278_cu_();
+@@ -623,10 +_,11 @@
+    }
+ 
+    public void func_72389_g() {
++      MinecraftTimings.savePlayers.startTiming(); // Paper
+       for(int i = 0; i < this.field_72404_b.size(); ++i) {
+          this.func_72391_b(this.field_72404_b.get(i));
+       }
+-
++      MinecraftTimings.savePlayers.stopTiming(); // Paper
+    }
+ 
+    public WhiteList func_152599_k() {
 @@ -649,22 +_,32 @@
     }
  

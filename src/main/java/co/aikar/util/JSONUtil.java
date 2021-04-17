@@ -3,6 +3,12 @@ package co.aikar.util;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +27,13 @@ public final class JSONUtil {
      * @param obj Value to use
      * @return JSONPair
      */
-    public static JSONPair pair(String key, Object obj) {
+    @NotNull
+    public static JSONPair pair(@NotNull String key, @Nullable Object obj) {
         return new JSONPair(key, obj);
     }
 
-    public static JSONPair pair(long key, Object obj) {
+    @NotNull
+    public static JSONPair pair(long key, @Nullable Object obj) {
         return new JSONPair(String.valueOf(key), obj);
     }
 
@@ -35,7 +43,8 @@ public final class JSONUtil {
      * @param data JSONPairs
      * @return Map
      */
-    public static Map createObject(JSONPair... data) {
+    @NotNull
+    public static Map<String, Object> createObject(@NotNull JSONPair... data) {
         return appendObjectData(new LinkedHashMap(), data);
     }
 
@@ -46,7 +55,8 @@ public final class JSONUtil {
      * @param data Data to append
      * @return Map
      */
-    public static Map appendObjectData(Map parent, JSONPair... data) {
+    @NotNull
+    public static Map<String, Object> appendObjectData(@NotNull Map parent, @NotNull JSONPair... data) {
         for (JSONPair JSONPair : data) {
             parent.put(JSONPair.key, JSONPair.val);
         }
@@ -59,7 +69,8 @@ public final class JSONUtil {
      * @param data Data to build JSON array from
      * @return List
      */
-    public static List toArray(Object... data) {
+    @NotNull
+    public static List toArray(@NotNull Object... data) {
         return Lists.newArrayList(data);
     }
 
@@ -71,11 +82,13 @@ public final class JSONUtil {
      * @param <E> Element Type
      * @return List
      */
-    public static <E> List toArrayMapper(E[] collection, Function<E, Object> mapper) {
+    @NotNull
+    public static <E> List toArrayMapper(@NotNull E[] collection, @NotNull Function<E, Object> mapper) {
         return toArrayMapper(Lists.newArrayList(collection), mapper);
     }
 
-    public static <E> List toArrayMapper(Iterable<E> collection, Function<E, Object> mapper) {
+    @NotNull
+    public static <E> List toArrayMapper(@NotNull Iterable<E> collection, @NotNull Function<E, Object> mapper) {
         List array = Lists.newArrayList();
         for (E e : collection) {
             Object object = mapper.apply(e);
@@ -94,11 +107,13 @@ public final class JSONUtil {
      * @param <E> Element Type
      * @return Map
      */
-    public static <E> Map toObjectMapper(E[] collection, Function<E, JSONPair> mapper) {
+    @NotNull
+    public static <E> Map toObjectMapper(@NotNull E[] collection, @NotNull Function<E, JSONPair> mapper) {
         return toObjectMapper(Lists.newArrayList(collection), mapper);
     }
 
-    public static <E> Map toObjectMapper(Iterable<E> collection, Function<E, JSONPair> mapper) {
+    @NotNull
+    public static <E> Map toObjectMapper(@NotNull Iterable<E> collection, @NotNull Function<E, JSONPair> mapper) {
         Map object = Maps.newLinkedHashMap();
         for (E e : collection) {
             JSONPair JSONPair = mapper.apply(e);
@@ -117,7 +132,7 @@ public final class JSONUtil {
         final String key;
         final Object val;
 
-        JSONPair(String key, Object val) {
+        JSONPair(@NotNull String key, @NotNull Object val) {
             this.key = key;
             this.val = val;
         }

@@ -1,12 +1,15 @@
 package org.bukkit.craftbukkit.v1_16_R3.scheduler;
 
 import java.util.function.Consumer;
+
+import co.aikar.timings.NullTimingHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings; // Spigot
-import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import org.spigotmc.CustomTimingsHandler; // Spigot
+import co.aikar.timings.MinecraftTimings; // Paper
+import co.aikar.timings.Timing; // Paper
 
 public class CraftTask implements BukkitTask, Runnable { // Spigot
 
@@ -26,12 +29,12 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
      */
     private volatile long period;
     private long nextRun;
-    private final Runnable rTask;
-    private final Consumer<BukkitTask> cTask;
+    public final Runnable rTask; // Paper
+    public final Consumer<BukkitTask> cTask; // Paper
+    public Timing timings; // Paper
     private final Plugin plugin;
     private final int id;
 
-    final CustomTimingsHandler timings; // Spigot
     CraftTask() {
         this(null, null, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
     }
@@ -39,6 +42,21 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
     CraftTask(final Object task) {
         this(null, task, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
     }
+    // Paper start
+    public String taskName = null;
+    boolean internal = false;
+    CraftTask(final Object task, int id, String taskName) {
+        this.rTask = (Runnable) task;
+        this.cTask = null;
+        this.plugin = CraftScheduler.MINECRAFT;
+        this.taskName = taskName;
+        this.internal = true;
+        this.id = id;
+        this.period = CraftTask.NO_REPEATING;
+        this.taskName = taskName;
+        this.timings = MinecraftTimings.getInternalTaskName(taskName);
+    }
+    // Paper end
 
     CraftTask(final Plugin plugin, final Object task, final int id, final long period) {
         this.plugin = plugin;
@@ -57,7 +75,7 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
         }
         this.id = id;
         this.period = period;
-        this.timings = this.isSync() ? SpigotTimings.getPluginTaskTimings(this, period) : null; // Spigot
+        timings = task != null ? MinecraftTimings.getPluginTaskTimings(this, period) : NullTimingHandler.NULL; // Paper
     }
 
     @Override
@@ -77,11 +95,13 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
 
     @Override
     public void run() {
+        try (Timing ignored = timings.startTiming()) { // Paper
         if (rTask != null) {
             rTask.run();
         } else {
             cTask.accept(this);
         }
+        } // Paper
     }
 
     long getPeriod() {
@@ -108,7 +128,7 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
         this.next = next;
     }
 
-    Class<?> getTaskClass() {
+    public Class<?> getTaskClass() {
         return (rTask != null) ? rTask.getClass() : ((cTask != null) ? cTask.getClass() : null);
     }
 
@@ -132,9 +152,4 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
         return true;
     }
 
-    // Spigot start
-    public String getTaskName() {
-        return (getTaskClass() == null) ? "Unknown" : getTaskClass().getName();
-    }
-    // Spigot end
 }

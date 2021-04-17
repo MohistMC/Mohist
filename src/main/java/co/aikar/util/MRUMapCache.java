@@ -27,6 +27,8 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implements a Most Recently Used cache in front of a backing map, to quickly access the last accessed result.
@@ -38,7 +40,7 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
     final Map<K, V> backingMap;
     Object cacheKey;
     V cacheValue;
-    public MRUMapCache(final Map<K, V> backingMap) {
+    public MRUMapCache(@NotNull final Map<K, V> backingMap) {
         this.backingMap = backingMap;
     }
 
@@ -46,15 +48,16 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
 
     public boolean isEmpty() {return backingMap.isEmpty();}
 
-    public boolean containsKey(Object key) {
+    public boolean containsKey(@Nullable Object key) {
         return key != null && key.equals(cacheKey) || backingMap.containsKey(key);
     }
 
-    public boolean containsValue(Object value) {
+    public boolean containsValue(@Nullable Object value) {
         return value != null && value == cacheValue || backingMap.containsValue(value);
     }
 
-    public V get(Object key) {
+    @Nullable
+    public V get(@Nullable Object key) {
         if (cacheKey != null && cacheKey.equals(key)) {
             return cacheValue;
         }
@@ -62,19 +65,21 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
         return cacheValue = backingMap.get(key);
     }
 
-    public V put(K key, V value) {
+    @Nullable
+    public V put(@Nullable K key, @Nullable V value) {
         cacheKey = key;
         return cacheValue = backingMap.put(key, value);
     }
 
-    public V remove(Object key) {
+    @Nullable
+    public V remove(@Nullable Object key) {
         if (key != null && key.equals(cacheKey)) {
             cacheKey = null;
         }
         return backingMap.remove(key);
     }
 
-    public void putAll(Map<? extends K, ? extends V> m) {backingMap.putAll(m);}
+    public void putAll(@NotNull Map<? extends K, ? extends V> m) {backingMap.putAll(m);}
 
     public void clear() {
         cacheKey = null;
@@ -82,11 +87,14 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
         backingMap.clear();
     }
 
+    @NotNull
     public Set<K> keySet() {return backingMap.keySet();}
 
+    @NotNull
     public Collection<V> values() {return backingMap.values();}
 
-    public Set<Entry<K, V>> entrySet() {return backingMap.entrySet();}
+    @NotNull
+    public Set<Map.Entry<K, V>> entrySet() {return backingMap.entrySet();}
 
     /**
      * Wraps the specified map with a most recently used cache
@@ -96,7 +104,8 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
      * @param <V> Value Type of the Map
      * @return Map
      */
-    public static <K, V> Map<K, V> of(Map<K, V> map) {
+    @NotNull
+    public static <K, V> Map<K, V> of(@NotNull Map<K, V> map) {
         return new MRUMapCache<K, V>(map);
     }
 }

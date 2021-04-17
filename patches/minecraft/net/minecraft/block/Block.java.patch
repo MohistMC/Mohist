@@ -22,6 +22,22 @@
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
           return !VoxelShapes.func_197879_c(VoxelShapes.func_197868_b(), p_load_1_, IBooleanFunction.field_223236_g_);
+@@ -64,6 +_,15 @@
+    });
+    protected final StateContainer<Block, BlockState> field_176227_L;
+    private BlockState field_196275_y;
++   // Paper start
++   public co.aikar.timings.Timing timing;
++    public co.aikar.timings.Timing getTiming() {
++       if (timing == null) {
++          timing = co.aikar.timings.MinecraftTimings.getBlockTiming(this);
++       }
++       return timing;
++    }
++    // Paper end
+    @Nullable
+    private String field_149770_b;
+    @Nullable
 @@ -151,6 +_,8 @@
        super(p_i48440_1_);
        StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
