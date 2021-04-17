@@ -11,7 +11,7 @@
  import java.util.Arrays;
  import java.util.Collection;
  import java.util.Collections;
-@@ -16,13 +_,48 @@
+@@ -16,13 +_,47 @@
  import java.util.UUID;
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.stream.Stream;
@@ -44,7 +44,6 @@
 +import org.bukkit.event.vehicle.VehicleEnterEvent;
 +import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
-+import org.spigotmc.CustomTimingsHandler;
 +
 +import com.google.common.collect.Iterables;
 +import com.google.common.collect.Lists;
@@ -648,12 +647,33 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Entity being loaded");
-@@ -1544,8 +_,23 @@
+@@ -1537,6 +_,11 @@
+       return this.func_70099_a(p_199701_1_, 0.0F);
+    }
+ 
++   // Mohist start - Exclude Ice&Fire dragons from drop capture
++   private boolean dragonDone;
++   private Class<?> dragonClass;
++   // Mohist end
++
+    @Nullable
+    public ItemEntity func_70099_a(ItemStack p_70099_1_, float p_70099_2_) {
+       if (p_70099_1_.func_190926_b()) {
+@@ -1544,8 +_,32 @@
        } else if (this.field_70170_p.field_72995_K) {
           return null;
        } else {
++         // Mohist start - Exclude Ice&Fire dragons from drop capture
++         if (!this.dragonDone) {
++            try {
++               this.dragonClass = Class.forName("com.github.alexthe666.iceandfire.entity.EntityDragonBase");
++            } catch (Exception ex) {}
++            this.dragonDone = true;
++         }
++         boolean skip = this.dragonClass != null && this.dragonClass.isAssignableFrom(this.getClass());
++         // Mohist end
 +         // CraftBukkit start - Capture drops for death event
-+         if (this instanceof LivingEntity && !((LivingEntity) this).forceDrops && ((LivingEntity) this).func_110143_aJ() == 0) {
++         if (!skip && this instanceof LivingEntity && !((LivingEntity) this).forceDrops && ((LivingEntity) this).func_110143_aJ() == 0) {
 +            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.asCraftMirror(p_70099_1_));
 +            return null;
 +         }
