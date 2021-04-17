@@ -42,18 +42,16 @@
  import net.minecraft.world.storage.ISpawnWorldInfo;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.MapData;
-@@ -62,8 +_,16 @@
+@@ -62,8 +_,14 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 +import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-+import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 +import org.bukkit.craftbukkit.v1_16_R3.block.CapturedBlockState;
 +import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 +import org.bukkit.event.block.BlockPhysicsEvent;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
  
 -public abstract class World implements IWorld, AutoCloseable {
 +public abstract class World extends net.minecraftforge.common.capabilities.CapabilityProvider<World> implements IWorld, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
@@ -112,7 +110,7 @@
 +   private int tileTickPosition;
 +   public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
 +
-+   public final SpigotTimings.WorldTimingsHandler timings; // Spigot
++   public final co.aikar.timings.WorldTimingsHandler timings; // Spigot
 +
 +   public CraftWorld getWorld(){
 +      return this.craftWorld;
@@ -154,7 +152,7 @@
        this.field_217407_c = Thread.currentThread();
        this.field_226689_w_ = new BiomeManager(this, p_i241925_7_, p_i241925_3_.func_227176_e_());
        this.field_234916_c_ = p_i241925_6_;
-+      timings = new SpigotTimings.WorldTimingsHandler(this); // Spigot - code below can generate new world and access timings
++      timings = new co.aikar.timings.WorldTimingsHandler(this); // Paper - code below can generate new world and access timings
 +      this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
 +      this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
     }
@@ -520,11 +518,12 @@
                 }
              }
           }
-@@ -490,17 +_,24 @@
+@@ -490,17 +_,23 @@
           this.field_147484_a.clear();
        }
  
 +      timings.tileEntityPending.stopTiming(); // Spigot
++      co.aikar.timings.TimingHistory.tileEntityTicks += this.field_175730_i.size(); // Paper
        iprofiler.func_76319_b();
 +      spigotConfig.currentPrimedTnt = 0; // Spigot
     }
@@ -532,9 +531,7 @@
     public void func_217390_a(Consumer<Entity> p_217390_1_, Entity p_217390_2_) {
        try {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_217390_2_);
-+         SpigotTimings.tickEntityTimer.startTiming(); // Spigot
           p_217390_1_.accept(p_217390_2_);
-+         SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking entity");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Entity being ticked");

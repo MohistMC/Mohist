@@ -1354,6 +1354,12 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
         public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        // Paper start
+        public int getPing() {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+        // Paper end
     }
 
     @NotNull

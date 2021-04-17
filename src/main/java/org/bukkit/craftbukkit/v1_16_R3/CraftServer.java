@@ -1967,8 +1967,21 @@ public final class CraftServer implements Server {
     private final Spigot spigot = new Spigot()
     {
 
+        @Deprecated
         @Override
         public YamlConfiguration getConfig()
+        {
+            return org.spigotmc.SpigotConfig.config;
+        }
+
+        @Override
+        public YamlConfiguration getBukkitConfig()
+        {
+            return configuration;
+        }
+
+        @Override
+        public YamlConfiguration getSpigotConfig()
         {
             return org.spigotmc.SpigotConfig.config;
         }
@@ -1996,6 +2009,11 @@ public final class CraftServer implements Server {
     public Spigot spigot()
     {
         return spigot;
+    }
+
+    @Override
+    public boolean isStopping() {
+        return net.minecraft.server.MinecraftServer.getServer().hasStopped();
     }
 
     public void setPlayerList(PlayerList playerList) {

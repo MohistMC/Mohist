@@ -280,7 +280,7 @@
        } else {
           CompoundNBT compoundnbt = this.field_201618_i.get(p_223134_1_);
           if (compoundnbt != null) {
-@@ -450,13 +_,55 @@
+@@ -450,13 +_,57 @@
  
     }
  
@@ -295,25 +295,27 @@
 +          */
 +         server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(this.bukkitChunk, this.needsDecoration));
 +         if (this.needsDecoration) {
-+            this.needsDecoration = false;
-+            java.util.Random random = new java.util.Random();
-+            random.setSeed(((ServerWorld) field_76637_e).func_72905_C());
-+            long xRand = random.nextLong() / 2L * 2L + 1L;
-+            long zRand = random.nextLong() / 2L * 2L + 1L;
-+            random.setSeed((long) this.field_212816_F.field_77276_a * xRand + (long) this.field_212816_F.field_77275_b * zRand ^ ((ServerWorld) field_76637_e).func_72905_C());
++            try (co.aikar.timings.Timing ignored = this.field_76637_e.timings.chunkLoadPopulate.startTiming()) { // Paper
++               this.needsDecoration = false;
++               java.util.Random random = new java.util.Random();
++               random.setSeed(((ServerWorld) field_76637_e).func_72905_C());
++               long xRand = random.nextLong() / 2L * 2L + 1L;
++               long zRand = random.nextLong() / 2L * 2L + 1L;
++               random.setSeed((long) this.field_212816_F.field_77276_a * xRand + (long) this.field_212816_F.field_77275_b * zRand ^ ((ServerWorld) field_76637_e).func_72905_C());
 +
-+            org.bukkit.World world = this.field_76637_e.getWorld();
-+            if (world != null) {
-+               this.field_76637_e.populating = true;
-+               try {
-+                  for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
-+                     populator.populate(world, random, bukkitChunk);
++               org.bukkit.World world = this.field_76637_e.getWorld();
++               if (world != null) {
++                  this.field_76637_e.populating = true;
++                  try {
++                     for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
++                        populator.populate(world, random, bukkitChunk);
++                     }
++                  } finally {
++                     this.field_76637_e.populating = false;
 +                  }
-+               } finally {
-+                  this.field_76637_e.populating = false;
 +               }
-+            }
-+            server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(bukkitChunk));
++               server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(bukkitChunk));
++            } // Paper
 +         }
 +      }
 +   }

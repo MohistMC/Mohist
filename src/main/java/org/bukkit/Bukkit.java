@@ -651,7 +651,6 @@ public final class Bukkit {
      */
     public static void reload() {
         server.reload();
-        org.spigotmc.CustomTimingsHandler.reload(); // Spigot
     }
 
     /**
@@ -1585,6 +1584,15 @@ public final class Bukkit {
     @NotNull
     public static UnsafeValues getUnsafe() {
         return server.getUnsafe();
+    }
+
+    /**
+     * Checks if the server is in the process of being shutdown.
+     *
+     * @return true if server is in the process of being shutdown
+     */
+    public static boolean isStopping() {
+        return server.isStopping();
     }
 
     @NotNull

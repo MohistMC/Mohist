@@ -9,3 +9,12 @@
     }
  
     public void func_73660_a() {
+@@ -68,7 +_,7 @@
+ 
+          return 0;
+       } else {
+-         try {
++         try (co.aikar.timings.Timing timing = p_195447_1_.getTiming().startTiming()) { // Paper
+             this.field_194021_h = true;
+             int j = 0;
+             FunctionObject.IEntry[] afunctionobject$ientry = p_195447_1_.func_193528_a();

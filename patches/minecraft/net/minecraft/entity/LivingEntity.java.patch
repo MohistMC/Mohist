@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/LivingEntity.java
 +++ b/net/minecraft/entity/LivingEntity.java
-@@ -1,26 +_,49 @@
+@@ -1,26 +_,48 @@
  package net.minecraft.entity;
  
 -import com.google.common.base.Objects;
@@ -28,7 +28,6 @@
 +
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 +import org.bukkit.craftbukkit.v1_16_R3.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
@@ -1208,30 +1207,19 @@
              d2 = 0.0D;
           }
  
-@@ -2077,6 +_,8 @@
+@@ -2077,6 +_,7 @@
     }
  
     public void func_70071_h_() {
-+      SpigotTimings.timerEntityBaseTick.startTiming(); // Spigot
 +      if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();
-@@ -2122,7 +_,9 @@
-          }
-       }
- 
-+      SpigotTimings.timerEntityBaseTick.stopTiming(); // Spigot
-       this.func_70636_d();
-+      SpigotTimings.timerEntityTickRest.startTiming(); // Spigot
-       double d0 = this.func_226277_ct_() - this.field_70169_q;
-       double d1 = this.func_226281_cx_() - this.field_70166_s;
-       float f = (float)(d0 * d0 + d1 * d1);
-@@ -2200,9 +_,10 @@
+@@ -2199,10 +_,9 @@
+       if (this.func_70608_bn()) {
           this.field_70125_A = 0.0F;
        }
- 
-+      SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
+-
     }
  
 -   private void func_241353_q_() {
@@ -1247,39 +1235,9 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlotType.class);
              }
-@@ -2368,6 +_,7 @@
+@@ -2422,6 +_,38 @@
  
-       this.func_213293_j(d1, d3, d5);
-       this.field_70170_p.func_217381_Z().func_76320_a("ai");
-+      SpigotTimings.timerEntityAI.startTiming(); // Spigot
-       if (this.func_70610_aX()) {
-          this.field_70703_bu = false;
-          this.field_70702_br = 0.0F;
-@@ -2377,6 +_,7 @@
-          this.func_70626_be();
-          this.field_70170_p.func_217381_Z().func_76319_b();
-       }
-+      SpigotTimings.timerEntityAI.stopTiming(); // Spigot
- 
-       this.field_70170_p.func_217381_Z().func_76319_b();
-       this.field_70170_p.func_217381_Z().func_76320_a("jump");
-@@ -2412,7 +_,9 @@
-       this.field_191988_bg *= 0.98F;
-       this.func_184616_r();
-       AxisAlignedBB axisalignedbb = this.func_174813_aQ();
-+      SpigotTimings.timerEntityAIMove.startTiming(); // Spigot
-       this.func_213352_e(new Vector3d((double)this.field_70702_br, (double)this.field_70701_bs, (double)this.field_191988_bg));
-+      SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot
-       this.field_70170_p.func_217381_Z().func_76319_b();
-       this.field_70170_p.func_217381_Z().func_76320_a("push");
-       if (this.field_204807_bs > 0) {
-@@ -2420,8 +_,42 @@
-          this.func_204801_a(axisalignedbb, this.func_174813_aQ());
-       }
- 
-+      SpigotTimings.timerEntityAICollision.startTiming(); // Spigot
        this.func_85033_bc();
-+      SpigotTimings.timerEntityAICollision.stopTiming(); // Spigot
        this.field_70170_p.func_217381_Z().func_76319_b();
 +      // Paper/Mohist start
 +      if (this.field_70142_S != func_226277_ct_() || this.field_70137_T != func_226278_cu_() || this.field_70136_U != func_226281_cx_()

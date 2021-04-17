@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -1,18 +_,5 @@
+@@ -1,18 +_,6 @@
  package net.minecraft.server;
  
 -import com.google.common.base.Splitter;
@@ -16,10 +16,11 @@
 -import io.netty.buffer.ByteBufOutputStream;
 -import io.netty.buffer.Unpooled;
 -import it.unimi.dsi.fastutil.longs.LongIterator;
++import co.aikar.timings.MinecraftTimings;
  import java.awt.image.BufferedImage;
  import java.io.File;
  import java.io.IOException;
-@@ -37,19 +_,52 @@
+@@ -37,19 +_,50 @@
  import java.util.Date;
  import java.util.List;
  import java.util.Map;
@@ -44,11 +45,9 @@
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-+import org.bukkit.craftbukkit.v1_16_R3.SpigotTimings;
 +import org.bukkit.event.server.ServerLoadEvent;
 +import org.bukkit.event.world.WorldInitEvent;
 +import org.bukkit.event.world.WorldLoadEvent;
-+import org.spigotmc.CustomTimingsHandler;
 +import org.spigotmc.SlackActivityAccountant;
 +
 +import com.google.common.base.Splitter;
@@ -120,15 +119,20 @@
     private PlayerList field_71318_t;
     private volatile boolean field_71317_u = true;
     private boolean field_71316_v;
-@@ -204,7 +_,7 @@
+@@ -204,10 +_,10 @@
     private final GameProfileRepository field_152365_W;
     private final PlayerProfileCache field_152366_X;
     private long field_147142_T;
 -   private final Thread field_175590_aa;
 +   public final Thread field_175590_aa;
     protected long field_211151_aa = Util.func_211177_b();
-    private long field_213213_ab;
-    private boolean field_213214_ac;
+-   private long field_213213_ab;
+-   private boolean field_213214_ac;
++   private long field_213213_ab; final long getTickOversleepMaxTime() { return this.field_213213_ab; } // Paper - OBFHELPER
++   private boolean field_213214_ac; final boolean hasExecutedTask() { return this.field_213214_ac; } // Paper - OBFHELPER
+    @OnlyIn(Dist.CLIENT)
+    private boolean field_184111_ab;
+    private final ResourcePackList field_195577_ad;
 @@ -219,16 +_,36 @@
     private final FrameTimer field_213215_ap = new FrameTimer();
     private boolean field_205745_an;
@@ -331,7 +335,7 @@
           }
        }
  
-@@ -534,26 +_,47 @@
+@@ -534,26 +_,48 @@
        iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
        this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
        this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
@@ -362,6 +366,7 @@
 +      }
 +      // CraftBukkit end
 +      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.7"));
++      MinecraftTimings.stopServer(); // Paper
 +      // CraftBukkit start
 +      if (this.server != null) {
 +         this.server.disablePlugins();
@@ -536,25 +541,39 @@
           }
  
        }
-@@ -678,8 +_,15 @@
+@@ -678,17 +_,36 @@
     }
  
     private boolean func_212379_aT() {
 -      return this.func_213182_bg() || Util.func_211177_b() < (this.field_213214_ac ? this.field_213213_ab : this.field_211151_aa);
--   }
 +      // CraftBukkit start
++      if (isOversleep) return canOversleep();// Paper - because of our changes, this logic is broken
 +      return this.forceTicks || this.func_213182_bg() || Util.func_211177_b() < (this.field_213214_ac ? this.field_213213_ab : this.field_211151_aa);
-+   }
+    }
+ 
+-   protected void func_213202_o() {
++   // Paper start
++    boolean isOversleep = false;
++    private boolean canOversleep() {
++       return this.hasExecutedTask() && Util.func_211177_b() < this.getTickOversleepMaxTime();
++    }
++
++    private boolean canSleepForTickNoOversleep() {
++       return this.forceTicks || this.func_213182_bg() || Util.func_211177_b() < this.field_211151_aa;
++    }
++    // Paper end
 +
 +   private void executeModerately() {
-+      this.func_213160_bf();
+       this.func_213160_bf();
 +      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
- 
-    protected void func_213202_o() {
-       this.func_213160_bf();
-@@ -688,7 +_,7 @@
++
++   protected void func_213202_o() {
++      //this.runAllTasks(); // Paper - move this into the tick method for timings
+       this.func_213161_c(() -> {
+-         return !this.func_212379_aT();
++         return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
        });
     }
  
@@ -572,7 +591,7 @@
           } finally {
              bytebuf.release();
           }
-@@ -767,10 +_,16 @@
+@@ -767,10 +_,22 @@
     }
  
     protected void func_71240_o() {
@@ -580,16 +599,22 @@
     }
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
-+      SpigotTimings.serverTickTimer.startTiming(); // Spigot
++      co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTiming(); // Paper
 +      this.slackActivityAccountant.tickStarted(); // Spigot
        long i = Util.func_211178_c();
-+      SpigotTimings.forgePreServerTick.startTiming(); // Mohist - Wrap Forge pre/post tick with timings
++      // Paper start - move oversleep into full server tick
++      isOversleep = true;MinecraftTimings.serverOversleep.startTiming();
++      this.func_213161_c(() -> {
++         return !this.canOversleep();
++      });
++      isOversleep = false;MinecraftTimings.serverOversleep.stopTiming();
++      // Paper end
++
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
-+      SpigotTimings.forgePreServerTick.stopTiming(); // Mohist - Wrap Forge pre/post tick with timings
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -785,23 +_,26 @@
+@@ -785,77 +_,120 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -599,7 +624,6 @@
 -      if (this.field_71315_w % 6000 == 0) {
 -         field_147145_h.debug("Autosave started");
 +      if (autosavePeriod > 0 && this.field_71315_w % autosavePeriod == 0) { // CraftBukkit
-+         SpigotTimings.worldSaveTimer.startTiming(); // Spigot
 +         field_147145_h.debug(com.mohistmc.util.i18n.i18n.get("minecraftserver.21"));
           this.field_71304_b.func_76320_a("save");
           this.field_71318_t.func_72389_g();
@@ -607,7 +631,6 @@
           this.field_71304_b.func_76319_b();
 -         field_147145_h.debug("Autosave finished");
 +         field_147145_h.debug(com.mohistmc.util.i18n.i18n.get("minecraftserver.22"));
-+         SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
        }
  
        this.field_71304_b.func_76320_a("snooper");
@@ -621,58 +644,59 @@
           this.field_71307_n.func_76471_b();
        }
  
-@@ -812,50 +_,96 @@
+       this.field_71304_b.func_76319_b();
++      // Paper start - move executeAll() into full server tick timing
++      try (co.aikar.timings.Timing ignored = MinecraftTimings.processTasksTimer.startTiming()) {
++         this.func_213160_bf();
++      }
++      // Paper end
+       this.field_71304_b.func_76320_a("tallying");
+       long l = this.field_71311_j[this.field_71315_w % 100] = Util.func_211178_c() - i;
+       this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
 +      this.slackActivityAccountant.tickEnded(l); // Spigot
-+      SpigotTimings.serverTickTimer.stopTiming(); // Spigot
-+      // Mohist start - Wrap Forge pre/post tick with timings
-+      SpigotTimings.forgePostServerTick.startTiming();
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
-+      SpigotTimings.forgePostServerTick.stopTiming();
-+      CustomTimingsHandler.tick();
-+      // Mohist end
++      co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
     }
  
     protected void func_71190_q(BooleanSupplier p_71190_1_) {
-+      SpigotTimings.schedulerTimer.startTiming(); // Spigot
++      MinecraftTimings.bukkitSchedulerTimer.startTiming(); // Spigot // Paper
 +      this.server.getScheduler().mainThreadHeartbeat(this.field_71315_w); // CraftBukkit
-+      SpigotTimings.schedulerTimer.stopTiming(); // Spigot
++      MinecraftTimings.bukkitSchedulerTimer.stopTiming(); // Spigot // Paper
        this.field_71304_b.func_76320_a("commandFunctions");
-+      SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
++      MinecraftTimings.commandFunctionsTimer.startTiming(); // Spigot // Paper
        this.func_193030_aL().func_73660_a();
-+      SpigotTimings.commandFunctionsTimer.stopTiming(); // Spigot
++      MinecraftTimings.commandFunctionsTimer.stopTiming(); // Spigot // Paper
        this.field_71304_b.func_219895_b("levels");
  
 -      for(ServerWorld serverworld : this.func_212370_w()) {
 +      // CraftBukkit start
 +      // Run tasks that are waiting on processing
-+      SpigotTimings.processQueueTimer.startTiming(); // Spigot
++      MinecraftTimings.processQueueTimer.startTiming(); // Spigot
 +      while (!processQueue.isEmpty()) {
 +         processQueue.remove().run();
 +      }
-+      SpigotTimings.processQueueTimer.stopTiming(); // Spigot
++      MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
 +
 +      for(ServerWorld serverworld : this.getWorldArray()) {
 +         long tickStart = Util.func_211178_c();
           this.field_71304_b.func_194340_a(() -> {
              return serverworld + " " + serverworld.func_234923_W_().func_240901_a_();
           });
-+		 SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
++         MinecraftTimings.timeUpdateTimer.startTiming(); // Spigot // Paper
           if (this.field_71315_w % 20 == 0) {
              this.field_71304_b.func_76320_a("timeSync");
              this.field_71318_t.func_232642_a_(new SUpdateTimePacket(serverworld.func_82737_E(), serverworld.func_72820_D(), serverworld.func_82736_K().func_223586_b(GameRules.field_223607_j)), serverworld.func_234923_W_());
              this.field_71304_b.func_76319_b();
           }
-+		 SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
++		 MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot // Paper
  
           this.field_71304_b.func_76320_a("tick");
 -
-+         serverworld.timings.forgePreWorldTick.startTiming(); // Mohist - Wrap Forge pre/post tick with timings
 +         net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(serverworld);
-+         serverworld.timings.forgePreWorldTick.stopTiming(); // Mohist - Wrap Forge pre/post tick with timings
           try {
 +            serverworld.timings.doTick.startTiming(); // Spigot
              serverworld.func_72835_b(p_71190_1_);
@@ -693,9 +717,7 @@
 -
 -         this.field_71304_b.func_76319_b();
 -         this.field_71304_b.func_76319_b();
-+         serverworld.timings.forgePostWorldTick.startTiming(); // Mohist - Wrap Forge pre/post tick with timings
 +         net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(serverworld);
-+         serverworld.timings.forgePostWorldTick.stopTiming(); // Mohist - Wrap Forge pre/post tick with timings
 +         this.field_71304_b.func_76319_b();
 +         this.field_71304_b.func_76319_b();
 +         perWorldTickTimes.computeIfAbsent(serverworld.func_234923_W_(), k -> new long[100])[this.field_71315_w % 100] = Util.func_211178_c() - tickStart;
@@ -703,24 +725,24 @@
        }
  
        this.field_71304_b.func_219895_b("connection");
-+      SpigotTimings.connectionTimer.startTiming(); // Spigot
++      MinecraftTimings.connectionTimer.startTiming(); // Spigot
        this.func_147137_ag().func_151269_c();
-+      SpigotTimings.connectionTimer.stopTiming(); // Spigot
++      MinecraftTimings.connectionTimer.stopTiming(); // Spigot
        this.field_71304_b.func_219895_b("players");
-+      SpigotTimings.playerListTimer.startTiming(); // Spigot
++      MinecraftTimings.playerListTimer.startTiming(); // Spigot // Paper
        this.field_71318_t.func_72374_b();
-+      SpigotTimings.playerListTimer.stopTiming(); // Spigot
++      MinecraftTimings.playerListTimer.stopTiming(); // Spigot // Paper
        if (SharedConstants.field_206244_b) {
           TestCollection.field_229570_a_.func_229574_b_();
        }
  
        this.field_71304_b.func_219895_b("server gui refresh");
  
-+      SpigotTimings.tickablesTimer.startTiming(); // Spigot
++      MinecraftTimings.tickablesTimer.startTiming(); // Spigot // Paper
        for(int i = 0; i < this.field_71322_p.size(); ++i) {
           this.field_71322_p.get(i).run();
        }
-+      SpigotTimings.tickablesTimer.stopTiming(); // Spigot
++      MinecraftTimings.tickablesTimer.stopTiming(); // Spigot // Paper
  
        this.field_71304_b.func_76319_b();
     }

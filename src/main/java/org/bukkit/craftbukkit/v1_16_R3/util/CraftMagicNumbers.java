@@ -171,6 +171,12 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
     // ========================================================================
 
+    // Paper start
+    @Override
+    public void reportTimings() {
+        co.aikar.timings.TimingsExport.reportTimings();
+    }
+    // Paper end
     public static byte toLegacyData(BlockState data) {
         return CraftLegacy.toLegacyData(data);
     }
@@ -343,6 +349,13 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         return clazz;
     }
+
+    // Paper start
+    @Override
+    public String getTimingsServerName() {
+        return "mohist";
+    }
+    // Paper end
 
     /**
      * This helper class represents the different NBT Tags.

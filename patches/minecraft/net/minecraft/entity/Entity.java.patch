@@ -155,7 +155,7 @@
     private final Set<String> field_184236_aF = Sets.newHashSet();
     private boolean field_184237_aG;
     private final double[] field_191505_aI = new double[]{0.0D, 0.0D, 0.0D};
-@@ -194,7 +_,32 @@
+@@ -194,7 +_,31 @@
     private EntitySize field_213325_aI;
     private float field_213326_aJ;
  
@@ -165,7 +165,6 @@
 +   public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
 +   public boolean forceExplosionKnockback; // SPIGOT-949
 +   public boolean persistentInvisibility = false;
-+   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.getEntityTimings(this); // Spigot
 +
 +   // Spigot start
 +   public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
@@ -353,14 +352,6 @@
        if (this instanceof LivingEntity) {
           i = ProtectionEnchantment.func_92093_a((LivingEntity)this, i);
        }
-@@ -499,6 +_,7 @@
-    }
- 
-    public void func_213315_a(MoverType p_213315_1_, Vector3d p_213315_2_) {
-+      org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
-       if (this.field_70145_X) {
-          this.func_174826_a(this.func_174813_aQ().func_191194_a(p_213315_2_));
-          this.func_174829_m();
 @@ -546,6 +_,26 @@
              block.func_176216_a(this.field_70170_p, this);
           }
@@ -418,14 +409,6 @@
           }) && this.field_190534_ay <= 0) {
              this.func_241209_g_(-this.func_190531_bD());
           }
-@@ -604,6 +_,7 @@
- 
-          this.field_70170_p.func_217381_Z().func_76319_b();
-       }
-+      org.bukkit.craftbukkit.v1_16_R3.SpigotTimings.entityMoveTimer.stopTiming(); // Spigot
-    }
- 
-    protected BlockPos func_226268_ag_() {
 @@ -611,11 +_,10 @@
        int j = MathHelper.func_76128_c(this.field_233557_ao_.field_72448_b - (double)0.2F);
        int k = MathHelper.func_76128_c(this.field_233557_ao_.field_72449_c);
