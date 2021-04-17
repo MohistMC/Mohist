@@ -3,7 +3,7 @@ package co.aikar.timings;
 
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.ServerWorldInfo;
+import net.minecraft.world.storage.IServerWorldInfo;
 
 /**
  * Set of timers per world, to track world specific timings.
@@ -72,7 +72,7 @@ public class WorldTimingsHandler {
     public final Timing chunkUnloadDataSave;
 
     public WorldTimingsHandler(World server) {
-        String name = ((ServerWorldInfo) server.getLevelData()).getLevelName() + " - ";
+        String name = ((IServerWorldInfo) server.getLevelData()).getLevelName() + " - "; // Mohist - Fix Worldinfo Cast (#1216)
 
         mobSpawn = Timings.ofSafe(name + "mobSpawn");
         doChunkUnload = Timings.ofSafe(name + "doChunkUnload");
@@ -139,6 +139,6 @@ public class WorldTimingsHandler {
     }
 
     public static Timing getTickList(ServerWorld worldserver, String timingsType) {
-        return Timings.ofSafe(((ServerWorldInfo) worldserver.getLevelData()).getLevelName() + " - Scheduled " + timingsType);
+        return Timings.ofSafe(((IServerWorldInfo) worldserver.getLevelData()).getLevelName() + " - Scheduled " + timingsType); // Mohist - Fix Worldinfo Cast (#1216)
     }
 }
