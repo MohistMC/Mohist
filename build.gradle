@@ -420,6 +420,12 @@ project(':forge') {
         }
     }
 
+    tasks.named('compileFmllauncherJava') {
+        javaCompiler = javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+    }
+
     task downloadLibraries(type: DownloadLibrariesTask, dependsOn: ':mcp:setupMCP') {
         input = VERSION_JSON
         output = rootProject.file('build/libraries/')
