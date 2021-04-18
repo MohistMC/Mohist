@@ -21,22 +21,29 @@ package net.minecraftforge.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.network.download.DownloadJava;
+import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.i18n.i18n;
 
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
 import cpw.mods.modlauncher.Launcher;
 
 public class ServerMain {
+
+    public static int mohistLibsChanged; // Mohist - Restart the server if libraries were changed
+
     public static void main(String[] args) {
         // Mohist start - Download Java 11 if required
         if (Float.parseFloat(System.getProperty("java.class.version")) < 55f) {
@@ -53,6 +60,24 @@ public class ServerMain {
 
         try {
             MohistMCStart.main();
+            // Mohist start - Restart the server if libraries were changed
+            if (mohistLibsChanged > 0) {
+                ArrayList<String> cmd = new ArrayList<>();
+                Method current = Class.forName("java.lang.ProcessHandle").getMethod("current");
+                Method info = Class.forName("java.lang.ProcessHandle").getMethod("info");
+                Method command = Class.forName("java.lang.ProcessHandle$Info").getMethod("command");
+                Optional<String> java = (Optional<String>) command.invoke(info.invoke(current.invoke(null)));
+                if (java.isPresent()) {
+                    cmd.add(java.get());
+                    cmd.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
+                    cmd.add("-jar");
+                    cmd.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+                    for (String arg : args) cmd.add(arg);
+                    System.out.println(i18n.get("libraries.restart", mohistLibsChanged));
+                    UpdateUtils.restartServer(cmd, true);
+                }
+            }
+            // Mohist end
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
         } catch (Exception cnfe) {
