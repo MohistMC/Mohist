@@ -747,18 +747,11 @@ public class CraftWorld implements World {
     @Override
     public boolean generateTree(Location loc, TreeType type, BlockChangeDelegate delegate) {
         world.captureTreeGeneration = true;
-        world.captureBlockStates = true;
         boolean grownTree = generateTree(loc, type);
-        world.captureBlockStates = false;
         world.captureTreeGeneration = false;
         if (grownTree) { // Copy block data to delegate
             for (org.bukkit.block.BlockState blockstate : world.capturedBlockStates.values()) {
-                BlockPos position = ((CraftBlockState) blockstate).getPosition();
-                net.minecraft.block.BlockState oldBlock = world.getBlockState(position);
-                int flag = ((CraftBlockState) blockstate).getFlag();
-                delegate.setBlockData(blockstate.getX(), blockstate.getY(), blockstate.getZ(), blockstate.getBlockData());
-                net.minecraft.block.BlockState newBlock = world.getBlockState(position);
-                world.markAndNotifyBlock(position, null, oldBlock, newBlock, flag, 512);
+                blockstate.update(true);
             }
             world.capturedBlockStates.clear();
             return true;
