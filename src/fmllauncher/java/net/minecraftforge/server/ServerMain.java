@@ -19,11 +19,6 @@
 
 package net.minecraftforge.server;
 
-import com.mohistmc.MohistMCStart;
-import com.mohistmc.util.i18n.i18n;
-import cpw.mods.modlauncher.InvalidLauncherSetupException;
-import cpw.mods.modlauncher.Launcher;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -34,8 +29,28 @@ import java.util.Optional;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import com.mohistmc.MohistMCStart;
+import com.mohistmc.network.download.DownloadJava;
+import com.mohistmc.util.i18n.i18n;
+
+import cpw.mods.modlauncher.InvalidLauncherSetupException;
+import cpw.mods.modlauncher.Launcher;
+
 public class ServerMain {
     public static void main(String[] args) {
+        // Mohist start - Download Java 11 if required
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 55f) {
+            if (!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));
+            try {
+                DownloadJava.run(new String[0]);
+            } catch (Exception ex) {
+                System.err.println(i18n.get("oldjava.exception"));
+                ex.printStackTrace();
+                System.exit(1);
+            }
+        }
+        // Mohist end
+
         try {
             MohistMCStart.main();
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
