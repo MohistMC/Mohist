@@ -26,6 +26,7 @@ public class DefaultLibraries {
                 lib.getParentFile().mkdirs();
                 //if (i18n.isCN() && !lib.getName().contains("mcp_config")) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
                 String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
+                if (lib.getName().endsWith("mixin-0.8.2.jar")) u = "https://github.com/KR33PY/Mixin/releases/download/0.8.2-nofinal/mixin-0.8.2-nofinal.jar"; // Mohist - Replace Mixin lib with the patched one
                 System.out.println(i18n.get("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 57 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
 
                 try {
