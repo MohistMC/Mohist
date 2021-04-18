@@ -42,7 +42,7 @@ public class ServerMain {
         if (Float.parseFloat(System.getProperty("java.class.version")) < 55f) {
             if (!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));
             try {
-                DownloadJava.run(new String[0]);
+                DownloadJava.run(args); // Mohist - Invoke DownloadJava with actual launchargs
             } catch (Exception ex) {
                 System.err.println(i18n.get("oldjava.exception"));
                 ex.printStackTrace();
