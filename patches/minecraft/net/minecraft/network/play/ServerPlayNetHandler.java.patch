@@ -93,7 +93,7 @@
  import net.minecraft.util.math.shapes.IBooleanFunction;
  import net.minecraft.util.math.shapes.VoxelShape;
  import net.minecraft.util.math.shapes.VoxelShapes;
-@@ -150,6 +_,42 @@
+@@ -150,6 +_,43 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -132,6 +132,7 @@
 +import org.bukkit.inventory.CraftingInventory;
 +import org.bukkit.inventory.EquipmentSlot;
 +import org.bukkit.inventory.InventoryView;
++import org.bukkit.inventory.SmithingInventory;
 +import org.bukkit.util.NumberConversions;
  
  public class ServerPlayNetHandler implements IServerPlayNetHandler {
@@ -1504,7 +1505,7 @@
              NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
              for(int i = 0; i < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++i) {
-@@ -1255,8 +_,274 @@
+@@ -1255,8 +_,287 @@
  
              this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist);
           } else {
@@ -1709,12 +1710,25 @@
 +                     }
 +                  }
 +               }
++
++               if (p_147351_1_.func_149544_d() == 2 && top instanceof SmithingInventory) {
++                  org.bukkit.inventory.ItemStack result = ((SmithingInventory) top).getResult();
++                  if (result != null) {
++                     if (click == ClickType.NUMBER_KEY) {
++                        event = new SmithItemEvent(inventory, type, p_147351_1_.func_149544_d(), click, action, p_147351_1_.func_149543_e());
++                     } else {
++                        event = new SmithItemEvent(inventory, type, p_147351_1_.func_149544_d(), click, action);
++                     }
++                  }
++               }
++
 +               event.setCancelled(cancelled);
 +               Container oldContainer = this.field_147369_b.field_71070_bA; // SPIGOT-1224
 +               craftServer.getPluginManager().callEvent(event);
 +               if (this.field_147369_b.field_71070_bA != oldContainer) {
 +                  return;
 +               }
++
 +               switch (event.getResult()) {
 +                  case ALLOW:
 +                  case DEFAULT:
@@ -1769,7 +1783,7 @@
 +                     }
 +                     return;
 +               }
-+               if (event instanceof CraftItemEvent) {
++               if (event instanceof CraftItemEvent || event instanceof SmithItemEvent) {
 +                  // Need to update the inventory on crafting to
 +                  // correctly support custom recipes
 +                  field_147369_b.func_71120_a(field_147369_b.field_71070_bA);
