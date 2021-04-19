@@ -30,7 +30,7 @@ public class MohistInheritanceProvider implements InheritanceProvider {
         }
         Set<String> parents = new HashSet<>();
         try {
-            Class<?> reference = Class.forName(className.replace('/', '.').replace('$', '.'), false, this.getClass().getClassLoader());
+            Class<?> reference = Class.forName(className.replace('/', '.'), false, this.getClass().getClassLoader());
             Class<?> extend = reference.getSuperclass();
             if (extend != null) {
                 parents.add(RemapUtils.reverseMap(extend));

@@ -24,7 +24,7 @@
              builder.put(p_237403_1_, loottable);
           } catch (Exception exception) {
 -            field_186525_a.error("Couldn't parse loot table {}", p_237403_1_, exception);
-+            field_186525_a.error(com.mohistmc.util.i18n.i18n.get("loottablemanager.2", p_237403_1_, exception));
++            //LOGGER.error(com.mohistmc.util.i18n.i18n.get("loottablemanager.2", p_237403_1_), exception);
           }
  
        });
