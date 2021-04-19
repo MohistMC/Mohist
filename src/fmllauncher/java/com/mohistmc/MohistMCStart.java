@@ -20,11 +20,6 @@ public class MohistMCStart {
     }
 
     public static void main() throws Exception {
-        String path = JarTool.getJarPath();
-        if(path != null && (path.contains("+") || path.contains("!"))) {
-            System.out.println("[Mohist - ERROR] Unsupported characters have been detected in your server path. \nPlease remove + or ! in your server's folder name (in the folder which contains this character).\nPath : "+path);
-            System.exit(0);
-        }
         MohistConfigUtil.copyMohistConfig();
 
         if (MohistConfigUtil.bMohist("show_logo", "true"))
