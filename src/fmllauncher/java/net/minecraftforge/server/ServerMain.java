@@ -35,6 +35,7 @@ import java.util.jar.Manifest;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.i18n;
 
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
@@ -45,6 +46,12 @@ public class ServerMain {
     public static int mohistLibsChanged; // Mohist - Restart the server if libraries were changed
 
     public static void main(String[] args) {
+      String path = JarTool.getJarPath();
+      if(path != null && (path.contains("+") || path.contains("!"))) {
+        System.out.println("[Mohist - ERROR] Unsupported characters have been detected in your server path. \nPlease remove + or ! in your server's folder name (in the folder which contains this character).\nPath : "+path);
+        System.exit(0);
+      }
+
         // Mohist start - Download Java 11 if required
         if (Float.parseFloat(System.getProperty("java.class.version")) < 55f) {
             if (!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));

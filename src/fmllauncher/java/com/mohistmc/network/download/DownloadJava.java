@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -36,8 +37,10 @@ public class DownloadJava {
                     System.out.println(i18n.get("oldjava.serveronly"));
                     Scanner scan = new Scanner(System.in);
                     String input = scan.nextLine();
-                    if (input.equalsIgnoreCase("Yes")) searchJava();
-                    else {
+                    if (input.equalsIgnoreCase("Yes")) {
+                      scan.close();
+                      searchJava();
+                    } else {
                         System.out.println(i18n.get("oldjava.no"));
                         System.exit(0);
                     }
@@ -68,7 +71,9 @@ public class DownloadJava {
             java.createNewFile();
             System.out.println(i18n.get("oldjava.yes"));
             UpdateUtils.downloadFile(URL, javadl);
+            System.out.println(i18n.get("oldjava.unzip.start"));
             unzip(new FileInputStream(javadl), java.toPath());
+            System.out.println(i18n.get("oldjava.unzip.completed"));
             javadl.delete();
             if (os().equals("Unix")) Runtime.getRuntime().exec("chmod 755 -R ./CustomJAVA");
         }
@@ -86,10 +91,10 @@ public class DownloadJava {
         try (ZipInputStream zipIn = new ZipInputStream(is)) {
             for (ZipEntry ze; (ze = zipIn.getNextEntry()) != null; ) {
                 Path resolvedPath = targetDir.resolve(ze.getName());
-                if (ze.isDirectory()) Files.createDirectories(resolvedPath);
+                if (ze.isDirectory() && !Files.exists(resolvedPath)) Files.createDirectories(resolvedPath);
                 else {
-                    Files.createDirectories(resolvedPath.getParent());
-                    Files.copy(zipIn, resolvedPath);
+                    if(!Files.exists(resolvedPath.getParent())) Files.createDirectories(resolvedPath.getParent());
+                    Files.copy(zipIn, resolvedPath, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
         }
