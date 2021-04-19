@@ -1,5 +1,30 @@
 --- a/net/minecraft/world/server/ServerChunkProvider.java
 +++ b/net/minecraft/world/server/ServerChunkProvider.java
+@@ -1,9 +_,5 @@
+ package net.minecraft.world.server;
+ 
+-import com.google.common.annotations.VisibleForTesting;
+-import com.google.common.collect.Lists;
+-import com.mojang.datafixers.DataFixer;
+-import com.mojang.datafixers.util.Either;
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.Arrays;
+@@ -16,7 +_,14 @@
+ import java.util.function.Consumer;
+ import java.util.function.Function;
+ import java.util.function.Supplier;
++
+ import javax.annotation.Nullable;
++
++import com.google.common.annotations.VisibleForTesting;
++import com.google.common.collect.Lists;
++import com.mojang.datafixers.DataFixer;
++import com.mojang.datafixers.util.Either;
++
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.network.IPacket;
 @@ -57,8 +_,8 @@
     public final ChunkManager field_217237_a;
     private final DimensionSavedDataManager field_217244_j;
@@ -36,15 +61,6 @@
     public ServerWorldLightManager func_212863_j_() {
        return this.field_217242_h;
     }
-@@ -119,7 +_,7 @@
-          for(int j = 0; j < 4; ++j) {
-             if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
-                IChunk ichunk = this.field_222877_p[j];
--               if (ichunk != null || !p_212849_4_) {
-+               if (ichunk != null/* || !p_212849_4_*/) { // Mohist - Don't return immediately if cached chunk is null
-                   return ichunk;
-                }
-             }
 @@ -127,7 +_,11 @@
  
           iprofiler.func_230035_c_("getChunkCacheMiss");
