@@ -68,7 +68,7 @@ public class Util {
 			def path = "${folder}${filename}"
 			def url = "https://libraries.minecraft.net/${path}"
 			if (!checkExists(url)) {
-				url = "https://files.minecraftforge.net/maven/${path}"
+				url = "https://maven.minecraftforge.net/${path}"
 				if (!checkExists(url)) {
 					url = "https://hub.spigotmc.org/nexus/content/groups/public/${path}"
 					if (!checkExists(url)) {
