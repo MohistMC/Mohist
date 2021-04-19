@@ -1,9 +1,9 @@
 package org.bukkit.plugin.java;
 
-import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -17,13 +17,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
-import net.md_5.specialsource.repo.RuntimeRepo;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.mohistmc.bukkit.nms.ClassLoaderContext;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
+
+import net.md_5.specialsource.repo.RuntimeRepo;
+import net.minecraft.server.MinecraftServer;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
