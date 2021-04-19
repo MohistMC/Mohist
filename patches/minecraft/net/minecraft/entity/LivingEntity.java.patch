@@ -998,7 +998,7 @@
 +            return false;
 +         }
 +         // Mohist start - Prevent armor break if event is cancelled
-+         else {
++         else if(!damagesource.func_76363_c()) {
 +            this.func_230294_b_(damagesource, dmgPreArmor);
 +         }
 +         // Mohist end
