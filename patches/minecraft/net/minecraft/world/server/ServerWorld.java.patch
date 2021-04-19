@@ -415,7 +415,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -561,10 +_,22 @@
+@@ -561,36 +_,70 @@
     }
  
     private void func_73051_P() {
@@ -440,7 +440,42 @@
     }
  
     public void func_82742_i() {
-@@ -591,6 +_,22 @@
+       this.field_80004_Q = 0;
+    }
+ 
++   // Mohist start - Don't load chunks for scheduled ticks
+    private void func_205339_a(NextTickListEntry<Fluid> p_205339_1_) {
+-      FluidState fluidstate = this.func_204610_c(p_205339_1_.field_180282_a);
+-      if (fluidstate.func_206886_c() == p_205339_1_.func_151351_a()) {
+-         fluidstate.func_206880_a(this, p_205339_1_.field_180282_a);
+-      }
+-
++      ChunkHolder holder = this.field_241102_C_.field_217237_a.func_219219_b(ChunkPos.func_77272_a(p_205339_1_.field_180282_a.func_177958_n() >> 4, p_205339_1_.field_180282_a.func_177952_p() >> 4));
++      if (holder == null) return;
++      Chunk chunk = holder.func_219298_c();
++      if (chunk == null) return;
++      FluidState state = chunk.func_204610_c(p_205339_1_.field_180282_a);
++      if (state.func_206886_c() != p_205339_1_.func_151351_a()) return;
++      state.func_206880_a(this, p_205339_1_.field_180282_a);
+    }
+ 
+    private void func_205338_b(NextTickListEntry<Block> p_205338_1_) {
+-      BlockState blockstate = this.func_180495_p(p_205338_1_.field_180282_a);
+-      if (blockstate.func_203425_a(p_205338_1_.func_151351_a())) {
+-         blockstate.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
+-      }
+-
++      ChunkHolder holder = this.field_241102_C_.field_217237_a.func_219219_b(ChunkPos.func_77272_a(p_205338_1_.field_180282_a.func_177958_n() >> 4, p_205338_1_.field_180282_a.func_177952_p() >> 4));
++      if (holder == null) return;
++      Chunk chunk = holder.func_219298_c();
++      if (chunk == null) return;
++      BlockState state = chunk.func_180495_p(p_205338_1_.field_180282_a);
++      if (!state.func_203425_a(p_205338_1_.func_151351_a())) return;
++      state.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
+    }
++   // Mohist end
+ 
+    public void func_217479_a(Entity p_217479_1_) {
        if (!(p_217479_1_ instanceof PlayerEntity) && !this.func_72863_F().func_217204_a(p_217479_1_)) {
           this.func_217464_b(p_217479_1_);
        } else {
