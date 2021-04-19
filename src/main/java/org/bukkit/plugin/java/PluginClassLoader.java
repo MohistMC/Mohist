@@ -48,7 +48,7 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     PluginClassLoader(@NotNull final JavaPluginLoader loader, @Nullable final ClassLoader parent, @NotNull final PluginDescriptionFile description, @NotNull final File dataFolder, @NotNull final File file) throws IOException, InvalidPluginException, MalformedURLException {
-        super(new URL[]{file.toURI().toURL()}, parent);
+        super(new URL[] {file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");
 
         this.loader = loader;
@@ -98,80 +98,61 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     Class<?> findClass(@NotNull String name, boolean checkGlobal) throws ClassNotFoundException {
-        if (name.startsWith("org.bukkit.") || name.startsWith("net.minecraft.")) {
-            throw new ClassNotFoundException(name);
-        }
-        Class<?> result = classes.get(name);
-        if (result == null) {
-            if (checkGlobal) {
-                result = loader.getClassByName(name);
-                if (result != null) {
-                    PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
-
-                    if (provider != description
-                            && !seenIllegalAccess.contains(provider.getName())
-                            && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
-
-                        seenIllegalAccess.add(provider.getName());
-                        if (plugin != null) {
-                            plugin.getLogger().log(Level.WARNING, "Loaded class {0} from {1} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{name, provider.getFullName()});
-                        } else {
-                            // In case the bad access occurs on construction
-                            loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
-                        }
-                    }
-                }
+        ClassLoaderContext.put(this);
+        Class<?> result;
+        try {
+            if (name.replace("/", ".").startsWith("net.minecraft.server.v1_16_R3")) {
+                String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
+                return Class.forName(remappedClass);
             }
+            if (name.startsWith("org.bukkit.")) {
+                throw new ClassNotFoundException(name);
+            }
+            result = classes.get(name);
+            synchronized (name.intern()) {
+                if (result == null) {
+                    if (checkGlobal) {
+                        result = loader.getClassByName(name);
+                        if (result != null) {
+                            PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
 
-            if (result == null) {
-                String path = name.replace('.', '/').concat(".class");
-                URL url = this.findResource(path);
-                if (url != null) {
-                    InputStream stream = null;
-                    byte[] bytecode = new byte[0];
-                    try {
-                        stream = url.openStream();
-                        bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
-                    bytecode = RemapUtils.remapFindClass(bytecode);
+                            if (provider != description
+                                    && !seenIllegalAccess.contains(provider.getName())
+                                    && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
 
-                    int dot = name.lastIndexOf('.');
-                    if (dot != -1) {
-                        String pkgName = name.substring(0, dot);
-                        if (getPackage(pkgName) == null) {
-                            try {
-                                if (manifest != null) {
-                                    definePackage(pkgName, manifest, this.url);
+                                seenIllegalAccess.add(provider.getName());
+                                if (plugin != null) {
+                                    plugin.getLogger().log(Level.WARNING, "Loaded class {0} from {1} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{name, provider.getFullName()});
                                 } else {
-                                    definePackage(pkgName, null, null, null, null, null, null, null);
-                                }
-                            } catch (IllegalArgumentException ex) {
-                                if (getPackage(pkgName) == null) {
-                                    throw new IllegalStateException("Cannot find package " + pkgName);
+                                    // In case the bad access occurs on construction
+                                    loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
                                 }
                             }
                         }
                     }
-                    CodeSource codeSource = new CodeSource(this.url, new CodeSigner[0]);
 
-                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
-                }
+                    if (result == null) {
+                        result = remappedFindClass(name);
+                    }
 
-                if (result == null) {
-                    result = super.findClass(name);
-                }
+                    if (result != null) {
+                        loader.setClass(name, result);
+                    }
 
-                if (result != null) {
-                    loader.setClass(name, result);
+                    if (result == null) {
+                        try {
+                            result = MinecraftServer.getServer().getClass().getClassLoader().loadClass(name);
+                        } catch (Throwable throwable) {
+                            throw new ClassNotFoundException(name, throwable);
+                        }
+                    }
+
+                    classes.put(name, result);
                 }
             }
-
-            classes.put(name, result);
+        } finally {
+            ClassLoaderContext.pop();
         }
-
         return result;
     }
 
@@ -200,5 +181,55 @@ public final class PluginClassLoader extends URLClassLoader {
         this.pluginInit = javaPlugin;
 
         javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
+    }
+
+    private Class<?> remappedFindClass(String name) throws ClassNotFoundException {
+        Class<?> result = null;
+
+        try {
+            // Load the resource to the name
+            String path = name.replace('.', '/').concat(".class");
+            URL url = this.findResource(path);
+            if (url != null) {
+                InputStream stream = url.openStream();
+                if (stream != null) {
+                    byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
+                    bytecode = RemapUtils.remapFindClass(bytecode);
+
+                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                    URL jarURL = jarURLConnection.getJarFileURL();
+
+                    int dot = name.lastIndexOf('.');
+                    if (dot != -1) {
+                        String pkgName = name.substring(0, dot);
+                        if (getPackage(pkgName) == null) {
+                            try {
+                                if (manifest != null) {
+                                    definePackage(pkgName, manifest, url);
+                                } else {
+                                    definePackage(pkgName, null, null, null, null, null, null, null);
+                                }
+                            } catch (IllegalArgumentException ex) {
+                                if (getPackage(pkgName) == null) {
+                                    throw new IllegalStateException("Cannot find package " + pkgName);
+                                }
+                            }
+                        }
+                    }
+                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+
+                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                    if (result != null) {
+                        // Resolve it - sets the class loader of the class
+                        this.resolveClass(result);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            throw new ClassNotFoundException("Failed to remap class " + name, t);
+        }
+
+        return result;
     }
 }
