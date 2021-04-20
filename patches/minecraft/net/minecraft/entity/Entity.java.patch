@@ -1176,20 +1176,15 @@
        return 1;
     }
  
-@@ -2796,7 +_,12 @@
+@@ -2796,6 +_,8 @@
  
           this.field_233555_aA_ = true;
        }
--
-+      if (!this.rawposhack()) if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && !this.field_70128_L) this.field_70170_p.func_212866_a_((int) Math.floor(p_226288_1_) >> 4, (int) Math.floor(p_226288_5_) >> 4); // Forge - ensure target chunk is loaded. // Mohist - Don't load chunks for pos changes
-+
-+   }
-+
-+   private boolean rawposhack() {
-+      return false;
++      if (true) return; // Mohist - Don't load chunks for pos changes & Fix a minor typo
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && !this.field_70128_L) this.field_70170_p.func_212866_a_((int) Math.floor(p_226288_1_) >> 4, (int) Math.floor(p_226288_5_) >> 4); // Forge - ensure target chunk is loaded.
+ 
     }
  
-    public void func_70623_bb() {
 @@ -2810,5 +_,72 @@
     @FunctionalInterface
     public interface IMoveCallback {
