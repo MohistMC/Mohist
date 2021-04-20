@@ -19,10 +19,7 @@ public class ProxyClass {
     }
 
     public static Class<?> forName(String className, boolean initialize, ClassLoader loader) throws ClassNotFoundException {
-        if (className.startsWith("net.minecraft.")) {
-            className = ASMUtils.toClassName(RemapUtils.map(className.replace('.', '/')));
-        }
-        return Class.forName(className, initialize, loader);
+        return Class.forName(ASMUtils.toClassName(RemapUtils.map(className.replace('.', '/'))), initialize, loader);
     }
 
     public static Method getDeclaredMethod(Class<?> clazz, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
