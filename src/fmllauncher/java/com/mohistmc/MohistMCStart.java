@@ -6,6 +6,8 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
+
+import com.mohistmc.util.CustomFlagsHandler;
 import com.mohistmc.util.InstallUtils;
 import static com.mohistmc.util.InstallUtils.startInstallation;
 import com.mohistmc.util.JarLoader;
@@ -19,8 +21,9 @@ public class MohistMCStart {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
     }
 
-    public static void main() throws Exception {
+    public static void main(String[] args) throws Exception {
         MohistConfigUtil.copyMohistConfig();
+        CustomFlagsHandler.handleCustomArgs(args);
 
         if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +

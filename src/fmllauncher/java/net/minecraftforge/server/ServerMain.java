@@ -28,11 +28,13 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import com.mohistmc.MohistMCStart;
+import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.JarTool;
@@ -53,7 +55,7 @@ public class ServerMain {
       }
 
         // Mohist start - Download Java 11 if required
-        if (Float.parseFloat(System.getProperty("java.class.version")) < 55f) {
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 55f || MohistConfigUtil.bMohist("use_custom_java11", "false")) {
             if (!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));
             try {
                 DownloadJava.run(args); // Mohist - Invoke DownloadJava with actual launchargs
@@ -66,7 +68,7 @@ public class ServerMain {
         // Mohist end
 
         try {
-            MohistMCStart.main();
+            MohistMCStart.main(args);
             // Mohist start - Restart the server if libraries were changed
             if (mohistLibsChanged > 0) {
                 ArrayList<String> cmd = new ArrayList<>();
@@ -79,7 +81,7 @@ public class ServerMain {
                     cmd.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
                     cmd.add("-jar");
                     cmd.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-                    for (String arg : args) cmd.add(arg);
+                    cmd.addAll(Arrays.asList(args));
                     System.out.println(i18n.get("libraries.restart", mohistLibsChanged));
                     UpdateUtils.restartServer(cmd, true);
                 }

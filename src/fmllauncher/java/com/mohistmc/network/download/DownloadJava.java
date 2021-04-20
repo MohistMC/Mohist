@@ -1,6 +1,8 @@
 package com.mohistmc.network.download;
 
 import static com.mohistmc.config.MohistConfigUtil.bMohist;
+import static com.mohistmc.util.CustomFlagsHandler.getCustomFlags;
+import static com.mohistmc.util.CustomFlagsHandler.hasCustomFlags;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,20 +33,16 @@ public class DownloadJava {
         launchArgs.addAll(Arrays.asList(args));
 
         if (!launchArgs.contains("launchedWithCustomJava11")) {
-            if (!javabin.exists()) {
-                if (!bMohist("use_custom_java8", "false")) {
-                    System.out.println(i18n.get("oldjava.action"));
-                    System.out.println(i18n.get("oldjava.serveronly"));
-                    Scanner scan = new Scanner(System.in);
-                    String input = scan.nextLine();
-                    if (input.equalsIgnoreCase("Yes")) {
-                      scan.close();
-                      searchJava();
-                    } else {
-                        System.out.println(i18n.get("oldjava.no"));
-                        System.exit(0);
-                    }
-                } else searchJava();
+            if (!javabin.exists() && !bMohist("use_custom_java11", "false")) {
+              System.out.println(i18n.get("oldjava.action"));
+              System.out.println(i18n.get("oldjava.serveronly"));
+              Scanner scan = new Scanner(System.in);
+              String input = scan.nextLine();
+              if (input.equalsIgnoreCase("Yes")) searchJava();
+              else {
+                System.out.println(i18n.get("oldjava.no"));
+                System.exit(0);
+              }
             } else searchJava();
         }
     }
@@ -79,11 +77,12 @@ public class DownloadJava {
         }
 
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
-        launchArgs.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
+        launchArgs.addAll(getCustomFlags());
         launchArgs.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
         launchArgs.add("launchedWithCustomJava11");
+        if(hasCustomFlags) launchArgs.add("launchedWithCustomArgs");
         command.addAll(launchArgs);
-        System.out.println(i18n.get("oldjava.run", os(), command));
+        System.out.println(i18n.get("oldjava.run", os(), String.join(" ", command)));
         UpdateUtils.restartServer(command, true);
     }
 
