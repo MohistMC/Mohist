@@ -1,0 +1,11 @@
+--- a/net/minecraft/pathfinding/PathFinder.java
++++ b/net/minecraft/pathfinding/PathFinder.java
+@@ -40,7 +_,7 @@
+    }
+ 
+    @Nullable
+-   private Path func_227479_a_(PathPoint p_227479_1_, Map<FlaggedPathPoint, BlockPos> p_227479_2_, float p_227479_3_, int p_227479_4_, float p_227479_5_) {
++   public Path func_227479_a_(PathPoint p_227479_1_, Map<FlaggedPathPoint, BlockPos> p_227479_2_, float p_227479_3_, int p_227479_4_, float p_227479_5_) {
+       Set<FlaggedPathPoint> set = p_227479_2_.keySet();
+       p_227479_1_.field_75836_e = 0.0F;
+       p_227479_1_.field_75833_f = this.func_224776_a(p_227479_1_, set);
