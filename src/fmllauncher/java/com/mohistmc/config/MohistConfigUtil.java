@@ -11,11 +11,12 @@ public class MohistConfigUtil {
 
     public static String getString(File f, String key, String defaultReturn) {
         try {
-            for (String line : Files.readAllLines(f.toPath())) {
-                if (line.contains(key + ": ")) {
-                    return line.split(key + ": ")[1].replace("'", "").replace("\"", "");
+            for (String line : Files.readAllLines(f.toPath()))
+                if (line.contains(key + ":")) {
+                    String[] spl = line.split(key + ":");
+                    if(spl[1].startsWith(" ")) spl[1] = spl[1].substring(1);
+                    return spl[1].replace("'", "").replace("\"", "");
                 }
-            }
         } catch (Throwable ignored) {
         }
         return defaultReturn;

@@ -18,6 +18,8 @@ public class MohistConfig extends ConfigBase {
     public final StringSetting server_type = new StringSetting(this, "mohist.server_type", "FML");
     public final StringSetting lang = new StringSetting(this, "mohist.lang", "xx_XX");
     public final StringSetting console_name = new StringSetting(this, "mohist.console_name", "Server");
+    public final StringSetting custom_flags = new StringSetting(this, "mohist.custom_flags", "aaaa bbbb");
+    public final BoolSetting use_custom_java11 = new BoolSetting(this, "mohist.use_custom_java11", false);
 
     /* ======================================================================== */
 
