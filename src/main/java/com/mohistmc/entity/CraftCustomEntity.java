@@ -36,13 +36,4 @@ public class CraftCustomEntity extends CraftEntity {
             return EntityType.UNKNOWN;
         }
     }
-
-    @Override
-    public String getCustomName() {
-        String name = this.getHandle().getCustomName().getString();
-        if (name == null || name.length() == 0) {
-            return this.entity.getName().getString();
-        }
-        return name;
-    }
 }
