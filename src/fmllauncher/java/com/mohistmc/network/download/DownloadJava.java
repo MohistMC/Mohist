@@ -30,7 +30,7 @@ public class DownloadJava {
     public static void run(String[] args) throws Exception {
         launchArgs.addAll(Arrays.asList(args));
 
-        if (!launchArgs.contains("launchedWithCustomJava8")) {
+        if (!launchArgs.contains("launchedWithCustomJava11")) {
             if (!javabin.exists()) {
                 if (!bMohist("use_custom_java8", "false")) {
                     System.out.println(i18n.get("oldjava.action"));
@@ -81,7 +81,7 @@ public class DownloadJava {
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
         launchArgs.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
         launchArgs.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-        launchArgs.add("launchedWithCustomJava8");
+        launchArgs.add("launchedWithCustomJava11");
         command.addAll(launchArgs);
         System.out.println(i18n.get("oldjava.run", os(), command));
         UpdateUtils.restartServer(command, true);
