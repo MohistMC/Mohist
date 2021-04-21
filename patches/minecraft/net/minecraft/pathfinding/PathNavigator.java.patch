@@ -52,3 +52,14 @@
        boolean flag = d0 < (double)this.field_188561_o && d2 < (double)this.field_188561_o && d1 < 1.0D;
        if (flag || this.field_75515_a.func_233660_b_(this.field_75514_c.func_237225_h_().field_186287_m) && this.func_234112_b_(vector3d)) {
           this.field_75514_c.func_75875_a();
+@@ -219,8 +_,8 @@
+       this.func_179677_a(vector3d);
+    }
+ 
+-   private boolean func_234112_b_(Vector3d p_234112_1_) {
+-      if (this.field_75514_c.func_75873_e() + 1 >= this.field_75514_c.func_75874_d()) {
++   public boolean func_234112_b_(Vector3d p_234112_1_) {
++      if (this.field_75514_c == null || this.field_75514_c.func_75873_e() + 1 >= this.field_75514_c.func_75874_d()) {
+          return false;
+       } else {
+          Vector3d vector3d = Vector3d.func_237492_c_(this.field_75514_c.func_242948_g());
