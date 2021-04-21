@@ -45,8 +45,6 @@ import cpw.mods.modlauncher.Launcher;
 
 public class ServerMain {
 
-    public static int mohistLibsChanged; // Mohist - Restart the server if libraries were changed
-
     public static void main(String[] args) {
       String path = JarTool.getJarPath();
       if(path != null && (path.contains("+") || path.contains("!"))) {
@@ -65,27 +63,9 @@ public class ServerMain {
                 System.exit(1);
             }
         }
-        // Mohist end
 
         try {
             MohistMCStart.main(args);
-            // Mohist start - Restart the server if libraries were changed
-            if (mohistLibsChanged > 0) {
-                ArrayList<String> cmd = new ArrayList<>();
-                Method current = Class.forName("java.lang.ProcessHandle").getMethod("current");
-                Method info = Class.forName("java.lang.ProcessHandle").getMethod("info");
-                Method command = Class.forName("java.lang.ProcessHandle$Info").getMethod("command");
-                Optional<String> java = (Optional<String>) command.invoke(info.invoke(current.invoke(null)));
-                if (java.isPresent()) {
-                    cmd.add(java.get());
-                    cmd.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
-                    cmd.add("-jar");
-                    cmd.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-                    cmd.addAll(Arrays.asList(args));
-                    System.out.println(i18n.get("libraries.restart", mohistLibsChanged));
-                    UpdateUtils.restartServer(cmd, true);
-                }
-            }
             // Mohist end
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
