@@ -1,0 +1,80 @@
+package com.mohistmc.api.mc;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import com.mojang.datafixers.util.Either;
+
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ChunkHolder;
+import net.minecraft.world.server.ChunkHolder.IChunkLoadingError;
+import net.minecraft.world.server.ChunkHolder.LocationType;
+import net.minecraft.world.server.ServerWorld;
+
+/**
+ * Mohist API for Minecraft chunks.
+ * @author KR33PY
+ */
+public abstract class ChunkMcAPI {
+
+    /**
+     * Returns true if the chunk on provided coordinates is loaded and has LocationType of BORDER or higher.
+     */
+    public static boolean isBorderChunkLoaded(ServerWorld world, int cX, int cZ) {
+        return getBorderChunkNow(world, cX, cZ).isPresent();
+    }
+
+    /**
+     * Returns true if the chunk on provided coordinates is loaded and has LocationType of TICKING or higher.
+     */
+    public static boolean isTickingChunkLoaded(ServerWorld world, int cX, int cZ) {
+        return getTickingChunkNow(world, cX, cZ).isPresent();
+    }
+
+    /**
+     * Returns true if the chunk on provided coordinates is loaded and has LocationType of ENTITY_TICKING.
+     */
+    public static boolean isEntityTickingChunkLoaded(ServerWorld world, int cX, int cZ) {
+        return getEntityTickingChunkNow(world, cX, cZ).isPresent();
+    }
+
+    /**
+     * Returns non-empty optional if the chunk on provided coordinates is loaded and has LocationType of BORDER or higher.
+     */
+    public static Optional<Chunk> getBorderChunkNow(ServerWorld world, int cX, int cZ) {
+        return getChunkNow(world, cX, cZ, LocationType.BORDER);
+    }
+
+    /**
+     * Returns non-empty optional if the chunk on provided coordinates is loaded and has LocationType of TICKING or higher.
+     */
+    public static Optional<Chunk> getTickingChunkNow(ServerWorld world, int cX, int cZ) {
+        return getChunkNow(world, cX, cZ, LocationType.TICKING);
+    }
+
+    /**
+     * Returns non-empty optional if the chunk on provided coordinates is loaded and has LocationType of ENTITY_TICKING.
+     */
+    public static Optional<Chunk> getEntityTickingChunkNow(ServerWorld world, int cX, int cZ) {
+        return getChunkNow(world, cX, cZ, LocationType.ENTITY_TICKING);
+    }
+
+    private static Optional<Chunk> getChunkNow(ServerWorld world, int cX, int cZ, LocationType type) {
+        ChunkHolder holder = world.getChunkSource().chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(cX, cZ));
+        if (holder != null) {
+            CompletableFuture<Either<Chunk, IChunkLoadingError>> future;
+            switch (type) {
+                case BORDER: future = holder.getFullChunkFuture(); break;
+                case TICKING: future = holder.getTickingChunkFuture(); break;
+                case ENTITY_TICKING: future = holder.getEntityTickingChunkFuture(); break;
+                default: future = null; break;
+            }
+            if (future != null) {
+                return future.getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left();
+            }
+        }
+        return Optional.empty();
+    }
+
+}
