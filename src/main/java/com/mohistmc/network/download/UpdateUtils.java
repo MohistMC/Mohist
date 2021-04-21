@@ -46,8 +46,10 @@ public class UpdateUtils {
                 System.out.println(Message.getFormatString("update.latest", new Object[]{"1.9", jar_sha, build_number}));
             else {
                 System.out.println(Message.getFormatString("update.detect", new Object[]{build_number, jar_sha, time}));
-                if (bMohist("check_update_auto_download"))
-                    downloadFile("mhttps://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
+                if (bMohist("check_update_auto_download")) {
+                    downloadFile("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
+                    restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())));
+                }
             }
         } catch (Throwable e) {
             System.out.println(Message.getString("check.update.noci"));
@@ -55,7 +57,7 @@ public class UpdateUtils {
     }
 
     public static void downloadFile(String URL, File f) throws Exception {
-        URLConnection conn = getConn(URL.replace("mhttps", "https"));
+        URLConnection conn = getConn(URL);
         System.out.println(Message.getFormatString("file.download.start", new Object[]{f.getName(), getSize(conn.getContentLength())}));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -74,9 +76,7 @@ public class UpdateUtils {
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
-        if (URL.startsWith("mhttps"))
-            restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())));
-        else System.out.println(Message.getFormatString("file.download.ok", new Object[]{f.getName()}));
+        System.out.println(Message.getFormatString("file.download.ok", new Object[]{f.getName()}));
     }
 
     public static File getMohistJar() {
