@@ -1,20 +1,18 @@
 --- a/net/minecraft/inventory/container/ChestContainer.java
 +++ b/net/minecraft/inventory/container/ChestContainer.java
-@@ -1,5 +_,6 @@
+@@ -1,7 +_,11 @@
  package net.minecraft.inventory.container;
  
-+import net.minecraft.block.ChestBlock.DoubleInventory;
- import net.minecraft.entity.player.PlayerEntity;
- import net.minecraft.entity.player.PlayerInventory;
- import net.minecraft.inventory.IInventory;
-@@ -7,11 +_,35 @@
- import net.minecraft.item.ItemStack;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
- 
- public class ChestContainer extends Container {
++
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.entity.player.PlayerInventory;
++import net.minecraft.inventory.DoubleSidedInventory;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.inventory.Inventory;
+ import net.minecraft.item.ItemStack;
+@@ -12,6 +_,30 @@
     private final IInventory field_75155_e;
     private final int field_75154_f;
  
@@ -30,8 +28,10 @@
 +      CraftInventory inventory;
 +      if (this.field_75155_e instanceof PlayerInventory) {
 +         inventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryPlayer((PlayerInventory) this.field_75155_e);
-+      } else if (this.field_75155_e instanceof DoubleInventory) {
-+         inventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest((DoubleInventory) this.field_75155_e);
++      // Mohist start - Double Chest inventory holder is no longer null
++      } else if (this.field_75155_e instanceof DoubleSidedInventory) {
++         inventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) this.field_75155_e);
++      // Mohist end
 +      } else {
 +         inventory = new CraftInventory(this.field_75155_e);
 +      }
