@@ -1,16 +1,29 @@
 --- a/net/minecraft/block/FireBlock.java
 +++ b/net/minecraft/block/FireBlock.java
-@@ -24,6 +_,10 @@
- import net.minecraft.world.IWorldReader;
- import net.minecraft.world.World;
- import net.minecraft.world.server.ServerWorld;
+@@ -1,12 +_,20 @@
+ package net.minecraft.block;
+ 
+-import com.google.common.collect.ImmutableMap;
+-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.function.Function;
+ import java.util.stream.Collectors;
++
 +import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockBurnEvent;
 +import org.bukkit.event.block.BlockFadeEvent;
- 
- public class FireBlock extends AbstractFireBlock {
-    public static final IntegerProperty field_176543_a = BlockStateProperties.field_208171_X;
++
++import com.google.common.collect.ImmutableMap;
++import com.mohistmc.api.mc.ChunkMcAPI;
++
++import it.unimi.dsi.fastutil.objects.Object2IntMap;
++import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import net.minecraft.item.BlockItemUseContext;
+ import net.minecraft.state.BooleanProperty;
+ import net.minecraft.state.IntegerProperty;
 @@ -78,7 +_,18 @@
     }
  
@@ -103,6 +116,14 @@
              BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
              for(int l = -1; l <= 1; ++l) {
+@@ -168,6 +_,7 @@
+                         }
+ 
+                         blockpos$mutable.func_239621_a_(p_225534_3_, l, j1, i1);
++                        if (!ChunkMcAPI.isTickingChunkLoaded(p_225534_2_, blockpos$mutable.func_177958_n() >> 4, blockpos$mutable.func_177952_p() >> 4)) continue; // Mohist - Don't load chunks for fire spread
+                         int l1 = this.func_176538_m(p_225534_2_, blockpos$mutable);
+                         if (l1 > 0) {
+                            int i2 = (l1 + 40 + p_225534_2_.func_175659_aa().func_151525_a() * 7) / (i + 30);
 @@ -177,7 +_,14 @@
  
                             if (i2 > 0 && p_225534_4_.nextInt(k1) <= i2 && (!p_225534_2_.func_72896_J() || !this.func_176537_d(p_225534_2_, blockpos$mutable))) {
