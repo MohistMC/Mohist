@@ -23,10 +23,9 @@
  */
 package co.aikar.timings;
 
-import co.aikar.util.JSONUtil;
 import com.google.common.collect.Sets;
+import com.mohistmc.configuration.MohistConfig;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.packs.ResourcePackLoader;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -230,8 +229,8 @@ public class TimingsExport extends Thread {
 
         parent.put("config", createObject(
             pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
-            pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null)),
-            pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
+            pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null))
+            //pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
         ));
 
         new TimingsExport(listeners, parent, history).start();
