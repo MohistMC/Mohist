@@ -28,7 +28,7 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Objects;
-@@ -33,8 +_,40 @@
+@@ -33,8 +_,41 @@
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -53,6 +53,7 @@
 +import com.google.common.collect.Maps;
 +import com.google.common.collect.Queues;
 +import com.google.common.collect.Sets;
++import com.mohistmc.api.mc.ChunkMcAPI;
 +import com.mohistmc.config.MohistConfigUtil;
 +import com.mohistmc.configuration.TickConfig;
 +import com.mohistmc.inventory.CraftCustomInventory;
@@ -194,7 +195,7 @@
 +   // Mohist start - Add isPosLoaded method to IBlockReader
 +   @Override
 +   public boolean isPosLoaded(BlockPos pos) {
-+      return this.field_241102_C_.func_225313_a(pos.func_177958_n() >> 4, pos.func_177952_p() >> 4) != null; // Mohist - Rewrite isPosLoaded
++      return ChunkMcAPI.isBorderChunkLoaded(this, pos.func_177958_n() >> 4, pos.func_177952_p() >> 4); // Mohist - Rewrite isPosLoaded & Partially rewrite to use ChunkMcAPI
 +   }
 +   // Mohist end
 +
@@ -415,7 +416,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -561,36 +_,70 @@
+@@ -561,36 +_,74 @@
     }
  
     private void func_73051_P() {
@@ -450,13 +451,15 @@
 -         fluidstate.func_206880_a(this, p_205339_1_.field_180282_a);
 -      }
 -
-+      ChunkHolder holder = this.field_241102_C_.field_217237_a.func_219219_b(ChunkPos.func_77272_a(p_205339_1_.field_180282_a.func_177958_n() >> 4, p_205339_1_.field_180282_a.func_177952_p() >> 4));
-+      if (holder == null) return;
-+      Chunk chunk = holder.func_219298_c();
-+      if (chunk == null) return;
-+      FluidState state = chunk.func_204610_c(p_205339_1_.field_180282_a);
-+      if (state.func_206886_c() != p_205339_1_.func_151351_a()) return;
-+      state.func_206880_a(this, p_205339_1_.field_180282_a);
++      // Mohist start - Partially rewrite to use ChunkMcAPI
++      BlockPos pos = p_205339_1_.field_180282_a;
++      ChunkMcAPI.getTickingChunkNow(this, pos.func_177958_n() >> 4, pos.func_177952_p() >> 4).ifPresent((chunk) -> {
++         FluidState state = chunk.func_204610_c(pos);
++         if (state.func_206886_c() == p_205339_1_.func_151351_a()) {
++            state.func_206880_a(this, pos);
++         }
++      });
++      // Mohist end
     }
  
     private void func_205338_b(NextTickListEntry<Block> p_205338_1_) {
@@ -465,13 +468,15 @@
 -         blockstate.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
 -      }
 -
-+      ChunkHolder holder = this.field_241102_C_.field_217237_a.func_219219_b(ChunkPos.func_77272_a(p_205338_1_.field_180282_a.func_177958_n() >> 4, p_205338_1_.field_180282_a.func_177952_p() >> 4));
-+      if (holder == null) return;
-+      Chunk chunk = holder.func_219298_c();
-+      if (chunk == null) return;
-+      BlockState state = chunk.func_180495_p(p_205338_1_.field_180282_a);
-+      if (!state.func_203425_a(p_205338_1_.func_151351_a())) return;
-+      state.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
++      // Mohist start - Partially rewrite to use ChunkMcAPI
++      BlockPos pos = p_205338_1_.field_180282_a;
++      ChunkMcAPI.getTickingChunkNow(this, pos.func_177958_n() >> 4, pos.func_177952_p() >> 4).ifPresent((chunk) -> {
++         BlockState state = chunk.func_180495_p(pos);
++         if (state.func_203425_a(p_205338_1_.func_151351_a())) {
++            state.func_227033_a_(this, pos, this.field_73012_v);
++         }
++      });
++      // Mohist end
     }
 +   // Mohist end
  
