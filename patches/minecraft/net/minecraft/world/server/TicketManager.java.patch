@@ -1,6 +1,52 @@
 --- a/net/minecraft/world/server/TicketManager.java
 +++ b/net/minecraft/world/server/TicketManager.java
-@@ -37,7 +_,7 @@
+@@ -1,26 +_,33 @@
+ package net.minecraft.world.server;
+ 
++import java.util.Iterator;
++import java.util.Set;
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.Executor;
++
++import javax.annotation.Nullable;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.Sets;
+ import com.mojang.datafixers.util.Either;
++
+ import it.unimi.dsi.fastutil.longs.Long2ByteMap;
+ import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.Long2IntMap;
+ import it.unimi.dsi.fastutil.longs.Long2IntMaps;
+ import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
++import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.LongIterator;
+ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+ import it.unimi.dsi.fastutil.longs.LongSet;
+-import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
+ import it.unimi.dsi.fastutil.objects.ObjectIterator;
+ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+ import it.unimi.dsi.fastutil.objects.ObjectSet;
+-import java.util.Set;
+-import java.util.concurrent.CompletableFuture;
+-import java.util.concurrent.Executor;
+-import javax.annotation.Nullable;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.util.SortedArraySet;
+ import net.minecraft.util.concurrent.ITaskExecutor;
+@@ -30,14 +_,12 @@
+ import net.minecraft.world.chunk.ChunkDistanceGraph;
+ import net.minecraft.world.chunk.ChunkStatus;
+ import net.minecraft.world.chunk.ChunkTaskPriorityQueueSorter;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+ 
+ public abstract class TicketManager {
     private static final Logger field_219373_a = LogManager.getLogger();
     private static final int field_219374_b = 33 + ChunkStatus.func_222599_a(ChunkStatus.field_222617_m) - 2;
     private final Long2ObjectMap<ObjectSet<ServerPlayerEntity>> field_219375_c = new Long2ObjectOpenHashMap<>();
@@ -18,6 +64,36 @@
     protected TicketManager(Executor p_i50707_1_, Executor p_i50707_2_) {
        ITaskExecutor<Runnable> itaskexecutor = ITaskExecutor.func_213140_a("player ticket throttler", p_i50707_2_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(itaskexecutor), p_i50707_1_, 4);
+@@ -64,11 +_,26 @@
+ 
+       while(objectiterator.hasNext()) {
+          Entry<SortedArraySet<Ticket<?>>> entry = objectiterator.next();
+-         if (entry.getValue().removeIf((p_219370_1_) -> {
+-            return p_219370_1_.func_223182_a(this.field_219389_q);
+-         })) {
++         // Mohist start - Introduce 'chunk_unload_delay' option
++         boolean rem = false, remUnk = false;
++         Iterator<Ticket<?>> it = entry.getValue().iterator();
++         while (it.hasNext()) {
++            Ticket<?> ticket = it.next();
++            if (ticket.func_223182_a(this.field_219389_q)) {
++               if (ticket.func_219479_a() == TicketType.field_219494_g) {
++                  remUnk = true;
++               }
++               rem = true;
++               it.remove();
++            }
++         }
++         if (rem) {
++            if (remUnk) {
++               entry.getValue().func_226175_a_(new Ticket<ChunkPos>(TicketType.UNLOAD_DELAY, 33, new ChunkPos(entry.getLongKey()), false)).func_229861_a_(this.field_219389_q);
++            }
+             this.field_219378_f.func_215491_b(entry.getLongKey(), func_229844_a_(entry.getValue()), false);
+          }
++         // Mohist end
+ 
+          if (entry.getValue().isEmpty()) {
+             objectiterator.remove();
 @@ -98,10 +_,22 @@
        }
  
@@ -67,12 +143,23 @@
     }
  
     private void func_219349_b(long p_219349_1_, Ticket<?> p_219349_3_) {
-@@ -155,7 +_,35 @@
+@@ -150,12 +_,46 @@
+       if (sortedarrayset.remove(p_219349_3_)) {
+       }
+ 
++      // Mohist start - Introduce 'chunk_unload_delay' option
++      if (p_219349_3_.func_219479_a() == TicketType.field_219490_c) {
++         sortedarrayset.func_226175_a_(new Ticket<ChunkPos>(TicketType.UNLOAD_DELAY, 33, new ChunkPos(p_219349_1_), false)).func_229861_a_(this.field_219389_q);
++      }
++      // Mohist end
++
+       if (sortedarrayset.isEmpty()) {
+          this.field_219377_e.remove(p_219349_1_);
        }
  
        this.field_219378_f.func_215491_b(p_219349_1_, func_229844_a_(sortedarrayset), false);
 -   }
-+	  
++
 +	  if (p_219349_3_.isForceTicks()) {
 +          SortedArraySet<Ticket<?>> tickets = forcedTickets.get(p_219349_1_);
 +          if (tickets != null) {
@@ -146,7 +233,7 @@
     public String func_225412_c() {
        return this.field_219384_l.func_225396_a();
     }
-+   
++
 +   public boolean shouldForceTicks(long chunkPos) {
 +       SortedArraySet<Ticket<?>> tickets = forcedTickets.get(chunkPos);
 +       return tickets != null && !tickets.isEmpty();

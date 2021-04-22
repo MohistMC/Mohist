@@ -1,11 +1,18 @@
 --- a/net/minecraft/world/server/TicketType.java
 +++ b/net/minecraft/world/server/TicketType.java
-@@ -5,11 +_,12 @@
+@@ -1,6 +_,11 @@
+ package net.minecraft.world.server;
+ 
+ import java.util.Comparator;
++
++import org.bukkit.plugin.Plugin;
++
++import com.mohistmc.config.MohistConfigUtil;
++
+ import net.minecraft.util.Unit;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
- import net.minecraft.util.math.vector.Vector3i;
-+import org.bukkit.plugin.Plugin;
- 
+@@ -9,7 +_,7 @@
  public class TicketType<T> {
     private final String field_219495_h;
     private final Comparator<T> field_219496_i;
@@ -14,7 +21,7 @@
     public static final TicketType<Unit> field_219488_a = func_219484_a("start", (p_219486_0_, p_219486_1_) -> {
        return 0;
     });
-@@ -22,6 +_,10 @@
+@@ -22,6 +_,11 @@
     public static final TicketType<BlockPos> field_219493_f = func_223183_a("portal", Vector3i::compareTo, 300);
     public static final TicketType<Integer> field_223185_g = func_223183_a("post_teleport", Integer::compareTo, 5);
     public static final TicketType<ChunkPos> field_219494_g = func_223183_a("unknown", Comparator.comparingLong(ChunkPos::func_201841_a), 1);
@@ -22,6 +29,7 @@
 +   public static final TicketType<Unit> PLUGIN = func_219484_a("plugin", (a, b) -> 0); // CraftBukkit
 +   public static final TicketType<Plugin> PLUGIN_TICKET = func_219484_a("plugin_ticket", Comparator.comparing(plugin -> plugin.getClass().getName())); // CraftBukkit
 +
++   public static final TicketType<ChunkPos> UNLOAD_DELAY = func_223183_a("unload_delay", Comparator.comparingLong(ChunkPos::func_201841_a), Integer.valueOf(MohistConfigUtil.sMohist("chunk_unload_delay", "5")) * 20); // Mohist - Introduce 'chunk_unload_delay' option
  
     public static <T> TicketType<T> func_219484_a(String p_219484_0_, Comparator<T> p_219484_1_) {
        return new TicketType<>(p_219484_0_, p_219484_1_, 0L);
