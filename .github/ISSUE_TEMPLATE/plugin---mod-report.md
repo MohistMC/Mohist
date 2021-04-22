@@ -1,6 +1,6 @@
 ---
 name: Plugin & Mod report
-about: Want to report a bug with specfici mod or plugin ? It's here !
+about: Want to report a bug for a specific mod / plugin ? It's here !
 title: "[MC VERSION] Name of the bug"
 labels: waiting
 assignees: ''
