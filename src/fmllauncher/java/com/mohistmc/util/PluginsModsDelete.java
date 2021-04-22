@@ -16,7 +16,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class PluginsModsDelete {
 
-    public static void chekPlugins(Fix fix) throws Exception {
+    public static void chekPlugins(FixPlugin fix) throws Exception {
         File plugins = new File("plugins");
         String mainClassSplit = fix.mainClass.replaceAll("\\.", "/") + ".class";
         if (!plugins.exists())
@@ -84,8 +84,49 @@ public class PluginsModsDelete {
         }
     }
 
-    public static void chekMods(Fix fix) {
+    public static void chekMods(FixMods fix) throws Exception {
+        File mods = new File("mods");
+        if (!mods.exists())
+            mods.mkdir();
+        for (File file : Objects.requireNonNull(mods.listFiles((dir, name) -> name.endsWith(".jar")))) {
+            if (!fileExists(file, "META-INF/mods.toml")) return;
 
+            JarFile jarFile = new JarFile(file);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(jarFile.getInputStream(new ZipEntry("META-INF/mods.toml"))));
+            boolean versionFound = false;
+            boolean modidFound = false;
+
+            String line;
+            String version = "";
+            String modid ="";
+            String link = "";
+            try {
+                version = fix.version_fix;
+                modid = fix.modid;
+                link = fix.urlFix;
+            } catch (Exception ignored) {
+            }
+
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.startsWith("version=") && !line.startsWith("version=\"" + version + "\"")) {
+                    versionFound = true;
+                }
+
+                if (line.startsWith("modId=") && line.startsWith("modId=\"" + modid + "\""))
+                    modidFound = true;
+            }
+            bufferedReader.close();
+            jarFile.close();
+
+            if (!version.equals("")) {
+                if (versionFound && modidFound) {
+                    System.out.println(i18n.get("update.modversion", new Object[]{file.getName().replace(".jar", ""), version, link, ""}));
+                    System.out.println(i18n.get("update.downloadmodversion", new Object[]{file.getName().replace(".jar", "")}));
+                    if (new Scanner(System.in).next().equals("yes"))
+                        downloadFile(link, new File(mods + "/" + file.getName()));
+                }
+            }
+        }
     }
 
     public static void chekMods(String mainClass) throws Exception {
@@ -125,14 +166,26 @@ public class PluginsModsDelete {
         return false;
     }
 
-    public static class Fix {
+    public static class FixPlugin {
 
         public String mainClass;
         public String urlFix;
         public String version_fix;
 
-        public Fix(String mainClass, String url_fix, String version_fix) {
+        public FixPlugin(String mainClass, String url_fix, String version_fix) {
             this.mainClass = mainClass;
+            this.urlFix = url_fix;
+            this.version_fix = version_fix;
+        }
+    }
+
+    public static class FixMods {
+        public String modid;
+        public String urlFix;
+        public String version_fix;
+
+        public FixMods(String modid, String url_fix, String version_fix) {
+            this.modid = modid;
             this.urlFix = url_fix;
             this.version_fix = version_fix;
         }
