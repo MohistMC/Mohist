@@ -64,7 +64,7 @@ public enum Attribute implements Keyed {
 
     private final NamespacedKey key;
 
-    public Attribute(String key) {
+    Attribute(String key) {
         this.key = NamespacedKey.minecraft(key);
     }
 
