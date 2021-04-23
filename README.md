@@ -34,7 +34,7 @@ Progress
   * Spigot(a25e8ed2)  
   * Paper(2609a118)
 - [x] Beta release
-- [ ] The nms patch is compatible with mms - 42%
+- [ ] The nms patch is compatible with mms - 45%
 
 Getting Help
 ------

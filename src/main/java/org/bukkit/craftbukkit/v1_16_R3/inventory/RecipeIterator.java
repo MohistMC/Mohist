@@ -4,6 +4,8 @@ import com.mohistmc.recipe.RecipeUtils;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.server.MinecraftServer;
@@ -11,16 +13,25 @@ import net.minecraft.util.ResourceLocation;
 import org.bukkit.inventory.Recipe;
 
 public class RecipeIterator implements Iterator<Recipe> {
-    private final Iterator<Entry<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>>> recipes;
+    private final Iterator<Entry<IRecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, IRecipe<?>>>> recipes;
     private Iterator<IRecipe<?>> current;
 
     public RecipeIterator() {
-        this.recipes = MinecraftServer.getServer().getRecipeManager().recipes.entrySet().iterator();
+        this.recipes = MinecraftServer.getServer().getRecipeManager().recipesCB.entrySet().iterator();
     }
 
     @Override
     public boolean hasNext() {
-        return (current != null && current.hasNext()) || recipes.hasNext();
+        if (current != null && current.hasNext()) {
+            return true;
+        }
+
+        if (recipes.hasNext()) {
+            current = recipes.next().getValue().values().iterator();
+            return hasNext();
+        }
+
+        return false;
     }
 
     @Override
@@ -29,7 +40,7 @@ public class RecipeIterator implements Iterator<Recipe> {
             current = recipes.next().getValue().values().iterator();
         }
 
-        return RecipeUtils.toBukkitRecipe(current.next());
+        return current.next().toBukkitRecipe();
     }
 
     @Override
