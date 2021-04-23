@@ -162,7 +162,7 @@
           serverworld1 = this.field_72400_f.func_241755_D_();
        } else {
           serverworld1 = serverworld;
-@@ -142,20 +_,35 @@
+@@ -142,20 +_,34 @@
           s1 = p_72355_1_.func_74430_c().toString();
        }
  
@@ -197,11 +197,10 @@
        serverplaynethandler.func_147359_a(new STagsListPacket(this.field_72400_f.func_244266_aF()));
 +      serverplaynethandler.func_147359_a(new SEntityStatusPacket(p_72355_2_, (byte) (serverworld1.func_82736_K().func_223586_b(GameRules.field_223612_o) ? 22 : 23))); // Paper - fix this rule not being initialized on the client
 +      net.minecraftforge.fml.network.NetworkHooks.syncCustomTagTypes(p_72355_2_, this.field_72400_f.func_244266_aF());
-+
        this.func_187243_f(p_72355_2_);
        p_72355_2_.func_147099_x().func_150877_d();
        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
-@@ -167,19 +_,54 @@
+@@ -167,19 +_,53 @@
        } else {
           iformattabletextcomponent = new TranslationTextComponent("multiplayer.player.joined.renamed", p_72355_2_.func_145748_c_(), s);
        }
@@ -235,10 +234,6 @@
  
        for(int i = 0; i < this.field_72404_b.size(); ++i) {
           p_72355_2_.field_71135_a.func_147359_a(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, this.field_72404_b.get(i)));
--      }
--
--      serverworld1.func_217435_c(p_72355_2_);
--      this.field_72400_f.func_201300_aS().func_201383_a(p_72355_2_);
 +         ServerPlayerEntity entityplayer1 = (ServerPlayerEntity) this.field_72404_b.get(i);
 +         if (entityplayer1.getBukkitEntity().canSee(p_72355_2_.getBukkitEntity())) {
 +            entityplayer1.field_71135_a.func_147359_a(packet);
@@ -255,11 +250,12 @@
 +      if (p_72355_2_.field_70170_p == serverworld1 && !serverworld1.func_217369_A().contains(p_72355_2_)) {
 +         serverworld1.func_217435_c(p_72355_2_);
 +         this.field_72400_f.func_201300_aS().func_201383_a(p_72355_2_);
-+      }
-+
+       }
+ 
+-      serverworld1.func_217435_c(p_72355_2_);
+-      this.field_72400_f.func_201300_aS().func_201383_a(p_72355_2_);
 +      serverworld1 = p_72355_2_.func_71121_q(); // CraftBukkit - Update in case join event changed it
 +      // CraftBukkit end
-+
        this.func_72354_b(p_72355_2_, serverworld1);
        if (!this.field_72400_f.func_147133_T().isEmpty()) {
           p_72355_2_.func_175397_a(this.field_72400_f.func_147133_T(), this.field_72400_f.func_175581_ab());
