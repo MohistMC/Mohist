@@ -406,12 +406,30 @@
           }
  
           if (flag && this.func_226691_t_(blockpos3).func_201851_b() == Biome.RainType.RAIN) {
-@@ -489,7 +_,30 @@
+@@ -489,30 +_,33 @@
        }
  
        iprofiler.func_219895_b("tickBlocks");
 +      timings.chunkTicksBlocks.startTiming(); // Paper
        if (p_217441_2_ > 0) {
+-         for(ChunkSection chunksection : p_217441_1_.func_76587_i()) {
+-            if (chunksection != Chunk.field_186036_a && chunksection.func_206915_b()) {
+-               int k = chunksection.func_222632_g();
+-
+-               for(int l = 0; l < p_217441_2_; ++l) {
+-                  BlockPos blockpos1 = this.func_217383_a(i, k, j, 15);
+-                  iprofiler.func_76320_a("randomTick");
+-                  BlockState blockstate = chunksection.func_177485_a(blockpos1.func_177958_n() - i, blockpos1.func_177956_o() - k, blockpos1.func_177952_p() - j);
+-                  if (blockstate.func_204519_t()) {
+-                     blockstate.func_227034_b_(this, blockpos1, this.field_73012_v);
+-                  }
+-
+-                  FluidState fluidstate = blockstate.func_204520_s();
+-                  if (fluidstate.func_206890_h()) {
+-                     fluidstate.func_206891_b(this, blockpos1, this.field_73012_v);
+-                  }
+-
+-                  iprofiler.func_76319_b();
 +         // Mohist start - Optimize Randomtick (2nd attempt)
 +         ChunkSection[] secs = p_217441_1_.func_76587_i();
 +         for (int iSec = 0; iSec < secs.length; iSec++) {
@@ -423,7 +441,7 @@
 +               int iRnd = this.randomTickRandom.nextInt(4096);
 +               if (iRnd >= sec.tickableLocations.size()) {
 +                  continue;
-+               }
+                }
 +               int key = sec.tickableLocations.get(iRnd);
 +               int rndX = key & 15;
 +               int rndY = (key >>> (4 + 4)) & 255;
@@ -431,14 +449,9 @@
 +               BlockPos rndPos = new BlockPos(p_217441_1_.func_76632_l().func_180334_c() + rndX, (iSec * 16) + rndY, p_217441_1_.func_76632_l().func_180333_d() + rndZ);
 +               BlockState rndState = sec.func_177485_a(rndX, rndY, rndZ);
 +               rndState.func_227034_b_(this, rndPos, this.randomTickRandom);
-+            }
-+         }
-+         // Mohist end
-          for(ChunkSection chunksection : p_217441_1_.func_76587_i()) {
-             if (chunksection != Chunk.field_186036_a && chunksection.func_206915_b()) {
-                int k = chunksection.func_222632_g();
-@@ -513,6 +_,7 @@
+             }
           }
++         // Mohist end
        }
  
 +      timings.chunkTicksBlocks.stopTiming(); // Paper
