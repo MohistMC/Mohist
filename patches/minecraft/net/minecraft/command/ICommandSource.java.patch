@@ -15,8 +15,8 @@
 +
 +      // CraftBukkit start
 +      @Override
-+      public org.bukkit.command.CommandSender getBukkitSender(CommandSource wrapper) {
-+         throw new UnsupportedOperationException("Not supported yet.");
++      public CommandSender getBukkitSender(CommandSource wrapper) {
++         return wrapper.func_197028_i().console;
 +      }
 +      // CraftBukkit end
     };
@@ -27,5 +27,5 @@
  
     boolean func_195041_r_();
 +
-+   CommandSender getBukkitSender(CommandSource p0);
++   CommandSender getBukkitSender(CommandSource wrapper);
  }
