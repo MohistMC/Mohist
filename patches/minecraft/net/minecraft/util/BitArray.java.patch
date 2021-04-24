@@ -1,0 +1,40 @@
+--- a/net/minecraft/util/BitArray.java
++++ b/net/minecraft/util/BitArray.java
+@@ -1,7 +_,9 @@
+ package net.minecraft.util;
+ 
+ import java.util.function.IntConsumer;
++
+ import javax.annotation.Nullable;
++
+ import org.apache.commons.lang3.Validate;
+ 
+ public class BitArray {
+@@ -99,4 +_,27 @@
+       }
+ 
+    }
++
++   // Mohist start - Optimize Randomtick (2nd attempt)
++   public void getAll(IntConsumerDouble p_225421_1_) {
++      int i = 0;
++
++      for(long j : this.field_188145_a) {
++         for(int k = 0; k < this.field_232982_f_; ++k) {
++            p_225421_1_.accept((int)(j & this.field_188147_c), i);
++            j >>= this.field_188146_b;
++            ++i;
++            if (i >= this.field_188148_d) {
++               return;
++            }
++         }
++      }
++
++   }
++
++   @FunctionalInterface
++   public interface IntConsumerDouble {
++      void accept(int a, int b);
++   }
++   // Mohist end
+ }

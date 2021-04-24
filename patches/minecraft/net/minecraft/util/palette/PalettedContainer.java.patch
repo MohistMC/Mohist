@@ -1,6 +1,29 @@
 --- a/net/minecraft/util/palette/PalettedContainer.java
 +++ b/net/minecraft/util/palette/PalettedContainer.java
-@@ -66,8 +_,11 @@
+@@ -1,13 +_,14 @@
+ package net.minecraft.util.palette;
+ 
+-import it.unimi.dsi.fastutil.ints.Int2IntMap;
+-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+ import java.util.Arrays;
+ import java.util.Objects;
+ import java.util.concurrent.locks.ReentrantLock;
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+ import java.util.stream.Collectors;
++
++import it.unimi.dsi.fastutil.ints.Int2IntMap;
++import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.crash.ReportedException;
+@@ -61,13 +_,16 @@
+       this.func_186012_b(4);
+    }
+ 
+-   private static int func_186011_b(int p_186011_0_, int p_186011_1_, int p_186011_2_) {
++   public static int func_186011_b(int p_186011_0_, int p_186011_1_, int p_186011_2_) { // Mohist - Optimize Randomtick (2nd attempt)
+       return p_186011_1_ << 8 | p_186011_2_ << 4 | p_186011_0_;
     }
  
     private void func_186012_b(int p_186012_1_) {
@@ -41,3 +64,27 @@
     }
  
     public void func_186009_b(PacketBuffer p_186009_1_) {
+@@ -237,4 +_,23 @@
+    public interface ICountConsumer<T> {
+       void accept(T p_accept_1_, int p_accept_2_);
+    }
++
++   // Mohist start - Optimize Randomtick (2nd attempt)
++   public void count(PalettedContainer.ICountConsumerTriple<T> p_225497_1_) {
++      Int2IntMap int2intmap = new Int2IntOpenHashMap();
++      Int2IntMap int2keymap = new Int2IntOpenHashMap();
++      this.field_186021_b.getAll((p_225498_1_, key) -> {
++         int2intmap.put(p_225498_1_, int2intmap.get(p_225498_1_) + 1);
++         int2keymap.put(p_225498_1_, key);
++      });
++      int2intmap.int2IntEntrySet().forEach((p_225499_2_) -> {
++         p_225497_1_.accept(this.field_186022_c.func_186039_a(p_225499_2_.getIntKey()), p_225499_2_.getIntValue(), int2keymap.get(p_225499_2_.getIntKey()));
++      });
++   }
++
++   @FunctionalInterface
++   public interface ICountConsumerTriple<T> {
++      void accept(T p_accept_1_, int p_accept_2_, int key);
++   }
++   // Mohist end
+ }
