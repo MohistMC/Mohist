@@ -1,6 +1,17 @@
 --- a/net/minecraft/world/chunk/ChunkSection.java
 +++ b/net/minecraft/world/chunk/ChunkSection.java
-@@ -15,7 +_,7 @@
+@@ -1,7 +_,10 @@
+ package net.minecraft.world.chunk;
+ 
++import java.util.ArrayList;
+ import java.util.function.Predicate;
++
+ import javax.annotation.Nullable;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+@@ -15,12 +_,13 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkSection {
@@ -9,3 +20,40 @@
     private final int field_76684_a;
     private short field_76682_b;
     private short field_76683_c;
+    private short field_206918_e;
+    private final PalettedContainer<BlockState> field_177488_d;
++   public final ArrayList<Integer> tickableLocations = new ArrayList<>(); // Mohist - Optimize Randomtick (2nd attempt)
+ 
+    public ChunkSection(int p_i49943_1_) {
+       this(p_i49943_1_, (short)0, (short)0, (short)0);
+@@ -68,6 +_,7 @@
+          --this.field_76682_b;
+          if (blockstate.func_204519_t()) {
+             --this.field_76683_c;
++            this.tickableLocations.remove((Integer) PalettedContainer.func_186011_b(p_177484_1_, p_177484_2_, p_177484_3_)); // Mohist - Optimize Randomtick (2nd attempt)
+          }
+       }
+ 
+@@ -79,6 +_,7 @@
+          ++this.field_76682_b;
+          if (p_177484_4_.func_204519_t()) {
+             ++this.field_76683_c;
++            this.tickableLocations.add(PalettedContainer.func_186011_b(p_177484_1_, p_177484_2_, p_177484_3_)); // Mohist - Optimize Randomtick (2nd attempt)
+          }
+       }
+ 
+@@ -117,12 +_,13 @@
+       this.field_76682_b = 0;
+       this.field_76683_c = 0;
+       this.field_206918_e = 0;
+-      this.field_177488_d.func_225497_a((p_225496_1_, p_225496_2_) -> {
++      this.field_177488_d.count((p_225496_1_, p_225496_2_, key) -> {
+          FluidState fluidstate = p_225496_1_.func_204520_s();
+          if (!p_225496_1_.func_196958_f()) {
+             this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
+             if (p_225496_1_.func_204519_t()) {
+                this.field_76683_c = (short)(this.field_76683_c + p_225496_2_);
++               this.tickableLocations.add(key); // Mohist - Optimize Randomtick (2nd attempt)
+             }
+          }
+ 

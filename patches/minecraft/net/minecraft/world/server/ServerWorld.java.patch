@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/ServerWorld.java
 +++ b/net/minecraft/world/server/ServerWorld.java
-@@ -1,25 +_,13 @@
+@@ -1,30 +_,19 @@
  package net.minecraft.world.server;
  
 -import com.google.common.annotations.VisibleForTesting;
@@ -28,6 +28,12 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Objects;
+ import java.util.Optional;
+ import java.util.Queue;
++import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
+ import java.util.concurrent.Executor;
 @@ -33,8 +_,41 @@
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
@@ -359,6 +365,15 @@
              }
  
              iprofiler.func_76319_b();
+@@ -443,6 +_,8 @@
+       });
+    }
+ 
++   private final Random randomTickRandom = new Random(); // Mohist - Optimize Randomtick (2nd attempt)
++
+    public void func_217441_a(Chunk p_217441_1_, int p_217441_2_) {
+       ChunkPos chunkpos = p_217441_1_.func_76632_l();
+       boolean flag = this.func_72896_J();
 @@ -460,13 +_,13 @@
                 skeletonhorseentity.func_190691_p(true);
                 skeletonhorseentity.func_70873_a(0);
@@ -391,14 +406,37 @@
           }
  
           if (flag && this.func_226691_t_(blockpos3).func_201851_b() == Biome.RainType.RAIN) {
-@@ -489,6 +_,7 @@
+@@ -489,7 +_,30 @@
        }
  
        iprofiler.func_219895_b("tickBlocks");
 +      timings.chunkTicksBlocks.startTiming(); // Paper
        if (p_217441_2_ > 0) {
++         // Mohist start - Optimize Randomtick (2nd attempt)
++         ChunkSection[] secs = p_217441_1_.func_76587_i();
++         for (int iSec = 0; iSec < secs.length; iSec++) {
++            ChunkSection sec = secs[iSec];
++            if (sec == Chunk.field_186036_a || sec.tickableLocations.isEmpty()) {
++               continue;
++            }
++            for (int loop = 0; loop < p_217441_2_; loop++) {
++               int iRnd = this.randomTickRandom.nextInt(4096);
++               if (iRnd >= sec.tickableLocations.size()) {
++                  continue;
++               }
++               int key = sec.tickableLocations.get(iRnd);
++               int rndX = key & 15;
++               int rndY = (key >>> (4 + 4)) & 255;
++               int rndZ = (key >>> 4) & 15;
++               BlockPos rndPos = new BlockPos(p_217441_1_.func_76632_l().func_180334_c() + rndX, (iSec * 16) + rndY, p_217441_1_.func_76632_l().func_180333_d() + rndZ);
++               BlockState rndState = sec.func_177485_a(rndX, rndY, rndZ);
++               rndState.func_227034_b_(this, rndPos, this.randomTickRandom);
++            }
++         }
++         // Mohist end
           for(ChunkSection chunksection : p_217441_1_.func_76587_i()) {
              if (chunksection != Chunk.field_186036_a && chunksection.func_206915_b()) {
+                int k = chunksection.func_222632_g();
 @@ -513,6 +_,7 @@
           }
        }
