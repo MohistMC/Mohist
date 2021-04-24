@@ -1,34 +1,54 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -2,23 +_,19 @@
+@@ -1,24 +_,31 @@
+ package net.minecraft.item.crafting;
  
- import com.google.common.collect.ImmutableMap;
- import com.google.common.collect.Maps;
+-import com.google.common.collect.ImmutableMap;
+-import com.google.common.collect.Maps;
 -import com.google.common.collect.ImmutableMap.Builder;
- import com.google.gson.Gson;
- import com.google.gson.GsonBuilder;
- import com.google.gson.JsonElement;
- import com.google.gson.JsonObject;
- import com.google.gson.JsonParseException;
- import com.google.gson.JsonSyntaxException;
--import java.util.Collection;
--import java.util.Collections;
--import java.util.Comparator;
--import java.util.List;
--import java.util.Map;
--import java.util.Objects;
--import java.util.Optional;
-+
-+import java.util.*;
- import java.util.Map.Entry;
+-import com.google.gson.Gson;
+-import com.google.gson.GsonBuilder;
+-import com.google.gson.JsonElement;
+-import com.google.gson.JsonObject;
+-import com.google.gson.JsonParseException;
+-import com.google.gson.JsonSyntaxException;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Comparator;
++import java.util.HashMap;
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Map.Entry;
+ import java.util.Objects;
+ import java.util.Optional;
+-import java.util.Map.Entry;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
++import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.Maps;
++import com.google.gson.Gson;
++import com.google.gson.GsonBuilder;
++import com.google.gson.JsonElement;
++import com.google.gson.JsonObject;
++import com.google.gson.JsonParseException;
++import com.google.gson.JsonSyntaxException;
 +
 +import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
  import net.minecraft.client.resources.JsonReloadListener;
  import net.minecraft.inventory.IInventory;
  import net.minecraft.item.ItemStack;
-@@ -38,7 +_,8 @@
+@@ -32,13 +_,12 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+ 
  public class RecipeManager extends JsonReloadListener {
     private static final Gson field_223401_a = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger field_199521_c = LogManager.getLogger();
@@ -38,7 +58,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,31 +_,93 @@
+@@ -47,31 +_,94 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -95,6 +115,7 @@
 +            })).putAndMoveToFirst(minecraftkey, irecipe);
 +            // CraftBukkit end
 +         } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
++            String msg; if ((msg = jsonparseexception.getMessage()) == null || !msg.startsWith("Unknown item")) // Mohist - Suppress recipe loading error
 +            field_199521_c.error(com.mohistmc.util.i18n.i18n.get("recipemanager.3", minecraftkey, jsonparseexception));
 +         }
 +      }
