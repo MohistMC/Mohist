@@ -35,21 +35,21 @@ public class WatchdogThread extends Thread
     {
         if ( instance == null )
         {
-            instance = new WatchdogThread( timeoutTime * 1000L, restart );
-            instance.start();
+            //instance = new WatchdogThread( timeoutTime * 1000L, restart );
+            //instance.start();
         }
     }
 
     public static void tick()
     {
-        instance.lastTick = monotonicMillis();
+        //instance.lastTick = monotonicMillis();
     }
 
     public static void doStop()
     {
         if ( instance != null )
         {
-            instance.stopping = true;
+            //instance.stopping = true;
         }
     }
 
