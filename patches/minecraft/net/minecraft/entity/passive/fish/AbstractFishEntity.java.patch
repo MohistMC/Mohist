@@ -1,5 +1,24 @@
 --- a/net/minecraft/entity/passive/fish/AbstractFishEntity.java
 +++ b/net/minecraft/entity/passive/fish/AbstractFishEntity.java
+@@ -25,6 +_,8 @@
+ import net.minecraft.network.datasync.DataParameter;
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
++import net.minecraft.network.play.server.SEntityMetadataPacket;
++import net.minecraft.network.play.server.SSpawnMobPacket;
+ import net.minecraft.pathfinding.PathNavigator;
+ import net.minecraft.pathfinding.SwimmerPathNavigator;
+ import net.minecraft.tags.FluidTags;
+@@ -38,6 +_,9 @@
+ import net.minecraft.util.math.vector.Vector3d;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
++import org.bukkit.event.player.PlayerBucketFishEvent;
+ 
+ public abstract class AbstractFishEntity extends WaterMobEntity {
+    private static final DataParameter<Boolean> field_203711_b = EntityDataManager.func_187226_a(AbstractFishEntity.class, DataSerializers.field_187198_h);
 @@ -64,7 +_,7 @@
     }
  
@@ -17,3 +36,29 @@
     }
  
     public void func_213281_b(CompoundNBT p_213281_1_) {
+@@ -133,10 +_,23 @@
+    protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
+       ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
+       if (itemstack.func_77973_b() == Items.field_151131_as && this.func_70089_S()) {
+-         this.func_184185_a(SoundEvents.field_203814_aa, 1.0F, 1.0F);
+-         itemstack.func_190918_g(1);
++         // CraftBukkit start
+          ItemStack itemstack1 = this.func_203707_dx();
+          this.func_204211_f(itemstack1);
++
++         PlayerBucketFishEvent playerBucketFishEvent = CraftEventFactory.callPlayerFishBucketEvent(this, p_230254_1_, itemstack, itemstack1);
++         itemstack1 = CraftItemStack.asNMSCopy(playerBucketFishEvent.getFishBucket());
++         if (playerBucketFishEvent.isCancelled()) {
++            ((ServerPlayerEntity) p_230254_1_).func_71120_a(((ServerPlayerEntity) p_230254_1_).field_71070_bA); // We need to update inventory to resync client's bucket
++            ((ServerPlayerEntity) p_230254_1_).field_71135_a.func_147359_a(new SSpawnMobPacket(this)); // We need to play out these packets as the client assumes the fish is gone
++            ((ServerPlayerEntity) p_230254_1_).field_71135_a.func_147359_a(new SEntityMetadataPacket(this.func_145782_y(), field_70180_af, true)); // Need to send data such as the display name to client
++            return ActionResultType.FAIL;
++         }
++         // CraftBukkit end
++         this.func_184185_a(SoundEvents.field_203814_aa, 1.0F, 1.0F);
++         itemstack.func_190918_g(1);
++         // ItemStack itemstack1 = this.getBucketItemStack(); // CraftBukkit - moved up
++         // this.saveToBucketTag(itemstack1); // CraftBukkit - moved up
+          if (!this.field_70170_p.field_72995_K) {
+             CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_230254_1_, itemstack1);
+          }

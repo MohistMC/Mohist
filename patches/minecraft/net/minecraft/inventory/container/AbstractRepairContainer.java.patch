@@ -8,36 +8,6 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-@@ -12,12 +_,7 @@
- 
- public abstract class AbstractRepairContainer extends Container {
-    protected final CraftResultInventory field_234642_c_ = new CraftResultInventory();
--   protected final IInventory field_234643_d_ = new Inventory(2) {
--      public void func_70296_d() {
--         super.func_70296_d();
--         AbstractRepairContainer.this.func_75130_a(this);
--      }
--   };
-+   protected final IInventory field_234643_d_; // CraftBukkit - instantiate repairInventory in the constructor
-    protected final IWorldPosCallable field_234644_e_;
-    protected final PlayerEntity field_234645_f_;
- 
-@@ -31,6 +_,15 @@
-       super(p_i231587_1_, p_i231587_2_);
-       this.field_234644_e_ = p_i231587_4_;
-       this.field_234645_f_ = p_i231587_3_.field_70458_d;
-+      // CraftBukkit start
-+      this.field_234643_d_ = new CraftingInventory(this, 1, 2, field_234645_f_) {
-+         @Override
-+         public void func_70296_d() {
-+            super.func_70296_d();
-+            AbstractRepairContainer.this.func_75130_a(this);
-+         }
-+      };
-+      // CraftBukkit end
-       this.func_75146_a(new Slot(this.field_234643_d_, 0, 27, 47));
-       this.func_75146_a(new Slot(this.field_234643_d_, 1, 76, 47));
-       this.func_75146_a(new Slot(this.field_234642_c_, 2, 134, 47) {
 @@ -77,6 +_,7 @@
     }
  

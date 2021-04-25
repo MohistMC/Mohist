@@ -30,6 +30,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.GolemEntity;
 import net.minecraft.entity.passive.StriderEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
+import net.minecraft.entity.passive.fish.AbstractFishEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
@@ -59,9 +60,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
@@ -90,7 +88,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftRaider;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftSpellcaster;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaBook;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftDamageSource;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
@@ -102,6 +99,7 @@ import org.bukkit.entity.Bat;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Fish;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
@@ -148,6 +146,7 @@ import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerBucketFishEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
@@ -260,6 +259,18 @@ public class CraftEventFactory {
         PlayerHarvestBlockEvent playerHarvestBlockEvent = new PlayerHarvestBlockEvent(player, CraftBlock.at(world, blockPos), bukkitItemsToHarvest);
         Bukkit.getPluginManager().callEvent(playerHarvestBlockEvent);
         return playerHarvestBlockEvent;
+    }
+
+
+    /**
+     * Player Fish Bucket Event
+     */
+    public static PlayerBucketFishEvent callPlayerFishBucketEvent(AbstractFishEntity fish, PlayerEntity entityHuman, ItemStack waterBucket, ItemStack fishBucket) {
+        Fish bukkitFish = (Fish) fish.getBukkitEntity();
+        Player player = (Player) entityHuman.getBukkitEntity();
+        PlayerBucketFishEvent playerBucketFishEvent = new PlayerBucketFishEvent(player, bukkitFish, CraftItemStack.asBukkitCopy(waterBucket), CraftItemStack.asBukkitCopy(fishBucket));
+        Bukkit.getPluginManager().callEvent(playerBucketFishEvent);
+        return playerBucketFishEvent;
     }
 
     /**
@@ -520,7 +531,7 @@ public class CraftEventFactory {
             boolean isNpc = entity instanceof NPC;
 
             if (spawnReason != CreatureSpawnEvent.SpawnReason.CUSTOM) {
-                if (isAnimal && !world.getWorld().getAllowAnimals() || isMonster && !world.getWorld().getAllowMonsters() || isNpc && !world.getServer().getServer().areNpcsEnabled() ) {
+                if (isAnimal && !world.getWorld().getAllowAnimals() || isMonster && !world.getWorld().getAllowMonsters() || isNpc && !world.getServer().getServer().areNpcsEnabled()) {
                     entity.removed = true;
                     return false;
                 }
@@ -724,7 +735,8 @@ public class CraftEventFactory {
             if (stack == null || stack.getType() == Material.AIR || stack.getAmount() == 0) continue;
 
             world.dropItem(entity.getLocation(), stack); // Paper - note: dropItem already clones due to this being bukkit -> NMS
-            if (stack instanceof CraftItemStack) stack.setAmount(0); // Paper - destroy this item - if this ever leaks due to game bugs, ensure it doesn't dupe, but don't nuke bukkit stacks of manually added items
+            if (stack instanceof CraftItemStack)
+                stack.setAmount(0); // Paper - destroy this item - if this ever leaks due to game bugs, ensure it doesn't dupe, but don't nuke bukkit stacks of manually added items
         }
 
         return event;
@@ -1309,7 +1321,7 @@ public class CraftEventFactory {
             if (!editBookEvent.isCancelled()) {
                 // Mohist start - Fix book signing (#981)
                 ItemStack book = editBookEvent.isSigning() ?
-                    new ItemStack(Items.WRITTEN_BOOK) : new ItemStack(Items.WRITABLE_BOOK);
+                        new ItemStack(Items.WRITTEN_BOOK) : new ItemStack(Items.WRITABLE_BOOK);
                 CraftItemStack.setItemMeta(book, editBookEvent.getNewBookMeta());
                 player.inventory.setItem(player.inventory.selected, book);
                 player.refreshContainer(player.inventoryMenu);
@@ -1425,6 +1437,7 @@ public class CraftEventFactory {
         entity.getServer().getPluginManager().callEvent(event);
         return event;
     }
+
     public static EntityToggleGlideEvent callToggleGlideEvent(LivingEntity entity, boolean gliding) {
         EntityToggleGlideEvent event = new EntityToggleGlideEvent((org.bukkit.entity.LivingEntity) entity.getBukkitEntity(), gliding);
         entity.level.getCBServer().getPluginManager().callEvent(event);
