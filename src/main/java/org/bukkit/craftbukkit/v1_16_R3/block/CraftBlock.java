@@ -667,12 +667,23 @@ public class CraftBlock implements Block {
         net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
         // Modelled off EntityHuman#hasBlock
-        if (item == null || !iblockdata.requiresCorrectToolForDrops() || nms.isCorrectToolForDrops(iblockdata)) {
+        if (item == null || isPreferredTool(iblockdata, nms)) {
             return net.minecraft.block.Block.getDrops(iblockdata, (ServerWorld) world.getMinecraftWorld(), position, world.getBlockEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public boolean isPreferredTool(ItemStack item) {
+        net.minecraft.block.BlockState iblockdata = getNMS();
+        net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
+        return isPreferredTool(iblockdata, nms);
+    }
+
+    private boolean isPreferredTool(net.minecraft.block.BlockState iblockdata, net.minecraft.item.ItemStack nmsItem) {
+        return !iblockdata.requiresCorrectToolForDrops() || nmsItem.isCorrectToolForDrops(iblockdata);
     }
 
     @Override

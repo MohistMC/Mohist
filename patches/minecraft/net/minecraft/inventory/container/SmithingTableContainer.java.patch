@@ -19,7 +19,7 @@
     public SmithingTableContainer(int p_i231590_1_, PlayerInventory p_i231590_2_) {
        this(p_i231590_1_, p_i231590_2_, IWorldPosCallable.field_221489_a);
     }
-@@ -56,12 +_,12 @@
+@@ -56,12 +_,11 @@
     public void func_82848_d() {
        List<SmithingRecipe> list = this.field_234651_g_.func_199532_z().func_215370_b(IRecipeType.field_234827_g_, this.field_234643_d_, this.field_234651_g_);
        if (list.isEmpty()) {
@@ -28,7 +28,7 @@
        } else {
           this.field_234652_h_ = list.get(0);
           ItemStack itemstack = this.field_234652_h_.func_77572_b(this.field_234643_d_);
-          this.field_234642_c_.func_193056_a(this.field_234652_h_);
+-         this.field_234642_c_.func_193056_a(this.field_234652_h_);
 -         this.field_234642_c_.func_70299_a(0, itemstack);
 +         org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack); // CraftBukkit
        }

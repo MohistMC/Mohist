@@ -11,9 +11,14 @@ public class CraftInventorySmithing extends CraftResultInventory implements Smit
 
     private final Location location;
 
-    public CraftInventorySmithing(Location location, IInventory inventory, IInventory resultInventory) {
+    public CraftInventorySmithing(Location location, IInventory inventory, net.minecraft.inventory.CraftResultInventory resultInventory) {
         super(inventory, resultInventory);
         this.location = location;
+    }
+
+    @Override
+    public net.minecraft.inventory.CraftResultInventory getResultInventory() {
+        return (net.minecraft.inventory.CraftResultInventory) super.getResultInventory();
     }
 
     @Override
@@ -33,7 +38,7 @@ public class CraftInventorySmithing extends CraftResultInventory implements Smit
 
     @Override
     public Recipe getRecipe() {
-        IRecipe recipe = getInventory().getCurrentRecipe();
+        IRecipe recipe = getResultInventory().getCurrentRecipe();
         return (recipe == null) ? null : recipe.toBukkitRecipe();
     }
 }
