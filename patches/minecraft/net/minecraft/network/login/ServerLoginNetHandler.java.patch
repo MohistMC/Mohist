@@ -25,7 +25,7 @@
  
     public ServerLoginNetHandler(MinecraftServer p_i45298_1_, NetworkManager p_i45298_2_) {
        this.field_147327_f = p_i45298_1_;
-@@ -55,8 +_,15 @@
+@@ -55,7 +_,13 @@
     }
  
     public void func_73660_a() {
@@ -38,10 +38,8 @@
 +            this.field_147328_g = State.READY_TO_ACCEPT;
 +      } else if (this.field_147328_g == ServerLoginNetHandler.State.READY_TO_ACCEPT) {
           this.func_147326_c();
-+         field_147332_c.error("DEBUG1");
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-          if (serverplayerentity == null) {
 @@ -72,29 +_,73 @@
  
     }
@@ -126,7 +124,7 @@
        } else {
           this.field_147328_g = ServerLoginNetHandler.State.ACCEPTED;
           if (this.field_147327_f.func_175577_aI() >= 0 && !this.field_147333_a.func_150731_c()) {
-@@ -107,16 +_,17 @@
+@@ -107,16 +_,16 @@
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
           if (serverplayerentity != null) {
              this.field_147328_g = ServerLoginNetHandler.State.DELAY_ACCEPT;
@@ -135,7 +133,6 @@
           } else {
 -            this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i));
 +            this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, s); // CraftBukkit - add player reference
-+            field_147332_c.error("DEBUG");
           }
        }
  
