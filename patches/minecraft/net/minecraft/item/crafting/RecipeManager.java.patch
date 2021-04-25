@@ -58,7 +58,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,31 +_,94 @@
+@@ -47,31 +_,105 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -107,8 +107,19 @@
 +         ResourceLocation minecraftkey = entry.getKey();
 +
 +         try {
++            // Mohist start - Duplicate vanilla checks for CB recipes
++            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
++               field_199521_c.debug(com.mohistmc.util.i18n.i18n.get("recipemanager.1", minecraftkey));
++               continue;
++            }
++            // Mohist end
 +            IRecipe<?> irecipe = func_215377_a(minecraftkey, JSONUtils.func_151210_l(entry.getValue(), "top element"));
-+
++            // Mohist start - Duplicate vanilla checks for CB recipes
++            if (irecipe == null) {
++               field_199521_c.info(com.mohistmc.util.i18n.i18n.get("recipemanager.2", minecraftkey));
++               continue;
++            }
++            // Mohist end
 +            // CraftBukkit start - SPIGOT-4638: last recipe gets priority
 +            (map1.computeIfAbsent(irecipe.func_222127_g(), (recipes) -> {
 +               return new Object2ObjectLinkedOpenHashMap<>();
