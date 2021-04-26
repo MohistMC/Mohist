@@ -1407,12 +1407,6 @@ public interface Server extends PluginMessageRecipient {
     // Spigot end
 
     /**
-     * @return the default no permission message used on the server
-     */
-    @NotNull
-    String getPermissionMessage();
-
-    /**
      * Checks if the server is in the process of being shutdown.
      *
      * @return true if server is in the process of being shutdown
