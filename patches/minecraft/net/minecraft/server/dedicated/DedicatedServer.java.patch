@@ -15,6 +15,14 @@
  import java.io.BufferedReader;
  import java.io.IOException;
  import java.io.InputStreamReader;
+@@ -19,6 +_,7 @@
+ import java.util.function.BooleanSupplier;
+ import java.util.regex.Pattern;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.command.CommandSource;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.entity.player.PlayerEntity;
 @@ -39,7 +_,6 @@
  import net.minecraft.server.management.PreYggdrasilConverter;
  import net.minecraft.tileentity.SkullTileEntity;
@@ -23,7 +31,7 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.SharedConstants;
  import net.minecraft.util.Util;
-@@ -55,17 +_,24 @@
+@@ -55,480 +_,609 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
@@ -38,167 +46,670 @@
 +import org.bukkit.plugin.Plugin;
  
  public class DedicatedServer extends MinecraftServer implements IServer {
-    private static final Logger field_155771_h = LogManager.getLogger();
-    private static final Pattern field_189647_l = Pattern.compile("^[a-fA-F0-9]{40}$");
-    public final List<PendingCommand> field_71341_l = Collections.synchronizedList(Lists.newArrayList());
-    private QueryThread field_71342_m;
+-   private static final Logger field_155771_h = LogManager.getLogger();
+-   private static final Pattern field_189647_l = Pattern.compile("^[a-fA-F0-9]{40}$");
+-   public final List<PendingCommand> field_71341_l = Collections.synchronizedList(Lists.newArrayList());
+-   private QueryThread field_71342_m;
 -   private final RConConsoleSource field_184115_n;
-+   public final RConConsoleSource field_184115_n;
-    private MainThread field_71339_n;
+-   private MainThread field_71339_n;
 -   private final ServerPropertiesProvider field_71340_o;
-+   public ServerPropertiesProvider field_71340_o;
-    @Nullable
-    private MinecraftServerGui field_213225_q;
-    @Nullable
-@@ -81,28 +_,65 @@
-    public boolean func_71197_b() throws IOException {
-       Thread thread = new Thread("Server console handler") {
-          public void run() {
-+            // CraftBukkit start
-+            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-+            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
-+            try {
-+               System.in.available();
-+            } catch (IOException ex) {
-+               return;
+-   @Nullable
+-   private MinecraftServerGui field_213225_q;
+-   @Nullable
+-   private final ChatFilterClient field_244714_r;
+-
+-   public DedicatedServer(Thread p_i232601_1_, DynamicRegistries.Impl p_i232601_2_, SaveFormat.LevelSave p_i232601_3_, ResourcePackList p_i232601_4_, DataPackRegistries p_i232601_5_, IServerConfiguration p_i232601_6_, ServerPropertiesProvider p_i232601_7_, DataFixer p_i232601_8_, MinecraftSessionService p_i232601_9_, GameProfileRepository p_i232601_10_, PlayerProfileCache p_i232601_11_, IChunkStatusListenerFactory p_i232601_12_) {
+-      super(p_i232601_1_, p_i232601_2_, p_i232601_3_, p_i232601_6_, p_i232601_4_, Proxy.NO_PROXY, p_i232601_8_, p_i232601_5_, p_i232601_9_, p_i232601_10_, p_i232601_11_, p_i232601_12_);
+-      this.field_71340_o = p_i232601_7_;
+-      this.field_184115_n = new RConConsoleSource(this);
+-      this.field_244714_r = null;
+-   }
+-
+-   public boolean func_71197_b() throws IOException {
+-      Thread thread = new Thread("Server console handler") {
+-         public void run() {
+-            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+-
+-            String s1;
++    private static final Logger field_155771_h = LogManager.getLogger();
++    private static final Pattern field_189647_l = Pattern.compile("^[a-fA-F0-9]{40}$");
++    public final List<PendingCommand> field_71341_l = Collections.synchronizedList(Lists.newArrayList());
++    private QueryThread field_71342_m;
++    public final RConConsoleSource field_184115_n;
++    private MainThread field_71339_n;
++    public ServerPropertiesProvider field_71340_o;
++    @Nullable
++    private MinecraftServerGui field_213225_q;
++    @Nullable
++    private final ChatFilterClient field_244714_r;
++
++    public DedicatedServer(Thread p_i232601_1_, DynamicRegistries.Impl p_i232601_2_, SaveFormat.LevelSave p_i232601_3_, ResourcePackList p_i232601_4_, DataPackRegistries p_i232601_5_, IServerConfiguration p_i232601_6_, ServerPropertiesProvider p_i232601_7_, DataFixer p_i232601_8_, MinecraftSessionService p_i232601_9_, GameProfileRepository p_i232601_10_, PlayerProfileCache p_i232601_11_, IChunkStatusListenerFactory p_i232601_12_) {
++        super(p_i232601_1_, p_i232601_2_, p_i232601_3_, p_i232601_6_, p_i232601_4_, Proxy.NO_PROXY, p_i232601_8_, p_i232601_5_, p_i232601_9_, p_i232601_10_, p_i232601_11_, p_i232601_12_);
++        this.field_71340_o = p_i232601_7_;
++        this.field_184115_n = new RConConsoleSource(this);
++        this.field_244714_r = null;
++    }
++
++    public boolean func_71197_b() throws IOException {
++        Thread thread = new Thread("Server console handler") {
++            public void run() {
++                // CraftBukkit start
++                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
++                BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
++                // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
++                try {
++                    System.in.available();
++                } catch (IOException ex) {
++                    return;
++                }
++                // CraftBukkit end
++                String s3;
++                try {
++                    // CraftBukkit start - JLine disabling compatibility
++                    while (!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l()) {
++                        s3 = bufferedreader.readLine();
++
++                        // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
++                        if (s3 == null) {
++                            try {
++                                Thread.sleep(50L);
++                            } catch (InterruptedException ex) {
++                                Thread.currentThread().interrupt();
++                            }
++                            continue;
++                        }
++                        if (s3.trim().length() > 0) { // Trim to filter lines which are just spaces
++                            DedicatedServer.this.func_195581_a(s3, DedicatedServer.this.func_195573_aM());
++                        }
++                        // CraftBukkit end
++                    }
++                } catch (IOException ioexception1) {
++                    DedicatedServer.field_155771_h.error(com.mohistmc.util.i18n.i18n.get("dedicatedserver.1", (Throwable) ioexception1));
++                }
++
++            }
++        };
++
++        // CraftBukkit start - TODO: handle command-line logging arguments
++        java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
++        global.setUseParentHandlers(false);
++        for (java.util.logging.Handler handler : global.getHandlers()) {
++            global.removeHandler(handler);
++        }
++        global.addHandler(new org.bukkit.craftbukkit.v1_16_R3.util.ForwardLogHandler());
++
++        final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
++
++        System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
++        System.setErr(IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
++        // CraftBukkit end
++        thread.setDaemon(true);
++        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
++        thread.start();
++        field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.26", SharedConstants.func_215069_a().getName()));
++        if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.2"));
++        }
++
++        field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.3"));
++        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
++        if (this.func_71264_H()) {
++            this.func_71189_e("127.0.0.1");
++        } else {
++            this.func_71229_d(serverproperties.field_219007_a);
++            this.func_190517_e(serverproperties.field_219008_b);
++            this.func_71189_e(serverproperties.field_219009_c);
++        }
++
++        // Paper start
++        try {
++            com.destroystokyo.paper.PaperConfig.init((java.io.File) options.valueOf("paper-settings"));
++        } catch (Exception e) {
++            DedicatedServer.field_155771_h.error("Unable to load server configuration", e);
++            return false;
++        }
++        com.destroystokyo.paper.PaperConfig.registerCommands();
++        // Paper end
++
++        this.func_71188_g(serverproperties.field_219012_f);
++        this.func_71245_h(serverproperties.field_219013_g);
++        this.func_180507_a_(serverproperties.field_219014_h, this.func_184113_aK());
++        this.func_71205_p(serverproperties.field_219015_i);
++        this.func_104055_i(serverproperties.field_219016_j);
++        super.func_143006_e(serverproperties.field_219005_R.get());
++        this.func_205741_k(serverproperties.field_219017_k);
++        this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
++        field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.4", (Object) serverproperties.field_219020_n));
++        InetAddress inetaddress = null;
++        if (!this.func_71211_k().isEmpty()) {
++            inetaddress = InetAddress.getByName(this.func_71211_k());
++        }
++
++        if (this.func_71215_F() < 0) {
++            this.func_71208_b(serverproperties.field_219025_s);
++        }
++
++        this.func_244801_P();
++        field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.5", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), this.func_71215_F()));
++
++        try {
++            this.func_147137_ag().func_151265_a(inetaddress, this.func_71215_F());
++        } catch (IOException ioexception) {
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.6"));
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.7", (Object) ioexception.toString()));
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.8"));
++            return false;
++        }
++
++        if (!this.func_71266_T()) {
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.9"));
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.10"));
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.11"));
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.12"));
++        }
++
++        if (this.func_152368_aE()) {
++            this.func_152358_ax().func_152658_c();
++        }
++
++        if (!PreYggdrasilConverter.func_219587_e(this)) {
++            return false;
++        } else {
++            this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
++            server.loadPlugins();
++            server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++            long i = Util.func_211178_c();
++            this.func_71191_d(serverproperties.field_219026_t);
++            SkullTileEntity.func_184293_a(this.func_152358_ax());
++            SkullTileEntity.func_184294_a(this.func_147130_as());
++            PlayerProfileCache.func_187320_a(this.func_71266_T());
++            if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
++            field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.13", (Object) this.func_230542_k__()));
++            this.func_240800_l__();
++            long j = Util.func_211178_c() - i;
++            String s = String.format(Locale.ROOT, "%.3fs", (double) j / 1.0E9D);
++            field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.14", (Object) s));
++            Metrics.MohistMetrics.startMetrics();
++            this.field_211151_aa = Util.func_211177_b(); //Forge: Update server time to prevent watchdog/spaming during long load.
++            if (serverproperties.field_219027_u != null) {
++                this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
++            }
++
++            if (serverproperties.field_219028_v) {
++                field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.15"));
++                this.field_71342_m = QueryThread.func_242129_a(this);
++            }
++
++            if (serverproperties.field_219030_x) {
++                field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.16"));
++                this.field_71339_n = MainThread.func_242130_a(this);
++                this.remoteConsole = new org.bukkit.craftbukkit.v1_16_R3.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
++            }
++
++            Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
++            // <3 you Grum for this, saves us ~30 patch files! --^
++            if (serverproperties.field_241079_P_) {
++                ServerInfoMBean.func_233490_a_(this);
++            }
++            return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
++        }
++
++    }
++
++    public boolean func_230537_U_() {
++        return this.func_213221_d_().field_219010_d && super.func_230537_U_();
++    }
++
++    public boolean func_230536_N_() {
++        return this.field_71340_o.func_219034_a().field_218992_E && super.func_230536_N_();
++    }
++
++    public boolean func_230538_V_() {
++        return this.field_71340_o.func_219034_a().field_219011_e && super.func_230538_V_();
++    }
++
++    public String func_184113_aK() {
++        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
++        String s;
++        if (!serverproperties.field_218989_B.isEmpty()) {
++            s = serverproperties.field_218989_B;
++            if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
++                field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.17"));
++            }
++        } else if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.18"));
++            s = serverproperties.field_218988_A;
++        } else {
++            s = "";
++        }
++
++        if (!s.isEmpty() && !field_189647_l.matcher(s).matches()) {
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.19"));
++        }
++
++        if (!serverproperties.field_219014_h.isEmpty() && s.isEmpty()) {
++            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.20"));
++        }
++
++        return s;
++    }
++
++    public ServerProperties func_213221_d_() {
++        return this.field_71340_o.func_219034_a();
++    }
++
++    public void func_230543_p_() {
++        this.func_147139_a(this.func_213221_d_().field_219019_m, true);
++    }
++
++    public boolean func_71199_h() {
++        return this.func_213221_d_().field_218990_C;
++    }
++
++    public CrashReport func_71230_b(CrashReport p_71230_1_) {
++        p_71230_1_ = super.func_71230_b(p_71230_1_);
++        p_71230_1_.func_85056_g().func_189529_a("Is Modded", () -> {
++            return this.func_230045_q_().orElse("Unknown (can't tell)");
++        });
++        p_71230_1_.func_85056_g().func_189529_a("Type", () -> {
++            return "Dedicated Server (map_server.txt)";
++        });
++        return p_71230_1_;
++    }
++
++    public Optional<String> func_230045_q_() {
++        String s = this.getServerModName();
++        return !"vanilla".equals(s) ? Optional.of("Definitely; Server brand changed to '" + s + "'") : Optional.empty();
++    }
++
++    public void func_71240_o() {
++        if (this.field_244714_r != null) {
++            this.field_244714_r.close();
++        }
++
++        if (this.field_213225_q != null) {
++            this.field_213225_q.func_219050_b();
++        }
++
++        if (this.field_71339_n != null) {
++            this.field_71339_n.func_219591_b();
++        }
++
++        if (this.field_71342_m != null) {
++            this.field_71342_m.func_219591_b();
++        }
++    }
++
++    public void func_71190_q(BooleanSupplier p_71190_1_) {
++        super.func_71190_q(p_71190_1_);
++        this.func_71333_ah();
++    }
++
++    public boolean func_71255_r() {
++        return this.func_213221_d_().field_218991_D;
++    }
++
++    public void func_70000_a(Snooper p_70000_1_) {
++        p_70000_1_.func_152768_a("whitelist_enabled", this.func_184103_al().func_72383_n());
++        p_70000_1_.func_152768_a("whitelist_count", this.func_184103_al().func_152598_l().length);
++        super.func_70000_a(p_70000_1_);
++    }
++
++    public void func_195581_a(String p_195581_1_, CommandSource p_195581_2_) {
++        this.field_71341_l.add(new PendingCommand(p_195581_1_, p_195581_2_));
++    }
++
++    public void func_71333_ah() {
++        MinecraftTimings.serverCommandTimer.startTiming(); // Spigot
++        while (!this.field_71341_l.isEmpty()) {
++            PendingCommand pendingcommand = this.field_71341_l.remove(0);
++            // CraftBukkit start - ServerCommand for preprocessing
++            ServerCommandEvent event = new ServerCommandEvent(this.console, pendingcommand.field_73702_a);
++            this.server.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                continue;
++            }
++            pendingcommand = new PendingCommand(event.getCommand(), pendingcommand.field_73701_b);
++            this.server.dispatchServerCommand(this.console, pendingcommand);
++            // CraftBukkit end
++        }
++
++        MinecraftTimings.serverCommandTimer.stopTiming(); // Spigot
++    }
++
++    public boolean func_71262_S() {
++        return true;
++    }
++
++    public int func_241871_k() {
++        return this.func_213221_d_().field_244379_I;
++    }
++
++    public boolean func_181035_ah() {
++        return this.func_213221_d_().field_218994_G;
++    }
++
++    public DedicatedPlayerList func_184103_al() {
++        return (DedicatedPlayerList) super.func_184103_al();
++    }
++
++    public boolean func_71344_c() {
++        return true;
++    }
++
++    public String func_71277_t() {
++        return this.func_71211_k();
++    }
++
++    public int func_71234_u() {
++        return this.func_71215_F();
++    }
++
++    public String func_71274_v() {
++        return this.func_71273_Y();
++    }
++
++    public void func_120011_ar() {
++        if (this.field_213225_q == null) {
++            this.field_213225_q = MinecraftServerGui.func_219048_a(this);
++        }
++
++    }
++
++    public boolean func_71279_ae() {
++        return this.field_213225_q != null;
++    }
++
++    public boolean func_195565_a(GameType p_195565_1_, boolean p_195565_2_, int p_195565_3_) {
++        return false;
++    }
++
++    public boolean func_82356_Z() {
++        return this.func_213221_d_().field_218995_H;
++    }
++
++    public int func_82357_ak() {
++        return this.func_213221_d_().field_218996_I;
++    }
++
++    public boolean func_175579_a(ServerWorld p_175579_1_, BlockPos p_175579_2_, PlayerEntity p_175579_3_) {
++        if (p_175579_1_.func_234923_W_() != World.field_234918_g_) {
++            return false;
++        } else if (this.func_184103_al().func_152603_m().func_152690_d()) {
++            return false;
++        } else if (this.func_184103_al().func_152596_g(p_175579_3_.func_146103_bH())) {
++            return false;
++        } else if (this.func_82357_ak() <= 0) {
++            return false;
++        } else {
++            BlockPos blockpos = p_175579_1_.func_241135_u_();
++            int i = MathHelper.func_76130_a(p_175579_2_.func_177958_n() - blockpos.func_177958_n());
++            int j = MathHelper.func_76130_a(p_175579_2_.func_177952_p() - blockpos.func_177952_p());
++            int k = Math.max(i, j);
++            return k <= this.func_82357_ak();
++        }
++    }
++
++    public boolean func_230541_aj_() {
++        return this.func_213221_d_().field_241080_Q_;
++    }
++
++    public int func_110455_j() {
++        return this.func_213221_d_().field_218997_J;
++    }
++
++    public int func_223707_k() {
++        return this.func_213221_d_().field_225395_K;
++    }
++
++    public void func_143006_e(int p_143006_1_) {
++        super.func_143006_e(p_143006_1_);
++        this.field_71340_o.func_219033_a((p_213224_2_) -> {
++            return p_213224_2_.field_219005_R.func_244381_a(this.func_244267_aX(), p_143006_1_);
++        });
++    }
++
++    public boolean func_195569_l() {
++        return this.func_213221_d_().field_219002_O;
++    }
++
++    public boolean func_195041_r_() {
++        return this.func_213221_d_().field_219003_P;
++    }
++
++    public int func_175580_aG() {
++        return this.func_213221_d_().field_219004_Q;
++    }
++
++    public int func_175577_aI() {
++        return this.func_213221_d_().field_219001_N;
++    }
++
++    protected boolean func_152368_aE() {
++        boolean flag = false;
++
++        for (int i = 0; !flag && i <= 2; ++i) {
++            if (i > 0) {
++                field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.21"));
++                this.func_152369_aG();
++            }
++
++            flag = PreYggdrasilConverter.func_152724_a(this);
++        }
++
++        boolean flag1 = false;
++
++        for (int j = 0; !flag1 && j <= 2; ++j) {
++            if (j > 0) {
++                field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.22"));
++                this.func_152369_aG();
++            }
++
++            flag1 = PreYggdrasilConverter.func_152722_b(this);
++        }
++
++        boolean flag2 = false;
++
++        for (int k = 0; !flag2 && k <= 2; ++k) {
++            if (k > 0) {
++                field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.23"));
++                this.func_152369_aG();
++            }
++
++            flag2 = PreYggdrasilConverter.func_152718_c(this);
++        }
++
++        boolean flag3 = false;
++
++        for (int l = 0; !flag3 && l <= 2; ++l) {
++            if (l > 0) {
++                field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.24"));
++                this.func_152369_aG();
++            }
++
++            flag3 = PreYggdrasilConverter.func_152710_d(this);
++        }
++
++        boolean flag4 = false;
++
++        for (int i1 = 0; !flag4 && i1 <= 2; ++i1) {
++            if (i1 > 0) {
++                field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.25"));
++                this.func_152369_aG();
++            }
++
++            flag4 = PreYggdrasilConverter.func_152723_a(this);
++        }
++
++        return flag || flag1 || flag2 || flag3 || flag4;
++    }
++
++    private void func_152369_aG() {
++        try {
++            Thread.sleep(5000L);
++        } catch (InterruptedException interruptedexception) {
++        }
++    }
++
++    public long func_175593_aQ() {
++        return this.func_213221_d_().field_218998_K;
++    }
++
++    public String func_71258_A() {
++        // CraftBukkit start - Whole method
++        StringBuilder result = new StringBuilder();
++        Plugin[] plugins = this.server.getPluginManager().getPlugins();
++        result.append(this.server.getName());
++        result.append(" on Bukkit ");
++        result.append(this.server.getBukkitVersion());
++        if (plugins.length > 0 && this.server.getQueryPlugins()) {
++            result.append(": ");
++            for (int i = 0; i < plugins.length; ++i) {
++                if (i > 0) {
++                    result.append("; ");
++                }
++                result.append(plugins[i].getDescription().getName());
++                result.append(" ");
++                result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
++            }
++        }
++        return result.toString();
++        // CraftBukkit end
++    }
++
++    public String func_71252_i(String p_71252_1_) {
++        Waitable[] waitableArray = new Waitable[1];
++        this.field_184115_n.func_70007_b();
++        this.func_213167_f(() -> {
++            // CraftBukkit start - fire RemoteServerCommandEvent
++            RemoteServerCommandEvent event = new RemoteServerCommandEvent(this.remoteConsole, p_71252_1_);
++            this.server.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                return;
++            }
++            // Paper start
++            if (p_71252_1_.toLowerCase().startsWith("timings") && p_71252_1_.toLowerCase().matches("timings (report|paste|get|merged|seperate)")) {
++                org.bukkit.command.BufferedCommandSender sender = new org.bukkit.command.BufferedCommandSender();
++                Waitable<String> waitable = new Waitable<String>() {
++                    @Override
++                    protected String evaluate() {
++                        return sender.getBuffer();
++                    }
++                };
++                waitableArray[0] = waitable;
++                co.aikar.timings.Timings.generateReport(new co.aikar.timings.TimingsReportListener(sender, waitable));
++            } else {
++                // Paper end
++                PendingCommand serverCommand = new PendingCommand(event.getCommand(), this.field_184115_n.func_195540_f());
++                this.server.dispatchServerCommand(this.remoteConsole, serverCommand);
 +            }
 +            // CraftBukkit end
-+            String s3;
-+            try {
-+               // CraftBukkit start - JLine disabling compatibility
-+               while (!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l()) {
-+                  s3 = bufferedreader.readLine();
- 
--            String s1;
--            try {
++        });
++        // Paper start
++        if (waitableArray[0] != null) {
++            //noinspection unchecked
++            Waitable<String> waitable = waitableArray[0];
+             try {
 -               while(!DedicatedServer.this.func_71241_aa() && DedicatedServer.this.func_71278_l() && (s1 = bufferedreader.readLine()) != null) {
 -                  DedicatedServer.this.func_195581_a(s1, DedicatedServer.this.func_195573_aM());
-+                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
-+                  if (s3 == null) {
-+                     try {
-+                        Thread.sleep(50L);
-+                     } catch (InterruptedException ex) {
-+                        Thread.currentThread().interrupt();
-+                     }
-+                     continue;
-+                  }
-+                  if (s3.trim().length() > 0) { // Trim to filter lines which are just spaces
-+                     DedicatedServer.this.func_195581_a(s3, DedicatedServer.this.func_195573_aM());
-+                  }
-+                  // CraftBukkit end
-                }
-             } catch (IOException ioexception1) {
+-               }
+-            } catch (IOException ioexception1) {
 -               DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-+               DedicatedServer.field_155771_h.error(com.mohistmc.util.i18n.i18n.get("dedicatedserver.1", (Throwable)ioexception1));
++                return waitable.get();
++            } catch (java.util.concurrent.ExecutionException e) {
++                throw new RuntimeException("Exception processing rcon command " + p_71252_1_, e.getCause());
++            } catch (InterruptedException e) {
++                Thread.currentThread().interrupt(); // Maintain interrupted state
++                throw new RuntimeException("Interrupted processing rcon command " + p_71252_1_, e);
              }
  
-          }
-       };
-+
-+      // CraftBukkit start - TODO: handle command-line logging arguments
-+      java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
-+      global.setUseParentHandlers(false);
-+      for (java.util.logging.Handler handler : global.getHandlers()) {
-+         global.removeHandler(handler);
-+      }
-+      global.addHandler(new org.bukkit.craftbukkit.v1_16_R3.util.ForwardLogHandler());
-+
-+      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
-+
-+      System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
-+      System.setErr(IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
-+      // CraftBukkit end
-       thread.setDaemon(true);
-       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
-       thread.start();
+-         }
+-      };
+-      thread.setDaemon(true);
+-      thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
+-      thread.start();
 -      field_155771_h.info("Starting minecraft server version " + SharedConstants.func_215069_a().getName());
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.26", SharedConstants.func_215069_a().getName()));
-       if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
+-      if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
 -         field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.2"));
-       }
- 
+-      }
+-
 -      field_155771_h.info("Loading properties");
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.3"));
-       ServerProperties serverproperties = this.field_71340_o.func_219034_a();
-       if (this.func_71264_H()) {
-          this.func_71189_e("127.0.0.1");
-@@ -120,7 +_,7 @@
-       super.func_143006_e(serverproperties.field_219005_R.get());
-       this.func_205741_k(serverproperties.field_219017_k);
-       this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
+-      ServerProperties serverproperties = this.field_71340_o.func_219034_a();
+-      if (this.func_71264_H()) {
+-         this.func_71189_e("127.0.0.1");
+-      } else {
+-         this.func_71229_d(serverproperties.field_219007_a);
+-         this.func_190517_e(serverproperties.field_219008_b);
+-         this.func_71189_e(serverproperties.field_219009_c);
+-      }
+-
+-      this.func_71188_g(serverproperties.field_219012_f);
+-      this.func_71245_h(serverproperties.field_219013_g);
+-      this.func_180507_a_(serverproperties.field_219014_h, this.func_184113_aK());
+-      this.func_71205_p(serverproperties.field_219015_i);
+-      this.func_104055_i(serverproperties.field_219016_j);
+-      super.func_143006_e(serverproperties.field_219005_R.get());
+-      this.func_205741_k(serverproperties.field_219017_k);
+-      this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
 -      field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.4", (Object)serverproperties.field_219020_n));
-       InetAddress inetaddress = null;
-       if (!this.func_71211_k().isEmpty()) {
-          inetaddress = InetAddress.getByName(this.func_71211_k());
-@@ -131,22 +_,22 @@
-       }
- 
-       this.func_244801_P();
+-      InetAddress inetaddress = null;
+-      if (!this.func_71211_k().isEmpty()) {
+-         inetaddress = InetAddress.getByName(this.func_71211_k());
+-      }
+-
+-      if (this.func_71215_F() < 0) {
+-         this.func_71208_b(serverproperties.field_219025_s);
+-      }
+-
+-      this.func_244801_P();
 -      field_155771_h.info("Starting Minecraft server on {}:{}", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), this.func_71215_F());
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.5", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), this.func_71215_F()));
- 
-       try {
-          this.func_147137_ag().func_151265_a(inetaddress, this.func_71215_F());
-       } catch (IOException ioexception) {
+-
+-      try {
+-         this.func_147137_ag().func_151265_a(inetaddress, this.func_71215_F());
+-      } catch (IOException ioexception) {
 -         field_155771_h.warn("**** FAILED TO BIND TO PORT!");
 -         field_155771_h.warn("The exception was: {}", (Object)ioexception.toString());
 -         field_155771_h.warn("Perhaps a server is already running on that port?");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.6"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.7", (Object)ioexception.toString()));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.8"));
-          return false;
-       }
- 
-       if (!this.func_71266_T()) {
+-         return false;
+-      }
+-
+-      if (!this.func_71266_T()) {
 -         field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
 -         field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
 -         field_155771_h.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
 -         field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.9"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.10"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.11"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.12"));
-       }
- 
-       if (this.func_152368_aE()) {
-@@ -157,45 +_,44 @@
-          return false;
-       } else {
-          this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
-+         server.loadPlugins();
-+         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-          long i = Util.func_211178_c();
-          this.func_71191_d(serverproperties.field_219026_t);
-          SkullTileEntity.func_184293_a(this.func_152358_ax());
-          SkullTileEntity.func_184294_a(this.func_147130_as());
-          PlayerProfileCache.func_187320_a(this.func_71266_T());
+-      }
+-
+-      if (this.func_152368_aE()) {
+-         this.func_152358_ax().func_152658_c();
+-      }
+-
+-      if (!PreYggdrasilConverter.func_219587_e(this)) {
+-         return false;
+-      } else {
+-         this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
+-         long i = Util.func_211178_c();
+-         this.func_71191_d(serverproperties.field_219026_t);
+-         SkullTileEntity.func_184293_a(this.func_152358_ax());
+-         SkullTileEntity.func_184294_a(this.func_147130_as());
+-         PlayerProfileCache.func_187320_a(this.func_71266_T());
 -         field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
-+         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-+         field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.13", (Object)this.func_230542_k__()));
-          this.func_240800_l__();
-          long j = Util.func_211178_c() - i;
-          String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
+-         this.func_240800_l__();
+-         long j = Util.func_211178_c() - i;
+-         String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
 -         field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
-+         field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.14", (Object)s));
-+         Metrics.MohistMetrics.startMetrics();
-+         this.field_211151_aa = Util.func_211177_b(); //Forge: Update server time to prevent watchdog/spaming during long load.
-          if (serverproperties.field_219027_u != null) {
-             this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
-          }
- 
-          if (serverproperties.field_219028_v) {
+-         if (serverproperties.field_219027_u != null) {
+-            this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
+-         }
+-
+-         if (serverproperties.field_219028_v) {
 -            field_155771_h.info("Starting GS4 status listener");
-+            field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.15"));
-             this.field_71342_m = QueryThread.func_242129_a(this);
-          }
- 
-          if (serverproperties.field_219030_x) {
+-            this.field_71342_m = QueryThread.func_242129_a(this);
+-         }
+-
+-         if (serverproperties.field_219030_x) {
 -            field_155771_h.info("Starting remote control listener");
-+            field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.16"));
-             this.field_71339_n = MainThread.func_242130_a(this);
+-            this.field_71339_n = MainThread.func_242130_a(this);
 -         }
 -
 -         if (this.func_175593_aQ() > 0L) {
@@ -207,226 +718,395 @@
 -            thread1.setName("Server Watchdog");
 -            thread1.setDaemon(true);
 -            thread1.start();
-+            this.remoteConsole = new org.bukkit.craftbukkit.v1_16_R3.command.CraftRemoteConsoleCommandSender(this.field_184115_n); // CraftBukkit
-          }
- 
-          Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
-+         // <3 you Grum for this, saves us ~30 patch files! --^
-          if (serverproperties.field_241079_P_) {
-             ServerInfoMBean.func_233490_a_(this);
-          }
+-         }
+-
+-         Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
+-         if (serverproperties.field_241079_P_) {
+-            ServerInfoMBean.func_233490_a_(this);
+-         }
 -
 -         return true;
-+         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
-       }
-+
-    }
- 
-    public boolean func_230537_U_() {
-@@ -216,21 +_,21 @@
-       if (!serverproperties.field_218989_B.isEmpty()) {
-          s = serverproperties.field_218989_B;
-          if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
--            field_155771_h.warn("resource-pack-hash is deprecated and found along side resource-pack-sha1. resource-pack-hash will be ignored.");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.17"));
-          }
-       } else if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
--         field_155771_h.warn("resource-pack-hash is deprecated. Please use resource-pack-sha1 instead.");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.18"));
-          s = serverproperties.field_218988_A;
-       } else {
-          s = "";
-       }
- 
-       if (!s.isEmpty() && !field_189647_l.matcher(s).matches()) {
--         field_155771_h.warn("Invalid sha1 for ressource-pack-sha1");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.19"));
-       }
- 
-       if (!serverproperties.field_219014_h.isEmpty() && s.isEmpty()) {
--         field_155771_h.warn("You specified a resource pack without providing a sha1 hash. Pack will be updated on the client only if you change the name of the pack.");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.20"));
-       }
- 
-       return s;
-@@ -280,7 +_,6 @@
-       if (this.field_71342_m != null) {
-          this.field_71342_m.func_219591_b();
-       }
+-      }
+-   }
 -
-    }
- 
-    public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -303,11 +_,21 @@
-    }
- 
-    public void func_71333_ah() {
-+      MinecraftTimings.serverCommandTimer.startTiming(); // Spigot
-       while(!this.field_71341_l.isEmpty()) {
-          PendingCommand pendingcommand = this.field_71341_l.remove(0);
+-   public boolean func_230537_U_() {
+-      return this.func_213221_d_().field_219010_d && super.func_230537_U_();
+-   }
+-
+-   public boolean func_230536_N_() {
+-      return this.field_71340_o.func_219034_a().field_218992_E && super.func_230536_N_();
+-   }
+-
+-   public boolean func_230538_V_() {
+-      return this.field_71340_o.func_219034_a().field_219011_e && super.func_230538_V_();
+-   }
+-
+-   public String func_184113_aK() {
+-      ServerProperties serverproperties = this.field_71340_o.func_219034_a();
+-      String s;
+-      if (!serverproperties.field_218989_B.isEmpty()) {
+-         s = serverproperties.field_218989_B;
+-         if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
+-            field_155771_h.warn("resource-pack-hash is deprecated and found along side resource-pack-sha1. resource-pack-hash will be ignored.");
+-         }
+-      } else if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
+-         field_155771_h.warn("resource-pack-hash is deprecated. Please use resource-pack-sha1 instead.");
+-         s = serverproperties.field_218988_A;
+-      } else {
+-         s = "";
+-      }
+-
+-      if (!s.isEmpty() && !field_189647_l.matcher(s).matches()) {
+-         field_155771_h.warn("Invalid sha1 for ressource-pack-sha1");
+-      }
+-
+-      if (!serverproperties.field_219014_h.isEmpty() && s.isEmpty()) {
+-         field_155771_h.warn("You specified a resource pack without providing a sha1 hash. Pack will be updated on the client only if you change the name of the pack.");
+-      }
+-
+-      return s;
+-   }
+-
+-   public ServerProperties func_213221_d_() {
+-      return this.field_71340_o.func_219034_a();
+-   }
+-
+-   public void func_230543_p_() {
+-      this.func_147139_a(this.func_213221_d_().field_219019_m, true);
+-   }
+-
+-   public boolean func_71199_h() {
+-      return this.func_213221_d_().field_218990_C;
+-   }
+-
+-   public CrashReport func_71230_b(CrashReport p_71230_1_) {
+-      p_71230_1_ = super.func_71230_b(p_71230_1_);
+-      p_71230_1_.func_85056_g().func_189529_a("Is Modded", () -> {
+-         return this.func_230045_q_().orElse("Unknown (can't tell)");
+-      });
+-      p_71230_1_.func_85056_g().func_189529_a("Type", () -> {
+-         return "Dedicated Server (map_server.txt)";
+-      });
+-      return p_71230_1_;
+-   }
+-
+-   public Optional<String> func_230045_q_() {
+-      String s = this.getServerModName();
+-      return !"vanilla".equals(s) ? Optional.of("Definitely; Server brand changed to '" + s + "'") : Optional.empty();
+-   }
+-
+-   public void func_71240_o() {
+-      if (this.field_244714_r != null) {
+-         this.field_244714_r.close();
+-      }
+-
+-      if (this.field_213225_q != null) {
+-         this.field_213225_q.func_219050_b();
+-      }
+-
+-      if (this.field_71339_n != null) {
+-         this.field_71339_n.func_219591_b();
+-      }
+-
+-      if (this.field_71342_m != null) {
+-         this.field_71342_m.func_219591_b();
+-      }
+-
+-   }
+-
+-   public void func_71190_q(BooleanSupplier p_71190_1_) {
+-      super.func_71190_q(p_71190_1_);
+-      this.func_71333_ah();
+-   }
+-
+-   public boolean func_71255_r() {
+-      return this.func_213221_d_().field_218991_D;
+-   }
+-
+-   public void func_70000_a(Snooper p_70000_1_) {
+-      p_70000_1_.func_152768_a("whitelist_enabled", this.func_184103_al().func_72383_n());
+-      p_70000_1_.func_152768_a("whitelist_count", this.func_184103_al().func_152598_l().length);
+-      super.func_70000_a(p_70000_1_);
+-   }
+-
+-   public void func_195581_a(String p_195581_1_, CommandSource p_195581_2_) {
+-      this.field_71341_l.add(new PendingCommand(p_195581_1_, p_195581_2_));
+-   }
+-
+-   public void func_71333_ah() {
+-      while(!this.field_71341_l.isEmpty()) {
+-         PendingCommand pendingcommand = this.field_71341_l.remove(0);
 -         this.func_195571_aL().func_197059_a(pendingcommand.field_73701_b, pendingcommand.field_73702_a);
-+         // CraftBukkit start - ServerCommand for preprocessing
-+         ServerCommandEvent event = new ServerCommandEvent(this.console, pendingcommand.field_73702_a);
-+         this.server.getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            continue;
-+         }
-+         pendingcommand = new PendingCommand(event.getCommand(), pendingcommand.field_73701_b);
-+         this.server.dispatchServerCommand(this.console, pendingcommand);
-+         // CraftBukkit end
-       }
- 
-+      MinecraftTimings.serverCommandTimer.stopTiming(); // Spigot
-    }
- 
-    public boolean func_71262_S() {
-@@ -410,7 +_,7 @@
-       return this.func_213221_d_().field_219003_P;
-    }
- 
+-      }
+-
+-   }
+-
+-   public boolean func_71262_S() {
+-      return true;
+-   }
+-
+-   public int func_241871_k() {
+-      return this.func_213221_d_().field_244379_I;
+-   }
+-
+-   public boolean func_181035_ah() {
+-      return this.func_213221_d_().field_218994_G;
+-   }
+-
+-   public DedicatedPlayerList func_184103_al() {
+-      return (DedicatedPlayerList)super.func_184103_al();
+-   }
+-
+-   public boolean func_71344_c() {
+-      return true;
+-   }
+-
+-   public String func_71277_t() {
+-      return this.func_71211_k();
+-   }
+-
+-   public int func_71234_u() {
+-      return this.func_71215_F();
+-   }
+-
+-   public String func_71274_v() {
+-      return this.func_71273_Y();
+-   }
+-
+-   public void func_120011_ar() {
+-      if (this.field_213225_q == null) {
+-         this.field_213225_q = MinecraftServerGui.func_219048_a(this);
+-      }
+-
+-   }
+-
+-   public boolean func_71279_ae() {
+-      return this.field_213225_q != null;
+-   }
+-
+-   public boolean func_195565_a(GameType p_195565_1_, boolean p_195565_2_, int p_195565_3_) {
+-      return false;
+-   }
+-
+-   public boolean func_82356_Z() {
+-      return this.func_213221_d_().field_218995_H;
+-   }
+-
+-   public int func_82357_ak() {
+-      return this.func_213221_d_().field_218996_I;
+-   }
+-
+-   public boolean func_175579_a(ServerWorld p_175579_1_, BlockPos p_175579_2_, PlayerEntity p_175579_3_) {
+-      if (p_175579_1_.func_234923_W_() != World.field_234918_g_) {
+-         return false;
+-      } else if (this.func_184103_al().func_152603_m().func_152690_d()) {
+-         return false;
+-      } else if (this.func_184103_al().func_152596_g(p_175579_3_.func_146103_bH())) {
+-         return false;
+-      } else if (this.func_82357_ak() <= 0) {
+-         return false;
+-      } else {
+-         BlockPos blockpos = p_175579_1_.func_241135_u_();
+-         int i = MathHelper.func_76130_a(p_175579_2_.func_177958_n() - blockpos.func_177958_n());
+-         int j = MathHelper.func_76130_a(p_175579_2_.func_177952_p() - blockpos.func_177952_p());
+-         int k = Math.max(i, j);
+-         return k <= this.func_82357_ak();
+-      }
+-   }
+-
+-   public boolean func_230541_aj_() {
+-      return this.func_213221_d_().field_241080_Q_;
+-   }
+-
+-   public int func_110455_j() {
+-      return this.func_213221_d_().field_218997_J;
+-   }
+-
+-   public int func_223707_k() {
+-      return this.func_213221_d_().field_225395_K;
+-   }
+-
+-   public void func_143006_e(int p_143006_1_) {
+-      super.func_143006_e(p_143006_1_);
+-      this.field_71340_o.func_219033_a((p_213224_2_) -> {
+-         return p_213224_2_.field_219005_R.func_244381_a(this.func_244267_aX(), p_143006_1_);
+-      });
+-   }
+-
+-   public boolean func_195569_l() {
+-      return this.func_213221_d_().field_219002_O;
+-   }
+-
+-   public boolean func_195041_r_() {
+-      return this.func_213221_d_().field_219003_P;
+-   }
+-
 -   public int func_175580_aG() {
-+    public int func_175580_aG() {
-       return this.func_213221_d_().field_219004_Q;
-    }
- 
-@@ -423,7 +_,7 @@
- 
-       for(int i = 0; !flag && i <= 2; ++i) {
-          if (i > 0) {
+-      return this.func_213221_d_().field_219004_Q;
+-   }
+-
+-   public int func_175577_aI() {
+-      return this.func_213221_d_().field_219001_N;
+-   }
+-
+-   protected boolean func_152368_aE() {
+-      boolean flag = false;
+-
+-      for(int i = 0; !flag && i <= 2; ++i) {
+-         if (i > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the user banlist, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.21"));
-             this.func_152369_aG();
-          }
- 
-@@ -434,7 +_,7 @@
- 
-       for(int j = 0; !flag1 && j <= 2; ++j) {
-          if (j > 0) {
+-            this.func_152369_aG();
+-         }
+-
+-         flag = PreYggdrasilConverter.func_152724_a(this);
+-      }
+-
+-      boolean flag1 = false;
+-
+-      for(int j = 0; !flag1 && j <= 2; ++j) {
+-         if (j > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the ip banlist, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.22"));
-             this.func_152369_aG();
-          }
- 
-@@ -445,7 +_,7 @@
- 
-       for(int k = 0; !flag2 && k <= 2; ++k) {
-          if (k > 0) {
+-            this.func_152369_aG();
+-         }
+-
+-         flag1 = PreYggdrasilConverter.func_152722_b(this);
+-      }
+-
+-      boolean flag2 = false;
+-
+-      for(int k = 0; !flag2 && k <= 2; ++k) {
+-         if (k > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the op list, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.23"));
-             this.func_152369_aG();
-          }
- 
-@@ -456,7 +_,7 @@
- 
-       for(int l = 0; !flag3 && l <= 2; ++l) {
-          if (l > 0) {
+-            this.func_152369_aG();
+-         }
+-
+-         flag2 = PreYggdrasilConverter.func_152718_c(this);
+-      }
+-
+-      boolean flag3 = false;
+-
+-      for(int l = 0; !flag3 && l <= 2; ++l) {
+-         if (l > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the whitelist, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.24"));
-             this.func_152369_aG();
-          }
- 
-@@ -467,7 +_,7 @@
- 
-       for(int i1 = 0; !flag4 && i1 <= 2; ++i1) {
-          if (i1 > 0) {
+-            this.func_152369_aG();
+-         }
+-
+-         flag3 = PreYggdrasilConverter.func_152710_d(this);
+-      }
+-
+-      boolean flag4 = false;
+-
+-      for(int i1 = 0; !flag4 && i1 <= 2; ++i1) {
+-         if (i1 > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the player save files, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.25"));
-             this.func_152369_aG();
-          }
- 
-@@ -489,14 +_,70 @@
-    }
- 
-    public String func_71258_A() {
+-            this.func_152369_aG();
+-         }
+-
+-         flag4 = PreYggdrasilConverter.func_152723_a(this);
+-      }
+-
+-      return flag || flag1 || flag2 || flag3 || flag4;
+-   }
+-
+-   private void func_152369_aG() {
+-      try {
+-         Thread.sleep(5000L);
+-      } catch (InterruptedException interruptedexception) {
+-      }
+-   }
+-
+-   public long func_175593_aQ() {
+-      return this.func_213221_d_().field_218998_K;
+-   }
+-
+-   public String func_71258_A() {
 -      return "";
-+      // CraftBukkit start - Whole method
-+      StringBuilder result = new StringBuilder();
-+      Plugin[] plugins = this.server.getPluginManager().getPlugins();
-+      result.append(this.server.getName());
-+      result.append(" on Bukkit ");
-+      result.append(this.server.getBukkitVersion());
-+      if (plugins.length > 0 && this.server.getQueryPlugins()) {
-+         result.append(": ");
-+         for (int i = 0; i < plugins.length; ++i) {
-+            if (i > 0) {
-+               result.append("; ");
-+            }
-+            result.append(plugins[i].getDescription().getName());
-+            result.append(" ");
-+            result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
-+         }
-+      }
-+      return result.toString();
-+      // CraftBukkit end
-    }
- 
-    public String func_71252_i(String p_71252_1_) {
-+      Waitable[] waitableArray = new Waitable[1];
-       this.field_184115_n.func_70007_b();
-       this.func_213167_f(() -> {
+-   }
+-
+-   public String func_71252_i(String p_71252_1_) {
+-      this.field_184115_n.func_70007_b();
+-      this.func_213167_f(() -> {
 -         this.func_195571_aL().func_197059_a(this.field_184115_n.func_195540_f(), p_71252_1_);
-+         // CraftBukkit start - fire RemoteServerCommandEvent
-+         RemoteServerCommandEvent event = new RemoteServerCommandEvent(this.remoteConsole, p_71252_1_);
-+         this.server.getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            return;
-+         }
-+         // Paper start
-+         if (p_71252_1_.toLowerCase().startsWith("timings") && p_71252_1_.toLowerCase().matches("timings (report|paste|get|merged|seperate)")) {
-+            org.bukkit.command.BufferedCommandSender sender = new org.bukkit.command.BufferedCommandSender();
-+            Waitable<String> waitable = new Waitable<String>() {
-+               @Override
-+               protected String evaluate() {
-+                  return sender.getBuffer();
-+               }
-+            };
-+            waitableArray[0] = waitable;
-+            co.aikar.timings.Timings.generateReport(new co.aikar.timings.TimingsReportListener(sender, waitable));
-+         } else {
-+            // Paper end
-+            PendingCommand serverCommand = new PendingCommand(event.getCommand(), this.field_184115_n.func_195540_f());
-+            this.server.dispatchServerCommand(this.remoteConsole, serverCommand);
-+         }
-+         // CraftBukkit end
-       });
-+         // Paper start
-+      if (waitableArray[0] != null) {
-+         //noinspection unchecked
-+         Waitable<String> waitable = waitableArray[0];
-+         try {
-+            return waitable.get();
-+         } catch (java.util.concurrent.ExecutionException e) {
-+            throw new RuntimeException("Exception processing rcon command " + p_71252_1_, e.getCause());
-+         } catch (InterruptedException e) {
-+            Thread.currentThread().interrupt(); // Maintain interrupted state
-+            throw new RuntimeException("Interrupted processing rcon command " + p_71252_1_, e);
-+         }
+-      });
+-      return this.field_184115_n.func_70008_c();
+-   }
+-
+-   public void func_213223_o(boolean p_213223_1_) {
+-      this.field_71340_o.func_219033_a((p_213222_2_) -> {
+-         return p_213222_2_.field_219006_S.func_244381_a(this.func_244267_aX(), p_213223_1_);
+-      });
+-   }
+-
+-   public void func_71260_j() {
+-      super.func_71260_j();
+-      Util.func_240993_h_();
+-   }
+-
+-   public boolean func_213199_b(GameProfile p_213199_1_) {
+-      return false;
+-   }
+-
+-   public int func_230512_b_(int p_230512_1_) {
+-      return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
+-   }
+-
+-   public String func_230542_k__() {
+-      return this.field_71310_m.func_237282_a_();
+-   }
+-
+-   public boolean func_230540_aS_() {
+-      return this.field_71340_o.func_219034_a().field_241078_O_;
+-   }
+-
+-   @Nullable
+-   public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
+-      return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
+-   }
++        }
++        // Paper end
++        return this.field_184115_n.func_70008_c();
++    }
 +
-+      }
-+      // Paper end
-       return this.field_184115_n.func_70008_c();
-    }
- 
-@@ -515,6 +_,11 @@
-       return false;
-    }
- 
-+   @Override //Forge: Enable formated text for colors in console.
-+   public void func_145747_a(net.minecraft.util.text.ITextComponent message, java.util.UUID p_145747_2_) {
-+      field_155771_h.info(message.getString());
-+   }
++    public void func_213223_o(boolean p_213223_1_) {
++        this.field_71340_o.func_219033_a((p_213222_2_) -> {
++            return p_213222_2_.field_219006_S.func_244381_a(this.func_244267_aX(), p_213223_1_);
++        });
++    }
 +
-    public int func_230512_b_(int p_230512_1_) {
-       return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
-    }
-@@ -531,4 +_,10 @@
-    public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
-       return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
-    }
++    public void func_71260_j() {
++        super.func_71260_j();
++        Util.func_240993_h_();
++    }
 +
-+   @Override
-+   public CommandSender getBukkitSender(CommandSource wrapper) {
-+      return console;
-+   }
-+   // CraftBukkit end
++    public boolean func_213199_b(GameProfile p_213199_1_) {
++        return false;
++    }
++
++    @Override //Forge: Enable formated text for colors in console.
++    public void func_145747_a(net.minecraft.util.text.ITextComponent message, java.util.UUID p_145747_2_) {
++        field_155771_h.info(message.getString());
++    }
++
++    public int func_230512_b_(int p_230512_1_) {
++        return this.func_213221_d_().field_241081_R_ * p_230512_1_ / 100;
++    }
++
++    public String func_230542_k__() {
++        return this.field_71310_m.func_237282_a_();
++    }
++
++    public boolean func_230540_aS_() {
++        return this.field_71340_o.func_219034_a().field_241078_O_;
++    }
++
++    @Nullable
++    public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
++        return this.field_244714_r != null ? this.field_244714_r.func_244566_a(p_244435_1_.func_146103_bH()) : null;
++    }
++
++    @Override
++    public CommandSender getBukkitSender(CommandSource wrapper) {
++        return console;
++    }
++    // CraftBukkit end
  }
