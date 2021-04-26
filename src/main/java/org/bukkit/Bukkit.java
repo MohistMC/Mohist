@@ -1,7 +1,6 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableList;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
@@ -63,8 +62,7 @@ public final class Bukkit {
     /**
      * Static class cannot be initialized.
      */
-    private Bukkit() {
-    }
+    private Bukkit() {}
 
     /**
      * Gets the current {@link Server} singleton
@@ -140,7 +138,7 @@ public final class Bukkit {
      * affect the collection are fully supported. The effects following
      * (non-exhaustive) {@link Entity#teleport(Location) teleportation},
      * {@link Player#setHealth(double) death}, and {@link Player#kickPlayer(
-     *String) kicking} are undefined. Any use of this collection from
+     * String) kicking} are undefined. Any use of this collection from
      * asynchronous threads is unsafe.
      * <p>
      * For safe consequential iteration or mimicking the old array behavior,
@@ -186,7 +184,7 @@ public final class Bukkit {
      * specified.
      *
      * @return the IP string that this server is bound to, otherwise empty
-     * string
+     *     string
      */
     @NotNull
     public static String getIp() {
@@ -552,7 +550,7 @@ public final class Bukkit {
      * Unloads the given world.
      *
      * @param world the world to unload
-     * @param save  whether to save the chunks before unloading
+     * @param save whether to save the chunks before unloading
      * @return true if successful, false otherwise
      */
     public static boolean unloadWorld(@NotNull World world, boolean save) {
@@ -612,12 +610,13 @@ public final class Bukkit {
      * This method uses implementation default values for radius and
      * findUnexplored (usually 100, true).
      *
-     * @param world         the world the map will belong to
-     * @param location      the origin location to find the nearest structure
+     * @param world the world the map will belong to
+     * @param location the origin location to find the nearest structure
      * @param structureType the type of structure to find
      * @return a newly created item stack
+     *
      * @see World#locateNearestStructure(org.bukkit.Location,
-     * org.bukkit.StructureType, int, boolean)
+     *      org.bukkit.StructureType, int, boolean)
      */
     @NotNull
     public static ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull StructureType structureType) {
@@ -631,15 +630,16 @@ public final class Bukkit {
      * This method uses implementation default values for radius and
      * findUnexplored (usually 100, true).
      *
-     * @param world          the world the map will belong to
-     * @param location       the origin location to find the nearest structure
-     * @param structureType  the type of structure to find
-     * @param radius         radius to search, see World#locateNearestStructure for more
-     *                       information
+     * @param world the world the map will belong to
+     * @param location the origin location to find the nearest structure
+     * @param structureType the type of structure to find
+     * @param radius radius to search, see World#locateNearestStructure for more
+     *               information
      * @param findUnexplored whether to find unexplored structures
      * @return the newly created item stack
+     *
      * @see World#locateNearestStructure(org.bukkit.Location,
-     * org.bukkit.StructureType, int, boolean)
+     *      org.bukkit.StructureType, int, boolean)
      */
     @NotNull
     public static ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull StructureType structureType, int radius, boolean findUnexplored) {
@@ -692,12 +692,12 @@ public final class Bukkit {
     /**
      * Dispatches a command on this server, and executes it if found.
      *
-     * @param sender      the apparent sender of the command
+     * @param sender the apparent sender of the command
      * @param commandLine the command + arguments. Example: <code>test abc
-     *                    123</code>
+     *     123</code>
      * @return returns false if no target is found
      * @throws CommandException thrown when the executor for the given command
-     *                          fails with an unhandled exception
+     *     fails with an unhandled exception
      */
     public static boolean dispatchCommand(@NotNull CommandSender sender, @NotNull String commandLine) throws CommandException {
         return server.dispatchCommand(sender, commandLine);
@@ -708,7 +708,7 @@ public final class Bukkit {
      *
      * @param recipe the recipe to add
      * @return true if the recipe was added, false if it wasn't for some
-     * reason
+     *     reason
      */
     @Contract("null -> false")
     public static boolean addRecipe(@Nullable Recipe recipe) {
@@ -842,9 +842,9 @@ public final class Bukkit {
      * Broadcasts the specified message to every user with the given
      * permission name.
      *
-     * @param message    message to broadcast
+     * @param message message to broadcast
      * @param permission the required permission {@link Permissible
-     *                   permissibles} must have to receive the broadcast
+     *     permissibles} must have to receive the broadcast
      * @return number of message recipients
      */
     public static int broadcast(@NotNull String message, @NotNull String permission) {
@@ -861,11 +861,11 @@ public final class Bukkit {
      * This will return an object even if the player does not exist. To this
      * method, all players will exist.
      *
+     * @deprecated Persistent storage of users should be by UUID as names are no longer
+     *             unique past a single session.
      * @param name the name the player to retrieve
      * @return an offline player
      * @see #getOfflinePlayer(java.util.UUID)
-     * @deprecated Persistent storage of users should be by UUID as names are no longer
-     * unique past a single session.
      */
     @Deprecated
     @NotNull
@@ -1034,10 +1034,11 @@ public final class Bukkit {
      * {@link Player#openEnchanting(Location, boolean)} instead.
      *
      * @param owner the holder of the inventory, or null to indicate no holder
-     * @param type  the type of inventory to create
+     * @param type the type of inventory to create
      * @return a new inventory
      * @throws IllegalArgumentException if the {@link InventoryType} cannot be
-     *                                  viewed.
+     * viewed.
+     *
      * @see InventoryType#isCreatable()
      */
     @NotNull
@@ -1061,11 +1062,12 @@ public final class Bukkit {
      * {@link Player#openEnchanting(Location, boolean)} instead.
      *
      * @param owner The holder of the inventory; can be null if there's no holder.
-     * @param type  The type of inventory to create.
+     * @param type The type of inventory to create.
      * @param title The title of the inventory, to be displayed when it is viewed.
      * @return The new inventory.
      * @throws IllegalArgumentException if the {@link InventoryType} cannot be
-     *                                  viewed.
+     * viewed.
+     *
      * @see InventoryType#isCreatable()
      */
     @NotNull
@@ -1078,7 +1080,7 @@ public final class Bukkit {
      * specified size.
      *
      * @param owner the holder of the inventory, or null to indicate no holder
-     * @param size  a multiple of 9 as the size of inventory to create
+     * @param size a multiple of 9 as the size of inventory to create
      * @return a new inventory
      * @throws IllegalArgumentException if the size is not a multiple of 9
      */
@@ -1092,9 +1094,9 @@ public final class Bukkit {
      * specified size and title.
      *
      * @param owner the holder of the inventory, or null to indicate no holder
-     * @param size  a multiple of 9 as the size of inventory to create
+     * @param size a multiple of 9 as the size of inventory to create
      * @param title the title of the inventory, displayed when inventory is
-     *              viewed
+     *     viewed
      * @return a new inventory
      * @throws IllegalArgumentException if the size is not a multiple of 9
      */
@@ -1107,7 +1109,7 @@ public final class Bukkit {
      * Creates an empty merchant.
      *
      * @param title the title of the corresponding merchant inventory, displayed
-     *              when the merchant inventory is viewed
+     * when the merchant inventory is viewed
      * @return a new merchant
      */
     @NotNull
@@ -1175,7 +1177,7 @@ public final class Bukkit {
      * preclude</b> the same assumption.
      *
      * @return true if the current thread matches the expected primary thread,
-     * false otherwise
+     *     false otherwise
      */
     public static boolean isPrimaryThread() {
         return server.isPrimaryThread();
@@ -1238,8 +1240,8 @@ public final class Bukkit {
      * Gets an instance of the server's default server-icon.
      *
      * @return the default server-icon; null values may be used by the
-     * implementation to indicate no defined icon, but this behavior is
-     * not guaranteed
+     *     implementation to indicate no defined icon, but this behavior is
+     *     not guaranteed
      */
     @Nullable
     public static CachedServerIcon getServerIcon() {
@@ -1254,11 +1256,11 @@ public final class Bukkit {
      * guaranteed to throw an implementation-defined {@link Exception}.
      *
      * @param file the file to load the from
-     * @return a cached server-icon that can be used for a {@link
-     * ServerListPingEvent#setServerIcon(CachedServerIcon)}
      * @throws IllegalArgumentException if image is null
-     * @throws Exception                if the image does not meet current server server-icon
-     *                                  specifications
+     * @throws Exception if the image does not meet current server server-icon
+     *     specifications
+     * @return a cached server-icon that can be used for a {@link
+     *     ServerListPingEvent#setServerIcon(CachedServerIcon)}
      */
     @NotNull
     public static CachedServerIcon loadServerIcon(@NotNull File file) throws IllegalArgumentException, Exception {
@@ -1272,11 +1274,11 @@ public final class Bukkit {
      * guaranteed to throw an implementation-defined {@link Exception}.
      *
      * @param image the image to use
-     * @return a cached server-icon that can be used for a {@link
-     * ServerListPingEvent#setServerIcon(CachedServerIcon)}
      * @throws IllegalArgumentException if image is null
-     * @throws Exception                if the image does not meet current server
-     *                                  server-icon specifications
+     * @throws Exception if the image does not meet current server
+     *     server-icon specifications
+     * @return a cached server-icon that can be used for a {@link
+     *     ServerListPingEvent#setServerIcon(CachedServerIcon)}
      */
     @NotNull
     public static CachedServerIcon loadServerIcon(@NotNull BufferedImage image) throws IllegalArgumentException, Exception {
@@ -1306,11 +1308,12 @@ public final class Bukkit {
 
     /**
      * Create a ChunkData for use in a generator.
-     * <p>
+     *
      * See {@link ChunkGenerator#generateChunkData(org.bukkit.World, java.util.Random, int, int, org.bukkit.generator.ChunkGenerator.BiomeGrid)}
      *
      * @param world the world to create the ChunkData for
      * @return a new ChunkData for the world
+     *
      */
     @NotNull
     public static ChunkGenerator.ChunkData createChunkData(@NotNull World world) {
@@ -1339,7 +1342,7 @@ public final class Bukkit {
      * This instance is added to the persistent storage of the server and will
      * be editable by commands and restored after restart.
      *
-     * @param key   the key of the boss bar that is used to access the boss bar
+     * @param key the key of the boss bar that is used to access the boss bar
      * @param title the title of the boss bar
      * @param color the color of the boss bar
      * @param style the style of the boss bar
@@ -1360,7 +1363,7 @@ public final class Bukkit {
      *     {@link #createBossBar(String, BarColor, BarStyle, BarFlag...)}
      *   </li>
      * </ul>
-     * <p>
+     *
      * e.g. bossbars created using the bossbar command
      *
      * @return a bossbar iterator
@@ -1379,7 +1382,7 @@ public final class Bukkit {
      *     {@link #createBossBar(String, BarColor, BarStyle, BarFlag...)}
      *   </li>
      * </ul>
-     * <p>
+     *
      * e.g. bossbars created using the bossbar command
      *
      * @param key unique bossbar key
@@ -1399,7 +1402,7 @@ public final class Bukkit {
      *     {@link #createBossBar(String, BarColor, BarStyle, BarFlag...)}
      *   </li>
      * </ul>
-     * <p>
+     *
      * e.g. bossbars created using the bossbar command
      *
      * @param key unique bossbar key
@@ -1486,7 +1489,7 @@ public final class Bukkit {
      * provided in data.
      *
      * @param material the material
-     * @param data     data string
+     * @param data data string
      * @return new data instance
      * @throws IllegalArgumentException if the specified data is not valid
      */
@@ -1508,10 +1511,10 @@ public final class Bukkit {
      * Server implementations are allowed to handle only the registries
      * indicated in {@link Tag}.
      *
-     * @param <T>      type of the tag
+     * @param <T> type of the tag
      * @param registry the tag registry to look at
-     * @param tag      the name of the tag
-     * @param clazz    the class of the tag entries
+     * @param tag the name of the tag
+     * @param clazz the class of the tag entries
      * @return the tag or null
      */
     @Nullable
@@ -1527,9 +1530,9 @@ public final class Bukkit {
      * <br>
      * No guarantees are made about the mutability of the returned iterator.
      *
-     * @param <T>      type of the tag
+     * @param <T> type of the tag
      * @param registry the tag registry to look at
-     * @param clazz    the class of the tag entries
+     * @param clazz the class of the tag entries
      * @return all defined tags
      */
     @NotNull
@@ -1561,12 +1564,12 @@ public final class Bukkit {
      * '@' selectors, but this method should not check such permissions from the
      * sender.
      *
-     * @param sender   the sender to execute as, must be provided
+     * @param sender the sender to execute as, must be provided
      * @param selector the selection string
      * @return a list of the selected entities. The list will not be null, but
      * no further guarantees are made.
      * @throws IllegalArgumentException if the selector is malformed in any way
-     *                                  or a parameter is null
+     * or a parameter is null
      */
     @NotNull
     public static List<Entity> selectEntities(@NotNull CommandSender sender, @NotNull String selector) throws IllegalArgumentException {
@@ -1574,8 +1577,8 @@ public final class Bukkit {
     }
 
     /**
-     * @return the unsafe values instance
      * @see UnsafeValues
+     * @return the unsafe values instance
      */
     @Deprecated
     @NotNull
