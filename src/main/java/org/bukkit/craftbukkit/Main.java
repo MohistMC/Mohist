@@ -111,6 +111,14 @@ public class Main extends OptionParser {
                 .defaultsTo(new File("spigot.yml"))
                 .describedAs("Yml file");
 
+        // Paper Start
+        acceptsAll(asList("paper", "paper-settings"), "File for paper settings")
+                .withRequiredArg()
+                .ofType(File.class)
+                .defaultsTo(new File("paper.yml"))
+                .describedAs("Yml file");
+        // Paper end
+
         allowsUnrecognizedOptions();
     }
 }
