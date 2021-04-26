@@ -20,9 +20,7 @@ import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-
 import java.net.ProxySelector;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
@@ -129,7 +127,6 @@ import org.bukkit.potion.Potion;
 import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
-import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
@@ -350,7 +347,7 @@ public final class CraftServer implements Server {
         for (CommandNode<CommandSource> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
             // Spigot start
             VanillaCommandWrapper wrapper = new VanillaCommandWrapper(dispatcher, cmd);
-            if (org.spigotmc.SpigotConfig.replaceCommands.contains(wrapper.getName())) {
+            if (org.spigotmc.SpigotConfig.replaceCommands.contains( wrapper.getName() ) ) {
                 if (first) {
                     commandMap.register("minecraft", wrapper);
                 }
@@ -723,7 +720,6 @@ public final class CraftServer implements Server {
         }
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
-        com.destroystokyo.paper.PaperConfig.init((File) console.options.valueOf("paper-settings")); // Paper
         for (ServerWorld world : console.getAllLevels()) {
             world.getServer().getWorldData().setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
@@ -757,7 +753,6 @@ public final class CraftServer implements Server {
                 world.ticksPerAmbientSpawns = this.getTicksPerAmbientSpawns();
             }
             world.spigotConfig.init(); // Spigot
-            world.paperConfig.init(); // Paper
         }
 
         pluginManager.clearPlugins();
@@ -765,7 +760,6 @@ public final class CraftServer implements Server {
         resetRecipes();
         reloadData();
         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
-        com.destroystokyo.paper.PaperConfig.registerCommands(); // Paper
         overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
         ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
 
@@ -1359,7 +1353,8 @@ public final class CraftServer implements Server {
             // Spigot Start
             GameProfile profile = null;
             // Only fetch an online UUID in online mode
-            if (getOnlineMode() || org.spigotmc.SpigotConfig.bungee) {
+            if ( getOnlineMode() || org.spigotmc.SpigotConfig.bungee )
+            {
                 profile = console.getProfileCache().get(name);
             }
             // Spigot end
@@ -1657,7 +1652,8 @@ public final class CraftServer implements Server {
 
     public List<String> tabCompleteCommand(Player player, String message, ServerWorld world, Vector3d pos) {
         // Spigot Start
-        if ((org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains(" ")) {
+        if ( (org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains( " " ) )
+        {
             return ImmutableList.of();
         }
         // Spigot End
@@ -1968,21 +1964,25 @@ public final class CraftServer implements Server {
         return CraftMagicNumbers.INSTANCE;
     }
 
-    private final Spigot spigot = new Spigot() {
+    private final Spigot spigot = new Spigot()
+    {
 
         @Deprecated
         @Override
-        public YamlConfiguration getConfig() {
+        public YamlConfiguration getConfig()
+        {
             return org.spigotmc.SpigotConfig.config;
         }
 
         @Override
-        public YamlConfiguration getBukkitConfig() {
+        public YamlConfiguration getBukkitConfig()
+        {
             return configuration;
         }
 
         @Override
-        public YamlConfiguration getSpigotConfig() {
+        public YamlConfiguration getSpigotConfig()
+        {
             return org.spigotmc.SpigotConfig.config;
         }
 
@@ -2006,56 +2006,17 @@ public final class CraftServer implements Server {
         }
     };
 
-    public Spigot spigot() {
+    public Spigot spigot()
+    {
         return spigot;
     }
-
-    // Paper start
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static java.nio.file.Path dumpHeap(java.nio.file.Path dir, String name) {
-        try {
-            java.nio.file.Files.createDirectories(dir);
-
-            javax.management.MBeanServer server = java.lang.management.ManagementFactory.getPlatformMBeanServer();
-            java.nio.file.Path file;
-
-            try {
-                Class clazz = Class.forName("openj9.lang.management.OpenJ9DiagnosticsMXBean");
-                Object openj9Mbean = java.lang.management.ManagementFactory.newPlatformMXBeanProxy(server, "openj9.lang.management:type=OpenJ9Diagnostics", clazz);
-                java.lang.reflect.Method m = clazz.getMethod("triggerDumpToFile", String.class, String.class);
-                file = dir.resolve(name + ".phd");
-                m.invoke(openj9Mbean, "heap", file.toString());
-            } catch (ClassNotFoundException e) {
-                Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-                Object hotspotMBean = java.lang.management.ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", clazz);
-                java.lang.reflect.Method m = clazz.getMethod("dumpHeap", String.class, boolean.class);
-                file = dir.resolve(name + ".hprof");
-                m.invoke(hotspotMBean, file.toString(), true);
-            }
-
-            return file;
-        } catch (Throwable t) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not write heap", t);
-            return null;
-        }
-    }
-    // Paper end
 
     @Override
     public boolean isStopping() {
         return net.minecraft.server.MinecraftServer.getServer().hasStopped();
     }
 
-    // Paper end
-
-    @Override
-    public String getPermissionMessage() {
-        return com.destroystokyo.paper.PaperConfig.noPermissionMessage;
-    }
-
-    // Paper end
-
     public void setPlayerList(PlayerList playerList) {
-        playerList = (DedicatedPlayerList) playerList;
+        playerList = (DedicatedPlayerList)playerList;
     }
 }
