@@ -1192,18 +1192,6 @@ public interface Server extends PluginMessageRecipient {
     @Nullable
     Entity getEntity(@NotNull UUID uuid);
 
-    // Paper start
-
-    /**
-     * Gets the active {@link org.bukkit.command.CommandMap}
-     *
-     * @return the active command map
-     */
-    @NotNull
-    org.bukkit.command.CommandMap getCommandMap();
-
-    // Paper end
-
     /**
      * Get the advancement specified by this key.
      *
