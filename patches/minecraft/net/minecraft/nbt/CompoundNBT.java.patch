@@ -1,5 +1,14 @@
 --- a/net/minecraft/nbt/CompoundNBT.java
 +++ b/net/minecraft/nbt/CompoundNBT.java
+@@ -19,6 +_,8 @@
+ import java.util.UUID;
+ import java.util.regex.Pattern;
+ import javax.annotation.Nullable;
++
++import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.crash.ReportedException;
 @@ -49,6 +_,7 @@
              while((b0 = CompoundNBT.func_152447_a(p_225649_1_, p_225649_3_)) != 0) {
                 String s = CompoundNBT.func_152448_b(p_225649_1_, p_225649_3_);
@@ -8,6 +17,15 @@
                 INBT inbt = CompoundNBT.func_229680_b_(NBTTypes.func_229710_a_(b0), s, p_225649_1_, p_225649_2_ + 1, p_225649_3_);
                 if (map.put(s, inbt) != null) {
                    p_225649_3_.func_152450_a(288L);
+@@ -67,7 +_,7 @@
+          return "TAG_Compound";
+       }
+    };
+-   private final Map<String, INBT> field_74784_a;
++   public final Map<String, INBT> field_74784_a; // Paper
+ 
+    protected CompoundNBT(Map<String, INBT> p_i226075_1_) {
+       this.field_74784_a = p_i226075_1_;
 @@ -104,6 +_,7 @@
  
     @Nullable

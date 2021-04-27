@@ -1,5 +1,30 @@
 --- a/net/minecraft/world/Region.java
 +++ b/net/minecraft/world/Region.java
+@@ -6,6 +_,7 @@
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.entity.Entity;
++import net.minecraft.fluid.Fluid;
+ import net.minecraft.fluid.FluidState;
+ import net.minecraft.fluid.Fluids;
+ import net.minecraft.tileentity.TileEntity;
+@@ -17,6 +_,7 @@
+ import net.minecraft.world.chunk.AbstractChunkProvider;
+ import net.minecraft.world.chunk.EmptyChunk;
+ import net.minecraft.world.chunk.IChunk;
++import net.minecraft.world.server.ServerWorld;
+ 
+ public class Region implements IBlockReader, ICollisionReader {
+    protected final int field_72818_a;
+@@ -37,7 +_,7 @@
+ 
+       for(int k = this.field_72818_a; k <= i; ++k) {
+          for(int l = this.field_72816_b; l <= j; ++l) {
+-            this.field_72817_c[k - this.field_72818_a][l - this.field_72816_b] = abstractchunkprovider.func_225313_a(k, l);
++            this.field_72817_c[k - this.field_72818_a][l - this.field_72816_b] = ((ServerWorld)field_72815_e).func_72863_F().getChunkAtIfLoadedMainThreadNoCache(k, l); // Paper
+          }
+       }
+ 
 @@ -53,6 +_,13 @@
  
     }
@@ -14,3 +39,41 @@
     private IChunk func_226703_d_(BlockPos p_226703_1_) {
        return this.func_226702_a_(p_226703_1_.func_177958_n() >> 4, p_226703_1_.func_177952_p() >> 4);
     }
+@@ -60,7 +_,8 @@
+    private IChunk func_226702_a_(int p_226702_1_, int p_226702_2_) {
+       int i = p_226702_1_ - this.field_72818_a;
+       int j = p_226702_2_ - this.field_72816_b;
+-      if (i >= 0 && i < this.field_72817_c.length && j >= 0 && j < this.field_72817_c[i].length) {
++
++      if (i >= 0 && i < this.field_72817_c.length && j >= 0 && j < this.field_72817_c[i].length) { // Paper - if this changes, update getChunkIfLoaded below
+          IChunk ichunk = this.field_72817_c[i][j];
+          return (IChunk)(ichunk != null ? ichunk : new EmptyChunk(this.field_72815_e, new ChunkPos(p_226702_1_, p_226702_2_)));
+       } else {
+@@ -75,6 +_,27 @@
+    public IBlockReader func_225522_c_(int p_225522_1_, int p_225522_2_) {
+       return this.func_226702_a_(p_225522_1_, p_225522_2_);
+    }
++
++   // Paper start - if loaded util
++   private IChunk getChunkIfLoaded(int x, int z) {
++      int k = x - this.field_72818_a;
++      int l = z - this.field_72816_b;
++
++      if (k >= 0 && k < this.field_72817_c.length && l >= 0 && l < this.field_72817_c[k].length) {
++         return this.field_72817_c[k][l];
++      }
++      return null;
++   }
++   public Fluid getFluidIfLoaded(BlockPos blockposition) {
++      IChunk chunk = getChunkIfLoaded(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_204610_c(blockposition).func_206886_c();
++   }
++
++   public BlockState getTypeIfLoaded(BlockPos blockposition) {
++      IChunk chunk = getChunkIfLoaded(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_180495_p(blockposition);
++   }
++   // Paper end
+ 
+    @Nullable
+    public TileEntity func_175625_s(BlockPos p_175625_1_) {

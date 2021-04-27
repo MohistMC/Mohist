@@ -9,6 +9,25 @@
           }
        }
  
+@@ -129,6 +_,18 @@
+       this.field_201663_k.add(p_201637_1_.func_185334_h());
+    }
+ 
++   // Paper start - If loaded util
++   @Override
++   public Fluid getFluidIfLoaded(BlockPos blockposition) {
++      return this.func_204610_c(blockposition).func_206886_c();
++   }
++
++   @Override
++   public BlockState getTypeIfLoaded(BlockPos blockposition) {
++      return this.func_180495_p(blockposition);
++   }
++   // Paper end
++
+    @Nullable
+    public BlockState func_177436_a(BlockPos p_177436_1_, BlockState p_177436_2_, boolean p_177436_3_) {
+       int i = p_177436_1_.func_177958_n();
 @@ -138,13 +_,13 @@
           if (this.field_201661_i[j >> 4] == Chunk.field_186036_a && p_177436_2_.func_203425_a(Blocks.field_150350_a)) {
              return p_177436_2_;

@@ -186,6 +186,8 @@ public class CraftScheduler implements BukkitScheduler {
         return runTaskTimer(plugin, runnable, delay, period).getTaskId();
     }
 
+
+
     @Override
     public BukkitTask runTaskTimer(Plugin plugin, Runnable runnable, long delay, long period) {
         return runTaskTimer(plugin, (Object) runnable, delay, period);

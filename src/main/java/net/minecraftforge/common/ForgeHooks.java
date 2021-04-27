@@ -1196,6 +1196,16 @@ public class ForgeHooks
             return Fluids.EMPTY.defaultFluidState();
         }
 
+        // Paper start - if loaded util
+        public Fluid getFluidIfLoaded(BlockPos blockposition) {
+            return null;
+        }
+
+        public BlockState getTypeIfLoaded(BlockPos blockposition) {
+            return null;
+        }
+        // Paper end
+
     }
 
     public static int onNoteChange(World world, BlockPos pos, BlockState state, int old, int _new) {

@@ -8,6 +8,45 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.fluid.Fluid;
+@@ -28,11 +_,7 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.SectionPos;
+ import net.minecraft.util.registry.DynamicRegistries;
+-import net.minecraft.world.DifficultyInstance;
+-import net.minecraft.world.DimensionType;
+-import net.minecraft.world.ISeedReader;
+-import net.minecraft.world.ITickList;
+-import net.minecraft.world.WorldGenTickList;
++import net.minecraft.world.*;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.biome.BiomeManager;
+ import net.minecraft.world.border.WorldBorder;
+@@ -94,6 +_,25 @@
+       }
+    }
+ 
++   // Paper start - if loaded util
++   @Nullable
++
++   public IChunk getChunkIfLoadedImmediately(int x, int z) {
++      return this.func_217353_a(x, z, ChunkStatus.field_222617_m, false);
++   }
++
++   public BlockState getTypeIfLoaded(BlockPos blockposition) {
++      IBlockReader chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_180495_p(blockposition);
++   }
++
++
++   public Fluid getFluidIfLoaded(BlockPos blockposition) {
++      IBlockReader chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_204610_c(blockposition).func_206886_c();
++   }
++   // Paper end
++
+    public int func_201679_a() {
+       return this.field_201685_b;
+    }
 @@ -123,8 +_,8 @@
        if (!p_217353_4_) {
           return null;

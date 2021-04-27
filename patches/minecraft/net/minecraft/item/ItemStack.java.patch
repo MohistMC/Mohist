@@ -329,8 +329,34 @@
     @Nullable
     public CompoundNBT func_77978_p() {
        return this.field_77990_d;
-@@ -479,7 +_,7 @@
+@@ -477,9 +_,33 @@
+       return this.field_77990_d != null ? this.field_77990_d.func_150295_c("Enchantments", 10) : new ListNBT();
+    }
  
++   // Paper start - (this is just a good no conflict location)
++   public org.bukkit.inventory.ItemStack asBukkitMirror() {
++      return CraftItemStack.asCraftMirror(this);
++   }
++
++   public org.bukkit.inventory.ItemStack asBukkitCopy() {
++      return CraftItemStack.asCraftMirror(this.func_77946_l());
++   }
++
++   public static ItemStack fromBukkitCopy(org.bukkit.inventory.ItemStack itemstack) {
++      return CraftItemStack.asNMSCopy(itemstack);
++   }
++
++   private org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack bukkitStack;
++
++   public org.bukkit.inventory.ItemStack getBukkitStack() {
++      if (bukkitStack == null || bukkitStack.getHandle() != this) {
++         bukkitStack = CraftItemStack.asCraftMirror(this);
++      }
++      return bukkitStack;
++   }
++   // Paper end
++
++
     public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
        this.field_77990_d = p_77982_1_;
 -      if (this.func_77973_b().func_77645_m()) {
@@ -378,6 +404,7 @@
 +   // CraftBukkit start
 +   @Deprecated
 +   public void setItem(Item item) {
++      this.bukkitStack = null; // Paper
 +      this.field_151002_e = item;
 +      this.delegate = item.delegate;
 +   }

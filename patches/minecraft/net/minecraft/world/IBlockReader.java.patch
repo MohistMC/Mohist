@@ -1,7 +1,37 @@
 --- a/net/minecraft/world/IBlockReader.java
 +++ b/net/minecraft/world/IBlockReader.java
-@@ -25,8 +_,14 @@
+@@ -5,7 +_,11 @@
+ import java.util.function.Supplier;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
++
++import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
++import net.minecraft.block.material.Material;
++import net.minecraft.fluid.Fluid;
+ import net.minecraft.fluid.FluidState;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.Direction;
+@@ -23,10 +_,32 @@
  
+    BlockState func_180495_p(BlockPos p_180495_1_);
+ 
++   // Paper start - if loaded util
++   BlockState getTypeIfLoaded(BlockPos blockposition);
++
++   default Material getMaterialIfLoaded(BlockPos blockposition) {
++      BlockState type = this.getTypeIfLoaded(blockposition);
++      return type == null ? null : type.func_185904_a();
++   }
++
++   default Block getBlockIfLoaded(BlockPos blockposition) {
++      BlockState type = this.getTypeIfLoaded(blockposition);
++      return type == null ? null : type.func_177230_c();
++   }
++
++   Fluid getFluidIfLoaded(BlockPos blockposition);
++   // Paper end
++
     FluidState func_204610_c(BlockPos p_204610_1_);
  
 +   // Mohist start - Add isPosLoaded method to IBlockReader

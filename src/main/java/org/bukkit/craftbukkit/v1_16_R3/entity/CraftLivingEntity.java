@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_16_R3.entity;
 
+import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.mohistmc.api.ServerAPI;
@@ -36,6 +37,7 @@ import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.server.MCUtil;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import org.apache.commons.lang.Validate;
@@ -45,8 +47,10 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.entity.memory.CraftMemoryKey;
 import org.bukkit.craftbukkit.v1_16_R3.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftEntityEquipment;
@@ -89,6 +93,8 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public String entityName;
@@ -201,6 +207,24 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         List<Block> blocks = getLineOfSight(transparent, maxDistance, 1);
         return blocks.get(0);
     }
+
+    @Override
+    public @Nullable Block getTargetBlock(int maxDistance, TargetBlockInfo.@NotNull FluidMode fluidMode) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public BlockFace getTargetBlockFace(int maxDistance, TargetBlockInfo.@NotNull FluidMode fluidMode) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public TargetBlockInfo getTargetBlockInfo(int maxDistance, TargetBlockInfo.@NotNull FluidMode fluidMode) {
+        return null;
+    }
+
 
     @Override
     public List<Block> getLastTwoTargetBlocks(Set<Material> transparent, int maxDistance) {

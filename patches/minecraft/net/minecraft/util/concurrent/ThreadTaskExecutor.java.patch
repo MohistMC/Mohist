@@ -1,6 +1,18 @@
 --- a/net/minecraft/util/concurrent/ThreadTaskExecutor.java
 +++ b/net/minecraft/util/concurrent/ThreadTaskExecutor.java
-@@ -135,7 +_,8 @@
+@@ -131,11 +_,20 @@
+       LockSupport.parkNanos("waiting for tasks", 100000L);
+    }
+ 
++   // Paper start
++   public void scheduleOnMain(Runnable r0) {
++      // wrapRunnable does not work the same as older versions of mc
++      // This method is actually used to create a TickTask, which can then be posted onto main
++      this.func_212871_a_(this.func_212875_d_(r0));
++   }
++   // Paper end
++
+    protected void func_213166_h(R p_213166_1_) {
        try {
           p_213166_1_.run();
        } catch (Exception exception) {

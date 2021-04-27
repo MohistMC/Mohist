@@ -30,11 +30,12 @@
  import net.minecraft.world.IServerWorld;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
-@@ -73,6 +_,15 @@
+@@ -73,6 +_,16 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -74,11 +75,13 @@
     @Nullable
     private Entity field_110168_bw;
     private int field_213400_bI;
-@@ -104,6 +_,8 @@
+@@ -104,6 +_,10 @@
     private BlockPos field_213401_bK = BlockPos.field_177992_a;
     private float field_213402_bL = -1.0F;
  
 +   public boolean aware = true; // CraftBukkit
++
++   public CraftMob getBukkitMob() { return (CraftMob) super.getBukkitEntity(); } // Paper
 +
     protected MobEntity(EntityType<? extends MobEntity> p_i48576_1_, World p_i48576_2_) {
        super(p_i48576_1_, p_i48576_2_);

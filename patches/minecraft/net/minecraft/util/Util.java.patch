@@ -1,5 +1,32 @@
 --- a/net/minecraft/util/Util.java
 +++ b/net/minecraft/util/Util.java
+@@ -51,10 +_,17 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.client.util.ICharacterPredicate;
+ import net.minecraft.crash.ReportedException;
++import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.nbt.CompoundNBT;
++import net.minecraft.network.NetworkManager;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.state.Property;
+ import net.minecraft.util.datafix.DataFixesManager;
++import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.registry.Bootstrap;
++import net.minecraft.world.server.ChunkHolder;
++import net.minecraft.world.server.ServerChunkProvider;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.commons.io.IOUtils;
+@@ -87,7 +_,7 @@
+    }
+ 
+    public static long func_211178_c() {
+-      return field_211180_a.getAsLong();
++      return System.nanoTime(); // Paper
+    }
+ 
+    public static long func_211179_d() {
 @@ -104,9 +_,9 @@
              ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(p_240981_1_) {
                 protected void onTermination(Throwable p_onTermination_1_) {

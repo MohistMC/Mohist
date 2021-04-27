@@ -1,8 +1,5 @@
 package org.bukkit.craftbukkit.v1_16_R3.util;
 
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -17,11 +14,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.EmptyTickList;
-import net.minecraft.world.ITickList;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.border.WorldBorder;
@@ -33,6 +26,10 @@ import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.IWorldInfo;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 public class DummyGeneratorAccess implements IWorld {
 
@@ -163,6 +160,25 @@ public class DummyGeneratorAccess implements IWorld {
     public FluidState getFluidState(BlockPos pos) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
+    // Paper start - if loaded util
+    @javax.annotation.Nullable
+    @Override
+    public IChunk getChunkIfLoadedImmediately(int x, int z) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public BlockState getTypeIfLoaded(BlockPos blockposition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Fluid getFluidIfLoaded(BlockPos blockposition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    // Paper end
 
     @Override
     public WorldBorder getWorldBorder() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/LivingEntity.java
 +++ b/net/minecraft/entity/LivingEntity.java
-@@ -1,26 +_,48 @@
+@@ -1,26 +_,49 @@
  package net.minecraft.entity;
  
 -import com.google.common.base.Objects;
@@ -29,6 +29,7 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_16_R3.attribute.CraftAttributeMap;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.entity.Player;
@@ -150,7 +151,7 @@
     private LivingEntity field_110150_bn;
     private int field_142016_bo;
     private float field_70746_aG;
-@@ -199,10 +_,36 @@
+@@ -199,10 +_,38 @@
     private float field_205018_bM;
     protected Brain<?> field_213378_br;
  
@@ -163,6 +164,8 @@
 +   public boolean collides = true;
 +   public Set<UUID> collidableExemptions = new HashSet<>();
 +   public boolean canPickUpLoot;
++
++   public CraftLivingEntity getBukkitLivingEntity() { return (CraftLivingEntity) super.getBukkitEntity(); } // Paper
 +
 +   @Override
 +   public float getBukkitYaw() {

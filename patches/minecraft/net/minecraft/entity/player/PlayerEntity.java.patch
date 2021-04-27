@@ -71,10 +71,12 @@
     protected boolean field_204230_bP;
     public final PlayerAbilities field_71075_bZ = new PlayerAbilities();
     public int field_71068_ca;
-@@ -150,6 +_,19 @@
+@@ -150,8 +_,24 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
     public FishingBobberEntity field_71104_cf;
+-
+-   public PlayerEntity(World p_i241920_1_, BlockPos p_i241920_2_, float p_i241920_3_, GameProfile p_i241920_4_) {
 +   private final java.util.Collection<IFormattableTextComponent> prefixes = new java.util.LinkedList<>();
 +   private final java.util.Collection<IFormattableTextComponent> suffixes = new java.util.LinkedList<>();
 +   @Nullable private Pose forcedPose;
@@ -88,9 +90,23 @@
 +      return (CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
- 
-    public PlayerEntity(World p_i241920_1_, BlockPos p_i241920_2_, float p_i241920_3_, GameProfile p_i241920_4_) {
++
++    public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<PlayerEntity> cachedSingleHashSet; // Paper
++
++
++    public PlayerEntity(World p_i241920_1_, BlockPos p_i241920_2_, float p_i241920_3_, GameProfile p_i241920_4_) {
        super(EntityType.field_200729_aH, p_i241920_1_);
+       this.func_184221_a(func_146094_a(p_i241920_4_));
+       this.field_146106_i = p_i241920_4_;
+@@ -159,6 +_,8 @@
+       this.field_71070_bA = this.field_71069_bz;
+       this.func_70012_b((double)p_i241920_2_.func_177958_n() + 0.5D, (double)(p_i241920_2_.func_177956_o() + 1), (double)p_i241920_2_.func_177952_p() + 0.5D, p_i241920_3_, 0.0F);
+       this.field_70741_aB = 180.0F;
++
++        this.cachedSingleHashSet = new com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
+    }
+ 
+    public boolean func_223729_a(World p_223729_1_, BlockPos p_223729_2_, GameType p_223729_3_) {
 @@ -175,7 +_,7 @@
     }
  

@@ -1,0 +1,46 @@
+--- a/net/minecraft/client/renderer/chunk/ChunkRenderCache.java
++++ b/net/minecraft/client/renderer/chunk/ChunkRenderCache.java
+@@ -2,6 +_,7 @@
+ 
+ import javax.annotation.Nullable;
+ import net.minecraft.block.BlockState;
++import net.minecraft.fluid.Fluid;
+ import net.minecraft.fluid.FluidState;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.Direction;
+@@ -9,6 +_,7 @@
+ import net.minecraft.world.IBlockDisplayReader;
+ import net.minecraft.world.World;
+ import net.minecraft.world.chunk.Chunk;
++import net.minecraft.world.chunk.IChunk;
+ import net.minecraft.world.level.ColorResolver;
+ import net.minecraft.world.lighting.WorldLightManager;
+ import net.minecraftforge.api.distmarker.Dist;
+@@ -101,6 +_,27 @@
+    public BlockState func_180495_p(BlockPos p_180495_1_) {
+       return this.field_217340_h[this.func_212398_a(p_180495_1_)];
+    }
++
++   // Paper start - if loaded util
++   private IChunk getChunkIfLoaded(int x, int z) {
++      int k = x - this.field_212400_a;
++      int l = z - this.field_212401_b;
++
++      if (k >= 0 && k < this.field_212406_g.length && l >= 0 && l < this.field_212406_g[k].length) {
++         return this.field_212406_g[k][l];
++      }
++      return null;
++   }
++   public Fluid getFluidIfLoaded(BlockPos blockposition) {
++      IChunk chunk = getChunkIfLoaded(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_204610_c(blockposition).func_206886_c();
++   }
++
++   public BlockState getTypeIfLoaded(BlockPos blockposition) {
++      IChunk chunk = getChunkIfLoaded(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_180495_p(blockposition);
++   }
++   // Paper end
+ 
+    public FluidState func_204610_c(BlockPos p_204610_1_) {
+       return this.field_217341_i[this.func_212398_a(p_204610_1_)];

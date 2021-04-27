@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/Blockreader.java
++++ b/net/minecraft/world/Blockreader.java
+@@ -3,6 +_,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
++import net.minecraft.fluid.Fluid;
+ import net.minecraft.fluid.FluidState;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.math.BlockPos;
+@@ -27,4 +_,14 @@
+    public FluidState func_204610_c(BlockPos p_204610_1_) {
+       return this.func_180495_p(p_204610_1_).func_204520_s();
+    }
++
++   // Paper start - if loaded util
++   public Fluid getFluidIfLoaded(BlockPos blockposition) {
++      return null;
++   }
++
++   public BlockState getTypeIfLoaded(BlockPos blockposition) {
++      return null;
++   }
++   // Paper end
+ }

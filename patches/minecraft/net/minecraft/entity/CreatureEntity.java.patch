@@ -1,14 +1,20 @@
 --- a/net/minecraft/entity/CreatureEntity.java
 +++ b/net/minecraft/entity/CreatureEntity.java
-@@ -7,6 +_,8 @@
+@@ -7,8 +_,14 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_16_R3.entity.CraftCreature;
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
  
  public abstract class CreatureEntity extends MobEntity {
++
++   public CraftCreature getBukkitCreature() { return (CraftCreature) super.getBukkitEntity(); } // Paper
++
     protected CreatureEntity(EntityType<? extends CreatureEntity> p_i48575_1_, World p_i48575_2_) {
+       super(p_i48575_1_, p_i48575_2_);
+    }
 @@ -37,6 +_,7 @@
           float f = this.func_70032_d(entity);
           if (this instanceof TameableEntity && ((TameableEntity)this).func_233684_eK_()) {

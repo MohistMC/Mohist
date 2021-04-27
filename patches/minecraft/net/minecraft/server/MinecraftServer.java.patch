@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -1,18 +_,6 @@
+@@ -1,18 +_,7 @@
  package net.minecraft.server;
  
 -import com.google.common.base.Splitter;
@@ -17,6 +17,7 @@
 -import io.netty.buffer.Unpooled;
 -import it.unimi.dsi.fastutil.longs.LongIterator;
 +import co.aikar.timings.MinecraftTimings;
++
  import java.awt.image.BufferedImage;
  import java.io.File;
  import java.io.IOException;
@@ -80,7 +81,7 @@
  import net.minecraft.server.management.OpEntry;
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
-@@ -152,29 +_,27 @@
+@@ -152,1430 +_,1769 @@
  import net.minecraft.world.storage.WorldSavedDataCallableSave;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -91,907 +92,3183 @@
  
  public abstract class MinecraftServer extends RecursiveEventLoop<TickDelayedTask> implements ISnooperInfo, ICommandSource, AutoCloseable {
 -   private static final Logger field_147145_h = LogManager.getLogger();
-+   public static final Logger field_147145_h = LogManager.getLogger();
-    public static final File field_152367_a = new File("usercache.json");
-    public static final WorldSettings field_213219_c = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.field_234880_a_);
+-   public static final File field_152367_a = new File("usercache.json");
+-   public static final WorldSettings field_213219_c = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.field_234880_a_);
 -   protected final SaveFormat.LevelSave field_71310_m;
 -   protected final PlayerData field_240766_e_;
-+   public final SaveFormat.LevelSave field_71310_m;
-+   public final PlayerData field_240766_e_;
-    private final Snooper field_71307_n = new Snooper("server", this, Util.func_211177_b());
-    private final List<Runnable> field_71322_p = Lists.newArrayList();
-    private final TimeTracker field_240769_m_ = new TimeTracker(Util.field_211180_a, this::func_71259_af);
-    private IProfiler field_71304_b = EmptyProfiler.field_219906_a;
+-   private final Snooper field_71307_n = new Snooper("server", this, Util.func_211177_b());
+-   private final List<Runnable> field_71322_p = Lists.newArrayList();
+-   private final TimeTracker field_240769_m_ = new TimeTracker(Util.field_211180_a, this::func_71259_af);
+-   private IProfiler field_71304_b = EmptyProfiler.field_219906_a;
 -   private final NetworkSystem field_147144_o;
 -   private final IChunkStatusListenerFactory field_213220_d;
-+   private NetworkSystem field_147144_o;
-+   public final IChunkStatusListenerFactory field_213220_d;
-    private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
-    private final Random field_147146_q = new Random();
+-   private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
+-   private final Random field_147146_q = new Random();
 -   private final DataFixer field_184112_s;
-+   public final DataFixer field_184112_s;
-    private String field_71320_r;
-    private int field_71319_s = -1;
+-   private String field_71320_r;
+-   private int field_71319_s = -1;
 -   protected final DynamicRegistries.Impl field_240767_f_;
 -   private final Map<RegistryKey<World>, ServerWorld> field_71305_c = Maps.newLinkedHashMap();
-+   public final DynamicRegistries.Impl field_240767_f_;
-+   public final Map<RegistryKey<World>, ServerWorld> field_71305_c = Maps.newLinkedHashMap();
-    private PlayerList field_71318_t;
-    private volatile boolean field_71317_u = true;
-    private boolean field_71316_v;
-@@ -204,10 +_,10 @@
-    private final GameProfileRepository field_152365_W;
-    private final PlayerProfileCache field_152366_X;
-    private long field_147142_T;
+-   private PlayerList field_71318_t;
+-   private volatile boolean field_71317_u = true;
+-   private boolean field_71316_v;
+-   private int field_71315_w;
+-   protected final Proxy field_110456_c;
+-   private boolean field_71325_x;
+-   private boolean field_190519_A;
+-   private boolean field_71284_A;
+-   private boolean field_71285_B;
+-   @Nullable
+-   private String field_71286_C;
+-   private int field_71280_D;
+-   private int field_143008_E;
+-   public final long[] field_71311_j = new long[100];
+-   @Nullable
+-   private KeyPair field_71292_I;
+-   @Nullable
+-   private String field_71293_J;
+-   private boolean field_71288_M;
+-   private String field_147141_M = "";
+-   private String field_175588_P = "";
+-   private volatile boolean field_71296_Q;
+-   private long field_71299_R;
+-   private boolean field_71295_T;
+-   private boolean field_104057_T;
+-   private final MinecraftSessionService field_147143_S;
+-   private final GameProfileRepository field_152365_W;
+-   private final PlayerProfileCache field_152366_X;
+-   private long field_147142_T;
 -   private final Thread field_175590_aa;
-+   public final Thread field_175590_aa;
-    protected long field_211151_aa = Util.func_211177_b();
+-   protected long field_211151_aa = Util.func_211177_b();
 -   private long field_213213_ab;
 -   private boolean field_213214_ac;
-+   private long field_213213_ab; final long getTickOversleepMaxTime() { return this.field_213213_ab; } // Paper - OBFHELPER
-+   private boolean field_213214_ac; final boolean hasExecutedTask() { return this.field_213214_ac; } // Paper - OBFHELPER
-    @OnlyIn(Dist.CLIENT)
-    private boolean field_184111_ab;
-    private final ResourcePackList field_195577_ad;
-@@ -219,16 +_,36 @@
-    private final FrameTimer field_213215_ap = new FrameTimer();
-    private boolean field_205745_an;
-    private float field_211152_ao;
+-   @OnlyIn(Dist.CLIENT)
+-   private boolean field_184111_ab;
+-   private final ResourcePackList field_195577_ad;
+-   private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
+-   @Nullable
+-   private CommandStorage field_229733_al_;
+-   private final CustomServerBossInfoManager field_201301_aj = new CustomServerBossInfoManager();
+-   private final FunctionManager field_200258_al;
+-   private final FrameTimer field_213215_ap = new FrameTimer();
+-   private boolean field_205745_an;
+-   private float field_211152_ao;
 -   private final Executor field_213217_au;
-+   public final Executor field_213217_au;
-    @Nullable
-    private String field_213218_av;
+-   @Nullable
+-   private String field_213218_av;
 -   private DataPackRegistries field_195576_ac;
-+   public DataPackRegistries field_195576_ac;
-    private final TemplateManager field_240765_ak_;
+-   private final TemplateManager field_240765_ak_;
 -   protected final IServerConfiguration field_240768_i_;
-+   protected IServerConfiguration field_240768_i_;
-+
-+   // CraftBukkit start
-+   public DatapackCodec datapackconfiguration;
-+   public CraftServer server;
-+   public static OptionSet options;
-+   public org.bukkit.command.ConsoleCommandSender console;
-+   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
-+   public static int currentTick = (int) (System.currentTimeMillis() / 50);
-+   public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
-+   public int autosavePeriod;
-+   public Commands vanillaCommandDispatcher;
-+   private boolean forceTicks;
-+   // CraftBukkit end
-+   // Spigot start
-+   public static final int TPS = 20;
-+   public static final int TICK_TIME = 1000000000 / TPS;
-+   private static final int SAMPLE_INTERVAL = 100;
-+   public final double[] recentTps = new double[ 3 ];
-+   public final SlackActivityAccountant slackActivityAccountant = new SlackActivityAccountant();
-+   // Spigot end
- 
-    public static <S extends MinecraftServer> S func_240784_a_(Function<Thread, S> p_240784_0_) {
-       AtomicReference<S> atomicreference = new AtomicReference<>();
--      Thread thread = new Thread(() -> {
-+      Thread thread = new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, () -> {
-          atomicreference.get().func_240802_v_();
-       }, "Server thread");
-       thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
-@@ -259,7 +_,11 @@
-       this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
-       this.field_175590_aa = p_i232576_1_;
-       this.field_213217_au = Util.func_215072_e();
-+      this.datapackconfiguration = DatapackCodecUtils.getDatapackCodec();
-+      // CraftBukkit start
-+      this.vanillaCommandDispatcher = p_i232576_8_.field_240953_c_; // CraftBukkit
-    }
-+   // CraftBukkit end
- 
-    private void func_213204_a(DimensionSavedDataManager p_213204_1_) {
-       ScoreboardSaveData scoreboardsavedata = p_213204_1_.func_215752_a(ScoreboardSaveData::new, "scoreboard");
-@@ -271,7 +_,7 @@
- 
-    public static void func_240777_a_(SaveFormat.LevelSave p_240777_0_) {
-       if (p_240777_0_.func_237295_c_()) {
--         field_147145_h.info("Converting map!");
-+         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.1"));
-          p_240777_0_.func_237283_a_(new IProgressUpdate() {
-             private long field_96245_b = Util.func_211177_b();
- 
-@@ -285,7 +_,7 @@
-             public void func_73718_a(int p_73718_1_) {
-                if (Util.func_211177_b() - this.field_96245_b >= 1000L) {
-                   this.field_96245_b = Util.func_211177_b();
--                  MinecraftServer.field_147145_h.info("Converting... {}%", (int)p_73718_1_);
-+                  MinecraftServer.field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.2", (int)p_73718_1_));
-                }
- 
-             }
-@@ -332,6 +_,7 @@
-          chunkgenerator = dimension.func_236064_c_();
-       }
- 
-+      ForgeInjectBukkit.addEnumEnvironment();
-       ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
-       this.field_71305_c.put(World.field_234918_g_, serverworld);
-       DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
-@@ -371,13 +_,23 @@
-             RegistryKey<World> registrykey1 = RegistryKey.func_240903_a_(Registry.field_239699_ae_, registrykey.func_240901_a_());
-             DimensionType dimensiontype1 = entry.getValue().func_236063_b_();
-             ChunkGenerator chunkgenerator1 = entry.getValue().func_236064_c_();
--            DerivedWorldInfo derivedworldinfo = new DerivedWorldInfo(this.field_240768_i_, iserverworldinfo);
-+            DerivedWorldInfo derivedworldinfo = new DerivedWorldInfo(this.field_240768_i_, iserverworldinfo, DimensionType.func_236031_a_(registrykey1, this.field_71310_m.getWorldDir().toFile()).getName());
-             ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, p_240787_1_, chunkgenerator1, flag, j, ImmutableList.of(), false);
-             worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
-             this.field_71305_c.put(registrykey1, serverworld1);
-+            if (this.server.scoreboardManager == null) {
-+               this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_16_R3.scoreboard.CraftScoreboardManager(this, serverworld1.func_96441_U());
-+            }
-+            if (serverworld1.generator != null) {
-+               serverworld1.getWorld().getPopulators().addAll(serverworld1.generator.getDefaultPopulators(serverworld1.getWorld()));
-+            }
-          }
-+         Bukkit.getPluginManager().callEvent(new WorldInitEvent(field_71305_c.get(registrykey).getWorld()));
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(field_71305_c.get(registrykey)));
-       }
 -
-+      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
-+      this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
-+      this.field_147144_o.acceptConnections();
-    }
- 
-    private static void func_240786_a_(ServerWorld p_240786_0_, IServerWorldInfo p_240786_1_, boolean p_240786_2_, boolean p_240786_3_, boolean p_240786_4_) {
-@@ -387,6 +_,7 @@
-       } else if (p_240786_3_) {
-          p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177984_a(), 0.0F);
-       } else {
-+         if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(p_240786_0_, p_240786_1_)) return;
-          BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
-          Random random = new Random(p_240786_0_.func_72905_C());
-          BlockPos blockpos = biomeprovider.func_225531_a_(0, p_240786_0_.func_181545_F(), 0, 256, (p_244265_0_) -> {
-@@ -394,7 +_,7 @@
-          }, random);
-          ChunkPos chunkpos = blockpos == null ? new ChunkPos(0, 0) : new ChunkPos(blockpos);
-          if (blockpos == null) {
+-   public static <S extends MinecraftServer> S func_240784_a_(Function<Thread, S> p_240784_0_) {
+-      AtomicReference<S> atomicreference = new AtomicReference<>();
+-      Thread thread = new Thread(() -> {
+-         atomicreference.get().func_240802_v_();
+-      }, "Server thread");
+-      thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
+-         field_147145_h.error(p_240779_1_);
+-      });
+-      S s = p_240784_0_.apply(thread);
+-      atomicreference.set(s);
+-      thread.start();
+-      return s;
+-   }
+-
+-   public MinecraftServer(Thread p_i232576_1_, DynamicRegistries.Impl p_i232576_2_, SaveFormat.LevelSave p_i232576_3_, IServerConfiguration p_i232576_4_, ResourcePackList p_i232576_5_, Proxy p_i232576_6_, DataFixer p_i232576_7_, DataPackRegistries p_i232576_8_, MinecraftSessionService p_i232576_9_, GameProfileRepository p_i232576_10_, PlayerProfileCache p_i232576_11_, IChunkStatusListenerFactory p_i232576_12_) {
+-      super("Server");
+-      this.field_240767_f_ = p_i232576_2_;
+-      this.field_240768_i_ = p_i232576_4_;
+-      this.field_110456_c = p_i232576_6_;
+-      this.field_195577_ad = p_i232576_5_;
+-      this.field_195576_ac = p_i232576_8_;
+-      this.field_147143_S = p_i232576_9_;
+-      this.field_152365_W = p_i232576_10_;
+-      this.field_152366_X = p_i232576_11_;
+-      this.field_147144_o = new NetworkSystem(this);
+-      this.field_213220_d = p_i232576_12_;
+-      this.field_71310_m = p_i232576_3_;
+-      this.field_240766_e_ = p_i232576_3_.func_237292_b_();
+-      this.field_184112_s = p_i232576_7_;
+-      this.field_200258_al = new FunctionManager(this, p_i232576_8_.func_240960_a_());
+-      this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
+-      this.field_175590_aa = p_i232576_1_;
+-      this.field_213217_au = Util.func_215072_e();
+-   }
+-
+-   private void func_213204_a(DimensionSavedDataManager p_213204_1_) {
+-      ScoreboardSaveData scoreboardsavedata = p_213204_1_.func_215752_a(ScoreboardSaveData::new, "scoreboard");
+-      scoreboardsavedata.func_96499_a(this.func_200251_aP());
+-      this.func_200251_aP().func_186684_a(new WorldSavedDataCallableSave(scoreboardsavedata));
+-   }
+-
+-   protected abstract boolean func_71197_b() throws IOException;
+-
+-   public static void func_240777_a_(SaveFormat.LevelSave p_240777_0_) {
+-      if (p_240777_0_.func_237295_c_()) {
+-         field_147145_h.info("Converting map!");
+-         p_240777_0_.func_237283_a_(new IProgressUpdate() {
+-            private long field_96245_b = Util.func_211177_b();
+-
+-            public void func_200210_a(ITextComponent p_200210_1_) {
+-            }
+-
+-            @OnlyIn(Dist.CLIENT)
+-            public void func_200211_b(ITextComponent p_200211_1_) {
+-            }
+-
+-            public void func_73718_a(int p_73718_1_) {
+-               if (Util.func_211177_b() - this.field_96245_b >= 1000L) {
+-                  this.field_96245_b = Util.func_211177_b();
+-                  MinecraftServer.field_147145_h.info("Converting... {}%", (int)p_73718_1_);
+-               }
+-
+-            }
+-
+-            @OnlyIn(Dist.CLIENT)
+-            public void func_146586_a() {
+-            }
+-
+-            public void func_200209_c(ITextComponent p_200209_1_) {
+-            }
+-         });
+-      }
+-
+-   }
+-
+-   protected void func_240800_l__() {
+-      this.func_175584_a();
+-      this.field_240768_i_.func_230412_a_(this.getServerModName(), this.func_230045_q_().isPresent());
+-      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
+-      this.func_240787_a_(ichunkstatuslistener);
+-      this.func_230543_p_();
+-      this.func_213186_a(ichunkstatuslistener);
+-   }
+-
+-   protected void func_230543_p_() {
+-   }
+-
+-   protected void func_240787_a_(IChunkStatusListener p_240787_1_) {
+-      IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
+-      DimensionGeneratorSettings dimensiongeneratorsettings = this.field_240768_i_.func_230418_z_();
+-      boolean flag = dimensiongeneratorsettings.func_236227_h_();
+-      long i = dimensiongeneratorsettings.func_236221_b_();
+-      long j = BiomeManager.func_235200_a_(i);
+-      List<ISpecialSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(iserverworldinfo));
+-      SimpleRegistry<Dimension> simpleregistry = dimensiongeneratorsettings.func_236224_e_();
+-      Dimension dimension = simpleregistry.func_230516_a_(Dimension.field_236053_b_);
+-      ChunkGenerator chunkgenerator;
+-      DimensionType dimensiontype;
+-      if (dimension == null) {
+-         dimensiontype = this.field_240767_f_.func_230520_a_().func_243576_d(DimensionType.field_235999_c_);
+-         chunkgenerator = DimensionGeneratorSettings.func_242750_a(this.field_240767_f_.func_243612_b(Registry.field_239720_u_), this.field_240767_f_.func_243612_b(Registry.field_243549_ar), (new Random()).nextLong());
+-      } else {
+-         dimensiontype = dimension.func_236063_b_();
+-         chunkgenerator = dimension.func_236064_c_();
+-      }
+-
+-      ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
+-      this.field_71305_c.put(World.field_234918_g_, serverworld);
+-      DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
+-      this.func_213204_a(dimensionsaveddatamanager);
+-      this.field_229733_al_ = new CommandStorage(dimensionsaveddatamanager);
+-      WorldBorder worldborder = serverworld.func_175723_af();
+-      worldborder.func_235926_a_(iserverworldinfo.func_230398_q_());
+-      if (!iserverworldinfo.func_76070_v()) {
+-         try {
+-            func_240786_a_(serverworld, iserverworldinfo, dimensiongeneratorsettings.func_236223_d_(), flag, true);
++    public static final Logger field_147145_h = LogManager.getLogger();
++    public static final File field_152367_a = new File("usercache.json");
++    public static final WorldSettings field_213219_c = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.field_234880_a_);
++    public final SaveFormat.LevelSave field_71310_m;
++    public final PlayerData field_240766_e_;
++    private final Snooper field_71307_n = new Snooper("server", this, Util.func_211177_b());
++    private final List<Runnable> field_71322_p = Lists.newArrayList();
++    private final TimeTracker field_240769_m_ = new TimeTracker(Util.field_211180_a, this::func_71259_af);
++    private IProfiler field_71304_b = EmptyProfiler.field_219906_a;
++    private NetworkSystem field_147144_o;
++    public final IChunkStatusListenerFactory field_213220_d;
++    private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
++    private final Random field_147146_q = new Random();
++    public final DataFixer field_184112_s;
++    private String field_71320_r;
++    private int field_71319_s = -1;
++    public final DynamicRegistries.Impl field_240767_f_;
++    public final Map<RegistryKey<World>, ServerWorld> field_71305_c = Maps.newLinkedHashMap();
++    private PlayerList field_71318_t;
++    private volatile boolean field_71317_u = true;
++    private boolean field_71316_v;
++    private int field_71315_w;
++    protected final Proxy field_110456_c;
++    private boolean field_71325_x;
++    private boolean field_190519_A;
++    private boolean field_71284_A;
++    private boolean field_71285_B;
++    @Nullable
++    private String field_71286_C;
++    private int field_71280_D;
++    private int field_143008_E;
++    public final long[] field_71311_j = new long[100];
++    @Nullable
++    private KeyPair field_71292_I;
++    @Nullable
++    private String field_71293_J;
++    private boolean field_71288_M;
++    private String field_147141_M = "";
++    private String field_175588_P = "";
++    private volatile boolean field_71296_Q;
++    private long field_71299_R;
++    private boolean field_71295_T;
++    private boolean field_104057_T;
++    private final MinecraftSessionService field_147143_S;
++    private final GameProfileRepository field_152365_W;
++    private final PlayerProfileCache field_152366_X;
++    private long field_147142_T;
++    public final Thread field_175590_aa;
++    protected long field_211151_aa = Util.func_211177_b();
++    private long field_213213_ab;
++
++    final long getTickOversleepMaxTime() {
++        return this.field_213213_ab;
++    } // Paper - OBFHELPER
++
++    private boolean field_213214_ac;
++
++    final boolean hasExecutedTask() {
++        return this.field_213214_ac;
++    } // Paper - OBFHELPER
++
++    @OnlyIn(Dist.CLIENT)
++    private boolean field_184111_ab;
++    private final ResourcePackList field_195577_ad;
++    private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
++    @Nullable
++    private CommandStorage field_229733_al_;
++    private final CustomServerBossInfoManager field_201301_aj = new CustomServerBossInfoManager();
++    private final FunctionManager field_200258_al;
++    private final FrameTimer field_213215_ap = new FrameTimer();
++    private boolean field_205745_an;
++    private float field_211152_ao;
++    public final Executor field_213217_au;
++    @Nullable
++    private String field_213218_av;
++    public DataPackRegistries field_195576_ac;
++    private final TemplateManager field_240765_ak_;
++    protected IServerConfiguration field_240768_i_;
++
++    // CraftBukkit start
++    public DatapackCodec datapackconfiguration;
++    public CraftServer server;
++    public static OptionSet options;
++    public org.bukkit.command.ConsoleCommandSender console;
++    public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
++    public static int currentTick = (int) (System.currentTimeMillis() / 50);
++    public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
++    public int autosavePeriod;
++    public Commands vanillaCommandDispatcher;
++    private boolean forceTicks;
++    // CraftBukkit end
++    // Spigot start
++    public static final int TPS = 20;
++    public static final int TICK_TIME = 1000000000 / TPS;
++    private static final int SAMPLE_INTERVAL = 100;
++    public final double[] recentTps = new double[3];
++    public final SlackActivityAccountant slackActivityAccountant = new SlackActivityAccountant();
++    // Spigot end
++
++    public static <S extends MinecraftServer> S func_240784_a_(Function<Thread, S> p_240784_0_) {
++        AtomicReference<S> atomicreference = new AtomicReference<>();
++        Thread thread = new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, () -> {
++            atomicreference.get().func_240802_v_();
++        }, "Server thread");
++        thread.setUncaughtExceptionHandler((p_240779_0_, p_240779_1_) -> {
++            field_147145_h.error(p_240779_1_);
++        });
++        S s = p_240784_0_.apply(thread);
++        atomicreference.set(s);
++        thread.start();
++        return s;
++    }
++
++    public MinecraftServer(Thread p_i232576_1_, DynamicRegistries.Impl p_i232576_2_, SaveFormat.LevelSave p_i232576_3_, IServerConfiguration p_i232576_4_, ResourcePackList p_i232576_5_, Proxy p_i232576_6_, DataFixer p_i232576_7_, DataPackRegistries p_i232576_8_, MinecraftSessionService p_i232576_9_, GameProfileRepository p_i232576_10_, PlayerProfileCache p_i232576_11_, IChunkStatusListenerFactory p_i232576_12_) {
++        super("Server");
++        this.field_240767_f_ = p_i232576_2_;
++        this.field_240768_i_ = p_i232576_4_;
++        this.field_110456_c = p_i232576_6_;
++        this.field_195577_ad = p_i232576_5_;
++        this.field_195576_ac = p_i232576_8_;
++        this.field_147143_S = p_i232576_9_;
++        this.field_152365_W = p_i232576_10_;
++        this.field_152366_X = p_i232576_11_;
++        this.field_147144_o = new NetworkSystem(this);
++        this.field_213220_d = p_i232576_12_;
++        this.field_71310_m = p_i232576_3_;
++        this.field_240766_e_ = p_i232576_3_.func_237292_b_();
++        this.field_184112_s = p_i232576_7_;
++        this.field_200258_al = new FunctionManager(this, p_i232576_8_.func_240960_a_());
++        this.field_240765_ak_ = new TemplateManager(p_i232576_8_.func_240970_h_(), p_i232576_3_, p_i232576_7_);
++        this.field_175590_aa = p_i232576_1_;
++        this.field_213217_au = Util.func_215072_e();
++        this.datapackconfiguration = DatapackCodecUtils.getDatapackCodec();
++        // CraftBukkit start
++        this.vanillaCommandDispatcher = p_i232576_8_.field_240953_c_; // CraftBukkit
++    }
++    // CraftBukkit end
++
++    private void func_213204_a(DimensionSavedDataManager p_213204_1_) {
++        ScoreboardSaveData scoreboardsavedata = p_213204_1_.func_215752_a(ScoreboardSaveData::new, "scoreboard");
++        scoreboardsavedata.func_96499_a(this.func_200251_aP());
++        this.func_200251_aP().func_186684_a(new WorldSavedDataCallableSave(scoreboardsavedata));
++    }
++
++    protected abstract boolean func_71197_b() throws IOException;
++
++    public static void func_240777_a_(SaveFormat.LevelSave p_240777_0_) {
++        if (p_240777_0_.func_237295_c_()) {
++            field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.1"));
++            p_240777_0_.func_237283_a_(new IProgressUpdate() {
++                private long field_96245_b = Util.func_211177_b();
++
++                public void func_200210_a(ITextComponent p_200210_1_) {
++                }
++
++                @OnlyIn(Dist.CLIENT)
++                public void func_200211_b(ITextComponent p_200211_1_) {
++                }
++
++                public void func_73718_a(int p_73718_1_) {
++                    if (Util.func_211177_b() - this.field_96245_b >= 1000L) {
++                        this.field_96245_b = Util.func_211177_b();
++                        MinecraftServer.field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.2", (int) p_73718_1_));
++                    }
++
++                }
++
++                @OnlyIn(Dist.CLIENT)
++                public void func_146586_a() {
++                }
++
++                public void func_200209_c(ITextComponent p_200209_1_) {
++                }
++            });
++        }
++
++    }
++
++    protected void func_240800_l__() {
++        this.func_175584_a();
++        this.field_240768_i_.func_230412_a_(this.getServerModName(), this.func_230045_q_().isPresent());
++        IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
++        this.func_240787_a_(ichunkstatuslistener);
++        this.func_230543_p_();
++        this.func_213186_a(ichunkstatuslistener);
++    }
++
++    protected void func_230543_p_() {
++    }
++
++    protected void func_240787_a_(IChunkStatusListener p_240787_1_) {
++        IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
++        DimensionGeneratorSettings dimensiongeneratorsettings = this.field_240768_i_.func_230418_z_();
++        boolean flag = dimensiongeneratorsettings.func_236227_h_();
++        long i = dimensiongeneratorsettings.func_236221_b_();
++        long j = BiomeManager.func_235200_a_(i);
++        List<ISpecialSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(iserverworldinfo));
++        SimpleRegistry<Dimension> simpleregistry = dimensiongeneratorsettings.func_236224_e_();
++        Dimension dimension = simpleregistry.func_230516_a_(Dimension.field_236053_b_);
++        ChunkGenerator chunkgenerator;
++        DimensionType dimensiontype;
++        if (dimension == null) {
++            dimensiontype = this.field_240767_f_.func_230520_a_().func_243576_d(DimensionType.field_235999_c_);
++            chunkgenerator = DimensionGeneratorSettings.func_242750_a(this.field_240767_f_.func_243612_b(Registry.field_239720_u_), this.field_240767_f_.func_243612_b(Registry.field_243549_ar), (new Random()).nextLong());
++        } else {
++            dimensiontype = dimension.func_236063_b_();
++            chunkgenerator = dimension.func_236064_c_();
++        }
++
++        ForgeInjectBukkit.addEnumEnvironment();
++        ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
++        this.field_71305_c.put(World.field_234918_g_, serverworld);
++        DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
++        this.func_213204_a(dimensionsaveddatamanager);
++        this.field_229733_al_ = new CommandStorage(dimensionsaveddatamanager);
++        WorldBorder worldborder = serverworld.func_175723_af();
++        worldborder.func_235926_a_(iserverworldinfo.func_230398_q_());
++        if (!iserverworldinfo.func_76070_v()) {
++            try {
++                func_240786_a_(serverworld, iserverworldinfo, dimensiongeneratorsettings.func_236223_d_(), flag, true);
++                iserverworldinfo.func_76091_d(true);
++                if (flag) {
++                    this.func_240778_a_(this.field_240768_i_);
++                }
++            } catch (Throwable throwable1) {
++                CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception initializing level");
++
++                try {
++                    serverworld.func_72914_a(crashreport);
++                } catch (Throwable throwable) {
++                }
++
++                throw new ReportedException(crashreport);
++            }
++
+             iserverworldinfo.func_76091_d(true);
+-            if (flag) {
+-               this.func_240778_a_(this.field_240768_i_);
+-            }
+-         } catch (Throwable throwable1) {
+-            CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception initializing level");
+-
+-            try {
+-               serverworld.func_72914_a(crashreport);
+-            } catch (Throwable throwable) {
+-            }
+-
+-            throw new ReportedException(crashreport);
+-         }
+-
+-         iserverworldinfo.func_76091_d(true);
+-      }
+-
+-      this.func_184103_al().func_212504_a(serverworld);
+-      if (this.field_240768_i_.func_230404_D_() != null) {
+-         this.func_201300_aS().func_201381_a(this.field_240768_i_.func_230404_D_());
+-      }
+-
+-      for(Entry<RegistryKey<Dimension>, Dimension> entry : simpleregistry.func_239659_c_()) {
+-         RegistryKey<Dimension> registrykey = entry.getKey();
+-         if (registrykey != Dimension.field_236053_b_) {
+-            RegistryKey<World> registrykey1 = RegistryKey.func_240903_a_(Registry.field_239699_ae_, registrykey.func_240901_a_());
+-            DimensionType dimensiontype1 = entry.getValue().func_236063_b_();
+-            ChunkGenerator chunkgenerator1 = entry.getValue().func_236064_c_();
+-            DerivedWorldInfo derivedworldinfo = new DerivedWorldInfo(this.field_240768_i_, iserverworldinfo);
+-            ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, p_240787_1_, chunkgenerator1, flag, j, ImmutableList.of(), false);
+-            worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
+-            this.field_71305_c.put(registrykey1, serverworld1);
+-         }
+-      }
+-
+-   }
+-
+-   private static void func_240786_a_(ServerWorld p_240786_0_, IServerWorldInfo p_240786_1_, boolean p_240786_2_, boolean p_240786_3_, boolean p_240786_4_) {
+-      ChunkGenerator chunkgenerator = p_240786_0_.func_72863_F().func_201711_g();
+-      if (!p_240786_4_) {
+-         p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177981_b(chunkgenerator.func_205470_d()), 0.0F);
+-      } else if (p_240786_3_) {
+-         p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177984_a(), 0.0F);
+-      } else {
+-         BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
+-         Random random = new Random(p_240786_0_.func_72905_C());
+-         BlockPos blockpos = biomeprovider.func_225531_a_(0, p_240786_0_.func_181545_F(), 0, 256, (p_244265_0_) -> {
+-            return p_244265_0_.func_242433_b().func_242562_b();
+-         }, random);
+-         ChunkPos chunkpos = blockpos == null ? new ChunkPos(0, 0) : new ChunkPos(blockpos);
+-         if (blockpos == null) {
 -            field_147145_h.warn("Unable to find spawn biome");
-+            field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.3"));
-          }
- 
-          boolean flag = false;
-@@ -452,8 +_,11 @@
-    }
- 
-    private void func_213186_a(IChunkStatusListener p_213186_1_) {
-+      net.minecraftforge.common.world.StructureSpawnManager.gatherEntitySpawns();
-       ServerWorld serverworld = this.func_241755_D_();
+-         }
+-
+-         boolean flag = false;
+-
+-         for(Block block : BlockTags.field_205599_H.func_230236_b_()) {
+-            if (biomeprovider.func_205706_b().contains(block.func_176223_P())) {
+-               flag = true;
+-               break;
+-            }
+-         }
+-
+-         p_240786_1_.func_176143_a(chunkpos.func_206849_h().func_177982_a(8, chunkgenerator.func_205470_d(), 8), 0.0F);
+-         int i1 = 0;
+-         int j1 = 0;
+-         int i = 0;
+-         int j = -1;
+-         int k = 32;
+-
+-         for(int l = 0; l < 1024; ++l) {
+-            if (i1 > -16 && i1 <= 16 && j1 > -16 && j1 <= 16) {
+-               BlockPos blockpos1 = SpawnLocationHelper.func_241094_a_(p_240786_0_, new ChunkPos(chunkpos.field_77276_a + i1, chunkpos.field_77275_b + j1), flag);
+-               if (blockpos1 != null) {
+-                  p_240786_1_.func_176143_a(blockpos1, 0.0F);
+-                  break;
+-               }
+-            }
+-
+-            if (i1 == j1 || i1 < 0 && i1 == -j1 || i1 > 0 && i1 == 1 - j1) {
+-               int k1 = i;
+-               i = -j;
+-               j = k1;
+-            }
+-
+-            i1 += i;
+-            j1 += j;
+-         }
+-
+-         if (p_240786_2_) {
+-            ConfiguredFeature<?, ?> configuredfeature = Features.field_243795_U;
+-            configuredfeature.func_242765_a(p_240786_0_, chunkgenerator, p_240786_0_.field_73012_v, new BlockPos(p_240786_1_.func_76079_c(), p_240786_1_.func_76075_d(), p_240786_1_.func_76074_e()));
+-         }
+-
+-      }
+-   }
+-
+-   private void func_240778_a_(IServerConfiguration p_240778_1_) {
+-      p_240778_1_.func_230409_a_(Difficulty.PEACEFUL);
+-      p_240778_1_.func_230415_d_(true);
+-      IServerWorldInfo iserverworldinfo = p_240778_1_.func_230407_G_();
+-      iserverworldinfo.func_76084_b(false);
+-      iserverworldinfo.func_76069_a(false);
+-      iserverworldinfo.func_230391_a_(1000000000);
+-      iserverworldinfo.func_76068_b(6000L);
+-      iserverworldinfo.func_230392_a_(GameType.SPECTATOR);
+-   }
+-
+-   private void func_213186_a(IChunkStatusListener p_213186_1_) {
+-      ServerWorld serverworld = this.func_241755_D_();
 -      field_147145_h.info("Preparing start region for dimension {}", (Object)serverworld.func_234923_W_().func_240901_a_());
-+      this.forceTicks = true;
-+      // CraftBukkit end
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.4", (Object)serverworld.func_234923_W_().func_240901_a_()));
-       BlockPos blockpos = serverworld.func_241135_u_();
-       p_213186_1_.func_219509_a(new ChunkPos(blockpos));
-       ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
-@@ -461,32 +_,40 @@
-       this.field_211151_aa = Util.func_211177_b();
-       serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
- 
+-      BlockPos blockpos = serverworld.func_241135_u_();
+-      p_213186_1_.func_219509_a(new ChunkPos(blockpos));
+-      ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
+-      serverchunkprovider.func_212863_j_().func_215598_a(500);
+-      this.field_211151_aa = Util.func_211177_b();
+-      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+-
 -      while(serverchunkprovider.func_217229_b() != 441) {
 -         this.field_211151_aa = Util.func_211177_b() + 10L;
 -         this.func_213202_o();
-+      while(serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
-+         // CraftBukkit start
-+         this.executeModerately();
-+         // CraftBukkit end
-       }
- 
+-      }
+-
 -      this.field_211151_aa = Util.func_211177_b() + 10L;
 -      this.func_213202_o();
 -
 -      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
 -         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
 -         if (forcedchunkssavedata != null) {
--            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
--
++        }
++
++        this.func_184103_al().func_212504_a(serverworld);
++        if (this.field_240768_i_.func_230404_D_() != null) {
++            this.func_201300_aS().func_201381_a(this.field_240768_i_.func_230404_D_());
++        }
++
++        for (Entry<RegistryKey<Dimension>, Dimension> entry : simpleregistry.func_239659_c_()) {
++            RegistryKey<Dimension> registrykey = entry.getKey();
++            if (registrykey != Dimension.field_236053_b_) {
++                RegistryKey<World> registrykey1 = RegistryKey.func_240903_a_(Registry.field_239699_ae_, registrykey.func_240901_a_());
++                DimensionType dimensiontype1 = entry.getValue().func_236063_b_();
++                ChunkGenerator chunkgenerator1 = entry.getValue().func_236064_c_();
++                DerivedWorldInfo derivedworldinfo = new DerivedWorldInfo(this.field_240768_i_, iserverworldinfo, DimensionType.func_236031_a_(registrykey1, this.field_71310_m.getWorldDir().toFile()).getName());
++                ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, p_240787_1_, chunkgenerator1, flag, j, ImmutableList.of(), false);
++                worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
++                this.field_71305_c.put(registrykey1, serverworld1);
++                if (this.server.scoreboardManager == null) {
++                    this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_16_R3.scoreboard.CraftScoreboardManager(this, serverworld1.func_96441_U());
++                }
++                if (serverworld1.generator != null) {
++                    serverworld1.getWorld().getPopulators().addAll(serverworld1.generator.getDefaultPopulators(serverworld1.getWorld()));
++                }
++            }
++            Bukkit.getPluginManager().callEvent(new WorldInitEvent(field_71305_c.get(registrykey).getWorld()));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(field_71305_c.get(registrykey)));
++        }
++        this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
++        this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
++        this.field_147144_o.acceptConnections();
++    }
++
++    private static void func_240786_a_(ServerWorld p_240786_0_, IServerWorldInfo p_240786_1_, boolean p_240786_2_, boolean p_240786_3_, boolean p_240786_4_) {
++        ChunkGenerator chunkgenerator = p_240786_0_.func_72863_F().func_201711_g();
++        if (!p_240786_4_) {
++            p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177981_b(chunkgenerator.func_205470_d()), 0.0F);
++        } else if (p_240786_3_) {
++            p_240786_1_.func_176143_a(BlockPos.field_177992_a.func_177984_a(), 0.0F);
++        } else {
++            if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(p_240786_0_, p_240786_1_)) return;
++            BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
++            Random random = new Random(p_240786_0_.func_72905_C());
++            BlockPos blockpos = biomeprovider.func_225531_a_(0, p_240786_0_.func_181545_F(), 0, 256, (p_244265_0_) -> {
++                return p_244265_0_.func_242433_b().func_242562_b();
++            }, random);
++            ChunkPos chunkpos = blockpos == null ? new ChunkPos(0, 0) : new ChunkPos(blockpos);
++            if (blockpos == null) {
++                field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.3"));
++            }
++
++            boolean flag = false;
++
++            for (Block block : BlockTags.field_205599_H.func_230236_b_()) {
++                if (biomeprovider.func_205706_b().contains(block.func_176223_P())) {
++                    flag = true;
++                    break;
++                }
++            }
++
++            p_240786_1_.func_176143_a(chunkpos.func_206849_h().func_177982_a(8, chunkgenerator.func_205470_d(), 8), 0.0F);
++            int i1 = 0;
++            int j1 = 0;
++            int i = 0;
++            int j = -1;
++            int k = 32;
++
++            for (int l = 0; l < 1024; ++l) {
++                if (i1 > -16 && i1 <= 16 && j1 > -16 && j1 <= 16) {
++                    BlockPos blockpos1 = SpawnLocationHelper.func_241094_a_(p_240786_0_, new ChunkPos(chunkpos.field_77276_a + i1, chunkpos.field_77275_b + j1), flag);
++                    if (blockpos1 != null) {
++                        p_240786_1_.func_176143_a(blockpos1, 0.0F);
++                        break;
++                    }
++                }
++
++                if (i1 == j1 || i1 < 0 && i1 == -j1 || i1 > 0 && i1 == 1 - j1) {
++                    int k1 = i;
++                    i = -j;
++                    j = k1;
++                }
++
++                i1 += i;
++                j1 += j;
++            }
++
++            if (p_240786_2_) {
++                ConfiguredFeature<?, ?> configuredfeature = Features.field_243795_U;
++                configuredfeature.func_242765_a(p_240786_0_, chunkgenerator, p_240786_0_.field_73012_v, new BlockPos(p_240786_1_.func_76079_c(), p_240786_1_.func_76075_d(), p_240786_1_.func_76074_e()));
++            }
++
++        }
++    }
++
++    private void func_240778_a_(IServerConfiguration p_240778_1_) {
++        p_240778_1_.func_230409_a_(Difficulty.PEACEFUL);
++        p_240778_1_.func_230415_d_(true);
++        IServerWorldInfo iserverworldinfo = p_240778_1_.func_230407_G_();
++        iserverworldinfo.func_76084_b(false);
++        iserverworldinfo.func_76069_a(false);
++        iserverworldinfo.func_230391_a_(1000000000);
++        iserverworldinfo.func_76068_b(6000L);
++        iserverworldinfo.func_230392_a_(GameType.SPECTATOR);
++    }
++
++    private void func_213186_a(IChunkStatusListener p_213186_1_) {
++        net.minecraftforge.common.world.StructureSpawnManager.gatherEntitySpawns();
++        ServerWorld serverworld = this.func_241755_D_();
++        this.forceTicks = true;
++        // CraftBukkit end
++        field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.4", (Object) serverworld.func_234923_W_().func_240901_a_()));
++        BlockPos blockpos = serverworld.func_241135_u_();
++        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
++        ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
++        serverchunkprovider.func_212863_j_().func_215598_a(500);
++        this.field_211151_aa = Util.func_211177_b();
++        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
++
++        while (serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
++            // CraftBukkit start
++            this.executeModerately();
++            // CraftBukkit end
++        }
++
++        // CraftBukkit start
++        //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
++        this.executeModerately();
++        for (ServerWorld serverworld1 : this.field_71305_c.values()) {
++            if (serverworld1.getWorld().getKeepSpawnInMemory()) {
++                ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
++
++                if (forcedchunkssavedata != null) {
++                    LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
++
++                    while (longiterator.hasNext()) {
++                        long i = longiterator.nextLong();
++                        ChunkPos chunkpos = new ChunkPos(i);
++                        serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++                    }
++                }
++            }
++            Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverworld1.getWorld()));
++        }
++
++        // CraftBukkit start
++        //this.serverTime = Util.milliTime() + 10L;
++        this.executeModerately();
++        // CraftBukkit end
++        p_213186_1_.func_219510_b();
++        serverchunkprovider.func_212863_j_().func_215598_a(5);
++        this.func_240794_aZ_();
++        this.forceTicks = false;
++    }
++
++    protected void func_175584_a() {
++        File file1 = this.field_71310_m.func_237285_a_(FolderName.field_237252_h_).toFile();
++        if (file1.isFile()) {
++            String s = this.field_71310_m.func_237282_a_();
++
++            try {
++                this.func_180507_a_("level://" + URLEncoder.encode(s, StandardCharsets.UTF_8.toString()) + "/" + "resources.zip", "");
++            } catch (UnsupportedEncodingException unsupportedencodingexception) {
++                field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.5", (Object) s));
++            }
++        }
++
++    }
++
++    public GameType func_71265_f() {
++        return this.field_240768_i_.func_76077_q();
++    }
++
++    public boolean func_71199_h() {
++        return this.field_240768_i_.func_76093_s();
++    }
++
++    public abstract int func_110455_j();
++
++    public abstract int func_223707_k();
++
++    public abstract boolean func_195569_l();
++
++    public boolean func_213211_a(boolean p_213211_1_, boolean p_213211_2_, boolean p_213211_3_) {
++        boolean flag = false;
++
++        for (ServerWorld serverworld : this.func_212370_w()) {
++            if (!p_213211_1_) {
++                field_147145_h.info("Saving chunks for level '{}'/{}", serverworld, serverworld.func_234923_W_().func_240901_a_());
++            }
++
++            serverworld.func_217445_a((IProgressUpdate) null, p_213211_2_, serverworld.field_73058_d && !p_213211_3_);
++            flag = true;
++        }
++
++        ServerWorld serverworld1 = this.func_241755_D_();
++        IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
++        iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
++        this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
++        this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
++        return flag;
++    }
++
++    public void close() {
++        this.func_71260_j();
++    }
++
++    // CraftBukkit start
++    private boolean hasStopped = false;
++    private final Object stopLock = new Object();
++
++    public final boolean hasStopped() {
++        synchronized (stopLock) {
++            return hasStopped;
++        }
++    }
++    // CraftBukkit end
++
++    protected void func_71260_j() {
++        // CraftBukkit start - prevent double stopping on multiple threads
++        synchronized (stopLock) {
++            if (hasStopped) return;
++            hasStopped = true;
++        }
++        // CraftBukkit end
++        field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.7"));
++        MinecraftTimings.stopServer(); // Paper
++        // CraftBukkit start
++        if (this.server != null) {
++            this.server.disablePlugins();
++        }
++        // CraftBukkit end
++        if (this.func_147137_ag() != null) {
++            this.func_147137_ag().func_151268_b();
++        }
++
++        if (this.field_71318_t != null) {
++            field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.8"));
++            this.field_71318_t.func_72389_g();
++            this.field_71318_t.func_72392_r();
++        }
++
++        field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.9"));
++
++        for (ServerWorld serverworld : this.func_212370_w()) {
++            if (serverworld != null) {
++                serverworld.field_73058_d = false;
++            }
++        }
++
++        this.func_213211_a(false, true, false);
++
++        for (ServerWorld serverworld1 : this.field_71305_c.values()) {
++            ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
++            if (forcedchunkssavedata != null) {
++                LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
++
++                while (longiterator.hasNext()) {
++                    long i = longiterator.nextLong();
++                    ChunkPos chunkpos = new ChunkPos(i);
++                    serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++                }
++                net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld1, forcedchunkssavedata);
++            }
++        }
++
++        if (this.field_71307_n.func_76468_d()) {
++            this.field_71307_n.func_76470_e();
++        }
++
++        this.field_195576_ac.close();
++
++        try {
++            this.field_71310_m.close();
++        } catch (IOException ioexception) {
++            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.11", this.field_71310_m.func_237282_a_(), ioexception));
++        }
++        MCUtil.asyncExecutor.shutdown(); // Paper
++        try {MCUtil.asyncExecutor.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS); // Paper
++        } catch (java.lang.InterruptedException ignored) {} // Paper
++        // Spigot start
++        if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
++            field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.12"));
++            this.field_152366_X.func_152658_c();
++        }
++        // Spigot end
++
++    }
++
++    public String func_71211_k() {
++        return this.field_71320_r;
++    }
++
++    public void func_71189_e(String p_71189_1_) {
++        this.field_71320_r = p_71189_1_;
++    }
++
++    public boolean func_71278_l() {
++        return this.field_71317_u;
++    }
++
++    public void func_71263_m(boolean p_71263_1_) {
++        this.field_71317_u = false;
++        if (p_71263_1_) {
++            try {
++                this.field_175590_aa.join();
++            } catch (InterruptedException interruptedexception) {
++                field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.13", (Throwable) interruptedexception));
++            }
++        }
++
++    }
++
++    // Spigot Start
++    private static double calcTps(double avg, double exp, double tps) {
++        return (avg * exp) + (tps * (1 - exp));
++    }
++    // Spigot End
++
++    protected void func_240802_v_() {
++
++        try {
++            if (this.func_71197_b()) {
++                net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarted(this);
++                this.field_211151_aa = Util.func_211177_b();
++                this.field_147147_p.func_151315_a(new StringTextComponent(this.field_71286_C));
++                this.field_147147_p.func_151321_a(new ServerStatusResponse.Version(SharedConstants.func_215069_a().getName(), SharedConstants.func_215069_a().getProtocolVersion()));
++                this.func_184107_a(this.field_147147_p);
++
++                // Spigot start
++                Arrays.fill(recentTps, 20);
++                long curTime, tickSection = Util.func_211177_b(), tickCount = 1;
++                while (this.field_71317_u) {
++                    long i = (curTime = Util.func_211177_b()) - this.field_211151_aa;
++
++                    if (i > 5000L && this.field_211151_aa - this.field_71299_R >= 30000L) {  // CraftBukkit
++                        long j = i / 50L;
++                        if (server.getWarnOnOverload()) {
++                            field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.14", String.valueOf(i), String.valueOf(j)));
++                        }
++                        this.field_211151_aa += j * 50L;
++                        this.field_71299_R = this.field_211151_aa;
++                    }
++
++                    if (tickCount++ % SAMPLE_INTERVAL == 0) {
++                        double currentTps = 1E3 / (curTime - tickSection) * SAMPLE_INTERVAL;
++                        recentTps[0] = calcTps(recentTps[0], 0.92, currentTps); // 1/exp(5sec/1min)
++                        recentTps[1] = calcTps(recentTps[1], 0.9835, currentTps); // 1/exp(5sec/5min)
++                        recentTps[2] = calcTps(recentTps[2], 0.9945, currentTps); // 1/exp(5sec/15min)
++                        tickSection = curTime;
++                    }
++                    // Spigot end
++
++                    currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
++                    this.field_211151_aa += 50L;
++                    LongTickDetector longtickdetector = LongTickDetector.func_233524_a_("Server");
++                    this.func_240773_a_(longtickdetector);
++                    this.field_71304_b.func_219894_a();
++                    this.field_71304_b.func_76320_a("tick");
++                    this.func_71217_p(this::func_212379_aT);
++                    this.field_71304_b.func_219895_b("nextTickWait");
++                    this.field_213214_ac = true;
++                    this.field_213213_ab = Math.max(Util.func_211177_b() + 50L, this.field_211151_aa);
++                    this.func_213202_o();
++                    this.field_71304_b.func_76319_b();
++                    this.field_71304_b.func_219897_b();
++                    this.func_240795_b_(longtickdetector);
++                    this.field_71296_Q = true;
++                }
++                net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopping(this);
++                net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
++            } else {
++                net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
++                this.func_71228_a((CrashReport) null);
++            }
++        } catch (Throwable throwable1) {
++            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.15", throwable1));
++            // Spigot Start
++            if (throwable1.getCause() != null) {
++                MinecraftServer.field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.16", throwable1.getCause()));
++            }
++            // Spigot End
++            CrashReport crashreport;
++            if (throwable1 instanceof ReportedException) {
++                crashreport = this.func_71230_b(((ReportedException) throwable1).func_71575_a());
++            } else {
++                crashreport = this.func_71230_b(new CrashReport("Exception in server tick loop", throwable1));
++            }
++
++            File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
++            if (crashreport.func_147149_a(file1)) {
++                field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.17", (Object) file1.getAbsolutePath()));
++            } else {
++                field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.18"));
++            }
++
++            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
++            this.func_71228_a(crashreport);
++        } finally {
++            try {
++                this.field_71316_v = true;
++                this.func_71260_j();
++            } catch (Throwable throwable) {
++                field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.19", throwable));
++            } finally {
++                net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
++                org.spigotmc.WatchdogThread.doStop(); // Spigot
++                MohistThreadBox.METRICS.shutdown();
++                this.func_71240_o();
++                LogManager.shutdown();
++                Runtime.getRuntime().halt(0); // Mohist - Forcibly close the process
++            }
++
++        }
++
++    }
++
++    private boolean func_212379_aT() {
++        // CraftBukkit start
++        if (isOversleep) return canOversleep();// Paper - because of our changes, this logic is broken
++        return this.forceTicks || this.func_213182_bg() || Util.func_211177_b() < (this.field_213214_ac ? this.field_213213_ab : this.field_211151_aa);
++    }
++
++    // Paper start
++    boolean isOversleep = false;
++
++    private boolean canOversleep() {
++        return this.hasExecutedTask() && Util.func_211177_b() < this.getTickOversleepMaxTime();
++    }
++
++    private boolean canSleepForTickNoOversleep() {
++        return this.forceTicks || this.func_213182_bg() || Util.func_211177_b() < this.field_211151_aa;
++    }
++    // Paper end
++
++    private void executeModerately() {
++        this.func_213160_bf();
++        java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
++    }
++    // CraftBukkit end
++
++    protected void func_213202_o() {
++        //this.runAllTasks(); // Paper - move this into the tick method for timings
++        this.func_213161_c(() -> {
++            return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
++        });
++    }
++
++    public TickDelayedTask func_212875_d_(Runnable p_212875_1_) {
++        return new TickDelayedTask(this.field_71315_w, p_212875_1_);
++    }
++
++    protected boolean func_212874_c_(TickDelayedTask p_212874_1_) {
++        return p_212874_1_.func_218823_a() + 3 < this.field_71315_w || this.func_212379_aT();
++    }
++
++    public boolean func_213168_p() {
++        boolean flag = this.func_213205_aW();
++        this.field_213214_ac = flag;
++        return flag;
++    }
++
++    private boolean func_213205_aW() {
++        if (super.func_213168_p()) {
++            return true;
++        } else {
++            if (this.func_212379_aT()) {
++                for (ServerWorld serverworld : this.func_212370_w()) {
++                    if (serverworld.func_72863_F().func_217234_d()) {
++                        return true;
++                    }
++                }
++            }
++
++            return false;
++        }
++    }
++
++    protected void func_213166_h(TickDelayedTask p_213166_1_) {
++        this.func_213185_aS().func_230035_c_("runTask");
++        super.func_213166_h(p_213166_1_);
++    }
++
++    private void func_184107_a(ServerStatusResponse p_184107_1_) {
++        File file1 = this.func_71209_f("server-icon.png");
++        if (!file1.exists()) {
++            file1 = this.field_71310_m.func_237298_f_();
++        }
++
++        if (file1.isFile()) {
++            ByteBuf bytebuf = Unpooled.buffer();
++
++            try {
++                BufferedImage bufferedimage = ImageIO.read(file1);
++                Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
++                Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
++                ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
++                ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
++                p_184107_1_.func_151320_a("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
++            } catch (Exception exception) {
++                field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.20", (Throwable) exception));
++            } finally {
++                bytebuf.release();
++            }
++        }
++
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public boolean func_184106_y() {
++        this.field_184111_ab = this.field_184111_ab || this.func_184109_z().isFile();
++        return this.field_184111_ab;
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public File func_184109_z() {
++        return this.field_71310_m.func_237298_f_();
++    }
++
++    public File func_71238_n() {
++        return new File(".");
++    }
++
++    protected void func_71228_a(CrashReport p_71228_1_) {
++    }
++
++    protected void func_71240_o() {
++        System.exit(0);
++    }
++
++    protected void func_71217_p(BooleanSupplier p_71217_1_) {
++        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTiming(); // Paper
++        this.slackActivityAccountant.tickStarted(); // Spigot
++        long i = Util.func_211178_c();
++        // Paper start - move oversleep into full server tick
++        isOversleep = true;
++        MinecraftTimings.serverOversleep.startTiming();
++        this.func_213161_c(() -> {
++            return !this.canOversleep();
++        });
++        isOversleep = false;
++        MinecraftTimings.serverOversleep.stopTiming();
++        // Paper end
++
++        net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
++        ++this.field_71315_w;
++        this.func_71190_q(p_71217_1_);
++        if (i - this.field_147142_T >= 5000000000L) {
++            this.field_147142_T = i;
++            this.field_147147_p.func_151319_a(new ServerStatusResponse.Players(this.func_71275_y(), this.func_71233_x()));
++            GameProfile[] agameprofile = new GameProfile[Math.min(this.func_71233_x(), 12)];
++            int j = MathHelper.func_76136_a(this.field_147146_q, 0, this.func_71233_x() - agameprofile.length);
++
++            for (int k = 0; k < agameprofile.length; ++k) {
++                agameprofile[k] = this.field_71318_t.func_181057_v().get(j + k).func_146103_bH();
++            }
++
++            Collections.shuffle(Arrays.asList(agameprofile));
++            this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
++            this.field_147147_p.invalidateJson();
++        }
++
++        if (autosavePeriod > 0 && this.field_71315_w % autosavePeriod == 0) { // CraftBukkit
++            field_147145_h.debug(com.mohistmc.util.i18n.i18n.get("minecraftserver.21"));
++            this.field_71304_b.func_76320_a("save");
++            this.field_71318_t.func_72389_g();
++            this.func_213211_a(true, false, false);
++            this.field_71304_b.func_76319_b();
++            field_147145_h.debug(com.mohistmc.util.i18n.i18n.get("minecraftserver.22"));
++        }
++
++        this.field_71304_b.func_76320_a("snooper");
++        if (((DedicatedServer) this).func_213221_d_().field_218993_F && !this.field_71307_n.func_76468_d() && this.field_71315_w > 100) { // Spigot
++            this.field_71307_n.func_76463_a();
++        }
++
++        if (((DedicatedServer) this).func_213221_d_().field_218993_F && this.field_71315_w % 6000 == 0) {
++            this.field_71307_n.func_76471_b();
++        }
++
++        this.field_71304_b.func_76319_b();
++        // Paper start - move executeAll() into full server tick timing
++        try (co.aikar.timings.Timing ignored = MinecraftTimings.processTasksTimer.startTiming()) {
++            this.func_213160_bf();
++        }
++        // Paper end
++        this.field_71304_b.func_76320_a("tallying");
++        long l = this.field_71311_j[this.field_71315_w % 100] = Util.func_211178_c() - i;
++        this.field_211152_ao = this.field_211152_ao * 0.8F + (float) l / 1000000.0F * 0.19999999F;
++        long i1 = Util.func_211178_c();
++        this.field_213215_ap.func_181747_a(i1 - i);
++        this.field_71304_b.func_76319_b();
++        org.spigotmc.WatchdogThread.tick(); // Spigot
++        this.slackActivityAccountant.tickEnded(l); // Spigot
++        net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
++        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
++    }
++
++    protected void func_71190_q(BooleanSupplier p_71190_1_) {
++        MinecraftTimings.bukkitSchedulerTimer.startTiming(); // Spigot // Paper
++        this.server.getScheduler().mainThreadHeartbeat(this.field_71315_w); // CraftBukkit
++        MinecraftTimings.bukkitSchedulerTimer.stopTiming(); // Spigot // Paper
++        this.field_71304_b.func_76320_a("commandFunctions");
++        MinecraftTimings.commandFunctionsTimer.startTiming(); // Spigot // Paper
++        this.func_193030_aL().func_73660_a();
++        MinecraftTimings.commandFunctionsTimer.stopTiming(); // Spigot // Paper
++        this.field_71304_b.func_219895_b("levels");
++
++        // CraftBukkit start
++        // Run tasks that are waiting on processing
++        MinecraftTimings.processQueueTimer.startTiming(); // Spigot
++        while (!processQueue.isEmpty()) {
++            processQueue.remove().run();
++        }
++        MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
++
++        for (ServerWorld serverworld : this.getWorldArray()) {
++            long tickStart = Util.func_211178_c();
++            this.field_71304_b.func_194340_a(() -> {
++                return serverworld + " " + serverworld.func_234923_W_().func_240901_a_();
++            });
++            MinecraftTimings.timeUpdateTimer.startTiming(); // Spigot // Paper
++            if (this.field_71315_w % 20 == 0) {
++                this.field_71304_b.func_76320_a("timeSync");
++                this.field_71318_t.func_232642_a_(new SUpdateTimePacket(serverworld.func_82737_E(), serverworld.func_72820_D(), serverworld.func_82736_K().func_223586_b(GameRules.field_223607_j)), serverworld.func_234923_W_());
++                this.field_71304_b.func_76319_b();
++            }
++            MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot // Paper
++
++            this.field_71304_b.func_76320_a("tick");
++            net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(serverworld);
++            try {
++                serverworld.timings.doTick.startTiming(); // Spigot
++                serverworld.func_72835_b(p_71190_1_);
++                serverworld.timings.doTick.stopTiming(); // Spigot
++            } catch (Throwable throwable) {
++                // Spigot Start
++                CrashReport crashreport;
++                try {
++                    crashreport = CrashReport.func_85055_a(throwable, "Exception ticking world");
++                } catch (Throwable t) {
++                    throw new RuntimeException("Error generating crash report", t);
++                }
++                // Spigot End
++                serverworld.func_72914_a(crashreport);
++                throw new ReportedException(crashreport);
++            }
++            net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(serverworld);
++            this.field_71304_b.func_76319_b();
++            this.field_71304_b.func_76319_b();
++            perWorldTickTimes.computeIfAbsent(serverworld.func_234923_W_(), k -> new long[100])[this.field_71315_w % 100] = Util.func_211178_c() - tickStart;
++            serverworld.explosionDensityCache.clear(); // Paper - Optimize explosions
++        }
++
++        this.field_71304_b.func_219895_b("connection");
++        MinecraftTimings.connectionTimer.startTiming(); // Spigot
++        this.func_147137_ag().func_151269_c();
++        MinecraftTimings.connectionTimer.stopTiming(); // Spigot
++        this.field_71304_b.func_219895_b("players");
++        MinecraftTimings.playerListTimer.startTiming(); // Spigot // Paper
++        this.field_71318_t.func_72374_b();
++        MinecraftTimings.playerListTimer.stopTiming(); // Spigot // Paper
++        if (SharedConstants.field_206244_b) {
++            TestCollection.field_229570_a_.func_229574_b_();
++        }
++
++        this.field_71304_b.func_219895_b("server gui refresh");
++
++        MinecraftTimings.tickablesTimer.startTiming(); // Spigot // Paper
++        for (int i = 0; i < this.field_71322_p.size(); ++i) {
++            this.field_71322_p.get(i).run();
++        }
++        MinecraftTimings.tickablesTimer.stopTiming(); // Spigot // Paper
++
++        this.field_71304_b.func_76319_b();
++    }
++
++    public boolean func_71255_r() {
++        return true;
++    }
++
++    public void func_82010_a(Runnable p_82010_1_) {
++        this.field_71322_p.add(p_82010_1_);
++    }
++
++    protected void func_213208_c(String p_213208_1_) {
++        this.field_213218_av = p_213208_1_;
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public boolean func_213201_w() {
++        return !this.field_175590_aa.isAlive();
++    }
++
++    public File func_71209_f(String p_71209_1_) {
++        return new File(this.func_71238_n(), p_71209_1_);
++    }
++
++    public final ServerWorld func_241755_D_() {
++        return this.field_71305_c.get(World.field_234918_g_);
++    }
++
++    @Nullable
++    public ServerWorld func_71218_a(RegistryKey<World> p_71218_1_) {
++        return this.field_71305_c.get(p_71218_1_);
++    }
++
++    public Set<RegistryKey<World>> func_240770_D_() {
++        return this.field_71305_c.keySet();
++    }
++
++    public Iterable<ServerWorld> func_212370_w() {
++        return this.field_71305_c.values();
++    }
++
++    public String func_71249_w() {
++        return SharedConstants.func_215069_a().getName();
++    }
++
++    public int func_71233_x() {
++        return this.field_71318_t.func_72394_k();
++    }
++
++    public int func_71275_y() {
++        return this.field_71318_t.func_72352_l();
++    }
++
++    public String[] func_71213_z() {
++        return this.field_71318_t.func_72369_d();
++    }
++
++    public String getServerModName() {
++        return server.getName(); // CraftBukkit - cb > vanilla!
++    }
++
++    public CrashReport func_71230_b(CrashReport p_71230_1_) {
++        if (this.field_71318_t != null) {
++            p_71230_1_.func_85056_g().func_189529_a("Player Count", () -> {
++                return this.field_71318_t.func_72394_k() + " / " + this.field_71318_t.func_72352_l() + "; " + this.field_71318_t.func_181057_v();
++            });
++        }
++
++        p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
++            StringBuilder stringbuilder = new StringBuilder();
++
++            LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
++            for (ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
++                if (stringbuilder.length() > 0) {
++                    stringbuilder.append(", ");
++                }
++
++                stringbuilder.append(resourcepackinfo.func_195790_f());
++                if (!resourcepackinfo.func_195791_d().func_198968_a()) {
++                    stringbuilder.append(" (incompatible)");
++                }
++            }
++
++            return stringbuilder.toString();
++        });
++        if (this.field_213218_av != null) {
++            p_71230_1_.func_85056_g().func_189529_a("Server Id", () -> {
++                return this.field_213218_av;
++            });
++        }
++
++        return p_71230_1_;
++    }
++
++    public abstract Optional<String> func_230045_q_();
++
++    public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
++        field_147145_h.info(org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromComponent(p_145747_1_));
++    }
++
++    public KeyPair func_71250_E() {
++        return this.field_71292_I;
++    }
++
++    public int func_71215_F() {
++        return this.field_71319_s;
++    }
++
++    public void func_71208_b(int p_71208_1_) {
++        this.field_71319_s = p_71208_1_;
++    }
++
++    public String func_71214_G() {
++        return this.field_71293_J;
++    }
++
++    public void func_71224_l(String p_71224_1_) {
++        this.field_71293_J = p_71224_1_;
++    }
++
++    public boolean func_71264_H() {
++        return this.field_71293_J != null;
++    }
++
++    protected void func_244801_P() {
++        field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.23"));
++
++        try {
++            this.field_71292_I = CryptManager.func_75891_b();
++        } catch (CryptException cryptexception) {
++            throw new IllegalStateException("Failed to generate key pair", cryptexception);
++        }
++    }
++
++    public void func_147139_a(Difficulty p_147139_1_, boolean p_147139_2_) {
++        if (p_147139_2_ || !this.field_240768_i_.func_176123_z()) {
++            this.field_240768_i_.func_230409_a_(this.field_240768_i_.func_76093_s() ? Difficulty.HARD : p_147139_1_);
++            this.func_240794_aZ_();
++            this.func_184103_al().func_181057_v().forEach(this::func_213189_a);
++        }
++    }
++
++    public int func_230512_b_(int p_230512_1_) {
++        return p_230512_1_;
++    }
++
++    private void func_240794_aZ_() {
++        for (ServerWorld serverworld : this.func_212370_w()) {
++            serverworld.func_72891_a(this.func_230536_N_(), this.func_230537_U_());
++        }
++
++    }
++
++    public void func_213209_d(boolean p_213209_1_) {
++        this.field_240768_i_.func_230415_d_(p_213209_1_);
++        this.func_184103_al().func_181057_v().forEach(this::func_213189_a);
++    }
++
++    private void func_213189_a(ServerPlayerEntity p_213189_1_) {
++        IWorldInfo iworldinfo = p_213189_1_.func_71121_q().func_72912_H();
++        p_213189_1_.field_71135_a.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
++    }
++
++    protected boolean func_230536_N_() {
++        return this.field_240768_i_.func_176130_y() != Difficulty.PEACEFUL;
++    }
++
++    public boolean func_71242_L() {
++        return this.field_71288_M;
++    }
++
++    public void func_71204_b(boolean p_71204_1_) {
++        this.field_71288_M = p_71204_1_;
++    }
++
++    public String func_147133_T() {
++        return this.field_147141_M;
++    }
++
++    public String func_175581_ab() {
++        return this.field_175588_P;
++    }
++
++    public void func_180507_a_(String p_180507_1_, String p_180507_2_) {
++        this.field_147141_M = p_180507_1_;
++        this.field_175588_P = p_180507_2_;
++    }
++
++    public void func_70000_a(Snooper p_70000_1_) {
++        p_70000_1_.func_152768_a("whitelist_enabled", false);
++        p_70000_1_.func_152768_a("whitelist_count", 0);
++        if (this.field_71318_t != null) {
++            p_70000_1_.func_152768_a("players_current", this.func_71233_x());
++            p_70000_1_.func_152768_a("players_max", this.func_71275_y());
++            p_70000_1_.func_152768_a("players_seen", this.field_240766_e_.func_237334_a_().length);
++        }
++
++        p_70000_1_.func_152768_a("uses_auth", this.field_71325_x);
++        p_70000_1_.func_152768_a("gui_state", this.func_71279_ae() ? "enabled" : "disabled");
++        p_70000_1_.func_152768_a("run_time", (Util.func_211177_b() - p_70000_1_.func_130105_g()) / 60L * 1000L);
++        p_70000_1_.func_152768_a("avg_tick_ms", (int) (MathHelper.func_76127_a(this.field_71311_j) * 1.0E-6D));
++        int i = 0;
++
++        for (ServerWorld serverworld : this.func_212370_w()) {
++            if (serverworld != null) {
++                p_70000_1_.func_152768_a("world[" + i + "][dimension]", serverworld.func_234923_W_().func_240901_a_());
++                p_70000_1_.func_152768_a("world[" + i + "][mode]", this.field_240768_i_.func_76077_q());
++                p_70000_1_.func_152768_a("world[" + i + "][difficulty]", serverworld.func_175659_aa());
++                p_70000_1_.func_152768_a("world[" + i + "][hardcore]", this.field_240768_i_.func_76093_s());
++                p_70000_1_.func_152768_a("world[" + i + "][height]", this.field_71280_D);
++                p_70000_1_.func_152768_a("world[" + i + "][chunks_loaded]", serverworld.func_72863_F().func_73152_e());
++                ++i;
++            }
++        }
++
++        p_70000_1_.func_152768_a("worlds", i);
++    }
++
++    public abstract boolean func_71262_S();
++
++    public abstract int func_241871_k();
++
++    public boolean func_71266_T() {
++        return this.field_71325_x;
++    }
++
++    public void func_71229_d(boolean p_71229_1_) {
++        this.field_71325_x = p_71229_1_;
++    }
++
++    public boolean func_190518_ac() {
++        return this.field_190519_A;
++    }
++
++    public void func_190517_e(boolean p_190517_1_) {
++        this.field_190519_A = p_190517_1_;
++    }
++
++    public boolean func_230537_U_() {
++        return true;
++    }
++
++    public boolean func_230538_V_() {
++        return true;
++    }
++
++    public abstract boolean func_181035_ah();
++
++    public boolean func_71219_W() {
++        return this.field_71284_A;
++    }
++
++    public void func_71188_g(boolean p_71188_1_) {
++        this.field_71284_A = p_71188_1_;
++    }
++
++    public boolean func_71231_X() {
++        return this.field_71285_B;
++    }
++
++    public void func_71245_h(boolean p_71245_1_) {
++        this.field_71285_B = p_71245_1_;
++    }
++
++    public abstract boolean func_82356_Z();
++
++    public String func_71273_Y() {
++        return this.field_71286_C;
++    }
++
++    public void func_71205_p(String p_71205_1_) {
++        this.field_71286_C = p_71205_1_;
++    }
++
++    public int func_71207_Z() {
++        return this.field_71280_D;
++    }
++
++    public void func_71191_d(int p_71191_1_) {
++        this.field_71280_D = p_71191_1_;
++    }
++
++    public boolean func_71241_aa() {
++        return this.field_71316_v;
++    }
++
++    public PlayerList func_184103_al() {
++        return this.field_71318_t;
++    }
++
++    public void func_184105_a(PlayerList p_184105_1_) {
++        this.field_71318_t = p_184105_1_;
++    }
++
++    public abstract boolean func_71344_c();
++
++    public void func_71235_a(GameType p_71235_1_) {
++        this.field_240768_i_.func_230392_a_(p_71235_1_);
++    }
++
++    @Nullable
++    public NetworkSystem func_147137_ag() {
++        return this.field_147144_o;
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public boolean func_71200_ad() {
++        return this.field_71296_Q;
++    }
++
++    public boolean func_71279_ae() {
++        return false;
++    }
++
++    public abstract boolean func_195565_a(GameType p_195565_1_, boolean p_195565_2_, int p_195565_3_);
++
++    public int func_71259_af() {
++        return this.field_71315_w;
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public Snooper func_80003_ah() {
++        return this.field_71307_n;
++    }
++
++    public int func_82357_ak() {
++        return 16;
++    }
++
++    public boolean func_175579_a(ServerWorld p_175579_1_, BlockPos p_175579_2_, PlayerEntity p_175579_3_) {
++        return false;
++    }
++
++    public void func_104055_i(boolean p_104055_1_) {
++        this.field_104057_T = p_104055_1_;
++    }
++
++    public boolean func_104056_am() {
++        return this.field_104057_T;
++    }
++
++    public boolean func_230541_aj_() {
++        return true;
++    }
++
++    public int func_143007_ar() {
++        return this.field_143008_E;
++    }
++
++    public void func_143006_e(int p_143006_1_) {
++        this.field_143008_E = p_143006_1_;
++    }
++
++    public MinecraftSessionService func_147130_as() {
++        return this.field_147143_S;
++    }
++
++    public GameProfileRepository func_152359_aw() {
++        return this.field_152365_W;
++    }
++
++    public PlayerProfileCache func_152358_ax() {
++        return this.field_152366_X;
++    }
++
++    public ServerStatusResponse func_147134_at() {
++        return this.field_147147_p;
++    }
++
++    public void func_147132_au() {
++        this.field_147142_T = 0L;
++    }
++
++    public int func_175580_aG() {
++        return 29999984;
++    }
++
++    public boolean func_213164_aw() {
++        return super.func_213164_aw() && !this.func_71241_aa();
++    }
++
++    public Thread func_213170_ax() {
++        return this.field_175590_aa;
++    }
++
++    public int func_175577_aI() {
++        return 256;
++    }
++
++    public long func_211150_az() {
++        return this.field_211151_aa;
++    }
++
++    public DataFixer func_195563_aC() {
++        return this.field_184112_s;
++    }
++
++    public int func_184108_a(@Nullable ServerWorld p_184108_1_) {
++        return p_184108_1_ != null ? p_184108_1_.func_82736_K().func_223592_c(GameRules.field_223614_q) : 10;
++    }
++
++    public AdvancementManager func_191949_aK() {
++        return this.field_195576_ac.func_240969_g_();
++    }
++
++    public FunctionManager func_193030_aL() {
++        return this.field_200258_al;
++    }
++
++    public CompletableFuture<Void> func_240780_a_(Collection<String> p_240780_1_) {
++        return this.reloadServerResources(p_240780_1_, ServerResourcesReloadedEvent.Cause.PLUGIN);
++    }
++
++    // Paper - add cause
++    public CompletableFuture<Void> reloadServerResources(Collection<String> p_240780_1_, ServerResourcesReloadedEvent.Cause cause) {
++        CompletableFuture<Void> completablefuture = CompletableFuture.supplyAsync(() -> {
++            return p_240780_1_.stream().map(this.field_195577_ad::func_198981_a).filter(Objects::nonNull).map(ResourcePackInfo::func_195796_e).collect(ImmutableList.toImmutableList());
++        }, this).thenCompose((p_240775_1_) -> {
++            return DataPackRegistries.func_240961_a_(p_240775_1_, this.func_71262_S() ? Commands.EnvironmentType.DEDICATED : Commands.EnvironmentType.INTEGRATED, this.func_223707_k(), this.field_213217_au, this);
++        }).thenAcceptAsync((p_240782_2_) -> {
++            this.field_195576_ac.close();
++            this.field_195576_ac = p_240782_2_;
++            this.server.syncCommands(); // SPIGOT-5884: Lost on reload
++            this.field_195577_ad.func_198985_a(p_240780_1_);
++            this.field_240768_i_.func_230410_a_(func_240771_a_(this.field_195577_ad));
++            p_240782_2_.func_240971_i_();
++            // Paper start
++            ServerResourcesReloadedEvent event = new ServerResourcesReloadedEvent(cause);
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            if (Thread.currentThread() != this.field_175590_aa) {
++                return;
++            }
++            //this.getPlayerList().saveAll(); // Paper - we don't need to do this
++            // Paper end
++            this.func_184103_al().func_193244_w();
++            this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
++            this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
++            this.func_184103_al().func_181057_v().forEach(this.func_184103_al()::func_187243_f); //Forge: Fix newly added/modified commands not being sent to the client when commands reload.
++        }, this);
++        if (this.func_213162_bc()) {
++            this.func_213161_c(completablefuture::isDone);
++        }
++
++        return completablefuture;
++    }
++
++    public static DatapackCodec func_240772_a_(ResourcePackList p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
++        net.minecraftforge.fml.packs.ResourcePackLoader.loadResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
++        p_240772_0_.func_198983_a();
++        DatapackCodec.field_234880_a_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
++        p_240772_1_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
++        if (p_240772_2_) {
++            p_240772_0_.func_198985_a(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla());
++            return new DatapackCodec(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla(), ImmutableList.of());
++        } else {
++            Set<String> set = Sets.newLinkedHashSet();
++
++            for (String s : p_240772_1_.func_234884_a_()) {
++                if (p_240772_0_.func_232617_b_(s)) {
++                    set.add(s);
++                } else {
++                    field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.24", (Object) s));
++                }
++            }
++
++            for (ResourcePackInfo resourcepackinfo : p_240772_0_.func_198978_b()) {
++                String s1 = resourcepackinfo.func_195790_f();
++                if (!p_240772_1_.func_234887_b_().contains(s1) && !set.contains(s1)) {
++                    field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.25", (Object) s1));
++                    set.add(s1);
++                }
++            }
++
++            if (set.isEmpty()) {
++                field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.26"));
++                set.add("vanilla");
++            }
++
++            p_240772_0_.func_198985_a(set);
++            return func_240771_a_(p_240772_0_);
++        }
++    }
++
++    private static DatapackCodec func_240771_a_(ResourcePackList p_240771_0_) {
++        Collection<String> collection = p_240771_0_.func_232621_d_();
++        List<String> list = ImmutableList.copyOf(collection);
++        List<String> list1 = p_240771_0_.func_232616_b_().stream().filter((p_240781_1_) -> {
++            return !collection.contains(p_240781_1_);
++        }).collect(ImmutableList.toImmutableList());
++        return new DatapackCodec(list, list1);
++    }
++
++    public void func_205743_a(CommandSource p_205743_1_) {
++        if (this.func_205744_aT()) {
++            PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
++            WhiteList whitelist = playerlist.func_152599_k();
++            if (!((DedicatedServer) getServer()).func_213221_d_().field_219006_S.get())
++                return; // Paper - white list not enabled
++            for (ServerPlayerEntity serverplayerentity : Lists.newArrayList(playerlist.func_181057_v())) {
++                if (!whitelist.func_152705_a(serverplayerentity.func_146103_bH())) {
++                    serverplayerentity.field_71135_a.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.not_whitelisted"));
++                }
++            }
++
++        }
++    }
++
++    public ResourcePackList func_195561_aH() {
++        return this.field_195577_ad;
++    }
++
++    public Commands func_195571_aL() {
++        return this.field_195576_ac.func_240968_f_();
++    }
++
++    public CommandSource func_195573_aM() {
++        ServerWorld serverworld = this.func_241755_D_();
++        return new CommandSource(this, serverworld == null ? Vector3d.field_186680_a : Vector3d.func_237491_b_(serverworld.func_241135_u_()), Vector2f.field_189974_a, serverworld, 4, "Server", new StringTextComponent("Server"), this, (Entity) null);
++    }
++
++    public boolean func_195039_a() {
++        return true;
++    }
++
++    public boolean func_195040_b() {
++        return true;
++    }
++
++    public RecipeManager func_199529_aN() {
++        return this.field_195576_ac.func_240967_e_();
++    }
++
++    public ITagCollectionSupplier func_244266_aF() {
++        return this.field_195576_ac.func_244358_d();
++    }
++
++    public ServerScoreboard func_200251_aP() {
++        return this.field_200255_ai;
++    }
++
++    public CommandStorage func_229735_aN_() {
++        if (this.field_229733_al_ == null) {
++            throw new NullPointerException("Called before server init");
++        } else {
++            return this.field_229733_al_;
++        }
++    }
++
++    public LootTableManager func_200249_aQ() {
++        return this.field_195576_ac.func_240965_c_();
++    }
++
++    public LootPredicateManager func_229736_aP_() {
++        return this.field_195576_ac.func_240964_b_();
++    }
++
++    public GameRules func_200252_aR() {
++        return this.func_241755_D_().func_82736_K();
++    }
++
++    public CustomServerBossInfoManager func_201300_aS() {
++        return this.field_201301_aj;
++    }
++
++    public boolean func_205744_aT() {
++        return this.field_205745_an;
++    }
++
++    public void func_205741_k(boolean p_205741_1_) {
++        this.field_205745_an = p_205741_1_;
++    }
++
++    public float func_211149_aT() {
++        return this.field_211152_ao;
++    }
++
++    public int func_211833_a(GameProfile p_211833_1_) {
++        if (this.func_184103_al().func_152596_g(p_211833_1_)) {
++            OpEntry opentry = this.func_184103_al().func_152603_m().func_152683_b(p_211833_1_);
++            if (opentry != null) {
++                return opentry.func_152644_a();
++            } else if (this.func_213199_b(p_211833_1_)) {
++                return 4;
++            } else if (this.func_71264_H()) {
++                return this.func_184103_al().func_206257_x() ? 4 : 0;
++            } else {
++                return this.func_110455_j();
++            }
++        } else {
++            return 0;
++        }
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public FrameTimer func_213210_aR() {
++        return this.field_213215_ap;
++    }
++
++    public IProfiler func_213185_aS() {
++        return this.field_71304_b;
++    }
++
++    public abstract boolean func_213199_b(GameProfile p_213199_1_);
++
++    private Map<RegistryKey<World>, long[]> perWorldTickTimes = Maps.newIdentityHashMap();
++
++    @Nullable
++    public long[] getTickTime(RegistryKey<World> dim) {
++        return perWorldTickTimes.get(dim);
++    }
++
++    @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
++    public synchronized Map<RegistryKey<World>, ServerWorld> forgeGetWorldMap() {
++        return this.field_71305_c;
++    }
++
++    private int worldArrayMarker = 0;
++    private int worldArrayLast = -1;
++    private ServerWorld[] worldArray;
++
++    @Deprecated //Forge Internal use Only, use to protect against concurrent modifications in the world tick loop.
++    public synchronized void markWorldsDirty() {
++        worldArrayMarker++;
++    }
++
++    private ServerWorld[] getWorldArray() {
++        if (worldArrayMarker == worldArrayLast && worldArray != null)
++            return worldArray;
++        worldArray = this.field_71305_c.values().stream().toArray(x -> new ServerWorld[x]);
++        worldArrayLast = worldArrayMarker;
++        return worldArray;
++    }
++
++    public void func_223711_a(Path p_223711_1_) throws IOException {
++        Path path = p_223711_1_.resolve("levels");
++
++        for (Entry<RegistryKey<World>, ServerWorld> entry : this.field_71305_c.entrySet()) {
++            ResourceLocation resourcelocation = entry.getKey().func_240901_a_();
++            Path path1 = path.resolve(resourcelocation.func_110624_b()).resolve(resourcelocation.func_110623_a());
++            Files.createDirectories(path1);
++            entry.getValue().func_225322_a(path1);
++        }
++
++        this.func_223708_d(p_223711_1_.resolve("gamerules.txt"));
++        this.func_223706_e(p_223711_1_.resolve("classpath.txt"));
++        this.func_223709_c(p_223711_1_.resolve("example_crash.txt"));
++        this.func_223710_b(p_223711_1_.resolve("stats.txt"));
++        this.func_223712_f(p_223711_1_.resolve("threads.txt"));
++    }
++
++    private void func_223710_b(Path p_223710_1_) throws IOException {
++        try (Writer writer = Files.newBufferedWriter(p_223710_1_)) {
++            writer.write(String.format("pending_tasks: %d\n", this.func_223704_be()));
++            writer.write(String.format("average_tick_time: %f\n", this.func_211149_aT()));
++            writer.write(String.format("tick_times: %s\n", Arrays.toString(this.field_71311_j)));
++            writer.write(String.format("queue: %s\n", Util.func_215072_e()));
++        }
++
++    }
++
++    private void func_223709_c(Path p_223709_1_) throws IOException {
++        CrashReport crashreport = new CrashReport("Server dump", new Exception("dummy"));
++        this.func_71230_b(crashreport);
++
++        try (Writer writer = Files.newBufferedWriter(p_223709_1_)) {
++            writer.write(crashreport.func_71502_e());
++        }
++
++    }
++
++    private void func_223708_d(Path p_223708_1_) throws IOException {
++        try (Writer writer = Files.newBufferedWriter(p_223708_1_)) {
++            final List<String> list = Lists.newArrayList();
++            final GameRules gamerules = this.func_200252_aR();
++            GameRules.func_223590_a(new GameRules.IRuleEntryVisitor() {
++                public <T extends GameRules.RuleValue<T>> void func_223481_a(GameRules.RuleKey<T> p_223481_1_, GameRules.RuleType<T> p_223481_2_) {
++                    list.add(String.format("%s=%s\n", p_223481_1_.func_223576_a(), gamerules.<T>func_223585_a(p_223481_1_).toString()));
++                }
++            });
++
++            for (String s : list) {
++                writer.write(s);
++            }
++        }
++
++    }
++
++    private void func_223706_e(Path p_223706_1_) throws IOException {
++        try (Writer writer = Files.newBufferedWriter(p_223706_1_)) {
++            String s = System.getProperty("java.class.path");
++            String s1 = System.getProperty("path.separator");
++
++            for (String s2 : Splitter.on(s1).split(s)) {
++                writer.write(s2);
++                writer.write("\n");
++            }
++        }
++
++    }
++
++    private void func_223712_f(Path p_223712_1_) throws IOException {
++        ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
++        ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
++        Arrays.sort(athreadinfo, Comparator.comparing(ThreadInfo::getThreadName));
++
++        try (Writer writer = Files.newBufferedWriter(p_223712_1_)) {
++            for (ThreadInfo threadinfo : athreadinfo) {
++                writer.write(threadinfo.toString());
++                writer.write(10);
++            }
++        }
++
++    }
++
++    private void func_240773_a_(@Nullable LongTickDetector p_240773_1_) {
++        if (this.field_71295_T) {
++            this.field_71295_T = false;
++            this.field_240769_m_.func_233507_c_();
++        }
++
++        this.field_71304_b = LongTickDetector.func_233523_a_(this.field_240769_m_.func_233508_d_(), p_240773_1_);
++    }
++
++    private void func_240795_b_(@Nullable LongTickDetector p_240795_1_) {
++        if (p_240795_1_ != null) {
++            p_240795_1_.func_233525_b_();
++        }
++
++        this.field_71304_b = this.field_240769_m_.func_233508_d_();
++    }
++
++    public boolean func_240789_aP_() {
++        return this.field_240769_m_.func_233505_a_();
++    }
++
++    public void func_240790_aQ_() {
++        this.field_71295_T = true;
++    }
++
++    public IProfileResult func_240791_aR_() {
++        IProfileResult iprofileresult = this.field_240769_m_.func_233509_e_();
++        this.field_240769_m_.func_233506_b_();
++        return iprofileresult;
++    }
++
++    public Path func_240776_a_(FolderName p_240776_1_) {
++        return this.field_71310_m.func_237285_a_(p_240776_1_);
++    }
++
++    public boolean func_230540_aS_() {
++        return true;
++    }
++
++    public TemplateManager func_240792_aT_() {
++        return this.field_240765_ak_;
++    }
++
++    public IServerConfiguration func_240793_aU_() {
++        return this.field_240768_i_;
++    }
++
++    public DataPackRegistries getDataPackRegistries() {
++        return field_195576_ac;
++    }
++
++    public DynamicRegistries func_244267_aX() {
++        return this.field_240767_f_;
++    }
++
++    @Nullable
++    public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
++        return null;
++    }
++
++    @Override
++    public boolean func_213162_bc() {
++        return super.func_213162_bc() || this.func_71241_aa();
++    }
++
++    // CraftBukkit start
++    public boolean isDebugging() {
++        return false;
++    }
++
++    public static MinecraftServer getServer() {
++        return (Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
++    }
++    // CraftBukkit end
++
++    public void initWorld(ServerWorld serverWorld, IServerWorldInfo worldInfo, IServerConfiguration saveData, DimensionGeneratorSettings generatorSettings) {
++        boolean flag = generatorSettings.func_236227_h_();
++        if (serverWorld.generator != null) {
++            serverWorld.getWorld().getPopulators().addAll(serverWorld.generator.getDefaultPopulators(serverWorld.getWorld()));
++        }
++        WorldBorder worldborder = serverWorld.func_175723_af();
++        worldborder.func_235926_a_(worldInfo.func_230398_q_());
++        if (!worldInfo.func_76070_v()) {
++            try {
++                func_240786_a_(serverWorld, worldInfo, generatorSettings.func_236223_d_(), flag, true);
++                worldInfo.func_76091_d(true);
++                if (flag) {
++                    this.func_240778_a_(this.field_240768_i_);
++                }
++            } catch (Throwable throwable) {
++                CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception initializing level");
++                try {
++                    serverWorld.func_72914_a(crashreport);
++                } catch (Throwable throwable2) {
++                    // empty catch block
++                }
++                throw new ReportedException(crashreport);
++            }
++            worldInfo.func_76091_d(true);
++        }
++    }
++
++    public void loadSpawn(IChunkStatusListener listener, ServerWorld serverWorld) {
++        this.markWorldsDirty();
++        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverWorld));
++        if (!serverWorld.getWorld().getKeepSpawnInMemory()) {
++            return;
++        }
++        this.forceTicks = true;
++        field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.27", serverWorld.func_234923_W_().func_240901_a_()));
++        BlockPos blockpos = serverWorld.func_241135_u_();
++        listener.func_219509_a(new ChunkPos(blockpos));
++        ServerChunkProvider serverchunkprovider = serverWorld.func_72863_F();
++        serverchunkprovider.func_212863_j_().func_215598_a(500);
++        this.field_211151_aa = Util.func_211177_b();
++        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
++
++        while (serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
++            this.executeModerately();
++        }
++
++        this.executeModerately();
++
++        ForcedChunksSaveData forcedchunkssavedata = serverWorld.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
++        if (forcedchunkssavedata != null) {
+             LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
+ 
 -            while(longiterator.hasNext()) {
 -               long i = longiterator.nextLong();
 -               ChunkPos chunkpos = new ChunkPos(i);
 -               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
-+      // CraftBukkit start
-+      //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
-+      this.executeModerately();
-+      for (ServerWorld serverworld1 : this.field_71305_c.values()) {
-+         if (serverworld1.getWorld().getKeepSpawnInMemory()) {
-+            ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
-+
-+            if (forcedchunkssavedata != null) {
-+               LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
-+
-+               while (longiterator.hasNext()) {
-+                  long i = longiterator.nextLong();
-+                  ChunkPos chunkpos = new ChunkPos(i);
-+                  serverworld1.func_72863_F().func_217206_a(chunkpos, true);
-+               }
-             }
-          }
-+         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverworld1.getWorld()));
-       }
- 
+-            }
+-         }
+-      }
+-
 -      this.field_211151_aa = Util.func_211177_b() + 10L;
 -      this.func_213202_o();
-+      // CraftBukkit start
-+      //this.serverTime = Util.milliTime() + 10L;
-+      this.executeModerately();
-+      // CraftBukkit end
-       p_213186_1_.func_219510_b();
-       serverchunkprovider.func_212863_j_().func_215598_a(5);
-       this.func_240794_aZ_();
-+      this.forceTicks = false;
-    }
- 
-    protected void func_175584_a() {
-@@ -497,7 +_,7 @@
-          try {
-             this.func_180507_a_("level://" + URLEncoder.encode(s, StandardCharsets.UTF_8.toString()) + "/" + "resources.zip", "");
-          } catch (UnsupportedEncodingException unsupportedencodingexception) {
+-      p_213186_1_.func_219510_b();
+-      serverchunkprovider.func_212863_j_().func_215598_a(5);
+-      this.func_240794_aZ_();
+-   }
+-
+-   protected void func_175584_a() {
+-      File file1 = this.field_71310_m.func_237285_a_(FolderName.field_237252_h_).toFile();
+-      if (file1.isFile()) {
+-         String s = this.field_71310_m.func_237282_a_();
+-
+-         try {
+-            this.func_180507_a_("level://" + URLEncoder.encode(s, StandardCharsets.UTF_8.toString()) + "/" + "resources.zip", "");
+-         } catch (UnsupportedEncodingException unsupportedencodingexception) {
 -            field_147145_h.warn("Something went wrong url encoding {}", (Object)s);
-+            field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.5", (Object)s));
-          }
-       }
- 
-@@ -534,26 +_,48 @@
-       iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
-       this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
-       this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
+-         }
+-      }
+-
+-   }
+-
+-   public GameType func_71265_f() {
+-      return this.field_240768_i_.func_76077_q();
+-   }
+-
+-   public boolean func_71199_h() {
+-      return this.field_240768_i_.func_76093_s();
+-   }
+-
+-   public abstract int func_110455_j();
+-
+-   public abstract int func_223707_k();
+-
+-   public abstract boolean func_195569_l();
+-
+-   public boolean func_213211_a(boolean p_213211_1_, boolean p_213211_2_, boolean p_213211_3_) {
+-      boolean flag = false;
+-
+-      for(ServerWorld serverworld : this.func_212370_w()) {
+-         if (!p_213211_1_) {
+-            field_147145_h.info("Saving chunks for level '{}'/{}", serverworld, serverworld.func_234923_W_().func_240901_a_());
+-         }
+-
+-         serverworld.func_217445_a((IProgressUpdate)null, p_213211_2_, serverworld.field_73058_d && !p_213211_3_);
+-         flag = true;
+-      }
+-
+-      ServerWorld serverworld1 = this.func_241755_D_();
+-      IServerWorldInfo iserverworldinfo = this.field_240768_i_.func_230407_G_();
+-      iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
+-      this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
+-      this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
 -      return flag;
-+       return flag;
-    }
- 
-    public void close() {
-       this.func_71260_j();
-    }
- 
-+   // CraftBukkit start
-+   private boolean hasStopped = false;
-+   private final Object stopLock = new Object();
-+   public final boolean hasStopped() {
-+      synchronized (stopLock) {
-+         return hasStopped;
-+      }
-+   }
-+   // CraftBukkit end
-+
-    protected void func_71260_j() {
+-   }
+-
+-   public void close() {
+-      this.func_71260_j();
+-   }
+-
+-   protected void func_71260_j() {
 -      field_147145_h.info("Stopping server");
-+      // CraftBukkit start - prevent double stopping on multiple threads
-+      synchronized(stopLock) {
-+         if (hasStopped) return;
-+         hasStopped = true;
-+      }
-+      // CraftBukkit end
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.7"));
-+      MinecraftTimings.stopServer(); // Paper
-+      // CraftBukkit start
-+      if (this.server != null) {
-+         this.server.disablePlugins();
-+      }
-+      // CraftBukkit end
-       if (this.func_147137_ag() != null) {
-          this.func_147137_ag().func_151268_b();
-       }
- 
-       if (this.field_71318_t != null) {
+-      if (this.func_147137_ag() != null) {
+-         this.func_147137_ag().func_151268_b();
+-      }
+-
+-      if (this.field_71318_t != null) {
 -         field_147145_h.info("Saving players");
-+         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.8"));
-          this.field_71318_t.func_72389_g();
-          this.field_71318_t.func_72392_r();
-       }
- 
+-         this.field_71318_t.func_72389_g();
+-         this.field_71318_t.func_72392_r();
+-      }
+-
 -      field_147145_h.info("Saving worlds");
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.9"));
- 
-       for(ServerWorld serverworld : this.func_212370_w()) {
-          if (serverworld != null) {
-@@ -563,13 +_,17 @@
- 
-       this.func_213211_a(false, true, false);
- 
+-
+-      for(ServerWorld serverworld : this.func_212370_w()) {
+-         if (serverworld != null) {
+-            serverworld.field_73058_d = false;
+-         }
+-      }
+-
+-      this.func_213211_a(false, true, false);
+-
 -      for(ServerWorld serverworld1 : this.func_212370_w()) {
 -         if (serverworld1 != null) {
 -            try {
 -               serverworld1.close();
 -            } catch (IOException ioexception1) {
 -               field_147145_h.error("Exception closing the level", (Throwable)ioexception1);
-+      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
-+         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
-+         if (forcedchunkssavedata != null) {
-+            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
-+
-+            while(longiterator.hasNext()) {
-+               long i = longiterator.nextLong();
-+               ChunkPos chunkpos = new ChunkPos(i);
-+               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
-             }
-+            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld1, forcedchunkssavedata);
-          }
-       }
- 
-@@ -582,8 +_,14 @@
-       try {
-          this.field_71310_m.close();
-       } catch (IOException ioexception) {
+-            }
+-         }
+-      }
+-
+-      if (this.field_71307_n.func_76468_d()) {
+-         this.field_71307_n.func_76470_e();
+-      }
+-
+-      this.field_195576_ac.close();
+-
+-      try {
+-         this.field_71310_m.close();
+-      } catch (IOException ioexception) {
 -         field_147145_h.error("Failed to unlock level {}", this.field_71310_m.func_237282_a_(), ioexception);
 -      }
-+         field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.11", this.field_71310_m.func_237282_a_(), ioexception));
-+      }
-+      // Spigot start
-+      if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
-+         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.12"));
-+         this.field_152366_X.func_152658_c();
-+      }
-+      // Spigot end
- 
-    }
- 
-@@ -605,29 +_,56 @@
-          try {
-             this.field_175590_aa.join();
-          } catch (InterruptedException interruptedexception) {
+-
+-   }
+-
+-   public String func_71211_k() {
+-      return this.field_71320_r;
+-   }
+-
+-   public void func_71189_e(String p_71189_1_) {
+-      this.field_71320_r = p_71189_1_;
+-   }
+-
+-   public boolean func_71278_l() {
+-      return this.field_71317_u;
+-   }
+-
+-   public void func_71263_m(boolean p_71263_1_) {
+-      this.field_71317_u = false;
+-      if (p_71263_1_) {
+-         try {
+-            this.field_175590_aa.join();
+-         } catch (InterruptedException interruptedexception) {
 -            field_147145_h.error("Error while shutting down", (Throwable)interruptedexception);
-+            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.13", (Throwable)interruptedexception));
-          }
-       }
- 
-    }
-+
-+   // Spigot Start
-+   private static double calcTps(double avg, double exp, double tps)
-+   {
-+      return ( avg * exp ) + ( tps * ( 1 - exp ) );
-+   }
-+   // Spigot End
- 
-    protected void func_240802_v_() {
-+
-       try {
-          if (this.func_71197_b()) {
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarted(this);
-             this.field_211151_aa = Util.func_211177_b();
-             this.field_147147_p.func_151315_a(new StringTextComponent(this.field_71286_C));
-             this.field_147147_p.func_151321_a(new ServerStatusResponse.Version(SharedConstants.func_215069_a().getName(), SharedConstants.func_215069_a().getProtocolVersion()));
-             this.func_184107_a(this.field_147147_p);
- 
-+            // Spigot start
-+            org.spigotmc.WatchdogThread.hasStarted = true; // Paper
-+            Arrays.fill( recentTps, 20 );
-+            long curTime, tickSection = Util.func_211177_b(), tickCount = 1;
-             while(this.field_71317_u) {
+-         }
+-      }
+-
+-   }
+-
+-   protected void func_240802_v_() {
+-      try {
+-         if (this.func_71197_b()) {
+-            this.field_211151_aa = Util.func_211177_b();
+-            this.field_147147_p.func_151315_a(new StringTextComponent(this.field_71286_C));
+-            this.field_147147_p.func_151321_a(new ServerStatusResponse.Version(SharedConstants.func_215069_a().getName(), SharedConstants.func_215069_a().getProtocolVersion()));
+-            this.func_184107_a(this.field_147147_p);
+-
+-            while(this.field_71317_u) {
 -               long i = Util.func_211177_b() - this.field_211151_aa;
 -               if (i > 2000L && this.field_211151_aa - this.field_71299_R >= 15000L) {
-+               long i = (curTime = Util.func_211177_b()) - this.field_211151_aa;
-+
-+               if (i > 5000L && this.field_211151_aa - this.field_71299_R >= 30000L) {  // CraftBukkit
-                   long j = i / 50L;
+-                  long j = i / 50L;
 -                  field_147145_h.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
-+                  if (server.getWarnOnOverload()) {
-+                     field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.14", String.valueOf(i), String.valueOf(j)));
-+                  }
-                   this.field_211151_aa += j * 50L;
-                   this.field_71299_R = this.field_211151_aa;
-                }
- 
-+               if ( tickCount++ % SAMPLE_INTERVAL == 0 )
-+               {
-+                  double currentTps = 1E3 / ( curTime - tickSection ) * SAMPLE_INTERVAL;
-+                  recentTps[0] = calcTps( recentTps[0], 0.92, currentTps ); // 1/exp(5sec/1min)
-+                  recentTps[1] = calcTps( recentTps[1], 0.9835, currentTps ); // 1/exp(5sec/5min)
-+                  recentTps[2] = calcTps( recentTps[2], 0.9945, currentTps ); // 1/exp(5sec/15min)
-+                  tickSection = curTime;
-+               }
-+               // Spigot end
-+
-+               currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
-                this.field_211151_aa += 50L;
-                LongTickDetector longtickdetector = LongTickDetector.func_233524_a_("Server");
-                this.func_240773_a_(longtickdetector);
-@@ -643,11 +_,20 @@
-                this.func_240795_b_(longtickdetector);
-                this.field_71296_Q = true;
-             }
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopping(this);
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
-          } else {
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
-             this.func_71228_a((CrashReport)null);
-          }
-       } catch (Throwable throwable1) {
+-                  this.field_211151_aa += j * 50L;
+-                  this.field_71299_R = this.field_211151_aa;
+-               }
+-
+-               this.field_211151_aa += 50L;
+-               LongTickDetector longtickdetector = LongTickDetector.func_233524_a_("Server");
+-               this.func_240773_a_(longtickdetector);
+-               this.field_71304_b.func_219894_a();
+-               this.field_71304_b.func_76320_a("tick");
+-               this.func_71217_p(this::func_212379_aT);
+-               this.field_71304_b.func_219895_b("nextTickWait");
+-               this.field_213214_ac = true;
+-               this.field_213213_ab = Math.max(Util.func_211177_b() + 50L, this.field_211151_aa);
+-               this.func_213202_o();
+-               this.field_71304_b.func_76319_b();
+-               this.field_71304_b.func_219897_b();
+-               this.func_240795_b_(longtickdetector);
+-               this.field_71296_Q = true;
+-            }
+-         } else {
+-            this.func_71228_a((CrashReport)null);
+-         }
+-      } catch (Throwable throwable1) {
 -         field_147145_h.error("Encountered an unexpected exception", throwable1);
-+         field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.15", throwable1));
-+         // Spigot Start
-+         if ( throwable1.getCause() != null )
-+         {
-+            MinecraftServer.field_147145_h.error(com.mohistmc.util.i18n.i18n.get( "minecraftserver.16", throwable1.getCause() ));
-+         }
-+         // Spigot End
-          CrashReport crashreport;
-          if (throwable1 instanceof ReportedException) {
-             crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
-@@ -657,20 +_,26 @@
- 
-          File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
-          if (crashreport.func_147149_a(file1)) {
+-         CrashReport crashreport;
+-         if (throwable1 instanceof ReportedException) {
+-            crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
+-         } else {
+-            crashreport = this.func_71230_b(new CrashReport("Exception in server tick loop", throwable1));
+-         }
+-
+-         File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
+-         if (crashreport.func_147149_a(file1)) {
 -            field_147145_h.error("This crash report has been saved to: {}", (Object)file1.getAbsolutePath());
-+            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.17", (Object)file1.getAbsolutePath()));
-          } else {
+-         } else {
 -            field_147145_h.error("We were unable to save this crash report to disk.");
-+            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.18"));
-          }
- 
-+         net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
-          this.func_71228_a(crashreport);
-       } finally {
-          try {
-             this.field_71316_v = true;
-             this.func_71260_j();
-          } catch (Throwable throwable) {
+-         }
+-
+-         this.func_71228_a(crashreport);
+-      } finally {
+-         try {
+-            this.field_71316_v = true;
+-            this.func_71260_j();
+-         } catch (Throwable throwable) {
 -            field_147145_h.error("Exception stopping the server", throwable);
-+            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.19", throwable));
-          } finally {
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
-+            org.spigotmc.WatchdogThread.doStop(); // Spigot
-+            MohistThreadBox.METRICS.shutdown();
-             this.func_71240_o();
-+            LogManager.shutdown();
-+            Runtime.getRuntime().halt(0); // Mohist - Forcibly close the process
-          }
- 
-       }
-@@ -678,17 +_,36 @@
-    }
- 
-    private boolean func_212379_aT() {
+-         } finally {
+-            this.func_71240_o();
+-         }
+-
+-      }
+-
+-   }
+-
+-   private boolean func_212379_aT() {
 -      return this.func_213182_bg() || Util.func_211177_b() < (this.field_213214_ac ? this.field_213213_ab : this.field_211151_aa);
-+      // CraftBukkit start
-+      if (isOversleep) return canOversleep();// Paper - because of our changes, this logic is broken
-+      return this.forceTicks || this.func_213182_bg() || Util.func_211177_b() < (this.field_213214_ac ? this.field_213213_ab : this.field_211151_aa);
-    }
- 
+-   }
+-
 -   protected void func_213202_o() {
-+   // Paper start
-+    boolean isOversleep = false;
-+    private boolean canOversleep() {
-+       return this.hasExecutedTask() && Util.func_211177_b() < this.getTickOversleepMaxTime();
-+    }
-+
-+    private boolean canSleepForTickNoOversleep() {
-+       return this.forceTicks || this.func_213182_bg() || Util.func_211177_b() < this.field_211151_aa;
-+    }
-+    // Paper end
-+
-+   private void executeModerately() {
-       this.func_213160_bf();
-+      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
-+   }
-+   // CraftBukkit end
-+
-+   protected void func_213202_o() {
-+      //this.runAllTasks(); // Paper - move this into the tick method for timings
-       this.func_213161_c(() -> {
+-      this.func_213160_bf();
+-      this.func_213161_c(() -> {
 -         return !this.func_212379_aT();
-+         return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
-       });
-    }
- 
+-      });
+-   }
+-
 -   protected TickDelayedTask func_212875_d_(Runnable p_212875_1_) {
-+   public TickDelayedTask func_212875_d_(Runnable p_212875_1_) {
-       return new TickDelayedTask(this.field_71315_w, p_212875_1_);
-    }
- 
-@@ -740,7 +_,7 @@
-             ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
-             p_184107_1_.func_151320_a("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
-          } catch (Exception exception) {
+-      return new TickDelayedTask(this.field_71315_w, p_212875_1_);
+-   }
+-
+-   protected boolean func_212874_c_(TickDelayedTask p_212874_1_) {
+-      return p_212874_1_.func_218823_a() + 3 < this.field_71315_w || this.func_212379_aT();
+-   }
+-
+-   public boolean func_213168_p() {
+-      boolean flag = this.func_213205_aW();
+-      this.field_213214_ac = flag;
+-      return flag;
+-   }
+-
+-   private boolean func_213205_aW() {
+-      if (super.func_213168_p()) {
+-         return true;
+-      } else {
+-         if (this.func_212379_aT()) {
+-            for(ServerWorld serverworld : this.func_212370_w()) {
+-               if (serverworld.func_72863_F().func_217234_d()) {
+-                  return true;
+-               }
+-            }
+-         }
+-
+-         return false;
+-      }
+-   }
+-
+-   protected void func_213166_h(TickDelayedTask p_213166_1_) {
+-      this.func_213185_aS().func_230035_c_("runTask");
+-      super.func_213166_h(p_213166_1_);
+-   }
+-
+-   private void func_184107_a(ServerStatusResponse p_184107_1_) {
+-      File file1 = this.func_71209_f("server-icon.png");
+-      if (!file1.exists()) {
+-         file1 = this.field_71310_m.func_237298_f_();
+-      }
+-
+-      if (file1.isFile()) {
+-         ByteBuf bytebuf = Unpooled.buffer();
+-
+-         try {
+-            BufferedImage bufferedimage = ImageIO.read(file1);
+-            Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
+-            Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
+-            ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
+-            ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
+-            p_184107_1_.func_151320_a("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
+-         } catch (Exception exception) {
 -            field_147145_h.error("Couldn't load server icon", (Throwable)exception);
-+            field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.20", (Throwable)exception));
-          } finally {
-             bytebuf.release();
-          }
-@@ -767,10 +_,22 @@
-    }
- 
-    protected void func_71240_o() {
-+      System.exit(0);
-    }
- 
-    protected void func_71217_p(BooleanSupplier p_71217_1_) {
-+      co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTiming(); // Paper
-+      this.slackActivityAccountant.tickStarted(); // Spigot
-       long i = Util.func_211178_c();
-+      // Paper start - move oversleep into full server tick
-+      isOversleep = true;MinecraftTimings.serverOversleep.startTiming();
-+      this.func_213161_c(() -> {
-+         return !this.canOversleep();
-+      });
-+      isOversleep = false;MinecraftTimings.serverOversleep.stopTiming();
-+      // Paper end
-+
-+      net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
-       ++this.field_71315_w;
-       this.func_71190_q(p_71217_1_);
-       if (i - this.field_147142_T >= 5000000000L) {
-@@ -785,77 +_,120 @@
- 
-          Collections.shuffle(Arrays.asList(agameprofile));
-          this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
-+         this.field_147147_p.invalidateJson();
-       }
- 
+-         } finally {
+-            bytebuf.release();
+-         }
+-      }
+-
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public boolean func_184106_y() {
+-      this.field_184111_ab = this.field_184111_ab || this.func_184109_z().isFile();
+-      return this.field_184111_ab;
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public File func_184109_z() {
+-      return this.field_71310_m.func_237298_f_();
+-   }
+-
+-   public File func_71238_n() {
+-      return new File(".");
+-   }
+-
+-   protected void func_71228_a(CrashReport p_71228_1_) {
+-   }
+-
+-   protected void func_71240_o() {
+-   }
+-
+-   protected void func_71217_p(BooleanSupplier p_71217_1_) {
+-      long i = Util.func_211178_c();
+-      ++this.field_71315_w;
+-      this.func_71190_q(p_71217_1_);
+-      if (i - this.field_147142_T >= 5000000000L) {
+-         this.field_147142_T = i;
+-         this.field_147147_p.func_151319_a(new ServerStatusResponse.Players(this.func_71275_y(), this.func_71233_x()));
+-         GameProfile[] agameprofile = new GameProfile[Math.min(this.func_71233_x(), 12)];
+-         int j = MathHelper.func_76136_a(this.field_147146_q, 0, this.func_71233_x() - agameprofile.length);
+-
+-         for(int k = 0; k < agameprofile.length; ++k) {
+-            agameprofile[k] = this.field_71318_t.func_181057_v().get(j + k).func_146103_bH();
+-         }
+-
+-         Collections.shuffle(Arrays.asList(agameprofile));
+-         this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
+-      }
+-
 -      if (this.field_71315_w % 6000 == 0) {
 -         field_147145_h.debug("Autosave started");
-+      if (autosavePeriod > 0 && this.field_71315_w % autosavePeriod == 0) { // CraftBukkit
-+         field_147145_h.debug(com.mohistmc.util.i18n.i18n.get("minecraftserver.21"));
-          this.field_71304_b.func_76320_a("save");
-          this.field_71318_t.func_72389_g();
-          this.func_213211_a(true, false, false);
-          this.field_71304_b.func_76319_b();
+-         this.field_71304_b.func_76320_a("save");
+-         this.field_71318_t.func_72389_g();
+-         this.func_213211_a(true, false, false);
+-         this.field_71304_b.func_76319_b();
 -         field_147145_h.debug("Autosave finished");
-+         field_147145_h.debug(com.mohistmc.util.i18n.i18n.get("minecraftserver.22"));
-       }
- 
-       this.field_71304_b.func_76320_a("snooper");
+-      }
+-
+-      this.field_71304_b.func_76320_a("snooper");
 -      if (!this.field_71307_n.func_76468_d() && this.field_71315_w > 100) {
-+      if (((DedicatedServer) this).func_213221_d_().field_218993_F && !this.field_71307_n.func_76468_d() && this.field_71315_w > 100) { // Spigot
-          this.field_71307_n.func_76463_a();
-       }
- 
+-         this.field_71307_n.func_76463_a();
+-      }
+-
 -      if (this.field_71315_w % 6000 == 0) {
-+      if (((DedicatedServer) this).func_213221_d_().field_218993_F && this.field_71315_w % 6000 == 0) {
-          this.field_71307_n.func_76471_b();
-       }
- 
-       this.field_71304_b.func_76319_b();
-+      // Paper start - move executeAll() into full server tick timing
-+      try (co.aikar.timings.Timing ignored = MinecraftTimings.processTasksTimer.startTiming()) {
-+         this.func_213160_bf();
-+      }
-+      // Paper end
-       this.field_71304_b.func_76320_a("tallying");
-       long l = this.field_71311_j[this.field_71315_w % 100] = Util.func_211178_c() - i;
-       this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
-       long i1 = Util.func_211178_c();
-       this.field_213215_ap.func_181747_a(i1 - i);
-       this.field_71304_b.func_76319_b();
-+      org.spigotmc.WatchdogThread.tick(); // Spigot
-+      this.slackActivityAccountant.tickEnded(l); // Spigot
-+      net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
-+      co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
-    }
- 
-    protected void func_71190_q(BooleanSupplier p_71190_1_) {
-+      MinecraftTimings.bukkitSchedulerTimer.startTiming(); // Spigot // Paper
-+      this.server.getScheduler().mainThreadHeartbeat(this.field_71315_w); // CraftBukkit
-+      MinecraftTimings.bukkitSchedulerTimer.stopTiming(); // Spigot // Paper
-       this.field_71304_b.func_76320_a("commandFunctions");
-+      MinecraftTimings.commandFunctionsTimer.startTiming(); // Spigot // Paper
-       this.func_193030_aL().func_73660_a();
-+      MinecraftTimings.commandFunctionsTimer.stopTiming(); // Spigot // Paper
-       this.field_71304_b.func_219895_b("levels");
- 
+-         this.field_71307_n.func_76471_b();
+-      }
+-
+-      this.field_71304_b.func_76319_b();
+-      this.field_71304_b.func_76320_a("tallying");
+-      long l = this.field_71311_j[this.field_71315_w % 100] = Util.func_211178_c() - i;
+-      this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
+-      long i1 = Util.func_211178_c();
+-      this.field_213215_ap.func_181747_a(i1 - i);
+-      this.field_71304_b.func_76319_b();
+-   }
+-
+-   protected void func_71190_q(BooleanSupplier p_71190_1_) {
+-      this.field_71304_b.func_76320_a("commandFunctions");
+-      this.func_193030_aL().func_73660_a();
+-      this.field_71304_b.func_219895_b("levels");
+-
 -      for(ServerWorld serverworld : this.func_212370_w()) {
-+      // CraftBukkit start
-+      // Run tasks that are waiting on processing
-+      MinecraftTimings.processQueueTimer.startTiming(); // Spigot
-+      while (!processQueue.isEmpty()) {
-+         processQueue.remove().run();
-+      }
-+      MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
-+
-+      for(ServerWorld serverworld : this.getWorldArray()) {
-+         long tickStart = Util.func_211178_c();
-          this.field_71304_b.func_194340_a(() -> {
-             return serverworld + " " + serverworld.func_234923_W_().func_240901_a_();
-          });
-+         MinecraftTimings.timeUpdateTimer.startTiming(); // Spigot // Paper
-          if (this.field_71315_w % 20 == 0) {
-             this.field_71304_b.func_76320_a("timeSync");
-             this.field_71318_t.func_232642_a_(new SUpdateTimePacket(serverworld.func_82737_E(), serverworld.func_72820_D(), serverworld.func_82736_K().func_223586_b(GameRules.field_223607_j)), serverworld.func_234923_W_());
-             this.field_71304_b.func_76319_b();
-          }
-+		 MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot // Paper
- 
-          this.field_71304_b.func_76320_a("tick");
+-         this.field_71304_b.func_194340_a(() -> {
+-            return serverworld + " " + serverworld.func_234923_W_().func_240901_a_();
+-         });
+-         if (this.field_71315_w % 20 == 0) {
+-            this.field_71304_b.func_76320_a("timeSync");
+-            this.field_71318_t.func_232642_a_(new SUpdateTimePacket(serverworld.func_82737_E(), serverworld.func_72820_D(), serverworld.func_82736_K().func_223586_b(GameRules.field_223607_j)), serverworld.func_234923_W_());
+-            this.field_71304_b.func_76319_b();
+-         }
 -
-+         net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(serverworld);
-          try {
-+            serverworld.timings.doTick.startTiming(); // Spigot
-             serverworld.func_72835_b(p_71190_1_);
-+            serverworld.timings.doTick.stopTiming(); // Spigot
-          } catch (Throwable throwable) {
+-         this.field_71304_b.func_76320_a("tick");
+-
+-         try {
+-            serverworld.func_72835_b(p_71190_1_);
+-         } catch (Throwable throwable) {
 -            CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception ticking world");
-+            // Spigot Start
-+            CrashReport crashreport;
-+            try {
-+               crashreport = CrashReport.func_85055_a(throwable, "Exception ticking world");
-+            } catch (Throwable t) {
-+               throw new RuntimeException("Error generating crash report", t);
-+            }
-+            // Spigot End
-             serverworld.func_72914_a(crashreport);
-             throw new ReportedException(crashreport);
-          }
+-            serverworld.func_72914_a(crashreport);
+-            throw new ReportedException(crashreport);
+-         }
 -
 -         this.field_71304_b.func_76319_b();
 -         this.field_71304_b.func_76319_b();
-+         net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(serverworld);
-+         this.field_71304_b.func_76319_b();
-+         this.field_71304_b.func_76319_b();
-+         perWorldTickTimes.computeIfAbsent(serverworld.func_234923_W_(), k -> new long[100])[this.field_71315_w % 100] = Util.func_211178_c() - tickStart;
-+         serverworld.explosionDensityCache.clear(); // Paper - Optimize explosions
-       }
- 
-       this.field_71304_b.func_219895_b("connection");
-+      MinecraftTimings.connectionTimer.startTiming(); // Spigot
-       this.func_147137_ag().func_151269_c();
-+      MinecraftTimings.connectionTimer.stopTiming(); // Spigot
-       this.field_71304_b.func_219895_b("players");
-+      MinecraftTimings.playerListTimer.startTiming(); // Spigot // Paper
-       this.field_71318_t.func_72374_b();
-+      MinecraftTimings.playerListTimer.stopTiming(); // Spigot // Paper
-       if (SharedConstants.field_206244_b) {
-          TestCollection.field_229570_a_.func_229574_b_();
-       }
- 
-       this.field_71304_b.func_219895_b("server gui refresh");
- 
-+      MinecraftTimings.tickablesTimer.startTiming(); // Spigot // Paper
-       for(int i = 0; i < this.field_71322_p.size(); ++i) {
-          this.field_71322_p.get(i).run();
-       }
-+      MinecraftTimings.tickablesTimer.stopTiming(); // Spigot // Paper
- 
-       this.field_71304_b.func_76319_b();
-    }
-@@ -915,7 +_,7 @@
-    }
- 
-    public String getServerModName() {
+-      }
+-
+-      this.field_71304_b.func_219895_b("connection");
+-      this.func_147137_ag().func_151269_c();
+-      this.field_71304_b.func_219895_b("players");
+-      this.field_71318_t.func_72374_b();
+-      if (SharedConstants.field_206244_b) {
+-         TestCollection.field_229570_a_.func_229574_b_();
+-      }
+-
+-      this.field_71304_b.func_219895_b("server gui refresh");
+-
+-      for(int i = 0; i < this.field_71322_p.size(); ++i) {
+-         this.field_71322_p.get(i).run();
+-      }
+-
+-      this.field_71304_b.func_76319_b();
+-   }
+-
+-   public boolean func_71255_r() {
+-      return true;
+-   }
+-
+-   public void func_82010_a(Runnable p_82010_1_) {
+-      this.field_71322_p.add(p_82010_1_);
+-   }
+-
+-   protected void func_213208_c(String p_213208_1_) {
+-      this.field_213218_av = p_213208_1_;
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public boolean func_213201_w() {
+-      return !this.field_175590_aa.isAlive();
+-   }
+-
+-   public File func_71209_f(String p_71209_1_) {
+-      return new File(this.func_71238_n(), p_71209_1_);
+-   }
+-
+-   public final ServerWorld func_241755_D_() {
+-      return this.field_71305_c.get(World.field_234918_g_);
+-   }
+-
+-   @Nullable
+-   public ServerWorld func_71218_a(RegistryKey<World> p_71218_1_) {
+-      return this.field_71305_c.get(p_71218_1_);
+-   }
+-
+-   public Set<RegistryKey<World>> func_240770_D_() {
+-      return this.field_71305_c.keySet();
+-   }
+-
+-   public Iterable<ServerWorld> func_212370_w() {
+-      return this.field_71305_c.values();
+-   }
+-
+-   public String func_71249_w() {
+-      return SharedConstants.func_215069_a().getName();
+-   }
+-
+-   public int func_71233_x() {
+-      return this.field_71318_t.func_72394_k();
+-   }
+-
+-   public int func_71275_y() {
+-      return this.field_71318_t.func_72352_l();
+-   }
+-
+-   public String[] func_71213_z() {
+-      return this.field_71318_t.func_72369_d();
+-   }
+-
+-   public String getServerModName() {
 -      return "vanilla";
-+      return server.getName(); // CraftBukkit - cb > vanilla!
-    }
- 
-    public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -928,6 +_,7 @@
-       p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
-          StringBuilder stringbuilder = new StringBuilder();
- 
-+               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
-          for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
-             if (stringbuilder.length() > 0) {
-                stringbuilder.append(", ");
-@@ -953,7 +_,7 @@
-    public abstract Optional<String> func_230045_q_();
- 
-    public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
+-   }
+-
+-   public CrashReport func_71230_b(CrashReport p_71230_1_) {
+-      if (this.field_71318_t != null) {
+-         p_71230_1_.func_85056_g().func_189529_a("Player Count", () -> {
+-            return this.field_71318_t.func_72394_k() + " / " + this.field_71318_t.func_72352_l() + "; " + this.field_71318_t.func_181057_v();
+-         });
+-      }
+-
+-      p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
+-         StringBuilder stringbuilder = new StringBuilder();
+-
+-         for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
+-            if (stringbuilder.length() > 0) {
+-               stringbuilder.append(", ");
+-            }
+-
+-            stringbuilder.append(resourcepackinfo.func_195790_f());
+-            if (!resourcepackinfo.func_195791_d().func_198968_a()) {
+-               stringbuilder.append(" (incompatible)");
+-            }
+-         }
+-
+-         return stringbuilder.toString();
+-      });
+-      if (this.field_213218_av != null) {
+-         p_71230_1_.func_85056_g().func_189529_a("Server Id", () -> {
+-            return this.field_213218_av;
+-         });
+-      }
+-
+-      return p_71230_1_;
+-   }
+-
+-   public abstract Optional<String> func_230045_q_();
+-
+-   public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
 -      field_147145_h.info(p_145747_1_.getString());
-+      field_147145_h.info(org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromComponent(p_145747_1_));
-    }
- 
-    public KeyPair func_71250_E() {
-@@ -981,7 +_,7 @@
-    }
- 
-    protected void func_244801_P() {
+-   }
+-
+-   public KeyPair func_71250_E() {
+-      return this.field_71292_I;
+-   }
+-
+-   public int func_71215_F() {
+-      return this.field_71319_s;
+-   }
+-
+-   public void func_71208_b(int p_71208_1_) {
+-      this.field_71319_s = p_71208_1_;
+-   }
+-
+-   public String func_71214_G() {
+-      return this.field_71293_J;
+-   }
+-
+-   public void func_71224_l(String p_71224_1_) {
+-      this.field_71293_J = p_71224_1_;
+-   }
+-
+-   public boolean func_71264_H() {
+-      return this.field_71293_J != null;
+-   }
+-
+-   protected void func_244801_P() {
 -      field_147145_h.info("Generating keypair");
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.23"));
- 
-       try {
-          this.field_71292_I = CryptManager.func_75891_b();
-@@ -1266,6 +_,10 @@
-    }
- 
-    public CompletableFuture<Void> func_240780_a_(Collection<String> p_240780_1_) {
-+      return this.reloadServerResources(p_240780_1_, ServerResourcesReloadedEvent.Cause.PLUGIN);
-+   }
-+   // Paper - add cause
-+   public CompletableFuture<Void> reloadServerResources(Collection<String> p_240780_1_, ServerResourcesReloadedEvent.Cause cause) {
-       CompletableFuture<Void> completablefuture = CompletableFuture.supplyAsync(() -> {
-          return p_240780_1_.stream().map(this.field_195577_ad::func_198981_a).filter(Objects::nonNull).map(ResourcePackInfo::func_195796_e).collect(ImmutableList.toImmutableList());
-       }, this).thenCompose((p_240775_1_) -> {
-@@ -1273,13 +_,22 @@
-       }).thenAcceptAsync((p_240782_2_) -> {
-          this.field_195576_ac.close();
-          this.field_195576_ac = p_240782_2_;
-+         this.server.syncCommands(); // SPIGOT-5884: Lost on reload
-          this.field_195577_ad.func_198985_a(p_240780_1_);
-          this.field_240768_i_.func_230410_a_(func_240771_a_(this.field_195577_ad));
-          p_240782_2_.func_240971_i_();
+-
+-      try {
+-         this.field_71292_I = CryptManager.func_75891_b();
+-      } catch (CryptException cryptexception) {
+-         throw new IllegalStateException("Failed to generate key pair", cryptexception);
+-      }
+-   }
+-
+-   public void func_147139_a(Difficulty p_147139_1_, boolean p_147139_2_) {
+-      if (p_147139_2_ || !this.field_240768_i_.func_176123_z()) {
+-         this.field_240768_i_.func_230409_a_(this.field_240768_i_.func_76093_s() ? Difficulty.HARD : p_147139_1_);
+-         this.func_240794_aZ_();
+-         this.func_184103_al().func_181057_v().forEach(this::func_213189_a);
+-      }
+-   }
+-
+-   public int func_230512_b_(int p_230512_1_) {
+-      return p_230512_1_;
+-   }
+-
+-   private void func_240794_aZ_() {
+-      for(ServerWorld serverworld : this.func_212370_w()) {
+-         serverworld.func_72891_a(this.func_230536_N_(), this.func_230537_U_());
+-      }
+-
+-   }
+-
+-   public void func_213209_d(boolean p_213209_1_) {
+-      this.field_240768_i_.func_230415_d_(p_213209_1_);
+-      this.func_184103_al().func_181057_v().forEach(this::func_213189_a);
+-   }
+-
+-   private void func_213189_a(ServerPlayerEntity p_213189_1_) {
+-      IWorldInfo iworldinfo = p_213189_1_.func_71121_q().func_72912_H();
+-      p_213189_1_.field_71135_a.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
+-   }
+-
+-   protected boolean func_230536_N_() {
+-      return this.field_240768_i_.func_176130_y() != Difficulty.PEACEFUL;
+-   }
+-
+-   public boolean func_71242_L() {
+-      return this.field_71288_M;
+-   }
+-
+-   public void func_71204_b(boolean p_71204_1_) {
+-      this.field_71288_M = p_71204_1_;
+-   }
+-
+-   public String func_147133_T() {
+-      return this.field_147141_M;
+-   }
+-
+-   public String func_175581_ab() {
+-      return this.field_175588_P;
+-   }
+-
+-   public void func_180507_a_(String p_180507_1_, String p_180507_2_) {
+-      this.field_147141_M = p_180507_1_;
+-      this.field_175588_P = p_180507_2_;
+-   }
+-
+-   public void func_70000_a(Snooper p_70000_1_) {
+-      p_70000_1_.func_152768_a("whitelist_enabled", false);
+-      p_70000_1_.func_152768_a("whitelist_count", 0);
+-      if (this.field_71318_t != null) {
+-         p_70000_1_.func_152768_a("players_current", this.func_71233_x());
+-         p_70000_1_.func_152768_a("players_max", this.func_71275_y());
+-         p_70000_1_.func_152768_a("players_seen", this.field_240766_e_.func_237334_a_().length);
+-      }
+-
+-      p_70000_1_.func_152768_a("uses_auth", this.field_71325_x);
+-      p_70000_1_.func_152768_a("gui_state", this.func_71279_ae() ? "enabled" : "disabled");
+-      p_70000_1_.func_152768_a("run_time", (Util.func_211177_b() - p_70000_1_.func_130105_g()) / 60L * 1000L);
+-      p_70000_1_.func_152768_a("avg_tick_ms", (int)(MathHelper.func_76127_a(this.field_71311_j) * 1.0E-6D));
+-      int i = 0;
+-
+-      for(ServerWorld serverworld : this.func_212370_w()) {
+-         if (serverworld != null) {
+-            p_70000_1_.func_152768_a("world[" + i + "][dimension]", serverworld.func_234923_W_().func_240901_a_());
+-            p_70000_1_.func_152768_a("world[" + i + "][mode]", this.field_240768_i_.func_76077_q());
+-            p_70000_1_.func_152768_a("world[" + i + "][difficulty]", serverworld.func_175659_aa());
+-            p_70000_1_.func_152768_a("world[" + i + "][hardcore]", this.field_240768_i_.func_76093_s());
+-            p_70000_1_.func_152768_a("world[" + i + "][height]", this.field_71280_D);
+-            p_70000_1_.func_152768_a("world[" + i + "][chunks_loaded]", serverworld.func_72863_F().func_73152_e());
+-            ++i;
+-         }
+-      }
+-
+-      p_70000_1_.func_152768_a("worlds", i);
+-   }
+-
+-   public abstract boolean func_71262_S();
+-
+-   public abstract int func_241871_k();
+-
+-   public boolean func_71266_T() {
+-      return this.field_71325_x;
+-   }
+-
+-   public void func_71229_d(boolean p_71229_1_) {
+-      this.field_71325_x = p_71229_1_;
+-   }
+-
+-   public boolean func_190518_ac() {
+-      return this.field_190519_A;
+-   }
+-
+-   public void func_190517_e(boolean p_190517_1_) {
+-      this.field_190519_A = p_190517_1_;
+-   }
+-
+-   public boolean func_230537_U_() {
+-      return true;
+-   }
+-
+-   public boolean func_230538_V_() {
+-      return true;
+-   }
+-
+-   public abstract boolean func_181035_ah();
+-
+-   public boolean func_71219_W() {
+-      return this.field_71284_A;
+-   }
+-
+-   public void func_71188_g(boolean p_71188_1_) {
+-      this.field_71284_A = p_71188_1_;
+-   }
+-
+-   public boolean func_71231_X() {
+-      return this.field_71285_B;
+-   }
+-
+-   public void func_71245_h(boolean p_71245_1_) {
+-      this.field_71285_B = p_71245_1_;
+-   }
+-
+-   public abstract boolean func_82356_Z();
+-
+-   public String func_71273_Y() {
+-      return this.field_71286_C;
+-   }
+-
+-   public void func_71205_p(String p_71205_1_) {
+-      this.field_71286_C = p_71205_1_;
+-   }
+-
+-   public int func_71207_Z() {
+-      return this.field_71280_D;
+-   }
+-
+-   public void func_71191_d(int p_71191_1_) {
+-      this.field_71280_D = p_71191_1_;
+-   }
+-
+-   public boolean func_71241_aa() {
+-      return this.field_71316_v;
+-   }
+-
+-   public PlayerList func_184103_al() {
+-      return this.field_71318_t;
+-   }
+-
+-   public void func_184105_a(PlayerList p_184105_1_) {
+-      this.field_71318_t = p_184105_1_;
+-   }
+-
+-   public abstract boolean func_71344_c();
+-
+-   public void func_71235_a(GameType p_71235_1_) {
+-      this.field_240768_i_.func_230392_a_(p_71235_1_);
+-   }
+-
+-   @Nullable
+-   public NetworkSystem func_147137_ag() {
+-      return this.field_147144_o;
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public boolean func_71200_ad() {
+-      return this.field_71296_Q;
+-   }
+-
+-   public boolean func_71279_ae() {
+-      return false;
+-   }
+-
+-   public abstract boolean func_195565_a(GameType p_195565_1_, boolean p_195565_2_, int p_195565_3_);
+-
+-   public int func_71259_af() {
+-      return this.field_71315_w;
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public Snooper func_80003_ah() {
+-      return this.field_71307_n;
+-   }
+-
+-   public int func_82357_ak() {
+-      return 16;
+-   }
+-
+-   public boolean func_175579_a(ServerWorld p_175579_1_, BlockPos p_175579_2_, PlayerEntity p_175579_3_) {
+-      return false;
+-   }
+-
+-   public void func_104055_i(boolean p_104055_1_) {
+-      this.field_104057_T = p_104055_1_;
+-   }
+-
+-   public boolean func_104056_am() {
+-      return this.field_104057_T;
+-   }
+-
+-   public boolean func_230541_aj_() {
+-      return true;
+-   }
+-
+-   public int func_143007_ar() {
+-      return this.field_143008_E;
+-   }
+-
+-   public void func_143006_e(int p_143006_1_) {
+-      this.field_143008_E = p_143006_1_;
+-   }
+-
+-   public MinecraftSessionService func_147130_as() {
+-      return this.field_147143_S;
+-   }
+-
+-   public GameProfileRepository func_152359_aw() {
+-      return this.field_152365_W;
+-   }
+-
+-   public PlayerProfileCache func_152358_ax() {
+-      return this.field_152366_X;
+-   }
+-
+-   public ServerStatusResponse func_147134_at() {
+-      return this.field_147147_p;
+-   }
+-
+-   public void func_147132_au() {
+-      this.field_147142_T = 0L;
+-   }
+-
+-   public int func_175580_aG() {
+-      return 29999984;
+-   }
+-
+-   public boolean func_213164_aw() {
+-      return super.func_213164_aw() && !this.func_71241_aa();
+-   }
+-
+-   public Thread func_213170_ax() {
+-      return this.field_175590_aa;
+-   }
+-
+-   public int func_175577_aI() {
+-      return 256;
+-   }
+-
+-   public long func_211150_az() {
+-      return this.field_211151_aa;
+-   }
+-
+-   public DataFixer func_195563_aC() {
+-      return this.field_184112_s;
+-   }
+-
+-   public int func_184108_a(@Nullable ServerWorld p_184108_1_) {
+-      return p_184108_1_ != null ? p_184108_1_.func_82736_K().func_223592_c(GameRules.field_223614_q) : 10;
+-   }
+-
+-   public AdvancementManager func_191949_aK() {
+-      return this.field_195576_ac.func_240969_g_();
+-   }
+-
+-   public FunctionManager func_193030_aL() {
+-      return this.field_200258_al;
+-   }
+-
+-   public CompletableFuture<Void> func_240780_a_(Collection<String> p_240780_1_) {
+-      CompletableFuture<Void> completablefuture = CompletableFuture.supplyAsync(() -> {
+-         return p_240780_1_.stream().map(this.field_195577_ad::func_198981_a).filter(Objects::nonNull).map(ResourcePackInfo::func_195796_e).collect(ImmutableList.toImmutableList());
+-      }, this).thenCompose((p_240775_1_) -> {
+-         return DataPackRegistries.func_240961_a_(p_240775_1_, this.func_71262_S() ? Commands.EnvironmentType.DEDICATED : Commands.EnvironmentType.INTEGRATED, this.func_223707_k(), this.field_213217_au, this);
+-      }).thenAcceptAsync((p_240782_2_) -> {
+-         this.field_195576_ac.close();
+-         this.field_195576_ac = p_240782_2_;
+-         this.field_195577_ad.func_198985_a(p_240780_1_);
+-         this.field_240768_i_.func_230410_a_(func_240771_a_(this.field_195577_ad));
+-         p_240782_2_.func_240971_i_();
 -         this.func_184103_al().func_72389_g();
-+         // Paper start
-+         ServerResourcesReloadedEvent event = new ServerResourcesReloadedEvent(cause);
-+         Bukkit.getServer().getPluginManager().callEvent(event);
-+         if (Thread.currentThread() != this.field_175590_aa) {
-+            return;
-+         }
-+         //this.getPlayerList().saveAll(); // Paper - we don't need to do this
-+         // Paper end
-          this.func_184103_al().func_193244_w();
-          this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
-          this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
-+         this.func_184103_al().func_181057_v().forEach(this.func_184103_al()::func_187243_f); //Forge: Fix newly added/modified commands not being sent to the client when commands reload.
-       }, this);
-       if (this.func_213162_bc()) {
-          this.func_213161_c(completablefuture::isDone);
-@@ -1289,10 +_,13 @@
-    }
- 
-    public static DatapackCodec func_240772_a_(ResourcePackList p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
-+      net.minecraftforge.fml.packs.ResourcePackLoader.loadResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
-       p_240772_0_.func_198983_a();
-+      DatapackCodec.field_234880_a_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
-+      p_240772_1_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
-       if (p_240772_2_) {
+-         this.func_184103_al().func_193244_w();
+-         this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
+-         this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
+-      }, this);
+-      if (this.func_213162_bc()) {
+-         this.func_213161_c(completablefuture::isDone);
+-      }
+-
+-      return completablefuture;
+-   }
+-
+-   public static DatapackCodec func_240772_a_(ResourcePackList p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
+-      p_240772_0_.func_198983_a();
+-      if (p_240772_2_) {
 -         p_240772_0_.func_198985_a(Collections.singleton("vanilla"));
 -         return new DatapackCodec(ImmutableList.of("vanilla"), ImmutableList.of());
-+         p_240772_0_.func_198985_a(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla());
-+         return new DatapackCodec(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla(), ImmutableList.of());
-       } else {
-          Set<String> set = Sets.newLinkedHashSet();
- 
-@@ -1300,20 +_,20 @@
-             if (p_240772_0_.func_232617_b_(s)) {
-                set.add(s);
-             } else {
--               field_147145_h.warn("Missing data pack {}", (Object)s);
-+               field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.24", (Object)s));
-             }
-          }
- 
-          for(ResourcePackInfo resourcepackinfo : p_240772_0_.func_198978_b()) {
-             String s1 = resourcepackinfo.func_195790_f();
-             if (!p_240772_1_.func_234887_b_().contains(s1) && !set.contains(s1)) {
--               field_147145_h.info("Found new data pack {}, loading it automatically", (Object)s1);
-+               field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.25", (Object)s1));
-                set.add(s1);
-             }
-          }
- 
-          if (set.isEmpty()) {
--            field_147145_h.info("No datapacks selected, forcing vanilla");
-+            field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.26"));
-             set.add("vanilla");
-          }
- 
-@@ -1335,7 +_,7 @@
-       if (this.func_205744_aT()) {
-          PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
-          WhiteList whitelist = playerlist.func_152599_k();
+-      } else {
+-         Set<String> set = Sets.newLinkedHashSet();
 -
-+         if (!((DedicatedServer)getServer()).func_213221_d_().field_219006_S.get()) return; // Paper - white list not enabled
-          for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(playerlist.func_181057_v())) {
-             if (!whitelist.func_152705_a(serverplayerentity.func_146103_bH())) {
-                serverplayerentity.field_71135_a.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.not_whitelisted"));
-@@ -1442,6 +_,31 @@
- 
-    public abstract boolean func_213199_b(GameProfile p_213199_1_);
- 
-+   private Map<RegistryKey<World>, long[]> perWorldTickTimes = Maps.newIdentityHashMap();
-+   @Nullable
-+   public long[] getTickTime(RegistryKey<World> dim) {
-+      return perWorldTickTimes.get(dim);
-+   }
-+
-+   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
-+   public synchronized Map<RegistryKey<World>, ServerWorld> forgeGetWorldMap() {
-+      return this.field_71305_c;
-+   }
-+   private int worldArrayMarker = 0;
-+   private int worldArrayLast = -1;
-+   private ServerWorld[] worldArray;
-+   @Deprecated //Forge Internal use Only, use to protect against concurrent modifications in the world tick loop.
-+   public synchronized void markWorldsDirty() {
-+      worldArrayMarker++;
-+   }
-+   private ServerWorld[] getWorldArray() {
-+      if (worldArrayMarker == worldArrayLast && worldArray != null)
-+         return worldArray;
-+      worldArray = this.field_71305_c.values().stream().toArray(x -> new ServerWorld[x]);
-+      worldArrayLast = worldArrayMarker;
-+      return worldArray;
-+   }
-+
-    public void func_223711_a(Path p_223711_1_) throws IOException {
-       Path path = p_223711_1_.resolve("levels");
- 
-@@ -1570,6 +_,10 @@
-       return this.field_240768_i_;
-    }
- 
-+   public DataPackRegistries getDataPackRegistries() {
-+       return field_195576_ac;
-+   }
-+
-    public DynamicRegistries func_244267_aX() {
-       return this.field_240767_f_;
-    }
-@@ -1578,4 +_,85 @@
-    public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
-       return null;
-    }
-+
-+   @Override
-+   public boolean func_213162_bc() {
-+      return super.func_213162_bc() || this.func_71241_aa();
-+   }
-+
-+   // CraftBukkit start
-+   public boolean isDebugging() {
-+      return false;
-+   }
-+
-+   public static MinecraftServer getServer() {
-+      return (Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
-+   }
-+   // CraftBukkit end
-+
-+   public void initWorld(ServerWorld serverWorld, IServerWorldInfo worldInfo, IServerConfiguration saveData, DimensionGeneratorSettings generatorSettings) {
-+      boolean flag = generatorSettings.func_236227_h_();
-+      if (serverWorld.generator != null) {
-+         serverWorld.getWorld().getPopulators().addAll(serverWorld.generator.getDefaultPopulators(serverWorld.getWorld()));
-+      }
-+      WorldBorder worldborder = serverWorld.func_175723_af();
-+      worldborder.func_235926_a_(worldInfo.func_230398_q_());
-+      if (!worldInfo.func_76070_v()) {
-+         try {
-+            func_240786_a_(serverWorld, worldInfo, generatorSettings.func_236223_d_(), flag, true);
-+            worldInfo.func_76091_d(true);
-+            if (flag) {
-+               this.func_240778_a_(this.field_240768_i_);
+-         for(String s : p_240772_1_.func_234884_a_()) {
+-            if (p_240772_0_.func_232617_b_(s)) {
+-               set.add(s);
+-            } else {
+-               field_147145_h.warn("Missing data pack {}", (Object)s);
+-            }
+-         }
+-
+-         for(ResourcePackInfo resourcepackinfo : p_240772_0_.func_198978_b()) {
+-            String s1 = resourcepackinfo.func_195790_f();
+-            if (!p_240772_1_.func_234887_b_().contains(s1) && !set.contains(s1)) {
+-               field_147145_h.info("Found new data pack {}, loading it automatically", (Object)s1);
+-               set.add(s1);
+-            }
+-         }
+-
+-         if (set.isEmpty()) {
+-            field_147145_h.info("No datapacks selected, forcing vanilla");
+-            set.add("vanilla");
+-         }
+-
+-         p_240772_0_.func_198985_a(set);
+-         return func_240771_a_(p_240772_0_);
+-      }
+-   }
+-
+-   private static DatapackCodec func_240771_a_(ResourcePackList p_240771_0_) {
+-      Collection<String> collection = p_240771_0_.func_232621_d_();
+-      List<String> list = ImmutableList.copyOf(collection);
+-      List<String> list1 = p_240771_0_.func_232616_b_().stream().filter((p_240781_1_) -> {
+-         return !collection.contains(p_240781_1_);
+-      }).collect(ImmutableList.toImmutableList());
+-      return new DatapackCodec(list, list1);
+-   }
+-
+-   public void func_205743_a(CommandSource p_205743_1_) {
+-      if (this.func_205744_aT()) {
+-         PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
+-         WhiteList whitelist = playerlist.func_152599_k();
+-
+-         for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(playerlist.func_181057_v())) {
+-            if (!whitelist.func_152705_a(serverplayerentity.func_146103_bH())) {
+-               serverplayerentity.field_71135_a.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.not_whitelisted"));
+-            }
+-         }
+-
+-      }
+-   }
+-
+-   public ResourcePackList func_195561_aH() {
+-      return this.field_195577_ad;
+-   }
+-
+-   public Commands func_195571_aL() {
+-      return this.field_195576_ac.func_240968_f_();
+-   }
+-
+-   public CommandSource func_195573_aM() {
+-      ServerWorld serverworld = this.func_241755_D_();
+-      return new CommandSource(this, serverworld == null ? Vector3d.field_186680_a : Vector3d.func_237491_b_(serverworld.func_241135_u_()), Vector2f.field_189974_a, serverworld, 4, "Server", new StringTextComponent("Server"), this, (Entity)null);
+-   }
+-
+-   public boolean func_195039_a() {
+-      return true;
+-   }
+-
+-   public boolean func_195040_b() {
+-      return true;
+-   }
+-
+-   public RecipeManager func_199529_aN() {
+-      return this.field_195576_ac.func_240967_e_();
+-   }
+-
+-   public ITagCollectionSupplier func_244266_aF() {
+-      return this.field_195576_ac.func_244358_d();
+-   }
+-
+-   public ServerScoreboard func_200251_aP() {
+-      return this.field_200255_ai;
+-   }
+-
+-   public CommandStorage func_229735_aN_() {
+-      if (this.field_229733_al_ == null) {
+-         throw new NullPointerException("Called before server init");
+-      } else {
+-         return this.field_229733_al_;
+-      }
+-   }
+-
+-   public LootTableManager func_200249_aQ() {
+-      return this.field_195576_ac.func_240965_c_();
+-   }
+-
+-   public LootPredicateManager func_229736_aP_() {
+-      return this.field_195576_ac.func_240964_b_();
+-   }
+-
+-   public GameRules func_200252_aR() {
+-      return this.func_241755_D_().func_82736_K();
+-   }
+-
+-   public CustomServerBossInfoManager func_201300_aS() {
+-      return this.field_201301_aj;
+-   }
+-
+-   public boolean func_205744_aT() {
+-      return this.field_205745_an;
+-   }
+-
+-   public void func_205741_k(boolean p_205741_1_) {
+-      this.field_205745_an = p_205741_1_;
+-   }
+-
+-   public float func_211149_aT() {
+-      return this.field_211152_ao;
+-   }
+-
+-   public int func_211833_a(GameProfile p_211833_1_) {
+-      if (this.func_184103_al().func_152596_g(p_211833_1_)) {
+-         OpEntry opentry = this.func_184103_al().func_152603_m().func_152683_b(p_211833_1_);
+-         if (opentry != null) {
+-            return opentry.func_152644_a();
+-         } else if (this.func_213199_b(p_211833_1_)) {
+-            return 4;
+-         } else if (this.func_71264_H()) {
+-            return this.func_184103_al().func_206257_x() ? 4 : 0;
+-         } else {
+-            return this.func_110455_j();
+-         }
+-      } else {
+-         return 0;
+-      }
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public FrameTimer func_213210_aR() {
+-      return this.field_213215_ap;
+-   }
+-
+-   public IProfiler func_213185_aS() {
+-      return this.field_71304_b;
+-   }
+-
+-   public abstract boolean func_213199_b(GameProfile p_213199_1_);
+-
+-   public void func_223711_a(Path p_223711_1_) throws IOException {
+-      Path path = p_223711_1_.resolve("levels");
+-
+-      for(Entry<RegistryKey<World>, ServerWorld> entry : this.field_71305_c.entrySet()) {
+-         ResourceLocation resourcelocation = entry.getKey().func_240901_a_();
+-         Path path1 = path.resolve(resourcelocation.func_110624_b()).resolve(resourcelocation.func_110623_a());
+-         Files.createDirectories(path1);
+-         entry.getValue().func_225322_a(path1);
+-      }
+-
+-      this.func_223708_d(p_223711_1_.resolve("gamerules.txt"));
+-      this.func_223706_e(p_223711_1_.resolve("classpath.txt"));
+-      this.func_223709_c(p_223711_1_.resolve("example_crash.txt"));
+-      this.func_223710_b(p_223711_1_.resolve("stats.txt"));
+-      this.func_223712_f(p_223711_1_.resolve("threads.txt"));
+-   }
+-
+-   private void func_223710_b(Path p_223710_1_) throws IOException {
+-      try (Writer writer = Files.newBufferedWriter(p_223710_1_)) {
+-         writer.write(String.format("pending_tasks: %d\n", this.func_223704_be()));
+-         writer.write(String.format("average_tick_time: %f\n", this.func_211149_aT()));
+-         writer.write(String.format("tick_times: %s\n", Arrays.toString(this.field_71311_j)));
+-         writer.write(String.format("queue: %s\n", Util.func_215072_e()));
+-      }
+-
+-   }
+-
+-   private void func_223709_c(Path p_223709_1_) throws IOException {
+-      CrashReport crashreport = new CrashReport("Server dump", new Exception("dummy"));
+-      this.func_71230_b(crashreport);
+-
+-      try (Writer writer = Files.newBufferedWriter(p_223709_1_)) {
+-         writer.write(crashreport.func_71502_e());
+-      }
+-
+-   }
+-
+-   private void func_223708_d(Path p_223708_1_) throws IOException {
+-      try (Writer writer = Files.newBufferedWriter(p_223708_1_)) {
+-         final List<String> list = Lists.newArrayList();
+-         final GameRules gamerules = this.func_200252_aR();
+-         GameRules.func_223590_a(new GameRules.IRuleEntryVisitor() {
+-            public <T extends GameRules.RuleValue<T>> void func_223481_a(GameRules.RuleKey<T> p_223481_1_, GameRules.RuleType<T> p_223481_2_) {
+-               list.add(String.format("%s=%s\n", p_223481_1_.func_223576_a(), gamerules.<T>func_223585_a(p_223481_1_).toString()));
+-            }
+-         });
+-
+-         for(String s : list) {
+-            writer.write(s);
+-         }
+-      }
+-
+-   }
+-
+-   private void func_223706_e(Path p_223706_1_) throws IOException {
+-      try (Writer writer = Files.newBufferedWriter(p_223706_1_)) {
+-         String s = System.getProperty("java.class.path");
+-         String s1 = System.getProperty("path.separator");
+-
+-         for(String s2 : Splitter.on(s1).split(s)) {
+-            writer.write(s2);
+-            writer.write("\n");
+-         }
+-      }
+-
+-   }
+-
+-   private void func_223712_f(Path p_223712_1_) throws IOException {
+-      ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
+-      ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
+-      Arrays.sort(athreadinfo, Comparator.comparing(ThreadInfo::getThreadName));
+-
+-      try (Writer writer = Files.newBufferedWriter(p_223712_1_)) {
+-         for(ThreadInfo threadinfo : athreadinfo) {
+-            writer.write(threadinfo.toString());
+-            writer.write(10);
+-         }
+-      }
+-
+-   }
+-
+-   private void func_240773_a_(@Nullable LongTickDetector p_240773_1_) {
+-      if (this.field_71295_T) {
+-         this.field_71295_T = false;
+-         this.field_240769_m_.func_233507_c_();
+-      }
+-
+-      this.field_71304_b = LongTickDetector.func_233523_a_(this.field_240769_m_.func_233508_d_(), p_240773_1_);
+-   }
+-
+-   private void func_240795_b_(@Nullable LongTickDetector p_240795_1_) {
+-      if (p_240795_1_ != null) {
+-         p_240795_1_.func_233525_b_();
+-      }
+-
+-      this.field_71304_b = this.field_240769_m_.func_233508_d_();
+-   }
+-
+-   public boolean func_240789_aP_() {
+-      return this.field_240769_m_.func_233505_a_();
+-   }
+-
+-   public void func_240790_aQ_() {
+-      this.field_71295_T = true;
+-   }
+-
+-   public IProfileResult func_240791_aR_() {
+-      IProfileResult iprofileresult = this.field_240769_m_.func_233509_e_();
+-      this.field_240769_m_.func_233506_b_();
+-      return iprofileresult;
+-   }
+-
+-   public Path func_240776_a_(FolderName p_240776_1_) {
+-      return this.field_71310_m.func_237285_a_(p_240776_1_);
+-   }
+-
+-   public boolean func_230540_aS_() {
+-      return true;
+-   }
+-
+-   public TemplateManager func_240792_aT_() {
+-      return this.field_240765_ak_;
+-   }
+-
+-   public IServerConfiguration func_240793_aU_() {
+-      return this.field_240768_i_;
+-   }
+-
+-   public DynamicRegistries func_244267_aX() {
+-      return this.field_240767_f_;
+-   }
+-
+-   @Nullable
+-   public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
+-      return null;
+-   }
++            while (longiterator.hasNext()) {
++                long i = longiterator.nextLong();
++                ChunkPos chunkpos = new ChunkPos(i);
++                serverWorld.func_72863_F().func_217206_a(chunkpos, true);
 +            }
-+         } catch (Throwable throwable) {
-+            CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception initializing level");
-+            try {
-+               serverWorld.func_72914_a(crashreport);
-+            } catch (Throwable throwable2) {
-+               // empty catch block
-+            }
-+            throw new ReportedException(crashreport);
-+         }
-+         worldInfo.func_76091_d(true);
-+      }
-+   }
-+
-+   public void loadSpawn(IChunkStatusListener listener, ServerWorld serverWorld) {
-+      this.markWorldsDirty();
-+      MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverWorld));
-+      if (!serverWorld.getWorld().getKeepSpawnInMemory()) {
-+         return;
-+      }
-+      this.forceTicks = true;
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.27", serverWorld.func_234923_W_().func_240901_a_()));
-+      BlockPos blockpos = serverWorld.func_241135_u_();
-+      listener.func_219509_a(new ChunkPos(blockpos));
-+      ServerChunkProvider serverchunkprovider = serverWorld.func_72863_F();
-+      serverchunkprovider.func_212863_j_().func_215598_a(500);
-+      this.field_211151_aa = Util.func_211177_b();
-+      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
-+
-+      while (serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
-+         this.executeModerately();
-+      }
-+
-+      this.executeModerately();
-+
-+      ForcedChunksSaveData forcedchunkssavedata = serverWorld.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
-+      if (forcedchunkssavedata != null) {
-+         LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
-+
-+         while (longiterator.hasNext()) {
-+            long i = longiterator.nextLong();
-+            ChunkPos chunkpos = new ChunkPos(i);
-+            serverWorld.func_72863_F().func_217206_a(chunkpos, true);
-+         }
-+      }
-+      this.executeModerately();
-+      listener.func_219510_b();
-+      serverchunkprovider.func_212863_j_().func_215598_a(5);
-+      this.func_240794_aZ_();
-+      this.forceTicks = false;
-+   }
++        }
++        this.executeModerately();
++        listener.func_219510_b();
++        serverchunkprovider.func_212863_j_().func_215598_a(5);
++        this.func_240794_aZ_();
++        this.forceTicks = false;
++    }
 +
  }
