@@ -81,7 +81,7 @@
  import net.minecraft.server.management.OpEntry;
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
-@@ -152,1430 +_,1769 @@
+@@ -152,1430 +_,1770 @@
  import net.minecraft.world.storage.WorldSavedDataCallableSave;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -486,6 +486,7 @@
 +        }
 +
 +        ForgeInjectBukkit.addEnumEnvironment();
++
 +        ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
 +        this.field_71305_c.put(World.field_234918_g_, serverworld);
 +        DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
