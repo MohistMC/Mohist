@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -1,9 +_,13 @@
+@@ -1,10 +_,15 @@
  package net.minecraft.tileentity;
  
 +import co.aikar.timings.MinecraftTimings;
@@ -12,9 +12,11 @@
  import net.minecraft.nbt.CompoundNBT;
 +import net.minecraft.nbt.INBT;
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
++import net.minecraft.util.KeyedObject;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
-@@ -15,20 +_,33 @@
+ import net.minecraft.util.Rotation;
+@@ -15,21 +_,54 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -24,7 +26,7 @@
 +import org.spigotmc.CustomTimingsHandler;
  
 -public abstract class TileEntity {
-+public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity {
++public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity, KeyedObject { // Paper
 +   // CraftBukkit start - data containers
 +   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 +   public CraftPersistentDataContainer persistentDataContainer;
@@ -47,10 +49,32 @@
     public TileEntity(TileEntityType<?> p_i48289_1_) {
 +      super(TileEntity.class);
        this.field_200663_e = p_i48289_1_;
+-   }
 +      this.gatherCapabilities();
-    }
++   }
++
++   // Paper start
++   private String tileEntityKeyString = null;
++   private ResourceLocation tileEntityKey = null;
++
++   @Override
++   public ResourceLocation getResourceLocation() {
++      if (tileEntityKey == null) {
++         tileEntityKey = TileEntityType.func_200969_a(this.getTileEntity().func_200662_C());
++         tileEntityKeyString = tileEntityKey != null ? tileEntityKey.toString() : null;
++      }
++      return tileEntityKey;
++   }
++
++   @Override
++   public String getResourceLocationString() {
++      getResourceLocation(); // Try to load if it doesn't exists.
++      return tileEntityKeyString;
++   }
++   // Paper end
  
     @Nullable
+    public World func_145831_w() {
 @@ -47,6 +_,15 @@
  
     public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/CatRenderer.java
++++ b/net/minecraft/client/renderer/entity/CatRenderer.java
+@@ -21,7 +_,7 @@
+    }
+ 
+    public ResourceLocation func_110775_a(CatEntity p_110775_1_) {
+-      return p_110775_1_.func_213423_ee();
++      return p_110775_1_.getResourceLocation();
+    }
+ 
+    protected void func_225620_a_(CatEntity p_225620_1_, MatrixStack p_225620_2_, float p_225620_3_) {

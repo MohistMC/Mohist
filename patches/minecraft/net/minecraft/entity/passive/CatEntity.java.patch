@@ -8,6 +8,15 @@
  
  public class CatEntity extends TameableEntity {
     private static final Ingredient field_213426_bE = Ingredient.func_199804_a(Items.field_196086_aW, Items.field_196087_aX);
+@@ -100,7 +_,7 @@
+       super(p_i50284_1_, p_i50284_2_);
+    }
+ 
+-   public ResourceLocation func_213423_ee() {
++   public ResourceLocation getResourceLocation() {
+       return field_213425_bD.getOrDefault(this.func_213413_ef(), field_213425_bD.get(0));
+    }
+ 
 @@ -402,7 +_,7 @@
              }
           } else if (this.func_70877_b(itemstack)) {

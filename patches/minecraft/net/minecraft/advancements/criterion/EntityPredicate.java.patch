@@ -1,0 +1,11 @@
+--- a/net/minecraft/advancements/criterion/EntityPredicate.java
++++ b/net/minecraft/advancements/criterion/EntityPredicate.java
+@@ -123,7 +_,7 @@
+                }
+             }
+ 
+-            return this.field_217996_j == null || p_217993_3_ instanceof CatEntity && ((CatEntity)p_217993_3_).func_213423_ee().equals(this.field_217996_j);
++            return this.field_217996_j == null || p_217993_3_ instanceof CatEntity && ((CatEntity)p_217993_3_).getResourceLocation().equals(this.field_217996_j);
+          }
+       }
+    }
