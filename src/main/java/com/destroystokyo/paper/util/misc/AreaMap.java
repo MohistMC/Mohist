@@ -179,7 +179,7 @@ public abstract class AreaMap<E> {
         final int centerX = MCUtil.getCoordinateX(currPosition);
         final int centerZ = MCUtil.getCoordinateZ(currPosition);
 
-        for (Iterator<Long2ObjectLinkedOpenHashMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>>> iterator = this.areaMap.long2ObjectEntrySet().fastIterator();
+        /*for (Iterator<Long2ObjectLinkedOpenHashMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>>> iterator = this.areaMap.long2ObjectEntrySet().fastIterator();
              iterator.hasNext(); ) {
 
             final Long2ObjectLinkedOpenHashMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>> entry = iterator.next();
@@ -202,7 +202,7 @@ public abstract class AreaMap<E> {
                     throw new IllegalStateException("Expected view distance " + viewDistance + ", got " + dist);
                 }
             }
-        }
+        }*/
 
         if (entiesGot != expectedEntries) {
             throw new IllegalStateException("Expected " + expectedEntries + ", got " + entiesGot);
