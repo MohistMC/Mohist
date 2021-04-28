@@ -19,30 +19,41 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.fml.loading.toposort.CyclePresentException;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
-import net.minecraftforge.forgespi.locating.IModFile;
+import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
+
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.StringBuilderFormattable;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
+import com.mohistmc.config.MohistConfigUtil;
 
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
+import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.loading.toposort.CyclePresentException;
+import net.minecraftforge.fml.loading.toposort.TopologicalSort;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
 
 public class ModSorter
 {
@@ -266,6 +277,7 @@ public class ModSorter
         if (!missingVersions.isEmpty()) {
             return missingVersions
                     .stream()
+                    .filter(mv -> MohistConfigUtil.bMohist("forge_ignore_optional_mods_version_check", "false") ? mv.isMandatory() : true) // Mohist - Introduce 'forge_ignore_optional_mods_version_check' option
                     .map(mv -> new ExceptionData(mv.isMandatory() ? "fml.modloading.missingdependency" : "fml.modloading.missingdependency.optional",
                             mv.getOwner(), mv.getModId(), mv.getOwner().getModId(), mv.getVersionRange(),
                             modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null"))))
