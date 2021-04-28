@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/ShulkerEntity.java
 +++ b/net/minecraft/entity/monster/ShulkerEntity.java
-@@ -46,8 +_,11 @@
+@@ -46,16 +_,19 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.World;
@@ -12,8 +12,9 @@
  
  public class ShulkerEntity extends GolemEntity implements IMob {
     private static final UUID field_184703_bv = UUID.fromString("7E0292F2-9434-48D5-A29F-9583AF7DF27F");
-@@ -55,7 +_,7 @@
-    protected static final DataParameter<Direction> field_184700_a = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187202_l);
+    private static final AttributeModifier field_184704_bw = new AttributeModifier(field_184703_bv, "Covered armor bonus", 20.0D, AttributeModifier.Operation.ADDITION);
+-   protected static final DataParameter<Direction> field_184700_a = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187202_l);
++   public static final DataParameter<Direction> field_184700_a = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187202_l);
     protected static final DataParameter<Optional<BlockPos>> field_184701_b = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187201_k);
     protected static final DataParameter<Byte> field_184702_c = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
 -   protected static final DataParameter<Byte> field_190770_bw = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
