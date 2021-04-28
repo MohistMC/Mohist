@@ -1,5 +1,13 @@
 --- a/net/minecraft/network/login/ServerLoginNetHandler.java
 +++ b/net/minecraft/network/login/ServerLoginNetHandler.java
+@@ -17,6 +_,7 @@
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.network.NetworkManager;
++import net.minecraft.network.handshake.ServerHandshakeNetHandler;
+ import net.minecraft.network.login.client.CCustomPayloadLoginPacket;
+ import net.minecraft.network.login.client.CEncryptionResponsePacket;
+ import net.minecraft.network.login.client.CLoginStartPacket;
 @@ -29,10 +_,16 @@
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
@@ -40,7 +48,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -72,29 +_,73 @@
+@@ -72,29 +_,74 @@
  
     }
  
@@ -96,6 +104,7 @@
 +      {
 +         for ( com.mojang.authlib.properties.Property property : field_147333_a.spoofedProfile )
 +         {
++            if (!ServerHandshakeNetHandler.PROP_PATTERN.matcher(property.getName()).matches()) continue;
 +            this.field_147337_i.getProperties().put( property.getName(), property );
 +         }
 +      }

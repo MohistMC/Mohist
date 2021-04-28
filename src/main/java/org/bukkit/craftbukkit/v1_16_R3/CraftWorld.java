@@ -730,10 +730,10 @@ public class CraftWorld implements World {
             ((ChorusFlowerBlock) Blocks.CHORUS_FLOWER).generatePlant(world, pos, rand, 8);
             return true;
         case CRIMSON_FUNGUS:
-            gen = Features.CRIMSON_FUNGI;
+            gen = Features.CRIMSON_FUNGI_PLANTED;
             break;
         case WARPED_FUNGUS:
-            gen = Features.WARPED_FUNGI;
+            gen = Features.WARPED_FUNGI_PLANTED;
             break;
         case TREE:
         default:
