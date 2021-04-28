@@ -1,12 +1,11 @@
 package com.mohistmc;
 
-import com.mohistmc.util.PluginsModsDelete;
+import static com.mohistmc.util.PluginsModsDelete.chekPlugins;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mohistmc.util.PluginsModsDelete.chekPlugins;
+import com.mohistmc.util.PluginsModsDelete;
 
 /**
  * @author Mgazul
@@ -19,8 +18,8 @@ public class AutoDeletePlugins {
 
     public static void init() {
         plugins_fix.add(new PluginsModsDelete.Fix("com.earth2me.essentials.Essentials",
-                "https://cdn.discordapp.com/attachments/747808399634202706/822855068210167848/EssentialsX-2.19.0-dev97-bfeb0ef-all.jar",
-                "2.19.0-dev+97-bfeb0ef"));
+                "https://github.com/KR33PY/Essentials/releases/download/essxmohist/EssentialsX-2.19.0-dev+99-fd961d5.jar",
+                "2.19.0-dev+99-fd961d5"));
 
         plugins_not_compatible.add("com.comphenix.protocol.ProtocolLib"); // Until it is resolved, the plug-in is not allowed
     }
