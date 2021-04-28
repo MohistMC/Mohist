@@ -142,10 +142,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
-import org.bukkit.EntityEffect;
-import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
@@ -181,6 +178,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     public CraftEntity(final CraftServer server, final Entity entity) {
         this.server = server;
         this.entity = entity;
+    }
+
+    public Chunk getChunk() {
+        net.minecraft.world.chunk.Chunk currentChunk = entity.getCurrentChunk();
+        return currentChunk != null ? currentChunk.bukkitChunk : getLocation().getChunk();
     }
 
     public static CraftEntity getEntity(CraftServer server, Entity entity) {

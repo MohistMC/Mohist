@@ -11,7 +11,7 @@
  import java.util.Arrays;
  import java.util.Collection;
  import java.util.Collections;
-@@ -16,13 +_,49 @@
+@@ -16,13 +_,50 @@
  import java.util.UUID;
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.stream.Stream;
@@ -20,6 +20,7 @@
 +
 +import net.minecraft.tileentity.TileEntity;
 +import net.minecraft.util.*;
++import net.minecraft.world.chunk.Chunk;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
@@ -203,7 +204,7 @@
 +   }
 +
 +   public boolean isChunkLoaded() {
-+      return this.field_70170_p.func_217354_b((int)Math.floor(this.func_226277_ct_()) >> 4, (int)Math.floor(this.func_226281_cx_()) >> 4);
++      return getCurrentChunk() != null;
 +   }
 +   // CraftBukkit end
 +
@@ -682,11 +683,29 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Entity being loaded");
-@@ -1491,11 +_,31 @@
+@@ -1491,11 +_,49 @@
        return true;
     }
  
 +   // Paper start
++   public java.lang.ref.WeakReference<Chunk> currentChunk = null;
++
++   public void setCurrentChunk(Chunk chunk) {
++      this.currentChunk = chunk != null ? new java.lang.ref.WeakReference<>(chunk) : null;
++   }
++
++   /**
++    * Returns the entities current registered chunk. If the entity is not added to a chunk yet, it will return null
++    */
++   public Chunk getCurrentChunk() {
++      final Chunk chunk = currentChunk != null ? currentChunk.get() : null;
++      if (chunk != null && chunk.field_76636_d) {
++         return chunk;
++      }
++
++      return !field_70175_ag ? null : ((ServerWorld) field_70170_p).func_72863_F().getChunkAtIfLoadedMainThreadNoCache(field_70176_ah, field_70164_aj);
++   }
++
 +   private ResourceLocation entityKey;
 +   private String entityKeyString;
 +
