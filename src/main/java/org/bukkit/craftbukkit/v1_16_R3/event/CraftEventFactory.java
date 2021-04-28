@@ -1326,6 +1326,7 @@ public class CraftEventFactory {
                 player.inventory.setItem(player.inventory.selected, book);
                 player.refreshContainer(player.inventoryMenu);
                 // Mohist end
+                return book; // Mohist - Fix book sign desync (#1255)
             }
         }
 
