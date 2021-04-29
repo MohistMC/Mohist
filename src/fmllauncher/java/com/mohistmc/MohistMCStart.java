@@ -21,9 +21,9 @@ public class MohistMCStart {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main() throws Exception {
         MohistConfigUtil.copyMohistConfig();
-        CustomFlagsHandler.handleCustomArgs(args);
+        CustomFlagsHandler.handleCustomArgs();
 
         if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +

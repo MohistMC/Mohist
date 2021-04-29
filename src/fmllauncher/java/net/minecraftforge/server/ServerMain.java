@@ -45,7 +45,10 @@ import cpw.mods.modlauncher.Launcher;
 
 public class ServerMain {
 
+  public static String[] mainArgs = null;
+
     public static void main(String[] args) {
+      mainArgs = args;
       String path = JarTool.getJarPath();
       if(path != null && (path.contains("+") || path.contains("!"))) {
         System.out.println("[Mohist - ERROR] Unsupported characters have been detected in your server path. \nPlease remove + or ! in your server's folder name (in the folder which contains this character).\nPath : "+path);
@@ -56,7 +59,7 @@ public class ServerMain {
         if (Float.parseFloat(System.getProperty("java.class.version")) < 55f || MohistConfigUtil.bMohist("use_custom_java11", "false")) {
             if (!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));
             try {
-                DownloadJava.run(args); // Mohist - Invoke DownloadJava with actual launchargs
+                DownloadJava.run(); // Mohist - Invoke DownloadJava with actual launchargs
             } catch (Exception ex) {
                 System.err.println(i18n.get("oldjava.exception"));
                 ex.printStackTrace();
@@ -65,7 +68,7 @@ public class ServerMain {
         }
 
         try {
-            MohistMCStart.main(args);
+            MohistMCStart.main();
             // Mohist end
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());

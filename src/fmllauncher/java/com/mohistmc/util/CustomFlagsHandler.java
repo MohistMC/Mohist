@@ -3,6 +3,7 @@ package com.mohistmc.util;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.i18n.i18n;
+import net.minecraftforge.server.ServerMain;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -16,15 +17,15 @@ public class CustomFlagsHandler {
   public static ArrayList<String> bannedFlags = new ArrayList<>(Arrays.asList("xmx", "xms"));
   public static boolean hasCustomFlags = false;
 
-  public static void handleCustomArgs(String[] args) {
-    if(Arrays.asList(args).contains("launchedWithCustomArgs")) return;
+  public static void handleCustomArgs() {
+    if(Arrays.asList(ServerMain.mainArgs).contains("launchedWithCustomArgs")) return;
 
     getCustomFlags();
     if(!hasCustomFlags) return;
 
     launchArgs.addAll(addedFlags);
     launchArgs.add(new File(CustomFlagsHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-    launchArgs.addAll(Arrays.asList(args));
+    launchArgs.addAll(Arrays.asList(ServerMain.mainArgs));
     launchArgs.add("launchedWithCustomArgs");
 
     try {
