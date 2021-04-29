@@ -22,6 +22,7 @@ import java.util.zip.ZipInputStream;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.i18n.i18n;
+import net.minecraftforge.server.ServerMain;
 
 public class DownloadJava {
     public static File java = new File("CustomJAVA/");
@@ -29,10 +30,8 @@ public class DownloadJava {
     public static ArrayList<String> launchArgs = new ArrayList<>();
     private static File javadl = new File(java.getAbsolutePath() + "/java.zip");
 
-    public static void run(String[] args) throws Exception {
-        launchArgs.addAll(Arrays.asList(args));
-
-        if (!launchArgs.contains("launchedWithCustomJava11")) {
+    public static void run() throws Exception {
+        if (!Arrays.asList(ServerMain.mainArgs).contains("launchedWithCustomJava11")) {
             if (!javabin.exists() && !bMohist("use_custom_java11", "false")) {
               System.out.println(i18n.get("oldjava.action"));
               System.out.println(i18n.get("oldjava.serveronly"));
@@ -79,6 +78,7 @@ public class DownloadJava {
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
         launchArgs.addAll(getCustomFlags());
         launchArgs.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+        launchArgs.addAll(Arrays.asList(ServerMain.mainArgs));
         launchArgs.add("launchedWithCustomJava11");
         if(hasCustomFlags) launchArgs.add("launchedWithCustomArgs");
         command.addAll(launchArgs);
