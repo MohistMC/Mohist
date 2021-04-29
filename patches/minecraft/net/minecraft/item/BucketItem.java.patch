@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -12,10 +_,12 @@
+@@ -12,6 +_,7 @@
  import net.minecraft.fluid.FlowingFluid;
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.Fluids;
@@ -8,21 +8,12 @@
  import net.minecraft.particles.ParticleTypes;
  import net.minecraft.stats.Stats;
  import net.minecraft.tags.FluidTags;
- import net.minecraft.util.ActionResult;
-+import net.minecraft.util.ActionResultType;
- import net.minecraft.util.Direction;
- import net.minecraft.util.DrinkHelper;
- import net.minecraft.util.Hand;
-@@ -28,18 +_,38 @@
+@@ -28,18 +_,34 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
-+import net.minecraft.world.server.ServerWorld;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_16_R3.util.DummyGeneratorAccess;
 +import org.bukkit.event.player.PlayerBucketEmptyEvent;
-+import org.bukkit.event.player.PlayerBucketFillEvent;
  
  public class BucketItem extends Item {
     private final Fluid field_77876_a;
@@ -52,32 +43,18 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -53,11 +_,23 @@
-             if (this.field_77876_a == Fluids.field_204541_a) {
-                BlockState blockstate1 = p_77659_1_.func_180495_p(blockpos);
-                if (blockstate1.func_177230_c() instanceof IBucketPickupHandler) {
-+                  // CraftBukkit start
-+                  Fluid dummyFluid = ((IBucketPickupHandler) blockstate1.func_177230_c()).func_204508_a(DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
-+                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(p_77659_1_, p_77659_2_, blockpos, blockpos, ((BlockRayTraceResult) raytraceresult).func_216354_b(), itemstack, dummyFluid.func_204524_b());
-+                  if (event.isCancelled()) {
-+                     ((ServerPlayerEntity) p_77659_2_).field_71135_a.func_147359_a(new SChangeBlockPacket(p_77659_1_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
-+                     ((ServerPlayerEntity) p_77659_2_).getBukkitEntity().updateInventory(); // SPIGOT-4541
-+                     return new ActionResult<>(ActionResultType.FAIL, itemstack);
-+                  }
-+                  // CraftBukkit end
+@@ -56,7 +_,10 @@
                    Fluid fluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(p_77659_1_, blockpos, blockstate1);
                    if (fluid != Fluids.field_204541_a) {
                       p_77659_2_.func_71029_a(Stats.field_75929_E.func_199076_b(this));
 -                     p_77659_2_.func_184185_a(fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M, 1.0F, 1.0F);
--                     ItemStack itemstack1 = DrinkHelper.func_242398_a(itemstack, p_77659_2_, new ItemStack(fluid.func_204524_b()));
 +
 +                     SoundEvent soundevent = this.field_77876_a.getAttributes().getFillSound();
 +                     if (soundevent == null) soundevent = fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M;
 +                     p_77659_2_.func_184185_a(soundevent, 1.0F, 1.0F);
-+                     ItemStack itemstack1 = DrinkHelper.func_242398_a(itemstack, p_77659_2_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+                      ItemStack itemstack1 = DrinkHelper.func_242398_a(itemstack, p_77659_2_, new ItemStack(fluid.func_204524_b()));
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
-                      }
 @@ -69,8 +_,8 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
