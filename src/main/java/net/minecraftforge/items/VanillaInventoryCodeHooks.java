@@ -55,8 +55,14 @@ public class VanillaInventoryCodeHooks
         Pair<IItemHandler, Object> itemHandlerResult = getItemHandler(dest, EnumFacing.UP);
         if (itemHandlerResult == null)
             return null;
-		if (itemHandlerResult.getValue() instanceof IInventory)
-			return null;
+
+		    /* Not found in original forge repository (1.12.x/file commit 0683971).
+		    Adds dupes with tileentity with (not sure) crafting matrix inventories (e.g Tinkers's Construct Crafting Tool Table).
+		    If this lines is fixing some bugs - will try find more better solution.
+
+		    if (itemHandlerResult.getValue() instanceof IInventory)
+			      return null;
+			  */
 
         IItemHandler handler = itemHandlerResult.getKey();
 
