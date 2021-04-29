@@ -21,6 +21,8 @@ assignees: ''
 
 **Mohist Version :** {Provide Mohist build number}
 
+**Operating System :** {Provide the name of your OS}
+
 **Concerned mod / plugin** : {Provide mod / plugin name and download link if possible}
 
 **Logs :** {Link(s) of logs and crash reports if you have}
