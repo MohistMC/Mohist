@@ -1997,6 +1997,11 @@ public final class CraftServer implements Server {
         }
 
         @Override
+        public YamlConfiguration getPaperConfig() {
+            return com.destroystokyo.paper.PaperConfig.config;
+        }
+
+        @Override
         public void restart() {
             org.spigotmc.RestartCommand.restart();
         }

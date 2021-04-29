@@ -111,7 +111,7 @@
 +   public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
 +   public boolean pehkuiExplosionFire = false; // Mohist - Fix Pehkui Startup (#1324)
 +
-+   public final co.aikar.timings.WorldTimingsHandler timings; // Spigot
++   public final co.aikar.timings.WorldTimingsHandler timings; // Paper
 +
 +   public CraftWorld getWorld(){
 +      return this.craftWorld;

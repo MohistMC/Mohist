@@ -48,7 +48,7 @@
     private BlockState field_195045_e;
     private boolean field_222816_g;
 +   private CompoundNBT customTileData;
-+   public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Spigot
++   public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Paper
  
     public TileEntity(TileEntityType<?> p_i48289_1_) {
 +      super(TileEntity.class);
