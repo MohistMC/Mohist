@@ -21,6 +21,8 @@ assignees: ''
 
 **Mohist Version :** {Provide Mohist build number}
 
+**Operating System :** {Provide the name of your OS}
+
 **Logs :** {Link(s) of logs and crash reports if you have}
 
 **Mod list :** {List of your mods. You can also use /getmodlist command on your server)
