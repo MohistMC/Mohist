@@ -56,7 +56,7 @@ public class DownloadJava {
                 prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javamac64.zip", "java");
         } else {
             if (os().equals("Windows"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/janawin32.zip", "java.exe");
+                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javawin32.zip", "java.exe");
             else if (os().equals("Unix"))
                 prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javalinux32.zip", "java");
         }
