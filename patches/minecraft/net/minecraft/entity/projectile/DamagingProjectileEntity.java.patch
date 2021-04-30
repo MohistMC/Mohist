@@ -60,7 +60,7 @@
           Entity entity = p_70097_1_.func_76346_g();
           if (entity != null) {
 +            // CraftBukkit start
-+            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_)) {
++            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false)) {
 +               return false;
 +            }
 +            // CraftBukkit end
