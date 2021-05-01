@@ -12,13 +12,15 @@
  
  public class BlockGrass extends Block implements IGrowable
  {
-@@ -38,9 +43,19 @@
+@@ -38,14 +43,32 @@
      {
          if (!p_180650_1_.field_72995_K)
          {
 -            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_185891_c() > 2)
 +            if (!p_180650_1_.func_175697_a(p_180650_2_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
-+            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
++            //if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2)
++            int lightLevel = -1;
++            if (p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2 && (lightLevel = p_180650_1_.func_175671_l(p_180650_2_.func_177984_a())) < 4) // Paper - move light check to end to avoid unneeded light lookups
              {
 -                p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
 +                    org.bukkit.World bworld = p_180650_1_.getWorld();
@@ -34,12 +36,24 @@
              }
              else
              {
-@@ -58,9 +73,19 @@
+-                if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) >= 9)
++                //if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
++                // Paper start
++                if (lightLevel == -1) {
++                    lightLevel = p_180650_1_.func_175671_l(p_180650_2_.func_177984_a());
++                }
++                if (lightLevel >= 9)
+                 {
++                    // Paper end
+                     for (int i = 0; i < 4; ++i)
+                     {
+                         BlockPos blockpos = p_180650_2_.func_177982_a(p_180650_4_.nextInt(3) - 1, p_180650_4_.nextInt(5) - 3, p_180650_4_.nextInt(3) - 1);
+@@ -58,9 +81,19 @@
                          IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos.func_177984_a());
                          IBlockState iblockstate1 = p_180650_1_.func_180495_p(blockpos);
  
 -                        if (iblockstate1.func_177230_c() == Blocks.field_150346_d && iblockstate1.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate.func_185891_c() <= 2)
-+                        if (iblockstate1.func_177230_c() == Blocks.field_150346_d && iblockstate1.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate.getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) <= 2)
++                        if (iblockstate1.func_177230_c() == Blocks.field_150346_d && iblockstate1.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && iblockstate.getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) <= 2 && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4) // Paper - move last check before isLightLevel to avoid unneeded light checks
                          {
 -                            p_180650_1_.func_175656_a(blockpos, Blocks.field_150349_c.func_176223_P());
 +//                            worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState());
@@ -56,7 +70,7 @@
                          }
                      }
                  }
-@@ -96,18 +121,11 @@
+@@ -96,18 +129,11 @@
              {
                  if (j >= i / 16)
                  {
@@ -77,7 +91,7 @@
                          }
                          else
                          {
-@@ -115,7 +133,8 @@
+@@ -115,7 +141,8 @@
  
                              if (Blocks.field_150329_H.func_180671_f(p_176474_1_, blockpos1, iblockstate1))
                              {

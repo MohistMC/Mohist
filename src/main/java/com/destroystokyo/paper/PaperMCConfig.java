@@ -5,6 +5,11 @@ import co.aikar.timings.TimingsManager;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -16,10 +21,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PaperMCConfig {
 
@@ -309,5 +310,11 @@ public class PaperMCConfig {
             maxBookPageSize = 2560;
             maxBookTotalSizeMultiplier = 0.98D;
         }
+    }
+
+    public static boolean queueLightUpdates;
+    private static void queueLightUpdates() {
+        queueLightUpdates = getBoolean("queue-light-updates", false);
+        log("Lighting Queue enabled: " + queueLightUpdates);
     }
 }
