@@ -388,8 +388,13 @@ project(':forge') {
         // spigot
         installer 'net.md-5:bungeecord-chat:1.16-R0.4'
 
-        // paper
+        // Paper start
         //installer 'co.aikar:cleaner:1.0-SNAPSHOT'
+        installer 'net.kyori:adventure-api:4.7.0'
+        installer 'net.kyori:adventure-text-serializer-gson:4.7.0'
+        installer 'net.kyori:adventure-text-serializer-legacy:4.7.0'
+        installer 'net.kyori:adventure-text-serializer-plain:4.7.0'
+        // Paper end
 
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
