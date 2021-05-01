@@ -13,8 +13,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
@@ -204,5 +207,29 @@ public final class MCUtil {
 
     public static World getNMSWorld(@Nonnull org.bukkit.entity.Entity entity) {
         return getNMSWorld(entity.getWorld());
+    }
+
+    /**
+     * Gets a chunk without changing its boolean for should unload
+     * @param world
+     * @param x chunkX
+     * @param z chunkZ
+     * @return
+     */
+    @Nullable
+    public static Chunk getLoadedChunkWithoutMarkingActive(World world, int x, int z) {
+        return ((ChunkProviderServer) world.chunkProvider).id2ChunkMap.get(ChunkPos.asLong(x, z));
+    }
+
+    /**
+     * Gets a chunk without changing its boolean for should unload
+     * @param provider
+     * @param x chunkX
+     * @param z chunkZ
+     * @return
+     */
+    @Nullable
+    public static Chunk getLoadedChunkWithoutMarkingActive(IChunkProvider provider, int x, int z) {
+        return ((ChunkProviderServer) provider).id2ChunkMap.get(ChunkPos.asLong(x, z));
     }
 }
