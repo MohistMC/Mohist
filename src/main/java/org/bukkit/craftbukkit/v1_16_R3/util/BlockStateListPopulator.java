@@ -44,7 +44,9 @@ public class BlockStateListPopulator extends DummyGeneratorAccess {
         // Paper end
         CraftBlockState state = CraftBlockState.getBlockState(world, pos, flags);
         state.setData(newState);
-        list.put(pos, state);
+        // remove first to keep insertion order
+        list.remove(pos);
+        list.put(pos.immutable(), state);
         return true;
     }
 
