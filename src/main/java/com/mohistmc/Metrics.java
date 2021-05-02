@@ -87,7 +87,12 @@ public class Metrics {
 
 
     private void startSubmitting() {
-        MohistThreadBox.METRICS.scheduleAtFixedRate(this::submitData, 1000 * 60 * 5, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
+        MohistThreadBox.METRICS.scheduleAtFixedRate(() -> {
+            if (MinecraftServer.getServer().hasStopped()) {
+                return;
+            }
+            submitData();
+        }, 1000 * 60 * 5, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
     }
 
     public JSONObject getPluginData() {

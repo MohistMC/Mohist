@@ -429,7 +429,7 @@
  
     }
  
-@@ -605,29 +_,55 @@
+@@ -605,29 +_,56 @@
           try {
              this.field_175590_aa.join();
           } catch (InterruptedException interruptedexception) {
@@ -458,6 +458,7 @@
              this.func_184107_a(this.field_147147_p);
  
 +            // Spigot start
++            org.spigotmc.WatchdogThread.hasStarted = true; // Paper
 +            Arrays.fill( recentTps, 20 );
 +            long curTime, tickSection = Util.func_211177_b(), tickCount = 1;
              while(this.field_71317_u) {
