@@ -131,11 +131,10 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,9 +_,53 @@
+@@ -173,35 +_,152 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
--
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +
 +   // CraftBukkit start
@@ -169,10 +168,35 @@
 +   public Chunk getChunkIfLoaded(int x, int z) {
 +      return this.field_241102_C_.func_217205_a(x, z, false);
 +   }
-+
-+   // Add env and gen to constructor,
+ 
     public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_) {
        super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
+-      this.field_241107_Q_ = p_i241885_13_;
+-      this.field_73061_a = p_i241885_1_;
+-      this.field_241104_N_ = p_i241885_12_;
+-      this.field_241103_E_ = p_i241885_4_;
+-      this.field_241102_C_ = new ServerChunkProvider(this, p_i241885_3_, p_i241885_1_.func_195563_aC(), p_i241885_1_.func_240792_aT_(), p_i241885_2_, p_i241885_8_, p_i241885_1_.func_184103_al().func_72395_o(), p_i241885_1_.func_230540_aS_(), p_i241885_7_, () -> {
+-         return p_i241885_1_.func_241755_D_().func_217481_x();
+-      });
+-      this.field_85177_Q = new Teleporter(this);
+-      this.func_72966_v();
+-      this.func_72947_a();
+-      this.func_175723_af().func_177725_a(p_i241885_1_.func_175580_aG());
+-      this.field_217494_c = this.func_217481_x().func_215752_a(() -> {
+-         return new RaidManager(this);
+-      }, RaidManager.func_234620_a_(this.func_230315_m_()));
+-      if (!p_i241885_1_.func_71264_H()) {
+-         p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
+-      }
+-
+-      this.field_241106_P_ = new StructureManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_());
+-      if (this.func_230315_m_().func_236046_h_()) {
+-         this.field_241105_O_ = new DragonFightManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_().func_236221_b_(), p_i241885_1_.func_240793_aU_().func_230402_B_());
+-      } else {
+-         this.field_241105_O_ = null;
+-      }
+-
+-   }
 +      this.pvpMode = p_i241885_1_.func_71219_W();
 +      convertable = p_i241885_3_;
 +      uuid = WorldUUID.getUUID(p_i241885_1_.field_71310_m.func_237291_a_(p_i241885_5_));
@@ -183,22 +207,80 @@
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
 +      // CraftBukkit end
-       this.field_241107_Q_ = p_i241885_13_;
-       this.field_73061_a = p_i241885_1_;
-       this.field_241104_N_ = p_i241885_12_;
-@@ -200,8 +_,39 @@
-       } else {
-          this.field_241105_O_ = null;
-       }
--
--   }
++      this.field_241107_Q_ = p_i241885_13_;
++      this.field_73061_a = p_i241885_1_;
++      this.field_241104_N_ = p_i241885_12_;
++      this.field_241103_E_ = p_i241885_4_;
++      this.field_241102_C_ = new ServerChunkProvider(this, p_i241885_3_, p_i241885_1_.func_195563_aC(), p_i241885_1_.func_240792_aT_(), p_i241885_2_, p_i241885_8_, p_i241885_1_.func_184103_al().func_72395_o(), p_i241885_1_.func_230540_aS_(), p_i241885_7_, () -> {
++         return p_i241885_1_.func_241755_D_().func_217481_x();
++      });
++      this.field_85177_Q = new Teleporter(this);
++      this.func_72966_v();
++      this.func_72947_a();
++      this.func_175723_af().func_177725_a(p_i241885_1_.func_175580_aG());
++      this.field_217494_c = this.func_217481_x().func_215752_a(() -> {
++         return new RaidManager(this);
++      }, RaidManager.func_234620_a_(this.func_230315_m_()));
++      if (!p_i241885_1_.func_71264_H()) {
++         p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
++      }
++
++      this.field_241106_P_ = new StructureManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_());
++      if (this.func_230315_m_().func_236046_h_()) {
++         this.field_241105_O_ = new DragonFightManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_().func_236221_b_(), p_i241885_1_.func_240793_aU_().func_230402_B_());
++      } else {
++         this.field_241105_O_ = null;
++      }
 +      this.initCapabilities();
 +      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;
 +      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +   }
 +
-+   // Mohist start - Add isPosLoaded method to IBlockReader
++   public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen) {
++      super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
++      setGeneratorAndEnv(gen, env);
++      this.pvpMode = p_i241885_1_.func_71219_W();
++      convertable = p_i241885_3_;
++      uuid = WorldUUID.getUUID(p_i241885_1_.field_71310_m.func_237291_a_(p_i241885_5_));
++      if (p_i241885_4_ instanceof ServerWorldInfo) {
++         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
++      }
++      if (generator != null) {
++         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
++      }
++      // CraftBukkit end
++      this.field_241107_Q_ = p_i241885_13_;
++      this.field_73061_a = p_i241885_1_;
++      this.field_241104_N_ = p_i241885_12_;
++      this.field_241103_E_ = p_i241885_4_;
++      this.field_241102_C_ = new ServerChunkProvider(this, p_i241885_3_, p_i241885_1_.func_195563_aC(), p_i241885_1_.func_240792_aT_(), p_i241885_2_, p_i241885_8_, p_i241885_1_.func_184103_al().func_72395_o(), p_i241885_1_.func_230540_aS_(), p_i241885_7_, () -> {
++         return p_i241885_1_.func_241755_D_().func_217481_x();
++      });
++      this.field_85177_Q = new Teleporter(this);
++      this.func_72966_v();
++      this.func_72947_a();
++      this.func_175723_af().func_177725_a(p_i241885_1_.func_175580_aG());
++      this.field_217494_c = this.func_217481_x().func_215752_a(() -> {
++         return new RaidManager(this);
++      }, RaidManager.func_234620_a_(this.func_230315_m_()));
++      if (!p_i241885_1_.func_71264_H()) {
++         p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
++      }
++
++      this.field_241106_P_ = new StructureManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_());
++      if (this.func_230315_m_().func_236046_h_()) {
++         this.field_241105_O_ = new DragonFightManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_().func_236221_b_(), p_i241885_1_.func_240793_aU_().func_230402_B_());
++      } else {
++         this.field_241105_O_ = null;
++      }
++      this.initCapabilities();
++      this.craftWorld = new CraftWorld(this, generator, environment);
++      func_175723_af().world = this;
++      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
++   }
++
++      // Mohist start - Add isPosLoaded method to IBlockReader
 +   @Override
 +   public boolean isPosLoaded(BlockPos pos) {
 +      return ChunkMcAPI.isBorderChunkLoaded(this, pos.func_177958_n() >> 4, pos.func_177952_p() >> 4); // Mohist - Rewrite isPosLoaded & Partially rewrite to use ChunkMcAPI
