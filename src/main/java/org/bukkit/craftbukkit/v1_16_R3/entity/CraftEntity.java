@@ -423,7 +423,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public void setVelocity(Vector velocity) {
         Preconditions.checkArgument(velocity != null, "velocity");
-        velocity.checkFinite();
+        // velocity.checkFinite(); // Mohist - Remove infinity check from setVelocity
         entity.setDeltaMovement(CraftVector.toNMS(velocity));
         entity.hurtMarked = true;
     }
