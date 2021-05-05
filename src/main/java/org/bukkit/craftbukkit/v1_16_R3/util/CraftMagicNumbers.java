@@ -57,6 +57,13 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     private CraftMagicNumbers() {}
 
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer() {
+        return io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC;
+    }
+    // Paper end
+
     public static BlockState getBlock(MaterialData material) {
         return getBlock(material.getItemType(), material.getData());
     }

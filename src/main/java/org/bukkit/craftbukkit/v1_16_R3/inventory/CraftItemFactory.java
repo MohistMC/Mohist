@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
+import net.minecraft.nbt.CompoundNBT;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -334,4 +335,11 @@ public final class CraftItemFactory implements ItemFactory {
     public Material updateMaterial(ItemMeta meta, Material material) throws IllegalArgumentException {
         return ((CraftMetaItem) meta).updateMaterial(material);
     }
+
+    // Paper start
+    public net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowItem> asHoverEvent(final ItemStack item, final java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowItem> op) {
+        final CompoundNBT tag = CraftItemStack.asNMSCopy(item).getTag();
+        return net.kyori.adventure.text.event.HoverEvent.showItem(op.apply(net.kyori.adventure.text.event.HoverEvent.ShowItem.of(item.getType().getKey(), item.getAmount(), io.papermc.paper.adventure.PaperAdventure.asBinaryTagHolder(tag))));
+    }
+    // Paper end
 }

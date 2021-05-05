@@ -17,6 +17,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
  */
 @Deprecated
 public interface UnsafeValues {
+    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer(); // Paper
 
     void reportTimings(); // Paper
     Material toLegacy(Material material);

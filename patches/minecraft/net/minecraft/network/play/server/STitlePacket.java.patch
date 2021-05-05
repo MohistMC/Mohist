@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/play/server/STitlePacket.java
++++ b/net/minecraft/network/play/server/STitlePacket.java
+@@ -12,6 +_,7 @@
+ public class STitlePacket implements IPacket<IClientPlayNetHandler> {
+    private STitlePacket.Type field_179812_a;
+    private ITextComponent field_179810_b;
++   public net.kyori.adventure.text.Component adventure$text; // Paper
+    private int field_179811_c;
+    private int field_179808_d;
+    private int field_179809_e;
+@@ -52,6 +_,11 @@
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+       p_148840_1_.func_179249_a(this.field_179812_a);
+       if (this.field_179812_a == STitlePacket.Type.TITLE || this.field_179812_a == STitlePacket.Type.SUBTITLE || this.field_179812_a == STitlePacket.Type.ACTIONBAR) {
++         // Paper start
++         if (this.adventure$text != null) {
++            p_148840_1_.writeComponent(this.adventure$text);
++         } else
++            // Paper end
+          p_148840_1_.func_179256_a(this.field_179810_b);
+       }
+ 

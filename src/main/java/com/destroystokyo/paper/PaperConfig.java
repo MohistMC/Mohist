@@ -222,8 +222,12 @@ public class PaperConfig {
                 " - Server Name: " + timingsServerName);
     }
 
-    public static String noPermissionMessage = "&cI'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.";
+    public static boolean useDisplayNameInQuit = false;
+    private static void useDisplayNameInQuit() {
+        useDisplayNameInQuit = getBoolean("use-display-name-in-quit-message", useDisplayNameInQuit);
+    }
 
+    public static String noPermissionMessage = "&cI'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.";
     private static void noPermissionMessage() {
         noPermissionMessage = ChatColor.translateAlternateColorCodes('&', getString("messages.no-permission", noPermissionMessage));
     }

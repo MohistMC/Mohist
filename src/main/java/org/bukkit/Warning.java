@@ -67,6 +67,7 @@ public @interface Warning {
          *     </ul>
          */
         public boolean printFor(@Nullable Warning warning) {
+            if (Boolean.getBoolean("paper.alwaysPrintWarningState")) return true; // Paper
             if (this == DEFAULT) {
                 return warning == null || warning.value();
             }

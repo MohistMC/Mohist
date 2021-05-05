@@ -3,6 +3,7 @@ package org.bukkit.entity;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Nameable;
@@ -25,15 +26,14 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a base entity in the world
  */
-public interface Entity extends Metadatable, CommandSender, Nameable, PersistentDataHolder {
+public interface Entity extends Metadatable, CommandSender, Nameable, PersistentDataHolder, net.kyori.adventure.text.event.HoverEventSource<net.kyori.adventure.text.event.HoverEvent.ShowEntity> { // Paper
 
     /**
      * Gets the entity's current position
      *
      * @return a new copy of Location containing the position of this entity
      */
-    @NotNull
-    public Location getLocation();
+    @NotNull Location getLocation();
 
     /**
      * Stores the entity's current position in the provided Location object.
@@ -45,37 +45,35 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @return The Location object provided or null
      */
     @Contract("null -> null; !null -> !null")
-    @Nullable
-    public Location getLocation(@Nullable Location loc);
+    @Nullable Location getLocation(@Nullable Location loc);
 
     /**
      * Sets this entity's velocity in meters per tick
      *
      * @param velocity New velocity to travel with
      */
-    public void setVelocity(@NotNull Vector velocity);
+    void setVelocity(@NotNull Vector velocity);
 
     /**
      * Gets this entity's current velocity
      *
      * @return Current traveling velocity of this entity
      */
-    @NotNull
-    public Vector getVelocity();
+    @NotNull Vector getVelocity();
 
     /**
      * Gets the entity's height
      *
      * @return height of entity
      */
-    public double getHeight();
+    double getHeight();
 
     /**
      * Gets the entity's width
      *
      * @return width of entity
      */
-    public double getWidth();
+    double getWidth();
 
     /**
      * Gets the entity's current bounding box.
@@ -85,8 +83,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return the entity's current bounding box
      */
-    @NotNull
-    public BoundingBox getBoundingBox();
+    @NotNull BoundingBox getBoundingBox();
 
     /**
      * Returns true if the entity is supported by a block. This value is a
@@ -96,33 +93,32 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @return True if entity is on ground.
      * @see Player#isOnGround()
      */
-    public boolean isOnGround();
+    boolean isOnGround();
 
     /**
      * Returns true if the entity is in water.
      *
      * @return <code>true</code> if the entity is in water.
      */
-    public boolean isInWater();
+    boolean isInWater();
 
     /**
      * Gets the current world this entity resides in
      *
      * @return World
      */
-    @NotNull
-    public World getWorld();
+    @NotNull World getWorld();
 
     /**
      * Sets the entity's rotation.
      * <p>
      * Note that if the entity is affected by AI, it may override this rotation.
      *
-     * @param yaw the yaw
+     * @param yaw   the yaw
      * @param pitch the pitch
      * @throws UnsupportedOperationException if used for players
      */
-    public void setRotation(float yaw, float pitch);
+    void setRotation(float yaw, float pitch);
 
     /**
      * Teleports this entity to the given location. If this entity is riding a
@@ -131,17 +127,17 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @param location New location to teleport this entity to
      * @return <code>true</code> if the teleport was successful
      */
-    public boolean teleport(@NotNull Location location);
+    boolean teleport(@NotNull Location location);
 
     /**
      * Teleports this entity to the given location. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param location New location to teleport this entity to
-     * @param cause The cause of this teleportation
+     * @param cause    The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
-    public boolean teleport(@NotNull Location location, @NotNull TeleportCause cause);
+    boolean teleport(@NotNull Location location, @NotNull TeleportCause cause);
 
     /**
      * Teleports this entity to the target Entity. If this entity is riding a
@@ -150,17 +146,17 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @param destination Entity to teleport this entity to
      * @return <code>true</code> if the teleport was successful
      */
-    public boolean teleport(@NotNull Entity destination);
+    boolean teleport(@NotNull Entity destination);
 
     /**
      * Teleports this entity to the target Entity. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param destination Entity to teleport this entity to
-     * @param cause The cause of this teleportation
+     * @param cause       The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
-    public boolean teleport(@NotNull Entity destination, @NotNull TeleportCause cause);
+    boolean teleport(@NotNull Entity destination, @NotNull TeleportCause cause);
 
     /**
      * Returns a list of entities within a bounding box centered around this
@@ -171,15 +167,14 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @param z 1/2 the size of the box along z axis
      * @return {@code List<Entity>} List of entities nearby
      */
-    @NotNull
-    public List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z);
+    @NotNull List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z);
 
     /**
      * Returns a unique id for this entity
      *
      * @return Entity id
      */
-    public int getEntityId();
+    int getEntityId();
 
     /**
      * Returns the entity's current fire ticks (ticks before the entity stops
@@ -187,14 +182,14 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return int fireTicks
      */
-    public int getFireTicks();
+    int getFireTicks();
 
     /**
      * Returns the entity's maximum fire ticks.
      *
      * @return int maxFireTicks
      */
-    public int getMaxFireTicks();
+    int getMaxFireTicks();
 
     /**
      * Sets the entity's current fire ticks (ticks before the entity stops
@@ -202,19 +197,19 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @param ticks Current ticks remaining
      */
-    public void setFireTicks(int ticks);
+    void setFireTicks(int ticks);
 
     /**
      * Mark the entity's removal.
      */
-    public void remove();
+    void remove();
 
     /**
      * Returns true if this entity has been marked for removal.
      *
      * @return True if it is dead.
      */
-    public boolean isDead();
+    boolean isDead();
 
     /**
      * Returns false if the entity has died or been despawned for some other
@@ -222,7 +217,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return True if valid.
      */
-    public boolean isValid();
+    boolean isValid();
 
     /**
      * Gets the {@link Server} that contains this Entity
@@ -230,8 +225,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @return Server instance running this Entity
      */
     @Override
-    @NotNull
-    public Server getServer();
+    @NotNull Server getServer();
 
     /**
      * Returns true if the entity gets persisted.
@@ -250,7 +244,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return true if this entity is persistent
      */
-    public boolean isPersistent();
+    boolean isPersistent();
 
     /**
      * Sets whether or not the entity gets persisted.
@@ -258,7 +252,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @param persistent the persistence status
      * @see #isPersistent()
      */
-    public void setPersistent(boolean persistent);
+    void setPersistent(boolean persistent);
 
     /**
      * Gets the primary passenger of a vehicle. For vehicles that could have
@@ -269,8 +263,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * {@link #getPassengers()}
      */
     @Deprecated
-    @Nullable
-    public Entity getPassenger();
+    @Nullable Entity getPassenger();
 
     /**
      * Set the passenger of a vehicle.
@@ -281,7 +274,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * {@link #addPassenger(org.bukkit.entity.Entity)}
      */
     @Deprecated
-    public boolean setPassenger(@NotNull Entity passenger);
+    boolean setPassenger(@NotNull Entity passenger);
 
     /**
      * Gets a list of passengers of this vehicle.
@@ -291,8 +284,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return list of entities corresponding to current passengers.
      */
-    @NotNull
-    public List<Entity> getPassengers();
+    @NotNull List<Entity> getPassengers();
 
     /**
      * Add a passenger to the vehicle.
@@ -300,7 +292,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @param passenger The passenger to add
      * @return false if it could not be done for whatever reason
      */
-    public boolean addPassenger(@NotNull Entity passenger);
+    boolean addPassenger(@NotNull Entity passenger);
 
     /**
      * Remove a passenger from the vehicle.
@@ -308,60 +300,58 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @param passenger The passenger to remove
      * @return false if it could not be done for whatever reason
      */
-    public boolean removePassenger(@NotNull Entity passenger);
+    boolean removePassenger(@NotNull Entity passenger);
 
     /**
      * Check if a vehicle has passengers.
      *
      * @return True if the vehicle has no passengers.
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /**
      * Eject any passenger.
      *
      * @return True if there was a passenger.
      */
-    public boolean eject();
+    boolean eject();
 
     /**
      * Returns the distance this entity has fallen
      *
      * @return The distance.
      */
-    public float getFallDistance();
+    float getFallDistance();
 
     /**
      * Sets the fall distance for this entity
      *
      * @param distance The new distance.
      */
-    public void setFallDistance(float distance);
+    void setFallDistance(float distance);
 
     /**
      * Record the last {@link EntityDamageEvent} inflicted on this entity
      *
      * @param event a {@link EntityDamageEvent}
      */
-    public void setLastDamageCause(@Nullable EntityDamageEvent event);
+    void setLastDamageCause(@Nullable EntityDamageEvent event);
 
     /**
      * Retrieve the last {@link EntityDamageEvent} inflicted on this entity.
      * This event may have been cancelled.
      *
      * @return the last known {@link EntityDamageEvent} or null if hitherto
-     *     unharmed
+     * unharmed
      */
-    @Nullable
-    public EntityDamageEvent getLastDamageCause();
+    @Nullable EntityDamageEvent getLastDamageCause();
 
     /**
      * Returns a unique and persistent id for this entity
      *
      * @return unique id
      */
-    @NotNull
-    public UUID getUniqueId();
+    @NotNull UUID getUniqueId();
 
     /**
      * Gets the amount of ticks this entity has lived for.
@@ -370,7 +360,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return Age of entity
      */
-    public int getTicksLived();
+    int getTicksLived();
 
     /**
      * Sets the amount of ticks this entity has lived for.
@@ -380,7 +370,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @param value Age of entity
      */
-    public void setTicksLived(int value);
+    void setTicksLived(int value);
 
     /**
      * Performs the specified {@link EntityEffect} for this entity.
@@ -391,22 +381,21 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @param type Effect to play.
      */
-    public void playEffect(@NotNull EntityEffect type);
+    void playEffect(@NotNull EntityEffect type);
 
     /**
      * Get the type of the entity.
      *
      * @return The entity type.
      */
-    @NotNull
-    public EntityType getType();
+    @NotNull EntityType getType();
 
     /**
      * Returns whether this entity is inside a vehicle.
      *
      * @return True if the entity is in a vehicle.
      */
-    public boolean isInsideVehicle();
+    boolean isInsideVehicle();
 
     /**
      * Leave the current vehicle. If the entity is currently in a vehicle (and
@@ -415,7 +404,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return True if the entity was in a vehicle.
      */
-    public boolean leaveVehicle();
+    boolean leaveVehicle();
 
     /**
      * Get the vehicle that this player is inside. If there is no vehicle,
@@ -423,8 +412,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return The current vehicle.
      */
-    @Nullable
-    public Entity getVehicle();
+    @Nullable Entity getVehicle();
 
     /**
      * Sets whether or not to display the mob's custom name client side. The
@@ -435,7 +423,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @param flag custom name or not
      */
-    public void setCustomNameVisible(boolean flag);
+    void setCustomNameVisible(boolean flag);
 
     /**
      * Gets whether or not the mob's custom name is displayed client side.
@@ -445,7 +433,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return if the custom name is displayed
      */
-    public boolean isCustomNameVisible();
+    boolean isCustomNameVisible();
 
     /**
      * Sets whether the entity has a team colored (default: white) glow.
@@ -475,21 +463,21 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @param flag if the entity is invulnerable
      */
-    public void setInvulnerable(boolean flag);
+    void setInvulnerable(boolean flag);
 
     /**
      * Gets whether the entity is invulnerable or not.
      *
      * @return whether the entity is
      */
-    public boolean isInvulnerable();
+    boolean isInvulnerable();
 
     /**
      * Gets whether the entity is silent or not.
      *
      * @return whether the entity is silent.
      */
-    public boolean isSilent();
+    boolean isSilent();
 
     /**
      * Sets whether the entity is silent or not.
@@ -498,7 +486,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @param flag if the entity is silent
      */
-    public void setSilent(boolean flag);
+    void setSilent(boolean flag);
 
     /**
      * Returns whether gravity applies to this entity.
@@ -594,7 +582,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     Pose getPose();
 
     // Spigot start
-    public class Spigot extends CommandSender.Spigot {
+    class Spigot extends CommandSender.Spigot {
 
     }
 
@@ -602,4 +590,12 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     @Override
     Spigot spigot();
     // Spigot end
+
+    // Paper start
+    @NotNull
+    @Override
+    default net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowEntity> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowEntity> op) {
+        return net.kyori.adventure.text.event.HoverEvent.showEntity(op.apply(net.kyori.adventure.text.event.HoverEvent.ShowEntity.of(this.getType().getKey(), this.getUniqueId(), this.customName())));
+    }
+    // Paper end
 }

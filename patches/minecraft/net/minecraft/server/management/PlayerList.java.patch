@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/management/PlayerList.java
 +++ b/net/minecraft/server/management/PlayerList.java
-@@ -1,23 +_,36 @@
+@@ -1,23 +_,40 @@
  package net.minecraft.server.management;
  
 +import co.aikar.timings.MinecraftTimings;
@@ -30,6 +30,10 @@
  import java.util.UUID;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
++
++import io.papermc.paper.adventure.PaperAdventure;
++import net.kyori.adventure.text.Component;
++import net.md_5.bungee.api.ChatMessageType;
  import net.minecraft.advancements.PlayerAdvancements;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -119,7 +123,7 @@
 +   // CraftBukkit start
 +   private CraftServer cserver;
 +   private final Map<String,ServerPlayerEntity> playersByName = new java.util.HashMap<>(); // Spigot
-+   private String quitMessage; // Mohist
++   private Component quitMessage; // Mohist
 +
  
     public PlayerList(MinecraftServer p_i231425_1_, DynamicRegistries.Impl p_i231425_2_, PlayerData p_i231425_3_, int p_i231425_4_) {
@@ -205,7 +209,7 @@
           iformattabletextcomponent = new TranslationTextComponent("multiplayer.player.joined.renamed", p_72355_2_.func_145748_c_(), s);
        }
 +      iformattabletextcomponent.func_240699_a_(TextFormatting.YELLOW);
-+      String joinMessage = CraftChatMessage.fromComponent(iformattabletextcomponent);
++      ITextComponent joinMessage = iformattabletextcomponent; // Paper - Adventure
  
 -      this.func_232641_a_(iformattabletextcomponent.func_240699_a_(TextFormatting.YELLOW), ChatType.SYSTEM, Util.field_240973_b_);
        serverplaynethandler.func_147364_a(p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_(), p_72355_2_.field_70177_z, p_72355_2_.field_70125_A);
@@ -217,16 +221,16 @@
 +      // this.broadcastAll(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, p_72355_2_));
 +
 +      // CraftBukkit start
-+      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(cserver.getPlayer(p_72355_2_), joinMessage);
++      PlayerJoinEvent playerJoinEvent = new org.bukkit.event.player.PlayerJoinEvent(cserver.getPlayer(p_72355_2_), PaperAdventure.asAdventure(iformattabletextcomponent)); // Paper - Adventure
 +      cserver.getPluginManager().callEvent(playerJoinEvent);
 +      if (!p_72355_2_.field_71135_a.field_147371_a.func_150724_d()) {
 +         return;
 +      }
-+      joinMessage = playerJoinEvent.getJoinMessage();
-+      if (joinMessage != null && joinMessage.length() > 0) {
-+         for (ITextComponent line : org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromString(joinMessage)) {
-+            field_72400_f.func_184103_al().func_148540_a(new SChatPacket(line, ChatType.SYSTEM, Util.field_240973_b_));
-+         }
++      final net.kyori.adventure.text.Component jm = playerJoinEvent.joinMessage();
++
++      if (jm != null && !jm.equals(net.kyori.adventure.text.Component.empty())) { // Paper - Adventure
++         joinMessage = PaperAdventure.asVanilla(jm); // Paper - Adventure
++         field_72400_f.func_184103_al().func_148540_a(new SChatPacket(joinMessage, ChatType.SYSTEM, Util.field_240973_b_)); // Paper - Adventure
 +      }
 +      // CraftBukkit end
 +      // CraftBukkit start - sendAll above replaced with this loop
@@ -322,9 +326,9 @@
  
     }
  
-+   public String disconnect(ServerPlayerEntity playerIn) {
++   public net.kyori.adventure.text.Component disconnect(ServerPlayerEntity playerIn) { // Paper - return Component
 +      func_72367_e(playerIn);
-+      return quitMessage;
++      return quitMessage; // Paper - Adventure
 +   }
 +
     public void func_72367_e(ServerPlayerEntity p_72367_1_) {
@@ -337,7 +341,7 @@
 +      if (p_72367_1_.field_71070_bA != p_72367_1_.field_71069_bz) {
 +         p_72367_1_.func_71053_j();
 +      }
-+      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(p_72367_1_), "\u00A7e" + p_72367_1_.func_195047_I_() + " left the game");
++      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(p_72367_1_), net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, com.destroystokyo.paper.PaperConfig.useDisplayNameInQuit ? p_72367_1_.getBukkitEntity().displayName() : net.kyori.adventure.text.Component.text(p_72367_1_.func_200200_C_().getString())));
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      p_72367_1_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +      p_72367_1_.func_71127_g(); // SPIGOT-924
@@ -382,7 +386,7 @@
 +      cserver.getScoreboardManager().removePlayer(p_72367_1_.getBukkitEntity());
 +      // CraftBukkit end
 +
-+      this.quitMessage = playerQuitEvent.getQuitMessage(); // CraftBukkit
++      this.quitMessage = playerQuitEvent.quitMessage(); // CraftBukkit
     }
  
 -   @Nullable
@@ -425,9 +429,9 @@
 -      } else if (this.field_72413_h.func_152708_a(p_206258_1_)) {
 -         IPBanEntry ipbanentry = this.field_72413_h.func_152709_b(p_206258_1_);
 -         IFormattableTextComponent iformattabletextcomponent = new TranslationTextComponent("multiplayer.disconnect.banned_ip.reason", ipbanentry.func_73686_f());
-+         if (!profilebanentry.func_73682_e()) event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(iformattabletextcomponent1));
++         if (!profilebanentry.func_73682_e()) event.disallow(PlayerLoginEvent.Result.KICK_BANNED, PaperAdventure.asAdventure(iformattabletextcomponent1)); // Spigot // Paper - Adventure
 +      } else if (!this.func_152607_e(gameProfile)) {
-+         event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
++         event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, PaperAdventure.LEGACY_SECTION_UXRC.deserialize(org.spigotmc.SpigotConfig.whitelistMessage)); // Spigot // Paper - Adventure
 +      } else if (func_72363_f().func_152708_a(socketaddress) && !func_72363_f().func_152709_b(socketaddress).func_73682_e()) {
 +         IPBanEntry ipbanentry = this.field_72413_h.func_152709_b(socketaddress);
 +         iformattabletextcomponent1 = new TranslationTextComponent("multiplayer.disconnect.banned_ip.reason", ipbanentry.func_73686_f());
@@ -437,17 +441,17 @@
           }
 -
 -         return iformattabletextcomponent;
-+         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(iformattabletextcomponent1));
++         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, PaperAdventure.asAdventure(iformattabletextcomponent1)); // Paper - Adventure
        } else {
 -         return this.field_72404_b.size() >= this.field_72405_c && !this.func_183023_f(p_206258_2_) ? new TranslationTextComponent("multiplayer.disconnect.server_full") : null;
 -      }
 +         if (this.field_72404_b.size() >= this.field_72405_c && !this.func_183023_f(gameProfile)) {
-+            event.disallow(PlayerLoginEvent.Result.KICK_FULL,  org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
++            event.disallow(PlayerLoginEvent.Result.KICK_FULL, PaperAdventure.LEGACY_SECTION_UXRC.deserialize(org.spigotmc.SpigotConfig.serverFullMessage)); // Spigot // Paper - Adventure
 +         }
 +      }
 +      cserver.getPluginManager().callEvent(event);
 +      if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-+         netHandler.disconnect(event.getKickMessage());
++         netHandler.func_194026_b(PaperAdventure.asVanilla(event.kickMessage())); // Paper - Adventure
 +         return null;
 +      }
 +      return entity;
@@ -796,26 +800,32 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -728,25 +_,44 @@
+@@ -728,25 +_,48 @@
     }
  
     public void func_72392_r() {
 -      for(int i = 0; i < this.field_72404_b.size(); ++i) {
 -         (this.field_72404_b.get(i)).field_71135_a.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.server_shutdown"));
+-      }
+-
 +      // CraftBukkit start - disconnect safely
 +      for (ServerPlayerEntity player : field_72404_b) {
-+         player.field_71135_a.disconnect(this.field_72400_f.server.getShutdownMessage());
-       }
++         player.field_71135_a.func_194028_b(PaperAdventure.asVanilla(this.field_72400_f.server.shutdownMessage())); // CraftBukkit - add custom shutdown message // Paper - Adventure
++      }
 +      // CraftBukkit end
 +   }
- 
++
 +   // CraftBukkit start
 +   public void sendMessage(ITextComponent[] components) {
 +      for (ITextComponent component : components) {
 +         func_232641_a_(component, ChatType.SYSTEM, Util.field_240973_b_);
 +      }
-    }
++   }
 +   // CraftBukkit end
++
++   public void sendMessage(ITextComponent components) {
++      this.func_232641_a_(components, ChatType.SYSTEM, Util.field_240973_b_);
+    }
  
     public void func_232641_a_(ITextComponent p_232641_1_, ChatType p_232641_2_, UUID p_232641_3_) {
        this.field_72400_f.func_145747_a(p_232641_1_, p_232641_3_);

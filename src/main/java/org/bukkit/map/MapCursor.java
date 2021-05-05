@@ -10,46 +10,46 @@ public final class MapCursor {
     private byte x, y;
     private byte direction, type;
     private boolean visible;
-    private String caption;
+    private net.kyori.adventure.text.Component caption; // Paper
 
     /**
      * Initialize the map cursor.
      *
-     * @param x The x coordinate, from -128 to 127.
-     * @param y The y coordinate, from -128 to 127.
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
      * @param direction The facing of the cursor, from 0 to 15.
-     * @param type The type (color/style) of the map cursor.
-     * @param visible Whether the cursor is visible by default.
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
      * @deprecated Magic value
      */
     @Deprecated
     public MapCursor(byte x, byte y, byte direction, byte type, boolean visible) {
-        this(x, y, direction, type, visible, null);
+        this(x, y, direction, type, visible, (String) null); // Paper
     }
 
     /**
      * Initialize the map cursor.
      *
-     * @param x The x coordinate, from -128 to 127.
-     * @param y The y coordinate, from -128 to 127.
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
      * @param direction The facing of the cursor, from 0 to 15.
-     * @param type The type (color/style) of the map cursor.
-     * @param visible Whether the cursor is visible by default.
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
      */
     public MapCursor(byte x, byte y, byte direction, @NotNull Type type, boolean visible) {
-        this(x, y, direction, type, visible, null);
+        this(x, y, direction, type, visible, (String) null); // Paper
     }
 
     /**
      * Initialize the map cursor.
      *
-     * @param x The x coordinate, from -128 to 127.
-     * @param y The y coordinate, from -128 to 127.
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
      * @param direction The facing of the cursor, from 0 to 15.
-     * @param type The type (color/style) of the map cursor.
-     * @param visible Whether the cursor is visible by default.
-     * @param caption cursor caption
-     * @deprecated Magic value
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
+     * @param caption   cursor caption
+     * @deprecated Magic value. Use {@link #MapCursor(byte, byte, byte, byte, boolean, net.kyori.adventure.text.Component)}
      */
     @Deprecated
     public MapCursor(byte x, byte y, byte direction, byte type, boolean visible, @Nullable String caption) {
@@ -58,18 +58,60 @@ public final class MapCursor {
         setDirection(direction);
         setRawType(type);
         this.visible = visible;
+        this.caption = caption == null ? null : org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(caption); // Paper
+    }
+    // Paper start
+
+    /**
+     * Initialize the map cursor.
+     *
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
+     * @param direction The facing of the cursor, from 0 to 15.
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
+     * @param caption   cursor caption
+     * @deprecated Magic value
+     */
+    @Deprecated
+    public MapCursor(byte x, byte y, byte direction, byte type, boolean visible, @Nullable net.kyori.adventure.text.Component caption) {
+        this.x = x;
+        this.y = y;
+        this.visible = visible;
         this.caption = caption;
+        setDirection(direction);
+        setRawType(type);
     }
 
     /**
      * Initialize the map cursor.
      *
-     * @param x The x coordinate, from -128 to 127.
-     * @param y The y coordinate, from -128 to 127.
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
      * @param direction The facing of the cursor, from 0 to 15.
-     * @param type The type (color/style) of the map cursor.
-     * @param visible Whether the cursor is visible by default.
-     * @param caption cursor caption
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
+     * @param caption   cursor caption
+     */
+    public MapCursor(byte x, byte y, byte direction, @NotNull Type type, boolean visible, @Nullable net.kyori.adventure.text.Component caption) {
+        this.x = x;
+        this.y = y;
+        this.visible = visible;
+        this.caption = caption;
+        setDirection(direction);
+        setType(type);
+    }
+    // Paper end
+
+    /**
+     * Initialize the map cursor.
+     *
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
+     * @param direction The facing of the cursor, from 0 to 15.
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
+     * @param caption   cursor caption
      */
     public MapCursor(byte x, byte y, byte direction, @NotNull Type type, boolean visible, @Nullable String caption) {
         this.x = x;
@@ -77,7 +119,7 @@ public final class MapCursor {
         setDirection(direction);
         setType(type);
         this.visible = visible;
-        this.caption = caption;
+        this.caption = caption == null ? null : org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(caption); // Paper
     }
 
     /**
@@ -200,14 +242,15 @@ public final class MapCursor {
         this.visible = visible;
     }
 
+    // Paper start
+
     /**
      * Gets the caption on this cursor.
      *
      * @return caption
      */
-    @Nullable
-    public String getCaption() {
-        return caption;
+    public @Nullable net.kyori.adventure.text.Component caption() {
+        return this.caption;
     }
 
     /**
@@ -215,8 +258,32 @@ public final class MapCursor {
      *
      * @param caption new caption
      */
-    public void setCaption(@Nullable String caption) {
+    public void caption(@Nullable net.kyori.adventure.text.Component caption) {
         this.caption = caption;
+    }
+    // Paper end
+
+    /**
+     * Gets the caption on this cursor.
+     *
+     * @return caption
+     * @deprecated in favour of {@link #caption()}
+     */
+    @Nullable
+    @Deprecated // Paper
+    public String getCaption() {
+        return this.caption == null ? null : org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().serialize(this.caption); // Paper
+    }
+
+    /**
+     * Sets the caption on this cursor.
+     *
+     * @param caption new caption
+     * @deprecated in favour of {@link #caption(net.kyori.adventure.text.Component)}
+     */
+    @Deprecated // Paper
+    public void setCaption(@Nullable String caption) {
+        this.caption = caption == null ? null : org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(caption); // Paper
     }
 
     /**

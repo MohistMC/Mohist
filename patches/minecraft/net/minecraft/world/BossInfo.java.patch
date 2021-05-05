@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/BossInfo.java
 +++ b/net/minecraft/world/BossInfo.java
-@@ -6,10 +_,10 @@
+@@ -1,18 +_,21 @@
+ package net.minecraft.world;
+ 
+ import java.util.UUID;
++
++import io.papermc.paper.adventure.PaperAdventure;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TextFormatting;
  
  public abstract class BossInfo {
     private final UUID field_186756_h;
@@ -14,3 +21,83 @@
     protected boolean field_186753_e;
     protected boolean field_186754_f;
     protected boolean field_186755_g;
++   public net.kyori.adventure.bossbar.BossBar adventure; // Paper
+ 
+    public BossInfo(UUID p_i46824_1_, ITextComponent p_i46824_2_, BossInfo.Color p_i46824_3_, BossInfo.Overlay p_i46824_4_) {
+       this.field_186756_h = p_i46824_1_;
+@@ -27,61 +_,75 @@
+    }
+ 
+    public ITextComponent func_186744_e() {
++      if(this.adventure != null) return PaperAdventure.asVanilla(this.adventure.name()); // Paper
+       return this.field_186749_a;
+    }
+ 
+    public void func_186739_a(ITextComponent p_186739_1_) {
++      if (this.adventure != null) this.adventure.name(PaperAdventure.asAdventure(p_186739_1_)); // Paper
+       this.field_186749_a = p_186739_1_;
+    }
+ 
+    public float func_186738_f() {
++      if (this.adventure != null) return this.adventure.progress(); // Paper
+       return this.field_186750_b;
+    }
+ 
+    public void func_186735_a(float p_186735_1_) {
++      if (this.adventure != null) this.adventure.progress(p_186735_1_); // Paper
+       this.field_186750_b = p_186735_1_;
+    }
+ 
+    public BossInfo.Color func_186736_g() {
++      if (this.adventure != null) return PaperAdventure.asVanilla(this.adventure.color()); // Paper
+       return this.field_186751_c;
+    }
+ 
+    public void func_186745_a(BossInfo.Color p_186745_1_) {
++      if(this.adventure != null) this.adventure.color(PaperAdventure.asAdventure(p_186745_1_)); // Paper
+       this.field_186751_c = p_186745_1_;
+    }
+ 
+    public BossInfo.Overlay func_186740_h() {
++      if(this.adventure != null) return PaperAdventure.asVanilla(this.adventure.overlay()); // Paper
+       return this.field_186752_d;
+    }
+ 
+    public void func_186746_a(BossInfo.Overlay p_186746_1_) {
++      if(this.adventure != null) this.adventure.overlay(PaperAdventure.asAdventure(p_186746_1_)); // Paper
+       this.field_186752_d = p_186746_1_;
+    }
+ 
+    public boolean func_186734_i() {
++      if(this.adventure != null) return this.adventure.hasFlag(net.kyori.adventure.bossbar.BossBar.Flag.DARKEN_SCREEN); // Paper
+       return this.field_186753_e;
+    }
+ 
+    public BossInfo func_186741_a(boolean p_186741_1_) {
++      if(this.adventure != null) PaperAdventure.setFlag(this.adventure, net.kyori.adventure.bossbar.BossBar.Flag.DARKEN_SCREEN, p_186741_1_); // Paper
+       this.field_186753_e = p_186741_1_;
+       return this;
+    }
+ 
+    public boolean func_186747_j() {
++      if(this.adventure != null) return this.adventure.hasFlag(net.kyori.adventure.bossbar.BossBar.Flag.PLAY_BOSS_MUSIC); // Paper
+       return this.field_186754_f;
+    }
+ 
+    public BossInfo func_186742_b(boolean p_186742_1_) {
++      if(this.adventure != null) PaperAdventure.setFlag(this.adventure, net.kyori.adventure.bossbar.BossBar.Flag.PLAY_BOSS_MUSIC, p_186742_1_); // Paper
+       this.field_186754_f = p_186742_1_;
+       return this;
+    }
+ 
+    public BossInfo func_186743_c(boolean p_186743_1_) {
++      if(this.adventure != null) PaperAdventure.setFlag(this.adventure, net.kyori.adventure.bossbar.BossBar.Flag.CREATE_WORLD_FOG, p_186743_1_); // Paper
+       this.field_186755_g = p_186743_1_;
+       return this;
+    }
+ 
+    public boolean func_186748_k() {
++      if(this.adventure != null) return this.adventure.hasFlag(net.kyori.adventure.bossbar.BossBar.Flag.CREATE_WORLD_FOG); // Paper
+       return this.field_186755_g;
+    }
+ 

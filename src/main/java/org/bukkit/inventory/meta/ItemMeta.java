@@ -1,10 +1,12 @@
 package org.bukkit.inventory.meta;
 
 import com.google.common.collect.Multimap;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -31,6 +33,25 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      */
     boolean hasDisplayName();
 
+    // Paper start
+
+    /**
+     * Gets the display name.
+     *
+     * <p>Plugins should check that {@link #hasDisplayName()} returns <code>true</code> before calling this method.</p>
+     *
+     * @return the display name
+     */
+    @Nullable net.kyori.adventure.text.Component displayName();
+
+    /**
+     * Sets the display name.
+     *
+     * @param displayName the display name to set
+     */
+    void displayName(final @Nullable net.kyori.adventure.text.Component displayName);
+    // Paper end
+
     /**
      * Gets the display name that is set.
      * <p>
@@ -38,7 +59,9 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * before calling this method.
      *
      * @return the display name that is set
+     * @deprecated in favour of {@link #displayName()}
      */
+    @Deprecated // Paper
     @NotNull
     String getDisplayName();
 
@@ -46,7 +69,10 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * Sets the display name.
      *
      * @param name the name to set
+     * @deprecated in favour of {@link #displayName(net.kyori.adventure.text.Component)}
      */
+    @Deprecated
+    // Paper
     void setDisplayName(@Nullable String name);
 
     /**
@@ -81,6 +107,25 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      */
     boolean hasLore();
 
+    // Paper start
+
+    /**
+     * Gets the lore.
+     *
+     * <p>Plugins should check that {@link #hasLore()} returns <code>true</code> before calling this method.</p>
+     *
+     * @return the display name
+     */
+    @Nullable List<net.kyori.adventure.text.Component> lore();
+
+    /**
+     * Sets the lore.
+     *
+     * @param lore the lore to set
+     */
+    void lore(final @Nullable List<net.kyori.adventure.text.Component> lore);
+    // Paper end
+
     /**
      * Gets the lore that is set.
      * <p>
@@ -88,7 +133,9 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * calling this method.
      *
      * @return a list of lore that is set
+     * @deprecated in favour of {@link #lore()}
      */
+    @Deprecated // Paper
     @Nullable
     List<String> getLore();
 
@@ -97,7 +144,10 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * Removes lore when given null.
      *
      * @param lore the lore that will be set
+     * @deprecated in favour of {@link #lore(List)}
      */
+    @Deprecated
+    // Paper
     void setLore(@Nullable List<String> lore);
 
     /**
@@ -168,12 +218,12 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
     /**
      * Adds the specified enchantment to this item meta.
      *
-     * @param ench Enchantment to add
-     * @param level Level for the enchantment
+     * @param ench                   Enchantment to add
+     * @param level                  Level for the enchantment
      * @param ignoreLevelRestriction this indicates the enchantment should be
-     *     applied, ignoring the level limit
+     *                               applied, ignoring the level limit
      * @return true if the item meta changed as a result of this call, false
-     *     otherwise
+     * otherwise
      */
     boolean addEnchant(@NotNull Enchantment ench, int level, boolean ignoreLevelRestriction);
 
@@ -182,7 +232,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @param ench Enchantment to remove
      * @return true if the item meta changed as a result of this call, false
-     *     otherwise
+     * otherwise
      */
     boolean removeEnchant(@NotNull Enchantment ench);
 
@@ -253,7 +303,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * Returns null if none exist.
      *
      * @return an immutable {@link Multimap} of Attributes
-     *         and their AttributeModifiers, or null if none exist
+     * and their AttributeModifiers, or null if none exist
      */
     @Nullable
     Multimap<Attribute, AttributeModifier> getAttributeModifiers();
@@ -269,8 +319,8 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @param slot the {@link EquipmentSlot} to check
      * @return the immutable {@link Multimap} with the
-     *         respective Attributes and modifiers, or an empty map
-     *         if no attributes are set.
+     * respective Attributes and modifiers, or an empty map
+     * if no attributes are set.
      */
     @NotNull
     Multimap<Attribute, AttributeModifier> getAttributeModifiers(@NotNull EquipmentSlot slot);
@@ -281,7 +331,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      *
      * @param attribute the {@link Attribute}
      * @return an immutable collection of {@link AttributeModifier}s
-     *          or null if no AttributeModifiers exist for the Attribute.
+     * or null if no AttributeModifiers exist for the Attribute.
      * @throws NullPointerException if Attribute is null
      */
     @Nullable
@@ -296,11 +346,11 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * cannot exist on the same Attribute.
      *
      * @param attribute the {@link Attribute} to modify
-     * @param modifier the {@link AttributeModifier} specifying the modification
+     * @param modifier  the {@link AttributeModifier} specifying the modification
      * @return true if the Attribute and AttributeModifier were
-     *         successfully added
-     * @throws NullPointerException if Attribute is null
-     * @throws NullPointerException if AttributeModifier is null
+     * successfully added
+     * @throws NullPointerException     if Attribute is null
+     * @throws NullPointerException     if AttributeModifier is null
      * @throws IllegalArgumentException if AttributeModifier already exists
      */
     boolean addAttributeModifier(@NotNull Attribute attribute, @NotNull AttributeModifier modifier);
@@ -323,9 +373,9 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * This will return false if nothing was removed.
      *
      * @param attribute attribute to remove
-     * @return  true if all modifiers were removed from a given
-     *                  Attribute. Returns false if no attributes were
-     *                  removed.
+     * @return true if all modifiers were removed from a given
+     * Attribute. Returns false if no attributes were
+     * removed.
      * @throws NullPointerException if Attribute is null
      */
     boolean removeAttributeModifier(@NotNull Attribute attribute);
@@ -339,7 +389,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * @param slot the {@link EquipmentSlot} to clear all Attributes and
      *             their modifiers for
      * @return true if all modifiers were removed that match the given
-     *         EquipmentSlot.
+     * EquipmentSlot.
      */
     boolean removeAttributeModifier(@NotNull EquipmentSlot slot);
 
@@ -348,12 +398,10 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * AttributeModifiers are matched according to their {@link java.util.UUID}.
      *
      * @param attribute the {@link Attribute} to remove
-     * @param modifier the {@link AttributeModifier} to remove
+     * @param modifier  the {@link AttributeModifier} to remove
      * @return if any attribute modifiers were remove
-     *
      * @throws NullPointerException if the Attribute is null
      * @throws NullPointerException if the AttributeModifier is null
-     *
      * @see AttributeModifier#getUniqueId()
      */
     boolean removeAttributeModifier(@NotNull Attribute attribute, @NotNull AttributeModifier modifier);
@@ -361,11 +409,11 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
     /**
      * Returns a public custom tag container capable of storing tags on the
      * item.
-     *
+     * <p>
      * Those tags will be sent to the client with all of their content, so the
      * client is capable of reading them. This will result in the player seeing
      * a NBT Tag notification on the item.
-     *
+     * <p>
      * These tags can also be modified by the client once in creative mode
      *
      * @return the custom tag container

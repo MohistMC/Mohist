@@ -9,3 +9,20 @@
     private final boolean field_96303_A;
     private final String field_96304_B;
     private final int field_175747_C;
+@@ -146,4 +_,16 @@
+ 
+       return list;
+    }
++
++   // Paper start
++   @Nullable
++   public static TextFormatting getByHexValue(int i) {
++      for (TextFormatting value : values()) {
++         if (value.func_211163_e() != null && value.func_211163_e() == i) {
++            return value;
++         }
++      }
++      return null;
++   }
++   // Paper end
+ }

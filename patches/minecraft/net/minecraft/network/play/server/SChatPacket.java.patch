@@ -1,18 +1,24 @@
 --- a/net/minecraft/network/play/server/SChatPacket.java
 +++ b/net/minecraft/network/play/server/SChatPacket.java
-@@ -12,6 +_,7 @@
+@@ -12,6 +_,8 @@
  
  public class SChatPacket implements IPacket<IClientPlayNetHandler> {
     private ITextComponent field_148919_a;
++   public net.kyori.adventure.text.Component adventure$message; // Paper
 +   public net.md_5.bungee.api.chat.BaseComponent[] components; // Spigot
     private ChatType field_179842_b;
     private UUID field_240809_c_;
  
-@@ -31,7 +_,13 @@
+@@ -31,7 +_,18 @@
     }
  
     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
 -      p_148840_1_.func_179256_a(this.field_148919_a);
++      // Paper start
++      if (this.adventure$message != null) {
++         p_148840_1_.writeComponent(this.adventure$message);
++      } else
++         // Paper end
 +      // Spigot start
 +      if (components != null) {
 +         p_148840_1_.func_180714_a(net.md_5.bungee.chat.ComponentSerializer.toString(components));

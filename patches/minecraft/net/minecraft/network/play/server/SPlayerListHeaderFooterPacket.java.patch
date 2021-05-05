@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/server/SPlayerListHeaderFooterPacket.java
 +++ b/net/minecraft/network/play/server/SPlayerListHeaderFooterPacket.java
-@@ -9,8 +_,8 @@
+@@ -9,8 +_,12 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class SPlayerListHeaderFooterPacket implements IPacket<IClientPlayNetHandler> {
@@ -8,6 +8,24 @@
 -   private ITextComponent field_179702_b;
 +   public ITextComponent field_179703_a;
 +   public ITextComponent field_179702_b;
++   // Paper start
++   public net.kyori.adventure.text.Component adventure$header;
++   public net.kyori.adventure.text.Component adventure$footer;
++   // Paper end
  
     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
        this.field_179703_a = p_148837_1_.func_179258_d();
+@@ -18,6 +_,13 @@
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
++      // Paper start
++      if (this.adventure$header != null && this.adventure$footer != null) {
++         p_148840_1_.writeComponent(this.adventure$header);
++         p_148840_1_.writeComponent(this.adventure$footer);
++         return;
++      }
++      // Paper end
+       p_148840_1_.func_179256_a(this.field_179703_a);
+       p_148840_1_.func_179256_a(this.field_179702_b);
+    }

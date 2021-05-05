@@ -1,13 +1,14 @@
 --- a/net/minecraft/network/login/ServerLoginNetHandler.java
 +++ b/net/minecraft/network/login/ServerLoginNetHandler.java
-@@ -17,6 +_,7 @@
+@@ -14,6 +_,8 @@
+ import javax.annotation.Nullable;
+ import javax.crypto.Cipher;
+ import javax.crypto.SecretKey;
++
++import io.papermc.paper.adventure.PaperAdventure;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.NetworkManager;
-+import net.minecraft.network.handshake.ServerHandshakeNetHandler;
- import net.minecraft.network.login.client.CCustomPayloadLoginPacket;
- import net.minecraft.network.login.client.CEncryptionResponsePacket;
- import net.minecraft.network.login.client.CLoginStartPacket;
 @@ -29,10 +_,16 @@
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
@@ -48,7 +49,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -72,29 +_,74 @@
+@@ -72,29 +_,73 @@
  
     }
  
@@ -104,7 +105,6 @@
 +      {
 +         for ( com.mojang.authlib.properties.Property property : field_147333_a.spoofedProfile )
 +         {
-+            if (!ServerHandshakeNetHandler.PROP_PATTERN.matcher(property.getName()).matches()) continue;
 +            this.field_147337_i.getProperties().put( property.getName(), property );
 +         }
 +      }
@@ -184,7 +184,7 @@
        final String s;
        try {
           if (!Arrays.equals(this.field_147330_e, p_147315_1_.func_149299_b(privatekey))) {
-@@ -154,48 +_,95 @@
+@@ -154,48 +_,97 @@
        } catch (CryptException cryptexception) {
           throw new IllegalStateException("Protocol error", cryptexception);
        }
@@ -270,7 +270,7 @@
 +         if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
 +            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
 +            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
-+               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
++               event.disallow(asyncEvent.getResult(), asyncEvent.kickMessage()); // Paper - Adventure
 +            }
 +            Waitable<Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
 +               @Override
@@ -281,11 +281,13 @@
 +            ServerLoginNetHandler.this.field_147327_f.processQueue.add(waitable);
 +            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
 +               disconnect(event.getKickMessage());
++               func_194026_b(PaperAdventure.asVanilla(event.kickMessage())); // Paper - Adventure
 +               return;
 +            }
 +         } else {
 +            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
 +               disconnect(asyncEvent.getKickMessage());
++               func_194026_b(PaperAdventure.asVanilla(asyncEvent.kickMessage())); // Paper - Adventure
 +               return;
 +            }
 +         }
