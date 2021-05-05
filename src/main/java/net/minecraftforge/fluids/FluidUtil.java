@@ -48,6 +48,9 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 
 public class FluidUtil
 {
@@ -566,6 +569,15 @@ public class FluidUtil
 
         if (block instanceof IFluidBlock || block instanceof BlockLiquid)
         {
+            // Bukkit event calling for checking modded fluid pickup
+            if (playerIn != null) {
+                // Use default bucket material
+                PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(playerIn, pos.getX(), pos.getY(), pos.getZ(), null, emptyContainer.copy(), Items.BUCKET);
+                if (event.isCancelled()) {
+                    return FluidActionResult.FAILURE;
+                }
+            }
+            // We will ignore bukkit changes
             IFluidHandler targetFluidHandler = getFluidHandler(worldIn, pos, side);
             if (targetFluidHandler != null)
             {
@@ -591,6 +603,7 @@ public class FluidUtil
     {
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         IFluidHandlerItem containerFluidHandler = getFluidHandler(containerCopy);
+
         if (containerFluidHandler != null && tryPlaceFluid(player, world, pos, containerFluidHandler, resource))
         {
             return new FluidActionResult(containerFluidHandler.getContainer());
@@ -618,6 +631,15 @@ public class FluidUtil
         if (world == null || resource == null || pos == null)
         {
             return false;
+        }
+
+        // Bukkit event calling for checking modded fluid place
+        if (player != null) {
+            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(player, pos.getX(), pos.getY(), pos.getZ(), null, player.getHeldItem(EnumHand.MAIN_HAND).copy());
+            if (event.isCancelled()) {
+                return false;
+            }
+            // We will ignore bukkit changes
         }
 
         Fluid fluid = resource.getFluid();
