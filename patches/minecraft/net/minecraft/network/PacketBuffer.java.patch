@@ -1,5 +1,14 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
+@@ -22,6 +_,8 @@
+ import java.util.Date;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import io.papermc.paper.adventure.PaperAdventure;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.CompoundNBT;
 @@ -29,6 +_,7 @@
  import net.minecraft.nbt.INBT;
  import net.minecraft.nbt.NBTDynamicOps;
@@ -8,7 +17,7 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
-@@ -38,8 +_,9 @@
+@@ -38,9 +_,11 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,8 +26,33 @@
 -public class PacketBuffer extends ByteBuf {
 +public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
     private final ByteBuf field_150794_a;
++   public java.util.Locale adventure$locale; // Paper
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
+       this.field_150794_a = p_i45154_1_;
+@@ -56,6 +_,12 @@
+       return 5;
+    }
+ 
++   // Paper start
++   public PacketBuffer writeComponent(final net.kyori.adventure.text.Component component) {
++      return this.func_211400_a(PaperAdventure.asJsonString(component, this.adventure$locale), 262144);
++   }
++   // Paper end
++
+    public <T> T func_240628_a_(Codec<T> p_240628_1_) throws IOException {
+       CompoundNBT compoundnbt = this.func_244273_m();
+       DataResult<T> dataresult = p_240628_1_.parse(NBTDynamicOps.field_210820_a, compoundnbt);
+@@ -177,7 +_,8 @@
+    }
+ 
+    public PacketBuffer func_179256_a(ITextComponent p_179256_1_) {
+-      return this.func_211400_a(ITextComponent.Serializer.func_150696_a(p_179256_1_), 262144);
++      //return this.writeUtf(ITextComponent.Serializer.toJson(p_179256_1_), 262144); // Paper - comment
++      return this.func_211400_a(PaperAdventure.asJsonString(p_179256_1_, this.adventure$locale), 262144); // Paper
+    }
+ 
+    public <T extends Enum<T>> T func_179257_a(Class<T> p_179257_1_) {
 @@ -292,7 +_,16 @@
     }
  
