@@ -46,6 +46,8 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 
 /**
  * A universal bucket that can hold any liquid
@@ -213,6 +215,23 @@ public class UniversalBucket extends Item
     {
         if (event.getResult() != Event.Result.DEFAULT)
         {
+            // Mohist: checking when result is ALLOW
+            if (event.getResult() == Event.Result.ALLOW) {
+                if (event.getEntityPlayer() != null) {
+                    RayTraceResult target = event.getTarget();
+                    if (target != null) {
+                        BlockPos pos = target.getBlockPos();
+                        PlayerBucketFillEvent bEvent = CraftEventFactory.callPlayerBucketFillEvent(
+                                event.getEntityPlayer(), pos.getX(), pos.getY(), pos.getZ(), null,
+                                event.getEntityPlayer().getHeldItemMainhand().copy(), Items.BUCKET);
+                        // Changes from event not handled, only canceling
+                        if (bEvent.isCancelled()) {
+                            event.setCanceled(true);
+                            event.setResult(Event.Result.DENY);
+                        }
+                    }
+                }
+            }
             // event was already handled
             return;
         }

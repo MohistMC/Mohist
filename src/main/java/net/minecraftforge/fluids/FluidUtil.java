@@ -32,10 +32,7 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
@@ -48,6 +45,9 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 
 public class FluidUtil
 {
@@ -566,6 +566,16 @@ public class FluidUtil
 
         if (block instanceof IFluidBlock || block instanceof BlockLiquid)
         {
+            // Mohist: calling bukkit event before pickup custom fluid
+            if (playerIn != null) {
+                // Send default empty bucket
+                PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(
+                        playerIn, pos.getX(), pos.getY(), pos.getZ(), null, emptyContainer.copy(), Items.BUCKET);
+                // Changes from event not handled, only canceling
+                if (event.isCancelled()) {
+                    return FluidActionResult.FAILURE;
+                }
+            }
             IFluidHandler targetFluidHandler = getFluidHandler(worldIn, pos, side);
             if (targetFluidHandler != null)
             {
@@ -618,6 +628,16 @@ public class FluidUtil
         if (world == null || resource == null || pos == null)
         {
             return false;
+        }
+
+        // Mohist: calling bukkit event before place custom fluid
+        if (player != null) {
+            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(
+                    player, pos.getX(), pos.getY(), pos.getZ(), null, player.getHeldItem(EnumHand.MAIN_HAND).copy());
+            // Changes from event not handled, only canceling
+            if (event.isCancelled()) {
+                return false;
+            }
         }
 
         Fluid fluid = resource.getFluid();
