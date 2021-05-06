@@ -385,12 +385,18 @@
        for(int i = 0; i < this.field_76652_q.length; ++i) {
           ChunkSection chunksection = this.field_76652_q[i];
           if ((p_227073_4_ & 1 << i) == 0) {
-@@ -592,13 +_,17 @@
+@@ -592,13 +_,23 @@
        return this.field_76645_j;
     }
  
 +   public List<Entity>[] getEntitySlices() {
-+      return getEntitySlices();
++      // Mohist start - handle Spigot method in MythicMobs
++      List<Entity>[] e = new List[16];
++      for (int l = 0; l < this.field_76645_j.length; ++l) {
++         e[l] = new org.bukkit.craftbukkit.v1_16_R3.util.UnsafeList();
++      }
++      return e;
++      // Mohist end
 +   }
 +
     public CompoundNBT func_201579_g(BlockPos p_201579_1_) {
