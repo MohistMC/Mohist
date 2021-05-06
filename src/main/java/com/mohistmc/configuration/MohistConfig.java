@@ -107,6 +107,8 @@ public class MohistConfig extends ConfigBase {
     /* ======================================================================== */
     public List<Integer> dimensionsNotLoaded = new ArrayList();
 
+    public final IntSetting connectionTimeout = new IntSetting(this, "mohist.connectionTimeout", 15000);
+
     public MohistConfig() {
         super("mohist.yml");
         init();
