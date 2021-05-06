@@ -26,10 +26,24 @@ public abstract class ChunkMcAPI {
     }
 
     /**
+     * See {@link #isBorderChunkLoaded(ServerWorld, int, int)}
+     */
+    public static boolean isBorderChunkLoaded(ServerWorld world, long cPos) {
+        return getBorderChunkNow(world, cPos).isPresent();
+    }
+
+    /**
      * Returns true if the chunk on provided coordinates is loaded and has LocationType of TICKING or higher.
      */
     public static boolean isTickingChunkLoaded(ServerWorld world, int cX, int cZ) {
         return getTickingChunkNow(world, cX, cZ).isPresent();
+    }
+
+    /**
+     * See {@link #isTickingChunkLoaded(ServerWorld, int, int)}
+     */
+    public static boolean isTickingChunkLoaded(ServerWorld world, long cPos) {
+        return getTickingChunkNow(world, cPos).isPresent();
     }
 
     /**
@@ -40,28 +54,56 @@ public abstract class ChunkMcAPI {
     }
 
     /**
+     * See {@link #isEntityTickingChunkLoaded(ServerWorld, int, int)}
+     */
+    public static boolean isEntityTickingChunkLoaded(ServerWorld world, long cPos) {
+        return getEntityTickingChunkNow(world, cPos).isPresent();
+    }
+
+    /**
      * Returns non-empty optional if the chunk on provided coordinates is loaded and has LocationType of BORDER or higher.
      */
     public static Optional<Chunk> getBorderChunkNow(ServerWorld world, int cX, int cZ) {
-        return getChunkNow(world, cX, cZ, LocationType.BORDER);
+        return _getChunkNow(world, ChunkPos.asLong(cX, cZ), LocationType.BORDER);
+    }
+
+    /**
+     * See {@link #getBorderChunkNow(ServerWorld, int, int)}
+     */
+    public static Optional<Chunk> getBorderChunkNow(ServerWorld world, long cPos) {
+        return _getChunkNow(world, cPos, LocationType.BORDER);
     }
 
     /**
      * Returns non-empty optional if the chunk on provided coordinates is loaded and has LocationType of TICKING or higher.
      */
     public static Optional<Chunk> getTickingChunkNow(ServerWorld world, int cX, int cZ) {
-        return getChunkNow(world, cX, cZ, LocationType.TICKING);
+        return _getChunkNow(world, ChunkPos.asLong(cX, cZ), LocationType.TICKING);
+    }
+
+    /**
+     * See {@link #getTickingChunkNow(ServerWorld, int, int)}
+     */
+    public static Optional<Chunk> getTickingChunkNow(ServerWorld world, long cPos) {
+        return _getChunkNow(world, cPos, LocationType.TICKING);
     }
 
     /**
      * Returns non-empty optional if the chunk on provided coordinates is loaded and has LocationType of ENTITY_TICKING.
      */
     public static Optional<Chunk> getEntityTickingChunkNow(ServerWorld world, int cX, int cZ) {
-        return getChunkNow(world, cX, cZ, LocationType.ENTITY_TICKING);
+        return _getChunkNow(world, ChunkPos.asLong(cX, cZ), LocationType.ENTITY_TICKING);
     }
 
-    private static Optional<Chunk> getChunkNow(ServerWorld world, int cX, int cZ, LocationType type) {
-        ChunkHolder holder = world.getChunkSource().chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(cX, cZ));
+    /**
+     * See {@link #getEntityTickingChunkNow(ServerWorld, int, int)}
+     */
+    public static Optional<Chunk> getEntityTickingChunkNow(ServerWorld world, long cPos) {
+        return _getChunkNow(world, cPos, LocationType.ENTITY_TICKING);
+    }
+
+    private static Optional<Chunk> _getChunkNow(ServerWorld world, long cPos, LocationType type) {
+        ChunkHolder holder = world.getChunkSource().chunkMap.getVisibleChunkIfPresent(cPos);
         if (holder != null) {
             CompletableFuture<Either<Chunk, IChunkLoadingError>> future;
             switch (type) {
