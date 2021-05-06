@@ -175,6 +175,8 @@ public abstract class ChunkMcAPI {
     }
 
     private static Optional<ChunkHolder> _getChunkHolder(ServerWorld world, long cPos) {
+        if (world == null)
+            throw new IllegalArgumentException("`world` must not be null in getChunkHolder(...) call!");
         return Optional.ofNullable(world.getChunkSource().chunkMap.getVisibleChunkIfPresent(cPos));
     }
 
