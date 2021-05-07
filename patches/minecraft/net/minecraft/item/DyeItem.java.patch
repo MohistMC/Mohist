@@ -17,7 +17,7 @@
 -               sheepentity.func_175512_b(this.field_195964_b);
 +               // CraftBukkit start
 +               byte bColor = (byte) this.field_195964_b.getColorValue();
-+               SheepDyeWoolEvent event = new SheepDyeWoolEvent((org.bukkit.entity.Sheep) sheepentity.getBukkitEntity(), org.bukkit.DyeColor.getByColor(Color.fromRGB(this.field_195964_b.getColorValue())));
++               SheepDyeWoolEvent event = new SheepDyeWoolEvent((org.bukkit.entity.Sheep) sheepentity.getBukkitEntity(), org.bukkit.DyeColor.getByColor(Color.fromRGB(bColor)));
 +               sheepentity.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {
 +                  return ActionResultType.PASS;

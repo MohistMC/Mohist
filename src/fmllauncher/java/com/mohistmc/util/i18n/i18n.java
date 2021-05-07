@@ -17,7 +17,7 @@ public class i18n {
     }
 
     public static String get(String key, Object... f) {
-        return new MessageFormat(get(key)).format(Arrays.stream(f).map(o1 -> NumberUtils.isNumber(String.valueOf(o1)) ? String.valueOf(new BigDecimal(Double.parseDouble(String.valueOf(o1)))) : String.valueOf(o1)).toArray());
+        return new MessageFormat(get(key)).format(f);
     }
 
     public static String getLocale(int key) {
