@@ -1,6 +1,22 @@
 --- a/net/minecraft/world/spawner/WorldEntitySpawner.java
 +++ b/net/minecraft/world/spawner/WorldEntitySpawner.java
-@@ -46,10 +_,12 @@
+@@ -3,6 +_,7 @@
+ import it.unimi.dsi.fastutil.objects.Object2IntMap;
+ import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
++
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Objects;
+@@ -10,6 +_,7 @@
+ import java.util.function.Consumer;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.entity.Entity;
+@@ -46,437 +_,560 @@
  import net.minecraft.world.gen.feature.structure.Structure;
  import net.minecraft.world.gen.feature.structure.StructureManager;
  import net.minecraft.world.server.ServerWorld;
@@ -12,181 +28,976 @@
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public final class WorldEntitySpawner {
-    private static final Logger field_209383_a = LogManager.getLogger();
-@@ -82,7 +_,7 @@
-          } while(mobentity.func_104002_bU() || mobentity.func_213392_I());
- 
-          final Entity entity_f = entity;
+-   private static final Logger field_209383_a = LogManager.getLogger();
+-   private static final int field_234960_b_ = (int)Math.pow(17.0D, 2.0D);
+-   private static final EntityClassification[] field_234961_c_ = Stream.of(EntityClassification.values()).filter((p_234965_0_) -> {
+-      return p_234965_0_ != EntityClassification.MISC;
+-   }).toArray((p_234963_0_) -> {
+-      return new EntityClassification[p_234963_0_];
+-   });
+-
+-   public static WorldEntitySpawner.EntityDensityManager func_234964_a_(int p_234964_0_, Iterable<Entity> p_234964_1_, WorldEntitySpawner.IInitialDensityAdder p_234964_2_) {
+-      MobDensityTracker mobdensitytracker = new MobDensityTracker();
+-      Object2IntOpenHashMap<EntityClassification> object2intopenhashmap = new Object2IntOpenHashMap<>();
+-      Iterator iterator = p_234964_1_.iterator();
+-
+-      while(true) {
+-         Entity entity;
+-         MobEntity mobentity;
+-         do {
+-            if (!iterator.hasNext()) {
+-               return new WorldEntitySpawner.EntityDensityManager(p_234964_0_, object2intopenhashmap, mobdensitytracker);
+-            }
+-
+-            entity = (Entity)iterator.next();
++    private static final Logger field_209383_a = LogManager.getLogger();
++    private static final int field_234960_b_ = (int) Math.pow(17.0D, 2.0D);
++    private static final EntityClassification[] field_234961_c_ = Stream.of(EntityClassification.values()).filter((p_234965_0_) -> {
++        return p_234965_0_ != EntityClassification.MISC;
++    }).toArray((p_234963_0_) -> {
++        return new EntityClassification[p_234963_0_];
++    });
++
++    public static WorldEntitySpawner.EntityDensityManager func_234964_a_(int p_234964_0_, Iterable<Entity> p_234964_1_, WorldEntitySpawner.IInitialDensityAdder p_234964_2_) {
++        // Paper start - add countMobs parameter
++        return createState(p_234964_0_, p_234964_1_, p_234964_2_, false);
++    }
++
++    public static WorldEntitySpawner.EntityDensityManager createState(int p_234964_0_, Iterable<Entity> p_234964_1_, WorldEntitySpawner.IInitialDensityAdder p_234964_2_, boolean countMobs) {
++        // Paper end - add countMobs parameter
++        MobDensityTracker mobdensitytracker = new MobDensityTracker();
++        Object2IntOpenHashMap<EntityClassification> object2intopenhashmap = new Object2IntOpenHashMap<>();
++        Iterator iterator = p_234964_1_.iterator();
++
++        while (true) {
++            Entity entity;
++            MobEntity mobentity;
++            do {
++                if (!iterator.hasNext()) {
++                    return new WorldEntitySpawner.EntityDensityManager(p_234964_0_, object2intopenhashmap, mobdensitytracker);
++                }
++
++                entity = (Entity) iterator.next();
++                if (!(entity instanceof MobEntity)) {
++                    break;
++                }
++
++                mobentity = (MobEntity) entity;
++            } while (mobentity.func_104002_bU() || mobentity.func_213392_I());
++
++            final Entity entity_f = entity;
++            EntityClassification entityclassification = entity.getClassification(true);
++            if (entityclassification != EntityClassification.MISC) {
++                BlockPos blockpos = entity.func_233580_cy_();
++                long i = ChunkPos.func_77272_a(blockpos.func_177958_n() >> 4, blockpos.func_177952_p() >> 4);
++                Entity finalEntity = entity;
++                p_234964_2_.query(i, (p_234971_5_) -> {
++                    MobSpawnInfo.SpawnCosts mobspawninfo$spawncosts = func_234980_b_(blockpos, p_234971_5_).func_242433_b().func_242558_a(entity_f.func_200600_R());
++                    if (mobspawninfo$spawncosts != null) {
++                        mobdensitytracker.func_234998_a_(entity_f.func_233580_cy_(), mobspawninfo$spawncosts.func_242585_b());
++                    }
++
++                    object2intopenhashmap.addTo(entityclassification, 1);
++                    // Paper start
++                    if (countMobs) {
++                        ((ServerWorld) p_234971_5_.field_76637_e).func_72863_F().field_217237_a.updatePlayerMobTypeMap(finalEntity);
++                    }
++                    // Paper end
++                });
++            }
++        }
++    }
++
++    private static Biome func_234980_b_(BlockPos p_234980_0_, IChunk p_234980_1_) {
++        return DefaultBiomeMagnifier.INSTANCE.func_225532_a_(0L, p_234980_0_.func_177958_n(), p_234980_0_.func_177956_o(), p_234980_0_.func_177952_p(), p_234980_1_.func_225549_i_());
++    }
++
++    public static void func_234979_a_(ServerWorld p_234979_0_, Chunk p_234979_1_, WorldEntitySpawner.EntityDensityManager p_234979_2_, boolean p_234979_3_, boolean p_234979_4_, boolean p_234979_5_) {
++        p_234979_0_.func_217381_Z().func_76320_a("spawner");
++        p_234979_0_.timings.mobSpawn.startTiming(); // Spigot
++
++        // CraftBukkit start - Other mob type spawn tick rate
++        IWorldInfo worlddata = p_234979_0_.func_72912_H();
++        boolean spawnAnimalThisTick = p_234979_0_.ticksPerAnimalSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerAnimalSpawns == 0L;
++        boolean spawnMonsterThisTick = p_234979_0_.ticksPerMonsterSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerMonsterSpawns == 0L;
++        boolean spawnWaterThisTick = p_234979_0_.ticksPerWaterSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerWaterSpawns == 0L;
++        boolean spawnAmbientThisTick = p_234979_0_.ticksPerAmbientSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerAmbientSpawns == 0L;
++        boolean spawnWaterAmbientThisTick = p_234979_0_.ticksPerWaterAmbientSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerWaterAmbientSpawns == 0L;
++        // CraftBukkit end
++
++        for (EntityClassification entityclassification : field_234961_c_) {
++            // CraftBukkit start - Use per-world spawn limits
++            boolean spawnThisTick = true;
++            int limit = entityclassification.func_75601_b();
++            switch (entityclassification) {
++                case MONSTER:
++                    spawnThisTick = spawnMonsterThisTick;
++                    limit = p_234979_0_.getWorld().getMonsterSpawnLimit();
++                    break;
++                case CREATURE:
++                    spawnThisTick = spawnAnimalThisTick;
++                    limit = p_234979_0_.getWorld().getAnimalSpawnLimit();
++                    break;
++                case WATER_CREATURE:
++                    spawnThisTick = spawnWaterThisTick;
++                    limit = p_234979_0_.getWorld().getWaterAnimalSpawnLimit();
++                    break;
++                case AMBIENT:
++                    spawnThisTick = spawnAmbientThisTick;
++                    limit = p_234979_0_.getWorld().getAmbientSpawnLimit();
++                    break;
++                case WATER_AMBIENT:
++                    spawnThisTick = spawnWaterAmbientThisTick;
++                    limit = p_234979_0_.getWorld().getWaterAmbientSpawnLimit();
++                    break;
++            }
++
++            if (!spawnThisTick || limit == 0) {
++                continue;
++            }
++
++            // Paper start - only allow spawns upto the limit per chunk and update count afterwards
++            int currEntityCount = p_234979_2_.func_234995_b_().getInt(entityclassification);
++            int k1 = limit * p_234979_2_.func_234988_a_() / WorldEntitySpawner.field_234960_b_;
++            int difference = k1 - currEntityCount;
++
++            if (p_234979_0_.paperConfig.perPlayerMobSpawns) {
++                int minDiff = Integer.MAX_VALUE;
++                for (PlayerEntity entityplayer : p_234979_0_.func_72863_F().field_217237_a.playerMobDistanceMap.getPlayersInRange(p_234979_1_.func_76632_l())) {
++                    minDiff = Math.min(limit - p_234979_0_.func_72863_F().field_217237_a.getMobCountNear(entityplayer, entityclassification), minDiff);
++                }
++                difference = (minDiff == Integer.MAX_VALUE) ? 0 : minDiff;
++            }
++            // Paper end
++
++            if ((p_234979_3_ || !entityclassification.func_75599_d()) && (p_234979_4_ || entityclassification.func_75599_d()) && (p_234979_5_ || !entityclassification.func_82705_e()) && p_234979_2_.canSpawnForCategory(entityclassification, limit)) {
++                // CraftBukkit end
++                func_234967_a_(entityclassification, p_234979_0_, p_234979_1_, (p_234969_1_, p_234969_2_, p_234969_3_) -> {
++                    return p_234979_2_.func_234989_a_(p_234969_1_, p_234969_2_, p_234969_3_);
++                }, (p_234970_1_, p_234970_2_) -> {
++                    p_234979_2_.func_234990_a_(p_234970_1_, p_234970_2_);
++                });
++            }
++
++            // Paper start - per player mob spawning
++            if ((p_234979_3_ || !entityclassification.func_75599_d()) && (p_234979_4_ || entityclassification.func_75599_d()) && (p_234979_5_ || !entityclassification.func_82705_e()) && difference > 0) {
++                // CraftBukkit end
++                int spawnCount = spawnMobs(entityclassification, p_234979_0_, p_234979_1_, p_234979_2_::func_234989_a_, p_234979_2_::func_234990_a_,
++                        difference, p_234979_0_.paperConfig.perPlayerMobSpawns ? p_234979_0_.func_72863_F().field_217237_a::updatePlayerMobTypeMap : null);
++                p_234979_2_.func_234995_b_().mergeInt(entityclassification, spawnCount, Integer::sum);
++                // Paper end - per player mob spawning
++            }
++        }
++
++        p_234979_0_.timings.mobSpawn.stopTiming(); // Spigot
++        p_234979_0_.func_217381_Z().func_76319_b();
++    }
++
++    public static void func_234967_a_(EntityClassification p_234967_0_, ServerWorld p_234967_1_, Chunk p_234967_2_, WorldEntitySpawner.IDensityCheck p_234967_3_, WorldEntitySpawner.IOnSpawnDensityAdder p_234967_4_) {
++        // Paper start - add parameters and int ret type
++        spawnMobs(p_234967_0_, p_234967_1_, p_234967_2_, p_234967_3_, p_234967_4_, Integer.MAX_VALUE, null);
++    }
++
++    public static int spawnMobs(EntityClassification p_234967_0_, ServerWorld p_234967_1_, Chunk p_234967_2_, WorldEntitySpawner.IDensityCheck p_234967_3_, WorldEntitySpawner.IOnSpawnDensityAdder p_234967_4_, int maxSpawns, Consumer<Entity> trackEntity) {
++        // Paper end - add parameters and int ret type
++
++        BlockPos blockpos = func_222262_a(p_234967_1_, p_234967_2_);
++        if (blockpos.func_177956_o() >= 1) {
++            func_234966_a_(p_234967_0_, p_234967_1_, p_234967_2_, blockpos, p_234967_3_, p_234967_4_);
++            return spawnCategoryForPosition(p_234967_0_, p_234967_1_, p_234967_2_, blockpos, p_234967_3_, p_234967_4_, maxSpawns, trackEntity);
++        }
++        return 0; // Paper
++    }
++
++    public static void func_234966_a_(EntityClassification p_234966_0_, ServerWorld p_234966_1_, IChunk p_234966_2_, BlockPos p_234966_3_, WorldEntitySpawner.IDensityCheck p_234966_4_, WorldEntitySpawner.IOnSpawnDensityAdder p_234966_5_) {
++        // Paper start - add maxSpawns parameter and return spawned mobs
++        spawnCategoryForPosition(p_234966_0_, p_234966_1_, p_234966_2_, p_234966_3_, p_234966_4_, p_234966_5_, Integer.MAX_VALUE, null);
++    }
++
++    public static int spawnCategoryForPosition(EntityClassification p_234966_0_, ServerWorld p_234966_1_, IChunk p_234966_2_, BlockPos p_234966_3_, WorldEntitySpawner.IDensityCheck p_234966_4_, WorldEntitySpawner.IOnSpawnDensityAdder p_234966_5_, int maxSpawns, Consumer<Entity> trackEntity) {
++        // Paper end - add maxSpawns parameter and return spawned mobs
++        StructureManager structuremanager = p_234966_1_.func_241112_a_();
++        ChunkGenerator chunkgenerator = p_234966_1_.func_72863_F().func_201711_g();
++        int i = p_234966_3_.func_177956_o();
++        BlockState blockstate = p_234966_2_.func_180495_p(p_234966_3_);
++       int j = 0; // Paper - moved up
++        if (!blockstate.func_215686_e(p_234966_2_, p_234966_3_)) {
++            BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
++           // Paper - moved up
++
++            for (int k = 0; k < 3; ++k) {
++                int l = p_234966_3_.func_177958_n();
++                int i1 = p_234966_3_.func_177952_p();
++                int j1 = 6;
++                MobSpawnInfo.Spawners mobspawninfo$spawners = null;
++                ILivingEntityData ilivingentitydata = null;
++                int k1 = MathHelper.func_76123_f(p_234966_1_.field_73012_v.nextFloat() * 4.0F);
++                int l1 = 0;
++
++                for (int i2 = 0; i2 < k1; ++i2) {
++                    l += p_234966_1_.field_73012_v.nextInt(6) - p_234966_1_.field_73012_v.nextInt(6);
++                    i1 += p_234966_1_.field_73012_v.nextInt(6) - p_234966_1_.field_73012_v.nextInt(6);
++                    blockpos$mutable.func_181079_c(l, i, i1);
++                    double d0 = (double) l + 0.5D;
++                    double d1 = (double) i1 + 0.5D;
++                    PlayerEntity playerentity = p_234966_1_.func_217366_a(d0, (double) i, d1, -1.0D, false);
++                    if (playerentity != null) {
++                        double d2 = playerentity.func_70092_e(d0, (double) i, d1);
++                        if (func_234978_a_(p_234966_1_, p_234966_2_, blockpos$mutable, d2)) {
++                            if (mobspawninfo$spawners == null) {
++                                mobspawninfo$spawners = func_234977_a_(p_234966_1_, structuremanager, chunkgenerator, p_234966_0_, p_234966_1_.field_73012_v, blockpos$mutable);
++                                if (mobspawninfo$spawners == null) {
++                                    break;
++                                }
++
++                                k1 = mobspawninfo$spawners.field_242589_d + p_234966_1_.field_73012_v.nextInt(1 + mobspawninfo$spawners.field_242590_e - mobspawninfo$spawners.field_242589_d);
++                            }
++
++                            if (func_234975_a_(p_234966_1_, p_234966_0_, structuremanager, chunkgenerator, mobspawninfo$spawners, blockpos$mutable, d2) && p_234966_4_.test(mobspawninfo$spawners.field_242588_c, blockpos$mutable, p_234966_2_)) {
++                                MobEntity mobentity = func_234973_a_(p_234966_1_, mobspawninfo$spawners.field_242588_c);
++                                if (mobentity == null) {
++                                   return j; // Paper
++                                }
++
++                                mobentity.func_70012_b(d0, (double) i, d1, p_234966_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
++                                int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_234966_1_, d0, i, d1, null, SpawnReason.NATURAL);
++                                if (canSpawn != -1 && (canSpawn == 1 || func_234974_a_(p_234966_1_, mobentity, d2))) {
++                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, p_234966_1_, (float) d0, (float) i, (float) d1, null, SpawnReason.NATURAL))
++                                        ilivingentitydata = mobentity.func_213386_a(p_234966_1_, p_234966_1_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT) null);
++                                    // CraftBukkit start
++                                    p_234966_1_.addAllEntities(mobentity, CreatureSpawnEvent.SpawnReason.NATURAL);
++                                    if (!mobentity.field_70128_L) {
++                                        ++j; // Paper - force diff on name change - we expect this to be the total amount spawned
++                                        ++l1;
++                                        p_234966_5_.run(mobentity, p_234966_2_);
++                                       // Paper start
++                                       if (trackEntity != null) {
++                                          trackEntity.accept(mobentity);
++                                       }
++                                       // Paper end
++                                    }
++                                    // CraftBukkit end
++                                    if (j >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(mobentity) || j >= maxSpawns) { // Paper
++                                       return j; // Paper
++                                    }
++
++                                    if (mobentity.func_204209_c(l1)) {
++                                        break;
++                                    }
++                                }
++                            }
++                        }
++                    }
++                }
++            }
++
++        }
++       return j; // Paper
++    }
++
++    private static boolean func_234978_a_(ServerWorld p_234978_0_, IChunk p_234978_1_, BlockPos.Mutable p_234978_2_, double p_234978_3_) {
++        if (p_234978_3_ <= 576.0D) {
++            return false;
++        } else if (p_234978_0_.func_241135_u_().func_218137_a(new Vector3d((double) p_234978_2_.func_177958_n() + 0.5D, (double) p_234978_2_.func_177956_o(), (double) p_234978_2_.func_177952_p() + 0.5D), 24.0D)) {
++            return false;
++        } else {
++            ChunkPos chunkpos = new ChunkPos(p_234978_2_);
++            return Objects.equals(chunkpos, p_234978_1_.func_76632_l()) || p_234978_0_.func_72863_F().func_222865_a(chunkpos);
++        }
++    }
++
++    private static boolean func_234975_a_(ServerWorld p_234975_0_, EntityClassification p_234975_1_, StructureManager p_234975_2_, ChunkGenerator p_234975_3_, MobSpawnInfo.Spawners p_234975_4_, BlockPos.Mutable p_234975_5_, double p_234975_6_) {
++        EntityType<?> entitytype = p_234975_4_.field_242588_c;
++        if (entitytype.func_220339_d() == EntityClassification.MISC) {
++            return false;
++        } else if (!entitytype.func_225437_d() && p_234975_6_ > (double) (entitytype.func_220339_d().func_233671_f_() * entitytype.func_220339_d().func_233671_f_())) {
++            return false;
++        } else if (entitytype.func_200720_b() && func_234976_a_(p_234975_0_, p_234975_2_, p_234975_3_, p_234975_1_, p_234975_4_, p_234975_5_)) {
++            EntitySpawnPlacementRegistry.PlacementType entityspawnplacementregistry$placementtype = EntitySpawnPlacementRegistry.func_209344_a(entitytype);
++            if (!func_209382_a(entityspawnplacementregistry$placementtype, p_234975_0_, p_234975_5_, entitytype)) {
++                return false;
++            } else if (!EntitySpawnPlacementRegistry.func_223515_a(entitytype, p_234975_0_, SpawnReason.NATURAL, p_234975_5_, p_234975_0_.field_73012_v)) {
++                return false;
++            } else {
++                return p_234975_0_.func_226664_a_(entitytype.func_220328_a((double) p_234975_5_.func_177958_n() + 0.5D, (double) p_234975_5_.func_177956_o(), (double) p_234975_5_.func_177952_p() + 0.5D));
++            }
++        } else {
++            return false;
++        }
++    }
++
++    @Nullable
++    private static MobEntity func_234973_a_(ServerWorld p_234973_0_, EntityType<?> p_234973_1_) {
++        try {
++            Entity entity = p_234973_1_.func_200721_a(p_234973_0_);
+             if (!(entity instanceof MobEntity)) {
+-               break;
+-            }
+-
+-            mobentity = (MobEntity)entity;
+-         } while(mobentity.func_104002_bU() || mobentity.func_213392_I());
+-
+-         final Entity entity_f = entity;
 -         EntityClassification entityclassification = entity.func_200600_R().func_220339_d();
-+         EntityClassification entityclassification = entity.getClassification(true);
-          if (entityclassification != EntityClassification.MISC) {
-             BlockPos blockpos = entity.func_233580_cy_();
-             long i = ChunkPos.func_77272_a(blockpos.func_177958_n() >> 4, blockpos.func_177952_p() >> 4);
-@@ -104,9 +_,50 @@
- 
-    public static void func_234979_a_(ServerWorld p_234979_0_, Chunk p_234979_1_, WorldEntitySpawner.EntityDensityManager p_234979_2_, boolean p_234979_3_, boolean p_234979_4_, boolean p_234979_5_) {
-       p_234979_0_.func_217381_Z().func_76320_a("spawner");
-+      p_234979_0_.timings.mobSpawn.startTiming(); // Spigot
-+
-+      // CraftBukkit start - Other mob type spawn tick rate
-+      IWorldInfo worlddata = p_234979_0_.func_72912_H();
-+      boolean spawnAnimalThisTick = p_234979_0_.ticksPerAnimalSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerAnimalSpawns == 0L;
-+      boolean spawnMonsterThisTick = p_234979_0_.ticksPerMonsterSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerMonsterSpawns == 0L;
-+      boolean spawnWaterThisTick = p_234979_0_.ticksPerWaterSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerWaterSpawns == 0L;
-+      boolean spawnAmbientThisTick = p_234979_0_.ticksPerAmbientSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerAmbientSpawns == 0L;
-+      boolean spawnWaterAmbientThisTick = p_234979_0_.ticksPerWaterAmbientSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerWaterAmbientSpawns == 0L;
-+      // CraftBukkit end
- 
-       for(EntityClassification entityclassification : field_234961_c_) {
+-         if (entityclassification != EntityClassification.MISC) {
+-            BlockPos blockpos = entity.func_233580_cy_();
+-            long i = ChunkPos.func_77272_a(blockpos.func_177958_n() >> 4, blockpos.func_177952_p() >> 4);
+-            p_234964_2_.query(i, (p_234971_5_) -> {
+-               MobSpawnInfo.SpawnCosts mobspawninfo$spawncosts = func_234980_b_(blockpos, p_234971_5_).func_242433_b().func_242558_a(entity_f.func_200600_R());
+-               if (mobspawninfo$spawncosts != null) {
+-                  mobdensitytracker.func_234998_a_(entity_f.func_233580_cy_(), mobspawninfo$spawncosts.func_242585_b());
+-               }
+-
+-               object2intopenhashmap.addTo(entityclassification, 1);
+-            });
+-         }
+-      }
+-   }
+-
+-   private static Biome func_234980_b_(BlockPos p_234980_0_, IChunk p_234980_1_) {
+-      return DefaultBiomeMagnifier.INSTANCE.func_225532_a_(0L, p_234980_0_.func_177958_n(), p_234980_0_.func_177956_o(), p_234980_0_.func_177952_p(), p_234980_1_.func_225549_i_());
+-   }
+-
+-   public static void func_234979_a_(ServerWorld p_234979_0_, Chunk p_234979_1_, WorldEntitySpawner.EntityDensityManager p_234979_2_, boolean p_234979_3_, boolean p_234979_4_, boolean p_234979_5_) {
+-      p_234979_0_.func_217381_Z().func_76320_a("spawner");
+-
+-      for(EntityClassification entityclassification : field_234961_c_) {
 -         if ((p_234979_3_ || !entityclassification.func_75599_d()) && (p_234979_4_ || entityclassification.func_75599_d()) && (p_234979_5_ || !entityclassification.func_82705_e()) && p_234979_2_.func_234991_a_(entityclassification)) {
-+         // CraftBukkit start - Use per-world spawn limits
-+         boolean spawnThisTick = true;
-+         int limit = entityclassification.func_75601_b();
-+         switch (entityclassification) {
-+            case MONSTER:
-+               spawnThisTick = spawnMonsterThisTick;
-+               limit = p_234979_0_.getWorld().getMonsterSpawnLimit();
-+               break;
-+            case CREATURE:
-+               spawnThisTick = spawnAnimalThisTick;
-+               limit = p_234979_0_.getWorld().getAnimalSpawnLimit();
-+               break;
-+            case WATER_CREATURE:
-+               spawnThisTick = spawnWaterThisTick;
-+               limit = p_234979_0_.getWorld().getWaterAnimalSpawnLimit();
-+               break;
-+            case AMBIENT:
-+               spawnThisTick = spawnAmbientThisTick;
-+               limit = p_234979_0_.getWorld().getAmbientSpawnLimit();
-+               break;
-+            case WATER_AMBIENT:
-+               spawnThisTick = spawnWaterAmbientThisTick;
-+               limit = p_234979_0_.getWorld().getWaterAmbientSpawnLimit();
-+               break;
-+         }
-+
-+         if (!spawnThisTick || limit == 0) {
-+            continue;
-+         }
-+
-+         if ((p_234979_3_ || !entityclassification.func_75599_d()) && (p_234979_4_ || entityclassification.func_75599_d()) && (p_234979_5_ || !entityclassification.func_82705_e()) && p_234979_2_.canSpawnForCategory(entityclassification, limit)) {
-+            // CraftBukkit end
-             func_234967_a_(entityclassification, p_234979_0_, p_234979_1_, (p_234969_1_, p_234969_2_, p_234969_3_) -> {
-                return p_234979_2_.func_234989_a_(p_234969_1_, p_234969_2_, p_234969_3_);
-             }, (p_234970_1_, p_234970_2_) -> {
-@@ -115,6 +_,7 @@
-          }
-       }
- 
-+      p_234979_0_.timings.mobSpawn.stopTiming(); // Spigot
-       p_234979_0_.func_217381_Z().func_76319_b();
-    }
- 
-@@ -169,13 +_,19 @@
-                         }
- 
-                         mobentity.func_70012_b(d0, (double)i, d1, p_234966_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
+-            func_234967_a_(entityclassification, p_234979_0_, p_234979_1_, (p_234969_1_, p_234969_2_, p_234969_3_) -> {
+-               return p_234979_2_.func_234989_a_(p_234969_1_, p_234969_2_, p_234969_3_);
+-            }, (p_234970_1_, p_234970_2_) -> {
+-               p_234979_2_.func_234990_a_(p_234970_1_, p_234970_2_);
+-            });
+-         }
+-      }
+-
+-      p_234979_0_.func_217381_Z().func_76319_b();
+-   }
+-
+-   public static void func_234967_a_(EntityClassification p_234967_0_, ServerWorld p_234967_1_, Chunk p_234967_2_, WorldEntitySpawner.IDensityCheck p_234967_3_, WorldEntitySpawner.IOnSpawnDensityAdder p_234967_4_) {
+-      BlockPos blockpos = func_222262_a(p_234967_1_, p_234967_2_);
+-      if (blockpos.func_177956_o() >= 1) {
+-         func_234966_a_(p_234967_0_, p_234967_1_, p_234967_2_, blockpos, p_234967_3_, p_234967_4_);
+-      }
+-   }
+-
+-   public static void func_234966_a_(EntityClassification p_234966_0_, ServerWorld p_234966_1_, IChunk p_234966_2_, BlockPos p_234966_3_, WorldEntitySpawner.IDensityCheck p_234966_4_, WorldEntitySpawner.IOnSpawnDensityAdder p_234966_5_) {
+-      StructureManager structuremanager = p_234966_1_.func_241112_a_();
+-      ChunkGenerator chunkgenerator = p_234966_1_.func_72863_F().func_201711_g();
+-      int i = p_234966_3_.func_177956_o();
+-      BlockState blockstate = p_234966_2_.func_180495_p(p_234966_3_);
+-      if (!blockstate.func_215686_e(p_234966_2_, p_234966_3_)) {
+-         BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+-         int j = 0;
+-
+-         for(int k = 0; k < 3; ++k) {
+-            int l = p_234966_3_.func_177958_n();
+-            int i1 = p_234966_3_.func_177952_p();
+-            int j1 = 6;
+-            MobSpawnInfo.Spawners mobspawninfo$spawners = null;
+-            ILivingEntityData ilivingentitydata = null;
+-            int k1 = MathHelper.func_76123_f(p_234966_1_.field_73012_v.nextFloat() * 4.0F);
+-            int l1 = 0;
+-
+-            for(int i2 = 0; i2 < k1; ++i2) {
+-               l += p_234966_1_.field_73012_v.nextInt(6) - p_234966_1_.field_73012_v.nextInt(6);
+-               i1 += p_234966_1_.field_73012_v.nextInt(6) - p_234966_1_.field_73012_v.nextInt(6);
+-               blockpos$mutable.func_181079_c(l, i, i1);
+-               double d0 = (double)l + 0.5D;
+-               double d1 = (double)i1 + 0.5D;
+-               PlayerEntity playerentity = p_234966_1_.func_217366_a(d0, (double)i, d1, -1.0D, false);
+-               if (playerentity != null) {
+-                  double d2 = playerentity.func_70092_e(d0, (double)i, d1);
+-                  if (func_234978_a_(p_234966_1_, p_234966_2_, blockpos$mutable, d2)) {
+-                     if (mobspawninfo$spawners == null) {
+-                        mobspawninfo$spawners = func_234977_a_(p_234966_1_, structuremanager, chunkgenerator, p_234966_0_, p_234966_1_.field_73012_v, blockpos$mutable);
+-                        if (mobspawninfo$spawners == null) {
+-                           break;
+-                        }
+-
+-                        k1 = mobspawninfo$spawners.field_242589_d + p_234966_1_.field_73012_v.nextInt(1 + mobspawninfo$spawners.field_242590_e - mobspawninfo$spawners.field_242589_d);
+-                     }
+-
+-                     if (func_234975_a_(p_234966_1_, p_234966_0_, structuremanager, chunkgenerator, mobspawninfo$spawners, blockpos$mutable, d2) && p_234966_4_.test(mobspawninfo$spawners.field_242588_c, blockpos$mutable, p_234966_2_)) {
+-                        MobEntity mobentity = func_234973_a_(p_234966_1_, mobspawninfo$spawners.field_242588_c);
+-                        if (mobentity == null) {
+-                           return;
+-                        }
+-
+-                        mobentity.func_70012_b(d0, (double)i, d1, p_234966_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
 -                        if (func_234974_a_(p_234966_1_, mobentity, d2)) {
-+                        int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_234966_1_, d0, i, d1, null, SpawnReason.NATURAL);
-+                        if (canSpawn != -1 && (canSpawn == 1 || func_234974_a_(p_234966_1_, mobentity, d2))) {
-+                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, p_234966_1_, (float)d0, (float)i, (float)d1, null, SpawnReason.NATURAL))
-                            ilivingentitydata = mobentity.func_213386_a(p_234966_1_, p_234966_1_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
+-                           ilivingentitydata = mobentity.func_213386_a(p_234966_1_, p_234966_1_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
 -                           ++j;
 -                           ++l1;
 -                           p_234966_1_.func_242417_l(mobentity);
 -                           p_234966_5_.run(mobentity, p_234966_2_);
 -                           if (j >= mobentity.func_70641_bl()) {
-+                           // CraftBukkit start
-+                           p_234966_1_.addAllEntities(mobentity, CreatureSpawnEvent.SpawnReason.NATURAL);
-+                           if (!mobentity.field_70128_L) {
-+                              ++j;
-+                              ++l1;
-+                              p_234966_5_.run(mobentity, p_234966_2_);
-+                           }
-+                           // CraftBukkit end
-+                           if (j >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(mobentity)) {
-                               return;
-                            }
- 
-@@ -233,7 +_,7 @@
-             return (MobEntity)entity;
-          }
-       } catch (Exception exception) {
--         field_209383_a.warn("Failed to create mob", (Throwable)exception);
-+         field_209383_a.warn(com.mohistmc.util.i18n.i18n.get("worldentityspawner.1", (Throwable)exception));
-          return null;
-       }
-    }
-@@ -253,6 +_,7 @@
-          return null;
-       } else {
-          List<MobSpawnInfo.Spawners> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
-+         list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_234977_0_, p_234977_3_, p_234977_5_, list);
-          return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
-       }
-    }
-@@ -292,6 +_,13 @@
-       if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
-          return true;
-       } else if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
-+         return p_209382_0_.canSpawnAt(p_209382_1_, p_209382_2_, p_209382_3_);
-+      }
-+      return false;
-+   }
-+
-+   public static boolean canSpawnAtBody(EntitySpawnPlacementRegistry.PlacementType p_209382_0_, IWorldReader p_209382_1_, BlockPos p_209382_2_, @Nullable EntityType<?> p_209382_3_) {
-+      {
-          BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
-          FluidState fluidstate = p_209382_1_.func_204610_c(p_209382_2_);
-          BlockPos blockpos = p_209382_2_.func_177984_a();
-@@ -304,14 +_,12 @@
-          case ON_GROUND:
-          default:
-             BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
--            if (!blockstate1.func_215688_a(p_209382_1_, blockpos1, p_209382_3_)) {
-+            if (!blockstate1.canCreatureSpawn(p_209382_1_, blockpos1, p_209382_0_, p_209382_3_)) {
-                return false;
-             } else {
-                return func_234968_a_(p_209382_1_, p_209382_2_, blockstate, fluidstate, p_209382_3_) && func_234968_a_(p_209382_1_, blockpos, p_209382_1_.func_180495_p(blockpos), p_209382_1_.func_204610_c(blockpos), p_209382_3_);
-             }
-          }
+-                              return;
+-                           }
+-
+-                           if (mobentity.func_204209_c(l1)) {
+-                              break;
+-                           }
+-                        }
+-                     }
+-                  }
+-               }
+-            }
+-         }
+-
+-      }
+-   }
+-
+-   private static boolean func_234978_a_(ServerWorld p_234978_0_, IChunk p_234978_1_, BlockPos.Mutable p_234978_2_, double p_234978_3_) {
+-      if (p_234978_3_ <= 576.0D) {
+-         return false;
+-      } else if (p_234978_0_.func_241135_u_().func_218137_a(new Vector3d((double)p_234978_2_.func_177958_n() + 0.5D, (double)p_234978_2_.func_177956_o(), (double)p_234978_2_.func_177952_p() + 0.5D), 24.0D)) {
+-         return false;
+-      } else {
+-         ChunkPos chunkpos = new ChunkPos(p_234978_2_);
+-         return Objects.equals(chunkpos, p_234978_1_.func_76632_l()) || p_234978_0_.func_72863_F().func_222865_a(chunkpos);
+-      }
+-   }
+-
+-   private static boolean func_234975_a_(ServerWorld p_234975_0_, EntityClassification p_234975_1_, StructureManager p_234975_2_, ChunkGenerator p_234975_3_, MobSpawnInfo.Spawners p_234975_4_, BlockPos.Mutable p_234975_5_, double p_234975_6_) {
+-      EntityType<?> entitytype = p_234975_4_.field_242588_c;
+-      if (entitytype.func_220339_d() == EntityClassification.MISC) {
+-         return false;
+-      } else if (!entitytype.func_225437_d() && p_234975_6_ > (double)(entitytype.func_220339_d().func_233671_f_() * entitytype.func_220339_d().func_233671_f_())) {
+-         return false;
+-      } else if (entitytype.func_200720_b() && func_234976_a_(p_234975_0_, p_234975_2_, p_234975_3_, p_234975_1_, p_234975_4_, p_234975_5_)) {
+-         EntitySpawnPlacementRegistry.PlacementType entityspawnplacementregistry$placementtype = EntitySpawnPlacementRegistry.func_209344_a(entitytype);
+-         if (!func_209382_a(entityspawnplacementregistry$placementtype, p_234975_0_, p_234975_5_, entitytype)) {
+-            return false;
+-         } else if (!EntitySpawnPlacementRegistry.func_223515_a(entitytype, p_234975_0_, SpawnReason.NATURAL, p_234975_5_, p_234975_0_.field_73012_v)) {
+-            return false;
+-         } else {
+-            return p_234975_0_.func_226664_a_(entitytype.func_220328_a((double)p_234975_5_.func_177958_n() + 0.5D, (double)p_234975_5_.func_177956_o(), (double)p_234975_5_.func_177952_p() + 0.5D));
+-         }
 -      } else {
 -         return false;
-       }
-    }
- 
-@@ -348,16 +_,17 @@
-                      try {
-                         entity = mobspawninfo$spawners.field_242588_c.func_200721_a(p_77191_0_.func_201672_e());
-                      } catch (Exception exception) {
+-      }
+-   }
+-
+-   @Nullable
+-   private static MobEntity func_234973_a_(ServerWorld p_234973_0_, EntityType<?> p_234973_1_) {
+-      try {
+-         Entity entity = p_234973_1_.func_200721_a(p_234973_0_);
+-         if (!(entity instanceof MobEntity)) {
+-            throw new IllegalStateException("Trying to spawn a non-mob: " + Registry.field_212629_r.func_177774_c(p_234973_1_));
+-         } else {
+-            return (MobEntity)entity;
+-         }
+-      } catch (Exception exception) {
+-         field_209383_a.warn("Failed to create mob", (Throwable)exception);
+-         return null;
+-      }
+-   }
+-
+-   private static boolean func_234974_a_(ServerWorld p_234974_0_, MobEntity p_234974_1_, double p_234974_2_) {
+-      if (p_234974_2_ > (double)(p_234974_1_.func_200600_R().func_220339_d().func_233671_f_() * p_234974_1_.func_200600_R().func_220339_d().func_233671_f_()) && p_234974_1_.func_213397_c(p_234974_2_)) {
+-         return false;
+-      } else {
+-         return p_234974_1_.func_213380_a(p_234974_0_, SpawnReason.NATURAL) && p_234974_1_.func_205019_a(p_234974_0_);
+-      }
+-   }
+-
+-   @Nullable
+-   private static MobSpawnInfo.Spawners func_234977_a_(ServerWorld p_234977_0_, StructureManager p_234977_1_, ChunkGenerator p_234977_2_, EntityClassification p_234977_3_, Random p_234977_4_, BlockPos p_234977_5_) {
+-      Biome biome = p_234977_0_.func_226691_t_(p_234977_5_);
+-      if (p_234977_3_ == EntityClassification.WATER_AMBIENT && biome.func_201856_r() == Biome.Category.RIVER && p_234977_4_.nextFloat() < 0.98F) {
+-         return null;
+-      } else {
+-         List<MobSpawnInfo.Spawners> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
+-         return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
+-      }
+-   }
+-
+-   private static boolean func_234976_a_(ServerWorld p_234976_0_, StructureManager p_234976_1_, ChunkGenerator p_234976_2_, EntityClassification p_234976_3_, MobSpawnInfo.Spawners p_234976_4_, BlockPos p_234976_5_) {
+-      return func_241463_a_(p_234976_0_, p_234976_1_, p_234976_2_, p_234976_3_, p_234976_5_, (Biome)null).contains(p_234976_4_);
+-   }
+-
+-   private static List<MobSpawnInfo.Spawners> func_241463_a_(ServerWorld p_241463_0_, StructureManager p_241463_1_, ChunkGenerator p_241463_2_, EntityClassification p_241463_3_, BlockPos p_241463_4_, @Nullable Biome p_241463_5_) {
+-      return p_241463_3_ == EntityClassification.MONSTER && p_241463_0_.func_180495_p(p_241463_4_.func_177977_b()).func_177230_c() == Blocks.field_196653_dH && p_241463_1_.func_235010_a_(p_241463_4_, false, Structure.field_236378_n_).func_75069_d() ? Structure.field_236378_n_.func_202279_e() : p_241463_2_.func_230353_a_(p_241463_5_ != null ? p_241463_5_ : p_241463_0_.func_226691_t_(p_241463_4_), p_241463_1_, p_241463_3_, p_241463_4_);
+-   }
+-
+-   private static BlockPos func_222262_a(World p_222262_0_, Chunk p_222262_1_) {
+-      ChunkPos chunkpos = p_222262_1_.func_76632_l();
+-      int i = chunkpos.func_180334_c() + p_222262_0_.field_73012_v.nextInt(16);
+-      int j = chunkpos.func_180333_d() + p_222262_0_.field_73012_v.nextInt(16);
+-      int k = p_222262_1_.func_201576_a(Heightmap.Type.WORLD_SURFACE, i, j) + 1;
+-      int l = p_222262_0_.field_73012_v.nextInt(k + 1);
+-      return new BlockPos(i, l, j);
+-   }
+-
+-   public static boolean func_234968_a_(IBlockReader p_234968_0_, BlockPos p_234968_1_, BlockState p_234968_2_, FluidState p_234968_3_, EntityType<?> p_234968_4_) {
+-      if (p_234968_2_.func_235785_r_(p_234968_0_, p_234968_1_)) {
+-         return false;
+-      } else if (p_234968_2_.func_185897_m()) {
+-         return false;
+-      } else if (!p_234968_3_.func_206888_e()) {
+-         return false;
+-      } else if (p_234968_2_.func_235714_a_(BlockTags.field_232884_az_)) {
+-         return false;
+-      } else {
+-         return !p_234968_4_.func_233597_a_(p_234968_2_);
+-      }
+-   }
+-
+-   public static boolean func_209382_a(EntitySpawnPlacementRegistry.PlacementType p_209382_0_, IWorldReader p_209382_1_, BlockPos p_209382_2_, @Nullable EntityType<?> p_209382_3_) {
+-      if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
+-         return true;
+-      } else if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
+-         BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
+-         FluidState fluidstate = p_209382_1_.func_204610_c(p_209382_2_);
+-         BlockPos blockpos = p_209382_2_.func_177984_a();
+-         BlockPos blockpos1 = p_209382_2_.func_177977_b();
+-         switch(p_209382_0_) {
+-         case IN_WATER:
+-            return fluidstate.func_206884_a(FluidTags.field_206959_a) && p_209382_1_.func_204610_c(blockpos1).func_206884_a(FluidTags.field_206959_a) && !p_209382_1_.func_180495_p(blockpos).func_215686_e(p_209382_1_, blockpos);
+-         case IN_LAVA:
+-            return fluidstate.func_206884_a(FluidTags.field_206960_b);
+-         case ON_GROUND:
+-         default:
+-            BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
+-            if (!blockstate1.func_215688_a(p_209382_1_, blockpos1, p_209382_3_)) {
+-               return false;
++                throw new IllegalStateException("Trying to spawn a non-mob: " + Registry.field_212629_r.func_177774_c(p_234973_1_));
+             } else {
+-               return func_234968_a_(p_209382_1_, p_209382_2_, blockstate, fluidstate, p_209382_3_) && func_234968_a_(p_209382_1_, blockpos, p_209382_1_.func_180495_p(blockpos), p_209382_1_.func_204610_c(blockpos), p_209382_3_);
+-            }
+-         }
+-      } else {
+-         return false;
+-      }
+-   }
+-
+-   public static void func_77191_a(IServerWorld p_77191_0_, Biome p_77191_1_, int p_77191_2_, int p_77191_3_, Random p_77191_4_) {
+-      MobSpawnInfo mobspawninfo = p_77191_1_.func_242433_b();
+-      List<MobSpawnInfo.Spawners> list = mobspawninfo.func_242559_a(EntityClassification.CREATURE);
+-      if (!list.isEmpty()) {
+-         int i = p_77191_2_ << 4;
+-         int j = p_77191_3_ << 4;
+-
+-         while(p_77191_4_.nextFloat() < mobspawninfo.func_242557_a()) {
+-            MobSpawnInfo.Spawners mobspawninfo$spawners = WeightedRandom.func_76271_a(p_77191_4_, list);
+-            int k = mobspawninfo$spawners.field_242589_d + p_77191_4_.nextInt(1 + mobspawninfo$spawners.field_242590_e - mobspawninfo$spawners.field_242589_d);
+-            ILivingEntityData ilivingentitydata = null;
+-            int l = i + p_77191_4_.nextInt(16);
+-            int i1 = j + p_77191_4_.nextInt(16);
+-            int j1 = l;
+-            int k1 = i1;
+-
+-            for(int l1 = 0; l1 < k; ++l1) {
+-               boolean flag = false;
+-
+-               for(int i2 = 0; !flag && i2 < 4; ++i2) {
+-                  BlockPos blockpos = func_208498_a(p_77191_0_, mobspawninfo$spawners.field_242588_c, l, i1);
+-                  if (mobspawninfo$spawners.field_242588_c.func_200720_b() && func_209382_a(EntitySpawnPlacementRegistry.func_209344_a(mobspawninfo$spawners.field_242588_c), p_77191_0_, blockpos, mobspawninfo$spawners.field_242588_c)) {
+-                     float f = mobspawninfo$spawners.field_242588_c.func_220333_h();
+-                     double d0 = MathHelper.func_151237_a((double)l, (double)i + (double)f, (double)i + 16.0D - (double)f);
+-                     double d1 = MathHelper.func_151237_a((double)i1, (double)j + (double)f, (double)j + 16.0D - (double)f);
+-                     if (!p_77191_0_.func_226664_a_(mobspawninfo$spawners.field_242588_c.func_220328_a(d0, (double)blockpos.func_177956_o(), d1)) || !EntitySpawnPlacementRegistry.func_223515_a(mobspawninfo$spawners.field_242588_c, p_77191_0_, SpawnReason.CHUNK_GENERATION, new BlockPos(d0, (double)blockpos.func_177956_o(), d1), p_77191_0_.func_201674_k())) {
+-                        continue;
+-                     }
+-
+-                     Entity entity;
+-                     try {
+-                        entity = mobspawninfo$spawners.field_242588_c.func_200721_a(p_77191_0_.func_201672_e());
+-                     } catch (Exception exception) {
 -                        field_209383_a.warn("Failed to create mob", (Throwable)exception);
-+                        field_209383_a.warn(com.mohistmc.util.i18n.i18n.get("worldentityspawner.2", (Throwable)exception));
-                         continue;
-                      }
- 
-                      entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
-                      if (entity instanceof MobEntity) {
-                         MobEntity mobentity = (MobEntity)entity;
-+                        if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_77191_0_, d0, blockpos.func_177956_o(), d1, null, SpawnReason.CHUNK_GENERATION) == -1) continue;
-                         if (mobentity.func_213380_a(p_77191_0_, SpawnReason.CHUNK_GENERATION) && mobentity.func_205019_a(p_77191_0_)) {
-                            ilivingentitydata = mobentity.func_213386_a(p_77191_0_, p_77191_0_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.CHUNK_GENERATION, ilivingentitydata, (CompoundNBT)null);
+-                        continue;
+-                     }
+-
+-                     entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
+-                     if (entity instanceof MobEntity) {
+-                        MobEntity mobentity = (MobEntity)entity;
+-                        if (mobentity.func_213380_a(p_77191_0_, SpawnReason.CHUNK_GENERATION) && mobentity.func_205019_a(p_77191_0_)) {
+-                           ilivingentitydata = mobentity.func_213386_a(p_77191_0_, p_77191_0_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.CHUNK_GENERATION, ilivingentitydata, (CompoundNBT)null);
 -                           p_77191_0_.func_242417_l(mobentity);
-+                           p_77191_0_.addAllEntities(mobentity, CreatureSpawnEvent.SpawnReason.CHUNK_GEN); // CraftBukkit
-                            flag = true;
-                         }
-                      }
-@@ -461,6 +_,14 @@
- 
-       private boolean func_234991_a_(EntityClassification p_234991_1_) {
-          int i = p_234991_1_.func_75601_b() * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
-+         return this.field_234982_b_.getInt(p_234991_1_) < i;
-+      }
+-                           flag = true;
+-                        }
+-                     }
+-                  }
+-
+-                  l += p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5);
+-
+-                  for(i1 += p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5); l < i || l >= i + 16 || i1 < j || i1 >= j + 16; i1 = k1 + p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5)) {
+-                     l = j1 + p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5);
+-                  }
+-               }
+-            }
+-         }
+-
+-      }
+-   }
+-
+-   private static BlockPos func_208498_a(IWorldReader p_208498_0_, EntityType<?> p_208498_1_, int p_208498_2_, int p_208498_3_) {
+-      int i = p_208498_0_.func_201676_a(EntitySpawnPlacementRegistry.func_209342_b(p_208498_1_), p_208498_2_, p_208498_3_);
+-      BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(p_208498_2_, i, p_208498_3_);
+-      if (p_208498_0_.func_230315_m_().func_236037_d_()) {
+-         do {
+-            blockpos$mutable.func_189536_c(Direction.DOWN);
+-         } while(!p_208498_0_.func_180495_p(blockpos$mutable).func_196958_f());
+-
+-         do {
+-            blockpos$mutable.func_189536_c(Direction.DOWN);
+-         } while(p_208498_0_.func_180495_p(blockpos$mutable).func_196958_f() && blockpos$mutable.func_177956_o() > 0);
+-      }
+-
+-      if (EntitySpawnPlacementRegistry.func_209344_a(p_208498_1_) == EntitySpawnPlacementRegistry.PlacementType.ON_GROUND) {
+-         BlockPos blockpos = blockpos$mutable.func_177977_b();
+-         if (p_208498_0_.func_180495_p(blockpos).func_196957_g(p_208498_0_, blockpos, PathType.LAND)) {
+-            return blockpos;
+-         }
+-      }
+-
+-      return blockpos$mutable.func_185334_h();
+-   }
+-
+-   public static class EntityDensityManager {
+-      private final int field_234981_a_;
+-      private final Object2IntOpenHashMap<EntityClassification> field_234982_b_;
+-      private final MobDensityTracker field_234983_c_;
+-      private final Object2IntMap<EntityClassification> field_234984_d_;
+-      @Nullable
+-      private BlockPos field_234985_e_;
+-      @Nullable
+-      private EntityType<?> field_234986_f_;
+-      private double field_234987_g_;
+-
+-      private EntityDensityManager(int p_i231621_1_, Object2IntOpenHashMap<EntityClassification> p_i231621_2_, MobDensityTracker p_i231621_3_) {
+-         this.field_234981_a_ = p_i231621_1_;
+-         this.field_234982_b_ = p_i231621_2_;
+-         this.field_234983_c_ = p_i231621_3_;
+-         this.field_234984_d_ = Object2IntMaps.unmodifiable(p_i231621_2_);
+-      }
+-
+-      private boolean func_234989_a_(EntityType<?> p_234989_1_, BlockPos p_234989_2_, IChunk p_234989_3_) {
+-         this.field_234985_e_ = p_234989_2_;
+-         this.field_234986_f_ = p_234989_1_;
+-         MobSpawnInfo.SpawnCosts mobspawninfo$spawncosts = WorldEntitySpawner.func_234980_b_(p_234989_2_, p_234989_3_).func_242433_b().func_242558_a(p_234989_1_);
+-         if (mobspawninfo$spawncosts == null) {
+-            this.field_234987_g_ = 0.0D;
++                return (MobEntity) entity;
++            }
++        } catch (Exception exception) {
++            field_209383_a.warn(com.mohistmc.util.i18n.i18n.get("worldentityspawner.1", (Throwable) exception));
++            return null;
++        }
++    }
 +
-+      // CraftBukkit start
-+      private boolean canSpawnForCategory(EntityClassification p_234991_1_, int limit) {
-+         int i = limit * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
-+         // CraftBukkit end
++    private static boolean func_234974_a_(ServerWorld p_234974_0_, MobEntity p_234974_1_, double p_234974_2_) {
++        if (p_234974_2_ > (double) (p_234974_1_.func_200600_R().func_220339_d().func_233671_f_() * p_234974_1_.func_200600_R().func_220339_d().func_233671_f_()) && p_234974_1_.func_213397_c(p_234974_2_)) {
++            return false;
++        } else {
++            return p_234974_1_.func_213380_a(p_234974_0_, SpawnReason.NATURAL) && p_234974_1_.func_205019_a(p_234974_0_);
++        }
++    }
 +
-          return this.field_234982_b_.getInt(p_234991_1_) < i;
-       }
-    }
++    @Nullable
++    private static MobSpawnInfo.Spawners func_234977_a_(ServerWorld p_234977_0_, StructureManager p_234977_1_, ChunkGenerator p_234977_2_, EntityClassification p_234977_3_, Random p_234977_4_, BlockPos p_234977_5_) {
++        Biome biome = p_234977_0_.func_226691_t_(p_234977_5_);
++        if (p_234977_3_ == EntityClassification.WATER_AMBIENT && biome.func_201856_r() == Biome.Category.RIVER && p_234977_4_.nextFloat() < 0.98F) {
++            return null;
++        } else {
++            List<MobSpawnInfo.Spawners> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
++            list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_234977_0_, p_234977_3_, p_234977_5_, list);
++            return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
++        }
++    }
++
++    private static boolean func_234976_a_(ServerWorld p_234976_0_, StructureManager p_234976_1_, ChunkGenerator p_234976_2_, EntityClassification p_234976_3_, MobSpawnInfo.Spawners p_234976_4_, BlockPos p_234976_5_) {
++        return func_241463_a_(p_234976_0_, p_234976_1_, p_234976_2_, p_234976_3_, p_234976_5_, (Biome) null).contains(p_234976_4_);
++    }
++
++    private static List<MobSpawnInfo.Spawners> func_241463_a_(ServerWorld p_241463_0_, StructureManager p_241463_1_, ChunkGenerator p_241463_2_, EntityClassification p_241463_3_, BlockPos p_241463_4_, @Nullable Biome p_241463_5_) {
++        return p_241463_3_ == EntityClassification.MONSTER && p_241463_0_.func_180495_p(p_241463_4_.func_177977_b()).func_177230_c() == Blocks.field_196653_dH && p_241463_1_.func_235010_a_(p_241463_4_, false, Structure.field_236378_n_).func_75069_d() ? Structure.field_236378_n_.func_202279_e() : p_241463_2_.func_230353_a_(p_241463_5_ != null ? p_241463_5_ : p_241463_0_.func_226691_t_(p_241463_4_), p_241463_1_, p_241463_3_, p_241463_4_);
++    }
++
++    private static BlockPos func_222262_a(World p_222262_0_, Chunk p_222262_1_) {
++        ChunkPos chunkpos = p_222262_1_.func_76632_l();
++        int i = chunkpos.func_180334_c() + p_222262_0_.field_73012_v.nextInt(16);
++        int j = chunkpos.func_180333_d() + p_222262_0_.field_73012_v.nextInt(16);
++        int k = p_222262_1_.func_201576_a(Heightmap.Type.WORLD_SURFACE, i, j) + 1;
++        int l = p_222262_0_.field_73012_v.nextInt(k + 1);
++        return new BlockPos(i, l, j);
++    }
++
++    public static boolean func_234968_a_(IBlockReader p_234968_0_, BlockPos p_234968_1_, BlockState p_234968_2_, FluidState p_234968_3_, EntityType<?> p_234968_4_) {
++        if (p_234968_2_.func_235785_r_(p_234968_0_, p_234968_1_)) {
++            return false;
++        } else if (p_234968_2_.func_185897_m()) {
++            return false;
++        } else if (!p_234968_3_.func_206888_e()) {
++            return false;
++        } else if (p_234968_2_.func_235714_a_(BlockTags.field_232884_az_)) {
++            return false;
++        } else {
++            return !p_234968_4_.func_233597_a_(p_234968_2_);
++        }
++    }
++
++    public static boolean func_209382_a(EntitySpawnPlacementRegistry.PlacementType p_209382_0_, IWorldReader p_209382_1_, BlockPos p_209382_2_, @Nullable EntityType<?> p_209382_3_) {
++        if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
+             return true;
+-         } else {
+-            double d0 = mobspawninfo$spawncosts.func_242585_b();
+-            this.field_234987_g_ = d0;
+-            double d1 = this.field_234983_c_.func_234999_b_(p_234989_2_, d0);
+-            return d1 <= mobspawninfo$spawncosts.func_242582_a();
+-         }
+-      }
+-
+-      private void func_234990_a_(MobEntity p_234990_1_, IChunk p_234990_2_) {
+-         EntityType<?> entitytype = p_234990_1_.func_200600_R();
+-         BlockPos blockpos = p_234990_1_.func_233580_cy_();
+-         double d0;
+-         if (blockpos.equals(this.field_234985_e_) && entitytype == this.field_234986_f_) {
+-            d0 = this.field_234987_g_;
+-         } else {
+-            MobSpawnInfo.SpawnCosts mobspawninfo$spawncosts = WorldEntitySpawner.func_234980_b_(blockpos, p_234990_2_).func_242433_b().func_242558_a(entitytype);
+-            if (mobspawninfo$spawncosts != null) {
+-               d0 = mobspawninfo$spawncosts.func_242585_b();
+-            } else {
+-               d0 = 0.0D;
+-            }
+-         }
+-
+-         this.field_234983_c_.func_234998_a_(blockpos, d0);
+-         this.field_234982_b_.addTo(entitytype.func_220339_d(), 1);
+-      }
+-
+-      @OnlyIn(Dist.CLIENT)
+-      public int func_234988_a_() {
+-         return this.field_234981_a_;
+-      }
+-
+-      public Object2IntMap<EntityClassification> func_234995_b_() {
+-         return this.field_234984_d_;
+-      }
+-
+-      private boolean func_234991_a_(EntityClassification p_234991_1_) {
+-         int i = p_234991_1_.func_75601_b() * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
+-         return this.field_234982_b_.getInt(p_234991_1_) < i;
+-      }
+-   }
+-
+-   @FunctionalInterface
+-   public interface IDensityCheck {
+-      boolean test(EntityType<?> p_test_1_, BlockPos p_test_2_, IChunk p_test_3_);
+-   }
+-
+-   @FunctionalInterface
+-   public interface IInitialDensityAdder {
+-      void query(long p_query_1_, Consumer<Chunk> p_query_3_);
+-   }
+-
+-   @FunctionalInterface
+-   public interface IOnSpawnDensityAdder {
+-      void run(MobEntity p_run_1_, IChunk p_run_2_);
+-   }
++        } else if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
++            return p_209382_0_.canSpawnAt(p_209382_1_, p_209382_2_, p_209382_3_);
++        }
++        return false;
++    }
++
++    public static boolean canSpawnAtBody(EntitySpawnPlacementRegistry.PlacementType p_209382_0_, IWorldReader p_209382_1_, BlockPos p_209382_2_, @Nullable EntityType<?> p_209382_3_) {
++        {
++            BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
++            FluidState fluidstate = p_209382_1_.func_204610_c(p_209382_2_);
++            BlockPos blockpos = p_209382_2_.func_177984_a();
++            BlockPos blockpos1 = p_209382_2_.func_177977_b();
++            switch (p_209382_0_) {
++                case IN_WATER:
++                    return fluidstate.func_206884_a(FluidTags.field_206959_a) && p_209382_1_.func_204610_c(blockpos1).func_206884_a(FluidTags.field_206959_a) && !p_209382_1_.func_180495_p(blockpos).func_215686_e(p_209382_1_, blockpos);
++                case IN_LAVA:
++                    return fluidstate.func_206884_a(FluidTags.field_206960_b);
++                case ON_GROUND:
++                default:
++                    BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
++                    if (!blockstate1.canCreatureSpawn(p_209382_1_, blockpos1, p_209382_0_, p_209382_3_)) {
++                        return false;
++                    } else {
++                        return func_234968_a_(p_209382_1_, p_209382_2_, blockstate, fluidstate, p_209382_3_) && func_234968_a_(p_209382_1_, blockpos, p_209382_1_.func_180495_p(blockpos), p_209382_1_.func_204610_c(blockpos), p_209382_3_);
++                    }
++            }
++        }
++    }
++
++    public static void func_77191_a(IServerWorld p_77191_0_, Biome p_77191_1_, int p_77191_2_, int p_77191_3_, Random p_77191_4_) {
++        MobSpawnInfo mobspawninfo = p_77191_1_.func_242433_b();
++        List<MobSpawnInfo.Spawners> list = mobspawninfo.func_242559_a(EntityClassification.CREATURE);
++        if (!list.isEmpty()) {
++            int i = p_77191_2_ << 4;
++            int j = p_77191_3_ << 4;
++
++            while (p_77191_4_.nextFloat() < mobspawninfo.func_242557_a()) {
++                MobSpawnInfo.Spawners mobspawninfo$spawners = WeightedRandom.func_76271_a(p_77191_4_, list);
++                int k = mobspawninfo$spawners.field_242589_d + p_77191_4_.nextInt(1 + mobspawninfo$spawners.field_242590_e - mobspawninfo$spawners.field_242589_d);
++                ILivingEntityData ilivingentitydata = null;
++                int l = i + p_77191_4_.nextInt(16);
++                int i1 = j + p_77191_4_.nextInt(16);
++                int j1 = l;
++                int k1 = i1;
++
++                for (int l1 = 0; l1 < k; ++l1) {
++                    boolean flag = false;
++
++                    for (int i2 = 0; !flag && i2 < 4; ++i2) {
++                        BlockPos blockpos = func_208498_a(p_77191_0_, mobspawninfo$spawners.field_242588_c, l, i1);
++                        if (mobspawninfo$spawners.field_242588_c.func_200720_b() && func_209382_a(EntitySpawnPlacementRegistry.func_209344_a(mobspawninfo$spawners.field_242588_c), p_77191_0_, blockpos, mobspawninfo$spawners.field_242588_c)) {
++                            float f = mobspawninfo$spawners.field_242588_c.func_220333_h();
++                            double d0 = MathHelper.func_151237_a((double) l, (double) i + (double) f, (double) i + 16.0D - (double) f);
++                            double d1 = MathHelper.func_151237_a((double) i1, (double) j + (double) f, (double) j + 16.0D - (double) f);
++                            if (!p_77191_0_.func_226664_a_(mobspawninfo$spawners.field_242588_c.func_220328_a(d0, (double) blockpos.func_177956_o(), d1)) || !EntitySpawnPlacementRegistry.func_223515_a(mobspawninfo$spawners.field_242588_c, p_77191_0_, SpawnReason.CHUNK_GENERATION, new BlockPos(d0, (double) blockpos.func_177956_o(), d1), p_77191_0_.func_201674_k())) {
++                                continue;
++                            }
++
++                            Entity entity;
++                            try {
++                                entity = mobspawninfo$spawners.field_242588_c.func_200721_a(p_77191_0_.func_201672_e());
++                            } catch (Exception exception) {
++                                field_209383_a.warn(com.mohistmc.util.i18n.i18n.get("worldentityspawner.2", (Throwable) exception));
++                                continue;
++                            }
++
++                            entity.func_70012_b(d0, (double) blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
++                            if (entity instanceof MobEntity) {
++                                MobEntity mobentity = (MobEntity) entity;
++                                if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_77191_0_, d0, blockpos.func_177956_o(), d1, null, SpawnReason.CHUNK_GENERATION) == -1)
++                                    continue;
++                                if (mobentity.func_213380_a(p_77191_0_, SpawnReason.CHUNK_GENERATION) && mobentity.func_205019_a(p_77191_0_)) {
++                                    ilivingentitydata = mobentity.func_213386_a(p_77191_0_, p_77191_0_.func_175649_E(mobentity.func_233580_cy_()), SpawnReason.CHUNK_GENERATION, ilivingentitydata, (CompoundNBT) null);
++                                    p_77191_0_.addAllEntities(mobentity, CreatureSpawnEvent.SpawnReason.CHUNK_GEN); // CraftBukkit
++                                    flag = true;
++                                }
++                            }
++                        }
++
++                        l += p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5);
++
++                        for (i1 += p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5); l < i || l >= i + 16 || i1 < j || i1 >= j + 16; i1 = k1 + p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5)) {
++                            l = j1 + p_77191_4_.nextInt(5) - p_77191_4_.nextInt(5);
++                        }
++                    }
++                }
++            }
++
++        }
++    }
++
++    private static BlockPos func_208498_a(IWorldReader p_208498_0_, EntityType<?> p_208498_1_, int p_208498_2_, int p_208498_3_) {
++        int i = p_208498_0_.func_201676_a(EntitySpawnPlacementRegistry.func_209342_b(p_208498_1_), p_208498_2_, p_208498_3_);
++        BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(p_208498_2_, i, p_208498_3_);
++        if (p_208498_0_.func_230315_m_().func_236037_d_()) {
++            do {
++                blockpos$mutable.func_189536_c(Direction.DOWN);
++            } while (!p_208498_0_.func_180495_p(blockpos$mutable).func_196958_f());
++
++            do {
++                blockpos$mutable.func_189536_c(Direction.DOWN);
++            } while (p_208498_0_.func_180495_p(blockpos$mutable).func_196958_f() && blockpos$mutable.func_177956_o() > 0);
++        }
++
++        if (EntitySpawnPlacementRegistry.func_209344_a(p_208498_1_) == EntitySpawnPlacementRegistry.PlacementType.ON_GROUND) {
++            BlockPos blockpos = blockpos$mutable.func_177977_b();
++            if (p_208498_0_.func_180495_p(blockpos).func_196957_g(p_208498_0_, blockpos, PathType.LAND)) {
++                return blockpos;
++            }
++        }
++
++        return blockpos$mutable.func_185334_h();
++    }
++
++    public static class EntityDensityManager {
++        private final int field_234981_a_;
++        private final Object2IntOpenHashMap<EntityClassification> field_234982_b_;
++        private final MobDensityTracker field_234983_c_;
++        private final Object2IntMap<EntityClassification> field_234984_d_;
++        @Nullable
++        private BlockPos field_234985_e_;
++        @Nullable
++        private EntityType<?> field_234986_f_;
++        private double field_234987_g_;
++
++        private EntityDensityManager(int p_i231621_1_, Object2IntOpenHashMap<EntityClassification> p_i231621_2_, MobDensityTracker p_i231621_3_) {
++            this.field_234981_a_ = p_i231621_1_;
++            this.field_234982_b_ = p_i231621_2_;
++            this.field_234983_c_ = p_i231621_3_;
++            this.field_234984_d_ = Object2IntMaps.unmodifiable(p_i231621_2_);
++        }
++
++        private boolean func_234989_a_(EntityType<?> p_234989_1_, BlockPos p_234989_2_, IChunk p_234989_3_) {
++            this.field_234985_e_ = p_234989_2_;
++            this.field_234986_f_ = p_234989_1_;
++            MobSpawnInfo.SpawnCosts mobspawninfo$spawncosts = WorldEntitySpawner.func_234980_b_(p_234989_2_, p_234989_3_).func_242433_b().func_242558_a(p_234989_1_);
++            if (mobspawninfo$spawncosts == null) {
++                this.field_234987_g_ = 0.0D;
++                return true;
++            } else {
++                double d0 = mobspawninfo$spawncosts.func_242585_b();
++                this.field_234987_g_ = d0;
++                double d1 = this.field_234983_c_.func_234999_b_(p_234989_2_, d0);
++                return d1 <= mobspawninfo$spawncosts.func_242582_a();
++            }
++        }
++
++        private void func_234990_a_(MobEntity p_234990_1_, IChunk p_234990_2_) {
++            EntityType<?> entitytype = p_234990_1_.func_200600_R();
++            BlockPos blockpos = p_234990_1_.func_233580_cy_();
++            double d0;
++            if (blockpos.equals(this.field_234985_e_) && entitytype == this.field_234986_f_) {
++                d0 = this.field_234987_g_;
++            } else {
++                MobSpawnInfo.SpawnCosts mobspawninfo$spawncosts = WorldEntitySpawner.func_234980_b_(blockpos, p_234990_2_).func_242433_b().func_242558_a(entitytype);
++                if (mobspawninfo$spawncosts != null) {
++                    d0 = mobspawninfo$spawncosts.func_242585_b();
++                } else {
++                    d0 = 0.0D;
++                }
++            }
++
++            this.field_234983_c_.func_234998_a_(blockpos, d0);
++            this.field_234982_b_.addTo(entitytype.func_220339_d(), 1);
++        }
++
++        @OnlyIn(Dist.CLIENT)
++        public int func_234988_a_() {
++            return this.field_234981_a_;
++        }
++
++        public Object2IntMap<EntityClassification> func_234995_b_() {
++            return this.field_234984_d_;
++        }
++
++        private boolean func_234991_a_(EntityClassification p_234991_1_) {
++            int i = p_234991_1_.func_75601_b() * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
++            return this.field_234982_b_.getInt(p_234991_1_) < i;
++        }
++
++        // CraftBukkit start
++        private boolean canSpawnForCategory(EntityClassification p_234991_1_, int limit) {
++            int i = limit * this.field_234981_a_ / WorldEntitySpawner.field_234960_b_;
++            // CraftBukkit end
++
++            return this.field_234982_b_.getInt(p_234991_1_) < i;
++        }
++    }
++
++    @FunctionalInterface
++    public interface IDensityCheck {
++        boolean test(EntityType<?> p_test_1_, BlockPos p_test_2_, IChunk p_test_3_);
++    }
++
++    @FunctionalInterface
++    public interface IInitialDensityAdder {
++        void query(long p_query_1_, Consumer<Chunk> p_query_3_);
++    }
++
++    @FunctionalInterface
++    public interface IOnSpawnDensityAdder {
++        void run(MobEntity p_run_1_, IChunk p_run_2_);
++    }
+ }

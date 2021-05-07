@@ -1,5 +1,21 @@
 --- a/net/minecraft/entity/player/PlayerEntity.java
 +++ b/net/minecraft/entity/player/PlayerEntity.java
+@@ -20,14 +_,7 @@
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.RespawnAnchorBlock;
+ import net.minecraft.enchantment.EnchantmentHelper;
+-import net.minecraft.entity.CreatureAttribute;
+-import net.minecraft.entity.Entity;
+-import net.minecraft.entity.EntitySize;
+-import net.minecraft.entity.EntityType;
+-import net.minecraft.entity.LivingEntity;
+-import net.minecraft.entity.MobEntity;
+-import net.minecraft.entity.MoverType;
+-import net.minecraft.entity.Pose;
++import net.minecraft.entity.*;
+ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+ import net.minecraft.entity.ai.attributes.Attributes;
+ import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
 @@ -48,8 +_,8 @@
  import net.minecraft.inventory.container.INamedContainerProvider;
  import net.minecraft.inventory.container.PlayerContainer;
@@ -71,7 +87,7 @@
     protected boolean field_204230_bP;
     public final PlayerAbilities field_71075_bZ = new PlayerAbilities();
     public int field_71068_ca;
-@@ -150,8 +_,24 @@
+@@ -150,8 +_,34 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
     public FishingBobberEntity field_71104_cf;
@@ -81,9 +97,19 @@
 +   private final java.util.Collection<IFormattableTextComponent> suffixes = new java.util.LinkedList<>();
 +   @Nullable private Pose forcedPose;
 +
++   // Paper start
++   public boolean affectsSpawning = true;
++   // Paper end
++
 +   // CraftBukkit start
 +   public boolean fauxSleeping;
 +   public int oldLevel = -1;
++
++   // Paper start - mob spawning rework
++   public static final int ENUMCREATURETYPE_TOTAL_ENUMS = EntityClassification.values().length;
++   public final int[] mobCounts = new int[ENUMCREATURETYPE_TOTAL_ENUMS]; // Paper
++   public final com.destroystokyo.paper.util.PooledHashSets.PooledObjectLinkedOpenHashSet<PlayerEntity> cachedSingleMobDistanceMap;
++   // Paper end
 +
 +   @Override
 +   public CraftHumanEntity getBukkitEntity() {
@@ -98,12 +124,13 @@
        super(EntityType.field_200729_aH, p_i241920_1_);
        this.func_184221_a(func_146094_a(p_i241920_4_));
        this.field_146106_i = p_i241920_4_;
-@@ -159,6 +_,8 @@
+@@ -159,6 +_,9 @@
        this.field_71070_bA = this.field_71069_bz;
        this.func_70012_b((double)p_i241920_2_.func_177958_n() + 0.5D, (double)(p_i241920_2_.func_177956_o() + 1), (double)p_i241920_2_.func_177952_p() + 0.5D, p_i241920_3_, 0.0F);
        this.field_70741_aB = 180.0F;
 +
-+        this.cachedSingleHashSet = new com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
++      this.cachedSingleHashSet = new com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
++      this.cachedSingleMobDistanceMap = new com.destroystokyo.paper.util.PooledHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
     }
  
     public boolean func_223729_a(World p_223729_1_, BlockPos p_223729_2_, GameType p_223729_3_) {

@@ -401,7 +401,7 @@
        this.field_73251_h.func_217381_Z().func_76319_b();
        this.func_222869_l();
     }
-@@ -331,42 +_,53 @@
+@@ -331,42 +_,68 @@
        this.field_217245_k = i;
        IWorldInfo iworldinfo = this.field_73251_h.func_72912_H();
        boolean flag = this.field_73251_h.func_234925_Z_();
@@ -415,7 +415,23 @@
           this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
 +         this.field_73251_h.timings.countNaturalMobs.startTiming(); // Paper - timings
           int l = this.field_217240_d.func_219358_b();
-          WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = WorldEntitySpawner.func_234964_a_(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_);
+-         WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = WorldEntitySpawner.func_234964_a_(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_);
++         // Paper start - per player mob spawning
++         WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager; // moved down
++         if (this.field_217237_a.playerMobDistanceMap != null) {
++            // update distance map
++            this.field_73251_h.timings.playerMobDistanceMapUpdate.startTiming();
++            this.field_217237_a.playerMobDistanceMap.update(this.field_73251_h.field_217491_A, this.field_217237_a.field_219247_A);
++            this.field_73251_h.timings.playerMobDistanceMapUpdate.stopTiming();
++            // re-set mob counts
++            for (ServerPlayerEntity player : this.field_73251_h.field_217491_A) {
++               Arrays.fill(player.mobCounts, 0);
++            }
++            worldentityspawner$entitydensitymanager = WorldEntitySpawner.createState(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_, true);
++         } else {
++            worldentityspawner$entitydensitymanager = WorldEntitySpawner.createState(l, this.field_73251_h.func_241136_z_(), this::func_241098_a_, false);
++         }
++         // Paper end
 +         this.field_73251_h.timings.countNaturalMobs.stopTiming(); // Paper - timings
           this.field_241097_p_ = worldentityspawner$entitydensitymanager;
           this.field_73251_h.func_217381_Z().func_76319_b();
