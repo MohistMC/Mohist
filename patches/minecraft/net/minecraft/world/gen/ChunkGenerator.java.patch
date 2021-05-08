@@ -26,7 +26,7 @@
  
  public abstract class ChunkGenerator {
     public static final Codec<ChunkGenerator> field_235948_a_ = Registry.field_239690_aB_.dispatchStable(ChunkGenerator::func_230347_a_, Function.identity());
-@@ -151,6 +_,28 @@
+@@ -151,6 +_,26 @@
  
     @Nullable
     public BlockPos func_235956_a_(ServerWorld p_235956_1_, Structure<?> p_235956_2_, BlockPos p_235956_3_, int p_235956_4_, boolean p_235956_5_) {
@@ -48,9 +48,7 @@
 +      // Get radius and whether to find unexplored structures (re)defined by event call.
 +      p_235956_4_ = event.getRadius();
 +      p_235956_5_ = event.shouldFindUnexplored();
-+      // Mohist start - TODO: Add Structure to StructureType (Bukkit)
-+      if (event.getType() != null) p_235956_2_ = Structure.field_236365_a_.get(event.getType().getName());
-+      // Mohist end
++      p_235956_2_ = Structure.field_236365_a_.get(event.getType().getName());
 +      // Paper end
        if (!this.field_222542_c.func_205004_a(p_235956_2_)) {
           return null;

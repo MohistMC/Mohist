@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/management/PlayerInteractionManager.java
 +++ b/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -1,19 +_,28 @@
+@@ -1,19 +_,27 @@
  package net.minecraft.server.management;
  
  import java.util.Objects;
@@ -19,7 +19,6 @@
  import net.minecraft.inventory.container.INamedContainerProvider;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.ItemUseContext;
-+import net.minecraft.item.TallBlockItem;
  import net.minecraft.network.play.client.CPlayerDiggingPacket;
 +import net.minecraft.network.play.server.SChangeBlockPacket;
  import net.minecraft.network.play.server.SPlayerDiggingPacket;
@@ -229,7 +228,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -288,10 +_,49 @@
+@@ -288,10 +_,44 @@
        }
     }
  
@@ -267,11 +266,6 @@
 +            p_219441_1_.field_71135_a.func_147359_a(new SChangeBlockPacket(field_73092_a, bottom ? blockpos.func_177984_a() : blockpos.func_177977_b()));
 +         } else if (blockstate.func_177230_c() instanceof CakeBlock) {
 +            p_219441_1_.getBukkitEntity().sendHealthUpdate(); // SPIGOT-1341 - reset health for cake
-+         } else if (interactItemStack.func_77973_b() instanceof TallBlockItem) {
-+            // send a correcting update to the client, as it already placed the upper half of the bisected item
-+            p_219441_1_.field_71135_a.func_147359_a(new SChangeBlockPacket(field_73092_a, blockpos.func_177972_a(p_219441_5_.func_216354_b()).func_177984_a()));
-+            // send a correcting update to the client for the block above as well, this because of replaceable blocks (such as grass, sea grass etc)
-+            p_219441_1_.field_71135_a.func_147359_a(new SChangeBlockPacket(field_73092_a, blockpos.func_177984_a()));
 +         }
 +         p_219441_1_.getBukkitEntity().updateInventory(); // SPIGOT-2867
 +         enuminteractionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? ActionResultType.SUCCESS : ActionResultType.PASS;

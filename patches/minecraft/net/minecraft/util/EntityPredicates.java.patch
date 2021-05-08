@@ -1,5 +1,18 @@
 --- a/net/minecraft/util/EntityPredicates.java
 +++ b/net/minecraft/util/EntityPredicates.java
+@@ -30,6 +_,12 @@
+       return !p_233587_0_.func_175149_v();
+    };
+ 
++   // Paper start
++   public static final Predicate<Entity> affectsSpawning = (entity) -> {
++      return !entity.func_175149_v() && entity.func_70089_S() && (entity instanceof PlayerEntity) && ((PlayerEntity) entity).affectsSpawning;
++   };
++   // Paper end
++
+    public static Predicate<Entity> func_188443_a(double p_188443_0_, double p_188443_2_, double p_188443_4_, double p_188443_6_) {
+       double d0 = p_188443_6_ * p_188443_6_;
+       return (p_233584_8_) -> {
 @@ -41,7 +_,7 @@
        Team team = p_200823_0_.func_96124_cp();
        Team.CollisionRule team$collisionrule = team == null ? Team.CollisionRule.ALWAYS : team.func_186681_k();

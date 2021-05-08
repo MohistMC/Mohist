@@ -1,0 +1,102 @@
+--- a/net/minecraft/world/IEntityReader.java
++++ b/net/minecraft/world/IEntityReader.java
+@@ -1,6 +_,9 @@
+ package net.minecraft.world;
+ 
++import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.Lists;
++
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.UUID;
+ import java.util.function.Predicate;
+@@ -15,6 +_,7 @@
+ import net.minecraft.util.math.shapes.IBooleanFunction;
+ import net.minecraft.util.math.shapes.VoxelShape;
+ import net.minecraft.util.math.shapes.VoxelShapes;
++import org.bukkit.entity.HumanEntity;
+ 
+ public interface IEntityReader {
+    List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate<? super Entity> p_175674_3_);
+@@ -74,12 +_,21 @@
+       }
+    }
+ 
+-   @Nullable
+-   default PlayerEntity func_190525_a(double p_190525_1_, double p_190525_3_, double p_190525_5_, double p_190525_7_, @Nullable Predicate<Entity> p_190525_9_) {
++   default PlayerEntity findNearbyPlayer(Entity entity, double d0, @Nullable Predicate<Entity> predicate) {
++      return this.findNearbyPlayer(entity.func_213303_ch().field_72450_a, entity.func_213303_ch().field_72448_b, entity.func_213303_ch().field_72449_c, d0, predicate);
++   } // Paper
++
++   @Nullable
++   default PlayerEntity findNearbyPlayer(double p_190525_1_, double p_190525_3_, double p_190525_5_, double p_190525_7_, @Nullable Predicate<Entity> p_190525_9_) {
++      return func_190525_a(p_190525_1_, p_190525_3_, p_190525_5_, p_190525_7_, p_190525_9_);
++   } // Paper - OBFHELPER
++
++   @Nullable
++   default PlayerEntity func_190525_a(double p_190525_1_, double p_190525_3_, double p_190525_5_, double p_190525_7_, @Nullable Predicate<Entity> p_190525_9_) { // Paper
+       double d0 = -1.0D;
+       PlayerEntity playerentity = null;
+ 
+-      for(PlayerEntity playerentity1 : this.func_217369_A()) {
++      for (PlayerEntity playerentity1 : this.func_217369_A()) {
+          if (p_190525_9_ == null || p_190525_9_.test(playerentity1)) {
+             double d1 = playerentity1.func_70092_e(p_190525_1_, p_190525_3_, p_190525_5_);
+             if ((p_190525_7_ < 0.0D || d1 < p_190525_7_ * p_190525_7_) && (d0 == -1.0D || d1 < d0)) {
+@@ -92,6 +_,28 @@
+       return playerentity;
+    }
+ 
++   // Paper start
++   default List<HumanEntity> findNearbyBukkitPlayers(double x, double y, double z, double radius, boolean notSpectator) {
++      return findNearbyBukkitPlayers(x, y, z, radius, notSpectator ? EntityPredicates.field_180132_d : EntityPredicates.field_233583_f_);
++   }
++
++   default List<HumanEntity> findNearbyBukkitPlayers(double x, double y, double z, double radius, @Nullable Predicate<Entity> predicate) {
++      ImmutableList.Builder<HumanEntity> builder = ImmutableList.builder();
++
++      for (PlayerEntity human : this.func_217369_A()) {
++         if (predicate == null || predicate.test(human)) {
++            double distanceSquared = human.func_70092_e(x, y, z);
++
++            if (radius < 0.0D || distanceSquared < radius * radius) {
++               builder.add(human.getBukkitEntity());
++            }
++         }
++      }
++
++      return builder.build();
++   }
++   // Paper end
++
+    @Nullable
+    default PlayerEntity func_217362_a(Entity p_217362_1_, double p_217362_2_) {
+       return this.func_217366_a(p_217362_1_.func_226277_ct_(), p_217362_1_.func_226278_cu_(), p_217362_1_.func_226281_cx_(), p_217362_2_, false);
+@@ -115,6 +_,27 @@
+ 
+       return false;
+    }
++
++   // Paper end
++   default boolean isAffectsSpawningPlayerNearby(double d0, double d1, double d2, double d3) {
++      Iterator iterator = this.func_217369_A().iterator();
++      double d4;
++      do {
++         PlayerEntity entityhuman;
++         do {
++            if (!iterator.hasNext()) {
++               return false;
++            }
++
++            entityhuman = (PlayerEntity) iterator.next();
++         } while (!EntityPredicates.affectsSpawning.test(entityhuman));
++
++         d4 = entityhuman.func_70092_e(d0, d1, d2);
++      } while (d3 >= 0.0D && d4 >= d3 * d3);
++
++      return true;
++   }
++   // Paper end
+ 
+    @Nullable
+    default PlayerEntity func_217370_a(EntityPredicate p_217370_1_, LivingEntity p_217370_2_) {
