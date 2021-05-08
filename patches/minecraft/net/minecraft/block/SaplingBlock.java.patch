@@ -58,11 +58,10 @@
        }
  
     }
-@@ -38,6 +_,8 @@
+@@ -38,6 +_,7 @@
        if (p_226942_3_.func_177229_b(field_176479_b) == 0) {
           p_226942_1_.func_180501_a(p_226942_2_, p_226942_3_.func_235896_a_(field_176479_b), 4);
        } else {
-+         if (this.field_196387_c == null) return; // Mohist - Prevent sapling NPE if tree grower is null
 +         if (!net.minecraftforge.event.ForgeEventFactory.saplingGrowTree(p_226942_1_, p_226942_4_, p_226942_2_)) return;
           this.field_196387_c.func_230339_a_(p_226942_1_, p_226942_1_.func_72863_F().func_201711_g(), p_226942_2_, p_226942_3_, p_226942_4_);
        }
