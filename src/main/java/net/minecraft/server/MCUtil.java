@@ -2,14 +2,24 @@ package net.minecraft.server;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonWriter;
+import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.server.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -19,8 +29,11 @@ import org.spigotmc.AsyncCatcher;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -525,6 +538,172 @@ public final class MCUtil {
                 return BlockFace.EAST;
             default:
                 return null;
+        }
+    }
+
+    public static ChunkStatus getChunkStatus(ChunkHolder chunk) {
+        List<ChunkStatus> statuses = ServerChunkProvider.CHUNK_STATUSES;
+        for (int i = statuses.size() - 1; i >= 0; --i) {
+            ChunkStatus curr = statuses.get(i);
+            CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> future = chunk.getFutureIfPresentUnchecked(curr);
+            if (future != ChunkHolder.UNLOADED_CHUNK_FUTURE) {
+                return curr;
+            }
+        }
+        return null; // unloaded
+    }
+
+    public static void dumpChunks(File file) throws IOException {
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        /*
+         * Json format:
+         *
+         * Main data format:
+         *  -server-version:<string>
+         *  -data-version:<int>
+         *  -worlds:
+         *    -name:<world name>
+         *    -view-distance:<int>
+         *    -keep-spawn-loaded:<boolean>
+         *    -keep-spawn-loaded-range:<int>
+         *    -visible-chunk-count:<int>
+         *    -loaded-chunk-count:<int>
+         *    -verified-fully-loaded-chunks:<int>
+         *    -players:<array of player>
+         *    -chunk-data:<array of chunks>
+         *
+         * Player format:
+         *  -name:<string>
+         *  -x:<double>
+         *  -y:<double>
+         *  -z:<double>
+         *
+         * Chunk Format:
+         *  -x:<integer>
+         *  -z:<integer>
+         *  -ticket-level:<integer>
+         *  -state:<string>
+         *  -queued-for-unload:<boolean>
+         *  -status:<string>
+         *  -tickets:<array of tickets>
+         *
+         *
+         * Ticket format:
+         *  -ticket-type:<string>
+         *  -ticket-level:<int>
+         *  -add-tick:<long>
+         *  -object-reason:<string> // This depends on the type of ticket. ie POST_TELEPORT -> entity id
+         */
+        List<org.bukkit.World> worlds = org.bukkit.Bukkit.getWorlds();
+        JsonObject data = new JsonObject();
+
+        data.addProperty("server-version", org.bukkit.Bukkit.getVersion());
+        data.addProperty("data-version", 0);
+
+        JsonArray worldsData = new JsonArray();
+
+        for (org.bukkit.World bukkitWorld : worlds) {
+            JsonObject worldData = new JsonObject();
+
+            ServerWorld world = ((org.bukkit.craftbukkit.v1_16_R3.CraftWorld) bukkitWorld).getHandle();
+            ChunkManager chunkMap = world.getChunkSource().chunkMap;
+            Long2ObjectLinkedOpenHashMap<ChunkHolder> visibleChunks = chunkMap.visibleChunkMap;
+            TicketManager chunkMapDistance = chunkMap.distanceManager;
+            List<ChunkHolder> allChunks = new ArrayList<>(visibleChunks.values());
+            List<ServerPlayerEntity> players = world.players;
+
+            int fullLoadedChunks = 0;
+
+            for (ChunkHolder chunk : allChunks) {
+                if (chunk.getFullChunkIfCached() != null) {
+                    ++fullLoadedChunks;
+                }
+            }
+
+            // sorting by coordinate makes the log easier to read
+            allChunks.sort((ChunkHolder v1, ChunkHolder v2) -> {
+                if (v1.getPos().x != v2.getPos().x) {
+                    return Integer.compare(v1.getPos().x, v2.getPos().x);
+                }
+                return Integer.compare(v1.getPos().z, v2.getPos().z);
+            });
+
+            worldData.addProperty("name", world.getWorld().getName());
+            worldData.addProperty("view-distance", world.spigotConfig.viewDistance);
+            worldData.addProperty("keep-spawn-loaded", world.keepSpawnInMemory);
+            worldData.addProperty("keep-spawn-loaded-range", world.paperConfig.keepLoadedRange);
+            worldData.addProperty("visible-chunk-count", visibleChunks.size());
+            worldData.addProperty("loaded-chunk-count", chunkMap.entitiesInLevel.size());
+            worldData.addProperty("verified-fully-loaded-chunks", fullLoadedChunks);
+
+            JsonArray playersData = new JsonArray();
+
+            for (PlayerEntity player : players) {
+                JsonObject playerData = new JsonObject();
+
+                playerData.addProperty("name", player.getName().getString());
+                playerData.addProperty("x", player.position().x);
+                playerData.addProperty("y", player.position().y);
+                playerData.addProperty("z", player.position().z);
+
+                playersData.add(playerData);
+
+            }
+
+            worldData.add("players", playersData);
+
+            JsonArray chunksData = new JsonArray();
+
+            for (ChunkHolder playerChunk : allChunks) {
+                JsonObject chunkData = new JsonObject();
+
+                Set<Ticket<?>> tickets = chunkMapDistance.tickets.get(playerChunk.getPos().toLong());
+                ChunkStatus status = getChunkStatus(playerChunk);
+
+                chunkData.addProperty("x", playerChunk.getPos().x);
+                chunkData.addProperty("z", playerChunk.getPos().z);
+                chunkData.addProperty("ticket-level", playerChunk.getTicketLevel());
+                chunkData.addProperty("state", ChunkHolder.getFullChunkStatus(playerChunk.getTicketLevel()).toString());
+                chunkData.addProperty("queued-for-unload", chunkMap.toDrop.contains(playerChunk.getPos().toLong()));
+                chunkData.addProperty("status", status == null ? "unloaded" : status.toString());
+
+                JsonArray ticketsData = new JsonArray();
+
+                if (tickets != null) {
+                    for (Ticket<?> ticket : tickets) {
+                        JsonObject ticketData = new JsonObject();
+
+                        ticketData.addProperty("ticket-type", ticket.getType().toString());
+                        ticketData.addProperty("ticket-level", ticket.getTicketLevel());
+                        ticketData.addProperty("object-reason", String.valueOf(ticket.key));
+                        ticketData.addProperty("add-tick", ticket.createdTick);
+
+                        ticketsData.add(ticketData);
+                    }
+                }
+
+                chunkData.add("tickets", ticketsData);
+                chunksData.add(chunkData);
+            }
+
+
+            worldData.add("chunk-data", chunksData);
+            worldsData.add(worldData);
+        }
+
+        data.add("worlds", worldsData);
+
+        StringWriter stringWriter = new StringWriter();
+        JsonWriter jsonWriter = new JsonWriter(stringWriter);
+        jsonWriter.setIndent(" ");
+        jsonWriter.setLenient(false);
+        Streams.write(data, jsonWriter);
+
+        String fileData = stringWriter.toString();
+
+        try (PrintStream out = new PrintStream(new FileOutputStream(file), false, "UTF-8")) {
+            out.print(fileData);
         }
     }
 }
