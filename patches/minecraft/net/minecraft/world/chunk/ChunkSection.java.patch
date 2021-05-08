@@ -42,7 +42,7 @@
           }
        }
  
-@@ -117,19 +_,20 @@
+@@ -117,12 +_,13 @@
        this.field_76682_b = 0;
        this.field_76683_c = 0;
        this.field_206918_e = 0;
@@ -50,21 +50,10 @@
 +      this.field_177488_d.count((p_225496_1_, p_225496_2_, key) -> {
           FluidState fluidstate = p_225496_1_.func_204520_s();
           if (!p_225496_1_.func_196958_f()) {
--            this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
-+            this.field_76682_b++; // Mohist - Randomtick Improvements
+             this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
              if (p_225496_1_.func_204519_t()) {
--               this.field_76683_c = (short)(this.field_76683_c + p_225496_2_);
-+               this.field_76683_c++; // Mohist - Randomtick Improvements
+                this.field_76683_c = (short)(this.field_76683_c + p_225496_2_);
 +               this.tickableLocations.add(key); // Mohist - Optimize Randomtick (2nd attempt)
-             }
-          }
- 
-          if (!fluidstate.func_206888_e()) {
--            this.field_76682_b = (short)(this.field_76682_b + p_225496_2_);
-+            this.field_76682_b++; // Mohist - Randomtick Improvements
-             if (fluidstate.func_206890_h()) {
--               this.field_206918_e = (short)(this.field_206918_e + p_225496_2_);
-+               this.field_206918_e++; // Mohist - Randomtick Improvements
              }
           }
  
