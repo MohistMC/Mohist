@@ -772,7 +772,7 @@
     @Nullable
     public ItemEntity func_70099_a(ItemStack p_70099_1_, float p_70099_2_) {
        if (p_70099_1_.func_190926_b()) {
-@@ -1544,8 +_,35 @@
+@@ -1544,8 +_,32 @@
        } else if (this.field_70170_p.field_72995_K) {
           return null;
        } else {
@@ -783,13 +783,10 @@
 +            } catch (Exception ex) {}
 +            this.dragonDone = true;
 +         }
-+         // TODO Drop capture mechanics is a DISASTER.
-+         // TODO Reworking the whole concept would really help!
-+         boolean skipBackpacks = p_70099_1_.func_77973_b().getRegistryName().func_110624_b().equals("travelersbackpack"); // Mohist - Fix backpack duping (#1261)
 +         boolean skip = this.dragonClass != null && this.dragonClass.isAssignableFrom(this.getClass());
 +         // Mohist end
 +         // CraftBukkit start - Capture drops for death event
-+         if (!skipBackpacks && !skip && this instanceof LivingEntity && !((LivingEntity) this).forceDrops && ((LivingEntity) this).func_110143_aJ() == 0) {
++         if (!skip && this instanceof LivingEntity && !((LivingEntity) this).forceDrops && ((LivingEntity) this).func_110143_aJ() == 0) {
 +            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.asCraftMirror(p_70099_1_));
 +            return null;
 +         }
