@@ -89,47 +89,78 @@
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
                       CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)p_77659_2_, blockpos2, itemstack);
-@@ -96,6 +_,11 @@
+@@ -96,40 +_,55 @@
     }
  
     public boolean func_180616_a(@Nullable PlayerEntity p_180616_1_, World p_180616_2_, BlockPos p_180616_3_, @Nullable BlockRayTraceResult p_180616_4_) {
 +      return tryPlaceContainedLiquid(p_180616_1_, p_180616_2_, p_180616_3_, p_180616_4_, null, null, null);
 +   }
 +
-+   public boolean tryPlaceContainedLiquid(@Nullable PlayerEntity p_180616_1_, World p_180616_2_, BlockPos p_180616_3_, @Nullable BlockRayTraceResult p_180616_4_, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
++   public boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, World worldIn, BlockPos posIn, @Nullable BlockRayTraceResult rayTrace, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
 +      // CraftBukkit end
        if (!(this.field_77876_a instanceof FlowingFluid)) {
           return false;
        } else {
-@@ -104,8 +_,18 @@
+-         BlockState blockstate = p_180616_2_.func_180495_p(p_180616_3_);
++         BlockState blockstate = worldIn.func_180495_p(posIn);
+          Block block = blockstate.func_177230_c();
           Material material = blockstate.func_185904_a();
           boolean flag = blockstate.func_227032_a_(this.field_77876_a);
-          boolean flag1 = blockstate.func_196958_f() || flag || block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(p_180616_2_, p_180616_3_, blockstate, this.field_77876_a);
+-         boolean flag1 = blockstate.func_196958_f() || flag || block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(p_180616_2_, p_180616_3_, blockstate, this.field_77876_a);
++         boolean flag1 = blockstate.func_196958_f() || flag || block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(worldIn, posIn, blockstate, this.field_77876_a);
 +         // CraftBukkit start
-+         if(p_180616_1_ != null){
-+            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(p_180616_2_, p_180616_1_, p_180616_3_, clicked, enumdirection, itemstack);
++         if(player != null){
++            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(worldIn, player, posIn, clicked, enumdirection, itemstack);
 +            if(event.isCancelled()){
-+               ((ServerPlayerEntity) p_180616_1_).field_71135_a.func_147359_a(new SChangeBlockPacket(p_180616_2_, p_180616_3_)); // SPIGOT-4238: needed when looking through entity
-+               ((ServerPlayerEntity) p_180616_1_).getBukkitEntity().updateInventory(); // SPIGOT-4541
++               ((ServerPlayerEntity) player).field_71135_a.func_147359_a(new SChangeBlockPacket(worldIn, posIn)); // SPIGOT-4238: needed when looking through entity
++               ((ServerPlayerEntity) player).getBukkitEntity().updateInventory(); // SPIGOT-4541
 +               return false;
 +            }
 +         }
 +         // CraftBukkit end
           if (!flag1) {
 -            return p_180616_4_ != null && this.func_180616_a(p_180616_1_, p_180616_2_, p_180616_4_.func_216350_a().func_177972_a(p_180616_4_.func_216354_b()), (BlockRayTraceResult)null);
-+            return p_180616_4_ != null && this.tryPlaceContainedLiquid(p_180616_1_, p_180616_2_, p_180616_4_.func_216350_a().func_177972_a(p_180616_4_.func_216354_b()), (BlockRayTraceResult)null, enumdirection, clicked, itemstack); // CraftBukkit
-          } else if (p_180616_2_.func_230315_m_().func_236040_e_() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
-             int i = p_180616_3_.func_177958_n();
-             int j = p_180616_3_.func_177956_o();
-@@ -117,7 +_,7 @@
+-         } else if (p_180616_2_.func_230315_m_().func_236040_e_() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
+-            int i = p_180616_3_.func_177958_n();
+-            int j = p_180616_3_.func_177956_o();
+-            int k = p_180616_3_.func_177952_p();
+-            p_180616_2_.func_184133_a(p_180616_1_, p_180616_3_, SoundEvents.field_187646_bt, SoundCategory.BLOCKS, 0.5F, 2.6F + (p_180616_2_.field_73012_v.nextFloat() - p_180616_2_.field_73012_v.nextFloat()) * 0.8F);
++            return rayTrace != null && this.tryPlaceContainedLiquid(player, worldIn, rayTrace.func_216350_a().func_177972_a(rayTrace.func_216354_b()), (BlockRayTraceResult)null, enumdirection, clicked, itemstack); // CraftBukkit
++         } else if (worldIn.func_230315_m_().func_236040_e_() && this.field_77876_a.func_207185_a(FluidTags.field_206959_a)) {
++            int i = posIn.func_177958_n();
++            int j = posIn.func_177956_o();
++            int k = posIn.func_177952_p();
++            worldIn.func_184133_a(player, posIn, SoundEvents.field_187646_bt, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.field_73012_v.nextFloat() - worldIn.field_73012_v.nextFloat()) * 0.8F);
+ 
+             for(int l = 0; l < 8; ++l) {
+-               p_180616_2_.func_195594_a(ParticleTypes.field_197594_E, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
++               worldIn.func_195594_a(ParticleTypes.field_197594_E, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
              }
  
              return true;
 -         } else if (block instanceof ILiquidContainer && this.field_77876_a == Fluids.field_204546_a) {
-+         } else if (block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(p_180616_2_,p_180616_3_,blockstate,field_77876_a)) {
-             ((ILiquidContainer)block).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
-             this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
+-            ((ILiquidContainer)block).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
+-            this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
++         } else if (block instanceof ILiquidContainer && ((ILiquidContainer)block).func_204510_a(worldIn,posIn,blockstate,field_77876_a)) {
++            ((ILiquidContainer)block).func_204509_a(worldIn, posIn, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
++            this.func_203791_b(player, worldIn, posIn);
              return true;
+          } else {
+-            if (!p_180616_2_.field_72995_K && flag && !material.func_76224_d()) {
+-               p_180616_2_.func_175655_b(p_180616_3_, true);
++            if (!worldIn.field_72995_K && flag && !material.func_76224_d()) {
++               worldIn.func_175655_b(posIn, true);
+             }
+ 
+-            if (!p_180616_2_.func_180501_a(p_180616_3_, this.field_77876_a.func_207188_f().func_206883_i(), 11) && !blockstate.func_204520_s().func_206889_d()) {
++            if (!worldIn.func_180501_a(posIn, this.field_77876_a.func_207188_f().func_206883_i(), 11) && !blockstate.func_204520_s().func_206889_d()) {
+                return false;
+             } else {
+-               this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
++               this.func_203791_b(player, worldIn, posIn);
+                return true;
+             }
+          }
 @@ -137,7 +_,24 @@
     }
  
