@@ -66,6 +66,12 @@ public class PaperWorldConfig {
         return config.getString("world-settings." + worldName + "." + path, config.getString("world-settings.default." + path));
     }
 
+    public short keepLoadedRange;
+    private void keepLoadedRange() {
+        keepLoadedRange = (short) (getInt("keep-spawn-loaded-range", Math.min(spigotConfig.viewDistance, 10)) * 16);
+        log( "Keep Spawn Loaded Range: " + (keepLoadedRange/16));
+    }
+
     public boolean perPlayerMobSpawns = false;
     private void perPlayerMobSpawns() {
         perPlayerMobSpawns = getBoolean("per-player-mob-spawns", false);

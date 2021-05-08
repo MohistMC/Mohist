@@ -56,7 +56,12 @@
  import net.minecraft.world.gen.feature.template.TemplateManager;
  import net.minecraft.world.spawner.WorldEntitySpawner;
  import net.minecraft.world.storage.DimensionSavedDataManager;
-@@ -51,20 +_,173 @@
+@@ -47,24 +_,177 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class ServerChunkProvider extends AbstractChunkProvider {
+-   private static final List<ChunkStatus> field_217239_c = ChunkStatus.func_222582_a();
++   public static final List<ChunkStatus> field_217239_c = ChunkStatus.func_222582_a(); // Paper private -> public
     private final TicketManager field_217240_d;
     public final ChunkGenerator field_186029_c;
     public final ServerWorld field_73251_h;
