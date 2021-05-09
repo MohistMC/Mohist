@@ -949,7 +949,7 @@
 +      return this.strikeLightning(entitylightning, LightningStrikeEvent.Cause.UNKNOWN);
 +   }
 +   public boolean strikeLightning(Entity entitylightning, LightningStrikeEvent.Cause cause) {
-+      LightningStrikeEvent lightning = new LightningStrikeEvent(this.getWorld(), (org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
++      LightningStrikeEvent lightning =  CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
 +      this.getCBServer().getPluginManager().callEvent(lightning);
 +      if (lightning.isCancelled()) {
 +         return false;
