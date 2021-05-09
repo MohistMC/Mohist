@@ -119,6 +119,24 @@
           this.func_242369_fq();
           this.func_70106_y();
        } else {
+@@ -717,9 +_,16 @@
+             return;
+          }
+ 
++         // CraftBukkit start
++         ItemStack itemstack1 = inventory.func_174894_a(itemstack);
++         if (CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack1.func_190916_E(), false).isCancelled()) {
++            return;
++         }
++         // CraftBukkit end
++
+          this.func_233630_a_(p_175445_1_);
+          this.func_71001_a(p_175445_1_, itemstack.func_190916_E());
+-         ItemStack itemstack1 = inventory.func_174894_a(itemstack);
++         // ItemStack itemstack1 = inventory.addItem(itemstack);  // CraftBukkit - moved up
+          if (itemstack1.func_190926_b()) {
+             p_175445_1_.func_70106_y();
+          } else {
 @@ -820,7 +_,7 @@
              IronGolemEntity irongolementity = EntityType.field_200757_aw.func_220349_b(p_213759_1_, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos1, SpawnReason.MOB_SUMMONED, false, false);
              if (irongolementity != null) {

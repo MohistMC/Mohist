@@ -54,15 +54,17 @@
           this.field_184552_b = 0;
           Vector3d vector3d2 = this.func_213303_ch();
           Vector3d vector3d3 = vector3d2.func_178787_e(vector3d);
-@@ -184,7 +_,7 @@
+@@ -184,8 +_,8 @@
                 }
              }
  
 -            if (raytraceresult != null && !flag) {
+-               this.func_70227_a(raytraceresult);
 +            if (raytraceresult != null && raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-                this.func_70227_a(raytraceresult);
++               this.preOnHit(raytraceresult);  // CraftBukkit - projectile hit event
                 this.field_70160_al = true;
              }
+ 
 @@ -260,9 +_,10 @@
  
     }

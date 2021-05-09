@@ -165,6 +165,7 @@ import org.bukkit.event.raid.RaidStopEvent;
 import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
@@ -545,6 +546,9 @@ public class CraftEventFactory {
             event = CraftEventFactory.callProjectileLaunchEvent(entity);
         } else if (entity.getBukkitEntity() instanceof Vehicle) {
             event = CraftEventFactory.callVehicleCreateEvent(entity);
+        } else if (entity.getBukkitEntity() instanceof org.bukkit.entity.LightningStrike) {
+            LightningStrikeEvent.Cause cause = (spawnReason == CreatureSpawnEvent.SpawnReason.COMMAND ? LightningStrikeEvent.Cause.COMMAND : LightningStrikeEvent.Cause.UNKNOWN);
+            event = CraftEventFactory.callLightningStrikeEvent((LightningStrike) entity.getBukkitEntity(), cause);
             // Spigot start
         } else if (entity instanceof ExperienceOrbEntity) {
             ExperienceOrbEntity xp = (ExperienceOrbEntity) entity;
@@ -1187,9 +1191,9 @@ public class CraftEventFactory {
         return event;
     }
 
-    public static void callProjectileHitEvent(Entity entity, RayTraceResult position) {
+    public static ProjectileHitEvent callProjectileHitEvent(Entity entity, RayTraceResult position) {
         if (position.getType() == RayTraceResult.Type.MISS) {
-            return;
+            return null;
         }
 
         Block hitBlock = null;
@@ -1207,6 +1211,7 @@ public class CraftEventFactory {
 
         ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity(), hitEntity, hitBlock, hitFace);
         entity.level.getCBServer().getPluginManager().callEvent(event);
+        return event;
     }
 
     public static ExpBottleEvent callExpBottleEvent(Entity entity, int exp) {
@@ -1557,6 +1562,12 @@ public class CraftEventFactory {
     public static EntityPickupItemEvent callEntityPickupItemEvent(Entity who, ItemEntity item, int remaining, boolean cancelled) {
         EntityPickupItemEvent event = new EntityPickupItemEvent((org.bukkit.entity.LivingEntity) who.getBukkitEntity(), (Item) item.getBukkitEntity(), remaining);
         event.setCancelled(cancelled);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static LightningStrikeEvent callLightningStrikeEvent(LightningStrike entity, LightningStrikeEvent.Cause cause) {
+        LightningStrikeEvent event = new LightningStrikeEvent(entity.getWorld(), entity, cause);
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }
