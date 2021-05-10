@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/chunk/storage/ChunkSerializer.java
-@@ -17,10 +_,7 @@
+@@ -15,12 +_,10 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
++import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.Fluids;
 -import net.minecraft.nbt.CompoundNBT;
@@ -71,8 +74,12 @@
           return chunkprimer1;
        }
     }
-@@ -290,16 +_,31 @@
+@@ -288,18 +_,52 @@
+ 
+       compoundnbt1.func_218657_a("TileEntities", listnbt1);
        ListNBT listnbt2 = new ListNBT();
++
++      java.util.List<Entity> toUpdate = new java.util.ArrayList<>(); // Paper
        if (p_222645_1_.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
           Chunk chunk = (Chunk)p_222645_1_;
 +         // CraftBukkit start - store chunk persistent data in nbt
@@ -85,6 +92,16 @@
           for(int k = 0; k < chunk.func_177429_s().length; ++k) {
              for(Entity entity : chunk.func_177429_s()[k]) {
                 CompoundNBT compoundnbt3 = new CompoundNBT();
++
++               // Paper start
++               if ((int) Math.floor(entity.func_226277_ct_()) >> 4 != chunk.func_76632_l().field_77276_a || (int) Math.floor(entity.func_226281_cx_()) >> 4 != chunk.func_76632_l().field_77275_b) {
++                  toUpdate.add(entity);
++                  continue;
++               }
++               if (!entity.func_70089_S() || hasPlayerPassenger(entity)) {
++                  continue;
++               }
++               // Paper end
 +               try {
                 if (entity.func_70039_c(compoundnbt3)) {
                    chunk.func_177409_g(true);
@@ -95,6 +112,13 @@
 +               }
              }
 +         }
++
++         // Paper start - move entities to the correct chunk
++         for (Entity entity : toUpdate) {
++             p_222645_0_.func_217464_b(entity);
++         }
++         // Paper end
++
 +         try {
 +             final CompoundNBT capTag = chunk.writeCapsToNBT();
 +             if (capTag != null) compoundnbt1.func_218657_a("ForgeCaps", capTag);
@@ -103,6 +127,27 @@
           }
        } else {
           ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
+@@ -350,6 +_,20 @@
+       return compoundnbt;
+    }
+ 
++   // Paper start - this is saved with the player
++   private static boolean hasPlayerPassenger(Entity entity) {
++       for (Entity passenger : entity.field_184244_h) {
++           if (passenger instanceof PlayerEntity) {
++               return true;
++           }
++           if (hasPlayerPassenger(passenger)) {
++               return true;
++           }
++       }
++       return false;
++   }
++   // Paper end
++
+    public static ChunkStatus.Type func_222651_a(@Nullable CompoundNBT p_222651_0_) {
+       if (p_222651_0_ != null) {
+          ChunkStatus chunkstatus = ChunkStatus.func_222591_a(p_222651_0_.func_74775_l("Level").func_74779_i("Status"));
 @@ -419,7 +_,7 @@
           String s1 = s.toLowerCase(Locale.ROOT);
           Structure<?> structure = Structure.field_236365_a_.get(s1);
