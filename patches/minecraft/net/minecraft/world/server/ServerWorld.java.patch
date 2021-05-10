@@ -666,7 +666,7 @@
                 iprofiler.func_76319_b();
              }
  
-@@ -649,7 +_,7 @@
+@@ -649,16 +_,16 @@
        if (p_217464_1_.func_233578_ci_()) {
           this.func_217381_Z().func_76320_a("chunkCheck");
           int i = MathHelper.func_76128_c(p_217464_1_.func_226277_ct_() / 16.0D);
@@ -675,9 +675,11 @@
           int k = MathHelper.func_76128_c(p_217464_1_.func_226281_cx_() / 16.0D);
           if (!p_217464_1_.field_70175_ag || p_217464_1_.field_70176_ah != i || p_217464_1_.field_70162_ai != j || p_217464_1_.field_70164_aj != k) {
              if (p_217464_1_.field_70175_ag && this.func_217354_b(p_217464_1_.field_70176_ah, p_217464_1_.field_70164_aj)) {
-@@ -658,7 +_,7 @@
+                this.func_212866_a_(p_217464_1_.field_70176_ah, p_217464_1_.field_70164_aj).func_76608_a(p_217464_1_, p_217464_1_.field_70162_ai);
+             }
  
-             if (!p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) {
+-            if (!p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) {
++            if (!p_217464_1_.valid && !p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) { // Paper - always load chunks to register valid entities location
                 if (p_217464_1_.field_70175_ag) {
 -                  field_147491_a.warn("Entity {} left loaded chunk area", (Object)p_217464_1_);
 +                  field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.1", (Object)p_217464_1_));
@@ -773,7 +775,7 @@
 -         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_72838_1_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
 +         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entityIn, this))) return false;
 +         if (!CraftEventFactory.doEntityAddEventCalling(this, entityIn, spawnReason)) return false;
-+         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(entityIn.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(entityIn.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, entityIn.field_98038_p);
++         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(entityIn.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(entityIn.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, true); // Paper - always load chunks for entity adds
           if (!(ichunk instanceof Chunk)) {
              return false;
           } else {
@@ -801,7 +803,7 @@
           return true;
        }
     }
-@@ -851,15 +_,30 @@
+@@ -851,40 +_,101 @@
     }
  
     public boolean func_242106_g(Entity p_242106_1_) {
@@ -834,7 +836,37 @@
        this.field_147483_b.addAll(p_217466_1_.func_177434_r().values());
        ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = p_217466_1_.func_177429_s();
        int i = aclassinheritancemultimap.length;
-@@ -879,12 +_,41 @@
+ 
++      java.util.List<Entity> toMoveChunks = new java.util.ArrayList<>(); // Paper
+       for(int j = 0; j < i; ++j) {
+-         for(Entity entity : aclassinheritancemultimap[j]) {
++         Iterator<Entity> iterator = aclassinheritancemultimap[j].iterator();
++         while (iterator.hasNext()) {
++            Entity entity = iterator.next();
+             if (!(entity instanceof ServerPlayerEntity)) {
+                if (this.field_217492_a) {
+                   throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Removing entity while ticking!"));
+                }
+ 
++               // Paper start - move out entities that shouldn't be in this chunk before it unloads
++               if (entity.func_70089_S() && (int) Math.floor(entity.func_226277_ct_()) >> 4 != p_217466_1_.func_76632_l().field_77276_a || (int) Math.floor(entity.func_226281_cx_()) >> 4 != p_217466_1_.func_76632_l().field_77275_b) {
++                  toMoveChunks.add(entity);
++                  continue;
++               }
++
+                this.field_217498_x.remove(entity.func_145782_y());
+                this.func_217484_g(entity);
++
++               // UNSUPPORTED OPERATION !!!
++               // if (!entity.isAlive()) iterator.remove(); // Paper - don't save dead entities during unload
+             }
+          }
+       }
++      // Paper start - move out entities that shouldn't be in this chunk before it unloads
++      for (Entity entity : toMoveChunks) {
++         this.func_217464_b(entity);
++      }
++      // Paper end
  
     }
  
