@@ -139,13 +139,19 @@
  
     private void func_203043_v() {
        Vector3d vector3d = this.func_213322_ci();
-@@ -163,7 +_,10 @@
+@@ -161,9 +_,16 @@
+       this.func_213293_j(vector3d.field_72450_a * (double)0.95F, vector3d.field_72448_b + (double)(vector3d.field_72448_b < (double)0.06F ? 5.0E-4F : 0.0F), vector3d.field_72449_c * (double)0.95F);
+    }
  
++   // Mohist start - Fix Pehkui Startup (#1324)
++   private static final double[] vanillaMergeRadius = new double[] { 0.5D };
     private void func_85054_d() {
        if (this.func_213857_z()) {
 -         for(ItemEntity itementity : this.field_70170_p.func_175647_a(ItemEntity.class, this.func_174813_aQ().func_72314_b(0.5D, 0.0D, 0.5D), (p_213859_1_) -> {
++         double pehkuiRadius = 0.5D;
 +         // Spigot start
-+         double radius = field_70170_p.spigotConfig.itemMerge;
++         double radius = pehkuiRadius == vanillaMergeRadius[0] ? field_70170_p.spigotConfig.itemMerge : pehkuiRadius;
++         // Mohist end
 +         for(ItemEntity itementity : this.field_70170_p.func_175647_a(ItemEntity.class, this.func_174813_aQ().func_72314_b(radius, radius, radius), (p_213859_1_) -> {
 +            // Spigot end
              return p_213859_1_ != this && p_213859_1_.func_213857_z();
