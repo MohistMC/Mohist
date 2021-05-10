@@ -69,7 +69,7 @@
     private final boolean field_234916_c_;
     private int field_73008_k;
     protected int field_73005_l = (new Random()).nextInt();
-@@ -85,15 +_,77 @@
+@@ -85,15 +_,78 @@
     public float field_73017_q;
     public final Random field_73012_v = new Random();
     private final DimensionType field_234921_x_;
@@ -109,6 +109,7 @@
 +   private org.spigotmc.TickLimiter tileLimiter;
 +   private int tileTickPosition;
 +   public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
++   public boolean pehkuiExplosionFire = false; // Mohist - Fix Pehkui Startup (#1324)
 +
 +   public final co.aikar.timings.WorldTimingsHandler timings; // Spigot
 +
@@ -526,7 +527,7 @@
                 }
              }
           }
-@@ -490,17 +_,23 @@
+@@ -490,22 +_,28 @@
           this.field_147484_a.clear();
        }
  
@@ -550,6 +551,12 @@
        }
     }
  
+    public Explosion func_217385_a(@Nullable Entity p_217385_1_, double p_217385_2_, double p_217385_4_, double p_217385_6_, float p_217385_8_, Explosion.Mode p_217385_9_) {
+-      return this.func_230546_a_(p_217385_1_, (DamageSource)null, (ExplosionContext)null, p_217385_2_, p_217385_4_, p_217385_6_, p_217385_8_, false, p_217385_9_);
++      return this.func_230546_a_(p_217385_1_, (DamageSource)null, (ExplosionContext)null, p_217385_2_, p_217385_4_, p_217385_6_, p_217385_8_, this.pehkuiExplosionFire, p_217385_9_); // Mohist - Fix Pehkui Startup (#1324)
+    }
+ 
+    public Explosion func_217398_a(@Nullable Entity p_217398_1_, double p_217398_2_, double p_217398_4_, double p_217398_6_, float p_217398_8_, boolean p_217398_9_, Explosion.Mode p_217398_10_) {
 @@ -514,6 +_,7 @@
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
