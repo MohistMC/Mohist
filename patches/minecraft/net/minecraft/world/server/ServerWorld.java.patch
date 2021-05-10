@@ -721,13 +721,16 @@
        }
     }
  
-@@ -743,11 +_,21 @@
+@@ -742,12 +_,24 @@
+       return list.isEmpty() ? null : list.get(this.field_73012_v.nextInt(list.size()));
     }
  
++   public CreatureSpawnEvent.SpawnReason pehkuiSpawnReason = CreatureSpawnEvent.SpawnReason.DEFAULT; // Mohist - Fix Pehkui Startup (#1324)
++
     public boolean func_217376_c(Entity p_217376_1_) {
 -      return this.func_72838_d(p_217376_1_);
 +      // CraftBukkit start
-+      return this.addEntity0(p_217376_1_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++      return this.addEntity0(p_217376_1_, this.pehkuiSpawnReason); // Mohist - Fix Pehkui Startup (#1324)
 +   }
 +
 +   public boolean addEntity(Entity entityIn, CreatureSpawnEvent.SpawnReason reason) {
