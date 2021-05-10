@@ -35,26 +35,50 @@
           func_220011_a(p_77615_1_, true);
           SoundCategory soundcategory = p_77615_3_ instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
           p_77615_2_.func_184148_a((PlayerEntity)null, p_77615_3_.func_226277_ct_(), p_77615_3_.func_226278_cu_(), p_77615_3_.func_226281_cx_(), SoundEvents.field_219610_bB, soundcategory, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.5F + 1.0F) + 0.2F);
-@@ -82,10 +_,13 @@
+@@ -82,6 +_,8 @@
  
     }
  
--   private static boolean func_220021_a(LivingEntity p_220021_0_, ItemStack p_220021_1_) {
 +   private static boolean attemptProjectileLoad(LivingEntity ent, ItemStack bow) { return func_220021_a(ent, bow); } // Paper - EntityLoadCrossbowEvent - OBFHELPER
 +   private static boolean attemptProjectileLoad(LivingEntity ent, ItemStack bow, boolean consume) { return a(ent, bow, consume); } // Paper - EntityLoadCrossbowEvent - OBFHELPER
-+   private static boolean func_220021_a(LivingEntity p_220021_0_, ItemStack p_220021_1_) { return a(p_220021_0_, p_220021_1_, true); };// Paper - add consume
-+   private static boolean a(LivingEntity p_220021_0_, ItemStack p_220021_1_, boolean consume) {
+    private static boolean func_220021_a(LivingEntity p_220021_0_, ItemStack p_220021_1_) {
        int i = EnchantmentHelper.func_77506_a(Enchantments.field_222192_G, p_220021_1_);
        int j = i == 0 ? 1 : 3;
--      boolean flag = p_220021_0_ instanceof PlayerEntity && ((PlayerEntity)p_220021_0_).field_71075_bZ.field_75098_d;
-+      boolean flag = !consume || p_220021_0_ instanceof PlayerEntity && ((PlayerEntity)p_220021_0_).field_71075_bZ.field_75098_d; // Paper - add consme
-       ItemStack itemstack = p_220021_0_.func_213356_f(p_220021_1_);
-       ItemStack itemstack1 = itemstack.func_77946_l();
- 
-@@ -99,6 +_,12 @@
+@@ -99,6 +_,43 @@
              itemstack1 = itemstack.func_77946_l();
           }
  
++         // CraftBukkit start - SPIGOT-4870, MC-150847
++         else if (itemstack1.func_190926_b()) {
++            return false;
++         }
++         // CraftBukkit end
++
++         if (!func_220023_a(p_220021_0_, p_220021_1_, itemstack, k > 0, flag)) {
++            return false;
++         }
++      }
++
++      return true;
++   }
++
++   private static boolean a(LivingEntity p_220021_0_, ItemStack p_220021_1_, boolean consume) {
++      int i = EnchantmentHelper.func_77506_a(Enchantments.field_222192_G, p_220021_1_);
++      int j = i == 0 ? 1 : 3;
++      boolean flag = !consume || p_220021_0_ instanceof PlayerEntity && ((PlayerEntity)p_220021_0_).field_71075_bZ.field_75098_d; // Paper - add consme
++      ItemStack itemstack = p_220021_0_.func_213356_f(p_220021_1_);
++      ItemStack itemstack1 = itemstack.func_77946_l();
++
++      for(int k = 0; k < j; ++k) {
++         if (k > 0) {
++            itemstack = itemstack1.func_77946_l();
++         }
++
++         if (itemstack.func_190926_b() && flag) {
++            itemstack = new ItemStack(Items.field_151032_g);
++            itemstack1 = itemstack.func_77946_l();
++         }
++
 +         // CraftBukkit start - SPIGOT-4870, MC-150847
 +         else if (itemstack1.func_190926_b()) {
 +            return false;
