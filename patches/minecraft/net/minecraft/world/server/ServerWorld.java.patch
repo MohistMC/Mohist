@@ -131,7 +131,7 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,152 @@
+@@ -173,35 +_,154 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -142,6 +142,8 @@
 +   public ServerWorldInfo worldDataServer;
 +   public final SaveFormat.LevelSave convertable;
 +   public final UUID uuid;
++
++   public boolean dummyFreshEntitySpawn = false; // Mohist - Fix Pehkui Startup (#1324)
 +
 +   // Mohist start - Add option to ignore empty time
 +   private static final List<String> IGNORE_EMPTY_TIME_LIST;
@@ -857,7 +859,7 @@
                 this.field_217498_x.remove(entity.func_145782_y());
                 this.func_217484_g(entity);
 +
-+               // UNSUPPORTED OPERATION !!!
++               // TODO UNSUPPORTED OPERATION !!!
 +               // if (!entity.isAlive()) iterator.remove(); // Paper - don't save dead entities during unload
              }
           }
