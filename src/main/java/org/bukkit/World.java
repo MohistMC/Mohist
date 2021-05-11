@@ -2337,6 +2337,38 @@ public interface World extends PluginMessageRecipient, Metadatable, net.kyori.ad
     int getViewDistance();
     // Spigot end
 
+    // Paper start - view distance api
+
+    /**
+     * Sets the view distance for this world.
+     *
+     * @param viewDistance view distance in [2, 32]
+     */
+    void setViewDistance(int viewDistance);
+
+    /**
+     * Returns the no-tick view distance for this world.
+     * <p>
+     * No-tick view distance is the view distance where chunks will load, however the chunks and their entities will not
+     * be set to tick.
+     * </p>
+     *
+     * @return The no-tick view distance for this world.
+     */
+    int getNoTickViewDistance();
+
+    /**
+     * Sets the no-tick view distance for this world.
+     * <p>
+     * No-tick view distance is the view distance where chunks will load, however the chunks and their entities will not
+     * be set to tick.
+     * </p>
+     *
+     * @param viewDistance view distance in [2, 32]
+     */
+    void setNoTickViewDistance(int viewDistance);
+    // Paper end - view distance api
+
     // Spigot start
     class Spigot {
 
