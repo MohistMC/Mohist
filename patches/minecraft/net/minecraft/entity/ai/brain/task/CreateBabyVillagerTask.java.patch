@@ -12,11 +12,15 @@
        if (villagerentity == null) {
           return Optional.empty();
        } else {
-@@ -109,7 +_,7 @@
+@@ -109,7 +_,12 @@
           p_242307_3_.func_70873_a(6000);
           villagerentity.func_70873_a(-24000);
           villagerentity.func_70012_b(p_242307_2_.func_226277_ct_(), p_242307_2_.func_226278_cu_(), p_242307_2_.func_226281_cx_(), 0.0F, 0.0F);
--         p_242307_1_.func_242417_l(villagerentity);
++         // Mohist start - Fix Pehkui Villagers (#1328)
++         p_242307_1_.dummyFreshEntitySpawn = true;
+          p_242307_1_.func_242417_l(villagerentity);
++         p_242307_1_.dummyFreshEntitySpawn = false;
++         // Mohist end
 +         p_242307_1_.addAllEntities(villagerentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
           p_242307_1_.func_72960_a(villagerentity, (byte)12);
           return Optional.of(villagerentity);
