@@ -25,8 +25,8 @@ assignees: ''
 
 **Logs :** {Link(s) of logs and crash reports if you have}
 
-**Mod list :** {List of your mods. You can also use /getmodlist command on your server)
+**Mod list :** {List of your mods. You can also use /getmodlist command on your server}
 
-**Plugin list :** {List of your plugins. You can also use /getpluginlist command on your server)
+**Plugin list :** {List of your plugins. You can also use /getpluginlist command on your server}
 
 **Description of issue :** {Give all details about your issue}
