@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_16_R3.event;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
+import com.mohistmc.entity.CraftCustomFakePlayer;
 import com.mohistmc.inventory.InventoryOwner;
 import com.mojang.datafixers.util.Either;
 import java.net.InetAddress;
@@ -319,6 +320,9 @@ public class CraftEventFactory {
         CraftServer craftServer = world.getCBServer();
 
         Player player = (Player) who.getBukkitEntity();
+        if (player == null) {
+            player = new CraftCustomFakePlayer(craftServer, who);
+        }
 
         Block blockClicked = craftWorld.getBlockAt(clickedX, clickedY, clickedZ);
         Block placedBlock = replacedBlockState.getBlock();
