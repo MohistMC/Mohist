@@ -13,5 +13,5 @@ public interface Recipe {
      * @return The result stack
      */
     @NotNull
-    ItemStack getResult();
+    default ItemStack getResult() { return new ItemStack(org.bukkit.Material.AIR); } // Mohist - Fix ProtectionStones startup (#1271)
 }
