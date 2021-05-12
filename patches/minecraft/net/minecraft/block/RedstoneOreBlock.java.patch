@@ -25,7 +25,7 @@
  
     public void func_196270_a(BlockState p_196270_1_, World p_196270_2_, BlockPos p_196270_3_, PlayerEntity p_196270_4_) {
 -      func_196500_d(p_196270_1_, p_196270_2_, p_196270_3_);
-+      activate(p_196270_1_, p_196270_2_, p_196270_3_, p_196270_4_);  // CraftBukkit - add entityhuman
++      interact(p_196270_1_, p_196270_2_, p_196270_3_, p_196270_4_);  // CraftBukkit - add entityhuman
        super.func_196270_a(p_196270_1_, p_196270_2_, p_196270_3_, p_196270_4_);
     }
  
@@ -37,14 +37,14 @@
 +      if (p_176199_3_ instanceof PlayerEntity) {
 +         PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent((PlayerEntity) p_176199_3_, org.bukkit.event.block.Action.PHYSICAL, p_176199_2_, null, null, null);
 +         if (!event.isCancelled()) {
-+            activate(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_); // add entity
++            interact(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_); // add entity
 +            super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);
 +         }
 +      } else {
 +         EntityInteractEvent event = new EntityInteractEvent(p_176199_3_.getBukkitEntity(), p_176199_1_.getWorld().getBlockAt(p_176199_2_.func_177958_n(), p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p()));
 +         p_176199_1_.getCBServer().getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
-+            activate(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_); // add entity
++            interact(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_); // add entity
 +            super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);
 +         }
 +      }
@@ -56,7 +56,7 @@
           func_180691_e(p_225533_2_, p_225533_3_);
        } else {
 -         func_196500_d(p_225533_1_, p_225533_2_, p_225533_3_);
-+         activate(p_225533_1_, p_225533_2_, p_225533_3_, p_225533_4_); // CraftBukkit - add entityhuman
++         interact(p_225533_1_, p_225533_2_, p_225533_3_, p_225533_4_); // CraftBukkit - add entityhuman
        }
  
        ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
@@ -67,7 +67,7 @@
 -      func_180691_e(p_196500_1_, p_196500_2_);
 -      if (!p_196500_0_.func_177229_b(field_196501_a)) {
 -         p_196500_1_.func_180501_a(p_196500_2_, p_196500_0_.func_206870_a(field_196501_a, Boolean.valueOf(true)), 3);
-+   private static void activate(BlockState state, World world, BlockPos pos, Entity entity) { // CraftBukkit - add Entity
++   private static void interact(BlockState state, World world, BlockPos pos, Entity entity) { // CraftBukkit - add Entity
 +      func_180691_e(world, pos);
 +      if (!state.func_177229_b(field_196501_a)) {
 +         // CraftBukkit start
