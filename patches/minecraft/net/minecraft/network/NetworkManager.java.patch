@@ -1,18 +1,56 @@
 --- a/net/minecraft/network/NetworkManager.java
 +++ b/net/minecraft/network/NetworkManager.java
-@@ -31,9 +_,12 @@
- import java.util.Queue;
- import javax.annotation.Nullable;
- import javax.crypto.Cipher;
-+import javax.crypto.SecretKey;
+@@ -1,7 +_,23 @@
+ package net.minecraft.network;
+ 
++import java.net.InetAddress;
++import java.net.SocketAddress;
++import java.util.Queue;
++
++import javax.annotation.Nullable;
++import javax.crypto.Cipher;
++
++import org.apache.commons.lang3.Validate;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++import org.apache.logging.log4j.Marker;
++import org.apache.logging.log4j.MarkerManager;
++
+ import com.google.common.collect.Queues;
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import com.mohistmc.netty.NettyPacketCompressor;
++import com.mohistmc.netty.NettyPacketDecompressor;
++
+ import io.netty.bootstrap.Bootstrap;
+ import io.netty.channel.Channel;
+ import io.netty.channel.ChannelException;
+@@ -26,25 +_,16 @@
+ import io.netty.util.AttributeKey;
+ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
+-import java.net.InetAddress;
+-import java.net.SocketAddress;
+-import java.util.Queue;
+-import javax.annotation.Nullable;
+-import javax.crypto.Cipher;
  import net.minecraft.network.login.ServerLoginNetHandler;
  import net.minecraft.network.play.ServerPlayNetHandler;
  import net.minecraft.network.play.server.SDisconnectPacket;
 +import net.minecraft.server.MinecraftServer;
-+import net.minecraft.util.CryptManager;
  import net.minecraft.util.LazyValue;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+-import org.apache.commons.lang3.Validate;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+-import org.apache.logging.log4j.Marker;
+-import org.apache.logging.log4j.MarkerManager;
+ 
+ public class NetworkManager extends SimpleChannelInboundHandler<IPacket<?>> {
+    private static final Logger field_150735_g = LogManager.getLogger();
 @@ -62,8 +_,13 @@
     });
     private final PacketDirection field_179294_g;
