@@ -87,7 +87,7 @@
     protected boolean field_204230_bP;
     public final PlayerAbilities field_71075_bZ = new PlayerAbilities();
     public int field_71068_ca;
-@@ -150,8 +_,34 @@
+@@ -150,8 +_,35 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
     public FishingBobberEntity field_71104_cf;
@@ -111,6 +111,8 @@
 +   public final com.destroystokyo.paper.util.PooledHashSets.PooledObjectLinkedOpenHashSet<PlayerEntity> cachedSingleMobDistanceMap;
 +   // Paper end
 +
++   public boolean needsChunkCenterUpdate; // Paper - no-tick view distance
++
 +   @Override
 +   public CraftHumanEntity getBukkitEntity() {
 +      return (CraftHumanEntity) super.getBukkitEntity();
@@ -118,7 +120,6 @@
 +   // CraftBukkit end
 +
 +    public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<PlayerEntity> cachedSingleHashSet; // Paper
-+
 +
 +    public PlayerEntity(World p_i241920_1_, BlockPos p_i241920_2_, float p_i241920_3_, GameProfile p_i241920_4_) {
        super(EntityType.field_200729_aH, p_i241920_1_);

@@ -76,4 +76,9 @@ public class PaperWorldConfig {
     private void perPlayerMobSpawns() {
         perPlayerMobSpawns = getBoolean("per-player-mob-spawns", false);
     }
+
+    public int noTickViewDistance;
+    private void viewDistance() {
+        this.noTickViewDistance = this.getInt("viewdistances.no-tick-view-distance", -1);
+    }
 }

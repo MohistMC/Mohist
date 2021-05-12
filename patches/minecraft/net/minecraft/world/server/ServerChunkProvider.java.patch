@@ -56,11 +56,12 @@
  import net.minecraft.world.gen.feature.template.TemplateManager;
  import net.minecraft.world.spawner.WorldEntitySpawner;
  import net.minecraft.world.storage.DimensionSavedDataManager;
-@@ -47,24 +_,177 @@
+@@ -47,24 +_,178 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
 -   private static final List<ChunkStatus> field_217239_c = ChunkStatus.func_222582_a();
++
 +   public static final List<ChunkStatus> field_217239_c = ChunkStatus.func_222582_a(); // Paper private -> public
     private final TicketManager field_217240_d;
     public final ChunkGenerator field_186029_c;
@@ -68,7 +69,8 @@
 -   private final Thread field_217241_g;
 +   public final Thread field_217241_g; // Paper - private -> public
     private final ServerWorldLightManager field_217242_h;
-    private final ServerChunkProvider.ChunkExecutor field_217243_i;
+-   private final ServerChunkProvider.ChunkExecutor field_217243_i;
++   public final ServerChunkProvider.ChunkExecutor field_217243_i; // Paper private -> public
     public final ChunkManager field_217237_a;
     private final DimensionSavedDataManager field_217244_j;
     private long field_217245_k;
@@ -498,6 +500,15 @@
     public void func_217206_a(ChunkPos p_217206_1_, boolean p_217206_2_) {
        this.field_217240_d.func_219364_a(p_217206_1_, p_217206_2_);
     }
+@@ -480,7 +_,7 @@
+       return this.field_241097_p_;
+    }
+ 
+-   final class ChunkExecutor extends ThreadTaskExecutor<Runnable> {
++   public final class ChunkExecutor extends ThreadTaskExecutor<Runnable> { // Paper - package -> public
+       private ChunkExecutor(World p_i50985_2_) {
+          super("Chunk source main thread executor for " + p_i50985_2_.func_234923_W_().func_240901_a_());
+       }
 @@ -507,11 +_,16 @@
        }
  
