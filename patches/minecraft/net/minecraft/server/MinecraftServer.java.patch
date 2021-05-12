@@ -21,7 +21,7 @@
  import java.awt.image.BufferedImage;
  import java.io.File;
  import java.io.IOException;
-@@ -37,19 +_,50 @@
+@@ -37,19 +_,51 @@
  import java.util.Date;
  import java.util.List;
  import java.util.Map;
@@ -41,6 +41,7 @@
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
 +
++import net.minecraft.addons.server.MCUtil;
 +import org.apache.commons.lang3.Validate;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
@@ -81,7 +82,7 @@
  import net.minecraft.server.management.OpEntry;
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
-@@ -152,1430 +_,1770 @@
+@@ -152,1430 +_,1771 @@
  import net.minecraft.world.storage.WorldSavedDataCallableSave;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -970,6 +971,7 @@
 +                this.func_184107_a(this.field_147147_p);
 +
 +                // Spigot start
++                org.spigotmc.WatchdogThread.hasStarted = true; // Paper
 +                Arrays.fill(recentTps, 20);
 +                long curTime, tickSection = Util.func_211177_b(), tickCount = 1;
 +                while (this.field_71317_u) {

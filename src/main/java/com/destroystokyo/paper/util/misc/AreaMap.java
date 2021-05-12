@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-import net.minecraft.server.MCUtil;
+import net.minecraft.addons.server.MCUtil;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.ChunkPos;
 

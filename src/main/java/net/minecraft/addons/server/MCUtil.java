@@ -1,4 +1,4 @@
-package net.minecraft.server;
+package net.minecraft.addons.server;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;

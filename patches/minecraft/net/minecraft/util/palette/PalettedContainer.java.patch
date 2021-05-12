@@ -64,22 +64,25 @@
     }
  
     public void func_186009_b(PacketBuffer p_186009_1_) {
-@@ -237,4 +_,23 @@
+@@ -237,4 +_,26 @@
     public interface ICountConsumer<T> {
        void accept(T p_accept_1_, int p_accept_2_);
     }
 +
 +   // Mohist start - Optimize Randomtick (2nd attempt)
 +   public void count(PalettedContainer.ICountConsumerTriple<T> p_225497_1_) {
-+      Int2IntMap int2intmap = new Int2IntOpenHashMap();
-+      Int2IntMap int2keymap = new Int2IntOpenHashMap();
-+      this.field_186021_b.getAll((p_225498_1_, key) -> {
-+         int2intmap.put(p_225498_1_, int2intmap.get(p_225498_1_) + 1);
-+         int2keymap.put(p_225498_1_, key);
++      // Mohist start - Randomtick Improvements
++      Int2IntMap key2dat = new Int2IntOpenHashMap();
++      this.field_186021_b.getAll((dat, key) -> {
++         key2dat.put(key, dat);
 +      });
-+      int2intmap.int2IntEntrySet().forEach((p_225499_2_) -> {
-+         p_225497_1_.accept(this.field_186022_c.func_186039_a(p_225499_2_.getIntKey()), p_225499_2_.getIntValue(), int2keymap.get(p_225499_2_.getIntKey()));
-+      });
++      for (Int2IntMap.Entry ent : key2dat.int2IntEntrySet()) {
++         int key = ent.getIntKey();
++         int dat = ent.getIntValue();
++         T state = this.field_186022_c.func_186039_a(dat);
++         p_225497_1_.accept(state, 1, key);
++      }
++      // Mohist end
 +   }
 +
 +   @FunctionalInterface

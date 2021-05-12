@@ -691,6 +691,7 @@ public final class CraftServer implements Server {
 
     @Override
     public void reload() {
+        org.spigotmc.WatchdogThread.hasStarted = false; // Paper - Disable watchdog early timeout on reload
         reloadCount++;
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
@@ -802,6 +803,7 @@ public final class CraftServer implements Server {
         enablePlugins(PluginLoadOrder.STARTUP);
         enablePlugins(PluginLoadOrder.POSTWORLD);
         getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
+        org.spigotmc.WatchdogThread.hasStarted = true; // Paper - Disable watchdog early timeout on reload
     }
 
     @Override
@@ -929,7 +931,7 @@ public final class CraftServer implements Server {
 
         SaveFormat.LevelSave worldSession;
         try {
-            worldSession = SaveFormat.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
+            worldSession = SaveFormat.createDefault(getWorldContainer().toPath()).c(name, actualDimension);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
