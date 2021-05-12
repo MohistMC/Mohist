@@ -78,7 +78,7 @@
 +   }
 +
 +   // CraftBukkit start
-+   public SaveFormat.LevelSave createAccess(String saveName, RegistryKey<Dimension> dimensionType) throws IOException {
++   public SaveFormat.LevelSave c(String saveName, RegistryKey<Dimension> dimensionType) throws IOException {
 +      return new SaveFormat.LevelSave(saveName, dimensionType);
 +   }
 +
