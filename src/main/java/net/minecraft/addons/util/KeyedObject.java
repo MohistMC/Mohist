@@ -1,4 +1,6 @@
-package net.minecraft.util;
+package net.minecraft.addons.util;
+
+import net.minecraft.util.ResourceLocation;
 
 public interface KeyedObject {
     ResourceLocation getResourceLocation();

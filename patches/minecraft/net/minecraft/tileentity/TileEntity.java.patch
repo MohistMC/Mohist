@@ -1,21 +1,21 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -1,35 +_,85 @@
+@@ -1,9 +_,13 @@
  package net.minecraft.tileentity;
  
+-import javax.annotation.Nullable;
 +import co.aikar.timings.MinecraftTimings;
 +import co.aikar.timings.Timing;
 +import com.mohistmc.inventory.InventoryOwner;
- import javax.annotation.Nullable;
++import net.minecraft.addons.util.KeyedObject;
  import net.minecraft.block.BlockState;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.CompoundNBT;
 +import net.minecraft.nbt.INBT;
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-+import net.minecraft.util.KeyedObject;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.Rotation;
+@@ -11,25 +_,71 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
@@ -24,12 +24,14 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
+-
+-public abstract class TileEntity {
 +import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.inventory.InventoryHolder;
-+import org.spigotmc.CustomTimingsHandler;
- 
--public abstract class TileEntity {
++
++import javax.annotation.Nullable;
++
 +public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity, KeyedObject { // Paper
 +   // CraftBukkit start - data containers
 +   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
