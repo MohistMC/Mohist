@@ -4,34 +4,20 @@
     }
  
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
--      World world = p_195939_1_.func_195991_k();
--      BlockPos blockpos = p_195939_1_.func_195995_a();
--      BlockPos blockpos1 = blockpos.func_177972_a(p_195939_1_.func_196000_l());
--      if (func_195966_a(p_195939_1_.func_195996_i(), world, blockpos)) {
 +      // CraftBukkit start - extract bonemeal application logic to separate, static method
 +      return applyBonemeal(p_195939_1_);
 +   }
 +
-+   public static ActionResultType applyBonemeal(ItemUseContext context) {
++   public static ActionResultType applyBonemeal(ItemUseContext p_195939_1_) {
 +      // CraftBukkit end
-+      World world = context.func_195991_k();
-+      BlockPos blockpos = context.func_195995_a();
-+      BlockPos blockpos1 = blockpos.func_177972_a(context.func_196000_l());
-+      if (applyBonemeal(context.func_195996_i(), world, blockpos, context.func_195999_j())) {
+       World world = p_195939_1_.func_195991_k();
+       BlockPos blockpos = p_195939_1_.func_195995_a();
+       BlockPos blockpos1 = blockpos.func_177972_a(p_195939_1_.func_196000_l());
+-      if (func_195966_a(p_195939_1_.func_195996_i(), world, blockpos)) {
++      if (applyBonemeal(p_195939_1_.func_195996_i(), world, blockpos, p_195939_1_.func_195999_j())) {
           if (!world.field_72995_K) {
              world.func_217379_c(2005, blockpos, 0);
           }
-@@ -38,8 +_,8 @@
-          return ActionResultType.func_233537_a_(world.field_72995_K);
-       } else {
-          BlockState blockstate = world.func_180495_p(blockpos);
--         boolean flag = blockstate.func_224755_d(world, blockpos, p_195939_1_.func_196000_l());
--         if (flag && func_203173_b(p_195939_1_.func_195996_i(), world, blockpos1, p_195939_1_.func_196000_l())) {
-+         boolean flag = blockstate.func_224755_d(world, blockpos, context.func_196000_l());
-+         if (flag && func_203173_b(context.func_195996_i(), world, blockpos1, context.func_196000_l())) {
-             if (!world.field_72995_K) {
-                world.func_217379_c(2005, blockpos1, 0);
-             }
 @@ -51,8 +_,17 @@
        }
     }
