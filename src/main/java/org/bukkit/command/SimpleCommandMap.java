@@ -1,11 +1,8 @@
 package org.bukkit.command;
 
 import co.aikar.timings.TimingsCommand;
-import com.mohistmc.command.DownloadFileCommand;
-import com.mohistmc.command.DumpCommand;
-import com.mohistmc.command.GetPluginListCommand;
-import com.mohistmc.command.MohistCommand;
-import com.mohistmc.command.PluginCommand;
+import com.mohistmc.command.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,6 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.mohistmc.command.PluginCommand;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -47,6 +46,7 @@ public class SimpleCommandMap implements CommandMap {
         register("mohist", new DownloadFileCommand("downloadfile"));
         register("mohist", new DumpCommand("dump"));
         register("mohist", new PluginCommand("plugin"));
+        register("mohist", new WhitelistModsCommand("whitelistmods"));
     }
 
     public void setFallbackCommands() {

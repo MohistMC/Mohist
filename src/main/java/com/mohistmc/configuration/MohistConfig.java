@@ -20,6 +20,18 @@ public class MohistConfig extends ConfigBase {
     public final StringSetting console_name = new StringSetting(this, "mohist.console_name", "Server");
     public final StringSetting custom_flags = new StringSetting(this, "mohist.custom_flags", "aaaa bbbb");
     public final BoolSetting use_custom_java11 = new BoolSetting(this, "mohist.use_custom_java11", false);
+    public final BoolSetting hideJoinModsList = new BoolSetting(this, "forge.hidejoinmodslist", false);
+
+    // mods black list
+    public final StringSetting modsblacklist = new StringSetting(this, "forge.modsblacklist.list", "aaaa,bbbb");
+    public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modsblacklist.kickmessage", "Use of unauthorized mods");
+    public final BoolSetting modsblacklistenable = new BoolSetting(this, "forge.modsblacklist.enable", false);
+
+    // mods white list
+    public final IntSetting modsnumber = new IntSetting(this, "forge.modswhitelist.mods_number", 0);
+    public final StringSetting modswhitelist = new StringSetting(this, "forge.modswhitelist.list", "minecraft,forge");
+    public final StringSetting modswhitelistkickMessage = new StringSetting(this, "forge.modswhitelist.kickmessage", "Use of unauthorized mods");
+    public final BoolSetting modswhitelistenable = new BoolSetting(this, "forge.modswhitelist.enable", false);
 
     /* ======================================================================== */
 

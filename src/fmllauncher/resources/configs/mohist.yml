@@ -13,6 +13,17 @@ mohist:
   forge_ignore_optional_mods_version_check: false
   ignore_empty_time: all_worlds
   chunk_unload_delay: 5
+forge:
+  modsblacklist:
+    enable: false
+    list: aaaa,bbbb
+    kickmessage: Use of unauthorized mods
+  modswhitelist:
+    enable: false
+    mods_number: 0
+    list: minecraft,forge
+    kickmessage: Use of unauthorized mods
+  hidejoinmodslist: false
 consolecolor:
   info-time: b
   info-level: 2

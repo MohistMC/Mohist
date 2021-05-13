@@ -20,6 +20,9 @@
 package net.minecraftforge.fml.network;
 
 import com.mohistmc.api.PlayerAPI;
+import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.forge.MohistForgeUtils;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.network.login.ServerLoginNetHandler;
 import com.google.common.collect.Multimap;
 import net.minecraft.network.NetworkManager;
@@ -212,6 +215,18 @@ public class FMLHandshakeHandler {
         if (!accepted) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
             c.get().getNetworkManager().disconnect(new StringTextComponent("Connection closed - mismatched mod channel list"));
+            return;
+        }
+        if(!MohistConfig.instance.hideJoinModsList.getValue())
+            LOGGER.info(i18n.get("client.join.mods", clientModList.getModList().size()) + " : " + String.join(", ", clientModList.getModList()));
+        else
+            LOGGER.info(i18n.get("client.join.mods", clientModList.getModList().size()));
+        if(MohistForgeUtils.modsblacklist(clientModList.getModList())) {
+            c.get().getNetworkManager().disconnect(new StringTextComponent(MohistConfig.instance.modsblacklistkickMessage.getValue()));
+            return;
+        }
+        if(!MohistForgeUtils.modswhitelist(clientModList.getModList())) {
+            c.get().getNetworkManager().disconnect(new StringTextComponent(MohistConfig.instance.modswhitelistkickMessage.getValue()));
             return;
         }
         if(!clientModList.getModList().isEmpty() && c.get().getRemoteAddress() != null) {
