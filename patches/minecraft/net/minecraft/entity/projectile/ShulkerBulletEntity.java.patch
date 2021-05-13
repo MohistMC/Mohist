@@ -34,15 +34,17 @@
     protected void func_213281_b(CompoundNBT p_213281_1_) {
        super.func_213281_b(p_213281_1_);
        if (this.field_184571_b != null) {
-@@ -213,7 +_,7 @@
+@@ -213,8 +_,8 @@
           }
  
           RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
 -         if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
+-            this.func_70227_a(raytraceresult);
 +            if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-             this.func_70227_a(raytraceresult);
++            this.preOnHit(raytraceresult); // CraftBukkit - projectile hit event
           }
        }
+ 
 @@ -274,7 +_,7 @@
        if (flag) {
           this.func_174815_a(livingentity, entity);

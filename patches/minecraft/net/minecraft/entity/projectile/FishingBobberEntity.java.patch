@@ -37,6 +37,15 @@
     private FishingBobberEntity(World p_i50219_1_, PlayerEntity p_i50219_2_, int p_i50219_3_, int p_i50219_4_) {
        super(EntityType.field_200730_aI, p_i50219_1_);
        this.field_70158_ak = true;
+@@ -245,7 +_,7 @@
+ 
+    private void func_190624_r() {
+       RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
+-      this.func_70227_a(raytraceresult);
++      this.preOnHit(raytraceresult); // CraftBukkit - projectile hit event
+    }
+ 
+    protected boolean func_230298_a_(Entity p_230298_1_) {
 @@ -288,6 +_,10 @@
              this.field_146040_ay = 0;
              this.field_146038_az = 0;

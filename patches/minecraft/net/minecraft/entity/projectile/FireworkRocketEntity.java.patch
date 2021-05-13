@@ -44,6 +44,15 @@
     protected void func_70088_a() {
        this.field_70180_af.func_187214_a(field_184566_a, ItemStack.field_190927_a);
        this.field_70180_af.func_187214_a(field_191512_b, OptionalInt.empty());
+@@ -136,7 +_,7 @@
+ 
+       RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
+       if (!this.field_70145_X) {
+-         this.func_70227_a(raytraceresult);
++         this.preOnHit(raytraceresult); // CraftBukkit - projectile hit event
+          this.field_70160_al = true;
+       }
+ 
 @@ -151,9 +_,19 @@
        }
  

@@ -3,11 +3,11 @@ package com.mohistmc.util;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.ArrayUtils;
 import sun.misc.Unsafe;
 
 public class MohistJDK9EnumHelper
@@ -169,7 +169,13 @@ public class MohistJDK9EnumHelper
         {
             T[] previousValues = (T[])valuesField.get(enumType);
             T newValue = makeEnum(enumType, enumName, previousValues.length, paramTypes, paramValues);
-            setFailsafeFieldValue(valuesField, null, ArrayUtils.add(previousValues, newValue));
+            Object base = io.izzel.arclight.api.Unsafe.staticFieldBase(valuesField);
+            long offset = io.izzel.arclight.api.Unsafe.staticFieldOffset(valuesField);
+            T[] arr = (T[]) io.izzel.arclight.api.Unsafe.getObject(base, offset);
+            T[] newArr = (T[]) Array.newInstance(enumType, arr.length + 1);
+            System.arraycopy(arr, 0, newArr, 0, arr.length);
+            newArr[arr.length] = newValue;
+            io.izzel.arclight.api.Unsafe.putObject(base, offset, newArr);
             cleanEnumCache(enumType);
 
             return newValue;

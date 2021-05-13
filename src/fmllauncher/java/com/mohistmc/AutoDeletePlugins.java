@@ -20,8 +20,6 @@ public class AutoDeletePlugins {
         plugins_fix.add(new PluginsModsDelete.Fix("com.earth2me.essentials.Essentials",
                 "https://github.com/KR33PY/Essentials/releases/download/essxmohist/EssentialsX-2.19.0-dev+99-fd961d5.jar",
                 "2.19.0-dev+99-fd961d5"));
-
-        plugins_not_compatible.add("com.comphenix.protocol.ProtocolLib"); // Until it is resolved, the plug-in is not allowed
     }
 
     public static void jar() throws Exception {

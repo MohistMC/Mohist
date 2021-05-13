@@ -1,19 +1,21 @@
 --- a/net/minecraft/entity/projectile/EggEntity.java
 +++ b/net/minecraft/entity/projectile/EggEntity.java
-@@ -1,8 +_,11 @@
+@@ -1,8 +_,10 @@
  package net.minecraft.entity.projectile;
  
 +import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.passive.ChickenEntity;
-+import net.minecraft.entity.player.PlayerEntity;
 +import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.item.Item;
  import net.minecraft.item.Items;
  import net.minecraft.particles.ItemParticleData;
-@@ -13,6 +_,12 @@
+@@ -11,8 +_,15 @@
+ import net.minecraft.util.math.EntityRayTraceResult;
+ import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.world.World;
++import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.Location;
@@ -25,9 +27,13 @@
  
  public class EggEntity extends ProjectileItemEntity {
     public EggEntity(EntityType<? extends EggEntity> p_i50154_1_, World p_i50154_2_) {
-@@ -47,18 +_,38 @@
+@@ -46,19 +_,48 @@
+ 
     protected void func_70227_a(RayTraceResult p_70227_1_) {
        super.func_70227_a(p_70227_1_);
++      int dummy1 = 0; int dummy2 = 0; ChickenEntity hatchingEntity;// Mohist - Fix Pehkui Startup (#1324)
++      dummy1++; // do not allow the compiler to cut these fields off
++      dummy2++;
        if (!this.field_70170_p.field_72995_K) {
 -         if (this.field_70146_Z.nextInt(8) == 0) {
 -            int i = 1;
@@ -61,11 +67,17 @@
 +
 +            if (hatching) {
 +               for (int j = 0; j < i; j++) {
-+                  Entity entity = field_70170_p.getWorld().createEntity(new Location(field_70170_p.getWorld(), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, 0), hatchingType.getEntityClass());
-+                  if (entity.getBukkitEntity() instanceof Ageable) {
-+                     ((Ageable) entity.getBukkitEntity()).setBaby();
++                  hatchingEntity = (ChickenEntity) field_70170_p.getWorld().createEntity(new Location(field_70170_p.getWorld(), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, 0), hatchingType.getEntityClass());
++                  if (hatchingEntity.getBukkitEntity() instanceof Ageable) {
++                     ((Ageable) hatchingEntity.getBukkitEntity()).setBaby();
 +                  }
-+                  field_70170_p.getWorld().addEntity(entity, SpawnReason.EGG);
++                  // Mohist start - Fix Pehkui Startup (#1324)
++                  if (this.field_70170_p instanceof ServerWorld) {
++                      ((ServerWorld) this.field_70170_p).pehkuiSpawnReason = SpawnReason.EGG;
++                      field_70170_p.func_217376_c(hatchingEntity);
++                      ((ServerWorld) this.field_70170_p).pehkuiSpawnReason = SpawnReason.DEFAULT;
++                  }
++                  // Mohist end
 +               }
 +            }
 +            // CraftBukkit end

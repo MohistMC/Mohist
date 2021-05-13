@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/Chunk.java
 +++ b/net/minecraft/world/chunk/Chunk.java
-@@ -20,7 +_,7 @@
+@@ -20,14 +_,12 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -9,6 +9,13 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ReportedException;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityType;
+-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+-import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
+ import net.minecraft.fluid.Fluid;
+ import net.minecraft.fluid.FluidState;
+ import net.minecraft.fluid.Fluids;
 @@ -57,20 +_,21 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
@@ -180,15 +187,17 @@
                 } else {
                    tileentity1.func_145836_u();
                 }
-@@ -308,7 +_,7 @@
+@@ -308,8 +_,9 @@
        int i = MathHelper.func_76128_c(p_76612_1_.func_226277_ct_() / 16.0D);
        int j = MathHelper.func_76128_c(p_76612_1_.func_226281_cx_() / 16.0D);
        if (i != this.field_212816_F.field_77276_a || j != this.field_212816_F.field_77275_b) {
 -         field_150817_t.warn("Wrong location! ({}, {}) should be ({}, {}), {}", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_);
 +         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.2", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_));
           p_76612_1_.field_70128_L = true;
++         return; // Paper
        }
  
+       int k = MathHelper.func_76128_c(p_76612_1_.func_226278_cu_() / 16.0D);
 @@ -321,11 +_,13 @@
           k = this.field_76645_j.length - 1;
        }
@@ -393,7 +402,7 @@
 +      // Mohist start - handle Spigot method in MythicMobs
 +      List<Entity>[] e = new List[16];
 +      for (int l = 0; l < this.field_76645_j.length; ++l) {
-+         e[l] = new org.bukkit.craftbukkit.v1_16_R3.util.UnsafeList();
++         e[l] = new org.bukkit.craftbukkit.v1_16_R3.util.UnsafeList<>();
 +      }
 +      return e;
 +      // Mohist end
