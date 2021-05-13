@@ -1695,6 +1695,11 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     }
 
     @Override
+    public int getPing() {
+        return getHandle().latency;
+    }
+
+    @Override
     public String getLocale() {
         return getHandle().language;
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/IServerWorld.java
 +++ b/net/minecraft/world/IServerWorld.java
-@@ -6,7 +_,17 @@
+@@ -6,7 +_,18 @@
  public interface IServerWorld extends IWorld {
     ServerWorld func_201672_e();
  
@@ -11,6 +11,7 @@
     default void func_242417_l(Entity p_242417_1_) {
 -      p_242417_1_.func_226276_cg_().forEach(this::func_217376_c);
 -   }
++      if (this.func_201672_e() != null && this.func_201672_e().dummyFreshEntitySpawn) return; // Mohist - Fix Pehkui Startup (#1324)
 +      this.addAllEntities(p_242417_1_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +      // CraftBukkit start
 +   }

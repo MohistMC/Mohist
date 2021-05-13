@@ -1,9 +1,11 @@
 --- a/net/minecraft/entity/monster/SlimeEntity.java
 +++ b/net/minecraft/entity/monster/SlimeEntity.java
-@@ -44,6 +_,10 @@
+@@ -44,6 +_,12 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.biome.Biomes;
++import net.minecraft.world.server.ServerWorld;
++
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityTransformEvent;
@@ -59,7 +61,7 @@
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
-@@ -200,11 +_,15 @@
+@@ -200,11 +_,21 @@
              slimeentity.func_184224_h(this.func_190530_aW());
              slimeentity.func_70799_a(j, true);
              slimeentity.func_70012_b(this.func_226277_ct_() + (double)f1, this.func_226278_cu_() + 0.5D, this.func_226281_cx_() + (double)f2, this.field_70146_Z.nextFloat() * 360.0F, 0.0F);
@@ -68,7 +70,13 @@
 +            if (CraftEventFactory.callEntityTransformEvent(this, slimeentity, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
 +               return;
 +            }
-+            this.field_70170_p.addEntity(slimeentity, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
++            // Mohist start - Fix Pehkui Startup (#1324)
++            if (field_70170_p instanceof ServerWorld) {
++                ((ServerWorld) this.field_70170_p).pehkuiSpawnReason = CreatureSpawnEvent.SpawnReason.SLIME_SPLIT;
++                this.field_70170_p.func_217376_c(slimeentity);
++                ((ServerWorld) this.field_70170_p).pehkuiSpawnReason = CreatureSpawnEvent.SpawnReason.DEFAULT;
++            }
++            // Mohist end
           }
        }
  

@@ -962,7 +962,15 @@ public final class CraftServer implements Server {
             chunkgenerator = worlddimension.generator();
         }
 
-        RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
+        RegistryKey<net.minecraft.world.World> worldKey ;
+        String levelName = this.getServer().getProperties().levelName;
+        if (name.equals(levelName + "_nether")) {
+            worldKey = net.minecraft.world.World.NETHER;
+        } else if (name.equals(levelName + "_the_end")) {
+            worldKey = net.minecraft.world.World.END;
+        } else {
+            worldKey = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
+        }
 
         net.minecraft.world.World.setGeneratorAndEnv(generator, creator.environment());
         ServerWorld internal = (ServerWorld) new ServerWorld(console, console.executor, worldSession, worlddata, worldKey, dimensionmanager, getServer().progressListenerFactory.create(11),
