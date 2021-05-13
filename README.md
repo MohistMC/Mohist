@@ -10,7 +10,7 @@
 [![](https://img.shields.io/badge/Forge-1.16.5--36.1.16-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](http://files.minecraftforge.net/net/minecraftforge/forge/index_1.16.5.html)
 [![](https://img.shields.io/badge/Paper-1.16.5-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads)
 [![](https://img.shields.io/badge/AdoptOpenJDK-11.0.10+9-brightgreen.svg?colorB=469C00&logo=java)](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot)
-[![](https://img.shields.io/badge/Gradle-6.8.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/6.8.1/release-notes.html)
+[![](https://img.shields.io/badge/Gradle-6.9-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/6.9/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
@@ -27,7 +27,7 @@
 Progress
 ------
 
-- [x] Rectify Forge (b6ce4fb06)
+- [x] Rectify Forge (474b47ea5)
 - [x] Start patch 
   * CraftBukkit(51e2981b)  
   * Bukkit(b9ef9229)  
