@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/ServerWorld.java
 +++ b/net/minecraft/world/server/ServerWorld.java
-@@ -1,30 +_,19 @@
+@@ -1,30 +_,20 @@
  package net.minecraft.world.server;
  
 -import com.google.common.annotations.VisibleForTesting;
@@ -24,6 +24,7 @@
 +import java.util.ArrayList;
  import java.util.Collection;
  import java.util.Comparator;
++import java.util.HashMap;
 +import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -808,7 +809,7 @@
           return true;
        }
     }
-@@ -851,40 +_,101 @@
+@@ -851,40 +_,113 @@
     }
  
     public boolean func_242106_g(Entity p_242106_1_) {
@@ -842,7 +843,10 @@
        ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = p_217466_1_.func_177429_s();
        int i = aclassinheritancemultimap.length;
  
-+      java.util.List<Entity> toMoveChunks = new java.util.ArrayList<>(); // Paper
++      // Mohist start - Possibly resolve duplicate UUIDs
++      HashMap<Entity, Integer> entitiesToMove = new HashMap<>();
++      HashMap<Entity, Integer> entitiesToRemove = new HashMap<>();
++      // Mohist end
        for(int j = 0; j < i; ++j) {
 -         for(Entity entity : aclassinheritancemultimap[j]) {
 +         Iterator<Entity> iterator = aclassinheritancemultimap[j].iterator();
@@ -854,24 +858,33 @@
                 }
  
 +               // Paper start - move out entities that shouldn't be in this chunk before it unloads
-+               if (entity.func_70089_S() && (int) Math.floor(entity.func_226277_ct_()) >> 4 != p_217466_1_.func_76632_l().field_77276_a || (int) Math.floor(entity.func_226281_cx_()) >> 4 != p_217466_1_.func_76632_l().field_77275_b) {
-+                  toMoveChunks.add(entity);
++               if (entity.func_70089_S() && ((int) Math.floor(entity.func_226277_ct_()) >> 4 != p_217466_1_.func_76632_l().field_77276_a || (int) Math.floor(entity.func_226281_cx_()) >> 4 != p_217466_1_.func_76632_l().field_77275_b)) {
++                  // Mohist start - Possibly resolve duplicate UUIDs
++                  entitiesToRemove.put(entity, j);
++                  entitiesToMove.put(entity, j);
++                  // Mohist end
 +                  continue;
 +               }
 +
++               // Mohist start - Possibly resolve duplicate UUIDs
++               if (!entity.func_70089_S()) {
++                  entitiesToRemove.put(entity, j);
++               }
++               // Mohist end
++
                 this.field_217498_x.remove(entity.func_145782_y());
                 this.func_217484_g(entity);
-+
-+               // TODO UNSUPPORTED OPERATION !!!
-+               // if (!entity.isAlive()) iterator.remove(); // Paper - don't save dead entities during unload
              }
           }
        }
-+      // Paper start - move out entities that shouldn't be in this chunk before it unloads
-+      for (Entity entity : toMoveChunks) {
++      // Mohist start - Possibly resolve duplicate UUIDs
++      entitiesToRemove.forEach((entity, secY) -> {
++         p_217466_1_.func_76608_a(entity, secY);
++      });
++      entitiesToMove.forEach((entity, secY) -> {
 +         this.func_217464_b(entity);
-+      }
-+      // Paper end
++      });
++      // Mohist end
  
     }
  

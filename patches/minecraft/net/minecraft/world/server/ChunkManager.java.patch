@@ -154,14 +154,24 @@
     protected void func_219204_a(BooleanSupplier p_219204_1_) {
        IProfiler iprofiler = this.field_219255_i.func_217381_Z();
        iprofiler.func_76320_a("poi");
-@@ -400,6 +_,7 @@
+@@ -400,13 +_,16 @@
              if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
                 if (p_219185_5_ instanceof Chunk) {
                    ((Chunk)p_219185_5_).func_177417_c(false);
 +                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload((Chunk)p_219185_5_));
                 }
  
-                this.func_219229_a(p_219185_5_);
+-               this.func_219229_a(p_219185_5_);
++               // Mohist start - Possibly resolve duplicate UUIDs
+                if (this.field_219254_h.remove(p_219212_1_) && p_219185_5_ instanceof Chunk) {
+                   Chunk chunk = (Chunk)p_219185_5_;
+                   this.field_219255_i.func_217466_a(chunk);
+                }
++               this.func_219229_a(p_219185_5_);
++               // Mohist end
+ 
+                this.field_219256_j.func_215581_a(p_219185_5_.func_76632_l());
+                this.field_219256_j.func_215588_z_();
 @@ -482,7 +_,7 @@
                    return Either.left(ichunk);
                 }
