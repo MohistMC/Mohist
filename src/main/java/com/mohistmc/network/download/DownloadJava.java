@@ -28,8 +28,7 @@ public class DownloadJava {
         launchArgs.addAll(Arrays.asList(args));
 
         if (!launchArgs.contains("launchedWithCustomJava8")) {
-            if (!javabin.exists()) {
-                if (!bMohist("use_custom_java8")) {
+            if (!javabin.exists() || !bMohist("use_custom_java8")) {
                     System.out.println(Message.getString("unsupported.java.version"));
                     Scanner scan = new Scanner(System.in);
                     System.out.println(Message.getString("customjava.ask"));
@@ -39,7 +38,6 @@ public class DownloadJava {
                         System.out.println(Message.getString("customjava.no"));
                         System.exit(0);
                     }
-                } else searchJava();
             } else searchJava();
         }
     }
@@ -68,7 +66,7 @@ public class DownloadJava {
             UpdateUtils.downloadFile(URL, javadl);
             unzip(new FileInputStream(javadl), java.toPath());
             javadl.delete();
-            if (os().equals("Unix")) Runtime.getRuntime().exec("chmod 755 -R ./CustomJAVA");
+            if (os().equals("Unix") || os().equals("Mac")) Runtime.getRuntime().exec("chmod 755 -R ./CustomJAVA");
         }
 
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
