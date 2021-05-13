@@ -72,7 +72,7 @@ public class DownloadJava {
             unzip(new FileInputStream(javadl), java.toPath());
             System.out.println(i18n.get("oldjava.unzip.completed"));
             javadl.delete();
-            if (os().equals("Unix")) Runtime.getRuntime().exec("chmod 755 -R ./CustomJAVA");
+            if (os().equals("Unix") || os().equals("Mac")) Runtime.getRuntime().exec("chmod 755 -R ./CustomJAVA");
         }
 
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
