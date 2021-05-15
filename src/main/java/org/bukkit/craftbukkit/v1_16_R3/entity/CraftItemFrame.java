@@ -1,9 +1,11 @@
 package org.bukkit.craftbukkit.v1_16_R3.entity;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.item.HangingEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
@@ -39,20 +41,16 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         return true;
     }
 
-    private void update() {
-        ItemFrameEntity old = this.getHandle();
+    @Override
+    protected void update() {
+        super.update();
+        // mark dirty, so that the client gets updated with item and rotation
+        for (EntityDataManager.DataEntry<?> dataItem : getHandle().getEntityData().getAll()) {
+            getHandle().getEntityData().markDirty(dataItem.getAccessor());
+        }
 
-        ServerWorld world = ((CraftWorld) getWorld()).getHandle();
-        BlockPos position = old.getPos();
-        Direction direction = old.getDirection();
-        ItemStack item = old.getItem() != null ? old.getItem().copy() : null;
-
-        old.remove();
-
-        ItemFrameEntity frame = new ItemFrameEntity(world,position,direction);
-        frame.setItem(item, true, false);
-        world.addFreshEntity(frame);
-        this.entity = frame;
+        // update redstone
+        getHandle().getCommandSenderWorld().updateNeighbourForOutputSignal(getHandle().pos, Blocks.AIR);
     }
 
     @Override

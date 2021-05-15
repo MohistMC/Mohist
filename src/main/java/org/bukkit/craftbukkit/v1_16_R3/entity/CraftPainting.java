@@ -54,18 +54,6 @@ public class CraftPainting extends CraftHanging implements Painting {
         return false;
     }
 
-    private void update() {
-        ServerWorld world = ((CraftWorld) getWorld()).getHandle();
-        PaintingEntity painting = net.minecraft.entity.EntityType.PAINTING.create(world);
-        painting.pos = getHandle().pos;
-        painting.motive = getHandle().motive;
-        painting.setDirection(getHandle().getDirection());
-        getHandle().remove();
-        getHandle().hurtMarked = true; // because this occurs when the painting is broken, so it might be important
-        world.addFreshEntity(painting);
-        this.entity = painting;
-    }
-
     @Override
     public PaintingEntity getHandle() {
         return (PaintingEntity) entity;

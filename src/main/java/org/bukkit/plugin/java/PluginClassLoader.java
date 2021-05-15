@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
@@ -44,6 +45,7 @@ public final class PluginClassLoader extends URLClassLoader {
     private final JarFile jar;
     private final Manifest manifest;
     private final URL url;
+    private final ClassLoader libraryLoader;
     final JavaPlugin plugin;
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
@@ -53,7 +55,7 @@ public final class PluginClassLoader extends URLClassLoader {
         ClassLoader.registerAsParallelCapable();
     }
 
-    PluginClassLoader(@NotNull final JavaPluginLoader loader, @Nullable final ClassLoader parent, @NotNull final PluginDescriptionFile description, @NotNull final File dataFolder, @NotNull final File file) throws IOException, InvalidPluginException, MalformedURLException {
+    PluginClassLoader(@NotNull final JavaPluginLoader loader, @Nullable final ClassLoader parent, @NotNull final PluginDescriptionFile description, @NotNull final File dataFolder, @NotNull final File file, @Nullable ClassLoader libraryLoader) throws IOException, InvalidPluginException, MalformedURLException {
         super(new URL[] {file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");
 
@@ -64,6 +66,7 @@ public final class PluginClassLoader extends URLClassLoader {
         this.jar = new JarFile(file);
         this.manifest = jar.getManifest();
         this.url = file.toURI().toURL();
+        this.libraryLoader = libraryLoader;
 
         try {
             Class<?> jarClass;
@@ -99,11 +102,51 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
-    public Class<?> findClass(String name) throws ClassNotFoundException {
-        return findClass(name, true);
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        return loadClass0(name, resolve, true, true);
     }
 
-    Class<?> findClass(@NotNull String name, boolean checkGlobal) throws ClassNotFoundException {
+    Class<?> loadClass0(@NotNull String name, boolean resolve, boolean checkGlobal, boolean checkLibraries) throws ClassNotFoundException {
+        try {
+            return super.loadClass(name, resolve);
+        } catch (ClassNotFoundException ex) {
+        }
+
+        if (checkLibraries && libraryLoader != null) {
+            try {
+                return libraryLoader.loadClass(name);
+            } catch (ClassNotFoundException ex) {
+            }
+        }
+
+        if (checkGlobal) {
+            Class<?> result = loader.getClassByName(name, resolve, description);
+
+            if (result != null) {
+                PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+
+                if (provider != description
+                        && !seenIllegalAccess.contains(provider.getName())
+                        && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+
+                    seenIllegalAccess.add(provider.getName());
+                    if (plugin != null) {
+                        plugin.getLogger().log(Level.WARNING, "Loaded class {0} from {1} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{name, provider.getFullName()});
+                    } else {
+                        // In case the bad access occurs on construction
+                        loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        throw new ClassNotFoundException(name);
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
         ClassLoaderContext.put(this);
         Class<?> result;
         try {
@@ -117,25 +160,6 @@ public final class PluginClassLoader extends URLClassLoader {
             result = classes.get(name);
             synchronized (name.intern()) {
                 if (result == null) {
-                    if (checkGlobal) {
-                        result = loader.getClassByName(name);
-                        if (result != null) {
-                            PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
-
-                            if (provider != description
-                                    && !seenIllegalAccess.contains(provider.getName())
-                                    && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
-
-                                seenIllegalAccess.add(provider.getName());
-                                if (plugin != null) {
-                                    plugin.getLogger().log(Level.WARNING, "Loaded class {0} from {1} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{name, provider.getFullName()});
-                                } else {
-                                    // In case the bad access occurs on construction
-                                    loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
-                                }
-                            }
-                        }
-                    }
 
                     if (result == null) {
                         result = remappedFindClass(name);
@@ -153,6 +177,7 @@ public final class PluginClassLoader extends URLClassLoader {
                         }
                     }
 
+                    loader.setClass(name, result);
                     classes.put(name, result);
                 }
             }
@@ -172,8 +197,8 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     @NotNull
-    Set<String> getClasses() {
-        return classes.keySet();
+    Collection<Class<?>> getClasses() {
+        return classes.values();
     }
 
     synchronized void initialize(@NotNull JavaPlugin javaPlugin) {

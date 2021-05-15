@@ -2,8 +2,11 @@ package org.bukkit.craftbukkit.v1_16_R3.entity;
 
 import net.minecraft.entity.item.HangingEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.world.server.ChunkManager;
+import net.minecraft.world.server.ServerWorld;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
@@ -70,5 +73,20 @@ public class CraftHanging extends CraftEntity implements Hanging {
     @Override
     public EntityType getType() {
         return EntityType.UNKNOWN;
+    }
+
+    protected void update() {
+        if (!getHandle().isAlive()) {
+            return;
+        }
+
+        ServerWorld world = ((CraftWorld) getWorld()).getHandle();
+        ChunkManager.EntityTracker entityTracker = world.getChunkSource().chunkMap.entityMap.get(getEntityId());
+
+        if (entityTracker == null) {
+            return;
+        }
+
+        entityTracker.broadcast(getHandle().getAddEntityPacket());
     }
 }
