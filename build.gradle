@@ -373,6 +373,9 @@ project(':forge') {
         // bukkit
         installer 'commons-lang:commons-lang:2.6'
         installer 'org.yaml:snakeyaml:1.27'
+        installer 'org.apache.maven:maven-resolver-provider:3.8.1'
+        installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2'
+        installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.6.2'
         compileOnly 'org.jetbrains:annotations:20.1.0'
         // craftbukkit
         installer 'org.fusesource.jansi:jansi:1.18'

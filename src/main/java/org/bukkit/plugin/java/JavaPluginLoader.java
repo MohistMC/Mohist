@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.jetbrains.annotations.NotNull;
@@ -51,8 +53,8 @@ import org.yaml.snakeyaml.error.YAMLException;
 public final class JavaPluginLoader implements PluginLoader {
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
-    private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
     private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
+    private final LibraryLoader libraryLoader;
 
     /**
      * This class was not meant to be constructed explicitly
@@ -63,6 +65,15 @@ public final class JavaPluginLoader implements PluginLoader {
     public JavaPluginLoader(@NotNull Server instance) {
         Validate.notNull(instance, "Server cannot be null");
         server = instance;
+
+        LibraryLoader libraryLoader = null;
+        try {
+            libraryLoader = new LibraryLoader(server.getLogger());
+        } catch (NoClassDefFoundError ex) {
+            // Provided depends were not added back
+            server.getLogger().warning("Could not initialize LibraryLoader (missing dependencies?)");
+        }
+        this.libraryLoader = libraryLoader;
     }
 
     @Override
@@ -131,7 +142,7 @@ public final class JavaPluginLoader implements PluginLoader {
 
         final PluginClassLoader loader;
         try {
-            loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file);
+            loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file, (libraryLoader != null) ? libraryLoader.createLoader(description) : null);
         } catch (InvalidPluginException ex) {
             throw ex;
         } catch (Throwable ex) {
@@ -190,46 +201,27 @@ public final class JavaPluginLoader implements PluginLoader {
     }
 
     @Nullable
-    Class<?> getClassByName(final String name) {
-        Class<?> cachedClass = classes.get(name);
-
-        if (cachedClass != null) {
-            return cachedClass;
-        } else {
-            for (PluginClassLoader loader : loaders) {
-                try {
-                    cachedClass = loader.findClass(name, false);
-                } catch (ClassNotFoundException cnfe) {}
-                if (cachedClass != null) {
-                    return cachedClass;
-                }
+    Class<?> getClassByName(final String name, boolean resolve, PluginDescriptionFile description) {
+        for (PluginClassLoader loader : loaders) {
+            try {
+                return loader.loadClass0(name, resolve, false, ((SimplePluginManager) server.getPluginManager()).isTransitiveDepend(description, loader.plugin.getDescription()));
+            } catch (ClassNotFoundException cnfe) {
             }
         }
         return null;
     }
 
     void setClass(@NotNull final String name, @NotNull final Class<?> clazz) {
-        if (!classes.containsKey(name)) {
-            classes.put(name, clazz);
-
-            if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
-                Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
-                ConfigurationSerialization.registerClass(serializable);
-            }
+        if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
+            Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
+            ConfigurationSerialization.registerClass(serializable);
         }
     }
 
-    private void removeClass(@NotNull String name) {
-        Class<?> clazz = classes.remove(name);
-
-        try {
-            if ((clazz != null) && (ConfigurationSerializable.class.isAssignableFrom(clazz))) {
-                Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
-                ConfigurationSerialization.unregisterClass(serializable);
-            }
-        } catch (NullPointerException ex) {
-            // Boggle!
-            // (Native methods throwing NPEs is not fun when you can't stop it before-hand)
+    private void removeClass(@NotNull Class<?> clazz) {
+        if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
+            Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
+            ConfigurationSerialization.unregisterClass(serializable);
         }
     }
 
@@ -375,10 +367,16 @@ public final class JavaPluginLoader implements PluginLoader {
                 PluginClassLoader loader = (PluginClassLoader) cloader;
                 loaders.remove(loader);
 
-                Set<String> names = loader.getClasses();
+                Collection<Class<?>> classes = loader.getClasses();
 
-                for (String name : names) {
-                    removeClass(name);
+                for (Class<?> clazz : classes) {
+                    removeClass(clazz);
+                }
+
+                try {
+                    loader.close();
+                } catch (IOException ex) {
+                    //
                 }
             }
         }

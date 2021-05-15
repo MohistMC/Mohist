@@ -29,9 +29,9 @@ Progress
 
 - [x] Rectify Forge (6f3da80b5)
 - [x] Start patch 
-  * CraftBukkit(51e2981b)  
-  * Bukkit(b9ef9229)  
-  * Spigot(bd6b5668)  
+  * CraftBukkit(b1064c69)  
+  * Bukkit(146a7e4b)  
+  * Spigot(9fb885e8)  
   * Paper(2609a118)
 - [x] Beta release
 - [ ] The nms patch is compatible with mms - 45%
