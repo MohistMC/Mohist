@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://i.loli.net/2021/05/14/yJ5mvkN7Xjuo4x6.png">
+<img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.16.5</h1>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
@@ -52,7 +52,7 @@ Upstream Projects
 
 A Special Thanks To:
 -------------
-<a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
+<a href="https://serverjars.com/"><img src="https://serverjars.com/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="172"></a>
 <a href="https://www.bisecthosting.com/mohistmc"><img src="https://cdn.discordapp.com/attachments/303673296929685504/709610584680955944/Asset_5.png" width="200"></a>
 
