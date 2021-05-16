@@ -187,13 +187,18 @@
                 } else {
                    tileentity1.func_145836_u();
                 }
-@@ -308,8 +_,9 @@
+@@ -308,8 +_,13 @@
        int i = MathHelper.func_76128_c(p_76612_1_.func_226277_ct_() / 16.0D);
        int j = MathHelper.func_76128_c(p_76612_1_.func_226281_cx_() / 16.0D);
        if (i != this.field_212816_F.field_77276_a || j != this.field_212816_F.field_77275_b) {
 -         field_150817_t.warn("Wrong location! ({}, {}) should be ({}, {}), {}", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_);
+-         p_76612_1_.field_70128_L = true;
 +         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.2", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_));
-          p_76612_1_.field_70128_L = true;
++         // Mohist start - Fix "Wrong location"
++         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.entmove"));
++         p_76612_1_.needsChunkUpdate = true;
++         ((ServerWorld) this.field_76637_e).field_217499_z.add(p_76612_1_);
++         // Mohist end
 +         return; // Paper
        }
  

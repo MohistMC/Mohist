@@ -109,7 +109,8 @@
 -   private final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
 +   public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
     private final Map<UUID, Entity> field_175741_N = Maps.newHashMap();
-    private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
+-   private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
++   public final Queue<Entity> field_217499_z = Queues.newArrayDeque(); // Mohist - Fix "Wrong location" (private -> public)
     private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
     private final ServerChunkProvider field_241102_C_;
     boolean field_217492_a;
@@ -780,7 +781,7 @@
 -         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_72838_1_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
 +         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entityIn, this))) return false;
 +         if (!CraftEventFactory.doEntityAddEventCalling(this, entityIn, spawnReason)) return false;
-+         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(entityIn.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(entityIn.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, true); // Paper - always load chunks for entity adds
++         IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(entityIn.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(entityIn.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, entityIn.field_98038_p);
           if (!(ichunk instanceof Chunk)) {
              return false;
           } else {
@@ -896,7 +897,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -894,10 +_,19 @@
+@@ -894,13 +_,28 @@
        }
  
        this.func_96441_U().func_181140_a(p_217484_1_);
@@ -916,6 +917,15 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
++      // Mohist start - Fix "Wrong location"
++      if (p_217465_1_.needsChunkUpdate) {
++         this.func_212866_a_((int) Math.floor(p_217465_1_.func_226277_ct_()) >> 4, (int) Math.floor(p_217465_1_.func_226281_cx_()) >> 4).func_76612_a(p_217465_1_);
++         p_217465_1_.needsChunkUpdate = false;
++      }
++      // Mohist end
+       if (this.field_217492_a) {
+          this.field_217499_z.add(p_217465_1_);
+       } else {
 @@ -913,20 +_,31 @@
  
           this.field_175741_N.put(p_217465_1_.func_110124_au(), p_217465_1_);

@@ -74,12 +74,11 @@
           return chunkprimer1;
        }
     }
-@@ -288,18 +_,52 @@
+@@ -288,18 +_,41 @@
  
        compoundnbt1.func_218657_a("TileEntities", listnbt1);
        ListNBT listnbt2 = new ListNBT();
 +
-+      java.util.List<Entity> toUpdate = new java.util.ArrayList<>(); // Paper
        if (p_222645_1_.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
           Chunk chunk = (Chunk)p_222645_1_;
 +         // CraftBukkit start - store chunk persistent data in nbt
@@ -94,10 +93,6 @@
                 CompoundNBT compoundnbt3 = new CompoundNBT();
 +
 +               // Paper start
-+               if ((int) Math.floor(entity.func_226277_ct_()) >> 4 != chunk.func_76632_l().field_77276_a || (int) Math.floor(entity.func_226281_cx_()) >> 4 != chunk.func_76632_l().field_77275_b) {
-+                  toUpdate.add(entity);
-+                  continue;
-+               }
 +               if (!entity.func_70089_S() || hasPlayerPassenger(entity)) {
 +                  continue;
 +               }
@@ -112,12 +107,6 @@
 +               }
              }
 +         }
-+
-+         // Paper start - move entities to the correct chunk
-+         for (Entity entity : toUpdate) {
-+             p_222645_0_.func_217464_b(entity);
-+         }
-+         // Paper end
 +
 +         try {
 +             final CompoundNBT capTag = chunk.writeCapsToNBT();
