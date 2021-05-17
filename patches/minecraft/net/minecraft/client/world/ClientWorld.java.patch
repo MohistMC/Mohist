@@ -28,19 +28,6 @@
              p_217418_1_.func_70071_h_();
              this.func_217381_Z().func_76319_b();
           }
-@@ -267,6 +_,12 @@
-       });
-    }
- 
-+   @org.jetbrains.annotations.Nullable
-+   @Override
-+   public IChunk getChunkIfLoadedImmediately(int x, int z) {
-+      return null;
-+   }
-+
-    public boolean func_217354_b(int p_217354_1_, int p_217354_2_) {
-       return true;
-    }
 @@ -285,9 +_,11 @@
     }
  
