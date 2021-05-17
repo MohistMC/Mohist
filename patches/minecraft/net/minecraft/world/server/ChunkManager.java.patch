@@ -898,9 +898,9 @@
 +        this.field_219263_q = new ChunkTaskPriorityQueueSorter(ImmutableList.of(delegatedtaskexecutor, itaskexecutor, delegatedtaskexecutor1), p_i232602_5_, Integer.MAX_VALUE);
 +        this.field_219264_r = this.field_219263_q.func_219087_a(delegatedtaskexecutor, false);
 +        this.field_219265_s = this.field_219263_q.func_219087_a(itaskexecutor, false);
-+        DelegatedTaskExecutor<Runnable> lightthreaded;
-+        DelegatedTaskExecutor<Runnable> threadedmailbox1 = lightthreaded = DelegatedTaskExecutor.func_213144_a(p_i232602_5_, "light"); // Paper
-+        this.mailboxLight = this.field_219263_q.func_219087_a(lightthreaded, false);// Paper
++        /*DelegatedTaskExecutor<Runnable> lightthreaded;
++        DelegatedTaskExecutor<Runnable> threadedmailbox1 = lightthreaded = DelegatedTaskExecutor.create(p_i232602_5_, "light"); // Paper*/
++        this.mailboxLight = this.field_219263_q.func_219087_a(itaskexecutor, false);// Paper
 +        this.field_219256_j = new ServerWorldLightManager(p_i232602_7_, this, this.field_219255_i.func_230315_m_().func_218272_d(), delegatedtaskexecutor1, this.field_219263_q.func_219087_a(delegatedtaskexecutor1, false));
 +        this.field_219267_u = new ChunkManager.ProxyTicketManager(p_i232602_5_, p_i232602_6_);
 +        this.field_219259_m = p_i232602_10_;

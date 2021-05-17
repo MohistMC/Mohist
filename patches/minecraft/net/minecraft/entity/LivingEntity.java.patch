@@ -1319,8 +1319,15 @@
  
     protected void func_70018_K() {
        this.field_70133_I = this.field_70146_Z.nextDouble() >= this.func_233637_b_(Attributes.field_233820_c_);
-@@ -2668,8 +_,16 @@
+@@ -2666,16 +_,35 @@
+       return (this.field_70180_af.func_187225_a(field_184621_as) & 2) > 0 ? Hand.OFF_HAND : Hand.MAIN_HAND;
+    }
  
++   // Paper start - lag compensate eating
++   protected long eatStartTime;
++   protected int totalEatTimeTicks;
++   // Paper end
++
     private void func_184608_ct() {
        if (this.func_184587_cr()) {
 -         if (ItemStack.func_185132_d(this.func_184586_b(this.func_184600_cs()), this.field_184627_bm)) {
@@ -1338,7 +1345,20 @@
              this.field_184627_bm.func_222121_b(this.field_70170_p, this, this.func_184605_cv());
              if (this.func_226299_p_()) {
                 this.func_226293_b_(this.field_184627_bm, 5);
-@@ -2717,8 +_,10 @@
+             }
+ 
+-            if (--this.field_184628_bn == 0 && !this.field_70170_p.field_72995_K && !this.field_184627_bm.func_222122_m()) {
++            //if (--this.useItemRemaining == 0 && !this.level.isClientSide && !this.useItem.useOnRelease()) {
++            // Paper start - lag compensate eating
++            // we add 1 to the expected time to avoid lag compensating when we should not
++            boolean shouldLagCompensate = this.field_184627_bm.func_77973_b().isFood() && this.eatStartTime != -1 && (System.nanoTime() - this.eatStartTime) > ((1 + this.totalEatTimeTicks) * 50 * (1000 * 1000));
++            if ((--this.field_184628_bn == 0 || shouldLagCompensate) && !this.field_70170_p.field_72995_K && !this.field_184627_bm.func_222122_m()) {
++               this.setEatTimeTicks(0);
++               // Paper end
+                this.func_71036_o();
+             }
+          } else {
+@@ -2717,8 +_,13 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
        if (!itemstack.func_190926_b() && !this.func_184587_cr()) {
@@ -1346,10 +1366,25 @@
 +         if (duration <= 0) return;
           this.field_184627_bm = itemstack;
 -         this.field_184628_bn = itemstack.func_77988_m();
-+         this.field_184628_bn = duration;
++         // Paper start - lag compensate eating
++         this.field_184628_bn = this.totalEatTimeTicks = duration;
++         this.eatStartTime = System.nanoTime();
++         // Paper end
           if (!this.field_70170_p.field_72995_K) {
              this.func_204802_c(1, true);
              this.func_204802_c(2, p_184598_1_ == Hand.OFF_HAND);
+@@ -2741,7 +_,10 @@
+             }
+          } else if (!this.func_184587_cr() && !this.field_184627_bm.func_190926_b()) {
+             this.field_184627_bm = ItemStack.field_190927_a;
+-            this.field_184628_bn = 0;
++            // Paper start - lag compensate eating
++            this.field_184628_bn = this.totalEatTimeTicks = 0;
++            this.eatStartTime = -1L;
++            // Paper end
+          }
+       }
+ 
 @@ -2778,6 +_,9 @@
           vector3d1 = vector3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
@@ -1402,6 +1437,18 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
+@@ -2830,7 +_,10 @@
+       }
+ 
+       this.field_184627_bm = ItemStack.field_190927_a;
+-      this.field_184628_bn = 0;
++      // Paper start - lag compensate eating
++      this.field_184628_bn = this.totalEatTimeTicks = 0;
++      this.eatStartTime = -1L;
++      // Paper end
+    }
+ 
+    public boolean func_184585_cz() {
 @@ -2886,10 +_,18 @@
           }
  
@@ -1533,9 +1580,12 @@
     @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB func_184177_bl() {
        if (this.func_184582_a(EquipmentSlotType.HEAD).func_77973_b() == Items.field_196151_dA) {
-@@ -3091,4 +_,5 @@
+@@ -3091,4 +_,8 @@
           return super.func_184177_bl();
        }
     }
++
++   protected final int getEatTimeTicks() { return this.field_184628_bn; }
++   protected final void setEatTimeTicks(int value) { this.field_184628_bn = value; } // Paper - OBFHELPER
 +
  }

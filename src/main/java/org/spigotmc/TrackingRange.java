@@ -1,12 +1,14 @@
 package org.spigotmc;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.item.PaintingEntity;
 import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.server.ServerWorld;
 
 public class TrackingRange
 {
@@ -25,26 +27,25 @@ public class TrackingRange
         if ( entity instanceof PlayerEntity )
         {
             return config.playerTrackingRange;
-        }  else if ( entity.activationType == ActivationRange.ActivationType.MONSTER || entity.activationType == ActivationRange.ActivationType.RAIDER )
-        {
-            return config.monsterTrackingRange;
-        } else if ( entity instanceof GhastEntity )
-        {
-            if ( config.monsterTrackingRange > config.monsterActivationRange )
-            {
+        }
+        switch (entity.activationType) {
+            case RAIDER:
+            case MONSTER:
+            case FLYING_MONSTER:
                 return config.monsterTrackingRange;
-            } else
-            {
-                return config.monsterActivationRange;
-            }
-        } else if ( entity.activationType == ActivationRange.ActivationType.ANIMAL )
-        {
-            return config.animalTrackingRange;
-        } else if ( entity instanceof ItemFrameEntity || entity instanceof PaintingEntity || entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity )
+            case WATER:
+            case VILLAGER:
+            case ANIMAL:
+                return config.animalTrackingRange;
+            case MISC:
+        }
+        if ( entity instanceof ItemFrameEntity || entity instanceof PaintingEntity || entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity )
+        // Paper end
         {
             return config.miscTrackingRange;
         } else
         {
+            if (entity instanceof EnderDragonEntity) return ((ServerWorld)(entity.getEntity().level)).getChunkSource().chunkMap.getLoadViewDistance(); // Paper - enderdragon is exempt
             return config.otherTrackingRange;
         }
     }

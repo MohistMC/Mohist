@@ -2,10 +2,8 @@ package org.spigotmc;
 
 import co.aikar.timings.MinecraftTimings;
 import java.util.Collection;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+
+import net.minecraft.entity.*;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
@@ -13,12 +11,11 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.EnderCrystalEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.monster.AbstractRaiderEntity;
-import net.minecraft.entity.monster.CreeperEntity;
-import net.minecraft.entity.monster.SlimeEntity;
+import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.AmbientEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.FireballEntity;
@@ -32,12 +29,16 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
+import org.bukkit.entity.Monster;
 
 public class ActivationRange
 {
 
     public enum ActivationType
     {
+        WATER, // Paper
+        FLYING_MONSTER, // Paper
+        VILLAGER, // Paper
         MONSTER,
         ANIMAL,
         RAIDER,
@@ -57,6 +58,9 @@ public class ActivationRange
      */
     public static ActivationType initializeEntityActivationType(Entity entity)
     {
+        if (entity instanceof WaterMobEntity) { return ActivationType.WATER; } // Paper
+        else if (entity instanceof VillagerEntity) { return ActivationType.VILLAGER; } // Paper
+        else if (entity instanceof FlyingEntity && entity instanceof IMob) { return ActivationType.FLYING_MONSTER; } // Paper - doing & Monster incase Flying no longer includes monster in future
         if ( entity instanceof AbstractRaiderEntity )
         {
             return ActivationType.RAIDER;
