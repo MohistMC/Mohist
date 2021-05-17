@@ -98,7 +98,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.chunk.storage.ChunkLoader;
  import net.minecraft.world.chunk.storage.ChunkSerializer;
-@@ -88,1118 +_,1467 @@
+@@ -88,1118 +_,1440 @@
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -1475,33 +1475,6 @@
 +                        ((Chunk) p_219185_5_).func_177417_c(false);
 +                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(p_219185_5_));
 +                    }
-+
-+                    // Mohist start - Possibly resolve duplicate UUIDs (2)
-+                    if (p_219185_5_ instanceof Chunk) {
-+                        Chunk chunk = (Chunk) p_219185_5_;
-+                        HashMap<Entity, Integer> entitiesToRemove = new HashMap<>();
-+                        ArrayList<Entity> entitiesToRecheck = new ArrayList<>();
-+                        ClassInheritanceMultiMap<Entity>[] secs = chunk.func_177429_s();
-+                        for (int i = 0; i < secs.length; i++) {
-+                            ClassInheritanceMultiMap<Entity> sec = secs[i];
-+                            for (Entity entity : sec) {
-+                                if (entity.func_70089_S()) {
-+                                    if ((int) Math.floor(entity.func_226277_ct_()) >> 4 != chunk.func_76632_l().field_77276_a
-+                                            || (int) Math.floor(entity.func_226281_cx_()) >> 4 != chunk.func_76632_l().field_77275_b) {
-+                                        entitiesToRemove.put(entity, i);
-+                                        entitiesToRecheck.add(entity);
-+                                    }
-+                                } else entitiesToRemove.put(entity, i);
-+                            }
-+                        }
-+                        if (!entitiesToRemove.isEmpty()) {
-+                            entitiesToRemove.forEach(chunk::func_76608_a);
-+                        }
-+                        if (!entitiesToRecheck.isEmpty()) {
-+                            entitiesToRecheck.forEach(this.field_219255_i::func_217464_b);
-+                        }
-+                    }
-+                    // Mohist end
 +
 +                    this.func_219229_a(p_219185_5_);
 +                    if (this.field_219254_h.remove(p_219212_1_) && p_219185_5_ instanceof Chunk) {
