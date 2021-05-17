@@ -110,8 +110,9 @@
 -   private final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
 +   public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
     private final Map<UUID, Entity> field_175741_N = Maps.newHashMap();
-    private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
+-   private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
 -   private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
++   public final Queue<Entity> field_217499_z = Queues.newArrayDeque(); // Mohist - Fix "Wrong location" (private -> public)
 +   public final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList(); // Paper - private -> public
     private final ServerChunkProvider field_241102_C_;
     boolean field_217492_a;
