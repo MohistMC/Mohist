@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/Chunk.java
 +++ b/net/minecraft/world/chunk/Chunk.java
-@@ -20,14 +_,12 @@
+@@ -20,18 +_,19 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -13,10 +13,24 @@
  import net.minecraft.entity.EntityType;
 -import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 -import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
++import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
-@@ -57,20 +_,21 @@
+ import net.minecraft.nbt.CompoundNBT;
++import net.minecraft.network.IPacket;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.ClassInheritanceMultiMap;
+@@ -51,26 +_,26 @@
+ import net.minecraft.world.gen.feature.structure.Structure;
+ import net.minecraft.world.gen.feature.structure.StructureStart;
+ import net.minecraft.world.lighting.WorldLightManager;
+-import net.minecraft.world.server.ChunkHolder;
+-import net.minecraft.world.server.ServerWorld;
++import net.minecraft.world.server.*;
+ import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -44,7 +58,7 @@
     private final Map<Structure<?>, StructureStart<?>> field_201619_q = Maps.newHashMap();
     private final Map<Structure<?>, LongSet> field_201620_r = Maps.newHashMap();
     private final ShortList[] field_201622_t = new ShortList[16];
-@@ -85,17 +_,126 @@
+@@ -85,17 +_,170 @@
     @Nullable
     private Consumer<Chunk> field_217330_v;
     private final ChunkPos field_212816_F;
@@ -106,7 +120,51 @@
 +   }
 +
 +   protected void onNeighbourChange(final long bitsetBefore, final long bitsetAfter) {
++      // Paper start - no-tick view distance
++      ServerChunkProvider chunkProviderServer = ((ServerWorld) this.field_76637_e).func_72863_F();
++      ChunkManager chunkMap = chunkProviderServer.field_217237_a;
++      // this code handles the addition of ticking tickets - the distance map handles the removal
++      if (!areNeighboursLoaded(bitsetBefore, 2) && areNeighboursLoaded(bitsetAfter, 2)) {
++         if (chunkMap.playerViewDistanceTickMap.getObjectsInRange(this.coordinateKey) != null) {
++            // now we're ready for entity ticking
++            chunkProviderServer.field_217243_i.execute(() -> {
++               // double check that this condition still holds.
++               if (Chunk.this.areNeighboursLoaded(2) && chunkMap.playerViewDistanceTickMap.getObjectsInRange(Chunk.this.coordinateKey) != null) {
++                  chunkProviderServer.func_217228_a(TicketType.field_219490_c, Chunk.this.func_76632_l(), 31, Chunk.this.func_76632_l()); // 31 -> entity ticking, TODO check on update
++               }
++            });
++         }
++      }
 +
++      // this code handles the chunk sending
++      if (!areNeighboursLoaded(bitsetBefore, 1) && areNeighboursLoaded(bitsetAfter, 1)) {
++         if (chunkMap.playerViewDistanceBroadcastMap.getObjectsInRange(this.coordinateKey) != null) {
++            // now we're ready to send
++            chunkMap.field_219265_s.func_212871_a_(ChunkTaskPriorityQueueSorter.func_219081_a(chunkMap.func_219220_a(this.coordinateKey), (() -> { // Copied frm PlayerChunkMap
++               // double check that this condition still holds.
++               if (!Chunk.this.areNeighboursLoaded(1)) {
++                  return;
++               }
++               com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<PlayerEntity> inRange = chunkMap.playerViewDistanceBroadcastMap.getObjectsInRange(Chunk.this.coordinateKey);
++               if (inRange == null) {
++                  return;
++               }
++
++               // broadcast
++               Object[] backingSet = inRange.getBackingSet();
++               IPacket[] chunkPackets = new IPacket[2];
++               for (int index = 0, len = backingSet.length; index < len; ++index) {
++                  Object temp = backingSet[index];
++                  if (!(temp instanceof PlayerEntity)) {
++                     continue;
++                  }
++                  PlayerEntity player = (PlayerEntity) temp;
++                  chunkMap.func_219180_a((ServerPlayerEntity) player, chunkPackets, Chunk.this);
++               }
++            })));
++         }
++      }
++      // Paper end - no-tick view distance
 +   }
 +
 +   public final boolean isAnyNeighborsLoaded() {
@@ -569,6 +627,15 @@
     }
  
     public void func_177409_g(boolean p_177409_1_) {
+@@ -682,7 +_,7 @@
+                BlockPos blockpos = ChunkPrimer.func_201635_a(oshort, i, chunkpos);
+                BlockState blockstate = this.func_180495_p(blockpos);
+                BlockState blockstate1 = Block.func_199770_b(blockstate, this.field_76637_e, blockpos);
+-               this.field_76637_e.func_180501_a(blockpos, blockstate1, 20);
++               this.field_76637_e.func_180501_a(blockpos, blockstate1, 20 | 2); // Paper - We send chunks before they're ticking ready, so we need to notify here
+             }
+ 
+             this.field_201622_t[i].clear();
 @@ -704,12 +_,11 @@
        BlockState blockstate = this.func_180495_p(p_212815_1_);
        TileEntity tileentity;

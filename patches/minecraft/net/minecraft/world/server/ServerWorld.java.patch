@@ -314,11 +314,12 @@
  
     public void func_241113_a_(int p_241113_1_, int p_241113_2_, boolean p_241113_3_, boolean p_241113_4_) {
        this.field_241103_E_.func_230391_a_(p_241113_1_);
-@@ -211,6 +_,7 @@
+@@ -211,6 +_,8 @@
        this.field_241103_E_.func_76069_a(p_241113_4_);
     }
  
 +   public Biome getBiomeBySeed(int x, int y, int z) { return func_225604_a_(x, y, z); } // Paper - OBFHELPER
++
     public Biome func_225604_a_(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
        return this.func_72863_F().func_201711_g().func_202090_b().func_225526_b_(p_225604_1_, p_225604_2_, p_225604_3_);
     }

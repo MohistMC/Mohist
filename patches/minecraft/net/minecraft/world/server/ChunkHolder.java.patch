@@ -29,7 +29,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -37,377 +_,574 @@
+@@ -37,377 +_,575 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkHolder {
@@ -553,6 +553,7 @@
 +
 +    }
 +
++    public void sendPacketToTrackedPlayers(IPacket<?> packet, boolean flag) { func_219293_a(packet, flag); } // Paper - OBFHELPER
 +    private void func_219293_a(IPacket<?> p_219293_1_, boolean p_219293_2_) {
 +        this.field_219328_w.func_219097_a(this.field_219319_n, p_219293_2_).forEach((p_219304_1_) -> {
 +            p_219304_1_.field_71135_a.func_147359_a(p_219293_1_);

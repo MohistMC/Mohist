@@ -138,3 +138,14 @@
        return true;
     }
  
+@@ -353,5 +_,10 @@
+ 
+    public Stream<? extends StructureStart<?>> func_241827_a(SectionPos p_241827_1_, Structure<?> p_241827_2_) {
+       return this.field_244530_p.func_235011_a_(p_241827_1_, p_241827_2_);
++   }
++
++   @Override
++   public boolean isChunkLoaded(int i, int j) {
++      return i >= this.field_241160_n_.field_77276_a && i <= this.field_241161_o_.field_77276_a && j >= this.field_241160_n_.field_77275_b && j <= this.field_241161_o_.field_77275_b;
+    }
+ }
