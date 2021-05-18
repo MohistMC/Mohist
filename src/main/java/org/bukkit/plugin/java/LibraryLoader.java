@@ -56,6 +56,7 @@ class LibraryLoader
         this.session = MavenRepositorySystemUtils.newSession();
 
         session.setChecksumPolicy( RepositoryPolicy.CHECKSUM_POLICY_FAIL );
+        // TODO: repository == null
         session.setLocalRepositoryManager( repository.newLocalRepositoryManager( session, new LocalRepository( "libraries" ) ) );
         session.setTransferListener( new AbstractTransferListener()
         {
