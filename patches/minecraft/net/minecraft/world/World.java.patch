@@ -69,7 +69,7 @@
     private final boolean field_234916_c_;
     private int field_73008_k;
     protected int field_73005_l = (new Random()).nextInt();
-@@ -85,15 +_,78 @@
+@@ -85,15 +_,85 @@
     public float field_73017_q;
     public final Random field_73012_v = new Random();
     private final DimensionType field_234921_x_;
@@ -132,14 +132,21 @@
  
     protected World(ISpawnWorldInfo p_i241925_1_, RegistryKey<World> p_i241925_2_, final DimensionType p_i241925_3_, Supplier<IProfiler> p_i241925_4_, boolean p_i241925_5_, boolean p_i241925_6_, long p_i241925_7_) {
 +      super(World.class);
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().field_71310_m.func_237291_a_(p_i241925_2_).getName()); // Spigot
++      // Mohist start - Fix Advanced Rocketry assembler crash
++      if (p_i241925_1_ != null) {
++         this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().field_71310_m.func_237291_a_(p_i241925_2_).getName()); // Spigot
++      }
++      else {
++         this.spigotConfig = null;
++      }
++      // Mohist end
 +      this.ticksPerAnimalSpawns = this.getCBServer().getTicksPerAnimalSpawns(); // CraftBukkit
 +      this.ticksPerMonsterSpawns = this.getCBServer().getTicksPerMonsterSpawns(); // CraftBukkit
 +      this.ticksPerWaterSpawns = this.getCBServer().getTicksPerWaterSpawns(); // CraftBukkit
 +      this.ticksPerWaterAmbientSpawns = this.getCBServer().getTicksPerWaterAmbientSpawns(); // CraftBukkit
 +      this.ticksPerAmbientSpawns = this.getCBServer().getTicksPerAmbientSpawns(); // CraftBukkit
 +      MinecraftServer.getServer().func_244267_aX().func_230520_a_().func_239659_c_().stream().filter(entry -> entry.getValue() == p_i241925_3_).forEachOrdered(entry -> this.typeKey = entry.getKey());
-+      if (generator == null) {
++      if (generator == null && p_i241925_1_ != null) { // Mohist - Fix Advanced Rocketry assembler crash
 +         generator = getCBServer().getGenerator(((IServerWorldInfo) p_i241925_1_).func_76065_j());
 +      }
 +      if (environment == null) {
@@ -149,13 +156,20 @@
        this.field_72984_F = p_i241925_4_;
        this.field_72986_A = p_i241925_1_;
        this.field_234921_x_ = p_i241925_3_;
-@@ -116,6 +_,9 @@
+@@ -116,6 +_,16 @@
        this.field_217407_c = Thread.currentThread();
        this.field_226689_w_ = new BiomeManager(this, p_i241925_7_, p_i241925_3_.func_227176_e_());
        this.field_234916_c_ = p_i241925_6_;
-+      timings = new co.aikar.timings.WorldTimingsHandler(this); // Paper - code below can generate new world and access timings
-+      this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
-+      this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
++      // Mohist start - Fix Advanced Rocketry assembler crash
++      if (p_i241925_1_ != null) {
++         timings = new co.aikar.timings.WorldTimingsHandler(this); // Paper - code below can generate new world and access timings
++         this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
++         this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
++      }
++      else {
++         this.timings = null;
++      }
++      // Mohist end
     }
  
     public boolean func_201670_d() {

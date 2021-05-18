@@ -22,7 +22,6 @@ import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.lighting.WorldLightManager;
-import net.minecraft.world.server.ServerWorld;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
@@ -38,7 +37,7 @@ import org.bukkit.plugin.Plugin;
 
 public class CraftChunk implements Chunk {
     private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
-    private final ServerWorld worldServer;
+    private final net.minecraft.world.World worldServer; // Mohist - Fix Advanced Rocketry assembler crash
     private final int x;
     private final int z;
     private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getStates();
@@ -47,7 +46,7 @@ public class CraftChunk implements Chunk {
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
         this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(chunk);
 
-        worldServer = (ServerWorld) getHandle().level;
+        worldServer = getHandle().level; // Mohist - Fix Advanced Rocketry assembler crash
         x = getHandle().getPos().x;
         z = getHandle().getPos().z;
     }
