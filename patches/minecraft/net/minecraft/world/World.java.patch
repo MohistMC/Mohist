@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/World.java
 +++ b/net/minecraft/world/World.java
-@@ -1,11 +_,16 @@
+@@ -1,16 +_,23 @@
  package net.minecraft.world;
  
  import com.google.common.collect.Lists;
@@ -17,14 +17,23 @@
  import java.util.Random;
  import java.util.function.Consumer;
  import java.util.function.Predicate;
-@@ -20,6 +_,7 @@
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
++
++import net.minecraft.addons.server.MCUtil;
+ import net.minecraft.block.AbstractFireBlock;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
+@@ -20,7 +_,9 @@
  import net.minecraft.crash.ReportedException;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
 +import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
+ import net.minecraft.item.ItemStack;
 @@ -34,7 +_,6 @@
  import net.minecraft.tags.ITagCollectionSupplier;
  import net.minecraft.tileentity.ITickableTileEntity;
@@ -42,7 +51,7 @@
  import net.minecraft.world.storage.ISpawnWorldInfo;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.MapData;
-@@ -62,8 +_,14 @@
+@@ -62,8 +_,15 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -50,6 +59,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 +import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_16_R3.block.CapturedBlockState;
++import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 +import org.bukkit.event.block.BlockPhysicsEvent;
  
@@ -69,7 +79,7 @@
     private final boolean field_234916_c_;
     private int field_73008_k;
     protected int field_73005_l = (new Random()).nextInt();
-@@ -85,15 +_,85 @@
+@@ -85,15 +_,95 @@
     public float field_73017_q;
     public final Random field_73012_v = new Random();
     private final DimensionType field_234921_x_;
@@ -104,6 +114,7 @@
 +   public long ticksPerAmbientSpawns;
 +   public boolean populating;
 +   public final org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++   public final com.destroystokyo.paper.PaperWorldConfig paperConfig; // Paper
 +   public static BlockPos lastPhysicsProblem; // Spigot
 +   private org.spigotmc.TickLimiter entityLimiter;
 +   private org.spigotmc.TickLimiter tileLimiter;
@@ -121,6 +132,13 @@
 +      return (CraftServer) Bukkit.getServer();
 +   }
 +
++   // Paper start
++   @Override
++   public boolean isChunkLoaded(int x, int z) {
++      return ((ServerWorld)this).getChunkIfLoaded(x, z) != null;
++   }
++   // Paper end
++
 +   public RegistryKey<DimensionType> getTypeKey() {
 +      return typeKey;
 +   }
@@ -135,9 +153,11 @@
 +      // Mohist start - Fix Advanced Rocketry assembler crash
 +      if (p_i241925_1_ != null) {
 +         this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().field_71310_m.func_237291_a_(p_i241925_2_).getName()); // Spigot
++         this.paperConfig = new com.destroystokyo.paper.PaperWorldConfig(MinecraftServer.getServer().field_71310_m.func_237291_a_(p_i241925_2_).getName(), this.spigotConfig); // Paper
 +      }
 +      else {
 +         this.spigotConfig = null;
++         this.paperConfig = null;
 +      }
 +      // Mohist end
 +      this.ticksPerAnimalSpawns = this.getCBServer().getTicksPerAnimalSpawns(); // CraftBukkit
@@ -173,7 +193,7 @@
     }
  
     public boolean func_201670_d() {
-@@ -155,6 +_,11 @@
+@@ -155,11 +_,49 @@
        return this.func_212866_a_(p_175726_1_.func_177958_n() >> 4, p_175726_1_.func_177952_p() >> 4);
     }
  
@@ -185,6 +205,45 @@
     public Chunk func_212866_a_(int p_212866_1_, int p_212866_2_) {
        return (Chunk)this.func_217348_a(p_212866_1_, p_212866_2_, ChunkStatus.field_222617_m);
     }
+ 
+-   public IChunk func_217353_a(int p_217353_1_, int p_217353_2_, ChunkStatus p_217353_3_, boolean p_217353_4_) {
++   // Paper start - if loaded
++   @Nullable
++   @Override
++   public final IChunk getChunkIfLoadedImmediately(int x, int z) {
++      return ((ServerWorld)this).func_72863_F().getChunkAtIfLoadedImmediately(x, z);
++   }
++
++   public final BlockState getTypeIfLoaded(BlockPos blockposition) {
++      // CraftBukkit start - tree generation
++      if (captureTreeGeneration) {
++         CraftBlockState previous = capturedBlockStates.get(blockposition);
++         if (previous != null) {
++            return previous.getHandle();
++         }
++      }
++      // CraftBukkit end
++      if (!func_175701_a(blockposition)) {
++         return Blocks.field_150350_a.func_176223_P();
++      }
++      IChunk chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++
++      return chunk == null ? null : chunk.func_180495_p(blockposition);
++   }
++
++   @Override
++   public Fluid getFluidIfLoaded(BlockPos blockposition) {
++      IChunk chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++
++      return chunk == null ? null : chunk.func_204610_c(blockposition).func_206886_c();
++   }
++   // Paper end
++
++   @Override
++   public final IChunk func_217353_a(int p_217353_1_, int p_217353_2_, ChunkStatus p_217353_3_, boolean p_217353_4_) { // Paper - final for inline
+       IChunk ichunk = this.func_72863_F().func_212849_a_(p_217353_1_, p_217353_2_, p_217353_3_, p_217353_4_);
+       if (ichunk == null && p_217353_4_) {
+          throw new IllegalStateException("Should always be able to create a chunk!");
 @@ -173,6 +_,17 @@
     }
  
@@ -203,7 +262,7 @@
        if (func_189509_E(p_241211_1_)) {
           return false;
        } else if (!this.field_72995_K && this.func_234925_Z_()) {
-@@ -180,17 +_,66 @@
+@@ -180,24 +_,81 @@
        } else {
           Chunk chunk = this.func_175726_f(p_241211_1_);
           Block block = p_241211_2_.func_177230_c();
@@ -272,6 +331,22 @@
              if (blockstate1 == p_241211_2_) {
                 if (blockstate != blockstate1) {
                    this.func_225319_b(p_241211_1_, blockstate, blockstate1);
+                }
+ 
+-               if ((p_241211_3_ & 2) != 0 && (!this.field_72995_K || (p_241211_3_ & 4) == 0) && (this.field_72995_K || chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING))) {
++               /*if ((p_241211_3_ & 2) != 0 && (!this.isClientSide || (p_241211_3_ & 4) == 0) && (this.isClientSide || chunk.getFullStatus() != null && chunk.getFullStatus().isOrAfter(ChunkHolder.LocationType.TICKING))) {
++                  this.sendBlockUpdated(p_241211_1_, blockstate, p_241211_2_, p_241211_3_);
++               }*/
++               if ((p_241211_3_ & 2) != 0 && (!this.field_72995_K || (p_241211_3_ & 4) == 0) && (this.field_72995_K || chunk == null || (chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING)))) { // allow chunk to be null here as chunk.isReady() is false when we send our notification during block placement // Paper - diff on change, see below
+                   this.func_184138_a(p_241211_1_, blockstate, p_241211_2_, p_241211_3_);
++                  // Paper start - per player view distance - allow block updates for non-ticking chunks in player view distance
++                  // if copied from above
++               } else if ((p_241211_3_ & 2) != 0 && (!this.field_72995_K || (p_241211_3_ & 4) == 0) && (this.field_72995_K || chunk == null || ((ServerWorld)this).func_72863_F().field_217237_a.playerViewDistanceBroadcastMap.getObjectsInRange(MCUtil.getCoordinateKey(p_241211_1_)) != null)) {
++                  ((ServerWorld)this).func_72863_F().func_217217_a(p_241211_1_);
++                  // Paper end - per player view distance
+                }
+ 
+                if ((p_241211_3_ & 1) != 0) {
 @@ -210,14 +_,24 @@
                 if ((p_241211_3_ & 16) == 0 && p_241211_4_ > 0) {
                    int i = p_241211_3_ & -34;
