@@ -244,7 +244,18 @@
        IChunk ichunk = this.func_72863_F().func_212849_a_(p_217353_1_, p_217353_2_, p_217353_3_, p_217353_4_);
        if (ichunk == null && p_217353_4_) {
           throw new IllegalStateException("Should always be able to create a chunk!");
-@@ -173,6 +_,17 @@
+@@ -168,11 +_,28 @@
+       }
+    }
+ 
++   // Mohist start: MNS compatibility
++   public boolean setTypeAndData(BlockPos p_180501_1_, BlockState p_180501_2_, int p_180501_3_) {
++      return this.func_241211_a_(p_180501_1_, p_180501_2_, p_180501_3_, 512);
++   }
++   //Mohist end
++
+    public boolean func_180501_a(BlockPos p_180501_1_, BlockState p_180501_2_, int p_180501_3_) {
+       return this.func_241211_a_(p_180501_1_, p_180501_2_, p_180501_3_, 512);
     }
  
     public boolean func_241211_a_(BlockPos p_241211_1_, BlockState p_241211_2_, int p_241211_3_, int p_241211_4_) {
@@ -374,6 +385,22 @@
           }
        }
     }
+@@ -225,6 +_,15 @@
+    public void func_217393_a(BlockPos p_217393_1_, BlockState p_217393_2_, BlockState p_217393_3_) {
+    }
+ 
++   // Mohist start: MNS compatibility
++   public boolean setAir(BlockPos blockposition) {
++      return this.func_217377_a(blockposition, false);
++   }
++   public boolean setAir(BlockPos blockposition, boolean moved) {
++      return this.func_217377_a(blockposition, moved);
++   }
++   //Mohist end
++
+    public boolean func_217377_a(BlockPos p_217377_1_, boolean p_217377_2_) {
+       FluidState fluidstate = this.func_204610_c(p_217377_1_);
+       return this.func_180501_a(p_217377_1_, fluidstate.func_206883_i(), 3 | (p_217377_2_ ? 64 : 0));
 @@ -232,7 +_,7 @@
  
     public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
@@ -446,9 +473,16 @@
                 }
              });
              CrashReportCategory.func_175750_a(crashreportcategory, p_190524_1_, blockstate);
-@@ -336,6 +_,14 @@
+@@ -335,7 +_,21 @@
+       return this.func_72863_F().func_212863_j_();
     }
  
++   // Mohist start: MNS compatibility
++   public BlockState getType(BlockPos p_180495_1_) {
++      return func_180495_p(p_180495_1_);
++   }
++   // Mohist end
++
     public BlockState func_180495_p(BlockPos p_180495_1_) {
 +      // CraftBukkit start - tree generation
 +      if (captureTreeGeneration) {
@@ -825,6 +859,18 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
+@@ -802,6 +_,11 @@
+       }
+    }
+ 
++   // Mohist start: MNS compatibility
++   public int isBlockIndirectlyGettingPowered(BlockPos pos) {
++      return this.func_175687_A(pos);
++   }
++   // Mohist end
+    public int func_175687_A(BlockPos p_175687_1_) {
+       int i = 0;
+ 
 @@ -938,16 +_,15 @@
     public abstract Scoreboard func_96441_U();
  

@@ -81,4 +81,14 @@ public class PaperWorldConfig {
     private void viewDistance() {
         this.noTickViewDistance = this.getInt("viewdistances.no-tick-view-distance", -1);
     }
+
+    public boolean useEigencraftRedstone = false;
+    private void useEigencraftRedstone() {
+        useEigencraftRedstone = this.getBoolean("use-faster-eigencraft-redstone", false);
+        if (useEigencraftRedstone) {
+            log("Using Eigencraft redstone algorithm by theosib.");
+        } else {
+            log("Using vanilla redstone algorithm.");
+        }
+    }
 }

@@ -9,3 +9,29 @@
        public String apply(@Nullable Entry<Property<?>, Comparable<?>> p_apply_1_) {
           if (p_apply_1_ == null) {
              return "<NULL>";
+@@ -83,6 +_,12 @@
+       return this.field_235891_b_.containsKey(p_235901_1_);
+    }
+ 
++   // Mohist start: MNS compatibility
++   public <T extends Comparable<T>> T get(Property<T> p_177229_1_) {
++      return func_177229_b(p_177229_1_);
++   }
++   // Mohist end
++
+    public <T extends Comparable<T>> T func_177229_b(Property<T> p_177229_1_) {
+       Comparable<?> comparable = this.field_235891_b_.get(p_177229_1_);
+       if (comparable == null) {
+@@ -96,6 +_,12 @@
+       Comparable<?> comparable = this.field_235891_b_.get(p_235903_1_);
+       return comparable == null ? Optional.empty() : Optional.of(p_235903_1_.func_177699_b().cast(comparable));
+    }
++
++   // Mohist start: MNS compatibility
++   public <T extends Comparable<T>, V extends T> S set(Property<T> p_206870_1_, V p_206870_2_) {
++      return func_206870_a(p_206870_1_, p_206870_2_);
++   }
++   // Mohist end
+ 
+    public <T extends Comparable<T>, V extends T> S func_206870_a(Property<T> p_206870_1_, V p_206870_2_) {
+       Comparable<?> comparable = this.field_235891_b_.get(p_206870_1_);

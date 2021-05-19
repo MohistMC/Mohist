@@ -113,6 +113,19 @@
        public BlockState func_185907_a(Rotation p_185907_1_) {
           return this.func_177230_c().func_185499_a(this.func_230340_p_(), p_185907_1_);
        }
+@@ -458,6 +_,12 @@
+          return this.func_177230_c().func_220080_a(this.func_230340_p_(), p_215703_1_, p_215703_2_);
+       }
+ 
++      // Mohist start: MNS compatibility
++      public boolean isOccluding(IBlockReader p_215686_1_, BlockPos p_215686_2_) {
++         return func_215686_e(p_215686_1_, p_215686_2_);
++      }
++      // Mohist end
++
+       public boolean func_215686_e(IBlockReader p_215686_1_, BlockPos p_215686_2_) {
+          return this.field_235708_l_.test(this.func_230340_p_(), p_215686_1_, p_215686_2_);
+       }
 @@ -802,8 +_,11 @@
        private ResourceLocation field_222381_j;
        private boolean field_226895_m_ = true;
