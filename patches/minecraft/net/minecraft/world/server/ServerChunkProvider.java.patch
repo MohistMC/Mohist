@@ -10,7 +10,7 @@
  import java.io.File;
  import java.io.IOException;
  import java.util.Arrays;
-@@ -16,9 +_,24 @@
+@@ -16,9 +_,25 @@
  import java.util.function.Consumer;
  import java.util.function.Function;
  import java.util.function.Supplier;
@@ -23,6 +23,7 @@
 +import com.mojang.datafixers.util.Either;
 +
 +import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
++import net.minecraft.addons.server.MCUtil;
 +import net.minecraft.block.Block;
 +import net.minecraft.block.Blocks;
  import net.minecraft.entity.Entity;
@@ -56,7 +57,7 @@
  import net.minecraft.world.gen.feature.template.TemplateManager;
  import net.minecraft.world.spawner.WorldEntitySpawner;
  import net.minecraft.world.storage.DimensionSavedDataManager;
-@@ -47,24 +_,178 @@
+@@ -47,24 +_,185 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -236,6 +237,13 @@
 +      }, this.field_217243_i);
 +   }
 +   // Paper end
++
++   // Paper start - rewrite ticklistserver
++   public final boolean isTickingReadyMainThread(BlockPos pos) {
++      ChunkHolder chunk = this.field_217237_a.func_219220_a(MCUtil.getCoordinateKey(pos));
++      return chunk != null && chunk.isTickingReady();
++   }
++   // Paper end - rewrite ticklistserver
 +
     public ServerChunkProvider(ServerWorld p_i232603_1_, SaveFormat.LevelSave p_i232603_2_, DataFixer p_i232603_3_, TemplateManager p_i232603_4_, Executor p_i232603_5_, ChunkGenerator p_i232603_6_, int p_i232603_7_, boolean p_i232603_8_, IChunkStatusListener p_i232603_9_, Supplier<DimensionSavedDataManager> p_i232603_10_) {
        this.field_73251_h = p_i232603_1_;

@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/SerializableTickList.java
++++ b/net/minecraft/world/SerializableTickList.java
+@@ -6,6 +_,7 @@
+ import java.util.stream.Collectors;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.ListNBT;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.math.BlockPos;
+ 
+@@ -53,6 +_,8 @@
+       return listnbt;
+    }
+ 
++   private static final int MAX_TICK_DELAY = Integer.getInteger("paper.ticklist-max-tick-delay", -1).intValue(); // Paper - clean up broken entries
++
+    public static <T> SerializableTickList<T> func_222984_a(ListNBT p_222984_0_, Function<T, ResourceLocation> p_222984_1_, Function<ResourceLocation, T> p_222984_2_) {
+       List<SerializableTickList.TickHolder<T>> list = Lists.newArrayList();
+ 
+@@ -61,7 +_,14 @@
+          T t = p_222984_2_.apply(new ResourceLocation(compoundnbt.func_74779_i("i")));
+          if (t != null) {
+             BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
+-            list.add(new SerializableTickList.TickHolder<>(t, blockpos, compoundnbt.func_74762_e("t"), TickPriority.func_205397_a(compoundnbt.func_74762_e("p"))));
++            // Paper start - clean up broken entries
++            int delay = compoundnbt.func_74762_e("t");
++            if (MAX_TICK_DELAY > 0 && delay > MAX_TICK_DELAY) {
++               MinecraftServer.field_147145_h.warn("Dropping tick for pos " + blockpos + ", tick delay " + delay);
++               continue;
++            }
++            list.add(new SerializableTickList.TickHolder<>(t, blockpos, delay, TickPriority.func_205397_a(compoundnbt.func_74762_e("p"))));
++            // Paper end - clean up broken entries
+          }
+       }
+ 

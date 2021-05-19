@@ -20,6 +20,19 @@
     public BlockPos(int p_i46030_1_, int p_i46030_2_, int p_i46030_3_) {
        super(p_i46030_1_, p_i46030_2_, p_i46030_3_);
     }
+@@ -107,6 +_,12 @@
+       return p_177982_1_ == 0 && p_177982_2_ == 0 && p_177982_3_ == 0 ? this : new BlockPos(this.func_177958_n() + p_177982_1_, this.func_177956_o() + p_177982_2_, this.func_177952_p() + p_177982_3_);
+    }
+ 
++   // Mohist start: MNS compatibility
++   public BlockPos add(Vector3i p_177971_1_) {
++      return this.func_177971_a(p_177971_1_);
++   }
++   // Mohist end
++
+    public BlockPos func_177971_a(Vector3i p_177971_1_) {
+       return this.func_177982_a(p_177971_1_.func_177958_n(), p_177971_1_.func_177956_o(), p_177971_1_.func_177952_p());
+    }
 @@ -115,6 +_,24 @@
        return this.func_177982_a(-p_177973_1_.func_177958_n(), -p_177973_1_.func_177956_o(), -p_177973_1_.func_177952_p());
     }

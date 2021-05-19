@@ -1,49 +1,429 @@
 --- a/net/minecraft/world/server/ServerTickList.java
 +++ b/net/minecraft/world/server/ServerTickList.java
-@@ -38,13 +_,19 @@
-    private final List<NextTickListEntry<T>> field_223189_h = Lists.newArrayList();
-    private final Consumer<NextTickListEntry<T>> field_205378_h;
- 
--   public ServerTickList(ServerWorld p_i231625_1_, Predicate<T> p_i231625_2_, Function<T, ResourceLocation> p_i231625_3_, Consumer<NextTickListEntry<T>> p_i231625_4_) {
-+   public ServerTickList(ServerWorld p_i231625_1_, Predicate<T> p_i231625_2_, Function<T, ResourceLocation> p_i231625_3_, Consumer<NextTickListEntry<T>> p_i231625_4_, String timingsType) { // Paper
-       this.field_205371_a = p_i231625_2_;
-       this.field_205372_b = p_i231625_3_;
-       this.field_205376_f = p_i231625_1_;
-       this.field_205378_h = p_i231625_4_;
-+      this.timingCleanup = co.aikar.timings.WorldTimingsHandler.getTickList(p_i231625_1_, timingsType + " - Cleanup");
-+      this.timingTicking = co.aikar.timings.WorldTimingsHandler.getTickList(p_i231625_1_, timingsType + " - Ticking");
-    }
- 
-+   private final co.aikar.timings.Timing timingCleanup; // Paper
-+   private final co.aikar.timings.Timing timingTicking; // Paper
-+   // Paper end
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Queues;
+ import com.google.common.collect.Sets;
 +
-    public void func_205365_a() {
-       int i = this.field_205375_e.size();
-       if (i != this.field_205374_d.size()) {
-@@ -58,6 +_,7 @@
-          Iterator<NextTickListEntry<T>> iterator = this.field_205375_e.iterator();
-          this.field_205376_f.func_217381_Z().func_76320_a("cleaning");
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Iterator;
+@@ -14,6 +_,7 @@
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.block.BlockState;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -29,176 +_,239 @@
+ import net.minecraft.world.TickPriority;
  
-+         this.timingCleanup.startTiming(); // Paper
-          while(i > 0 && iterator.hasNext()) {
+ public class ServerTickList<T> implements ITickList<T> {
+-   protected final Predicate<T> field_205371_a;
+-   private final Function<T, ResourceLocation> field_205372_b;
+-   private final Set<NextTickListEntry<T>> field_205374_d = Sets.newHashSet();
+-   private final TreeSet<NextTickListEntry<T>> field_205375_e = Sets.newTreeSet(NextTickListEntry.func_223192_a());
+-   private final ServerWorld field_205376_f;
+-   private final Queue<NextTickListEntry<T>> field_205377_g = Queues.newArrayDeque();
+-   private final List<NextTickListEntry<T>> field_223189_h = Lists.newArrayList();
+-   private final Consumer<NextTickListEntry<T>> field_205378_h;
+-
+-   public ServerTickList(ServerWorld p_i231625_1_, Predicate<T> p_i231625_2_, Function<T, ResourceLocation> p_i231625_3_, Consumer<NextTickListEntry<T>> p_i231625_4_) {
+-      this.field_205371_a = p_i231625_2_;
+-      this.field_205372_b = p_i231625_3_;
+-      this.field_205376_f = p_i231625_1_;
+-      this.field_205378_h = p_i231625_4_;
+-   }
+-
+-   public void func_205365_a() {
+-      int i = this.field_205375_e.size();
+-      if (i != this.field_205374_d.size()) {
+-         throw new IllegalStateException("TickNextTick list out of synch");
+-      } else {
+-         if (i > 65536) {
+-            i = 65536;
+-         }
+-
+-         ServerChunkProvider serverchunkprovider = this.field_205376_f.func_72863_F();
+-         Iterator<NextTickListEntry<T>> iterator = this.field_205375_e.iterator();
+-         this.field_205376_f.func_217381_Z().func_76320_a("cleaning");
+-
+-         while(i > 0 && iterator.hasNext()) {
++    protected final Predicate<T> field_205371_a;
++    private final Function<T, ResourceLocation> field_205372_b;
++    private final Set<NextTickListEntry<T>> field_205374_d = Sets.newHashSet();
++    private final TreeSet<NextTickListEntry<T>> field_205375_e = Sets.newTreeSet(NextTickListEntry.func_223192_a());
++    private final ServerWorld field_205376_f;
++    private final Queue<NextTickListEntry<T>> field_205377_g = Queues.newArrayDeque();
++    private final List<NextTickListEntry<T>> field_223189_h = Lists.newArrayList();
++    private final Consumer<NextTickListEntry<T>> field_205378_h;
++
++    public ServerTickList(ServerWorld p_i231625_1_, Predicate<T> p_i231625_2_, Function<T, ResourceLocation> p_i231625_3_, Consumer<NextTickListEntry<T>> p_i231625_4_, String timingsType) { // Paper
++        this.field_205371_a = p_i231625_2_;
++        this.field_205372_b = p_i231625_3_;
++        this.field_205376_f = p_i231625_1_;
++        this.field_205378_h = p_i231625_4_;
++        this.timingCleanup = co.aikar.timings.WorldTimingsHandler.getTickList(p_i231625_1_, timingsType + " - Cleanup");
++        this.timingTicking = co.aikar.timings.WorldTimingsHandler.getTickList(p_i231625_1_, timingsType + " - Ticking");
++    }
++
++    private final co.aikar.timings.Timing timingCleanup; // Paper
++    private final co.aikar.timings.Timing timingTicking; // Paper
++    // Paper end
++
++    // Paper start
++    public void nextTick() {
++    }
++    // Paper end
++
++    public void func_205365_a() {
++        int i = this.field_205375_e.size();
++        if (i != this.field_205374_d.size()) {
++            throw new IllegalStateException("TickNextTick list out of synch");
++        } else {
++            if (i > 65536) {
++                i = 65536;
++            }
++
++            ServerChunkProvider serverchunkprovider = this.field_205376_f.func_72863_F();
++            Iterator<NextTickListEntry<T>> iterator = this.field_205375_e.iterator();
++            this.field_205376_f.func_217381_Z().func_76320_a("cleaning");
++
++            this.timingCleanup.startTiming(); // Paper
++            while (i > 0 && iterator.hasNext()) {
++                NextTickListEntry<T> nextticklistentry = iterator.next();
++                if (nextticklistentry.field_235017_b_ > this.field_205376_f.func_82737_E()) {
++                    break;
++                }
++
++                if (serverchunkprovider.func_222866_a(nextticklistentry.field_180282_a)) {
++                    iterator.remove();
++                    this.field_205374_d.remove(nextticklistentry);
++                    this.field_205377_g.add(nextticklistentry);
++                    --i;
++                }
++            }
++            this.timingCleanup.stopTiming(); // Paper
++
++            this.timingTicking.startTiming(); // Paper
++            this.field_205376_f.func_217381_Z().func_219895_b("ticking");
++
++            NextTickListEntry<T> nextticklistentry1;
++            while ((nextticklistentry1 = this.field_205377_g.poll()) != null) {
++                if (serverchunkprovider.func_222866_a(nextticklistentry1.field_180282_a)) {
++                    try {
++                        this.field_223189_h.add(nextticklistentry1);
++                        this.field_205378_h.accept(nextticklistentry1);
++                    } catch (Throwable throwable) {
++                        CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception while ticking");
++                        CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being ticked");
++                        CrashReportCategory.func_175750_a(crashreportcategory, nextticklistentry1.field_180282_a, null);
++                        throw new ReportedException(crashreport);
++                    }
++                } else {
++                    this.func_205360_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
++                }
++            }
++
++            this.timingTicking.stopTiming(); // Paper
++            this.field_205376_f.func_217381_Z().func_76319_b();
++            this.field_223189_h.clear();
++            this.field_205377_g.clear();
++        }
++    }
++
++    public boolean func_205361_b(BlockPos p_205361_1_, T p_205361_2_) {
++        // Paper start - allow overriding
++        return this.isPendingTickThisTick(p_205361_1_, p_205361_2_);
++    }
++
++    public boolean isPendingTickThisTick(BlockPos p_205361_1_, T p_205361_2_) {
++        // Paper end
++        return this.field_205377_g.contains(new NextTickListEntry(p_205361_1_, p_205361_2_));
++    }
++
++    public List<NextTickListEntry<T>> func_223188_a(ChunkPos p_223188_1_, boolean p_223188_2_, boolean p_223188_3_) {
++        // Paper start - allow overriding
++        return this.getEntriesInChunk(p_223188_1_, p_223188_2_, p_223188_3_);
++    }
++
++    public List<NextTickListEntry<T>> getEntriesInChunk(ChunkPos p_223188_1_, boolean p_223188_2_, boolean p_223188_3_) {
++        // Paper end
++        int i = (p_223188_1_.field_77276_a << 4) - 2;
++        int j = i + 16 + 2;
++        int k = (p_223188_1_.field_77275_b << 4) - 2;
++        int l = k + 16 + 2;
++        return this.func_205366_a(new MutableBoundingBox(i, 0, k, j, 256, l), p_223188_2_, p_223188_3_);
++    }
++
++    public List<NextTickListEntry<T>> func_205366_a(MutableBoundingBox p_205366_1_, boolean p_205366_2_, boolean p_205366_3_) {
++        // Paper start - allow overriding
++        return this.getEntriesInBoundingBox(p_205366_1_, p_205366_2_, p_205366_3_);
++    }
++
++    public List<NextTickListEntry<T>> getEntriesInBoundingBox(MutableBoundingBox p_205366_1_, boolean p_205366_2_, boolean p_205366_3_) {
++        // Paper end
++        List<NextTickListEntry<T>> list = this.func_223187_a(null, this.field_205375_e, p_205366_1_, p_205366_2_);
++        if (p_205366_2_ && list != null) {
++            this.field_205374_d.removeAll(list);
++        }
++
++        list = this.func_223187_a(list, this.field_205377_g, p_205366_1_, p_205366_2_);
++        if (!p_205366_3_) {
++            list = this.func_223187_a(list, this.field_223189_h, p_205366_1_, p_205366_2_);
++        }
++
++        return list == null ? Collections.emptyList() : list;
++    }
++
++    @Nullable
++    private List<NextTickListEntry<T>> func_223187_a(@Nullable List<NextTickListEntry<T>> p_223187_1_, Collection<NextTickListEntry<T>> p_223187_2_, MutableBoundingBox p_223187_3_, boolean p_223187_4_) {
++        Iterator<NextTickListEntry<T>> iterator = p_223187_2_.iterator();
++
++        while (iterator.hasNext()) {
              NextTickListEntry<T> nextticklistentry = iterator.next();
-             if (nextticklistentry.field_235017_b_ > this.field_205376_f.func_82737_E()) {
-@@ -71,7 +_,9 @@
-                --i;
-             }
-          }
-+         this.timingCleanup.stopTiming(); // Paper
- 
-+         this.timingTicking.startTiming(); // Paper
-          this.field_205376_f.func_217381_Z().func_219895_b("ticking");
- 
-          NextTickListEntry<T> nextticklistentry1;
-@@ -91,6 +_,7 @@
-             }
-          }
- 
-+         this.timingTicking.stopTiming(); // Paper
-          this.field_205376_f.func_217381_Z().func_76319_b();
-          this.field_223189_h.clear();
-          this.field_205377_g.clear();
+-            if (nextticklistentry.field_235017_b_ > this.field_205376_f.func_82737_E()) {
+-               break;
+-            }
+-
+-            if (serverchunkprovider.func_222866_a(nextticklistentry.field_180282_a)) {
+-               iterator.remove();
+-               this.field_205374_d.remove(nextticklistentry);
+-               this.field_205377_g.add(nextticklistentry);
+-               --i;
+-            }
+-         }
+-
+-         this.field_205376_f.func_217381_Z().func_219895_b("ticking");
+-
+-         NextTickListEntry<T> nextticklistentry1;
+-         while((nextticklistentry1 = this.field_205377_g.poll()) != null) {
+-            if (serverchunkprovider.func_222866_a(nextticklistentry1.field_180282_a)) {
+-               try {
+-                  this.field_223189_h.add(nextticklistentry1);
+-                  this.field_205378_h.accept(nextticklistentry1);
+-               } catch (Throwable throwable) {
+-                  CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception while ticking");
+-                  CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being ticked");
+-                  CrashReportCategory.func_175750_a(crashreportcategory, nextticklistentry1.field_180282_a, (BlockState)null);
+-                  throw new ReportedException(crashreport);
+-               }
+-            } else {
+-               this.func_205360_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
+-            }
+-         }
+-
+-         this.field_205376_f.func_217381_Z().func_76319_b();
+-         this.field_223189_h.clear();
+-         this.field_205377_g.clear();
+-      }
+-   }
+-
+-   public boolean func_205361_b(BlockPos p_205361_1_, T p_205361_2_) {
+-      return this.field_205377_g.contains(new NextTickListEntry(p_205361_1_, p_205361_2_));
+-   }
+-
+-   public List<NextTickListEntry<T>> func_223188_a(ChunkPos p_223188_1_, boolean p_223188_2_, boolean p_223188_3_) {
+-      int i = (p_223188_1_.field_77276_a << 4) - 2;
+-      int j = i + 16 + 2;
+-      int k = (p_223188_1_.field_77275_b << 4) - 2;
+-      int l = k + 16 + 2;
+-      return this.func_205366_a(new MutableBoundingBox(i, 0, k, j, 256, l), p_223188_2_, p_223188_3_);
+-   }
+-
+-   public List<NextTickListEntry<T>> func_205366_a(MutableBoundingBox p_205366_1_, boolean p_205366_2_, boolean p_205366_3_) {
+-      List<NextTickListEntry<T>> list = this.func_223187_a((List<NextTickListEntry<T>>)null, this.field_205375_e, p_205366_1_, p_205366_2_);
+-      if (p_205366_2_ && list != null) {
+-         this.field_205374_d.removeAll(list);
+-      }
+-
+-      list = this.func_223187_a(list, this.field_205377_g, p_205366_1_, p_205366_2_);
+-      if (!p_205366_3_) {
+-         list = this.func_223187_a(list, this.field_223189_h, p_205366_1_, p_205366_2_);
+-      }
+-
+-      return list == null ? Collections.emptyList() : list;
+-   }
+-
+-   @Nullable
+-   private List<NextTickListEntry<T>> func_223187_a(@Nullable List<NextTickListEntry<T>> p_223187_1_, Collection<NextTickListEntry<T>> p_223187_2_, MutableBoundingBox p_223187_3_, boolean p_223187_4_) {
+-      Iterator<NextTickListEntry<T>> iterator = p_223187_2_.iterator();
+-
+-      while(iterator.hasNext()) {
+-         NextTickListEntry<T> nextticklistentry = iterator.next();
+-         BlockPos blockpos = nextticklistentry.field_180282_a;
+-         if (blockpos.func_177958_n() >= p_223187_3_.field_78897_a && blockpos.func_177958_n() < p_223187_3_.field_78893_d && blockpos.func_177952_p() >= p_223187_3_.field_78896_c && blockpos.func_177952_p() < p_223187_3_.field_78892_f) {
+-            if (p_223187_4_) {
+-               iterator.remove();
+-            }
+-
+-            if (p_223187_1_ == null) {
+-               p_223187_1_ = Lists.newArrayList();
+-            }
+-
+-            p_223187_1_.add(nextticklistentry);
+-         }
+-      }
+-
+-      return p_223187_1_;
+-   }
+-
+-   public void func_205368_a(MutableBoundingBox p_205368_1_, BlockPos p_205368_2_) {
+-      for(NextTickListEntry<T> nextticklistentry : this.func_205366_a(p_205368_1_, false, false)) {
+-         if (p_205368_1_.func_175898_b(nextticklistentry.field_180282_a)) {
+-            BlockPos blockpos = nextticklistentry.field_180282_a.func_177971_a(p_205368_2_);
+-            T t = nextticklistentry.func_151351_a();
+-            this.func_219504_a(new NextTickListEntry<>(blockpos, t, nextticklistentry.field_235017_b_, nextticklistentry.field_82754_f));
+-         }
+-      }
+-
+-   }
+-
+-   public ListNBT func_219503_a(ChunkPos p_219503_1_) {
+-      List<NextTickListEntry<T>> list = this.func_223188_a(p_219503_1_, false, true);
+-      return func_219502_a(this.field_205372_b, list, this.field_205376_f.func_82737_E());
+-   }
+-
+-   private static <T> ListNBT func_219502_a(Function<T, ResourceLocation> p_219502_0_, Iterable<NextTickListEntry<T>> p_219502_1_, long p_219502_2_) {
+-      ListNBT listnbt = new ListNBT();
+-
+-      for(NextTickListEntry<T> nextticklistentry : p_219502_1_) {
+-         CompoundNBT compoundnbt = new CompoundNBT();
+-         compoundnbt.func_74778_a("i", p_219502_0_.apply(nextticklistentry.func_151351_a()).toString());
+-         compoundnbt.func_74768_a("x", nextticklistentry.field_180282_a.func_177958_n());
+-         compoundnbt.func_74768_a("y", nextticklistentry.field_180282_a.func_177956_o());
+-         compoundnbt.func_74768_a("z", nextticklistentry.field_180282_a.func_177952_p());
+-         compoundnbt.func_74768_a("t", (int)(nextticklistentry.field_235017_b_ - p_219502_2_));
+-         compoundnbt.func_74768_a("p", nextticklistentry.field_82754_f.func_205398_a());
+-         listnbt.add(compoundnbt);
+-      }
+-
+-      return listnbt;
+-   }
+-
+-   public boolean func_205359_a(BlockPos p_205359_1_, T p_205359_2_) {
+-      return this.field_205374_d.contains(new NextTickListEntry(p_205359_1_, p_205359_2_));
+-   }
+-
+-   public void func_205362_a(BlockPos p_205362_1_, T p_205362_2_, int p_205362_3_, TickPriority p_205362_4_) {
+-      if (!this.field_205371_a.test(p_205362_2_)) {
+-         this.func_219504_a(new NextTickListEntry<>(p_205362_1_, p_205362_2_, (long)p_205362_3_ + this.field_205376_f.func_82737_E(), p_205362_4_));
+-      }
+-
+-   }
+-
+-   private void func_219504_a(NextTickListEntry<T> p_219504_1_) {
+-      if (!this.field_205374_d.contains(p_219504_1_)) {
+-         this.field_205374_d.add(p_219504_1_);
+-         this.field_205375_e.add(p_219504_1_);
+-      }
+-
+-   }
+-
+-   public int func_225420_a() {
+-      return this.field_205374_d.size();
+-   }
++            BlockPos blockpos = nextticklistentry.field_180282_a;
++            if (blockpos.func_177958_n() >= p_223187_3_.field_78897_a && blockpos.func_177958_n() < p_223187_3_.field_78893_d && blockpos.func_177952_p() >= p_223187_3_.field_78896_c && blockpos.func_177952_p() < p_223187_3_.field_78892_f) {
++                if (p_223187_4_) {
++                    iterator.remove();
++                }
++
++                if (p_223187_1_ == null) {
++                    p_223187_1_ = Lists.newArrayList();
++                }
++
++                p_223187_1_.add(nextticklistentry);
++            }
++        }
++
++        return p_223187_1_;
++    }
++
++    public void func_205368_a(MutableBoundingBox p_205368_1_, BlockPos p_205368_2_) {
++        for (NextTickListEntry<T> nextticklistentry : this.func_205366_a(p_205368_1_, false, false)) {
++            if (p_205368_1_.func_175898_b(nextticklistentry.field_180282_a)) {
++                BlockPos blockpos = nextticklistentry.field_180282_a.func_177971_a(p_205368_2_);
++                T t = nextticklistentry.func_151351_a();
++                this.func_219504_a(new NextTickListEntry<>(blockpos, t, nextticklistentry.field_235017_b_, nextticklistentry.field_82754_f));
++            }
++        }
++
++    }
++
++    public ListNBT func_219503_a(ChunkPos p_219503_1_) {
++        // Paper start - allow overriding
++        return this.serialize(p_219503_1_);
++    }
++
++    public ListNBT serialize(ChunkPos p_219503_1_) {
++        // Paper end
++        List<NextTickListEntry<T>> list = this.func_223188_a(p_219503_1_, false, true);
++        return func_219502_a(this.field_205372_b, list, this.field_205376_f.func_82737_E());
++    }
++
++    // Mohist start: MNS compatibility
++    public static <T> ListNBT serialize(Function<T, ResourceLocation> function, Iterable<NextTickListEntry<T>> iterable, long i) {
++        return ServerTickList.func_219502_a(function, iterable, i);
++    }
++    //Mohist end
++
++    private static <T> ListNBT func_219502_a(Function<T, ResourceLocation> p_219502_0_, Iterable<NextTickListEntry<T>> p_219502_1_, long p_219502_2_) {
++        ListNBT listnbt = new ListNBT();
++
++        for (NextTickListEntry<T> nextticklistentry : p_219502_1_) {
++            CompoundNBT compoundnbt = new CompoundNBT();
++            compoundnbt.func_74778_a("i", p_219502_0_.apply(nextticklistentry.func_151351_a()).toString());
++            compoundnbt.func_74768_a("x", nextticklistentry.field_180282_a.func_177958_n());
++            compoundnbt.func_74768_a("y", nextticklistentry.field_180282_a.func_177956_o());
++            compoundnbt.func_74768_a("z", nextticklistentry.field_180282_a.func_177952_p());
++            compoundnbt.func_74768_a("t", (int) (nextticklistentry.field_235017_b_ - p_219502_2_));
++            compoundnbt.func_74768_a("p", nextticklistentry.field_82754_f.func_205398_a());
++            listnbt.add(compoundnbt);
++        }
++
++        return listnbt;
++    }
++
++    public boolean func_205359_a(BlockPos p_205359_1_, T p_205359_2_) {
++        // Paper start - allow overriding
++        return this.isScheduledForTick(p_205359_1_, p_205359_2_);
++    }
++
++    public boolean isScheduledForTick(BlockPos p_205359_1_, T p_205359_2_) {
++        // Paper end
++        return this.field_205374_d.contains(new NextTickListEntry(p_205359_1_, p_205359_2_));
++    }
++
++    public void func_205362_a(BlockPos p_205362_1_, T p_205362_2_, int p_205362_3_, TickPriority p_205362_4_) {
++        // Paper start - allow overriding
++        this.schedule(p_205362_1_, p_205362_2_, p_205362_3_, p_205362_4_);
++    }
++
++    public void schedule(BlockPos p_205362_1_, T p_205362_2_, int p_205362_3_, TickPriority p_205362_4_) {
++        // Paper end
++        if (!this.field_205371_a.test(p_205362_2_)) {
++            this.func_219504_a(new NextTickListEntry<>(p_205362_1_, p_205362_2_, (long) p_205362_3_ + this.field_205376_f.func_82737_E(), p_205362_4_));
++        }
++
++    }
++
++    private void func_219504_a(NextTickListEntry<T> p_219504_1_) {
++        if (!this.field_205374_d.contains(p_219504_1_)) {
++            this.field_205374_d.add(p_219504_1_);
++            this.field_205375_e.add(p_219504_1_);
++        }
++
++    }
++
++    public int func_225420_a() {
++        // Paper start - allow overriding
++        return this.getTotalScheduledEntries();
++    }
++
++    public int getTotalScheduledEntries() {
++        // Paper end
++        return this.field_205374_d.size();
++    }
+ }

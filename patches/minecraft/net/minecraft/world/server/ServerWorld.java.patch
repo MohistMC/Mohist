@@ -93,7 +93,7 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.network.DebugPacketSender;
  import net.minecraft.network.IPacket;
-@@ -138,32 +_,31 @@
+@@ -138,32 +_,27 @@
  import net.minecraft.world.storage.MapData;
  import net.minecraft.world.storage.MapIdTracker;
  import net.minecraft.world.storage.SaveFormat;
@@ -123,18 +123,18 @@
     private boolean field_73068_P;
     private int field_80004_Q;
     private final Teleporter field_85177_Q;
-    private final ServerTickList<Block> field_94579_S = new ServerTickList<>(this, (p_205341_0_) -> {
-       return p_205341_0_ == null || p_205341_0_.func_176223_P().func_196958_f();
+-   private final ServerTickList<Block> field_94579_S = new ServerTickList<>(this, (p_205341_0_) -> {
+-      return p_205341_0_ == null || p_205341_0_.func_176223_P().func_196958_f();
 -   }, Registry.field_212618_g::func_177774_c, this::func_205338_b);
-+   }, Registry.field_212618_g::func_177774_c, this::func_205338_b, "Blocks"); // Paper - Timings
-    private final ServerTickList<Fluid> field_205342_P = new ServerTickList<>(this, (p_205774_0_) -> {
-       return p_205774_0_ == null || p_205774_0_ == Fluids.field_204541_a;
+-   private final ServerTickList<Fluid> field_205342_P = new ServerTickList<>(this, (p_205774_0_) -> {
+-      return p_205774_0_ == null || p_205774_0_ == Fluids.field_204541_a;
 -   }, Registry.field_212619_h::func_177774_c, this::func_205339_a);
-+   }, Registry.field_212619_h::func_177774_c, this::func_205339_a, "Fluids"); // Paper - Timings
++   private final ServerTickList<Block> field_94579_S;
++   private final ServerTickList<Fluid> field_205342_P;
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,154 @@
+@@ -173,35 +_,193 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -173,6 +173,15 @@
 +   public Chunk getChunkIfLoaded(int x, int z) {
 +      return this.field_241102_C_.func_217205_a(x, z, false);
 +   }
++
++   // Paper start - rewrite ticklistserver
++   void onChunkSetTicking(int chunkX, int chunkZ) {
++      if (com.destroystokyo.paper.PaperConfig.useOptimizedTickList) {
++         ((com.destroystokyo.paper.server.ticklist.PaperTickList) this.field_94579_S).onChunkSetTicking(chunkX, chunkZ);
++         ((com.destroystokyo.paper.server.ticklist.PaperTickList) this.field_205342_P).onChunkSetTicking(chunkX, chunkZ);
++      }
++   }
++   // Paper end - rewrite ticklistserver
  
     public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_) {
        super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
@@ -212,6 +221,21 @@
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
 +      // CraftBukkit end
++      if (com.destroystokyo.paper.PaperConfig.useOptimizedTickList) {
++         this.field_94579_S = new com.destroystokyo.paper.server.ticklist.PaperTickList<>(this, (block) -> {
++            return block == null || block.func_176223_P().func_196958_f();
++         }, Registry.field_212618_g::func_177774_c, this::func_205338_b, "Blocks"); // Paper - Timings
++         this.field_205342_P = new com.destroystokyo.paper.server.ticklist.PaperTickList<>(this, (fluidtype) -> {
++            return fluidtype == null || fluidtype == Fluids.field_204541_a;
++         }, Registry.field_212619_h::func_177774_c, this::func_205339_a, "Fluids"); // Paper - Timings
++      } else {
++         this.field_94579_S = new ServerTickList<>(this, (block) -> {
++            return block == null || block.func_176223_P().func_196958_f();
++         }, Registry.field_212618_g::func_177774_c, this::func_205338_b, "Blocks"); // Paper - Timings
++         this.field_205342_P = new ServerTickList<>(this, (fluidtype) -> {
++            return fluidtype == null || fluidtype == Fluids.field_204541_a;
++         }, Registry.field_212619_h::func_177774_c, this::func_205339_a, "Fluids"); // Paper - Timings
++      }
 +      this.field_241107_Q_ = p_i241885_13_;
 +      this.field_73061_a = p_i241885_1_;
 +      this.field_241104_N_ = p_i241885_12_;
@@ -253,6 +277,21 @@
 +      }
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
++      }
++      if (com.destroystokyo.paper.PaperConfig.useOptimizedTickList) {
++         this.field_94579_S = new com.destroystokyo.paper.server.ticklist.PaperTickList<>(this, (block) -> {
++            return block == null || block.func_176223_P().func_196958_f();
++         }, Registry.field_212618_g::func_177774_c, this::func_205338_b, "Blocks"); // Paper - Timings
++         this.field_205342_P = new com.destroystokyo.paper.server.ticklist.PaperTickList<>(this, (fluidtype) -> {
++            return fluidtype == null || fluidtype == Fluids.field_204541_a;
++         }, Registry.field_212619_h::func_177774_c, this::func_205339_a, "Fluids"); // Paper - Timings
++      } else {
++         this.field_94579_S = new ServerTickList<>(this, (block) -> {
++            return block == null || block.func_176223_P().func_196958_f();
++         }, Registry.field_212618_g::func_177774_c, this::func_205338_b, "Blocks"); // Paper - Timings
++         this.field_205342_P = new ServerTickList<>(this, (fluidtype) -> {
++            return fluidtype == null || fluidtype == Fluids.field_204541_a;
++         }, Registry.field_212619_h::func_177774_c, this::func_205339_a, "Fluids"); // Paper - Timings
 +      }
 +      // CraftBukkit end
 +      this.field_241107_Q_ = p_i241885_13_;
@@ -453,6 +492,17 @@
              }
  
              iprofiler.func_76319_b();
+@@ -417,7 +_,9 @@
+    protected void func_241126_b_() {
+       if (this.field_241107_Q_) {
+          long i = this.field_72986_A.func_82573_f() + 1L;
+-         this.field_241103_E_.func_82572_b(i);
++         this.worldDataServer.func_82572_b(i); // Paper - diff on change, we want the below to be ran right after this
++         this.field_94579_S.nextTick(); // Paper
++         this.field_205342_P.nextTick(); // Paper
+          this.field_241103_E_.func_215763_z().func_216331_a(this.field_73061_a, i);
+          if (this.field_72986_A.func_82574_x().func_223586_b(GameRules.field_223607_j)) {
+             this.func_241114_a_(this.field_72986_A.func_76073_f() + 1L);
 @@ -443,6 +_,8 @@
        });
     }

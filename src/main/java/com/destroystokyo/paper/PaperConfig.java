@@ -232,4 +232,11 @@ public class PaperConfig {
     private static void noPermissionMessage() {
         noPermissionMessage = ChatColor.translateAlternateColorCodes('&', getString("messages.no-permission", noPermissionMessage));
     }
+
+    public static boolean useOptimizedTickList = true;
+    private static void useOptimizedTickList() {
+        if (config.contains("settings.use-optimized-ticklist")) { // don't add default, hopefully temporary config
+            useOptimizedTickList = config.getBoolean("settings.use-optimized-ticklist");
+        }
+    }
 }

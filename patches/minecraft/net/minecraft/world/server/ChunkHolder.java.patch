@@ -29,7 +29,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -37,377 +_,575 @@
+@@ -37,377 +_,577 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkHolder {
@@ -750,7 +750,9 @@
 +                    Chunk tickingChunk = either.left().get();
 +                    ChunkHolder.this.isTickingReady = true;
 +
-+
++                    // Paper start - rewrite ticklistserver
++                    ChunkHolder.this.chunkMap.field_219255_i.onChunkSetTicking(ChunkHolder.this.field_219319_n.field_77276_a, ChunkHolder.this.field_219319_n.field_77275_b);
++                    // Paper end - rewrite ticklistserver
 +                }
 +            });
 +            // Paper end

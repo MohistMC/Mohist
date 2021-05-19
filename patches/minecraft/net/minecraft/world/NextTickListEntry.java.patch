@@ -1,0 +1,90 @@
+--- a/net/minecraft/world/NextTickListEntry.java
++++ b/net/minecraft/world/NextTickListEntry.java
+@@ -10,6 +_,8 @@
+    public final long field_235017_b_;
+    public final TickPriority field_82754_f;
+    private final long field_77178_g;
++   private final int hash; // Paper
++   public int tickState; // Paper
+ 
+    public NextTickListEntry(BlockPos p_i48977_1_, T p_i48977_2_) {
+       this(p_i48977_1_, p_i48977_2_, 0L, TickPriority.NORMAL);
+@@ -21,6 +_,7 @@
+       this.field_151352_g = p_i48978_2_;
+       this.field_235017_b_ = p_i48978_3_;
+       this.field_82754_f = p_i48978_5_;
++      this.hash = this.computeHash(); // Paper
+    }
+ 
+    public boolean equals(Object p_equals_1_) {
+@@ -32,19 +_,43 @@
+       }
+    }
+ 
++   // Paper start - optimize hashcode
++   @Override
+    public int hashCode() {
++      return this.hash;
++   }
++
++   public final int computeHash() {
++      // Paper end - optimize hashcode
+       return this.field_180282_a.hashCode();
+    }
+ 
+-   public static <T> Comparator<NextTickListEntry<T>> func_223192_a() {
++   //TODO: delete this when there are not error in function #createTimeComparator
++   /*public static <T> Comparator<NextTickListEntry<T>> createTimeComparator() {
+       return Comparator.<NextTickListEntry<T>>comparingLong((p_226710_0_) -> {
+-         return p_226710_0_.field_235017_b_;
++         return p_226710_0_.triggerTick;
+       }).thenComparing((p_226709_0_) -> {
+-         return p_226709_0_.field_82754_f;
++         return p_226709_0_.priority;
+       }).thenComparingLong((p_226708_0_) -> {
+-         return p_226708_0_.field_77178_g;
++         return p_226708_0_.c;
+       });
++   }*/
++
++   // Paper start - let's not use more functional code for no reason.
++   public static <T> Comparator<Object> comparator() { return NextTickListEntry.func_223192_a(); } // Paper - OBFHELPER
++   public static <T> Comparator<Object> func_223192_a() {
++      return (Comparator)(Comparator<NextTickListEntry>)(NextTickListEntry nextticklistentry, NextTickListEntry nextticklistentry1) -> {
++         int i = Long.compare(nextticklistentry.getTargetTick(), nextticklistentry1.getTargetTick());
++
++         if (i != 0) {
++            return i;
++         } else {
++            i = nextticklistentry.getPriority().compareTo(nextticklistentry1.getPriority());
++            return i != 0 ? i : Long.compare(nextticklistentry.getId(), nextticklistentry1.getId());
++         }
++      };
+    }
++   // Paper end - let's not use more functional code for no reason.
+ 
+    public String toString() {
+       return this.field_151352_g + ": " + this.field_180282_a + ", " + this.field_235017_b_ + ", " + this.field_82754_f + ", " + this.field_77178_g;
+@@ -53,4 +_,22 @@
+    public T func_151351_a() {
+       return this.field_151352_g;
+    }
++
++   // Mohist start: MNS compatibility
++   public final T getData() {
++      return this.field_151352_g;
++   }
++   public final BlockPos getPosition() {
++      return this.field_180282_a;
++   }
++   public final long getTargetTick() {
++      return this.field_235017_b_;
++   }
++   public final TickPriority getPriority() {
++      return this.field_82754_f;
++   }
++   public final long getId() {
++      return this.field_77178_g;
++   }
++   // Mohist end
+ }

@@ -1,0 +1,32 @@
+--- a/net/minecraft/util/math/MutableBoundingBox.java
++++ b/net/minecraft/util/math/MutableBoundingBox.java
+@@ -156,4 +_,29 @@
+    public IntArrayNBT func_151535_h() {
+       return new IntArrayNBT(new int[]{this.field_78897_a, this.field_78895_b, this.field_78896_c, this.field_78893_d, this.field_78894_e, this.field_78892_f});
+    }
++
++   // Mohist start: MNS compatibility
++   public boolean hasPoint(Vector3i p_175898_1_) {
++      return func_175898_b(p_175898_1_);
++   }
++
++   public final int getMinX() {
++      return this.field_78897_a;
++   }
++   public final int getMinY() {
++      return this.field_78895_b;
++   }
++   public final int getMinZ() {
++      return this.field_78896_c;
++   }
++   public final int getMaxX() {
++      return this.field_78893_d;
++   }
++   public final int getMaxY() {
++      return this.field_78894_e;
++   }
++   public final int getMaxZ() {
++      return this.field_78892_f;
++   }
++   // Mohist end
+ }
