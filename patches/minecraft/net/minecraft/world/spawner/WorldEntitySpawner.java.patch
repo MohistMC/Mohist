@@ -16,7 +16,7 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.entity.Entity;
-@@ -46,437 +_,560 @@
+@@ -46,437 +_,561 @@
  import net.minecraft.world.gen.feature.structure.Structure;
  import net.minecraft.world.gen.feature.structure.StructureManager;
  import net.minecraft.world.server.ServerWorld;
@@ -184,7 +184,7 @@
 +                // CraftBukkit end
 +                int spawnCount = spawnMobs(entityclassification, p_234979_0_, p_234979_1_, p_234979_2_::func_234989_a_, p_234979_2_::func_234990_a_,
 +                        difference, p_234979_0_.paperConfig.perPlayerMobSpawns ? p_234979_0_.func_72863_F().field_217237_a::updatePlayerMobTypeMap : null);
-+                p_234979_2_.func_234995_b_().mergeInt(entityclassification, spawnCount, Integer::sum);
++                p_234979_2_.getEntityCountsByType().mergeInt(entityclassification, spawnCount, Integer::sum);
 +                // Paper end - per player mob spawning
 +            }
 +        }
@@ -963,10 +963,11 @@
 +            this.field_234982_b_.addTo(entitytype.func_220339_d(), 1);
 +        }
 +
-+        @OnlyIn(Dist.CLIENT)
 +        public int func_234988_a_() {
 +            return this.field_234981_a_;
 +        }
++
++        public final Object2IntMap<EntityClassification> getEntityCountsByType() { return this.field_234982_b_; }
 +
 +        public Object2IntMap<EntityClassification> func_234995_b_() {
 +            return this.field_234984_d_;
