@@ -168,7 +168,7 @@
           serverworld1 = this.field_72400_f.func_241755_D_();
        } else {
           serverworld1 = serverworld;
-@@ -142,20 +_,36 @@
+@@ -142,20 +_,34 @@
           s1 = p_72355_1_.func_74430_c().toString();
        }
  
@@ -194,9 +194,7 @@
        boolean flag = gamerules.func_223586_b(GameRules.field_226683_z_);
        boolean flag1 = gamerules.func_223586_b(GameRules.field_223612_o);
 -      serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), p_72355_2_.field_71134_c.func_241815_c_(), BiomeManager.func_235200_a_(serverworld1.func_72905_C()), iworldinfo.func_76093_s(), this.field_72400_f.func_240770_D_(), this.field_232639_s_, serverworld1.func_230315_m_(), serverworld1.func_234923_W_(), this.func_72352_l(), this.field_72402_d, flag1, !flag, serverworld1.func_234925_Z_(), serverworld1.func_241109_A_()));
-+      // TODO: find packet equivalent in forge
-+      //serverplaynethandler.send(new SCustomPayloadLoginPacket(p_72355_2_.getId(), p_72355_2_.gameMode.getGameModeForPlayer(), p_72355_2_.gameMode.c(), BiomeManager.a(serverworld1.getSeed()), worlddata.isHardcore(), this.server.F(), this.s, serverworld1.getDimensionManager(), serverworld1.getDimensionKey(), this.getMaxPlayers(), worldserver1.getChunkProvider().playerChunkMap.getLoadViewDistance(), flag1, !flag, worldserver1.isDebugWorld(), worldserver1.isFlatWorld())); // Paper - no-tick view distance
-+      serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), p_72355_2_.field_71134_c.func_241815_c_(), BiomeManager.func_235200_a_(serverworld1.func_72905_C()), iworldinfo.func_76093_s(), this.field_72400_f.func_240770_D_(), this.field_232639_s_, serverworld1.func_230315_m_(), serverworld1.func_234923_W_(), this.func_72352_l(), serverworld1.spigotConfig.viewDistance, flag1, !flag, serverworld1.func_234925_Z_(), serverworld1.func_241109_A_()));
++      serverplaynethandler.func_147359_a(new SJoinGamePacket(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), p_72355_2_.field_71134_c.func_241815_c_(), BiomeManager.func_235200_a_(serverworld1.func_72905_C()), iworldinfo.func_76093_s(), this.field_72400_f.func_240770_D_(), this.field_232639_s_, serverworld1.func_230315_m_(), serverworld1.func_234923_W_(), this.func_72352_l(), serverworld1.func_72863_F().field_217237_a.getLoadViewDistance(), flag1, !flag, serverworld1.func_234925_Z_(), serverworld1.func_241109_A_())); // Paper - no-tick view distance
        serverplaynethandler.func_147359_a(new SCustomPayloadPlayPacket(SCustomPayloadPlayPacket.field_209911_b, (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
        serverplaynethandler.func_147359_a(new SServerDifficultyPacket(iworldinfo.func_176130_y(), iworldinfo.func_176123_z()));
        serverplaynethandler.func_147359_a(new SPlayerAbilitiesPacket(p_72355_2_.field_71075_bZ));
@@ -873,7 +871,7 @@
     public void func_217884_a(int p_217884_1_) {
        this.field_72402_d = p_217884_1_;
 -      this.func_148540_a(new SUpdateViewDistancePacket(p_217884_1_));
-+      //this.broadcastAll(new SUpdateViewDistancePacket(p_217884_1_)); // Paper - move into setViewDistance
++      this.func_148540_a(new SUpdateViewDistancePacket(p_217884_1_)); // Paper - move into setViewDistance
  
        for(ServerWorld serverworld : this.field_72400_f.func_212370_w()) {
           if (serverworld != null) {

@@ -555,9 +555,9 @@
 +
 +    public void sendPacketToTrackedPlayers(IPacket<?> packet, boolean flag) { func_219293_a(packet, flag); } // Paper - OBFHELPER
 +    private void func_219293_a(IPacket<?> p_219293_1_, boolean p_219293_2_) {
-+        this.field_219328_w.func_219097_a(this.field_219319_n, p_219293_2_).forEach((p_219304_1_) -> {
-+            p_219304_1_.field_71135_a.func_147359_a(p_219293_1_);
-+        });
++        /*this.playerProvider.getPlayers(this.pos, p_219293_2_).forEach((p_219304_1_) -> {
++            p_219304_1_.connection.send(p_219293_1_);
++        });*/ // TODO: delete this (test world don't load)
 +
 +        // Paper start - per player view distance
 +        // there can be potential desync with player's last mapped section and the view distance map, so use the

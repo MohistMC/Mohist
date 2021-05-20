@@ -98,7 +98,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.chunk.storage.ChunkLoader;
  import net.minecraft.world.chunk.storage.ChunkSerializer;
-@@ -88,1118 +_,1440 @@
+@@ -88,1118 +_,1441 @@
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -1951,6 +1951,7 @@
 +            if (!flag1) {
 +                this.field_219267_u.func_219367_b(sectionpos, p_219234_1_);
 +            }
++            this.removePlayerFromDistanceMaps(p_219234_1_); // Paper - distance maps
 +        }
 +
 +        // Paper - broadcast view distance map handles this (see remove/add calls above)
