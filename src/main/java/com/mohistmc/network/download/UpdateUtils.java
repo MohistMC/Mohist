@@ -47,7 +47,7 @@ public class UpdateUtils {
             else {
                 System.out.println(Message.getFormatString("update.detect", new Object[]{build_number, jar_sha, time}));
                 if (bMohist("check_update_auto_download")) {
-                    downloadFile("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
+                    downloadFile("https://ci.codemc.io/job/MohistMC/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
                     restartServer(new ArrayList<>(Arrays.asList("java", "-jar", getMohistJar().getName())));
                 }
             }
