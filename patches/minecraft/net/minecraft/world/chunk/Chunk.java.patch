@@ -397,7 +397,7 @@
        }
  
        int k = MathHelper.func_76128_c(p_76612_1_.func_226278_cu_() / 16.0D);
-@@ -321,11 +_,13 @@
+@@ -321,11 +_,14 @@
           k = this.field_76645_j.length - 1;
        }
  
@@ -406,15 +406,17 @@
        p_76612_1_.field_70176_ah = this.field_212816_F.field_77276_a;
        p_76612_1_.field_70162_ai = k;
        p_76612_1_.field_70164_aj = this.field_212816_F.field_77275_b;
++      this.entities.add(p_76612_1_); // Paper - per chunk entity list
        this.field_76645_j[k].add(p_76612_1_);
 +      this.func_76630_e(); // Forge - ensure chunks are marked to save after an entity add
     }
  
     public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
-@@ -346,6 +_,7 @@
+@@ -346,6 +_,8 @@
        }
  
        this.field_76645_j[p_76608_2_].remove(p_76608_1_);
++      this.entities.remove(p_76608_1_); // Paper
 +      this.func_76630_e(); // Forge - ensure chunks are marked to save after entity removals
     }
  
@@ -488,13 +490,31 @@
        } else {
           CompoundNBT compoundnbt = this.field_201618_i.get(p_223134_1_);
           if (compoundnbt != null) {
-@@ -450,13 +_,57 @@
+@@ -450,13 +_,91 @@
  
     }
  
 +   // CraftBukkit start
 +   public void loadCallback() {
++      // Paper start - neighbour cache
++      int chunkX = this.field_212816_F.field_77276_a;
++      int chunkZ = this.field_212816_F.field_77275_b;
++      ServerChunkProvider chunkProvider = ((ServerWorld) this.field_76637_e).func_72863_F();
++      for (int dx = -NEIGHBOUR_CACHE_RADIUS; dx <= NEIGHBOUR_CACHE_RADIUS; ++dx) {
++         for (int dz = -NEIGHBOUR_CACHE_RADIUS; dz <= NEIGHBOUR_CACHE_RADIUS; ++dz) {
++            Chunk neighbour = chunkProvider.getChunkAtIfLoadedMainThreadNoCache(chunkX + dx, chunkZ + dz);
++            if (neighbour != null) {
++               neighbour.setNeighbourLoaded(-dx, -dz, this);
++               // should be in cached already
++               this.setNeighbourLoaded(dx, dz, neighbour);
++            }
++         }
++      }
++      this.setNeighbourLoaded(0, 0, this);
++      this.loadedTicketLevel = true;
++      // Paper end - neighbour cache
 +      org.bukkit.Server server = this.field_76637_e.getCBServer();
++      ((ServerWorld)this.field_76637_e).func_72863_F().addLoadedChunk(this); // Paper
 +      if (server != null) {
 +         /*
 +          * If it's a new world, the first few chunks are generated inside
@@ -533,6 +553,22 @@
 +      server.getPluginManager().callEvent(unloadEvent);
 +      // note: saving can be prevented, but not forced if no saving is actually required
 +      this.mustNotSave = !unloadEvent.isSaveChunk();
++      ((ServerWorld)this.field_76637_e).func_72863_F().removeLoadedChunk(this); // Paper
++      // Paper start - neighbour cache
++      int chunkX = this.field_212816_F.field_77276_a;
++      int chunkZ = this.field_212816_F.field_77275_b;
++      ServerChunkProvider chunkProvider = ((ServerWorld) this.field_76637_e).func_72863_F();
++      for (int dx = -NEIGHBOUR_CACHE_RADIUS; dx <= NEIGHBOUR_CACHE_RADIUS; ++dx) {
++         for (int dz = -NEIGHBOUR_CACHE_RADIUS; dz <= NEIGHBOUR_CACHE_RADIUS; ++dz) {
++            Chunk neighbour = chunkProvider.getChunkAtIfLoadedMainThreadNoCache(chunkX + dx, chunkZ + dz);
++            if (neighbour != null) {
++               neighbour.setNeighbourUnloaded(-dx, -dz);
++            }
++         }
++      }
++      this.loadedTicketLevel = false;
++      this.resetNeighbours();
++      // Paper end
 +   }
 +   // CraftBukkit end
 +

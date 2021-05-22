@@ -284,7 +284,7 @@
 +            ret = this.loadedChunkMap.get(k);
 +         } catch (Throwable thr) {
 +            if (thr instanceof ThreadDeath) {
-+               throw (ThreadDeath) thr;
++               throw (ThreadDeath)thr;
 +            }
 +            // re-try, this means a CME occurred...
 +            continue;

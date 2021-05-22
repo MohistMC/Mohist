@@ -29,7 +29,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -37,377 +_,577 @@
+@@ -37,377 +_,573 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkHolder {
@@ -466,7 +466,7 @@
 +    }
 +
 +    public void func_244386_a(BlockPos p_244386_1_) {
-+        Chunk chunk = this.getSendingChunk(); // Paper - no-tick view distance
++        Chunk chunk = this.func_219298_c(); // Paper - no-tick view distance
 +        if (chunk != null) {
 +            byte b0 = (byte) SectionPos.func_218159_a(p_244386_1_.func_177956_o());
 +            // Mohist: Prevent out of bounds
@@ -481,7 +481,7 @@
 +    }
 +
 +    public void func_219280_a(LightType p_219280_1_, int p_219280_2_) {
-+        Chunk chunk = this.getSendingChunk(); // Paper - no-tick view distance
++        Chunk chunk = this.func_219298_c(); // Paper - no-tick view distance
 +        if (chunk != null) {
 +            chunk.func_177427_f(true);
 +            if (p_219280_1_ == LightType.SKY) {
@@ -555,10 +555,6 @@
 +
 +    public void sendPacketToTrackedPlayers(IPacket<?> packet, boolean flag) { func_219293_a(packet, flag); } // Paper - OBFHELPER
 +    private void func_219293_a(IPacket<?> p_219293_1_, boolean p_219293_2_) {
-+        /*this.playerProvider.getPlayers(this.pos, p_219293_2_).forEach((p_219304_1_) -> {
-+            p_219304_1_.connection.send(p_219293_1_);
-+        });*/ // TODO: delete this (test world don't load)
-+
 +        // Paper start - per player view distance
 +        // there can be potential desync with player's last mapped section and the view distance map, so use the
 +        // view distance map here.

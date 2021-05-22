@@ -98,7 +98,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.chunk.storage.ChunkLoader;
  import net.minecraft.world.chunk.storage.ChunkSerializer;
-@@ -88,1118 +_,1441 @@
+@@ -88,1118 +_,1412 @@
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -938,7 +938,7 @@
 +                 com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<PlayerEntity> newState) -> {
 +                    if (player.needsChunkCenterUpdate) {
 +                        player.needsChunkCenterUpdate = false;
-+                        //((ServerPlayerEntity)player).connection.send(new PacketPlayOutViewCentre(currPosX, currPosZ)); // TODO: find forge packet equivalent
++                        ((ServerPlayerEntity)player).field_71135_a.func_147359_a(new SUpdateChunkPositionPacket(currPosX, currPosZ));
 +                    }
 +                    ChunkManager.this.func_219199_a((ServerPlayerEntity) player, new ChunkPos(rangeX, rangeZ), new IPacket[2], false, true); // unloaded, loaded
 +                },
@@ -1784,27 +1784,6 @@
 +        }
 +    }
 +
-+    /*public void setViewDistance(int p_219175_1_) { // Paper - public
-+       int i = MathHelper.clamp(p_219175_1_ + 1, 3, 33); // Paper - diff on change, these make the lower view distance limit 2 and the upper 32
-+        if (i != this.viewDistance) {
-+            int j = this.viewDistance;
-+            this.viewDistance = i;
-+            this.distanceManager.updatePlayerTickets(this.viewDistance);
-+
-+            for (ChunkHolder chunkholder : this.updatingChunkMap.values()) {
-+                ChunkPos chunkpos = chunkholder.getPos();
-+                IPacket<?>[] ipacket = new IPacket[2];
-+                this.getPlayers(chunkpos, false).forEach((p_219224_4_) -> {
-+                    int k = checkerboardDistance(chunkpos, p_219224_4_, true);
-+                    boolean flag = k <= j;
-+                    boolean flag1 = k <= this.viewDistance;
-+                    this.updateChunkTracking(p_219224_4_, chunkpos, ipacket, flag, flag1);
-+                });
-+            }
-+        }
-+
-+    }*/
-+
 +    public void func_219175_a(int p_219175_1_) { // Paper - public
 +        int j = MathHelper.func_76125_a(p_219175_1_ + 1, 3, 33); // Paper - diff on change, these make the lower view distance limit 2 and the upper 32
 +
@@ -1945,6 +1924,7 @@
 +            if (!flag) {
 +                this.field_219267_u.func_219341_a(SectionPos.func_218157_a(p_219234_1_), p_219234_1_);
 +            }
++            this.addPlayerToDistanceMaps(p_219234_1_); // Paper - distance maps
 +        } else {
 +            SectionPos sectionpos = p_219234_1_.func_213842_M();
 +            this.field_219271_y.func_219443_a(sectionpos.func_218155_u().func_201841_a(), p_219234_1_);
@@ -1955,13 +1935,12 @@
 +        }
 +
 +        // Paper - broadcast view distance map handles this (see remove/add calls above)
-+
 +    }
 +
 +    private SectionPos func_223489_c(ServerPlayerEntity p_223489_1_) {
 +        SectionPos sectionpos = SectionPos.func_218157_a(p_223489_1_);
 +        p_223489_1_.func_213850_a(sectionpos);
-+        // Paper - distance map handles this now
++        //Paper - distance map handles this now
 +        return sectionpos;
 +    }
 +
@@ -2008,7 +1987,7 @@
 +
 +        int k = sectionpos.func_218149_a();
 +        int l = sectionpos.func_218148_c();
-+        /* // Paper start - replaced by distance map
++        /*// Paper start - replaced by distance map
 +        if (Math.abs(k - l1) <= this.viewDistance * 2 && Math.abs(l - i2) <= this.viewDistance * 2) {
 +            int k2 = Math.min(l1, k) - this.viewDistance;
 +            int i3 = Math.min(i2, l) - this.viewDistance;
@@ -2041,19 +2020,11 @@
 +                    this.updateChunkTracking(p_219183_1_, chunkpos2, new IPacket[2], false, true);
 +                }
 +            }
-+        } */ // Paper end - replaced by distance map
++        }*/ // Paper end - replaced by distance map
 +
 +    }
 +
 +    public Stream<ServerPlayerEntity> func_219097_a(ChunkPos p_219097_1_, boolean p_219097_2_) {
-+        /*return this.playerMap.getPlayers(p_219097_1_.toLong()).filter((p_219192_3_) -> {
-+            int i = checkerboardDistance(p_219097_1_, p_219192_3_, true);
-+            if (i > this.viewDistance) {
-+                return false;
-+            } else {
-+                return !p_219097_2_ || i == this.viewDistance;
-+            }
-+        });*/
 +        // Paper start - per player view distance
 +        // there can be potential desync with player's last mapped section and the view distance map, so use the
 +        // view distance map here.
