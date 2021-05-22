@@ -19,9 +19,12 @@
        if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
           p_225534_2_.func_175655_b(p_225534_3_, true);
        }
-@@ -45,15 +_,17 @@
+@@ -43,17 +_,19 @@
+          for(i = 1; p_225542_2_.func_180495_p(p_225542_3_.func_177979_c(i)).func_203425_a(this); ++i) {
+          }
  
-          if (i < 3) {
+-         if (i < 3) {
++         if (i < p_225542_2_.paperConfig.cactusMaxHeight) { // Paper - Configurable growth height
              int j = p_225542_1_.func_177229_b(field_176587_a);
 -            if (j == 15) {
 -               p_225542_2_.func_175656_a(blockpos, this.func_176223_P());

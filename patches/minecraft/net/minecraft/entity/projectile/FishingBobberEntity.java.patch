@@ -37,6 +37,17 @@
     private FishingBobberEntity(World p_i50219_1_, PlayerEntity p_i50219_2_, int p_i50219_3_, int p_i50219_4_) {
        super(EntityType.field_200730_aI, p_i50219_1_);
        this.field_70158_ak = true;
+@@ -68,6 +_,10 @@
+       p_i50219_2_.field_71104_cf = this;
+       this.field_191518_aw = Math.max(0, p_i50219_3_);
+       this.field_191519_ax = Math.max(0, p_i50219_4_);
++      // Paper start
++      minWaitTime = p_i50219_1_.paperConfig.fishingMinTicks;
++      maxWaitTime = p_i50219_1_.paperConfig.fishingMaxTicks;
++      // paper end
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
 @@ -245,7 +_,7 @@
  
     private void func_190624_r() {

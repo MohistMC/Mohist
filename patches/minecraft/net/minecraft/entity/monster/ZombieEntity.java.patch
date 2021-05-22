@@ -8,7 +8,7 @@
  import net.minecraft.tags.FluidTags;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.EntityPredicates;
-@@ -64,20 +_,24 @@
+@@ -64,20 +_,25 @@
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.spawner.WorldEntitySpawner;
@@ -18,7 +18,9 @@
  
  public class ZombieEntity extends MonsterEntity {
     private static final UUID field_110187_bq = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-    private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
+-   private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
++   private final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE); // Paper - remove static - Make baby speed configurable
++   private final AttributeModifier babyModifier = this.field_110188_br; // Paper - remove static - Make baby speed configurable
     private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<Integer> field_184738_bw = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187192_b);
 -   private static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
@@ -44,6 +46,18 @@
        this.field_70715_bh.func_75776_a(3, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
        this.field_70715_bh.func_75776_a(5, new NearestAttackableTargetGoal<>(this, TurtleEntity.class, 10, true, false, TurtleEntity.field_203029_bx));
     }
+@@ -162,9 +_,9 @@
+       this.func_184212_Q().func_187227_b(field_184737_bv, p_82227_1_);
+       if (this.field_70170_p != null && !this.field_70170_p.field_72995_K) {
+          ModifiableAttributeInstance modifiableattributeinstance = this.func_110148_a(Attributes.field_233821_d_);
+-         modifiableattributeinstance.func_111124_b(field_110188_br);
++         modifiableattributeinstance.func_111124_b(this.babyModifier); // Paper
+          if (p_82227_1_) {
+-            modifiableattributeinstance.func_233767_b_(field_110188_br);
++            modifiableattributeinstance.func_111121_a(this.babyModifier); // Paper
+          }
+       }
+ 
 @@ -185,8 +_,12 @@
     public void func_70071_h_() {
        if (!this.field_70170_p.field_72995_K && this.func_70089_S() && !this.func_175446_cd()) {

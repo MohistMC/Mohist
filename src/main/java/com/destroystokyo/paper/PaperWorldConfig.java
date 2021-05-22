@@ -66,6 +66,38 @@ public class PaperWorldConfig {
         return config.getString("world-settings." + worldName + "." + path, config.getString("world-settings.default." + path));
     }
 
+    public int cactusMaxHeight;
+    public int reedMaxHeight;
+    public int bambooMaxHeight;
+    public int bambooMinHeight;
+    private void blockGrowthHeight() {
+        cactusMaxHeight = getInt("max-growth-height.cactus", 3);
+        reedMaxHeight = getInt("max-growth-height.reeds", 3);
+        bambooMaxHeight = getInt("max-growth-height.bamboo.max", 16);
+        bambooMinHeight = getInt("max-growth-height.bamboo.min", 11);
+        log("Max height for cactus growth " + cactusMaxHeight + ". Max height for reed growth " + reedMaxHeight + ". Max height for bamboo growth " + bambooMaxHeight + ". Min height for fully-grown bamboo " + bambooMinHeight + ".");
+
+    }
+
+    public double babyZombieMovementModifier;
+    private void babyZombieMovementModifier() {
+        babyZombieMovementModifier = getDouble("baby-zombie-movement-modifier", 0.5D);
+        if (PaperConfig.version < 20) {
+            babyZombieMovementModifier = getDouble("baby-zombie-movement-speed", 0.5D);
+            set("baby-zombie-movement-modifier", babyZombieMovementModifier);
+        }
+
+        log("Baby zombies will move at the speed of " + babyZombieMovementModifier);
+    }
+
+    public int fishingMinTicks;
+    public int fishingMaxTicks;
+    private void fishingTickRange() {
+        fishingMinTicks = getInt("fishing-time-range.MinimumTicks", 100);
+        fishingMaxTicks = getInt("fishing-time-range.MaximumTicks", 600);
+        log("Fishing time ranges are between " + fishingMinTicks +" and " + fishingMaxTicks + " ticks");
+    }
+
     public short keepLoadedRange;
     private void keepLoadedRange() {
         keepLoadedRange = (short) (getInt("keep-spawn-loaded-range", Math.min(spigotConfig.viewDistance, 10)) * 16);

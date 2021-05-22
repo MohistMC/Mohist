@@ -16,10 +16,29 @@
 +         if (p_225542_4_.nextInt(Math.max(1, (int) (100.0F / p_225542_2_.spigotConfig.bambooModifier) * 3)) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9) {
              int i = this.func_220260_b(p_225542_2_, p_225542_3_) + 1;
 -            if (i < 16) {
-+            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt(3) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9)) {
++            if (i < p_225542_2_.paperConfig.bambooMaxHeight && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt(3) == 0 && p_225542_2_.func_175623_d(p_225542_3_.func_177984_a()) && p_225542_2_.func_226659_b_(p_225542_3_.func_177984_a(), 0) >= 9)) { // Paper
                 this.func_220258_a(p_225542_1_, p_225542_2_, p_225542_3_, p_225542_4_, i);
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
              }
+          }
+ 
+@@ -129,7 +_,8 @@
+    public boolean func_176473_a(IBlockReader p_176473_1_, BlockPos p_176473_2_, BlockState p_176473_3_, boolean p_176473_4_) {
+       int i = this.func_220259_a(p_176473_1_, p_176473_2_);
+       int j = this.func_220260_b(p_176473_1_, p_176473_2_);
+-      return i + j + 1 < 16 && p_176473_1_.func_180495_p(p_176473_2_.func_177981_b(i)).func_177229_b(field_220266_f) != 1;
++      return i + j + 1 < ((World) p_176473_1_).paperConfig.bambooMaxHeight && (Integer) p_176473_1_.func_180495_p(p_176473_2_.up(i)).get(field_220266_f) != 1; // Paper
++
+    }
+ 
+    public boolean func_180670_a(World p_180670_1_, Random p_180670_2_, BlockPos p_180670_3_, BlockState p_180670_4_) {
+@@ -145,7 +_,7 @@
+       for(int i1 = 0; i1 < l; ++i1) {
+          BlockPos blockpos = p_225535_3_.func_177981_b(i);
+          BlockState blockstate = p_225535_1_.func_180495_p(blockpos);
+-         if (k >= 16 || blockstate.func_177229_b(field_220266_f) == 1 || !p_225535_1_.func_175623_d(blockpos.func_177984_a())) {
++         if (k >= p_225535_1_.paperConfig.bambooMaxHeight || !blockstate.func_203425_a(Blocks.field_222405_kQ) || (Integer) blockstate.get(field_220266_f) == 1 || !p_225535_1_.func_175623_d(p_225535_3_.up())) { // CraftBukkit - If the BlockSpreadEvent was cancelled, we have no bamboo here // Paper - Configurable cactus bamboo and reed growth heights
+             return;
           }
  
 @@ -165,13 +_,17 @@
@@ -42,9 +61,12 @@
                 }
              }
           } else {
-@@ -182,6 +_,15 @@
+@@ -180,13 +_,22 @@
+       }
+ 
        int i = p_220258_1_.func_177229_b(field_220264_d) != 1 && !blockstate1.func_203425_a(Blocks.field_222405_kQ) ? 0 : 1;
-       int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
+-      int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
++      int j = (i < p_220258_2_.paperConfig.bambooMinHeight || p_220258_4_.nextFloat() >= 0.25F) && i != (p_220258_2_.paperConfig.bambooMaxHeight - 1) ? 0 : 1; // Paper
        p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);
 +      // CraftBukkit start
 +      if (CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, blockpos, blockpos.func_177984_a(),
@@ -58,3 +80,18 @@
     }
  
     protected int func_220259_a(IBlockReader p_220259_1_, BlockPos p_220259_2_) {
+       int i;
+-      for(i = 0; i < 16 && p_220259_1_.func_180495_p(p_220259_2_.func_177981_b(i + 1)).func_203425_a(Blocks.field_222405_kQ); ++i) {
++      for (i = 0; i < ((World) p_220259_1_).paperConfig.bambooMaxHeight && p_220259_1_.func_180495_p(p_220259_2_.up(i + 1)).func_203425_a(Blocks.field_222405_kQ); ++i) { // Paper
+       }
+ 
+       return i;
+@@ -194,7 +_,7 @@
+ 
+    protected int func_220260_b(IBlockReader p_220260_1_, BlockPos p_220260_2_) {
+       int i;
+-      for(i = 0; i < 16 && p_220260_1_.func_180495_p(p_220260_2_.func_177979_c(i + 1)).func_203425_a(Blocks.field_222405_kQ); ++i) {
++      for (i = 0; i < ((World) p_220260_1_).paperConfig.bambooMaxHeight && p_220260_1_.func_180495_p(p_220260_2_.down(i + 1)).func_203425_a(Blocks.field_222405_kQ); ++i) { // Paper
+       }
+ 
+       return i;
