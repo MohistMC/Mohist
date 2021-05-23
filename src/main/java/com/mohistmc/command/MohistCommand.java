@@ -1,5 +1,6 @@
 package com.mohistmc.command;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.configuration.MohistConfig;
@@ -9,10 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.entity.Player;
 
 public class MohistCommand extends Command {
@@ -20,11 +24,11 @@ public class MohistCommand extends Command {
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item|reload]";
+        this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item|reload|version]";
         this.setPermission("mohist.command.mohist");
     }
 
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload");
+    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -92,6 +96,14 @@ public class MohistCommand extends Command {
                 TickConfig.TILES.reloadConfig();
                 sender.sendMessage(ChatColor.GREEN + "mohist-config directory reload complete.");
                 break;
+            case "version":
+                sender.sendMessage("Mohist: " + MohistMCStart.getVersion());
+                sender.sendMessage("Forge: " + ForgeVersion.getVersion());
+                String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
+                sender.sendMessage("Bukkit: " + cbs[0]);
+                sender.sendMessage("CraftBukkit: " + cbs[1]);
+                sender.sendMessage("Spigot: " + cbs[2]);
+				break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
