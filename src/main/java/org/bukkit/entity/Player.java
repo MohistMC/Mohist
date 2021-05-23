@@ -1381,4 +1381,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     @Override
     Spigot spigot();
     // Spigot end
+
+    // Mohist start
+    default boolean isFakePlayer() {
+        return false;
+    }
+    // Mohist end
 }
