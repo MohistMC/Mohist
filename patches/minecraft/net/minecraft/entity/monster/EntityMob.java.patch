@@ -51,31 +51,12 @@
                          this.field_70170_p.func_72960_a(entityplayer, (byte)30);
                      }
                  }
-@@ -153,17 +160,23 @@
-         }
-         else
-         {
--            int i = this.field_70170_p.func_175671_l(blockpos);
-+            //int i = this.world.getLightFromNeighbors(blockpos);
-+            boolean passes; // Paper
- 
-             if (this.field_70170_p.func_72911_I())
-             {
-                 int j = this.field_70170_p.func_175657_ab();
+@@ -161,6 +168,7 @@
                  this.field_70170_p.func_175692_b(10);
--                i = this.field_70170_p.func_175671_l(blockpos);
-+                //i = this.world.getLightFromNeighbors(blockpos);
-+                passes = !field_70170_p.isLightLevel(blockpos, field_70146_Z.nextInt(9)); // Paper
+                 i = this.field_70170_p.func_175671_l(blockpos);
                  this.field_70170_p.func_175692_b(j);
 +
-+            } else {
-+                passes = !field_70170_p.isLightLevel(blockpos, field_70146_Z.nextInt(9)); // Paper
+\ No newline at end of file
              }
  
--            return i <= this.field_70146_Z.nextInt(8);
-+            //return i <= this.rand.nextInt(8);
-+            return passes; // Paper
-\ No newline at end of file
-         }
-     }
- 
+             return i <= this.field_70146_Z.nextInt(8);

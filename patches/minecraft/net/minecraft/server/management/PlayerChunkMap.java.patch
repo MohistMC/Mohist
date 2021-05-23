@@ -48,68 +48,7 @@
      }
  
      public WorldServer func_72688_a()
-@@ -109,6 +115,7 @@
- 
-         if (i - this.field_111192_g > 8000L)
-         {
-+            try (Timing ignored = field_72701_a.timings.doChunkMapUpdate.startTiming()) { // Paper
-             this.field_111192_g = i;
- 
-             for (int j = 0; j < this.field_111193_e.size(); ++j)
-@@ -117,21 +124,25 @@
-                 playerchunkmapentry.func_187280_d();
-                 playerchunkmapentry.func_187279_c();
-             }
-+            } // Paper timing
-         }
- 
-         if (!this.field_72697_d.isEmpty())
-         {
-+            try (Timing ignored = field_72701_a.timings.doChunkMapToUpdate.startTiming()) { // Paper
-             for (PlayerChunkMapEntry playerchunkmapentry2 : this.field_72697_d)
-             {
-                 playerchunkmapentry2.func_187280_d();
-             }
- 
-             this.field_72697_d.clear();
-+            } // Paper timing
-         }
- 
-         if (this.field_187312_l && i % 4L == 0L)
-         {
-             this.field_187312_l = false;
-+            try (Timing ignored = field_72701_a.timings.doChunkMapSortMissing.startTiming()) { // Paper
-             Collections.sort(this.field_187311_h, new Comparator<PlayerChunkMapEntry>()
-             {
-                 public int compare(PlayerChunkMapEntry p_compare_1_, PlayerChunkMapEntry p_compare_2_)
-@@ -139,11 +150,13 @@
-                     return ComparisonChain.start().compare(p_compare_1_.func_187270_g(), p_compare_2_.func_187270_g()).result();
-                 }
-             });
-+            } // Paper timing
-         }
- 
-         if (this.field_187313_m && i % 4L == 2L)
-         {
-             this.field_187313_m = false;
-+            try (Timing ignored = field_72701_a.timings.doChunkMapSortSendToPlayers.startTiming()) { // Paper
-             Collections.sort(this.field_187310_g, new Comparator<PlayerChunkMapEntry>()
-             {
-                 public int compare(PlayerChunkMapEntry p_compare_1_, PlayerChunkMapEntry p_compare_2_)
-@@ -151,10 +164,12 @@
-                     return ComparisonChain.start().compare(p_compare_1_.func_187270_g(), p_compare_2_.func_187270_g()).result();
-                 }
-             });
-+            } // Paper timing
-         }
- 
-         if (!this.field_187311_h.isEmpty())
-         {
-+            try (Timing ignored = field_72701_a.timings.doChunkMapPlayersNeedingChunks.startTiming()) { // Paper
-             long l = System.nanoTime() + 50000000L;
-             int k = 49;
-             Iterator<PlayerChunkMapEntry> iterator = this.field_187311_h.iterator();
-@@ -183,13 +198,18 @@
+@@ -183,6 +189,9 @@
                              break;
                          }
                      }
@@ -118,26 +57,9 @@
 +                    iterator.remove();
                  }
              }
-+            } // Paper timing
          }
- 
-         if (!this.field_187310_g.isEmpty())
+@@ -213,7 +222,7 @@
          {
-             int i1 = 81;
-+            try (Timing ignored = field_72701_a.timings.doChunkMapPendingSendToPlayers.startTiming()) { // Paper
-             Iterator<PlayerChunkMapEntry> iterator1 = this.field_187310_g.iterator();
- 
-             while (iterator1.hasNext())
-@@ -207,16 +227,19 @@
-                     }
-                 }
-             }
-+            } // Paper timing
-         }
- 
-         if (this.field_72699_b.isEmpty())
-         {
-+            try (Timing ignored = field_72701_a.timings.doChunkMapUnloadChunks.startTiming()) { // Paper
              WorldProvider worldprovider = this.field_72701_a.field_73011_w;
  
 -            if (!worldprovider.func_76567_e())
@@ -145,11 +67,7 @@
              {
                  this.field_72701_a.func_72863_F().func_73240_a();
              }
-+            } // Paper timing
-         }
-     }
- 
-@@ -257,6 +280,16 @@
+@@ -257,6 +266,16 @@
          return playerchunkmapentry;
      }
  
@@ -166,7 +84,7 @@
      public void func_180244_a(BlockPos p_180244_1_)
      {
          int i = p_180244_1_.func_177958_n() >> 4;
-@@ -276,14 +309,26 @@
+@@ -276,14 +295,26 @@
          p_72683_1_.field_71131_d = p_72683_1_.field_70165_t;
          p_72683_1_.field_71132_e = p_72683_1_.field_70161_v;
  
@@ -196,7 +114,7 @@
          this.field_72699_b.add(p_72683_1_);
          this.func_187306_e();
      }
-@@ -293,10 +338,13 @@
+@@ -293,10 +324,13 @@
          int i = (int)p_72695_1_.field_71131_d >> 4;
          int j = (int)p_72695_1_.field_71132_e >> 4;
  
@@ -212,7 +130,7 @@
                  PlayerChunkMapEntry playerchunkmapentry = this.func_187301_b(k, l);
  
                  if (playerchunkmapentry != null)
-@@ -337,19 +385,23 @@
+@@ -337,19 +371,23 @@
          {
              int k = (int)p_72685_1_.field_71131_d >> 4;
              int l = (int)p_72685_1_.field_71132_e >> 4;
@@ -239,7 +157,7 @@
                          }
  
                          if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
-@@ -367,6 +419,12 @@
+@@ -367,6 +405,12 @@
                  p_72685_1_.field_71131_d = p_72685_1_.field_70165_t;
                  p_72685_1_.field_71132_e = p_72685_1_.field_70161_v;
                  this.func_187306_e();
@@ -252,7 +170,7 @@
              }
          }
      }
-@@ -377,6 +435,7 @@
+@@ -377,6 +421,7 @@
          return playerchunkmapentry != null && playerchunkmapentry.func_187275_d(p_72694_1_) && playerchunkmapentry.func_187274_e();
      }
  
@@ -260,7 +178,7 @@
      public void func_152622_a(int p_152622_1_)
      {
          p_152622_1_ = MathHelper.func_76125_a(p_152622_1_, 3, 32);
-@@ -387,43 +446,54 @@
+@@ -387,43 +432,54 @@
  
              for (EntityPlayerMP entityplayermp : Lists.newArrayList(this.field_72699_b))
              {
@@ -341,7 +259,7 @@
  
      private void func_187306_e()
      {
-@@ -456,11 +526,73 @@
+@@ -456,11 +512,73 @@
          this.field_72697_d.remove(p_187305_1_);
          this.field_187310_g.remove(p_187305_1_);
          this.field_187311_h.remove(p_187305_1_);

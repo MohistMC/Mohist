@@ -16,14 +16,13 @@
  
  public class BlockStem extends BlockBush implements IGrowable
  {
-@@ -66,18 +66,20 @@
+@@ -66,18 +66,19 @@
      {
          super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
  
 -        if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) >= 9)
 +        if (!p_180650_1_.func_175697_a(p_180650_2_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-+        //if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
-+        if (p_180650_1_.isLightLevel(p_180650_2_.func_177984_a(), 9)) // Paper
++        if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) >= 9) 
          {
              float f = BlockCrops.func_180672_a(this, p_180650_1_, p_180650_2_);
  
@@ -42,7 +41,7 @@
                  }
                  else
                  {
-@@ -90,13 +92,16 @@
+@@ -90,13 +91,16 @@
                      }
  
                      p_180650_2_ = p_180650_2_.func_177972_a(EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_));
@@ -62,7 +61,7 @@
              }
          }
      }
-@@ -104,26 +109,30 @@
+@@ -104,26 +108,30 @@
      public void func_176482_g(World p_176482_1_, BlockPos p_176482_2_, IBlockState p_176482_3_)
      {
          int i = ((Integer)p_176482_3_.func_177229_b(field_176484_a)).intValue() + MathHelper.func_76136_a(p_176482_1_.field_73012_v, 2, 5);
