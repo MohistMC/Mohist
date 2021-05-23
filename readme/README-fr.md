@@ -1,14 +1,14 @@
 <img src="https://i.loli.net/2020/09/06/lQscneqbV8Hptxz.png">
 
 ## Mohist-1.12.2
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-de.md">German</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-es.md">Spanish</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-in.md">Indonesian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-jp.md">Japanese</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-ru.md">Russian</a>
+<a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-zh.md">中文</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-de.md">German</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-es.md">Spanish</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-in.md">Indonesian</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-jp.md">Japanese</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-pt-BR.md">Portuguese, Brazilian</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-ru.md">Russian</a>
 
 
 ## Il est très recommandé d'utiliser les dernières versions de Mohist pour résoudre rapidement les erreures !
 
-[![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
-![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
-![](https://img.shields.io/github/license/Mohist-Community/Mohist.svg)
+[![](https://ci.codemc.org/buildStatus/icon?job=MohistMC%2FMohist-1.12.2)](https://ci.codemc.org/job/MohistMC/job/Mohist-1.12.2/)
+![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars)
+![](https://img.shields.io/github/license/MohistMC/Mohist.svg)
 [![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2855-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 ![](https://img.shields.io/badge/AdoptOpenJDK-8u242-brightgreen.svg?colorB=469C00)

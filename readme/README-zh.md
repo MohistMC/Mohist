@@ -5,9 +5,9 @@
 
 ### 基于Forge并融合Paper/Spigot/Bukkit的高性能Minecraft服务器软件(服务端)
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohist-Community%2Fjob%2FMohist-1.12.2)](https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2)
-[![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars&logo=github)](https://github.com/Mohist-Community/Mohist/stargazers)
-[![](https://img.shields.io/github/license/Mohist-Community/Mohist?)](https://github.com/Mohist-Community/Mohist/blob/1.12.2/LICENSE)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.12.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.12.2)
+[![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
+[![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.12.2/LICENSE)
 [![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2855-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 [![](https://img.shields.io/badge/AdoptOpenJDK-8u252-brightgreen.svg?colorB=469C00&logo=java)](https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot)
@@ -17,7 +17,7 @@
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
 [![](https://img.shields.io/badge/Patreon-Support-orange.svg?logo=Patreon)](https://www.patreon.com/mohist)
 
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/readme/README-fr.md">Français</a>
+<a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README.md">English</a> | <a href="https://github.com/MohistMC/Mohist/blob/1.12.2/readme/README-fr.md">Français</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
