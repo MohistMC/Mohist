@@ -45,4 +45,9 @@ public class CraftCustomFakePlayer extends CraftPlayer {
 
         return superGameMode == null ? Bukkit.getServer().getDefaultGameMode() : superGameMode;
     }
+
+    @Override
+    public boolean isFakePlayer(){
+        return true;
+    }
 }
