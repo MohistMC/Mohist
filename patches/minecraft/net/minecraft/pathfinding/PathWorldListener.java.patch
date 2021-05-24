@@ -1,0 +1,61 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathWorldListener.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathWorldListener.java
+@@ -1,8 +1,10 @@
+ package net.minecraft.pathfinding;
+ 
+-import com.google.common.collect.Lists;
+-import java.util.List;
++import java.util.Iterator;
++import java.util.Set;
+ import javax.annotation.Nullable;
++
++import com.google.common.collect.Sets;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+@@ -16,18 +18,32 @@
+ 
+ public class PathWorldListener implements IWorldEventListener
+ {
+-    private final List<PathNavigate> field_189519_a = Lists.<PathNavigate>newArrayList();
++    // Mohist: Replace ArrayList to ConcurrentHashSet. Fix potential memory leak. All mojang lines are commented out.
++    // P.S: The maximum number of objects that I saw was 160k, but there were only 1.5k entities (mobs, items) in the world
++    // P.S.S: Used ConcurrentHashSet because got ConcurrentModificationException when testing with HashSet.
++    //private final List<PathNavigate> navigations = Lists.<PathNavigate>newArrayList();
++    private final Set<PathNavigate> field_189519_a = Sets.newConcurrentHashSet();
+ 
+     public void func_184376_a(World p_184376_1_, BlockPos p_184376_2_, IBlockState p_184376_3_, IBlockState p_184376_4_, int p_184376_5_)
+     {
+         if (this.func_184378_a(p_184376_1_, p_184376_2_, p_184376_3_, p_184376_4_))
+         {
+-            int i = 0;
+-
+-            for (int j = this.field_189519_a.size(); i < j; ++i)
++            // Mohist: code start. All mojang lines are commented out.
++            //int i = 0;
++            //for (int j = this.navigations.size(); i < j; ++i)
++            Iterator<PathNavigate> iter = field_189519_a.iterator();
++            while (iter.hasNext())
+             {
+-                PathNavigate pathnavigate = this.field_189519_a.get(i);
++                //PathNavigate pathnavigate = this.navigations.get(i);
++                PathNavigate pathnavigate = iter.next();
+ 
++                // Mohist: Remove invalid path navigators
++                if (!pathnavigate.field_75515_a.valid) {
++                    iter.remove();
++                    continue;
++                }
++                // Mohist: code end.
++
+                 if (pathnavigate != null && !pathnavigate.func_188553_i())
+                 {
+                     Path path = pathnavigate.func_75505_d();
+@@ -48,6 +64,7 @@
+         }
+     }
+ 
++
+     protected boolean func_184378_a(World p_184378_1_, BlockPos p_184378_2_, IBlockState p_184378_3_, IBlockState p_184378_4_)
+     {
+         AxisAlignedBB axisalignedbb = p_184378_3_.func_185890_d(p_184378_1_, p_184378_2_);
