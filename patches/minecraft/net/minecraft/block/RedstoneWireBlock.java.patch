@@ -1,253 +1,1019 @@
 --- a/net/minecraft/block/RedstoneWireBlock.java
 +++ b/net/minecraft/block/RedstoneWireBlock.java
-@@ -1,5 +_,6 @@
+@@ -1,12 +_,15 @@
  package net.minecraft.block;
  
 +import com.destroystokyo.paper.util.RedstoneWireTurbo;
  import com.google.common.collect.ImmutableMap;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
-@@ -33,6 +_,7 @@
++
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.item.BlockItemUseContext;
+ import net.minecraft.particles.RedstoneParticleData;
+@@ -33,434 +_,573 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class RedstoneWireBlock extends Block {
-    public static final EnumProperty<RedstoneSide> field_176348_a = BlockStateProperties.field_208160_M;
-@@ -184,7 +_,7 @@
-       BlockState blockstate = p_235545_1_.func_180495_p(blockpos);
-       if (p_235545_4_) {
-          boolean flag = this.func_235552_b_(p_235545_1_, blockpos, blockstate);
+-   public static final EnumProperty<RedstoneSide> field_176348_a = BlockStateProperties.field_208160_M;
+-   public static final EnumProperty<RedstoneSide> field_176347_b = BlockStateProperties.field_208159_L;
+-   public static final EnumProperty<RedstoneSide> field_176349_M = BlockStateProperties.field_208161_N;
+-   public static final EnumProperty<RedstoneSide> field_176350_N = BlockStateProperties.field_208162_O;
+-   public static final IntegerProperty field_176351_O = BlockStateProperties.field_208136_ak;
+-   public static final Map<Direction, EnumProperty<RedstoneSide>> field_196498_A = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH, field_176348_a, Direction.EAST, field_176347_b, Direction.SOUTH, field_176349_M, Direction.WEST, field_176350_N));
+-   private static final VoxelShape field_235538_g_ = Block.func_208617_a(3.0D, 0.0D, 3.0D, 13.0D, 1.0D, 13.0D);
+-   private static final Map<Direction, VoxelShape> field_235539_h_ = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH, Block.func_208617_a(3.0D, 0.0D, 0.0D, 13.0D, 1.0D, 13.0D), Direction.SOUTH, Block.func_208617_a(3.0D, 0.0D, 3.0D, 13.0D, 1.0D, 16.0D), Direction.EAST, Block.func_208617_a(3.0D, 0.0D, 3.0D, 16.0D, 1.0D, 13.0D), Direction.WEST, Block.func_208617_a(0.0D, 0.0D, 3.0D, 13.0D, 1.0D, 13.0D)));
+-   private static final Map<Direction, VoxelShape> field_235540_i_ = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.NORTH), Block.func_208617_a(3.0D, 0.0D, 0.0D, 13.0D, 16.0D, 1.0D)), Direction.SOUTH, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.SOUTH), Block.func_208617_a(3.0D, 0.0D, 15.0D, 13.0D, 16.0D, 16.0D)), Direction.EAST, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.EAST), Block.func_208617_a(15.0D, 0.0D, 3.0D, 16.0D, 16.0D, 13.0D)), Direction.WEST, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.WEST), Block.func_208617_a(0.0D, 0.0D, 3.0D, 1.0D, 16.0D, 13.0D))));
+-   private final Map<BlockState, VoxelShape> field_235541_j_ = Maps.newHashMap();
+-   private static final Vector3f[] field_235542_k_ = new Vector3f[16];
+-   private final BlockState field_235543_o_;
+-   private boolean field_150181_a = true;
+-
+-   public RedstoneWireBlock(AbstractBlock.Properties p_i48344_1_) {
+-      super(p_i48344_1_);
+-      this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176348_a, RedstoneSide.NONE).func_206870_a(field_176347_b, RedstoneSide.NONE).func_206870_a(field_176349_M, RedstoneSide.NONE).func_206870_a(field_176350_N, RedstoneSide.NONE).func_206870_a(field_176351_O, Integer.valueOf(0)));
+-      this.field_235543_o_ = this.func_176223_P().func_206870_a(field_176348_a, RedstoneSide.SIDE).func_206870_a(field_176347_b, RedstoneSide.SIDE).func_206870_a(field_176349_M, RedstoneSide.SIDE).func_206870_a(field_176350_N, RedstoneSide.SIDE);
+-
+-      for(BlockState blockstate : this.func_176194_O().func_177619_a()) {
+-         if (blockstate.func_177229_b(field_176351_O) == 0) {
+-            this.field_235541_j_.put(blockstate, this.func_235554_l_(blockstate));
+-         }
+-      }
+-
+-   }
+-
+-   private VoxelShape func_235554_l_(BlockState p_235554_1_) {
+-      VoxelShape voxelshape = field_235538_g_;
+-
+-      for(Direction direction : Direction.Plane.HORIZONTAL) {
+-         RedstoneSide redstoneside = p_235554_1_.func_177229_b(field_196498_A.get(direction));
+-         if (redstoneside == RedstoneSide.SIDE) {
+-            voxelshape = VoxelShapes.func_197872_a(voxelshape, field_235539_h_.get(direction));
+-         } else if (redstoneside == RedstoneSide.UP) {
+-            voxelshape = VoxelShapes.func_197872_a(voxelshape, field_235540_i_.get(direction));
+-         }
+-      }
+-
+-      return voxelshape;
+-   }
+-
+-   public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
+-      return this.field_235541_j_.get(p_220053_1_.func_206870_a(field_176351_O, Integer.valueOf(0)));
+-   }
+-
+-   public BlockState func_196258_a(BlockItemUseContext p_196258_1_) {
+-      return this.func_235544_a_(p_196258_1_.func_195991_k(), this.field_235543_o_, p_196258_1_.func_195995_a());
+-   }
+-
+-   private BlockState func_235544_a_(IBlockReader p_235544_1_, BlockState p_235544_2_, BlockPos p_235544_3_) {
+-      boolean flag = func_235556_n_(p_235544_2_);
+-      p_235544_2_ = this.func_235551_b_(p_235544_1_, this.func_176223_P().func_206870_a(field_176351_O, p_235544_2_.func_177229_b(field_176351_O)), p_235544_3_);
+-      if (flag && func_235556_n_(p_235544_2_)) {
+-         return p_235544_2_;
+-      } else {
+-         boolean flag1 = p_235544_2_.func_177229_b(field_176348_a).func_235921_b_();
+-         boolean flag2 = p_235544_2_.func_177229_b(field_176349_M).func_235921_b_();
+-         boolean flag3 = p_235544_2_.func_177229_b(field_176347_b).func_235921_b_();
+-         boolean flag4 = p_235544_2_.func_177229_b(field_176350_N).func_235921_b_();
+-         boolean flag5 = !flag1 && !flag2;
+-         boolean flag6 = !flag3 && !flag4;
+-         if (!flag4 && flag5) {
+-            p_235544_2_ = p_235544_2_.func_206870_a(field_176350_N, RedstoneSide.SIDE);
+-         }
+-
+-         if (!flag3 && flag5) {
+-            p_235544_2_ = p_235544_2_.func_206870_a(field_176347_b, RedstoneSide.SIDE);
+-         }
+-
+-         if (!flag1 && flag6) {
+-            p_235544_2_ = p_235544_2_.func_206870_a(field_176348_a, RedstoneSide.SIDE);
+-         }
+-
+-         if (!flag2 && flag6) {
+-            p_235544_2_ = p_235544_2_.func_206870_a(field_176349_M, RedstoneSide.SIDE);
+-         }
+-
+-         return p_235544_2_;
+-      }
+-   }
+-
+-   private BlockState func_235551_b_(IBlockReader p_235551_1_, BlockState p_235551_2_, BlockPos p_235551_3_) {
+-      boolean flag = !p_235551_1_.func_180495_p(p_235551_3_.func_177984_a()).func_215686_e(p_235551_1_, p_235551_3_);
+-
+-      for(Direction direction : Direction.Plane.HORIZONTAL) {
+-         if (!p_235551_2_.func_177229_b(field_196498_A.get(direction)).func_235921_b_()) {
+-            RedstoneSide redstoneside = this.func_235545_a_(p_235551_1_, p_235551_3_, direction, flag);
+-            p_235551_2_ = p_235551_2_.func_206870_a(field_196498_A.get(direction), redstoneside);
+-         }
+-      }
+-
+-      return p_235551_2_;
+-   }
+-
+-   public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+-      if (p_196271_2_ == Direction.DOWN) {
+-         return p_196271_1_;
+-      } else if (p_196271_2_ == Direction.UP) {
+-         return this.func_235544_a_(p_196271_4_, p_196271_1_, p_196271_5_);
+-      } else {
+-         RedstoneSide redstoneside = this.func_208074_a(p_196271_4_, p_196271_5_, p_196271_2_);
+-         return redstoneside.func_235921_b_() == p_196271_1_.func_177229_b(field_196498_A.get(p_196271_2_)).func_235921_b_() && !func_235555_m_(p_196271_1_) ? p_196271_1_.func_206870_a(field_196498_A.get(p_196271_2_), redstoneside) : this.func_235544_a_(p_196271_4_, this.field_235543_o_.func_206870_a(field_176351_O, p_196271_1_.func_177229_b(field_176351_O)).func_206870_a(field_196498_A.get(p_196271_2_), redstoneside), p_196271_5_);
+-      }
+-   }
+-
+-   private static boolean func_235555_m_(BlockState p_235555_0_) {
+-      return p_235555_0_.func_177229_b(field_176348_a).func_235921_b_() && p_235555_0_.func_177229_b(field_176349_M).func_235921_b_() && p_235555_0_.func_177229_b(field_176347_b).func_235921_b_() && p_235555_0_.func_177229_b(field_176350_N).func_235921_b_();
+-   }
+-
+-   private static boolean func_235556_n_(BlockState p_235556_0_) {
+-      return !p_235556_0_.func_177229_b(field_176348_a).func_235921_b_() && !p_235556_0_.func_177229_b(field_176349_M).func_235921_b_() && !p_235556_0_.func_177229_b(field_176347_b).func_235921_b_() && !p_235556_0_.func_177229_b(field_176350_N).func_235921_b_();
+-   }
+-
+-   public void func_196248_b(BlockState p_196248_1_, IWorld p_196248_2_, BlockPos p_196248_3_, int p_196248_4_, int p_196248_5_) {
+-      BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+-
+-      for(Direction direction : Direction.Plane.HORIZONTAL) {
+-         RedstoneSide redstoneside = p_196248_1_.func_177229_b(field_196498_A.get(direction));
+-         if (redstoneside != RedstoneSide.NONE && !p_196248_2_.func_180495_p(blockpos$mutable.func_239622_a_(p_196248_3_, direction)).func_203425_a(this)) {
+-            blockpos$mutable.func_189536_c(Direction.DOWN);
+-            BlockState blockstate = p_196248_2_.func_180495_p(blockpos$mutable);
+-            if (!blockstate.func_203425_a(Blocks.field_190976_dk)) {
+-               BlockPos blockpos = blockpos$mutable.func_177972_a(direction.func_176734_d());
+-               BlockState blockstate1 = blockstate.func_196956_a(direction.func_176734_d(), p_196248_2_.func_180495_p(blockpos), p_196248_2_, blockpos$mutable, blockpos);
+-               func_241468_a_(blockstate, blockstate1, p_196248_2_, blockpos$mutable, p_196248_4_, p_196248_5_);
+-            }
+-
+-            blockpos$mutable.func_239622_a_(p_196248_3_, direction).func_189536_c(Direction.UP);
+-            BlockState blockstate3 = p_196248_2_.func_180495_p(blockpos$mutable);
+-            if (!blockstate3.func_203425_a(Blocks.field_190976_dk)) {
+-               BlockPos blockpos1 = blockpos$mutable.func_177972_a(direction.func_176734_d());
+-               BlockState blockstate2 = blockstate3.func_196956_a(direction.func_176734_d(), p_196248_2_.func_180495_p(blockpos1), p_196248_2_, blockpos$mutable, blockpos1);
+-               func_241468_a_(blockstate3, blockstate2, p_196248_2_, blockpos$mutable, p_196248_4_, p_196248_5_);
+-            }
+-         }
+-      }
+-
+-   }
+-
+-   private RedstoneSide func_208074_a(IBlockReader p_208074_1_, BlockPos p_208074_2_, Direction p_208074_3_) {
+-      return this.func_235545_a_(p_208074_1_, p_208074_2_, p_208074_3_, !p_208074_1_.func_180495_p(p_208074_2_.func_177984_a()).func_215686_e(p_208074_1_, p_208074_2_));
+-   }
+-
+-   private RedstoneSide func_235545_a_(IBlockReader p_235545_1_, BlockPos p_235545_2_, Direction p_235545_3_, boolean p_235545_4_) {
+-      BlockPos blockpos = p_235545_2_.func_177972_a(p_235545_3_);
+-      BlockState blockstate = p_235545_1_.func_180495_p(blockpos);
+-      if (p_235545_4_) {
+-         boolean flag = this.func_235552_b_(p_235545_1_, blockpos, blockstate);
 -         if (flag && func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177984_a()))) {
-+         if (flag && canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177984_a()), p_235545_1_, blockpos.func_177984_a(), null) ) {
-             if (blockstate.func_224755_d(p_235545_1_, blockpos, p_235545_3_.func_176734_d())) {
-                return RedstoneSide.UP;
-             }
-@@ -193,7 +_,7 @@
-          }
-       }
- 
+-            if (blockstate.func_224755_d(p_235545_1_, blockpos, p_235545_3_.func_176734_d())) {
+-               return RedstoneSide.UP;
+-            }
+-
+-            return RedstoneSide.SIDE;
+-         }
+-      }
+-
 -      return !func_176343_a(blockstate, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177977_b()))) ? RedstoneSide.NONE : RedstoneSide.SIDE;
-+      return !canConnectTo(blockstate, p_235545_1_, blockpos, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177977_b()), p_235545_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
-    }
- 
-    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-@@ -206,9 +_,132 @@
-       return p_235552_3_.func_224755_d(p_235552_1_, p_235552_2_, Direction.UP) || p_235552_3_.func_203425_a(Blocks.field_150438_bZ);
-    }
- 
-+   // Paper start - Optimize redstone
-+   // The bulk of the new functionality is found in RedstoneWireTurbo.java
-+   RedstoneWireTurbo turbo = new RedstoneWireTurbo(this);
-+
-+   /*
-+    * Modified version of pre-existing updateSurroundingRedstone, which is called from
-+    * this.neighborChanged and a few other methods in this class.
-+    * Note: Added 'source' argument so as to help determine direction of information flow
-+    */
-+   private void updateSurroundingRedstone(World worldIn, BlockPos pos, BlockState state, BlockPos source) {
-+      if (worldIn.paperConfig.useEigencraftRedstone) {
-+         turbo.updateSurroundingRedstone(worldIn, pos, state, source);
-+         return;
-+      }
-+      func_235547_a_(worldIn, pos, state);
-+   }
-+
-+   /*
-+    * Slightly modified method to compute redstone wire power levels from neighboring blocks.
-+    * Modifications cut the number of power level changes by about 45% from vanilla, and this
-+    * optimization synergizes well with the breadth-first search implemented in
-+    * RedstoneWireTurbo.
-+    * Note:  RedstoneWireTurbo contains a faster version of this code.
-+    * Note:  Made this public so that RedstoneWireTurbo can access it.
-+    */
-+   public BlockState calculateCurrentChanges(World worldIn, BlockPos pos1, BlockPos pos2, BlockState state) {
-+      BlockState iblockstate = state;
-+      int i = state.get(field_176351_O);
-+      int j = 0;
-+      j = this.getPower(j, worldIn.getType(pos2));
-+      this.setCanProvidePower(false);
-+      int k = worldIn.isBlockIndirectlyGettingPowered(pos1);
-+      this.setCanProvidePower(true);
-+
-+      if (!worldIn.paperConfig.useEigencraftRedstone) {
-+         // This code is totally redundant to if statements just below the loop.
-+         if (k > 0 && k > j - 1) {
-+            j = k;
-+         }
-+      }
-+
-+      int l = 0;
-+
-+      // The variable 'k' holds the maximum redstone power value of any adjacent blocks.
-+      // If 'k' has the highest level of all neighbors, then the power level of this
-+      // redstone wire will be set to 'k'.  If 'k' is already 15, then nothing inside the
-+      // following loop can affect the power level of the wire.  Therefore, the loop is
-+      // skipped if k is already 15.
-+      if (!worldIn.paperConfig.useEigencraftRedstone || k < 15) {
-+         for (Direction enumfacing : Direction.Plane.HORIZONTAL) {
-+            BlockPos blockpos = pos1.shift(enumfacing);
-+            boolean flag = blockpos.func_177958_n() != pos2.func_177958_n() || blockpos.func_177952_p() != pos2.func_177952_p();
-+
-+            if (flag) {
-+               l = this.getPower(l, worldIn.getType(blockpos));
-+            }
-+
-+            if (worldIn.getType(blockpos).isOccluding(worldIn, blockpos) && !worldIn.getType(pos1.up()).isOccluding(worldIn, pos1)) {
-+               if (flag && pos1.func_177956_o() >= pos2.func_177956_o()) {
-+                  l = this.getPower(l, worldIn.getType(blockpos.up()));
-+               }
-+            } else if (!worldIn.getType(blockpos).isOccluding(worldIn, blockpos) && flag && pos1.func_177956_o() <= pos2.func_177956_o()) {
-+               l = this.getPower(l, worldIn.getType(blockpos.down()));
-+            }
-+         }
-+      }
-+
-+      if (!worldIn.paperConfig.useEigencraftRedstone) {
-+         // The old code would decrement the wire value only by 1 at a time.
-+         if (l > j) {
-+            j = l - 1;
-+         } else if (j > 0) {
-+            --j;
-+         } else {
-+            j = 0;
-+         }
-+
-+         if (k > j - 1) {
-+            j = k;
-+         }
-+      } else {
-+         // The new code sets this RedstoneWire block's power level to the highest neighbor
-+         // minus 1.  This usually results in wire power levels dropping by 2 at a time.
-+         // This optimization alone has no impact on update order, only the number of updates.
-+         j = l - 1;
-+
-+         // If 'l' turns out to be zero, then j will be set to -1, but then since 'k' will
-+         // always be in the range of 0 to 15, the following if will correct that.
-+         if (k > j) j = k;
-+      }
-+
-+      if (i != j) {
-+         state = state.func_206870_a(field_176351_O, j);
-+
-+         if (worldIn.getType(pos1) == iblockstate) {
-+            worldIn.setTypeAndData(pos1, state, 2);
-+         }
-+
-+         // 1.16(.1?) dropped the need for blocks needing updates.
-+         // Whether this is necessary after all is to be seen.
-+//            if (!worldIn.paperConfig.useEigencraftRedstone) {
-+//                // The new search algorithm keeps track of blocks needing updates in its own data structures,
-+//                // so only add anything to blocksNeedingUpdate if we're using the vanilla update algorithm.
-+//                this.getBlocksNeedingUpdate().add(pos1);
-+//
-+//                for (EnumDirection enumfacing1 : EnumDirection.values()) {
-+//                    this.getBlocksNeedingUpdate().add(pos1.shift(enumfacing1));
-+//                }
-+//            }
-+      }
-+
-+      return state;
-+   }
-+   // Paper end
-+
-    private void func_235547_a_(World p_235547_1_, BlockPos p_235547_2_, BlockState p_235547_3_) {
-       int i = this.func_235546_a_(p_235547_1_, p_235547_2_);
+-   }
+-
+-   public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
+-      BlockPos blockpos = p_196260_3_.func_177977_b();
+-      BlockState blockstate = p_196260_2_.func_180495_p(blockpos);
+-      return this.func_235552_b_(p_196260_2_, blockpos, blockstate);
+-   }
+-
+-   private boolean func_235552_b_(IBlockReader p_235552_1_, BlockPos p_235552_2_, BlockState p_235552_3_) {
+-      return p_235552_3_.func_224755_d(p_235552_1_, p_235552_2_, Direction.UP) || p_235552_3_.func_203425_a(Blocks.field_150438_bZ);
+-   }
+-
+-   private void func_235547_a_(World p_235547_1_, BlockPos p_235547_2_, BlockState p_235547_3_) {
+-      int i = this.func_235546_a_(p_235547_1_, p_235547_2_);
 -      if (p_235547_3_.func_177229_b(field_176351_O) != i) {
-+      // CraftBukkit start
-+      int oldPower = p_235547_3_.func_177229_b(field_176351_O).intValue();
-+      if (oldPower != i) {
-+         BlockRedstoneEvent event = new BlockRedstoneEvent(p_235547_1_.getWorld().getBlockAt(p_235547_2_.func_177958_n(), p_235547_2_.func_177956_o(), p_235547_2_.func_177952_p()), oldPower, i);
-+         p_235547_1_.getCBServer().getPluginManager().callEvent(event);
-+         i = event.getNewCurrent();
-+         // CraftBukkit end
-+      }
-+      if (oldPower != i) {
-          if (p_235547_1_.func_180495_p(p_235547_2_) == p_235547_3_) {
-             p_235547_1_.func_180501_a(p_235547_2_, p_235547_3_.func_206870_a(field_176351_O, Integer.valueOf(i)), 2);
-          }
-@@ -216,11 +_,11 @@
-          Set<BlockPos> set = Sets.newHashSet();
-          set.add(p_235547_2_);
- 
+-         if (p_235547_1_.func_180495_p(p_235547_2_) == p_235547_3_) {
+-            p_235547_1_.func_180501_a(p_235547_2_, p_235547_3_.func_206870_a(field_176351_O, Integer.valueOf(i)), 2);
+-         }
+-
+-         Set<BlockPos> set = Sets.newHashSet();
+-         set.add(p_235547_2_);
+-
 -         for(Direction direction : Direction.values()) {
-+         for (Direction direction : Direction.values()) {
-             set.add(p_235547_2_.func_177972_a(direction));
-          }
- 
+-            set.add(p_235547_2_.func_177972_a(direction));
+-         }
+-
 -         for(BlockPos blockpos : set) {
-+         for (BlockPos blockpos : set) {
-             p_235547_1_.func_195593_d(blockpos, this);
-          }
-       }
-@@ -249,6 +_,9 @@
-       return Math.max(i, j - 1);
-    }
- 
-+   private int getPower(int min, BlockState iblockdata) { return Math.max(min, getPower(iblockdata)); } // Paper - Optimize redstone
-+   private int getPower(BlockState iblockdata) { return this.func_235557_o_(iblockdata); } // Paper - OBFHELPER
-+
-    private int func_235557_o_(BlockState p_235557_1_) {
-       return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
-    }
-@@ -266,7 +_,8 @@
- 
-    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
-       if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c()) && !p_220082_2_.field_72995_K) {
+-            p_235547_1_.func_195593_d(blockpos, this);
+-         }
+-      }
+-
+-   }
+-
+-   private int func_235546_a_(World p_235546_1_, BlockPos p_235546_2_) {
+-      this.field_150181_a = false;
+-      int i = p_235546_1_.func_175687_A(p_235546_2_);
+-      this.field_150181_a = true;
+-      int j = 0;
+-      if (i < 15) {
+-         for(Direction direction : Direction.Plane.HORIZONTAL) {
+-            BlockPos blockpos = p_235546_2_.func_177972_a(direction);
+-            BlockState blockstate = p_235546_1_.func_180495_p(blockpos);
+-            j = Math.max(j, this.func_235557_o_(blockstate));
+-            BlockPos blockpos1 = p_235546_2_.func_177984_a();
+-            if (blockstate.func_215686_e(p_235546_1_, blockpos) && !p_235546_1_.func_180495_p(blockpos1).func_215686_e(p_235546_1_, blockpos1)) {
+-               j = Math.max(j, this.func_235557_o_(p_235546_1_.func_180495_p(blockpos.func_177984_a())));
+-            } else if (!blockstate.func_215686_e(p_235546_1_, blockpos)) {
+-               j = Math.max(j, this.func_235557_o_(p_235546_1_.func_180495_p(blockpos.func_177977_b())));
+-            }
+-         }
+-      }
+-
+-      return Math.max(i, j - 1);
+-   }
+-
+-   private int func_235557_o_(BlockState p_235557_1_) {
+-      return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
+-   }
+-
+-   private void func_176344_d(World p_176344_1_, BlockPos p_176344_2_) {
+-      if (p_176344_1_.func_180495_p(p_176344_2_).func_203425_a(this)) {
+-         p_176344_1_.func_195593_d(p_176344_2_, this);
+-
+-         for(Direction direction : Direction.values()) {
+-            p_176344_1_.func_195593_d(p_176344_2_.func_177972_a(direction), this);
+-         }
+-
+-      }
+-   }
+-
+-   public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
+-      if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c()) && !p_220082_2_.field_72995_K) {
 -         this.func_235547_a_(p_220082_2_, p_220082_3_, p_220082_1_);
-+         //this.updatePowerStrength(p_220082_2_, p_220082_3_, p_220082_1_);
-+         this.updateSurroundingRedstone(p_220082_2_, p_220082_3_, p_220082_4_, null); // Paper - Optimize redstone
- 
-          for(Direction direction : Direction.Plane.VERTICAL) {
-             p_220082_2_.func_195593_d(p_220082_3_.func_177972_a(direction), this);
-@@ -284,7 +_,8 @@
-                p_196243_2_.func_195593_d(p_196243_3_.func_177972_a(direction), this);
-             }
- 
+-
+-         for(Direction direction : Direction.Plane.VERTICAL) {
+-            p_220082_2_.func_195593_d(p_220082_3_.func_177972_a(direction), this);
+-         }
+-
+-         this.func_235553_d_(p_220082_2_, p_220082_3_);
+-      }
+-   }
+-
+-   public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
+-      if (!p_196243_5_ && !p_196243_1_.func_203425_a(p_196243_4_.func_177230_c())) {
+-         super.func_196243_a(p_196243_1_, p_196243_2_, p_196243_3_, p_196243_4_, p_196243_5_);
+-         if (!p_196243_2_.field_72995_K) {
+-            for(Direction direction : Direction.values()) {
+-               p_196243_2_.func_195593_d(p_196243_3_.func_177972_a(direction), this);
+-            }
+-
 -            this.func_235547_a_(p_196243_2_, p_196243_3_, p_196243_1_);
-+            //this.updatePowerStrength(p_196243_2_, p_196243_3_, p_196243_1_);
-+            this.updateSurroundingRedstone(p_196243_2_, p_196243_3_, p_196243_1_, null); // Paper - Optimize redstone
-             this.func_235553_d_(p_196243_2_, p_196243_3_);
-          }
-       }
-@@ -309,7 +_,8 @@
-    public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
-       if (!p_220069_2_.field_72995_K) {
-          if (p_220069_1_.func_196955_c(p_220069_2_, p_220069_3_)) {
+-            this.func_235553_d_(p_196243_2_, p_196243_3_);
+-         }
+-      }
+-   }
+-
+-   private void func_235553_d_(World p_235553_1_, BlockPos p_235553_2_) {
+-      for(Direction direction : Direction.Plane.HORIZONTAL) {
+-         this.func_176344_d(p_235553_1_, p_235553_2_.func_177972_a(direction));
+-      }
+-
+-      for(Direction direction1 : Direction.Plane.HORIZONTAL) {
+-         BlockPos blockpos = p_235553_2_.func_177972_a(direction1);
+-         if (p_235553_1_.func_180495_p(blockpos).func_215686_e(p_235553_1_, blockpos)) {
+-            this.func_176344_d(p_235553_1_, blockpos.func_177984_a());
+-         } else {
+-            this.func_176344_d(p_235553_1_, blockpos.func_177977_b());
+-         }
+-      }
+-
+-   }
+-
+-   public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
+-      if (!p_220069_2_.field_72995_K) {
+-         if (p_220069_1_.func_196955_c(p_220069_2_, p_220069_3_)) {
 -            this.func_235547_a_(p_220069_2_, p_220069_3_, p_220069_1_);
-+            //this.updatePowerStrength(p_220069_2_, p_220069_3_, p_220069_1_);
-+            this.updateSurroundingRedstone(p_220069_2_, p_220069_3_, p_220069_1_, p_220069_5_); // Paper - Optimize redstone
-          } else {
-             func_220075_c(p_220069_1_, p_220069_2_, p_220069_3_);
-             p_220069_2_.func_217377_a(p_220069_3_, false);
-@@ -335,11 +_,7 @@
-       }
-    }
- 
+-         } else {
+-            func_220075_c(p_220069_1_, p_220069_2_, p_220069_3_);
+-            p_220069_2_.func_217377_a(p_220069_3_, false);
+-         }
+-
+-      }
+-   }
+-
+-   public int func_176211_b(BlockState p_176211_1_, IBlockReader p_176211_2_, BlockPos p_176211_3_, Direction p_176211_4_) {
+-      return !this.field_150181_a ? 0 : p_176211_1_.func_185911_a(p_176211_2_, p_176211_3_, p_176211_4_);
+-   }
+-
+-   public int func_180656_a(BlockState p_180656_1_, IBlockReader p_180656_2_, BlockPos p_180656_3_, Direction p_180656_4_) {
+-      if (this.field_150181_a && p_180656_4_ != Direction.DOWN) {
+-         int i = p_180656_1_.func_177229_b(field_176351_O);
+-         if (i == 0) {
++    public static final EnumProperty<RedstoneSide> field_176348_a = BlockStateProperties.field_208160_M;
++    public static final EnumProperty<RedstoneSide> field_176347_b = BlockStateProperties.field_208159_L;
++    public static final EnumProperty<RedstoneSide> field_176349_M = BlockStateProperties.field_208161_N;
++    public static final EnumProperty<RedstoneSide> field_176350_N = BlockStateProperties.field_208162_O;
++    public static final IntegerProperty field_176351_O = BlockStateProperties.field_208136_ak;
++    public static final Map<Direction, EnumProperty<RedstoneSide>> field_196498_A = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH, field_176348_a, Direction.EAST, field_176347_b, Direction.SOUTH, field_176349_M, Direction.WEST, field_176350_N));
++    private static final VoxelShape field_235538_g_ = Block.func_208617_a(3.0D, 0.0D, 3.0D, 13.0D, 1.0D, 13.0D);
++    private static final Map<Direction, VoxelShape> field_235539_h_ = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH, Block.func_208617_a(3.0D, 0.0D, 0.0D, 13.0D, 1.0D, 13.0D), Direction.SOUTH, Block.func_208617_a(3.0D, 0.0D, 3.0D, 13.0D, 1.0D, 16.0D), Direction.EAST, Block.func_208617_a(3.0D, 0.0D, 3.0D, 16.0D, 1.0D, 13.0D), Direction.WEST, Block.func_208617_a(0.0D, 0.0D, 3.0D, 13.0D, 1.0D, 13.0D)));
++    private static final Map<Direction, VoxelShape> field_235540_i_ = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.NORTH), Block.func_208617_a(3.0D, 0.0D, 0.0D, 13.0D, 16.0D, 1.0D)), Direction.SOUTH, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.SOUTH), Block.func_208617_a(3.0D, 0.0D, 15.0D, 13.0D, 16.0D, 16.0D)), Direction.EAST, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.EAST), Block.func_208617_a(15.0D, 0.0D, 3.0D, 16.0D, 16.0D, 13.0D)), Direction.WEST, VoxelShapes.func_197872_a(field_235539_h_.get(Direction.WEST), Block.func_208617_a(0.0D, 0.0D, 3.0D, 1.0D, 16.0D, 13.0D))));
++    private final Map<BlockState, VoxelShape> field_235541_j_ = Maps.newHashMap();
++    private static final Vector3f[] field_235542_k_ = new Vector3f[16];
++    private final BlockState field_235543_o_;
++    private boolean field_150181_a = true;
++
++    public RedstoneWireBlock(AbstractBlock.Properties p_i48344_1_) {
++        super(p_i48344_1_);
++        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176348_a, RedstoneSide.NONE).func_206870_a(field_176347_b, RedstoneSide.NONE).func_206870_a(field_176349_M, RedstoneSide.NONE).func_206870_a(field_176350_N, RedstoneSide.NONE).func_206870_a(field_176351_O, Integer.valueOf(0)));
++        this.field_235543_o_ = this.func_176223_P().func_206870_a(field_176348_a, RedstoneSide.SIDE).func_206870_a(field_176347_b, RedstoneSide.SIDE).func_206870_a(field_176349_M, RedstoneSide.SIDE).func_206870_a(field_176350_N, RedstoneSide.SIDE);
++
++        for (BlockState blockstate : this.func_176194_O().func_177619_a()) {
++            if (blockstate.func_177229_b(field_176351_O) == 0) {
++                this.field_235541_j_.put(blockstate, this.func_235554_l_(blockstate));
++            }
++        }
++
++    }
++
++    private VoxelShape func_235554_l_(BlockState p_235554_1_) {
++        VoxelShape voxelshape = field_235538_g_;
++
++        for (Direction direction : Direction.Plane.HORIZONTAL) {
++            RedstoneSide redstoneside = p_235554_1_.func_177229_b(field_196498_A.get(direction));
++            if (redstoneside == RedstoneSide.SIDE) {
++                voxelshape = VoxelShapes.func_197872_a(voxelshape, field_235539_h_.get(direction));
++            } else if (redstoneside == RedstoneSide.UP) {
++                voxelshape = VoxelShapes.func_197872_a(voxelshape, field_235540_i_.get(direction));
++            }
++        }
++
++        return voxelshape;
++    }
++
++    public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
++        return this.field_235541_j_.get(p_220053_1_.func_206870_a(field_176351_O, Integer.valueOf(0)));
++    }
++
++    public BlockState func_196258_a(BlockItemUseContext p_196258_1_) {
++        return this.func_235544_a_(p_196258_1_.func_195991_k(), this.field_235543_o_, p_196258_1_.func_195995_a());
++    }
++
++    private BlockState func_235544_a_(IBlockReader p_235544_1_, BlockState p_235544_2_, BlockPos p_235544_3_) {
++        boolean flag = func_235556_n_(p_235544_2_);
++        p_235544_2_ = this.func_235551_b_(p_235544_1_, this.func_176223_P().func_206870_a(field_176351_O, p_235544_2_.func_177229_b(field_176351_O)), p_235544_3_);
++        if (flag && func_235556_n_(p_235544_2_)) {
++            return p_235544_2_;
++        } else {
++            boolean flag1 = p_235544_2_.func_177229_b(field_176348_a).func_235921_b_();
++            boolean flag2 = p_235544_2_.func_177229_b(field_176349_M).func_235921_b_();
++            boolean flag3 = p_235544_2_.func_177229_b(field_176347_b).func_235921_b_();
++            boolean flag4 = p_235544_2_.func_177229_b(field_176350_N).func_235921_b_();
++            boolean flag5 = !flag1 && !flag2;
++            boolean flag6 = !flag3 && !flag4;
++            if (!flag4 && flag5) {
++                p_235544_2_ = p_235544_2_.func_206870_a(field_176350_N, RedstoneSide.SIDE);
++            }
++
++            if (!flag3 && flag5) {
++                p_235544_2_ = p_235544_2_.func_206870_a(field_176347_b, RedstoneSide.SIDE);
++            }
++
++            if (!flag1 && flag6) {
++                p_235544_2_ = p_235544_2_.func_206870_a(field_176348_a, RedstoneSide.SIDE);
++            }
++
++            if (!flag2 && flag6) {
++                p_235544_2_ = p_235544_2_.func_206870_a(field_176349_M, RedstoneSide.SIDE);
++            }
++
++            return p_235544_2_;
++        }
++    }
++
++    private BlockState func_235551_b_(IBlockReader p_235551_1_, BlockState p_235551_2_, BlockPos p_235551_3_) {
++        boolean flag = !p_235551_1_.func_180495_p(p_235551_3_.func_177984_a()).func_215686_e(p_235551_1_, p_235551_3_);
++
++        for (Direction direction : Direction.Plane.HORIZONTAL) {
++            if (!p_235551_2_.func_177229_b(field_196498_A.get(direction)).func_235921_b_()) {
++                RedstoneSide redstoneside = this.func_235545_a_(p_235551_1_, p_235551_3_, direction, flag);
++                p_235551_2_ = p_235551_2_.func_206870_a(field_196498_A.get(direction), redstoneside);
++            }
++        }
++
++        return p_235551_2_;
++    }
++
++    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
++        if (p_196271_2_ == Direction.DOWN) {
++            return p_196271_1_;
++        } else if (p_196271_2_ == Direction.UP) {
++            return this.func_235544_a_(p_196271_4_, p_196271_1_, p_196271_5_);
++        } else {
++            RedstoneSide redstoneside = this.func_208074_a(p_196271_4_, p_196271_5_, p_196271_2_);
++            return redstoneside.func_235921_b_() == p_196271_1_.func_177229_b(field_196498_A.get(p_196271_2_)).func_235921_b_() && !func_235555_m_(p_196271_1_) ? p_196271_1_.func_206870_a(field_196498_A.get(p_196271_2_), redstoneside) : this.func_235544_a_(p_196271_4_, this.field_235543_o_.func_206870_a(field_176351_O, p_196271_1_.func_177229_b(field_176351_O)).func_206870_a(field_196498_A.get(p_196271_2_), redstoneside), p_196271_5_);
++        }
++    }
++
++    private static boolean func_235555_m_(BlockState p_235555_0_) {
++        return p_235555_0_.func_177229_b(field_176348_a).func_235921_b_() && p_235555_0_.func_177229_b(field_176349_M).func_235921_b_() && p_235555_0_.func_177229_b(field_176347_b).func_235921_b_() && p_235555_0_.func_177229_b(field_176350_N).func_235921_b_();
++    }
++
++    private static boolean func_235556_n_(BlockState p_235556_0_) {
++        return !p_235556_0_.func_177229_b(field_176348_a).func_235921_b_() && !p_235556_0_.func_177229_b(field_176349_M).func_235921_b_() && !p_235556_0_.func_177229_b(field_176347_b).func_235921_b_() && !p_235556_0_.func_177229_b(field_176350_N).func_235921_b_();
++    }
++
++    public void func_196248_b(BlockState p_196248_1_, IWorld p_196248_2_, BlockPos p_196248_3_, int p_196248_4_, int p_196248_5_) {
++        BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
++
++        for (Direction direction : Direction.Plane.HORIZONTAL) {
++            RedstoneSide redstoneside = p_196248_1_.func_177229_b(field_196498_A.get(direction));
++            if (redstoneside != RedstoneSide.NONE && !p_196248_2_.func_180495_p(blockpos$mutable.func_239622_a_(p_196248_3_, direction)).func_203425_a(this)) {
++                blockpos$mutable.func_189536_c(Direction.DOWN);
++                BlockState blockstate = p_196248_2_.func_180495_p(blockpos$mutable);
++                if (!blockstate.func_203425_a(Blocks.field_190976_dk)) {
++                    BlockPos blockpos = blockpos$mutable.func_177972_a(direction.func_176734_d());
++                    BlockState blockstate1 = blockstate.func_196956_a(direction.func_176734_d(), p_196248_2_.func_180495_p(blockpos), p_196248_2_, blockpos$mutable, blockpos);
++                    func_241468_a_(blockstate, blockstate1, p_196248_2_, blockpos$mutable, p_196248_4_, p_196248_5_);
++                }
++
++                blockpos$mutable.func_239622_a_(p_196248_3_, direction).func_189536_c(Direction.UP);
++                BlockState blockstate3 = p_196248_2_.func_180495_p(blockpos$mutable);
++                if (!blockstate3.func_203425_a(Blocks.field_190976_dk)) {
++                    BlockPos blockpos1 = blockpos$mutable.func_177972_a(direction.func_176734_d());
++                    BlockState blockstate2 = blockstate3.func_196956_a(direction.func_176734_d(), p_196248_2_.func_180495_p(blockpos1), p_196248_2_, blockpos$mutable, blockpos1);
++                    func_241468_a_(blockstate3, blockstate2, p_196248_2_, blockpos$mutable, p_196248_4_, p_196248_5_);
++                }
++            }
++        }
++
++    }
++
++    private RedstoneSide func_208074_a(IBlockReader p_208074_1_, BlockPos p_208074_2_, Direction p_208074_3_) {
++        return this.func_235545_a_(p_208074_1_, p_208074_2_, p_208074_3_, !p_208074_1_.func_180495_p(p_208074_2_.func_177984_a()).func_215686_e(p_208074_1_, p_208074_2_));
++    }
++
++    private RedstoneSide func_235545_a_(IBlockReader p_235545_1_, BlockPos p_235545_2_, Direction p_235545_3_, boolean p_235545_4_) {
++        BlockPos blockpos = p_235545_2_.func_177972_a(p_235545_3_);
++        BlockState blockstate = p_235545_1_.func_180495_p(blockpos);
++        if (p_235545_4_) {
++            boolean flag = this.func_235552_b_(p_235545_1_, blockpos, blockstate);
++            if (flag && canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177984_a()), p_235545_1_, blockpos.func_177984_a(), null)) {
++                if (blockstate.func_224755_d(p_235545_1_, blockpos, p_235545_3_.func_176734_d())) {
++                    return RedstoneSide.UP;
++                }
++
++                return RedstoneSide.SIDE;
++            }
++        }
++
++        return !canConnectTo(blockstate, p_235545_1_, blockpos, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177977_b()), p_235545_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
++    }
++
++    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
++        BlockPos blockpos = p_196260_3_.func_177977_b();
++        BlockState blockstate = p_196260_2_.func_180495_p(blockpos);
++        return this.func_235552_b_(p_196260_2_, blockpos, blockstate);
++    }
++
++    private boolean func_235552_b_(IBlockReader p_235552_1_, BlockPos p_235552_2_, BlockState p_235552_3_) {
++        return p_235552_3_.func_224755_d(p_235552_1_, p_235552_2_, Direction.UP) || p_235552_3_.func_203425_a(Blocks.field_150438_bZ);
++    }
++
++    // Paper start - Optimize redstone
++    // The bulk of the new functionality is found in RedstoneWireTurbo.java
++    RedstoneWireTurbo turbo = new RedstoneWireTurbo(this);
++
++    /*
++     * Modified version of pre-existing updateSurroundingRedstone, which is called from
++     * this.neighborChanged and a few other methods in this class.
++     * Note: Added 'source' argument so as to help determine direction of information flow
++     */
++    private void updateSurroundingRedstone(World worldIn, BlockPos pos, BlockState state, BlockPos source) {
++        if (worldIn.paperConfig.useEigencraftRedstone) {
++            turbo.updateSurroundingRedstone(worldIn, pos, state, source);
++            return;
++        }
++        func_235547_a_(worldIn, pos, state);
++    }
++
++    /*
++     * Slightly modified method to compute redstone wire power Worlds from neighboring blocks.
++     * Modifications cut the number of power World changes by about 45% from vanilla, and this
++     * optimization synergizes well with the breadth-first search implemented in
++     * RedstoneWireTurbo.
++     * Note:  RedstoneWireTurbo contains a faster version of this code.
++     * Note:  Made this public so that RedstoneWireTurbo can access it.
++     */
++    public BlockState calculateCurrentChanges(World worldIn, BlockPos pos1, BlockPos pos2, BlockState state) {
++        BlockState iblockstate = state;
++        int i = state.func_177229_b(field_176351_O);
++        int j = 0;
++        j = this.getPower(j, worldIn.func_180495_p(pos2));
++        this.setCanProvidePower(false);
++        int k = worldIn.isBlockIndirectlyGettingPowered(pos1);
++        this.setCanProvidePower(true);
++
++        if (!worldIn.paperConfig.useEigencraftRedstone) {
++            // This code is totally redundant to if statements just below the loop.
++            if (k > 0 && k > j - 1) {
++                j = k;
++            }
++        }
++
++        int l = 0;
++
++        // The variable 'k' holds the maximum redstone power value of any adjacent blocks.
++        // If 'k' has the highest World of all neighbors, then the power World of this
++        // redstone wire will be set to 'k'.  If 'k' is already 15, then nothing inside the
++        // following loop can affect the power World of the wire.  Therefore, the loop is
++        // skipped if k is already 15.
++        if (!worldIn.paperConfig.useEigencraftRedstone || k < 15) {
++            for (Direction enumfacing : Direction.Plane.HORIZONTAL) {
++                BlockPos blockpos = pos1.func_177972_a(enumfacing);
++                boolean flag = blockpos.func_177958_n() != pos2.func_177958_n() || blockpos.func_177952_p() != pos2.func_177952_p();
++
++                if (flag) {
++                    l = this.getPower(l, worldIn.func_180495_p(blockpos));
++                }
++
++                if (worldIn.func_180495_p(blockpos).func_215686_e(worldIn, blockpos) && !worldIn.func_180495_p(pos1.func_177984_a()).func_215686_e(worldIn, pos1)) {
++                    if (flag && pos1.func_177956_o() >= pos2.func_177956_o()) {
++                        l = this.getPower(l, worldIn.func_180495_p(blockpos.func_177984_a()));
++                    }
++                } else if (!worldIn.func_180495_p(blockpos).func_215686_e(worldIn, blockpos) && flag && pos1.func_177956_o() <= pos2.func_177956_o()) {
++                    l = this.getPower(l, worldIn.func_180495_p(blockpos.func_177977_b()));
++                }
++            }
++        }
++
++        if (!worldIn.paperConfig.useEigencraftRedstone) {
++            // The old code would decrement the wire value only by 1 at a time.
++            if (l > j) {
++                j = l - 1;
++            } else if (j > 0) {
++                --j;
++            } else {
++                j = 0;
++            }
++
++            if (k > j - 1) {
++                j = k;
++            }
++        } else {
++            // The new code sets this RedstoneWire block's power World to the highest neighbor
++            // minus 1.  This usually results in wire power Worlds dropping by 2 at a time.
++            // This optimization alone has no impact on update order, only the number of updates.
++            j = l - 1;
++
++            // If 'l' turns out to be zero, then j will be set to -1, but then since 'k' will
++            // always be in the range of 0 to 15, the following if will correct that.
++            if (k > j) j = k;
++        }
++
++        if (i != j) {
++            state = state.func_206870_a(field_176351_O, j);
++
++            if (worldIn.func_180495_p(pos1) == iblockstate) {
++                worldIn.func_180501_a(pos1, state, 2);
++            }
++
++            // 1.16(.1?) dropped the need for blocks needing updates.
++            // Whether this is necessary after all is to be seen.
++            //            if (!worldIn.paperConfig.useEigencraftRedstone) {
++            //                // The new search algorithm keeps track of blocks needing updates in its own data structures,
++            //                // so only add anything to blocksNeedingUpdate if we're using the vanilla update algorithm.
++            //                this.getBlocksNeedingUpdate().add(pos1);
++            //
++            //                for (EnumDirection enumfacing1 : EnumDirection.values()) {
++            //                    this.getBlocksNeedingUpdate().add(pos1.shift(enumfacing1));
++            //                }
++            //            }
++        }
++
++        return state;
++    }
++    // Paper end
++
++    private void func_235547_a_(World p_235547_1_, BlockPos p_235547_2_, BlockState p_235547_3_) {
++        int i = this.func_235546_a_(p_235547_1_, p_235547_2_);
++        // CraftBukkit start
++        int oldPower = p_235547_3_.func_177229_b(field_176351_O).intValue();
++        if (oldPower != i) {
++            BlockRedstoneEvent event = new BlockRedstoneEvent(p_235547_1_.getWorld().getBlockAt(p_235547_2_.func_177958_n(), p_235547_2_.func_177956_o(), p_235547_2_.func_177952_p()), oldPower, i);
++            p_235547_1_.getCBServer().getPluginManager().callEvent(event);
++            i = event.getNewCurrent();
++            // CraftBukkit end
++        }
++        if (oldPower != i) {
++            if (p_235547_1_.func_180495_p(p_235547_2_) == p_235547_3_) {
++                p_235547_1_.func_180501_a(p_235547_2_, p_235547_3_.func_206870_a(field_176351_O, Integer.valueOf(i)), 2);
++            }
++
++            Set<BlockPos> set = Sets.newHashSet();
++            set.add(p_235547_2_);
++
++            for (Direction direction : Direction.values()) {
++                set.add(p_235547_2_.func_177972_a(direction));
++            }
++
++            for (BlockPos blockpos : set) {
++                p_235547_1_.func_195593_d(blockpos, this);
++            }
++        }
++
++    }
++
++    private int func_235546_a_(World p_235546_1_, BlockPos p_235546_2_) {
++        this.field_150181_a = false;
++        int i = p_235546_1_.func_175687_A(p_235546_2_);
++        this.field_150181_a = true;
++        int j = 0;
++        if (i < 15) {
++            for (Direction direction : Direction.Plane.HORIZONTAL) {
++                BlockPos blockpos = p_235546_2_.func_177972_a(direction);
++                BlockState blockstate = p_235546_1_.func_180495_p(blockpos);
++                j = Math.max(j, this.func_235557_o_(blockstate));
++                BlockPos blockpos1 = p_235546_2_.func_177984_a();
++                if (blockstate.func_215686_e(p_235546_1_, blockpos) && !p_235546_1_.func_180495_p(blockpos1).func_215686_e(p_235546_1_, blockpos1)) {
++                    j = Math.max(j, this.func_235557_o_(p_235546_1_.func_180495_p(blockpos.func_177984_a())));
++                } else if (!blockstate.func_215686_e(p_235546_1_, blockpos)) {
++                    j = Math.max(j, this.func_235557_o_(p_235546_1_.func_180495_p(blockpos.func_177977_b())));
++                }
++            }
++        }
++
++        return Math.max(i, j - 1);
++    }
++
++    private int getPower(int min, BlockState iblockdata) {
++        return Math.max(min, getPower(iblockdata));
++    } // Paper - Optimize redstone
++
++    private int getPower(BlockState iblockdata) {
++        return this.func_235557_o_(iblockdata);
++    } // Paper - OBFHELPER
++
++    private int func_235557_o_(BlockState p_235557_1_) {
++        return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
++    }
++
++    private void func_176344_d(World p_176344_1_, BlockPos p_176344_2_) {
++        if (p_176344_1_.func_180495_p(p_176344_2_).func_203425_a(this)) {
++            p_176344_1_.func_195593_d(p_176344_2_, this);
++
++            for (Direction direction : Direction.values()) {
++                p_176344_1_.func_195593_d(p_176344_2_.func_177972_a(direction), this);
++            }
++
++        }
++    }
++
++    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
++        if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c()) && !p_220082_2_.field_72995_K) {
++            //this.updatePowerStrength(p_220082_2_, p_220082_3_, p_220082_1_);
++            this.updateSurroundingRedstone(p_220082_2_, p_220082_3_, p_220082_4_, null); // Paper - Optimize redstone
++
++            for (Direction direction : Direction.Plane.VERTICAL) {
++                p_220082_2_.func_195593_d(p_220082_3_.func_177972_a(direction), this);
++            }
++
++            this.func_235553_d_(p_220082_2_, p_220082_3_);
++        }
++    }
++
++    public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
++        if (!p_196243_5_ && !p_196243_1_.func_203425_a(p_196243_4_.func_177230_c())) {
++            super.func_196243_a(p_196243_1_, p_196243_2_, p_196243_3_, p_196243_4_, p_196243_5_);
++            if (!p_196243_2_.field_72995_K) {
++                for (Direction direction : Direction.values()) {
++                    p_196243_2_.func_195593_d(p_196243_3_.func_177972_a(direction), this);
++                }
++
++                //this.updatePowerStrength(p_196243_2_, p_196243_3_, p_196243_1_);
++                this.updateSurroundingRedstone(p_196243_2_, p_196243_3_, p_196243_1_, null); // Paper - Optimize redstone
++                this.func_235553_d_(p_196243_2_, p_196243_3_);
++            }
++        }
++    }
++
++    private void func_235553_d_(World p_235553_1_, BlockPos p_235553_2_) {
++        for (Direction direction : Direction.Plane.HORIZONTAL) {
++            this.func_176344_d(p_235553_1_, p_235553_2_.func_177972_a(direction));
++        }
++
++        for (Direction direction1 : Direction.Plane.HORIZONTAL) {
++            BlockPos blockpos = p_235553_2_.func_177972_a(direction1);
++            if (p_235553_1_.func_180495_p(blockpos).func_215686_e(p_235553_1_, blockpos)) {
++                this.func_176344_d(p_235553_1_, blockpos.func_177984_a());
++            } else {
++                this.func_176344_d(p_235553_1_, blockpos.func_177977_b());
++            }
++        }
++
++    }
++
++    public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
++        if (!p_220069_2_.field_72995_K) {
++            if (p_220069_1_.func_196955_c(p_220069_2_, p_220069_3_)) {
++                //this.updatePowerStrength(p_220069_2_, p_220069_3_, p_220069_1_);
++                this.updateSurroundingRedstone(p_220069_2_, p_220069_3_, p_220069_1_, p_220069_5_); // Paper - Optimize redstone
++            } else {
++                func_220075_c(p_220069_1_, p_220069_2_, p_220069_3_);
++                p_220069_2_.func_217377_a(p_220069_3_, false);
++            }
++
++        }
++    }
++
++    public int func_176211_b(BlockState p_176211_1_, IBlockReader p_176211_2_, BlockPos p_176211_3_, Direction p_176211_4_) {
++        return !this.field_150181_a ? 0 : p_176211_1_.func_185911_a(p_176211_2_, p_176211_3_, p_176211_4_);
++    }
++
++    public int func_180656_a(BlockState p_180656_1_, IBlockReader p_180656_2_, BlockPos p_180656_3_, Direction p_180656_4_) {
++        if (this.field_150181_a && p_180656_4_ != Direction.DOWN) {
++            int i = p_180656_1_.func_177229_b(field_176351_O);
++            if (i == 0) {
++                return 0;
++            } else {
++                return p_180656_4_ != Direction.UP && !this.func_235544_a_(p_180656_2_, p_180656_1_, p_180656_3_).func_177229_b(field_196498_A.get(p_180656_4_.func_176734_d())).func_235921_b_() ? 0 : i;
++            }
++        } else {
+             return 0;
+-         } else {
+-            return p_180656_4_ != Direction.UP && !this.func_235544_a_(p_180656_2_, p_180656_1_, p_180656_3_).func_177229_b(field_196498_A.get(p_180656_4_.func_176734_d())).func_235921_b_() ? 0 : i;
+-         }
+-      } else {
+-         return 0;
+-      }
+-   }
+-
 -   protected static boolean func_176346_d(BlockState p_176346_0_) {
 -      return func_176343_a(p_176346_0_, (Direction)null);
 -   }
 -
 -   protected static boolean func_176343_a(BlockState p_176343_0_, @Nullable Direction p_176343_1_) {
-+   protected static boolean canConnectTo(BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
-       if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
-          return true;
-       } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
-@@ -348,7 +_,7 @@
-       } else if (p_176343_0_.func_203425_a(Blocks.field_190976_dk)) {
-          return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
-       } else {
+-      if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
+-         return true;
+-      } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
+-         Direction direction = p_176343_0_.func_177229_b(RepeaterBlock.field_185512_D);
+-         return direction == p_176343_1_ || direction.func_176734_d() == p_176343_1_;
+-      } else if (p_176343_0_.func_203425_a(Blocks.field_190976_dk)) {
+-         return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
+-      } else {
 -         return p_176343_0_.func_185897_m() && p_176343_1_ != null;
-+         return p_176343_0_.canConnectRedstone(world, pos, p_176343_1_) && p_176343_1_ != null;
-       }
-    }
- 
-@@ -463,4 +_,7 @@
-       }
- 
-    }
+-      }
+-   }
+-
+-   public boolean func_149744_f(BlockState p_149744_1_) {
+-      return this.field_150181_a;
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public static int func_235550_b_(int p_235550_0_) {
+-      Vector3f vector3f = field_235542_k_[p_235550_0_];
+-      return MathHelper.func_180183_b(vector3f.func_195899_a(), vector3f.func_195900_b(), vector3f.func_195902_c());
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   private void func_235549_a_(World p_235549_1_, Random p_235549_2_, BlockPos p_235549_3_, Vector3f p_235549_4_, Direction p_235549_5_, Direction p_235549_6_, float p_235549_7_, float p_235549_8_) {
+-      float f = p_235549_8_ - p_235549_7_;
+-      if (!(p_235549_2_.nextFloat() >= 0.2F * f)) {
+-         float f1 = 0.4375F;
+-         float f2 = p_235549_7_ + f * p_235549_2_.nextFloat();
+-         double d0 = 0.5D + (double)(0.4375F * (float)p_235549_5_.func_82601_c()) + (double)(f2 * (float)p_235549_6_.func_82601_c());
+-         double d1 = 0.5D + (double)(0.4375F * (float)p_235549_5_.func_96559_d()) + (double)(f2 * (float)p_235549_6_.func_96559_d());
+-         double d2 = 0.5D + (double)(0.4375F * (float)p_235549_5_.func_82599_e()) + (double)(f2 * (float)p_235549_6_.func_82599_e());
+-         p_235549_1_.func_195594_a(new RedstoneParticleData(p_235549_4_.func_195899_a(), p_235549_4_.func_195900_b(), p_235549_4_.func_195902_c(), 1.0F), (double)p_235549_3_.func_177958_n() + d0, (double)p_235549_3_.func_177956_o() + d1, (double)p_235549_3_.func_177952_p() + d2, 0.0D, 0.0D, 0.0D);
+-      }
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public void func_180655_c(BlockState p_180655_1_, World p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_) {
+-      int i = p_180655_1_.func_177229_b(field_176351_O);
+-      if (i != 0) {
+-         for(Direction direction : Direction.Plane.HORIZONTAL) {
+-            RedstoneSide redstoneside = p_180655_1_.func_177229_b(field_196498_A.get(direction));
+-            switch(redstoneside) {
+-            case UP:
+-               this.func_235549_a_(p_180655_2_, p_180655_4_, p_180655_3_, field_235542_k_[i], direction, Direction.UP, -0.5F, 0.5F);
+-            case SIDE:
+-               this.func_235549_a_(p_180655_2_, p_180655_4_, p_180655_3_, field_235542_k_[i], Direction.DOWN, direction, 0.0F, 0.5F);
+-               break;
+-            case NONE:
+-            default:
+-               this.func_235549_a_(p_180655_2_, p_180655_4_, p_180655_3_, field_235542_k_[i], Direction.DOWN, direction, 0.0F, 0.3F);
+-            }
+-         }
+-
+-      }
+-   }
+-
+-   public BlockState func_185499_a(BlockState p_185499_1_, Rotation p_185499_2_) {
+-      switch(p_185499_2_) {
+-      case CLOCKWISE_180:
+-         return p_185499_1_.func_206870_a(field_176348_a, p_185499_1_.func_177229_b(field_176349_M)).func_206870_a(field_176347_b, p_185499_1_.func_177229_b(field_176350_N)).func_206870_a(field_176349_M, p_185499_1_.func_177229_b(field_176348_a)).func_206870_a(field_176350_N, p_185499_1_.func_177229_b(field_176347_b));
+-      case COUNTERCLOCKWISE_90:
+-         return p_185499_1_.func_206870_a(field_176348_a, p_185499_1_.func_177229_b(field_176347_b)).func_206870_a(field_176347_b, p_185499_1_.func_177229_b(field_176349_M)).func_206870_a(field_176349_M, p_185499_1_.func_177229_b(field_176350_N)).func_206870_a(field_176350_N, p_185499_1_.func_177229_b(field_176348_a));
+-      case CLOCKWISE_90:
+-         return p_185499_1_.func_206870_a(field_176348_a, p_185499_1_.func_177229_b(field_176350_N)).func_206870_a(field_176347_b, p_185499_1_.func_177229_b(field_176348_a)).func_206870_a(field_176349_M, p_185499_1_.func_177229_b(field_176347_b)).func_206870_a(field_176350_N, p_185499_1_.func_177229_b(field_176349_M));
+-      default:
+-         return p_185499_1_;
+-      }
+-   }
+-
+-   public BlockState func_185471_a(BlockState p_185471_1_, Mirror p_185471_2_) {
+-      switch(p_185471_2_) {
+-      case LEFT_RIGHT:
+-         return p_185471_1_.func_206870_a(field_176348_a, p_185471_1_.func_177229_b(field_176349_M)).func_206870_a(field_176349_M, p_185471_1_.func_177229_b(field_176348_a));
+-      case FRONT_BACK:
+-         return p_185471_1_.func_206870_a(field_176347_b, p_185471_1_.func_177229_b(field_176350_N)).func_206870_a(field_176350_N, p_185471_1_.func_177229_b(field_176347_b));
+-      default:
+-         return super.func_185471_a(p_185471_1_, p_185471_2_);
+-      }
+-   }
+-
+-   protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+-      p_206840_1_.func_206894_a(field_176348_a, field_176347_b, field_176349_M, field_176350_N, field_176351_O);
+-   }
+-
+-   public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+-      if (!p_225533_4_.field_71075_bZ.field_75099_e) {
+-         return ActionResultType.PASS;
+-      } else {
+-         if (func_235555_m_(p_225533_1_) || func_235556_n_(p_225533_1_)) {
+-            BlockState blockstate = func_235555_m_(p_225533_1_) ? this.func_176223_P() : this.field_235543_o_;
+-            blockstate = blockstate.func_206870_a(field_176351_O, p_225533_1_.func_177229_b(field_176351_O));
+-            blockstate = this.func_235544_a_(p_225533_2_, blockstate, p_225533_3_);
+-            if (blockstate != p_225533_1_) {
+-               p_225533_2_.func_180501_a(p_225533_3_, blockstate, 3);
+-               this.func_235548_a_(p_225533_2_, p_225533_3_, p_225533_1_, blockstate);
+-               return ActionResultType.SUCCESS;
+-            }
+-         }
+-
+-         return ActionResultType.PASS;
+-      }
+-   }
+-
+-   private void func_235548_a_(World p_235548_1_, BlockPos p_235548_2_, BlockState p_235548_3_, BlockState p_235548_4_) {
+-      for(Direction direction : Direction.Plane.HORIZONTAL) {
+-         BlockPos blockpos = p_235548_2_.func_177972_a(direction);
+-         if (p_235548_3_.func_177229_b(field_196498_A.get(direction)).func_235921_b_() != p_235548_4_.func_177229_b(field_196498_A.get(direction)).func_235921_b_() && p_235548_1_.func_180495_p(blockpos).func_215686_e(p_235548_1_, blockpos)) {
+-            p_235548_1_.func_175695_a(blockpos, p_235548_4_.func_177230_c(), direction.func_176734_d());
+-         }
+-      }
+-
+-   }
+-
+-   static {
+-      for(int i = 0; i <= 15; ++i) {
+-         float f = (float)i / 15.0F;
+-         float f1 = f * 0.6F + (f > 0.0F ? 0.4F : 0.3F);
+-         float f2 = MathHelper.func_76131_a(f * f * 0.7F - 0.5F, 0.0F, 1.0F);
+-         float f3 = MathHelper.func_76131_a(f * f * 0.6F - 0.7F, 0.0F, 1.0F);
+-         field_235542_k_[i] = new Vector3f(f1, f2, f3);
+-      }
+-
+-   }
++        }
++    }
 +
-+   public final boolean canProvidePower() { return this.field_150181_a; } // Paper - OBFHELPER
-+   public final void setCanProvidePower(boolean shouldSignal) { this.field_150181_a = shouldSignal; } // Paper - OBFHELPER
++    protected static boolean canConnectTo(BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
++        if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
++            return true;
++        } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
++            Direction direction = p_176343_0_.func_177229_b(RepeaterBlock.field_185512_D);
++            return direction == p_176343_1_ || direction.func_176734_d() == p_176343_1_;
++        } else if (p_176343_0_.func_203425_a(Blocks.field_190976_dk)) {
++            return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
++        } else {
++            return p_176343_0_.canConnectRedstone(world, pos, p_176343_1_) && p_176343_1_ != null;
++        }
++    }
++
++    public boolean func_149744_f(BlockState p_149744_1_) {
++        return this.field_150181_a;
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public static int func_235550_b_(int p_235550_0_) {
++        Vector3f vector3f = field_235542_k_[p_235550_0_];
++        return MathHelper.func_180183_b(vector3f.func_195899_a(), vector3f.func_195900_b(), vector3f.func_195902_c());
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    private void func_235549_a_(World p_235549_1_, Random p_235549_2_, BlockPos p_235549_3_, Vector3f p_235549_4_, Direction p_235549_5_, Direction p_235549_6_, float p_235549_7_, float p_235549_8_) {
++        float f = p_235549_8_ - p_235549_7_;
++        if (!(p_235549_2_.nextFloat() >= 0.2F * f)) {
++            float f1 = 0.4375F;
++            float f2 = p_235549_7_ + f * p_235549_2_.nextFloat();
++            double d0 = 0.5D + (double) (0.4375F * (float) p_235549_5_.func_82601_c()) + (double) (f2 * (float) p_235549_6_.func_82601_c());
++            double d1 = 0.5D + (double) (0.4375F * (float) p_235549_5_.func_96559_d()) + (double) (f2 * (float) p_235549_6_.func_96559_d());
++            double d2 = 0.5D + (double) (0.4375F * (float) p_235549_5_.func_82599_e()) + (double) (f2 * (float) p_235549_6_.func_82599_e());
++            p_235549_1_.func_195594_a(new RedstoneParticleData(p_235549_4_.func_195899_a(), p_235549_4_.func_195900_b(), p_235549_4_.func_195902_c(), 1.0F), (double) p_235549_3_.func_177958_n() + d0, (double) p_235549_3_.func_177956_o() + d1, (double) p_235549_3_.func_177952_p() + d2, 0.0D, 0.0D, 0.0D);
++        }
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public void func_180655_c(BlockState p_180655_1_, World p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_) {
++        int i = p_180655_1_.func_177229_b(field_176351_O);
++        if (i != 0) {
++            for (Direction direction : Direction.Plane.HORIZONTAL) {
++                RedstoneSide redstoneside = p_180655_1_.func_177229_b(field_196498_A.get(direction));
++                switch (redstoneside) {
++                    case UP:
++                        this.func_235549_a_(p_180655_2_, p_180655_4_, p_180655_3_, field_235542_k_[i], direction, Direction.UP, -0.5F, 0.5F);
++                    case SIDE:
++                        this.func_235549_a_(p_180655_2_, p_180655_4_, p_180655_3_, field_235542_k_[i], Direction.DOWN, direction, 0.0F, 0.5F);
++                        break;
++                    case NONE:
++                    default:
++                        this.func_235549_a_(p_180655_2_, p_180655_4_, p_180655_3_, field_235542_k_[i], Direction.DOWN, direction, 0.0F, 0.3F);
++                }
++            }
++
++        }
++    }
++
++    public BlockState func_185499_a(BlockState p_185499_1_, Rotation p_185499_2_) {
++        switch (p_185499_2_) {
++            case CLOCKWISE_180:
++                return p_185499_1_.func_206870_a(field_176348_a, p_185499_1_.func_177229_b(field_176349_M)).func_206870_a(field_176347_b, p_185499_1_.func_177229_b(field_176350_N)).func_206870_a(field_176349_M, p_185499_1_.func_177229_b(field_176348_a)).func_206870_a(field_176350_N, p_185499_1_.func_177229_b(field_176347_b));
++            case COUNTERCLOCKWISE_90:
++                return p_185499_1_.func_206870_a(field_176348_a, p_185499_1_.func_177229_b(field_176347_b)).func_206870_a(field_176347_b, p_185499_1_.func_177229_b(field_176349_M)).func_206870_a(field_176349_M, p_185499_1_.func_177229_b(field_176350_N)).func_206870_a(field_176350_N, p_185499_1_.func_177229_b(field_176348_a));
++            case CLOCKWISE_90:
++                return p_185499_1_.func_206870_a(field_176348_a, p_185499_1_.func_177229_b(field_176350_N)).func_206870_a(field_176347_b, p_185499_1_.func_177229_b(field_176348_a)).func_206870_a(field_176349_M, p_185499_1_.func_177229_b(field_176347_b)).func_206870_a(field_176350_N, p_185499_1_.func_177229_b(field_176349_M));
++            default:
++                return p_185499_1_;
++        }
++    }
++
++    public BlockState func_185471_a(BlockState p_185471_1_, Mirror p_185471_2_) {
++        switch (p_185471_2_) {
++            case LEFT_RIGHT:
++                return p_185471_1_.func_206870_a(field_176348_a, p_185471_1_.func_177229_b(field_176349_M)).func_206870_a(field_176349_M, p_185471_1_.func_177229_b(field_176348_a));
++            case FRONT_BACK:
++                return p_185471_1_.func_206870_a(field_176347_b, p_185471_1_.func_177229_b(field_176350_N)).func_206870_a(field_176350_N, p_185471_1_.func_177229_b(field_176347_b));
++            default:
++                return super.func_185471_a(p_185471_1_, p_185471_2_);
++        }
++    }
++
++    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
++        p_206840_1_.func_206894_a(field_176348_a, field_176347_b, field_176349_M, field_176350_N, field_176351_O);
++    }
++
++    public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
++        if (!p_225533_4_.field_71075_bZ.field_75099_e) {
++            return ActionResultType.PASS;
++        } else {
++            if (func_235555_m_(p_225533_1_) || func_235556_n_(p_225533_1_)) {
++                BlockState blockstate = func_235555_m_(p_225533_1_) ? this.func_176223_P() : this.field_235543_o_;
++                blockstate = blockstate.func_206870_a(field_176351_O, p_225533_1_.func_177229_b(field_176351_O));
++                blockstate = this.func_235544_a_(p_225533_2_, blockstate, p_225533_3_);
++                if (blockstate != p_225533_1_) {
++                    p_225533_2_.func_180501_a(p_225533_3_, blockstate, 3);
++                    this.func_235548_a_(p_225533_2_, p_225533_3_, p_225533_1_, blockstate);
++                    return ActionResultType.SUCCESS;
++                }
++            }
++
++            return ActionResultType.PASS;
++        }
++    }
++
++    private void func_235548_a_(World p_235548_1_, BlockPos p_235548_2_, BlockState p_235548_3_, BlockState p_235548_4_) {
++        for (Direction direction : Direction.Plane.HORIZONTAL) {
++            BlockPos blockpos = p_235548_2_.func_177972_a(direction);
++            if (p_235548_3_.func_177229_b(field_196498_A.get(direction)).func_235921_b_() != p_235548_4_.func_177229_b(field_196498_A.get(direction)).func_235921_b_() && p_235548_1_.func_180495_p(blockpos).func_215686_e(p_235548_1_, blockpos)) {
++                p_235548_1_.func_175695_a(blockpos, p_235548_4_.func_177230_c(), direction.func_176734_d());
++            }
++        }
++
++    }
++
++    static {
++        for (int i = 0; i <= 15; ++i) {
++            float f = (float) i / 15.0F;
++            float f1 = f * 0.6F + (f > 0.0F ? 0.4F : 0.3F);
++            float f2 = MathHelper.func_76131_a(f * f * 0.7F - 0.5F, 0.0F, 1.0F);
++            float f3 = MathHelper.func_76131_a(f * f * 0.6F - 0.7F, 0.0F, 1.0F);
++            field_235542_k_[i] = new Vector3f(f1, f2, f3);
++        }
++
++    }
++
++    public final boolean canProvidePower() {
++        return this.field_150181_a;
++    } // Paper - OBFHELPER
++
++    public final void setCanProvidePower(boolean shouldSignal) {
++        this.field_150181_a = shouldSignal;
++    } // Paper - OBFHELPER
  }
