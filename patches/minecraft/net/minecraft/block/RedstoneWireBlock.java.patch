@@ -677,7 +677,7 @@
 +    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
 +        if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c()) && !p_220082_2_.field_72995_K) {
 +            //this.updatePowerStrength(p_220082_2_, p_220082_3_, p_220082_1_);
-+            this.updateSurroundingRedstone(p_220082_2_, p_220082_3_, p_220082_4_, null); // Paper - Optimize redstone
++            this.updateSurroundingRedstone(p_220082_2_, p_220082_3_, p_220082_1_, null); // Paper - Optimize redstone
 +
 +            for (Direction direction : Direction.Plane.VERTICAL) {
 +                p_220082_2_.func_195593_d(p_220082_3_.func_177972_a(direction), this);
