@@ -308,7 +308,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Player being ticked");
-@@ -469,15 +_,54 @@
+@@ -469,12 +_,14 @@
     }
  
     private void func_184849_a(ScoreCriteria p_184849_1_, int p_184849_2_) {
@@ -320,72 +320,17 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
-+      // CraftBukkit start - fire PlayerDeathEvent //Mohist - Better handler inventory of player
-+      if (this.field_70729_aU || net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) {
-+         return;
-+      }
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
        boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
--      if (flag) {
--         ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
-+      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.field_71071_by.func_70302_i_());
-+      boolean keepInventory = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223600_c) || this.func_175149_v();
-+      if (!keepInventory) {
-+         for (ItemStack item : this.field_71071_by.getContents()) {
-+            if (!item.func_190926_b() && !EnchantmentHelper.func_190939_c(item)) {
-+               loot.add(CraftItemStack.asCraftMirror(item));
-+            }
-+         }
-+      }
-+
-+      // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
-+      loot.addAll(this.drops);
-+      ArrayList<org.bukkit.inventory.ItemStack> dropsBackup = this.drops;
-+      this.drops = new ArrayList<>(); // SPIGOT-5188: make sure to clear
-+      // MOHIST-InkerBot: Maybe needn't backup drops? Idk
-+      // MOHIST-InkerBot: Any further issue, try remove drops backup.
-+
-+      ITextComponent defaultMessage = this.func_110142_aN().func_151521_b();
-+      String deathmessage = defaultMessage.getString();
-+      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
-+      // Mohist start - Ensure that loot&xp are saved through death
-+      this.mohKeepInventory = event.getKeepInventory();
-+      this.mohKeepLevel = event.getKeepLevel();
-+      // Mohist end
-+      // SPIGOT-943 - only call if they have an inventory open
-+      if (this.field_71070_bA != this.field_71069_bz) {
-+         this.func_71128_l();
-+      }
-+      String deathMessage = event.getDeathMessage();
-+      if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
-+         ITextComponent itextcomponent;
-+         if (deathMessage.equals(deathmessage)) {
-+            itextcomponent = this.func_110142_aN().func_151521_b();
-+         } else {
-+            itextcomponent = org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromStringOrNull(deathMessage);
-+         }
-          this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent), (p_212356_2_) -> {
-             if (!p_212356_2_.isSuccess()) {
-                int i = 256;
-@@ -509,11 +_,20 @@
-          this.func_241157_eT_();
-       }
- 
--      if (!this.func_175149_v()) {
-+      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
-+      if (!event.getKeepInventory()) {
-+         this.field_71071_by.func_174888_l();
-+         drops = dropsBackup;
+       if (flag) {
+          ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
+@@ -513,7 +_,8 @@
           this.func_213345_d(p_70645_1_);
        }
  
 -      this.func_96123_co().func_197893_a(ScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
-+          // this.getWorldScoreboard().forAllObjectives(ScoreCriteria.DEATH_COUNT, this.getScoreboardName(), Score::incrementScore);
-+      this.func_175399_e(this); // Remove spectated target
-+      // CraftBukkit end
-+
 +      // CraftBukkit - Get our scores instead
 +      this.field_70170_p.getCBServer().getScoreboardManager().getScoreboardScores(ScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
-+
        LivingEntity livingentity = this.func_94060_bK();
        if (livingentity != null) {
           this.func_71029_a(Stats.field_199091_i.func_199076_b(livingentity.func_200600_R()));

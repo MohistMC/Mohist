@@ -56,32 +56,28 @@
     public void func_213323_x_() {
        double d0 = this.func_226277_ct_();
        double d1 = this.func_226278_cu_();
-@@ -131,14 +_,20 @@
+@@ -131,13 +_,19 @@
     }
  
     public void func_184201_a(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_) {
--      switch(p_184201_1_.func_188453_a()) {
 +      // CraftBukkit start
 +      this.setItemStackToSlot(p_184201_1_, p_184201_2_, false);
 +   }
 +
-+   public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {
++   public void setItemStackToSlot(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_, boolean silent) {
 +      // CraftBukkit end
-+      switch(slotIn.func_188453_a()) {
+       switch(p_184201_1_.func_188453_a()) {
        case HAND:
 -         this.func_184606_a_(p_184201_2_);
--         this.field_184799_bw.set(p_184201_1_.func_188454_b(), p_184201_2_);
-+         this.playEquipSound(stack, silent); // CraftBukkit
-+         this.field_184799_bw.set(slotIn.func_188454_b(), stack);
++         this.playEquipSound(p_184201_2_, silent); // CraftBukkit
+          this.field_184799_bw.set(p_184201_1_.func_188454_b(), p_184201_2_);
           break;
        case ARMOR:
 -         this.func_184606_a_(p_184201_2_);
--         this.field_184800_bx.set(p_184201_1_.func_188454_b(), p_184201_2_);
-+         this.playEquipSound(stack, silent); // CraftBukkit
-+         this.field_184800_bx.set(slotIn.func_188454_b(), stack);
++         this.playEquipSound(p_184201_2_, silent); // CraftBukkit
+          this.field_184800_bx.set(p_184201_1_.func_188454_b(), p_184201_2_);
        }
  
-    }
 @@ -372,7 +_,23 @@
           return false;
        } else if (itemstack.func_190926_b() && (this.field_175442_bg & 1 << p_226529_2_.func_188452_c() + 16) != 0) {
@@ -180,7 +176,7 @@
     }
  
     private void func_190773_I() {
-@@ -601,7 +_,16 @@
+@@ -601,6 +_,14 @@
        return this.func_175410_n();
     }
  
@@ -193,10 +189,8 @@
 +   // CraftBukkit end
 +
     public void func_174812_G() {
-+      CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
        this.func_70106_y();
     }
- 
 @@ -613,7 +_,7 @@
        return this.func_181026_s() ? PushReaction.IGNORE : super.func_184192_z();
     }
