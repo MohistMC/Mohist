@@ -725,7 +725,7 @@
                 this.field_70170_p.func_217376_c(itementity);
              }
           }
-@@ -1216,36 +_,57 @@
+@@ -1216,12 +_,9 @@
  
     protected void func_213345_d(DamageSource p_213345_1_) {
        Entity entity = p_213345_1_.func_76346_g();
@@ -740,18 +740,10 @@
 +      this.captureDrops(new java.util.ArrayList<>());
  
        boolean flag = this.field_70718_bc > 0;
-+      this.func_213337_cE(); // CraftBukkit - from below
        if (this.func_230282_cS_() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
-          this.func_213354_a(p_213345_1_, flag);
-          this.func_213333_a(p_213345_1_, i, flag);
-       }
-+      // CraftBukkit start - Call death event
-+      CraftEventFactory.callEntityDeathEvent(this, this.drops);
-+      this.drops = new ArrayList<>();
-+      // CraftBukkit end
+@@ -1231,21 +_,40 @@
  
--      this.func_213337_cE();
-+      // this.dropInventory();// CraftBukkit - moved up
+       this.func_213337_cE();
        this.func_226294_cV_();
 +
 +      Collection<ItemEntity> drops = captureDrops(null);
