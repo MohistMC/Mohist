@@ -16,7 +16,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.BlockItemUseContext;
  import net.minecraft.particles.RedstoneParticleData;
-@@ -33,434 +_,573 @@
+@@ -33,434 +_,570 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -676,7 +676,6 @@
 +
 +    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
 +        if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c()) && !p_220082_2_.field_72995_K) {
-+            //this.updatePowerStrength(p_220082_2_, p_220082_3_, p_220082_1_);
 +            this.updateSurroundingRedstone(p_220082_2_, p_220082_3_, p_220082_1_, null); // Paper - Optimize redstone
 +
 +            for (Direction direction : Direction.Plane.VERTICAL) {
@@ -695,7 +694,6 @@
 +                    p_196243_2_.func_195593_d(p_196243_3_.func_177972_a(direction), this);
 +                }
 +
-+                //this.updatePowerStrength(p_196243_2_, p_196243_3_, p_196243_1_);
 +                this.updateSurroundingRedstone(p_196243_2_, p_196243_3_, p_196243_1_, null); // Paper - Optimize redstone
 +                this.func_235553_d_(p_196243_2_, p_196243_3_);
 +            }
@@ -721,7 +719,6 @@
 +    public void func_220069_a(BlockState p_220069_1_, World p_220069_2_, BlockPos p_220069_3_, Block p_220069_4_, BlockPos p_220069_5_, boolean p_220069_6_) {
 +        if (!p_220069_2_.field_72995_K) {
 +            if (p_220069_1_.func_196955_c(p_220069_2_, p_220069_3_)) {
-+                //this.updatePowerStrength(p_220069_2_, p_220069_3_, p_220069_1_);
 +                this.updateSurroundingRedstone(p_220069_2_, p_220069_3_, p_220069_1_, p_220069_5_); // Paper - Optimize redstone
 +            } else {
 +                func_220075_c(p_220069_1_, p_220069_2_, p_220069_3_);
