@@ -733,7 +733,7 @@ public class CraftEventFactory {
 
     public static EntityDeathEvent callEntityDeathEvent(LivingEntity victim, List<org.bukkit.inventory.ItemStack> drops) {
         CraftLivingEntity entity = (CraftLivingEntity) victim.getBukkitEntity();
-        EntityDeathEvent event = new EntityDeathEvent(entity, drops, victim.getExpReward());
+        EntityDeathEvent event = new EntityDeathEvent(entity, drops, victim.expToDrop);
         CraftWorld world = (CraftWorld) entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
 
@@ -746,13 +746,14 @@ public class CraftEventFactory {
             if (stack instanceof CraftItemStack)
                 stack.setAmount(0); // Paper - destroy this item - if this ever leaks due to game bugs, ensure it doesn't dupe, but don't nuke bukkit stacks of manually added items
         }
+        victim.dropExperience(); // Mohist - move to here
 
         return event;
     }
 
     public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayerEntity victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage, boolean keepInventory) {
         CraftPlayer entity = victim.getBukkitEntity();
-        PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.getExpReward(), 0, deathMessage);
+        PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.expToDrop, 0, deathMessage);
         event.setKeepInventory(keepInventory);
         org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);

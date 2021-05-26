@@ -661,38 +661,13 @@
     @Nullable
     public ItemEntity func_70099_a(ItemStack p_70099_1_, float p_70099_2_) {
        if (p_70099_1_.func_190926_b()) {
-@@ -1544,8 +_,36 @@
+@@ -1544,8 +_,11 @@
        } else if (this.field_70170_p.field_72995_K) {
           return null;
        } else {
-+         // Mohist start - Exclude Ice&Fire dragons from drop capture
-+         if (!this.dragonDone) {
-+            try {
-+               this.dragonClass = Class.forName("com.github.alexthe666.iceandfire.entity.EntityDragonBase");
-+            } catch (Exception ex) {}
-+            this.dragonDone = true;
-+         }
-+         // TODO Drop capture mechanics is a DISASTER.
-+         // TODO Reworking the whole concept would really help!
-+         boolean skipBackpacks = p_70099_1_.func_77973_b().getRegistryName().func_110624_b().equals("travelersbackpack"); // Mohist - Fix backpack duping (#1261)
-+         boolean skip = this.dragonClass != null && this.dragonClass.isAssignableFrom(this.getClass());
-+         // Mohist end
-+         // CraftBukkit start - Capture drops for death event
-+         // if (!skipBackpacks && !skip && this instanceof LivingEntity && !((LivingEntity) this).forceDrops && ((LivingEntity) this).getHealth() == 0) {
-+         //    captureDrops.add(p_70099_1_.spawn);
-+         //    ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.asCraftMirror(p_70099_1_));
-+         //    return null;
-+         // }
-+         // CraftBukkit end
++
           ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_);
           itementity.func_174869_p();
-+         // CraftBukkit start
-+         // EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
-+         // Bukkit.getPluginManager().callEvent(event);
-+         // if (event.isCancelled()) {
-+         //    return null;
-+         // }
-+         // CraftBukkit end
 +         if (captureDrops() != null) captureDrops().add(itementity);
 +         else
           this.field_70170_p.func_217376_c(itementity);
