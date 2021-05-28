@@ -581,18 +581,24 @@
          }
      }
  
-@@ -1433,6 +1627,10 @@
+@@ -1433,6 +1627,16 @@
          return this.field_76645_j;
      }
  
 +    public List<Entity>[] getEntitySlices() {
-+        return getEntitySlices();
++        // Mohist start - handle Spigot method in MythicMobs
++        List<Entity>[] e = new List[16];
++        for (int l = 0; l < this.field_76645_j.length; ++l) {
++            e[l] = new org.bukkit.craftbukkit.v1_12_R1.util.UnsafeList<>();
++        }
++        return e;
++        // Mohist end
 +    }
 +
      public boolean func_177419_t()
      {
          return this.field_76646_k;
-@@ -1489,4 +1687,55 @@
+@@ -1489,4 +1693,55 @@
          QUEUED,
          CHECK;
      }
