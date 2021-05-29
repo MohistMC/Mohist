@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_16_R3;
 
 import java.util.HashMap;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.SoundType;
 import org.bukkit.Sound;
 import org.bukkit.SoundGroup;
 

@@ -908,7 +908,7 @@
        if (entity != this.field_175401_bS) {
           this.field_71135_a.func_147359_a(new SCameraPacket(this.field_175401_bS));
 -         this.func_70634_a(this.field_175401_bS.func_226277_ct_(), this.field_175401_bS.func_226278_cu_(), this.field_175401_bS.func_226281_cx_());
-+         this.field_71135_a.setPlayerLocation(this.field_175401_bS.func_226277_ct_(), this.field_175401_bS.func_226278_cu_(), this.field_175401_bS.func_226281_cx_(), this.field_70177_z, this.field_70125_A, TeleportCause.SPECTATE); // CraftBukkit
++         this.field_71135_a.teleport(this.field_175401_bS.func_226277_ct_(), this.field_175401_bS.func_226278_cu_(), this.field_175401_bS.func_226281_cx_(), this.field_70177_z, this.field_70125_A, TeleportCause.SPECTATE); // CraftBukkit
        }
  
     }

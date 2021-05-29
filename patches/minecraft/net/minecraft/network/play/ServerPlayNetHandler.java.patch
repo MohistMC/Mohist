@@ -729,13 +729,13 @@
                          if (flag) {
                             this.field_147369_b.field_70143_R = 0.0F;
                          }
-@@ -875,24 +_,83 @@
+@@ -875,24 +_,84 @@
        this.func_175089_a(p_147364_1_, p_147364_3_, p_147364_5_, p_147364_7_, p_147364_8_, Collections.emptySet());
     }
  
 +   // CraftBukkit start - Delegate to teleport(Location)
-+   public void setPlayerLocation(double x, double y, double z, float yaw, float pitch, TeleportCause cause) {
-+      this.setPlayerLocation(x, y, z, yaw, pitch, Collections.emptySet(), cause);
++   public void teleport(double x, double y, double z, float yaw, float pitch, TeleportCause cause) {
++      this.teleport(x, y, z, yaw, pitch, Collections.emptySet(), cause);
 +   }
 +
     public void func_175089_a(double p_175089_1_, double p_175089_3_, double p_175089_5_, float p_175089_7_, float p_175089_8_, Set<SPlayerPositionLookPacket.Flags> p_175089_9_) {
@@ -745,10 +745,10 @@
 -      float f = p_175089_9_.contains(SPlayerPositionLookPacket.Flags.Y_ROT) ? this.field_147369_b.field_70177_z : 0.0F;
 -      float f1 = p_175089_9_.contains(SPlayerPositionLookPacket.Flags.X_ROT) ? this.field_147369_b.field_70125_A : 0.0F;
 -      this.field_184362_y = new Vector3d(p_175089_1_, p_175089_3_, p_175089_5_);
-+      this.setPlayerLocation(p_175089_1_, p_175089_3_, p_175089_5_, p_175089_7_, p_175089_8_, p_175089_9_, TeleportCause.UNKNOWN);
++      this.teleport(p_175089_1_, p_175089_3_, p_175089_5_, p_175089_7_, p_175089_8_, p_175089_9_, TeleportCause.UNKNOWN);
 +   }
 +
-+   public void setPlayerLocation(double d0, double d1, double d2, float f, float f1, Set<SPlayerPositionLookPacket.Flags> relativeSet, TeleportCause cause) {
++   public boolean teleport(double d0, double d1, double d2, float f, float f1, Set<SPlayerPositionLookPacket.Flags> relativeSet, TeleportCause cause) { // CraftBukkit - Return event status
 +      Player player = this.getPlayer();
 +      Location from = player.getLocation();
 +      double x = d0;
@@ -760,7 +760,7 @@
 +      // SPIGOT-5171: Triggered on join
 +      if (from.equals(to)) {
 +         this.internalTeleport(d0, d1, d2, f, f1, relativeSet);
-+         return;
++         return false; // CraftBukkit - Return event status
 +      }
 +      PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), cause);
 +      this.craftServer.getPluginManager().callEvent(event);
@@ -774,6 +774,7 @@
 +         f1 = to.getPitch();
 +      }
 +      this.internalTeleport(d0, d1, d2, f, f1, relativeSet);
++      return event.isCancelled(); // CraftBukkit - Return event status
 +   }
 +
 +   public void teleport(Location dest) {

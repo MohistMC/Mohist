@@ -110,7 +110,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R3.boss.CraftDragonBattle;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;

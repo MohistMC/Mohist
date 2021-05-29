@@ -2,14 +2,12 @@ package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
-
 import com.google.common.collect.Lists;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Objects;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -17,7 +15,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextComponent.Serializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -25,7 +22,6 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BookMeta;
-
 import static org.spigotmc.ValidateUtils.limit;
 
 @DelegateDeserialization(SerializableMeta.class)

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -1,6 +1,7 @@
 package com.mojang.brigadier.tree;
 
 // CHECKSTYLE:OFF
+
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -14,17 +15,13 @@ import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import net.minecraft.command.CommandSource; // CraftBukkit
+import net.minecraft.command.CommandSource;
 
 public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
     private Map<String, CommandNode<S>> children = Maps.newTreeMap(); // Paper - Optimize brigadier child sorting performance

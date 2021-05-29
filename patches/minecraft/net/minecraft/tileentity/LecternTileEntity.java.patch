@@ -10,7 +10,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.LecternBlock;
-@@ -25,9 +_,58 @@
+@@ -25,9 +_,62 @@
  import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.server.ServerWorld;
@@ -66,6 +66,10 @@
 +       @Override
 +       public InventoryHolder getOwner() {
 +          return (Lectern) LecternTileEntity.this.getOwner();
++       }
++
++      public LecternTileEntity getLectern() {
++          return LecternTileEntity.this;
 +       }
 +
 +       // CraftBukkit end

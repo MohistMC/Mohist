@@ -7,10 +7,9 @@ import net.minecraft.nbt.IntNBT;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemFactory.DEFAULT_LEATHER_COLOR;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-
-import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemFactory.DEFAULT_LEATHER_COLOR;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {

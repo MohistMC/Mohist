@@ -1,13 +1,12 @@
 package com.mohistmc.netty;
 
-import java.util.List;
-import java.util.zip.Inflater;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.DecoderException;
+import java.util.List;
+import java.util.zip.Inflater;
 import net.minecraft.network.PacketBuffer;
 
 public class NettyPacketDecompressor extends ByteToMessageDecoder {

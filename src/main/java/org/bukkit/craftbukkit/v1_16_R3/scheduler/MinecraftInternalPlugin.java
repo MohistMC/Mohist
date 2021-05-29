@@ -1,6 +1,9 @@
 package org.bukkit.craftbukkit.v1_16_R3.scheduler;
 
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,10 +13,6 @@ import org.bukkit.plugin.PluginBase;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
 
 public class MinecraftInternalPlugin extends PluginBase {
     private boolean enabled = true;

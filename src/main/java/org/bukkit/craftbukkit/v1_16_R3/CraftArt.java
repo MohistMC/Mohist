@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.mohistmc.forge.ForgeInjectBukkit;
-import java.util.Map;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;

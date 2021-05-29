@@ -1,10 +1,8 @@
 package com.mohistmc.api.mc;
 
+import com.mojang.datafixers.util.Either;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-
-import com.mojang.datafixers.util.Either;
-
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ChunkHolder;

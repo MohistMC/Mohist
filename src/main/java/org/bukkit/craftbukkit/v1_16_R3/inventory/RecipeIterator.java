@@ -1,11 +1,8 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
-import com.mohistmc.recipe.RecipeUtils;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.server.MinecraftServer;

@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_16_R3.command;
 
 import java.util.Set;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
