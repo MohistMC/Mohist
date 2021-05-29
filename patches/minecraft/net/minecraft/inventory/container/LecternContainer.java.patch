@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/LecternContainer.java
 +++ b/net/minecraft/inventory/container/LecternContainer.java
-@@ -1,6 +_,8 @@
+@@ -1,24 +_,47 @@
  package net.minecraft.inventory.container;
  
 +import io.papermc.paper.event.player.PlayerLecternPageChangeEvent;
@@ -9,7 +9,8 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-@@ -8,17 +_,37 @@
++import net.minecraft.tileentity.LecternTileEntity;
+ import net.minecraft.util.IIntArray;
  import net.minecraft.util.IntArray;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -126,10 +127,11 @@
              ItemStack itemstack = this.field_217018_c.func_70304_b(0);
              this.field_217018_c.func_70296_d();
              if (!p_75140_1_.field_71071_by.func_70441_a(itemstack)) {
-@@ -71,6 +_,7 @@
+@@ -71,6 +_,8 @@
     }
  
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (field_217018_c instanceof LecternTileEntity.LecternInventory && !((LecternTileEntity.LecternInventory) field_217018_c).getLectern().func_214046_f()) return false; // CraftBukkit
 +      if (!this.checkReachable) return true; // CraftBukkit
        return this.field_217018_c.func_70300_a(p_75145_1_);
     }

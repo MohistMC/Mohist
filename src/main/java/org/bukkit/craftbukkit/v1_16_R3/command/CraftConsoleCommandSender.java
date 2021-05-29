@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.v1_16_R3.command;
 
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
 import org.bukkit.craftbukkit.v1_16_R3.conversations.ConversationTracker;
-
-import java.util.UUID;
 
 /**
  * Represents CLI input from a console

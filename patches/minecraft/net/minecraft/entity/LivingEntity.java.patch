@@ -69,11 +69,12 @@
  import net.minecraft.nbt.ListNBT;
  import net.minecraft.nbt.NBTDynamicOps;
  import net.minecraft.network.IPacket;
-@@ -113,22 +_,25 @@
+@@ -113,22 +_,26 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import net.minecraftforge.common.ForgeHooks;
++import org.bukkit.event.player.PlayerTeleportEvent;
  
  public abstract class LivingEntity extends Entity {
     private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
@@ -1397,28 +1398,64 @@
           if (this.field_184627_bm.func_222122_m()) {
              this.func_184608_ct();
           }
-@@ -2886,10 +_,18 @@
+@@ -2863,6 +_,9 @@
+       return this.field_184629_bo;
+    }
+ 
++
++   public PlayerTeleportEvent.TeleportCause defCause = PlayerTeleportEvent.TeleportCause.UNKNOWN;
++
+    public boolean func_213373_a(double p_213373_1_, double p_213373_3_, double p_213373_5_, boolean p_213373_7_) {
+       double d0 = this.func_226277_ct_();
+       double d1 = this.func_226278_cu_();
+@@ -2886,10 +_,31 @@
           }
  
           if (flag1) {
 -            this.func_70634_a(p_213373_1_, d3, p_213373_5_);
--            if (world.func_226669_j_(this) && !world.func_72953_d(this.func_174813_aQ())) {
--               flag = true;
-+            // CraftBukkit start - Teleport event
-+            // this.setPositionAndUpdate(x, d3, z);
-+            EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.field_70170_p.getWorld(), d0, d1, d2), new Location(this.field_70170_p.getWorld(), p_213373_1_, d3, p_213373_5_));
-+            this.field_70170_p.getCBServer().getPluginManager().callEvent(teleport);
-+            if (!teleport.isCancelled()) {
-+               Location to = teleport.getTo();
-+               this.func_70634_a(to.getX(), to.getY(), to.getZ());
-+               if (world.func_226669_j_(this) && !world.func_72953_d(this.func_174813_aQ())) {
-+                  flag = true;
-+               }
++            // first set position, to check if the place to teleport is valid
++            this.func_70107_b(p_213373_1_, d3, p_213373_5_);
+             if (world.func_226669_j_(this) && !world.func_72953_d(this.func_174813_aQ())) {
+                flag = true;
              }
++            // now revert and call event if the teleport place is valid
++            this.func_70107_b(d0, d1, d2);
++            if (flag1) {
++               if (!(this instanceof ServerPlayerEntity)) {
++                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.field_70170_p.getWorld(), d0, d1, d2), new Location(this.field_70170_p.getWorld(), p_213373_1_, p_213373_3_, p_213373_5_));
++                  this.field_70170_p.getCBServer().getPluginManager().callEvent(teleport);
++                  if (!teleport.isCancelled()) {
++                     Location to = teleport.getTo();
++                     this.func_70634_a(to.getX(), to.getY(), to.getZ());
++                  } else {
++                     return false;
++                  }
++               } else {
++                  // player teleport event is called in the underlining code
++                  if (((ServerPlayerEntity) this).field_71135_a.teleport(p_213373_1_, p_213373_3_, p_213373_5_, this.field_70177_z, this.field_70125_A, java.util.Collections.emptySet(), defCause)) {
++                     return false;
++                  }
++               }
++            }
 +            // CraftBukkit end
           }
        }
  
+@@ -2909,6 +_,14 @@
+       }
+    }
+ 
++   public Optional<Boolean> safeTeleport(double d0, double d1, double d2, boolean flag, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      boolean safeTeleport;
++      defCause = cause;
++      safeTeleport = func_213373_a(d0, d1, d2, false);
++      defCause = PlayerTeleportEvent.TeleportCause.UNKNOWN;
++      return Optional.of(safeTeleport);
++   }
++
+    public boolean func_184603_cC() {
+       return true;
+    }
 @@ -2964,8 +_,8 @@
        }
  

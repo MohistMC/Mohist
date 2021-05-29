@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_16_R3.util;
 
-import java.util.Arrays;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 

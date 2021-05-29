@@ -10,6 +10,9 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_16_R3.enchantments.CraftEnchantment;
+import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.ENCHANTMENTS;
+import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.ENCHANTMENTS_ID;
+import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftLegacy;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
@@ -17,10 +20,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
-
-import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.ENCHANTMENTS;
-import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.ENCHANTMENTS_ID;
-import static org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {

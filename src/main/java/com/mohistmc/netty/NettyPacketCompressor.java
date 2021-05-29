@@ -1,10 +1,9 @@
 package com.mohistmc.netty;
 
-import java.util.zip.Deflater;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import java.util.zip.Deflater;
 import net.minecraft.network.PacketBuffer;
 
 public class NettyPacketCompressor extends MessageToByteEncoder<ByteBuf> {

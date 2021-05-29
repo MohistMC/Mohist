@@ -2,9 +2,7 @@ package org.bukkit.craftbukkit;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-
 import static java.util.Arrays.asList;
-
 import joptsimple.OptionParser;
 
 public class Main extends OptionParser {

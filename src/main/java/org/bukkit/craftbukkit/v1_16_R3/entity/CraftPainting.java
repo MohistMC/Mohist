@@ -2,12 +2,10 @@ package org.bukkit.craftbukkit.v1_16_R3.entity;
 
 import net.minecraft.entity.item.PaintingEntity;
 import net.minecraft.entity.item.PaintingType;
-import net.minecraft.world.server.ServerWorld;
 import org.bukkit.Art;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.CraftArt;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Painting;
 

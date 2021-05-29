@@ -3,15 +3,10 @@ package org.bukkit.craftbukkit.v1_16_R3.inventory;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextComponent.Serializer;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BookMeta;
 
 @DelegateDeserialization(SerializableMeta.class)

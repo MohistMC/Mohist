@@ -1,15 +1,12 @@
 package org.bukkit.craftbukkit.v1_16_R3.scheduler;
 
-import java.util.function.Consumer;
-
+import co.aikar.timings.MinecraftTimings;
 import co.aikar.timings.NullTimingHandler;
+import co.aikar.timings.Timing;
+import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-
-import org.spigotmc.CustomTimingsHandler; // Spigot
-import co.aikar.timings.MinecraftTimings; // Paper
-import co.aikar.timings.Timing; // Paper
 
 public class CraftTask implements BukkitTask, Runnable { // Spigot
 

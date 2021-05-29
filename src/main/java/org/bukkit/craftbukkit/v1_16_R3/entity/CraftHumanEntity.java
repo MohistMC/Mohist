@@ -25,7 +25,6 @@ import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.client.CCloseWindowPacket;
 import net.minecraft.network.play.server.SOpenWindowPacket;
-import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.HandSide;
@@ -41,6 +40,7 @@ import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftContainer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryLectern;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
@@ -285,6 +285,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         INamedContainerProvider iinventory = null;
         if (inventory instanceof CraftInventoryDoubleChest) {
             iinventory = ((CraftInventoryDoubleChest) inventory).tile;
+        } else if (inventory instanceof CraftInventoryLectern) {
+            iinventory = ((CraftInventoryLectern) inventory).tile;
         } else if (inventory instanceof CraftInventory) {
             CraftInventory craft = (CraftInventory) inventory;
             if (craft.getInventory() instanceof INamedContainerProvider) {
@@ -302,7 +304,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         }
 
         ContainerType<?> container = CraftContainer.getNotchInventoryType(inventory);
-        if (iinventory instanceof LockableTileEntity) {
+        if (iinventory instanceof INamedContainerProvider) {
             getHandle().openMenu(iinventory);
         } else {
             openCustomInventory(inventory, player, container);

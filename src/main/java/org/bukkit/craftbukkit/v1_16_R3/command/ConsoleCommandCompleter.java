@@ -4,14 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-
+import net.minecraft.server.dedicated.DedicatedServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.util.Waitable;
-
-import net.minecraft.server.dedicated.DedicatedServer;
 import org.bukkit.event.server.TabCompleteEvent;
-
-// Paper start - JLine update
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
