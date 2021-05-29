@@ -8,6 +8,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.MohistProxySelector;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.util.i18n.i18n;
@@ -195,7 +196,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
+        this.serverVersion = (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
 
         Bukkit.setServer(this);
 
