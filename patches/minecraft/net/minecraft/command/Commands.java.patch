@@ -51,7 +51,7 @@
        AdvancementCommand.func_198199_a(this.field_197062_b);
        AttributeCommand.func_241003_a_(this.field_197062_b);
        ExecuteCommand.func_198378_a(this.field_197062_b);
-@@ -186,35 +_,90 @@
+@@ -186,16 +_,61 @@
        if (p_i232148_1_.field_237219_d_) {
           PublishCommand.func_198581_a(this.field_197062_b);
        }
@@ -98,34 +98,28 @@
 +      return this.func_197059_a(sender, joiner.join(args));
 +   }
 +
++   public String labell;
     public int func_197059_a(CommandSource p_197059_1_, String p_197059_2_) {
--      StringReader stringreader = new StringReader(p_197059_2_);
-+      return this.handleCommand(p_197059_1_, p_197059_2_, p_197059_2_);
-+   }
-+
-+   public int handleCommand(CommandSource source, String command, String labell) {
++      if (labell == null) labell = p_197059_2_; // Mohist
 +      // CraftBukkit end
 +      // Mohist start - Call ServerCommandEvent for command blocks
-+      ServerCommandEvent bukevent = new ServerCommandEvent(source.getBukkitSender(), command);
++      ServerCommandEvent bukevent = new ServerCommandEvent(p_197059_1_.getBukkitSender(), p_197059_2_);
 +      Bukkit.getPluginManager().callEvent(bukevent);
 +      if (bukevent.isCancelled()) return 0;
 +      final String label;
-+      if (command.equals(labell)) label = bukevent.getCommand();
++      if (p_197059_2_.equals(labell)) label = bukevent.getCommand();
 +      else label = labell;
-+      command = bukevent.getCommand();
++      p_197059_2_ = bukevent.getCommand();
 +      // Mohist end
-+      StringReader stringreader = new StringReader(command);
+       StringReader stringreader = new StringReader(p_197059_2_);
        if (stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
-       }
- 
--      p_197059_1_.func_197028_i().func_213185_aS().func_76320_a(p_197059_2_);
-+      source.func_197028_i().func_213185_aS().func_76320_a(command);
+@@ -205,7 +_,15 @@
  
        try {
           try {
 -            return this.field_197062_b.execute(stringreader, p_197059_1_);
-+            ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, source);
++            ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, p_197059_1_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() != null) {
@@ -135,12 +129,9 @@
 +            }
 +            return this.field_197062_b.execute(event.getParseResults());
           } catch (CommandException commandexception) {
--            p_197059_1_.func_197021_a(commandexception.func_197003_a());
-+            source.func_197021_a(commandexception.func_197003_a());
+             p_197059_1_.func_197021_a(commandexception.func_197003_a());
              return 0;
-          } catch (CommandSyntaxException commandsyntaxexception) {
--            p_197059_1_.func_197021_a(TextComponentUtils.func_202465_a(commandsyntaxexception.getRawMessage()));
-+            source.func_197021_a(TextComponentUtils.func_202465_a(commandsyntaxexception.getRawMessage()));
+@@ -214,7 +_,7 @@
              if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 IFormattableTextComponent iformattabletextcomponent1 = (new StringTextComponent("")).func_240699_a_(TextFormatting.GRAY).func_240700_a_((p_211705_1_) -> {
@@ -149,44 +140,26 @@
                 });
                 if (j > 10) {
                    iformattabletextcomponent1.func_240702_b_("...");
-@@ -227,12 +_,12 @@
-                }
- 
-                iformattabletextcomponent1.func_230529_a_((new TranslationTextComponent("command.context.here")).func_240701_a_(new TextFormatting[]{TextFormatting.RED, TextFormatting.ITALIC}));
--               p_197059_1_.func_197021_a(iformattabletextcomponent1);
-+               source.func_197021_a(iformattabletextcomponent1);
-             }
+@@ -232,7 +_,7 @@
           } catch (Exception exception) {
              IFormattableTextComponent iformattabletextcomponent = new StringTextComponent(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
              if (field_197061_a.isDebugEnabled()) {
 -               field_197061_a.error("Command exception: {}", p_197059_2_, exception);
-+               field_197061_a.error(com.mohistmc.util.i18n.i18n.get("commands.1", command, exception));
++               field_197061_a.error(com.mohistmc.util.i18n.i18n.get("commands.1", p_197059_2_, exception));
                 StackTraceElement[] astacktraceelement = exception.getStackTrace();
  
                 for(int i = 0; i < Math.min(astacktraceelement.length, 3); ++i) {
-@@ -240,12 +_,12 @@
-                }
-             }
- 
--            p_197059_1_.func_197021_a((new TranslationTextComponent("command.failed")).func_240700_a_((p_211704_1_) -> {
-+            source.func_197021_a((new TranslationTextComponent("command.failed")).func_240700_a_((p_211704_1_) -> {
-                return p_211704_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, iformattabletextcomponent));
-             }));
-             if (SharedConstants.field_206244_b) {
--               p_197059_1_.func_197021_a(new StringTextComponent(Util.func_229758_d_(exception)));
--               field_197061_a.error("'" + p_197059_2_ + "' threw an exception", (Throwable)exception);
-+               source.func_197021_a(new StringTextComponent(Util.func_229758_d_(exception)));
-+               field_197061_a.error("'" + command + "' threw an exception", (Throwable)exception);
-             }
- 
-             return 0;
-@@ -253,20 +_,44 @@
- 
+@@ -254,19 +_,49 @@
           return 0;
        } finally {
--         p_197059_1_.func_197028_i().func_213185_aS().func_76319_b();
-+         source.func_197028_i().func_213185_aS().func_76319_b();
+          p_197059_1_.func_197028_i().func_213185_aS().func_76319_b();
++         labell = null;
        }
++   }
++
++   public int handleCommand(CommandSource source, String command, String l) {
++      labell = l;
++      return func_197059_a(source, command);
     }
  
     public void func_197051_a(ServerPlayerEntity p_197051_1_) {
