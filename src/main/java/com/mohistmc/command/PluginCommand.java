@@ -18,14 +18,12 @@ public class PluginCommand extends Command {
         super(name);
         this.description = "Plugin manager";
         this.usageMessage = "/plugin [load|unload|reload] [name]";
-        this.setAliases(Collections.singletonList("pl"));
         this.setPermission("mohist.command.plugin");
     }
 
     private final List<String> params = Arrays.asList("load", "unload", "reload");
 
     private boolean checkparam(String args) {
-        //TODO
         for (String param : params) {
             if (args.equalsIgnoreCase(param)) {
                 return true;

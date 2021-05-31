@@ -64,7 +64,7 @@ public class MohistCommand extends Command {
             case "playermods":
                 // Not recommended for use in games, only test output
                 if (args.length == 1) {
-                    sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+                    sender.sendMessage(ChatColor.RED + "Usage: /mohist playermods <playername>");
                     return false;
                 }
                 Player player = Bukkit.getPlayer(args[1]);
