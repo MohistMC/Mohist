@@ -20,7 +20,6 @@ public class PluginCommand extends Command {
         super(name);
         this.description = "Plugin manager";
         this.usageMessage = "/plugin [load|unload|reload] [name]";
-        this.setAliases(Collections.singletonList("pl"));
         this.setPermission("mohist.command.plugin");
     }
 

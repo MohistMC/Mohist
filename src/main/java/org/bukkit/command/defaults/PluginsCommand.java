@@ -14,6 +14,7 @@ public class PluginsCommand extends BukkitCommand {
         super(name);
         this.description = Message.getString("pluginscommand.des");
         this.usageMessage = "/plugins";
+        this.setAliases(Collections.singletonList("pl"));
         this.setPermission("bukkit.command.plugins");
     }
 
