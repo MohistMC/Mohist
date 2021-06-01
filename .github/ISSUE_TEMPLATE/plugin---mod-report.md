@@ -17,19 +17,19 @@ assignees: ''
 
 <!-- TO FILL THIS TEMPLATE, YOU NEED TO REPLACE THE {} BY WHAT YOU WANT -->
 
-**Minecraft Version :** {Minecraft version}
+**Minecraft Version :** Minecraft version
 
-**Mohist Version :** {Provide Mohist build number}
+**Mohist Version :** Provide Mohist build number
 
-**Operating System :** {Provide the name of your OS}
+**Operating System :** Provide the name of your OS
 
-**Concerned mod / plugin** : {Provide mod / plugin name and download link if possible}
+**Concerned mod / plugin** : Provide mod / plugin name and download link if possible
 
-**Logs :** {Link(s) of logs and crash reports if you have}
+**Logs :** Link(s) of logs and crash reports if you have
 
 **Steps to Reproduce :**
  1. Do this
  2. Then do that
  3. ...
 
-**Description of issue :** {Give all details about your issue}
+**Description of issue :** Give all details about your issue
