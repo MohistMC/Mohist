@@ -28,7 +28,7 @@
  
  public class PiglinTasks {
     public static final Item field_234444_a_ = Items.field_151043_k;
-@@ -184,14 +_,18 @@
+@@ -184,24 +_,28 @@
     protected static void func_234470_a_(PiglinEntity p_234470_0_, ItemEntity p_234470_1_) {
        func_234531_r_(p_234470_0_);
        ItemStack itemstack;
@@ -48,8 +48,11 @@
 +      // CraftBukkit end
  
        Item item = itemstack.func_77973_b();
-       if (func_234480_a_(item)) {
-@@ -201,7 +_,7 @@
+-      if (func_234480_a_(item)) {
++      if (isLovedByPiglin(item, p_234470_0_)) { // CraftBukkit - Changes to allow for custom payment in bartering
+          p_234470_0_.func_213375_cj().func_218189_b(MemoryModuleType.field_242310_O);
+          func_241427_c_(p_234470_0_, itemstack);
+          func_234501_d_(p_234470_0_);
        } else if (func_234499_c_(item) && !func_234538_z_(p_234470_0_)) {
           func_234536_x_(p_234470_0_);
        } else {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/Inventory.java
 +++ b/net/minecraft/inventory/Inventory.java
-@@ -10,15 +_,70 @@
+@@ -10,15 +_,75 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.ListNBT;
  import net.minecraft.util.NonNullList;
@@ -57,6 +57,11 @@
 +   @Override
 +   public Location getLocation() {
 +      return null;
++   }
++
++   public Inventory(Inventory original) {
++      this.field_70481_b = original.field_70481_b;
++      this.field_70482_c = NonNullList.func_193580_a(ItemStack.field_190927_a, original.field_70482_c.toArray(new ItemStack[0]));
 +   }
 +
     public Inventory(int p_i50397_1_) {
