@@ -3516,6 +3516,7 @@ public enum Material implements Keyed {
     public static final String LEGACY_PREFIX = "LEGACY_";
 
     private final int id;
+    private int blockID;
     private final Constructor<? extends MaterialData> ctor;
     private static final Map<String, Material> BY_NAME = Maps.newHashMap();
     private final int maxStack;
@@ -3554,6 +3555,7 @@ public enum Material implements Keyed {
 
     private Material(final int id, final int stack, final int durability, /*@NotNull*/ final Class<?> data) {
         this.id = id;
+        this.blockID = id;
         this.durability = (short) durability;
         this.maxStack = stack;
         this.data = data;
@@ -3583,6 +3585,16 @@ public enum Material implements Keyed {
     public int getId() {
         Validate.isTrue(legacy, "Cannot get ID of Modern Material");
         return id;
+    }
+
+    /**
+     * Gets the ForgeBlock ID of this Material
+     *
+     * @return ID of this material's Block
+     */
+
+    public int getBlockID() {
+        return blockID;
     }
 
     /**
@@ -8696,6 +8708,7 @@ public enum Material implements Keyed {
         if (isBlock) {
             Material material = BY_NAME.get(materialName);
             if (material != null){
+                material.blockID = id;
                 material.isForgeBlock = true;
             }else {
                 material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, true});
