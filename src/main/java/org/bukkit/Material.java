@@ -3524,6 +3524,9 @@ public enum Material implements Keyed {
     public final Class<?> data;
     private final boolean legacy;
     private final NamespacedKey key;
+
+    private String modName;
+    private NamespacedKey keyForge;
     private boolean isForgeBlock = false;
 
     private Material(final int id) {
@@ -3534,6 +3537,16 @@ public enum Material implements Keyed {
     private Material(final int id, boolean flag) {
         this(id, 64);
         this.isForgeBlock = flag;
+    }
+    // Mohist end
+
+    // Mohist start - constructor used to set if block is modded
+    private Material(final int id, boolean flag, String modName) {
+        this(id, 64);
+        this.isForgeBlock = flag;
+        this.modName = modName;
+        this.keyForge = new NamespacedKey(modName, this.name().toLowerCase(Locale.ROOT).substring(modName.length() + 1));
+        System.out.println("key forge " + keyForge);
     }
     // Mohist end
 
@@ -3561,6 +3574,10 @@ public enum Material implements Keyed {
         this.data = data;
         this.legacy = this.name().startsWith(LEGACY_PREFIX);
         this.key = NamespacedKey.minecraft(this.name().toLowerCase(Locale.ROOT));
+        if (this.modName == null) {
+            this.modName = "minecraft";
+            this.keyForge = this.key;
+        }
         // try to cache the constructor for this material
         try {
             if (MaterialData.class.isAssignableFrom(data)) {
@@ -3595,6 +3612,22 @@ public enum Material implements Keyed {
 
     public int getBlockID() {
         return blockID;
+    }
+
+    /**
+     * Gets the mod that add the material
+     * @return the mod name
+     */
+    public String getModName() {
+        return modName;
+    }
+
+    /**
+     * Gets the correct NamespacedKey (modName:blockName)
+     * @return correct NamespacedKey
+     */
+    public NamespacedKey getKeyForge() {
+        return keyForge;
     }
 
     /**
@@ -8717,6 +8750,25 @@ public enum Material implements Keyed {
             return material;
         } else { // Forge Items
             Material material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, false});
+            BY_NAME.put(materialName, material);
+            return material;
+        }
+    }
+
+    public static Material addMaterial(String materialName, int id, boolean isBlock, String modName) {
+        // Forge Blocks
+        if (isBlock) {
+            Material material = BY_NAME.get(materialName);
+            if (material != null){
+                material.blockID = id;
+                material.isForgeBlock = true;
+            }else {
+                material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, true, modName});
+            }
+            BY_NAME.put(materialName, material);
+            return material;
+        } else { // Forge Items
+            Material material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, false, modName});
             BY_NAME.put(materialName, material);
             return material;
         }
