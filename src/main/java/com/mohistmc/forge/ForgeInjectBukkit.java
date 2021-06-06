@@ -79,7 +79,7 @@ public class ForgeInjectBukkit {
                 String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
                 Item item = entry.getValue();
                 int id = Item.getId(item);
-                Material material = Material.addMaterial(materialName, id, false);
+                Material material = Material.addMaterial(materialName, id, false, resourceLocation.getNamespace());
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
                 if (material != null) {
@@ -98,7 +98,7 @@ public class ForgeInjectBukkit {
                 String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_BLOCK__", "");
                 Block block = entry.getValue();
                 int id = Item.getId(block.asItem());
-                Material material = Material.addMaterial(materialName, id, true);
+                Material material = Material.addMaterial(materialName, id, true, resourceLocation.getNamespace());
                 CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
                 CraftMagicNumbers.MATERIAL_BLOCK.put(material, block);
                 if (material != null) {
