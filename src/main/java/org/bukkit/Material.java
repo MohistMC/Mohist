@@ -3546,7 +3546,6 @@ public enum Material implements Keyed {
         this.isForgeBlock = flag;
         this.modName = modName;
         this.keyForge = new NamespacedKey(modName, this.name().toLowerCase(Locale.ROOT).substring(modName.length() + 1));
-        System.out.println("key forge " + keyForge);
     }
     // Mohist end
 
