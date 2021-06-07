@@ -24,7 +24,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -71,31 +_,57 @@
+@@ -71,31 +_,73 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
@@ -51,6 +51,13 @@
 +              .ofType(File.class)
 +              .defaultsTo(new File("plugins"))
 +              .describedAs("Plugin directory");
++      // Paper Start
++      optionparser.acceptsAll(Arrays.asList("paper", "paper-settings"), "File for paper settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("paper.yml"))
++              .describedAs("Yml file");
++      // Paper end
 +
  
        try {
@@ -60,6 +67,15 @@
              optionparser.printHelpOn(System.err);
              return;
           }
+ 
++         // Paper start - load config files for access below if needed
++         org.bukkit.configuration.file.YamlConfiguration bukkitConfiguration = loadConfigFile((File) optionset.valueOf("bukkit-settings"));
++         org.bukkit.configuration.file.YamlConfiguration spigotConfiguration = loadConfigFile((File) optionset.valueOf("spigot-settings"));
++         org.bukkit.configuration.file.YamlConfiguration paperConfiguration = loadConfigFile((File) optionset.valueOf("paper-settings"));
++
++         com.destroystokyo.paper.PaperConfig.init((File) optionset.valueOf("paper-settings")); // Paper
++         // Paper end
++
 +         Path path1 = Paths.get("eula.txt");
 +         ServerEula servereula = new ServerEula(path1);
 +
@@ -67,7 +83,7 @@
 +            field_240759_a_.info(com.mohistmc.util.i18n.i18n.get("main.1"));
 +            return;
 +         }
- 
++
           CrashReport.func_230188_h_();
           Bootstrap.func_151354_b();
           Bootstrap.func_218821_c();
@@ -189,3 +205,23 @@
           }
  
           if (!p_240761_3_.getAsBoolean()) {
+@@ -206,6 +_,19 @@
+             }
+          }
+       }
++   }
+ 
++   // Paper start - load config files
++   private static org.bukkit.configuration.file.YamlConfiguration loadConfigFile(File configFile) throws Exception {
++      org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
++      if (configFile.exists()) {
++         try {
++            config.load(configFile);
++         } catch (Exception ex) {
++            throw new Exception("Failed to load configuration file: " + configFile.getName(), ex);
++         }
++      }
++      return config;
+    }
++   // Paper end
+ }

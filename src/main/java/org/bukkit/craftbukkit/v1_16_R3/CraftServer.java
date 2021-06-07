@@ -21,6 +21,7 @@ import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +51,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
@@ -278,7 +280,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
+        serverVersion = (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
 
         Bukkit.setServer(this);
 
@@ -345,11 +347,11 @@ public final class CraftServer implements Server {
     }
 
     private File getConfigFile() {
-        return (File) console.options.valueOf("bukkit-settings");
+        return (File) MinecraftServer.options.valueOf("bukkit-settings");
     }
 
     private File getCommandsConfigFile() {
-        return (File) console.options.valueOf("commands-settings");
+        return (File) MinecraftServer.options.valueOf("commands-settings");
     }
 
     private void saveConfig() {
@@ -373,7 +375,7 @@ public final class CraftServer implements Server {
         ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
         pluginManager.registerInterface(JavaPluginLoader.class);
 
-        File pluginFolder = (File) console.options.valueOf("plugins");
+        File pluginFolder = (File) MinecraftServer.options.valueOf("plugins");
 
         if (pluginFolder.exists()) {
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
@@ -431,7 +433,7 @@ public final class CraftServer implements Server {
         for (CommandNode<CommandSource> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
             // Spigot start
             VanillaCommandWrapper wrapper = new VanillaCommandWrapper(dispatcher, cmd);
-            if (org.spigotmc.SpigotConfig.replaceCommands.contains( wrapper.getName() ) ) {
+            if (org.spigotmc.SpigotConfig.replaceCommands.contains(wrapper.getName())) {
                 if (first) {
                     commandMap.register("minecraft", wrapper);
                 }
@@ -666,7 +668,7 @@ public final class CraftServer implements Server {
 
     @Override
     public File getUpdateFolderFile() {
-        return new File((File) console.options.valueOf("plugins"), this.configuration.getString("settings.update-folder", "update"));
+        return new File((File) MinecraftServer.options.valueOf("plugins"), this.configuration.getString("settings.update-folder", "update"));
     }
 
     @Override
@@ -804,7 +806,8 @@ public final class CraftServer implements Server {
             logger.log(Level.WARNING, i18n.get("pluginscommand.notload", "banned-players.json, " + ex.getMessage()));
         }
 
-        org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
+        org.spigotmc.SpigotConfig.init((File) MinecraftServer.options.valueOf("spigot-settings")); // Spigot
+        com.destroystokyo.paper.PaperConfig.init((java.io.File) MinecraftServer.options.valueOf("paper-settings")); // Paper
         for (ServerWorld world : console.getAllLevels()) {
             world.getServer().getWorldData().setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
@@ -838,6 +841,7 @@ public final class CraftServer implements Server {
                 world.ticksPerAmbientSpawns = this.getTicksPerAmbientSpawns();
             }
             world.spigotConfig.init(); // Spigot
+            world.paperConfig.init(); // Paper
         }
 
         pluginManager.clearPlugins();
@@ -845,6 +849,7 @@ public final class CraftServer implements Server {
         resetRecipes();
         reloadData();
         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
+        com.destroystokyo.paper.PaperConfig.registerCommands(); // Paper
         overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
         ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
 
@@ -914,9 +919,9 @@ public final class CraftServer implements Server {
         Map<String, Map<String, Object>> perms;
 
         try {
-            perms = (Map<String, Map<String, Object>>) yaml.load(stream);
+            perms = yaml.load(stream);
         } catch (MarkedYAMLException ex) {
-            getLogger().log(Level.WARNING, "Server permissions file " + file + " is not valid YAML: " + ex.toString());
+            getLogger().log(Level.WARNING, "Server permissions file " + file + " is not valid YAML: " + ex);
             return;
         } catch (Throwable ex) {
             getLogger().log(Level.WARNING, "Server permissions file " + file + " is not valid YAML.", ex);
@@ -1013,16 +1018,16 @@ public final class CraftServer implements Server {
         boolean hardcore = creator.hardcore();
 
         WorldSettingsImport<INBT> registryreadops = WorldSettingsImport.create((DynamicOps) NBTDynamicOps.INSTANCE, console.getDataPackRegistries().getResourceManager(), console.registryHolder);
-        ServerWorldInfo worlddata = (ServerWorldInfo) worldSession.getDataTag((DynamicOps) registryreadops, console.datapackconfiguration);
+        ServerWorldInfo worlddata = (ServerWorldInfo) worldSession.getDataTag(registryreadops, console.datapackconfiguration);
 
         WorldSettings worldSettings;
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)
         if (worlddata == null) {
             Properties properties = new Properties();
-            properties.put("generator-settings", Objects.toString(creator.generatorSettings()));
+            properties.put("generator-settings", creator.generatorSettings());
             properties.put("level-seed", Objects.toString(creator.seed()));
             properties.put("generate-structures", Objects.toString(creator.generateStructures()));
-            properties.put("level-type", Objects.toString(creator.type().getName()));
+            properties.put("level-type", creator.type().getName());
 
             DimensionGeneratorSettings generatorsettings = DimensionGeneratorSettings.create(console.registryAccess(), properties);
             worldSettings = new WorldSettings(name, GameType.byId(getDefaultGameMode().getValue()), hardcore, Difficulty.EASY, false, new GameRules(), console.datapackconfiguration);
@@ -1034,19 +1039,19 @@ public final class CraftServer implements Server {
         long j = BiomeManager.obfuscateSeed(creator.seed());
         List<ISpecialSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
         SimpleRegistry<Dimension> registrymaterials = worlddata.worldGenSettings().dimensions();
-        Dimension worlddimension = (Dimension) registrymaterials.get(actualDimension);
+        Dimension worlddimension = registrymaterials.get(actualDimension);
         DimensionType dimensionmanager;
         net.minecraft.world.gen.ChunkGenerator chunkgenerator;
 
         if (worlddimension == null) {
-            dimensionmanager = (DimensionType) console.registryHolder.dimensionTypes().getOrThrow(DimensionType.OVERWORLD_LOCATION);
+            dimensionmanager = console.registryHolder.dimensionTypes().getOrThrow(DimensionType.OVERWORLD_LOCATION);
             chunkgenerator = DimensionGeneratorSettings.makeDefaultOverworld(console.registryHolder.registryOrThrow(Registry.BIOME_REGISTRY), console.registryHolder.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY), (new Random()).nextLong());
         } else {
             dimensionmanager = worlddimension.type();
             chunkgenerator = worlddimension.generator();
         }
 
-        RegistryKey<net.minecraft.world.World> worldKey ;
+        RegistryKey<net.minecraft.world.World> worldKey;
         String levelName = this.getServer().getProperties().levelName;
         if (name.equals(levelName + "_nether")) {
             worldKey = net.minecraft.world.World.NETHER;
@@ -1057,7 +1062,7 @@ public final class CraftServer implements Server {
         }
 
         net.minecraft.world.World.setGeneratorAndEnv(generator, creator.environment());
-        ServerWorld internal = (ServerWorld) new ServerWorld(console, console.executor, worldSession, worlddata, worldKey, dimensionmanager, getServer().progressListenerFactory.create(11),
+        ServerWorld internal = new ServerWorld(console, console.executor, worldSession, worlddata, worldKey, dimensionmanager, getServer().progressListenerFactory.create(11),
                 chunkgenerator, worlddata.worldGenSettings().isDebug(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true);
 
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
@@ -1445,8 +1450,7 @@ public final class CraftServer implements Server {
             // Spigot Start
             GameProfile profile = null;
             // Only fetch an online UUID in online mode
-            if ( getOnlineMode() || org.spigotmc.SpigotConfig.bungee )
-            {
+            if (getOnlineMode() || org.spigotmc.SpigotConfig.bungee) {
                 profile = console.getProfileCache().get(name);
             }
             // Spigot end
@@ -1744,8 +1748,7 @@ public final class CraftServer implements Server {
 
     public List<String> tabCompleteCommand(Player player, String message, ServerWorld world, Vector3d pos) {
         // Spigot Start
-        if ( (org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains( " " ) )
-        {
+        if ((org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains(" ")) {
             return ImmutableList.of();
         }
         // Spigot End
@@ -1765,7 +1768,7 @@ public final class CraftServer implements Server {
             getLogger().log(Level.SEVERE, "Exception when " + player.getName() + " attempted to tab complete " + message, ex);
         }
 
-        return completions == null ? ImmutableList.<String>of() : completions;
+        return completions == null ? ImmutableList.of() : completions;
     }
 
     public List<String> tabCompleteChat(Player player, String message) {
@@ -2056,25 +2059,21 @@ public final class CraftServer implements Server {
         return CraftMagicNumbers.INSTANCE;
     }
 
-    private final Spigot spigot = new Spigot()
-    {
+    private final Spigot spigot = new Spigot() {
 
         @Deprecated
         @Override
-        public YamlConfiguration getConfig()
-        {
+        public YamlConfiguration getConfig() {
             return org.spigotmc.SpigotConfig.config;
         }
 
         @Override
-        public YamlConfiguration getBukkitConfig()
-        {
+        public YamlConfiguration getBukkitConfig() {
             return configuration;
         }
 
         @Override
-        public YamlConfiguration getSpigotConfig()
-        {
+        public YamlConfiguration getSpigotConfig() {
             return org.spigotmc.SpigotConfig.config;
         }
 
@@ -2098,8 +2097,7 @@ public final class CraftServer implements Server {
         }
     };
 
-    public Spigot spigot()
-    {
+    public Spigot spigot() {
         return spigot;
     }
 
@@ -2108,7 +2106,46 @@ public final class CraftServer implements Server {
         return net.minecraft.server.MinecraftServer.getServer().hasStopped();
     }
 
-    public void setPlayerList(PlayerList playerList) {
-        playerList = (DedicatedPlayerList)playerList;
+    // Paper start
+    @Override
+    public String getPermissionMessage() {
+        return com.destroystokyo.paper.PaperConfig.noPermissionMessage;
     }
+
+    // Paper end
+
+    public void setPlayerList(PlayerList playerList) {
+        playerList = playerList;
+    }
+
+    // Paper start
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static java.nio.file.Path dumpHeap(java.nio.file.Path dir, String name) {
+        try {
+            java.nio.file.Files.createDirectories(dir);
+
+            javax.management.MBeanServer server = java.lang.management.ManagementFactory.getPlatformMBeanServer();
+            java.nio.file.Path file;
+
+            try {
+                Class clazz = Class.forName("openj9.lang.management.OpenJ9DiagnosticsMXBean");
+                Object openj9Mbean = java.lang.management.ManagementFactory.newPlatformMXBeanProxy(server, "openj9.lang.management:type=OpenJ9Diagnostics", clazz);
+                java.lang.reflect.Method m = clazz.getMethod("triggerDumpToFile", String.class, String.class);
+                file = dir.resolve(name + ".phd");
+                m.invoke(openj9Mbean, "heap", file.toString());
+            } catch (ClassNotFoundException e) {
+                Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
+                Object hotspotMBean = java.lang.management.ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", clazz);
+                java.lang.reflect.Method m = clazz.getMethod("dumpHeap", String.class, boolean.class);
+                file = dir.resolve(name + ".hprof");
+                m.invoke(hotspotMBean, file.toString(), true);
+            }
+
+            return file;
+        } catch (Throwable t) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not write heap", t);
+            return null;
+        }
+    }
+    // Paper end
 }
