@@ -1,11 +1,41 @@
 --- a/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
 +++ b/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
-@@ -34,13 +_,13 @@
+@@ -1,14 +_,14 @@
+ package net.minecraft.world.chunk.listener;
+ 
+-import javax.annotation.Nullable;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MathHelper;
+-import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.world.chunk.ChunkStatus;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import javax.annotation.Nullable;
++
+ public class LoggingChunkStatusListener implements IChunkStatusListener {
+    private static final Logger field_219512_a = LogManager.getLogger();
+    private final int field_219513_b;
+@@ -26,21 +_,26 @@
+       this.field_219515_d = this.field_219516_e;
+    }
+ 
++   private static int lastPercentage = -1;
+    public void func_219508_a(ChunkPos p_219508_1_, @Nullable ChunkStatus p_219508_2_) {
+       if (p_219508_2_ == ChunkStatus.field_222617_m) {
+          ++this.field_219514_c;
+       }
+ 
        int i = this.func_219511_c();
++      int calc = MathHelper.func_76125_a(i, 0, 100);
        if (Util.func_211177_b() > this.field_219516_e) {
           this.field_219516_e += 500L;
 -         field_219512_a.info((new TranslationTextComponent("menu.preparingSpawn", MathHelper.func_76125_a(i, 0, 100))).getString());
-+         field_219512_a.info(com.mohistmc.util.i18n.i18n.get("loggingchunkstatuslistener.2", MathHelper.func_76125_a(i, 0, 100)));
++         if(lastPercentage != calc) {
++            field_219512_a.info(com.mohistmc.util.i18n.i18n.get("loggingchunkstatuslistener.2", calc));
++            lastPercentage = calc;
++         }
        }
  
     }
