@@ -1,5 +1,6 @@
 package org.bukkit.plugin.java;
 
+import com.mohistmc.MohistMC;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -71,7 +72,7 @@ public final class JavaPluginLoader implements PluginLoader {
             libraryLoader = new LibraryLoader(server.getLogger());
         } catch (NoClassDefFoundError ex) {
             // Provided depends were not added back
-            server.getLogger().warning("Could not initialize LibraryLoader (missing dependencies?)");
+            MohistMC.LOGGER.debug("Could not initialize LibraryLoader (missing dependencies?)");
         }
         this.libraryLoader = libraryLoader;
     }
