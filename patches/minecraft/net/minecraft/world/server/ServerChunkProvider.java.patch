@@ -100,6 +100,15 @@
     }
  
     public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
+@@ -278,6 +_,8 @@
+       }
+    }
+ 
++   public final boolean isInEntityTickingChunk(Entity entity) { return this.func_217204_a(entity); } // Paper - OBFHELPER
++
+    public boolean func_217204_a(Entity p_217204_1_) {
+       long i = ChunkPos.func_77272_a(MathHelper.func_76128_c(p_217204_1_.func_226277_ct_()) >> 4, MathHelper.func_76128_c(p_217204_1_.func_226281_cx_()) >> 4);
+       return this.func_222872_a(i, ChunkHolder::func_219297_b);
 @@ -292,7 +_,7 @@
        return this.func_222872_a(i, ChunkHolder::func_219296_a);
     }

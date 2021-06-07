@@ -1595,6 +1595,19 @@ public final class Bukkit {
         return server.isStopping();
     }
 
+    // Paper start
+
+    /**
+     *
+     * @return the default no permission message used on the server
+     */
+    @NotNull
+    public static String getPermissionMessage() {
+        return server.getPermissionMessage();
+    }
+
+    // Paper end
+
     @NotNull
     public static Server.Spigot spigot() {
         return server.spigot();

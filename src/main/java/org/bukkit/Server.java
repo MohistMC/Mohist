@@ -1192,6 +1192,18 @@ public interface Server extends PluginMessageRecipient {
     @Nullable
     Entity getEntity(@NotNull UUID uuid);
 
+    // Paper start
+
+    /**
+     * Gets the active {@link org.bukkit.command.CommandMap}
+     *
+     * @return the active command map
+     */
+    @NotNull
+    org.bukkit.command.CommandMap getCommandMap();
+
+    // Paper end
+
     /**
      * Get the advancement specified by this key.
      *
@@ -1393,6 +1405,12 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     Spigot spigot();
     // Spigot end
+
+    /**
+     * @return the default no permission message used on the server
+     */
+    @NotNull
+    String getPermissionMessage();
 
     /**
      * Checks if the server is in the process of being shutdown.
