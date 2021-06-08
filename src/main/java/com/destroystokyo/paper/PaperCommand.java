@@ -1,5 +1,6 @@
 package com.destroystokyo.paper;
 
+import com.destroystokyo.paper.config.PaperConfig;
 import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -276,7 +277,7 @@ public class PaperCommand extends Command {
         Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
 
         MinecraftServer console = MinecraftServer.getServer();
-        com.destroystokyo.paper.PaperConfig.init((File) console.options.valueOf("paper-settings"));
+        PaperConfig.init((File) console.options.valueOf("paper-settings"));
         for (ServerWorld world : console.getAllLevels()) {
             world.paperConfig.init();
         }

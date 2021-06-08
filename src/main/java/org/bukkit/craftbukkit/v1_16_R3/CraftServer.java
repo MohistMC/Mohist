@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_16_R3;
 
+import com.destroystokyo.paper.config.PaperConfig;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -807,7 +808,7 @@ public final class CraftServer implements Server {
         }
 
         org.spigotmc.SpigotConfig.init((File) MinecraftServer.options.valueOf("spigot-settings")); // Spigot
-        com.destroystokyo.paper.PaperConfig.init((java.io.File) MinecraftServer.options.valueOf("paper-settings")); // Paper
+        PaperConfig.init((java.io.File) MinecraftServer.options.valueOf("paper-settings")); // Paper
         for (ServerWorld world : console.getAllLevels()) {
             world.getServer().getWorldData().setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
@@ -849,7 +850,7 @@ public final class CraftServer implements Server {
         resetRecipes();
         reloadData();
         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
-        com.destroystokyo.paper.PaperConfig.registerCommands(); // Paper
+        PaperConfig.registerCommands(); // Paper
         overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
         ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
 
@@ -2109,7 +2110,7 @@ public final class CraftServer implements Server {
     // Paper start
     @Override
     public String getPermissionMessage() {
-        return com.destroystokyo.paper.PaperConfig.noPermissionMessage;
+        return PaperConfig.noPermissionMessage;
     }
 
     // Paper end

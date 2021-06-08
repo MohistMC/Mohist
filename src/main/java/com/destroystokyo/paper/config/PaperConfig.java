@@ -1,5 +1,6 @@
-package com.destroystokyo.paper;
+package com.destroystokyo.paper.config;
 
+import com.destroystokyo.paper.PaperCommand;
 import com.google.common.base.Throwables;
 
 import java.io.File;
@@ -18,7 +19,6 @@ import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
