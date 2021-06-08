@@ -20,6 +20,9 @@ public class AutoDeletePlugins {
         plugins_fix.add(new PluginsModsDelete.Fix("com.earth2me.essentials.Essentials",
                 "https://github.com/KR33PY/Essentials/releases/download/essxmohist/EssentialsX-2.19.0-dev+99-fd961d5.jar",
                 "2.19.0-dev+99-fd961d5"));
+        plugins_fix.add(new PluginsModsDelete.Fix("com.sk89q.worldedit.bukkit.WorldEditPlugin",
+                "https://github.com/MohistMC/WorldEdit/releases/download/1.16.5-1.0/worldedit-bukkit-7.3.0-MOHIST-dist.jar",
+                "\"7.3.0-MOHIST+cf3b83f\""));
     }
 
     public static void jar() throws Exception {
