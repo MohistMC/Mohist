@@ -20,7 +20,7 @@
  import java.awt.image.BufferedImage;
  import java.io.File;
  import java.io.IOException;
-@@ -37,19 +_,50 @@
+@@ -37,19 +_,51 @@
  import java.util.Date;
  import java.util.List;
  import java.util.Map;
@@ -40,6 +40,7 @@
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
 +
++import net.minecraft.addons.server.MCUtil;
 +import org.apache.commons.lang3.Validate;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
@@ -412,7 +413,7 @@
           }
        }
  
-@@ -582,8 +_,14 @@
+@@ -582,8 +_,19 @@
        try {
           this.field_71310_m.close();
        } catch (IOException ioexception) {
@@ -421,6 +422,11 @@
 +         field_147145_h.error(com.mohistmc.util.i18n.i18n.get("minecraftserver.11", this.field_71310_m.func_237282_a_(), ioexception));
 +      }
 +      // Spigot start
++      MCUtil.asyncExecutor.shutdown(); // Paper
++      try {
++         MCUtil.asyncExecutor.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS); // Paper
++      } catch (java.lang.InterruptedException ignored) {
++      } // Paper
 +      if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
 +         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.12"));
 +         this.field_152366_X.func_152658_c();

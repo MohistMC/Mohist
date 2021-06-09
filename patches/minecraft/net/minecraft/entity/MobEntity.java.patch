@@ -91,9 +91,12 @@
     }
  
     protected void func_184651_r() {
-@@ -197,7 +_,39 @@
+@@ -196,8 +_,42 @@
+       return this.field_70696_bz;
     }
  
++   public org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob getBukkitMob() { return (org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob) super.getBukkitEntity(); } // Paper
++
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
 -      this.field_70696_bz = p_70624_1_;
 +      //Craftbukkit start

@@ -1,0 +1,10 @@
+--- a/net/minecraft/util/math/AxisAlignedBB.java
++++ b/net/minecraft/util/math/AxisAlignedBB.java
+@@ -217,6 +_,7 @@
+       return p_197744_1_ >= this.field_72340_a && p_197744_1_ < this.field_72336_d && p_197744_3_ >= this.field_72338_b && p_197744_3_ < this.field_72337_e && p_197744_5_ >= this.field_72339_c && p_197744_5_ < this.field_72334_f;
+    }
+ 
++   public final double getAverageSideLength(){return func_72320_b();} // Paper - OBFHELPER
+    public double func_72320_b() {
+       double d0 = this.func_216364_b();
+       double d1 = this.func_216360_c();

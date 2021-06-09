@@ -34,7 +34,7 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Executor;
-@@ -33,8 +_,41 @@
+@@ -33,8 +_,42 @@
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -42,6 +42,7 @@
  import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
 +
++import it.unimi.dsi.fastutil.objects.Object2IntMap;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
@@ -112,7 +113,8 @@
 -   private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
 +   public final Queue<Entity> field_217499_z = Queues.newArrayDeque(); // Mohist - Fix "Wrong location" (private -> public)
     private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
-    private final ServerChunkProvider field_241102_C_;
+-   private final ServerChunkProvider field_241102_C_;
++   public final ServerChunkProvider field_241102_C_; // Paper - public
     boolean field_217492_a;
     private final MinecraftServer field_73061_a;
 -   private final IServerWorldInfo field_241103_E_;
@@ -1088,6 +1090,15 @@
        }, p_217406_1_);
     }
  
+@@ -1263,7 +_,7 @@
+          writer.write(String.format("spawning_chunks: %d\n", chunkmanager.func_219246_e().func_219358_b()));
+          WorldEntitySpawner.EntityDensityManager worldentityspawner$entitydensitymanager = this.func_72863_F().func_241101_k_();
+          if (worldentityspawner$entitydensitymanager != null) {
+-            for(it.unimi.dsi.fastutil.objects.Object2IntMap.Entry<EntityClassification> entry : worldentityspawner$entitydensitymanager.func_234995_b_().object2IntEntrySet()) {
++            for(Object2IntMap.Entry<EntityClassification> entry : worldentityspawner$entitydensitymanager.func_234995_b_().object2IntEntrySet()) {
+                writer.write(String.format("spawn_count.%s: %d\n", entry.getKey().func_220363_a(), entry.getIntValue()));
+             }
+          }
 @@ -1333,6 +_,11 @@
  
     public void func_230547_a_(BlockPos p_230547_1_, Block p_230547_2_) {

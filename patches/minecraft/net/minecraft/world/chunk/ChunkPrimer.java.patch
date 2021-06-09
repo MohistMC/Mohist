@@ -25,3 +25,20 @@
                 WorldLightManager worldlightmanager = this.func_217307_e();
                 worldlightmanager.func_215568_a(p_177436_1_);
              }
+@@ -433,4 +_,16 @@
+       this.field_217335_u = p_217305_1_;
+       this.func_177427_f(true);
+    }
++
++   // Paper start - If loaded util
++   @Override
++   public FluidState getFluidIfLoaded(BlockPos blockposition) {
++      return this.func_204610_c(blockposition);
++   }
++
++   @Override
++   public BlockState getTypeIfLoaded(BlockPos blockposition) {
++      return this.func_180495_p(blockposition);
++   }
++   // Paper end
+ }

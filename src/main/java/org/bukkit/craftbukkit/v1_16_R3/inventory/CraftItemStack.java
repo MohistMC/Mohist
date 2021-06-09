@@ -87,6 +87,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     net.minecraft.item.ItemStack handle;
+    public net.minecraft.item.ItemStack getHandle() { return handle; } // Paper
 
     /**
      * Mirror

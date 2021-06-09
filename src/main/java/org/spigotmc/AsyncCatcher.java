@@ -5,6 +5,7 @@ import net.minecraft.server.MinecraftServer;
 public class AsyncCatcher
 {
 
+    public static boolean enabled = true;
     /*
     public static boolean enabled = true;
 

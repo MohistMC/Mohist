@@ -8,15 +8,39 @@
  import net.minecraft.util.AxisRotation;
  import net.minecraft.util.Direction;
  import net.minecraft.util.Rotation;
-@@ -39,6 +_,11 @@
-    private static final long field_177993_j = (1L << field_177991_c) - 1L;
+@@ -40,6 +_,11 @@
     private static final int field_218292_j = field_177989_d;
     private static final int field_218293_k = field_177989_d + field_177991_c;
-+
+ 
 +   // CraftBukkit
 +   public BlockPos(Entity p_i46032_1_) {
 +      this(p_i46032_1_.func_226277_ct_(), p_i46032_1_.func_226278_cu_(), p_i46032_1_.func_226281_cx_());
 +   }
- 
++
     public BlockPos(int p_i46030_1_, int p_i46030_2_, int p_i46030_3_) {
        super(p_i46030_1_, p_i46030_2_, p_i46030_3_);
+    }
+@@ -103,6 +_,7 @@
+       return p_177963_1_ == 0.0D && p_177963_3_ == 0.0D && p_177963_5_ == 0.0D ? this : new BlockPos((double)this.func_177958_n() + p_177963_1_, (double)this.func_177956_o() + p_177963_3_, (double)this.func_177952_p() + p_177963_5_);
+    }
+ 
++   public final BlockPos add(int i, int j, int k) {return func_177982_a(i, j, k);} // Paper - OBFHELPER
+    public BlockPos func_177982_a(int p_177982_1_, int p_177982_2_, int p_177982_3_) {
+       return p_177982_1_ == 0 && p_177982_2_ == 0 && p_177982_3_ == 0 ? this : new BlockPos(this.func_177958_n() + p_177982_1_, this.func_177956_o() + p_177982_2_, this.func_177952_p() + p_177982_3_);
+    }
+@@ -408,6 +_,7 @@
+          return super.func_190942_a(p_190942_1_).func_185334_h();
+       }
+ 
++      public final BlockPos.Mutable setValues(int i, int j, int k) { return func_181079_c(i, j, k);} // Paper - OBFHELPER
+       public BlockPos.Mutable func_181079_c(int p_181079_1_, int p_181079_2_, int p_181079_3_) {
+          this.func_223471_o(p_181079_1_);
+          this.func_185336_p(p_181079_2_);
+@@ -415,6 +_,7 @@
+          return this;
+       }
+ 
++      public final BlockPos.Mutable setValues(double d0, double d1, double d2) { return func_189532_c(d0, d1, d2);} // Paper - OBFHELPER
+       public BlockPos.Mutable func_189532_c(double p_189532_1_, double p_189532_3_, double p_189532_5_) {
+          return this.func_181079_c(MathHelper.func_76128_c(p_189532_1_), MathHelper.func_76128_c(p_189532_3_), MathHelper.func_76128_c(p_189532_5_));
+       }

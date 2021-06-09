@@ -68,3 +68,11 @@
              }
           }
  
+@@ -146,6 +_,7 @@
+       this.field_177488_d.func_186010_a(p_222634_1_);
+    }
+ 
++   public void writeChunkSection(PacketBuffer packetDataSerializer) { this.func_222630_b(packetDataSerializer); } // Paper - OBFHELPER
+    public void func_222630_b(PacketBuffer p_222630_1_) {
+       p_222630_1_.writeShort(this.field_76682_b);
+       this.field_177488_d.func_186009_b(p_222630_1_);

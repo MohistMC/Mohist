@@ -1,16 +1,229 @@
 --- a/net/minecraft/world/Region.java
 +++ b/net/minecraft/world/Region.java
-@@ -53,6 +_,13 @@
- 
-    }
- 
-+   // Mohist start - Add isPosLoaded method to IBlockReader
-+   @Override
-+   public boolean isPosLoaded(BlockPos pos) {
-+      return this.field_72815_e.isPosLoaded(pos);
-+   }
-+   // Mohist end
+@@ -3,6 +_,7 @@
+ import java.util.function.Predicate;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
 +
-    private IChunk func_226703_d_(BlockPos p_226703_1_) {
-       return this.func_226702_a_(p_226703_1_.func_177958_n() >> 4, p_226703_1_.func_177952_p() >> 4);
-    }
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.entity.Entity;
+@@ -17,94 +_,130 @@
+ import net.minecraft.world.chunk.AbstractChunkProvider;
+ import net.minecraft.world.chunk.EmptyChunk;
+ import net.minecraft.world.chunk.IChunk;
++import net.minecraft.world.server.ServerWorld;
+ 
+ public class Region implements IBlockReader, ICollisionReader {
+-   protected final int field_72818_a;
+-   protected final int field_72816_b;
+-   protected final IChunk[][] field_72817_c;
+-   protected boolean field_72814_d;
+-   protected final World field_72815_e;
+-
+-   public Region(World p_i50004_1_, BlockPos p_i50004_2_, BlockPos p_i50004_3_) {
+-      this.field_72815_e = p_i50004_1_;
+-      this.field_72818_a = p_i50004_2_.func_177958_n() >> 4;
+-      this.field_72816_b = p_i50004_2_.func_177952_p() >> 4;
+-      int i = p_i50004_3_.func_177958_n() >> 4;
+-      int j = p_i50004_3_.func_177952_p() >> 4;
+-      this.field_72817_c = new IChunk[i - this.field_72818_a + 1][j - this.field_72816_b + 1];
+-      AbstractChunkProvider abstractchunkprovider = p_i50004_1_.func_72863_F();
+-      this.field_72814_d = true;
+-
+-      for(int k = this.field_72818_a; k <= i; ++k) {
+-         for(int l = this.field_72816_b; l <= j; ++l) {
+-            this.field_72817_c[k - this.field_72818_a][l - this.field_72816_b] = abstractchunkprovider.func_225313_a(k, l);
+-         }
+-      }
+-
+-      for(int i1 = p_i50004_2_.func_177958_n() >> 4; i1 <= p_i50004_3_.func_177958_n() >> 4; ++i1) {
+-         for(int j1 = p_i50004_2_.func_177952_p() >> 4; j1 <= p_i50004_3_.func_177952_p() >> 4; ++j1) {
+-            IChunk ichunk = this.field_72817_c[i1 - this.field_72818_a][j1 - this.field_72816_b];
+-            if (ichunk != null && !ichunk.func_76606_c(p_i50004_2_.func_177956_o(), p_i50004_3_.func_177956_o())) {
+-               this.field_72814_d = false;
+-               return;
+-            }
+-         }
+-      }
+-
+-   }
+-
+-   private IChunk func_226703_d_(BlockPos p_226703_1_) {
+-      return this.func_226702_a_(p_226703_1_.func_177958_n() >> 4, p_226703_1_.func_177952_p() >> 4);
+-   }
+-
+-   private IChunk func_226702_a_(int p_226702_1_, int p_226702_2_) {
+-      int i = p_226702_1_ - this.field_72818_a;
+-      int j = p_226702_2_ - this.field_72816_b;
+-      if (i >= 0 && i < this.field_72817_c.length && j >= 0 && j < this.field_72817_c[i].length) {
+-         IChunk ichunk = this.field_72817_c[i][j];
+-         return (IChunk)(ichunk != null ? ichunk : new EmptyChunk(this.field_72815_e, new ChunkPos(p_226702_1_, p_226702_2_)));
+-      } else {
+-         return new EmptyChunk(this.field_72815_e, new ChunkPos(p_226702_1_, p_226702_2_));
+-      }
+-   }
+-
+-   public WorldBorder func_175723_af() {
+-      return this.field_72815_e.func_175723_af();
+-   }
+-
+-   public IBlockReader func_225522_c_(int p_225522_1_, int p_225522_2_) {
+-      return this.func_226702_a_(p_225522_1_, p_225522_2_);
+-   }
+-
+-   @Nullable
+-   public TileEntity func_175625_s(BlockPos p_175625_1_) {
+-      IChunk ichunk = this.func_226703_d_(p_175625_1_);
+-      return ichunk.func_175625_s(p_175625_1_);
+-   }
+-
+-   public BlockState func_180495_p(BlockPos p_180495_1_) {
+-      if (World.func_189509_E(p_180495_1_)) {
+-         return Blocks.field_150350_a.func_176223_P();
+-      } else {
+-         IChunk ichunk = this.func_226703_d_(p_180495_1_);
+-         return ichunk.func_180495_p(p_180495_1_);
+-      }
+-   }
+-
+-   public Stream<VoxelShape> func_230318_c_(@Nullable Entity p_230318_1_, AxisAlignedBB p_230318_2_, Predicate<Entity> p_230318_3_) {
+-      return Stream.empty();
+-   }
+-
+-   public Stream<VoxelShape> func_234867_d_(@Nullable Entity p_234867_1_, AxisAlignedBB p_234867_2_, Predicate<Entity> p_234867_3_) {
+-      return this.func_226666_b_(p_234867_1_, p_234867_2_);
+-   }
+-
+-   public FluidState func_204610_c(BlockPos p_204610_1_) {
+-      if (World.func_189509_E(p_204610_1_)) {
+-         return Fluids.field_204541_a.func_207188_f();
+-      } else {
+-         IChunk ichunk = this.func_226703_d_(p_204610_1_);
+-         return ichunk.func_204610_c(p_204610_1_);
+-      }
+-   }
++    protected final int field_72818_a;
++    protected final int field_72816_b;
++    protected final IChunk[][] field_72817_c;
++    protected boolean field_72814_d;
++    protected final World field_72815_e;
++
++    public Region(World p_i50004_1_, BlockPos p_i50004_2_, BlockPos p_i50004_3_) {
++        this.field_72815_e = p_i50004_1_;
++        this.field_72818_a = p_i50004_2_.func_177958_n() >> 4;
++        this.field_72816_b = p_i50004_2_.func_177952_p() >> 4;
++        int i = p_i50004_3_.func_177958_n() >> 4;
++        int j = p_i50004_3_.func_177952_p() >> 4;
++        this.field_72817_c = new IChunk[i - this.field_72818_a + 1][j - this.field_72816_b + 1];
++        AbstractChunkProvider abstractchunkprovider = p_i50004_1_.func_72863_F();
++        this.field_72814_d = true;
++
++        for (int k = this.field_72818_a; k <= i; ++k) {
++            for (int l = this.field_72816_b; l <= j; ++l) {
++                this.field_72817_c[k - this.field_72818_a][l - this.field_72816_b] = ((ServerWorld) p_i50004_1_).func_72863_F().getChunkAtIfLoadedMainThreadNoCache(k, l); // Paper
++            }
++        }
++
++        for (int i1 = p_i50004_2_.func_177958_n() >> 4; i1 <= p_i50004_3_.func_177958_n() >> 4; ++i1) {
++            for (int j1 = p_i50004_2_.func_177952_p() >> 4; j1 <= p_i50004_3_.func_177952_p() >> 4; ++j1) {
++                IChunk ichunk = this.field_72817_c[i1 - this.field_72818_a][j1 - this.field_72816_b];
++                if (ichunk != null && !ichunk.func_76606_c(p_i50004_2_.func_177956_o(), p_i50004_3_.func_177956_o())) {
++                    this.field_72814_d = false;
++                    return;
++                }
++            }
++        }
++
++    }
++
++    // Mohist start - Add isPosLoaded method to IBlockReader
++    @Override
++    public boolean isPosLoaded(BlockPos pos) {
++        return this.field_72815_e.isPosLoaded(pos);
++    }
++    // Mohist end
++
++    private IChunk func_226703_d_(BlockPos p_226703_1_) {
++        return this.func_226702_a_(p_226703_1_.func_177958_n() >> 4, p_226703_1_.func_177952_p() >> 4);
++    }
++
++    private IChunk func_226702_a_(int p_226702_1_, int p_226702_2_) {
++        int i = p_226702_1_ - this.field_72818_a;
++        int j = p_226702_2_ - this.field_72816_b;
++        if (i >= 0 && i < this.field_72817_c.length && j >= 0 && j < this.field_72817_c[i].length) { // Paper - if this changes, update getChunkIfLoaded below
++            IChunk ichunk = this.field_72817_c[i][j];
++            return ichunk != null ? ichunk : new EmptyChunk(this.field_72815_e, new ChunkPos(p_226702_1_, p_226702_2_));
++        } else {
++            return new EmptyChunk(this.field_72815_e, new ChunkPos(p_226702_1_, p_226702_2_));
++        }
++    }
++
++    public WorldBorder func_175723_af() {
++        return this.field_72815_e.func_175723_af();
++    }
++
++    public IBlockReader func_225522_c_(int p_225522_1_, int p_225522_2_) {
++        return this.func_226702_a_(p_225522_1_, p_225522_2_);
++    }
++
++    // Paper start - if loaded util
++    private IChunk getChunkIfLoaded(int x, int z) {
++        int k = x - this.field_72818_a;
++        int l = z - this.field_72816_b;
++
++        if (k >= 0 && k < this.field_72817_c.length && l >= 0 && l < this.field_72817_c[k].length) {
++            return this.field_72817_c[k][l];
++        }
++        return null;
++    }
++
++    @Override
++    public FluidState getFluidIfLoaded(BlockPos blockposition) {
++        IChunk chunk = getChunkIfLoaded(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++        return chunk == null ? null : chunk.func_204610_c(blockposition);
++    }
++
++    @Override
++    public BlockState getTypeIfLoaded(BlockPos blockposition) {
++        IChunk chunk = getChunkIfLoaded(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++        return chunk == null ? null : chunk.func_180495_p(blockposition);
++    }
++    // Paper end
++
++    @Nullable
++    public TileEntity func_175625_s(BlockPos p_175625_1_) {
++        IChunk ichunk = this.func_226703_d_(p_175625_1_);
++        return ichunk.func_175625_s(p_175625_1_);
++    }
++
++    public BlockState func_180495_p(BlockPos p_180495_1_) {
++        if (World.func_189509_E(p_180495_1_)) {
++            return Blocks.field_150350_a.func_176223_P();
++        } else {
++            IChunk ichunk = this.func_226703_d_(p_180495_1_);
++            return ichunk.func_180495_p(p_180495_1_);
++        }
++    }
++
++    public Stream<VoxelShape> func_230318_c_(@Nullable Entity p_230318_1_, AxisAlignedBB p_230318_2_, Predicate<Entity> p_230318_3_) {
++        return Stream.empty();
++    }
++
++    public Stream<VoxelShape> func_234867_d_(@Nullable Entity p_234867_1_, AxisAlignedBB p_234867_2_, Predicate<Entity> p_234867_3_) {
++        return this.func_226666_b_(p_234867_1_, p_234867_2_);
++    }
++
++    public FluidState func_204610_c(BlockPos p_204610_1_) {
++        if (World.func_189509_E(p_204610_1_)) {
++            return Fluids.field_204541_a.func_207188_f();
++        } else {
++            IChunk ichunk = this.func_226703_d_(p_204610_1_);
++            return ichunk.func_204610_c(p_204610_1_);
++        }
++    }
++
++    protected final World getWorld() {
++        return field_72815_e;
++    } // Paper - OBFHELPER
+ }

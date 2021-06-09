@@ -1,0 +1,10 @@
+--- a/net/minecraft/potion/PotionUtils.java
++++ b/net/minecraft/potion/PotionUtils.java
+@@ -121,6 +_,7 @@
+       return p_185187_0_ == null ? Potions.field_185229_a : Potion.func_185168_a(p_185187_0_.func_74779_i("Potion"));
+    }
+ 
++   public static ItemStack addPotionToItemStack(ItemStack itemstack, Potion potionregistry) { return func_185188_a(itemstack, potionregistry); } // Paper - OBFHELPER
+    public static ItemStack func_185188_a(ItemStack p_185188_0_, Potion p_185188_1_) {
+       ResourceLocation resourcelocation = Registry.field_212621_j.func_177774_c(p_185188_1_);
+       if (p_185188_1_ == Potions.field_185229_a) {

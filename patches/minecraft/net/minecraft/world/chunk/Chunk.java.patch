@@ -1,6 +1,18 @@
 --- a/net/minecraft/world/chunk/Chunk.java
 +++ b/net/minecraft/world/chunk/Chunk.java
-@@ -20,14 +_,12 @@
+@@ -5,6 +_,7 @@
+ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+ import it.unimi.dsi.fastutil.longs.LongSet;
+ import it.unimi.dsi.fastutil.shorts.ShortList;
++
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.List;
+@@ -17,17 +_,16 @@
+ import java.util.stream.Stream;
+ import java.util.stream.StreamSupport;
+ import javax.annotation.Nullable;
++
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
@@ -16,477 +28,1779 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
-@@ -57,20 +_,21 @@
+@@ -52,747 +_,1046 @@
+ import net.minecraft.world.gen.feature.structure.StructureStart;
+ import net.minecraft.world.lighting.WorldLightManager;
+ import net.minecraft.world.server.ChunkHolder;
++import net.minecraft.world.server.ServerChunkProvider;
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
- 
+-
 -public class Chunk implements IChunk {
-+public class Chunk extends net.minecraftforge.common.capabilities.CapabilityProvider<Chunk> implements IChunk, net.minecraftforge.common.extensions.IForgeChunk {
-    private static final Logger field_150817_t = LogManager.getLogger();
-    @Nullable
-    public static final ChunkSection field_186036_a = null;
-    private final ChunkSection[] field_76652_q = new ChunkSection[16];
-    private BiomeContainer field_76651_r;
-    private final Map<BlockPos, CompoundNBT> field_201618_i = Maps.newHashMap();
+-   private static final Logger field_150817_t = LogManager.getLogger();
+-   @Nullable
+-   public static final ChunkSection field_186036_a = null;
+-   private final ChunkSection[] field_76652_q = new ChunkSection[16];
+-   private BiomeContainer field_76651_r;
+-   private final Map<BlockPos, CompoundNBT> field_201618_i = Maps.newHashMap();
 -   private boolean field_76636_d;
 -   private final World field_76637_e;
 -   private final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
-+   public boolean field_76636_d;
-+   public final World field_76637_e;
-+   public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
-    private final UpgradeData field_196967_n;
+-   private final UpgradeData field_196967_n;
 -   private final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
 -   private final ClassInheritanceMultiMap<Entity>[] field_76645_j;
-+   public final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
-+   public final ClassInheritanceMultiMap<Entity>[] field_76645_j;
-    private final Map<Structure<?>, StructureStart<?>> field_201619_q = Maps.newHashMap();
-    private final Map<Structure<?>, LongSet> field_201620_r = Maps.newHashMap();
-    private final ShortList[] field_201622_t = new ShortList[16];
-@@ -92,6 +_,7 @@
-    }
- 
-    public Chunk(World p_i225781_1_, ChunkPos p_i225781_2_, BiomeContainer p_i225781_3_, UpgradeData p_i225781_4_, ITickList<Block> p_i225781_5_, ITickList<Fluid> p_i225781_6_, long p_i225781_7_, @Nullable ChunkSection[] p_i225781_9_, @Nullable Consumer<Chunk> p_i225781_10_) {
-+      super(Chunk.class);
-       this.field_76645_j = new ClassInheritanceMultiMap[16];
-       this.field_76637_e = p_i225781_1_;
-       this.field_212816_F = p_i225781_2_;
-@@ -116,11 +_,26 @@
-          if (this.field_76652_q.length == p_i225781_9_.length) {
-             System.arraycopy(p_i225781_9_, 0, this.field_76652_q, 0, this.field_76652_q.length);
-          } else {
+-   private final Map<Structure<?>, StructureStart<?>> field_201619_q = Maps.newHashMap();
+-   private final Map<Structure<?>, LongSet> field_201620_r = Maps.newHashMap();
+-   private final ShortList[] field_201622_t = new ShortList[16];
+-   private ITickList<Block> field_201621_s;
+-   private ITickList<Fluid> field_205325_u;
+-   private boolean field_76644_m;
+-   private long field_76641_n;
+-   private volatile boolean field_76643_l;
+-   private long field_111204_q;
+-   @Nullable
+-   private Supplier<ChunkHolder.LocationType> field_217329_u;
+-   @Nullable
+-   private Consumer<Chunk> field_217330_v;
+-   private final ChunkPos field_212816_F;
+-   private volatile boolean field_217331_x;
+-
+-   public Chunk(World p_i225780_1_, ChunkPos p_i225780_2_, BiomeContainer p_i225780_3_) {
+-      this(p_i225780_1_, p_i225780_2_, p_i225780_3_, UpgradeData.field_196994_a, EmptyTickList.func_205388_a(), EmptyTickList.func_205388_a(), 0L, (ChunkSection[])null, (Consumer<Chunk>)null);
+-   }
+-
+-   public Chunk(World p_i225781_1_, ChunkPos p_i225781_2_, BiomeContainer p_i225781_3_, UpgradeData p_i225781_4_, ITickList<Block> p_i225781_5_, ITickList<Fluid> p_i225781_6_, long p_i225781_7_, @Nullable ChunkSection[] p_i225781_9_, @Nullable Consumer<Chunk> p_i225781_10_) {
+-      this.field_76645_j = new ClassInheritanceMultiMap[16];
+-      this.field_76637_e = p_i225781_1_;
+-      this.field_212816_F = p_i225781_2_;
+-      this.field_196967_n = p_i225781_4_;
+-
+-      for(Heightmap.Type heightmap$type : Heightmap.Type.values()) {
+-         if (ChunkStatus.field_222617_m.func_222595_h().contains(heightmap$type)) {
+-            this.field_76634_f.put(heightmap$type, new Heightmap(this, heightmap$type));
+-         }
+-      }
+-
+-      for(int i = 0; i < this.field_76645_j.length; ++i) {
+-         this.field_76645_j[i] = new ClassInheritanceMultiMap<>(Entity.class);
+-      }
+-
+-      this.field_76651_r = p_i225781_3_;
+-      this.field_201621_s = p_i225781_5_;
+-      this.field_205325_u = p_i225781_6_;
+-      this.field_111204_q = p_i225781_7_;
+-      this.field_217330_v = p_i225781_10_;
+-      if (p_i225781_9_ != null) {
+-         if (this.field_76652_q.length == p_i225781_9_.length) {
+-            System.arraycopy(p_i225781_9_, 0, this.field_76652_q, 0, this.field_76652_q.length);
+-         } else {
 -            field_150817_t.warn("Could not set level chunk sections, array length is {} instead of {}", p_i225781_9_.length, this.field_76652_q.length);
-+            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.1", p_i225781_9_.length, this.field_76652_q.length));
-          }
-       }
+-         }
+-      }
 -
 -   }
-+      this.gatherCapabilities();
+-
+-   public Chunk(World p_i49947_1_, ChunkPrimer p_i49947_2_) {
+-      this(p_i49947_1_, p_i49947_2_.func_76632_l(), p_i49947_2_.func_225549_i_(), p_i49947_2_.func_196966_y(), p_i49947_2_.func_205218_i_(), p_i49947_2_.func_212247_j(), p_i49947_2_.func_177416_w(), p_i49947_2_.func_76587_i(), (Consumer<Chunk>)null);
+-
+-      for(CompoundNBT compoundnbt : p_i49947_2_.func_201652_l()) {
+-         EntityType.func_220335_a(compoundnbt, p_i49947_1_, (p_217325_1_) -> {
+-            this.func_76612_a(p_217325_1_);
+-            return p_217325_1_;
+-         });
+-      }
+-
+-      for(TileEntity tileentity : p_i49947_2_.func_201627_k().values()) {
+-         this.func_150813_a(tileentity);
+-      }
+-
+-      this.field_201618_i.putAll(p_i49947_2_.func_201632_q());
+-
+-      for(int i = 0; i < p_i49947_2_.func_201614_D().length; ++i) {
+-         this.field_201622_t[i] = p_i49947_2_.func_201614_D()[i];
+-      }
+-
+-      this.func_201612_a(p_i49947_2_.func_201609_c());
+-      this.func_201606_b(p_i49947_2_.func_201604_d());
+-
+-      for(Entry<Heightmap.Type, Heightmap> entry : p_i49947_2_.func_217311_f()) {
+-         if (ChunkStatus.field_222617_m.func_222595_h().contains(entry.getKey())) {
+-            this.func_217303_b(entry.getKey()).func_202268_a(entry.getValue().func_202269_a());
+-         }
+-      }
+-
+-      this.func_217305_b(p_i49947_2_.func_217310_r());
+-      this.field_76643_l = true;
+-   }
+-
+-   public Heightmap func_217303_b(Heightmap.Type p_217303_1_) {
+-      return this.field_76634_f.computeIfAbsent(p_217303_1_, (p_217319_1_) -> {
+-         return new Heightmap(this, p_217319_1_);
+-      });
+-   }
+-
+-   public Set<BlockPos> func_203066_o() {
+-      Set<BlockPos> set = Sets.newHashSet(this.field_201618_i.keySet());
+-      set.addAll(this.field_150816_i.keySet());
+-      return set;
+-   }
+-
+-   public ChunkSection[] func_76587_i() {
+-      return this.field_76652_q;
+-   }
+-
+-   public BlockState func_180495_p(BlockPos p_180495_1_) {
+-      int i = p_180495_1_.func_177958_n();
+-      int j = p_180495_1_.func_177956_o();
+-      int k = p_180495_1_.func_177952_p();
+-      if (this.field_76637_e.func_234925_Z_()) {
+-         BlockState blockstate = null;
+-         if (j == 60) {
+-            blockstate = Blocks.field_180401_cv.func_176223_P();
+-         }
+-
+-         if (j == 70) {
+-            blockstate = DebugChunkGenerator.func_177461_b(i, k);
+-         }
+-
+-         return blockstate == null ? Blocks.field_150350_a.func_176223_P() : blockstate;
+-      } else {
+-         try {
+-            if (j >= 0 && j >> 4 < this.field_76652_q.length) {
+-               ChunkSection chunksection = this.field_76652_q[j >> 4];
+-               if (!ChunkSection.func_222628_a(chunksection)) {
+-                  return chunksection.func_177485_a(i & 15, j & 15, k & 15);
+-               }
+-            }
+-
+-            return Blocks.field_150350_a.func_176223_P();
+-         } catch (Throwable throwable) {
+-            CrashReport crashreport = CrashReport.func_85055_a(throwable, "Getting block state");
++import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
 +
-+      // CraftBukkit start
-+      this.bukkitChunk = new CraftChunk(this);
-+   }
++public class Chunk extends net.minecraftforge.common.capabilities.CapabilityProvider<Chunk> implements IChunk, net.minecraftforge.common.extensions.IForgeChunk {
++    private static final Logger field_150817_t = LogManager.getLogger();
++    @Nullable
++    public static final ChunkSection field_186036_a = null;
++    public static final ChunkSection EMPTY_CHUNK_SECTION = field_186036_a; // Paper - OBFHELPER
++    private final ChunkSection[] field_76652_q = new ChunkSection[16];
++    private BiomeContainer field_76651_r;
++    private final Map<BlockPos, CompoundNBT> field_201618_i = Maps.newHashMap();
++    public boolean field_76636_d;
++    public final World field_76637_e;
++    public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
++    private final UpgradeData field_196967_n;
++    public final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
++    public final ClassInheritanceMultiMap<Entity>[] field_76645_j;
++    private final Map<Structure<?>, StructureStart<?>> field_201619_q = Maps.newHashMap();
++    private final Map<Structure<?>, LongSet> field_201620_r = Maps.newHashMap();
++    private final ShortList[] field_201622_t = new ShortList[16];
++    private ITickList<Block> field_201621_s;
++    private ITickList<Fluid> field_205325_u;
++    private boolean field_76644_m;
++    private long field_76641_n;
++    private volatile boolean field_76643_l;
++    private long field_111204_q;
++    @Nullable
++    private Supplier<ChunkHolder.LocationType> field_217329_u;
++    @Nullable
++    private Consumer<Chunk> field_217330_v;
++    private final ChunkPos field_212816_F;
++    public final long coordinateKey; // Paper - cache coordinate key
++    public final int locX; // Paper - cache coordinate key
++    public final int locZ; // Paper - cache coordinate key
++    private volatile boolean field_217331_x;
 +
-+   public org.bukkit.Chunk bukkitChunk;
-+   public org.bukkit.Chunk getBukkitChunk() {
-+      return bukkitChunk;
-+   }
++    public Chunk(World p_i225780_1_, ChunkPos p_i225780_2_, BiomeContainer p_i225780_3_) {
++        this(p_i225780_1_, p_i225780_2_, p_i225780_3_, UpgradeData.field_196994_a, EmptyTickList.func_205388_a(), EmptyTickList.func_205388_a(), 0L, (ChunkSection[]) null, (Consumer<Chunk>) null);
++    }
 +
-+   public boolean mustNotSave;
-+   public boolean needsDecoration;
++    public Chunk(World p_i225781_1_, ChunkPos p_i225781_2_, BiomeContainer p_i225781_3_, UpgradeData p_i225781_4_, ITickList<Block> p_i225781_5_, ITickList<Fluid> p_i225781_6_, long p_i225781_7_, @Nullable ChunkSection[] p_i225781_9_, @Nullable Consumer<Chunk> p_i225781_10_) {
++        super(Chunk.class);
++        this.field_76645_j = new ClassInheritanceMultiMap[16];
++        this.field_76637_e = p_i225781_1_;
++        this.field_212816_F = p_i225781_2_;
++        this.locX = p_i225781_2_.field_77276_a; // Paper - reduce need for field look ups
++        this.locZ = p_i225781_2_.field_77275_b; // Paper - reduce need for field look ups
++        this.coordinateKey = ChunkPos.func_77272_a(locX, locZ); // Paper - cache long key
++        this.field_196967_n = p_i225781_4_;
 +
-+   private static final org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry();
-+   public final org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
-+   // CraftBukkit end
- 
-    public Chunk(World p_i49947_1_, ChunkPrimer p_i49947_2_) {
-       this(p_i49947_1_, p_i49947_2_.func_76632_l(), p_i49947_2_.func_225549_i_(), p_i49947_2_.func_196966_y(), p_i49947_2_.func_205218_i_(), p_i49947_2_.func_212247_j(), p_i49947_2_.func_177416_w(), p_i49947_2_.func_76587_i(), (Consumer<Chunk>)null);
-@@ -153,6 +_,7 @@
- 
-       this.func_217305_b(p_i49947_2_.func_217310_r());
-       this.field_76643_l = true;
-+      this.needsDecoration = true; // CraftBukkit
-    }
- 
-    public Heightmap func_217303_b(Heightmap.Type p_217303_1_) {
-@@ -231,14 +_,25 @@
-       }
-    }
- 
-+   // CraftBukkit start
-    @Nullable
-    public BlockState func_177436_a(BlockPos p_177436_1_, BlockState p_177436_2_, boolean p_177436_3_) {
++        for (Heightmap.Type heightmap$type : Heightmap.Type.values()) {
++            if (ChunkStatus.field_222617_m.func_222595_h().contains(heightmap$type)) {
++                this.field_76634_f.put(heightmap$type, new Heightmap(this, heightmap$type));
++            }
++        }
++
++        for (int i = 0; i < this.field_76645_j.length; ++i) {
++            this.field_76645_j[i] = new ClassInheritanceMultiMap<>(Entity.class);
++        }
++
++        this.field_76651_r = p_i225781_3_;
++        this.field_201621_s = p_i225781_5_;
++        this.field_205325_u = p_i225781_6_;
++        this.field_111204_q = p_i225781_7_;
++        this.field_217330_v = p_i225781_10_;
++        if (p_i225781_9_ != null) {
++            if (this.field_76652_q.length == p_i225781_9_.length) {
++                System.arraycopy(p_i225781_9_, 0, this.field_76652_q, 0, this.field_76652_q.length);
++            } else {
++                field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.1", p_i225781_9_.length, this.field_76652_q.length));
++            }
++        }
++        this.gatherCapabilities();
++
++        // CraftBukkit start
++        this.bukkitChunk = new CraftChunk(this);
++    }
++
++    public org.bukkit.Chunk bukkitChunk;
++
++    public org.bukkit.Chunk getBukkitChunk() {
++        return bukkitChunk;
++    }
++
++    public boolean mustNotSave;
++    public boolean needsDecoration;
++
++    private static final org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry();
++    public final org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++    // CraftBukkit end
++
++    // Paper start
++    public final com.destroystokyo.paper.util.maplist.EntityList entities = new com.destroystokyo.paper.util.maplist.EntityList();
++    public ChunkHolder playerChunk;
++
++    static final int NEIGHBOUR_CACHE_RADIUS = 3;
++
++    public static int getNeighbourCacheRadius() {
++        return NEIGHBOUR_CACHE_RADIUS;
++    }
++
++    boolean loadedTicketLevel;
++    private long neighbourChunksLoadedBitset;
++    private final Chunk[] loadedNeighbourChunks = new Chunk[(NEIGHBOUR_CACHE_RADIUS * 2 + 1) * (NEIGHBOUR_CACHE_RADIUS * 2 + 1)];
++
++    private static int getNeighbourIndex(final int relativeX, final int relativeZ) {
++        // index = (relativeX + NEIGHBOUR_CACHE_RADIUS) + (relativeZ + NEIGHBOUR_CACHE_RADIUS) * (NEIGHBOUR_CACHE_RADIUS * 2 + 1)
++        // optimised variant of the above by moving some of the ops to compile time
++        return relativeX + (relativeZ * (NEIGHBOUR_CACHE_RADIUS * 2 + 1)) + (NEIGHBOUR_CACHE_RADIUS + NEIGHBOUR_CACHE_RADIUS * ((NEIGHBOUR_CACHE_RADIUS * 2 + 1)));
++    }
++
++    public final Chunk getRelativeNeighbourIfLoaded(final int relativeX, final int relativeZ) {
++        return this.loadedNeighbourChunks[getNeighbourIndex(relativeX, relativeZ)];
++    }
++
++    public final boolean isNeighbourLoaded(final int relativeX, final int relativeZ) {
++        return (this.neighbourChunksLoadedBitset & (1L << getNeighbourIndex(relativeX, relativeZ))) != 0;
++    }
++
++    public final void setNeighbourLoaded(final int relativeX, final int relativeZ, final Chunk chunk) {
++        if (chunk == null) {
++            throw new IllegalArgumentException("Chunk must be non-null, neighbour: (" + relativeX + "," + relativeZ + "), chunk: " + this.field_212816_F);
++        }
++        final long before = this.neighbourChunksLoadedBitset;
++        final int index = getNeighbourIndex(relativeX, relativeZ);
++        this.loadedNeighbourChunks[index] = chunk;
++        this.neighbourChunksLoadedBitset |= (1L << index);
++        this.onNeighbourChange(before, this.neighbourChunksLoadedBitset);
++    }
++
++    public final void setNeighbourUnloaded(final int relativeX, final int relativeZ) {
++        final long before = this.neighbourChunksLoadedBitset;
++        final int index = getNeighbourIndex(relativeX, relativeZ);
++        this.loadedNeighbourChunks[index] = null;
++        this.neighbourChunksLoadedBitset &= ~(1L << index);
++        this.onNeighbourChange(before, this.neighbourChunksLoadedBitset);
++    }
++
++    public final void resetNeighbours() {
++        final long before = this.neighbourChunksLoadedBitset;
++        this.neighbourChunksLoadedBitset = 0L;
++        java.util.Arrays.fill(this.loadedNeighbourChunks, null);
++        this.onNeighbourChange(before, 0L);
++    }
++
++    protected void onNeighbourChange(final long bitsetBefore, final long bitsetAfter) {
++
++    }
++
++    public final boolean isAnyNeighborsLoaded() {
++        return neighbourChunksLoadedBitset != 0;
++    }
++
++    public final boolean areNeighboursLoaded(final int radius) {
++        return Chunk.areNeighboursLoaded(this.neighbourChunksLoadedBitset, radius);
++    }
++
++    public static boolean areNeighboursLoaded(final long bitset, final int radius) {
++        // index = relativeX + (relativeZ * (NEIGHBOUR_CACHE_RADIUS * 2 + 1)) + (NEIGHBOUR_CACHE_RADIUS + NEIGHBOUR_CACHE_RADIUS * ((NEIGHBOUR_CACHE_RADIUS * 2 + 1)))
++        switch (radius) {
++            case 0: {
++                return (bitset & (1L << getNeighbourIndex(0, 0))) != 0;
++            }
++            case 1: {
++                long mask = 0L;
++                for (int dx = -1; dx <= 1; ++dx) {
++                    for (int dz = -1; dz <= 1; ++dz) {
++                        mask |= (1L << getNeighbourIndex(dx, dz));
++                    }
++                }
++                return (bitset & mask) == mask;
++            }
++            case 2: {
++                long mask = 0L;
++                for (int dx = -2; dx <= 2; ++dx) {
++                    for (int dz = -2; dz <= 2; ++dz) {
++                        mask |= (1L << getNeighbourIndex(dx, dz));
++                    }
++                }
++                return (bitset & mask) == mask;
++            }
++            case 3: {
++                long mask = 0L;
++                for (int dx = -3; dx <= 3; ++dx) {
++                    for (int dz = -3; dz <= 3; ++dz) {
++                        mask |= (1L << getNeighbourIndex(dx, dz));
++                    }
++                }
++                return (bitset & mask) == mask;
++            }
++
++            default:
++                throw new IllegalArgumentException("Radius not recognized: " + radius);
++        }
++    }
++    // Paper end
++
++    public Chunk(World p_i49947_1_, ChunkPrimer p_i49947_2_) {
++        this(p_i49947_1_, p_i49947_2_.func_76632_l(), p_i49947_2_.func_225549_i_(), p_i49947_2_.func_196966_y(), p_i49947_2_.func_205218_i_(), p_i49947_2_.func_212247_j(), p_i49947_2_.func_177416_w(), p_i49947_2_.func_76587_i(), (Consumer<Chunk>) null);
++
++        for (CompoundNBT compoundnbt : p_i49947_2_.func_201652_l()) {
++            EntityType.func_220335_a(compoundnbt, p_i49947_1_, (p_217325_1_) -> {
++                this.func_76612_a(p_217325_1_);
++                return p_217325_1_;
++            });
++        }
++
++        for (TileEntity tileentity : p_i49947_2_.func_201627_k().values()) {
++            this.func_150813_a(tileentity);
++        }
++
++        this.field_201618_i.putAll(p_i49947_2_.func_201632_q());
++
++        for (int i = 0; i < p_i49947_2_.func_201614_D().length; ++i) {
++            this.field_201622_t[i] = p_i49947_2_.func_201614_D()[i];
++        }
++
++        this.func_201612_a(p_i49947_2_.func_201609_c());
++        this.func_201606_b(p_i49947_2_.func_201604_d());
++
++        for (Entry<Heightmap.Type, Heightmap> entry : p_i49947_2_.func_217311_f()) {
++            if (ChunkStatus.field_222617_m.func_222595_h().contains(entry.getKey())) {
++                this.func_217303_b(entry.getKey()).func_202268_a(entry.getValue().func_202269_a());
++            }
++        }
++
++        this.func_217305_b(p_i49947_2_.func_217310_r());
++        this.field_76643_l = true;
++        this.needsDecoration = true; // CraftBukkit
++    }
++
++    public Heightmap func_217303_b(Heightmap.Type p_217303_1_) {
++        return this.field_76634_f.computeIfAbsent(p_217303_1_, (p_217319_1_) -> {
++            return new Heightmap(this, p_217319_1_);
++        });
++    }
++
++    public Set<BlockPos> func_203066_o() {
++        Set<BlockPos> set = Sets.newHashSet(this.field_201618_i.keySet());
++        set.addAll(this.field_150816_i.keySet());
++        return set;
++    }
++
++    public ChunkSection[] func_76587_i() {
++        return this.field_76652_q;
++    }
++
++    public BlockState func_180495_p(BlockPos p_180495_1_) {
++        int i = p_180495_1_.func_177958_n();
++        int j = p_180495_1_.func_177956_o();
++        int k = p_180495_1_.func_177952_p();
++        if (this.field_76637_e.func_234925_Z_()) {
++            BlockState blockstate = null;
++            if (j == 60) {
++                blockstate = Blocks.field_180401_cv.func_176223_P();
++            }
++
++            if (j == 70) {
++                blockstate = DebugChunkGenerator.func_177461_b(i, k);
++            }
++
++            return blockstate == null ? Blocks.field_150350_a.func_176223_P() : blockstate;
++        } else {
++            try {
++                if (j >= 0 && j >> 4 < this.field_76652_q.length) {
++                    ChunkSection chunksection = this.field_76652_q[j >> 4];
++                    if (!ChunkSection.func_222628_a(chunksection)) {
++                        return chunksection.func_177485_a(i & 15, j & 15, k & 15);
++                    }
++                }
++
++                return Blocks.field_150350_a.func_176223_P();
++            } catch (Throwable throwable) {
++                CrashReport crashreport = CrashReport.func_85055_a(throwable, "Getting block state");
++                CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being got");
++                crashreportcategory.func_189529_a("Location", () -> {
++                    return CrashReportCategory.func_184876_a(i, j, k);
++                });
++                throw new ReportedException(crashreport);
++            }
++        }
++    }
++
++    // Paper start - If loaded util
++    @Override
++    public FluidState getFluidIfLoaded(BlockPos blockposition) {
++                return this.func_204610_c(blockposition);
++            }
++
++            @Override
++    public BlockState getTypeIfLoaded(BlockPos blockposition) {
++                return this.func_180495_p(blockposition);
++            }
++    // Paper end
++
++    public FluidState func_204610_c(BlockPos p_204610_1_) {
++        return this.func_205751_b(p_204610_1_.func_177958_n(), p_204610_1_.func_177956_o(), p_204610_1_.func_177952_p());
++    }
++
++    public FluidState func_205751_b(int p_205751_1_, int p_205751_2_, int p_205751_3_) {
++        try {
++            if (p_205751_2_ >= 0 && p_205751_2_ >> 4 < this.field_76652_q.length) {
++                ChunkSection chunksection = this.field_76652_q[p_205751_2_ >> 4];
++                if (!ChunkSection.func_222628_a(chunksection)) {
++                    return chunksection.func_206914_b(p_205751_1_ & 15, p_205751_2_ & 15, p_205751_3_ & 15);
++                }
++            }
++
++            return Fluids.field_204541_a.func_207188_f();
++        } catch (Throwable throwable) {
++            CrashReport crashreport = CrashReport.func_85055_a(throwable, "Getting fluid state");
+             CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being got");
+             crashreportcategory.func_189529_a("Location", () -> {
+-               return CrashReportCategory.func_184876_a(i, j, k);
++                return CrashReportCategory.func_184876_a(p_205751_1_, p_205751_2_, p_205751_3_);
+             });
+             throw new ReportedException(crashreport);
+-         }
+-      }
+-   }
+-
+-   public FluidState func_204610_c(BlockPos p_204610_1_) {
+-      return this.func_205751_b(p_204610_1_.func_177958_n(), p_204610_1_.func_177956_o(), p_204610_1_.func_177952_p());
+-   }
+-
+-   public FluidState func_205751_b(int p_205751_1_, int p_205751_2_, int p_205751_3_) {
+-      try {
+-         if (p_205751_2_ >= 0 && p_205751_2_ >> 4 < this.field_76652_q.length) {
+-            ChunkSection chunksection = this.field_76652_q[p_205751_2_ >> 4];
+-            if (!ChunkSection.func_222628_a(chunksection)) {
+-               return chunksection.func_206914_b(p_205751_1_ & 15, p_205751_2_ & 15, p_205751_3_ & 15);
++        }
++    }
++
++    // CraftBukkit start
++    @Nullable
++    public BlockState func_177436_a(BlockPos p_177436_1_, BlockState p_177436_2_, boolean p_177436_3_) {
++        return this.setBlockState(p_177436_1_, p_177436_2_, p_177436_3_, true);
++    }
++
++    // Mohist: Plugin NMS compatibility
++    public BlockState setType(BlockPos pos, BlockState state, boolean isMoving, boolean doPlace) {
++        return this.setBlockState(pos, state, isMoving, doPlace);
++    }
++
++    public BlockState setBlockState(BlockPos pos, BlockState state, boolean isMoving, boolean doPlace) {
++        // CraftBukkit end
++        int i = pos.func_177958_n() & 15;
++        int j = pos.func_177956_o();
++        int k = pos.func_177952_p() & 15;
++        ChunkSection chunksection = this.field_76652_q[j >> 4];
++        if (chunksection == field_186036_a) {
++            if (state.func_196958_f()) {
++                return null;
+             }
+-         }
+-
+-         return Fluids.field_204541_a.func_207188_f();
+-      } catch (Throwable throwable) {
+-         CrashReport crashreport = CrashReport.func_85055_a(throwable, "Getting fluid state");
+-         CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being got");
+-         crashreportcategory.func_189529_a("Location", () -> {
+-            return CrashReportCategory.func_184876_a(p_205751_1_, p_205751_2_, p_205751_3_);
+-         });
+-         throw new ReportedException(crashreport);
+-      }
+-   }
+-
+-   @Nullable
+-   public BlockState func_177436_a(BlockPos p_177436_1_, BlockState p_177436_2_, boolean p_177436_3_) {
 -      int i = p_177436_1_.func_177958_n() & 15;
 -      int j = p_177436_1_.func_177956_o();
 -      int k = p_177436_1_.func_177952_p() & 15;
-+      return this.setBlockState(p_177436_1_, p_177436_2_, p_177436_3_, true);
-+   }
-+
-+   // Mohist: Plugin NMS compatibility
-+   public BlockState setType(BlockPos pos, BlockState state, boolean isMoving, boolean doPlace) {
-+       return this.setBlockState(pos, state, isMoving, doPlace);
-+   }
-+
-+   public BlockState setBlockState(BlockPos pos, BlockState state, boolean isMoving, boolean doPlace) {
-+      // CraftBukkit end
-+      int i = pos.func_177958_n() & 15;
-+      int j = pos.func_177956_o();
-+      int k = pos.func_177952_p() & 15;
-       ChunkSection chunksection = this.field_76652_q[j >> 4];
-       if (chunksection == field_186036_a) {
+-      ChunkSection chunksection = this.field_76652_q[j >> 4];
+-      if (chunksection == field_186036_a) {
 -         if (p_177436_2_.func_196958_f()) {
-+         if (state.func_196958_f()) {
-             return null;
-          }
- 
-@@ -247,46 +_,47 @@
-       }
- 
-       boolean flag = chunksection.func_76663_a();
+-            return null;
+-         }
+-
+-         chunksection = new ChunkSection(j >> 4 << 4);
+-         this.field_76652_q[j >> 4] = chunksection;
+-      }
+-
+-      boolean flag = chunksection.func_76663_a();
 -      BlockState blockstate = chunksection.func_222629_a(i, j & 15, k, p_177436_2_);
 -      if (blockstate == p_177436_2_) {
-+      BlockState blockstate = chunksection.func_222629_a(i, j & 15, k, state);
-+      if (blockstate == state) {
-          return null;
-       } else {
+-         return null;
+-      } else {
 -         Block block = p_177436_2_.func_177230_c();
-+         Block block = state.func_177230_c();
-          Block block1 = blockstate.func_177230_c();
+-         Block block1 = blockstate.func_177230_c();
 -         this.field_76634_f.get(Heightmap.Type.MOTION_BLOCKING).func_202270_a(i, j, k, p_177436_2_);
 -         this.field_76634_f.get(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).func_202270_a(i, j, k, p_177436_2_);
 -         this.field_76634_f.get(Heightmap.Type.OCEAN_FLOOR).func_202270_a(i, j, k, p_177436_2_);
 -         this.field_76634_f.get(Heightmap.Type.WORLD_SURFACE).func_202270_a(i, j, k, p_177436_2_);
-+         this.field_76634_f.get(Heightmap.Type.MOTION_BLOCKING).func_202270_a(i, j, k, state);
-+         this.field_76634_f.get(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).func_202270_a(i, j, k, state);
-+         this.field_76634_f.get(Heightmap.Type.OCEAN_FLOOR).func_202270_a(i, j, k, state);
-+         this.field_76634_f.get(Heightmap.Type.WORLD_SURFACE).func_202270_a(i, j, k, state);
-          boolean flag1 = chunksection.func_76663_a();
-          if (flag != flag1) {
+-         boolean flag1 = chunksection.func_76663_a();
+-         if (flag != flag1) {
 -            this.field_76637_e.func_72863_F().func_212863_j_().func_215567_a(p_177436_1_, flag1);
-+            this.field_76637_e.func_72863_F().func_212863_j_().func_215567_a(pos, flag1);
-          }
- 
-          if (!this.field_76637_e.field_72995_K) {
+-         }
+-
+-         if (!this.field_76637_e.field_72995_K) {
 -            blockstate.func_196947_b(this.field_76637_e, p_177436_1_, p_177436_2_, p_177436_3_);
 -         } else if (block1 != block && block1 instanceof ITileEntityProvider) {
 -            this.field_76637_e.func_175713_t(p_177436_1_);
-+            blockstate.func_196947_b(this.field_76637_e, pos, state, isMoving);
-+         } else if ((block1 != block || !state.hasTileEntity()) && blockstate.hasTileEntity()) {
-+            this.field_76637_e.func_175713_t(pos);
-          }
- 
-          if (!chunksection.func_177485_a(i, j & 15, k).func_203425_a(block)) {
-             return null;
-          } else {
+-         }
+-
+-         if (!chunksection.func_177485_a(i, j & 15, k).func_203425_a(block)) {
+-            return null;
+-         } else {
 -            if (block1 instanceof ITileEntityProvider) {
 -               TileEntity tileentity = this.func_177424_a(p_177436_1_, Chunk.CreateEntityType.CHECK);
-+            if (blockstate.hasTileEntity()) {
-+               TileEntity tileentity = this.func_177424_a(pos, Chunk.CreateEntityType.CHECK);
-                if (tileentity != null) {
-                   tileentity.func_145836_u();
-                }
+-               if (tileentity != null) {
+-                  tileentity.func_145836_u();
+-               }
++
++            chunksection = new ChunkSection(j >> 4 << 4);
++            this.field_76652_q[j >> 4] = chunksection;
++        }
++
++        boolean flag = chunksection.func_76663_a();
++        BlockState blockstate = chunksection.func_222629_a(i, j & 15, k, state);
++        if (blockstate == state) {
++            return null;
++        } else {
++            Block block = state.func_177230_c();
++            Block block1 = blockstate.func_177230_c();
++            this.field_76634_f.get(Heightmap.Type.MOTION_BLOCKING).func_202270_a(i, j, k, state);
++            this.field_76634_f.get(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).func_202270_a(i, j, k, state);
++            this.field_76634_f.get(Heightmap.Type.OCEAN_FLOOR).func_202270_a(i, j, k, state);
++            this.field_76634_f.get(Heightmap.Type.WORLD_SURFACE).func_202270_a(i, j, k, state);
++            boolean flag1 = chunksection.func_76663_a();
++            if (flag != flag1) {
++                this.field_76637_e.func_72863_F().func_212863_j_().func_215567_a(pos, flag1);
              }
  
--            if (!this.field_76637_e.field_72995_K) {
+             if (!this.field_76637_e.field_72995_K) {
 -               p_177436_2_.func_215705_a(this.field_76637_e, p_177436_1_, blockstate, p_177436_3_);
-+            // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
-+            if (!this.field_76637_e.field_72995_K && doPlace && !this.field_76637_e.captureBlockSnapshots && (!this.field_76637_e.captureBlockStates || block instanceof ContainerBlock)) {
-+               state.func_215705_a(this.field_76637_e, pos, blockstate, isMoving);
-             }
- 
+-            }
+-
 -            if (block instanceof ITileEntityProvider) {
 -               TileEntity tileentity1 = this.func_177424_a(p_177436_1_, Chunk.CreateEntityType.CHECK);
-+            if (state.hasTileEntity()) {
-+               TileEntity tileentity1 = this.func_177424_a(pos, Chunk.CreateEntityType.CHECK);
-                if (tileentity1 == null) {
+-               if (tileentity1 == null) {
 -                  tileentity1 = ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
 -                  this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
-+                  tileentity1 = state.createTileEntity(this.field_76637_e);
-+                  this.field_76637_e.func_175690_a(pos, tileentity1);
-                } else {
-                   tileentity1.func_145836_u();
-                }
-@@ -308,8 +_,13 @@
-       int i = MathHelper.func_76128_c(p_76612_1_.func_226277_ct_() / 16.0D);
-       int j = MathHelper.func_76128_c(p_76612_1_.func_226281_cx_() / 16.0D);
-       if (i != this.field_212816_F.field_77276_a || j != this.field_212816_F.field_77275_b) {
+-               } else {
+-                  tileentity1.func_145836_u();
+-               }
+-            }
+-
+-            this.field_76643_l = true;
+-            return blockstate;
+-         }
+-      }
+-   }
+-
+-   @Nullable
+-   public WorldLightManager func_217307_e() {
+-      return this.field_76637_e.func_72863_F().func_212863_j_();
+-   }
+-
+-   public void func_76612_a(Entity p_76612_1_) {
+-      this.field_76644_m = true;
+-      int i = MathHelper.func_76128_c(p_76612_1_.func_226277_ct_() / 16.0D);
+-      int j = MathHelper.func_76128_c(p_76612_1_.func_226281_cx_() / 16.0D);
+-      if (i != this.field_212816_F.field_77276_a || j != this.field_212816_F.field_77275_b) {
 -         field_150817_t.warn("Wrong location! ({}, {}) should be ({}, {}), {}", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_);
 -         p_76612_1_.field_70128_L = true;
-+         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.2", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_));
-+         // Mohist start - Fix "Wrong location"
-+         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.entmove"));
-+         p_76612_1_.needsChunkUpdate = true;
-+         ((ServerWorld) this.field_76637_e).field_217499_z.add(p_76612_1_);
-+         // Mohist end
-+         return; // Paper
-       }
- 
-       int k = MathHelper.func_76128_c(p_76612_1_.func_226278_cu_() / 16.0D);
-@@ -321,11 +_,13 @@
-          k = this.field_76645_j.length - 1;
-       }
- 
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EnteringChunk(p_76612_1_, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_.field_70176_ah, p_76612_1_.field_70164_aj));
-       p_76612_1_.field_70175_ag = true;
-       p_76612_1_.field_70176_ah = this.field_212816_F.field_77276_a;
-       p_76612_1_.field_70162_ai = k;
-       p_76612_1_.field_70164_aj = this.field_212816_F.field_77275_b;
-       this.field_76645_j[k].add(p_76612_1_);
-+      this.func_76630_e(); // Forge - ensure chunks are marked to save after an entity add
-    }
- 
-    public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
-@@ -346,6 +_,7 @@
-       }
- 
-       this.field_76645_j[p_76608_2_].remove(p_76608_1_);
-+      this.func_76630_e(); // Forge - ensure chunks are marked to save after entity removals
-    }
- 
-    public int func_201576_a(Heightmap.Type p_201576_1_, int p_201576_2_, int p_201576_3_) {
-@@ -356,7 +_,7 @@
-    private TileEntity func_177422_i(BlockPos p_177422_1_) {
-       BlockState blockstate = this.func_180495_p(p_177422_1_);
-       Block block = blockstate.func_177230_c();
+-      }
+-
+-      int k = MathHelper.func_76128_c(p_76612_1_.func_226278_cu_() / 16.0D);
+-      if (k < 0) {
+-         k = 0;
+-      }
+-
+-      if (k >= this.field_76645_j.length) {
+-         k = this.field_76645_j.length - 1;
+-      }
+-
+-      p_76612_1_.field_70175_ag = true;
+-      p_76612_1_.field_70176_ah = this.field_212816_F.field_77276_a;
+-      p_76612_1_.field_70162_ai = k;
+-      p_76612_1_.field_70164_aj = this.field_212816_F.field_77275_b;
+-      this.field_76645_j[k].add(p_76612_1_);
+-   }
+-
+-   public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
+-      this.field_76634_f.get(p_201607_1_).func_202268_a(p_201607_2_);
+-   }
+-
+-   public void func_76622_b(Entity p_76622_1_) {
+-      this.func_76608_a(p_76622_1_, p_76622_1_.field_70162_ai);
+-   }
+-
+-   public void func_76608_a(Entity p_76608_1_, int p_76608_2_) {
+-      if (p_76608_2_ < 0) {
+-         p_76608_2_ = 0;
+-      }
+-
+-      if (p_76608_2_ >= this.field_76645_j.length) {
+-         p_76608_2_ = this.field_76645_j.length - 1;
+-      }
+-
+-      this.field_76645_j[p_76608_2_].remove(p_76608_1_);
+-   }
+-
+-   public int func_201576_a(Heightmap.Type p_201576_1_, int p_201576_2_, int p_201576_3_) {
+-      return this.field_76634_f.get(p_201576_1_).func_202273_a(p_201576_2_ & 15, p_201576_3_ & 15) - 1;
+-   }
+-
+-   @Nullable
+-   private TileEntity func_177422_i(BlockPos p_177422_1_) {
+-      BlockState blockstate = this.func_180495_p(p_177422_1_);
+-      Block block = blockstate.func_177230_c();
 -      return !block.func_235695_q_() ? null : ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
-+      return !blockstate.hasTileEntity() ? null : blockstate.createTileEntity(this.field_76637_e);
-    }
- 
-    @Nullable
-@@ -366,7 +_,17 @@
- 
-    @Nullable
-    public TileEntity func_177424_a(BlockPos p_177424_1_, Chunk.CreateEntityType p_177424_2_) {
+-   }
+-
+-   @Nullable
+-   public TileEntity func_175625_s(BlockPos p_175625_1_) {
+-      return this.func_177424_a(p_175625_1_, Chunk.CreateEntityType.CHECK);
+-   }
+-
+-   @Nullable
+-   public TileEntity func_177424_a(BlockPos p_177424_1_, Chunk.CreateEntityType p_177424_2_) {
 -      TileEntity tileentity = this.field_150816_i.get(p_177424_1_);
-+      // CraftBukkit start
-+      TileEntity tileentity = field_76637_e.capturedTileEntities.get(p_177424_1_);
-+      if (tileentity == null) {
-+         tileentity = (TileEntity) this.field_150816_i.get(p_177424_1_);
-+      }
-+      // CraftBukkit end
-+
-+      if (tileentity != null && tileentity.func_145837_r()) {
-+         field_150816_i.remove(p_177424_1_);
-+         tileentity = null;
-+      }
-       if (tileentity == null) {
-          CompoundNBT compoundnbt = this.field_201618_i.remove(p_177424_1_);
-          if (compoundnbt != null) {
-@@ -382,9 +_,6 @@
-             tileentity = this.func_177422_i(p_177424_1_);
-             this.field_76637_e.func_175690_a(p_177424_1_, tileentity);
-          }
+-      if (tileentity == null) {
+-         CompoundNBT compoundnbt = this.field_201618_i.remove(p_177424_1_);
+-         if (compoundnbt != null) {
+-            TileEntity tileentity1 = this.func_212815_a(p_177424_1_, compoundnbt);
+-            if (tileentity1 != null) {
+-               return tileentity1;
+-            }
+-         }
+-      }
+-
+-      if (tileentity == null) {
+-         if (p_177424_2_ == Chunk.CreateEntityType.IMMEDIATE) {
+-            tileentity = this.func_177422_i(p_177424_1_);
+-            this.field_76637_e.func_175690_a(p_177424_1_, tileentity);
+-         }
 -      } else if (tileentity.func_145837_r()) {
 -         this.field_150816_i.remove(p_177424_1_);
 -         return null;
-       }
- 
-       return tileentity;
-@@ -399,14 +_,13 @@
-    }
- 
-    public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_) {
--      if (this.func_180495_p(p_177426_1_).func_177230_c() instanceof ITileEntityProvider) {
-+      if (this.func_180495_p(p_177426_1_).hasTileEntity()) {
-          p_177426_2_.func_226984_a_(this.field_76637_e, p_177426_1_);
-          p_177426_2_.func_145829_t();
-          TileEntity tileentity = this.field_150816_i.put(p_177426_1_.func_185334_h(), p_177426_2_);
-          if (tileentity != null && tileentity != p_177426_2_) {
-             tileentity.func_145843_s();
-          }
+-      }
 -
-       }
-    }
- 
-@@ -418,9 +_,14 @@
-    public CompoundNBT func_223134_j(BlockPos p_223134_1_) {
-       TileEntity tileentity = this.func_175625_s(p_223134_1_);
-       if (tileentity != null && !tileentity.func_145837_r()) {
-+         try {
-          CompoundNBT compoundnbt1 = tileentity.func_189515_b(new CompoundNBT());
-          compoundnbt1.func_74757_a("keepPacked", false);
-          return compoundnbt1;
-+         } catch (Exception e) {
-+            LogManager.getLogger().error("A TileEntity type {} has thrown an exception trying to write state. It will not persist, Report this to the mod author", tileentity.getClass().getName(), e);
-+            return null;
-+         }
-       } else {
-          CompoundNBT compoundnbt = this.field_201618_i.get(p_223134_1_);
-          if (compoundnbt != null) {
-@@ -450,13 +_,57 @@
- 
-    }
- 
-+   // CraftBukkit start
-+   public void loadCallback() {
-+      org.bukkit.Server server = this.field_76637_e.getCBServer();
-+      if (server != null) {
-+         /*
-+          * If it's a new world, the first few chunks are generated inside
-+          * the World constructor. We can't reliably alter that, so we have
-+          * no way of creating a CraftWorld/CraftServer at that point.
-+          */
-+         server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(this.bukkitChunk, this.needsDecoration));
-+         if (this.needsDecoration) {
-+            try (co.aikar.timings.Timing ignored = this.field_76637_e.timings.chunkLoadPopulate.startTiming()) { // Paper
-+               this.needsDecoration = false;
-+               java.util.Random random = new java.util.Random();
-+               random.setSeed(((ServerWorld) field_76637_e).func_72905_C());
-+               long xRand = random.nextLong() / 2L * 2L + 1L;
-+               long zRand = random.nextLong() / 2L * 2L + 1L;
-+               random.setSeed((long) this.field_212816_F.field_77276_a * xRand + (long) this.field_212816_F.field_77275_b * zRand ^ ((ServerWorld) field_76637_e).func_72905_C());
-+
-+               org.bukkit.World world = this.field_76637_e.getWorld();
-+               if (world != null) {
-+                  this.field_76637_e.populating = true;
-+                  try {
-+                     for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
-+                        populator.populate(world, random, bukkitChunk);
-+                     }
-+                  } finally {
-+                     this.field_76637_e.populating = false;
-+                  }
-+               }
-+               server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(bukkitChunk));
-+            } // Paper
-+         }
-+      }
-+   }
-+   public void unloadCallback() {
-+      org.bukkit.Server server = this.field_76637_e.getCBServer();
-+      org.bukkit.event.world.ChunkUnloadEvent unloadEvent = new org.bukkit.event.world.ChunkUnloadEvent(this.bukkitChunk, this.func_201593_f());
-+      server.getPluginManager().callEvent(unloadEvent);
-+      // note: saving can be prevented, but not forced if no saving is actually required
-+      this.mustNotSave = !unloadEvent.isSaveChunk();
-+   }
-+   // CraftBukkit end
-+
-    public void func_76630_e() {
-       this.field_76643_l = true;
-    }
- 
-    public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, @Nullable Predicate<? super Entity> p_177414_4_) {
+-      return tileentity;
+-   }
+-
+-   public void func_150813_a(TileEntity p_150813_1_) {
+-      this.func_177426_a(p_150813_1_.func_174877_v(), p_150813_1_);
+-      if (this.field_76636_d || this.field_76637_e.func_201670_d()) {
+-         this.field_76637_e.func_175690_a(p_150813_1_.func_174877_v(), p_150813_1_);
+-      }
+-
+-   }
+-
+-   public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_) {
+-      if (this.func_180495_p(p_177426_1_).func_177230_c() instanceof ITileEntityProvider) {
+-         p_177426_2_.func_226984_a_(this.field_76637_e, p_177426_1_);
+-         p_177426_2_.func_145829_t();
+-         TileEntity tileentity = this.field_150816_i.put(p_177426_1_.func_185334_h(), p_177426_2_);
+-         if (tileentity != null && tileentity != p_177426_2_) {
+-            tileentity.func_145843_s();
+-         }
+-
+-      }
+-   }
+-
+-   public void func_201591_a(CompoundNBT p_201591_1_) {
+-      this.field_201618_i.put(new BlockPos(p_201591_1_.func_74762_e("x"), p_201591_1_.func_74762_e("y"), p_201591_1_.func_74762_e("z")), p_201591_1_);
+-   }
+-
+-   @Nullable
+-   public CompoundNBT func_223134_j(BlockPos p_223134_1_) {
+-      TileEntity tileentity = this.func_175625_s(p_223134_1_);
+-      if (tileentity != null && !tileentity.func_145837_r()) {
+-         CompoundNBT compoundnbt1 = tileentity.func_189515_b(new CompoundNBT());
+-         compoundnbt1.func_74757_a("keepPacked", false);
+-         return compoundnbt1;
+-      } else {
+-         CompoundNBT compoundnbt = this.field_201618_i.get(p_223134_1_);
+-         if (compoundnbt != null) {
+-            compoundnbt = compoundnbt.func_74737_b();
+-            compoundnbt.func_74757_a("keepPacked", true);
+-         }
+-
+-         return compoundnbt;
+-      }
+-   }
+-
+-   public void func_177425_e(BlockPos p_177425_1_) {
+-      if (this.field_76636_d || this.field_76637_e.func_201670_d()) {
+-         TileEntity tileentity = this.field_150816_i.remove(p_177425_1_);
+-         if (tileentity != null) {
+-            tileentity.func_145843_s();
+-         }
+-      }
+-
+-   }
+-
+-   public void func_217318_w() {
+-      if (this.field_217330_v != null) {
+-         this.field_217330_v.accept(this);
+-         this.field_217330_v = null;
+-      }
+-
+-   }
+-
+-   public void func_76630_e() {
+-      this.field_76643_l = true;
+-   }
+-
+-   public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, @Nullable Predicate<? super Entity> p_177414_4_) {
 -      int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + 2.0D) / 16.0D);
-+      int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
-+      int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
-       i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
-       j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
- 
-@@ -472,8 +_,8 @@
-                   p_177414_3_.add(entity);
-                }
- 
+-      i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
+-      j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
+-
+-      for(int k = i; k <= j; ++k) {
+-         ClassInheritanceMultiMap<Entity> classinheritancemultimap = this.field_76645_j[k];
+-         List<Entity> list = classinheritancemultimap.func_241289_a_();
+-         int l = list.size();
+-
+-         for(int i1 = 0; i1 < l; ++i1) {
+-            Entity entity = list.get(i1);
+-            if (entity.func_174813_aQ().func_72326_a(p_177414_2_) && entity != p_177414_1_) {
+-               if (p_177414_4_ == null || p_177414_4_.test(entity)) {
+-                  p_177414_3_.add(entity);
+-               }
+-
 -               if (entity instanceof EnderDragonEntity) {
 -                  for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)entity).func_213404_dT()) {
-+               if (entity.isMultipartEntity()) {
-+                  for(net.minecraftforge.entity.PartEntity<?> enderdragonpartentity : entity.getParts()) {
-                      if (enderdragonpartentity != p_177414_1_ && enderdragonpartentity.func_174813_aQ().func_72326_a(p_177414_2_) && (p_177414_4_ == null || p_177414_4_.test(enderdragonpartentity))) {
-                         p_177414_3_.add(enderdragonpartentity);
-                      }
-@@ -486,8 +_,8 @@
-    }
- 
-    public <T extends Entity> void func_217313_a(@Nullable EntityType<?> p_217313_1_, AxisAlignedBB p_217313_2_, List<? super T> p_217313_3_, Predicate<? super T> p_217313_4_) {
+-                     if (enderdragonpartentity != p_177414_1_ && enderdragonpartentity.func_174813_aQ().func_72326_a(p_177414_2_) && (p_177414_4_ == null || p_177414_4_.test(enderdragonpartentity))) {
+-                        p_177414_3_.add(enderdragonpartentity);
+-                     }
+-                  }
+-               }
+-            }
+-         }
+-      }
+-
+-   }
+-
+-   public <T extends Entity> void func_217313_a(@Nullable EntityType<?> p_217313_1_, AxisAlignedBB p_217313_2_, List<? super T> p_217313_3_, Predicate<? super T> p_217313_4_) {
 -      int i = MathHelper.func_76128_c((p_217313_2_.field_72338_b - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76128_c((p_217313_2_.field_72337_e + 2.0D) / 16.0D);
-+      int i = MathHelper.func_76128_c((p_217313_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
-+      int j = MathHelper.func_76128_c((p_217313_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
-       i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
-       j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
- 
-@@ -502,8 +_,8 @@
-    }
- 
-    public <T extends Entity> void func_177430_a(Class<? extends T> p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, @Nullable Predicate<? super T> p_177430_4_) {
+-      i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
+-      j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
+-
+-      for(int k = i; k <= j; ++k) {
+-         for(Entity entity : this.field_76645_j[k].func_219790_a(Entity.class)) {
+-            if ((p_217313_1_ == null || entity.func_200600_R() == p_217313_1_) && entity.func_174813_aQ().func_72326_a(p_217313_2_) && p_217313_4_.test((T)entity)) {
+-               p_217313_3_.add((T)entity);
+-            }
+-         }
+-      }
+-
+-   }
+-
+-   public <T extends Entity> void func_177430_a(Class<? extends T> p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, @Nullable Predicate<? super T> p_177430_4_) {
 -      int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + 2.0D) / 16.0D);
-+      int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
-+      int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
-       i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
-       j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
- 
-@@ -535,6 +_,11 @@
-       };
-       Sets.newHashSet(this.field_150816_i.keySet()).stream().filter(predicate).forEach(this.field_76637_e::func_175713_t);
- 
-+      for (TileEntity tileEntity : field_150816_i.values()) {
-+         tileEntity.func_145836_u();
-+         tileEntity.func_195044_w();
-+      }
-+
-       for(int i = 0; i < this.field_76652_q.length; ++i) {
-          ChunkSection chunksection = this.field_76652_q[i];
-          if ((p_227073_4_ & 1 << i) == 0) {
-@@ -592,13 +_,23 @@
-       return this.field_76645_j;
-    }
- 
-+   public List<Entity>[] getEntitySlices() {
-+      // Mohist start - handle Spigot method in MythicMobs
-+      List<Entity>[] e = new List[16];
-+      for (int l = 0; l < this.field_76645_j.length; ++l) {
-+         e[l] = new org.bukkit.craftbukkit.v1_16_R3.util.UnsafeList<>();
-+      }
-+      return e;
-+      // Mohist end
-+   }
-+
-    public CompoundNBT func_201579_g(BlockPos p_201579_1_) {
-       return this.field_201618_i.get(p_201579_1_);
-    }
- 
-    public Stream<BlockPos> func_217304_m() {
-       return StreamSupport.stream(BlockPos.func_191531_b(this.field_212816_F.func_180334_c(), 0, this.field_212816_F.func_180333_d(), this.field_212816_F.func_180332_e(), 255, this.field_212816_F.func_180330_f()).spliterator(), false).filter((p_217312_1_) -> {
+-      i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
+-      j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
+-
+-      for(int k = i; k <= j; ++k) {
+-         for(T t : this.field_76645_j[k].func_219790_a(p_177430_1_)) {
+-            if (t.func_174813_aQ().func_72326_a(p_177430_2_) && (p_177430_4_ == null || p_177430_4_.test(t))) {
+-               p_177430_3_.add(t);
+-            }
+-         }
+-      }
+-
+-   }
+-
+-   public boolean func_76621_g() {
+-      return false;
+-   }
+-
+-   public ChunkPos func_76632_l() {
+-      return this.field_212816_F;
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public void func_227073_a_(@Nullable BiomeContainer p_227073_1_, PacketBuffer p_227073_2_, CompoundNBT p_227073_3_, int p_227073_4_) {
+-      boolean flag = p_227073_1_ != null;
+-      Predicate<BlockPos> predicate = flag ? (p_217315_0_) -> {
+-         return true;
+-      } : (p_217323_1_) -> {
+-         return (p_227073_4_ & 1 << (p_217323_1_.func_177956_o() >> 4)) != 0;
+-      };
+-      Sets.newHashSet(this.field_150816_i.keySet()).stream().filter(predicate).forEach(this.field_76637_e::func_175713_t);
+-
+-      for(int i = 0; i < this.field_76652_q.length; ++i) {
+-         ChunkSection chunksection = this.field_76652_q[i];
+-         if ((p_227073_4_ & 1 << i) == 0) {
+-            if (flag && chunksection != field_186036_a) {
+-               this.field_76652_q[i] = field_186036_a;
+-            }
+-         } else {
+-            if (chunksection == field_186036_a) {
+-               chunksection = new ChunkSection(i << 4);
+-               this.field_76652_q[i] = chunksection;
+-            }
+-
+-            chunksection.func_222634_a(p_227073_2_);
+-         }
+-      }
+-
+-      if (p_227073_1_ != null) {
+-         this.field_76651_r = p_227073_1_;
+-      }
+-
+-      for(Heightmap.Type heightmap$type : Heightmap.Type.values()) {
+-         String s = heightmap$type.func_203500_b();
+-         if (p_227073_3_.func_150297_b(s, 12)) {
+-            this.func_201607_a(heightmap$type, p_227073_3_.func_197645_o(s));
+-         }
+-      }
+-
+-      for(TileEntity tileentity : this.field_150816_i.values()) {
+-         tileentity.func_145836_u();
+-      }
+-
+-   }
+-
+-   public BiomeContainer func_225549_i_() {
+-      return this.field_76651_r;
+-   }
+-
+-   public void func_177417_c(boolean p_177417_1_) {
+-      this.field_76636_d = p_177417_1_;
+-   }
+-
+-   public World func_177412_p() {
+-      return this.field_76637_e;
+-   }
+-
+-   public Collection<Entry<Heightmap.Type, Heightmap>> func_217311_f() {
+-      return Collections.unmodifiableSet(this.field_76634_f.entrySet());
+-   }
+-
+-   public Map<BlockPos, TileEntity> func_177434_r() {
+-      return this.field_150816_i;
+-   }
+-
+-   public ClassInheritanceMultiMap<Entity>[] func_177429_s() {
+-      return this.field_76645_j;
+-   }
+-
+-   public CompoundNBT func_201579_g(BlockPos p_201579_1_) {
+-      return this.field_201618_i.get(p_201579_1_);
+-   }
+-
+-   public Stream<BlockPos> func_217304_m() {
+-      return StreamSupport.stream(BlockPos.func_191531_b(this.field_212816_F.func_180334_c(), 0, this.field_212816_F.func_180333_d(), this.field_212816_F.func_180332_e(), 255, this.field_212816_F.func_180330_f()).spliterator(), false).filter((p_217312_1_) -> {
 -         return this.func_180495_p(p_217312_1_).func_185906_d() != 0;
-+         return this.func_180495_p(p_217312_1_).getLightValue(func_177412_p(), p_217312_1_) != 0;
-       });
-    }
- 
-@@ -615,7 +_,7 @@
-    }
- 
-    public boolean func_201593_f() {
+-      });
+-   }
+-
+-   public ITickList<Block> func_205218_i_() {
+-      return this.field_201621_s;
+-   }
+-
+-   public ITickList<Fluid> func_212247_j() {
+-      return this.field_205325_u;
+-   }
+-
+-   public void func_177427_f(boolean p_177427_1_) {
+-      this.field_76643_l = p_177427_1_;
+-   }
+-
+-   public boolean func_201593_f() {
 -      return this.field_76643_l || this.field_76644_m && this.field_76637_e.func_82737_E() != this.field_76641_n;
-+      return (this.field_76643_l || this.field_76644_m && this.field_76637_e.func_82737_E() != this.field_76641_n) && !this.mustNotSave; // CraftBukkit
-    }
- 
-    public void func_177409_g(boolean p_177409_1_) {
-@@ -704,12 +_,11 @@
-       BlockState blockstate = this.func_180495_p(p_212815_1_);
-       TileEntity tileentity;
-       if ("DUMMY".equals(p_212815_2_.func_74779_i("id"))) {
+-   }
+-
+-   public void func_177409_g(boolean p_177409_1_) {
+-      this.field_76644_m = p_177409_1_;
+-   }
+-
+-   public void func_177432_b(long p_177432_1_) {
+-      this.field_76641_n = p_177432_1_;
+-   }
+-
+-   @Nullable
+-   public StructureStart<?> func_230342_a_(Structure<?> p_230342_1_) {
+-      return this.field_201619_q.get(p_230342_1_);
+-   }
+-
+-   public void func_230344_a_(Structure<?> p_230344_1_, StructureStart<?> p_230344_2_) {
+-      this.field_201619_q.put(p_230344_1_, p_230344_2_);
+-   }
+-
+-   public Map<Structure<?>, StructureStart<?>> func_201609_c() {
+-      return this.field_201619_q;
+-   }
+-
+-   public void func_201612_a(Map<Structure<?>, StructureStart<?>> p_201612_1_) {
+-      this.field_201619_q.clear();
+-      this.field_201619_q.putAll(p_201612_1_);
+-   }
+-
+-   public LongSet func_230346_b_(Structure<?> p_230346_1_) {
+-      return this.field_201620_r.computeIfAbsent(p_230346_1_, (p_235961_0_) -> {
+-         return new LongOpenHashSet();
+-      });
+-   }
+-
+-   public void func_230343_a_(Structure<?> p_230343_1_, long p_230343_2_) {
+-      this.field_201620_r.computeIfAbsent(p_230343_1_, (p_235960_0_) -> {
+-         return new LongOpenHashSet();
+-      }).add(p_230343_2_);
+-   }
+-
+-   public Map<Structure<?>, LongSet> func_201604_d() {
+-      return this.field_201620_r;
+-   }
+-
+-   public void func_201606_b(Map<Structure<?>, LongSet> p_201606_1_) {
+-      this.field_201620_r.clear();
+-      this.field_201620_r.putAll(p_201606_1_);
+-   }
+-
+-   public long func_177416_w() {
+-      return this.field_111204_q;
+-   }
+-
+-   public void func_177415_c(long p_177415_1_) {
+-      this.field_111204_q = p_177415_1_;
+-   }
+-
+-   public void func_201595_A() {
+-      ChunkPos chunkpos = this.func_76632_l();
+-
+-      for(int i = 0; i < this.field_201622_t.length; ++i) {
+-         if (this.field_201622_t[i] != null) {
+-            for(Short oshort : this.field_201622_t[i]) {
+-               BlockPos blockpos = ChunkPrimer.func_201635_a(oshort, i, chunkpos);
+-               BlockState blockstate = this.func_180495_p(blockpos);
+-               BlockState blockstate1 = Block.func_199770_b(blockstate, this.field_76637_e, blockpos);
+-               this.field_76637_e.func_180501_a(blockpos, blockstate1, 20);
+-            }
+-
+-            this.field_201622_t[i].clear();
+-         }
+-      }
+-
+-      this.func_222879_B();
+-
+-      for(BlockPos blockpos1 : Sets.newHashSet(this.field_201618_i.keySet())) {
+-         this.func_175625_s(blockpos1);
+-      }
+-
+-      this.field_201618_i.clear();
+-      this.field_196967_n.func_196990_a(this);
+-   }
+-
+-   @Nullable
+-   private TileEntity func_212815_a(BlockPos p_212815_1_, CompoundNBT p_212815_2_) {
+-      BlockState blockstate = this.func_180495_p(p_212815_1_);
+-      TileEntity tileentity;
+-      if ("DUMMY".equals(p_212815_2_.func_74779_i("id"))) {
 -         Block block = blockstate.func_177230_c();
 -         if (block instanceof ITileEntityProvider) {
 -            tileentity = ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
-+         if (blockstate.hasTileEntity()) {
-+            tileentity = blockstate.createTileEntity(this.field_76637_e);
-          } else {
+-         } else {
++                blockstate.func_196947_b(this.field_76637_e, pos, state, isMoving);
++            } else if ((block1 != block || !state.hasTileEntity()) && blockstate.hasTileEntity()) {
++                this.field_76637_e.func_175713_t(pos);
++            }
++
++            if (!chunksection.func_177485_a(i, j & 15, k).func_203425_a(block)) {
++                return null;
++            } else {
++                if (blockstate.hasTileEntity()) {
++                    TileEntity tileentity = this.func_177424_a(pos, Chunk.CreateEntityType.CHECK);
++                    if (tileentity != null) {
++                        tileentity.func_145836_u();
++                    }
++                }
++
++                // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
++                if (!this.field_76637_e.field_72995_K && doPlace && !this.field_76637_e.captureBlockSnapshots && (!this.field_76637_e.captureBlockStates || block instanceof ContainerBlock)) {
++                    state.func_215705_a(this.field_76637_e, pos, blockstate, isMoving);
++                }
++
++                if (state.hasTileEntity()) {
++                    TileEntity tileentity1 = this.func_177424_a(pos, Chunk.CreateEntityType.CHECK);
++                    if (tileentity1 == null) {
++                        tileentity1 = state.createTileEntity(this.field_76637_e);
++                        this.field_76637_e.func_175690_a(pos, tileentity1);
++                    } else {
++                        tileentity1.func_145836_u();
++                    }
++                }
++
++                this.field_76643_l = true;
++                return blockstate;
++            }
++        }
++    }
++
++    @Nullable
++    public WorldLightManager func_217307_e() {
++        return this.field_76637_e.func_72863_F().func_212863_j_();
++    }
++
++    public void func_76612_a(Entity p_76612_1_) {
++        this.field_76644_m = true;
++        int i = MathHelper.func_76128_c(p_76612_1_.func_226277_ct_() / 16.0D);
++        int j = MathHelper.func_76128_c(p_76612_1_.func_226281_cx_() / 16.0D);
++        if (i != this.field_212816_F.field_77276_a || j != this.field_212816_F.field_77275_b) {
++            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.2", i, j, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_));
++            // Mohist start - Fix "Wrong location"
++            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.entmove"));
++            p_76612_1_.needsChunkUpdate = true;
++            ((ServerWorld) this.field_76637_e).field_217499_z.add(p_76612_1_);
++            // Mohist end
++            return; // Paper
++        }
++
++        int k = MathHelper.func_76128_c(p_76612_1_.func_226278_cu_() / 16.0D);
++        if (k < 0) {
++            k = 0;
++        }
++
++        if (k >= this.field_76645_j.length) {
++            k = this.field_76645_j.length - 1;
++        }
++
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EnteringChunk(p_76612_1_, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_.field_70176_ah, p_76612_1_.field_70164_aj));
++        p_76612_1_.field_70175_ag = true;
++        p_76612_1_.field_70176_ah = this.field_212816_F.field_77276_a;
++        p_76612_1_.field_70162_ai = k;
++        p_76612_1_.field_70164_aj = this.field_212816_F.field_77275_b;
++        this.entities.add(p_76612_1_); // Paper - per chunk entity list
++        this.field_76645_j[k].add(p_76612_1_);
++        this.func_76630_e(); // Forge - ensure chunks are marked to save after an entity add
++    }
++
++    public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
++        this.field_76634_f.get(p_201607_1_).func_202268_a(p_201607_2_);
++    }
++
++    public void func_76622_b(Entity p_76622_1_) {
++        this.func_76608_a(p_76622_1_, p_76622_1_.field_70162_ai);
++    }
++
++    public void func_76608_a(Entity p_76608_1_, int p_76608_2_) {
++        if (p_76608_2_ < 0) {
++            p_76608_2_ = 0;
++        }
++
++        if (p_76608_2_ >= this.field_76645_j.length) {
++            p_76608_2_ = this.field_76645_j.length - 1;
++        }
++
++        this.field_76645_j[p_76608_2_].remove(p_76608_1_);
++        this.entities.remove(p_76608_1_); // Paper
++        this.func_76630_e(); // Forge - ensure chunks are marked to save after entity removals
++    }
++
++    public int func_201576_a(Heightmap.Type p_201576_1_, int p_201576_2_, int p_201576_3_) {
++        return this.field_76634_f.get(p_201576_1_).func_202273_a(p_201576_2_ & 15, p_201576_3_ & 15) - 1;
++    }
++
++    @Nullable
++    private TileEntity func_177422_i(BlockPos p_177422_1_) {
++        BlockState blockstate = this.func_180495_p(p_177422_1_);
++        Block block = blockstate.func_177230_c();
++        return !blockstate.hasTileEntity() ? null : blockstate.createTileEntity(this.field_76637_e);
++    }
++
++    @Nullable
++    public TileEntity func_175625_s(BlockPos p_175625_1_) {
++        return this.func_177424_a(p_175625_1_, Chunk.CreateEntityType.CHECK);
++    }
++
++    @Nullable public final TileEntity getTileEntityImmediately(BlockPos pos) { return this.func_177424_a(pos, CreateEntityType.IMMEDIATE); } // Paper - OBFHELPER
++
++    @Nullable
++    public TileEntity func_177424_a(BlockPos p_177424_1_, Chunk.CreateEntityType p_177424_2_) {
++        // CraftBukkit start
++        TileEntity tileentity = field_76637_e.capturedTileEntities.get(p_177424_1_);
++        if (tileentity == null) {
++            tileentity = (TileEntity) this.field_150816_i.get(p_177424_1_);
++        }
++        // CraftBukkit end
++
++        if (tileentity != null && tileentity.func_145837_r()) {
++            field_150816_i.remove(p_177424_1_);
              tileentity = null;
 -            field_150817_t.warn("Tried to load a DUMMY block entity @ {} but found not block entity block {} at location", p_212815_1_, blockstate);
-+            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.3", p_212815_1_, blockstate));
-          }
-       } else {
-          tileentity = TileEntity.func_235657_b_(blockstate, p_212815_2_);
-@@ -719,7 +_,7 @@
-          tileentity.func_226984_a_(this.field_76637_e, p_212815_1_);
-          this.func_150813_a(tileentity);
-       } else {
+-         }
+-      } else {
+-         tileentity = TileEntity.func_235657_b_(blockstate, p_212815_2_);
+-      }
+-
+-      if (tileentity != null) {
+-         tileentity.func_226984_a_(this.field_76637_e, p_212815_1_);
+-         this.func_150813_a(tileentity);
+-      } else {
 -         field_150817_t.warn("Tried to load a block entity for block {} but failed at location {}", blockstate, p_212815_1_);
-+         field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.4", blockstate, p_212815_1_));
-       }
- 
-       return tileentity;
-@@ -794,5 +_,31 @@
-       IMMEDIATE,
-       QUEUED,
-       CHECK;
-+   }
+-      }
+-
+-      return tileentity;
+-   }
+-
+-   public UpgradeData func_196966_y() {
+-      return this.field_196967_n;
+-   }
+-
+-   public ShortList[] func_201614_D() {
+-      return this.field_201622_t;
+-   }
+-
+-   public void func_222879_B() {
+-      if (this.field_201621_s instanceof ChunkPrimerTickList) {
+-         ((ChunkPrimerTickList<Block>)this.field_201621_s).func_205381_a(this.field_76637_e.func_205220_G_(), (p_222881_1_) -> {
+-            return this.func_180495_p(p_222881_1_).func_177230_c();
+-         });
+-         this.field_201621_s = EmptyTickList.func_205388_a();
+-      } else if (this.field_201621_s instanceof SerializableTickList) {
+-         ((SerializableTickList)this.field_201621_s).func_234855_a_(this.field_76637_e.func_205220_G_());
+-         this.field_201621_s = EmptyTickList.func_205388_a();
+-      }
+-
+-      if (this.field_205325_u instanceof ChunkPrimerTickList) {
+-         ((ChunkPrimerTickList<Fluid>)this.field_205325_u).func_205381_a(this.field_76637_e.func_205219_F_(), (p_222878_1_) -> {
+-            return this.func_204610_c(p_222878_1_).func_206886_c();
+-         });
+-         this.field_205325_u = EmptyTickList.func_205388_a();
+-      } else if (this.field_205325_u instanceof SerializableTickList) {
+-         ((SerializableTickList)this.field_205325_u).func_234855_a_(this.field_76637_e.func_205219_F_());
+-         this.field_205325_u = EmptyTickList.func_205388_a();
+-      }
+-
+-   }
+-
+-   public void func_222880_a(ServerWorld p_222880_1_) {
+-      if (this.field_201621_s == EmptyTickList.<Block>func_205388_a()) {
+-         this.field_201621_s = new SerializableTickList<>(Registry.field_212618_g::func_177774_c, p_222880_1_.func_205220_G_().func_223188_a(this.field_212816_F, true, false), p_222880_1_.func_82737_E());
+-         this.func_177427_f(true);
+-      }
+-
+-      if (this.field_205325_u == EmptyTickList.<Fluid>func_205388_a()) {
+-         this.field_205325_u = new SerializableTickList<>(Registry.field_212619_h::func_177774_c, p_222880_1_.func_205219_F_().func_223188_a(this.field_212816_F, true, false), p_222880_1_.func_82737_E());
+-         this.func_177427_f(true);
+-      }
+-
+-   }
+-
+-   public ChunkStatus func_201589_g() {
+-      return ChunkStatus.field_222617_m;
+-   }
+-
+-   public ChunkHolder.LocationType func_217321_u() {
+-      return this.field_217329_u == null ? ChunkHolder.LocationType.BORDER : this.field_217329_u.get();
+-   }
+-
+-   public void func_217314_a(Supplier<ChunkHolder.LocationType> p_217314_1_) {
+-      this.field_217329_u = p_217314_1_;
+-   }
+-
+-   public boolean func_217310_r() {
+-      return this.field_217331_x;
+-   }
+-
+-   public void func_217305_b(boolean p_217305_1_) {
+-      this.field_217331_x = p_217305_1_;
+-      this.func_177427_f(true);
+-   }
+-
+-   public static enum CreateEntityType {
+-      IMMEDIATE,
+-      QUEUED,
+-      CHECK;
+-   }
++        }
++        if (tileentity == null) {
++            CompoundNBT compoundnbt = this.field_201618_i.remove(p_177424_1_);
++            if (compoundnbt != null) {
++                TileEntity tileentity1 = this.func_212815_a(p_177424_1_, compoundnbt);
++                if (tileentity1 != null) {
++                    return tileentity1;
++                }
++            }
++        }
 +
-+   /**
-+    * <strong>FOR INTERNAL USE ONLY</strong>
-+    * <p>
-+    * Only public for use in {@link AnvilChunkLoader}.
-+    */
-+   @java.lang.Deprecated
-+   @javax.annotation.Nullable
-+   public final CompoundNBT writeCapsToNBT() {
-+      return this.serializeCaps();
-+   }
++        if (tileentity == null) {
++            if (p_177424_2_ == Chunk.CreateEntityType.IMMEDIATE) {
++                tileentity = this.func_177422_i(p_177424_1_);
++                this.field_76637_e.func_175690_a(p_177424_1_, tileentity);
++            }
++        }
 +
-+   /**
-+    * <strong>FOR INTERNAL USE ONLY</strong>
-+    * <p>
-+    * Only public for use in {@link AnvilChunkLoader}.
-+    */
-+   @java.lang.Deprecated
-+   public final void readCapsFromNBT(CompoundNBT tag) {
-+      this.deserializeCaps(tag);
-+   }
++        return tileentity;
++    }
 +
-+   @Override
-+   public World getWorldForge() {
-+      return func_177412_p();
-    }
++    public void func_150813_a(TileEntity p_150813_1_) {
++        this.func_177426_a(p_150813_1_.func_174877_v(), p_150813_1_);
++        if (this.field_76636_d || this.field_76637_e.func_201670_d()) {
++            this.field_76637_e.func_175690_a(p_150813_1_.func_174877_v(), p_150813_1_);
++        }
++
++    }
++
++    public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_) {
++        if (this.func_180495_p(p_177426_1_).hasTileEntity()) {
++            p_177426_2_.func_226984_a_(this.field_76637_e, p_177426_1_);
++            p_177426_2_.func_145829_t();
++            TileEntity tileentity = this.field_150816_i.put(p_177426_1_.func_185334_h(), p_177426_2_);
++            if (tileentity != null && tileentity != p_177426_2_) {
++                tileentity.func_145843_s();
++            }
++        }
++    }
++
++    public void func_201591_a(CompoundNBT p_201591_1_) {
++        this.field_201618_i.put(new BlockPos(p_201591_1_.func_74762_e("x"), p_201591_1_.func_74762_e("y"), p_201591_1_.func_74762_e("z")), p_201591_1_);
++    }
++
++    @Nullable
++    public CompoundNBT func_223134_j(BlockPos p_223134_1_) {
++        TileEntity tileentity = this.func_175625_s(p_223134_1_);
++        if (tileentity != null && !tileentity.func_145837_r()) {
++            try {
++                CompoundNBT compoundnbt1 = tileentity.func_189515_b(new CompoundNBT());
++                compoundnbt1.func_74757_a("keepPacked", false);
++                return compoundnbt1;
++            } catch (Exception e) {
++                LogManager.getLogger().error("A TileEntity type {} has thrown an exception trying to write state. It will not persist, Report this to the mod author", tileentity.getClass().getName(), e);
++                return null;
++            }
++        } else {
++            CompoundNBT compoundnbt = this.field_201618_i.get(p_223134_1_);
++            if (compoundnbt != null) {
++                compoundnbt = compoundnbt.func_74737_b();
++                compoundnbt.func_74757_a("keepPacked", true);
++            }
++
++            return compoundnbt;
++        }
++    }
++
++    public void func_177425_e(BlockPos p_177425_1_) {
++        if (this.field_76636_d || this.field_76637_e.func_201670_d()) {
++            TileEntity tileentity = this.field_150816_i.remove(p_177425_1_);
++            if (tileentity != null) {
++                tileentity.func_145843_s();
++            }
++        }
++
++    }
++
++    public void func_217318_w() {
++        if (this.field_217330_v != null) {
++            this.field_217330_v.accept(this);
++            this.field_217330_v = null;
++        }
++
++    }
++
++    // CraftBukkit start
++    public void loadCallback() {
++        // Paper start - neighbour cache
++        int chunkX = this.field_212816_F.field_77276_a;
++        int chunkZ = this.field_212816_F.field_77275_b;
++        ServerChunkProvider chunkProvider = ((ServerWorld) this.field_76637_e).func_72863_F();
++        for (int dx = -NEIGHBOUR_CACHE_RADIUS; dx <= NEIGHBOUR_CACHE_RADIUS; ++dx) {
++            for (int dz = -NEIGHBOUR_CACHE_RADIUS; dz <= NEIGHBOUR_CACHE_RADIUS; ++dz) {
++                Chunk neighbour = chunkProvider.getChunkAtIfLoadedMainThreadNoCache(chunkX + dx, chunkZ + dz);
++                if (neighbour != null) {
++                    neighbour.setNeighbourLoaded(-dx, -dz, this);
++                    // should be in cached already
++                    this.setNeighbourLoaded(dx, dz, neighbour);
++                }
++            }
++        }
++        this.setNeighbourLoaded(0, 0, this);
++        this.loadedTicketLevel = true;
++        // Paper end - neighbour cache
++        org.bukkit.Server server = this.field_76637_e.getCBServer();
++        ((ServerWorld) this.field_76637_e).func_72863_F().addLoadedChunk(this); // Paper
++        if (server != null) {
++            /*
++             * If it's a new world, the first few chunks are generated inside
++             * the World constructor. We can't reliably alter that, so we have
++             * no way of creating a CraftWorld/CraftServer at that point.
++             */
++            server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(this.bukkitChunk, this.needsDecoration));
++            if (this.needsDecoration) {
++                try (co.aikar.timings.Timing ignored = this.field_76637_e.timings.chunkLoadPopulate.startTiming()) { // Paper
++                    this.needsDecoration = false;
++                    java.util.Random random = new java.util.Random();
++                    random.setSeed(((ServerWorld) field_76637_e).func_72905_C());
++                    long xRand = random.nextLong() / 2L * 2L + 1L;
++                    long zRand = random.nextLong() / 2L * 2L + 1L;
++                    random.setSeed((long) this.field_212816_F.field_77276_a * xRand + (long) this.field_212816_F.field_77275_b * zRand ^ ((ServerWorld) field_76637_e).func_72905_C());
++
++                    org.bukkit.World world = this.field_76637_e.getWorld();
++                    if (world != null) {
++                        this.field_76637_e.populating = true;
++                        try {
++                            for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
++                                populator.populate(world, random, bukkitChunk);
++                            }
++                        } finally {
++                            this.field_76637_e.populating = false;
++                        }
++                    }
++                    server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(bukkitChunk));
++                } // Paper
++            }
++        }
++    }
++
++    public void unloadCallback() {
++        org.bukkit.Server server = this.field_76637_e.getCBServer();
++        org.bukkit.event.world.ChunkUnloadEvent unloadEvent = new org.bukkit.event.world.ChunkUnloadEvent(this.bukkitChunk, this.func_201593_f());
++        server.getPluginManager().callEvent(unloadEvent);
++        // note: saving can be prevented, but not forced if no saving is actually required
++        this.mustNotSave = !unloadEvent.isSaveChunk();
++        ((ServerWorld)this.field_76637_e).func_72863_F().removeLoadedChunk(this); // Paper
++        // Paper start - neighbour cache
++        int chunkX = this.field_212816_F.field_77276_a;
++        int chunkZ = this.field_212816_F.field_77275_b;
++        ServerChunkProvider chunkProvider = ((ServerWorld) this.field_76637_e).func_72863_F();
++        for (int dx = -NEIGHBOUR_CACHE_RADIUS; dx <= NEIGHBOUR_CACHE_RADIUS; ++dx) {
++            for (int dz = -NEIGHBOUR_CACHE_RADIUS; dz <= NEIGHBOUR_CACHE_RADIUS; ++dz) {
++                Chunk neighbour = chunkProvider.getChunkAtIfLoadedMainThreadNoCache(chunkX + dx, chunkZ + dz);
++                if (neighbour != null) {
++                    neighbour.setNeighbourUnloaded(-dx, -dz);
++                }
++            }
++        }
++        this.loadedTicketLevel = false;
++        this.resetNeighbours();
++        // Paper end
++    }
++    // CraftBukkit end
++
++    public void func_76630_e() {
++        this.field_76643_l = true;
++    }
++
++    public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, @Nullable Predicate<? super Entity> p_177414_4_) {
++        int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++        int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
++        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
++
++        for (int k = i; k <= j; ++k) {
++            ClassInheritanceMultiMap<Entity> classinheritancemultimap = this.field_76645_j[k];
++            List<Entity> list = classinheritancemultimap.func_241289_a_();
++            int l = list.size();
++
++            for (int i1 = 0; i1 < l; ++i1) {
++                Entity entity = list.get(i1);
++                if (entity.func_174813_aQ().func_72326_a(p_177414_2_) && entity != p_177414_1_) {
++                    if (p_177414_4_ == null || p_177414_4_.test(entity)) {
++                        p_177414_3_.add(entity);
++                    }
++
++                    if (entity.isMultipartEntity()) {
++                        for (net.minecraftforge.entity.PartEntity<?> enderdragonpartentity : entity.getParts()) {
++                            if (enderdragonpartentity != p_177414_1_ && enderdragonpartentity.func_174813_aQ().func_72326_a(p_177414_2_) && (p_177414_4_ == null || p_177414_4_.test(enderdragonpartentity))) {
++                                p_177414_3_.add(enderdragonpartentity);
++                            }
++                        }
++                    }
++                }
++            }
++        }
++
++    }
++
++    public <T extends Entity> void func_217313_a(@Nullable EntityType<?> p_217313_1_, AxisAlignedBB p_217313_2_, List<? super T> p_217313_3_, Predicate<? super T> p_217313_4_) {
++        int i = MathHelper.func_76128_c((p_217313_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++        int j = MathHelper.func_76128_c((p_217313_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
++        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
++
++        for (int k = i; k <= j; ++k) {
++            for (Entity entity : this.field_76645_j[k].func_219790_a(Entity.class)) {
++                if ((p_217313_1_ == null || entity.func_200600_R() == p_217313_1_) && entity.func_174813_aQ().func_72326_a(p_217313_2_) && p_217313_4_.test((T) entity)) {
++                    p_217313_3_.add((T) entity);
++                }
++            }
++        }
++
++    }
++
++    public <T extends Entity> void func_177430_a(Class<? extends T> p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, @Nullable Predicate<? super T> p_177430_4_) {
++        int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++        int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
++        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
++
++        for (int k = i; k <= j; ++k) {
++            for (T t : this.field_76645_j[k].func_219790_a(p_177430_1_)) {
++                if (t.func_174813_aQ().func_72326_a(p_177430_2_) && (p_177430_4_ == null || p_177430_4_.test(t))) {
++                    p_177430_3_.add(t);
++                }
++            }
++        }
++
++    }
++
++    public boolean func_76621_g() {
++        return false;
++    }
++
++    public ChunkPos func_76632_l() {
++        return this.field_212816_F;
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public void func_227073_a_(@Nullable BiomeContainer p_227073_1_, PacketBuffer p_227073_2_, CompoundNBT p_227073_3_, int p_227073_4_) {
++        boolean flag = p_227073_1_ != null;
++        Predicate<BlockPos> predicate = flag ? (p_217315_0_) -> {
++            return true;
++        } : (p_217323_1_) -> {
++            return (p_227073_4_ & 1 << (p_217323_1_.func_177956_o() >> 4)) != 0;
++        };
++        Sets.newHashSet(this.field_150816_i.keySet()).stream().filter(predicate).forEach(this.field_76637_e::func_175713_t);
++
++        for (TileEntity tileEntity : field_150816_i.values()) {
++            tileEntity.func_145836_u();
++            tileEntity.func_195044_w();
++        }
++
++        for (int i = 0; i < this.field_76652_q.length; ++i) {
++            ChunkSection chunksection = this.field_76652_q[i];
++            if ((p_227073_4_ & 1 << i) == 0) {
++                if (flag && chunksection != field_186036_a) {
++                    this.field_76652_q[i] = field_186036_a;
++                }
++            } else {
++                if (chunksection == field_186036_a) {
++                    chunksection = new ChunkSection(i << 4);
++                    this.field_76652_q[i] = chunksection;
++                }
++
++                chunksection.func_222634_a(p_227073_2_);
++            }
++        }
++
++        if (p_227073_1_ != null) {
++            this.field_76651_r = p_227073_1_;
++        }
++
++        for (Heightmap.Type heightmap$type : Heightmap.Type.values()) {
++            String s = heightmap$type.func_203500_b();
++            if (p_227073_3_.func_150297_b(s, 12)) {
++                this.func_201607_a(heightmap$type, p_227073_3_.func_197645_o(s));
++            }
++        }
++
++        for (TileEntity tileentity : this.field_150816_i.values()) {
++            tileentity.func_145836_u();
++        }
++
++    }
++
++    public BiomeContainer func_225549_i_() {
++        return this.field_76651_r;
++    }
++
++    public void func_177417_c(boolean p_177417_1_) {
++        this.field_76636_d = p_177417_1_;
++    }
++
++    public World func_177412_p() {
++        return this.field_76637_e;
++    }
++
++    public Collection<Entry<Heightmap.Type, Heightmap>> func_217311_f() {
++        return Collections.unmodifiableSet(this.field_76634_f.entrySet());
++    }
++
++    public Map<BlockPos, TileEntity> func_177434_r() {
++        return this.field_150816_i;
++    }
++
++    public ClassInheritanceMultiMap<Entity>[] func_177429_s() {
++        return this.field_76645_j;
++    }
++
++    public List<Entity>[] getEntitySlices() {
++        // Mohist start - handle Spigot method in MythicMobs
++        List<Entity>[] e = new List[16];
++        for (int l = 0; l < this.field_76645_j.length; ++l) {
++            e[l] = new org.bukkit.craftbukkit.v1_16_R3.util.UnsafeList<>();
++        }
++        return e;
++        // Mohist end
++    }
++
++    public CompoundNBT func_201579_g(BlockPos p_201579_1_) {
++        return this.field_201618_i.get(p_201579_1_);
++    }
++
++    public Stream<BlockPos> func_217304_m() {
++        return StreamSupport.stream(BlockPos.func_191531_b(this.field_212816_F.func_180334_c(), 0, this.field_212816_F.func_180333_d(), this.field_212816_F.func_180332_e(), 255, this.field_212816_F.func_180330_f()).spliterator(), false).filter((p_217312_1_) -> {
++            return this.func_180495_p(p_217312_1_).getLightValue(func_177412_p(), p_217312_1_) != 0;
++        });
++    }
++
++    public ITickList<Block> func_205218_i_() {
++        return this.field_201621_s;
++    }
++
++    public ITickList<Fluid> func_212247_j() {
++        return this.field_205325_u;
++    }
++
++    public void func_177427_f(boolean p_177427_1_) {
++        this.field_76643_l = p_177427_1_;
++    }
++
++    public boolean func_201593_f() {
++        return (this.field_76643_l || this.field_76644_m && this.field_76637_e.func_82737_E() != this.field_76641_n) && !this.mustNotSave; // CraftBukkit
++    }
++
++    public void func_177409_g(boolean p_177409_1_) {
++        this.field_76644_m = p_177409_1_;
++    }
++
++    public void func_177432_b(long p_177432_1_) {
++        this.field_76641_n = p_177432_1_;
++    }
++
++    @Nullable
++    public StructureStart<?> func_230342_a_(Structure<?> p_230342_1_) {
++        return this.field_201619_q.get(p_230342_1_);
++    }
++
++    public void func_230344_a_(Structure<?> p_230344_1_, StructureStart<?> p_230344_2_) {
++        this.field_201619_q.put(p_230344_1_, p_230344_2_);
++    }
++
++    public Map<Structure<?>, StructureStart<?>> func_201609_c() {
++        return this.field_201619_q;
++    }
++
++    public void func_201612_a(Map<Structure<?>, StructureStart<?>> p_201612_1_) {
++        this.field_201619_q.clear();
++        this.field_201619_q.putAll(p_201612_1_);
++    }
++
++    public LongSet func_230346_b_(Structure<?> p_230346_1_) {
++        return this.field_201620_r.computeIfAbsent(p_230346_1_, (p_235961_0_) -> {
++            return new LongOpenHashSet();
++        });
++    }
++
++    public void func_230343_a_(Structure<?> p_230343_1_, long p_230343_2_) {
++        this.field_201620_r.computeIfAbsent(p_230343_1_, (p_235960_0_) -> {
++            return new LongOpenHashSet();
++        }).add(p_230343_2_);
++    }
++
++    public Map<Structure<?>, LongSet> func_201604_d() {
++        return this.field_201620_r;
++    }
++
++    public void func_201606_b(Map<Structure<?>, LongSet> p_201606_1_) {
++        this.field_201620_r.clear();
++        this.field_201620_r.putAll(p_201606_1_);
++    }
++
++    public long func_177416_w() {
++        return this.field_111204_q;
++    }
++
++    public void func_177415_c(long p_177415_1_) {
++        this.field_111204_q = p_177415_1_;
++    }
++
++    public void func_201595_A() {
++        ChunkPos chunkpos = this.func_76632_l();
++
++        for (int i = 0; i < this.field_201622_t.length; ++i) {
++            if (this.field_201622_t[i] != null) {
++                for (Short oshort : this.field_201622_t[i]) {
++                    BlockPos blockpos = ChunkPrimer.func_201635_a(oshort, i, chunkpos);
++                    BlockState blockstate = this.func_180495_p(blockpos);
++                    BlockState blockstate1 = Block.func_199770_b(blockstate, this.field_76637_e, blockpos);
++                    this.field_76637_e.func_180501_a(blockpos, blockstate1, 20);
++                }
++
++                this.field_201622_t[i].clear();
++            }
++        }
++
++        this.func_222879_B();
++
++        for (BlockPos blockpos1 : Sets.newHashSet(this.field_201618_i.keySet())) {
++            this.func_175625_s(blockpos1);
++        }
++
++        this.field_201618_i.clear();
++        this.field_196967_n.func_196990_a(this);
++    }
++
++    @Nullable
++    private TileEntity func_212815_a(BlockPos p_212815_1_, CompoundNBT p_212815_2_) {
++        BlockState blockstate = this.func_180495_p(p_212815_1_);
++        TileEntity tileentity;
++        if ("DUMMY".equals(p_212815_2_.func_74779_i("id"))) {
++            if (blockstate.hasTileEntity()) {
++                tileentity = blockstate.createTileEntity(this.field_76637_e);
++            } else {
++                tileentity = null;
++                field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.3", p_212815_1_, blockstate));
++            }
++        } else {
++            tileentity = TileEntity.func_235657_b_(blockstate, p_212815_2_);
++        }
++
++        if (tileentity != null) {
++            tileentity.func_226984_a_(this.field_76637_e, p_212815_1_);
++            this.func_150813_a(tileentity);
++        } else {
++            field_150817_t.warn(com.mohistmc.util.i18n.i18n.get("chunk.4", blockstate, p_212815_1_));
++        }
++
++        return tileentity;
++    }
++
++    public UpgradeData func_196966_y() {
++        return this.field_196967_n;
++    }
++
++    public ShortList[] func_201614_D() {
++        return this.field_201622_t;
++    }
++
++    public void func_222879_B() {
++        if (this.field_201621_s instanceof ChunkPrimerTickList) {
++            ((ChunkPrimerTickList<Block>) this.field_201621_s).func_205381_a(this.field_76637_e.func_205220_G_(), (p_222881_1_) -> {
++                return this.func_180495_p(p_222881_1_).func_177230_c();
++            });
++            this.field_201621_s = EmptyTickList.func_205388_a();
++        } else if (this.field_201621_s instanceof SerializableTickList) {
++            ((SerializableTickList) this.field_201621_s).func_234855_a_(this.field_76637_e.func_205220_G_());
++            this.field_201621_s = EmptyTickList.func_205388_a();
++        }
++
++        if (this.field_205325_u instanceof ChunkPrimerTickList) {
++            ((ChunkPrimerTickList<Fluid>) this.field_205325_u).func_205381_a(this.field_76637_e.func_205219_F_(), (p_222878_1_) -> {
++                return this.func_204610_c(p_222878_1_).func_206886_c();
++            });
++            this.field_205325_u = EmptyTickList.func_205388_a();
++        } else if (this.field_205325_u instanceof SerializableTickList) {
++            ((SerializableTickList) this.field_205325_u).func_234855_a_(this.field_76637_e.func_205219_F_());
++            this.field_205325_u = EmptyTickList.func_205388_a();
++        }
++
++    }
++
++    public void func_222880_a(ServerWorld p_222880_1_) {
++        if (this.field_201621_s == EmptyTickList.<Block>func_205388_a()) {
++            this.field_201621_s = new SerializableTickList<>(Registry.field_212618_g::func_177774_c, p_222880_1_.func_205220_G_().func_223188_a(this.field_212816_F, true, false), p_222880_1_.func_82737_E());
++            this.func_177427_f(true);
++        }
++
++        if (this.field_205325_u == EmptyTickList.<Fluid>func_205388_a()) {
++            this.field_205325_u = new SerializableTickList<>(Registry.field_212619_h::func_177774_c, p_222880_1_.func_205219_F_().func_223188_a(this.field_212816_F, true, false), p_222880_1_.func_82737_E());
++            this.func_177427_f(true);
++        }
++
++    }
++
++    public ChunkStatus func_201589_g() {
++        return ChunkStatus.field_222617_m;
++    }
++
++    public ChunkHolder.LocationType func_217321_u() {
++        return this.field_217329_u == null ? ChunkHolder.LocationType.BORDER : this.field_217329_u.get();
++    }
++
++    public void func_217314_a(Supplier<ChunkHolder.LocationType> p_217314_1_) {
++        this.field_217329_u = p_217314_1_;
++    }
++
++    public boolean func_217310_r() {
++        return this.field_217331_x;
++    }
++
++    public void func_217305_b(boolean p_217305_1_) {
++        this.field_217331_x = p_217305_1_;
++        this.func_177427_f(true);
++    }
++
++    public static enum CreateEntityType {
++        IMMEDIATE,
++        QUEUED,
++        CHECK;
++    }
++
++    /**
++     * <strong>FOR INTERNAL USE ONLY</strong>
++     * <p>
++     * Only public for use in {@link AnvilChunkLoader}.
++     */
++    @java.lang.Deprecated
++    @javax.annotation.Nullable
++    public final CompoundNBT writeCapsToNBT() {
++        return this.serializeCaps();
++    }
++
++    /**
++     * <strong>FOR INTERNAL USE ONLY</strong>
++     * <p>
++     * Only public for use in {@link AnvilChunkLoader}.
++     */
++    @java.lang.Deprecated
++    public final void readCapsFromNBT(CompoundNBT tag) {
++        this.deserializeCaps(tag);
++    }
++
++    @Override
++    public World getWorldForge() {
++        return func_177412_p();
++    }
  }

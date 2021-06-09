@@ -105,7 +105,7 @@
     private ChatVisibility field_71143_cn;
     private boolean field_71140_co = true;
     private long field_143005_bX = Util.func_211177_b();
-@@ -175,6 +_,21 @@
+@@ -175,6 +_,23 @@
     public int field_71138_i;
     public boolean field_71136_j;
  
@@ -124,14 +124,18 @@
 +   // CraftBukkit end
 +   private boolean initialized = false;
 +
++   public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayerEntity> cachedSingleHashSet; // Paper
++
     public ServerPlayerEntity(MinecraftServer p_i45285_1_, ServerWorld p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_) {
        super(p_i45285_2_, p_i45285_2_.func_241135_u_(), p_i45285_2_.func_242107_v(), p_i45285_3_);
        p_i45285_4_.field_73090_b = this;
-@@ -185,7 +_,45 @@
+@@ -185,7 +_,47 @@
        this.field_70138_W = 1.0F;
        this.func_205734_a(p_i45285_2_);
        this.field_244528_co = p_i45285_1_.func_244435_a(this);
 -   }
++
++      this.cachedSingleHashSet = new com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
 +
 +      // CraftBukkit start
 +      this.displayName = this.func_195047_I_();
