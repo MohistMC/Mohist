@@ -1,0 +1,29 @@
+--- a/net/minecraft/util/math/vector/Vector3i.java
++++ b/net/minecraft/util/math/vector/Vector3i.java
+@@ -76,15 +_,15 @@
+       return this.field_177961_c;
+    }
+ 
+-   protected void func_223471_o(int p_223471_1_) {
++   public void func_223471_o(int p_223471_1_) { // Paper - protected -> public
+       this.field_177962_a = p_223471_1_;
+    }
+ 
+-   protected void func_185336_p(int p_185336_1_) {
++   public void func_185336_p(int p_185336_1_) { // Paper - protected -> public
+       this.field_177960_b = p_185336_1_;
+    }
+ 
+-   protected void func_223472_q(int p_223472_1_) {
++   public void func_223472_q(int p_223472_1_) { // Paper - protected -> public
+       this.field_177961_c = p_223472_1_;
+    }
+ 
+@@ -120,6 +_,7 @@
+       return this.func_218140_a(p_218137_1_.func_82615_a(), p_218137_1_.func_82617_b(), p_218137_1_.func_82616_c(), true) < p_218137_2_ * p_218137_2_;
+    }
+ 
++   public final double distanceSquared(Vector3i baseblockposition) { return func_177951_i(baseblockposition); } // Paper - OBFHELPER
+    public double func_177951_i(Vector3i p_177951_1_) {
+       return this.func_218140_a((double)p_177951_1_.func_177958_n(), (double)p_177951_1_.func_177956_o(), (double)p_177951_1_.func_177952_p(), true);
+    }

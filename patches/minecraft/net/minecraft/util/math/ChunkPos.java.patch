@@ -1,0 +1,35 @@
+--- a/net/minecraft/util/math/ChunkPos.java
++++ b/net/minecraft/util/math/ChunkPos.java
+@@ -10,26 +_,31 @@
+    public static final long field_222244_a = func_77272_a(1875016, 1875016);
+    public final int field_77276_a;
+    public final int field_77275_b;
++   public final long longKey; // Paper
+ 
+    public ChunkPos(int p_i1947_1_, int p_i1947_2_) {
+       this.field_77276_a = p_i1947_1_;
+       this.field_77275_b = p_i1947_2_;
++      this.longKey = func_77272_a(this.field_77276_a, this.field_77275_b); // Paper
+    }
+ 
+    public ChunkPos(BlockPos p_i46717_1_) {
+       this.field_77276_a = p_i46717_1_.func_177958_n() >> 4;
+       this.field_77275_b = p_i46717_1_.func_177952_p() >> 4;
++      this.longKey = func_77272_a(this.field_77276_a, this.field_77275_b); // Paper
+    }
+ 
+    public ChunkPos(long p_i48713_1_) {
+       this.field_77276_a = (int)p_i48713_1_;
+       this.field_77275_b = (int)(p_i48713_1_ >> 32);
++      this.longKey = func_77272_a(this.field_77276_a, this.field_77275_b); // Paper
+    }
+ 
+    public long func_201841_a() {
+-      return func_77272_a(this.field_77276_a, this.field_77275_b);
++      return longKey; // Paper
+    }
+ 
++   public static long pair(final BlockPos pos) { return func_77272_a(pos.func_177958_n() >> 4, pos.func_177952_p() >> 4); } // Paper - OBFHELPER
+    public static long func_77272_a(int p_77272_0_, int p_77272_1_) {
+       return (long)p_77272_0_ & 4294967295L | ((long)p_77272_1_ & 4294967295L) << 32;
+    }

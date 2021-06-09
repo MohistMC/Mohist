@@ -291,4 +291,6 @@ public class UnsafeList<E> extends AbstractList<E> implements List<E>, RandomAcc
             }
         }
     }
+
+    public final Object[] getRawDataArray() { return this.data; } // Paper - expose for raw get
 }

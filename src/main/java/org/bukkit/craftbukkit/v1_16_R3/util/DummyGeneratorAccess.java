@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_16_R3.util;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -163,6 +164,24 @@ public class DummyGeneratorAccess implements IWorld {
     public FluidState getFluidState(BlockPos pos) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    // Paper start - if loaded util
+    @javax.annotation.Nullable
+    @Override
+    public IChunk getChunkIfLoadedImmediately(int x, int z) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public BlockState getTypeIfLoaded(BlockPos blockposition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public FluidState getFluidIfLoaded(BlockPos blockposition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    // Paper end
 
     @Override
     public WorldBorder getWorldBorder() {

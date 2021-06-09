@@ -26,6 +26,14 @@
                       this.field_76716_d.put(k, 0);
                    } else {
                       this.field_227128_i_.func_227120_a_(i1, j1);
+@@ -95,6 +_,7 @@
+       return this.field_227124_d_.resolve(s);
+    }
+ 
++   @Nullable public synchronized DataInputStream getReadStream(ChunkPos chunkCoordIntPair) throws IOException { return func_222666_a(chunkCoordIntPair);} // Paper - OBFHELPER
+    @Nullable
+    public synchronized DataInputStream func_222666_a(ChunkPos p_222666_1_) throws IOException {
+       int i = this.func_222660_e(p_222666_1_);
 @@ -108,27 +_,27 @@
           this.field_76719_c.read(bytebuffer, (long)(j * 4096));
           ((Buffer)bytebuffer).flip();

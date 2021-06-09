@@ -1,0 +1,17 @@
+--- a/net/minecraft/network/play/server/SChunkDataPacket.java
++++ b/net/minecraft/network/play/server/SChunkDataPacket.java
+@@ -130,6 +_,7 @@
+       return bytebuf;
+    }
+ 
++   public int writeChunk(PacketBuffer packetDataSerializer, Chunk chunk, int chunkSectionSelector) { return this.func_218708_a(packetDataSerializer, chunk, chunkSectionSelector); } // Paper - OBFHELPER
+    public int func_218708_a(PacketBuffer p_218708_1_, Chunk p_218708_2_, int p_218708_3_) {
+       int i = 0;
+       ChunkSection[] achunksection = p_218708_2_.func_76587_i();
+@@ -195,4 +_,6 @@
+    public int[] func_244296_i() {
+       return this.field_229738_e_;
+    }
++
++   private byte[] getData() { return this.field_186949_d; } // Paper - OBFHELPER
+ }

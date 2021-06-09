@@ -1,5 +1,13 @@
 --- a/net/minecraft/util/math/shapes/VoxelShapes.java
 +++ b/net/minecraft/util/math/shapes/VoxelShapes.java
+@@ -34,6 +_,7 @@
+       return field_197886_a;
+    }
+ 
++   public static final VoxelShape fullCube() {return func_197868_b();} // Paper - OBFHELPER
+    public static VoxelShape func_197868_b() {
+       return field_197887_b;
+    }
 @@ -332,31 +_,48 @@
        }
     }

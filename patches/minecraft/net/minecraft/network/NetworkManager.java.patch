@@ -131,7 +131,13 @@
     }
  
     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, IPacket<?> p_channelRead0_2_) throws Exception {
-@@ -170,8 +_,8 @@
+@@ -165,13 +_,14 @@
+ 
+    }
+ 
++   private void dispatchPacket(IPacket<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> genericFutureListener) { this.func_150732_b(packet, genericFutureListener); } // Paper - OBFHELPER
+    private void func_150732_b(IPacket<?> p_150732_1_, @Nullable GenericFutureListener<? extends Future<? super Void>> p_150732_2_) {
+       ProtocolType protocoltype = ProtocolType.func_150752_a(p_150732_1_);
        ProtocolType protocoltype1 = this.field_150746_k.attr(field_150739_c).get();
        ++this.field_211395_r;
        if (protocoltype1 != protocoltype) {
@@ -142,6 +148,14 @@
        }
  
        if (this.field_150746_k.eventLoop().inEventLoop()) {
+@@ -202,6 +_,7 @@
+ 
+    }
+ 
++   private void sendPacketQueue() { this.func_150733_h(); } // Paper - OBFHELPER
+    private void func_150733_h() {
+       if (this.field_150746_k != null && this.field_150746_k.isOpen()) {
+          synchronized(this.field_150745_j) {
 @@ -246,8 +_,11 @@
     }
  
@@ -237,10 +251,15 @@
     static class QueuedPacket {
        private final IPacket<?> field_150774_a;
        @Nullable
-@@ -386,4 +_,11 @@
+@@ -385,5 +_,15 @@
+          this.field_150774_a = p_i48604_1_;
           this.field_201049_b = p_i48604_2_;
        }
-    }
+-   }
++
++      private final IPacket<?> getPacket() { return this.field_150774_a; } // Paper - OBFHELPER
++      private final GenericFutureListener<? extends Future<? super Void>> getGenericFutureListener() { return this.field_201049_b; } // Paper - OBFHELPER
++   }
 +
 +   // Spigot Start
 +   public SocketAddress getRawAddress()

@@ -30,6 +30,14 @@
  
     public boolean func_177746_a(BlockPos p_177746_1_) {
        return (double)(p_177746_1_.func_177958_n() + 1) > this.func_177726_b() && (double)p_177746_1_.func_177958_n() < this.func_177728_d() && (double)(p_177746_1_.func_177952_p() + 1) > this.func_177736_c() && (double)p_177746_1_.func_177952_p() < this.func_177733_e();
+@@ -44,6 +_,7 @@
+       return this.func_177729_b(p_177745_1_.func_226277_ct_(), p_177745_1_.func_226281_cx_());
+    }
+ 
++   public final VoxelShape asVoxelShape(){ return func_222521_a();} // Paper - OBFHELPER
+    public VoxelShape func_222521_a() {
+       return this.field_212674_i.func_222517_m();
+    }
 @@ -88,12 +_,31 @@
     }
  

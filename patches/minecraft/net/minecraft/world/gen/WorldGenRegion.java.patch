@@ -19,6 +19,33 @@
           if (ichunk != null) {
              throw (RuntimeException)Util.func_229757_c_(new RuntimeException(String.format("Chunk is not of correct status. Expecting %s, got %s | %s %s", p_217353_3_, ichunk.func_201589_g(), p_217353_1_, p_217353_2_)));
           } else {
+@@ -137,6 +_,26 @@
+       return p_217354_1_ >= this.field_241160_n_.field_77276_a && p_217354_1_ <= this.field_241161_o_.field_77276_a && p_217354_2_ >= this.field_241160_n_.field_77275_b && p_217354_2_ <= this.field_241161_o_.field_77275_b;
+    }
+ 
++   // Paper start - if loaded util
++   @Nullable
++   @Override
++   public IChunk getChunkIfLoadedImmediately(int x, int z) {
++      return this.func_217353_a(x, z, ChunkStatus.field_222617_m, false);
++   }
++
++   @Override
++   public BlockState getTypeIfLoaded(BlockPos blockposition) {
++      IChunk chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_180495_p(blockposition);
++   }
++
++   @Override
++   public FluidState getFluidIfLoaded(BlockPos blockposition) {
++      IChunk chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
++      return chunk == null ? null : chunk.func_204610_c(blockposition);
++   }
++    // Paper end
++
+    public BlockState func_180495_p(BlockPos p_180495_1_) {
+       return this.func_212866_a_(p_180495_1_.func_177958_n() >> 4, p_180495_1_.func_177952_p() >> 4).func_180495_p(p_180495_1_);
+    }
 @@ -173,11 +_,11 @@
  
     public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {

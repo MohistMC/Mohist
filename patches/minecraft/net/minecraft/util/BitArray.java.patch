@@ -10,6 +10,14 @@
  import org.apache.commons.lang3.Validate;
  
  public class BitArray {
+@@ -76,6 +_,7 @@
+       return (int)(j >> k & this.field_188147_c);
+    }
+ 
++   public final long[] getDataBits() { return this.func_188143_a(); } // Paper - OBFHELPER
+    public long[] func_188143_a() {
+       return this.field_188145_a;
+    }
 @@ -99,4 +_,27 @@
        }
  

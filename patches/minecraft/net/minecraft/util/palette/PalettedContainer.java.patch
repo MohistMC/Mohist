@@ -18,7 +18,7 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ReportedException;
-@@ -61,13 +_,16 @@
+@@ -61,13 +_,18 @@
        this.func_186012_b(4);
     }
  
@@ -27,6 +27,8 @@
        return p_186011_1_ << 8 | p_186011_2_ << 4 | p_186011_0_;
     }
  
++   private void initialize(int bitsPerObject) { this.func_186012_b(bitsPerObject); } // Paper - OBFHELPER
++
     private void func_186012_b(int p_186012_1_) {
 -      if (p_186012_1_ != this.field_186024_e) {
 -         this.field_186024_e = p_186012_1_;
@@ -47,7 +49,7 @@
           }
  
           this.field_186022_c.func_186041_a(this.field_205526_g);
-@@ -138,12 +_,16 @@
+@@ -138,14 +_,19 @@
        this.func_210459_b();
        int i = p_186010_1_.readByte();
        if (this.field_186024_e != i) {
@@ -64,8 +66,11 @@
 +         this.onResize(regSize, field_205526_g);
     }
  
++   public void writeDataPaletteBlock(PacketBuffer packetDataSerializer) { this.func_186009_b(packetDataSerializer); } // Paper - OBFHELPER
     public void func_186009_b(PacketBuffer p_186009_1_) {
-@@ -237,4 +_,26 @@
+       this.func_210459_b();
+       p_186009_1_.writeByte(this.field_186024_e);
+@@ -237,4 +_,32 @@
     public interface ICountConsumer<T> {
        void accept(T p_accept_1_, int p_accept_2_);
     }
@@ -91,4 +96,10 @@
 +      void accept(T p_accept_1_, int p_accept_2_, int key);
 +   }
 +   // Mohist end
++
++   private final IPalette<T> getDataPaletteGlobal() { return this.field_205521_b; } // Paper - OBFHELPER
++   public final BitArray getDataBits() { return this.field_186021_b; } // Paper - OBFHELPER
++   private IPalette<T> getDataPalette() { return this.field_186022_c; } // Paper - OBFHELPER
++   private int getBitsPerObject() { return this.field_186024_e; } // Paper - OBFHELPER
++
  }

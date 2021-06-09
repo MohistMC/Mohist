@@ -1,5 +1,14 @@
 --- a/net/minecraft/util/Util.java
 +++ b/net/minecraft/util/Util.java
+@@ -87,7 +_,7 @@
+    }
+ 
+    public static long func_211178_c() {
+-      return field_211180_a.getAsLong();
++      return System.nanoTime(); // Paper
+    }
+ 
+    public static long func_211179_d() {
 @@ -104,9 +_,9 @@
              ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(p_240981_1_) {
                 protected void onTermination(Throwable p_onTermination_1_) {

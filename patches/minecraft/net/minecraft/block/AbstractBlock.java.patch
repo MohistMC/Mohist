@@ -113,6 +113,14 @@
        public BlockState func_185907_a(Rotation p_185907_1_) {
           return this.func_177230_c().func_185499_a(this.func_230340_p_(), p_185907_1_);
        }
+@@ -710,6 +_,7 @@
+          return this.field_215707_c != null ? this.field_215707_c.field_225494_j : Block.func_208062_a(this.func_196952_d(p_235785_1_, p_235785_2_));
+       }
+ 
++      public final BlockState getBlockData() { return func_230340_p_(); } // Paper - OBFHELPER
+       protected abstract BlockState func_230340_p_();
+ 
+       public boolean func_235783_q_() {
 @@ -802,8 +_,11 @@
        private ResourceLocation field_222381_j;
        private boolean field_226895_m_ = true;

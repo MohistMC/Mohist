@@ -48,10 +48,11 @@
        }
  
        return 0;
-@@ -138,6 +_,10 @@
+@@ -138,6 +_,11 @@
                 ++this.field_150864_e;
              }
           }
++
 +         // CraftBukkit start - left and right
 +         blocks.func_180501_a(p_242969_1_.func_189533_g(this.field_150861_f).func_189534_c(Direction.UP, i).func_189534_c(this.field_150866_c, -1), this.field_150867_a.func_180495_p(p_242969_1_), 18);
 +         blocks.func_180501_a(p_242969_1_.func_189533_g(this.field_150861_f).func_189534_c(Direction.UP, i).func_189534_c(this.field_150866_c, this.field_150868_h), this.field_150867_a.func_180495_p(p_242969_1_), 18);

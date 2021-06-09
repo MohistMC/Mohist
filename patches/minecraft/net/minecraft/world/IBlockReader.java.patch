@@ -1,43 +1,45 @@
 --- a/net/minecraft/world/IBlockReader.java
 +++ b/net/minecraft/world/IBlockReader.java
-@@ -25,8 +_,14 @@
- 
-    FluidState func_204610_c(BlockPos p_204610_1_);
- 
-+   // Mohist start - Add isPosLoaded method to IBlockReader
-+   default boolean isPosLoaded(BlockPos pos) {
-+      return false;
-+   }
-+   // Mohist end
+@@ -5,7 +_,10 @@
+ import java.util.function.Supplier;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
 +
-    default int func_217298_h(BlockPos p_217298_1_) {
++import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
++import net.minecraft.block.material.Material;
+ import net.minecraft.fluid.FluidState;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.Direction;
+@@ -18,135 +_,163 @@
+ import net.minecraft.util.math.vector.Vector3d;
+ 
+ public interface IBlockReader {
+-   @Nullable
+-   TileEntity func_175625_s(BlockPos p_175625_1_);
+-
+-   BlockState func_180495_p(BlockPos p_180495_1_);
+-
+-   FluidState func_204610_c(BlockPos p_204610_1_);
+-
+-   default int func_217298_h(BlockPos p_217298_1_) {
 -      return this.func_180495_p(p_217298_1_).func_185906_d();
-+      return this.func_180495_p(p_217298_1_).getLightValue(this, p_217298_1_);
-    }
- 
-    default int func_201572_C() {
-@@ -41,19 +_,25 @@
-       return BlockPos.func_239581_a_(p_234853_1_).map(this::func_180495_p);
-    }
- 
-+   // CraftBukkit start
-+   default BlockRayTraceResult rayTraceBlock(RayTraceContext p_217297_1_, BlockPos p_217297_2_) {
-+      BlockState blockstate = this.func_180495_p(p_217297_2_);
-+      FluidState fluidstate = this.func_204610_c(p_217297_2_);
-+      Vector3d vector3d = p_217297_1_.func_222253_b();
-+      Vector3d vector3d1 = p_217297_1_.func_222250_a();
-+      VoxelShape voxelshape = p_217297_1_.func_222251_a(blockstate, this, p_217297_2_);
-+      BlockRayTraceResult blockraytraceresult = this.func_217296_a(vector3d, vector3d1, p_217297_2_, voxelshape, blockstate);
-+      VoxelShape voxelshape1 = p_217297_1_.func_222252_a(fluidstate, this, p_217297_2_);
-+      BlockRayTraceResult blockraytraceresult1 = voxelshape1.func_212433_a(vector3d, vector3d1, p_217297_2_);
-+      double d0 = blockraytraceresult == null ? Double.MAX_VALUE : p_217297_1_.func_222253_b().func_72436_e(blockraytraceresult.func_216347_e());
-+      double d1 = blockraytraceresult1 == null ? Double.MAX_VALUE : p_217297_1_.func_222253_b().func_72436_e(blockraytraceresult1.func_216347_e());
-+      return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
-+   }
-+   // CraftBukkit end
-+
-    default BlockRayTraceResult func_217299_a(RayTraceContext p_217299_1_) {
-       return func_217300_a(p_217299_1_, (p_217297_1_, p_217297_2_) -> {
+-   }
+-
+-   default int func_201572_C() {
+-      return 15;
+-   }
+-
+-   default int func_217301_I() {
+-      return 256;
+-   }
+-
+-   default Stream<BlockState> func_234853_a_(AxisAlignedBB p_234853_1_) {
+-      return BlockPos.func_239581_a_(p_234853_1_).map(this::func_180495_p);
+-   }
+-
+-   default BlockRayTraceResult func_217299_a(RayTraceContext p_217299_1_) {
+-      return func_217300_a(p_217299_1_, (p_217297_1_, p_217297_2_) -> {
 -         BlockState blockstate = this.func_180495_p(p_217297_2_);
 -         FluidState fluidstate = this.func_204610_c(p_217297_2_);
 -         Vector3d vector3d = p_217297_1_.func_222253_b();
@@ -49,7 +51,256 @@
 -         double d0 = blockraytraceresult == null ? Double.MAX_VALUE : p_217297_1_.func_222253_b().func_72436_e(blockraytraceresult.func_216347_e());
 -         double d1 = blockraytraceresult1 == null ? Double.MAX_VALUE : p_217297_1_.func_222253_b().func_72436_e(blockraytraceresult1.func_216347_e());
 -         return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
-+         return this.rayTraceBlock(p_217299_1_, p_217297_2_); // CraftBukkit - moved into separate method
-       }, (p_217302_0_) -> {
-          Vector3d vector3d = p_217302_0_.func_222253_b().func_178788_d(p_217302_0_.func_222250_a());
-          return BlockRayTraceResult.func_216352_a(p_217302_0_.func_222250_a(), Direction.func_210769_a(vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c), new BlockPos(p_217302_0_.func_222250_a()));
+-      }, (p_217302_0_) -> {
+-         Vector3d vector3d = p_217302_0_.func_222253_b().func_178788_d(p_217302_0_.func_222250_a());
+-         return BlockRayTraceResult.func_216352_a(p_217302_0_.func_222250_a(), Direction.func_210769_a(vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c), new BlockPos(p_217302_0_.func_222250_a()));
+-      });
+-   }
+-
+-   @Nullable
+-   default BlockRayTraceResult func_217296_a(Vector3d p_217296_1_, Vector3d p_217296_2_, BlockPos p_217296_3_, VoxelShape p_217296_4_, BlockState p_217296_5_) {
+-      BlockRayTraceResult blockraytraceresult = p_217296_4_.func_212433_a(p_217296_1_, p_217296_2_, p_217296_3_);
+-      if (blockraytraceresult != null) {
+-         BlockRayTraceResult blockraytraceresult1 = p_217296_5_.func_235777_m_(this, p_217296_3_).func_212433_a(p_217296_1_, p_217296_2_, p_217296_3_);
+-         if (blockraytraceresult1 != null && blockraytraceresult1.func_216347_e().func_178788_d(p_217296_1_).func_189985_c() < blockraytraceresult.func_216347_e().func_178788_d(p_217296_1_).func_189985_c()) {
+-            return blockraytraceresult.func_216351_a(blockraytraceresult1.func_216354_b());
+-         }
+-      }
+-
+-      return blockraytraceresult;
+-   }
+-
+-   default double func_242402_a(VoxelShape p_242402_1_, Supplier<VoxelShape> p_242402_2_) {
+-      if (!p_242402_1_.func_197766_b()) {
+-         return p_242402_1_.func_197758_c(Direction.Axis.Y);
+-      } else {
+-         double d0 = p_242402_2_.get().func_197758_c(Direction.Axis.Y);
+-         return d0 >= 1.0D ? d0 - 1.0D : Double.NEGATIVE_INFINITY;
+-      }
+-   }
+-
+-   default double func_242403_h(BlockPos p_242403_1_) {
+-      return this.func_242402_a(this.func_180495_p(p_242403_1_).func_196952_d(this, p_242403_1_), () -> {
+-         BlockPos blockpos = p_242403_1_.func_177977_b();
+-         return this.func_180495_p(blockpos).func_196952_d(this, blockpos);
+-      });
+-   }
+-
+-   static <T> T func_217300_a(RayTraceContext p_217300_0_, BiFunction<RayTraceContext, BlockPos, T> p_217300_1_, Function<RayTraceContext, T> p_217300_2_) {
+-      Vector3d vector3d = p_217300_0_.func_222253_b();
+-      Vector3d vector3d1 = p_217300_0_.func_222250_a();
+-      if (vector3d.equals(vector3d1)) {
+-         return p_217300_2_.apply(p_217300_0_);
+-      } else {
+-         double d0 = MathHelper.func_219803_d(-1.0E-7D, vector3d1.field_72450_a, vector3d.field_72450_a);
+-         double d1 = MathHelper.func_219803_d(-1.0E-7D, vector3d1.field_72448_b, vector3d.field_72448_b);
+-         double d2 = MathHelper.func_219803_d(-1.0E-7D, vector3d1.field_72449_c, vector3d.field_72449_c);
+-         double d3 = MathHelper.func_219803_d(-1.0E-7D, vector3d.field_72450_a, vector3d1.field_72450_a);
+-         double d4 = MathHelper.func_219803_d(-1.0E-7D, vector3d.field_72448_b, vector3d1.field_72448_b);
+-         double d5 = MathHelper.func_219803_d(-1.0E-7D, vector3d.field_72449_c, vector3d1.field_72449_c);
+-         int i = MathHelper.func_76128_c(d3);
+-         int j = MathHelper.func_76128_c(d4);
+-         int k = MathHelper.func_76128_c(d5);
+-         BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(i, j, k);
+-         T t = p_217300_1_.apply(p_217300_0_, blockpos$mutable);
+-         if (t != null) {
+-            return t;
+-         } else {
+-            double d6 = d0 - d3;
+-            double d7 = d1 - d4;
+-            double d8 = d2 - d5;
+-            int l = MathHelper.func_219802_k(d6);
+-            int i1 = MathHelper.func_219802_k(d7);
+-            int j1 = MathHelper.func_219802_k(d8);
+-            double d9 = l == 0 ? Double.MAX_VALUE : (double)l / d6;
+-            double d10 = i1 == 0 ? Double.MAX_VALUE : (double)i1 / d7;
+-            double d11 = j1 == 0 ? Double.MAX_VALUE : (double)j1 / d8;
+-            double d12 = d9 * (l > 0 ? 1.0D - MathHelper.func_181162_h(d3) : MathHelper.func_181162_h(d3));
+-            double d13 = d10 * (i1 > 0 ? 1.0D - MathHelper.func_181162_h(d4) : MathHelper.func_181162_h(d4));
+-            double d14 = d11 * (j1 > 0 ? 1.0D - MathHelper.func_181162_h(d5) : MathHelper.func_181162_h(d5));
+-
+-            while(d12 <= 1.0D || d13 <= 1.0D || d14 <= 1.0D) {
+-               if (d12 < d13) {
+-                  if (d12 < d14) {
+-                     i += l;
+-                     d12 += d9;
+-                  } else {
+-                     k += j1;
+-                     d14 += d11;
+-                  }
+-               } else if (d13 < d14) {
+-                  j += i1;
+-                  d13 += d10;
+-               } else {
+-                  k += j1;
+-                  d14 += d11;
+-               }
+-
+-               T t1 = p_217300_1_.apply(p_217300_0_, blockpos$mutable.func_181079_c(i, j, k));
+-               if (t1 != null) {
+-                  return t1;
+-               }
++    @Nullable
++    TileEntity func_175625_s(BlockPos p_175625_1_);
++
++    BlockState func_180495_p(BlockPos p_180495_1_);
++
++    // Paper start - if loaded util
++    BlockState getTypeIfLoaded(BlockPos blockposition);
++
++    default Material getMaterialIfLoaded(BlockPos blockposition) {
++        BlockState type = this.getTypeIfLoaded(blockposition);
++        return type == null ? null : type.func_185904_a();
++    }
++
++    default Block getBlockIfLoaded(BlockPos blockposition) {
++        BlockState type = this.getTypeIfLoaded(blockposition);
++        return type == null ? null : type.func_177230_c();
++    }
++
++    FluidState getFluidIfLoaded(BlockPos blockposition);
++    // Paper end
++
++    FluidState func_204610_c(BlockPos p_204610_1_);
++
++    // Mohist start - Add isPosLoaded method to IBlockReader
++    default boolean isPosLoaded(BlockPos pos) {
++        return false;
++    }
++    // Mohist end
++
++    default int func_217298_h(BlockPos p_217298_1_) {
++        return this.func_180495_p(p_217298_1_).getLightValue(this, p_217298_1_);
++    }
++
++    default int func_201572_C() {
++        return 15;
++    }
++
++    default int func_217301_I() {
++        return 256;
++    }
++
++    default Stream<BlockState> func_234853_a_(AxisAlignedBB p_234853_1_) {
++        return BlockPos.func_239581_a_(p_234853_1_).map(this::func_180495_p);
++    }
++
++    // CraftBukkit start
++    default BlockRayTraceResult rayTraceBlock(RayTraceContext p_217297_1_, BlockPos p_217297_2_) {
++        BlockState blockstate = this.func_180495_p(p_217297_2_);
++        FluidState fluidstate = this.func_204610_c(p_217297_2_);
++        Vector3d vector3d = p_217297_1_.func_222253_b();
++        Vector3d vector3d1 = p_217297_1_.func_222250_a();
++        VoxelShape voxelshape = p_217297_1_.func_222251_a(blockstate, this, p_217297_2_);
++        BlockRayTraceResult blockraytraceresult = this.func_217296_a(vector3d, vector3d1, p_217297_2_, voxelshape, blockstate);
++        VoxelShape voxelshape1 = p_217297_1_.func_222252_a(fluidstate, this, p_217297_2_);
++        BlockRayTraceResult blockraytraceresult1 = voxelshape1.func_212433_a(vector3d, vector3d1, p_217297_2_);
++        double d0 = blockraytraceresult == null ? Double.MAX_VALUE : p_217297_1_.func_222253_b().func_72436_e(blockraytraceresult.func_216347_e());
++        double d1 = blockraytraceresult1 == null ? Double.MAX_VALUE : p_217297_1_.func_222253_b().func_72436_e(blockraytraceresult1.func_216347_e());
++        return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
++    }
++    // CraftBukkit end
++
++    default BlockRayTraceResult func_217299_a(RayTraceContext p_217299_1_) {
++        return func_217300_a(p_217299_1_, (p_217297_1_, p_217297_2_) -> {
++            return this.rayTraceBlock(p_217299_1_, p_217297_2_); // CraftBukkit - moved into separate method
++        }, (p_217302_0_) -> {
++            Vector3d vector3d = p_217302_0_.func_222253_b().func_178788_d(p_217302_0_.func_222250_a());
++            return BlockRayTraceResult.func_216352_a(p_217302_0_.func_222250_a(), Direction.func_210769_a(vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c), new BlockPos(p_217302_0_.func_222250_a()));
++        });
++    }
++
++    @Nullable
++    default BlockRayTraceResult func_217296_a(Vector3d p_217296_1_, Vector3d p_217296_2_, BlockPos p_217296_3_, VoxelShape p_217296_4_, BlockState p_217296_5_) {
++        BlockRayTraceResult blockraytraceresult = p_217296_4_.func_212433_a(p_217296_1_, p_217296_2_, p_217296_3_);
++        if (blockraytraceresult != null) {
++            BlockRayTraceResult blockraytraceresult1 = p_217296_5_.func_235777_m_(this, p_217296_3_).func_212433_a(p_217296_1_, p_217296_2_, p_217296_3_);
++            if (blockraytraceresult1 != null && blockraytraceresult1.func_216347_e().func_178788_d(p_217296_1_).func_189985_c() < blockraytraceresult.func_216347_e().func_178788_d(p_217296_1_).func_189985_c()) {
++                return blockraytraceresult.func_216351_a(blockraytraceresult1.func_216354_b());
+             }
+-
++        }
++
++        return blockraytraceresult;
++    }
++
++    default double func_242402_a(VoxelShape p_242402_1_, Supplier<VoxelShape> p_242402_2_) {
++        if (!p_242402_1_.func_197766_b()) {
++            return p_242402_1_.func_197758_c(Direction.Axis.Y);
++        } else {
++            double d0 = p_242402_2_.get().func_197758_c(Direction.Axis.Y);
++            return d0 >= 1.0D ? d0 - 1.0D : Double.NEGATIVE_INFINITY;
++        }
++    }
++
++    default double func_242403_h(BlockPos p_242403_1_) {
++        return this.func_242402_a(this.func_180495_p(p_242403_1_).func_196952_d(this, p_242403_1_), () -> {
++            BlockPos blockpos = p_242403_1_.func_177977_b();
++            return this.func_180495_p(blockpos).func_196952_d(this, blockpos);
++        });
++    }
++
++    static <T> T func_217300_a(RayTraceContext p_217300_0_, BiFunction<RayTraceContext, BlockPos, T> p_217300_1_, Function<RayTraceContext, T> p_217300_2_) {
++        Vector3d vector3d = p_217300_0_.func_222253_b();
++        Vector3d vector3d1 = p_217300_0_.func_222250_a();
++        if (vector3d.equals(vector3d1)) {
+             return p_217300_2_.apply(p_217300_0_);
+-         }
+-      }
+-   }
++        } else {
++            double d0 = MathHelper.func_219803_d(-1.0E-7D, vector3d1.field_72450_a, vector3d.field_72450_a);
++            double d1 = MathHelper.func_219803_d(-1.0E-7D, vector3d1.field_72448_b, vector3d.field_72448_b);
++            double d2 = MathHelper.func_219803_d(-1.0E-7D, vector3d1.field_72449_c, vector3d.field_72449_c);
++            double d3 = MathHelper.func_219803_d(-1.0E-7D, vector3d.field_72450_a, vector3d1.field_72450_a);
++            double d4 = MathHelper.func_219803_d(-1.0E-7D, vector3d.field_72448_b, vector3d1.field_72448_b);
++            double d5 = MathHelper.func_219803_d(-1.0E-7D, vector3d.field_72449_c, vector3d1.field_72449_c);
++            int i = MathHelper.func_76128_c(d3);
++            int j = MathHelper.func_76128_c(d4);
++            int k = MathHelper.func_76128_c(d5);
++            BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(i, j, k);
++            T t = p_217300_1_.apply(p_217300_0_, blockpos$mutable);
++            if (t != null) {
++                return t;
++            } else {
++                double d6 = d0 - d3;
++                double d7 = d1 - d4;
++                double d8 = d2 - d5;
++                int l = MathHelper.func_219802_k(d6);
++                int i1 = MathHelper.func_219802_k(d7);
++                int j1 = MathHelper.func_219802_k(d8);
++                double d9 = l == 0 ? Double.MAX_VALUE : (double) l / d6;
++                double d10 = i1 == 0 ? Double.MAX_VALUE : (double) i1 / d7;
++                double d11 = j1 == 0 ? Double.MAX_VALUE : (double) j1 / d8;
++                double d12 = d9 * (l > 0 ? 1.0D - MathHelper.func_181162_h(d3) : MathHelper.func_181162_h(d3));
++                double d13 = d10 * (i1 > 0 ? 1.0D - MathHelper.func_181162_h(d4) : MathHelper.func_181162_h(d4));
++                double d14 = d11 * (j1 > 0 ? 1.0D - MathHelper.func_181162_h(d5) : MathHelper.func_181162_h(d5));
++
++                while (d12 <= 1.0D || d13 <= 1.0D || d14 <= 1.0D) {
++                    if (d12 < d13) {
++                        if (d12 < d14) {
++                            i += l;
++                            d12 += d9;
++                        } else {
++                            k += j1;
++                            d14 += d11;
++                        }
++                    } else if (d13 < d14) {
++                        j += i1;
++                        d13 += d10;
++                    } else {
++                        k += j1;
++                        d14 += d11;
++                    }
++
++                    T t1 = p_217300_1_.apply(p_217300_0_, blockpos$mutable.func_181079_c(i, j, k));
++                    if (t1 != null) {
++                        return t1;
++                    }
++                }
++
++                return p_217300_2_.apply(p_217300_0_);
++            }
++        }
++    }
+ }

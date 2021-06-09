@@ -22,13 +22,14 @@
  import java.io.File;
  import java.io.IOException;
  import java.io.Writer;
-@@ -36,14 +_,37 @@
+@@ -36,14 +_,38 @@
  import java.util.function.Supplier;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
 +
  import javax.annotation.Nullable;
 +
++import net.minecraft.addons.server.MCUtil;
 +import org.apache.commons.lang3.mutable.MutableBoolean;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
@@ -78,7 +79,7 @@
     private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219253_g = new Long2ObjectLinkedOpenHashMap<>();
     private final LongSet field_219254_h = new LongOpenHashSet();
     private final ServerWorld field_219255_i;
-@@ -110,17 +_,39 @@
+@@ -110,17 +_,59 @@
     private final ChunkTaskPriorityQueueSorter field_219263_q;
     private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219264_r;
     private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219265_s;
@@ -118,6 +119,26 @@
 +   };
 +   // CraftBukkit end
 +
++   // Paper start - distance maps
++   private final com.destroystokyo.paper.util.misc.PooledLinkedHashSets<ServerPlayerEntity> pooledLinkedPlayerHashSets = new com.destroystokyo.paper.util.misc.PooledLinkedHashSets<>();
++
++   void addPlayerToDistanceMaps(ServerPlayerEntity player) {
++      int chunkX = MCUtil.getChunkCoordinate(player.func_226277_ct_());
++      int chunkZ = MCUtil.getChunkCoordinate(player.func_226281_cx_());
++      // Note: players need to be explicitly added to distance maps before they can be updated
++   }
++
++   void removePlayerFromDistanceMaps(ServerPlayerEntity player) {
++
++   }
++
++   void updateMaps(ServerPlayerEntity player) {
++      int chunkX = MCUtil.getChunkCoordinate(player.func_226277_ct_());
++      int chunkZ = MCUtil.getChunkCoordinate(player.func_226281_cx_());
++      // Note: players need to be explicitly added to distance maps before they can be updated
++   }
++   // Paper end
++
     public ChunkManager(ServerWorld p_i232602_1_, SaveFormat.LevelSave p_i232602_2_, DataFixer p_i232602_3_, TemplateManager p_i232602_4_, Executor p_i232602_5_, ThreadTaskExecutor<Runnable> p_i232602_6_, IChunkLightProvider p_i232602_7_, ChunkGenerator p_i232602_8_, IChunkStatusListener p_i232602_9_, Supplier<DimensionSavedDataManager> p_i232602_10_, int p_i232602_11_, boolean p_i232602_12_) {
        super(new File(p_i232602_2_.func_237291_a_(p_i232602_1_.func_234923_W_()), "region"), p_i232602_3_, p_i232602_12_);
        this.field_219269_w = p_i232602_4_;
@@ -136,6 +157,21 @@
        return this.field_219252_f.get(p_219219_1_);
     }
  
+@@ -215,6 +_,14 @@
+       }
+    }
+ 
++   // Paper start
++   public final int getEffectiveViewDistance() {
++      // TODO this needs to be checked on update
++      // Mojang currently sets it to +1 of the configured view distance. So subtract one to get the one we really want.
++      return this.field_219247_A - 1;
++   }
++   // Paper end
++
+    private CompletableFuture<Either<List<IChunk>, ChunkHolder.IChunkLoadingError>> func_219236_a(ChunkPos p_219236_1_, int p_219236_2_, IntFunction<ChunkStatus> p_219236_3_) {
+       List<CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>>> list = Lists.newArrayList();
+       int i = p_219236_1_.field_77276_a;
 @@ -343,7 +_,7 @@
              return true;
           });
@@ -245,6 +281,30 @@
        });
     }
  
+@@ -827,12 +_,14 @@
+          if (!flag) {
+             this.field_219267_u.func_219341_a(SectionPos.func_218157_a(p_219234_1_), p_219234_1_);
+          }
++         this.addPlayerToDistanceMaps(p_219234_1_); // Paper - distance maps
+       } else {
+          SectionPos sectionpos = p_219234_1_.func_213842_M();
+          this.field_219271_y.func_219443_a(sectionpos.func_218155_u().func_201841_a(), p_219234_1_);
+          if (!flag1) {
+             this.field_219267_u.func_219367_b(sectionpos, p_219234_1_);
+          }
++         this.removePlayerFromDistanceMaps(p_219234_1_); // Paper - distance maps
+       }
+ 
+       for(int l = i - this.field_219247_A; l <= i + this.field_219247_A; ++l) {
+@@ -842,6 +_,8 @@
+          }
+       }
+ 
++      this.updateMaps(p_219234_1_); // Paper - distance maps
++
+    }
+ 
+    private SectionPos func_223489_c(ServerPlayerEntity p_223489_1_) {
 @@ -942,9 +_,10 @@
     }
  

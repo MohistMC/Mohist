@@ -1,0 +1,16 @@
+--- a/net/minecraft/util/palette/IPalette.java
++++ b/net/minecraft/util/palette/IPalette.java
+@@ -8,10 +_,13 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public interface IPalette<T> {
++
++   default int getOrCreateIdFor(T object) { return this.func_186041_a(object); } // Paper - OBFHELPER
+    int func_186041_a(T p_186041_1_);
+ 
+    boolean func_230341_a_(Predicate<T> p_230341_1_);
+ 
++   @Nullable default T getObject(int dataBits) { return this.func_186039_a(dataBits); } // Paper - OBFHELPER
+    @Nullable
+    T func_186039_a(int p_186039_1_);
+ 

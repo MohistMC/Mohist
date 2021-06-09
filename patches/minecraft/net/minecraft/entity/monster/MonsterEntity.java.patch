@@ -1,0 +1,12 @@
+--- a/net/minecraft/entity/monster/MonsterEntity.java
++++ b/net/minecraft/entity/monster/MonsterEntity.java
+@@ -25,6 +_,9 @@
+ import net.minecraft.world.World;
+ 
+ public abstract class MonsterEntity extends CreatureEntity implements IMob {
++
++   public org.bukkit.craftbukkit.v1_16_R3.entity.CraftMonster getBukkitMonster() { return (org.bukkit.craftbukkit.v1_16_R3.entity.CraftMonster) super.getBukkitEntity(); } // Paper
++
+    protected MonsterEntity(EntityType<? extends MonsterEntity> p_i48553_1_, World p_i48553_2_) {
+       super(p_i48553_1_, p_i48553_2_);
+       this.field_70728_aV = 5;

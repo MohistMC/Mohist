@@ -1,12 +1,287 @@
 --- a/net/minecraft/util/concurrent/ThreadTaskExecutor.java
 +++ b/net/minecraft/util/concurrent/ThreadTaskExecutor.java
-@@ -135,7 +_,8 @@
-       try {
-          p_213166_1_.run();
-       } catch (Exception exception) {
--         field_213172_c.fatal("Error executing task on {}", this.func_213142_bd(), exception);
-+         field_213172_c.fatal(com.mohistmc.util.i18n.i18n.get("threadtaskexecutor.1", this.func_213142_bd()));
-+         exception.printStackTrace();
-       }
+@@ -1,142 +_,159 @@
+ package net.minecraft.util.concurrent;
  
-    }
+ import com.google.common.collect.Queues;
++
+ import java.util.Queue;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
+ import java.util.concurrent.locks.LockSupport;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Supplier;
++
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+ public abstract class ThreadTaskExecutor<R extends Runnable> implements ITaskExecutor<R>, Executor {
+-   private final String field_213171_b;
+-   private static final Logger field_213172_c = LogManager.getLogger();
+-   private final Queue<R> field_213173_d = Queues.newConcurrentLinkedQueue();
+-   private int field_213174_e;
+-
+-   protected ThreadTaskExecutor(String p_i50403_1_) {
+-      this.field_213171_b = p_i50403_1_;
+-   }
+-
+-   protected abstract R func_212875_d_(Runnable p_212875_1_);
+-
+-   protected abstract boolean func_212874_c_(R p_212874_1_);
+-
+-   public boolean func_213162_bc() {
+-      return Thread.currentThread() == this.func_213170_ax();
+-   }
+-
+-   protected abstract Thread func_213170_ax();
+-
+-   protected boolean func_213164_aw() {
+-      return !this.func_213162_bc();
+-   }
+-
+-   public int func_223704_be() {
+-      return this.field_213173_d.size();
+-   }
+-
+-   public String func_213142_bd() {
+-      return this.field_213171_b;
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public <V> CompletableFuture<V> func_213169_a(Supplier<V> p_213169_1_) {
+-      return this.func_213164_aw() ? CompletableFuture.supplyAsync(p_213169_1_, this) : CompletableFuture.completedFuture(p_213169_1_.get());
+-   }
+-
+-   public CompletableFuture<Void> func_213165_a(Runnable p_213165_1_) {
+-      return CompletableFuture.supplyAsync(() -> {
+-         p_213165_1_.run();
+-         return null;
+-      }, this);
+-   }
+-
+-   public CompletableFuture<Void> func_222817_e(Runnable p_222817_1_) {
+-      if (this.func_213164_aw()) {
+-         return this.func_213165_a(p_222817_1_);
+-      } else {
+-         p_222817_1_.run();
+-         return CompletableFuture.completedFuture((Void)null);
+-      }
+-   }
+-
+-   public void func_213167_f(Runnable p_213167_1_) {
+-      if (!this.func_213162_bc()) {
+-         this.func_213165_a(p_213167_1_).join();
+-      } else {
+-         p_213167_1_.run();
+-      }
+-
+-   }
+-
+-   public void func_212871_a_(R p_212871_1_) {
+-      this.field_213173_d.add(p_212871_1_);
+-      LockSupport.unpark(this.func_213170_ax());
+-   }
+-
+-   public void execute(Runnable p_execute_1_) {
+-      if (this.func_213164_aw()) {
+-         this.func_212871_a_(this.func_212875_d_(p_execute_1_));
+-      } else {
+-         p_execute_1_.run();
+-      }
+-
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   protected void func_213159_be() {
+-      this.field_213173_d.clear();
+-   }
+-
+-   protected void func_213160_bf() {
+-      while(this.func_213168_p()) {
+-      }
+-
+-   }
+-
+-   protected boolean func_213168_p() {
+-      R r = this.field_213173_d.peek();
+-      if (r == null) {
+-         return false;
+-      } else if (this.field_213174_e == 0 && !this.func_212874_c_(r)) {
+-         return false;
+-      } else {
+-         this.func_213166_h(this.field_213173_d.remove());
+-         return true;
+-      }
+-   }
+-
+-   public void func_213161_c(BooleanSupplier p_213161_1_) {
+-      ++this.field_213174_e;
+-
+-      try {
+-         while(!p_213161_1_.getAsBoolean()) {
+-            if (!this.func_213168_p()) {
+-               this.func_223705_bi();
++    private final String field_213171_b;
++    private static final Logger field_213172_c = LogManager.getLogger();
++    private final Queue<R> field_213173_d = Queues.newConcurrentLinkedQueue();
++    private int field_213174_e;
++
++    protected ThreadTaskExecutor(String p_i50403_1_) {
++        this.field_213171_b = p_i50403_1_;
++    }
++
++    protected abstract R func_212875_d_(Runnable p_212875_1_);
++
++    protected abstract boolean func_212874_c_(R p_212874_1_);
++
++    public boolean func_213162_bc() {
++        return Thread.currentThread() == this.func_213170_ax();
++    }
++
++    protected abstract Thread func_213170_ax();
++
++    protected boolean func_213164_aw() {
++        return !this.func_213162_bc();
++    }
++
++    public int func_223704_be() {
++        return this.field_213173_d.size();
++    }
++
++    public String func_213142_bd() {
++        return this.field_213171_b;
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public <V> CompletableFuture<V> func_213169_a(Supplier<V> p_213169_1_) {
++        return this.func_213164_aw() ? CompletableFuture.supplyAsync(p_213169_1_, this) : CompletableFuture.completedFuture(p_213169_1_.get());
++    }
++
++    public CompletableFuture<Void> func_213165_a(Runnable p_213165_1_) {
++        return CompletableFuture.supplyAsync(() -> {
++            p_213165_1_.run();
++            return null;
++        }, this);
++    }
++
++    public CompletableFuture<Void> func_222817_e(Runnable p_222817_1_) {
++        if (this.func_213164_aw()) {
++            return this.func_213165_a(p_222817_1_);
++        } else {
++            p_222817_1_.run();
++            return CompletableFuture.completedFuture((Void) null);
++        }
++    }
++
++    public void func_213167_f(Runnable p_213167_1_) {
++        if (!this.func_213162_bc()) {
++            this.func_213165_a(p_213167_1_).join();
++        } else {
++            p_213167_1_.run();
++        }
++
++    }
++
++    // Paper start
++    public void scheduleOnMain(Runnable r0) {
++        // postToMainThread does not work the same as older versions of mc
++        // This method is actually used to create a TickTask, which can then be posted onto main
++        this.addTask(this.func_212875_d_(r0));
++    }
++    // Paper end
++
++    // Paper start - OBFHELPER
++    public final void addTask(R r0) {
++        func_212871_a_(r0);
++    }
++    // Paper end
++
++    public void func_212871_a_(R p_212871_1_) {
++        this.field_213173_d.add(p_212871_1_);
++        LockSupport.unpark(this.func_213170_ax());
++    }
++
++    public void execute(Runnable p_execute_1_) {
++        if (this.func_213164_aw()) {
++            this.func_212871_a_(this.func_212875_d_(p_execute_1_));
++        } else {
++            p_execute_1_.run();
++        }
++
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    protected void func_213159_be() {
++        this.field_213173_d.clear();
++    }
++
++    protected void func_213160_bf() {
++        while (this.func_213168_p()) {
++        }
++
++    }
++
++    protected boolean func_213168_p() {
++        R r = this.field_213173_d.peek();
++        if (r == null) {
++            return false;
++        } else if (this.field_213174_e == 0 && !this.func_212874_c_(r)) {
++            return false;
++        } else {
++            this.func_213166_h(this.field_213173_d.remove());
++            return true;
++        }
++    }
++
++    public void func_213161_c(BooleanSupplier p_213161_1_) {
++        ++this.field_213174_e;
++
++        try {
++            while (!p_213161_1_.getAsBoolean()) {
++                if (!this.func_213168_p()) {
++                    this.func_223705_bi();
++                }
+             }
+-         }
+-      } finally {
+-         --this.field_213174_e;
+-      }
+-
+-   }
+-
+-   protected void func_223705_bi() {
+-      Thread.yield();
+-      LockSupport.parkNanos("waiting for tasks", 100000L);
+-   }
+-
+-   protected void func_213166_h(R p_213166_1_) {
+-      try {
+-         p_213166_1_.run();
+-      } catch (Exception exception) {
+-         field_213172_c.fatal("Error executing task on {}", this.func_213142_bd(), exception);
+-      }
+-
+-   }
++        } finally {
++            --this.field_213174_e;
++        }
++
++    }
++
++    protected void func_223705_bi() {
++        Thread.yield();
++        LockSupport.parkNanos("waiting for tasks", 100000L);
++    }
++
++    protected void func_213166_h(R p_213166_1_) {
++        try {
++            p_213166_1_.run();
++        } catch (Exception exception) {
++            field_213172_c.fatal(com.mohistmc.util.i18n.i18n.get("threadtaskexecutor.1", this.func_213142_bd()));
++            exception.printStackTrace();
++        }
++
++    }
+ }

@@ -7,7 +7,7 @@
  import com.google.common.base.Objects;
  import com.google.common.collect.ImmutableList;
  import com.google.common.collect.ImmutableMap;
-@@ -8,19 +_,39 @@
+@@ -8,19 +_,40 @@
  import com.mojang.datafixers.util.Pair;
  import com.mojang.serialization.DataResult;
  import com.mojang.serialization.Dynamic;
@@ -26,6 +26,7 @@
 +
  import javax.annotation.Nullable;
 +
++import net.minecraft.util.math.*;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_16_R3.attribute.CraftAttributeMap;
@@ -69,6 +70,18 @@
  import net.minecraft.nbt.ListNBT;
  import net.minecraft.nbt.NBTDynamicOps;
  import net.minecraft.network.IPacket;
+@@ -101,11 +_,6 @@
+ import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.TeleportationRepositioner;
+-import net.minecraft.util.math.AxisAlignedBB;
+-import net.minecraft.util.math.BlockPos;
+-import net.minecraft.util.math.MathHelper;
+-import net.minecraft.util.math.RayTraceContext;
+-import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.util.math.vector.Vector3d;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.World;
 @@ -113,22 +_,26 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
@@ -141,7 +154,7 @@
     private LivingEntity field_110150_bn;
     private int field_142016_bo;
     private float field_70746_aG;
-@@ -199,10 +_,36 @@
+@@ -199,10 +_,37 @@
     private float field_205018_bM;
     protected Brain<?> field_213378_br;
  
@@ -154,6 +167,7 @@
 +   public boolean collides = true;
 +   public Set<UUID> collidableExemptions = new HashSet<>();
 +   public boolean canPickUpLoot;
++   public org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity getBukkitLivingEntity() { return (org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity) super.getBukkitEntity(); } // Paper
 +
 +   @Override
 +   public float getBukkitYaw() {
@@ -1506,10 +1520,29 @@
              }
           }
        }
-@@ -3082,6 +_,58 @@
+@@ -3082,6 +_,77 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }
  
++   // Paper start
++   public BlockRayTraceResult getRayTrace(int maxDistance) {
++      return getRayTrace(maxDistance, RayTraceContext.FluidMode.NONE);
++   }
++
++   public BlockRayTraceResult getRayTrace(int maxDistance, RayTraceContext.FluidMode fluidCollisionOption) {
++      if (maxDistance < 1 || maxDistance > 120) {
++         throw new IllegalArgumentException("maxDistance must be between 1-120");
++      }
++
++      Vector3d start = new Vector3d(func_226277_ct_(), func_226278_cu_() + func_70047_e(), func_226281_cx_());
++      org.bukkit.util.Vector dir = getBukkitEntity().getLocation().getDirection().multiply(maxDistance);
++      Vector3d end = new Vector3d(start.field_72450_a + dir.getX(), start.field_72448_b + dir.getY(), start.field_72449_c + dir.getZ());
++      RayTraceContext raytrace = new RayTraceContext(start, end, RayTraceContext.BlockMode.OUTLINE, fluidCollisionOption, this);
++
++      return field_70170_p.func_217299_a(raytrace);
++   }
++   // Paper end
++
 +   /* ==== FORGE START ==== */
 +   /***
 +    * Removes all potion effects that have curativeItem as a curative item for its effect
