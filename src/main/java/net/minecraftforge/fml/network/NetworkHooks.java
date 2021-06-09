@@ -33,6 +33,7 @@ import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
+import net.minecraftforge.network.NetworkFilters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -117,6 +118,7 @@ public class NetworkHooks
     }
 
     public synchronized static void sendMCRegistryPackets(NetworkManager manager, String direction) {
+        NetworkFilters.injectIfNecessary(manager);
         final Set<ResourceLocation> resourceLocations = NetworkRegistry.buildChannelVersions().keySet().stream().
                 filter(rl -> !Objects.equals(rl.getNamespace(), "minecraft")).
                 collect(Collectors.toSet());

@@ -171,7 +171,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.5-36.1.25'
+    version = '1.16.5-36.1.30'
     println('Forge Version: ' + version)
 
     patcher {
@@ -329,7 +329,7 @@ project(':forge') {
                 'Specification-Vendor'  : 'SpigotMC',
                 'Specification-Version':  '1.16.5',
                 'Implementation-Title'  : 'Spigot',
-                'Implementation-Version': '04df07fe-ebe18b9b-9fb885e8',
+                'Implementation-Version': '04df07fe-fae895ac-9fb885e8',
                 'Implementation-Vendor' : 'SpigotMC'
             ] as LinkedHashMap
         ]

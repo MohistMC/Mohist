@@ -69,7 +69,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.network.NetworkFilters;
 import net.minecraftforge.registries.GameData;
 
 public class ServerLifecycleHooks
@@ -170,7 +169,6 @@ public class ServerLifecycleHooks
         if (packet.getIntention() == ProtocolType.STATUS) return true;
 
         NetworkHooks.registerServerLoginChannel(manager, packet);
-        NetworkFilters.injectIfNecessary(manager);
         return true;
 
     }
