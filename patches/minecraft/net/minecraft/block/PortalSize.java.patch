@@ -20,19 +20,46 @@
     private BlockPos field_150861_f;
     private int field_150862_g;
     private int field_150868_h;
-+   java.util.List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<org.bukkit.block.BlockState>(); // CraftBukkit - add field
++   org.bukkit.craftbukkit.v1_16_R3.util.BlockStateListPopulator blocks; // CraftBukkit - add field
  
     public static Optional<PortalSize> func_242964_a(IWorld p_242964_0_, BlockPos p_242964_1_, Direction.Axis p_242964_2_) {
        return func_242965_a(p_242964_0_, p_242964_1_, (p_242968_0_) -> {
+@@ -44,6 +_,7 @@
+    }
+ 
+    public PortalSize(IWorld p_i48740_1_, BlockPos p_i48740_2_, Direction.Axis p_i48740_3_) {
++      blocks = new org.bukkit.craftbukkit.v1_16_R3.util.BlockStateListPopulator(p_i48740_1_.getMinecraftWorld()); // CraftBukkit
+       this.field_150867_a = p_i48740_1_;
+       this.field_150865_b = p_i48740_3_;
+       this.field_150866_c = p_i48740_3_ == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;
 @@ -84,6 +_,7 @@
           BlockState blockstate = this.field_150867_a.func_180495_p(blockpos$mutable);
           if (!func_196900_a(blockstate)) {
              if (field_242962_a.test(blockstate, this.field_150867_a, blockpos$mutable)) {
-+               blocks.add(CraftBlock.at(this.field_150867_a, blockpos$mutable).getState()); // CraftBukkit
++               blocks.func_180501_a(blockpos$mutable, blockstate, 18); // CraftBukkit - lower left / right
                 return i;
              }
              break;
-@@ -151,11 +_,29 @@
+@@ -93,6 +_,7 @@
+          if (!field_242962_a.test(blockstate1, this.field_150867_a, blockpos$mutable)) {
+             break;
+          }
++         blocks.func_180501_a(blockpos$mutable, blockstate1, 18); // CraftBukkit - bottom row
+       }
+ 
+       return 0;
+@@ -138,6 +_,10 @@
+                ++this.field_150864_e;
+             }
+          }
++         // CraftBukkit start - left and right
++         blocks.func_180501_a(p_242969_1_.func_189533_g(this.field_150861_f).func_189534_c(Direction.UP, i).func_189534_c(this.field_150866_c, -1), this.field_150867_a.func_180495_p(p_242969_1_), 18);
++         blocks.func_180501_a(p_242969_1_.func_189533_g(this.field_150861_f).func_189534_c(Direction.UP, i).func_189534_c(this.field_150866_c, this.field_150868_h), this.field_150867_a.func_180495_p(p_242969_1_), 18);
++         // CraftBukkit end
+       }
+ 
+       return 21;
+@@ -151,11 +_,27 @@
        return this.field_150861_f != null && this.field_150868_h >= 2 && this.field_150868_h <= 21 && this.field_150862_g >= 3 && this.field_150862_g <= 21;
     }
  
@@ -44,12 +71,10 @@
 +      // Copy below for loop
        BlockState blockstate = Blocks.field_150427_aO.func_176223_P().func_206870_a(NetherPortalBlock.field_176550_a, this.field_150865_b);
        BlockPos.func_218278_a(this.field_150861_f, this.field_150861_f.func_177967_a(Direction.UP, this.field_150862_g - 1).func_177967_a(this.field_150866_c, this.field_150868_h - 1)).forEach((p_242967_2_) -> {
-+         CraftBlockState state = CraftBlockState.getBlockState(this.field_150867_a.getMinecraftWorld(), p_242967_2_, 18);
-+         state.setData(blockstate);
-+         blocks.add(state);
++         blocks.func_180501_a(p_242967_2_, blockstate, 18);
 +      });
 +
-+      PortalCreateEvent event = new PortalCreateEvent(blocks, bworld, null, PortalCreateEvent.CreateReason.FIRE);
++      PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, null, PortalCreateEvent.CreateReason.FIRE);
 +      this.field_150867_a.getMinecraftWorld().func_73046_m().server.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {

@@ -9,7 +9,15 @@
  import net.minecraft.network.IPacket;
  import net.minecraft.network.PacketBuffer;
  import net.minecraft.network.play.IServerPlayNetHandler;
-@@ -27,7 +_,13 @@
+@@ -20,14 +_,20 @@
+    }
+ 
+    public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
+-      this.field_149440_a = p_148837_1_.func_150789_c(256);
++      this.field_149440_a = org.apache.commons.lang3.StringUtils.normalizeSpace(p_148837_1_.func_150789_c(256)); // CraftBukkit - see PlayerConnection
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
        p_148840_1_.func_180714_a(this.field_149440_a);
     }
  
