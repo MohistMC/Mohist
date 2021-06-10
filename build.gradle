@@ -156,7 +156,8 @@ project(':forge') {
         mavenCentral()
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://papermc.io/repo/repository/maven-public/' }
-    }
+        maven { url 'https://repo.aikar.co/content/groups/aikar/' }
+  }
 
     ext {
         SPEC_VERSION = '36.1' // This is overwritten by git tag, but here so dev time doesnt explode
