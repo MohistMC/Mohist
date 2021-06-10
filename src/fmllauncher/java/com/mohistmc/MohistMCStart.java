@@ -4,16 +4,15 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.util.*;
+import com.mohistmc.util.i18n.i18n;
+
+import java.util.Scanner;
+
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
-
-import com.mohistmc.util.CustomFlagsHandler;
-import com.mohistmc.util.InstallUtils;
 import static com.mohistmc.util.InstallUtils.startInstallation;
-import com.mohistmc.util.JarLoader;
-import com.mohistmc.util.JarTool;
-import com.mohistmc.util.i18n.i18n;
-import java.util.Scanner;
+import static com.mohistmc.util.PluginsModsDelete.checkPlugins;
 
 public class MohistMCStart {
 
@@ -46,14 +45,10 @@ public class MohistMCStart {
             while (!"true".equals(new Scanner(System.in).next())) ;
             writeInfos();
         }
-        if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) {
-            AutoDeletePlugins.init();
-            AutoDeletePlugins.jar();
-        }
+        if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false"))
+			checkPlugins(AutoDeletePlugins.LIST, PluginsModsDelete.PLUGIN);
 
-        if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) {
-            AutoDeleteMods.init();
-            AutoDeleteMods.jar();
-        }
+        if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false"))
+			checkPlugins(AutoDeleteMods.LIST, PluginsModsDelete.MOD);
     }
 }
