@@ -2119,7 +2119,8 @@ public final class CraftServer implements Server {
         playerList = playerList;
     }
 
-    // Paper start
+    // Mohist - fix https://github.com/MohistMC/Mohist/issues/1420 ?
+    /*// Paper start
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static java.nio.file.Path dumpHeap(java.nio.file.Path dir, String name) {
         try {
@@ -2148,5 +2149,5 @@ public final class CraftServer implements Server {
             return null;
         }
     }
-    // Paper end
+    // Paper end*/
 }
