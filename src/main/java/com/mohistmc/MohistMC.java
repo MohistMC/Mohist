@@ -17,15 +17,17 @@ import org.apache.logging.log4j.Logger;
 public class MohistMC {
     public static final String NAME = "Mohist";
     public static Logger LOGGER;
+    public static String[] mainArgs = null;
 
     public static String getVersion() {
         return (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
     }
 
     public static void main(String[] args) throws Throwable {
+        mainArgs = args;
         MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
-            DownloadJava.run(args);
+            DownloadJava.run();
         if (MohistConfigUtil.bMohist("showlogo")) {
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
