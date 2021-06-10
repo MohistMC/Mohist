@@ -259,7 +259,8 @@ public class PaperCommand extends Command {
     }
 
     private void dumpHeap(CommandSender sender) {
-        java.nio.file.Path dir = java.nio.file.Paths.get("./dumps");
+        // Mohist - fix https://github.com/MohistMC/Mohist/issues/1420 ?
+        /*java.nio.file.Path dir = java.nio.file.Paths.get("./dumps");
         String name = "heap-dump-" + DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss").format(LocalDateTime.now());
 
         Command.broadcastCommandMessage(sender, ChatColor.YELLOW + "Writing JVM heap data...");
@@ -269,7 +270,7 @@ public class PaperCommand extends Command {
             Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Heap dump saved to " + file);
         } else {
             Command.broadcastCommandMessage(sender, ChatColor.RED + "Failed to write heap dump, see sever log for details");
-        }
+        }*/
     }
 
     private void doReload(CommandSender sender) {

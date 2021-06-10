@@ -445,7 +445,7 @@
 +        }
 +    }
 +
-+    public final boolean func_180501_a(BlockPos p_180501_1_, BlockState p_180501_2_, int p_180501_3_) { // Paper - final for inline
++    public boolean func_180501_a(BlockPos p_180501_1_, BlockState p_180501_2_, int p_180501_3_) { // Paper - final for inline // Mohist - delete final
 +        return this.func_241211_a_(p_180501_1_, p_180501_2_, p_180501_3_, 512);
 +    }
 +
