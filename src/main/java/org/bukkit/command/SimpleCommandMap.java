@@ -1,30 +1,18 @@
 package org.bukkit.command;
 
 import co.aikar.timings.TimingsCommand;
-import com.mohistmc.command.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.mohistmc.command.PluginCommand;
+import com.mohistmc.command.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.command.defaults.HelpCommand;
-import org.bukkit.command.defaults.PluginsCommand;
-import org.bukkit.command.defaults.ReloadCommand;
-import org.bukkit.command.defaults.VersionCommand;
+import org.bukkit.command.defaults.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class SimpleCommandMap implements CommandMap {
     protected final Map<String, Command> knownCommands = new HashMap<String, Command>();
@@ -46,6 +34,7 @@ public class SimpleCommandMap implements CommandMap {
         register("mohist", new DownloadFileCommand("downloadfile"));
         register("mohist", new DumpCommand("dump"));
         register("mohist", new PluginCommand("plugin"));
+		register("mohist", new UpdateMohistCommand("updatemohist"));
         register("mohist", new WhitelistModsCommand("whitelistmods"));
     }
 
