@@ -1,5 +1,6 @@
 package com.mohistmc;
 
+import com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
@@ -39,6 +40,7 @@ public class MohistMCStart {
         }
         CustomLibraries.loadCustomLibs();
         new JarLoader().loadJar(InstallUtils.extra);
+        TypeAdapters$EnumTypeAdapter.class.getClassLoader();
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
