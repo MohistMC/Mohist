@@ -1,12 +1,14 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -1,9 +_,13 @@
+@@ -1,9 +_,15 @@
  package net.minecraft.tileentity;
  
 +import co.aikar.timings.MinecraftTimings;
 +import co.aikar.timings.Timing;
 +import com.mohistmc.inventory.InventoryOwner;
++
  import javax.annotation.Nullable;
++
  import net.minecraft.block.BlockState;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.CompoundNBT;
@@ -14,141 +16,418 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
-@@ -15,20 +_,33 @@
+@@ -15,172 +_,246 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
+-
+-public abstract class TileEntity {
+-   private static final Logger field_145852_a = LogManager.getLogger();
+-   private final TileEntityType<?> field_200663_e;
+-   @Nullable
+-   protected World field_145850_b;
+-   protected BlockPos field_174879_c = BlockPos.field_177992_a;
+-   protected boolean field_145846_f;
+-   @Nullable
+-   private BlockState field_195045_e;
+-   private boolean field_222816_g;
+-
+-   public TileEntity(TileEntityType<?> p_i48289_1_) {
+-      this.field_200663_e = p_i48289_1_;
+-   }
+-
+-   @Nullable
+-   public World func_145831_w() {
+-      return this.field_145850_b;
+-   }
+-
+-   public void func_226984_a_(World p_226984_1_, BlockPos p_226984_2_) {
+-      this.field_145850_b = p_226984_1_;
+-      this.field_174879_c = p_226984_2_.func_185334_h();
+-   }
+-
+-   public boolean func_145830_o() {
+-      return this.field_145850_b != null;
+-   }
+-
+-   public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+-      this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
+-   }
+-
+-   public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
+-      return this.func_189516_d(p_189515_1_);
+-   }
+-
+-   private CompoundNBT func_189516_d(CompoundNBT p_189516_1_) {
+-      ResourceLocation resourcelocation = TileEntityType.func_200969_a(this.func_200662_C());
+-      if (resourcelocation == null) {
+-         throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
+-      } else {
+-         p_189516_1_.func_74778_a("id", resourcelocation.toString());
+-         p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
+-         p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
+-         p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
+-         return p_189516_1_;
+-      }
+-   }
+-
+-   @Nullable
+-   public static TileEntity func_235657_b_(BlockState p_235657_0_, CompoundNBT p_235657_1_) {
+-      String s = p_235657_1_.func_74779_i("id");
+-      return Registry.field_212626_o.func_241873_b(new ResourceLocation(s)).map((p_213134_1_) -> {
+-         try {
+-            return p_213134_1_.func_200968_a();
+-         } catch (Throwable throwable) {
+-            field_145852_a.error("Failed to create block entity {}", s, throwable);
+-            return null;
+-         }
+-      }).map((p_235656_3_) -> {
+-         try {
+-            p_235656_3_.func_230337_a_(p_235657_0_, p_235657_1_);
+-            return p_235656_3_;
+-         } catch (Throwable throwable) {
+-            field_145852_a.error("Failed to load data for block entity {}", s, throwable);
+-            return null;
+-         }
+-      }).orElseGet(() -> {
+-         field_145852_a.warn("Skipping BlockEntity with id {}", (Object)s);
+-         return null;
+-      });
+-   }
+-
+-   public void func_70296_d() {
+-      if (this.field_145850_b != null) {
+-         this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
+-         this.field_145850_b.func_175646_b(this.field_174879_c, this);
+-         if (!this.field_195045_e.func_196958_f()) {
+-            this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
+-         }
+-      }
+-
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public double func_145833_n() {
+-      return 64.0D;
+-   }
+-
+-   public BlockPos func_174877_v() {
+-      return this.field_174879_c;
+-   }
+-
+-   public BlockState func_195044_w() {
+-      if (this.field_195045_e == null) {
+-         this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
+-      }
+-
+-      return this.field_195045_e;
+-   }
+-
+-   @Nullable
+-   public SUpdateTileEntityPacket func_189518_D_() {
+-      return null;
+-   }
+-
+-   public CompoundNBT func_189517_E_() {
+-      return this.func_189516_d(new CompoundNBT());
+-   }
+-
+-   public boolean func_145837_r() {
+-      return this.field_145846_f;
+-   }
+-
+-   public void func_145843_s() {
+-      this.field_145846_f = true;
+-   }
+-
+-   public void func_145829_t() {
+-      this.field_145846_f = false;
+-   }
+-
+-   public boolean func_145842_c(int p_145842_1_, int p_145842_2_) {
+-      return false;
+-   }
+-
+-   public void func_145836_u() {
+-      this.field_195045_e = null;
+-   }
+-
+-   public void func_145828_a(CrashReportCategory p_145828_1_) {
+-      p_145828_1_.func_189529_a("Name", () -> {
+-         return Registry.field_212626_o.func_177774_c(this.func_200662_C()) + " // " + this.getClass().getCanonicalName();
+-      });
+-      if (this.field_145850_b != null) {
+-         CrashReportCategory.func_175750_a(p_145828_1_, this.field_174879_c, this.func_195044_w());
+-         CrashReportCategory.func_175750_a(p_145828_1_, this.field_174879_c, this.field_145850_b.func_180495_p(this.field_174879_c));
+-      }
+-   }
+-
+-   public void func_174878_a(BlockPos p_174878_1_) {
+-      this.field_174879_c = p_174878_1_.func_185334_h();
+-   }
+-
+-   public boolean func_183000_F() {
+-      return false;
+-   }
+-
+-   public void func_189667_a(Rotation p_189667_1_) {
+-   }
+-
+-   public void func_189668_a(Mirror p_189668_1_) {
+-   }
+-
+-   public TileEntityType<?> func_200662_C() {
+-      return this.field_200663_e;
+-   }
+-
+-   public void func_222814_r() {
+-      if (!this.field_222816_g) {
+-         this.field_222816_g = true;
+-         field_145852_a.warn("Block entity invalid: {} @ {}", () -> {
+-            return Registry.field_212626_o.func_177774_c(this.func_200662_C());
+-         }, this::func_174877_v);
+-      }
+-   }
 +import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.inventory.InventoryHolder;
 +import org.spigotmc.CustomTimingsHandler;
- 
--public abstract class TileEntity {
-+public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity {
-+   // CraftBukkit start - data containers
-+   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
-+   public CraftPersistentDataContainer persistentDataContainer;
-+   // CraftBukkit end
-    private static final Logger field_145852_a = LogManager.getLogger();
-+   public boolean isLoadingStructure = false; // Paper
-    private final TileEntityType<?> field_200663_e;
-    @Nullable
--   protected World field_145850_b;
--   protected BlockPos field_174879_c = BlockPos.field_177992_a;
-+   public World field_145850_b;
-+   public BlockPos field_174879_c = BlockPos.field_177992_a;
-    protected boolean field_145846_f;
-    @Nullable
-    private BlockState field_195045_e;
-    private boolean field_222816_g;
-+   private CompoundNBT customTileData;
-+   public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Spigot
- 
-    public TileEntity(TileEntityType<?> p_i48289_1_) {
-+      super(TileEntity.class);
-       this.field_200663_e = p_i48289_1_;
-+      this.gatherCapabilities();
-    }
- 
-    @Nullable
-@@ -47,6 +_,15 @@
- 
-    public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
-       this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
-+      if (p_230337_2_.func_74764_b("ForgeData")) this.customTileData = p_230337_2_.func_74775_l("ForgeData");
-+      if (getCapabilities() != null && p_230337_2_.func_74764_b("ForgeCaps")) deserializeCaps(p_230337_2_.func_74775_l("ForgeCaps"));
-+      // CraftBukkit start - read container
-+      this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
-+      INBT persistentDataTag = p_230337_2_.func_74781_a("PublicBukkitValues");
-+      if (persistentDataTag instanceof CompoundNBT) {
-+         this.persistentDataContainer.putAll((CompoundNBT) persistentDataTag);
-+      }
-+      // CraftBukkit end
-    }
- 
-    public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -62,6 +_,13 @@
-          p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
-          p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
-          p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
-+         if (this.customTileData != null) p_189516_1_.func_218657_a("ForgeData", this.customTileData);
-+         if (getCapabilities() != null) p_189516_1_.func_218657_a("ForgeCaps", serializeCaps());
-+         // CraftBukkit start - store container
-+         if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
-+            p_189516_1_.func_218657_a("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
-+         }
-+         // CraftBukkit end
-          return p_189516_1_;
-       }
-    }
-@@ -73,7 +_,7 @@
-          try {
-             return p_213134_1_.func_200968_a();
-          } catch (Throwable throwable) {
--            field_145852_a.error("Failed to create block entity {}", s, throwable);
-+            field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.1", s, throwable));
-             return null;
-          }
-       }).map((p_235656_3_) -> {
-@@ -81,11 +_,11 @@
-             p_235656_3_.func_230337_a_(p_235657_0_, p_235657_1_);
-             return p_235656_3_;
-          } catch (Throwable throwable) {
--            field_145852_a.error("Failed to load data for block entity {}", s, throwable);
-+            field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.2", s, throwable));
-             return null;
-          }
-       }).orElseGet(() -> {
--         field_145852_a.warn("Skipping BlockEntity with id {}", (Object)s);
-+         field_145852_a.warn(com.mohistmc.util.i18n.i18n.get("tileentity.3", (Object)s));
-          return null;
-       });
-    }
-@@ -94,7 +_,7 @@
-       if (this.field_145850_b != null) {
-          this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
-          this.field_145850_b.func_175646_b(this.field_174879_c, this);
--         if (!this.field_195045_e.func_196958_f()) {
-+         if (!this.field_195045_e.isAir(this.field_145850_b, this.field_174879_c)) {
-             this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
-          }
-       }
-@@ -133,6 +_,13 @@
- 
-    public void func_145843_s() {
-       this.field_145846_f = true;
-+      this.invalidateCaps();
-+      requestModelDataUpdate();
-+   }
 +
-+   @Override
-+   public void onChunkUnloaded() {
-+      this.invalidateCaps();
-    }
- 
-    public void func_145829_t() {
-@@ -175,6 +_,13 @@
-       return this.field_200663_e;
-    }
- 
-+   @Override
-+   public CompoundNBT getTileData() {
-+      if (this.customTileData == null)
-+         this.customTileData = new CompoundNBT();
-+      return this.customTileData;
-+   }
++public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity, net.minecraft.addons.server.KeyedObject { // Paper
++    // CraftBukkit start - data containers
++    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
++    public CraftPersistentDataContainer persistentDataContainer;
++    // CraftBukkit end
++    private static final Logger field_145852_a = LogManager.getLogger();
++    public boolean isLoadingStructure = false; // Paper
++    private final TileEntityType<?> field_200663_e;
++    @Nullable
++    public World field_145850_b;
++    public BlockPos field_174879_c = BlockPos.field_177992_a;
++    protected boolean field_145846_f;
++    @Nullable
++    private BlockState field_195045_e;
++    private boolean field_222816_g;
++    private CompoundNBT customTileData;
++    public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Spigot
 +
-    public void func_222814_r() {
-       if (!this.field_222816_g) {
-          this.field_222816_g = true;
-@@ -183,4 +_,10 @@
-          }, this::func_174877_v);
-       }
-    }
++    public TileEntity(TileEntityType<?> p_i48289_1_) {
++        super(TileEntity.class);
++        this.field_200663_e = p_i48289_1_;
++        this.gatherCapabilities();
++    }
 +
-+   // CraftBukkit start
-+   public InventoryHolder getOwner() {
-+      return InventoryOwner.get(field_145850_b, field_174879_c);
-+   }
-+   // CraftBukkit start
++    // Paper start
++    private String tileEntityKeyString = null;
++    private ResourceLocation tileEntityKey = null;
++
++    @Override
++    public ResourceLocation getMinecraftKey() {
++        if (tileEntityKey == null) {
++            tileEntityKey = TileEntityType.func_200969_a(this.getTileEntityType());
++            tileEntityKeyString = tileEntityKey != null ? tileEntityKey.toString() : null;
++        }
++        return tileEntityKey;
++    }
++
++    @Override
++    public String getMinecraftKeyString() {
++        getMinecraftKey(); // Try to load if it doesn't exists.
++        return tileEntityKeyString;
++    }
++    // Paper end
++
++    @Nullable
++    public World func_145831_w() {
++        return this.field_145850_b;
++    }
++
++    public void func_226984_a_(World p_226984_1_, BlockPos p_226984_2_) {
++        this.field_145850_b = p_226984_1_;
++        this.field_174879_c = p_226984_2_.func_185334_h();
++    }
++
++    public boolean func_145830_o() {
++        return this.field_145850_b != null;
++    }
++
++    public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
++        this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
++        if (p_230337_2_.func_74764_b("ForgeData")) this.customTileData = p_230337_2_.func_74775_l("ForgeData");
++        if (getCapabilities() != null && p_230337_2_.func_74764_b("ForgeCaps"))
++            deserializeCaps(p_230337_2_.func_74775_l("ForgeCaps"));
++        // CraftBukkit start - read container
++        this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++        INBT persistentDataTag = p_230337_2_.func_74781_a("PublicBukkitValues");
++        if (persistentDataTag instanceof CompoundNBT) {
++            this.persistentDataContainer.putAll((CompoundNBT) persistentDataTag);
++        }
++        // CraftBukkit end
++    }
++
++    public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
++        return this.func_189516_d(p_189515_1_);
++    }
++
++    private CompoundNBT func_189516_d(CompoundNBT p_189516_1_) {
++        ResourceLocation resourcelocation = TileEntityType.func_200969_a(this.func_200662_C());
++        if (resourcelocation == null) {
++            throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
++        } else {
++            p_189516_1_.func_74778_a("id", resourcelocation.toString());
++            p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
++            p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
++            p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
++            if (this.customTileData != null) p_189516_1_.func_218657_a("ForgeData", this.customTileData);
++            if (getCapabilities() != null) p_189516_1_.func_218657_a("ForgeCaps", serializeCaps());
++            // CraftBukkit start - store container
++            if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
++                p_189516_1_.func_218657_a("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
++            }
++            // CraftBukkit end
++            return p_189516_1_;
++        }
++    }
++
++    @Nullable
++    public static TileEntity func_235657_b_(BlockState p_235657_0_, CompoundNBT p_235657_1_) {
++        String s = p_235657_1_.func_74779_i("id");
++        return Registry.field_212626_o.func_241873_b(new ResourceLocation(s)).map((p_213134_1_) -> {
++            try {
++                return p_213134_1_.func_200968_a();
++            } catch (Throwable throwable) {
++                field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.1", s, throwable));
++                return null;
++            }
++        }).map((p_235656_3_) -> {
++            try {
++                p_235656_3_.func_230337_a_(p_235657_0_, p_235657_1_);
++                return p_235656_3_;
++            } catch (Throwable throwable) {
++                field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.2", s, throwable));
++                return null;
++            }
++        }).orElseGet(() -> {
++            field_145852_a.warn(com.mohistmc.util.i18n.i18n.get("tileentity.3", (Object) s));
++            return null;
++        });
++    }
++
++    public void func_70296_d() {
++        if (this.field_145850_b != null) {
++            this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
++            this.field_145850_b.func_175646_b(this.field_174879_c, this);
++            if (!this.field_195045_e.isAir(this.field_145850_b, this.field_174879_c)) {
++                this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
++            }
++        }
++
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public double func_145833_n() {
++        return 64.0D;
++    }
++
++    public BlockPos func_174877_v() {
++        return this.field_174879_c;
++    }
++
++    public BlockState func_195044_w() {
++        if (this.field_195045_e == null) {
++            this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
++        }
++
++        return this.field_195045_e;
++    }
++
++    @Nullable
++    public SUpdateTileEntityPacket func_189518_D_() {
++        return null;
++    }
++
++    public CompoundNBT func_189517_E_() {
++        return this.func_189516_d(new CompoundNBT());
++    }
++
++    public boolean func_145837_r() {
++        return this.field_145846_f;
++    }
++
++    public void func_145843_s() {
++        this.field_145846_f = true;
++        this.invalidateCaps();
++        requestModelDataUpdate();
++    }
++
++    @Override
++    public void onChunkUnloaded() {
++        this.invalidateCaps();
++    }
++
++    public void func_145829_t() {
++        this.field_145846_f = false;
++    }
++
++    public boolean func_145842_c(int p_145842_1_, int p_145842_2_) {
++        return false;
++    }
++
++    public void func_145836_u() {
++        this.field_195045_e = null;
++    }
++
++    public void func_145828_a(CrashReportCategory p_145828_1_) {
++        p_145828_1_.func_189529_a("Name", () -> {
++            return Registry.field_212626_o.func_177774_c(this.func_200662_C()) + " // " + this.getClass().getCanonicalName();
++        });
++        if (this.field_145850_b != null) {
++            CrashReportCategory.func_175750_a(p_145828_1_, this.field_174879_c, this.func_195044_w());
++            CrashReportCategory.func_175750_a(p_145828_1_, this.field_174879_c, this.field_145850_b.func_180495_p(this.field_174879_c));
++        }
++    }
++
++    public void func_174878_a(BlockPos p_174878_1_) {
++        this.field_174879_c = p_174878_1_.func_185334_h();
++    }
++
++    public boolean func_183000_F() {
++        return false;
++    }
++
++    public void func_189667_a(Rotation p_189667_1_) {
++    }
++
++    public void func_189668_a(Mirror p_189668_1_) {
++    }
++
++    public TileEntityType<?> func_200662_C() {
++        return this.field_200663_e;
++    }
++
++    @Override
++    public CompoundNBT getTileData() {
++        if (this.customTileData == null)
++            this.customTileData = new CompoundNBT();
++        return this.customTileData;
++    }
++
++    public void func_222814_r() {
++        if (!this.field_222816_g) {
++            this.field_222816_g = true;
++            field_145852_a.warn("Block entity invalid: {} @ {}", () -> {
++                return Registry.field_212626_o.func_177774_c(this.func_200662_C());
++            }, this::func_174877_v);
++        }
++    }
++
++    // CraftBukkit start
++    public InventoryHolder getOwner() {
++        return InventoryOwner.get(field_145850_b, field_174879_c);
++    }
++    // CraftBukkit start
++
++    public TileEntityType getTileEntityType() {
++        return field_200663_e;
++    } // Paper - OBFHELPER
  }

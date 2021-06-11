@@ -107,6 +107,14 @@
           return t;
        }
     }
+@@ -369,6 +_,7 @@
+       }
+    }
+ 
++   public boolean isPersistable() { return func_200715_a(); } // Paper - OBFHELPER
+    public boolean func_200715_a() {
+       return this.field_200733_aL;
+    }
 @@ -443,7 +_,7 @@
        }), (p_220329_1_) -> {
           p_220329_1_.func_70020_e(p_220330_0_);

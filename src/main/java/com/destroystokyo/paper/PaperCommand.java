@@ -210,7 +210,7 @@ public class PaperCommand extends Command {
 
                 Collection<Entity> entities = world.entitiesById.values();
                 entities.forEach(e -> {
-                    ResourceLocation key = new ResourceLocation(""); // TODO: update in next patch
+                    ResourceLocation key = e.getMinecraftKey();
 
                     MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(key, k -> MutablePair.of(0, Maps.newHashMap()));
                     ChunkPos chunk = new ChunkPos(e.xChunk, e.zChunk);
