@@ -730,7 +730,7 @@
                 this.field_70170_p.func_217376_c(itementity);
              }
           }
-@@ -1216,36 +_,55 @@
+@@ -1216,36 +_,88 @@
  
     protected void func_213345_d(DamageSource p_213345_1_) {
        Entity entity = p_213345_1_.func_76346_g();
@@ -740,19 +740,26 @@
 -      } else {
 -         i = 0;
 -      }
-+
-+      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_213345_1_);
-+      this.captureDrops(new java.util.ArrayList<>());
- 
-       boolean flag = this.field_70718_bc > 0;
-+      this.func_213337_cE(); // CraftBukkit - from below
-       if (this.func_230282_cS_() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
-          this.func_213354_a(p_213345_1_, flag);
-          this.func_213333_a(p_213345_1_, i, flag);
-       }
+-
+-      boolean flag = this.field_70718_bc > 0;
+-      if (this.func_230282_cS_() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
+-         this.func_213354_a(p_213345_1_, flag);
+-         this.func_213333_a(p_213345_1_, i, flag);
+-      }
 -
 -      this.func_213337_cE();
 -      this.func_226294_cV_();
+-   }
++
++      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_213345_1_);
++      this.captureDrops(new java.util.ArrayList<>());
++
++      boolean flag = this.field_70718_bc > 0;
++      this.func_213337_cE(); // CraftBukkit - from below
++      if (this.func_230282_cS_() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
++         this.func_213354_a(p_213345_1_, flag);
++         this.func_213333_a(p_213345_1_, i, flag);
++      }
 +      Collection<ItemEntity> drops = captureDrops(null);
 +      this.expToDrop = this.getExpReward();
 +      if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_213345_1_, drops, i, field_70718_bc > 0)){
@@ -762,7 +769,40 @@
 +         }
 +         CraftEventFactory.callEntityDeathEvent(this, this.drops);
 +      }
-    }
++   }
++
++   // Mohist start - fix armor stand don't dropping
++   protected void dropAllDeathLoot(DamageSource p_213345_1_, List<ItemStack> drops_mohist) {
++      Entity entity = p_213345_1_.func_76346_g();
++
++      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_213345_1_);
++
++      System.out.println(drops_mohist);
++
++      for (ItemStack itemStack : drops_mohist) {
++         ItemEntity dropItem = new ItemEntity(field_70170_p, entity.func_226277_ct_(), entity.func_226278_cu_(),entity.func_226281_cx_(), itemStack.func_77946_l());
++         field_70170_p.func_217376_c(dropItem);
++      }
++
++      this.captureDrops(new java.util.ArrayList<>());
++
++      boolean flag = this.field_70718_bc > 0;
++      this.func_213337_cE(); // CraftBukkit - from below
++      if (this.func_230282_cS_() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
++         this.func_213354_a(p_213345_1_, flag);
++         this.func_213333_a(p_213345_1_, i, flag);
++      }
++      Collection<ItemEntity> drops = captureDrops(null);
++      this.expToDrop = this.getExpReward();
++      if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_213345_1_, drops, i, field_70718_bc > 0)){
++         this.drops = new ArrayList<>();
++         for (ItemEntity drop : drops) {
++            this.drops.add(CraftItemStack.asCraftMirror(drop.func_92059_d()));
++         }
++         CraftEventFactory.callEntityDeathEvent(this, this.drops);
++      }
++   }
++   // Mohsit end
  
     protected void func_213337_cE() {
     }
