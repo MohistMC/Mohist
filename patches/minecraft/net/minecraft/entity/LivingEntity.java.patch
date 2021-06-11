@@ -730,7 +730,7 @@
                 this.field_70170_p.func_217376_c(itementity);
              }
           }
-@@ -1216,36 +_,88 @@
+@@ -1216,36 +_,86 @@
  
     protected void func_213345_d(DamageSource p_213345_1_) {
        Entity entity = p_213345_1_.func_76346_g();
@@ -776,8 +776,6 @@
 +      Entity entity = p_213345_1_.func_76346_g();
 +
 +      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_213345_1_);
-+
-+      System.out.println(drops_mohist);
 +
 +      for (ItemStack itemStack : drops_mohist) {
 +         ItemEntity dropItem = new ItemEntity(field_70170_p, entity.func_226277_ct_(), entity.func_226278_cu_(),entity.func_226281_cx_(), itemStack.func_77946_l());
