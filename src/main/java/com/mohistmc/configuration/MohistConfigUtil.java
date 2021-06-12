@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 
 /**
  * Only used before the libraries file is loaded, yaml should be used later
@@ -15,8 +16,11 @@ import java.nio.file.StandardCopyOption;
 public class MohistConfigUtil {
 
     public static File mohistyml = new File("mohist-config", "mohist.yml");
+    private static HashMap<String, String> argsConfig = new HashMap<>();
 
     public static String getString(String s, String key, String defaultreturn) {
+    	String _key = key.replace(":", "");
+    	if(argsConfig.containsKey(_key)) return argsConfig.get(_key);
         if (s.contains(key)) {
             String string = s.substring(s.indexOf(key));
             String s1 = (string.substring(string.indexOf(": ") + 2));
@@ -60,8 +64,14 @@ public class MohistConfigUtil {
                 Files.copy(MohistMC.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
-            System.out.println("File copy exception!");
+            System.out.println("Failed to copy Mohist config file !");
         }
+
+        for(String arg : MohistMC.mainArgs)
+        	if(arg.contains("=")) {
+        		String[] spl = arg.split("=");
+				argsConfig.put(spl[0], spl[1]);
+			}
     }
 
     public static boolean bMohist(String key) {

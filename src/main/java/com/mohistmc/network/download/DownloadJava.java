@@ -25,7 +25,7 @@ public class DownloadJava {
     private static File javadl = new File(java.getAbsolutePath() + "/java.zip");
 
     public static void run() throws Exception {
-        if (!Arrays.asList(MohistMC.mainArgs).contains("launchedWithCustomJava8")) {
+        if (!MohistMC.mainArgs.contains("launchedWithCustomJava8")) {
             if (!javabin.exists() || !bMohist("use_custom_java8")) {
                     System.out.println(Message.getString("unsupported.java.version"));
                     Scanner scan = new Scanner(System.in);
@@ -70,7 +70,7 @@ public class DownloadJava {
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
         launchArgs.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
         launchArgs.add(new File(MohistMC.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-        launchArgs.addAll(Arrays.asList(MohistMC.mainArgs));
+        launchArgs.addAll(MohistMC.mainArgs);
         launchArgs.add("launchedWithCustomJava8");
         command.addAll(launchArgs);
         System.out.println(Message.getFormatString("customjava.run", new Object[]{os(), command}));
