@@ -18,14 +18,14 @@ public class CustomFlagsHandler {
   public static boolean hasCustomFlags = false;
 
   public static void handleCustomArgs() {
-    if(Arrays.asList(ServerMain.mainArgs).contains("launchedWithCustomArgs")) return;
+    if(ServerMain.mainArgs.contains("launchedWithCustomArgs")) return;
 
     getCustomFlags();
     if(!hasCustomFlags) return;
 
     launchArgs.addAll(addedFlags);
     launchArgs.add(new File(CustomFlagsHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-    launchArgs.addAll(Arrays.asList(ServerMain.mainArgs));
+    launchArgs.addAll(ServerMain.mainArgs);
     launchArgs.add("launchedWithCustomArgs");
 
     try {
