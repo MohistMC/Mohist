@@ -19,29 +19,23 @@
 
 package net.minecraftforge.server;
 
+import com.mohistmc.MohistMCStart;
+import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.network.download.DownloadJava;
+import com.mohistmc.util.JarTool;
+import com.mohistmc.util.i18n.i18n;
+import cpw.mods.modlauncher.InvalidLauncherSetupException;
+import cpw.mods.modlauncher.Launcher;
+
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import com.mohistmc.MohistMCStart;
-import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.network.download.DownloadJava;
-import com.mohistmc.network.download.UpdateUtils;
-import com.mohistmc.util.JarTool;
-import com.mohistmc.util.i18n.i18n;
-
-import cpw.mods.modlauncher.InvalidLauncherSetupException;
-import cpw.mods.modlauncher.Launcher;
 
 public class ServerMain {
 
@@ -56,10 +50,11 @@ public class ServerMain {
       }
 
         // Mohist start - Download Java 11 if required
-        if (Float.parseFloat(System.getProperty("java.class.version")) < 55f || MohistConfigUtil.bMohist("use_custom_java11", "false")) {
+		float jVersion = Float.parseFloat(System.getProperty("java.class.version"));
+        if (jVersion < 55f || jVersion == 60.0 || MohistConfigUtil.bMohist("use_custom_java11", "false")) {
             if (!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));
             try {
-                DownloadJava.run(); // Mohist - Invoke DownloadJava with actual launchargs
+                DownloadJava.run(); // Mohist - Invoke DownloadJava
             } catch (Exception ex) {
                 System.err.println(i18n.get("oldjava.exception"));
                 ex.printStackTrace();
