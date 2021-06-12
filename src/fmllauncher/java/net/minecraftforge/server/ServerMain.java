@@ -33,16 +33,18 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class ServerMain {
 
-  public static String[] mainArgs = null;
+  public static ArrayList<String> mainArgs = null;
 
     public static void main(String[] args) {
-      mainArgs = args;
+      mainArgs = new ArrayList<>(Arrays.asList(args));
       String path = JarTool.getJarPath();
       if(path != null && (path.contains("+") || path.contains("!"))) {
         System.out.println("[Mohist - ERROR] Unsupported characters have been detected in your server path. \nPlease remove + or ! in your server's folder name (in the folder which contains this character).\nPath : "+path);
