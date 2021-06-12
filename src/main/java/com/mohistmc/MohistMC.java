@@ -1,5 +1,6 @@
 package com.mohistmc;
 
+import com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter;
 import com.mohistmc.bukkit.AutoDeletePlugins;
 import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.forge.AutoDeleteMods;
@@ -48,7 +49,7 @@ public class MohistMC {
 
         //MappingFix.init();
         //MappingFix.copyMappings();
-
+        TypeAdapters$EnumTypeAdapter.class.getClassLoader();
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
             while (!"true".equals(new Scanner(System.in).next()));
