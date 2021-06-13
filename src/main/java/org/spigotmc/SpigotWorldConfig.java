@@ -73,10 +73,10 @@ public class SpigotWorldConfig {
     }
 
     public void init() {
-        this.verbose = getBoolean("verbose", true);
+        this.verbose = getBoolean("verbose", false);
 
         Object[] p = {worldName};
-        MohistMC.LOGGER.info(Message.getFormatString("world.settings", p));
+        log(Message.getFormatString("world.settings", p));
         SpigotConfig.readConfig(SpigotWorldConfig.class, this);
     }
 
