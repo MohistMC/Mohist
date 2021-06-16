@@ -31,3 +31,11 @@
     Style func_150256_b();
  
     String func_150261_e();
+@@ -325,6 +_,7 @@
+          return field_150700_a.toJsonTree(p_200528_0_);
+       }
+ 
++      @Nullable public static ITextComponent jsonToComponent(String json) { return func_240643_a_(json);} // Paper - OBFHELPER
+       @Nullable
+       public static IFormattableTextComponent func_240643_a_(String p_240643_0_) {
+          return JSONUtils.func_188176_a(field_150700_a, p_240643_0_, IFormattableTextComponent.class, false);
