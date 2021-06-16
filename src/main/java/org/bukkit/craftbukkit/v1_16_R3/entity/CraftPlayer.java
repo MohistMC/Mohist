@@ -237,6 +237,26 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
     }
 
+    // Paper start
+    @Override
+    public void sendActionBar(BaseComponent[] message) {
+        if (getHandle().connection == null) return;
+        getHandle().connection.send(new STitlePacket(STitlePacket.Type.ACTIONBAR, message, -1, -1, -1));
+    }
+
+    @Override
+    public void sendActionBar(String message) {
+        if (getHandle().connection == null || message == null || message.isEmpty()) return;
+        getHandle().connection.send(new STitlePacket(STitlePacket.Type.ACTIONBAR, CraftChatMessage.fromStringOrNull(message)));
+    }
+
+    @Override
+    public void sendActionBar(char alternateChar, String message) {
+        if (message == null || message.isEmpty()) return;
+        sendActionBar(org.bukkit.ChatColor.translateAlternateColorCodes(alternateChar, message));
+    }
+    // Paper end
+
     @Override
     public String getDisplayName() {
         return getHandle().displayName;
