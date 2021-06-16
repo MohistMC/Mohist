@@ -26,6 +26,20 @@
     public static int func_150790_a(int p_150790_0_) {
        for(int i = 1; i < 5; ++i) {
           if ((p_150790_0_ & -1 << i * 7) == 0) {
+@@ -176,6 +_,13 @@
+       return ITextComponent.Serializer.func_240643_a_(this.func_150789_c(262144));
+    }
+ 
++   // Paper start
++   @Deprecated
++   public PacketBuffer writeComponent(final net.md_5.bungee.api.chat.BaseComponent[] component) {
++      return this.func_211400_a(net.md_5.bungee.chat.ComponentSerializer.toString(component), 262144);
++   }
++   // Paper end
++
+    public PacketBuffer func_179256_a(ITextComponent p_179256_1_) {
+       return this.func_211400_a(ITextComponent.Serializer.func_150696_a(p_179256_1_), 262144);
+    }
 @@ -292,7 +_,16 @@
     }
  
