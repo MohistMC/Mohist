@@ -16,7 +16,12 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
-@@ -15,172 +_,246 @@
+@@ -11,176 +_,262 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.registry.Registry;
+ import net.minecraft.world.World;
++import net.minecraft.world.chunk.Chunk;
+ import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -234,6 +239,17 @@
 +    public String getMinecraftKeyString() {
 +        getMinecraftKey(); // Try to load if it doesn't exists.
 +        return tileEntityKeyString;
++    }
++
++    private java.lang.ref.WeakReference<Chunk> currentChunk = null;
++
++    public Chunk getCurrentChunk() {
++        final Chunk chunk = currentChunk != null ? currentChunk.get() : null;
++        return chunk != null && chunk.field_76636_d ? chunk : null;
++    }
++
++    public void setCurrentChunk(Chunk chunk) {
++        this.currentChunk = chunk != null ? new java.lang.ref.WeakReference<>(chunk) : null;
 +    }
 +    // Paper end
 +

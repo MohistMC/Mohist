@@ -3,11 +3,8 @@ package org.bukkit.entity;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.EntityEffect;
-import org.bukkit.Location;
-import org.bukkit.Nameable;
-import org.bukkit.Server;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
@@ -118,7 +115,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * <p>
      * Note that if the entity is affected by AI, it may override this rotation.
      *
-     * @param yaw the yaw
+     * @param yaw   the yaw
      * @param pitch the pitch
      * @throws UnsupportedOperationException if used for players
      */
@@ -138,7 +135,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param location New location to teleport this entity to
-     * @param cause The cause of this teleportation
+     * @param cause    The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
     public boolean teleport(@NotNull Location location, @NotNull TeleportCause cause);
@@ -157,7 +154,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param destination Entity to teleport this entity to
-     * @param cause The cause of this teleportation
+     * @param cause       The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
     public boolean teleport(@NotNull Entity destination, @NotNull TeleportCause cause);
@@ -350,7 +347,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * This event may have been cancelled.
      *
      * @return the last known {@link EntityDamageEvent} or null if hitherto
-     *     unharmed
+     * unharmed
      */
     @Nullable
     public EntityDamageEvent getLastDamageCause();
@@ -602,4 +599,12 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     @Override
     Spigot spigot();
     // Spigot end
+
+    /**
+     * Gets the latest chunk an entity is currently or was in.
+     *
+     * @return The current, or most recent chunk if the entity is invalid (which may load the chunk)
+     */
+    @NotNull
+    Chunk getChunk();
 }

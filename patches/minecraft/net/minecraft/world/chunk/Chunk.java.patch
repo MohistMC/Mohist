@@ -28,7 +28,7 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
-@@ -52,747 +_,1046 @@
+@@ -52,747 +_,1080 @@
  import net.minecraft.world.gen.feature.structure.StructureStart;
  import net.minecraft.world.lighting.WorldLightManager;
  import net.minecraft.world.server.ChunkHolder;
@@ -193,7 +193,7 @@
 +    public final World field_76637_e;
 +    public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
 +    private final UpgradeData field_196967_n;
-+    public final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
++    public final Map<BlockPos, TileEntity> field_150816_i = new TileEntityHashMap(); // Paper
 +    public final ClassInheritanceMultiMap<Entity>[] field_76645_j;
 +    private final Map<Structure<?>, StructureStart<?>> field_201619_q = Maps.newHashMap();
 +    private final Map<Structure<?>, LongSet> field_201620_r = Maps.newHashMap();
@@ -217,6 +217,31 @@
 +    public Chunk(World p_i225780_1_, ChunkPos p_i225780_2_, BiomeContainer p_i225780_3_) {
 +        this(p_i225780_1_, p_i225780_2_, p_i225780_3_, UpgradeData.field_196994_a, EmptyTickList.func_205388_a(), EmptyTickList.func_205388_a(), 0L, (ChunkSection[]) null, (Consumer<Chunk>) null);
 +    }
++
++    // Paper start
++    private class TileEntityHashMap extends java.util.HashMap<BlockPos, TileEntity> {
++        @Override
++        public TileEntity put(BlockPos key, TileEntity value) {
++            TileEntity replaced = super.put(key, value);
++            if (replaced != null) {
++                replaced.setCurrentChunk(null);
++            }
++            if (value != null) {
++                value.setCurrentChunk(Chunk.this);
++            }
++            return replaced;
++        }
++
++        @Override
++        public TileEntity remove(Object key) {
++            TileEntity removed = super.remove(key);
++            if (removed != null) {
++                removed.setCurrentChunk(null);
++            }
++            return removed;
++        }
++    }
++    // Paper end
 +
 +    public Chunk(World p_i225781_1_, ChunkPos p_i225781_2_, BiomeContainer p_i225781_3_, UpgradeData p_i225781_4_, ITickList<Block> p_i225781_5_, ITickList<Fluid> p_i225781_6_, long p_i225781_7_, @Nullable ChunkSection[] p_i225781_9_, @Nullable Consumer<Chunk> p_i225781_10_) {
 +        super(Chunk.class);
@@ -464,13 +489,13 @@
 +    // Paper start - If loaded util
 +    @Override
 +    public FluidState getFluidIfLoaded(BlockPos blockposition) {
-+                return this.func_204610_c(blockposition);
-+            }
++        return this.func_204610_c(blockposition);
++    }
 +
-+            @Override
++    @Override
 +    public BlockState getTypeIfLoaded(BlockPos blockposition) {
-+                return this.func_180495_p(blockposition);
-+            }
++        return this.func_180495_p(blockposition);
++    }
 +    // Paper end
 +
 +    public FluidState func_204610_c(BlockPos p_204610_1_) {
@@ -1108,6 +1133,7 @@
 +
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EnteringChunk(p_76612_1_, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_.field_70176_ah, p_76612_1_.field_70164_aj));
 +        p_76612_1_.field_70175_ag = true;
++        p_76612_1_.setCurrentChunk(this); // Paper
 +        p_76612_1_.field_70176_ah = this.field_212816_F.field_77276_a;
 +        p_76612_1_.field_70162_ai = k;
 +        p_76612_1_.field_70164_aj = this.field_212816_F.field_77275_b;
@@ -1133,7 +1159,12 @@
 +            p_76608_2_ = this.field_76645_j.length - 1;
 +        }
 +
-+        this.field_76645_j[p_76608_2_].remove(p_76608_1_);
++        // Paper start
++        if (p_76608_1_.currentChunk != null && p_76608_1_.currentChunk.get() == this) p_76608_1_.setCurrentChunk(null);
++        if (!this.field_76645_j[p_76608_2_].remove(p_76608_1_)) {
++            return;
++        }
++        // Paper end
 +        this.entities.remove(p_76608_1_); // Paper
 +        this.func_76630_e(); // Forge - ensure chunks are marked to save after entity removals
 +    }
@@ -1154,7 +1185,10 @@
 +        return this.func_177424_a(p_175625_1_, Chunk.CreateEntityType.CHECK);
 +    }
 +
-+    @Nullable public final TileEntity getTileEntityImmediately(BlockPos pos) { return this.func_177424_a(pos, CreateEntityType.IMMEDIATE); } // Paper - OBFHELPER
++    @Nullable
++    public final TileEntity getTileEntityImmediately(BlockPos pos) {
++        return this.func_177424_a(pos, CreateEntityType.IMMEDIATE);
++    } // Paper - OBFHELPER
 +
 +    @Nullable
 +    public TileEntity func_177424_a(BlockPos p_177424_1_, Chunk.CreateEntityType p_177424_2_) {
@@ -1399,7 +1433,7 @@
 +        server.getPluginManager().callEvent(unloadEvent);
 +        // note: saving can be prevented, but not forced if no saving is actually required
 +        this.mustNotSave = !unloadEvent.isSaveChunk();
-+        ((ServerWorld)this.field_76637_e).func_72863_F().removeLoadedChunk(this); // Paper
++        ((ServerWorld) this.field_76637_e).func_72863_F().removeLoadedChunk(this); // Paper
 +        // Paper start - neighbour cache
 +        int chunkX = this.field_212816_F.field_77276_a;
 +        int chunkZ = this.field_212816_F.field_77275_b;
