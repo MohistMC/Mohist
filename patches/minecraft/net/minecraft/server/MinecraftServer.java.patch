@@ -915,7 +915,7 @@
     public DynamicRegistries func_244267_aX() {
        return this.field_240767_f_;
     }
-@@ -1578,4 +_,85 @@
+@@ -1578,4 +_,91 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return null;
     }
@@ -965,23 +965,29 @@
 +   public void loadSpawn(IChunkStatusListener listener, ServerWorld serverWorld) {
 +      this.markWorldsDirty();
 +      MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverWorld));
-+      if (!serverWorld.getWorld().getKeepSpawnInMemory()) {
-+         return;
-+      }
++      ServerChunkProvider serverchunkprovider = serverWorld.func_72863_F(); // Paper
 +      this.forceTicks = true;
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.27", serverWorld.func_234923_W_().func_240901_a_()));
-+      BlockPos blockpos = serverWorld.func_241135_u_();
-+      listener.func_219509_a(new ChunkPos(blockpos));
-+      ServerChunkProvider serverchunkprovider = serverWorld.func_72863_F();
-+      serverchunkprovider.func_212863_j_().func_215598_a(500);
-+      this.field_211151_aa = Util.func_211177_b();
-+      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
++      if (serverWorld.getWorld().getKeepSpawnInMemory()) { // Paper
++         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.27", serverWorld.func_234923_W_().func_240901_a_()));
++         BlockPos blockpos = serverWorld.func_241135_u_();
++         listener.func_219509_a(new ChunkPos(blockpos));
++         //ServerChunkProvider serverchunkprovider = serverWorld.getChunkSource();  // Paper - move up
++         serverchunkprovider.func_212863_j_().func_215598_a(500);
++         this.field_211151_aa = Util.func_211177_b();
 +
-+      while (serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
++         // Paper start - configurable spawn reason
++         int radiusBlocks = serverWorld.paperConfig.keepLoadedRange;
++         int radiusChunks = radiusBlocks / 16 + ((radiusBlocks & 15) != 0 ? 1 : 0);
++         int totalChunks = ((radiusChunks) * 2 + 1);
++         totalChunks *= totalChunks;
++         listener.setChunkRadius(radiusBlocks / 16);
++
++         serverWorld.addTicketsForSpawn(radiusBlocks, blockpos);
++         field_147145_h.info("Loaded " + serverchunkprovider.func_217229_b() + " spawn chunks for world " + serverWorld.getWorld().getName()); // Paper
++         // Paper end
++
 +         this.executeModerately();
 +      }
-+
-+      this.executeModerately();
 +
 +      ForcedChunksSaveData forcedchunkssavedata = serverWorld.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
 +      if (forcedchunkssavedata != null) {
@@ -994,7 +1000,7 @@
 +         }
 +      }
 +      this.executeModerately();
-+      listener.func_219510_b();
++      if (serverWorld.getWorld().getKeepSpawnInMemory()) listener.func_219510_b(); // Paper
 +      serverchunkprovider.func_212863_j_().func_215598_a(5);
 +      this.func_240794_aZ_();
 +      this.forceTicks = false;

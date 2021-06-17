@@ -34,7 +34,7 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Executor;
-@@ -33,8 +_,42 @@
+@@ -33,8 +_,43 @@
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -43,6 +43,7 @@
  import javax.annotation.Nullable;
 +
 +import it.unimi.dsi.fastutil.objects.Object2IntMap;
++import net.minecraft.addons.server.MCUtil;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
@@ -111,9 +112,10 @@
 +   public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
     private final Map<UUID, Entity> field_175741_N = Maps.newHashMap();
 -   private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
-+   public final Queue<Entity> field_217499_z = Queues.newArrayDeque(); // Mohist - Fix "Wrong location" (private -> public)
-    private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
+-   private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
 -   private final ServerChunkProvider field_241102_C_;
++   public final Queue<Entity> field_217499_z = Queues.newArrayDeque(); // Mohist - Fix "Wrong location" (private -> public)
++   public final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList(); // Paper - private -> public
 +   public final ServerChunkProvider field_241102_C_; // Paper - public
     boolean field_217492_a;
     private final MinecraftServer field_73061_a;
@@ -1088,6 +1090,98 @@
 +         return newMap;
 +         // CraftBukkit end
        }, p_217406_1_);
+    }
+ 
+@@ -1143,11 +_,88 @@
+       return this.func_73046_m().func_241755_D_().func_217481_x().func_215752_a(MapIdTracker::new, "idcounts").func_215162_a();
+    }
+ 
++   // Paper start - helper function for configurable spawn radius
++   public void addTicketsForSpawn(int radiusInBlocks, BlockPos spawn) {
++      // In order to respect vanilla behavior, which is ensuring everything but the spawn border can tick, we add tickets
++      // with level 31 for the non-border spawn chunks
++      ServerChunkProvider chunkproviderserver = this.func_72863_F();
++      int tickRadius = radiusInBlocks - 16;
++
++      // add ticking chunks
++      for (int x = -tickRadius; x <= tickRadius; x += 16) {
++         for (int z = -tickRadius; z <= tickRadius; z += 16) {
++            // radius of 2 will have the current chunk be level 31
++            chunkproviderserver.func_217228_a(TicketType.field_219488_a, new ChunkPos(spawn.add(x, 0, z)), 2, Unit.INSTANCE);
++         }
++      }
++
++      // add border chunks
++
++      // add border along x axis (including corner chunks)
++      for (int x = -radiusInBlocks; x <= radiusInBlocks; x += 16) {
++         // top
++         chunkproviderserver.func_217228_a(TicketType.field_219488_a, new ChunkPos(spawn.add(x, 0, radiusInBlocks)), 1, Unit.INSTANCE); // level 32
++         // bottom
++         chunkproviderserver.func_217228_a(TicketType.field_219488_a, new ChunkPos(spawn.add(x, 0, -radiusInBlocks)), 1, Unit.INSTANCE); // level 32
++      }
++
++      // add border along z axis (excluding corner chunks)
++      for (int z = -radiusInBlocks + 16; z < radiusInBlocks; z += 16) {
++         // right
++         chunkproviderserver.func_217228_a(TicketType.field_219488_a, new ChunkPos(spawn.add(radiusInBlocks, 0, z)), 1, Unit.INSTANCE); // level 32
++         // left
++         chunkproviderserver.func_217228_a(TicketType.field_219488_a, new ChunkPos(spawn.add(-radiusInBlocks, 0, z)), 1, Unit.INSTANCE); // level 32
++      }
++
++      MCUtil.getSpiralOutChunks(spawn, radiusInBlocks >> 4).forEach(pair -> {
++         func_72863_F().getChunkAtMainThread(pair.field_77276_a, pair.field_77275_b);
++      });
++   }
++
++   public void removeTicketsForSpawn(int radiusInBlocks, BlockPos spawn) {
++      // In order to respect vanilla behavior, which is ensuring everything but the spawn border can tick, we added tickets
++      // with level 31 for the non-border spawn chunks
++      ServerChunkProvider chunkproviderserver = this.func_72863_F();
++      int tickRadius = radiusInBlocks - 16;
++
++      // remove ticking chunks
++      for (int x = -tickRadius; x <= tickRadius; x += 16) {
++         for (int z = -tickRadius; z <= tickRadius; z += 16) {
++            // radius of 2 will have the current chunk be level 31
++            chunkproviderserver.func_217222_b(TicketType.field_219488_a, new ChunkPos(spawn.add(x, 0, z)), 2, Unit.INSTANCE);
++         }
++      }
++
++      // remove border chunks
++
++      // remove border along x axis (including corner chunks)
++      for (int x = -radiusInBlocks; x <= radiusInBlocks; x += 16) {
++         // top
++         chunkproviderserver.func_217222_b(TicketType.field_219488_a, new ChunkPos(spawn.add(x, 0, radiusInBlocks)), 1, Unit.INSTANCE); // level 32
++         // bottom
++         chunkproviderserver.func_217222_b(TicketType.field_219488_a, new ChunkPos(spawn.add(x, 0, -radiusInBlocks)), 1, Unit.INSTANCE); // level 32
++      }
++
++      // remove border along z axis (excluding corner chunks)
++      for (int z = -radiusInBlocks + 16; z < radiusInBlocks; z += 16) {
++         // right
++         chunkproviderserver.func_217222_b(TicketType.field_219488_a, new ChunkPos(spawn.add(radiusInBlocks, 0, z)), 1, Unit.INSTANCE); // level 32
++         // left
++         chunkproviderserver.func_217222_b(TicketType.field_219488_a, new ChunkPos(spawn.add(-radiusInBlocks, 0, z)), 1, Unit.INSTANCE); // level 32
++      }
++   }
++   // Paper end
++
+    public void func_241124_a__(BlockPos p_241124_1_, float p_241124_2_) {
+-      ChunkPos chunkpos = new ChunkPos(new BlockPos(this.field_72986_A.func_76079_c(), 0, this.field_72986_A.func_76074_e()));
++      // Paper - configurable spawn radius
++      BlockPos prevSpawn = this.func_241135_u_();
++      //ChunkPos chunkpos = new ChunkPos(new BlockPos(this.levelData.getXSpawn(), 0, this.levelData.getZSpawn()));
+       this.field_72986_A.func_176143_a(p_241124_1_, p_241124_2_);
+-      this.func_72863_F().func_217222_b(TicketType.field_219488_a, chunkpos, 11, Unit.INSTANCE);
+-      this.func_72863_F().func_217228_a(TicketType.field_219488_a, new ChunkPos(p_241124_1_), 11, Unit.INSTANCE);
++      if (this.keepSpawnInMemory) {
++         // if this keepSpawnInMemory is false a plugin has already removed our tickets, do not re-add
++         this.removeTicketsForSpawn(this.paperConfig.keepLoadedRange, prevSpawn);
++         this.addTicketsForSpawn(this.paperConfig.keepLoadedRange, p_241124_1_);
++      }
+       this.func_73046_m().func_184103_al().func_148540_a(new SWorldSpawnChangedPacket(p_241124_1_, p_241124_2_));
     }
  
 @@ -1263,7 +_,7 @@

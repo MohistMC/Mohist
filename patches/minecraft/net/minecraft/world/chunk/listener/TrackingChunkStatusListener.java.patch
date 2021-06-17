@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/chunk/listener/TrackingChunkStatusListener.java
++++ b/net/minecraft/world/chunk/listener/TrackingChunkStatusListener.java
+@@ -54,6 +_,11 @@
+       this.field_219526_a.func_219510_b();
+    }
+ 
++   @Override
++   public void setChunkRadius(int radius) {
++
++   }
++
+    public int func_219522_c() {
+       return this.field_219529_d;
+    }

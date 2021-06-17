@@ -24,7 +24,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -37,377 +_,531 @@
+@@ -37,377 +_,533 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkHolder {
@@ -308,7 +308,8 @@
 +    public int field_219316_k;
 +    private int field_219317_l;
 +    private int field_219318_m;
-+    private final ChunkPos field_219319_n;
++    public final ChunkPos field_219319_n; // Paper - private -> public
++    public final ChunkPos location; // Paper
 +    private boolean field_244382_p;
 +    private final ShortSet[] field_244383_q = new ShortSet[16];
 +    private int field_219324_s;
@@ -323,6 +324,7 @@
 +
 +    public ChunkHolder(ChunkPos p_i50716_1_, int p_i50716_2_, WorldLightManager p_i50716_3_, ChunkHolder.IListener p_i50716_4_, ChunkHolder.IPlayerProvider p_i50716_5_) {
 +        this.field_219319_n = p_i50716_1_;
++        this.location = p_i50716_1_;
 +        this.field_219326_u = p_i50716_3_;
 +        this.field_219327_v = p_i50716_4_;
 +        this.field_219328_w = p_i50716_5_;

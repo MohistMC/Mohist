@@ -1872,15 +1872,21 @@ public class CraftWorld implements World {
 
     @Override
     public void setKeepSpawnInMemory(boolean keepLoaded) {
+        // Paper start - Configurable spawn radius
+        if (keepLoaded == world.keepSpawnInMemory) {
+            // do nothing, nothing has changed
+            return;
+        }
         world.keepSpawnInMemory = keepLoaded;
         // Grab the worlds spawn chunk
-        BlockPos chunkcoordinates = this.world.getSharedSpawnPos();
+        BlockPos prevSpawn = this.world.getSharedSpawnPos();
         if (keepLoaded) {
-            world.getChunkSource().addRegionTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
+            world.addTicketsForSpawn(world.paperConfig.keepLoadedRange, prevSpawn);
         } else {
-            // TODO: doesn't work well if spawn changed....
-            world.getChunkSource().addRegionTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
+            // TODO: doesn't work well if spawn changed.... // paper - resolved
+            world.removeTicketsForSpawn(world.paperConfig.keepLoadedRange, prevSpawn);
         }
+        // Paper end
     }
 
     @Override
