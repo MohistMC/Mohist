@@ -62,7 +62,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,13 +_,30 @@
+@@ -130,13 +_,31 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -74,6 +74,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftPortalEvent;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
++import org.bukkit.event.entity.PlayerDeathEvent;
 +import org.bukkit.event.inventory.InventoryType;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerChangedMainHandEvent;
@@ -312,7 +313,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Player being ticked");
-@@ -469,12 +_,14 @@
+@@ -469,15 +_,19 @@
     }
  
     private void func_184849_a(ScoreCriteria p_184849_1_, int p_184849_2_) {
@@ -326,8 +327,13 @@
     public void func_70645_a(DamageSource p_70645_1_) {
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
        boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
++      boolean keepInventory = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223600_c);
        if (flag) {
           ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
++         PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, this.drops, itextcomponent.toString(), keepInventory);
+          this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent), (p_212356_2_) -> {
+             if (!p_212356_2_.isSuccess()) {
+                int i = 256;
 @@ -513,7 +_,8 @@
           this.func_213345_d(p_70645_1_);
        }
