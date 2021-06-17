@@ -28,7 +28,7 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
-@@ -52,747 +_,1080 @@
+@@ -52,747 +_,1087 @@
  import net.minecraft.world.gen.feature.structure.StructureStart;
  import net.minecraft.world.lighting.WorldLightManager;
  import net.minecraft.world.server.ChunkHolder;
@@ -219,15 +219,19 @@
 +    }
 +
 +    // Paper start
++    public final co.aikar.util.Counter<String> entityCounts = new co.aikar.util.Counter<>();
++    public final co.aikar.util.Counter<String> tileEntityCounts = new co.aikar.util.Counter<>();
 +    private class TileEntityHashMap extends java.util.HashMap<BlockPos, TileEntity> {
 +        @Override
 +        public TileEntity put(BlockPos key, TileEntity value) {
 +            TileEntity replaced = super.put(key, value);
 +            if (replaced != null) {
 +                replaced.setCurrentChunk(null);
++                tileEntityCounts.decrement(replaced.getMinecraftKeyString());
 +            }
 +            if (value != null) {
 +                value.setCurrentChunk(Chunk.this);
++                tileEntityCounts.increment(value.getMinecraftKeyString());
 +            }
 +            return replaced;
 +        }
@@ -237,6 +241,7 @@
 +            TileEntity removed = super.remove(key);
 +            if (removed != null) {
 +                removed.setCurrentChunk(null);
++                tileEntityCounts.decrement(removed.getMinecraftKeyString());
 +            }
 +            return removed;
 +        }
@@ -1132,6 +1137,7 @@
 +        }
 +
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EnteringChunk(p_76612_1_, this.field_212816_F.field_77276_a, this.field_212816_F.field_77275_b, p_76612_1_.field_70176_ah, p_76612_1_.field_70164_aj));
++        if (!p_76612_1_.field_70175_ag || p_76612_1_.getCurrentChunk() != this) entityCounts.increment(p_76612_1_.getMinecraftKeyString()); // Paper
 +        p_76612_1_.field_70175_ag = true;
 +        p_76612_1_.setCurrentChunk(this); // Paper
 +        p_76612_1_.field_70176_ah = this.field_212816_F.field_77276_a;
@@ -1164,6 +1170,7 @@
 +        if (!this.field_76645_j[p_76608_2_].remove(p_76608_1_)) {
 +            return;
 +        }
++        entityCounts.decrement(p_76608_1_.getMinecraftKeyString());
 +        // Paper end
 +        this.entities.remove(p_76608_1_); // Paper
 +        this.func_76630_e(); // Forge - ensure chunks are marked to save after entity removals
