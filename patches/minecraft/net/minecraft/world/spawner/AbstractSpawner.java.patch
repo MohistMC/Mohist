@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/AbstractSpawner.java
 +++ b/net/minecraft/world/spawner/AbstractSpawner.java
-@@ -31,35 +_,36 @@
+@@ -31,40 +_,41 @@
  
  public abstract class AbstractSpawner {
     private static final Logger field_209160_a = LogManager.getLogger();
@@ -46,6 +46,12 @@
     }
  
     private boolean func_98279_f() {
+       BlockPos blockpos = this.func_177221_b();
+-      return this.func_98271_a().func_217358_a((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D, (double)this.field_98289_l);
++      return this.func_98271_a().isAffectsSpawningPlayerNearby((double) blockpos.func_177958_n() + 0.5D, (double) blockpos.func_177956_o() + 0.5D, (double) blockpos.func_177952_p() + 0.5D, (double) this.field_98289_l); // Paper
+    }
+ 
+    public void func_98278_g() {
 @@ -131,16 +_,36 @@
                       entity.func_70012_b(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), world.field_73012_v.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {

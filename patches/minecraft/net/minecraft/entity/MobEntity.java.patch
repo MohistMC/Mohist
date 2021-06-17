@@ -22,7 +22,19 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.inventory.EquipmentSlotType;
  import net.minecraft.item.ArmorItem;
-@@ -65,7 +_,6 @@
+@@ -54,18 +_,11 @@
+ import net.minecraft.pathfinding.PathNavigator;
+ import net.minecraft.pathfinding.PathNodeType;
+ import net.minecraft.tags.ITag;
+-import net.minecraft.util.ActionResultType;
+-import net.minecraft.util.DamageSource;
+-import net.minecraft.util.Hand;
+-import net.minecraft.util.HandSide;
+-import net.minecraft.util.NonNullList;
+-import net.minecraft.util.ResourceLocation;
+-import net.minecraft.util.SoundEvent;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.DifficultyInstance;
@@ -234,10 +246,12 @@
           }
  
           this.func_233657_b_(equipmentslottype, p_233665_1_);
-@@ -639,6 +_,14 @@
+@@ -638,7 +_,15 @@
+       if (this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL && this.func_225511_J_()) {
           this.func_70106_y();
        } else if (!this.func_104002_bU() && !this.func_213392_I()) {
-          Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
+-         Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
++         Entity entity = this.field_70170_p.findNearbyPlayer(this, -1.0D, EntityPredicates.affectsSpawning); // Paper
 +         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
 +         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
 +            field_70708_bq = 0;

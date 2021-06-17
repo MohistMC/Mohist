@@ -20,6 +20,15 @@
  
  public class SilverfishEntity extends MonsterEntity {
     private SilverfishEntity.SummonSilverfishGoal field_175460_b;
+@@ -108,7 +_,7 @@
+    public static boolean func_223331_b(EntityType<SilverfishEntity> p_223331_0_, IWorld p_223331_1_, SpawnReason p_223331_2_, BlockPos p_223331_3_, Random p_223331_4_) {
+       if (func_223324_d(p_223331_0_, p_223331_1_, p_223331_2_, p_223331_3_, p_223331_4_)) {
+          PlayerEntity playerentity = p_223331_1_.func_217366_a((double)p_223331_3_.func_177958_n() + 0.5D, (double)p_223331_3_.func_177956_o() + 0.5D, (double)p_223331_3_.func_177952_p() + 0.5D, 5.0D, true);
+-         return playerentity == null;
++         return !(playerentity != null && !playerentity.affectsSpawning) && playerentity == null; // Paper - Affects Spawning API
+       } else {
+          return false;
+       }
 @@ -134,7 +_,7 @@
              return false;
           } else {
