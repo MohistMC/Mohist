@@ -17,7 +17,7 @@
     }
  
     private long func_242123_d() {
-@@ -130,14 +_,14 @@
+@@ -130,20 +_,27 @@
           playerprofilecache$profileentry.func_242126_a(this.func_242123_d());
           gameprofile = playerprofilecache$profileentry.func_152668_a();
        } else {
@@ -34,6 +34,19 @@
           this.func_152658_c();
        }
  
+       return gameprofile;
+    }
+ 
++   // Paper start
++   @Nullable public GameProfile getProfileIfCached(String name) {
++      PlayerProfileCache.ProfileEntry entry = this.field_152661_c.get(name.toLowerCase(Locale.ROOT));
++      return entry == null ? null : entry.func_152668_a();
++   }
++   // Paper end
++
+    @Nullable
+    public GameProfile func_152652_a(UUID p_152652_1_) {
+       PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = this.field_152662_d.get(p_152652_1_);
 @@ -177,6 +_,11 @@
  
           });

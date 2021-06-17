@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_16_R3;
 
 import com.destroystokyo.paper.config.PaperConfig;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -225,6 +226,8 @@ import org.bukkit.potion.Potion;
 import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
@@ -2105,6 +2108,28 @@ public final class CraftServer implements Server {
     @Override
     public boolean isStopping() {
         return net.minecraft.server.MinecraftServer.getServer().hasStopped();
+    }
+
+    @NotNull
+    @Override
+    public PlayerProfile createProfile(@NotNull UUID uuid) {
+        return createProfile(uuid, null);
+    }
+
+    @NotNull
+    @Override
+    public PlayerProfile createProfile(@NotNull String name) {
+        return createProfile(null, name);
+    }
+
+    @NotNull
+    @Override
+    public PlayerProfile createProfile(@Nullable UUID uuid, @Nullable String name) {
+        Player player = uuid != null ? Bukkit.getPlayer(uuid) : (name != null ? Bukkit.getPlayerExact(name) : null);
+        if (player != null) {
+            return new com.destroystokyo.paper.profile.CraftPlayerProfile((CraftPlayer)player);
+        }
+        return new com.destroystokyo.paper.profile.CraftPlayerProfile(uuid, name);
     }
 
     // Paper start
