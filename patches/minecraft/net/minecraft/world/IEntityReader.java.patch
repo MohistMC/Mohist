@@ -1,0 +1,408 @@
+--- a/net/minecraft/world/IEntityReader.java
++++ b/net/minecraft/world/IEntityReader.java
+@@ -1,11 +_,14 @@
+ package net.minecraft.world;
+ 
+ import com.google.common.collect.Lists;
++
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.UUID;
+ import java.util.function.Predicate;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityPredicate;
+ import net.minecraft.entity.LivingEntity;
+@@ -17,182 +_,212 @@
+ import net.minecraft.util.math.shapes.VoxelShapes;
+ 
+ public interface IEntityReader {
+-   List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate<? super Entity> p_175674_3_);
+-
+-   <T extends Entity> List<T> func_175647_a(Class<? extends T> p_175647_1_, AxisAlignedBB p_175647_2_, @Nullable Predicate<? super T> p_175647_3_);
+-
+-   default <T extends Entity> List<T> func_225316_b(Class<? extends T> p_225316_1_, AxisAlignedBB p_225316_2_, @Nullable Predicate<? super T> p_225316_3_) {
+-      return this.func_175647_a(p_225316_1_, p_225316_2_, p_225316_3_);
+-   }
+-
+-   List<? extends PlayerEntity> func_217369_A();
+-
+-   default List<Entity> func_72839_b(@Nullable Entity p_72839_1_, AxisAlignedBB p_72839_2_) {
+-      return this.func_175674_a(p_72839_1_, p_72839_2_, EntityPredicates.field_180132_d);
+-   }
+-
+-   default boolean func_195585_a(@Nullable Entity p_195585_1_, VoxelShape p_195585_2_) {
+-      if (p_195585_2_.func_197766_b()) {
+-         return true;
+-      } else {
+-         for(Entity entity : this.func_72839_b(p_195585_1_, p_195585_2_.func_197752_a())) {
+-            if (!entity.field_70128_L && entity.field_70156_m && (p_195585_1_ == null || !entity.func_184223_x(p_195585_1_)) && VoxelShapes.func_197879_c(p_195585_2_, VoxelShapes.func_197881_a(entity.func_174813_aQ()), IBooleanFunction.field_223238_i_)) {
+-               return false;
+-            }
+-         }
+-
+-         return true;
+-      }
+-   }
+-
+-   default <T extends Entity> List<T> func_217357_a(Class<? extends T> p_217357_1_, AxisAlignedBB p_217357_2_) {
+-      return this.func_175647_a(p_217357_1_, p_217357_2_, EntityPredicates.field_180132_d);
+-   }
+-
+-   default <T extends Entity> List<T> func_225317_b(Class<? extends T> p_225317_1_, AxisAlignedBB p_225317_2_) {
+-      return this.func_225316_b(p_225317_1_, p_225317_2_, EntityPredicates.field_180132_d);
+-   }
+-
+-   default Stream<VoxelShape> func_230318_c_(@Nullable Entity p_230318_1_, AxisAlignedBB p_230318_2_, Predicate<Entity> p_230318_3_) {
+-      if (p_230318_2_.func_72320_b() < 1.0E-7D) {
+-         return Stream.empty();
+-      } else {
+-         AxisAlignedBB axisalignedbb = p_230318_2_.func_186662_g(1.0E-7D);
+-         return this.func_175674_a(p_230318_1_, axisalignedbb, p_230318_3_.and((p_234892_2_) -> {
+-            if (p_234892_2_.func_174813_aQ().func_72326_a(axisalignedbb)) {
+-               if (p_230318_1_ == null) {
+-                  if (p_234892_2_.func_241845_aY()) {
+-                     return true;
+-                  }
+-               } else if (p_230318_1_.func_241849_j(p_234892_2_)) {
+-                  return true;
+-               }
+-            }
+-
+-            return false;
+-         })).stream().map(Entity::func_174813_aQ).map(VoxelShapes::func_197881_a);
+-      }
+-   }
+-
+-   @Nullable
+-   default PlayerEntity func_190525_a(double p_190525_1_, double p_190525_3_, double p_190525_5_, double p_190525_7_, @Nullable Predicate<Entity> p_190525_9_) {
+-      double d0 = -1.0D;
+-      PlayerEntity playerentity = null;
+-
+-      for(PlayerEntity playerentity1 : this.func_217369_A()) {
+-         if (p_190525_9_ == null || p_190525_9_.test(playerentity1)) {
+-            double d1 = playerentity1.func_70092_e(p_190525_1_, p_190525_3_, p_190525_5_);
+-            if ((p_190525_7_ < 0.0D || d1 < p_190525_7_ * p_190525_7_) && (d0 == -1.0D || d1 < d0)) {
+-               d0 = d1;
+-               playerentity = playerentity1;
+-            }
+-         }
+-      }
+-
+-      return playerentity;
+-   }
+-
+-   @Nullable
+-   default PlayerEntity func_217362_a(Entity p_217362_1_, double p_217362_2_) {
+-      return this.func_217366_a(p_217362_1_.func_226277_ct_(), p_217362_1_.func_226278_cu_(), p_217362_1_.func_226281_cx_(), p_217362_2_, false);
+-   }
+-
+-   @Nullable
+-   default PlayerEntity func_217366_a(double p_217366_1_, double p_217366_3_, double p_217366_5_, double p_217366_7_, boolean p_217366_9_) {
+-      Predicate<Entity> predicate = p_217366_9_ ? EntityPredicates.field_188444_d : EntityPredicates.field_180132_d;
+-      return this.func_190525_a(p_217366_1_, p_217366_3_, p_217366_5_, p_217366_7_, predicate);
+-   }
+-
+-   default boolean func_217358_a(double p_217358_1_, double p_217358_3_, double p_217358_5_, double p_217358_7_) {
+-      for(PlayerEntity playerentity : this.func_217369_A()) {
+-         if (EntityPredicates.field_180132_d.test(playerentity) && EntityPredicates.field_212545_b.test(playerentity)) {
+-            double d0 = playerentity.func_70092_e(p_217358_1_, p_217358_3_, p_217358_5_);
+-            if (p_217358_7_ < 0.0D || d0 < p_217358_7_ * p_217358_7_) {
+-               return true;
+-            }
+-         }
+-      }
+-
+-      return false;
+-   }
+-
+-   @Nullable
+-   default PlayerEntity func_217370_a(EntityPredicate p_217370_1_, LivingEntity p_217370_2_) {
+-      return this.func_217361_a(this.func_217369_A(), p_217370_1_, p_217370_2_, p_217370_2_.func_226277_ct_(), p_217370_2_.func_226278_cu_(), p_217370_2_.func_226281_cx_());
+-   }
+-
+-   @Nullable
+-   default PlayerEntity func_217372_a(EntityPredicate p_217372_1_, LivingEntity p_217372_2_, double p_217372_3_, double p_217372_5_, double p_217372_7_) {
+-      return this.func_217361_a(this.func_217369_A(), p_217372_1_, p_217372_2_, p_217372_3_, p_217372_5_, p_217372_7_);
+-   }
+-
+-   @Nullable
+-   default PlayerEntity func_217359_a(EntityPredicate p_217359_1_, double p_217359_2_, double p_217359_4_, double p_217359_6_) {
+-      return this.func_217361_a(this.func_217369_A(), p_217359_1_, (LivingEntity)null, p_217359_2_, p_217359_4_, p_217359_6_);
+-   }
+-
+-   @Nullable
+-   default <T extends LivingEntity> T func_217360_a(Class<? extends T> p_217360_1_, EntityPredicate p_217360_2_, @Nullable LivingEntity p_217360_3_, double p_217360_4_, double p_217360_6_, double p_217360_8_, AxisAlignedBB p_217360_10_) {
+-      return this.func_217361_a(this.func_175647_a(p_217360_1_, p_217360_10_, (Predicate<? super T>)null), p_217360_2_, p_217360_3_, p_217360_4_, p_217360_6_, p_217360_8_);
+-   }
+-
+-   @Nullable
+-   default <T extends LivingEntity> T func_225318_b(Class<? extends T> p_225318_1_, EntityPredicate p_225318_2_, @Nullable LivingEntity p_225318_3_, double p_225318_4_, double p_225318_6_, double p_225318_8_, AxisAlignedBB p_225318_10_) {
+-      return this.func_217361_a(this.func_225316_b(p_225318_1_, p_225318_10_, (Predicate<? super T>)null), p_225318_2_, p_225318_3_, p_225318_4_, p_225318_6_, p_225318_8_);
+-   }
+-
+-   @Nullable
+-   default <T extends LivingEntity> T func_217361_a(List<? extends T> p_217361_1_, EntityPredicate p_217361_2_, @Nullable LivingEntity p_217361_3_, double p_217361_4_, double p_217361_6_, double p_217361_8_) {
+-      double d0 = -1.0D;
+-      T t = null;
+-
+-      for(T t1 : p_217361_1_) {
+-         if (p_217361_2_.func_221015_a(p_217361_3_, t1)) {
+-            double d1 = t1.func_70092_e(p_217361_4_, p_217361_6_, p_217361_8_);
+-            if (d0 == -1.0D || d1 < d0) {
+-               d0 = d1;
+-               t = t1;
+-            }
+-         }
+-      }
+-
+-      return t;
+-   }
+-
+-   default List<PlayerEntity> func_217373_a(EntityPredicate p_217373_1_, LivingEntity p_217373_2_, AxisAlignedBB p_217373_3_) {
+-      List<PlayerEntity> list = Lists.newArrayList();
+-
+-      for(PlayerEntity playerentity : this.func_217369_A()) {
+-         if (p_217373_3_.func_197744_e(playerentity.func_226277_ct_(), playerentity.func_226278_cu_(), playerentity.func_226281_cx_()) && p_217373_1_.func_221015_a(p_217373_2_, playerentity)) {
+-            list.add(playerentity);
+-         }
+-      }
+-
+-      return list;
+-   }
+-
+-   default <T extends LivingEntity> List<T> func_217374_a(Class<? extends T> p_217374_1_, EntityPredicate p_217374_2_, LivingEntity p_217374_3_, AxisAlignedBB p_217374_4_) {
+-      List<T> list = this.func_175647_a(p_217374_1_, p_217374_4_, (Predicate<? super T>)null);
+-      List<T> list1 = Lists.newArrayList();
+-
+-      for(T t : list) {
+-         if (p_217374_2_.func_221015_a(p_217374_3_, t)) {
+-            list1.add(t);
+-         }
+-      }
+-
+-      return list1;
+-   }
+-
+-   @Nullable
+-   default PlayerEntity func_217371_b(UUID p_217371_1_) {
+-      for(int i = 0; i < this.func_217369_A().size(); ++i) {
+-         PlayerEntity playerentity = this.func_217369_A().get(i);
+-         if (p_217371_1_.equals(playerentity.func_110124_au())) {
+-            return playerentity;
+-         }
+-      }
+-
+-      return null;
+-   }
++    List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate<? super Entity> p_175674_3_);
++
++    <T extends Entity> List<T> func_175647_a(Class<? extends T> p_175647_1_, AxisAlignedBB p_175647_2_, @Nullable Predicate<? super T> p_175647_3_);
++
++    default <T extends Entity> List<T> func_225316_b(Class<? extends T> p_225316_1_, AxisAlignedBB p_225316_2_, @Nullable Predicate<? super T> p_225316_3_) {
++        return this.func_175647_a(p_225316_1_, p_225316_2_, p_225316_3_);
++    }
++
++    List<? extends PlayerEntity> func_217369_A();
++
++    default List<Entity> func_72839_b(@Nullable Entity p_72839_1_, AxisAlignedBB p_72839_2_) {
++        return this.func_175674_a(p_72839_1_, p_72839_2_, EntityPredicates.field_180132_d);
++    }
++
++    default boolean func_195585_a(@Nullable Entity p_195585_1_, VoxelShape p_195585_2_) {
++        if (p_195585_2_.func_197766_b()) {
++            return true;
++        } else {
++            for (Entity entity : this.func_72839_b(p_195585_1_, p_195585_2_.func_197752_a())) {
++                if (!entity.field_70128_L && entity.field_70156_m && (p_195585_1_ == null || !entity.func_184223_x(p_195585_1_)) && VoxelShapes.func_197879_c(p_195585_2_, VoxelShapes.func_197881_a(entity.func_174813_aQ()), IBooleanFunction.field_223238_i_)) {
++                    return false;
++                }
++            }
++
++            return true;
++        }
++    }
++
++    default <T extends Entity> List<T> func_217357_a(Class<? extends T> p_217357_1_, AxisAlignedBB p_217357_2_) {
++        return this.func_175647_a(p_217357_1_, p_217357_2_, EntityPredicates.field_180132_d);
++    }
++
++    default <T extends Entity> List<T> func_225317_b(Class<? extends T> p_225317_1_, AxisAlignedBB p_225317_2_) {
++        return this.func_225316_b(p_225317_1_, p_225317_2_, EntityPredicates.field_180132_d);
++    }
++
++    default Stream<VoxelShape> func_230318_c_(@Nullable Entity p_230318_1_, AxisAlignedBB p_230318_2_, Predicate<Entity> p_230318_3_) {
++        if (p_230318_2_.func_72320_b() < 1.0E-7D) {
++            return Stream.empty();
++        } else {
++            AxisAlignedBB axisalignedbb = p_230318_2_.func_186662_g(1.0E-7D);
++            return this.func_175674_a(p_230318_1_, axisalignedbb, p_230318_3_.and((p_234892_2_) -> {
++                if (p_234892_2_.func_174813_aQ().func_72326_a(axisalignedbb)) {
++                    if (p_230318_1_ == null) {
++                        if (p_234892_2_.func_241845_aY()) {
++                            return true;
++                        }
++                    } else if (p_230318_1_.func_241849_j(p_234892_2_)) {
++                        return true;
++                    }
++                }
++
++                return false;
++            })).stream().map(Entity::func_174813_aQ).map(VoxelShapes::func_197881_a);
++        }
++    }
++
++    default PlayerEntity findNearbyPlayer(Entity entity, double d0, @Nullable Predicate<Entity> predicate) {
++        return this.findNearbyPlayer(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), d0, predicate);
++    } // Paper
++
++    @Nullable
++    default PlayerEntity findNearbyPlayer(double d0, double d1, double d2, double d3, @Nullable Predicate<Entity> predicate) {
++        return func_190525_a(d0, d1, d2, d3, predicate);
++    } // Paper - OBFHELPER
++
++    @Nullable
++    default PlayerEntity func_190525_a(double p_190525_1_, double p_190525_3_, double p_190525_5_, double p_190525_7_, @Nullable Predicate<Entity> p_190525_9_) { // Paper
++        double d0 = -1.0D;
++        PlayerEntity playerentity = null;
++
++        for (PlayerEntity playerentity1 : this.func_217369_A()) {
++            if (p_190525_9_ == null || p_190525_9_.test(playerentity1)) {
++                double d1 = playerentity1.func_70092_e(p_190525_1_, p_190525_3_, p_190525_5_);
++                if ((p_190525_7_ < 0.0D || d1 < p_190525_7_ * p_190525_7_) && (d0 == -1.0D || d1 < d0)) {
++                    d0 = d1;
++                    playerentity = playerentity1;
++                }
++            }
++        }
++
++        return playerentity;
++    }
++
++    @Nullable
++    default PlayerEntity func_217362_a(Entity p_217362_1_, double p_217362_2_) {
++        return this.func_217366_a(p_217362_1_.func_226277_ct_(), p_217362_1_.func_226278_cu_(), p_217362_1_.func_226281_cx_(), p_217362_2_, false);
++    }
++
++    @Nullable
++    default PlayerEntity func_217366_a(double p_217366_1_, double p_217366_3_, double p_217366_5_, double p_217366_7_, boolean p_217366_9_) {
++        Predicate<Entity> predicate = p_217366_9_ ? EntityPredicates.field_188444_d : EntityPredicates.field_180132_d;
++        return this.func_190525_a(p_217366_1_, p_217366_3_, p_217366_5_, p_217366_7_, predicate);
++    }
++
++    // Paper end
++    default boolean isAffectsSpawningPlayerNearby(double d0, double d1, double d2, double d3) {
++        Iterator iterator = this.func_217369_A().iterator();
++        double d4;
++        do {
++            PlayerEntity entityhuman;
++            do {
++                if (!iterator.hasNext()) {
++                    return false;
++                }
++
++                entityhuman = (PlayerEntity) iterator.next();
++            } while (!EntityPredicates.affectsSpawning.test(entityhuman));
++
++            d4 = entityhuman.getDistanceSquared(d0, d1, d2);
++        } while (d3 >= 0.0D && d4 >= d3 * d3);
++
++        return true;
++    }
++    // Paper end
++
++    default boolean func_217358_a(double p_217358_1_, double p_217358_3_, double p_217358_5_, double p_217358_7_) {
++        for (PlayerEntity playerentity : this.func_217369_A()) {
++            if (EntityPredicates.field_180132_d.test(playerentity) && EntityPredicates.field_212545_b.test(playerentity)) {
++                double d0 = playerentity.func_70092_e(p_217358_1_, p_217358_3_, p_217358_5_);
++                if (p_217358_7_ < 0.0D || d0 < p_217358_7_ * p_217358_7_) {
++                    return true;
++                }
++            }
++        }
++
++        return false;
++    }
++
++    @Nullable
++    default PlayerEntity func_217370_a(EntityPredicate p_217370_1_, LivingEntity p_217370_2_) {
++        return this.func_217361_a(this.func_217369_A(), p_217370_1_, p_217370_2_, p_217370_2_.func_226277_ct_(), p_217370_2_.func_226278_cu_(), p_217370_2_.func_226281_cx_());
++    }
++
++    @Nullable
++    default PlayerEntity func_217372_a(EntityPredicate p_217372_1_, LivingEntity p_217372_2_, double p_217372_3_, double p_217372_5_, double p_217372_7_) {
++        return this.func_217361_a(this.func_217369_A(), p_217372_1_, p_217372_2_, p_217372_3_, p_217372_5_, p_217372_7_);
++    }
++
++    @Nullable
++    default PlayerEntity func_217359_a(EntityPredicate p_217359_1_, double p_217359_2_, double p_217359_4_, double p_217359_6_) {
++        return this.func_217361_a(this.func_217369_A(), p_217359_1_, (LivingEntity) null, p_217359_2_, p_217359_4_, p_217359_6_);
++    }
++
++    @Nullable
++    default <T extends LivingEntity> T func_217360_a(Class<? extends T> p_217360_1_, EntityPredicate p_217360_2_, @Nullable LivingEntity p_217360_3_, double p_217360_4_, double p_217360_6_, double p_217360_8_, AxisAlignedBB p_217360_10_) {
++        return this.func_217361_a(this.func_175647_a(p_217360_1_, p_217360_10_, (Predicate<? super T>) null), p_217360_2_, p_217360_3_, p_217360_4_, p_217360_6_, p_217360_8_);
++    }
++
++    @Nullable
++    default <T extends LivingEntity> T func_225318_b(Class<? extends T> p_225318_1_, EntityPredicate p_225318_2_, @Nullable LivingEntity p_225318_3_, double p_225318_4_, double p_225318_6_, double p_225318_8_, AxisAlignedBB p_225318_10_) {
++        return this.func_217361_a(this.func_225316_b(p_225318_1_, p_225318_10_, (Predicate<? super T>) null), p_225318_2_, p_225318_3_, p_225318_4_, p_225318_6_, p_225318_8_);
++    }
++
++    @Nullable
++    default <T extends LivingEntity> T func_217361_a(List<? extends T> p_217361_1_, EntityPredicate p_217361_2_, @Nullable LivingEntity p_217361_3_, double p_217361_4_, double p_217361_6_, double p_217361_8_) {
++        double d0 = -1.0D;
++        T t = null;
++
++        for (T t1 : p_217361_1_) {
++            if (p_217361_2_.func_221015_a(p_217361_3_, t1)) {
++                double d1 = t1.func_70092_e(p_217361_4_, p_217361_6_, p_217361_8_);
++                if (d0 == -1.0D || d1 < d0) {
++                    d0 = d1;
++                    t = t1;
++                }
++            }
++        }
++
++        return t;
++    }
++
++    default List<PlayerEntity> func_217373_a(EntityPredicate p_217373_1_, LivingEntity p_217373_2_, AxisAlignedBB p_217373_3_) {
++        List<PlayerEntity> list = Lists.newArrayList();
++
++        for (PlayerEntity playerentity : this.func_217369_A()) {
++            if (p_217373_3_.func_197744_e(playerentity.func_226277_ct_(), playerentity.func_226278_cu_(), playerentity.func_226281_cx_()) && p_217373_1_.func_221015_a(p_217373_2_, playerentity)) {
++                list.add(playerentity);
++            }
++        }
++
++        return list;
++    }
++
++    default <T extends LivingEntity> List<T> func_217374_a(Class<? extends T> p_217374_1_, EntityPredicate p_217374_2_, LivingEntity p_217374_3_, AxisAlignedBB p_217374_4_) {
++        List<T> list = this.func_175647_a(p_217374_1_, p_217374_4_, (Predicate<? super T>) null);
++        List<T> list1 = Lists.newArrayList();
++
++        for (T t : list) {
++            if (p_217374_2_.func_221015_a(p_217374_3_, t)) {
++                list1.add(t);
++            }
++        }
++
++        return list1;
++    }
++
++    @Nullable
++    default PlayerEntity func_217371_b(UUID p_217371_1_) {
++        for (int i = 0; i < this.func_217369_A().size(); ++i) {
++            PlayerEntity playerentity = this.func_217369_A().get(i);
++            if (p_217371_1_.equals(playerentity.func_110124_au())) {
++                return playerentity;
++            }
++        }
++
++        return null;
++    }
+ }
