@@ -1283,6 +1283,23 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     @NotNull
     public String getLocale();
 
+    // Paper start
+
+    /**
+     * Get whether the player can affect mob spawning
+     *
+     * @return if the player can affect mob spawning
+     */
+    public boolean getAffectsSpawning();
+
+    /**
+     * Set whether the player can affect mob spawning
+     *
+     * @param affects Whether the player can affect mob spawning
+     */
+    public void setAffectsSpawning(boolean affects);
+    // Paper end
+
     /**
      * Update the list of commands sent to the client.
      * <br>
@@ -1375,9 +1392,9 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
         /**
          * Sends an array of components as a single message to the specified screen position of this player
          *
-         * @deprecated This is unlikely the API you want to use. See {@link #sendActionBar(String)} for a more proper Action Bar API. This deprecated API may send unsafe items to the client.
          * @param position   the screen position
          * @param components the components to send
+         * @deprecated This is unlikely the API you want to use. See {@link #sendActionBar(String)} for a more proper Action Bar API. This deprecated API may send unsafe items to the client.
          */
         @Deprecated
         public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
@@ -1387,10 +1404,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
         /**
          * Sends the component to the specified screen position of this player
          *
-         * @deprecated This is unlikely the API you want to use. See {@link #sendActionBar(String)} for a more proper Action Bar API. This deprecated API may send unsafe items to the client.
          * @param position  the screen position
          * @param sender    the sender of the message
          * @param component the components to send
+         * @deprecated This is unlikely the API you want to use. See {@link #sendActionBar(String)} for a more proper Action Bar API. This deprecated API may send unsafe items to the client.
          */
         @Deprecated
         public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
@@ -1400,10 +1417,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
         /**
          * Sends an array of components as a single message to the specified screen position of this player
          *
-         * @deprecated This is unlikely the API you want to use. See {@link #sendActionBar(String)} for a more proper Action Bar API. This deprecated API may send unsafe items to the client.
          * @param position   the screen position
          * @param sender     the sender of the message
          * @param components the components to send
+         * @deprecated This is unlikely the API you want to use. See {@link #sendActionBar(String)} for a more proper Action Bar API. This deprecated API may send unsafe items to the client.
          */
         @Deprecated
         public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
