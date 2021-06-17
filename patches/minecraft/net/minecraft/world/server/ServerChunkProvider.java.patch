@@ -26,7 +26,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.IPacket;
-@@ -47,472 +_,766 @@
+@@ -47,472 +_,768 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -1260,4 +1260,6 @@
 +			}
 +		}
 +	}
++
++	public static final List<ChunkStatus> getPossibleChunkStatuses() { return ServerChunkProvider.field_217239_c; } // Paper - OBFHELPER
  }

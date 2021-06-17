@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/chunk/listener/ChainedChunkStatusListener.java
++++ b/net/minecraft/world/chunk/listener/ChainedChunkStatusListener.java
+@@ -33,4 +_,9 @@
+    public void func_219510_b() {
+       this.field_219520_b.func_212871_a_(this.field_219519_a::func_219510_b);
+    }
++
++   @Override
++   public void setChunkRadius(int radius) {
++
++   }
+ }

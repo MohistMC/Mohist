@@ -68,4 +68,10 @@ public class PaperWorldConfig {
 		config.addDefault("world-settings.default." + path, def);
 		return config.getString("world-settings." + worldName + "." + path, config.getString("world-settings.default." + path));
 	}
+
+	public short keepLoadedRange;
+	private void keepLoadedRange() {
+		keepLoadedRange = (short) (getInt("keep-spawn-loaded-range", Math.min(spigotConfig.viewDistance, 10)) * 16);
+		log("Keep Spawn Loaded Range: " + (keepLoadedRange / 16));
+	}
 }

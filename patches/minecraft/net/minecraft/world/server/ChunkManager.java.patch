@@ -1183,17 +1183,17 @@
 -   }
 +	private static final Logger field_219250_d = LogManager.getLogger();
 +	public static final int field_219249_a = 33 + ChunkStatus.func_222600_b();
-+	private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219251_e = new Long2ObjectLinkedOpenHashMap<>();
++	public final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219251_e = new Long2ObjectLinkedOpenHashMap<>(); // Paper - private -> public
 +	public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
 +	private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219253_g = new Long2ObjectLinkedOpenHashMap<>();
-+	private final LongSet field_219254_h = new LongOpenHashSet();
++	public final LongSet field_219254_h = new LongOpenHashSet(); // Paper - private -> public
 +	private final ServerWorld field_219255_i;
 +	private final ServerWorldLightManager field_219256_j;
 +	private final ThreadTaskExecutor<Runnable> field_219257_k;
 +	private final ChunkGenerator field_219258_l;
 +	private final Supplier<DimensionSavedDataManager> field_219259_m;
 +	private final PointOfInterestManager field_219260_n;
-+	private final LongSet field_219261_o = new LongOpenHashSet();
++	public final LongSet field_219261_o = new LongOpenHashSet(); // Paper - private -> public
 +	private boolean field_219262_p;
 +	private final ChunkTaskPriorityQueueSorter field_219263_q;
 +	private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219264_r;

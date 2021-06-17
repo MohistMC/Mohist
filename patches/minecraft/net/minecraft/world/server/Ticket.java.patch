@@ -40,16 +40,18 @@
     }
  
     public TicketType<T> func_219479_a() {
-@@ -58,5 +_,12 @@
-    protected boolean func_223182_a(long p_223182_1_) {
+@@ -59,4 +_,14 @@
        long i = this.field_219480_a.func_223184_b();
        return i != 0L && p_223182_1_ - this.field_219483_d > i;
-+   }
+    }
 +
 +   /* ======================================== FORGE START =====================================*/
 +   private final boolean forceTicks;
 +
 +   public boolean isForceTicks() {
 +      return forceTicks;
-    }
++   }
++
++   public final T getObjectReason() { return this.field_219482_c; } // Paper - OBFHELPER
++   public final long getCreationTick() { return this.field_219483_d; } // Paper - OBFHELPER
  }

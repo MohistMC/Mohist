@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/chunk/listener/IChunkStatusListener.java
++++ b/net/minecraft/world/chunk/listener/IChunkStatusListener.java
+@@ -10,4 +_,6 @@
+    void func_219508_a(ChunkPos p_219508_1_, @Nullable ChunkStatus p_219508_2_);
+ 
+    void func_219510_b();
++
++   void setChunkRadius(int radius); // Paper - allow changing chunk radius
+ }
