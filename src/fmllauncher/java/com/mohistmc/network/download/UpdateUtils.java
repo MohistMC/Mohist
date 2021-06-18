@@ -3,11 +3,9 @@ package com.mohistmc.network.download;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
-import static com.mohistmc.config.MohistConfigUtil.bMohist;
-import static com.mohistmc.network.download.NetworkUtil.getConn;
-import static com.mohistmc.network.download.NetworkUtil.getInput;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.i18n;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,13 +14,14 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+
+import static com.mohistmc.config.MohistConfigUtil.bMohist;
+import static com.mohistmc.network.download.NetworkUtil.getConn;
+import static com.mohistmc.network.download.NetworkUtil.getInput;
 
 public class UpdateUtils {
 
@@ -92,6 +91,10 @@ public class UpdateUtils {
     }
 
     public static long getSizeOfDirectory(File path) throws IOException {
-        return Files.walk(path.toPath()).parallel().filter(p -> !p.toFile().isDirectory()).count();
+        return Files.walk(path.toPath()).parallel()
+                .map(Path::toFile)
+                .filter(File::isFile)
+                .mapToLong(File::length)
+                .sum();
     }
 }
