@@ -82,11 +82,7 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Features;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.raid.RaidManager;
-import net.minecraft.world.server.ChunkHolder;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.server.Ticket;
-import net.minecraft.world.server.TicketManager;
-import net.minecraft.world.server.TicketType;
+import net.minecraft.world.server.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Bukkit;
@@ -2362,9 +2358,38 @@ public class CraftWorld implements World {
 	// Spigot start
     @Override
     public int getViewDistance() {
-        return world.spigotConfig.viewDistance;
+        return getHandle().getChunkSource().chunkMap.getEffectiveViewDistance(); // Paper - no-tick view distance
     }
     // Spigot end
+
+    // Paper start - per player view distance
+    @Override
+    public void setViewDistance(int viewDistance) {
+        if (viewDistance < 2 || viewDistance > 32) {
+            throw new IllegalArgumentException("View distance " + viewDistance + " is out of range of [2, 32]");
+        }
+        ChunkManager chunkMap = getHandle().getChunkSource().chunkMap;
+        if (viewDistance != chunkMap.getEffectiveViewDistance()) {
+            chunkMap.setViewDistance(viewDistance);
+        }
+    }
+
+    @Override
+    public int getNoTickViewDistance() {
+        return getHandle().getChunkSource().chunkMap.getEffectiveNoTickViewDistance();
+    }
+
+    @Override
+    public void setNoTickViewDistance(int viewDistance) {
+        if ((viewDistance < 2 || viewDistance > 32) && viewDistance != -1) {
+            throw new IllegalArgumentException("View distance " + viewDistance + " is out of range of [2, 32]");
+        }
+        ChunkManager chunkMap = getHandle().getChunkSource().chunkMap;
+        if (viewDistance != chunkMap.getRawNoTickViewDistance()) {
+            chunkMap.setNoTickViewDistance(viewDistance);
+        }
+    }
+    // Paper end - per player view distance
 
     // Spigot start
     private final Spigot spigot = new Spigot()

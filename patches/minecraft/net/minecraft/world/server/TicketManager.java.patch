@@ -229,6 +229,17 @@
        objectset.remove(p_219367_2_);
        if (objectset.isEmpty()) {
           this.field_219375_c.remove(i);
+@@ -224,6 +_,10 @@
+       return s;
+    }
+ 
++   protected void setNoTickViewDistance(int i) { // Paper - force abi breakage on usage change
++      func_219354_b(i);
++   }
++
+    protected void func_219354_b(int p_219354_1_) {
+       this.field_219382_j.func_215508_a(p_219354_1_);
+    }
 @@ -241,6 +_,29 @@
     public String func_225412_c() {
        return this.field_219384_l.func_225396_a();
