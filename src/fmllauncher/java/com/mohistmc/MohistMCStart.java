@@ -41,7 +41,7 @@ public class MohistMCStart {
         new JarLoader().loadJar(InstallUtils.extra);
 
         // make sure gson use this EnumTypeAdapter
-        // Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
+        Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
 
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
         if (!hasAcceptedEULA()) {
