@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/World.java
 +++ b/net/minecraft/world/World.java
-@@ -1,16 +_,24 @@
+@@ -1,16 +_,25 @@
  package net.minecraft.world;
  
 +import com.destroystokyo.paper.config.PaperWorldConfig;
@@ -22,6 +22,7 @@
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
 +
++import net.minecraft.addons.server.MCUtil;
  import net.minecraft.block.AbstractFireBlock;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
@@ -50,7 +51,7 @@
  import net.minecraft.world.storage.ISpawnWorldInfo;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.MapData;
-@@ -62,969 +_,1303 @@
+@@ -62,969 +_,1313 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -622,8 +623,13 @@
 +                        this.func_225319_b(p_241211_1_, blockstate, blockstate1);
 +                    }
 +
-+                    if ((p_241211_3_ & 2) != 0 && (!this.field_72995_K || (p_241211_3_ & 4) == 0) && (this.field_72995_K || chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING))) {
++                    if ((p_241211_3_ & 2) != 0 && (!this.field_72995_K || (p_241211_3_ & 4) == 0) && (this.field_72995_K || chunk == null || (chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING)))) { // allow chunk to be null here as chunk.isReady() is false when we send our notification during block placement // Paper - diff on change, see below
 +                        this.func_184138_a(p_241211_1_, blockstate, p_241211_2_, p_241211_3_);
++                        // Paper start - per player view distance - allow block updates for non-ticking chunks in player view distance
++                        // if copied from above
++                    } else if ((p_241211_3_ & 2) != 0 && (!this.field_72995_K || (p_241211_3_ & 4) == 0) && (this.field_72995_K || chunk == null || ((ServerWorld) this).func_72863_F().field_217237_a.playerViewDistanceBroadcastMap.getObjectsInRange(MCUtil.getCoordinateKey(p_241211_1_)) != null)) {
++                        ((ServerWorld) this).func_72863_F().func_217217_a(p_241211_1_);
++                        // Paper end - per player view distance
 +                    }
 +
 +                    if ((p_241211_3_ & 1) != 0) {
@@ -638,7 +644,7 @@
 +                        blockstate.func_241483_b_(this, p_241211_1_, i, p_241211_4_ - 1);
 +
 +                        // CraftBukkit start
-+                        CraftWorld world = ((ServerWorld) this).getWorld();
++                        CraftWorld world = this.getWorld();
 +                        if (world != null) {
 +                            BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_241211_1_.func_177958_n(), p_241211_1_.func_177956_o(), p_241211_1_.func_177952_p()), CraftBlockData.fromData(p_241211_2_));
 +                            this.getCBServer().getPluginManager().callEvent(event);
@@ -661,8 +667,13 @@
 +    public void func_217393_a(BlockPos p_217393_1_, BlockState p_217393_2_, BlockState p_217393_3_) {
 +    }
 +
-+    public boolean setAir(BlockPos blockposition) { return this.func_217377_a(blockposition, false); } // Paper - OBFHELPER
-+    public boolean setAir(BlockPos blockposition, boolean moved) { return this.func_217377_a(blockposition, moved); } // Paper - OBFHELPER
++    public boolean setAir(BlockPos blockposition) {
++        return this.func_217377_a(blockposition, false);
++    } // Paper - OBFHELPER
++
++    public boolean setAir(BlockPos blockposition, boolean moved) {
++        return this.func_217377_a(blockposition, moved);
++    } // Paper - OBFHELPER
 +
 +    public boolean func_217377_a(BlockPos p_217377_1_, boolean p_217377_2_) {
 +        FluidState fluidstate = this.func_204610_c(p_217377_1_);
@@ -749,7 +760,7 @@
 +
 +            try {
 +                // CraftBukkit start
-+                CraftWorld world = ((ServerWorld) this).getWorld();
++                CraftWorld world = this.getWorld();
 +                if (world != null) {
 +                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_190524_1_.func_177958_n(), p_190524_1_.func_177956_o(), p_190524_1_.func_177952_p()), CraftBlockData.fromData(blockstate), world.getBlockAt(p_190524_3_.func_177958_n(), p_190524_3_.func_177956_o(), p_190524_3_.func_177952_p()));
 +                    this.getCBServer().getPluginManager().callEvent(event);
@@ -920,7 +931,7 @@
 +             tilesThisCycle < field_175730_i.size() && (tilesThisCycle % 10 != 0 || tileLimiter.shouldContinue());
 +             tileTickPosition++, tilesThisCycle++) {
 +            tileTickPosition = (tileTickPosition < field_175730_i.size()) ? tileTickPosition : 0;
-+            TileEntity tileentity = (TileEntity) this.field_175730_i.get(tileTickPosition);
++            TileEntity tileentity = this.field_175730_i.get(tileTickPosition);
 +            // Spigot start
 +            if (tileentity == null) {
 +                getCBServer().getLogger().severe("Spigot has detected a null entity and has removed it, preventing a crash");
@@ -1282,11 +1293,11 @@
 +    }
 +
 +    public Explosion func_217385_a(@Nullable Entity p_217385_1_, double p_217385_2_, double p_217385_4_, double p_217385_6_, float p_217385_8_, Explosion.Mode p_217385_9_) {
-+        return this.func_230546_a_(p_217385_1_, (DamageSource) null, (ExplosionContext) null, p_217385_2_, p_217385_4_, p_217385_6_, p_217385_8_, this.pehkuiExplosionFire, p_217385_9_); // Mohist - Fix Pehkui Startup (#1324)
++        return this.func_230546_a_(p_217385_1_, null, null, p_217385_2_, p_217385_4_, p_217385_6_, p_217385_8_, this.pehkuiExplosionFire, p_217385_9_); // Mohist - Fix Pehkui Startup (#1324)
 +    }
 +
 +    public Explosion func_217398_a(@Nullable Entity p_217398_1_, double p_217398_2_, double p_217398_4_, double p_217398_6_, float p_217398_8_, boolean p_217398_9_, Explosion.Mode p_217398_10_) {
-+        return this.func_230546_a_(p_217398_1_, (DamageSource) null, (ExplosionContext) null, p_217398_2_, p_217398_4_, p_217398_6_, p_217398_8_, p_217398_9_, p_217398_10_);
++        return this.func_230546_a_(p_217398_1_, null, null, p_217398_2_, p_217398_4_, p_217398_6_, p_217398_8_, p_217398_9_, p_217398_10_);
 +    }
 +
 +    public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
@@ -1592,7 +1603,7 @@
 +    }
 +
 +    public boolean func_195588_v(BlockPos p_195588_1_) {
-+        return func_189509_E(p_195588_1_) ? false : this.func_72863_F().func_73149_a(p_195588_1_.func_177958_n() >> 4, p_195588_1_.func_177952_p() >> 4);
++        return !func_189509_E(p_195588_1_) && this.func_72863_F().func_73149_a(p_195588_1_.func_177958_n() >> 4, p_195588_1_.func_177952_p() >> 4);
 +    }
 +
 +    public boolean func_234929_a_(BlockPos p_234929_1_, Entity p_234929_2_, Direction p_234929_3_) {
@@ -1600,7 +1611,7 @@
 +            return false;
 +        } else {
 +            IChunk ichunk = this.func_217353_a(p_234929_1_.func_177958_n() >> 4, p_234929_1_.func_177952_p() >> 4, ChunkStatus.field_222617_m, false);
-+            return ichunk == null ? false : ichunk.func_180495_p(p_234929_1_).func_215682_a(this, p_234929_1_, p_234929_2_, p_234929_3_);
++            return ichunk != null && ichunk.func_180495_p(p_234929_1_).func_215682_a(this, p_234929_1_, p_234929_2_, p_234929_3_);
 +        }
 +    }
 +
@@ -1611,7 +1622,7 @@
 +    public void func_72966_v() {
 +        double d0 = 1.0D - (double) (this.func_72867_j(1.0F) * 5.0F) / 16.0D;
 +        double d1 = 1.0D - (double) (this.func_72819_i(1.0F) * 5.0F) / 16.0D;
-+        double d2 = 0.5D + 2.0D * MathHelper.func_151237_a((double) MathHelper.func_76134_b(this.func_242415_f(1.0F) * ((float) Math.PI * 2F)), -0.25D, 0.25D);
++        double d2 = 0.5D + 2.0D * MathHelper.func_151237_a(MathHelper.func_76134_b(this.func_242415_f(1.0F) * ((float) Math.PI * 2F)), -0.25D, 0.25D);
 +        this.field_73008_k = (int) ((1.0D - d2 * d0 * d1) * 11.0D);
 +    }
 +
