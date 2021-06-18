@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.UpdateUtils;
@@ -12,8 +15,6 @@ import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
-
-import net.minecraftforge.server.ServerMain;
 
 public class DefaultLibraries {
     private static int retry = 0;
@@ -23,25 +24,35 @@ public class DefaultLibraries {
         System.out.println(i18n.get("libraries.checking.start"));
         String url = "https://maven.mohistmc.com/";
         LinkedHashMap<File, String> libs = getDefaultLibs();
-
+        AtomicLong currentSize = new AtomicLong();
+        Set<File> defaultLibs = new LinkedHashSet<>();
         for (File lib : getDefaultLibs().keySet()) {
-            if((!lib.exists() || !MD5Util.getMd5(lib).equals(libs.get(lib)) && !MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName()))) {
-                lib.getParentFile().mkdirs();
-                //if (i18n.isCN() && !lib.getName().contains("mcp_config")) url = "https://MohistMC.gitee.io/mohistdown/"; //Gitee Mirror
-                String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-                System.out.println(i18n.get("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 57 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
-
-                try {
-                    UpdateUtils.downloadFile(u, lib);
-                    if(lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar")) new JarLoader().loadJar(lib);
-                    fail.remove(u);
-                } catch (Exception e) {
-                    System.out.println(i18n.get("file.download.nook", u));
-                    lib.delete();
-                    fail.put(u, lib.getAbsolutePath());
-                }
+            if(lib.exists() && MD5Util.getMd5(lib).equals(libs.get(lib))){
+                currentSize.addAndGet(lib.length());
+                continue;
             }
-
+            if(MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
+                continue;
+            }
+            defaultLibs.add(lib);
+        }
+        for (File lib : defaultLibs) {
+            lib.getParentFile().mkdirs();
+            //if (i18n.isCN() && !lib.getName().contains("mcp_config")) url = "https://MohistMC.gitee.io/mohistdown/"; //Gitee Mirror
+            String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
+            System.out.println(
+                    i18n.get("libraries.global.percentage") +
+                            Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
+            try {
+                UpdateUtils.downloadFile(u, lib);
+                if(lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar")) new JarLoader().loadJar(lib);
+                currentSize.addAndGet(lib.length());
+                fail.remove(u);
+            } catch (Exception e) {
+                System.out.println(i18n.get("file.download.nook", u));
+                lib.delete();
+                fail.put(u, lib.getAbsolutePath());
+            }
         }
         /*FINISHED | RECHECK IF A FILE FAILED*/
         if (retry < 3 && !fail.isEmpty()) {
