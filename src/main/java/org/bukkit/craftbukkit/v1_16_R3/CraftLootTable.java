@@ -102,7 +102,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
 
         // SPIGOT-5603 - Avoid IllegalArgumentException in LootTableInfo#build()
         LootParameterSet.Builder nmsBuilder = new LootParameterSet.Builder(); // PAIL rename Builder
-        for (LootParameter<?> param : getHandle().getParamSet().getAllowed()) { // PAIL rename required
+        for (LootParameter<?> param : getHandle().getParamSet().getRequired()) { // PAIL rename required
             nmsBuilder.required(param); // PAIL rename addRequired
         }
         for (LootParameter<?> param : getHandle().getParamSet().getAllowed()) { // PAIL rename optional
