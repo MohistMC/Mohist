@@ -35,6 +35,7 @@ public class SimpleCommandMap implements CommandMap {
         register("mohist", new DumpCommand("dump"));
         register("mohist", new PluginCommand("plugin"));
 		register("mohist", new UpdateMohistCommand("updatemohist"));
+		register("mohist", new BackupWorldCommand("backupworld"));
         register("mohist", new WhitelistModsCommand("whitelistmods"));
     }
 
