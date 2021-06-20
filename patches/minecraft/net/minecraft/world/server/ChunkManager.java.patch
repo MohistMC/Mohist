@@ -92,7 +92,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.chunk.storage.ChunkLoader;
  import net.minecraft.world.chunk.storage.ChunkSerializer;
-@@ -88,1118 +_,1415 @@
+@@ -88,1118 +_,1416 @@
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -2087,7 +2087,8 @@
 +            i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_219210_1_, i); // Spigot
 +            int j = entitytype.func_220332_l();
 +            if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
-+                throw (IllegalStateException) Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
++                //throw (IllegalStateException) Util.pauseInIde(new IllegalStateException("Entity is already tracked!"));
++                return;
 +            } else {
 +                ChunkManager.EntityTracker chunkmanager$entitytracker = new ChunkManager.EntityTracker(p_219210_1_, i, j, entitytype.func_220340_m());
 +                this.field_219272_z.put(p_219210_1_.func_145782_y(), chunkmanager$entitytracker);
