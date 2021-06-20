@@ -67,7 +67,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,1283 +_,1812 @@
+@@ -130,1283 +_,1840 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -1845,12 +1845,40 @@
 +	public void func_70645_a(DamageSource p_70645_1_) {
 +		if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
 +		boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
-+		if (flag) {
-+			ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
-+			this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent), (p_212356_2_) -> {
++
++		java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.field_71071_by.func_70302_i_());
++
++		ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
++
++		String deathmessage = itextcomponent.getString();
++		boolean keepInventory = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223600_c) || this.func_175149_v();
++
++		if (!keepInventory) {
++			for (ItemStack item : this.field_71071_by.getContents()) {
++				if (!item.func_190926_b() && !EnchantmentHelper.func_190939_c(item)) {
++					loot.add(CraftItemStack.asCraftMirror(item));
++				}
++			}
++		}
++
++		org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
++
++		// SPIGOT-943 - only call if they have an inventory open
++		if (this.field_71070_bA != this.field_71069_bz) {
++			this.func_71053_j();
++		}
++		String deathMessage = event.getDeathMessage();
++		if (deathMessage != null && deathMessage.length() > 0 && flag) {
++			ITextComponent ichatbasecomponent;
++			if (deathMessage.equals(deathmessage)) {
++				ichatbasecomponent = this.func_110142_aN().func_151521_b();
++			} else {
++				ichatbasecomponent = org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromStringOrNull(deathMessage);
++			}
++			this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, ichatbasecomponent), (p_212356_2_) -> {
 +				if (!p_212356_2_.isSuccess()) {
 +					int i = 256;
-+					String s = itextcomponent.func_212636_a(256);
++					String s = ichatbasecomponent.func_212636_a(256);
 +					ITextComponent itextcomponent1 = new TranslationTextComponent("death.attack.message_too_long", (new StringTextComponent(s)).func_240699_a_(TextFormatting.YELLOW));
 +					ITextComponent itextcomponent2 = (new TranslationTextComponent("death.attack.even_more_magic", this.func_145748_c_())).func_240700_a_((p_212357_1_) -> {
 +						return p_212357_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, itextcomponent1));
@@ -1878,7 +1906,7 @@
 +			this.func_241157_eT_();
 +		}
 +
-+		if (!this.func_175149_v()) {
++		if (!event.getKeepInventory()) {
 +			this.func_213345_d(p_70645_1_);
 +		}
 +
