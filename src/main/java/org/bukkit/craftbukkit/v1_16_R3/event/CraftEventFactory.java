@@ -795,6 +795,7 @@ public class CraftEventFactory {
         return event;
     }
 
+    // TODO
     public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayerEntity victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage, boolean keepInventory) {
         CraftPlayer entity = victim.getBukkitEntity();
         PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.expToDrop, 0, deathMessage);
@@ -808,11 +809,13 @@ public class CraftEventFactory {
         victim.expToDrop = event.getDroppedExp();
         victim.newExp = event.getNewExp();
 
+        /*
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             if (stack == null || stack.getType() == Material.AIR) continue;
 
             world.dropItem(entity.getLocation(), stack);
         }
+        */
 
         return event;
     }
