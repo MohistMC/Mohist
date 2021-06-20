@@ -1,5 +1,23 @@
 --- a/net/minecraft/crash/CrashReport.java
 +++ b/net/minecraft/crash/CrashReport.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.crash;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.MohistMCStart;
+ import java.io.File;
+ import java.io.FileOutputStream;
+ import java.io.OutputStreamWriter;
+@@ -45,6 +_,9 @@
+       this.field_85061_c.func_189529_a("Minecraft Version ID", () -> {
+          return SharedConstants.func_215069_a().getId();
+       });
++      this.field_85061_c.func_189529_a("Mohist Version", () -> {
++         return MohistMCStart.getVersion();
++      });
+       this.field_85061_c.func_189529_a("Operating System", () -> {
+          return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version");
+       });
 @@ -69,6 +_,8 @@
           List<String> list = Util.func_211565_f().collect(Collectors.toList());
           return String.format("%d total; %s", list.size(), list.stream().collect(Collectors.joining(" ")));
