@@ -33,13 +33,13 @@ public class DefaultLibraries {
 				continue;
 			}
 			if(lib.getName().contains("launchwrapper")) {
-				if(lib.exists()) lib.delete();
 				File customLaunchwrapper = new File(JarTool.getJarDir() + "/libraries/customize_libraries/launchwrapper-fccb-1.12.jar");
 				if(bMohist("forge_can_call_bukkit")) {
+					if(lib.exists()) lib.delete();
 					if(!customLaunchwrapper.exists() || !MD5Util.md5CheckSum(customLaunchwrapper, "8f121345f96b77620fcfa69a4330947a"))
 						defaultLibs.add(customLaunchwrapper);
+					continue;
 				} else if(customLaunchwrapper.exists()) customLaunchwrapper.delete();
-				continue;
 			}
 			if(lib.exists() && MD5Util.md5CheckSum(lib, libs.get(lib))){
 				currentSize.addAndGet(lib.length());
