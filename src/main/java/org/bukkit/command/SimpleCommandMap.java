@@ -39,6 +39,7 @@ public class SimpleCommandMap implements CommandMap {
         register("mohist", new DumpCommand("dump"));
         register("mohist", new EntityCommand("entity"));
         register("mohist", new TileEntityCommand("tileentity"));
+		register("mohist", new BackupWorldCommand("backupworld"));
         register("mohist", new PluginCommand("plugin"));
     }
 

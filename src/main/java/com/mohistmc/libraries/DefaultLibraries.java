@@ -12,48 +12,71 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 
 public class DefaultLibraries {
-    private static int retry = 0;
     public static HashMap<String, String> fail = new HashMap<>();
+	private static String mirror = "";
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
-        String url = "https://maven.mohistmc.com/";
-        if (Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
+		String url = mirror.equals("") ? Message.isCN() ? "https://mohist-community.gitee.io/mohistdown/" : "https://maven.mohistmc.com/" : mirror;
         LinkedHashMap<File, String> libs = getDefaultLibs();
+		AtomicLong currentSize = new AtomicLong();
+		Set<File> defaultLibs = new LinkedHashSet<>();
+		for (File lib : getDefaultLibs().keySet()) {
+			if(lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
+				continue;
+			}
+			if(lib.getName().contains("launchwrapper")) {
+				if(lib.exists()) lib.delete();
+				File customLaunchwrapper = new File(JarTool.getJarDir() + "/libraries/customize_libraries/launchwrapper-fccb-1.12.jar");
+				if(bMohist("forge_can_call_bukkit")) {
+					if(!customLaunchwrapper.exists() || !MD5Util.md5CheckSum(customLaunchwrapper, "8f121345f96b77620fcfa69a4330947a"))
+						defaultLibs.add(customLaunchwrapper);
+				} else if(customLaunchwrapper.exists()) customLaunchwrapper.delete();
+				continue;
+			}
+			if(lib.exists() && MD5Util.md5CheckSum(lib, libs.get(lib))){
+				currentSize.addAndGet(lib.length());
+				continue;
+			}
+			defaultLibs.add(lib);
+		}
 
-        for (File lib : getDefaultLibs().keySet()) {
-            if((!lib.exists() || !MD5Util.md5CheckSum(lib, libs.get(lib))) && !MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
+        for (File lib : defaultLibs) {
                 lib.getParentFile().mkdirs();
                 String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-                System.out.println(Message.getString("libraries.global.percentage") + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File(JarTool.getJarDir() + "/libraries")) / 35 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
+				System.out.println(Message.getString("libraries.global.percentage") + Math.round(currentSize.get() * 100 / 70000000d) + "%"); //Global percentage
 
                 try {
                     UpdateUtils.downloadFile(u, lib);
-                    fail.remove(u);
+					currentSize.addAndGet(lib.length());
+                    fail.remove(u.replace(url, ""));
                 } catch (Exception e) {
                     System.out.println(Message.getFormatString("file.download.nook", new Object[]{u}));
                     lib.delete();
-                    fail.put(u, lib.getAbsolutePath());
+					fail.put(u.replace(url, ""), lib.getAbsolutePath());
                 }
-            }
-
         }
         /*FINISHED | RECHECK IF A FILE FAILED*/
-        if (retry < 3 && !fail.isEmpty()) {
-            retry++;
-            System.out.println(Message.getFormatString("update.retry", new Object[]{retry}));
-            run();
-        } else {
-            System.out.println(Message.getString("libraries.checking.end"));
-            if(!fail.isEmpty()) {
-                System.out.println(Message.getString("libraries.cant.start.server"));
-                for (String lib : fail.keySet())
-                    System.out.println("Link : " + lib + "\nPath : " + fail.get(lib) + "\n");
-                System.exit(0);
-            }
-        }
+        if (!fail.isEmpty()) {
+			if(!mirror.equals("")) {
+				System.out.println("Looks like there is no maven available at the moment, or you don't have any network connection.\nPlease try again later or come into our Discord server (discord.gg/mohist) to get help.");
+				System.out.println(Message.getString("libraries.checking.end"));
+				for (String lib : fail.keySet())
+					System.out.println("Link : " + lib + "\nPath : " + fail.get(lib) + "\n");
+				System.exit(0);
+			}
+			System.out.println(Message.getFormatString("update.retry", new Object[]{1}));
+			System.out.println("Something went wrong during download, trying to download with the mirror...");
+			mirror = "http://mavenmirror.mohistmc.com/";
+			run();
+        } else System.out.println(Message.getString("libraries.checking.end"));
     }
 
     public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {

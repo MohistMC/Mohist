@@ -3,6 +3,7 @@ package org.bukkit.plugin.java;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -22,6 +23,8 @@ import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import com.mohistmc.bukkit.nms.ClassLoaderContext;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
@@ -74,6 +77,12 @@ public final class PluginClassLoader extends URLClassLoader {
         } catch (InstantiationException ex) {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
+		if (bMohist("forge_can_call_bukkit") && parent != null && parent instanceof LaunchClassLoader) {
+			try {
+				Method methode = parent.getClass().getDeclaredMethod("addChild", ClassLoader.class);
+				methode.invoke(parent, this);
+			} catch(Exception ignored) {}
+		}
     }
 
     static {

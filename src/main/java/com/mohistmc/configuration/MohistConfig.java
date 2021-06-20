@@ -39,6 +39,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting keepLevel = new BoolSetting(this, "eventCanceled.keepLevel", false);
 
     public final BoolSetting use_custom_java8 = new BoolSetting(this, "mohist.use_custom_java8", false);
+	public final BoolSetting forge_can_call_bukkit = new BoolSetting(this, "mohist.forge_can_call_bukkit", false);
     public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true);
     public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false);
     public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true);

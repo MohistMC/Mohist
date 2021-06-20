@@ -26,7 +26,7 @@ public class DownloadJava {
 
     public static void run() throws Exception {
         if (!MohistMC.mainArgs.contains("launchedWithCustomJava8")) {
-            if (!javabin.exists() || !bMohist("use_custom_java8")) {
+            if (!javabin.exists() && !bMohist("use_custom_java8")) {
                     System.out.println(Message.getString("unsupported.java.version"));
                     Scanner scan = new Scanner(System.in);
                     System.out.println(Message.getString("customjava.ask"));
