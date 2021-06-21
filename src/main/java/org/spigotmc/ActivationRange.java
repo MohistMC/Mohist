@@ -31,7 +31,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
 
 public class ActivationRange
 {
@@ -120,7 +119,7 @@ public class ActivationRange
         int maxRange = Math.max( monsterActivationRange, animalActivationRange );
         maxRange = Math.max( maxRange, raiderActivationRange );
         maxRange = Math.max( maxRange, miscActivationRange );
-        maxRange = Math.min( ( ((ServerWorld)world).getChunkSource().chunkMap.getEffectiveViewDistance() << 4 ) - 8, maxRange ); // Paper - no-tick view distance
+        maxRange = Math.min( ( world.spigotConfig.viewDistance << 4 ) - 8, maxRange );
 
         for ( PlayerEntity player : world.players() )
         {

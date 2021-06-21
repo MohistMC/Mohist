@@ -26,7 +26,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.IPacket;
-@@ -47,472 +_,778 @@
+@@ -47,472 +_,768 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -504,7 +504,7 @@
 +	public final ServerWorld field_73251_h;
 +	public final Thread field_217241_g; // Paper - private -> public
 +	private final ServerWorldLightManager field_217242_h;
-+	public final ServerChunkProvider.ChunkExecutor field_217243_i; // Paper private -> public
++	private final ServerChunkProvider.ChunkExecutor field_217243_i;
 +	public final ChunkManager field_217237_a;
 +	private final DimensionSavedDataManager field_217244_j;
 +	private long field_217245_k;
@@ -1220,7 +1220,7 @@
 +		return this.field_241097_p_;
 +	}
 +
-+	public final class ChunkExecutor extends ThreadTaskExecutor<Runnable> { // Paper - package -> public
++	final class ChunkExecutor extends ThreadTaskExecutor<Runnable> {
 +		private ChunkExecutor(World p_i50985_2_) {
 +			super("Chunk source main thread executor for " + p_i50985_2_.func_234923_W_().func_240901_a_());
 +		}
@@ -1262,14 +1262,4 @@
 +	}
 +
 +	public static final List<ChunkStatus> getPossibleChunkStatuses() { return ServerChunkProvider.field_217239_c; } // Paper - OBFHELPER
-+
-+	// Paper start - no-tick-view-distance
-+	public <T> void addTicketAtLevel(TicketType<T> p_217228_1_, ChunkPos p_217228_2_, int p_217228_3_, T p_217228_4_) {
-+		this.func_217228_a(p_217228_1_, p_217228_2_, p_217228_3_, p_217228_4_);
-+	}
-+
-+	public <T> void removeTicketAtLevel(TicketType<T> p_217222_1_, ChunkPos p_217222_2_, int p_217222_3_, T p_217222_4_) {
-+		this.func_217222_b(p_217222_1_, p_217222_2_, p_217222_3_, p_217222_4_);
-+	}
-+	// Paper end
  }

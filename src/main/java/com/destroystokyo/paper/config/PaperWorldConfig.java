@@ -74,9 +74,4 @@ public class PaperWorldConfig {
 		keepLoadedRange = (short) (getInt("keep-spawn-loaded-range", Math.min(spigotConfig.viewDistance, 10)) * 16);
 		log("Keep Spawn Loaded Range: " + (keepLoadedRange / 16));
 	}
-
-	public int noTickViewDistance;
-	private void viewDistance() {
-		this.noTickViewDistance = this.getInt("viewdistances.no-tick-view-distance", -1);
-	}
 }
