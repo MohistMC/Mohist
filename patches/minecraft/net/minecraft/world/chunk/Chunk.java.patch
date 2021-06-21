@@ -1,11 +1,6 @@
 --- a/net/minecraft/world/chunk/Chunk.java
 +++ b/net/minecraft/world/chunk/Chunk.java
-@@ -1,10 +_,12 @@
- package net.minecraft.world.chunk;
- 
-+import com.destroystokyo.paper.util.misc.PooledLinkedHashSets;
- import com.google.common.collect.Maps;
- import com.google.common.collect.Sets;
+@@ -5,6 +_,7 @@
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
  import it.unimi.dsi.fastutil.longs.LongSet;
  import it.unimi.dsi.fastutil.shorts.ShortList;
@@ -13,7 +8,7 @@
  import java.util.Collection;
  import java.util.Collections;
  import java.util.List;
-@@ -17,21 +_,22 @@
+@@ -17,17 +_,16 @@
  import java.util.stream.Stream;
  import java.util.stream.StreamSupport;
  import javax.annotation.Nullable;
@@ -30,22 +25,15 @@
  import net.minecraft.entity.EntityType;
 -import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 -import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
-+import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
- import net.minecraft.nbt.CompoundNBT;
-+import net.minecraft.network.IPacket;
- import net.minecraft.network.PacketBuffer;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.util.ClassInheritanceMultiMap;
-@@ -51,748 +_,1130 @@
- import net.minecraft.world.gen.feature.structure.Structure;
+@@ -52,747 +_,1087 @@
  import net.minecraft.world.gen.feature.structure.StructureStart;
  import net.minecraft.world.lighting.WorldLightManager;
--import net.minecraft.world.server.ChunkHolder;
--import net.minecraft.world.server.ServerWorld;
-+import net.minecraft.world.server.*;
+ import net.minecraft.world.server.ChunkHolder;
++import net.minecraft.world.server.ServerChunkProvider;
+ import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
@@ -366,51 +354,7 @@
 +    }
 +
 +    protected void onNeighbourChange(final long bitsetBefore, final long bitsetAfter) {
-+        // Paper start - no-tick view distance
-+        ServerChunkProvider chunkProviderServer = ((ServerWorld) this.field_76637_e).func_72863_F();
-+        ChunkManager chunkMap = chunkProviderServer.field_217237_a;
-+        // this code handles the addition of ticking tickets - the distance map handles the removal
-+        if (!areNeighboursLoaded(bitsetBefore, 2) && areNeighboursLoaded(bitsetAfter, 2)) {
-+            if (chunkMap.playerViewDistanceTickMap.getObjectsInRange(this.coordinateKey) != null) {
-+                // now we're ready for entity ticking
-+                chunkProviderServer.field_217243_i.execute(() -> {
-+                    // double check that this condition still holds.
-+                    if (Chunk.this.areNeighboursLoaded(2) && chunkMap.playerViewDistanceTickMap.getObjectsInRange(Chunk.this.coordinateKey) != null) {
-+                        chunkProviderServer.addTicketAtLevel(TicketType.field_219490_c, Chunk.this.field_212816_F, 31, Chunk.this.field_212816_F); // 31 -> entity ticking, TODO check on update
-+                    }
-+                });
-+            }
-+        }
 +
-+        // this code handles the chunk sending
-+        if (!areNeighboursLoaded(bitsetBefore, 1) && areNeighboursLoaded(bitsetAfter, 1)) {
-+            if (chunkMap.playerViewDistanceBroadcastMap.getObjectsInRange(this.coordinateKey) != null) {
-+                // now we're ready to send
-+                chunkMap.field_219265_s.func_212871_a_(ChunkTaskPriorityQueueSorter.func_219081_a(chunkMap.func_219220_a(this.coordinateKey), (() -> { // Copied frm PlayerChunkMap
-+                    // double check that this condition still holds.
-+                    if (!Chunk.this.areNeighboursLoaded(1)) {
-+                        return;
-+                    }
-+                    PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayerEntity> inRange = chunkMap.playerViewDistanceBroadcastMap.getObjectsInRange(Chunk.this.coordinateKey);
-+                    if (inRange == null) {
-+                        return;
-+                    }
-+
-+                    // broadcast
-+                    Object[] backingSet = inRange.getBackingSet();
-+                    IPacket[] chunkPackets = new IPacket[2];
-+                    for (int index = 0, len = backingSet.length; index < len; ++index) {
-+                        Object temp = backingSet[index];
-+                        if (!(temp instanceof ServerPlayerEntity)) {
-+                            continue;
-+                        }
-+                        ServerPlayerEntity player = (ServerPlayerEntity) temp;
-+                        chunkMap.sendChunk(player, chunkPackets, Chunk.this);
-+                    }
-+                })));
-+            }
-+        }
-+        // Paper end - no-tick view distance
 +    }
 +
 +    public final boolean isAnyNeighborsLoaded() {
@@ -1762,7 +1706,7 @@
 +                    BlockPos blockpos = ChunkPrimer.func_201635_a(oshort, i, chunkpos);
 +                    BlockState blockstate = this.func_180495_p(blockpos);
 +                    BlockState blockstate1 = Block.func_199770_b(blockstate, this.field_76637_e, blockpos);
-+                    this.field_76637_e.func_180501_a(blockpos, blockstate1, 20 | 2); // Paper - We send chunks before they're ticking ready, so we need to notify here
++                    this.field_76637_e.func_180501_a(blockpos, blockstate1, 20);
 +                }
 +
 +                this.field_201622_t[i].clear();

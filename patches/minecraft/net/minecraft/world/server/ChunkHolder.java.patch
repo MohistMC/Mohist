@@ -8,12 +8,11 @@
  import java.util.List;
  import java.util.Optional;
  import java.util.concurrent.CompletableFuture;
-@@ -11,6 +_,8 @@
+@@ -11,6 +_,7 @@
  import java.util.function.IntSupplier;
  import java.util.stream.Stream;
  import javax.annotation.Nullable;
 +
-+import net.minecraft.addons.server.MCUtil;
  import net.minecraft.block.BlockState;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.IPacket;
@@ -25,7 +24,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -37,377 +_,584 @@
+@@ -37,377 +_,533 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkHolder {
@@ -323,18 +322,6 @@
 +
 +    private final ChunkManager chunkMap; // Paper
 +
-+    // Paper start - no-tick view distance
-+    public final Chunk getSendingChunk() {
-+        // it's important that we use getChunkAtIfLoadedImmediately to mirror the chunk sending logic used
-+        // in Chunk's neighbour callback
-+        Chunk ret = this.chunkMap.field_219255_i.func_72863_F().getChunkAtIfLoadedImmediately(this.field_219319_n.field_77276_a, this.field_219319_n.field_77275_b);
-+        if (ret != null && ret.areNeighboursLoaded(1)) {
-+            return ret;
-+        }
-+        return null;
-+    }
-+    // Paper end - no-tick view distance
-+
 +    public ChunkHolder(ChunkPos p_i50716_1_, int p_i50716_2_, WorldLightManager p_i50716_3_, ChunkHolder.IListener p_i50716_4_, ChunkHolder.IPlayerProvider p_i50716_5_) {
 +        this.field_219319_n = p_i50716_1_;
 +        this.location = p_i50716_1_;
@@ -474,7 +461,7 @@
 +    }
 +
 +    public void func_244386_a(BlockPos p_244386_1_) {
-+        Chunk chunk = this.getSendingChunk(); // Paper - no-tick view distance
++        Chunk chunk = this.func_219298_c();
 +        if (chunk != null) {
 +            byte b0 = (byte) SectionPos.func_218159_a(p_244386_1_.func_177956_o());
 +            // Mohist: Prevent out of bounds
@@ -489,7 +476,7 @@
 +    }
 +
 +    public void func_219280_a(LightType p_219280_1_, int p_219280_2_) {
-+        Chunk chunk = this.getSendingChunk(); // Paper - no-tick view distance
++        Chunk chunk = this.func_219298_c();
 +        if (chunk != null) {
 +            chunk.func_177427_f(true);
 +            if (p_219280_1_ == LightType.SKY) {
@@ -562,48 +549,9 @@
 +    }
 +
 +    private void func_219293_a(IPacket<?> p_219293_1_, boolean p_219293_2_) {
-+        // Paper start - per player view distance
-+        // there can be potential desync with player's last mapped section and the view distance map, so use the
-+        // view distance map here.
-+        com.destroystokyo.paper.util.misc.PlayerAreaMap viewDistanceMap = this.chunkMap.playerViewDistanceBroadcastMap;
-+        com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayerEntity> players = viewDistanceMap.getObjectsInRange(this.field_219319_n);
-+        if (players == null) {
-+            return;
-+        }
-+
-+        if (p_219293_2_) { // flag -> border only
-+            Object[] backingSet = players.getBackingSet();
-+            for (int i = 0, len = backingSet.length; i < len; ++i) {
-+                Object temp = backingSet[i];
-+                if (!(temp instanceof ServerPlayerEntity)) {
-+                    continue;
-+                }
-+                ServerPlayerEntity player = (ServerPlayerEntity) temp;
-+
-+                int viewDistance = viewDistanceMap.getLastViewDistance(player);
-+                long lastPosition = viewDistanceMap.getLastCoordinate(player);
-+
-+                int distX = Math.abs(MCUtil.getCoordinateX(lastPosition) - this.field_219319_n.field_77276_a);
-+                int distZ = Math.abs(MCUtil.getCoordinateZ(lastPosition) - this.field_219319_n.field_77275_b);
-+
-+                if (Math.max(distX, distZ) == viewDistance) {
-+                    player.field_71135_a.func_147359_a(p_219293_1_);
-+                }
-+            }
-+        } else {
-+            Object[] backingSet = players.getBackingSet();
-+            for (int i = 0, len = backingSet.length; i < len; ++i) {
-+                Object temp = backingSet[i];
-+                if (!(temp instanceof ServerPlayerEntity)) {
-+                    continue;
-+                }
-+                ServerPlayerEntity player = (ServerPlayerEntity) temp;
-+                player.field_71135_a.func_147359_a(p_219293_1_);
-+            }
-+        }
-+
-+        return;
-+        // Paper end - per player view distance
++        this.field_219328_w.func_219097_a(this.field_219319_n, p_219293_2_).forEach((p_219304_1_) -> {
++            p_219304_1_.field_71135_a.func_147359_a(p_219293_1_);
++        });
 +    }
 +
 +    public CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_219276_a(ChunkStatus p_219276_1_, ChunkManager p_219276_2_) {
