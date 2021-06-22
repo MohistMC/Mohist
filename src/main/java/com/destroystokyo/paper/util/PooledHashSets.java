@@ -193,7 +193,7 @@ public class PooledHashSets<E> {
 			boolean added = this.set.add(element);
 
 			if(added) {
-				this.hash = hash0(element.hashCode());
+				this.hash += hash0(element.hashCode());
 			}
 
 			return added;
