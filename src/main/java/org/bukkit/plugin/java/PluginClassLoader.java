@@ -19,6 +19,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
+import com.mohistmc.bukkit.pluginfix.PluginFixManager;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -229,6 +230,8 @@ public final class PluginClassLoader extends URLClassLoader {
                     byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
                     bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
                     bytecode = RemapUtils.remapFindClass(bytecode);
+
+                    bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
 
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     URL jarURL = jarURLConnection.getJarFileURL();
