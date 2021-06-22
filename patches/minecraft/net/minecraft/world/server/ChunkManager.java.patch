@@ -63,7 +63,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
-@@ -88,1118 +_,1232 @@
+@@ -88,1118 +_,1234 @@
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -1561,6 +1561,8 @@
 +        });
 +    }
 +
++    final CallbackExecutor chunkLoadConversionCallbackExecutor = new CallbackExecutor(); // Paper
++
 +    public CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>> func_219179_a(ChunkHolder p_219179_1_) {
 +        ChunkPos chunkpos = p_219179_1_.func_219277_h();
 +        CompletableFuture<Either<List<IChunk>, ChunkHolder.IChunkLoadingError>> completablefuture = this.func_219236_a(chunkpos, 1, (p_219172_0_) -> {
@@ -1573,7 +1575,7 @@
 +                return Either.left(chunk);
 +            });
 +        }, (p_219230_2_) -> {
-+            this.field_219265_s.func_212871_a_(ChunkTaskPriorityQueueSorter.func_219081_a(p_219179_1_, p_219230_2_));
++            this.field_219265_s.func_212871_a_(ChunkTaskPriorityQueueSorter.func_219081_a(p_219179_1_, () -> ChunkManager.this.chunkLoadConversionCallbackExecutor.execute(p_219230_2_))); // Paper
 +        });
 +        completablefuture1.thenAcceptAsync((p_219176_2_) -> {
 +            p_219176_2_.mapLeft((p_219196_2_) -> {
