@@ -32,6 +32,13 @@ Util.init() //Init all our extension methods!
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
+if (System.getProperty("_JAVA_OPTIONS") == null) {
+    System.setProperty("_JAVA_OPTIONS", "-Xmx3500M")
+    System.out.println("This programm use by default 3500M of RAM")
+    System.out.println("If you want to disable this, you can set '_JAVA_OPTIONS' proprety in your environment variable")
+}
+
+
 ext {
     JAR_SIGNER = null
     if (project.hasProperty('keystore')) {
