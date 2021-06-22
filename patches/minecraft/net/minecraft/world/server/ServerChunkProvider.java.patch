@@ -26,7 +26,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.IPacket;
-@@ -47,472 +_,768 @@
+@@ -47,472 +_,769 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -1256,6 +1256,7 @@
 +					return super.func_213168_p();
 +				}
 +			} finally {
++				field_217237_a.chunkLoadConversionCallbackExecutor.run(); // Paper - Add chunk load conversion callback executor to prevent deadlock due to recursion in the chunk task queue sorter
 +				field_217237_a.callbackExecutor.run();
 +			}
 +		}
