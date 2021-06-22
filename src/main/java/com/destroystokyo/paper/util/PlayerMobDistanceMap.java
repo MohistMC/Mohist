@@ -170,8 +170,8 @@ public final class PlayerMobDistanceMap {
 				maxZ = fromZ + (oldViewDistance * up) + up; // exclusive
 				minZ = toZ - (oldViewDistance * up); // inclusive
 
-				for (int currX = minX; currX != maxX; currX = right) {
-					for (int currZ = minZ; currZ != maxZ; currZ = up) {
+				for (int currX = minX; currX != maxX; currX += right) {
+					for (int currZ = minZ; currZ != maxZ; currZ += up) {
 						this.addPlayerTo(player, currX, currZ);
 					}
 				}
@@ -185,8 +185,8 @@ public final class PlayerMobDistanceMap {
 				maxZ = toZ + (oldViewDistance * up) + up; // exclusive
 				minZ = fromZ + (oldViewDistance * up) + up; // inclusive
 
-				for (int currX = minX; currX != maxX; currX = right) {
-					for (int currZ = minZ; currZ != maxZ; currZ = up) {
+				for (int currX = minX; currX != maxX; currX += right) {
+					for (int currZ = minZ; currZ != maxZ; currZ += up) {
 						this.addPlayerTo(player, currX, currZ);
 					}
 				}
@@ -200,8 +200,8 @@ public final class PlayerMobDistanceMap {
 				maxZ = fromZ + (oldViewDistance * up) + up; // exclusive
 				minZ = toZ - (oldViewDistance * up); // inclusive
 
-				for (int currX = minX; currX != maxX; currX = right) {
-					for (int currZ = minZ; currZ != maxZ; currZ = up) {
+				for (int currX = minX; currX != maxX; currX += right) {
+					for (int currZ = minZ; currZ != maxZ; currZ += up) {
 						this.removePlayerFrom(player, currX, currZ);
 					}
 				}
@@ -215,8 +215,8 @@ public final class PlayerMobDistanceMap {
 				maxZ = toZ - (oldViewDistance * up); // exclusive
 				minZ = fromZ - (oldViewDistance * up); // inclusive
 
-				for (int currX = minX; currX != maxX; currX = right) {
-					for (int currZ = minZ; currZ != maxZ; currZ = up) {
+				for (int currX = minX; currX != maxX; currX += right) {
+					for (int currZ = minZ; currZ != maxZ; currZ += up) {
 						this.removePlayerFrom(player, currX, currZ);
 					}
 				}
