@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -205,9 +206,5 @@ public class ItemAPI {
 
     public static int getModBlockByItem(int itemId) {
         return ITEM_BLOCK.getOrDefault(itemId, 0);
-    }
-
-    public static int isBlockByBlockID(int blockid) {
-        return ITEM_BLOCK.entrySet().stream().filter(a -> a.getValue() == blockid).findFirst().map(Map.Entry::getKey).orElse(blockid);
     }
 }

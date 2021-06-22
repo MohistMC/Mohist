@@ -620,7 +620,7 @@ public enum Material {
     public static Material getMaterial(final int id) {
         if (byId.length > id && id >= 0) {
             if (ItemAPI.isBlockByID(id)) {
-                return getBlockMaterial(ItemAPI.getModBlockByItem(ItemAPI.isBlockByBlockID(id)));
+                return blockById[id];
             }
             return byId[id];
         } else {
