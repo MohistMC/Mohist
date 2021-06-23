@@ -1,6 +1,6 @@
+<div align="center">
 <img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
-
-## Mohist-1.7.10
+  <h1>Mohist 1.17.10</h1>
 
 [![](https://ci.codemc.org/buildStatus/icon?job=MohistMC%2FMohist-1.7.10)](https://ci.codemc.org/job/MohistMC/job/Mohist-1.7.10/)
 ![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars)
@@ -11,38 +11,22 @@
 ![](https://img.shields.io/badge/Gradle-2.8-brightgreen.svg?colorB=469C00)
 ![](https://img.shields.io/badge/ideaIU-jbr8-brightgreen.svg?colorB=469C00)
 
-### Getting Help
-   [**Home**](https://mohistmc.com//)
-   [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
-   [**Discord**](https://discord.gg/mohist)
-   [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
-   
-   [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
+[![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
+</div>
 
-### Download
-* [**Jenkins**](https://ci.codemc.org/job/MohistMC/job/Mohist-1.7.10/)
-
-### Building
-* Checkout project
-  * You can use IDE or clone from console:
-  `git clone -b 1.7.10 https://github.com/MohistMC/Mohist.git`
-* Setup
-  * Setting up submodules:
-  `git submodule update --init --recursive`
-* Building
-  * Build the project for Linux:
-  `./gradlew setupCauldron` 
-  `./gradlew launch4j`
-  * or for Windows:
-  `./gradlew.bat setupCauldron ` 
-  `./gradlew.bat launch4j `
-
-All builds will be in `.\Mohist\build\distributions\`
-
-Mohist-xxxxx-server.jar - is the server we should run it
+| Version  | Support |
+| ------------- | ------------- |
+| 1.16.5  | Active  |
+| 1.12.2  | Active  |
+| 1.7.10  | Slow  |
 
 
-Thanks to the following projects
+Getting Help
+------
+
+[MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
+
+Upstream Projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
@@ -50,7 +34,6 @@ Thanks to the following projects
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
 * [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
 
 A Special Thanks To:
 -------------
@@ -62,4 +45,3 @@ A Special Thanks To:
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
 [YourKit](http://www.yourkit.com/), makers of the outstanding java profiler, support open source projects of all kinds with their full featured [Java](https://www.yourkit.com/java/profiler/index.jsp) and [.NET](https://www.yourkit.com/.net/profiler/index.jsp) application profilers. We thank them for granting Mohist an OSS license so that we can make our software the best it can be.
-
