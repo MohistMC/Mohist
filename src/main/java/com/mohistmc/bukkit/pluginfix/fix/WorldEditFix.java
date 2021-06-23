@@ -44,10 +44,20 @@ public class WorldEditFix {
         classReader.accept(classNode, 0);
 
         for (MethodNode methodNode : classNode.methods) {
+            // Fix method 'public static Material adapt(BlockType blockType)'
             if (methodNode.name.equals("adapt") && methodNode.desc.equals("(Lcom/sk89q/worldedit/world/block/BlockType;)Lorg/bukkit/Material;")) {
                 InsnList toInject = new InsnList();
                 toInject.add(new VarInsnNode(ALOAD, 0));
                 toInject.add(new MethodInsnNode(INVOKEVIRTUAL, "com/sk89q/worldedit/world/block/BlockType", "getId", "()Ljava/lang/String;"));
+                toInject.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(WorldEditFix.class), "adaptFix", "(Ljava/lang/String;)Lorg/bukkit/Material;"));
+                toInject.add(new InsnNode(ARETURN));
+                methodNode.instructions = toInject;
+            }
+            // Fix method 'public static Material adapt(ItemType itemType)'
+            if (methodNode.name.equals("adapt") && methodNode.desc.equals("(Lcom/sk89q/worldedit/world/item/ItemType;)Lorg/bukkit/Material;")) {
+                InsnList toInject = new InsnList();
+                toInject.add(new VarInsnNode(ALOAD, 0));
+                toInject.add(new MethodInsnNode(INVOKEVIRTUAL, "com/sk89q/worldedit/world/item/ItemType", "getId", "()Ljava/lang/String;"));
                 toInject.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(WorldEditFix.class), "adaptFix", "(Ljava/lang/String;)Lorg/bukkit/Material;"));
                 toInject.add(new InsnNode(ARETURN));
                 methodNode.instructions = toInject;
@@ -59,11 +69,11 @@ public class WorldEditFix {
     }
 
     // Method inject in worldedit plugin
-    public static Material adaptFix(String blockType) {
-        checkNotNull(blockType);
-        if (!blockType.startsWith("minecraft:")) {
-            return Material.getMaterial(blockType.replace(":", "_").toUpperCase(Locale.ROOT));
+    public static Material adaptFix(String type) {
+        checkNotNull(type);
+        if (!type.startsWith("minecraft:")) {
+            return Material.getMaterial(type.replace(":", "_").toUpperCase(Locale.ROOT));
         }
-        return Material.getMaterial(blockType.substring(10).toUpperCase(Locale.ROOT));
+        return Material.getMaterial(type.substring(10).toUpperCase(Locale.ROOT));
     }
 }
