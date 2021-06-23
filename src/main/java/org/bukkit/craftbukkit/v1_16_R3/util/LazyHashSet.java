@@ -80,7 +80,7 @@ public abstract class LazyHashSet<E> implements Set<E> {
         return this.reference = makeReference();
     }
 
-    abstract Set<E> makeReference();
+    protected abstract Set<E> makeReference(); // Paper - protected
 
     public boolean isLazy() {
         return reference == null;

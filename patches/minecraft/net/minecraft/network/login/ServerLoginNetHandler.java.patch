@@ -1,6 +1,11 @@
 --- a/net/minecraft/network/login/ServerLoginNetHandler.java
 +++ b/net/minecraft/network/login/ServerLoginNetHandler.java
-@@ -17,6 +_,7 @@
+@@ -14,9 +_,12 @@
+ import javax.annotation.Nullable;
+ import javax.crypto.Cipher;
+ import javax.crypto.SecretKey;
++
++import io.papermc.paper.adventure.PaperAdventure;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.NetworkManager;
@@ -270,7 +275,7 @@
 +         if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
 +            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
 +            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
-+               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
++               event.disallow(asyncEvent.getResult(), asyncEvent.kickMessage()); // Paper - Adventure
 +            }
 +            Waitable<Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
 +               @Override
@@ -280,12 +285,12 @@
 +               }};
 +            ServerLoginNetHandler.this.field_147327_f.processQueue.add(waitable);
 +            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
-+               disconnect(event.getKickMessage());
++               ServerLoginNetHandler.this.func_194026_b(PaperAdventure.asVanilla(event.kickMessage())); // Paper - Adventure
 +               return;
 +            }
 +         } else {
 +            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-+               disconnect(asyncEvent.getKickMessage());
++               ServerLoginNetHandler.this.func_194026_b(PaperAdventure.asVanilla(asyncEvent.kickMessage())); // Paper - Adventure
 +               return;
 +            }
 +         }

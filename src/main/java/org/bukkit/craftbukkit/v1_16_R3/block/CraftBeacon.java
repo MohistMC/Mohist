@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_16_R3.block;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.tileentity.BeaconTileEntity;
@@ -69,6 +70,19 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconTileEntity> impleme
     public void setSecondaryEffect(PotionEffectType effect) {
         this.getSnapshot().secondaryPower = (effect != null) ? Effect.byId(effect.getId()) : null;
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component customName() {
+        final BeaconTileEntity be = this.getSnapshot();
+        return be.name != null ? io.papermc.paper.adventure.PaperAdventure.asAdventure(be.name) : null;
+    }
+
+    @Override
+    public void customName(final net.kyori.adventure.text.Component customName) {
+        this.getSnapshot().setCustomName(customName != null ? io.papermc.paper.adventure.PaperAdventure.asVanilla(customName) : null);
+    }
+    // Paper end
 
     @Override
     public String getCustomName() {

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class InventoryView {
     public static final int OUTSIDE = -999;
+
     /**
      * Represents various extra properties of certain inventory windows.
      */
@@ -26,7 +27,7 @@ public abstract class InventoryView {
         BREW_TIME(0, InventoryType.BREWING),
         /**
          * The progress of the fuel slot in a brewing inventory.
-         *
+         * <p>
          * This is a value between 0 and 20, with 0 making the bar empty, and 20
          * making the bar full.
          */
@@ -112,6 +113,7 @@ public abstract class InventoryView {
         BOOK_PAGE(0, InventoryType.LECTERN);
         int id;
         InventoryType style;
+
         private Property(int id, /*@NotNull*/ InventoryType appliesTo) {
             this.id = id;
             style = appliesTo;
@@ -133,6 +135,7 @@ public abstract class InventoryView {
             return id;
         }
     }
+
     /**
      * Get the upper inventory involved in this transaction.
      *
@@ -201,7 +204,7 @@ public abstract class InventoryView {
      * Sets the item on the cursor of one of the viewing players.
      *
      * @param item The item to put on the cursor, or null to remove the item
-     *     on their cursor.
+     *             on their cursor.
      */
     public final void setCursor(@Nullable ItemStack item) {
         getPlayer().setItemOnCursor(item);
@@ -211,7 +214,7 @@ public abstract class InventoryView {
      * Get the item on the cursor of one of the viewing players.
      *
      * @return The item on the player's cursor, or null if they aren't holding
-     *     one.
+     * one.
      */
     @Nullable
     public final ItemStack getCursor() {
@@ -220,10 +223,10 @@ public abstract class InventoryView {
 
     /**
      * Gets the inventory corresponding to the given raw slot ID.
-     *
+     * <p>
      * If the slot ID is {@link #OUTSIDE} null will be returned, otherwise
      * behaviour for illegal and negative slot IDs is undefined.
-     *
+     * <p>
      * May be used with {@link #convertSlot(int)} to directly index an
      * underlying inventory.
      *
@@ -338,65 +341,65 @@ public abstract class InventoryView {
         InventoryType.SlotType type = InventoryType.SlotType.CONTAINER;
         if (slot >= 0 && slot < this.getTopInventory().getSize()) {
             switch (this.getType()) {
-            case BLAST_FURNACE:
-            case FURNACE:
-            case SMOKER:
-                if (slot == 2) {
-                    type = InventoryType.SlotType.RESULT;
-                } else if (slot == 1) {
-                    type = InventoryType.SlotType.FUEL;
-                } else {
+                case BLAST_FURNACE:
+                case FURNACE:
+                case SMOKER:
+                    if (slot == 2) {
+                        type = InventoryType.SlotType.RESULT;
+                    } else if (slot == 1) {
+                        type = InventoryType.SlotType.FUEL;
+                    } else {
+                        type = InventoryType.SlotType.CRAFTING;
+                    }
+                    break;
+                case BREWING:
+                    if (slot == 3) {
+                        type = InventoryType.SlotType.FUEL;
+                    } else {
+                        type = InventoryType.SlotType.CRAFTING;
+                    }
+                    break;
+                case ENCHANTING:
                     type = InventoryType.SlotType.CRAFTING;
-                }
-                break;
-            case BREWING:
-                if (slot == 3) {
-                    type = InventoryType.SlotType.FUEL;
-                } else {
+                    break;
+                case WORKBENCH:
+                case CRAFTING:
+                    if (slot == 0) {
+                        type = InventoryType.SlotType.RESULT;
+                    } else {
+                        type = InventoryType.SlotType.CRAFTING;
+                    }
+                    break;
+                case BEACON:
                     type = InventoryType.SlotType.CRAFTING;
-                }
-                break;
-            case ENCHANTING:
-                type = InventoryType.SlotType.CRAFTING;
-                break;
-            case WORKBENCH:
-            case CRAFTING:
-                if (slot == 0) {
-                    type = InventoryType.SlotType.RESULT;
-                } else {
-                    type = InventoryType.SlotType.CRAFTING;
-                }
-                break;
-            case BEACON:
-                type = InventoryType.SlotType.CRAFTING;
-                break;
-            case ANVIL:
-            case SMITHING:
-            case CARTOGRAPHY:
-            case GRINDSTONE:
-            case MERCHANT:
-                if (slot == 2) {
-                    type = InventoryType.SlotType.RESULT;
-                } else {
-                    type = InventoryType.SlotType.CRAFTING;
-                }
-                break;
-            case STONECUTTER:
-                if (slot == 1) {
-                    type = InventoryType.SlotType.RESULT;
-                } else {
-                    type = InventoryType.SlotType.CRAFTING;
-                }
-                break;
-            case LOOM:
-                if (slot == 3) {
-                    type = InventoryType.SlotType.RESULT;
-                } else {
-                    type = InventoryType.SlotType.CRAFTING;
-                }
-                break;
-            default:
-                // Nothing to do, it's a CONTAINER slot
+                    break;
+                case ANVIL:
+                case SMITHING:
+                case CARTOGRAPHY:
+                case GRINDSTONE:
+                case MERCHANT:
+                    if (slot == 2) {
+                        type = InventoryType.SlotType.RESULT;
+                    } else {
+                        type = InventoryType.SlotType.CRAFTING;
+                    }
+                    break;
+                case STONECUTTER:
+                    if (slot == 1) {
+                        type = InventoryType.SlotType.RESULT;
+                    } else {
+                        type = InventoryType.SlotType.CRAFTING;
+                    }
+                    break;
+                case LOOM:
+                    if (slot == 3) {
+                        type = InventoryType.SlotType.RESULT;
+                    } else {
+                        type = InventoryType.SlotType.CRAFTING;
+                    }
+                    break;
+                default:
+                    // Nothing to do, it's a CONTAINER slot
             }
         } else {
             if (slot < 0) {
@@ -438,20 +441,35 @@ public abstract class InventoryView {
      * Sets an extra property of this inventory if supported by that
      * inventory, for example the state of a progress bar.
      *
-     * @param prop the window property to update
+     * @param prop  the window property to update
      * @param value the new value for the window property
      * @return true if the property was updated successfully, false if the
-     *     property is not supported by that inventory
+     * property is not supported by that inventory
      */
     public final boolean setProperty(@NotNull Property prop, int value) {
         return getPlayer().setWindowProperty(prop, value);
     }
+
+    // Paper start
 
     /**
      * Get the title of this inventory window.
      *
      * @return The title.
      */
+    @NotNull
+    public /*abstract*/ net.kyori.adventure.text.Component title() {
+        return org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(this.getTitle());
+    }
+    // Paper end
+
+    /**
+     * Get the title of this inventory window.
+     *
+     * @return The title.
+     * @deprecated in favour of {@link #title()}
+     */
+    @Deprecated // Paper
     @NotNull
     public abstract String getTitle();
 }

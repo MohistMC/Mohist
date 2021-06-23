@@ -1,14 +1,17 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.nbt.CompoundNBT;
@@ -22,6 +25,7 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BookMeta;
+
 import static org.spigotmc.ValidateUtils.limit;
 
 @DelegateDeserialization(SerializableMeta.class)
@@ -84,11 +88,11 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         super(tag);
 
         if (tag.contains(BOOK_TITLE.NBT)) {
-            this.title =  limit( tag.getString(BOOK_TITLE.NBT), 8192 ); // Spigot
+            this.title = limit(tag.getString(BOOK_TITLE.NBT), 8192); // Spigot
         }
 
         if (tag.contains(BOOK_AUTHOR.NBT)) {
-            this.author = limit( tag.getString(BOOK_AUTHOR.NBT), 8192 ); // Spigot
+            this.author = limit(tag.getString(BOOK_AUTHOR.NBT), 8192); // Spigot
         }
 
         if (tag.contains(RESOLVED.NBT)) {
@@ -197,11 +201,11 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     @Override
     boolean applicableTo(Material type) {
         switch (type) {
-        case WRITTEN_BOOK:
-        case WRITABLE_BOOK:
-            return true;
-        default:
-            return false;
+            case WRITTEN_BOOK:
+            case WRITABLE_BOOK:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -262,6 +266,142 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     public void setGeneration(Generation generation) {
         this.generation = (generation == null) ? null : generation.ordinal();
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component title() {
+        return this.title == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(this.title);
+    }
+
+    @Override
+    public org.bukkit.inventory.meta.BookMeta title(net.kyori.adventure.text.Component title) {
+        this.setTitle(title == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(title));
+        return this;
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component author() {
+        return this.author == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(this.author);
+    }
+
+    @Override
+    public org.bukkit.inventory.meta.BookMeta author(net.kyori.adventure.text.Component author) {
+        this.setAuthor(author == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(author));
+        return this;
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component page(final int page) {
+        Validate.isTrue(isValidPage(page), "Invalid page number");
+        return this instanceof CraftMetaBookSigned ? net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().deserialize(pages.get(page - 1)) : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(pages.get(page - 1));
+    }
+
+    @Override
+    public void page(final int page, net.kyori.adventure.text.Component data) {
+        if (!isValidPage(page)) {
+            throw new IllegalArgumentException("Invalid page number " + page + "/" + pages.size());
+        }
+        if (data == null) {
+            data = net.kyori.adventure.text.Component.empty();
+        }
+        pages.set(page - 1, this instanceof CraftMetaBookSigned ? net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().serialize(data) : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(data));
+    }
+
+    @Override
+    public List<net.kyori.adventure.text.Component> pages() {
+        if (this.pages == null) return ImmutableList.of();
+        if (this instanceof CraftMetaBookSigned)
+            return pages.stream().map(net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson()::deserialize).collect(ImmutableList.toImmutableList());
+        else
+            return pages.stream().map(io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC::deserialize).collect(ImmutableList.toImmutableList());
+    }
+
+    @Override
+    public BookMeta pages(List<net.kyori.adventure.text.Component> pages) {
+        if (this.pages != null) this.pages.clear();
+        for (net.kyori.adventure.text.Component page : pages) {
+            addPages(page);
+        }
+        return this;
+    }
+
+    @Override
+    public BookMeta pages(net.kyori.adventure.text.Component... pages) {
+        if (this.pages != null) this.pages.clear();
+        addPages(pages);
+        return this;
+    }
+
+    @Override
+    public void addPages(net.kyori.adventure.text.Component... pages) {
+        if (this.pages == null) this.pages = new ArrayList<>();
+        for (net.kyori.adventure.text.Component page : pages) {
+            if (this.pages.size() >= MAX_PAGES) {
+                return;
+            }
+
+            if (page == null) {
+                page = net.kyori.adventure.text.Component.empty();
+            }
+
+            this.pages.add(this instanceof CraftMetaBookSigned ? net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().serialize(page) : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(page));
+        }
+    }
+
+    private CraftMetaBook(net.kyori.adventure.text.Component title, net.kyori.adventure.text.Component author, List<net.kyori.adventure.text.Component> pages) {
+        super((org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaItem) org.bukkit.Bukkit.getItemFactory().getItemMeta(org.bukkit.Material.WRITABLE_BOOK));
+        this.title = title == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(title);
+        this.author = author == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(author);
+        this.pages = pages.subList(0, Math.min(MAX_PAGES, pages.size())).stream().map(io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC::serialize).collect(java.util.stream.Collectors.toList());
+    }
+
+    static final class CraftMetaBookBuilder implements BookMetaBuilder {
+        private net.kyori.adventure.text.Component title = null;
+        private net.kyori.adventure.text.Component author = null;
+        private final List<net.kyori.adventure.text.Component> pages = new java.util.ArrayList<>();
+
+        @Override
+        public BookMetaBuilder title(net.kyori.adventure.text.Component title) {
+            this.title = title;
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder author(net.kyori.adventure.text.Component author) {
+            this.author = author;
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder addPage(net.kyori.adventure.text.Component page) {
+            this.pages.add(page);
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder pages(net.kyori.adventure.text.Component... pages) {
+            java.util.Collections.addAll(this.pages, pages);
+            return this;
+        }
+
+        @Override
+        public BookMetaBuilder pages(java.util.Collection<net.kyori.adventure.text.Component> pages) {
+            this.pages.addAll(pages);
+            return this;
+        }
+
+        @Override
+        public BookMeta build() {
+            return new CraftMetaBook(title, author, pages);
+        }
+    }
+
+    @Override
+    public BookMetaBuilder toBuilder() {
+        return new CraftMetaBookBuilder();
+    }
+
+    // Paper end
 
     @Override
     public String getPage(final int page) {
@@ -407,7 +547,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     }
 
     @Override
-    Builder<String, Object> serialize(Builder<String, Object> builder) {
+    ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         super.serialize(builder);
 
         if (hasTitle()) {
@@ -435,6 +575,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
     // Spigot start
     private BookMeta.Spigot spigot = new SpigotMeta();
+
     private class SpigotMeta extends BookMeta.Spigot {
 
         private String pageToJSON(String page) {
@@ -458,11 +599,13 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 return CraftChatMessage.fromJSONComponent(ComponentSerializer.toString(components));
             }
         }
+
         @Override
         public BaseComponent[] getPage(final int page) {
             Validate.isTrue(isValidPage(page), "Invalid page number");
             return ComponentSerializer.parse(pageToJSON(pages.get(page - 1)));
         }
+
         @Override
         public void setPage(final int page, final BaseComponent... text) {
             if (!isValidPage(page)) {
@@ -471,10 +614,12 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
             BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
             CraftMetaBook.this.pages.set(page - 1, componentsToPage(newText));
         }
+
         @Override
         public void setPages(final BaseComponent[]... pages) {
             setPages(Arrays.asList(pages));
         }
+
         @Override
         public void addPage(final BaseComponent[]... pages) {
             for (BaseComponent[] page : pages) {
@@ -484,6 +629,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 CraftMetaBook.this.pages.add(componentsToPage(page));
             }
         }
+
         @Override
         public List<BaseComponent[]> getPages() {
             if (CraftMetaBook.this.pages == null) return ImmutableList.of();
@@ -493,12 +639,14 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 public BaseComponent[] get(int index) {
                     return ComponentSerializer.parse(pageToJSON(copy.get(index)));
                 }
+
                 @Override
                 public int size() {
                     return copy.size();
                 }
             };
         }
+
         @Override
         public void setPages(List<BaseComponent[]> pages) {
             if (pages.isEmpty()) {
@@ -513,7 +661,9 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 addPage(page);
             }
         }
-    };
+    }
+
+    ;
 
     @Override
     public BookMeta.Spigot spigot() {

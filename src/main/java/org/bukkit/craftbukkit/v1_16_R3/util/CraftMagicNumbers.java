@@ -8,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -55,7 +57,35 @@ import org.bukkit.plugin.PluginDescriptionFile;
 public final class CraftMagicNumbers implements UnsafeValues {
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
 
-    private CraftMagicNumbers() {}
+    private CraftMagicNumbers() {
+    }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.flattener.ComponentFlattener componentFlattener() {
+        return io.papermc.paper.adventure.PaperAdventure.FLATTENER;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer colorDownsamplingGsonComponentSerializer() {
+        return io.papermc.paper.adventure.PaperAdventure.COLOR_DOWNSAMPLING_GSON;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer gsonComponentSerializer() {
+        return io.papermc.paper.adventure.PaperAdventure.GSON;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.plain.PlainComponentSerializer plainComponentSerializer() {
+        return io.papermc.paper.adventure.PaperAdventure.PLAIN;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer() {
+        return io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC;
+    }
+    // Paper end
 
     public static BlockState getBlock(MaterialData material) {
         return getBlock(material.getItemType(), material.getData());
@@ -176,6 +206,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public void reportTimings() {
         co.aikar.timings.TimingsExport.reportTimings();
     }
+
     // Paper end
     public static byte toLegacyData(BlockState data) {
         return CraftLegacy.toLegacyData(data);
@@ -228,11 +259,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     /**
      * This string should be changed if the NMS mappings do.
-     *
+     * <p>
      * It has no meaning and should only be used as an equality check. Plugins
      * which are sensitive to the NMS mappings may read it and refuse to load if
      * it cannot be found or is different to the expected value.
-     *
+     * <p>
      * Remember: NMS is not supported API and may break at any time for any
      * reason irrespective of this. There is often supported API to do the same
      * thing as many common NMS usages. If not, you are encouraged to open a

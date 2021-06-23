@@ -1,7 +1,10 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+
 import java.util.Map;
+
 import net.minecraft.nbt.CompoundNBT;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -51,11 +54,11 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
     @Override
     boolean applicableTo(Material type) {
         switch (type) {
-        case WRITTEN_BOOK:
-        case WRITABLE_BOOK:
-            return true;
-        default:
-            return false;
+            case WRITTEN_BOOK:
+            case WRITABLE_BOOK:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -83,7 +86,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
     }
 
     @Override
-    Builder<String, Object> serialize(Builder<String, Object> builder) {
+    ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         super.serialize(builder);
         return builder;
     }

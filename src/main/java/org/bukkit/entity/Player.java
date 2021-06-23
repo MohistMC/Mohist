@@ -31,7 +31,28 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a player, connected or not
  */
-public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginMessageRecipient {
+public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginMessageRecipient, net.kyori.adventure.identity.Identified { // Paper
+
+    // Paper start
+    @Override
+    default @NotNull net.kyori.adventure.identity.Identity identity() {
+        return net.kyori.adventure.identity.Identity.identity(this.getUniqueId());
+    }
+
+    /**
+     * Gets the "friendly" name to display of this player.
+     *
+     * @return the display name
+     */
+    @NotNull net.kyori.adventure.text.Component displayName();
+
+    /**
+     * Sets the "friendly" name to display of this player.
+     *
+     * @param displayName the display name to set
+     */
+    void displayName(final @Nullable net.kyori.adventure.text.Component displayName);
+    // Paper end
 
     /**
      * Gets the "friendly" name to display of this player. This may include
@@ -41,7 +62,9 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * places defined by plugins.
      *
      * @return the friendly name
+     * @deprecated in favour of {@link #displayName()}
      */
+    @Deprecated // Paper
     @NotNull
     public String getDisplayName();
 
@@ -53,16 +76,12 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * places defined by plugins.
      *
      * @param name The new display name.
+     * @deprecated in favour of {@link #displayName(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public void setDisplayName(@Nullable String name);
 
-    /**
-     * Gets the name that is shown on the player list.
-     *
-     * @return the player list name
-     */
-    @NotNull
-    public String getPlayerListName();
+    // Paper start
 
     /**
      * Sets the name that is shown on the in-game player list.
@@ -71,13 +90,59 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param name new player list name
      */
-    public void setPlayerListName(@Nullable String name);
+    void playerListName(@Nullable net.kyori.adventure.text.Component name);
+
+    /**
+     * Gets the name that is shown on the in-game player list.
+     *
+     * @return the player list name
+     */
+    @Nullable net.kyori.adventure.text.Component playerListName();
 
     /**
      * Gets the currently displayed player list header for this player.
      *
      * @return player list header or null
      */
+    @Nullable net.kyori.adventure.text.Component playerListHeader();
+
+    /**
+     * Gets the currently displayed player list footer for this player.
+     *
+     * @return player list footer or null
+     */
+    @Nullable net.kyori.adventure.text.Component playerListFooter();
+    // Paper end
+
+    /**
+     * Gets the name that is shown on the player list.
+     *
+     * @return the player list name
+     * @deprecated in favour of {@link #playerListName()}
+     */
+
+    @NotNull
+    @Deprecated // Paper
+    public String getPlayerListName();
+
+    /**
+     * Sets the name that is shown on the in-game player list.
+     * <p>
+     * If the value is null, the name will be identical to {@link #getName()}.
+     *
+     * @param name new player list name
+     * @deprecated in favour of {@link #playerListName(net.kyori.adventure.text.Component)}
+     */
+    @Deprecated // Paper
+    public void setPlayerListName(@Nullable String name);
+
+    /**
+     * Gets the currently displayed player list header for this player.
+     *
+     * @return player list header or null
+     * @deprecated in favour of {@link #playerListHeader()}
+     */
+    @Deprecated // Paper
     @Nullable
     public String getPlayerListHeader();
 
@@ -85,7 +150,9 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Gets the currently displayed player list footer for this player.
      *
      * @return player list header or null
+     * @deprecated in favour of {@link #playerListFooter()}
      */
+    @Deprecated // Paper
     @Nullable
     public String getPlayerListFooter();
 
@@ -93,14 +160,18 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Sets the currently displayed player list header for this player.
      *
      * @param header player list header, null for empty
+     * @deprecated in favour of {@link #sendPlayerListHeader(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public void setPlayerListHeader(@Nullable String header);
 
     /**
      * Sets the currently displayed player list footer for this player.
      *
      * @param footer player list footer, null for empty
+     * @deprecated in favour of {@link #sendPlayerListFooter(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public void setPlayerListFooter(@Nullable String footer);
 
     /**
@@ -109,7 +180,9 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param header player list header, null for empty
      * @param footer player list footer, null for empty
+     * @deprecated in favour of {@link #sendPlayerListHeaderAndFooter(net.kyori.adventure.text.Component, net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public void setPlayerListHeaderFooter(@Nullable String header, @Nullable String footer);
 
     /**
@@ -147,8 +220,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Kicks player with custom kick message.
      *
      * @param message kick message
+     * @deprecated in favour of {@link #kick(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public void kickPlayer(@Nullable String message);
+
+    // Paper start
+
+    /**
+     * Kicks player with custom kick message.
+     *
+     * @param message kick message
+     */
+    void kick(final @Nullable net.kyori.adventure.text.Component message);
+    // Paper end
 
     /**
      * Says a message (or runs a command).
@@ -449,6 +534,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     @Deprecated
     public boolean sendChunkChange(@NotNull Location loc, int sx, int sy, int sz, @NotNull byte[] data);
 
+    // Paper start
+
     /**
      * Send a sign change. This fakes a sign change packet for a user at
      * a certain location. This will not actually change the world in any way.
@@ -464,6 +551,45 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @throws IllegalArgumentException if location is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      */
+    void sendSignChange(@NotNull Location loc, @Nullable java.util.List<net.kyori.adventure.text.Component> lines) throws IllegalArgumentException;
+
+    /**
+     * Send a sign change. This fakes a sign change packet for a user at
+     * a certain location. This will not actually change the world in any way.
+     * This method will use a sign at the location's block or a faked sign
+     * sent via
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.Material, byte)}.
+     * <p>
+     * If the client does not have a sign at the given location it will
+     * display an error message to the user.
+     *
+     * @param loc      the location of the sign
+     * @param lines    the new text on the sign or null to clear it
+     * @param dyeColor the color of the sign
+     * @throws IllegalArgumentException if location is null
+     * @throws IllegalArgumentException if dyeColor is null
+     * @throws IllegalArgumentException if lines is non-null and has a length less than 4
+     */
+    void sendSignChange(@NotNull Location loc, @Nullable java.util.List<net.kyori.adventure.text.Component> lines, @NotNull DyeColor dyeColor) throws IllegalArgumentException;
+    // Paper end
+
+    /**
+     * Send a sign change. This fakes a sign change packet for a user at
+     * a certain location. This will not actually change the world in any way.
+     * This method will use a sign at the location's block or a faked sign
+     * sent via
+     * {@link #sendBlockChange(org.bukkit.Location, org.bukkit.Material, byte)}.
+     * <p>
+     * If the client does not have a sign at the given location it will
+     * display an error message to the user.
+     *
+     * @param loc   the location of the sign
+     * @param lines the new text on the sign or null to clear it
+     * @throws IllegalArgumentException if location is null
+     * @throws IllegalArgumentException if lines is non-null and has a length less than 4
+     * @deprecated in favour of {@link #sendSignChange(org.bukkit.Location, java.util.List)}
+     */
+    @Deprecated // Paper
     public void sendSignChange(@NotNull Location loc, @Nullable String[] lines) throws IllegalArgumentException;
 
 
@@ -483,7 +609,9 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @throws IllegalArgumentException if location is null
      * @throws IllegalArgumentException if dyeColor is null
      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
+     * @deprecated in favour of {@link #sendSignChange(org.bukkit.Location, java.util.List, org.bukkit.DyeColor)}
      */
+    @Deprecated // Paper
     public void sendSignChange(@NotNull Location loc, @Nullable String[] lines, @NotNull DyeColor dyeColor) throws IllegalArgumentException;
 
     /**
@@ -1254,6 +1382,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     public int getClientViewDistance();
 
+    // Paper start
+
+    /**
+     * Gets the player's current locale.
+     *
+     * @return the player's locale
+     */
+    @NotNull java.util.Locale locale();
+    // Paper end
+
     /**
      * Gets the player's estimated ping in milliseconds.
      * <p>
@@ -1279,8 +1417,10 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * they wish.
      *
      * @return the player's locale
+     * @deprecated in favour of {@link #locale()}
      */
     @NotNull
+    @Deprecated // Paper
     public String getLocale();
 
     // Paper start
@@ -1314,6 +1454,14 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param book The book to open for this player
      */
     public void openBook(@NotNull ItemStack book);
+
+    // Paper start
+    @NotNull
+    @Override
+    default net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowEntity> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowEntity> op) {
+        return net.kyori.adventure.text.event.HoverEvent.showEntity(op.apply(net.kyori.adventure.text.event.HoverEvent.ShowEntity.of(this.getType().getKey(), this.getUniqueId(), this.displayName())));
+    }
+    // Paper end
 
     // Spigot start
     public class Spigot extends Entity.Spigot {
@@ -1369,11 +1517,13 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Deprecated // Paper
         @Override
         public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Deprecated // Paper
         @Override
         public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -1384,7 +1534,9 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
          *
          * @param position  the screen position
          * @param component the components to send
+         * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
          */
+        @Deprecated // Paper
         public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
             throw new UnsupportedOperationException("Not supported yet.");
         }

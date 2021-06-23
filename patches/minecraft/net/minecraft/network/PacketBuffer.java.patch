@@ -1,5 +1,14 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
+@@ -22,6 +_,8 @@
+ import java.util.Date;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import io.papermc.paper.adventure.PaperAdventure;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.CompoundNBT;
 @@ -29,6 +_,7 @@
  import net.minecraft.nbt.INBT;
  import net.minecraft.nbt.NBTDynamicOps;
@@ -8,7 +17,7 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
-@@ -38,14 +_,16 @@
+@@ -38,14 +_,17 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,6 +26,7 @@
 -public class PacketBuffer extends ByteBuf {
 +public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
     private final ByteBuf field_150794_a;
++   public java.util.Locale adventure$locale; // Paper
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
        this.field_150794_a = p_i45154_1_;
@@ -26,11 +36,15 @@
     public static int func_150790_a(int p_150790_0_) {
        for(int i = 1; i < 5; ++i) {
           if ((p_150790_0_ & -1 << i * 7) == 0) {
-@@ -176,6 +_,13 @@
+@@ -176,8 +_,20 @@
        return ITextComponent.Serializer.func_240643_a_(this.func_150789_c(262144));
     }
  
 +   // Paper start
++   public PacketBuffer writeComponent(final net.kyori.adventure.text.Component component) {
++      return this.func_211400_a(PaperAdventure.asJsonString(component, this.adventure$locale), 262144);
++   }
++   
 +   @Deprecated
 +   public PacketBuffer writeComponent(final net.md_5.bungee.api.chat.BaseComponent[] component) {
 +      return this.func_211400_a(net.md_5.bungee.chat.ComponentSerializer.toString(component), 262144);
@@ -38,8 +52,12 @@
 +   // Paper end
 +
     public PacketBuffer func_179256_a(ITextComponent p_179256_1_) {
-       return this.func_211400_a(ITextComponent.Serializer.func_150696_a(p_179256_1_), 262144);
+-      return this.func_211400_a(ITextComponent.Serializer.func_150696_a(p_179256_1_), 262144);
++      //return this.writeUtf(ITextComponent.Serializer.toJson(p_179256_1_), 262144);  // Paper - comment
++      return this.func_211400_a(PaperAdventure.asJsonString(p_179256_1_, this.adventure$locale), 262144); // Paper
     }
+ 
+    public <T extends Enum<T>> T func_179257_a(Class<T> p_179257_1_) {
 @@ -292,7 +_,16 @@
     }
  

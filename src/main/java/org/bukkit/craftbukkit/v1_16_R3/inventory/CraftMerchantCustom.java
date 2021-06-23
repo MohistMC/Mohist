@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.merchant.IMerchant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,10 +16,18 @@ import org.apache.commons.lang.Validate;
 
 public class CraftMerchantCustom extends CraftMerchant {
 
+    @Deprecated // Paper - Adventure
     public CraftMerchantCustom(String title) {
         super(new MinecraftMerchant(title));
         getMerchant().craftMerchant = this;
     }
+
+    // Paper start
+    public CraftMerchantCustom(net.kyori.adventure.text.Component title) {
+        super(new MinecraftMerchant(title));
+        getMerchant().craftMerchant = this;
+    }
+    // Paper end
 
     @Override
     public String toString() {
@@ -38,10 +47,19 @@ public class CraftMerchantCustom extends CraftMerchant {
         private World tradingWorld;
         protected CraftMerchant craftMerchant;
 
+        @Deprecated // Paper - Adventure
         public MinecraftMerchant(String title) {
             Validate.notNull(title, "Title cannot be null");
             this.title = new StringTextComponent(title);
         }
+
+        // Paper start
+        public MinecraftMerchant(net.kyori.adventure.text.Component title) {
+            Validate.notNull(title, "Title cannot be null");
+            this.title = io.papermc.paper.adventure.PaperAdventure.asVanilla(title);
+        }
+        // Paper end
+
 
         @Override
         public CraftMerchant getCraftMerchant() {

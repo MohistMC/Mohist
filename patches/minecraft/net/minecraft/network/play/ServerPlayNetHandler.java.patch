@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -1,27 +_,32 @@
+@@ -1,27 +_,34 @@
  package net.minecraft.network.play;
  
 +import co.aikar.timings.MinecraftTimings;
@@ -13,6 +13,8 @@
  import com.mojang.brigadier.StringReader;
  import io.netty.util.concurrent.Future;
  import io.netty.util.concurrent.GenericFutureListener;
++import io.papermc.paper.adventure.ChatProcessor;
++import io.papermc.paper.adventure.PaperAdventure;
  import it.unimi.dsi.fastutil.ints.Int2ShortMap;
  import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
 +
@@ -99,7 +101,7 @@
  import net.minecraft.util.math.shapes.IBooleanFunction;
  import net.minecraft.util.math.shapes.VoxelShape;
  import net.minecraft.util.math.shapes.VoxelShapes;
-@@ -150,1271 +_,2504 @@
+@@ -150,1271 +_,2517 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -514,20 +516,23 @@
 +        return this.field_147367_d.func_213199_b(this.field_147369_b.func_146103_bH());
 +    }
 +
-+    // CraftBukkit start
-+    @Deprecated
-+    public void func_194028_b(ITextComponent p_194028_1_) {
-+        disconnect(CraftChatMessage.fromComponent(p_194028_1_));
++    public void disconnect(String s) {
++        // Paper start
++        this.disconnect(PaperAdventure.LEGACY_SECTION_UXRC.deserialize(s));
 +    }
-+    // CraftBukkit end
 +
-+    public void disconnect(String message) {
++    public void func_194028_b(final ITextComponent p_194028_1_) {
++        this.disconnect(PaperAdventure.asAdventure(p_194028_1_));
++    }
++
++    public void disconnect(net.kyori.adventure.text.Component reason) {
++        // Paper end
 +        // CraftBukkit start - fire PlayerKickEvent
 +        if (this.processedDisconnect) {
 +            return;
 +        }
-+        String leaveMessage = TextFormatting.YELLOW + this.field_147369_b.func_195047_I_() + " left the game.";
-+        PlayerKickEvent event = new PlayerKickEvent(this.craftServer.getPlayer(this.field_147369_b), message, leaveMessage);
++        net.kyori.adventure.text.Component leaveMessage = net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, this.field_147369_b.getBukkitEntity().displayName()); // Paper - Adventure
++        PlayerKickEvent event = new PlayerKickEvent(this.field_147369_b.getBukkitEntity(), reason, leaveMessage); // Paper - Adventure
 +        if (this.craftServer.getServer().func_71278_l()) {
 +            this.craftServer.getPluginManager().callEvent(event);
 +        }
@@ -536,9 +541,8 @@
 +            return;
 +        }
 +        // Send the possibly modified leave message
-+        message = event.getReason();
++        final ITextComponent textComponent = PaperAdventure.asVanilla(event.reason()); // Paper - Adventure
 +        // CraftBukkit end
-+        final ITextComponent textComponent = new StringTextComponent(message);
 +
 +        this.field_147371_a.func_201058_a(new SDisconnectPacket(textComponent), (p_210161_2_) -> {
 +            this.field_147371_a.func_150718_a(textComponent);
@@ -2171,15 +2175,17 @@
 +      this.player.disconnect();
 +      this.server.getPlayerList().playerLoggedOut(this.player);
 +     */
-+        String quitMessage = this.field_147367_d.func_184103_al().disconnect(this.field_147369_b);
++        // CraftBukkit end
 +        IChatFilter ichatfilter = this.field_147369_b.func_244529_Q();
 +        if (ichatfilter != null) {
 +            ichatfilter.func_244434_b();
 +        }
-+        if ((quitMessage != null) && (quitMessage.length() > 0)) {
-+            this.field_147367_d.func_184103_al().sendMessage(CraftChatMessage.fromString(quitMessage));
++        // Paper start - Adventure
++        net.kyori.adventure.text.Component quitMessage = this.field_147367_d.func_184103_al().disconnect(this.field_147369_b);
++        if ((quitMessage != null) && !quitMessage.equals(net.kyori.adventure.text.Component.empty())) {
++            this.field_147367_d.func_184103_al().func_232641_a_(PaperAdventure.asVanilla(quitMessage), ChatType.SYSTEM, Util.field_240973_b_);
++            // Paper end
 +        }
-+        // CraftBukkit end
 +        if (this.func_217264_d()) {
 +            field_147370_c.info(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.10"));
 +            this.field_147367_d.func_71263_m(false);
@@ -2379,7 +2385,12 @@
 +            this.func_147361_d(s);
 +        } else if (this.field_147369_b.func_147096_v() == ChatVisibility.SYSTEM) {
 +            // Do nothing, this is coming from a plugin
-+        } else {
++            // Paper start
++        } else if (true) {
++            final ChatProcessor cp = new ChatProcessor(this.field_147367_d, this.field_147369_b, s, async);
++            cp.process();
++            // Paper end
++        } else if (false) { // Paper
 +            Player player = this.getPlayer();
 +            AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(field_147367_d));
 +            this.craftServer.getPluginManager().callEvent(event);
@@ -3719,21 +3730,25 @@
 +
 +            String[] astring = p_147343_1_.func_187017_b();
 +
-+            // CraftBukkit start
++            // CraftBukkit start // Paper start - Adventure
 +            Player player = this.craftServer.getPlayer(this.field_147369_b);
 +            int x = p_147343_1_.func_179722_a().func_177958_n();
 +            int y = p_147343_1_.func_179722_a().func_177956_o();
 +            int z = p_147343_1_.func_179722_a().func_177952_p();
-+            String[] lines = new String[4];
++            List<net.kyori.adventure.text.Component> lines = new java.util.ArrayList<>();
 +
 +            for (int i = 0; i < astring.length; ++i) {
-+                lines[i] = SharedConstants.filterAllowedChatCharacters(astring[i]); // Paper - Replaced with anvil color stripping method to stop exploits that allow colored signs to be created.
++                lines.add(net.kyori.adventure.text.Component.text(SharedConstants.filterAllowedChatCharacters(astring[i]))); // Paper - Replaced with anvil color stripping method to stop exploits that allow colored signs to be created.
 +            }
 +
 +            SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), this.craftServer.getPlayer(this.field_147369_b), lines);
 +            this.craftServer.getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
-+                System.arraycopy(org.bukkit.craftbukkit.v1_16_R3.block.CraftSign.sanitizeLines(event.getLines()), 0, signtileentity.field_145915_a, 0, 4);
++                for (int i = 0; i < 4; i++) {
++                    signtileentity.func_212365_a(i, PaperAdventure.asVanilla(event.line(i)));
++                }
++                // Paper end
++                //System.arraycopy(org.bukkit.craftbukkit.v1_16_R3.block.CraftSign.sanitizeLines(event.getLines()), 0, signtileentity.messages, 0, 4);
 +                signtileentity.field_145916_j = false;
 +            }
 +            // CraftBukkit end

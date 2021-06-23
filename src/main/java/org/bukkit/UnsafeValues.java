@@ -18,7 +18,20 @@ import org.bukkit.plugin.PluginDescriptionFile;
 @Deprecated
 public interface UnsafeValues {
 
+    // Paper start
+    net.kyori.adventure.text.flattener.ComponentFlattener componentFlattener();
+
+    net.kyori.adventure.text.serializer.plain.PlainComponentSerializer plainComponentSerializer();
+
+    net.kyori.adventure.text.serializer.gson.GsonComponentSerializer gsonComponentSerializer();
+
+    net.kyori.adventure.text.serializer.gson.GsonComponentSerializer colorDownsamplingGsonComponentSerializer();
+
+    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer();
+    // Paper end
+
     void reportTimings(); // Paper
+
     Material toLegacy(Material material);
 
     Material fromLegacy(Material material);
@@ -52,7 +65,7 @@ public interface UnsafeValues {
      * <br>
      * Callers should be prepared for {@link Exception} to be thrown.
      *
-     * @param key the unique advancement key
+     * @param key         the unique advancement key
      * @param advancement representation of the advancement
      * @return the loaded advancement or null if an error occurred
      */
@@ -72,8 +85,10 @@ public interface UnsafeValues {
     boolean removeAdvancement(NamespacedKey key);
 
     // Paper start
+
     /**
      * Server name to report to timings v2
+     *
      * @return name
      */
     String getTimingsServerName();
