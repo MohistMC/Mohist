@@ -26,7 +26,7 @@ public class UpdateUtils {
     System.out.println(i18n.get("update.stopcheck"));
 
     try {
-      JsonElement root = new JsonParser().parse(new InputStreamReader(NetworkUtil.getInput("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.7.10/lastSuccessfulBuild/api/json")));
+      JsonElement root = new JsonParser().parse(new InputStreamReader(NetworkUtil.getInput("https://ci.codemc.io/job/MohistMC/job/Mohist-1.7.10/lastSuccessfulBuild/api/json")));
 
       String jar_sha = MohistMC.getVersion();
       String build_number = "1.7.10-" + root.getAsJsonObject().get("number").toString();
@@ -37,7 +37,7 @@ public class UpdateUtils {
       else {
         System.out.println(i18n.get("update.detect", build_number, jar_sha, time));
         if(bMohist("check_update_auto_download"))
-          downloadFile("mhttps://ci.codemc.io/job/Mohist-Community/job/Mohist-1.7.10/lastSuccessfulBuild/artifact/build/distributions/Mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
+          downloadFile("mhttps://ci.codemc.io/job/MohistMC/job/Mohist-1.7.10/lastSuccessfulBuild/artifact/build/distributions/Mohist-" + build_number + "-server.jar", new File(getMohistJar().getName()));
       }
     } catch (Throwable e) {
       System.out.println(i18n.get("check.update.noci"));

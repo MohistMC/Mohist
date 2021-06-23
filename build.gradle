@@ -6,7 +6,7 @@ buildscript {
     repositories {
         maven {
             name 'forge'
-            url 'https://files.minecraftforge.net/maven'
+            url 'https://maven.minecraftforge.net/'
         }
         maven {
             name 'sonatype'
@@ -34,10 +34,10 @@ repositories {
         url 'http://oss.sonatype.org/content/repositories/snapshots/'
     }
     maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
-    maven { url 'https://github.com/mohist-community/maven/raw/master' }
+    maven { url 'https://maven.mohistmc.com/' }
     maven {
         name 'forge'
-        url 'https://files.minecraftforge.net/maven'
+        url 'https://maven.minecraftforge.net/'
     }
     maven {
         name 'minecraft'
@@ -232,11 +232,11 @@ targetCompatibility = '1.8'
 
 repositories {
     mavenLocal()
-    maven { url 'https://github.com/mohist-community/maven/raw/master' }
+    maven { url 'https://maven.mohistmc.com/' }
     maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
     maven {
         name 'forge'
-        url 'https://files.minecraftforge.net/maven'
+        url 'https://maven.minecraftforge.net/'
     }
     maven {
         name 'minecraft'
@@ -262,7 +262,7 @@ task resolveAllDependencies {
 }
 
 def JenkinsNumber() {
-    def conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.7.10/api/json").openConnection();
+    def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.7.10/api/json").openConnection();
     conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
     conn.connect()
     def root = conn.content.text
