@@ -1,9 +1,8 @@
-package com.mohistmc.bukkit.pluginfix;
+package com.mohistmc.bukkit.pluginfix.fix;
 
 import org.bukkit.Material;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 

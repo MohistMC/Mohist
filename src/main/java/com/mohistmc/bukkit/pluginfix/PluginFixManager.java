@@ -1,5 +1,7 @@
 package com.mohistmc.bukkit.pluginfix;
 
+import com.mohistmc.bukkit.pluginfix.fix.WorldEditFix;
+
 public class PluginFixManager {
 
     public static byte[] injectPluginFix(String className, byte[] clazz) {
