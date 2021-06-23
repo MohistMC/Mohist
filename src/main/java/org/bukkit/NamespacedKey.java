@@ -1,9 +1,11 @@
 package org.bukkit;
 
 import com.google.common.base.Preconditions;
+
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,15 +13,14 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a String based key which consists of two components - a namespace
  * and a key.
- *
+ * <p>
  * Namespaces may only contain lowercase alphanumeric characters, periods,
  * underscores, and hyphens.
  * <p>
  * Keys may only contain lowercase alphanumeric characters, periods,
  * underscores, hyphens, and forward slashes.
- *
  */
-public final class NamespacedKey {
+public final class NamespacedKey implements net.kyori.adventure.key.Key { // Paper - implement Key
 
     /**
      * The namespace representing all inbuilt keys.
@@ -41,7 +42,7 @@ public final class NamespacedKey {
      * Create a key in a specific namespace.
      *
      * @param namespace namespace
-     * @param key key
+     * @param key       key
      * @deprecated should never be used by plugins, for internal use only!!
      */
     @Deprecated
@@ -66,7 +67,7 @@ public final class NamespacedKey {
      * underscores, hyphens, and forward slashes.
      *
      * @param plugin the plugin to use for the namespace
-     * @param key the key to create
+     * @param key    the key to create
      */
     public NamespacedKey(@NotNull Plugin plugin, @NotNull String key) {
         Preconditions.checkArgument(plugin != null, "Plugin cannot be null");
@@ -158,10 +159,10 @@ public final class NamespacedKey {
      * fromString("", plugin) -{@literal >} null
      * </pre>
      *
-     * @param string the string to convert to a NamespacedKey
+     * @param string           the string to convert to a NamespacedKey
      * @param defaultNamespace the default namespace to use if none was
-     * supplied. If null, the {@code minecraft} namespace
-     * ({@link #minecraft(String)}) will be used
+     *                         supplied. If null, the {@code minecraft} namespace
+     *                         ({@link #minecraft(String)}) will be used
      * @return the created NamespacedKey. null if invalid key
      * @see #fromString(String)
      */
@@ -200,7 +201,7 @@ public final class NamespacedKey {
 
     /**
      * Get a NamespacedKey from the supplied string.
-     *
+     * <p>
      * The default namespace will be Minecraft's (i.e.
      * {@link #minecraft(String)}).
      *
@@ -212,4 +213,24 @@ public final class NamespacedKey {
     public static NamespacedKey fromString(@NotNull String key) {
         return fromString(key, null);
     }
+
+    // Paper start
+    @NotNull
+    @Override
+    public String namespace() {
+        return this.getNamespace();
+    }
+
+    @NotNull
+    @Override
+    public String value() {
+        return this.getKey();
+    }
+
+    @NotNull
+    @Override
+    public String asString() {
+        return this.namespace + ':' + this.key;
+    }
+    // Paper end
 }

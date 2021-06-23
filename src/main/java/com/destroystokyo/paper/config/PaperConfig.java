@@ -197,4 +197,9 @@ public class PaperConfig {
     private static void noPermissionMessage() {
         noPermissionMessage = ChatColor.translateAlternateColorCodes('&', getString("messages.no-permission", noPermissionMessage));
     }
+
+    public static boolean useDisplayNameInQuit = false;
+    private static void useDisplayNameInQuit() {
+        useDisplayNameInQuit = getBoolean("use-display-name-in-quit-message", useDisplayNameInQuit);
+    }
 }

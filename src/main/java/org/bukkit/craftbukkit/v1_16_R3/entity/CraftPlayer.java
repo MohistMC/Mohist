@@ -5,27 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.WeakHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.Nullable;
-
+import net.kyori.adventure.bossbar.HackyBossBarPlatformBridgeCustom;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.PlayerAdvancements;
@@ -35,34 +15,22 @@ import net.minecraft.entity.ai.attributes.AttributeModifierManager;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.network.play.server.SAnimateBlockBreakPacket;
-import net.minecraft.network.play.server.SChangeBlockPacket;
-import net.minecraft.network.play.server.SChatPacket;
-import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
-import net.minecraft.network.play.server.SEntityPropertiesPacket;
-import net.minecraft.network.play.server.SMapDataPacket;
-import net.minecraft.network.play.server.SPlaySoundEffectPacket;
-import net.minecraft.network.play.server.SPlaySoundEventPacket;
-import net.minecraft.network.play.server.SPlaySoundPacket;
-import net.minecraft.network.play.server.SPlayerListHeaderFooterPacket;
-import net.minecraft.network.play.server.SPlayerListItemPacket;
-import net.minecraft.network.play.server.SSetExperiencePacket;
-import net.minecraft.network.play.server.SSpawnParticlePacket;
-import net.minecraft.network.play.server.SStopSoundPacket;
-import net.minecraft.network.play.server.STitlePacket;
-import net.minecraft.network.play.server.SUpdateHealthPacket;
-import net.minecraft.network.play.server.SWorldSpawnChangedPacket;
+import net.minecraft.network.play.server.*;
 import net.minecraft.server.management.WhitelistEntry;
 import net.minecraft.tileentity.SignTileEntity;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -73,33 +41,13 @@ import net.minecraft.world.storage.MapDecoration;
 import net.minecraftforge.common.util.ITeleporter;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
-import org.bukkit.BanList;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Note;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.Statistic;
-import org.bukkit.WeatherType;
+import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
-import org.bukkit.craftbukkit.v1_16_R3.CraftEffect;
-import org.bukkit.craftbukkit.v1_16_R3.CraftOfflinePlayer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftParticle;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftSound;
-import org.bukkit.craftbukkit.v1_16_R3.CraftStatistic;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.*;
 import org.bukkit.craftbukkit.v1_16_R3.advancement.CraftAdvancement;
 import org.bukkit.craftbukkit.v1_16_R3.advancement.CraftAdvancementProgress;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftSign;
@@ -124,6 +72,16 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
+
+import javax.annotation.Nullable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity implements Player {
@@ -261,13 +219,42 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     @Override
     public String getDisplayName() {
+        if (true) return io.papermc.paper.adventure.DisplayNames.getLegacy(this); // Paper
         return getHandle().displayName;
     }
 
     @Override
     public void setDisplayName(final String name) {
+        this.getHandle().adventure$displayName = name != null ? io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(name) : net.kyori.adventure.text.Component.text(this.getName()); // Paper
         getHandle().displayName = name == null ? getName() : name;
     }
+
+    // Paper start
+    @Override
+    public void playerListName(net.kyori.adventure.text.Component name) {
+        getHandle().listName = name == null ? null : io.papermc.paper.adventure.PaperAdventure.asVanilla(name);
+        for (ServerPlayerEntity player : server.getHandle().players) {
+            if (player.getBukkitEntity().canSee(this)) {
+                player.connection.send(new SPlayerListItemPacket(SPlayerListItemPacket.Action.UPDATE_DISPLAY_NAME, getHandle()));
+            }
+        }
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component playerListName() {
+        return getHandle().listName == null ? net.kyori.adventure.text.Component.text(getName()) : io.papermc.paper.adventure.PaperAdventure.asAdventure(getHandle().listName);
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component playerListHeader() {
+        return playerListHeader;
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component playerListFooter() {
+        return playerListFooter;
+    }
+    // Paper end
 
     @Override
     public String getPlayerListName() {
@@ -287,35 +274,35 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
     }
 
-    private ITextComponent playerListHeader;
-    private ITextComponent playerListFooter;
+    private net.kyori.adventure.text.Component playerListHeader; // Paper - Adventure
+    private net.kyori.adventure.text.Component playerListFooter; // Paper - Adventure
 
     @Override
     public String getPlayerListHeader() {
-        return (playerListHeader == null) ? null : CraftChatMessage.fromComponent(playerListHeader);
+        return (this.playerListHeader == null) ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(playerListHeader);
     }
 
     @Override
     public String getPlayerListFooter() {
-        return (playerListFooter == null) ? null : CraftChatMessage.fromComponent(playerListFooter);
+        return (this.playerListFooter == null) ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(playerListFooter); // Paper - Adventure
     }
 
     @Override
     public void setPlayerListHeader(String header) {
-        this.playerListHeader = CraftChatMessage.fromStringOrNull(header, true);
+        this.playerListHeader = header == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(header); // Paper - Adventure
         updatePlayerListHeaderFooter();
     }
 
     @Override
     public void setPlayerListFooter(String footer) {
-        this.playerListFooter = CraftChatMessage.fromStringOrNull(footer, true);
+        this.playerListFooter = footer == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(footer); // Paper - Adventure
         updatePlayerListHeaderFooter();
     }
 
     @Override
     public void setPlayerListHeaderFooter(String header, String footer) {
-        this.playerListHeader = CraftChatMessage.fromStringOrNull(header, true);
-        this.playerListFooter = CraftChatMessage.fromStringOrNull(footer, true);
+        this.playerListHeader = header == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(header); // Paper - Adventure
+        this.playerListFooter = footer == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(footer); // Paper - Adventure
         updatePlayerListHeaderFooter();
     }
 
@@ -323,8 +310,8 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         if (getHandle().connection == null) return;
 
         SPlayerListHeaderFooterPacket packet = new SPlayerListHeaderFooterPacket();
-        packet.header = (this.playerListHeader == null) ? new StringTextComponent("") : this.playerListHeader;
-        packet.footer = (this.playerListFooter == null) ? new StringTextComponent("") : this.playerListFooter;
+        packet.header = (this.playerListHeader == null) ? new StringTextComponent("") : io.papermc.paper.adventure.PaperAdventure.asVanilla(this.playerListHeader);
+        packet.footer = (this.playerListFooter == null) ? new StringTextComponent("") : io.papermc.paper.adventure.PaperAdventure.asVanilla(this.playerListFooter);
         getHandle().connection.send(packet);
     }
 
@@ -354,6 +341,17 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
         getHandle().connection.disconnect(message == null ? "" : message);
     }
+
+    // Paper start
+    @Override
+    public void kick(final net.kyori.adventure.text.Component message) {
+        org.spigotmc.AsyncCatcher.catchOp("player kick");
+        final ServerPlayNetHandler connection = this.getHandle().connection;
+        if (connection != null) {
+            connection.disconnect(message == null ? net.kyori.adventure.text.Component.empty() : message);
+        }
+    }
+    // Paper end
 
     @Override
     public void setCompassTarget(Location loc) {
@@ -585,6 +583,39 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         getHandle().connection.send(packet);
     }
 
+    // Paper start
+    @Override
+    public void sendSignChange(Location loc, List<net.kyori.adventure.text.Component> lines) {
+        this.sendSignChange(loc, lines, org.bukkit.DyeColor.BLACK);
+    }
+
+    @Override
+    public void sendSignChange(Location loc, List<net.kyori.adventure.text.Component> lines, DyeColor dyeColor) {
+        if (getHandle().connection == null) {
+            return;
+        }
+        if (lines == null) {
+            lines = new java.util.ArrayList<>(4);
+        }
+        Validate.notNull(loc, "Location cannot be null");
+        Validate.notNull(dyeColor, "DyeColor cannot be null");
+        if (lines.size() < 4) {
+            throw new IllegalArgumentException("Must have at least 4 lines");
+        }
+        ITextComponent[] components = CraftSign.sanitizeLines(lines);
+        this.sendSignChange0(components, loc, dyeColor);
+    }
+
+    private void sendSignChange0(ITextComponent[] components, Location loc, DyeColor dyeColor) {
+        SignTileEntity sign = new SignTileEntity();
+        sign.setPosition(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+        sign.setColor(net.minecraft.item.DyeColor.byId(dyeColor.getWoolData()));
+        System.arraycopy(components, 0, sign.messages, 0, sign.messages.length);
+
+        getHandle().connection.send(sign.getUpdatePacket());
+    }
+    // Paper end
+
     @Override
     public void sendSignChange(Location loc, String[] lines) {
         sendSignChange(loc, lines, DyeColor.BLACK);
@@ -607,12 +638,12 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
 
         ITextComponent[] components = CraftSign.sanitizeLines(lines);
-        SignTileEntity sign = new SignTileEntity();
+        /*SignTileEntity sign = new SignTileEntity(); // Paper
         sign.setPosition(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         sign.setColor(net.minecraft.item.DyeColor.byId(dyeColor.getWoolData()));
         System.arraycopy(components, 0, sign.messages, 0, sign.messages.length);
-
-        getHandle().connection.send(sign.getUpdatePacket());
+        getHandle().connection.send(sign.getUpdatePacket()); */ // Paper
+        this.sendSignChange0(components, loc, dyeColor); // Paper
     }
 
     @Override
@@ -1715,6 +1746,13 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         return (getHandle().clientViewDistance == null) ? Bukkit.getViewDistance() : getHandle().clientViewDistance;
     }
 
+    // Paper start
+    @Override
+    public java.util.Locale locale() {
+        return getHandle().adventure$locale;
+    }
+    // Paper end
+
     @Override
     public int getPing() {
         return getHandle().latency;
@@ -1753,6 +1791,138 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         getHandle().openItemGui(org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.asNMSCopy(book), net.minecraft.util.Hand.MAIN_HAND);
         getInventory().setItemInMainHand(hand);
     }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component displayName() {
+        return this.getHandle().adventure$displayName;
+    }
+
+    @Override
+    public void displayName(final net.kyori.adventure.text.Component displayName) {
+        this.getHandle().adventure$displayName = displayName != null ? displayName : net.kyori.adventure.text.Component.text(this.getName());
+        this.getHandle().displayName = null;
+    }
+
+    @Override
+    public void sendMessage(final net.kyori.adventure.identity.Identity identity, final net.kyori.adventure.text.Component message, final net.kyori.adventure.audience.MessageType type) {
+        final SChatPacket packet = new SChatPacket(null, type == net.kyori.adventure.audience.MessageType.CHAT ? ChatType.CHAT : ChatType.SYSTEM, identity.uuid());
+        packet.adventure$message = message;
+        this.getHandle().connection.send(packet);
+    }
+
+    @Override
+    public void sendActionBar(final net.kyori.adventure.text.Component message) {
+        final STitlePacket packet = new STitlePacket(STitlePacket.Type.ACTIONBAR, null);
+        packet.adventure$text = message;
+        this.getHandle().connection.send(packet);
+    }
+
+    @Override
+    public void sendPlayerListHeader(final net.kyori.adventure.text.Component header) {
+        this.playerListHeader = header;
+        this.adventure$sendPlayerListHeaderAndFooter();
+    }
+
+    @Override
+    public void sendPlayerListFooter(final net.kyori.adventure.text.Component footer) {
+        this.playerListFooter = footer;
+        this.adventure$sendPlayerListHeaderAndFooter();
+    }
+
+    @Override
+    public void sendPlayerListHeaderAndFooter(final net.kyori.adventure.text.Component header, final net.kyori.adventure.text.Component footer) {
+        this.playerListHeader = header;
+        this.playerListFooter = footer;
+        this.adventure$sendPlayerListHeaderAndFooter();
+    }
+
+    private void adventure$sendPlayerListHeaderAndFooter() {
+        final ServerPlayNetHandler connection = this.getHandle().connection;
+        if (connection == null) return;
+        final SPlayerListHeaderFooterPacket packet = new SPlayerListHeaderFooterPacket();
+        packet.adventure$header = (this.playerListHeader == null) ? net.kyori.adventure.text.Component.empty() : this.playerListHeader;
+        packet.adventure$footer = (this.playerListFooter == null) ? net.kyori.adventure.text.Component.empty() : this.playerListFooter;
+        connection.send(packet);
+    }
+
+    @Override
+    public void showTitle(final net.kyori.adventure.title.Title title) {
+        final ServerPlayNetHandler connection = this.getHandle().connection;
+        final net.kyori.adventure.title.Title.Times times = title.times();
+        if (times != null) {
+            connection.send(new STitlePacket(ticks(times.fadeIn()), ticks(times.stay()), ticks(times.fadeOut())));
+        }
+        final STitlePacket sp = new STitlePacket(STitlePacket.Type.SUBTITLE, null);
+        sp.adventure$text = title.subtitle();
+        connection.send(sp);
+        final STitlePacket tp = new STitlePacket(STitlePacket.Type.TITLE, null);
+        tp.adventure$text = title.title();
+        connection.send(tp);
+    }
+
+    private static int ticks(final java.time.Duration duration) {
+        if (duration == null) {
+            return -1;
+        }
+        return (int) (duration.toMillis() / 50L);
+    }
+
+    @Override
+    public void clearTitle() {
+        this.getHandle().connection.send(new STitlePacket(STitlePacket.Type.CLEAR, null));
+    }
+
+    // resetTitle implemented above
+
+    @Override
+    public void showBossBar(final net.kyori.adventure.bossbar.BossBar bar) {
+        ((HackyBossBarPlatformBridgeCustom) bar).paper$playerShow(this);
+    }
+
+    @Override
+    public void hideBossBar(final net.kyori.adventure.bossbar.BossBar bar) {
+        ((HackyBossBarPlatformBridgeCustom) bar).paper$playerHide(this);
+    }
+
+    @Override
+    public void playSound(final net.kyori.adventure.sound.Sound sound) {
+        final Vector3d pos = this.getHandle().position();
+        this.playSound(sound, pos.x, pos.y, pos.z);
+    }
+
+    @Override
+    public void playSound(final net.kyori.adventure.sound.Sound sound, final double x, final double y, final double z) {
+        final ResourceLocation name = io.papermc.paper.adventure.PaperAdventure.asVanilla(sound.name());
+        final java.util.Optional<SoundEvent> event = Registry.SOUND_EVENT.getOptional(name);
+        if (event.isPresent()) {
+            this.getHandle().connection.send(new SPlaySoundEffectPacket(event.get(), io.papermc.paper.adventure.PaperAdventure.asVanilla(sound.source()), x, y, z, sound.volume(), sound.pitch()));
+        } else {
+            this.getHandle().connection.send(new SPlaySoundPacket(name, io.papermc.paper.adventure.PaperAdventure.asVanilla(sound.source()), new Vector3d(x, y, z), sound.volume(), sound.pitch()));
+        }
+    }
+
+    @Override
+    public void stopSound(final net.kyori.adventure.sound.SoundStop stop) {
+        this.getHandle().connection.send(new SStopSoundPacket(
+                io.papermc.paper.adventure.PaperAdventure.asVanillaNullable(stop.sound()),
+                io.papermc.paper.adventure.PaperAdventure.asVanillaNullable(stop.source())
+        ));
+    }
+
+    @Override
+    public void openBook(final net.kyori.adventure.inventory.Book book) {
+        final java.util.Locale locale = this.getHandle().adventure$locale;
+        final net.minecraft.item.ItemStack item = io.papermc.paper.adventure.PaperAdventure.asItemStack(book, locale);
+        final ServerPlayerEntity player = this.getHandle();
+        final ServerPlayNetHandler connection = player.connection;
+        final PlayerInventory inventory = player.inventory;
+        final int slot = inventory.items.size() + inventory.selected;
+        connection.send(new SSetSlotPacket(0, slot, item));
+        connection.send(new SOpenBookWindowPacket(Hand.MAIN_HAND));
+        connection.send(new SSetSlotPacket(0, slot, inventory.getSelected()));
+    }
+    // Paper end
 
     // Spigot start
     private final Player.Spigot spigot = new Player.Spigot() {

@@ -8,7 +8,7 @@
  import net.minecraft.client.network.play.IClientPlayNetHandler;
  import net.minecraft.network.IPacket;
  import net.minecraft.network.PacketBuffer;
-@@ -10,94 +_,113 @@
+@@ -10,94 +_,114 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class STitlePacket implements IPacket<IClientPlayNetHandler> {
@@ -104,6 +104,7 @@
 -   }
 +    private STitlePacket.Type field_179812_a;
 +    private ITextComponent field_179810_b;
++    public net.kyori.adventure.text.Component adventure$text; // Paper
 +    private int field_179811_c;
 +    private int field_179808_d;
 +    private int field_179809_e;
@@ -157,9 +158,9 @@
 +        p_148840_1_.func_179249_a(this.field_179812_a);
 +        if (this.field_179812_a == STitlePacket.Type.TITLE || this.field_179812_a == STitlePacket.Type.SUBTITLE || this.field_179812_a == STitlePacket.Type.ACTIONBAR) {
 +            // Paper start
-+            /*if (this.adventure$text != null) {
-+                buf.writeComponent(this.adventure$text);
-+            } else*/ if (this.components != null) {
++            if (this.adventure$text != null) {
++                p_148840_1_.writeComponent(this.adventure$text);
++            } else if (this.components != null) {
 +                p_148840_1_.writeComponent(this.components);
 +            } else
 +                // Paper end

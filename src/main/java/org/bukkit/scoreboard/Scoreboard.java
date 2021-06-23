@@ -1,6 +1,7 @@
 package org.bukkit.scoreboard;
 
 import java.util.Set;
+
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,61 +14,112 @@ public interface Scoreboard {
     /**
      * Registers an Objective on this Scoreboard
      *
-     * @param name Name of the Objective
+     * @param name     Name of the Objective
      * @param criteria Criteria for the Objective
      * @return The registered Objective
      * @throws IllegalArgumentException if name is null
      * @throws IllegalArgumentException if name is longer than 16
-     *     characters.
+     *                                  characters.
      * @throws IllegalArgumentException if criteria is null
      * @throws IllegalArgumentException if an objective by that name already
-     *     exists
+     *                                  exists
      * @deprecated a displayName should be explicitly specified
      */
     @Deprecated
     @NotNull
     Objective registerNewObjective(@NotNull String name, @NotNull String criteria) throws IllegalArgumentException;
 
+    // Paper start
+
     /**
      * Registers an Objective on this Scoreboard
      *
-     * @param name Name of the Objective
-     * @param criteria Criteria for the Objective
+     * @param name        Name of the Objective
+     * @param criteria    Criteria for the Objective
      * @param displayName Name displayed to players for the Objective.
      * @return The registered Objective
      * @throws IllegalArgumentException if name is null
      * @throws IllegalArgumentException if name is longer than 16
-     *     characters.
+     *                                  characters.
      * @throws IllegalArgumentException if criteria is null
      * @throws IllegalArgumentException if displayName is null
      * @throws IllegalArgumentException if displayName is longer than 128
-     *     characters.
+     *                                  characters.
      * @throws IllegalArgumentException if an objective by that name already
-     *     exists
+     *                                  exists
      */
     @NotNull
+    Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @Nullable net.kyori.adventure.text.Component displayName) throws IllegalArgumentException;
+
+    /**
+     * Registers an Objective on this Scoreboard
+     *
+     * @param name        Name of the Objective
+     * @param criteria    Criteria for the Objective
+     * @param displayName Name displayed to players for the Objective.
+     * @param renderType  Manner of rendering the Objective
+     * @return The registered Objective
+     * @throws IllegalArgumentException if name is null
+     * @throws IllegalArgumentException if name is longer than 16
+     *                                  characters.
+     * @throws IllegalArgumentException if criteria is null
+     * @throws IllegalArgumentException if displayName is null
+     * @throws IllegalArgumentException if displayName is longer than 128
+     *                                  characters.
+     * @throws IllegalArgumentException if renderType is null
+     * @throws IllegalArgumentException if an objective by that name already
+     *                                  exists
+     */
+    @NotNull
+    Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @Nullable net.kyori.adventure.text.Component displayName, @NotNull RenderType renderType) throws IllegalArgumentException;
+    // Paper end
+
+    /**
+     * Registers an Objective on this Scoreboard
+     *
+     * @param name        Name of the Objective
+     * @param criteria    Criteria for the Objective
+     * @param displayName Name displayed to players for the Objective.
+     * @return The registered Objective
+     * @throws IllegalArgumentException if name is null
+     * @throws IllegalArgumentException if name is longer than 16
+     *                                  characters.
+     * @throws IllegalArgumentException if criteria is null
+     * @throws IllegalArgumentException if displayName is null
+     * @throws IllegalArgumentException if displayName is longer than 128
+     *                                  characters.
+     * @throws IllegalArgumentException if an objective by that name already
+     *                                  exists
+     * @deprecated in favour of {@link #registerNewObjective(String, String, net.kyori.adventure.text.Component)}
+     */
+    @NotNull
+    @Deprecated
+    // Paper
     Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @NotNull String displayName) throws IllegalArgumentException;
 
     /**
      * Registers an Objective on this Scoreboard
      *
-     * @param name Name of the Objective
-     * @param criteria Criteria for the Objective
+     * @param name        Name of the Objective
+     * @param criteria    Criteria for the Objective
      * @param displayName Name displayed to players for the Objective.
-     * @param renderType Manner of rendering the Objective
+     * @param renderType  Manner of rendering the Objective
      * @return The registered Objective
      * @throws IllegalArgumentException if name is null
      * @throws IllegalArgumentException if name is longer than 16
-     *     characters.
+     *                                  characters.
      * @throws IllegalArgumentException if criteria is null
      * @throws IllegalArgumentException if displayName is null
      * @throws IllegalArgumentException if displayName is longer than 128
-     *     characters.
+     *                                  characters.
      * @throws IllegalArgumentException if renderType is null
      * @throws IllegalArgumentException if an objective by that name already
-     *     exists
+     *                                  exists
+     * @deprecated in favour of {@link #registerNewObjective(String, String, net.kyori.adventure.text.Component, RenderType)}
      */
     @NotNull
+    @Deprecated
+    // Paper
     Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @NotNull String displayName, @NotNull RenderType renderType) throws IllegalArgumentException;
 
     /**
@@ -104,7 +156,7 @@ public interface Scoreboard {
      *
      * @param slot The DisplaySlot
      * @return the Objective currently displayed or null if nothing is
-     *     displayed in that DisplaySlot
+     * displayed in that DisplaySlot
      * @throws IllegalArgumentException if slot is null
      */
     @Nullable
@@ -116,8 +168,8 @@ public interface Scoreboard {
      * @param player the player whose scores are being retrieved
      * @return immutable set of all scores tracked for the player
      * @throws IllegalArgumentException if player is null
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #getScores(String)
+     * @deprecated Scoreboards can contain entries that aren't players
      */
     @Deprecated
     @NotNull
@@ -138,8 +190,8 @@ public interface Scoreboard {
      *
      * @param player the player to drop all current scores for
      * @throws IllegalArgumentException if player is null
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #resetScores(String)
+     * @deprecated Scoreboards can contain entries that aren't players
      */
     @Deprecated
     void resetScores(@NotNull OfflinePlayer player) throws IllegalArgumentException;
@@ -158,8 +210,8 @@ public interface Scoreboard {
      * @param player the player to search for
      * @return the player's Team or null if the player is not on a team
      * @throws IllegalArgumentException if player is null
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #getEntryTeam(String)
+     * @deprecated Scoreboards can contain entries that aren't players
      */
     @Deprecated
     @Nullable
@@ -208,8 +260,8 @@ public interface Scoreboard {
      * Gets all players tracked by this Scoreboard
      *
      * @return immutable set of all tracked players
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #getEntries()
+     * @deprecated Scoreboards can contain entries that aren't players
      */
     @Deprecated
     @NotNull

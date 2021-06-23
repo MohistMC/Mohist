@@ -1,8 +1,10 @@
 package org.bukkit.inventory;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,14 +24,15 @@ import org.jetbrains.annotations.Nullable;
  * use this class to encapsulate Materials for which {@link Material#isItem()}
  * returns false.</b>
  */
-public class ItemStack implements Cloneable, ConfigurationSerializable {
+public class ItemStack implements Cloneable, ConfigurationSerializable, net.kyori.adventure.text.event.HoverEventSource<net.kyori.adventure.text.event.HoverEvent.ShowItem> { // Paper
     private Material type = Material.AIR;
     private int amount = 0;
     private MaterialData data = null;
     private ItemMeta meta;
 
     @Utility
-    protected ItemStack() {}
+    protected ItemStack() {
+    }
 
     /**
      * Defaults stack size to 1, with no extra data.
@@ -51,7 +54,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * <i>items</i>. Do not use this class to encapsulate Materials for which
      * {@link Material#isItem()} returns false.</b>
      *
-     * @param type item material
+     * @param type   item material
      * @param amount stack size
      */
     public ItemStack(@NotNull final Material type, final int amount) {
@@ -61,7 +64,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     /**
      * An item stack with the specified damage / durability
      *
-     * @param type item material
+     * @param type   item material
      * @param amount stack size
      * @param damage durability / damage
      * @deprecated see {@link #setDurability(short)}
@@ -72,10 +75,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     }
 
     /**
-     * @param type the type
+     * @param type   the type
      * @param amount the amount in the stack
      * @param damage the damage value of the item
-     * @param data the data value or null
+     * @param data   the data value or null
      * @deprecated this method uses an ambiguous data byte object
      */
     @Deprecated
@@ -96,7 +99,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      *
      * @param stack the stack to copy
      * @throws IllegalArgumentException if the specified stack is null or
-     *     returns an item meta not created by the item factory
+     *                                  returns an item meta not created by the item factory
      */
     public ItemStack(@NotNull final ItemStack stack) throws IllegalArgumentException {
         Validate.notNull(stack, "Cannot copy null stack");
@@ -364,8 +367,8 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * @param enchantments Enchantments to add
      * @throws IllegalArgumentException if the specified enchantments is null
      * @throws IllegalArgumentException if any specific enchantment or level
-     *     is null. <b>Warning</b>: Some enchantments may be added before this
-     *     exception is thrown.
+     *                                  is null. <b>Warning</b>: Some enchantments may be added before this
+     *                                  exception is thrown.
      */
     @Utility
     public void addEnchantments(@NotNull Map<Enchantment, Integer> enchantments) {
@@ -381,10 +384,10 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * If this item stack already contained the given enchantment (at any
      * level), it will be replaced.
      *
-     * @param ench Enchantment to add
+     * @param ench  Enchantment to add
      * @param level Level of the enchantment
      * @throws IllegalArgumentException if enchantment null, or enchantment is
-     *     not applicable
+     *                                  not applicable
      */
     @Utility
     public void addEnchantment(@NotNull Enchantment ench, int level) {
@@ -423,7 +426,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      * This method is unsafe and will ignore level restrictions or item type.
      * Use at your own discretion.
      *
-     * @param ench Enchantment to add
+     * @param ench  Enchantment to add
      * @param level Level of the enchantment
      */
     public void addUnsafeEnchantment(@NotNull Enchantment ench, int level) {
@@ -564,9 +567,9 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      *
      * @param itemMeta new ItemMeta, or null to indicate meta data be cleared.
      * @return True if successfully applied ItemMeta, see {@link
-     *     ItemFactory#isApplicable(ItemMeta, ItemStack)}
+     * ItemFactory#isApplicable(ItemMeta, ItemStack)}
      * @throws IllegalArgumentException if the item meta was not created by
-     *     the {@link ItemFactory}
+     *                                  the {@link ItemFactory}
      */
     public boolean setItemMeta(@Nullable ItemMeta itemMeta) {
         return setItemMeta0(itemMeta, type);
@@ -596,4 +599,21 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
 
         return true;
     }
+
+    // Paper start
+    @NotNull
+    @Override
+    public net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowItem> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowItem> op) {
+        return org.bukkit.Bukkit.getServer().getItemFactory().asHoverEvent(this, op);
+    }
+
+    /**
+     * Get the formatted display name of the {@link ItemStack}.
+     *
+     * @return display name of the {@link ItemStack}
+     */
+    public @NotNull net.kyori.adventure.text.Component displayName() {
+        return Bukkit.getServer().getItemFactory().displayName(this);
+    }
+    // Paper end
 }

@@ -1,6 +1,7 @@
 package org.bukkit.event.server;
 
 import java.util.Set;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class BroadcastMessageEvent extends ServerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-    private String message;
+    private net.kyori.adventure.text.Component message; // Paper
     private final Set<CommandSender> recipients;
     private boolean cancelled = false;
 
@@ -27,29 +28,68 @@ public class BroadcastMessageEvent extends ServerEvent implements Cancellable {
         this(false, message, recipients);
     }
 
+    @Deprecated // Paper
     public BroadcastMessageEvent(boolean isAsync, @NotNull String message, @NotNull Set<CommandSender> recipients) {
+        // Paper start
+        super(isAsync);
+        this.message = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(message);
+        this.recipients = recipients;
+    }
+
+    @Deprecated
+    public BroadcastMessageEvent(@NotNull net.kyori.adventure.text.Component message, @NotNull Set<CommandSender> recipients) {
+        this(false, message, recipients);
+    }
+
+    public BroadcastMessageEvent(boolean isAsync, @NotNull net.kyori.adventure.text.Component message, @NotNull Set<CommandSender> recipients) {
+        // Paper end
         super(isAsync);
         this.message = message;
         this.recipients = recipients;
     }
 
+    // Paper start
+
+    /**
+     * Get the broadcast message.
+     *
+     * @return Message to broadcast
+     */
+    public @NotNull net.kyori.adventure.text.Component message() {
+        return this.message;
+    }
+
+    /**
+     * Set the broadcast message.
+     *
+     * @param message New message to broadcast
+     */
+    public void message(@NotNull net.kyori.adventure.text.Component message) {
+        this.message = message;
+    }
+    // Paper end
+
     /**
      * Get the message to broadcast.
      *
      * @return Message to broadcast
+     * @deprecated in favour of {@link #message()}
      */
     @NotNull
+    @Deprecated // Paper
     public String getMessage() {
-        return message;
+        return org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().serialize(this.message); // Paper
     }
 
     /**
      * Set the message to broadcast.
      *
      * @param message New message to broadcast
+     * @deprecated in favour of {@link #message(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public void setMessage(@NotNull String message) {
-        this.message = message;
+        this.message = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(message); // Paper
     }
 
     /**

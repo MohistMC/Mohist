@@ -17,7 +17,7 @@ public class ServerListPingEvent extends org.bukkit.event.server.ServerListPingE
     private final Object[] players;
 
     public ServerListPingEvent(NetworkManager networkManager, MinecraftServer server) {
-        super(((InetSocketAddress) networkManager.getRemoteAddress()).getAddress(), server.getMotd(), server.getPlayerList().getMaxPlayers());
+        super(((InetSocketAddress) networkManager.getRemoteAddress()).getAddress(), server.getMotd(), server.getPlayerList().getMaxPlayers()); // Paper - Adventure
         this.icon = ((CraftServer) Bukkit.getServer()).getServerIcon();
         this.players = server.getPlayerList().players.toArray();
     }

@@ -1,5 +1,14 @@
 --- a/net/minecraft/network/NettyPacketEncoder.java
 +++ b/net/minecraft/network/NettyPacketEncoder.java
+@@ -4,6 +_,8 @@
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.MessageToByteEncoder;
+ import java.io.IOException;
++
++import io.papermc.paper.adventure.PaperAdventure;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.Marker;
 @@ -25,7 +_,7 @@
        } else {
           Integer integer = protocoltype.func_179246_a(this.field_152500_c, p_encode_2_);
@@ -9,7 +18,12 @@
           }
  
           if (integer == null) {
-@@ -37,7 +_,8 @@
+@@ -33,11 +_,13 @@
+          } else {
+             PacketBuffer packetbuffer = new PacketBuffer(p_encode_3_);
+             packetbuffer.func_150787_b(integer);
++            packetbuffer.adventure$locale = p_encode_1_.channel().attr(PaperAdventure.LOCALE_ATTRIBUTE).get(); // Paper
+ 
              try {
                 p_encode_2_.func_148840_b(packetbuffer);
              } catch (Throwable throwable) {

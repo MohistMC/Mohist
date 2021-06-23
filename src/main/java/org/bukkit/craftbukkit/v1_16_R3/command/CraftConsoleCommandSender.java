@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_16_R3.command;
 
 import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
@@ -80,4 +81,11 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
     public boolean isConversing() {
         return conversationTracker.isConversing();
     }
+
+    // Paper start
+    @Override
+    public void sendMessage(final net.kyori.adventure.identity.Identity identity, final net.kyori.adventure.text.Component message, final net.kyori.adventure.audience.MessageType type) {
+        this.sendRawMessage(org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromComponent(io.papermc.paper.adventure.PaperAdventure.asVanilla(message)));
+    }
+    // Paper end
 }

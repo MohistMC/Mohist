@@ -1,29 +1,11 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableList;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
-
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
-import org.bukkit.boss.KeyedBossBar;
+import org.bukkit.boss.*;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -34,12 +16,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.help.HelpMap;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
@@ -53,6 +30,13 @@ import org.bukkit.util.CachedServerIcon;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  * Represents the Bukkit core, for version and Server singleton handling
@@ -282,7 +266,9 @@ public final class Bukkit {
      *
      * @param message the message
      * @return the number of players
+     * @deprecated in favour of {@link Server#broadcast(net.kyori.adventure.text.Component)}
      */
+    @Deprecated // Paper
     public static int broadcastMessage(@NotNull String message) {
         return server.broadcastMessage(message);
     }
@@ -838,6 +824,21 @@ public final class Bukkit {
         server.shutdown();
     }
 
+    // Paper start
+
+    /**
+     * Broadcast a message to all players.
+     * <p>
+     * This is the same as calling {@link #broadcast(net.kyori.adventure.text.Component,
+     * java.lang.String)} with the {@link Server#BROADCAST_CHANNEL_USERS} permission.
+     *
+     * @param message the message
+     * @return the number of players
+     */
+    public static int broadcast(@NotNull net.kyori.adventure.text.Component message) {
+        return server.broadcast(message);
+    }
+
     /**
      * Broadcasts the specified message to every user with the given
      * permission name.
@@ -847,6 +848,22 @@ public final class Bukkit {
      *                   permissibles} must have to receive the broadcast
      * @return number of message recipients
      */
+    public static int broadcast(@NotNull net.kyori.adventure.text.Component message, @NotNull String permission) {
+        return server.broadcast(message, permission);
+    }
+    // Paper end
+
+    /**
+     * Broadcasts the specified message to every user with the given
+     * permission name.
+     *
+     * @param message    message to broadcast
+     * @param permission the required permission {@link Permissible
+     *                   permissibles} must have to receive the broadcast
+     * @return number of message recipients
+     * @deprecated in favour of {@link #broadcast(net.kyori.adventure.text.Component, String)}
+     */
+    @Deprecated // Paper
     public static int broadcast(@NotNull String message, @NotNull String permission) {
         return server.broadcast(message, permission);
     }
@@ -1020,6 +1037,8 @@ public final class Bukkit {
         return server.getHelpMap();
     }
 
+    // Paper start
+
     /**
      * Creates an empty inventory with the specified type. If the type
      * is {@link InventoryType#CHEST}, the new inventory has a size of 27;
@@ -1069,9 +1088,42 @@ public final class Bukkit {
      * @see InventoryType#isCreatable()
      */
     @NotNull
+    public static Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, @NotNull net.kyori.adventure.text.Component title) {
+        return server.createInventory(owner, type, title);
+    }
+    // Paper end
+
+    /**
+     * Creates an empty inventory with the specified type and title. If the type
+     * is {@link InventoryType#CHEST}, the new inventory has a size of 27;
+     * otherwise the new inventory has the normal size for its type.<br>
+     * It should be noted that some inventory types do not support titles and
+     * may not render with said titles on the Minecraft client.
+     * <br>
+     * {@link InventoryType#WORKBENCH} will not process crafting recipes if
+     * created with this method. Use
+     * {@link Player#openWorkbench(Location, boolean)} instead.
+     * <br>
+     * {@link InventoryType#ENCHANTING} will not process {@link ItemStack}s
+     * for possible enchanting results. Use
+     * {@link Player#openEnchanting(Location, boolean)} instead.
+     *
+     * @param owner The holder of the inventory; can be null if there's no holder.
+     * @param type  The type of inventory to create.
+     * @param title The title of the inventory, to be displayed when it is viewed.
+     * @return The new inventory.
+     * @throws IllegalArgumentException if the {@link InventoryType} cannot be
+     *                                  viewed.
+     * @see InventoryType#isCreatable()
+     * @deprecated in favour of {@link #createInventory(InventoryHolder, InventoryType, net.kyori.adventure.text.Component)}
+     */
+    @Deprecated // Paper
+    @NotNull
     public static Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, @NotNull String title) {
         return server.createInventory(owner, type, title);
     }
+
+    // Paper start
 
     /**
      * Creates an empty inventory of type {@link InventoryType#CHEST} with the
@@ -1099,9 +1151,30 @@ public final class Bukkit {
      * @throws IllegalArgumentException if the size is not a multiple of 9
      */
     @NotNull
+    public static Inventory createInventory(@Nullable InventoryHolder owner, int size, @NotNull net.kyori.adventure.text.Component title) throws IllegalArgumentException {
+        return server.createInventory(owner, size, title);
+    }
+    // Paper end
+
+    /**
+     * Creates an empty inventory of type {@link InventoryType#CHEST} with the
+     * specified size and title.
+     *
+     * @param owner the holder of the inventory, or null to indicate no holder
+     * @param size  a multiple of 9 as the size of inventory to create
+     * @param title the title of the inventory, displayed when inventory is
+     *              viewed
+     * @return a new inventory
+     * @throws IllegalArgumentException if the size is not a multiple of 9
+     * @deprecated in favour of {@link #createInventory(InventoryHolder, InventoryType, net.kyori.adventure.text.Component)}
+     */
+    @Deprecated // Paper
+    @NotNull
     public static Inventory createInventory(@Nullable InventoryHolder owner, int size, @NotNull String title) throws IllegalArgumentException {
         return server.createInventory(owner, size, title);
     }
+
+    // Paper start
 
     /**
      * Creates an empty merchant.
@@ -1110,7 +1183,21 @@ public final class Bukkit {
      *              when the merchant inventory is viewed
      * @return a new merchant
      */
+    public static @NotNull Merchant createMerchant(@Nullable net.kyori.adventure.text.Component title) {
+        return server.createMerchant(title);
+    }
+    // Paper start
+
+    /**
+     * Creates an empty merchant.
+     *
+     * @param title the title of the corresponding merchant inventory, displayed
+     *              when the merchant inventory is viewed
+     * @return a new merchant
+     * @deprecated in favour of {@link #createMerchant(net.kyori.adventure.text.Component)}
+     */
     @NotNull
+    @Deprecated // Paper
     public static Merchant createMerchant(@Nullable String title) {
         return server.createMerchant(title);
     }
@@ -1181,22 +1268,51 @@ public final class Bukkit {
         return server.isPrimaryThread();
     }
 
+    // Paper start
+
+    /**
+     * Gets the message that is displayed on the server list.
+     *
+     * @return the server's MOTD
+     */
+    @NotNull
+    public static net.kyori.adventure.text.Component motd() {
+        return server.motd();
+    }
+    // Paper end
+
     /**
      * Gets the message that is displayed on the server list.
      *
      * @return the servers MOTD
+     * @deprecated in favour of {@link #motd()}
      */
     @NotNull
+    @Deprecated // Paper
     public static String getMotd() {
         return server.getMotd();
     }
+
+    // Paper start
 
     /**
      * Gets the default message that is displayed when the server is stopped.
      *
      * @return the shutdown message
      */
+    public static @Nullable net.kyori.adventure.text.Component shutdownMessage() {
+        return server.shutdownMessage();
+    }
+    // Paper end
+
+    /**
+     * Gets the default message that is displayed when the server is stopped.
+     *
+     * @return the shutdown message
+     * @deprecated in favour of {@link #shutdownMessage()}
+     */
     @Nullable
+    @Deprecated // Paper
     public static String getShutdownMessage() {
         return server.getShutdownMessage();
     }
