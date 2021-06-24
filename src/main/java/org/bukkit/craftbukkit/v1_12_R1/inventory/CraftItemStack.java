@@ -220,7 +220,7 @@ public final class CraftItemStack extends ItemStack {
             case ENDER_CHEST:
                 return new CraftMetaBlockState(item.getTagCompound(), CraftMagicNumbers.getMaterial(item.getItem()));
             default:
-                return item.getItem() instanceof ItemBlock ? new CraftMetaBlockState(item.getTagCompound(), CraftMagicNumbers.getMaterial(item.getItem())) : new CraftMetaItem(item.getTagCompound());
+                return new CraftMetaItem(item.getTagCompound());
         }
     }
 
