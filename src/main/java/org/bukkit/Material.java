@@ -619,17 +619,12 @@ public enum Material {
 
     public static Material getMaterial(final int id) {
         if (byId.length > id && id >= 0) {
-            if (ItemAPI.isBlockByID(id)) {
-                return blockById[id];
-            }
             return byId[id];
         } else {
             return null;
         }
     }
 
-    //TODO: Get through the above getMaterial(int id)?
-    @Deprecated
     public static Material getBlockMaterial(final int id) {
         if (blockById.length > id && id >= 0) {
             return blockById[id];
