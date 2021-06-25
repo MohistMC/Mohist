@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,19 +_,23 @@
+@@ -1,24 +_,29 @@
  package net.minecraft.server;
  
 +import com.destroystokyo.paper.config.PaperConfig;
@@ -25,6 +25,12 @@
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
  import joptsimple.OptionSpec;
+ import net.minecraft.command.Commands;
+ import net.minecraft.crash.CrashReport;
++import net.minecraft.entity.merchant.villager.VillagerTrades;
+ import net.minecraft.nbt.INBT;
+ import net.minecraft.nbt.NBTDynamicOps;
+ import net.minecraft.resources.DataPackRegistries;
 @@ -31,6 +_,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
@@ -33,7 +39,7 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
-@@ -53,159 +_,244 @@
+@@ -53,159 +_,245 @@
  import org.apache.logging.log4j.Logger;
  
  public class Main {
@@ -295,6 +301,7 @@
 +
 +            saveformat$levelsave.func_237287_a_(dynamicregistries$impl, iserverconfiguration);
 +            IServerConfiguration iserverconfiguration1 = iserverconfiguration;
++            Class.forName(VillagerTrades.class.getName());// Paper - load this sync so it won't fail later async
 +            final DedicatedServer dedicatedserver = MinecraftServer.func_240784_a_((p_240762_16_) -> {
 +                DedicatedServer dedicatedserver1 = new DedicatedServer(p_240762_16_, dynamicregistries$impl, saveformat$levelsave, resourcepacklist, datapackregistries, iserverconfiguration1, serverpropertiesprovider, DataFixesManager.func_210901_a(), minecraftsessionservice, gameprofilerepository, playerprofilecache, LoggingChunkStatusListener::new);
 +                dedicatedserver1.func_71224_l(optionset.valueOf(optionspec8));

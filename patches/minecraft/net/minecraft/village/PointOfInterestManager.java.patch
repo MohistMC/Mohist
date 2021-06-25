@@ -1,0 +1,520 @@
+--- a/net/minecraft/village/PointOfInterestManager.java
++++ b/net/minecraft/village/PointOfInterestManager.java
+@@ -6,6 +_,7 @@
+ import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+ import it.unimi.dsi.fastutil.longs.LongSet;
++
+ import java.io.File;
+ import java.util.Collections;
+ import java.util.Comparator;
+@@ -18,7 +_,9 @@
+ import java.util.stream.Collectors;
+ import java.util.stream.IntStream;
+ import java.util.stream.Stream;
++
+ import net.minecraft.block.BlockState;
++import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.util.SectionDistanceGraph;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.datafix.DefaultTypeReferences;
+@@ -29,226 +_,280 @@
+ import net.minecraft.world.chunk.ChunkSection;
+ import net.minecraft.world.chunk.ChunkStatus;
+ import net.minecraft.world.chunk.storage.RegionSectionCache;
++import net.minecraft.world.server.ServerWorld;
+ 
+ public class PointOfInterestManager extends RegionSectionCache<PointOfInterestData> {
+-   private final PointOfInterestManager.DistanceGraph field_219164_a;
+-   private final LongSet field_226345_b_ = new LongOpenHashSet();
+-
+-   public PointOfInterestManager(File p_i231554_1_, DataFixer p_i231554_2_, boolean p_i231554_3_) {
+-      super(p_i231554_1_, PointOfInterestData::func_234158_a_, PointOfInterestData::new, p_i231554_2_, DefaultTypeReferences.POI_CHUNK, p_i231554_3_);
+-      this.field_219164_a = new PointOfInterestManager.DistanceGraph();
+-   }
+-
+-   public void func_219135_a(BlockPos p_219135_1_, PointOfInterestType p_219135_2_) {
+-      this.func_235995_e_(SectionPos.func_218167_a(p_219135_1_).func_218146_v()).func_218243_a(p_219135_1_, p_219135_2_);
+-   }
+-
+-   public void func_219140_a(BlockPos p_219140_1_) {
+-      this.func_235995_e_(SectionPos.func_218167_a(p_219140_1_).func_218146_v()).func_218248_a(p_219140_1_);
+-   }
+-
+-   public long func_219145_a(Predicate<PointOfInterestType> p_219145_1_, BlockPos p_219145_2_, int p_219145_3_, PointOfInterestManager.Status p_219145_4_) {
+-      return this.func_219146_b(p_219145_1_, p_219145_2_, p_219145_3_, p_219145_4_).count();
+-   }
+-
+-   public boolean func_234135_a_(PointOfInterestType p_234135_1_, BlockPos p_234135_2_) {
+-      Optional<PointOfInterestType> optional = this.func_235995_e_(SectionPos.func_218167_a(p_234135_2_).func_218146_v()).func_218244_d(p_234135_2_);
+-      return optional.isPresent() && optional.get().equals(p_234135_1_);
+-   }
+-
+-   public Stream<PointOfInterest> func_226353_b_(Predicate<PointOfInterestType> p_226353_1_, BlockPos p_226353_2_, int p_226353_3_, PointOfInterestManager.Status p_226353_4_) {
+-      int i = Math.floorDiv(p_226353_3_, 16) + 1;
+-      return ChunkPos.func_222243_a(new ChunkPos(p_226353_2_), i).flatMap((p_226350_3_) -> {
+-         return this.func_219137_a(p_226353_1_, p_226350_3_, p_226353_4_);
+-      }).filter((p_242322_2_) -> {
+-         BlockPos blockpos = p_242322_2_.func_218261_f();
+-         return Math.abs(blockpos.func_177958_n() - p_226353_2_.func_177958_n()) <= p_226353_3_ && Math.abs(blockpos.func_177952_p() - p_226353_2_.func_177952_p()) <= p_226353_3_;
+-      });
+-   }
+-
+-   public Stream<PointOfInterest> func_219146_b(Predicate<PointOfInterestType> p_219146_1_, BlockPos p_219146_2_, int p_219146_3_, PointOfInterestManager.Status p_219146_4_) {
+-      int i = p_219146_3_ * p_219146_3_;
+-      return this.func_226353_b_(p_219146_1_, p_219146_2_, p_219146_3_, p_219146_4_).filter((p_226349_2_) -> {
+-         return p_226349_2_.func_218261_f().func_177951_i(p_219146_2_) <= (double)i;
+-      });
+-   }
+-
+-   public Stream<PointOfInterest> func_219137_a(Predicate<PointOfInterestType> p_219137_1_, ChunkPos p_219137_2_, PointOfInterestManager.Status p_219137_3_) {
+-      return IntStream.range(0, 16).boxed().map((p_219149_2_) -> {
+-         return this.func_219113_d(SectionPos.func_218156_a(p_219137_2_, p_219149_2_).func_218146_v());
+-      }).filter(Optional::isPresent).flatMap((p_241393_2_) -> {
+-         return p_241393_2_.get().func_218247_a(p_219137_1_, p_219137_3_);
+-      });
+-   }
+-
+-   public Stream<BlockPos> func_225399_a(Predicate<PointOfInterestType> p_225399_1_, Predicate<BlockPos> p_225399_2_, BlockPos p_225399_3_, int p_225399_4_, PointOfInterestManager.Status p_225399_5_) {
+-      return this.func_219146_b(p_225399_1_, p_225399_3_, p_225399_4_, p_225399_5_).map(PointOfInterest::func_218261_f).filter(p_225399_2_);
+-   }
+-
+-   public Stream<BlockPos> func_242324_b(Predicate<PointOfInterestType> p_242324_1_, Predicate<BlockPos> p_242324_2_, BlockPos p_242324_3_, int p_242324_4_, PointOfInterestManager.Status p_242324_5_) {
+-      return this.func_225399_a(p_242324_1_, p_242324_2_, p_242324_3_, p_242324_4_, p_242324_5_).sorted(Comparator.comparingDouble((p_242323_1_) -> {
+-         return p_242323_1_.func_177951_i(p_242324_3_);
+-      }));
+-   }
+-
+-   public Optional<BlockPos> func_219127_a(Predicate<PointOfInterestType> p_219127_1_, Predicate<BlockPos> p_219127_2_, BlockPos p_219127_3_, int p_219127_4_, PointOfInterestManager.Status p_219127_5_) {
+-      return this.func_225399_a(p_219127_1_, p_219127_2_, p_219127_3_, p_219127_4_, p_219127_5_).findFirst();
+-   }
+-
+-   public Optional<BlockPos> func_234148_d_(Predicate<PointOfInterestType> p_234148_1_, BlockPos p_234148_2_, int p_234148_3_, PointOfInterestManager.Status p_234148_4_) {
+-      return this.func_219146_b(p_234148_1_, p_234148_2_, p_234148_3_, p_234148_4_).map(PointOfInterest::func_218261_f).min(Comparator.comparingDouble((p_219160_1_) -> {
+-         return p_219160_1_.func_177951_i(p_234148_2_);
+-      }));
+-   }
+-
+-   public Optional<BlockPos> func_219157_a(Predicate<PointOfInterestType> p_219157_1_, Predicate<BlockPos> p_219157_2_, BlockPos p_219157_3_, int p_219157_4_) {
+-      return this.func_219146_b(p_219157_1_, p_219157_3_, p_219157_4_, PointOfInterestManager.Status.HAS_SPACE).filter((p_219129_1_) -> {
+-         return p_219157_2_.test(p_219129_1_.func_218261_f());
+-      }).findFirst().map((p_219152_0_) -> {
+-         p_219152_0_.func_218262_b();
+-         return p_219152_0_.func_218261_f();
+-      });
+-   }
+-
+-   public Optional<BlockPos> func_219163_a(Predicate<PointOfInterestType> p_219163_1_, Predicate<BlockPos> p_219163_2_, PointOfInterestManager.Status p_219163_3_, BlockPos p_219163_4_, int p_219163_5_, Random p_219163_6_) {
+-      List<PointOfInterest> list = this.func_219146_b(p_219163_1_, p_219163_4_, p_219163_5_, p_219163_3_).collect(Collectors.toList());
+-      Collections.shuffle(list, p_219163_6_);
+-      return list.stream().filter((p_234143_1_) -> {
+-         return p_219163_2_.test(p_234143_1_.func_218261_f());
+-      }).findFirst().map(PointOfInterest::func_218261_f);
+-   }
+-
+-   public boolean func_219142_b(BlockPos p_219142_1_) {
+-      return this.func_235995_e_(SectionPos.func_218167_a(p_219142_1_).func_218146_v()).func_218251_c(p_219142_1_);
+-   }
+-
+-   public boolean func_219138_a(BlockPos p_219138_1_, Predicate<PointOfInterestType> p_219138_2_) {
+-      return this.func_219113_d(SectionPos.func_218167_a(p_219138_1_).func_218146_v()).map((p_234141_2_) -> {
+-         return p_234141_2_.func_218245_a(p_219138_1_, p_219138_2_);
+-      }).orElse(false);
+-   }
+-
+-   public Optional<PointOfInterestType> func_219148_c(BlockPos p_219148_1_) {
+-      PointOfInterestData pointofinterestdata = this.func_235995_e_(SectionPos.func_218167_a(p_219148_1_).func_218146_v());
+-      return pointofinterestdata.func_218244_d(p_219148_1_);
+-   }
+-
+-   public int func_219150_a(SectionPos p_219150_1_) {
+-      this.field_219164_a.func_215563_a();
+-      return this.field_219164_a.func_215471_c(p_219150_1_.func_218146_v());
+-   }
+-
+-   private boolean func_219154_f(long p_219154_1_) {
+-      Optional<PointOfInterestData> optional = this.func_219106_c(p_219154_1_);
+-      return optional == null ? false : optional.map((p_234134_0_) -> {
+-         return p_234134_0_.func_218247_a(PointOfInterestType.field_221053_a, PointOfInterestManager.Status.IS_OCCUPIED).count() > 0L;
+-      }).orElse(false);
+-   }
+-
+-   public void func_219115_a(BooleanSupplier p_219115_1_) {
+-      super.func_219115_a(p_219115_1_);
+-      this.field_219164_a.func_215563_a();
+-   }
+-
+-   protected void func_219116_a(long p_219116_1_) {
+-      super.func_219116_a(p_219116_1_);
+-      this.field_219164_a.func_215515_b(p_219116_1_, this.field_219164_a.func_215516_b(p_219116_1_), false);
+-   }
+-
+-   protected void func_219111_b(long p_219111_1_) {
+-      this.field_219164_a.func_215515_b(p_219111_1_, this.field_219164_a.func_215516_b(p_219111_1_), false);
+-   }
+-
+-   public void func_219139_a(ChunkPos p_219139_1_, ChunkSection p_219139_2_) {
+-      SectionPos sectionpos = SectionPos.func_218156_a(p_219139_1_, p_219139_2_.func_222632_g() >> 4);
+-      Util.func_215077_a(this.func_219113_d(sectionpos.func_218146_v()), (p_234138_3_) -> {
+-         p_234138_3_.func_218240_a((p_234145_3_) -> {
++    private final PointOfInterestManager.DistanceGraph field_219164_a;
++    private final LongSet field_226345_b_ = new LongOpenHashSet();
++    private final ServerWorld world; // Paper
++
++    public PointOfInterestManager(File p_i231554_1_, DataFixer p_i231554_2_, boolean p_i231554_3_) {
++        // Paper start - add world parameter
++        this(p_i231554_1_, p_i231554_2_, p_i231554_3_, null);
++    }
++
++    public PointOfInterestManager(File p_i231554_1_, DataFixer p_i231554_2_, boolean p_i231554_3_, ServerWorld world) {
++        super(p_i231554_1_, PointOfInterestData::func_234158_a_, PointOfInterestData::new, p_i231554_2_, DefaultTypeReferences.POI_CHUNK, p_i231554_3_);
++        this.field_219164_a = new PointOfInterestManager.DistanceGraph();
++        this.world = world;
++        // Paper end - add world parameter
++    }
++
++    public void func_219135_a(BlockPos p_219135_1_, PointOfInterestType p_219135_2_) {
++        this.func_235995_e_(SectionPos.func_218167_a(p_219135_1_).func_218146_v()).func_218243_a(p_219135_1_, p_219135_2_);
++    }
++
++    public void func_219140_a(BlockPos p_219140_1_) {
++        this.func_235995_e_(SectionPos.func_218167_a(p_219140_1_).func_218146_v()).func_218248_a(p_219140_1_);
++    }
++
++    public long func_219145_a(Predicate<PointOfInterestType> p_219145_1_, BlockPos p_219145_2_, int p_219145_3_, PointOfInterestManager.Status p_219145_4_) {
++        return this.func_219146_b(p_219145_1_, p_219145_2_, p_219145_3_, p_219145_4_).count();
++    }
++
++    public boolean func_234135_a_(PointOfInterestType p_234135_1_, BlockPos p_234135_2_) {
++        Optional<PointOfInterestType> optional = this.func_235995_e_(SectionPos.func_218167_a(p_234135_2_).func_218146_v()).func_218244_d(p_234135_2_);
++        return optional.isPresent() && optional.get().equals(p_234135_1_);
++    }
++
++    public Stream<PointOfInterest> func_226353_b_(Predicate<PointOfInterestType> p_226353_1_, BlockPos p_226353_2_, int p_226353_3_, PointOfInterestManager.Status p_226353_4_) {
++        int i = Math.floorDiv(p_226353_3_, 16) + 1;
++        return ChunkPos.func_222243_a(new ChunkPos(p_226353_2_), i).flatMap((p_226350_3_) -> {
++            return this.func_219137_a(p_226353_1_, p_226350_3_, p_226353_4_);
++        }).filter((p_242322_2_) -> {
++            BlockPos blockpos = p_242322_2_.func_218261_f();
++            return Math.abs(blockpos.func_177958_n() - p_226353_2_.func_177958_n()) <= p_226353_3_ && Math.abs(blockpos.func_177952_p() - p_226353_2_.func_177952_p()) <= p_226353_3_;
++        });
++    }
++
++    public Stream<PointOfInterest> func_219146_b(Predicate<PointOfInterestType> p_219146_1_, BlockPos p_219146_2_, int p_219146_3_, PointOfInterestManager.Status p_219146_4_) {
++        int i = p_219146_3_ * p_219146_3_;
++        return this.func_226353_b_(p_219146_1_, p_219146_2_, p_219146_3_, p_219146_4_).filter((p_226349_2_) -> {
++            return p_226349_2_.func_218261_f().func_177951_i(p_219146_2_) <= (double) i;
++        });
++    }
++
++    public Stream<PointOfInterest> func_219137_a(Predicate<PointOfInterestType> p_219137_1_, ChunkPos p_219137_2_, PointOfInterestManager.Status p_219137_3_) {
++        return IntStream.range(0, 16).boxed().map((p_219149_2_) -> {
++            return this.func_219113_d(SectionPos.func_218156_a(p_219137_2_, p_219149_2_).func_218146_v());
++        }).filter(Optional::isPresent).flatMap((p_241393_2_) -> {
++            return p_241393_2_.get().func_218247_a(p_219137_1_, p_219137_3_);
++        });
++    }
++
++    public Stream<BlockPos> func_225399_a(Predicate<PointOfInterestType> p_225399_1_, Predicate<BlockPos> p_225399_2_, BlockPos p_225399_3_, int p_225399_4_, PointOfInterestManager.Status p_225399_5_) {
++        return this.func_219146_b(p_225399_1_, p_225399_3_, p_225399_4_, p_225399_5_).map(PointOfInterest::func_218261_f).filter(p_225399_2_);
++    }
++
++    public Stream<BlockPos> func_242324_b(Predicate<PointOfInterestType> p_242324_1_, Predicate<BlockPos> p_242324_2_, BlockPos p_242324_3_, int p_242324_4_, PointOfInterestManager.Status p_242324_5_) {
++        return this.func_225399_a(p_242324_1_, p_242324_2_, p_242324_3_, p_242324_4_, p_242324_5_).sorted(Comparator.comparingDouble((p_242323_1_) -> {
++            return p_242323_1_.func_177951_i(p_242324_3_);
++        }));
++    }
++
++    public Optional<BlockPos> func_219127_a(Predicate<PointOfInterestType> p_219127_1_, Predicate<BlockPos> p_219127_2_, BlockPos p_219127_3_, int p_219127_4_, PointOfInterestManager.Status p_219127_5_) {
++        return this.func_225399_a(p_219127_1_, p_219127_2_, p_219127_3_, p_219127_4_, p_219127_5_).findFirst();
++    }
++
++    public Optional<BlockPos> func_234148_d_(Predicate<PointOfInterestType> p_234148_1_, BlockPos p_234148_2_, int p_234148_3_, PointOfInterestManager.Status p_234148_4_) {
++        return this.func_219146_b(p_234148_1_, p_234148_2_, p_234148_3_, p_234148_4_).map(PointOfInterest::func_218261_f).min(Comparator.comparingDouble((p_219160_1_) -> {
++            return p_219160_1_.func_177951_i(p_234148_2_);
++        }));
++    }
++
++    public Optional<BlockPos> func_219157_a(Predicate<PointOfInterestType> p_219157_1_, Predicate<BlockPos> p_219157_2_, BlockPos p_219157_3_, int p_219157_4_) {
++        return this.func_219146_b(p_219157_1_, p_219157_3_, p_219157_4_, PointOfInterestManager.Status.HAS_SPACE).filter((p_219129_1_) -> {
++            return p_219157_2_.test(p_219129_1_.func_218261_f());
++        }).findFirst().map((p_219152_0_) -> {
++            p_219152_0_.func_218262_b();
++            return p_219152_0_.func_218261_f();
++        });
++    }
++
++    public Optional<BlockPos> func_219163_a(Predicate<PointOfInterestType> p_219163_1_, Predicate<BlockPos> p_219163_2_, PointOfInterestManager.Status p_219163_3_, BlockPos p_219163_4_, int p_219163_5_, Random p_219163_6_) {
++        List<PointOfInterest> list = this.func_219146_b(p_219163_1_, p_219163_4_, p_219163_5_, p_219163_3_).collect(Collectors.toList());
++        Collections.shuffle(list, p_219163_6_);
++        return list.stream().filter((p_234143_1_) -> {
++            return p_219163_2_.test(p_234143_1_.func_218261_f());
++        }).findFirst().map(PointOfInterest::func_218261_f);
++    }
++
++    public boolean func_219142_b(BlockPos p_219142_1_) {
++        return this.func_235995_e_(SectionPos.func_218167_a(p_219142_1_).func_218146_v()).func_218251_c(p_219142_1_);
++    }
++
++    public boolean func_219138_a(BlockPos p_219138_1_, Predicate<PointOfInterestType> p_219138_2_) {
++        return this.func_219113_d(SectionPos.func_218167_a(p_219138_1_).func_218146_v()).map((p_234141_2_) -> {
++            return p_234141_2_.func_218245_a(p_219138_1_, p_219138_2_);
++        }).orElse(false);
++    }
++
++    public Optional<PointOfInterestType> func_219148_c(BlockPos p_219148_1_) {
++        PointOfInterestData pointofinterestdata = this.func_235995_e_(SectionPos.func_218167_a(p_219148_1_).func_218146_v());
++        return pointofinterestdata.func_218244_d(p_219148_1_);
++    }
++
++    public int func_219150_a(SectionPos p_219150_1_) {
++        this.field_219164_a.func_215563_a();
++        return this.field_219164_a.func_215471_c(p_219150_1_.func_218146_v());
++    }
++
++    private boolean func_219154_f(long p_219154_1_) {
++        Optional<PointOfInterestData> optional = this.func_219106_c(p_219154_1_);
++        return optional == null ? false : optional.map((p_234134_0_) -> {
++            return p_234134_0_.func_218247_a(PointOfInterestType.field_221053_a, PointOfInterestManager.Status.IS_OCCUPIED).count() > 0L;
++        }).orElse(false);
++    }
++
++    public void func_219115_a(BooleanSupplier p_219115_1_) {
++        // Paper start - async chunk io
++        if (this.world == null) {
++            super.func_219115_a(p_219115_1_);
++        } else {
++            while (!this.field_219122_d.isEmpty() && p_219115_1_.getAsBoolean()) {
++                ChunkPos chunkcoordintpair = SectionPos.func_218170_a(this.field_219122_d.firstLong()).func_218155_u();
++
++                net.minecraft.nbt.CompoundNBT data;
++                //try (co.aikar.timings.Timing ignored1 = this.world.timings.poiSaveDataSerialization.startTiming()) { // Mohist - fix server crash when player teleport in other dimension (NPE)
++                    data = this.getData(chunkcoordintpair);
++                //}
++                com.destroystokyo.paper.io.PaperFileIOThread.Holder.INSTANCE.scheduleSave(this.world,
++                        chunkcoordintpair.field_77276_a, chunkcoordintpair.field_77275_b, data, null, com.destroystokyo.paper.io.PrioritizedTaskQueue.LOW_PRIORITY);
++            }
++        }
++        // Paper end
++        this.field_219164_a.func_215563_a();
++    }
++
++
++    protected void func_219116_a(long p_219116_1_) {
++        super.func_219116_a(p_219116_1_);
++        this.field_219164_a.func_215515_b(p_219116_1_, this.field_219164_a.func_215516_b(p_219116_1_), false);
++    }
++
++    protected void func_219111_b(long p_219111_1_) {
++        this.field_219164_a.func_215515_b(p_219111_1_, this.field_219164_a.func_215516_b(p_219111_1_), false);
++    }
++
++    public void func_219139_a(ChunkPos p_219139_1_, ChunkSection p_219139_2_) {
++        SectionPos sectionpos = SectionPos.func_218156_a(p_219139_1_, p_219139_2_.func_222632_g() >> 4);
++        Util.func_215077_a(this.func_219113_d(sectionpos.func_218146_v()), (p_234138_3_) -> {
++            p_234138_3_.func_218240_a((p_234145_3_) -> {
++                if (func_219151_a(p_219139_2_)) {
++                    this.func_219132_a(p_219139_2_, sectionpos, p_234145_3_);
++                }
++
++            });
++        }, () -> {
+             if (func_219151_a(p_219139_2_)) {
+-               this.func_219132_a(p_219139_2_, sectionpos, p_234145_3_);
+-            }
+-
+-         });
+-      }, () -> {
+-         if (func_219151_a(p_219139_2_)) {
+-            PointOfInterestData pointofinterestdata = this.func_235995_e_(sectionpos.func_218146_v());
+-            this.func_219132_a(p_219139_2_, sectionpos, pointofinterestdata::func_218243_a);
+-         }
+-
+-      });
+-   }
+-
+-   private static boolean func_219151_a(ChunkSection p_219151_0_) {
+-      return p_219151_0_.func_235962_a_(PointOfInterestType.field_234167_x_::contains);
+-   }
+-
+-   private void func_219132_a(ChunkSection p_219132_1_, SectionPos p_219132_2_, BiConsumer<BlockPos, PointOfInterestType> p_219132_3_) {
+-      p_219132_2_.func_218145_w().forEach((p_234139_2_) -> {
+-         BlockState blockstate = p_219132_1_.func_177485_a(SectionPos.func_218171_b(p_234139_2_.func_177958_n()), SectionPos.func_218171_b(p_234139_2_.func_177956_o()), SectionPos.func_218171_b(p_234139_2_.func_177952_p()));
+-         PointOfInterestType.func_221047_b(blockstate).ifPresent((p_234142_2_) -> {
+-            p_219132_3_.accept(p_234139_2_, p_234142_2_);
+-         });
+-      });
+-   }
+-
+-   public void func_226347_a_(IWorldReader p_226347_1_, BlockPos p_226347_2_, int p_226347_3_) {
+-      SectionPos.func_229421_b_(new ChunkPos(p_226347_2_), Math.floorDiv(p_226347_3_, 16)).map((p_234147_1_) -> {
+-         return Pair.of(p_234147_1_, this.func_219113_d(p_234147_1_.func_218146_v()));
+-      }).filter((p_234146_0_) -> {
+-         return !p_234146_0_.getSecond().map(PointOfInterestData::func_226355_a_).orElse(false);
+-      }).map((p_234140_0_) -> {
+-         return p_234140_0_.getFirst().func_218155_u();
+-      }).filter((p_234144_1_) -> {
+-         return this.field_226345_b_.add(p_234144_1_.func_201841_a());
+-      }).forEach((p_234136_1_) -> {
+-         p_226347_1_.func_217348_a(p_234136_1_.field_77276_a, p_234136_1_.field_77275_b, ChunkStatus.field_223226_a_);
+-      });
+-   }
+-
+-   final class DistanceGraph extends SectionDistanceGraph {
+-      private final Long2ByteMap field_215565_b = new Long2ByteOpenHashMap();
+-
+-      protected DistanceGraph() {
+-         super(7, 16, 256);
+-         this.field_215565_b.defaultReturnValue((byte)7);
+-      }
+-
+-      protected int func_215516_b(long p_215516_1_) {
+-         return PointOfInterestManager.this.func_219154_f(p_215516_1_) ? 0 : 7;
+-      }
+-
+-      protected int func_215471_c(long p_215471_1_) {
+-         return this.field_215565_b.get(p_215471_1_);
+-      }
+-
+-      protected void func_215476_a(long p_215476_1_, int p_215476_3_) {
+-         if (p_215476_3_ > 6) {
+-            this.field_215565_b.remove(p_215476_1_);
+-         } else {
+-            this.field_215565_b.put(p_215476_1_, (byte)p_215476_3_);
+-         }
+-
+-      }
+-
+-      public void func_215563_a() {
+-         super.func_215483_b(Integer.MAX_VALUE);
+-      }
+-   }
+-
+-   public static enum Status {
+-      HAS_SPACE(PointOfInterest::func_218265_d),
+-      IS_OCCUPIED(PointOfInterest::func_218263_e),
+-      ANY((p_221036_0_) -> {
+-         return true;
+-      });
+-
+-      private final Predicate<? super PointOfInterest> field_221037_d;
+-
+-      private Status(Predicate<? super PointOfInterest> p_i50192_3_) {
+-         this.field_221037_d = p_i50192_3_;
+-      }
+-
+-      public Predicate<? super PointOfInterest> func_221035_a() {
+-         return this.field_221037_d;
+-      }
+-   }
++                PointOfInterestData pointofinterestdata = this.func_235995_e_(sectionpos.func_218146_v());
++                this.func_219132_a(p_219139_2_, sectionpos, pointofinterestdata::func_218243_a);
++            }
++
++        });
++    }
++
++    private static boolean func_219151_a(ChunkSection p_219151_0_) {
++        return p_219151_0_.func_235962_a_(PointOfInterestType.field_234167_x_::contains);
++    }
++
++    private void func_219132_a(ChunkSection p_219132_1_, SectionPos p_219132_2_, BiConsumer<BlockPos, PointOfInterestType> p_219132_3_) {
++        p_219132_2_.func_218145_w().forEach((p_234139_2_) -> {
++            BlockState blockstate = p_219132_1_.func_177485_a(SectionPos.func_218171_b(p_234139_2_.func_177958_n()), SectionPos.func_218171_b(p_234139_2_.func_177956_o()), SectionPos.func_218171_b(p_234139_2_.func_177952_p()));
++            PointOfInterestType.func_221047_b(blockstate).ifPresent((p_234142_2_) -> {
++                p_219132_3_.accept(p_234139_2_, p_234142_2_);
++            });
++        });
++    }
++
++    public void func_226347_a_(IWorldReader p_226347_1_, BlockPos p_226347_2_, int p_226347_3_) {
++        SectionPos.func_229421_b_(new ChunkPos(p_226347_2_), Math.floorDiv(p_226347_3_, 16)).map((p_234147_1_) -> {
++            return Pair.of(p_234147_1_, this.func_219113_d(p_234147_1_.func_218146_v()));
++        }).filter((p_234146_0_) -> {
++            return !p_234146_0_.getSecond().map(PointOfInterestData::func_226355_a_).orElse(false);
++        }).map((p_234140_0_) -> {
++            return p_234140_0_.getFirst().func_218155_u();
++        }).filter((p_234144_1_) -> {
++            return this.field_226345_b_.add(p_234144_1_.func_201841_a());
++        }).forEach((p_234136_1_) -> {
++            p_226347_1_.func_217348_a(p_234136_1_.field_77276_a, p_234136_1_.field_77275_b, ChunkStatus.field_223226_a_);
++        });
++    }
++
++    final class DistanceGraph extends SectionDistanceGraph {
++        private final Long2ByteMap field_215565_b = new Long2ByteOpenHashMap();
++
++        protected DistanceGraph() {
++            super(7, 16, 256);
++            this.field_215565_b.defaultReturnValue((byte) 7);
++        }
++
++        protected int func_215516_b(long p_215516_1_) {
++            return PointOfInterestManager.this.func_219154_f(p_215516_1_) ? 0 : 7;
++        }
++
++        protected int func_215471_c(long p_215471_1_) {
++            return this.field_215565_b.get(p_215471_1_);
++        }
++
++        protected void func_215476_a(long p_215476_1_, int p_215476_3_) {
++            if (p_215476_3_ > 6) {
++                this.field_215565_b.remove(p_215476_1_);
++            } else {
++                this.field_215565_b.put(p_215476_1_, (byte) p_215476_3_);
++            }
++
++        }
++
++        public void func_215563_a() {
++            super.func_215483_b(Integer.MAX_VALUE);
++        }
++    }
++
++    // Paper start - Asynchronous chunk io
++    @javax.annotation.Nullable
++    @Override
++    public net.minecraft.nbt.CompoundNBT func_219099_e(ChunkPos chunkcoordintpair) throws java.io.IOException {
++        if (this.world != null && Thread.currentThread() != com.destroystokyo.paper.io.PaperFileIOThread.Holder.INSTANCE) {
++            net.minecraft.nbt.CompoundNBT ret = com.destroystokyo.paper.io.PaperFileIOThread.Holder.INSTANCE
++                    .loadChunkDataAsyncFuture(this.world, chunkcoordintpair.field_77276_a, chunkcoordintpair.field_77275_b, com.destroystokyo.paper.io.IOUtil.getPriorityForCurrentThread(),
++                            true, false, true).join().poiData;
++
++            if (ret == com.destroystokyo.paper.io.PaperFileIOThread.FAILURE_VALUE) {
++                throw new java.io.IOException("See logs for further detail");
++            }
++            return ret;
++        }
++        return super.func_219099_e(chunkcoordintpair);
++    }
++
++    @Override
++    public void func_219100_a(ChunkPos chunkcoordintpair, net.minecraft.nbt.CompoundNBT nbttagcompound) throws java.io.IOException {
++        if (this.world != null && Thread.currentThread() != com.destroystokyo.paper.io.PaperFileIOThread.Holder.INSTANCE) {
++            com.destroystokyo.paper.io.PaperFileIOThread.Holder.INSTANCE.scheduleSave(
++                    this.world, chunkcoordintpair.field_77276_a, chunkcoordintpair.field_77275_b, nbttagcompound, null,
++                    com.destroystokyo.paper.io.IOUtil.getPriorityForCurrentThread());
++            return;
++        }
++        super.func_219100_a(chunkcoordintpair, nbttagcompound);
++    }
++    // Paper end
++
++    public static enum Status {
++        HAS_SPACE(PointOfInterest::func_218265_d),
++        IS_OCCUPIED(PointOfInterest::func_218263_e),
++        ANY((p_221036_0_) -> {
++            return true;
++        });
++
++        private final Predicate<? super PointOfInterest> field_221037_d;
++
++        private Status(Predicate<? super PointOfInterest> p_i50192_3_) {
++            this.field_221037_d = p_i50192_3_;
++        }
++
++        public Predicate<? super PointOfInterest> func_221035_a() {
++            return this.field_221037_d;
++        }
++    }
+ }

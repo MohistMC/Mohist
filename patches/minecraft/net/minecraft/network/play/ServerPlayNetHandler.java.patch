@@ -101,7 +101,7 @@
  import net.minecraft.util.math.shapes.IBooleanFunction;
  import net.minecraft.util.math.shapes.VoxelShape;
  import net.minecraft.util.math.shapes.VoxelShapes;
-@@ -150,1271 +_,2517 @@
+@@ -150,1271 +_,2525 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -824,6 +824,14 @@
 +            this.func_194028_b(new TranslationTextComponent("disconnect.spam", new Object[0]));
 +            return;
 +        }
++        // Paper start
++        String str = p_195518_1_.func_197707_b();
++        int index = -1;
++        if (str.length() > 64 && ((index = str.indexOf(' ')) == -1 || index >= 64)) {
++            field_147367_d.scheduleOnMain(() -> this.func_194028_b(new TranslationTextComponent("disconnect.spam", new Object[0]))); // Paper
++            return;
++        }
++        // Paper end
 +        // CraftBukkit end
 +        StringReader stringreader = new StringReader(p_195518_1_.func_197707_b());
 +        if (stringreader.canRead() && stringreader.peek() == '/') {

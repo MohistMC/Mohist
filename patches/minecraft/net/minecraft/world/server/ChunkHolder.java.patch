@@ -24,7 +24,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -37,377 +_,533 @@
+@@ -37,377 +_,545 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkHolder {
@@ -436,6 +436,18 @@
 +                return chunkstatus;
 +            }
 +        }
++        return null;
++    }
++
++    public ChunkStatus getChunkHolderStatus() {
++        for (ChunkStatus curr = ChunkStatus.field_222617_m, next = curr.func_222593_e(); curr != next; curr = next, next = next.func_222593_e()) {
++            CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> future = this.func_219301_a(curr);
++            Either<IChunk, ChunkHolder.IChunkLoadingError> either = future.getNow(null);
++            if (either == null || !either.left().isPresent()) {
++                continue;
++            }
++            return curr;
++        }
 +
 +        return null;
 +    }
@@ -613,7 +625,7 @@
 +        ChunkStatus chunkstatus = func_219278_b(this.field_219316_k);
 +        ChunkStatus chunkstatus1 = func_219278_b(this.field_219317_l);
 +        boolean flag = this.field_219316_k <= ChunkManager.field_219249_a;
-+        boolean flag1 = this.field_219317_l <= ChunkManager.field_219249_a;
++        boolean flag1 = this.field_219317_l <= ChunkManager.field_219249_a; // Paper - diff on change: (flag1 = new ticket level is in loadable range)
 +        ChunkHolder.LocationType chunkholder$locationtype = func_219286_c(this.field_219316_k);
 +        ChunkHolder.LocationType chunkholder$locationtype1 = func_219286_c(this.field_219317_l);
 +        // CraftBukkit start
