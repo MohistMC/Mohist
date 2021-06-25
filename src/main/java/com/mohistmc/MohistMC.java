@@ -31,6 +31,7 @@ public class MohistMC {
         MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run();
+        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (MohistConfigUtil.bMohist("showlogo")) {
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
@@ -49,16 +50,13 @@ public class MohistMC {
         DefaultLibraries.loadDefaultLibs();
         CustomLibraries.loadCustomLibs();
 
-        //MappingFix.init();
-        //MappingFix.copyMappings();
-        TypeAdapters$EnumTypeAdapter.class.getClassLoader();
+        Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
             while (!"true".equals(new Scanner(System.in).next()));
             EulaUtil.writeInfos();
         }
 
-        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false")) AutoDeletePlugins.jar();
         if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false")) AutoDeleteMods.jar();
         FastWorkBenchConf.changeConf();

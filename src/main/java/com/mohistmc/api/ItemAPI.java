@@ -199,12 +199,4 @@ public class ItemAPI {
     public static String getModid(int id) {
         return MODNAME_MAP.getOrDefault(id, "unknown");
     }
-
-    public static boolean isBlockByID(int id) {
-        return ITEM_BLOCK.containsKey(id);
-    }
-
-    public static int getModBlockByItem(int itemId) {
-        return ITEM_BLOCK.getOrDefault(itemId, 0);
-    }
 }
