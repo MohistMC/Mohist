@@ -1,17 +1,15 @@
 package com.mohistmc;
 
-import com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter;
 import com.mohistmc.bukkit.AutoDeletePlugins;
 import com.mohistmc.configuration.MohistConfigUtil;
 import com.mohistmc.forge.AutoDeleteMods;
 import com.mohistmc.forge.FastWorkBenchConf;
 import com.mohistmc.libraries.CustomLibraries;
-import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.libraries.DefaultLibraries;
+import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.i18n.Message;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -31,7 +29,6 @@ public class MohistMC {
         MohistConfigUtil.copyMohistConfig();
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run();
-        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         if (MohistConfigUtil.bMohist("showlogo")) {
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
@@ -50,6 +47,7 @@ public class MohistMC {
         DefaultLibraries.loadDefaultLibs();
         CustomLibraries.loadCustomLibs();
 
+        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));

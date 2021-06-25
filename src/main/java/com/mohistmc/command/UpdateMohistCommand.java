@@ -1,10 +1,9 @@
 package com.mohistmc.command;
 
 import com.mohistmc.configuration.MohistConfig;
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 
 public class UpdateMohistCommand extends Command {
 

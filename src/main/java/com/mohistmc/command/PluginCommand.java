@@ -3,7 +3,6 @@ package com.mohistmc.command;
 import com.mohistmc.util.pluginmanager.PluginManagers;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import org.bukkit.Bukkit;

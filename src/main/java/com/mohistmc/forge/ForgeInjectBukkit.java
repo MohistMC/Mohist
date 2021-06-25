@@ -5,9 +5,11 @@ import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.i18n.Message;
-
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
