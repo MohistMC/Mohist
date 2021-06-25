@@ -72,7 +72,7 @@ public class DefaultLibraries {
 			}
 			System.out.println(Message.getFormatString("update.retry", new Object[]{1}));
 			System.out.println("Something went wrong during download, trying to download with the mirror...");
-			mirror = "http://mavenmirror.mohistmc.com/";
+			mirror = "https://mavenmirror.mohistmc.com/";
 			run();
         } else System.out.println(Message.getString("libraries.checking.end"));
     }
