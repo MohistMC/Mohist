@@ -101,6 +101,7 @@ public class WatchdogThread extends Thread
                 // Paper end - Different message for short timeout
                 log.log( Level.SEVERE, "------------------------------" );
                 log.log( Level.SEVERE, i18n.get("watchdogthread.10" ));
+                com.destroystokyo.paper.io.chunk.ChunkTaskManager.dumpAllChunkLoadInfo(); // Paper
                 dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
                 log.log( Level.SEVERE, "------------------------------" );
                 //

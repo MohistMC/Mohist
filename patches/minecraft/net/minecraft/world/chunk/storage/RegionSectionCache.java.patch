@@ -1,29 +1,422 @@
 --- a/net/minecraft/world/chunk/storage/RegionSectionCache.java
 +++ b/net/minecraft/world/chunk/storage/RegionSectionCache.java
-@@ -107,7 +_,7 @@
-       try {
-          return this.field_227173_b_.func_227090_a_(p_223138_1_);
-       } catch (IOException ioexception) {
+@@ -11,6 +_,7 @@
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
++
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.Map;
+@@ -18,6 +_,7 @@
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Function;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.INBT;
+ import net.minecraft.nbt.NBTDynamicOps;
+@@ -30,183 +_,225 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class RegionSectionCache<R> implements AutoCloseable {
+-   private static final Logger field_219120_a = LogManager.getLogger();
+-   private final IOWorker field_227173_b_;
+-   private final Long2ObjectMap<Optional<R>> field_219121_b = new Long2ObjectOpenHashMap<>();
+-   private final LongLinkedOpenHashSet field_219122_d = new LongLinkedOpenHashSet();
+-   private final Function<Runnable, Codec<R>> field_235988_e_;
+-   private final Function<Runnable, R> field_219124_f;
+-   private final DataFixer field_219125_g;
+-   private final DefaultTypeReferences field_219126_h;
+-
+-   public RegionSectionCache(File p_i231897_1_, Function<Runnable, Codec<R>> p_i231897_2_, Function<Runnable, R> p_i231897_3_, DataFixer p_i231897_4_, DefaultTypeReferences p_i231897_5_, boolean p_i231897_6_) {
+-      this.field_235988_e_ = p_i231897_2_;
+-      this.field_219124_f = p_i231897_3_;
+-      this.field_219125_g = p_i231897_4_;
+-      this.field_219126_h = p_i231897_5_;
+-      this.field_227173_b_ = new IOWorker(p_i231897_1_, p_i231897_6_, p_i231897_1_.getName());
+-   }
+-
+-   protected void func_219115_a(BooleanSupplier p_219115_1_) {
+-      while(!this.field_219122_d.isEmpty() && p_219115_1_.getAsBoolean()) {
+-         ChunkPos chunkpos = SectionPos.func_218170_a(this.field_219122_d.firstLong()).func_218155_u();
+-         this.func_219117_c(chunkpos);
+-      }
+-
+-   }
+-
+-   @Nullable
+-   protected Optional<R> func_219106_c(long p_219106_1_) {
+-      return this.field_219121_b.get(p_219106_1_);
+-   }
+-
+-   protected Optional<R> func_219113_d(long p_219113_1_) {
+-      SectionPos sectionpos = SectionPos.func_218170_a(p_219113_1_);
+-      if (this.func_219114_b(sectionpos)) {
+-         return Optional.empty();
+-      } else {
+-         Optional<R> optional = this.func_219106_c(p_219113_1_);
+-         if (optional != null) {
+-            return optional;
+-         } else {
+-            this.func_219107_b(sectionpos.func_218155_u());
+-            optional = this.func_219106_c(p_219113_1_);
+-            if (optional == null) {
+-               throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException());
++public class RegionSectionCache<R> extends RegionFileCache implements AutoCloseable { // Paper - nuke IOWorker
++    private static final Logger field_219120_a = LogManager.getLogger();
++    // Paper - remove mojang I/O thread
++    private final Long2ObjectMap<Optional<R>> field_219121_b = new Long2ObjectOpenHashMap<>();
++    public final LongLinkedOpenHashSet field_219122_d = new LongLinkedOpenHashSet(); // Paper - private -> public
++    private final Function<Runnable, Codec<R>> field_235988_e_;
++    private final Function<Runnable, R> field_219124_f;
++    private final DataFixer field_219125_g;
++    private final DefaultTypeReferences field_219126_h;
++
++    public RegionSectionCache(File p_i231897_1_, Function<Runnable, Codec<R>> p_i231897_2_, Function<Runnable, R> p_i231897_3_, DataFixer p_i231897_4_, DefaultTypeReferences p_i231897_5_, boolean p_i231897_6_) {
++        super(p_i231897_1_, p_i231897_6_); // Paper - nuke IOWorker
++        this.field_235988_e_ = p_i231897_2_;
++        this.field_219124_f = p_i231897_3_;
++        this.field_219125_g = p_i231897_4_;
++        this.field_219126_h = p_i231897_5_;
++        // Paper - remove mojang I/O thread
++    }
++
++    protected void func_219115_a(BooleanSupplier p_219115_1_) {
++        while (!this.field_219122_d.isEmpty() && p_219115_1_.getAsBoolean()) {
++            ChunkPos chunkpos = SectionPos.func_218170_a(this.field_219122_d.firstLong()).func_218155_u();
++            this.func_219117_c(chunkpos);
++        }
++
++    }
++
++    @Nullable
++    protected Optional<R> func_219106_c(long p_219106_1_) {
++        return this.field_219121_b.get(p_219106_1_);
++    }
++
++    protected Optional<R> func_219113_d(long p_219113_1_) {
++        SectionPos sectionpos = SectionPos.func_218170_a(p_219113_1_);
++        if (this.func_219114_b(sectionpos)) {
++            return Optional.empty();
++        } else {
++            Optional<R> optional = this.func_219106_c(p_219113_1_);
++            if (optional != null) {
++                return optional;
+             } else {
+-               return optional;
+-            }
+-         }
+-      }
+-   }
+-
+-   protected boolean func_219114_b(SectionPos p_219114_1_) {
+-      return World.func_217405_b(SectionPos.func_218142_c(p_219114_1_.func_218163_b()));
+-   }
+-
+-   protected R func_235995_e_(long p_235995_1_) {
+-      Optional<R> optional = this.func_219113_d(p_235995_1_);
+-      if (optional.isPresent()) {
+-         return optional.get();
+-      } else {
+-         R r = this.field_219124_f.apply(() -> {
+-            this.func_219116_a(p_235995_1_);
+-         });
+-         this.field_219121_b.put(p_235995_1_, Optional.of(r));
+-         return r;
+-      }
+-   }
+-
+-   private void func_219107_b(ChunkPos p_219107_1_) {
+-      this.func_235992_a_(p_219107_1_, NBTDynamicOps.field_210820_a, this.func_223138_c(p_219107_1_));
+-   }
+-
+-   @Nullable
+-   private CompoundNBT func_223138_c(ChunkPos p_223138_1_) {
+-      try {
+-         return this.field_227173_b_.func_227090_a_(p_223138_1_);
+-      } catch (IOException ioexception) {
 -         field_219120_a.error("Error reading chunk {} data from disk", p_223138_1_, ioexception);
-+         field_219120_a.error(com.mohistmc.util.i18n.i18n.get("regionsectioncache.1", p_223138_1_, ioexception));
-          return null;
-       }
-    }
-@@ -151,7 +_,7 @@
-       if (inbt instanceof CompoundNBT) {
-          this.field_227173_b_.func_227093_a_(p_219117_1_, (CompoundNBT)inbt);
-       } else {
+-         return null;
+-      }
+-   }
+-
+-   private <T> void func_235992_a_(ChunkPos p_235992_1_, DynamicOps<T> p_235992_2_, @Nullable T p_235992_3_) {
+-      if (p_235992_3_ == null) {
+-         for(int i = 0; i < 16; ++i) {
+-            this.field_219121_b.put(SectionPos.func_218156_a(p_235992_1_, i).func_218146_v(), Optional.empty());
+-         }
+-      } else {
+-         Dynamic<T> dynamic1 = new Dynamic<>(p_235992_2_, p_235992_3_);
+-         int j = func_235993_a_(dynamic1);
+-         int k = SharedConstants.func_215069_a().getWorldVersion();
+-         boolean flag = j != k;
+-         Dynamic<T> dynamic = this.field_219125_g.update(this.field_219126_h.func_219816_a(), dynamic1, j, k);
+-         OptionalDynamic<T> optionaldynamic = dynamic.get("Sections");
+-
+-         for(int l = 0; l < 16; ++l) {
+-            long i1 = SectionPos.func_218156_a(p_235992_1_, l).func_218146_v();
+-            Optional<R> optional = optionaldynamic.get(Integer.toString(l)).result().flatMap((p_235989_3_) -> {
+-               return this.field_235988_e_.apply(() -> {
+-                  this.func_219116_a(i1);
+-               }).parse(p_235989_3_).resultOrPartial(field_219120_a::error);
+-            });
+-            this.field_219121_b.put(i1, optional);
+-            optional.ifPresent((p_235990_4_) -> {
+-               this.func_219111_b(i1);
+-               if (flag) {
+-                  this.func_219116_a(i1);
+-               }
+-
+-            });
+-         }
+-      }
+-
+-   }
+-
+-   private void func_219117_c(ChunkPos p_219117_1_) {
+-      Dynamic<INBT> dynamic = this.func_235991_a_(p_219117_1_, NBTDynamicOps.field_210820_a);
+-      INBT inbt = dynamic.getValue();
+-      if (inbt instanceof CompoundNBT) {
+-         this.field_227173_b_.func_227093_a_(p_219117_1_, (CompoundNBT)inbt);
+-      } else {
 -         field_219120_a.error("Expected compound tag, got {}", (Object)inbt);
-+         field_219120_a.error(com.mohistmc.util.i18n.i18n.get("regionsectioncache.2", (Object)inbt));
-       }
- 
-    }
-@@ -185,7 +_,7 @@
-       if (optional != null && optional.isPresent()) {
-          this.field_219122_d.add(p_219116_1_);
-       } else {
+-      }
+-
+-   }
+-
+-   private <T> Dynamic<T> func_235991_a_(ChunkPos p_235991_1_, DynamicOps<T> p_235991_2_) {
+-      Map<T, T> map = Maps.newHashMap();
+-
+-      for(int i = 0; i < 16; ++i) {
+-         long j = SectionPos.func_218156_a(p_235991_1_, i).func_218146_v();
+-         this.field_219122_d.remove(j);
+-         Optional<R> optional = this.field_219121_b.get(j);
+-         if (optional != null && optional.isPresent()) {
+-            DataResult<T> dataresult = this.field_235988_e_.apply(() -> {
+-               this.func_219116_a(j);
+-            }).encodeStart(p_235991_2_, optional.get());
+-            String s = Integer.toString(i);
+-            dataresult.resultOrPartial(field_219120_a::error).ifPresent((p_235994_3_) -> {
+-               map.put(p_235991_2_.createString(s), p_235994_3_);
+-            });
+-         }
+-      }
+-
+-      return new Dynamic<>(p_235991_2_, p_235991_2_.createMap(ImmutableMap.of(p_235991_2_.createString("Sections"), p_235991_2_.createMap(map), p_235991_2_.createString("DataVersion"), p_235991_2_.createInt(SharedConstants.func_215069_a().getWorldVersion()))));
+-   }
+-
+-   protected void func_219111_b(long p_219111_1_) {
+-   }
+-
+-   protected void func_219116_a(long p_219116_1_) {
+-      Optional<R> optional = this.field_219121_b.get(p_219116_1_);
+-      if (optional != null && optional.isPresent()) {
+-         this.field_219122_d.add(p_219116_1_);
+-      } else {
 -         field_219120_a.warn("No data for position: {}", (Object)SectionPos.func_218170_a(p_219116_1_));
-+         field_219120_a.warn(com.mohistmc.util.i18n.i18n.get("regionsectioncache.3", (Object)SectionPos.func_218170_a(p_219116_1_)));
-       }
-    }
- 
+-      }
+-   }
+-
+-   private static int func_235993_a_(Dynamic<?> p_235993_0_) {
+-      return p_235993_0_.get("DataVersion").asInt(1945);
+-   }
+-
+-   public void func_219112_a(ChunkPos p_219112_1_) {
+-      if (!this.field_219122_d.isEmpty()) {
+-         for(int i = 0; i < 16; ++i) {
+-            long j = SectionPos.func_218156_a(p_219112_1_, i).func_218146_v();
+-            if (this.field_219122_d.contains(j)) {
+-               this.func_219117_c(p_219112_1_);
+-               return;
+-            }
+-         }
+-      }
+-
+-   }
+-
+-   public void close() throws IOException {
+-      this.field_227173_b_.close();
+-   }
++                this.func_219107_b(sectionpos.func_218155_u());
++                optional = this.func_219106_c(p_219113_1_);
++                if (optional == null) {
++                    throw (IllegalStateException) Util.func_229757_c_(new IllegalStateException());
++                } else {
++                    return optional;
++                }
++            }
++        }
++    }
++
++    protected boolean func_219114_b(SectionPos p_219114_1_) {
++        return World.func_217405_b(SectionPos.func_218142_c(p_219114_1_.func_218163_b()));
++    }
++
++    protected R func_235995_e_(long p_235995_1_) {
++        Optional<R> optional = this.func_219113_d(p_235995_1_);
++        if (optional.isPresent()) {
++            return optional.get();
++        } else {
++            R r = this.field_219124_f.apply(() -> {
++                this.func_219116_a(p_235995_1_);
++            });
++            this.field_219121_b.put(p_235995_1_, Optional.of(r));
++            return r;
++        }
++    }
++
++    private void func_219107_b(ChunkPos p_219107_1_) {
++        // Paper start - expose function to load in data
++        this.loadInData(p_219107_1_, this.func_223138_c(p_219107_1_));
++    }
++
++    public void loadInData(ChunkPos chunkPos, CompoundNBT compound) {
++        this.func_235992_a_(chunkPos, NBTDynamicOps.field_210820_a, compound);
++        // Paper end - expose function to load in data
++    }
++
++    @Nullable
++    private CompoundNBT func_223138_c(ChunkPos p_223138_1_) {
++        try {
++            return this.func_219099_e(p_223138_1_); // Paper - nuke IOWorker
++        } catch (IOException ioexception) {
++            field_219120_a.error(com.mohistmc.util.i18n.i18n.get("regionsectioncache.1", p_223138_1_, ioexception));
++            return null;
++        }
++    }
++
++    private <T> void func_235992_a_(ChunkPos p_235992_1_, DynamicOps<T> p_235992_2_, @Nullable T p_235992_3_) {
++        if (p_235992_3_ == null) {
++            for (int i = 0; i < 16; ++i) {
++                this.field_219121_b.put(SectionPos.func_218156_a(p_235992_1_, i).func_218146_v(), Optional.empty());
++            }
++        } else {
++            Dynamic<T> dynamic1 = new Dynamic<>(p_235992_2_, p_235992_3_);
++            int j = func_235993_a_(dynamic1);
++            int k = SharedConstants.func_215069_a().getWorldVersion();
++            boolean flag = j != k;
++            Dynamic<T> dynamic = this.field_219125_g.update(this.field_219126_h.func_219816_a(), dynamic1, j, k);
++            OptionalDynamic<T> optionaldynamic = dynamic.get("Sections");
++
++            for (int l = 0; l < 16; ++l) {
++                long i1 = SectionPos.func_218156_a(p_235992_1_, l).func_218146_v();
++                Optional<R> optional = optionaldynamic.get(Integer.toString(l)).result().flatMap((p_235989_3_) -> {
++                    return this.field_235988_e_.apply(() -> {
++                        this.func_219116_a(i1);
++                    }).parse(p_235989_3_).resultOrPartial(field_219120_a::error);
++                });
++                this.field_219121_b.put(i1, optional);
++                optional.ifPresent((p_235990_4_) -> {
++                    this.func_219111_b(i1);
++                    if (flag) {
++                        this.func_219116_a(i1);
++                    }
++
++                });
++            }
++        }
++
++    }
++
++    private void func_219117_c(ChunkPos p_219117_1_) {
++        Dynamic<INBT> dynamic = this.func_235991_a_(p_219117_1_, NBTDynamicOps.field_210820_a);
++        INBT inbt = dynamic.getValue();
++        if (inbt instanceof CompoundNBT) {
++            try {
++                this.func_219100_a(p_219117_1_, (CompoundNBT) inbt);
++            } catch (IOException ioexception) {
++                RegionSectionCache.field_219120_a.error("Error writing data to disk", ioexception);
++            } // Paper - nuke IOWorker;
++        } else {
++            field_219120_a.error(com.mohistmc.util.i18n.i18n.get("regionsectioncache.2", (Object) inbt));
++        }
++
++    }
++
++    // Paper start - internal get data function, copied from above
++    private CompoundNBT getDataInternal(ChunkPos chunkcoordintpair) {
++        Dynamic<INBT> dynamic = this.func_235991_a_(chunkcoordintpair, NBTDynamicOps.field_210820_a);
++        INBT nbtbase = (INBT) dynamic.getValue();
++
++        if (nbtbase instanceof CompoundNBT) {
++            return (CompoundNBT) nbtbase;
++        } else {
++            RegionSectionCache.field_219120_a.error("Expected compound tag, got {}", nbtbase);
++        }
++        return null;
++    }
++    // Paper end
++
++    private <T> Dynamic<T> func_235991_a_(ChunkPos p_235991_1_, DynamicOps<T> p_235991_2_) {
++        Map<T, T> map = Maps.newHashMap();
++
++        for (int i = 0; i < 16; ++i) {
++            long j = SectionPos.func_218156_a(p_235991_1_, i).func_218146_v();
++            this.field_219122_d.remove(j);
++            Optional<R> optional = this.field_219121_b.get(j);
++            if (optional != null && optional.isPresent()) {
++                DataResult<T> dataresult = this.field_235988_e_.apply(() -> {
++                    this.func_219116_a(j);
++                }).encodeStart(p_235991_2_, optional.get());
++                String s = Integer.toString(i);
++                dataresult.resultOrPartial(field_219120_a::error).ifPresent((p_235994_3_) -> {
++                    map.put(p_235991_2_.createString(s), p_235994_3_);
++                });
++            }
++        }
++
++        return new Dynamic<>(p_235991_2_, p_235991_2_.createMap(ImmutableMap.of(p_235991_2_.createString("Sections"), p_235991_2_.createMap(map), p_235991_2_.createString("DataVersion"), p_235991_2_.createInt(SharedConstants.func_215069_a().getWorldVersion()))));
++    }
++
++    protected void func_219111_b(long p_219111_1_) {
++    }
++
++    protected void func_219116_a(long p_219116_1_) {
++        Optional<R> optional = this.field_219121_b.get(p_219116_1_);
++        if (optional != null && optional.isPresent()) {
++            this.field_219122_d.add(p_219116_1_);
++        } else {
++            field_219120_a.warn(com.mohistmc.util.i18n.i18n.get("regionsectioncache.3", (Object) SectionPos.func_218170_a(p_219116_1_)));
++        }
++    }
++
++    private static int func_235993_a_(Dynamic<?> p_235993_0_) {
++        return p_235993_0_.get("DataVersion").asInt(1945);
++    }
++
++    public void func_219112_a(ChunkPos p_219112_1_) {
++        if (!this.field_219122_d.isEmpty()) {
++            for (int i = 0; i < 16; ++i) {
++                long j = SectionPos.func_218156_a(p_219112_1_, i).func_218146_v();
++                if (this.field_219122_d.contains(j)) {
++                    this.func_219117_c(p_219112_1_);
++                    return;
++                }
++            }
++        }
++
++    }
++
++    public void close() throws IOException {
++        //this.worker.close(); // Paper - nuke I/O worker
++    }
++
++    // Paper start - get data function
++    public CompoundNBT getData(ChunkPos chunkcoordintpair) {
++        // Note: Copied from above
++        // This is checking if the data needs to be written, then it builds it later in getDataInternal(ChunkCoordIntPair)
++        if (!this.field_219122_d.isEmpty()) {
++            for (int i = 0; i < 16; ++i) {
++                long j = SectionPos.func_218156_a(chunkcoordintpair, i).func_218146_v();
++
++                if (this.field_219122_d.contains(j)) {
++                    return this.getDataInternal(chunkcoordintpair);
++                }
++            }
++        }
++        return null;
++    }
++    // Paper end
+ }

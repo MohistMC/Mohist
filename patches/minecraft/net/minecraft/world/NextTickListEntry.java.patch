@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/NextTickListEntry.java
++++ b/net/minecraft/world/NextTickListEntry.java
+@@ -4,7 +_,7 @@
+ import net.minecraft.util.math.BlockPos;
+ 
+ public class NextTickListEntry<T> {
+-   private static long field_77177_f;
++   private static final java.util.concurrent.atomic.AtomicLong COUNTER = new java.util.concurrent.atomic.AtomicLong(); // Paper - async chunk loading
+    private final T field_151352_g;
+    public final BlockPos field_180282_a;
+    public final long field_235017_b_;
+@@ -16,7 +_,7 @@
+    }
+ 
+    public NextTickListEntry(BlockPos p_i48978_1_, T p_i48978_2_, long p_i48978_3_, TickPriority p_i48978_5_) {
+-      this.field_77178_g = (long)(field_77177_f++);
++      this.field_77178_g =  (NextTickListEntry.COUNTER.getAndIncrement()); // Paper - async chunk loading
+       this.field_180282_a = p_i48978_1_.func_185334_h();
+       this.field_151352_g = p_i48978_2_;
+       this.field_235017_b_ = p_i48978_3_;

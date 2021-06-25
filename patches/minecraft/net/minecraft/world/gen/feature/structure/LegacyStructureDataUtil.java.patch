@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/structure/LegacyStructureDataUtil.java
++++ b/net/minecraft/world/gen/feature/structure/LegacyStructureDataUtil.java
+@@ -202,7 +_,7 @@
+       }
+    }
+ 
+-   public static LegacyStructureDataUtil func_236992_a_(RegistryKey<World> p_236992_0_, @Nullable DimensionSavedDataManager p_236992_1_) {
++   public static LegacyStructureDataUtil func_236992_a_(RegistryKey<World> p_236992_0_, @Nullable DimensionSavedDataManager p_236992_1_) { // CraftBukkit
+       if (p_236992_0_ == World.field_234918_g_) {
+          return new LegacyStructureDataUtil(p_236992_1_, ImmutableList.of("Monument", "Stronghold", "Village", "Mineshaft", "Temple", "Mansion"), ImmutableList.of("Village", "Mineshaft", "Mansion", "Igloo", "Desert_Pyramid", "Jungle_Pyramid", "Swamp_Hut", "Stronghold", "Monument"));
+       } else if (p_236992_0_ == World.field_234919_h_) {

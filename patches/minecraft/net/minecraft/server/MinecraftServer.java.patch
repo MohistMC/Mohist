@@ -413,7 +413,7 @@
           }
        }
  
-@@ -582,8 +_,19 @@
+@@ -582,9 +_,21 @@
        try {
           this.field_71310_m.close();
        } catch (IOException ioexception) {
@@ -433,8 +433,10 @@
 +      }
 +      // Spigot end
  
++      com.destroystokyo.paper.io.PaperFileIOThread.Holder.INSTANCE.close(true, true); // Paper
     }
  
+    public String func_71211_k() {
 @@ -605,29 +_,56 @@
           try {
              this.field_175590_aa.join();

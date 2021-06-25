@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChorusFlowerBlock;
 import net.minecraft.block.RedstoneDiodeBlock;
@@ -343,7 +345,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkLoaded(int x, int z) {
-        net.minecraft.world.chunk.Chunk chunk = world.getChunkSource().getChunk(x,z, false);
+        net.minecraft.world.chunk.Chunk chunk = world.getChunkSource().getChunk(x, z, false);
         return chunk != null;
     }
 
@@ -680,64 +682,64 @@ public class CraftWorld implements World {
 
         ConfiguredFeature gen;
         switch (type) {
-        case BIG_TREE:
-            gen = Features.FANCY_OAK;
-            break;
-        case BIRCH:
-            gen = Features.BIRCH;
-            break;
-        case REDWOOD:
-            gen = Features.SPRUCE;
-            break;
-        case TALL_REDWOOD:
-            gen = Features.PINE;
-            break;
-        case JUNGLE:
-            gen = Features.MEGA_JUNGLE_TREE;
-            break;
-        case SMALL_JUNGLE:
-            gen = Features.JUNGLE_TREE_NO_VINE;
-            break;
-        case COCOA_TREE:
-            gen = Features.JUNGLE_TREE;
-            break;
-        case JUNGLE_BUSH:
-            gen = Features.JUNGLE_BUSH;
-            break;
-        case RED_MUSHROOM:
-            gen = Features.HUGE_RED_MUSHROOM;
-            break;
-        case BROWN_MUSHROOM:
-            gen = Features.HUGE_BROWN_MUSHROOM;
-            break;
-        case SWAMP:
-            gen = Features.SWAMP_TREE;
-            break;
-        case ACACIA:
-            gen = Features.ACACIA;
-            break;
-        case DARK_OAK:
-            gen = Features.DARK_OAK;
-            break;
-        case MEGA_REDWOOD:
-            gen = Features.MEGA_PINE;
-            break;
-        case TALL_BIRCH:
-            gen = Features.OAK_BEES_0002;
-            break;
-        case CHORUS_PLANT:
-            ((ChorusFlowerBlock) Blocks.CHORUS_FLOWER).generatePlant(world, pos, rand, 8);
-            return true;
-        case CRIMSON_FUNGUS:
-            gen = Features.CRIMSON_FUNGI_PLANTED;
-            break;
-        case WARPED_FUNGUS:
-            gen = Features.WARPED_FUNGI_PLANTED;
-            break;
-        case TREE:
-        default:
-            gen = Features.OAK;
-            break;
+            case BIG_TREE:
+                gen = Features.FANCY_OAK;
+                break;
+            case BIRCH:
+                gen = Features.BIRCH;
+                break;
+            case REDWOOD:
+                gen = Features.SPRUCE;
+                break;
+            case TALL_REDWOOD:
+                gen = Features.PINE;
+                break;
+            case JUNGLE:
+                gen = Features.MEGA_JUNGLE_TREE;
+                break;
+            case SMALL_JUNGLE:
+                gen = Features.JUNGLE_TREE_NO_VINE;
+                break;
+            case COCOA_TREE:
+                gen = Features.JUNGLE_TREE;
+                break;
+            case JUNGLE_BUSH:
+                gen = Features.JUNGLE_BUSH;
+                break;
+            case RED_MUSHROOM:
+                gen = Features.HUGE_RED_MUSHROOM;
+                break;
+            case BROWN_MUSHROOM:
+                gen = Features.HUGE_BROWN_MUSHROOM;
+                break;
+            case SWAMP:
+                gen = Features.SWAMP_TREE;
+                break;
+            case ACACIA:
+                gen = Features.ACACIA;
+                break;
+            case DARK_OAK:
+                gen = Features.DARK_OAK;
+                break;
+            case MEGA_REDWOOD:
+                gen = Features.MEGA_PINE;
+                break;
+            case TALL_BIRCH:
+                gen = Features.OAK_BEES_0002;
+                break;
+            case CHORUS_PLANT:
+                ((ChorusFlowerBlock) Blocks.CHORUS_FLOWER).generatePlant(world, pos, rand, 8);
+                return true;
+            case CRIMSON_FUNGUS:
+                gen = Features.CRIMSON_FUNGI_PLANTED;
+                break;
+            case WARPED_FUNGUS:
+                gen = Features.WARPED_FUNGI_PLANTED;
+                break;
+            case TREE:
+            default:
+                gen = Features.OAK;
+                break;
         }
 
         return gen.feature.place(world, world.getChunkSource().getGenerator(), rand, pos, gen.config);
@@ -1027,7 +1029,7 @@ public class CraftWorld implements World {
     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T> clazz) {
         Collection<T> list = new ArrayList<T>();
 
-        for (Object entity: world.entitiesById.values()) {
+        for (Object entity : world.entitiesById.values()) {
             if (entity instanceof net.minecraft.entity.Entity) {
                 Entity bukkitEntity = ((net.minecraft.entity.Entity) entity).getBukkitEntity();
 
@@ -1050,7 +1052,7 @@ public class CraftWorld implements World {
     public Collection<Entity> getEntitiesByClasses(Class<?>... classes) {
         Collection<Entity> list = new ArrayList<Entity>();
 
-        for (Object entity: world.entitiesById.values()) {
+        for (Object entity : world.entitiesById.values()) {
             if (entity instanceof net.minecraft.entity.Entity) {
                 Entity bukkitEntity = ((net.minecraft.entity.Entity) entity).getBukkitEntity();
 
@@ -1752,7 +1754,7 @@ public class CraftWorld implements World {
                             ? ItemFrameEntity.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height)
                             : HangingEntity.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height);
                     List<net.minecraft.entity.Entity> list = (List<net.minecraft.entity.Entity>) world.getEntities(null, bb);
-                    for (Iterator<net.minecraft.entity.Entity> it = list.iterator(); !taken && it.hasNext();) {
+                    for (Iterator<net.minecraft.entity.Entity> it = list.iterator(); !taken && it.hasNext(); ) {
                         net.minecraft.entity.Entity e = it.next();
                         if (e instanceof HangingEntity) {
                             taken = true; // Hanging entities do not like hanging entities which intersect them.
@@ -2127,6 +2129,7 @@ public class CraftWorld implements World {
     }
 
     private static Map<String, RuleKey<?>> gamerules;
+
     public static synchronized Map<String, RuleKey<?>> getGameRulesNMS() {
         if (gamerules != null) {
             return gamerules;
@@ -2144,6 +2147,7 @@ public class CraftWorld implements World {
     }
 
     private static Map<String, RuleType<?>> gameruleDefinitions;
+
     public static synchronized Map<String, RuleType<?>> getGameRuleDefinitions() {
         if (gameruleDefinitions != null) {
             return gameruleDefinitions;
@@ -2353,13 +2357,42 @@ public class CraftWorld implements World {
         return (getHandle().dragonFight() == null) ? null : new CraftDragonBattle(getHandle().dragonFight());
     }
 
+    // Paper start
+    @Override
+    public java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int x, int z, boolean gen, boolean urgent) {
+        if (Bukkit.isPrimaryThread()) {
+            net.minecraft.world.chunk.Chunk immediate = this.world.getChunkSource().getChunkAtIfLoadedImmediately(x, z);
+            if (immediate != null) {
+                return java.util.concurrent.CompletableFuture.completedFuture(immediate.getBukkitChunk());
+            }
+        } else {
+            java.util.concurrent.CompletableFuture<Chunk> future = new java.util.concurrent.CompletableFuture<Chunk>();
+            world.getServer().execute(() -> {
+                getChunkAtAsync(x, z, gen, urgent).whenComplete((chunk, err) -> {
+                    if (err != null) {
+                        future.completeExceptionally(err);
+                    } else {
+                        future.complete(chunk);
+                    }
+                });
+            });
+            return future;
+        }
+
+        return this.world.getChunkSource().getChunkAtAsynchronously(x, z, gen, urgent).thenComposeAsync((either) -> {
+            net.minecraft.world.chunk.Chunk chunk = (net.minecraft.world.chunk.Chunk) either.left().orElse(null);
+            return java.util.concurrent.CompletableFuture.completedFuture(chunk == null ? null : chunk.getBukkitChunk());
+        }, net.minecraft.server.MinecraftServer.getServer());
+    }
+    // Paper end
+
     // Mohist - start
     public TileEntity getTileEntityAt(int x, int y, int z) {
         return world.getBlockEntity(new BlockPos(x, y, z));
     }
-	// Mohist - end
-	
-	// Spigot start
+    // Mohist - end
+
+    // Spigot start
     @Override
     public int getViewDistance() {
         return world.spigotConfig.viewDistance;
@@ -2367,24 +2400,21 @@ public class CraftWorld implements World {
     // Spigot end
 
     // Spigot start
-    private final Spigot spigot = new Spigot()
-    {
+    private final Spigot spigot = new Spigot() {
 
         @Override
-        public LightningStrike strikeLightning(Location loc, boolean isSilent)
-        {
-            LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create( world );
-            lightning.moveTo( loc.getX(), loc.getY(), loc.getZ() );
+        public LightningStrike strikeLightning(Location loc, boolean isSilent) {
+            LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
+            lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
             lightning.isSilent = isSilent;
-            world.strikeLightning( lightning );
+            world.strikeLightning(lightning);
             return (LightningStrike) lightning.getBukkitEntity();
         }
 
         @Override
-        public LightningStrike strikeLightningEffect(Location loc, boolean isSilent)
-        {
-            LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create( world );
-            lightning.moveTo( loc.getX(), loc.getY(), loc.getZ() );
+        public LightningStrike strikeLightningEffect(Location loc, boolean isSilent) {
+            LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
+            lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
             lightning.isEffect = true;
             lightning.isSilent = isSilent;
             return (LightningStrike) lightning.getBukkitEntity();
@@ -2392,8 +2422,7 @@ public class CraftWorld implements World {
 
     };
 
-    public Spigot spigot()
-    {
+    public Spigot spigot() {
         return spigot;
     }
     // Spigot end
