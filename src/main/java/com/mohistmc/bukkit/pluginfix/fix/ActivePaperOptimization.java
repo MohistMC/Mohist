@@ -3,12 +3,10 @@ package com.mohistmc.bukkit.pluginfix.fix;
 import com.mohistmc.configuration.MohistConfig;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.ARETURN;
 
 public class ActivePaperOptimization {
 
