@@ -36,7 +36,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting modswhitelistenable = new BoolSetting(this, "forge.modswhitelist.enable", false);
 
     // paper optimization
-    public final StringSetting paperoptimization = new StringSetting(this, "mohist.paper_optimization", "false");
+    public final StringSetting paperoptimization = new StringSetting(this, "mohist.paper_optimization", "only_works");
 
     /* ======================================================================== */
 

@@ -6,6 +6,9 @@ import com.mohistmc.bukkit.pluginfix.fix.WorldEditFix;
 public class PluginFixManager {
 
     public static byte[] injectPluginFix(String className, byte[] clazz) {
+        if (ActivePaperOptimization.plugin_work_with_paper_optimization.contains(className)) {
+            clazz = ActivePaperOptimization.activeIfItWorkWithPaperOptimization(clazz);
+        }
         if (className.equals("com.sk89q.worldedit.bukkit.WorldEditPlugin")) {
             return WorldEditFix.replaceGetKeyByGetKeyForge(clazz);
         }
