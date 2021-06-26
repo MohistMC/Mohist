@@ -780,6 +780,8 @@
 +    ;
 +    // CraftBukkit end
 +
++    final CallbackExecutor chunkLoadConversionCallbackExecutor = new CallbackExecutor(); // Paper
++
 +    // Paper start - distance maps
 +    private final com.destroystokyo.paper.util.misc.PooledLinkedHashSets<ServerPlayerEntity> pooledLinkedPlayerHashSets = new com.destroystokyo.paper.util.misc.PooledLinkedHashSets<>();
 +
@@ -1668,8 +1670,6 @@
 +            this.field_219265_s.func_212871_a_(ChunkTaskPriorityQueueSorter.func_219069_a(p_219228_2_, p_219200_1_.func_219277_h().func_201841_a(), p_219200_1_::func_219299_i));
 +        });
 +    }
-+
-+    final CallbackExecutor chunkLoadConversionCallbackExecutor = new CallbackExecutor(); // Paper
 +
 +    public CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>> func_219179_a(ChunkHolder p_219179_1_) {
 +        ChunkPos chunkpos = p_219179_1_.func_219277_h();
