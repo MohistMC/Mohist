@@ -1,12 +1,5 @@
 --- a/net/minecraft/entity/item/ArmorStandEntity.java
 +++ b/net/minecraft/entity/item/ArmorStandEntity.java
-@@ -1,5 +_,6 @@
- package net.minecraft.entity.item;
- 
-+import java.util.ArrayList;
- import java.util.List;
- import java.util.function.Predicate;
- import javax.annotation.Nullable;
 @@ -42,6 +_,13 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
@@ -154,35 +147,32 @@
        } else {
           this.func_70606_j(f);
        }
-@@ -500,12 +_,14 @@
+@@ -500,12 +_,12 @@
  
     private void func_213816_g(DamageSource p_213816_1_) {
        this.func_190773_I();
 -      this.func_213345_d(p_213816_1_);
 +      //this.spawnDrops(source); // CraftBukkit - moved down
-+      List<ItemStack> drops_armor = new ArrayList<>(); // Mohist - fix armor stand don't dropping
  
        for(int i = 0; i < this.field_184799_bw.size(); ++i) {
           ItemStack itemstack = this.field_184799_bw.get(i);
           if (!itemstack.func_190926_b()) {
 -            Block.func_180635_a(this.field_70170_p, this.func_233580_cy_().func_177984_a(), itemstack);
 +            drops.add(CraftItemStack.asCraftMirror(itemstack)); // CraftBukkit - add to drops
-+            drops_armor.add(itemstack); // Mohist - fix armor stand don't dropping
              this.field_184799_bw.set(i, ItemStack.field_190927_a);
           }
        }
-@@ -513,11 +_,12 @@
+@@ -513,11 +_,11 @@
        for(int j = 0; j < this.field_184800_bx.size(); ++j) {
           ItemStack itemstack1 = this.field_184800_bx.get(j);
           if (!itemstack1.func_190926_b()) {
 -            Block.func_180635_a(this.field_70170_p, this.func_233580_cy_().func_177984_a(), itemstack1);
 +            drops.add(CraftItemStack.asCraftMirror(itemstack1)); // CraftBukkit - add to drops
-+            drops_armor.add(itemstack1); // Mohist - fix armor stand don't dropping
              this.field_184800_bx.set(j, ItemStack.field_190927_a);
           }
        }
 -
-+      this.dropAllDeathLoot(p_213816_1_, drops_armor); // CraftBukkit - moved from above // Mohist - fix armor stand don't dropping
++      this.func_213345_d(p_213816_1_); // CraftBukkit - moved from above
     }
  
     private void func_190773_I() {
