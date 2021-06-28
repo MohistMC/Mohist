@@ -12,7 +12,7 @@ public class MohistConfig extends ConfigBase {
 
     private final String HEADER = "This is the main configuration file for Mohist.\n"
             + "\n"
-            + "Home: https://mohist.red/\n";
+            + "Home: https://mohistmc.com/\n";
 
     public static MohistConfig instance;
 
