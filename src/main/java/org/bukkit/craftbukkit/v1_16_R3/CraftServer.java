@@ -1801,7 +1801,7 @@ public final class CraftServer implements Server {
             offers = tabCompleteChat(player, message);
         }
 
-        TabCompleteEvent tabEvent = new TabCompleteEvent(player, message, offers);
+        TabCompleteEvent tabEvent = new TabCompleteEvent(player, message, offers, message.startsWith("/") || forceCommand, pos != null ? net.minecraft.addons.server.MCUtil.toLocation(((CraftWorld) player.getWorld()).getHandle(), new BlockPos(pos)) : null); // Paper
         getPluginManager().callEvent(tabEvent);
 
         return tabEvent.isCancelled() ? Collections.EMPTY_LIST : tabEvent.getCompletions();
