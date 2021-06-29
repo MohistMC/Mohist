@@ -101,7 +101,7 @@
  import net.minecraft.util.math.shapes.IBooleanFunction;
  import net.minecraft.util.math.shapes.VoxelShape;
  import net.minecraft.util.math.shapes.VoxelShapes;
-@@ -150,1271 +_,2525 @@
+@@ -150,1271 +_,2548 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -818,7 +818,7 @@
 +    }
 +
 +    public void func_195518_a(CTabCompletePacket p_195518_1_) {
-+        PacketThreadUtil.func_218796_a(p_195518_1_, this, this.field_147369_b.func_71121_q());
++        //PacketThreadUtil.ensureRunningOnSameThread(p_195518_1_, this, this.player.getLevel()); // Paper - run this async
 +        // CraftBukkit start
 +        if (chatSpamField.addAndGet(this, 1) > 500 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
 +            this.func_194028_b(new TranslationTextComponent("disconnect.spam", new Object[0]));
@@ -838,12 +838,35 @@
 +            stringreader.skip();
 +        }
 +
-+        ParseResults<CommandSource> parseresults = this.field_147367_d.func_195571_aL().func_197054_a().parse(stringreader, this.field_147369_b.func_195051_bN());
-+        this.field_147367_d.func_195571_aL().func_197054_a().getCompletionSuggestions(parseresults).thenAccept((p_195519_2_) -> {
-+            if (p_195519_2_.isEmpty())
-+                return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
-+            this.field_147371_a.func_179290_a(new STabCompletePacket(p_195518_1_.func_197709_a(), p_195519_2_));
-+        });
++        // Paper start - async tab completion
++        com.destroystokyo.paper.event.server.AsyncTabCompleteEvent event;
++        java.util.List<String> completions = new java.util.ArrayList<>();
++        String buffer = p_195518_1_.func_197707_b();
++        event = new com.destroystokyo.paper.event.server.AsyncTabCompleteEvent(this.getPlayer(), completions,
++                buffer, true, null);
++        event.callEvent();
++        completions = event.isCancelled() ? com.google.common.collect.ImmutableList.of() : event.getCompletions();
++        // If the event isn't handled, we can assume that we have no completions, and so we'll ask the server
++        if (!event.isHandled()) {
++            if (!event.isCancelled()) {
++                this.field_147367_d.scheduleOnMain(() -> { // Paper - This needs to be on main
++                    ParseResults<CommandSource> parseresults = this.field_147367_d.func_195571_aL().func_197054_a().parse(stringreader, this.field_147369_b.func_195051_bN());
++
++                    this.field_147367_d.func_195571_aL().func_197054_a().getCompletionSuggestions(parseresults).thenAccept((suggestions) -> {
++                        if (suggestions.isEmpty())
++                            return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
++                        this.field_147371_a.func_179290_a(new STabCompletePacket(p_195518_1_.func_197709_a(), suggestions));
++                    });
++                });
++            }
++        } else if (!completions.isEmpty()) {
++            com.mojang.brigadier.suggestion.SuggestionsBuilder builder = new com.mojang.brigadier.suggestion.SuggestionsBuilder(p_195518_1_.func_197707_b(), stringreader.getTotalLength());
++
++            builder = builder.createOffset(builder.getInput().lastIndexOf(' ') + 1);
++            completions.forEach(builder::suggest);
++            field_147369_b.field_71135_a.func_147359_a(new STabCompletePacket(p_195518_1_.func_197709_a(), builder.buildFuture().join()));
++        }
++        // Paper end - async tab completion
 +    }
 +
 +    public void func_210153_a(CUpdateCommandBlockPacket p_210153_1_) {
