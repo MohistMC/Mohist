@@ -39,7 +39,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.gen.ChunkGenerator;
  import net.minecraft.world.gen.feature.template.TemplateManager;
-@@ -47,472 +_,903 @@
+@@ -47,472 +_,904 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -711,6 +711,7 @@
 +    }
 +
 +    private CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_217233_c(int p_217233_1_, int p_217233_2_, ChunkStatus p_217233_3_, boolean p_217233_4_) {
++        this.field_73251_h.func_217381_Z(); // Mohist - Fix Performant startup (#1492)
 +        // Paper start - add isUrgent - old sig left in place for dirty nms plugins
 +        return getChunkFutureMainThread(p_217233_1_, p_217233_2_, p_217233_3_, p_217233_4_, false);
 +    }
