@@ -38,6 +38,9 @@ public class MohistConfig extends ConfigBase {
     // paper optimization
     public final StringSetting paperoptimization = new StringSetting(this, "mohist.paper_optimization", "only_works");
 
+    // plugin fix
+    public final BoolSetting enableworldeditfix = new BoolSetting(this, "mohist.enable_worldedit_fix", true);
+
     /* ======================================================================== */
 
     public MohistConfig() {
