@@ -39,7 +39,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.gen.ChunkGenerator;
  import net.minecraft.world.gen.feature.template.TemplateManager;
-@@ -47,472 +_,904 @@
+@@ -47,472 +_,902 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -599,8 +599,6 @@
 +
 +    @Nullable
 +    public IChunk func_212849_a_(int p_212849_1_, int p_212849_2_, ChunkStatus p_212849_3_, boolean p_212849_4_) {
-+        final int x1 = p_212849_1_;
-+        final int z1 = p_212849_2_; // Paper - conflict on variable change
 +        if (Thread.currentThread() != this.field_217241_g) {
 +            return CompletableFuture.supplyAsync(() -> {
 +                return this.func_212849_a_(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
@@ -627,8 +625,8 @@
 +            CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.getChunkFutureMainThread(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_, true); // Paper
 +            if (!completablefuture.isDone()) { // Paper
 +                // Paper start - async chunk io/loading
-+                this.field_73251_h.asyncChunkTaskManager.raisePriority(x1, z1, com.destroystokyo.paper.io.PrioritizedTaskQueue.HIGHEST_PRIORITY);
-+                com.destroystokyo.paper.io.chunk.ChunkTaskManager.pushChunkWait(this.field_73251_h, x1, z1);
++                this.field_73251_h.asyncChunkTaskManager.raisePriority(p_212849_1_, p_212849_2_, com.destroystokyo.paper.io.PrioritizedTaskQueue.HIGHEST_PRIORITY);
++                com.destroystokyo.paper.io.chunk.ChunkTaskManager.pushChunkWait(this.field_73251_h, p_212849_1_, p_212849_2_);
 +                // Paper end
 +                this.field_73251_h.timings.syncChunkLoad.startTiming(); // Paper
 +                this.field_217243_i.func_213161_c(completablefuture::isDone);
