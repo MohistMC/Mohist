@@ -68,7 +68,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,1283 +_,1863 @@
+@@ -130,1283 +_,1870 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -827,8 +827,6 @@
 +
 +        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.field_71071_by.func_70302_i_());
 +
-+        ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
-+
 +        boolean keepInventory = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223600_c) || this.func_175149_v();
 +
 +        if (!keepInventory) {
@@ -838,6 +836,15 @@
 +                }
 +            }
 +        }
++
++        // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
++        this.func_213354_a(p_70645_1_, this.field_70718_bc > 0);
++        for (org.bukkit.inventory.ItemStack item : this.drops) {
++            loot.add(item);
++        }
++        this.drops.clear(); // SPIGOT-5188: make sure to clear
++
++        ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
 +
 +        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, PaperAdventure.asAdventure(itextcomponent), itextcomponent.getString(), keepInventory); // Paper - Adventure
 +
