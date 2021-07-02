@@ -257,4 +257,13 @@ public class PaperConfig {
             log("Async Chunks: Enabled - Chunks will be loaded much faster, without lag.");
         }
     }
+
+    public static boolean useOptimizedTickList = true;
+
+    private static void useOptimizedTickList() {
+        if (config.contains("settings.use-optimized-ticklist")) { // don't add default, hopefully temporary config
+            useOptimizedTickList = config.getBoolean("settings.use-optimized-ticklist");
+        }
+    }
+
 }
