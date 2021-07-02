@@ -68,7 +68,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,1283 +_,1870 @@
+@@ -130,1283 +_,1874 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -848,6 +848,10 @@
 +
 +        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, PaperAdventure.asAdventure(itextcomponent), itextcomponent.getString(), keepInventory); // Paper - Adventure
 +
++        // Mohist start - Fix PlayerDeathEvent drop/xp saving (again)
++        this.mohKeepInventory = event.getKeepInventory();
++        this.mohKeepLevel = event.getKeepLevel();
++        // Mohist end
 +        // SPIGOT-943 - only call if they have an inventory open
 +        if (this.field_71070_bA != this.field_71069_bz) {
 +            this.func_71053_j();
