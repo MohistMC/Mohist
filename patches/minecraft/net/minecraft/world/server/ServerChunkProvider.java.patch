@@ -39,7 +39,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.gen.ChunkGenerator;
  import net.minecraft.world.gen.feature.template.TemplateManager;
-@@ -47,472 +_,902 @@
+@@ -47,472 +_,908 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -377,6 +377,12 @@
 +        }, this.field_217243_i);
 +    }
 +    // Paper end
++    // Paper start - rewrite ticklistserver
++    public final boolean isTickingReadyMainThread(BlockPos pos) {
++        ChunkHolder chunk = this.field_217237_a.func_219220_a(net.minecraft.addons.server.MCUtil.getCoordinateKey(pos));
++        return chunk != null && chunk.isTickingReady();
++    }
++    // Paper end - rewrite ticklistserver
 +
 +    public ServerChunkProvider(ServerWorld p_i232603_1_, SaveFormat.LevelSave p_i232603_2_, DataFixer p_i232603_3_, TemplateManager p_i232603_4_, Executor p_i232603_5_, ChunkGenerator p_i232603_6_, int p_i232603_7_, boolean p_i232603_8_, IChunkStatusListener p_i232603_9_, Supplier<DimensionSavedDataManager> p_i232603_10_) {
 +        this.field_73251_h = p_i232603_1_;

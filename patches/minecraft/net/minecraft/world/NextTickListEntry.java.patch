@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/NextTickListEntry.java
 +++ b/net/minecraft/world/NextTickListEntry.java
-@@ -4,7 +_,7 @@
+@@ -4,23 +_,26 @@
  import net.minecraft.util.math.BlockPos;
  
  public class NextTickListEntry<T> {
@@ -9,7 +9,13 @@
     private final T field_151352_g;
     public final BlockPos field_180282_a;
     public final long field_235017_b_;
-@@ -16,7 +_,7 @@
+    public final TickPriority field_82754_f;
+    private final long field_77178_g;
++   private final int hash; // Paper
++   public int tickState; // Paper
+ 
+    public NextTickListEntry(BlockPos p_i48977_1_, T p_i48977_2_) {
+       this(p_i48977_1_, p_i48977_2_, 0L, TickPriority.NORMAL);
     }
  
     public NextTickListEntry(BlockPos p_i48978_1_, T p_i48978_2_, long p_i48978_3_, TickPriority p_i48978_5_) {
@@ -18,3 +24,54 @@
        this.field_180282_a = p_i48978_1_.func_185334_h();
        this.field_151352_g = p_i48978_2_;
        this.field_235017_b_ = p_i48978_3_;
+       this.field_82754_f = p_i48978_5_;
++      this.hash = this.computeHash(); // Paper
+    }
+ 
+    public boolean equals(Object p_equals_1_) {
+@@ -33,17 +_,28 @@
+    }
+ 
+    public int hashCode() {
++      // Paper start - optimize hashcode
++      return this.hash;
++   }
++
++   public final int computeHash() {
++      // Paper end - optimize hashcode
+       return this.field_180282_a.hashCode();
+    }
+ 
+    public static <T> Comparator<NextTickListEntry<T>> func_223192_a() {
+-      return Comparator.<NextTickListEntry<T>>comparingLong((p_226710_0_) -> {
+-         return p_226710_0_.field_235017_b_;
+-      }).thenComparing((p_226709_0_) -> {
+-         return p_226709_0_.field_82754_f;
+-      }).thenComparingLong((p_226708_0_) -> {
+-         return p_226708_0_.field_77178_g;
+-      });
++      // Paper start - let's not use more functional code for no reason.
++      return (Comparator) (Comparator<NextTickListEntry>) (NextTickListEntry nextticklistentry, NextTickListEntry nextticklistentry1) -> {
++         int i = Long.compare(nextticklistentry.field_235017_b_, nextticklistentry1.field_235017_b_);
++
++         if (i != 0) {
++            return i;
++         } else {
++            i = nextticklistentry.field_82754_f.compareTo(nextticklistentry1.field_82754_f);
++            return i != 0 ? i : Long.compare(nextticklistentry.getId(), nextticklistentry1.getId());
++         }
++      };
++      // Paper end - let's not use more functional code for no reason.
+    }
+ 
+    public String toString() {
+@@ -53,4 +_,9 @@
+    public T func_151351_a() {
+       return this.field_151352_g;
+    }
++
++   @Deprecated
++   public final long getId() {
++      return this.field_77178_g;
++   } // Paper - OBFHELPER
+ }
