@@ -345,14 +345,13 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkLoaded(int x, int z) {
-        net.minecraft.world.chunk.Chunk chunk = world.getChunkSource().getChunk(x, z, false);
-        return chunk != null;
+        return this.world.getChunkSource().getChunkAtIfLoadedImmediately(x, z) != null; // Paper
     }
 
     @Override
     public boolean isChunkGenerated(int x, int z) {
         try {
-            return isChunkLoaded(x, z) || world.getChunkSource().chunkMap.read(new ChunkPos(x, z)) != null;
+            return this.world.getChunkSource().getChunkAtIfCachedImmediately(x, z) != null || this.world.getChunkSource().chunkMap.read(new ChunkPos(x, z)) != null; // Paper (TODO check if the first part can be removed)
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
