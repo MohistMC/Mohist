@@ -69,16 +69,11 @@ ext.mcVersion = "1.7.10"
 ext.forgeVersion = "10.13.4.1614"
 version = '1.7.10-' + JenkinsNumber()
 
-launch4j {
-    jreMinVersion = '1.7.0'
-}
-
 configurations {
     compile.extendsFrom exported
     libraries
     bootstrap
 }
-
 
 dependencies {
     bootstrap 'pw.prok:KBootstrap:0.2.+'
