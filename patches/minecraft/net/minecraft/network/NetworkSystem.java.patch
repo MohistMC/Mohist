@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NetworkSystem.java
 +++ b/net/minecraft/network/NetworkSystem.java
-@@ -41,11 +_,12 @@
+@@ -41,16 +_,29 @@
  
  public class NetworkSystem {
     private static final Logger field_151275_b = LogManager.getLogger();
@@ -15,6 +15,23 @@
     });
     private final MinecraftServer field_151273_d;
     public volatile boolean field_151277_a;
+    private final List<ChannelFuture> field_151274_e = Collections.synchronizedList(Lists.newArrayList());
+    private final List<NetworkManager> field_151272_f = Collections.synchronizedList(Lists.newArrayList());
++   // Paper start - prevent blocking on adding a new network manager while the server is ticking
++   private final java.util.Queue<NetworkManager> pending = new java.util.concurrent.ConcurrentLinkedQueue<>();
++   private static final boolean disableFlushConsolidation = Boolean.getBoolean("Paper.disableFlushConsolidate"); // Paper
++
++   private final void addPending() {
++      NetworkManager manager = null;
++      while ((manager = pending.poll()) != null) {
++         field_151272_f.add(manager);
++         manager.isPending = false;
++      }
++   }
++   // Paper end
+ 
+    public NetworkSystem(MinecraftServer p_i45292_1_) {
+       this.field_151273_d = p_i45292_1_;
 @@ -58,17 +_,18 @@
     }
  
@@ -36,15 +53,18 @@
           }
  
           this.field_151274_e.add((new ServerBootstrap()).channel(oclass).childHandler(new ChannelInitializer<Channel>() {
-@@ -78,14 +_,14 @@
+@@ -78,14 +_,16 @@
                 } catch (ChannelException channelexception) {
                 }
  
 -               p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(PacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(PacketDirection.CLIENTBOUND));
++               if (!disableFlushConsolidation) p_initChannel_1_.pipeline().addFirst(new io.netty.handler.flush.FlushConsolidationHandler()); // Paper
 +               p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(PacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(PacketDirection.CLIENTBOUND));
                 int i = NetworkSystem.this.field_151273_d.func_241871_k();
                 NetworkManager networkmanager = (NetworkManager)(i > 0 ? new RateLimitedNetworkManager(i) : new NetworkManager(PacketDirection.SERVERBOUND));
-                NetworkSystem.this.field_151272_f.add(networkmanager);
+-               NetworkSystem.this.field_151272_f.add(networkmanager);
++               //NetworkSystem.this.connections.add(networkmanager); // Paper - comment
++               pending.add(networkmanager); // Paper
                 p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                 networkmanager.func_150719_a(new ServerHandshakeNetHandler(NetworkSystem.this.field_151273_d, networkmanager));
              }
@@ -62,11 +82,12 @@
           }
        }
  
-@@ -122,6 +_,13 @@
+@@ -122,6 +_,14 @@
  
     public void func_151269_c() {
        synchronized(this.field_151272_f) {
 +         // Spigot Start
++         this.addPending(); // Paper
 +         // This prevents players from 'gaming' the server, and strategically relogging to increase their position in the tick order
 +         if ( org.spigotmc.SpigotConfig.playerShuffle > 0 && MinecraftServer.currentTick % org.spigotmc.SpigotConfig.playerShuffle == 0 )
 +         {
