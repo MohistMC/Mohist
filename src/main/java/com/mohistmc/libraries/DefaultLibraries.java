@@ -82,5 +82,3 @@ public class DefaultLibraries {
         return temp;
     }
 }
-
-}
