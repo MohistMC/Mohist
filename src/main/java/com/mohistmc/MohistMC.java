@@ -36,8 +36,7 @@ public class MohistMC {
             System.out.println("                                      " + i18n.get("forge.serverlanunchwrapper.1"));
         }
 
-        if (MohistConfigUtil.bMohist("check_libraries")) DefaultLibraries.run();
-        DefaultLibraries.loadDefaultLibs();
+        if (MohistConfigUtil.bMohist("check_libraries")) DefaultLibraries.loadDefaultLibs();
         CustomLibraries.loadCustomLibs();
 
         if (!EulaUtil.hasAcceptedEULA()) {

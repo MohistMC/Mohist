@@ -20,7 +20,7 @@ public class DefaultLibraries {
     public static HashMap<String, String> fail = new HashMap<>();
     private static String mirror = "";
 
-    public static void run() throws Exception {
+    public static void loadDefaultLibs() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
         String url = mirror.equals("") ? "https://maven.mohistmc.com/" : mirror;
         LinkedHashMap<File, String> libs = getDefaultLibs();
@@ -30,7 +30,7 @@ public class DefaultLibraries {
 			if(lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
 				continue;
 			}
-            if(lib.exists() && MD5Util.getMd5(lib).equals(libs.get(lib))){
+            if(lib.exists() && MD5Util.getMD5(lib).equals(libs.get(lib))){
                 currentSize.addAndGet(lib.length());
                 continue;
             }
@@ -45,7 +45,7 @@ public class DefaultLibraries {
                             Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib);
-                if(lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar")) new JarLoader().loadJar(lib);
+                if(lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar")) new JarLoader().loadJar(lib.toURI().toURL());
                 currentSize.addAndGet(lib.length());
                 fail.remove(u.replace(url, ""));
             } catch (Exception e) {
@@ -66,7 +66,7 @@ public class DefaultLibraries {
             System.out.println(i18n.get("libraries.check.retry", 0));
 			System.out.println("Something went wrong during download, trying to download with the mirror...");
 			mirror = "http://mavenmirror.mohistmc.com/";
-            run();
+            loadDefaultLibs();
         } else System.out.println(i18n.get("libraries.check.end"));
     }
 
