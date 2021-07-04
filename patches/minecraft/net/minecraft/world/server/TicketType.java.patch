@@ -21,8 +21,11 @@
     public static final TicketType<Unit> field_219488_a = func_219484_a("start", (p_219486_0_, p_219486_1_) -> {
        return 0;
     });
-@@ -22,6 +_,13 @@
+@@ -20,8 +_,16 @@
+    public static final TicketType<ChunkPos> field_219491_d = func_219484_a("forced", Comparator.comparingLong(ChunkPos::func_201841_a));
+    public static final TicketType<ChunkPos> field_219492_e = func_219484_a("light", Comparator.comparingLong(ChunkPos::func_201841_a));
     public static final TicketType<BlockPos> field_219493_f = func_223183_a("portal", Vector3i::compareTo, 300);
++   public static final TicketType<Long> LOGIN = func_223183_a("login", Long::compareTo, 100); // Paper
     public static final TicketType<Integer> field_223185_g = func_223183_a("post_teleport", Integer::compareTo, 5);
     public static final TicketType<ChunkPos> field_219494_g = func_223183_a("unknown", Comparator.comparingLong(ChunkPos::func_201841_a), 1);
 +

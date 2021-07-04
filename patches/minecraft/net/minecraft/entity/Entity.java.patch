@@ -69,7 +69,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.fluid.Fluid;
-@@ -106,2709 +_,3341 @@
+@@ -106,2709 +_,3345 @@
  import net.minecraft.world.server.TicketType;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -3957,7 +3957,8 @@
 +        this.field_70166_s = d1;
 +        this.func_70107_b(d0, p_242281_3_, d1);
 +        if (Thread.currentThread() == MinecraftServer.getServer().field_175590_aa) // Mohist - Fix Ice&Fire worldgen deadlock
-+            field_70170_p.func_212866_a_((int) Math.floor(this.func_226277_ct_()) >> 4, (int) Math.floor(this.func_226281_cx_()) >> 4); // CraftBukkit
++            if (valid)
++                this.field_70170_p.func_212866_a_((int) Math.floor(this.func_226277_ct_()) >> 4, (int) Math.floor(this.func_226281_cx_()) >> 4); // CraftBukkit // Paper
 +    }
 +
 +    public void func_233576_c_(Vector3d p_233576_1_) {
@@ -4003,7 +4004,10 @@
 +        return MathHelper.func_76129_c(f * f + f1 * f1 + f2 * f2);
 +    }
 +
-+    public double getDistanceSquared(double x, double y, double z) { return func_70092_e(x, y, z); } // Paper - OBFHELPER
++    public double getDistanceSquared(double x, double y, double z) {
++        return func_70092_e(x, y, z);
++    } // Paper - OBFHELPER
++
 +    public double func_70092_e(double p_70092_1_, double p_70092_3_, double p_70092_5_) {
 +        double d0 = this.func_226277_ct_() - p_70092_1_;
 +        double d1 = this.func_226278_cu_() - p_70092_3_;
