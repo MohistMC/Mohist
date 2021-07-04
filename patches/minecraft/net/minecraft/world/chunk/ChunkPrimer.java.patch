@@ -1,5 +1,22 @@
 --- a/net/minecraft/world/chunk/ChunkPrimer.java
 +++ b/net/minecraft/world/chunk/ChunkPrimer.java
+@@ -64,6 +_,16 @@
+    private final Map<GenerationStage.Carving, BitSet> field_205769_s = new Object2ObjectArrayMap<>();
+    private volatile boolean field_217335_u;
+ 
++   // Paper start - track last save time
++   public long lastSaveTime;
++
++   @Override
++   public void setLastSaved(long ticks) {
++      this.lastSaveTime = ticks;
++   }
++
++   // Paper end
++
+    public ChunkPrimer(ChunkPos p_i48700_1_, UpgradeData p_i48700_2_) {
+       this(p_i48700_1_, p_i48700_2_, (ChunkSection[])null, new ChunkPrimerTickList<>((p_205332_0_) -> {
+          return p_205332_0_ == null || p_205332_0_.func_176223_P().func_196958_f();
 @@ -81,7 +_,7 @@
           if (this.field_201661_i.length == p_i49941_3_.length) {
              System.arraycopy(p_i49941_3_, 0, this.field_201661_i, 0, this.field_201661_i.length);

@@ -39,7 +39,7 @@
  import net.minecraft.world.chunk.listener.IChunkStatusListener;
  import net.minecraft.world.gen.ChunkGenerator;
  import net.minecraft.world.gen.feature.template.TemplateManager;
-@@ -47,472 +_,908 @@
+@@ -47,472 +_,917 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ServerChunkProvider extends AbstractChunkProvider {
@@ -1136,6 +1136,15 @@
 +            this.field_217237_a.func_219177_a(p_217210_1_);
 +        } // Paper - Timings
 +    }
++
++    // Paper start - duplicate save, but call incremental
++    public void saveIncrementally() {
++        this.func_217235_l();
++        try (co.aikar.timings.Timing timed = field_73251_h.timings.chunkSaveData.startTiming()) { // Paper - Timings
++            this.field_217237_a.saveIncrementally();
++        } // Paper - Timings
++    }
++    // Paper end
 +
 +    public void close() throws IOException {
 +        // CraftBukkit start

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/chunk/IChunk.java
 +++ b/net/minecraft/world/chunk/IChunk.java
+@@ -57,6 +_,8 @@
+ 
+    ChunkSection[] func_76587_i();
+ 
++   void setLastSaved(long i);
++
+    Collection<Entry<Heightmap.Type, Heightmap>> func_217311_f();
+ 
+    void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_);
 @@ -145,4 +_,9 @@
     boolean func_217310_r();
  
