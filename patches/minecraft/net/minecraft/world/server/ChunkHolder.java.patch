@@ -24,7 +24,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -37,377 +_,547 @@
+@@ -37,377 +_,586 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class ChunkHolder {
@@ -321,6 +321,8 @@
 +    private boolean field_244384_x;
 +
 +    private final ChunkManager chunkMap; // Paper
++    long lastAutoSaveTime; // Paper - incremental autosave
++    long inactiveTimeStart; // Paper - incremental autosave
 +
 +    public ChunkHolder(ChunkPos p_i50716_1_, int p_i50716_2_, WorldLightManager p_i50716_3_, ChunkHolder.IListener p_i50716_4_, ChunkHolder.IPlayerProvider p_i50716_5_) {
 +        this.field_219319_n = p_i50716_1_;
@@ -672,7 +674,20 @@
 +
 +        boolean flag5 = chunkholder$locationtype.func_219065_a(ChunkHolder.LocationType.BORDER);
 +        boolean flag6 = chunkholder$locationtype1.func_219065_a(ChunkHolder.LocationType.BORDER);
++
++        boolean prevHasBeenLoaded = this.field_219329_x; // Paper
 +        this.field_219329_x |= flag6;
++        // Paper start - incremental autosave
++        if (this.field_219329_x & !prevHasBeenLoaded) {
++            long timeSinceAutoSave = this.inactiveTimeStart - this.lastAutoSaveTime;
++            if (timeSinceAutoSave < 0) {
++                // safest bet is to assume autosave is needed here
++                timeSinceAutoSave = this.chunkMap.field_219255_i.paperConfig.autoSavePeriod;
++            }
++            this.lastAutoSaveTime = this.chunkMap.field_219255_i.func_82737_E() - timeSinceAutoSave;
++            this.chunkMap.autoSaveQueue.add(this);
++        }
++        // Paper end
 +        if (!flag5 && flag6) {
 +            // Paper start - cache ticking ready status
 +            int expectCreateCount = ++this.fullChunkCreateCount;
@@ -788,8 +803,32 @@
 +    }
 +
 +    public void func_219303_l() {
++        boolean prev = this.field_219329_x; // Paper
 +        this.field_219329_x = func_219286_c(this.field_219317_l).func_219065_a(ChunkHolder.LocationType.BORDER);
++        // Paper start - incremental autosave
++        if (prev != this.field_219329_x) {
++            if (this.field_219329_x) {
++                long timeSinceAutoSave = this.inactiveTimeStart - this.lastAutoSaveTime;
++                if (timeSinceAutoSave < 0) {
++                    // safest bet is to assume autosave is needed here
++                    timeSinceAutoSave = this.chunkMap.field_219255_i.paperConfig.autoSavePeriod;
++                }
++                this.lastAutoSaveTime = this.chunkMap.field_219255_i.func_82737_E() - timeSinceAutoSave;
++                this.chunkMap.autoSaveQueue.add(this);
++            } else {
++                this.inactiveTimeStart = this.chunkMap.field_219255_i.func_82737_E();
++                this.chunkMap.autoSaveQueue.remove(this);
++            }
++        }
++        // Paper end
 +    }
++
++    // Paper start - incremental autosave
++    public boolean setHasBeenLoaded() {
++        this.field_219329_x = func_219286_c(this.field_219317_l).func_219065_a(ChunkHolder.LocationType.BORDER);
++        return this.field_219329_x;
++    }
++    // Paper end
 +
 +    public void func_219294_a(ChunkPrimerWrapper p_219294_1_) {
 +        for (int i = 0; i < this.field_219312_g.length(); ++i) {
