@@ -290,7 +290,7 @@
 +    public final ServerChunkProvider field_241102_C_; // Paper - public
 +    boolean field_217492_a;
 +    private final MinecraftServer field_73061_a;
-+    public final IServerWorldInfo field_241103_E_;
++    public final IServerWorldInfo field_241103_E_; // CraftBukkit - type
 +    public boolean field_73058_d;
 +    private boolean field_73068_P;
 +    private int field_80004_Q;
@@ -2262,7 +2262,7 @@
 +                ServerWorld worldserver1 = this;
 +
 +                this.field_241103_E_.func_230393_a_(worldserver1.func_175723_af().func_235927_t_());
-+                ((ServerWorldInfo)this.field_241103_E_).func_230414_b_(this.field_73061_a.func_201300_aS().func_201380_c());
++                ((IServerConfiguration)this.field_241103_E_).func_230414_b_(this.field_73061_a.func_201300_aS().func_201380_c());
 +                this.convertable.func_237288_a_(this.field_73061_a.field_240767_f_, (IServerConfiguration) this.field_241103_E_, this.field_73061_a.func_184103_al().func_72378_q());
 +            }
 +            // CraftBukkit end
