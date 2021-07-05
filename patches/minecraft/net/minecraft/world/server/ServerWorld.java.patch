@@ -34,7 +34,7 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Executor;
-@@ -33,8 +_,45 @@
+@@ -33,8 +_,47 @@
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -44,6 +44,8 @@
 +
 +import it.unimi.dsi.fastutil.objects.Object2IntMap;
 +import net.minecraft.addons.server.MCUtil;
++import net.minecraft.crash.CrashReportCategory;
++import net.minecraft.crash.ReportedException;
 +import net.minecraft.world.chunk.storage.RegionFile;
 +import net.minecraft.world.storage.*;
 +import org.apache.logging.log4j.LogManager;
@@ -96,7 +98,7 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.network.DebugPacketSender;
  import net.minecraft.network.IPacket;
-@@ -133,1281 +_,1907 @@
+@@ -133,1281 +_,1918 @@
  import net.minecraft.world.raid.RaidManager;
  import net.minecraft.world.spawner.ISpecialSpawner;
  import net.minecraft.world.spawner.WorldEntitySpawner;
@@ -2262,8 +2264,19 @@
 +                ServerWorld worldserver1 = this;
 +
 +                this.field_241103_E_.func_230393_a_(worldserver1.func_175723_af().func_235927_t_());
-+                ((IServerConfiguration)this.field_241103_E_).func_230414_b_(this.field_73061_a.func_201300_aS().func_201380_c());
-+                this.convertable.func_237288_a_(this.field_73061_a.field_240767_f_, (IServerConfiguration) this.field_241103_E_, this.field_73061_a.func_184103_al().func_72378_q());
++                if (this.field_241103_E_ instanceof DerivedWorldInfo) {
++                    ((DerivedWorldInfo) this.field_241103_E_).field_237244_a_.func_230414_b_(this.field_73061_a.func_201300_aS().func_201380_c());
++                    this.convertable.func_237288_a_(this.field_73061_a.field_240767_f_, ((DerivedWorldInfo) this.field_241103_E_).field_237244_a_, this.field_73061_a.func_184103_al().func_72378_q());
++                } else if (this.field_241103_E_ instanceof ServerWorldInfo) {
++                    ((ServerWorldInfo) this.field_241103_E_).func_230414_b_(this.field_73061_a.func_201300_aS().func_201380_c());
++                    this.convertable.func_237288_a_(this.field_73061_a.field_240767_f_, ((ServerWorldInfo) this.field_241103_E_), this.field_73061_a.func_184103_al().func_72378_q());
++                } else {
++                    CrashReport crashreport = new CrashReport("Server level data can't be cast in DerivedWorldInfo or ServerWorldInfo", new IllegalStateException());
++                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Affected level");
++                    crashreportcategory.func_71507_a("Problem", this.field_241103_E_.getClass() + " can't be cast ! ");
++
++                    throw new ReportedException(crashreport);
++                }
 +            }
 +            // CraftBukkit end
 +        }
