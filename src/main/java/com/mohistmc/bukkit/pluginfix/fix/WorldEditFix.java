@@ -14,7 +14,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class WorldEditFix {
 
-    public static byte[] replaceGetKeyByGetKeyForge(byte[] basicClass) {
+    public static byte[] replaceGetKeyByGetKeyForgeAndGetAsString(byte[] basicClass) {
         ClassReader classReader = new ClassReader(basicClass);
         ClassNode classNode = new ClassNode();
         ClassWriter classWriter = new ClassWriter(0);
@@ -29,6 +29,9 @@ public class WorldEditFix {
                     if (methodInsnNode.owner.equals("org/bukkit/Material") && methodInsnNode.name.equals("getKey") && methodInsnNode.desc.equals("()Lorg/bukkit/NamespacedKey;")) {
                         methodInsnNode.name = "getKeyForge";
                     }
+                    if (methodInsnNode.owner.equals("org/bukkit/block/data/BlockData") && methodInsnNode.name.equals("getAsString") && methodInsnNode.desc.equals("()Ljava/lang/String;")) {
+                        methodInsnNode.name = "getAsStringFix";
+                    }
                 }
             }
         }
@@ -36,7 +39,7 @@ public class WorldEditFix {
         classNode.accept(classWriter);
         return classWriter.toByteArray();
     }
-    
+
     public static byte[] replaceAdaptBlockType(byte[] basicClass) {
         ClassReader classReader = new ClassReader(basicClass);
         ClassNode classNode = new ClassNode();

@@ -26,6 +26,16 @@ public interface BlockData extends Cloneable {
     @NotNull
     String getAsString();
 
+    // Mohist start - fix registry material with '/'
+    /**
+     * Same that {@link #getAsString()} but replace all '/' by ''
+     *
+     * @return serialized data string for this block
+     */
+    @NotNull
+    String getAsStringFix();
+    // Mohist end
+
     /**
      * Gets a string, which when passed into a method such as
      * {@link Server#createBlockData(java.lang.String)} will recreate this or a
