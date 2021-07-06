@@ -98,7 +98,7 @@
  import net.minecraft.world.storage.FolderName;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.PlayerData;
-@@ -85,735 +_,1155 @@
+@@ -85,735 +_,1156 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -1419,6 +1419,7 @@
 +        p_232644_1_.field_71136_j = false;
 +        // CraftBukkit end
 +
++        serverplayerentity.didPlayerJoinEvent = p_232644_1_.didPlayerJoinEvent;
 +        serverplayerentity.field_71135_a = p_232644_1_.field_71135_a;
 +        serverplayerentity.func_193104_a(p_232644_1_, p_232644_2_);
 +        p_232644_1_.remove(false); // Forge: clone event had a chance to see old data, now discard it
