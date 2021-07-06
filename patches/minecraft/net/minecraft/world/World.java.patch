@@ -50,7 +50,7 @@
  import net.minecraft.world.storage.ISpawnWorldInfo;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.MapData;
-@@ -62,969 +_,1303 @@
+@@ -62,969 +_,1310 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -435,6 +435,13 @@
 +        return chunk == null ? null : chunk.func_204610_c(blockposition);
 +    }
 +    // Paper end
++
++    @Nullable
++    public Chunk getChunkIfLoaded(int x, int z) {
++        if (this instanceof ServerWorld)
++            return ((ServerWorld)this).field_241102_C_.func_217205_a(x, z, false);
++        return null;
++    }
 +
 +    public final IChunk func_217353_a(int p_217353_1_, int p_217353_2_, ChunkStatus p_217353_3_, boolean p_217353_4_) { // Paper - final for inline
 +        IChunk ichunk = this.func_72863_F().func_212849_a_(p_217353_1_, p_217353_2_, p_217353_3_, p_217353_4_);
