@@ -98,7 +98,7 @@
  import net.minecraft.world.storage.FolderName;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.PlayerData;
-@@ -85,735 +_,1155 @@
+@@ -85,735 +_,1082 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -860,7 +860,6 @@
 +    private final IPBanList field_72413_h = new IPBanList(field_152614_b);
 +    private final OpList field_72414_i = new OpList(field_152615_c);
 +    private final WhiteList field_72411_j = new WhiteList(field_152616_d);
-+    private final Map<UUID, ServerPlayerEntity> pendingPlayers = Maps.newHashMap(); // Paper
 +    private final Map<UUID, ServerStatisticsManager> field_148547_k = Maps.newHashMap();
 +    private final Map<UUID, PlayerAdvancements> field_192055_p = Maps.newHashMap();
 +    public final PlayerData field_72412_k;
@@ -903,11 +902,6 @@
 +    }
 +
 +    public void func_72355_a(NetworkManager p_72355_1_, ServerPlayerEntity p_72355_2_) {
-+        ServerPlayerEntity prev = pendingPlayers.put(p_72355_2_.func_110124_au(), p_72355_2_);// Paper
-+        if (prev != null) {
-+            disconnectPendingPlayer(prev);
-+        }
-+        p_72355_2_.networkManager = p_72355_1_; // Paper
 +        GameProfile gameprofile = p_72355_2_.func_146103_bH();
 +        PlayerProfileCache playerprofilecache = this.field_72400_f.func_152358_ax();
 +        GameProfile gameprofile1 = playerprofilecache.func_152652_a(gameprofile.getId());
@@ -920,7 +914,6 @@
 +            CompoundNBT bukkit = compoundnbt.func_74775_l("bukkit");
 +            s = bukkit.func_150297_b("lastKnownName", 8) ? bukkit.func_74779_i("lastKnownName") : s;
 +        }
-+        String lastKnownName = s; // Paper
 +        // CraftBukkit end
 +
 +        RegistryKey<World> registrykey = compoundnbt != null ? DimensionType.func_236025_a_(new Dynamic<>(NBTDynamicOps.field_210820_a, compoundnbt.func_74781_a("Dimension"))).resultOrPartial(field_148546_d::error).orElse(World.field_234918_g_) : World.field_234918_g_;
@@ -973,52 +966,6 @@
 +        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
 +        this.func_96456_a(serverworld1.func_96441_U(), p_72355_2_);
 +        this.field_72400_f.func_147132_au();
-+        // Paper start - async load spawn in chunk
-+        ServerWorld finalWorldserver = serverworld1;
-+        int chunkX = loc.getBlockX() >> 4;
-+        int chunkZ = loc.getBlockZ() >> 4;
-+        final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-+        ChunkManager playerChunkMap = serverworld1.func_72863_F().field_217237_a;
-+        TicketManager distanceManager = playerChunkMap.field_219267_u;
-+        distanceManager.addTicketAtLevel(TicketType.LOGIN, pos, 31, pos.func_201841_a());
-+        serverworld1.func_72863_F().func_217235_l();
-+        serverworld1.func_72863_F().getChunkAtAsynchronously(chunkX, chunkZ, true, true).thenApply(chunk -> {
-+            ChunkHolder updatingChunk = playerChunkMap.func_219220_a(pos.func_201841_a());
-+            if (updatingChunk != null) {
-+                return updatingChunk.func_219297_b();
-+            } else {
-+                return java.util.concurrent.CompletableFuture.completedFuture(chunk);
-+            }
-+        }).thenAccept(chunk -> {
-+            serverplaynethandler.playerJoinReady = () -> {
-+                postChunkLoadJoin(
-+                        p_72355_2_, finalWorldserver, p_72355_1_, serverplaynethandler,
-+                        compoundnbt, p_72355_1_.func_74430_c().toString(), lastKnownName
-+                );
-+            };
-+        });
-+    }
-+
-+    public ServerPlayerEntity getActivePlayer(UUID uuid) {
-+        ServerPlayerEntity player = this.field_177454_f.get(uuid);
-+        return player != null ? player : pendingPlayers.get(uuid);
-+    }
-+
-+    void disconnectPendingPlayer(ServerPlayerEntity entityplayer) {
-+        TranslationTextComponent msg = new TranslationTextComponent("multiplayer.disconnect.duplicate_login", new Object[0]);
-+        entityplayer.networkManager.func_201058_a(new SDisconnectPacket(msg), (future) -> {
-+            entityplayer.networkManager.func_150718_a(msg);
-+            entityplayer.networkManager = null;
-+        });
-+    }
-+
-+    private void postChunkLoadJoin(ServerPlayerEntity p_72355_2_, ServerWorld serverworld1, NetworkManager p_72355_1_, ServerPlayNetHandler serverplaynethandler, CompoundNBT compoundnbt, String s1, String s) {
-+        pendingPlayers.remove(p_72355_2_.func_110124_au(), p_72355_2_);
-+        if (!p_72355_1_.func_150724_d()) {
-+            return;
-+        }
-+        p_72355_2_.didPlayerJoinEvent = true;
-+        // Paper end
 +        IFormattableTextComponent iformattabletextcomponent;
 +        if (p_72355_2_.func_146103_bH().getName().equalsIgnoreCase(s)) {
 +            iformattabletextcomponent = new TranslationTextComponent("multiplayer.player.joined", p_72355_2_.func_145748_c_());
@@ -1190,8 +1137,6 @@
 +    protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
 +        if (p_72391_1_.field_71135_a == null) return;
 +        if (!p_72391_1_.getBukkitEntity().isPersistent()) return;
-+        if (!p_72391_1_.didPlayerJoinEvent)
-+            return; // Paper - If we never fired PJE, we disconnected during login. Data has not changed, and additionally, our saved vehicle is not loaded! If we save now, we will lose our vehicle (CraftBukkit bug)
 +        this.field_72412_k.func_237335_a_(p_72391_1_);
 +        ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
 +        if (serverstatisticsmanager != null) {
@@ -1207,7 +1152,7 @@
 +
 +    public net.kyori.adventure.text.Component disconnect(ServerPlayerEntity playerIn) { // Paper - return Component
 +        func_72367_e(playerIn);
-+        return playerIn.didPlayerJoinEvent ? quitMessage$adventure : null; // CraftBukkit // Paper - Adventure // Paper - don't print quit if we never printed join
++        return quitMessage$adventure; // CraftBukkit // Paper - Adventure
 +    }
 +
 +    public void func_72367_e(ServerPlayerEntity p_72367_1_) {
@@ -1221,8 +1166,6 @@
 +            p_72367_1_.func_71053_j();
 +        }
 +        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_72367_1_.getBukkitEntity(), net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, com.destroystokyo.paper.config.PaperConfig.useDisplayNameInQuit ? p_72367_1_.getBukkitEntity().displayName() : net.kyori.adventure.text.Component.text(p_72367_1_.func_195047_I_())));
-+        if (p_72367_1_.didPlayerJoinEvent)
-+            this.cserver.getPluginManager().callEvent(playerQuitEvent); // Paper - if we disconnected before join ever fired, don't fire quit
 +        p_72367_1_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +        p_72367_1_.func_71127_g(); // SPIGOT-924
 +        // CraftBukkit end
@@ -1259,14 +1202,6 @@
 +            this.field_192055_p.remove(uuid);
 +        }
 +
-+        // Paper start
-+        serverplayerentity = pendingPlayers.get(uuid);
-+        if (serverplayerentity == p_72367_1_) {
-+            pendingPlayers.remove(uuid);
-+        }
-+        p_72367_1_.networkManager = null;
-+        // Paper end
-+
 +        // CraftBukkit start
 +        // this.sendPacketToAllPlayers(new SPlayerListItemPacket(SPlayerListItemPacket.Action.REMOVE_PLAYER, playerIn));
 +        SPlayerListItemPacket packet = new SPlayerListItemPacket(SPlayerListItemPacket.Action.REMOVE_PLAYER, p_72367_1_);
@@ -1300,14 +1235,6 @@
 +                playerEntityList.add(player);
 +            }
 +        }
-+
-+        // Paper start - check pending players too
-+        entityplayer = pendingPlayers.get(uuid);
-+        if (entityplayer != null) {
-+            this.pendingPlayers.remove(uuid);
-+            disconnectPendingPlayer(entityplayer);
-+        }
-+        // Paper end
 +
 +        for (ServerPlayerEntity entityPlayer : playerEntityList) {
 +            func_72391_b(entityPlayer);
