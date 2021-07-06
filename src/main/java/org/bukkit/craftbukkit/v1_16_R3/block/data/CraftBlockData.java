@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import net.minecraft.state.Property;
 import net.minecraft.state.StateHolder;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import org.bukkit.Material;
 import org.bukkit.SoundGroup;
@@ -28,6 +30,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R3.CraftSoundGroup;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftBlockData implements BlockData {
 
@@ -203,6 +206,11 @@ public class CraftBlockData implements BlockData {
     @Override
     public String getAsString(boolean hideUnspecified) {
         return (hideUnspecified && parsedStates != null) ? toString(parsedStates) : getAsString();
+    }
+
+    @Override
+    public @NotNull String getAsStringFix() {
+        return getAsString().replaceAll("/", "");
     }
 
     @Override
@@ -498,7 +506,21 @@ public class CraftBlockData implements BlockData {
                 blockData = arg.getState();
                 parsed = arg.getProperties();
             } catch (CommandSyntaxException ex) {
-                throw new IllegalArgumentException("Could not parse data: " + data, ex);
+                try {
+                    data = getGoodData(data);
+                    // Material provided, force that material in
+                    if (block != null) {
+                        data = Registry.BLOCK.getKey(block) + data;
+                    }
+
+                    StringReader reader = new StringReader(data);
+                    BlockStateParser arg = new BlockStateParser(reader, false).parse(false);
+                    Preconditions.checkArgument(!reader.canRead(), "Spurious trailing data: " + data);
+                    blockData = arg.getState();
+                    parsed = arg.getProperties();
+                } catch (CommandSyntaxException ex2) {
+                    throw new IllegalArgumentException("Could not parse data: " + data, ex2);
+                }
             }
         } else {
             blockData = block.defaultBlockState();
@@ -507,6 +529,18 @@ public class CraftBlockData implements BlockData {
         CraftBlockData craft = fromData(blockData);
         craft.parsedStates = parsed;
         return craft;
+    }
+
+
+    public static String getGoodData(String data) {
+        for (Iterator<Block> it = Registry.BLOCK.iterator(); it.hasNext(); ) {
+            Block block_search = it.next();
+
+            if (block_search.getRegistryName().toString().replaceAll("/", "").equals(data)) {
+                return block_search.getRegistryName().toString();
+            }
+        }
+        return data;
     }
 
     public static CraftBlockData fromData(BlockState data) {
