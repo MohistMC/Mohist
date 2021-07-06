@@ -76,7 +76,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,1283 +_,1877 @@
+@@ -130,1283 +_,1891 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -356,11 +356,11 @@
 +    private static final Logger field_147102_bM = LogManager.getLogger();
 +    public ServerPlayNetHandler field_71135_a;
 +    public NetworkManager networkManager; // Paper
-+    public final MinecraftServer field_71133_b;
-+    public final PlayerInteractionManager field_71134_c;
++    public MinecraftServer field_71133_b; // Mohist - delete final
++    public PlayerInteractionManager field_71134_c; // Mohist - delete final
 +    public final List<Integer> field_71130_g = Lists.newLinkedList();
-+    private final PlayerAdvancements field_192042_bX;
-+    private final ServerStatisticsManager field_147103_bO;
++    private PlayerAdvancements field_192042_bX; // Mohist - delete final
++    private ServerStatisticsManager field_147103_bO; // Mohist - delete final
 +    private float field_130068_bO = Float.MIN_VALUE;
 +    private int field_184852_bV = Integer.MIN_VALUE;
 +    private int field_184853_bW = Integer.MIN_VALUE;
@@ -391,7 +391,7 @@
 +    private boolean field_241139_cs_;
 +    private float field_242108_cn;
 +    @Nullable
-+    private final IChatFilter field_244528_co;
++    private IChatFilter field_244528_co; // Mohist - delete final
 +    public int field_71139_cq;
 +    public boolean field_71137_h;
 +    public int field_71138_i;
@@ -442,6 +442,20 @@
 +        this.cachedSingleMobDistanceMap = new com.destroystokyo.paper.util.PooledHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
 +        this.initialized = true;
 +    }
++
++    // Mohist start - reset serverPlayerEntity (fix ServerPlayerEntity is recreate when player die or move into other dimension)
++    public ServerPlayerEntity resetServerPlayerEntity(MinecraftServer p_i45285_1_, ServerWorld p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_) {
++        this.field_71134_c = p_i45285_4_;
++        this.field_71133_b = p_i45285_1_;
++        this.field_147103_bO = p_i45285_1_.func_184103_al().func_152602_a(this);
++        this.field_192042_bX = p_i45285_1_.func_184103_al().func_192054_h(this);
++        this.func_205734_a(p_i45285_2_);
++        this.field_244528_co = p_i45285_1_.func_244435_a(this);
++
++        return this;
++    }
++    // Mohist end
++
 +
 +    // Yes, this doesn't match Vanilla, but it's the best we can do for now.
 +    // If this is an issue, PRs are welcome
