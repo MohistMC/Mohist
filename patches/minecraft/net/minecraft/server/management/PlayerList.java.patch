@@ -98,7 +98,7 @@
  import net.minecraft.world.storage.FolderName;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.PlayerData;
-@@ -85,735 +_,1156 @@
+@@ -85,735 +_,1158 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -1414,12 +1414,14 @@
 +            playerinteractionmanager = new PlayerInteractionManager(serverworld1);
 +        }
 +
-+        ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, serverworld1, p_232644_1_.func_146103_bH(), playerinteractionmanager);
++        p_232644_1_.field_71133_b = this.field_72400_f;
++
++        //ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.server, serverworld1, p_232644_1_.getGameProfile(), playerinteractionmanager);  // Mohist - comment - fix ServerPlayerEntity is recreate when player die or move into other dimension
++        ServerPlayerEntity serverplayerentity = p_232644_1_.resetServerPlayerEntity(this.field_72400_f, serverworld1, p_232644_1_.func_146103_bH(), playerinteractionmanager); // Mohist - fix ServerPlayerEntity is recreate when player die or move into other dimension
 +        org.bukkit.World fromWorld = p_232644_1_.getBukkitEntity().getWorld();
 +        p_232644_1_.field_71136_j = false;
 +        // CraftBukkit end
 +
-+        serverplayerentity.didPlayerJoinEvent = p_232644_1_.didPlayerJoinEvent;
 +        serverplayerentity.field_71135_a = p_232644_1_.field_71135_a;
 +        serverplayerentity.func_193104_a(p_232644_1_, p_232644_2_);
 +        p_232644_1_.remove(false); // Forge: clone event had a chance to see old data, now discard it
@@ -1464,7 +1466,7 @@
 +                location = new Location(serverworld1.getWorld(), (double) ((float) blockpos.func_177958_n() + 0.5F), (double) ((float) blockpos.func_177956_o() + 0.1F), (double) ((float) blockpos.func_177952_p() + 0.5F));
 +            }
 +            Player respawnPlayer = cserver.getPlayer(serverplayerentity);
-+            respawnPlayer.setGameMode(p_232644_1_.getBukkitEntity().getGameMode()); // Mohist - Fix respawn with CMI (#998)
++            //respawnPlayer.setGameMode(p_232644_1_.getBukkitEntity().getGameMode()); // Mohist - Fix respawn with CMI (#998)  // Mohist - comment - fix ServerPlayerEntity is recreate when player die or move into other dimension
 +            // Mohist start - Fix known recipes resetting (#1009)
 +            for (ResourceLocation recipe : p_232644_1_.func_192037_E().field_194077_a) {
 +                serverplayerentity.func_192037_E().field_194077_a.add(recipe);
@@ -1516,7 +1518,7 @@
 +        serverplayerentity.forceSetPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 +        // CraftBukkit end
 +
-+        this.func_72381_a(serverplayerentity, p_232644_1_, serverWorld);
++        //this.updatePlayerGameMode(serverplayerentity, p_232644_1_, serverWorld); // Mohist - comment - fix ServerPlayerEntity is recreate when player die or move into other dimension
 +        while (avoidSuffocation && !worldserver1.func_226669_j_(serverplayerentity) && serverplayerentity.func_226278_cu_() < 256.0D) {
 +            serverplayerentity.func_70107_b(serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_() + 1.0D, serverplayerentity.func_226281_cx_());
 +        }
