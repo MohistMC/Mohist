@@ -1477,7 +1477,7 @@
 +                    Vector3d vec3d = (Vector3d) optional.get();
 +                    float f1;
 +
-+                    if (!blockstate.func_235714_a_((Tag) ItemTags.field_219771_F) && !flag3) {
++                    if (!blockstate.func_235714_a_(BlockTags.field_219747_F) && !flag3) {
 +                        f1 = f;
 +                    } else {
 +                        Vector3d vec3d1 = Vector3d.func_237492_c_(blockpos).func_178788_d(vec3d).func_72432_b();
