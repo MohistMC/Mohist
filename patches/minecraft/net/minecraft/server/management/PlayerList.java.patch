@@ -103,7 +103,7 @@
  import net.minecraft.world.storage.FolderName;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.PlayerData;
-@@ -85,735 +_,1156 @@
+@@ -85,735 +_,1159 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -1438,11 +1438,14 @@
 +        p_232644_1_.remove(false); // Forge: clone event had a chance to see old data, now discard it
 +        serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
 +        serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
-+        Iterator iterator = p_232644_1_.func_184216_O().iterator();
++        /*Iterator iterator = p_232644_1_.getTags().iterator();
 +
 +        while (iterator.hasNext()) {
 +            String s = (String) iterator.next();
 +
++            serverplayerentity.addTag(s);
++        }*/
++        for (String s : p_232644_1_.func_184216_O()) {
 +            serverplayerentity.func_184211_a(s);
 +        }
 +
