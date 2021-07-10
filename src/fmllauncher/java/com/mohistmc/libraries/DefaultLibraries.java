@@ -22,7 +22,7 @@ public class DefaultLibraries {
 
     public static void run() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
-        String url = mirror.equals("") ? "https://maven.mohistmc.com/" : mirror;
+        String url = mirror.equals("") ? (i18n.isCN() ? "https://gitee.com/mohistmc/MohistDown/raw/master/dl/" : "https://maven.mohistmc.com/") : mirror;
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
