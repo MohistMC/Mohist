@@ -28,7 +28,7 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
-@@ -52,747 +_,1095 @@
+@@ -52,747 +_,1097 @@
  import net.minecraft.world.gen.feature.structure.StructureStart;
  import net.minecraft.world.lighting.WorldLightManager;
  import net.minecraft.world.server.ChunkHolder;
@@ -201,6 +201,7 @@
 +    private ITickList<Block> field_201621_s;
 +    private ITickList<Fluid> field_205325_u;
 +    private boolean field_76644_m;
++    public final ServerWorld world;
 +    // Paper start - track last save time
 +    public long field_76641_n;
 +
@@ -260,6 +261,7 @@
 +        super(Chunk.class);
 +        this.field_76645_j = new ClassInheritanceMultiMap[16];
 +        this.field_76637_e = p_i225781_1_;
++        this.world = (ServerWorld) p_i225781_1_;
 +        this.field_212816_F = p_i225781_2_;
 +        this.locX = p_i225781_2_.field_77276_a; // Paper - reduce need for field look ups
 +        this.locZ = p_i225781_2_.field_77275_b; // Paper - reduce need for field look ups
