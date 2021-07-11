@@ -24,6 +24,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1266,7 +1267,7 @@ public final class CraftServer implements Server {
         Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
 
         ResourceLocation mcKey = CraftNamespacedKey.toMinecraft(recipeKey);
-        for (Map<ResourceLocation, IRecipe<?>> recipes : getServer().getRecipeManager().recipes.values()) {
+        for (Object2ObjectLinkedOpenHashMap<ResourceLocation, IRecipe<?>> recipes : getServer().getRecipeManager().recipesCB.values()) {
             if (recipes.remove(mcKey) != null) {
                 return true;
             }
