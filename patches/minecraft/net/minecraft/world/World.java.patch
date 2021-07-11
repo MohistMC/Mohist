@@ -443,7 +443,7 @@
 +        return null;
 +    }
 +
-+    public final IChunk func_217353_a(int p_217353_1_, int p_217353_2_, ChunkStatus p_217353_3_, boolean p_217353_4_) { // Paper - final for inline
++    public IChunk func_217353_a(int p_217353_1_, int p_217353_2_, ChunkStatus p_217353_3_, boolean p_217353_4_) {
 +        IChunk ichunk = this.func_72863_F().func_212849_a_(p_217353_1_, p_217353_2_, p_217353_3_, p_217353_4_);
 +        if (ichunk == null && p_217353_4_) {
 +            throw new IllegalStateException("Should always be able to create a chunk!");
@@ -452,7 +452,7 @@
 +        }
 +    }
 +
-+    public boolean func_180501_a(BlockPos p_180501_1_, BlockState p_180501_2_, int p_180501_3_) { // Paper - final for inline // Mohist - delete final
++    public boolean func_180501_a(BlockPos p_180501_1_, BlockState p_180501_2_, int p_180501_3_) { // Paper - final for inline
 +        return this.func_241211_a_(p_180501_1_, p_180501_2_, p_180501_3_, 512);
 +    }
 +
