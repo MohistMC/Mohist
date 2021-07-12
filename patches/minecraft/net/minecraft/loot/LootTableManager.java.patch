@@ -1,5 +1,13 @@
 --- a/net/minecraft/loot/LootTableManager.java
 +++ b/net/minecraft/loot/LootTableManager.java
+@@ -4,6 +_,7 @@
+ import com.google.common.collect.ImmutableMap.Builder;
+ import com.google.gson.Gson;
+ import com.google.gson.JsonElement;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Map;
+ import java.util.Set;
+ import net.minecraft.client.resources.JsonReloadListener;
 @@ -17,6 +_,7 @@
     private static final Logger field_186525_a = LogManager.getLogger();
     private static final Gson field_186526_b = LootSerializers.func_237388_c_().create();
@@ -13,7 +21,7 @@
        JsonElement jsonelement = p_212853_1_.remove(LootTables.field_186419_a);
        if (jsonelement != null) {
 -         field_186525_a.warn("Datapack tried to redefine {} loot table, ignoring", (Object)LootTables.field_186419_a);
-+         field_186525_a.warn(com.mohistmc.util.i18n.i18n.get("loottablemanager.1", (Object)LootTables.field_186419_a));
++         field_186525_a.warn(i18n.get("loottablemanager.1", (Object)LootTables.field_186419_a));
        }
  
        p_212853_1_.forEach((p_237403_1_, p_237403_2_) -> {
@@ -24,7 +32,7 @@
              builder.put(p_237403_1_, loottable);
           } catch (Exception exception) {
 -            field_186525_a.error("Couldn't parse loot table {}", p_237403_1_, exception);
-+            //LOGGER.error(com.mohistmc.util.i18n.i18n.get("loottablemanager.2", p_237403_1_), exception);
++            //LOGGER.error(i18n.get("loottablemanager.2", p_237403_1_), exception);
           }
  
        });

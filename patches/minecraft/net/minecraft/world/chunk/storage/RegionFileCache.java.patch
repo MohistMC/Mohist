@@ -1,212 +1,48 @@
 --- a/net/minecraft/world/chunk/storage/RegionFileCache.java
 +++ b/net/minecraft/world/chunk/storage/RegionFileCache.java
-@@ -1,89 +_,133 @@
- package net.minecraft.world.chunk.storage;
+@@ -21,7 +_,11 @@
+    }
  
- import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
-+
- import java.io.DataInputStream;
- import java.io.DataOutputStream;
- import java.io.File;
- import java.io.IOException;
- import javax.annotation.Nullable;
-+
- import net.minecraft.nbt.CompoundNBT;
- import net.minecraft.nbt.CompressedStreamTools;
- import net.minecraft.util.math.ChunkPos;
- 
--public final class RegionFileCache implements AutoCloseable {
--   private final Long2ObjectLinkedOpenHashMap<RegionFile> field_219102_c = new Long2ObjectLinkedOpenHashMap<>();
--   private final File field_219101_a;
--   private final boolean field_235986_c_;
--
--   RegionFileCache(File p_i231895_1_, boolean p_i231895_2_) {
--      this.field_219101_a = p_i231895_1_;
--      this.field_235986_c_ = p_i231895_2_;
--   }
--
--   private RegionFile func_219098_a(ChunkPos p_219098_1_) throws IOException {
+    private RegionFile func_219098_a(ChunkPos p_219098_1_) throws IOException {
 -      long i = ChunkPos.func_77272_a(p_219098_1_.func_222241_h(), p_219098_1_.func_222242_i());
--      RegionFile regionfile = this.field_219102_c.getAndMoveToFirst(i);
--      if (regionfile != null) {
--         return regionfile;
--      } else {
--         if (this.field_219102_c.size() >= 256) {
--            this.field_219102_c.removeLast().close();
--         }
--
--         if (!this.field_219101_a.exists()) {
--            this.field_219101_a.mkdirs();
--         }
--
++      return loadFile(p_219098_1_, false);
++   }
++
++   private RegionFile loadFile(ChunkPos pos, boolean existingOnly) throws IOException { // CraftBukkit
++      long i = ChunkPos.func_77272_a(pos.func_222241_h(), pos.func_222242_i());
+       RegionFile regionfile = this.field_219102_c.getAndMoveToFirst(i);
+       if (regionfile != null) {
+          return regionfile;
+@@ -34,7 +_,8 @@
+             this.field_219101_a.mkdirs();
+          }
+ 
 -         File file1 = new File(this.field_219101_a, "r." + p_219098_1_.func_222241_h() + "." + p_219098_1_.func_222242_i() + ".mca");
--         RegionFile regionfile1 = new RegionFile(file1, this.field_219101_a, this.field_235986_c_);
--         this.field_219102_c.putAndMoveToFirst(i, regionfile1);
--         return regionfile1;
--      }
--   }
--
--   @Nullable
--   public CompoundNBT func_219099_e(ChunkPos p_219099_1_) throws IOException {
++         File file1 = new File(this.field_219101_a, "r." + pos.func_222241_h() + "." + pos.func_222242_i() + ".mca");
++         if (existingOnly && !file1.exists()) return null; // CraftBukkit
+          RegionFile regionfile1 = new RegionFile(file1, this.field_219101_a, this.field_235986_c_);
+          this.field_219102_c.putAndMoveToFirst(i, regionfile1);
+          return regionfile1;
+@@ -43,7 +_,12 @@
+ 
+    @Nullable
+    public CompoundNBT func_219099_e(ChunkPos p_219099_1_) throws IOException {
 -      RegionFile regionfile = this.func_219098_a(p_219099_1_);
--
--      Object object;
--      try (DataInputStream datainputstream = regionfile.func_222666_a(p_219099_1_)) {
--         if (datainputstream != null) {
--            return CompressedStreamTools.func_74794_a(datainputstream);
--         }
--
--         object = null;
--      }
--
--      return (CompoundNBT)object;
--   }
--
--   protected void func_219100_a(ChunkPos p_219100_1_, CompoundNBT p_219100_2_) throws IOException {
++      // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
++      RegionFile regionfile = this.loadFile(p_219099_1_, true);
++      if (regionfile == null) {
++         return null;
++      }
++      // CraftBukkit end
+ 
+       Object object;
+       try (DataInputStream datainputstream = regionfile.func_222666_a(p_219099_1_)) {
+@@ -58,7 +_,7 @@
+    }
+ 
+    protected void func_219100_a(ChunkPos p_219100_1_, CompoundNBT p_219100_2_) throws IOException {
 -      RegionFile regionfile = this.func_219098_a(p_219100_1_);
--
--      try (DataOutputStream dataoutputstream = regionfile.func_222661_c(p_219100_1_)) {
--         CompressedStreamTools.func_74800_a(p_219100_2_, dataoutputstream);
--      }
--
--   }
--
--   public void close() throws IOException {
--      SuppressedExceptions<IOException> suppressedexceptions = new SuppressedExceptions<>();
--
--      for(RegionFile regionfile : this.field_219102_c.values()) {
--         try {
--            regionfile.close();
--         } catch (IOException ioexception) {
--            suppressedexceptions.func_233003_a_(ioexception);
--         }
--      }
--
--      suppressedexceptions.func_233002_a_();
--   }
--
--   public void func_235987_a_() throws IOException {
--      for(RegionFile regionfile : this.field_219102_c.values()) {
--         regionfile.func_235985_a_();
--      }
--
--   }
-+public class RegionFileCache implements AutoCloseable {  // Paper - no final
-+    private final Long2ObjectLinkedOpenHashMap<RegionFile> field_219102_c = new Long2ObjectLinkedOpenHashMap<>();
-+    private final File field_219101_a;
-+    private final boolean field_235986_c_;
-+
-+    public RegionFileCache(File p_i231895_1_, boolean p_i231895_2_) {
-+        this.field_219101_a = p_i231895_1_;
-+        this.field_235986_c_ = p_i231895_2_;
-+    }
-+
-+    private RegionFile func_219098_a(ChunkPos p_219098_1_) throws IOException {
-+        return getFile(p_219098_1_, false);
-+    }
-+
-+    // Paper start
-+    public synchronized RegionFile getRegionFileIfLoaded(ChunkPos chunkcoordintpair) {
-+        return this.field_219102_c.getAndMoveToFirst(ChunkPos.func_77272_a(chunkcoordintpair.func_222241_h(), chunkcoordintpair.func_222242_i()));
-+    }
-+
-+    public synchronized boolean chunkExists(ChunkPos pos) throws IOException {
-+        RegionFile regionfile = getFile(pos, true);
-+
-+        return regionfile != null ? regionfile.func_222667_d(pos) : false;
-+    }
-+
-+    public synchronized RegionFile getFile(ChunkPos chunkcoordintpair, boolean existingOnly) throws IOException { // CraftBukkit
-+        return this.getFile(chunkcoordintpair, existingOnly, false);
-+    }
-+
-+    public synchronized RegionFile getFile(ChunkPos pos, boolean existingOnly, boolean lock) throws IOException {
-+        // Paper end
-+        long i = ChunkPos.func_77272_a(pos.func_222241_h(), pos.func_222242_i());
-+        RegionFile regionfile = this.field_219102_c.getAndMoveToFirst(i);
-+        if (regionfile != null) {
-+            // Paper start
-+            if (lock) {
-+                // must be in this synchronized block
-+                regionfile.fileLock.lock();
-+            }
-+            // Paper end
-+            return regionfile;
-+        } else {
-+            if (this.field_219102_c.size() >= 256) {
-+                this.field_219102_c.removeLast().close();
-+            }
-+
-+            if (!this.field_219101_a.exists()) {
-+                this.field_219101_a.mkdirs();
-+            }
-+
-+            File file1 = new File(this.field_219101_a, "r." + pos.func_222241_h() + "." + pos.func_222242_i() + ".mca");
-+            if (existingOnly && !file1.exists()) return null; // CraftBukkit
-+            RegionFile regionfile1 = new RegionFile(file1, this.field_219101_a, this.field_235986_c_);
-+            this.field_219102_c.putAndMoveToFirst(i, regionfile1);
-+            // Paper start
-+            if (lock) {
-+                // must be in this synchronized block
-+                regionfile1.fileLock.lock();
-+            }
-+            // Paper end
-+            return regionfile1;
-+        }
-+    }
-+
-+    @Nullable
-+    public CompoundNBT func_219099_e(ChunkPos p_219099_1_) throws IOException {
-+        // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
-+        RegionFile regionfile = this.getFile(p_219099_1_, true, true); // Paper
-+        if (regionfile == null) {
-+            return null;
-+        }
-+        // CraftBukkit end
-+
-+        Object object;
-+        try (DataInputStream datainputstream = regionfile.func_222666_a(p_219099_1_)) {
-+            if (datainputstream != null) {
-+                return CompressedStreamTools.func_74794_a(datainputstream);
-+            }
-+
-+            object = null;
-+        } finally { // Paper start
-+            regionfile.fileLock.unlock();
-+        } // Paper end
-+
-+        return (CompoundNBT) object;
-+    }
-+
-+    protected void func_219100_a(ChunkPos p_219100_1_, CompoundNBT p_219100_2_) throws IOException {
-+        RegionFile regionfile = this.getFile(p_219100_1_, false, true); // CraftBukkit // Paper
-+
-+        try (DataOutputStream dataoutputstream = regionfile.func_222661_c(p_219100_1_)) {
-+            CompressedStreamTools.func_74800_a(p_219100_2_, dataoutputstream);
-+        } finally { // Paper start
-+            regionfile.fileLock.unlock();
-+        } // Paper end
-+
-+    }
-+
-+    public synchronized void close() throws IOException { // Paper -> synchronized
-+        SuppressedExceptions<IOException> suppressedexceptions = new SuppressedExceptions<>();
-+
-+        for (RegionFile regionfile : this.field_219102_c.values()) {
-+            try {
-+                regionfile.close();
-+            } catch (IOException ioexception) {
-+                suppressedexceptions.func_233003_a_(ioexception);
-+            }
-+        }
-+
-+        suppressedexceptions.func_233002_a_();
-+    }
-+
-+    public synchronized void func_235987_a_() throws IOException { // Paper - synchronize
-+        for (RegionFile regionfile : this.field_219102_c.values()) {
-+            regionfile.func_235985_a_();
-+        }
-+
-+    }
- }
++      RegionFile regionfile = this.loadFile(p_219100_1_, false); // CraftBukkit
+ 
+       try (DataOutputStream dataoutputstream = regionfile.func_222661_c(p_219100_1_)) {
+          CompressedStreamTools.func_74800_a(p_219100_2_, dataoutputstream);

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/chunk/ChunkPrimer.java
 +++ b/net/minecraft/world/chunk/ChunkPrimer.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.util.i18n.i18n;
+ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+ import it.unimi.dsi.fastutil.longs.LongSet;
+ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 @@ -64,6 +_,16 @@
     private final Map<GenerationStage.Carving, BitSet> field_205769_s = new Object2ObjectArrayMap<>();
     private volatile boolean field_217335_u;
@@ -22,7 +30,7 @@
              System.arraycopy(p_i49941_3_, 0, this.field_201661_i, 0, this.field_201661_i.length);
           } else {
 -            field_201653_a.warn("Could not set level chunk sections, array length is {} instead of {}", p_i49941_3_.length, this.field_201661_i.length);
-+            field_201653_a.warn(com.mohistmc.util.i18n.i18n.get("chunkprimer.1", p_i49941_3_.length, this.field_201661_i.length));
++            field_201653_a.warn(i18n.get("chunkprimer.1", p_i49941_3_.length, this.field_201661_i.length));
           }
        }
  
@@ -42,20 +50,3 @@
                 WorldLightManager worldlightmanager = this.func_217307_e();
                 worldlightmanager.func_215568_a(p_177436_1_);
              }
-@@ -433,4 +_,16 @@
-       this.field_217335_u = p_217305_1_;
-       this.func_177427_f(true);
-    }
-+
-+   // Paper start - If loaded util
-+   @Override
-+   public FluidState getFluidIfLoaded(BlockPos blockposition) {
-+      return this.func_204610_c(blockposition);
-+   }
-+
-+   @Override
-+   public BlockState getTypeIfLoaded(BlockPos blockposition) {
-+      return this.func_180495_p(blockposition);
-+   }
-+   // Paper end
- }

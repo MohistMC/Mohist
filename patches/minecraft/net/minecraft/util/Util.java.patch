@@ -1,5 +1,13 @@
 --- a/net/minecraft/util/Util.java
 +++ b/net/minecraft/util/Util.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Iterators;
+ import com.google.common.collect.Lists;
+ import com.google.common.util.concurrent.MoreExecutors;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.DataFixUtils;
+ import com.mojang.datafixers.DSL.TypeReference;
+ import com.mojang.datafixers.types.Type;
 @@ -87,7 +_,7 @@
     }
  
@@ -14,10 +22,10 @@
                 protected void onTermination(Throwable p_onTermination_1_) {
                    if (p_onTermination_1_ != null) {
 -                     Util.field_195650_a.warn("{} died", this.getName(), p_onTermination_1_);
-+                     Util.field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.1", this.getName(), p_onTermination_1_));
++                     Util.field_195650_a.warn(i18n.get("util.1", this.getName(), p_onTermination_1_));
                    } else {
 -                     Util.field_195650_a.debug("{} shutdown", (Object)this.getName());
-+                     Util.field_195650_a.debug(com.mohistmc.util.i18n.i18n.get("util.2", (Object)this.getName()));
++                     Util.field_195650_a.debug(i18n.get("util.2", (Object)this.getName()));
                    }
  
                    super.onTermination(p_onTermination_1_);
@@ -35,13 +43,13 @@
     public static <T extends Throwable> T func_229757_c_(T p_229757_0_) {
        if (SharedConstants.field_206244_b) {
 -         field_195650_a.error("Trying to throw a fatal exception, pausing in IDE", p_229757_0_);
-+         field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.5", p_229757_0_));
++         field_195650_a.error(i18n.get("util.5", p_229757_0_));
  
           while(true) {
              try {
                 Thread.sleep(1000L);
 -               field_195650_a.error("paused");
-+               field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.6"));
++               field_195650_a.error(i18n.get("util.6"));
              } catch (InterruptedException interruptedexception) {
                 return p_229757_0_;
              }
@@ -50,7 +58,7 @@
                 return true;
              } catch (IOException ioexception) {
 -               Util.field_195650_a.error("Failed to rename", (Throwable)ioexception);
-+               Util.field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.7", (Throwable)ioexception));
++               Util.field_195650_a.error(i18n.get("util.7", (Throwable)ioexception));
                 return false;
              }
           }
@@ -59,7 +67,7 @@
                 return true;
              } catch (IOException ioexception) {
 -               Util.field_195650_a.warn("Failed to delete", (Throwable)ioexception);
-+               Util.field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.8", (Throwable)ioexception));
++               Util.field_195650_a.warn(i18n.get("util.8", (Throwable)ioexception));
                 return false;
              }
           }
@@ -68,7 +76,7 @@
        for(BooleanSupplier booleansupplier : p_244365_0_) {
           if (!booleansupplier.getAsBoolean()) {
 -            field_195650_a.warn("Failed to execute {}", (Object)booleansupplier);
-+            field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.9", (Object)booleansupplier));
++            field_195650_a.warn(i18n.get("util.9", (Object)booleansupplier));
              return false;
           }
        }
@@ -77,11 +85,11 @@
           }
  
 -         field_195650_a.error("Failed to {}, retrying {}/{}", p_244359_1_, i, p_244359_0_);
-+         field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.10", p_244359_1_, i, p_244359_0_));
++         field_195650_a.error(i18n.get("util.10", p_244359_1_, i, p_244359_0_));
        }
  
 -      field_195650_a.error("Failed to {}, aborting, progress might be lost", (Object)p_244359_1_);
-+      field_195650_a.error(com.mohistmc.util.i18n.i18n.get("util.11", (Object)p_244359_1_));
++      field_195650_a.error(i18n.get("util.11", (Object)p_244359_1_));
        return false;
     }
  
@@ -90,7 +98,7 @@
                    Thread.sleep(2147483647L);
                 } catch (InterruptedException interruptedexception) {
 -                  Util.field_195650_a.warn("Timer hack thread interrupted, that really should not happen");
-+                  Util.field_195650_a.warn(com.mohistmc.util.i18n.i18n.get("util.12"));
++                  Util.field_195650_a.warn(i18n.get("util.12"));
                    return;
                 }
              }

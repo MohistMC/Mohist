@@ -1192,16 +1192,6 @@ public class ForgeHooks
         }
 
         @Override
-        public BlockState getTypeIfLoaded(BlockPos blockposition) {
-            return null;
-        }
-
-        @Override
-        public FluidState getFluidIfLoaded(BlockPos blockposition) {
-            return null;
-        }
-
-        @Override
         public FluidState getFluidState(BlockPos pos) {
             return Fluids.EMPTY.defaultFluidState();
         }

@@ -1,11 +1,19 @@
 --- a/net/minecraft/resources/SimpleReloadableResourceManager.java
 +++ b/net/minecraft/resources/SimpleReloadableResourceManager.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.util.Collection;
 @@ -128,7 +_,7 @@
           try {
              this.func_199021_a(iresourcepack);
           } catch (Exception exception) {
 -            field_199012_a.error("Failed to add resource pack {}", iresourcepack.func_195762_a(), exception);
-+            field_199012_a.error(com.mohistmc.util.i18n.i18n.get("simplereloadableresourcemanager.1", iresourcepack.func_195762_a(), exception));
++            field_199012_a.error(i18n.get("simplereloadableresourcemanager.1", iresourcepack.func_195762_a(), exception));
              return new SimpleReloadableResourceManager.FailedPackReloader(new SimpleReloadableResourceManager.FailedPackException(iresourcepack, exception));
           }
        }

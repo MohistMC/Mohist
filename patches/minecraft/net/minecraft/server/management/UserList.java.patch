@@ -1,11 +1,19 @@
 --- a/net/minecraft/server/management/UserList.java
 +++ b/net/minecraft/server/management/UserList.java
+@@ -8,6 +_,7 @@
+ import com.google.gson.JsonArray;
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.BufferedReader;
+ import java.io.BufferedWriter;
+ import java.io.File;
 @@ -42,7 +_,7 @@
        try {
           this.func_152678_f();
        } catch (IOException ioexception) {
 -         field_152693_a.warn("Could not save the list after adding a user.", (Throwable)ioexception);
-+         field_152693_a.warn(com.mohistmc.util.i18n.i18n.get("userlist.1", (Throwable)ioexception));
++         field_152693_a.warn(i18n.get("userlist.1", (Throwable)ioexception));
        }
  
     }
@@ -23,7 +31,7 @@
           this.func_152678_f();
        } catch (IOException ioexception) {
 -         field_152693_a.warn("Could not save the list after removing a user.", (Throwable)ioexception);
-+         field_152693_a.warn(com.mohistmc.util.i18n.i18n.get("userlist.2", (Throwable)ioexception));
++         field_152693_a.warn(i18n.get("userlist.2", (Throwable)ioexception));
        }
  
     }

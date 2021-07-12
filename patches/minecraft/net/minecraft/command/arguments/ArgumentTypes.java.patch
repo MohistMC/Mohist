@@ -1,11 +1,19 @@
 --- a/net/minecraft/command/arguments/ArgumentTypes.java
 +++ b/net/minecraft/command/arguments/ArgumentTypes.java
+@@ -4,6 +_,7 @@
+ import com.google.common.collect.Sets;
+ import com.google.gson.JsonArray;
+ import com.google.gson.JsonObject;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.arguments.ArgumentType;
+ import com.mojang.brigadier.tree.ArgumentCommandNode;
 @@ -101,7 +_,7 @@
     public static <T extends ArgumentType<?>> void func_197484_a(PacketBuffer p_197484_0_, T p_197484_1_) {
        ArgumentTypes.Entry<T> entry = (Entry<T>) func_201040_a(p_197484_1_);
        if (entry == null) {
 -         field_197488_a.error("Could not serialize {} ({}) - will not be sent to client!", p_197484_1_, p_197484_1_.getClass());
-+         field_197488_a.debug(com.mohistmc.util.i18n.i18n.get("argumenttypes.1", p_197484_1_, p_197484_1_.getClass()));
++         field_197488_a.debug(i18n.get("argumenttypes.1", p_197484_1_, p_197484_1_.getClass()));
           p_197484_0_.func_192572_a(new ResourceLocation(""));
        } else {
           p_197484_0_.func_192572_a(entry.field_197481_c);
@@ -14,7 +22,7 @@
        ArgumentTypes.Entry<?> entry = func_197482_a(resourcelocation);
        if (entry == null) {
 -         field_197488_a.error("Could not deserialize {}", (Object)resourcelocation);
-+         field_197488_a.error(com.mohistmc.util.i18n.i18n.get("argumenttypes.2", (Object)resourcelocation));
++         field_197488_a.error(i18n.get("argumenttypes.2", (Object)resourcelocation));
           return null;
        } else {
           return entry.field_197480_b.func_197071_b(p_197486_0_);
@@ -23,7 +31,7 @@
        ArgumentTypes.Entry<T> entry = (Entry<T>) func_201040_a(p_201042_1_);
        if (entry == null) {
 -         field_197488_a.error("Could not serialize argument {} ({})!", p_201042_1_, p_201042_1_.getClass());
-+         field_197488_a.error(com.mohistmc.util.i18n.i18n.get("argumenttypes.3", p_201042_1_, p_201042_1_.getClass()));
++         field_197488_a.error(i18n.get("argumenttypes.3", p_201042_1_, p_201042_1_.getClass()));
           p_201042_0_.addProperty("type", "unknown");
        } else {
           p_201042_0_.addProperty("type", "argument");
@@ -32,7 +40,7 @@
           func_201042_a(jsonobject, ((ArgumentCommandNode)p_200388_1_).getType());
        } else {
 -         field_197488_a.error("Could not serialize node {} ({})!", p_200388_1_, p_200388_1_.getClass());
-+         field_197488_a.error(com.mohistmc.util.i18n.i18n.get("argumenttypes.4", p_200388_1_, p_200388_1_.getClass()));
++         field_197488_a.error(i18n.get("argumenttypes.4", p_200388_1_, p_200388_1_.getClass()));
           jsonobject.addProperty("type", "unknown");
        }
  

@@ -1,5 +1,13 @@
 --- a/net/minecraft/util/registry/Registry.java
 +++ b/net/minecraft/util/registry/Registry.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.util.registry;
+ 
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.DataResult;
 @@ -94,6 +_,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -180,7 +188,7 @@
        p_239738_0_.forEach((p_239739_1_) -> {
           if (p_239739_1_.func_148742_b().isEmpty()) {
 -            field_212616_e.error("Registry '{}' was empty after loading", (Object)p_239738_0_.func_177774_c(p_239739_1_));
-+            field_212616_e.error(com.mohistmc.util.i18n.i18n.get("registry.1", (Object)p_239738_0_.func_177774_c(p_239739_1_)));
++            field_212616_e.error(i18n.get("registry.1", (Object)p_239738_0_.func_177774_c(p_239739_1_)));
              if (SharedConstants.field_206244_b) {
                 throw new IllegalStateException("Registry: '" + p_239738_0_.func_177774_c(p_239739_1_) + "' is empty, not allowed, fix me!");
              }
@@ -224,7 +232,7 @@
        field_218376_a.forEach((p_239747_0_, p_239747_1_) -> {
           if (p_239747_1_.get() == null) {
 -            field_212616_e.error("Unable to bootstrap registry '{}'", (Object)p_239747_0_);
-+            field_212616_e.error(com.mohistmc.util.i18n.i18n.get("registry.2", (Object)p_239747_0_));
++            field_212616_e.error(i18n.get("registry.2", (Object)p_239747_0_));
           }
  
        });

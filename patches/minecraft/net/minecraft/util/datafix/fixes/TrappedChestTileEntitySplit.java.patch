@@ -1,11 +1,18 @@
 --- a/net/minecraft/util/datafix/fixes/TrappedChestTileEntitySplit.java
 +++ b/net/minecraft/util/datafix/fixes/TrappedChestTileEntitySplit.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.util.datafix.fixes;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.DSL;
+ import com.mojang.datafixers.DataFix;
+ import com.mojang.datafixers.OpticFinder;
 @@ -79,7 +_,7 @@
                             return intset.contains(LeavesFix.func_208411_a(i1, j1, k1)) ? p_212530_4_.update(taggedchoicetype.finder(), (p_212534_0_) -> {
                                return p_212534_0_.mapFirst((p_212535_0_) -> {
                                   if (!Objects.equals(p_212535_0_, "minecraft:chest")) {
 -                                    field_212536_a.warn("Block Entity was expected to be a chest");
-+                                    field_212536_a.warn(com.mohistmc.util.i18n.i18n.get("trappedchesttileentitysplit.1"));
++                                    field_212536_a.warn(i18n.get("trappedchesttileentitysplit.1"));
                                   }
  
                                   return "minecraft:trapped_chest";

@@ -1,11 +1,19 @@
 --- a/net/minecraft/item/KnowledgeBookItem.java
 +++ b/net/minecraft/item/KnowledgeBookItem.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.item;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.List;
+ import java.util.Optional;
+ import net.minecraft.entity.player.PlayerEntity;
 @@ -40,7 +_,7 @@
                 String s = listnbt.func_150307_f(i);
                 Optional<? extends IRecipe<?>> optional = recipemanager.func_215367_a(new ResourceLocation(s));
                 if (!optional.isPresent()) {
 -                  field_194126_a.error("Invalid recipe: {}", (Object)s);
-+                  field_194126_a.error(com.mohistmc.util.i18n.i18n.get("knowledgebookitem.1", (Object)s));
++                  field_194126_a.error(i18n.get("knowledgebookitem.1", (Object)s));
                    return ActionResult.func_226251_d_(itemstack);
                 }
  
@@ -14,7 +22,7 @@
           return ActionResult.func_233538_a_(itemstack, p_77659_1_.func_201670_d());
        } else {
 -         field_194126_a.error("Tag not valid: {}", (Object)compoundnbt);
-+         field_194126_a.error(com.mohistmc.util.i18n.i18n.get("knowledgebookitem.2", (Object)compoundnbt));
++         field_194126_a.error(i18n.get("knowledgebookitem.2", (Object)compoundnbt));
           return ActionResult.func_226251_d_(itemstack);
        }
     }

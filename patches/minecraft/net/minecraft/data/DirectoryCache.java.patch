@@ -1,11 +1,19 @@
 --- a/net/minecraft/data/DirectoryCache.java
 +++ b/net/minecraft/data/DirectoryCache.java
+@@ -3,6 +_,7 @@
+ import com.google.common.base.Charsets;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.IOException;
+ import java.io.Writer;
+ import java.nio.file.Files;
 @@ -50,15 +_,15 @@
        try {
           writer = Files.newBufferedWriter(this.field_208326_c);
        } catch (IOException ioexception) {
 -         field_208324_a.warn("Unable write cachefile {}: {}", this.field_208326_c, ioexception.toString());
-+         field_208324_a.warn(com.mohistmc.util.i18n.i18n.get("directorycache.1", this.field_208326_c, ioexception.toString()));
++         field_208324_a.warn(i18n.get("directorycache.1", this.field_208326_c, ioexception.toString()));
           return;
        }
  
@@ -16,7 +24,7 @@
 +      }).sorted(java.util.Comparator.comparing(a -> a.split(" ")[1])).collect(Collectors.toList()), System.lineSeparator(), writer);
        writer.close();
 -      field_208324_a.debug("Caching: cache hits: {}, created: {} removed: {}", this.field_208327_d, this.field_208329_f.size() - this.field_208327_d, this.field_208328_e.size());
-+      field_208324_a.debug(com.mohistmc.util.i18n.i18n.get("directorycache.2", this.field_208327_d, this.field_208329_f.size() - this.field_208327_d, this.field_208328_e.size()));
++      field_208324_a.debug(i18n.get("directorycache.2", this.field_208327_d, this.field_208329_f.size() - this.field_208327_d, this.field_208328_e.size()));
     }
  
     @Nullable
@@ -25,7 +33,7 @@
                 Files.delete(p_208322_1_);
              } catch (IOException ioexception) {
 -               field_208324_a.debug("Unable to delete: {} ({})", p_208322_1_, ioexception.toString());
-+               field_208324_a.debug(com.mohistmc.util.i18n.i18n.get("directorycache.3", p_208322_1_, ioexception.toString()));
++               field_208324_a.debug(i18n.get("directorycache.3", p_208322_1_, ioexception.toString()));
              }
           }
  

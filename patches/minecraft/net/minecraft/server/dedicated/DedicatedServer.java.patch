@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,11 +_,15 @@
+@@ -1,11 +_,16 @@
  package net.minecraft.server.dedicated;
  
 +import co.aikar.timings.MinecraftTimings;
@@ -8,6 +8,7 @@
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
 +import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.util.i18n.i18n;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -94,7 +95,7 @@
                 }
              } catch (IOException ioexception1) {
 -               DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-+               DedicatedServer.field_155771_h.error(com.mohistmc.util.i18n.i18n.get("dedicatedserver.1", (Throwable)ioexception1));
++               DedicatedServer.field_155771_h.error(i18n.get("dedicatedserver.1", (Throwable)ioexception1));
              }
  
           }
@@ -117,14 +118,14 @@
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
        thread.start();
 -      field_155771_h.info("Starting minecraft server version " + SharedConstants.func_215069_a().getName());
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.26", SharedConstants.func_215069_a().getName()));
++      field_155771_h.info(i18n.get("dedicatedserver.26", SharedConstants.func_215069_a().getName()));
        if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
 -         field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.2"));
++         field_155771_h.warn(i18n.get("dedicatedserver.2"));
        }
  
 -      field_155771_h.info("Loading properties");
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.3"));
++      field_155771_h.info(i18n.get("dedicatedserver.3"));
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
@@ -133,7 +134,7 @@
        this.func_205741_k(serverproperties.field_219017_k);
        this.field_240768_i_.func_230392_a_(serverproperties.field_219020_n);
 -      field_155771_h.info("Default game type: {}", (Object)serverproperties.field_219020_n);
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.4", (Object)serverproperties.field_219020_n));
++      field_155771_h.info(i18n.get("dedicatedserver.4", (Object)serverproperties.field_219020_n));
        InetAddress inetaddress = null;
        if (!this.func_71211_k().isEmpty()) {
           inetaddress = InetAddress.getByName(this.func_71211_k());
@@ -142,7 +143,7 @@
  
        this.func_244801_P();
 -      field_155771_h.info("Starting Minecraft server on {}:{}", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), this.func_71215_F());
-+      field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.5", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), this.func_71215_F()));
++      field_155771_h.info(i18n.get("dedicatedserver.5", this.func_71211_k().isEmpty() ? "*" : this.func_71211_k(), this.func_71215_F()));
  
        try {
           this.func_147137_ag().func_151265_a(inetaddress, this.func_71215_F());
@@ -150,9 +151,9 @@
 -         field_155771_h.warn("**** FAILED TO BIND TO PORT!");
 -         field_155771_h.warn("The exception was: {}", (Object)ioexception.toString());
 -         field_155771_h.warn("Perhaps a server is already running on that port?");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.6"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.7", (Object)ioexception.toString()));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.8"));
++         field_155771_h.warn(i18n.get("dedicatedserver.6"));
++         field_155771_h.warn(i18n.get("dedicatedserver.7", (Object)ioexception.toString()));
++         field_155771_h.warn(i18n.get("dedicatedserver.8"));
           return false;
        }
  
@@ -161,10 +162,10 @@
 -         field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
 -         field_155771_h.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
 -         field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.9"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.10"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.11"));
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.12"));
++         field_155771_h.warn(i18n.get("dedicatedserver.9"));
++         field_155771_h.warn(i18n.get("dedicatedserver.10"));
++         field_155771_h.warn(i18n.get("dedicatedserver.11"));
++         field_155771_h.warn(i18n.get("dedicatedserver.12"));
        }
  
        if (this.func_152368_aE()) {
@@ -181,12 +182,12 @@
           PlayerProfileCache.func_187320_a(this.func_71266_T());
 -         field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
 +         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-+         field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.13", (Object)this.func_230542_k__()));
++         field_155771_h.info(i18n.get("dedicatedserver.13", (Object)this.func_230542_k__()));
           this.func_240800_l__();
           long j = Util.func_211178_c() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
 -         field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
-+         field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.14", (Object)s));
++         field_155771_h.info(i18n.get("dedicatedserver.14", (Object)s));
 +         Metrics.MohistMetrics.startMetrics();
 +         this.field_211151_aa = Util.func_211177_b(); //Forge: Update server time to prevent watchdog/spaming during long load.
           if (serverproperties.field_219027_u != null) {
@@ -195,13 +196,13 @@
  
           if (serverproperties.field_219028_v) {
 -            field_155771_h.info("Starting GS4 status listener");
-+            field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.15"));
++            field_155771_h.info(i18n.get("dedicatedserver.15"));
              this.field_71342_m = QueryThread.func_242129_a(this);
           }
  
           if (serverproperties.field_219030_x) {
 -            field_155771_h.info("Starting remote control listener");
-+            field_155771_h.info(com.mohistmc.util.i18n.i18n.get("dedicatedserver.16"));
++            field_155771_h.info(i18n.get("dedicatedserver.16"));
              this.field_71339_n = MainThread.func_242130_a(this);
 -         }
 -
@@ -232,11 +233,11 @@
           s = serverproperties.field_218989_B;
           if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
 -            field_155771_h.warn("resource-pack-hash is deprecated and found along side resource-pack-sha1. resource-pack-hash will be ignored.");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.17"));
++            field_155771_h.warn(i18n.get("dedicatedserver.17"));
           }
        } else if (!Strings.isNullOrEmpty(serverproperties.field_218988_A)) {
 -         field_155771_h.warn("resource-pack-hash is deprecated. Please use resource-pack-sha1 instead.");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.18"));
++         field_155771_h.warn(i18n.get("dedicatedserver.18"));
           s = serverproperties.field_218988_A;
        } else {
           s = "";
@@ -244,12 +245,12 @@
  
        if (!s.isEmpty() && !field_189647_l.matcher(s).matches()) {
 -         field_155771_h.warn("Invalid sha1 for ressource-pack-sha1");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.19"));
++         field_155771_h.warn(i18n.get("dedicatedserver.19"));
        }
  
        if (!serverproperties.field_219014_h.isEmpty() && s.isEmpty()) {
 -         field_155771_h.warn("You specified a resource pack without providing a sha1 hash. Pack will be updated on the client only if you change the name of the pack.");
-+         field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.20"));
++         field_155771_h.warn(i18n.get("dedicatedserver.20"));
        }
  
        return s;
@@ -298,7 +299,7 @@
        for(int i = 0; !flag && i <= 2; ++i) {
           if (i > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the user banlist, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.21"));
++            field_155771_h.warn(i18n.get("dedicatedserver.21"));
              this.func_152369_aG();
           }
  
@@ -307,7 +308,7 @@
        for(int j = 0; !flag1 && j <= 2; ++j) {
           if (j > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the ip banlist, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.22"));
++            field_155771_h.warn(i18n.get("dedicatedserver.22"));
              this.func_152369_aG();
           }
  
@@ -316,7 +317,7 @@
        for(int k = 0; !flag2 && k <= 2; ++k) {
           if (k > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the op list, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.23"));
++            field_155771_h.warn(i18n.get("dedicatedserver.23"));
              this.func_152369_aG();
           }
  
@@ -325,7 +326,7 @@
        for(int l = 0; !flag3 && l <= 2; ++l) {
           if (l > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the whitelist, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.24"));
++            field_155771_h.warn(i18n.get("dedicatedserver.24"));
              this.func_152369_aG();
           }
  
@@ -334,7 +335,7 @@
        for(int i1 = 0; !flag4 && i1 <= 2; ++i1) {
           if (i1 > 0) {
 -            field_155771_h.warn("Encountered a problem while converting the player save files, retrying in a few seconds");
-+            field_155771_h.warn(com.mohistmc.util.i18n.i18n.get("dedicatedserver.25"));
++            field_155771_h.warn(i18n.get("dedicatedserver.25"));
              this.func_152369_aG();
           }
  

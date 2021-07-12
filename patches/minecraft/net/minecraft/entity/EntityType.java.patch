@@ -1,1026 +1,227 @@
 --- a/net/minecraft/entity/EntityType.java
 +++ b/net/minecraft/entity/EntityType.java
-@@ -2,6 +_,7 @@
+@@ -1,7 +_,9 @@
+ package net.minecraft.entity;
  
  import com.google.common.collect.ImmutableSet;
++import com.mohistmc.util.i18n.i18n;
  import java.util.Optional;
 +import java.util.Set;
  import java.util.UUID;
  import java.util.function.Function;
  import java.util.stream.Stream;
-@@ -140,463 +_,562 @@
+@@ -140,12 +_,14 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.apache.commons.lang3.NotImplementedException;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
--
--public class EntityType<T extends Entity> {
--   private static final Logger field_200731_aJ = LogManager.getLogger();
--   public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
--   public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F).func_233606_a_(10));
--   public static final EntityType<ArrowEntity> field_200790_d = func_200712_a("arrow", EntityType.Builder.<ArrowEntity>func_220322_a(ArrowEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(4).func_233608_b_(20));
--   public static final EntityType<BatEntity> field_200791_e = func_200712_a("bat", EntityType.Builder.<BatEntity>func_220322_a(BatEntity::new, EntityClassification.AMBIENT).func_220321_a(0.5F, 0.9F).func_233606_a_(5));
--   public static final EntityType<BeeEntity> field_226289_e_ = func_200712_a("bee", EntityType.Builder.<BeeEntity>func_220322_a(BeeEntity::new, EntityClassification.CREATURE).func_220321_a(0.7F, 0.6F).func_233606_a_(8));
--   public static final EntityType<BlazeEntity> field_200792_f = func_200712_a("blaze", EntityType.Builder.<BlazeEntity>func_220322_a(BlazeEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(0.6F, 1.8F).func_233606_a_(8));
--   public static final EntityType<BoatEntity> field_200793_g = func_200712_a("boat", EntityType.Builder.<BoatEntity>func_220322_a(BoatEntity::new, EntityClassification.MISC).func_220321_a(1.375F, 0.5625F).func_233606_a_(10));
--   public static final EntityType<CatEntity> field_220360_g = func_200712_a("cat", EntityType.Builder.<CatEntity>func_220322_a(CatEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.7F).func_233606_a_(8));
--   public static final EntityType<CaveSpiderEntity> field_200794_h = func_200712_a("cave_spider", EntityType.Builder.<CaveSpiderEntity>func_220322_a(CaveSpiderEntity::new, EntityClassification.MONSTER).func_220321_a(0.7F, 0.5F).func_233606_a_(8));
--   public static final EntityType<ChickenEntity> field_200795_i = func_200712_a("chicken", EntityType.Builder.<ChickenEntity>func_220322_a(ChickenEntity::new, EntityClassification.CREATURE).func_220321_a(0.4F, 0.7F).func_233606_a_(10));
--   public static final EntityType<CodEntity> field_203780_j = func_200712_a("cod", EntityType.Builder.<CodEntity>func_220322_a(CodEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.5F, 0.3F).func_233606_a_(4));
--   public static final EntityType<CowEntity> field_200796_j = func_200712_a("cow", EntityType.Builder.<CowEntity>func_220322_a(CowEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.4F).func_233606_a_(10));
--   public static final EntityType<CreeperEntity> field_200797_k = func_200712_a("creeper", EntityType.Builder.<CreeperEntity>func_220322_a(CreeperEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.7F).func_233606_a_(8));
--   public static final EntityType<DolphinEntity> field_205137_n = func_200712_a("dolphin", EntityType.Builder.<DolphinEntity>func_220322_a(DolphinEntity::new, EntityClassification.WATER_CREATURE).func_220321_a(0.9F, 0.6F));
--   public static final EntityType<DonkeyEntity> field_200798_l = func_200712_a("donkey", EntityType.Builder.<DonkeyEntity>func_220322_a(DonkeyEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.5F).func_233606_a_(10));
--   public static final EntityType<DragonFireballEntity> field_200799_m = func_200712_a("dragon_fireball", EntityType.Builder.<DragonFireballEntity>func_220322_a(DragonFireballEntity::new, EntityClassification.MISC).func_220321_a(1.0F, 1.0F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<DrownedEntity> field_204724_o = func_200712_a("drowned", EntityType.Builder.<DrownedEntity>func_220322_a(DrownedEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<ElderGuardianEntity> field_200800_n = func_200712_a("elder_guardian", EntityType.Builder.<ElderGuardianEntity>func_220322_a(ElderGuardianEntity::new, EntityClassification.MONSTER).func_220321_a(1.9975F, 1.9975F).func_233606_a_(10));
--   public static final EntityType<EnderCrystalEntity> field_200801_o = func_200712_a("end_crystal", EntityType.Builder.<EnderCrystalEntity>func_220322_a(EnderCrystalEntity::new, EntityClassification.MISC).func_220321_a(2.0F, 2.0F).func_233606_a_(16).func_233608_b_(Integer.MAX_VALUE));
--   public static final EntityType<EnderDragonEntity> field_200802_p = func_200712_a("ender_dragon", EntityType.Builder.<EnderDragonEntity>func_220322_a(EnderDragonEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(16.0F, 8.0F).func_233606_a_(10));
--   public static final EntityType<EndermanEntity> field_200803_q = func_200712_a("enderman", EntityType.Builder.<EndermanEntity>func_220322_a(EndermanEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 2.9F).func_233606_a_(8));
--   public static final EntityType<EndermiteEntity> field_200804_r = func_200712_a("endermite", EntityType.Builder.<EndermiteEntity>func_220322_a(EndermiteEntity::new, EntityClassification.MONSTER).func_220321_a(0.4F, 0.3F).func_233606_a_(8));
--   public static final EntityType<EvokerEntity> field_200806_t = func_200712_a("evoker", EntityType.Builder.<EvokerEntity>func_220322_a(EvokerEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<EvokerFangsEntity> field_200805_s = func_200712_a("evoker_fangs", EntityType.Builder.<EvokerFangsEntity>func_220322_a(EvokerFangsEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.8F).func_233606_a_(6).func_233608_b_(2));
--   public static final EntityType<ExperienceOrbEntity> field_200807_u = func_200712_a("experience_orb", EntityType.Builder.<ExperienceOrbEntity>func_220322_a(ExperienceOrbEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(6).func_233608_b_(20));
--   public static final EntityType<EyeOfEnderEntity> field_200808_v = func_200712_a("eye_of_ender", EntityType.Builder.<EyeOfEnderEntity>func_220322_a(EyeOfEnderEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(4));
--   public static final EntityType<FallingBlockEntity> field_200809_w = func_200712_a("falling_block", EntityType.Builder.<FallingBlockEntity>func_220322_a(FallingBlockEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.98F).func_233606_a_(10).func_233608_b_(20));
--   public static final EntityType<FireworkRocketEntity> field_200810_x = func_200712_a("firework_rocket", EntityType.Builder.<FireworkRocketEntity>func_220322_a(FireworkRocketEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<FoxEntity> field_220356_B = func_200712_a("fox", EntityType.Builder.<FoxEntity>func_220322_a(FoxEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.7F).func_233606_a_(8).func_233607_a_(Blocks.field_222434_lW));
--   public static final EntityType<GhastEntity> field_200811_y = func_200712_a("ghast", EntityType.Builder.<GhastEntity>func_220322_a(GhastEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(4.0F, 4.0F).func_233606_a_(10));
--   public static final EntityType<GiantEntity> field_200812_z = func_200712_a("giant", EntityType.Builder.<GiantEntity>func_220322_a(GiantEntity::new, EntityClassification.MONSTER).func_220321_a(3.6F, 12.0F).func_233606_a_(10));
--   public static final EntityType<GuardianEntity> field_200761_A = func_200712_a("guardian", EntityType.Builder.<GuardianEntity>func_220322_a(GuardianEntity::new, EntityClassification.MONSTER).func_220321_a(0.85F, 0.85F).func_233606_a_(8));
--   public static final EntityType<HoglinEntity> field_233588_G_ = func_200712_a("hoglin", EntityType.Builder.<HoglinEntity>func_220322_a(HoglinEntity::new, EntityClassification.MONSTER).func_220321_a(1.3964844F, 1.4F).func_233606_a_(8));
--   public static final EntityType<HorseEntity> field_200762_B = func_200712_a("horse", EntityType.Builder.<HorseEntity>func_220322_a(HorseEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(10));
--   public static final EntityType<HuskEntity> field_200763_C = func_200712_a("husk", EntityType.Builder.<HuskEntity>func_220322_a(HuskEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<IllusionerEntity> field_200764_D = func_200712_a("illusioner", EntityType.Builder.<IllusionerEntity>func_220322_a(IllusionerEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<IronGolemEntity> field_200757_aw = func_200712_a("iron_golem", EntityType.Builder.<IronGolemEntity>func_220322_a(IronGolemEntity::new, EntityClassification.MISC).func_220321_a(1.4F, 2.7F).func_233606_a_(10));
--   public static final EntityType<ItemEntity> field_200765_E = func_200712_a("item", EntityType.Builder.<ItemEntity>func_220322_a(ItemEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(6).func_233608_b_(20));
--   public static final EntityType<ItemFrameEntity> field_200766_F = func_200712_a("item_frame", EntityType.Builder.<ItemFrameEntity>func_220322_a(ItemFrameEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
--   public static final EntityType<FireballEntity> field_200767_G = func_200712_a("fireball", EntityType.Builder.<FireballEntity>func_220322_a(FireballEntity::new, EntityClassification.MISC).func_220321_a(1.0F, 1.0F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<LeashKnotEntity> field_200768_H = func_200712_a("leash_knot", EntityType.Builder.<LeashKnotEntity>func_220322_a(LeashKnotEntity::new, EntityClassification.MISC).func_200706_c().func_220321_a(0.5F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
--   public static final EntityType<LightningBoltEntity> field_200728_aG = func_200712_a("lightning_bolt", EntityType.Builder.<LightningBoltEntity>func_220322_a(LightningBoltEntity::new, EntityClassification.MISC).func_200706_c().func_220321_a(0.0F, 0.0F).func_233606_a_(16).func_233608_b_(Integer.MAX_VALUE));
--   public static final EntityType<LlamaEntity> field_200769_I = func_200712_a("llama", EntityType.Builder.<LlamaEntity>func_220322_a(LlamaEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.87F).func_233606_a_(10));
--   public static final EntityType<LlamaSpitEntity> field_200770_J = func_200712_a("llama_spit", EntityType.Builder.<LlamaSpitEntity>func_220322_a(LlamaSpitEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<MagmaCubeEntity> field_200771_K = func_200712_a("magma_cube", EntityType.Builder.<MagmaCubeEntity>func_220322_a(MagmaCubeEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(2.04F, 2.04F).func_233606_a_(8));
--   public static final EntityType<MinecartEntity> field_200772_L = func_200712_a("minecart", EntityType.Builder.<MinecartEntity>func_220322_a(MinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
--   public static final EntityType<ChestMinecartEntity> field_200773_M = func_200712_a("chest_minecart", EntityType.Builder.<ChestMinecartEntity>func_220322_a(ChestMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
--   public static final EntityType<CommandBlockMinecartEntity> field_200774_N = func_200712_a("command_block_minecart", EntityType.Builder.<CommandBlockMinecartEntity>func_220322_a(CommandBlockMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
--   public static final EntityType<FurnaceMinecartEntity> field_200775_O = func_200712_a("furnace_minecart", EntityType.Builder.<FurnaceMinecartEntity>func_220322_a(FurnaceMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
--   public static final EntityType<HopperMinecartEntity> field_200776_P = func_200712_a("hopper_minecart", EntityType.Builder.<HopperMinecartEntity>func_220322_a(HopperMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
--   public static final EntityType<SpawnerMinecartEntity> field_200777_Q = func_200712_a("spawner_minecart", EntityType.Builder.<SpawnerMinecartEntity>func_220322_a(SpawnerMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
--   public static final EntityType<TNTMinecartEntity> field_200778_R = func_200712_a("tnt_minecart", EntityType.Builder.<TNTMinecartEntity>func_220322_a(TNTMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
--   public static final EntityType<MuleEntity> field_200779_S = func_200712_a("mule", EntityType.Builder.<MuleEntity>func_220322_a(MuleEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(8));
--   public static final EntityType<MooshroomEntity> field_200780_T = func_200712_a("mooshroom", EntityType.Builder.<MooshroomEntity>func_220322_a(MooshroomEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.4F).func_233606_a_(10));
--   public static final EntityType<OcelotEntity> field_200781_U = func_200712_a("ocelot", EntityType.Builder.<OcelotEntity>func_220322_a(OcelotEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.7F).func_233606_a_(10));
--   public static final EntityType<PaintingEntity> field_200782_V = func_200712_a("painting", EntityType.Builder.<PaintingEntity>func_220322_a(PaintingEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
--   public static final EntityType<PandaEntity> field_220353_aa = func_200712_a("panda", EntityType.Builder.<PandaEntity>func_220322_a(PandaEntity::new, EntityClassification.CREATURE).func_220321_a(1.3F, 1.25F).func_233606_a_(10));
--   public static final EntityType<ParrotEntity> field_200783_W = func_200712_a("parrot", EntityType.Builder.<ParrotEntity>func_220322_a(ParrotEntity::new, EntityClassification.CREATURE).func_220321_a(0.5F, 0.9F).func_233606_a_(8));
--   public static final EntityType<PhantomEntity> field_203097_aH = func_200712_a("phantom", EntityType.Builder.<PhantomEntity>func_220322_a(PhantomEntity::new, EntityClassification.MONSTER).func_220321_a(0.9F, 0.5F).func_233606_a_(8));
--   public static final EntityType<PigEntity> field_200784_X = func_200712_a("pig", EntityType.Builder.<PigEntity>func_220322_a(PigEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 0.9F).func_233606_a_(10));
--   public static final EntityType<PiglinEntity> field_233591_ai_ = func_200712_a("piglin", EntityType.Builder.<PiglinEntity>func_220322_a(PiglinEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<PiglinBruteEntity> field_242287_aj = func_200712_a("piglin_brute", EntityType.Builder.<PiglinBruteEntity>func_220322_a(PiglinBruteEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<PillagerEntity> field_220350_aJ = func_200712_a("pillager", EntityType.Builder.<PillagerEntity>func_220322_a(PillagerEntity::new, EntityClassification.MONSTER).func_225435_d().func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<PolarBearEntity> field_200786_Z = func_200712_a("polar_bear", EntityType.Builder.<PolarBearEntity>func_220322_a(PolarBearEntity::new, EntityClassification.CREATURE).func_220321_a(1.4F, 1.4F).func_233606_a_(10));
--   public static final EntityType<TNTEntity> field_200735_aa = func_200712_a("tnt", EntityType.Builder.<TNTEntity>func_220322_a(TNTEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(0.98F, 0.98F).func_233606_a_(10).func_233608_b_(10));
--   public static final EntityType<PufferfishEntity> field_203779_Z = func_200712_a("pufferfish", EntityType.Builder.<PufferfishEntity>func_220322_a(PufferfishEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.7F, 0.7F).func_233606_a_(4));
--   public static final EntityType<RabbitEntity> field_200736_ab = func_200712_a("rabbit", EntityType.Builder.<RabbitEntity>func_220322_a(RabbitEntity::new, EntityClassification.CREATURE).func_220321_a(0.4F, 0.5F).func_233606_a_(8));
--   public static final EntityType<RavagerEntity> field_220352_aU = func_200712_a("ravager", EntityType.Builder.<RavagerEntity>func_220322_a(RavagerEntity::new, EntityClassification.MONSTER).func_220321_a(1.95F, 2.2F).func_233606_a_(10));
--   public static final EntityType<SalmonEntity> field_203778_ae = func_200712_a("salmon", EntityType.Builder.<SalmonEntity>func_220322_a(SalmonEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.7F, 0.4F).func_233606_a_(4));
--   public static final EntityType<SheepEntity> field_200737_ac = func_200712_a("sheep", EntityType.Builder.<SheepEntity>func_220322_a(SheepEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.3F).func_233606_a_(10));
--   public static final EntityType<ShulkerEntity> field_200738_ad = func_200712_a("shulker", EntityType.Builder.<ShulkerEntity>func_220322_a(ShulkerEntity::new, EntityClassification.MONSTER).func_220320_c().func_225435_d().func_220321_a(1.0F, 1.0F).func_233606_a_(10));
--   public static final EntityType<ShulkerBulletEntity> field_200739_ae = func_200712_a("shulker_bullet", EntityType.Builder.<ShulkerBulletEntity>func_220322_a(ShulkerBulletEntity::new, EntityClassification.MISC).func_220321_a(0.3125F, 0.3125F).func_233606_a_(8));
--   public static final EntityType<SilverfishEntity> field_200740_af = func_200712_a("silverfish", EntityType.Builder.<SilverfishEntity>func_220322_a(SilverfishEntity::new, EntityClassification.MONSTER).func_220321_a(0.4F, 0.3F).func_233606_a_(8));
--   public static final EntityType<SkeletonEntity> field_200741_ag = func_200712_a("skeleton", EntityType.Builder.<SkeletonEntity>func_220322_a(SkeletonEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.99F).func_233606_a_(8));
--   public static final EntityType<SkeletonHorseEntity> field_200742_ah = func_200712_a("skeleton_horse", EntityType.Builder.<SkeletonHorseEntity>func_220322_a(SkeletonHorseEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(10));
--   public static final EntityType<SlimeEntity> field_200743_ai = func_200712_a("slime", EntityType.Builder.<SlimeEntity>func_220322_a(SlimeEntity::new, EntityClassification.MONSTER).func_220321_a(2.04F, 2.04F).func_233606_a_(10));
--   public static final EntityType<SmallFireballEntity> field_200744_aj = func_200712_a("small_fireball", EntityType.Builder.<SmallFireballEntity>func_220322_a(SmallFireballEntity::new, EntityClassification.MISC).func_220321_a(0.3125F, 0.3125F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<SnowGolemEntity> field_200745_ak = func_200712_a("snow_golem", EntityType.Builder.<SnowGolemEntity>func_220322_a(SnowGolemEntity::new, EntityClassification.MISC).func_220321_a(0.7F, 1.9F).func_233606_a_(8));
--   public static final EntityType<SnowballEntity> field_200746_al = func_200712_a("snowball", EntityType.Builder.<SnowballEntity>func_220322_a(SnowballEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<SpectralArrowEntity> field_200747_am = func_200712_a("spectral_arrow", EntityType.Builder.<SpectralArrowEntity>func_220322_a(SpectralArrowEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(4).func_233608_b_(20));
--   public static final EntityType<SpiderEntity> field_200748_an = func_200712_a("spider", EntityType.Builder.<SpiderEntity>func_220322_a(SpiderEntity::new, EntityClassification.MONSTER).func_220321_a(1.4F, 0.9F).func_233606_a_(8));
--   public static final EntityType<SquidEntity> field_200749_ao = func_200712_a("squid", EntityType.Builder.<SquidEntity>func_220322_a(SquidEntity::new, EntityClassification.WATER_CREATURE).func_220321_a(0.8F, 0.8F).func_233606_a_(8));
--   public static final EntityType<StrayEntity> field_200750_ap = func_200712_a("stray", EntityType.Builder.<StrayEntity>func_220322_a(StrayEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.99F).func_233606_a_(8));
--   public static final EntityType<StriderEntity> field_233589_aE_ = func_200712_a("strider", EntityType.Builder.<StriderEntity>func_220322_a(StriderEntity::new, EntityClassification.CREATURE).func_220320_c().func_220321_a(0.9F, 1.7F).func_233606_a_(10));
--   public static final EntityType<EggEntity> field_200751_aq = func_200712_a("egg", EntityType.Builder.<EggEntity>func_220322_a(EggEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<EnderPearlEntity> field_200752_ar = func_200712_a("ender_pearl", EntityType.Builder.<EnderPearlEntity>func_220322_a(EnderPearlEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<ExperienceBottleEntity> field_200753_as = func_200712_a("experience_bottle", EntityType.Builder.<ExperienceBottleEntity>func_220322_a(ExperienceBottleEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<PotionEntity> field_200754_at = func_200712_a("potion", EntityType.Builder.<PotionEntity>func_220322_a(PotionEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<TridentEntity> field_203098_aL = func_200712_a("trident", EntityType.Builder.<TridentEntity>func_220322_a(TridentEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(4).func_233608_b_(20));
--   public static final EntityType<TraderLlamaEntity> field_220354_ax = func_200712_a("trader_llama", EntityType.Builder.<TraderLlamaEntity>func_220322_a(TraderLlamaEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.87F).func_233606_a_(10));
--   public static final EntityType<TropicalFishEntity> field_204262_at = func_200712_a("tropical_fish", EntityType.Builder.<TropicalFishEntity>func_220322_a(TropicalFishEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.5F, 0.4F).func_233606_a_(4));
--   public static final EntityType<TurtleEntity> field_203099_aq = func_200712_a("turtle", EntityType.Builder.<TurtleEntity>func_220322_a(TurtleEntity::new, EntityClassification.CREATURE).func_220321_a(1.2F, 0.4F).func_233606_a_(10));
--   public static final EntityType<VexEntity> field_200755_au = func_200712_a("vex", EntityType.Builder.<VexEntity>func_220322_a(VexEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(0.4F, 0.8F).func_233606_a_(8));
--   public static final EntityType<VillagerEntity> field_200756_av = func_200712_a("villager", EntityType.Builder.<VillagerEntity>func_220322_a(VillagerEntity::new, EntityClassification.MISC).func_220321_a(0.6F, 1.95F).func_233606_a_(10));
--   public static final EntityType<VindicatorEntity> field_200758_ax = func_200712_a("vindicator", EntityType.Builder.<VindicatorEntity>func_220322_a(VindicatorEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<WanderingTraderEntity> field_220351_aK = func_200712_a("wandering_trader", EntityType.Builder.<WanderingTraderEntity>func_220322_a(WanderingTraderEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 1.95F).func_233606_a_(10));
--   public static final EntityType<WitchEntity> field_200759_ay = func_200712_a("witch", EntityType.Builder.<WitchEntity>func_220322_a(WitchEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<WitherEntity> field_200760_az = func_200712_a("wither", EntityType.Builder.<WitherEntity>func_220322_a(WitherEntity::new, EntityClassification.MONSTER).func_220320_c().func_233607_a_(Blocks.field_222388_bz).func_220321_a(0.9F, 3.5F).func_233606_a_(10));
--   public static final EntityType<WitherSkeletonEntity> field_200722_aA = func_200712_a("wither_skeleton", EntityType.Builder.<WitherSkeletonEntity>func_220322_a(WitherSkeletonEntity::new, EntityClassification.MONSTER).func_220320_c().func_233607_a_(Blocks.field_222388_bz).func_220321_a(0.7F, 2.4F).func_233606_a_(8));
--   public static final EntityType<WitherSkullEntity> field_200723_aB = func_200712_a("wither_skull", EntityType.Builder.<WitherSkullEntity>func_220322_a(WitherSkullEntity::new, EntityClassification.MISC).func_220321_a(0.3125F, 0.3125F).func_233606_a_(4).func_233608_b_(10));
--   public static final EntityType<WolfEntity> field_200724_aC = func_200712_a("wolf", EntityType.Builder.<WolfEntity>func_220322_a(WolfEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.85F).func_233606_a_(10));
--   public static final EntityType<ZoglinEntity> field_233590_aW_ = func_200712_a("zoglin", EntityType.Builder.<ZoglinEntity>func_220322_a(ZoglinEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(1.3964844F, 1.4F).func_233606_a_(8));
--   public static final EntityType<ZombieEntity> field_200725_aD = func_200712_a("zombie", EntityType.Builder.<ZombieEntity>func_220322_a(ZombieEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<ZombieHorseEntity> field_200726_aE = func_200712_a("zombie_horse", EntityType.Builder.<ZombieHorseEntity>func_220322_a(ZombieHorseEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(10));
--   public static final EntityType<ZombieVillagerEntity> field_200727_aF = func_200712_a("zombie_villager", EntityType.Builder.<ZombieVillagerEntity>func_220322_a(ZombieVillagerEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<ZombifiedPiglinEntity> field_233592_ba_ = func_200712_a("zombified_piglin", EntityType.Builder.<ZombifiedPiglinEntity>func_220322_a(ZombifiedPiglinEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(0.6F, 1.95F).func_233606_a_(8));
--   public static final EntityType<PlayerEntity> field_200729_aH = func_200712_a("player", EntityType.Builder.<PlayerEntity>func_220319_a(EntityClassification.MISC).func_200706_c().func_200705_b().func_220321_a(0.6F, 1.8F).func_233606_a_(32).func_233608_b_(2));
--   public static final EntityType<FishingBobberEntity> field_200730_aI = func_200712_a("fishing_bobber", EntityType.Builder.<FishingBobberEntity>func_220319_a(EntityClassification.MISC).func_200706_c().func_200705_b().func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(5));
--   private final EntityType.IFactory<T> field_200732_aK;
--   private final EntityClassification field_220355_ba;
--   private final ImmutableSet<Block> field_233593_bg_;
--   private final boolean field_200733_aL;
--   private final boolean field_200734_aM;
--   private final boolean field_220357_bd;
--   private final boolean field_225438_be;
--   private final int field_233594_bl_;
--   private final int field_233595_bm_;
--   @Nullable
--   private String field_210762_aX;
--   @Nullable
--   private ITextComponent field_212547_aX;
--   @Nullable
--   private ResourceLocation field_220358_bg;
--   private final EntitySize field_220359_bi;
--
--   private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
--      return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
--   }
--
--   public static ResourceLocation func_200718_a(EntityType<?> p_200718_0_) {
--      return Registry.field_212629_r.func_177774_c(p_200718_0_);
--   }
--
--   public static Optional<EntityType<?>> func_220327_a(String p_220327_0_) {
--      return Registry.field_212629_r.func_241873_b(ResourceLocation.func_208304_a(p_220327_0_));
--   }
--
--   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
--      this.field_200732_aK = p_i231489_1_;
--      this.field_220355_ba = p_i231489_2_;
--      this.field_225438_be = p_i231489_6_;
--      this.field_200733_aL = p_i231489_3_;
--      this.field_200734_aM = p_i231489_4_;
--      this.field_220357_bd = p_i231489_5_;
--      this.field_233593_bg_ = p_i231489_7_;
--      this.field_220359_bi = p_i231489_8_;
--      this.field_233594_bl_ = p_i231489_9_;
--      this.field_233595_bm_ = p_i231489_10_;
--   }
--
--   @Nullable
--   public Entity func_220331_a(ServerWorld p_220331_1_, @Nullable ItemStack p_220331_2_, @Nullable PlayerEntity p_220331_3_, BlockPos p_220331_4_, SpawnReason p_220331_5_, boolean p_220331_6_, boolean p_220331_7_) {
--      return this.func_220342_a(p_220331_1_, p_220331_2_ == null ? null : p_220331_2_.func_77978_p(), p_220331_2_ != null && p_220331_2_.func_82837_s() ? p_220331_2_.func_200301_q() : null, p_220331_3_, p_220331_4_, p_220331_5_, p_220331_6_, p_220331_7_);
--   }
--
--   @Nullable
--   public T func_220342_a(ServerWorld p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
--      T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
--      if (t != null) {
--         p_220342_1_.func_242417_l(t);
--      }
--
--      return t;
--   }
--
--   @Nullable
--   public T func_220349_b(ServerWorld p_220349_1_, @Nullable CompoundNBT p_220349_2_, @Nullable ITextComponent p_220349_3_, @Nullable PlayerEntity p_220349_4_, BlockPos p_220349_5_, SpawnReason p_220349_6_, boolean p_220349_7_, boolean p_220349_8_) {
--      T t = this.func_200721_a(p_220349_1_);
--      if (t == null) {
--         return (T)null;
--      } else {
--         double d0;
--         if (p_220349_7_) {
--            t.func_70107_b((double)p_220349_5_.func_177958_n() + 0.5D, (double)(p_220349_5_.func_177956_o() + 1), (double)p_220349_5_.func_177952_p() + 0.5D);
--            d0 = func_208051_a(p_220349_1_, p_220349_5_, p_220349_8_, t.func_174813_aQ());
--         } else {
--            d0 = 0.0D;
--         }
--
--         t.func_70012_b((double)p_220349_5_.func_177958_n() + 0.5D, (double)p_220349_5_.func_177956_o() + d0, (double)p_220349_5_.func_177952_p() + 0.5D, MathHelper.func_76142_g(p_220349_1_.field_73012_v.nextFloat() * 360.0F), 0.0F);
--         if (t instanceof MobEntity) {
--            MobEntity mobentity = (MobEntity)t;
--            mobentity.field_70759_as = mobentity.field_70177_z;
--            mobentity.field_70761_aq = mobentity.field_70177_z;
--            mobentity.func_213386_a(p_220349_1_, p_220349_1_.func_175649_E(mobentity.func_233580_cy_()), p_220349_6_, (ILivingEntityData)null, p_220349_2_);
--            mobentity.func_70642_aH();
--         }
--
--         if (p_220349_3_ != null && t instanceof LivingEntity) {
--            t.func_200203_b(p_220349_3_);
--         }
--
--         func_208048_a(p_220349_1_, p_220349_4_, t, p_220349_2_);
--         return t;
--      }
--   }
--
--   protected static double func_208051_a(IWorldReader p_208051_0_, BlockPos p_208051_1_, boolean p_208051_2_, AxisAlignedBB p_208051_3_) {
--      AxisAlignedBB axisalignedbb = new AxisAlignedBB(p_208051_1_);
--      if (p_208051_2_) {
--         axisalignedbb = axisalignedbb.func_72321_a(0.0D, -1.0D, 0.0D);
--      }
--
--      Stream<VoxelShape> stream = p_208051_0_.func_234867_d_((Entity)null, axisalignedbb, (p_233596_0_) -> {
--         return true;
--      });
--      return 1.0D + VoxelShapes.func_212437_a(Direction.Axis.Y, p_208051_3_, stream, p_208051_2_ ? -2.0D : -1.0D);
--   }
--
--   public static void func_208048_a(World p_208048_0_, @Nullable PlayerEntity p_208048_1_, @Nullable Entity p_208048_2_, @Nullable CompoundNBT p_208048_3_) {
--      if (p_208048_3_ != null && p_208048_3_.func_150297_b("EntityTag", 10)) {
--         MinecraftServer minecraftserver = p_208048_0_.func_73046_m();
--         if (minecraftserver != null && p_208048_2_ != null) {
--            if (p_208048_0_.field_72995_K || !p_208048_2_.func_184213_bq() || p_208048_1_ != null && minecraftserver.func_184103_al().func_152596_g(p_208048_1_.func_146103_bH())) {
--               CompoundNBT compoundnbt = p_208048_2_.func_189511_e(new CompoundNBT());
--               UUID uuid = p_208048_2_.func_110124_au();
--               compoundnbt.func_197643_a(p_208048_3_.func_74775_l("EntityTag"));
--               p_208048_2_.func_184221_a(uuid);
--               p_208048_2_.func_70020_e(compoundnbt);
--            }
--         }
--      }
--   }
--
--   public boolean func_200715_a() {
--      return this.field_200733_aL;
--   }
--
--   public boolean func_200720_b() {
--      return this.field_200734_aM;
--   }
--
--   public boolean func_220338_c() {
--      return this.field_220357_bd;
--   }
--
--   public boolean func_225437_d() {
--      return this.field_225438_be;
--   }
--
--   public EntityClassification func_220339_d() {
--      return this.field_220355_ba;
--   }
--
--   public String func_210760_d() {
--      if (this.field_210762_aX == null) {
--         this.field_210762_aX = Util.func_200697_a("entity", Registry.field_212629_r.func_177774_c(this));
--      }
--
--      return this.field_210762_aX;
--   }
--
--   public ITextComponent func_212546_e() {
--      if (this.field_212547_aX == null) {
--         this.field_212547_aX = new TranslationTextComponent(this.func_210760_d());
--      }
--
--      return this.field_212547_aX;
--   }
--
--   public String toString() {
--      return this.func_210760_d();
--   }
--
--   public ResourceLocation func_220348_g() {
--      if (this.field_220358_bg == null) {
--         ResourceLocation resourcelocation = Registry.field_212629_r.func_177774_c(this);
--         this.field_220358_bg = new ResourceLocation(resourcelocation.func_110624_b(), "entities/" + resourcelocation.func_110623_a());
--      }
--
--      return this.field_220358_bg;
--   }
--
--   public float func_220333_h() {
--      return this.field_220359_bi.field_220315_a;
--   }
--
--   public float func_220344_i() {
--      return this.field_220359_bi.field_220316_b;
--   }
--
--   @Nullable
--   public T func_200721_a(World p_200721_1_) {
--      return this.field_200732_aK.create(this, p_200721_1_);
--   }
--
--   @Nullable
--   @OnlyIn(Dist.CLIENT)
--   public static Entity func_200717_a(int p_200717_0_, World p_200717_1_) {
--      return func_200719_a(p_200717_1_, Registry.field_212629_r.func_148745_a(p_200717_0_));
--   }
--
--   public static Optional<Entity> func_220330_a(CompoundNBT p_220330_0_, World p_220330_1_) {
--      return Util.func_215077_a(func_220347_a(p_220330_0_).map((p_220337_1_) -> {
--         return p_220337_1_.func_200721_a(p_220330_1_);
--      }), (p_220329_1_) -> {
--         p_220329_1_.func_70020_e(p_220330_0_);
--      }, () -> {
--         field_200731_aJ.warn("Skipping Entity with id {}", (Object)p_220330_0_.func_74779_i("id"));
--      });
--   }
--
--   @Nullable
--   @OnlyIn(Dist.CLIENT)
--   private static Entity func_200719_a(World p_200719_0_, @Nullable EntityType<?> p_200719_1_) {
--      return p_200719_1_ == null ? null : p_200719_1_.func_200721_a(p_200719_0_);
--   }
--
--   public AxisAlignedBB func_220328_a(double p_220328_1_, double p_220328_3_, double p_220328_5_) {
--      float f = this.func_220333_h() / 2.0F;
--      return new AxisAlignedBB(p_220328_1_ - (double)f, p_220328_3_, p_220328_5_ - (double)f, p_220328_1_ + (double)f, p_220328_3_ + (double)this.func_220344_i(), p_220328_5_ + (double)f);
--   }
--
--   public boolean func_233597_a_(BlockState p_233597_1_) {
--      if (this.field_233593_bg_.contains(p_233597_1_.func_177230_c())) {
--         return false;
--      } else if (this.field_220357_bd || !p_233597_1_.func_235714_a_(BlockTags.field_232872_am_) && !p_233597_1_.func_203425_a(Blocks.field_196814_hQ) && !CampfireBlock.func_226915_i_(p_233597_1_) && !p_233597_1_.func_203425_a(Blocks.field_150353_l)) {
--         return p_233597_1_.func_203425_a(Blocks.field_222388_bz) || p_233597_1_.func_203425_a(Blocks.field_222434_lW) || p_233597_1_.func_203425_a(Blocks.field_150434_aF);
--      } else {
--         return true;
--      }
--   }
--
--   public EntitySize func_220334_j() {
--      return this.field_220359_bi;
--   }
--
--   public static Optional<EntityType<?>> func_220347_a(CompoundNBT p_220347_0_) {
--      return Registry.field_212629_r.func_241873_b(new ResourceLocation(p_220347_0_.func_74779_i("id")));
--   }
--
--   @Nullable
--   public static Entity func_220335_a(CompoundNBT p_220335_0_, World p_220335_1_, Function<Entity, Entity> p_220335_2_) {
--      return func_220343_b(p_220335_0_, p_220335_1_).map(p_220335_2_).map((p_220346_3_) -> {
--         if (p_220335_0_.func_150297_b("Passengers", 9)) {
--            ListNBT listnbt = p_220335_0_.func_150295_c("Passengers", 10);
--
--            for(int i = 0; i < listnbt.size(); ++i) {
--               Entity entity = func_220335_a(listnbt.func_150305_b(i), p_220335_1_, p_220335_2_);
--               if (entity != null) {
--                  entity.func_184205_a(p_220346_3_, true);
--               }
--            }
--         }
--
--         return p_220346_3_;
--      }).orElse((Entity)null);
--   }
--
--   private static Optional<Entity> func_220343_b(CompoundNBT p_220343_0_, World p_220343_1_) {
--      try {
--         return func_220330_a(p_220343_0_, p_220343_1_);
--      } catch (RuntimeException runtimeexception) {
--         field_200731_aJ.warn("Exception loading entity: ", (Throwable)runtimeexception);
--         return Optional.empty();
--      }
--   }
--
--   public int func_233602_m_() {
--      return this.field_233594_bl_;
--   }
--
--   public int func_220332_l() {
--      return this.field_233595_bm_;
--   }
--
--   public boolean func_220340_m() {
--      return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
--   }
--
--   public boolean func_220341_a(ITag<EntityType<?>> p_220341_1_) {
--      return p_220341_1_.func_230235_a_(this);
--   }
--
--   public static class Builder<T extends Entity> {
--      private final EntityType.IFactory<T> field_200709_a;
--      private final EntityClassification field_220324_b;
--      private ImmutableSet<Block> field_233603_c_ = ImmutableSet.of();
--      private boolean field_200710_b = true;
--      private boolean field_200711_c = true;
--      private boolean field_220325_e;
--      private boolean field_225436_f;
--      private int field_233604_h_ = 5;
--      private int field_233605_i_ = 3;
--      private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
--
--      private Builder(EntityType.IFactory<T> p_i50479_1_, EntityClassification p_i50479_2_) {
--         this.field_200709_a = p_i50479_1_;
--         this.field_220324_b = p_i50479_2_;
--         this.field_225436_f = p_i50479_2_ == EntityClassification.CREATURE || p_i50479_2_ == EntityClassification.MISC;
--      }
--
--      public static <T extends Entity> EntityType.Builder<T> func_220322_a(EntityType.IFactory<T> p_220322_0_, EntityClassification p_220322_1_) {
--         return new EntityType.Builder<>(p_220322_0_, p_220322_1_);
--      }
--
--      public static <T extends Entity> EntityType.Builder<T> func_220319_a(EntityClassification p_220319_0_) {
--         return new EntityType.Builder<>((p_220323_0_, p_220323_1_) -> {
--            return (T)null;
--         }, p_220319_0_);
--      }
--
--      public EntityType.Builder<T> func_220321_a(float p_220321_1_, float p_220321_2_) {
--         this.field_220326_f = EntitySize.func_220314_b(p_220321_1_, p_220321_2_);
--         return this;
--      }
--
--      public EntityType.Builder<T> func_200705_b() {
--         this.field_200711_c = false;
--         return this;
--      }
--
--      public EntityType.Builder<T> func_200706_c() {
--         this.field_200710_b = false;
--         return this;
--      }
--
--      public EntityType.Builder<T> func_220320_c() {
--         this.field_220325_e = true;
--         return this;
--      }
--
--      public EntityType.Builder<T> func_233607_a_(Block... p_233607_1_) {
--         this.field_233603_c_ = ImmutableSet.copyOf(p_233607_1_);
--         return this;
--      }
--
--      public EntityType.Builder<T> func_225435_d() {
--         this.field_225436_f = true;
--         return this;
--      }
--
--      public EntityType.Builder<T> func_233606_a_(int p_233606_1_) {
--         this.field_233604_h_ = p_233606_1_;
--         return this;
--      }
--
--      public EntityType.Builder<T> func_233608_b_(int p_233608_1_) {
--         this.field_233605_i_ = p_233608_1_;
--         return this;
--      }
--
--      public EntityType<T> func_206830_a(String p_206830_1_) {
--         if (this.field_200710_b) {
--            Util.func_240976_a_(TypeReferences.field_211298_n, p_206830_1_);
--         }
--
--         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, this.field_225436_f, this.field_233603_c_, this.field_220326_f, this.field_233604_h_, this.field_233605_i_);
--      }
--   }
--
--   public interface IFactory<T extends Entity> {
--      T create(EntityType<T> p_create_1_, World p_create_2_);
--   }
 +import org.bukkit.event.entity.CreatureSpawnEvent;
-+
+ 
+-public class EntityType<T extends Entity> {
 +public class EntityType<T extends Entity> extends net.minecraftforge.registries.ForgeRegistryEntry<EntityType<?>> {
-+	private static final Logger field_200731_aJ = LogManager.getLogger();
-+	public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F).func_233606_a_(10).func_233608_b_(10));  // CraftBukkit - SPIGOT-3729: track area effect clouds
-+	public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F).func_233606_a_(10));
-+	public static final EntityType<ArrowEntity> field_200790_d = func_200712_a("arrow", EntityType.Builder.<ArrowEntity>func_220322_a(ArrowEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(4).func_233608_b_(20));
-+	public static final EntityType<BatEntity> field_200791_e = func_200712_a("bat", EntityType.Builder.<BatEntity>func_220322_a(BatEntity::new, EntityClassification.AMBIENT).func_220321_a(0.5F, 0.9F).func_233606_a_(5));
-+	public static final EntityType<BeeEntity> field_226289_e_ = func_200712_a("bee", EntityType.Builder.<BeeEntity>func_220322_a(BeeEntity::new, EntityClassification.CREATURE).func_220321_a(0.7F, 0.6F).func_233606_a_(8));
-+	public static final EntityType<BlazeEntity> field_200792_f = func_200712_a("blaze", EntityType.Builder.<BlazeEntity>func_220322_a(BlazeEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(0.6F, 1.8F).func_233606_a_(8));
-+	public static final EntityType<BoatEntity> field_200793_g = func_200712_a("boat", EntityType.Builder.<BoatEntity>func_220322_a(BoatEntity::new, EntityClassification.MISC).func_220321_a(1.375F, 0.5625F).func_233606_a_(10));
-+	public static final EntityType<CatEntity> field_220360_g = func_200712_a("cat", EntityType.Builder.<CatEntity>func_220322_a(CatEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<CaveSpiderEntity> field_200794_h = func_200712_a("cave_spider", EntityType.Builder.<CaveSpiderEntity>func_220322_a(CaveSpiderEntity::new, EntityClassification.MONSTER).func_220321_a(0.7F, 0.5F).func_233606_a_(8));
-+	public static final EntityType<ChickenEntity> field_200795_i = func_200712_a("chicken", EntityType.Builder.<ChickenEntity>func_220322_a(ChickenEntity::new, EntityClassification.CREATURE).func_220321_a(0.4F, 0.7F).func_233606_a_(10));
-+	public static final EntityType<CodEntity> field_203780_j = func_200712_a("cod", EntityType.Builder.<CodEntity>func_220322_a(CodEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.5F, 0.3F).func_233606_a_(4));
-+	public static final EntityType<CowEntity> field_200796_j = func_200712_a("cow", EntityType.Builder.<CowEntity>func_220322_a(CowEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.4F).func_233606_a_(10));
-+	public static final EntityType<CreeperEntity> field_200797_k = func_200712_a("creeper", EntityType.Builder.<CreeperEntity>func_220322_a(CreeperEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.7F).func_233606_a_(8));
-+	public static final EntityType<DolphinEntity> field_205137_n = func_200712_a("dolphin", EntityType.Builder.<DolphinEntity>func_220322_a(DolphinEntity::new, EntityClassification.WATER_CREATURE).func_220321_a(0.9F, 0.6F));
-+	public static final EntityType<DonkeyEntity> field_200798_l = func_200712_a("donkey", EntityType.Builder.<DonkeyEntity>func_220322_a(DonkeyEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.5F).func_233606_a_(10));
-+	public static final EntityType<DragonFireballEntity> field_200799_m = func_200712_a("dragon_fireball", EntityType.Builder.<DragonFireballEntity>func_220322_a(DragonFireballEntity::new, EntityClassification.MISC).func_220321_a(1.0F, 1.0F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<DrownedEntity> field_204724_o = func_200712_a("drowned", EntityType.Builder.<DrownedEntity>func_220322_a(DrownedEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<ElderGuardianEntity> field_200800_n = func_200712_a("elder_guardian", EntityType.Builder.<ElderGuardianEntity>func_220322_a(ElderGuardianEntity::new, EntityClassification.MONSTER).func_220321_a(1.9975F, 1.9975F).func_233606_a_(10));
-+	public static final EntityType<EnderCrystalEntity> field_200801_o = func_200712_a("end_crystal", EntityType.Builder.<EnderCrystalEntity>func_220322_a(EnderCrystalEntity::new, EntityClassification.MISC).func_220321_a(2.0F, 2.0F).func_233606_a_(16).func_233608_b_(Integer.MAX_VALUE));
-+	public static final EntityType<EnderDragonEntity> field_200802_p = func_200712_a("ender_dragon", EntityType.Builder.<EnderDragonEntity>func_220322_a(EnderDragonEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(16.0F, 8.0F).func_233606_a_(10));
-+	public static final EntityType<EndermanEntity> field_200803_q = func_200712_a("enderman", EntityType.Builder.<EndermanEntity>func_220322_a(EndermanEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 2.9F).func_233606_a_(8));
-+	public static final EntityType<EndermiteEntity> field_200804_r = func_200712_a("endermite", EntityType.Builder.<EndermiteEntity>func_220322_a(EndermiteEntity::new, EntityClassification.MONSTER).func_220321_a(0.4F, 0.3F).func_233606_a_(8));
-+	public static final EntityType<EvokerEntity> field_200806_t = func_200712_a("evoker", EntityType.Builder.<EvokerEntity>func_220322_a(EvokerEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<EvokerFangsEntity> field_200805_s = func_200712_a("evoker_fangs", EntityType.Builder.<EvokerFangsEntity>func_220322_a(EvokerFangsEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.8F).func_233606_a_(6).func_233608_b_(2));
-+	public static final EntityType<ExperienceOrbEntity> field_200807_u = func_200712_a("experience_orb", EntityType.Builder.<ExperienceOrbEntity>func_220322_a(ExperienceOrbEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(6).func_233608_b_(20));
-+	public static final EntityType<EyeOfEnderEntity> field_200808_v = func_200712_a("eye_of_ender", EntityType.Builder.<EyeOfEnderEntity>func_220322_a(EyeOfEnderEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(4));
-+	public static final EntityType<FallingBlockEntity> field_200809_w = func_200712_a("falling_block", EntityType.Builder.<FallingBlockEntity>func_220322_a(FallingBlockEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.98F).func_233606_a_(10).func_233608_b_(20));
-+	public static final EntityType<FireworkRocketEntity> field_200810_x = func_200712_a("firework_rocket", EntityType.Builder.<FireworkRocketEntity>func_220322_a(FireworkRocketEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<FoxEntity> field_220356_B = func_200712_a("fox", EntityType.Builder.<FoxEntity>func_220322_a(FoxEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.7F).func_233606_a_(8).func_233607_a_(Blocks.field_222434_lW));
-+	public static final EntityType<GhastEntity> field_200811_y = func_200712_a("ghast", EntityType.Builder.<GhastEntity>func_220322_a(GhastEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(4.0F, 4.0F).func_233606_a_(10));
-+	public static final EntityType<GiantEntity> field_200812_z = func_200712_a("giant", EntityType.Builder.<GiantEntity>func_220322_a(GiantEntity::new, EntityClassification.MONSTER).func_220321_a(3.6F, 12.0F).func_233606_a_(10));
-+	public static final EntityType<GuardianEntity> field_200761_A = func_200712_a("guardian", EntityType.Builder.<GuardianEntity>func_220322_a(GuardianEntity::new, EntityClassification.MONSTER).func_220321_a(0.85F, 0.85F).func_233606_a_(8));
-+	public static final EntityType<HoglinEntity> field_233588_G_ = func_200712_a("hoglin", EntityType.Builder.<HoglinEntity>func_220322_a(HoglinEntity::new, EntityClassification.MONSTER).func_220321_a(1.3964844F, 1.4F).func_233606_a_(8));
-+	public static final EntityType<HorseEntity> field_200762_B = func_200712_a("horse", EntityType.Builder.<HorseEntity>func_220322_a(HorseEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(10));
-+	public static final EntityType<HuskEntity> field_200763_C = func_200712_a("husk", EntityType.Builder.<HuskEntity>func_220322_a(HuskEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<IllusionerEntity> field_200764_D = func_200712_a("illusioner", EntityType.Builder.<IllusionerEntity>func_220322_a(IllusionerEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<IronGolemEntity> field_200757_aw = func_200712_a("iron_golem", EntityType.Builder.<IronGolemEntity>func_220322_a(IronGolemEntity::new, EntityClassification.MISC).func_220321_a(1.4F, 2.7F).func_233606_a_(10));
-+	public static final EntityType<ItemEntity> field_200765_E = func_200712_a("item", EntityType.Builder.<ItemEntity>func_220322_a(ItemEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(6).func_233608_b_(20));
-+	public static final EntityType<ItemFrameEntity> field_200766_F = func_200712_a("item_frame", EntityType.Builder.<ItemFrameEntity>func_220322_a(ItemFrameEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
-+	public static final EntityType<FireballEntity> field_200767_G = func_200712_a("fireball", EntityType.Builder.<FireballEntity>func_220322_a(FireballEntity::new, EntityClassification.MISC).func_220321_a(1.0F, 1.0F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<LeashKnotEntity> field_200768_H = func_200712_a("leash_knot", EntityType.Builder.<LeashKnotEntity>func_220322_a(LeashKnotEntity::new, EntityClassification.MISC).func_200706_c().func_220321_a(0.5F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
-+	public static final EntityType<LightningBoltEntity> field_200728_aG = func_200712_a("lightning_bolt", EntityType.Builder.<LightningBoltEntity>func_220322_a(LightningBoltEntity::new, EntityClassification.MISC).func_200706_c().func_220321_a(0.0F, 0.0F).func_233606_a_(16).func_233608_b_(Integer.MAX_VALUE));
-+	public static final EntityType<LlamaEntity> field_200769_I = func_200712_a("llama", EntityType.Builder.<LlamaEntity>func_220322_a(LlamaEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.87F).func_233606_a_(10));
-+	public static final EntityType<LlamaSpitEntity> field_200770_J = func_200712_a("llama_spit", EntityType.Builder.<LlamaSpitEntity>func_220322_a(LlamaSpitEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<MagmaCubeEntity> field_200771_K = func_200712_a("magma_cube", EntityType.Builder.<MagmaCubeEntity>func_220322_a(MagmaCubeEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(2.04F, 2.04F).func_233606_a_(8));
-+	public static final EntityType<MinecartEntity> field_200772_L = func_200712_a("minecart", EntityType.Builder.<MinecartEntity>func_220322_a(MinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<ChestMinecartEntity> field_200773_M = func_200712_a("chest_minecart", EntityType.Builder.<ChestMinecartEntity>func_220322_a(ChestMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<CommandBlockMinecartEntity> field_200774_N = func_200712_a("command_block_minecart", EntityType.Builder.<CommandBlockMinecartEntity>func_220322_a(CommandBlockMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<FurnaceMinecartEntity> field_200775_O = func_200712_a("furnace_minecart", EntityType.Builder.<FurnaceMinecartEntity>func_220322_a(FurnaceMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<HopperMinecartEntity> field_200776_P = func_200712_a("hopper_minecart", EntityType.Builder.<HopperMinecartEntity>func_220322_a(HopperMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<SpawnerMinecartEntity> field_200777_Q = func_200712_a("spawner_minecart", EntityType.Builder.<SpawnerMinecartEntity>func_220322_a(SpawnerMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<TNTMinecartEntity> field_200778_R = func_200712_a("tnt_minecart", EntityType.Builder.<TNTMinecartEntity>func_220322_a(TNTMinecartEntity::new, EntityClassification.MISC).func_220321_a(0.98F, 0.7F).func_233606_a_(8));
-+	public static final EntityType<MuleEntity> field_200779_S = func_200712_a("mule", EntityType.Builder.<MuleEntity>func_220322_a(MuleEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(8));
-+	public static final EntityType<MooshroomEntity> field_200780_T = func_200712_a("mooshroom", EntityType.Builder.<MooshroomEntity>func_220322_a(MooshroomEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.4F).func_233606_a_(10));
-+	public static final EntityType<OcelotEntity> field_200781_U = func_200712_a("ocelot", EntityType.Builder.<OcelotEntity>func_220322_a(OcelotEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.7F).func_233606_a_(10));
-+	public static final EntityType<PaintingEntity> field_200782_V = func_200712_a("painting", EntityType.Builder.<PaintingEntity>func_220322_a(PaintingEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
-+	public static final EntityType<PandaEntity> field_220353_aa = func_200712_a("panda", EntityType.Builder.<PandaEntity>func_220322_a(PandaEntity::new, EntityClassification.CREATURE).func_220321_a(1.3F, 1.25F).func_233606_a_(10));
-+	public static final EntityType<ParrotEntity> field_200783_W = func_200712_a("parrot", EntityType.Builder.<ParrotEntity>func_220322_a(ParrotEntity::new, EntityClassification.CREATURE).func_220321_a(0.5F, 0.9F).func_233606_a_(8));
-+	public static final EntityType<PhantomEntity> field_203097_aH = func_200712_a("phantom", EntityType.Builder.<PhantomEntity>func_220322_a(PhantomEntity::new, EntityClassification.MONSTER).func_220321_a(0.9F, 0.5F).func_233606_a_(8));
-+	public static final EntityType<PigEntity> field_200784_X = func_200712_a("pig", EntityType.Builder.<PigEntity>func_220322_a(PigEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 0.9F).func_233606_a_(10));
-+	public static final EntityType<PiglinEntity> field_233591_ai_ = func_200712_a("piglin", EntityType.Builder.<PiglinEntity>func_220322_a(PiglinEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<PiglinBruteEntity> field_242287_aj = func_200712_a("piglin_brute", EntityType.Builder.<PiglinBruteEntity>func_220322_a(PiglinBruteEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<PillagerEntity> field_220350_aJ = func_200712_a("pillager", EntityType.Builder.<PillagerEntity>func_220322_a(PillagerEntity::new, EntityClassification.MONSTER).func_225435_d().func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<PolarBearEntity> field_200786_Z = func_200712_a("polar_bear", EntityType.Builder.<PolarBearEntity>func_220322_a(PolarBearEntity::new, EntityClassification.CREATURE).func_220321_a(1.4F, 1.4F).func_233606_a_(10));
-+	public static final EntityType<TNTEntity> field_200735_aa = func_200712_a("tnt", EntityType.Builder.<TNTEntity>func_220322_a(TNTEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(0.98F, 0.98F).func_233606_a_(10).func_233608_b_(10));
-+	public static final EntityType<PufferfishEntity> field_203779_Z = func_200712_a("pufferfish", EntityType.Builder.<PufferfishEntity>func_220322_a(PufferfishEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.7F, 0.7F).func_233606_a_(4));
-+	public static final EntityType<RabbitEntity> field_200736_ab = func_200712_a("rabbit", EntityType.Builder.<RabbitEntity>func_220322_a(RabbitEntity::new, EntityClassification.CREATURE).func_220321_a(0.4F, 0.5F).func_233606_a_(8));
-+	public static final EntityType<RavagerEntity> field_220352_aU = func_200712_a("ravager", EntityType.Builder.<RavagerEntity>func_220322_a(RavagerEntity::new, EntityClassification.MONSTER).func_220321_a(1.95F, 2.2F).func_233606_a_(10));
-+	public static final EntityType<SalmonEntity> field_203778_ae = func_200712_a("salmon", EntityType.Builder.<SalmonEntity>func_220322_a(SalmonEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.7F, 0.4F).func_233606_a_(4));
-+	public static final EntityType<SheepEntity> field_200737_ac = func_200712_a("sheep", EntityType.Builder.<SheepEntity>func_220322_a(SheepEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.3F).func_233606_a_(10));
-+	public static final EntityType<ShulkerEntity> field_200738_ad = func_200712_a("shulker", EntityType.Builder.<ShulkerEntity>func_220322_a(ShulkerEntity::new, EntityClassification.MONSTER).func_220320_c().func_225435_d().func_220321_a(1.0F, 1.0F).func_233606_a_(10));
-+	public static final EntityType<ShulkerBulletEntity> field_200739_ae = func_200712_a("shulker_bullet", EntityType.Builder.<ShulkerBulletEntity>func_220322_a(ShulkerBulletEntity::new, EntityClassification.MISC).func_220321_a(0.3125F, 0.3125F).func_233606_a_(8));
-+	public static final EntityType<SilverfishEntity> field_200740_af = func_200712_a("silverfish", EntityType.Builder.<SilverfishEntity>func_220322_a(SilverfishEntity::new, EntityClassification.MONSTER).func_220321_a(0.4F, 0.3F).func_233606_a_(8));
-+	public static final EntityType<SkeletonEntity> field_200741_ag = func_200712_a("skeleton", EntityType.Builder.<SkeletonEntity>func_220322_a(SkeletonEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.99F).func_233606_a_(8));
-+	public static final EntityType<SkeletonHorseEntity> field_200742_ah = func_200712_a("skeleton_horse", EntityType.Builder.<SkeletonHorseEntity>func_220322_a(SkeletonHorseEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(10));
-+	public static final EntityType<SlimeEntity> field_200743_ai = func_200712_a("slime", EntityType.Builder.<SlimeEntity>func_220322_a(SlimeEntity::new, EntityClassification.MONSTER).func_220321_a(2.04F, 2.04F).func_233606_a_(10));
-+	public static final EntityType<SmallFireballEntity> field_200744_aj = func_200712_a("small_fireball", EntityType.Builder.<SmallFireballEntity>func_220322_a(SmallFireballEntity::new, EntityClassification.MISC).func_220321_a(0.3125F, 0.3125F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<SnowGolemEntity> field_200745_ak = func_200712_a("snow_golem", EntityType.Builder.<SnowGolemEntity>func_220322_a(SnowGolemEntity::new, EntityClassification.MISC).func_220321_a(0.7F, 1.9F).func_233606_a_(8));
-+	public static final EntityType<SnowballEntity> field_200746_al = func_200712_a("snowball", EntityType.Builder.<SnowballEntity>func_220322_a(SnowballEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<SpectralArrowEntity> field_200747_am = func_200712_a("spectral_arrow", EntityType.Builder.<SpectralArrowEntity>func_220322_a(SpectralArrowEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(4).func_233608_b_(20));
-+	public static final EntityType<SpiderEntity> field_200748_an = func_200712_a("spider", EntityType.Builder.<SpiderEntity>func_220322_a(SpiderEntity::new, EntityClassification.MONSTER).func_220321_a(1.4F, 0.9F).func_233606_a_(8));
-+	public static final EntityType<SquidEntity> field_200749_ao = func_200712_a("squid", EntityType.Builder.<SquidEntity>func_220322_a(SquidEntity::new, EntityClassification.WATER_CREATURE).func_220321_a(0.8F, 0.8F).func_233606_a_(8));
-+	public static final EntityType<StrayEntity> field_200750_ap = func_200712_a("stray", EntityType.Builder.<StrayEntity>func_220322_a(StrayEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.99F).func_233606_a_(8));
-+	public static final EntityType<StriderEntity> field_233589_aE_ = func_200712_a("strider", EntityType.Builder.<StriderEntity>func_220322_a(StriderEntity::new, EntityClassification.CREATURE).func_220320_c().func_220321_a(0.9F, 1.7F).func_233606_a_(10));
-+	public static final EntityType<EggEntity> field_200751_aq = func_200712_a("egg", EntityType.Builder.<EggEntity>func_220322_a(EggEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<EnderPearlEntity> field_200752_ar = func_200712_a("ender_pearl", EntityType.Builder.<EnderPearlEntity>func_220322_a(EnderPearlEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<ExperienceBottleEntity> field_200753_as = func_200712_a("experience_bottle", EntityType.Builder.<ExperienceBottleEntity>func_220322_a(ExperienceBottleEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<PotionEntity> field_200754_at = func_200712_a("potion", EntityType.Builder.<PotionEntity>func_220322_a(PotionEntity::new, EntityClassification.MISC).func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<TridentEntity> field_203098_aL = func_200712_a("trident", EntityType.Builder.<TridentEntity>func_220322_a(TridentEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(4).func_233608_b_(20));
-+	public static final EntityType<TraderLlamaEntity> field_220354_ax = func_200712_a("trader_llama", EntityType.Builder.<TraderLlamaEntity>func_220322_a(TraderLlamaEntity::new, EntityClassification.CREATURE).func_220321_a(0.9F, 1.87F).func_233606_a_(10));
-+	public static final EntityType<TropicalFishEntity> field_204262_at = func_200712_a("tropical_fish", EntityType.Builder.<TropicalFishEntity>func_220322_a(TropicalFishEntity::new, EntityClassification.WATER_AMBIENT).func_220321_a(0.5F, 0.4F).func_233606_a_(4));
-+	public static final EntityType<TurtleEntity> field_203099_aq = func_200712_a("turtle", EntityType.Builder.<TurtleEntity>func_220322_a(TurtleEntity::new, EntityClassification.CREATURE).func_220321_a(1.2F, 0.4F).func_233606_a_(10));
-+	public static final EntityType<VexEntity> field_200755_au = func_200712_a("vex", EntityType.Builder.<VexEntity>func_220322_a(VexEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(0.4F, 0.8F).func_233606_a_(8));
-+	public static final EntityType<VillagerEntity> field_200756_av = func_200712_a("villager", EntityType.Builder.<VillagerEntity>func_220322_a(VillagerEntity::new, EntityClassification.MISC).func_220321_a(0.6F, 1.95F).func_233606_a_(10));
-+	public static final EntityType<VindicatorEntity> field_200758_ax = func_200712_a("vindicator", EntityType.Builder.<VindicatorEntity>func_220322_a(VindicatorEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<WanderingTraderEntity> field_220351_aK = func_200712_a("wandering_trader", EntityType.Builder.<WanderingTraderEntity>func_220322_a(WanderingTraderEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 1.95F).func_233606_a_(10));
-+	public static final EntityType<WitchEntity> field_200759_ay = func_200712_a("witch", EntityType.Builder.<WitchEntity>func_220322_a(WitchEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<WitherEntity> field_200760_az = func_200712_a("wither", EntityType.Builder.<WitherEntity>func_220322_a(WitherEntity::new, EntityClassification.MONSTER).func_220320_c().func_233607_a_(Blocks.field_222388_bz).func_220321_a(0.9F, 3.5F).func_233606_a_(10));
-+	public static final EntityType<WitherSkeletonEntity> field_200722_aA = func_200712_a("wither_skeleton", EntityType.Builder.<WitherSkeletonEntity>func_220322_a(WitherSkeletonEntity::new, EntityClassification.MONSTER).func_220320_c().func_233607_a_(Blocks.field_222388_bz).func_220321_a(0.7F, 2.4F).func_233606_a_(8));
-+	public static final EntityType<WitherSkullEntity> field_200723_aB = func_200712_a("wither_skull", EntityType.Builder.<WitherSkullEntity>func_220322_a(WitherSkullEntity::new, EntityClassification.MISC).func_220321_a(0.3125F, 0.3125F).func_233606_a_(4).func_233608_b_(10));
-+	public static final EntityType<WolfEntity> field_200724_aC = func_200712_a("wolf", EntityType.Builder.<WolfEntity>func_220322_a(WolfEntity::new, EntityClassification.CREATURE).func_220321_a(0.6F, 0.85F).func_233606_a_(10));
-+	public static final EntityType<ZoglinEntity> field_233590_aW_ = func_200712_a("zoglin", EntityType.Builder.<ZoglinEntity>func_220322_a(ZoglinEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(1.3964844F, 1.4F).func_233606_a_(8));
-+	public static final EntityType<ZombieEntity> field_200725_aD = func_200712_a("zombie", EntityType.Builder.<ZombieEntity>func_220322_a(ZombieEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<ZombieHorseEntity> field_200726_aE = func_200712_a("zombie_horse", EntityType.Builder.<ZombieHorseEntity>func_220322_a(ZombieHorseEntity::new, EntityClassification.CREATURE).func_220321_a(1.3964844F, 1.6F).func_233606_a_(10));
-+	public static final EntityType<ZombieVillagerEntity> field_200727_aF = func_200712_a("zombie_villager", EntityType.Builder.<ZombieVillagerEntity>func_220322_a(ZombieVillagerEntity::new, EntityClassification.MONSTER).func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<ZombifiedPiglinEntity> field_233592_ba_ = func_200712_a("zombified_piglin", EntityType.Builder.<ZombifiedPiglinEntity>func_220322_a(ZombifiedPiglinEntity::new, EntityClassification.MONSTER).func_220320_c().func_220321_a(0.6F, 1.95F).func_233606_a_(8));
-+	public static final EntityType<PlayerEntity> field_200729_aH = func_200712_a("player", EntityType.Builder.<PlayerEntity>func_220319_a(EntityClassification.MISC).func_200706_c().func_200705_b().func_220321_a(0.6F, 1.8F).func_233606_a_(32).func_233608_b_(2));
-+	public static final EntityType<FishingBobberEntity> field_200730_aI = func_200712_a("fishing_bobber", EntityType.Builder.<FishingBobberEntity>func_220319_a(EntityClassification.MISC).func_200706_c().func_200705_b().func_220321_a(0.25F, 0.25F).func_233606_a_(4).func_233608_b_(5));
-+	private final EntityType.IFactory<T> field_200732_aK;
-+	private final EntityClassification field_220355_ba;
-+	private final ImmutableSet<Block> field_233593_bg_;
-+	private final boolean field_200733_aL;
-+	private final boolean field_200734_aM;
-+	private final boolean field_220357_bd;
-+	private final boolean field_225438_be;
-+	private final int field_233594_bl_;
-+	private final int field_233595_bm_;
-+	@Nullable
-+	private String field_210762_aX;
-+	@Nullable
-+	private ITextComponent field_212547_aX;
-+	@Nullable
-+	private ResourceLocation field_220358_bg;
-+	private final EntitySize field_220359_bi;
-+
-+	private final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier;
-+	private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
-+	private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
-+	private final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
-+	private final net.minecraftforge.common.util.ReverseTagWrapper<EntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.EntityTypeTags::func_219762_a);
-+
-+	private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
-+		return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
-+	}
-+
-+	public static ResourceLocation func_200718_a(EntityType<?> p_200718_0_) {
-+		return Registry.field_212629_r.func_177774_c(p_200718_0_);
-+	}
-+
-+	public static Optional<EntityType<?>> func_220327_a(String p_220327_0_) {
-+		return Registry.field_212629_r.func_241873_b(ResourceLocation.func_208304_a(p_220327_0_));
-+	}
-+
-+	public final String id;
-+	// Paper start - timings
-+	public final co.aikar.timings.Timing tickTimer;
-+	public final co.aikar.timings.Timing inactiveTickTimer;
-+	public final co.aikar.timings.Timing passengerTickTimer;
-+	public final co.aikar.timings.Timing passengerInactiveTickTimer;
-+	// Paper end
-+	public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
-+		this(p_i231489_1_, p_i231489_2_, p_i231489_3_, p_i231489_4_, p_i231489_5_, p_i231489_6_, p_i231489_7_, p_i231489_8_, p_i231489_9_, p_i231489_10_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null, "custom");
-+	}
-+	public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_, String id) { // Paper - add id
-+		this(p_i231489_1_, p_i231489_2_, p_i231489_3_, p_i231489_4_, p_i231489_5_, p_i231489_6_, p_i231489_7_, p_i231489_8_, p_i231489_9_, p_i231489_10_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null, id);
-+	}
-+	public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory, String id) { // Paper - add id
-+		this.field_200732_aK = p_i231489_1_;
-+		this.field_220355_ba = p_i231489_2_;
-+		this.field_225438_be = p_i231489_6_;
-+		this.field_200733_aL = p_i231489_3_;
-+		this.field_200734_aM = p_i231489_4_;
-+		this.field_220357_bd = p_i231489_5_;
-+		this.field_233593_bg_ = p_i231489_7_;
-+		this.field_220359_bi = p_i231489_8_;
-+		this.field_233594_bl_ = p_i231489_9_;
-+		this.field_233595_bm_ = p_i231489_10_;
-+		this.velocityUpdateSupplier = velocityUpdateSupplier;
-+		this.trackingRangeSupplier = trackingRangeSupplier;
-+		this.updateIntervalSupplier = updateIntervalSupplier;
-+		this.customClientFactory = customClientFactory;
-+		// Paper start - timings
-+		this.id = id;
-+		this.tickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "tick");
-+		this.inactiveTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "inactiveTick");
-+		this.passengerTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "passengerTick");
-+		this.passengerInactiveTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "passengerInactiveTick");
-+		// Paper end
-+	}
-+
-+	@Nullable
-+	public Entity func_220331_a(ServerWorld p_220331_1_, @Nullable ItemStack p_220331_2_, @Nullable PlayerEntity p_220331_3_, BlockPos p_220331_4_, SpawnReason p_220331_5_, boolean p_220331_6_, boolean p_220331_7_) {
-+		return this.func_220342_a(p_220331_1_, p_220331_2_ == null ? null : p_220331_2_.func_77978_p(), p_220331_2_ != null && p_220331_2_.func_82837_s() ? p_220331_2_.func_200301_q() : null, p_220331_3_, p_220331_4_, p_220331_5_, p_220331_6_, p_220331_7_);
-+	}
-+
-+	@Nullable
-+	public T func_220342_a(ServerWorld p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
-+		// CraftBukkit start
-+		return spawn(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_,p_220342_7_, p_220342_8_, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
-+	}
-+
-+	@Nullable
-+	public T spawn(ServerWorld worldIn, @Nullable CompoundNBT compound, @Nullable ITextComponent customName, @Nullable PlayerEntity playerIn, BlockPos pos, SpawnReason reason, boolean p_220342_7_, boolean p_220342_8_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+		T t = this.func_220349_b(worldIn, compound, customName, playerIn, pos, reason, p_220342_7_, p_220342_8_);
-+		if (t != null) {
-+			if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, worldIn, pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p(), null, reason)) return null;
-+			worldIn.addAllEntities(t, spawnReason);
-+			return !t.field_70128_L ? t : null;  // Don't return an entity when CreatureSpawnEvent is canceled
-+		}
-+
-+		return t;
-+	}
-+
-+	@Nullable
-+	public T func_220349_b(ServerWorld p_220349_1_, @Nullable CompoundNBT p_220349_2_, @Nullable ITextComponent p_220349_3_, @Nullable PlayerEntity p_220349_4_, BlockPos p_220349_5_, SpawnReason p_220349_6_, boolean p_220349_7_, boolean p_220349_8_) {
-+		T t = this.func_200721_a(p_220349_1_);
-+		if (t == null) {
-+			return (T)null;
-+		} else {
-+			double d0;
-+			if (p_220349_7_) {
-+				t.func_70107_b((double)p_220349_5_.func_177958_n() + 0.5D, (double)(p_220349_5_.func_177956_o() + 1), (double)p_220349_5_.func_177952_p() + 0.5D);
-+				d0 = func_208051_a(p_220349_1_, p_220349_5_, p_220349_8_, t.func_174813_aQ());
-+			} else {
-+				d0 = 0.0D;
-+			}
-+
-+			t.func_70012_b((double)p_220349_5_.func_177958_n() + 0.5D, (double)p_220349_5_.func_177956_o() + d0, (double)p_220349_5_.func_177952_p() + 0.5D, MathHelper.func_76142_g(p_220349_1_.field_73012_v.nextFloat() * 360.0F), 0.0F);
-+			if (t instanceof MobEntity) {
-+				MobEntity mobentity = (MobEntity)t;
-+				mobentity.field_70759_as = mobentity.field_70177_z;
-+				mobentity.field_70761_aq = mobentity.field_70177_z;
-+				mobentity.func_213386_a(p_220349_1_, p_220349_1_.func_175649_E(mobentity.func_233580_cy_()), p_220349_6_, (ILivingEntityData)null, p_220349_2_);
-+				mobentity.func_70642_aH();
-+			}
-+
-+			if (p_220349_3_ != null && t instanceof LivingEntity) {
-+				t.func_200203_b(p_220349_3_);
-+			}
-+
-+			try { func_208048_a(p_220349_1_, p_220349_4_, t, p_220349_2_); } catch (Throwable throwable) { field_200731_aJ.warn("Error loading spawn egg NBT", throwable); } // CraftBukkit - SPIGOT-5665
-+			return t;
-+		}
-+	}
-+
-+	protected static double func_208051_a(IWorldReader p_208051_0_, BlockPos p_208051_1_, boolean p_208051_2_, AxisAlignedBB p_208051_3_) {
-+		AxisAlignedBB axisalignedbb = new AxisAlignedBB(p_208051_1_);
-+		if (p_208051_2_) {
-+			axisalignedbb = axisalignedbb.func_72321_a(0.0D, -1.0D, 0.0D);
-+		}
-+
-+		Stream<VoxelShape> stream = p_208051_0_.func_234867_d_((Entity)null, axisalignedbb, (p_233596_0_) -> {
-+			return true;
-+		});
-+		return 1.0D + VoxelShapes.func_212437_a(Direction.Axis.Y, p_208051_3_, stream, p_208051_2_ ? -2.0D : -1.0D);
-+	}
-+
-+	public static void func_208048_a(World p_208048_0_, @Nullable PlayerEntity p_208048_1_, @Nullable Entity p_208048_2_, @Nullable CompoundNBT p_208048_3_) {
-+		if (p_208048_3_ != null && p_208048_3_.func_150297_b("EntityTag", 10)) {
-+			MinecraftServer minecraftserver = p_208048_0_.func_73046_m();
-+			if (minecraftserver != null && p_208048_2_ != null) {
-+				if (p_208048_0_.field_72995_K || !p_208048_2_.func_184213_bq() || p_208048_1_ != null && minecraftserver.func_184103_al().func_152596_g(p_208048_1_.func_146103_bH())) {
-+					CompoundNBT compoundnbt = p_208048_2_.func_189511_e(new CompoundNBT());
-+					UUID uuid = p_208048_2_.func_110124_au();
-+					compoundnbt.func_197643_a(p_208048_3_.func_74775_l("EntityTag"));
-+					p_208048_2_.func_184221_a(uuid);
-+					p_208048_2_.func_70020_e(compoundnbt);
-+				}
-+			}
-+		}
-+	}
-+
-+	public boolean isPersistable() { return func_200715_a(); } // Paper - OBFHELPER
-+	public boolean func_200715_a() {
-+		return this.field_200733_aL;
-+	}
-+
-+	public boolean func_200720_b() {
-+		return this.field_200734_aM;
-+	}
-+
-+	public boolean func_220338_c() {
-+		return this.field_220357_bd;
-+	}
-+
-+	public boolean func_225437_d() {
-+		return this.field_225438_be;
-+	}
-+
-+	public final EntityClassification getEnumCreatureType() { return this.func_220339_d(); } // Paper - OBFHELPER
-+	public EntityClassification func_220339_d() {
-+		return this.field_220355_ba;
-+	}
-+
-+	public String func_210760_d() {
-+		if (this.field_210762_aX == null) {
-+			this.field_210762_aX = Util.func_200697_a("entity", Registry.field_212629_r.func_177774_c(this));
-+		}
-+
-+		return this.field_210762_aX;
-+	}
-+
-+	public ITextComponent func_212546_e() {
-+		if (this.field_212547_aX == null) {
-+			this.field_212547_aX = new TranslationTextComponent(this.func_210760_d());
-+		}
-+
-+		return this.field_212547_aX;
-+	}
-+
-+	public String toString() {
-+		return this.func_210760_d();
-+	}
-+
-+	public ResourceLocation func_220348_g() {
-+		if (this.field_220358_bg == null) {
-+			ResourceLocation resourcelocation = Registry.field_212629_r.func_177774_c(this);
-+			this.field_220358_bg = new ResourceLocation(resourcelocation.func_110624_b(), "entities/" + resourcelocation.func_110623_a());
-+		}
-+
-+		return this.field_220358_bg;
-+	}
-+
-+	public float func_220333_h() {
-+		return this.field_220359_bi.field_220315_a;
-+	}
-+
-+	public float func_220344_i() {
-+		return this.field_220359_bi.field_220316_b;
-+	}
-+
-+	@Nullable
-+	public T func_200721_a(World p_200721_1_) {
-+		return this.field_200732_aK.create(this, p_200721_1_);
-+	}
-+
-+	@Nullable
-+	@OnlyIn(Dist.CLIENT)
-+	public static Entity func_200717_a(int p_200717_0_, World p_200717_1_) {
-+		return func_200719_a(p_200717_1_, Registry.field_212629_r.func_148745_a(p_200717_0_));
-+	}
-+
-+	public static Optional<Entity> func_220330_a(CompoundNBT p_220330_0_, World p_220330_1_) {
-+		return Util.func_215077_a(func_220347_a(p_220330_0_).map((p_220337_1_) -> {
-+			return p_220337_1_.func_200721_a(p_220330_1_);
-+		}), (p_220329_1_) -> {
-+			p_220329_1_.func_70020_e(p_220330_0_);
-+		}, () -> {
-+			field_200731_aJ.warn(com.mohistmc.util.i18n.i18n.get("entitytype.1", (Object)p_220330_0_.func_74779_i("id")));
-+		});
-+	}
-+
-+	@Nullable
-+	@OnlyIn(Dist.CLIENT)
-+	private static Entity func_200719_a(World p_200719_0_, @Nullable EntityType<?> p_200719_1_) {
-+		return p_200719_1_ == null ? null : p_200719_1_.func_200721_a(p_200719_0_);
-+	}
-+
-+	public AxisAlignedBB func_220328_a(double p_220328_1_, double p_220328_3_, double p_220328_5_) {
-+		float f = this.func_220333_h() / 2.0F;
-+		return new AxisAlignedBB(p_220328_1_ - (double)f, p_220328_3_, p_220328_5_ - (double)f, p_220328_1_ + (double)f, p_220328_3_ + (double)this.func_220344_i(), p_220328_5_ + (double)f);
-+	}
-+
-+	public boolean func_233597_a_(BlockState p_233597_1_) {
-+		if (this.field_233593_bg_.contains(p_233597_1_.func_177230_c())) {
-+			return false;
-+		} else if (this.field_220357_bd || !p_233597_1_.func_235714_a_(BlockTags.field_232872_am_) && !p_233597_1_.func_203425_a(Blocks.field_196814_hQ) && !CampfireBlock.func_226915_i_(p_233597_1_) && !p_233597_1_.func_203425_a(Blocks.field_150353_l)) {
-+			return p_233597_1_.func_203425_a(Blocks.field_222388_bz) || p_233597_1_.func_203425_a(Blocks.field_222434_lW) || p_233597_1_.func_203425_a(Blocks.field_150434_aF);
-+		} else {
-+			return true;
-+		}
-+	}
-+
-+	public EntitySize func_220334_j() {
-+		return this.field_220359_bi;
-+	}
-+
-+	public static Optional<EntityType<?>> func_220347_a(CompoundNBT p_220347_0_) {
-+		return Registry.field_212629_r.func_241873_b(new ResourceLocation(p_220347_0_.func_74779_i("id")));
-+	}
-+
-+	@Nullable
-+	public static Entity func_220335_a(CompoundNBT p_220335_0_, World p_220335_1_, Function<Entity, Entity> p_220335_2_) {
-+		return func_220343_b(p_220335_0_, p_220335_1_).map(p_220335_2_).map((p_220346_3_) -> {
-+			if (p_220335_0_.func_150297_b("Passengers", 9)) {
-+				ListNBT listnbt = p_220335_0_.func_150295_c("Passengers", 10);
-+
-+				for(int i = 0; i < listnbt.size(); ++i) {
-+					Entity entity = func_220335_a(listnbt.func_150305_b(i), p_220335_1_, p_220335_2_);
-+					if (entity != null) {
-+						entity.func_184205_a(p_220346_3_, true);
-+					}
-+				}
-+			}
-+
-+			return p_220346_3_;
-+		}).orElse((Entity)null);
-+	}
-+
-+	private static Optional<Entity> func_220343_b(CompoundNBT p_220343_0_, World p_220343_1_) {
-+		try {
-+			return func_220330_a(p_220343_0_, p_220343_1_);
-+		} catch (RuntimeException runtimeexception) {
-+			field_200731_aJ.warn(com.mohistmc.util.i18n.i18n.get("entitytype.2", (Throwable)runtimeexception));
-+			return Optional.empty();
-+		}
-+	}
-+
-+	public int func_233602_m_() {
-+		return trackingRangeSupplier.applyAsInt(this);
-+	}
-+	private int defaultTrackingRangeSupplier() {
-+		return this.field_233594_bl_;
-+	}
-+
-+	public int func_220332_l() {
-+		return updateIntervalSupplier.applyAsInt(this);
-+	}
-+	private int defaultUpdateIntervalSupplier() {
-+		return this.field_233595_bm_;
-+	}
-+
-+	public boolean func_220340_m() {
-+		return velocityUpdateSupplier.test(this);
-+	}
-+	private boolean defaultVelocitySupplier() {
-+		return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
-+	}
-+
-+	public boolean func_220341_a(ITag<EntityType<?>> p_220341_1_) {
-+		return p_220341_1_.func_230235_a_(this);
-+	}
-+
-+	public T customClientSpawn(net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity packet, World world) {
-+		if (customClientFactory == null) return this.func_200721_a(world);
-+		return customClientFactory.apply(packet, world);
-+	}
-+
-+	/**
-+	 * Retrieves a list of tags names this is known to be associated with.
-+	 * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
-+	 */
-+	public java.util.Set<ResourceLocation> getTags() {
-+		return reverseTags.getTagNames();
-+	}
-+
-+	public static class Builder<T extends Entity> {
-+		private final EntityType.IFactory<T> field_200709_a;
-+		private final EntityClassification field_220324_b;
-+		private ImmutableSet<Block> field_233603_c_ = ImmutableSet.of();
-+		private boolean field_200710_b = true;
-+		private boolean field_200711_c = true;
-+		private boolean field_220325_e;
-+		private boolean field_225436_f;
-+		private int field_233604_h_ = 5;
-+		private int field_233605_i_ = 3;
-+		private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
-+
-+		private java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier = EntityType::defaultVelocitySupplier;
-+		private java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier = EntityType::defaultTrackingRangeSupplier;
-+		private java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier = EntityType::defaultUpdateIntervalSupplier;
-+		private java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
-+
-+		private Builder(EntityType.IFactory<T> p_i50479_1_, EntityClassification p_i50479_2_) {
-+			this.field_200709_a = p_i50479_1_;
-+			this.field_220324_b = p_i50479_2_;
-+			this.field_225436_f = p_i50479_2_ == EntityClassification.CREATURE || p_i50479_2_ == EntityClassification.MISC;
-+		}
-+
-+		public static <T extends Entity> EntityType.Builder<T> func_220322_a(EntityType.IFactory<T> p_220322_0_, EntityClassification p_220322_1_) {
-+			return new EntityType.Builder<>(p_220322_0_, p_220322_1_);
-+		}
-+
-+		public static <T extends Entity> EntityType.Builder<T> func_220319_a(EntityClassification p_220319_0_) {
-+			return new EntityType.Builder<>((p_220323_0_, p_220323_1_) -> {
-+				return (T)null;
-+			}, p_220319_0_);
-+		}
-+
-+		public EntityType.Builder<T> func_220321_a(float p_220321_1_, float p_220321_2_) {
-+			this.field_220326_f = EntitySize.func_220314_b(p_220321_1_, p_220321_2_);
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> func_200705_b() {
-+			this.field_200711_c = false;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> func_200706_c() {
-+			this.field_200710_b = false;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> func_220320_c() {
-+			this.field_220325_e = true;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> func_233607_a_(Block... p_233607_1_) {
-+			this.field_233603_c_ = ImmutableSet.copyOf(p_233607_1_);
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> func_225435_d() {
-+			this.field_225436_f = true;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> func_233606_a_(int p_233606_1_) {
-+			this.field_233604_h_ = p_233606_1_;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> func_233608_b_(int p_233608_1_) {
-+			this.field_233605_i_ = p_233608_1_;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> setUpdateInterval(int interval) {
-+			this.updateIntervalSupplier = t->interval;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> setTrackingRange(int range) {
-+			this.trackingRangeSupplier = t->range;
-+			return this;
-+		}
-+
-+		public EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value) {
-+			this.velocityUpdateSupplier = t->value;
-+			return this;
-+		}
-+
-+		/**
-+		 * By default, entities are spawned clientside via {@link EntityType#create(World)}.
-+		 * If you need finer control over the spawning process, use this to get read access to the spawn packet.
-+		 */
-+		public EntityType.Builder<T> setCustomClientFactory(java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
-+			this.customClientFactory = customClientFactory;
-+			return this;
-+		}
-+
-+		public EntityType<T> func_206830_a(String p_206830_1_) {
-+			if (this.field_200710_b) {
-+				Util.func_240976_a_(TypeReferences.field_211298_n, p_206830_1_);
-+			}
-+
-+			return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, this.field_225436_f, this.field_233603_c_, this.field_220326_f, this.field_233604_h_, this.field_233605_i_, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory, p_206830_1_);
-+		}
-+	}
-+
-+	public interface IFactory<T extends Entity> {
-+		T create(EntityType<T> p_create_1_, World p_create_2_);
-+	}
+    private static final Logger field_200731_aJ = LogManager.getLogger();
+-   public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
++   public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F).func_233606_a_(10).func_233608_b_(10));  // CraftBukkit - SPIGOT-3729: track area effect clouds
+    public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F).func_233606_a_(10));
+    public static final EntityType<ArrowEntity> field_200790_d = func_200712_a("arrow", EntityType.Builder.<ArrowEntity>func_220322_a(ArrowEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 0.5F).func_233606_a_(4).func_233608_b_(20));
+    public static final EntityType<BatEntity> field_200791_e = func_200712_a("bat", EntityType.Builder.<BatEntity>func_220322_a(BatEntity::new, EntityClassification.AMBIENT).func_220321_a(0.5F, 0.9F).func_233606_a_(5));
+@@ -270,6 +_,12 @@
+    private ResourceLocation field_220358_bg;
+    private final EntitySize field_220359_bi;
+ 
++   private final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier;
++   private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
++   private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
++   private final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
++   private final net.minecraftforge.common.util.ReverseTagWrapper<EntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.EntityTypeTags::func_219762_a);
++
+    private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
+       return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
+    }
+@@ -282,7 +_,20 @@
+       return Registry.field_212629_r.func_241873_b(ResourceLocation.func_208304_a(p_220327_0_));
+    }
+ 
+-   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
++   public final String id;
++   // Paper start - timings
++   public final co.aikar.timings.Timing tickTimer;
++   public final co.aikar.timings.Timing inactiveTickTimer;
++   public final co.aikar.timings.Timing passengerTickTimer;
++   public final co.aikar.timings.Timing passengerInactiveTickTimer;
++    // Paper end
++    public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
++       this(p_i231489_1_, p_i231489_2_, p_i231489_3_, p_i231489_4_, p_i231489_5_, p_i231489_6_, p_i231489_7_, p_i231489_8_, p_i231489_9_, p_i231489_10_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null, "custom");
++    }
++   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_, String id) { // Paper - add id
++       this(p_i231489_1_, p_i231489_2_, p_i231489_3_, p_i231489_4_, p_i231489_5_, p_i231489_6_, p_i231489_7_, p_i231489_8_, p_i231489_9_, p_i231489_10_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null, id);
++   }
++   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory, String id) { // Paper - add id
+       this.field_200732_aK = p_i231489_1_;
+       this.field_220355_ba = p_i231489_2_;
+       this.field_225438_be = p_i231489_6_;
+@@ -293,6 +_,17 @@
+       this.field_220359_bi = p_i231489_8_;
+       this.field_233594_bl_ = p_i231489_9_;
+       this.field_233595_bm_ = p_i231489_10_;
++      this.velocityUpdateSupplier = velocityUpdateSupplier;
++      this.trackingRangeSupplier = trackingRangeSupplier;
++      this.updateIntervalSupplier = updateIntervalSupplier;
++      this.customClientFactory = customClientFactory;
++      // Paper start - timings
++      this.id = id;
++      this.tickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "tick");
++      this.inactiveTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "inactiveTick");
++      this.passengerTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "passengerTick");
++      this.passengerInactiveTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "passengerInactiveTick");
++      // Paper end
+    }
+ 
+    @Nullable
+@@ -302,9 +_,17 @@
+ 
+    @Nullable
+    public T func_220342_a(ServerWorld p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
+-      T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
++      // CraftBukkit start
++      return spawn(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_,p_220342_7_, p_220342_8_, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++   }
++
++   @Nullable
++   public T spawn(ServerWorld worldIn, @Nullable CompoundNBT compound, @Nullable ITextComponent customName, @Nullable PlayerEntity playerIn, BlockPos pos, SpawnReason reason, boolean p_220342_7_, boolean p_220342_8_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      T t = this.func_220349_b(worldIn, compound, customName, playerIn, pos, reason, p_220342_7_, p_220342_8_);
+       if (t != null) {
+-         p_220342_1_.func_242417_l(t);
++         if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, worldIn, pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p(), null, reason)) return null;
++         worldIn.addAllEntities(t, spawnReason);
++         return !t.field_70128_L ? t : null;  // Don't return an entity when CreatureSpawnEvent is canceled
+       }
+ 
+       return t;
+@@ -337,7 +_,7 @@
+             t.func_200203_b(p_220349_3_);
+          }
+ 
+-         func_208048_a(p_220349_1_, p_220349_4_, t, p_220349_2_);
++         try { func_208048_a(p_220349_1_, p_220349_4_, t, p_220349_2_); } catch (Throwable throwable) { field_200731_aJ.warn("Error loading spawn egg NBT", throwable); } // CraftBukkit - SPIGOT-5665
+          return t;
+       }
+    }
+@@ -443,7 +_,7 @@
+       }), (p_220329_1_) -> {
+          p_220329_1_.func_70020_e(p_220330_0_);
+       }, () -> {
+-         field_200731_aJ.warn("Skipping Entity with id {}", (Object)p_220330_0_.func_74779_i("id"));
++         field_200731_aJ.warn(i18n.get("entitytype.1", (Object)p_220330_0_.func_74779_i("id")));
+       });
+    }
+ 
+@@ -498,20 +_,29 @@
+       try {
+          return func_220330_a(p_220343_0_, p_220343_1_);
+       } catch (RuntimeException runtimeexception) {
+-         field_200731_aJ.warn("Exception loading entity: ", (Throwable)runtimeexception);
++         field_200731_aJ.warn(i18n.get("entitytype.2", (Throwable)runtimeexception));
+          return Optional.empty();
+       }
+    }
+ 
+    public int func_233602_m_() {
++      return trackingRangeSupplier.applyAsInt(this);
++   }
++   private int defaultTrackingRangeSupplier() {
+       return this.field_233594_bl_;
+    }
+ 
+    public int func_220332_l() {
++      return updateIntervalSupplier.applyAsInt(this);
++   }
++   private int defaultUpdateIntervalSupplier() {
+       return this.field_233595_bm_;
+    }
+ 
+    public boolean func_220340_m() {
++      return velocityUpdateSupplier.test(this);
++   }
++   private boolean defaultVelocitySupplier() {
+       return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
+    }
+ 
+@@ -519,6 +_,19 @@
+       return p_220341_1_.func_230235_a_(this);
+    }
+ 
++   public T customClientSpawn(net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity packet, World world) {
++       if (customClientFactory == null) return this.func_200721_a(world);
++       return customClientFactory.apply(packet, world);
++   }
++
++   /**
++    * Retrieves a list of tags names this is known to be associated with.
++    * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
++    */
++   public java.util.Set<ResourceLocation> getTags() {
++       return reverseTags.getTagNames();
++   }
++
+    public static class Builder<T extends Entity> {
+       private final EntityType.IFactory<T> field_200709_a;
+       private final EntityClassification field_220324_b;
+@@ -531,6 +_,11 @@
+       private int field_233605_i_ = 3;
+       private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
+ 
++      private java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier = EntityType::defaultVelocitySupplier;
++      private java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier = EntityType::defaultTrackingRangeSupplier;
++      private java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier = EntityType::defaultUpdateIntervalSupplier;
++      private java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
++
+       private Builder(EntityType.IFactory<T> p_i50479_1_, EntityClassification p_i50479_2_) {
+          this.field_200709_a = p_i50479_1_;
+          this.field_220324_b = p_i50479_2_;
+@@ -587,16 +_,46 @@
+          return this;
+       }
+ 
++      public EntityType.Builder<T> setUpdateInterval(int interval) {
++          this.updateIntervalSupplier = t->interval;
++          return this;
++      }
++
++      public EntityType.Builder<T> setTrackingRange(int range) {
++          this.trackingRangeSupplier = t->range;
++          return this;
++      }
++
++      public EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value) {
++          this.velocityUpdateSupplier = t->value;
++          return this;
++      }
++
++      /**
++       * By default, entities are spawned clientside via {@link EntityType#create(World)}.
++       * If you need finer control over the spawning process, use this to get read access to the spawn packet.
++       */
++      public EntityType.Builder<T> setCustomClientFactory(java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
++          this.customClientFactory = customClientFactory;
++          return this;
++      }
++
+       public EntityType<T> func_206830_a(String p_206830_1_) {
+          if (this.field_200710_b) {
+             Util.func_240976_a_(TypeReferences.field_211298_n, p_206830_1_);
+          }
+ 
+-         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, this.field_225436_f, this.field_233603_c_, this.field_220326_f, this.field_233604_h_, this.field_233605_i_);
++         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, this.field_225436_f, this.field_233603_c_, this.field_220326_f, this.field_233604_h_, this.field_233605_i_, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory, p_206830_1_);
+       }
+    }
+ 
+    public interface IFactory<T extends Entity> {
+       T create(EntityType<T> p_create_1_, World p_create_2_);
+    }
 +
 +	// Paper start
 +	public static Set<ResourceLocation> getEntityNameList() {

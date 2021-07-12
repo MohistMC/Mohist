@@ -1,5 +1,12 @@
 --- a/net/minecraft/util/datafix/fixes/BlockStateFlatteningMap.java
 +++ b/net/minecraft/util/datafix/fixes/BlockStateFlatteningMap.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.util.datafix.fixes;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.DataFixUtils;
+ import com.mojang.serialization.Dynamic;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 @@ -20,7 +_,7 @@
        p_209419_0_.defaultReturnValue(-1);
     });
@@ -14,7 +21,7 @@
           return new Dynamic<>(NBTDynamicOps.field_210820_a, JsonToNBT.func_180713_a(p_210048_0_.replace('\'', '"')));
        } catch (Exception exception) {
 -         field_199199_a.error("Parsing {}", p_210048_0_, exception);
-+         field_199199_a.error(com.mohistmc.util.i18n.i18n.get("blockstateflatteningmap.1", p_210048_0_, exception));
++         field_199199_a.error(i18n.get("blockstateflatteningmap.1", p_210048_0_, exception));
           throw new RuntimeException(exception);
        }
     }

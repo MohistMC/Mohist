@@ -1,11 +1,19 @@
 --- a/net/minecraft/world/chunk/storage/IOWorker.java
 +++ b/net/minecraft/world/chunk/storage/IOWorker.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.chunk.storage;
+ 
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.util.Either;
+ import java.io.File;
+ import java.io.IOException;
 @@ -54,7 +_,7 @@
                 CompoundNBT compoundnbt = this.field_227084_e_.func_219099_e(p_227090_1_);
                 return Either.left(compoundnbt);
              } catch (Exception exception) {
 -               field_227080_a_.warn("Failed to read chunk {}", p_227090_1_, exception);
-+               field_227080_a_.warn(com.mohistmc.util.i18n.i18n.get("ioworker.1", p_227090_1_, exception));
++               field_227080_a_.warn(i18n.get("ioworker.1", p_227090_1_, exception));
                 return Either.right(exception);
              }
           }
@@ -14,7 +22,7 @@
                 return Either.left((Void)null);
              } catch (Exception exception) {
 -               field_227080_a_.warn("Failed to synchronized chunks", (Throwable)exception);
-+               field_227080_a_.warn(com.mohistmc.util.i18n.i18n.get("ioworker.2", (Throwable)exception));
++               field_227080_a_.warn(i18n.get("ioworker.2", (Throwable)exception));
                 return Either.right(exception);
              }
           });
@@ -23,7 +31,7 @@
           p_227091_2_.field_227114_b_.complete((Void)null);
        } catch (Exception exception) {
 -         field_227080_a_.error("Failed to store chunk {}", p_227091_1_, exception);
-+         field_227080_a_.error(com.mohistmc.util.i18n.i18n.get("ioworker.3", p_227091_1_, exception));
++         field_227080_a_.error(i18n.get("ioworker.3", p_227091_1_, exception));
           p_227091_2_.field_227114_b_.completeExceptionally(exception);
        }
  
@@ -32,7 +40,7 @@
              this.field_227084_e_.close();
           } catch (Exception exception) {
 -            field_227080_a_.error("Failed to close storage", (Throwable)exception);
-+            field_227080_a_.error(com.mohistmc.util.i18n.i18n.get("ioworker.4", (Throwable)exception));
++            field_227080_a_.error(i18n.get("ioworker.4", (Throwable)exception));
           }
  
        }

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/storage/SaveFormat.java
 +++ b/net/minecraft/world/storage/SaveFormat.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.serialization.DataResult;
 @@ -49,6 +_,7 @@
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.registry.RegistryLookupCodec;
@@ -22,7 +30,7 @@
                    flag = SessionLockManager.func_232999_b_(file1.toPath());
                 } catch (Exception exception) {
 -                  field_215785_a.warn("Failed to read {} lock", file1, exception);
-+                  field_215785_a.warn(com.mohistmc.util.i18n.i18n.get("saveformat.1", file1, exception));
++                  field_215785_a.warn(i18n.get("saveformat.1", file1, exception));
                    continue;
                 }
  
@@ -31,7 +39,7 @@
           return dynamic.get("DataPacks").result().map(SaveFormat::func_237258_a_).orElse(DatapackCodec.field_234880_a_);
        } catch (Exception exception) {
 -         field_215785_a.error("Exception reading {}", p_237272_0_, exception);
-+         field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.2", p_237272_0_, exception));
++         field_215785_a.error(i18n.get("saveformat.2", p_237272_0_, exception));
           return null;
        }
     }
@@ -55,7 +63,7 @@
 +            return info;
           } catch (Exception exception) {
 -            field_215785_a.error("Exception reading {}", p_242976_2_, exception);
-+            field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.3", p_242976_2_, exception));
++            field_215785_a.error(i18n.get("saveformat.3", p_242976_2_, exception));
              return null;
           }
        };
@@ -64,7 +72,7 @@
              }
           } catch (Exception exception) {
 -            field_215785_a.error("Exception reading {}", p_242977_3_, exception);
-+            field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.4", p_242977_3_, exception));
++            field_215785_a.error(i18n.get("saveformat.4", p_242977_3_, exception));
              return null;
           }
        };
@@ -139,7 +147,7 @@
              Util.func_240977_a_(file4, file2, file3);
           } catch (Exception exception) {
 -            SaveFormat.field_215785_a.error("Failed to save level {}", file1, exception);
-+            SaveFormat.field_215785_a.error(com.mohistmc.util.i18n.i18n.get("saveformat.5", file1, exception));
++            SaveFormat.field_215785_a.error(i18n.get("saveformat.5", file1, exception));
           }
  
        }
@@ -158,14 +166,14 @@
  
           for(int i = 1; i <= 5; ++i) {
 -            SaveFormat.field_215785_a.info("Attempt {}...", (int)i);
-+            SaveFormat.field_215785_a.info(com.mohistmc.util.i18n.i18n.get("saveformat.6", (int)i));
++            SaveFormat.field_215785_a.info(i18n.get("saveformat.6", (int)i));
  
              try {
                 Files.walkFileTree(this.field_237279_c_, new SimpleFileVisitor<Path>() {
                    public FileVisitResult visitFile(Path p_visitFile_1_, BasicFileAttributes p_visitFile_2_) throws IOException {
                       if (!p_visitFile_1_.equals(path)) {
 -                        SaveFormat.field_215785_a.debug("Deleting {}", (Object)p_visitFile_1_);
-+                        SaveFormat.field_215785_a.debug(com.mohistmc.util.i18n.i18n.get("saveformat.7", (Object)p_visitFile_1_));
++                        SaveFormat.field_215785_a.debug(i18n.get("saveformat.7", (Object)p_visitFile_1_));
                          Files.delete(p_visitFile_1_);
                       }
  
@@ -174,7 +182,7 @@
                 }
  
 -               SaveFormat.field_215785_a.warn("Failed to delete {}", this.field_237279_c_, ioexception);
-+               SaveFormat.field_215785_a.warn(com.mohistmc.util.i18n.i18n.get("saveformat.8", this.field_237279_c_, ioexception));
++               SaveFormat.field_215785_a.warn(i18n.get("saveformat.8", this.field_237279_c_, ioexception));
  
                 try {
                    Thread.sleep(500L);

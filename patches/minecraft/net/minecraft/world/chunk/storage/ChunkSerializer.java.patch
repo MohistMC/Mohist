@@ -1,17 +1,6 @@
 --- a/net/minecraft/world/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/chunk/storage/ChunkSerializer.java
-@@ -4,23 +_,13 @@
- import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
- import it.unimi.dsi.fastutil.longs.LongSet;
- import it.unimi.dsi.fastutil.shorts.ShortList;
--import java.util.Arrays;
--import java.util.BitSet;
--import java.util.EnumSet;
--import java.util.Locale;
--import java.util.Map;
--import java.util.Objects;
--import java.util.Map.Entry;
--import javax.annotation.Nullable;
+@@ -15,12 +_,10 @@
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
@@ -26,1257 +15,143 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.SharedConstants;
  import net.minecraft.util.math.BlockPos;
-@@ -35,15 +_,7 @@
- import net.minecraft.world.World;
- import net.minecraft.world.biome.BiomeContainer;
- import net.minecraft.world.biome.provider.BiomeProvider;
--import net.minecraft.world.chunk.AbstractChunkProvider;
--import net.minecraft.world.chunk.Chunk;
--import net.minecraft.world.chunk.ChunkPrimer;
--import net.minecraft.world.chunk.ChunkPrimerTickList;
--import net.minecraft.world.chunk.ChunkPrimerWrapper;
--import net.minecraft.world.chunk.ChunkSection;
--import net.minecraft.world.chunk.ChunkStatus;
--import net.minecraft.world.chunk.IChunk;
--import net.minecraft.world.chunk.NibbleArray;
-+import net.minecraft.world.chunk.*;
- import net.minecraft.world.gen.ChunkGenerator;
- import net.minecraft.world.gen.GenerationStage;
- import net.minecraft.world.gen.Heightmap;
-@@ -52,418 +_,826 @@
- import net.minecraft.world.gen.feature.template.TemplateManager;
- import net.minecraft.world.lighting.WorldLightManager;
- import net.minecraft.world.server.ServerWorld;
-+import net.minecraft.world.server.ServerWorldLightManager;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-+import javax.annotation.Nullable;
-+import java.util.*;
-+import java.util.Map.Entry;
-+
- public class ChunkSerializer {
--   private static final Logger field_222658_a = LogManager.getLogger();
--
--   public static ChunkPrimer func_222656_a(ServerWorld p_222656_0_, TemplateManager p_222656_1_, PointOfInterestManager p_222656_2_, ChunkPos p_222656_3_, CompoundNBT p_222656_4_) {
--      ChunkGenerator chunkgenerator = p_222656_0_.func_72863_F().func_201711_g();
--      BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
--      CompoundNBT compoundnbt = p_222656_4_.func_74775_l("Level");
--      ChunkPos chunkpos = new ChunkPos(compoundnbt.func_74762_e("xPos"), compoundnbt.func_74762_e("zPos"));
--      if (!Objects.equals(p_222656_3_, chunkpos)) {
+@@ -64,7 +_,7 @@
+       CompoundNBT compoundnbt = p_222656_4_.func_74775_l("Level");
+       ChunkPos chunkpos = new ChunkPos(compoundnbt.func_74762_e("xPos"), compoundnbt.func_74762_e("zPos"));
+       if (!Objects.equals(p_222656_3_, chunkpos)) {
 -         field_222658_a.error("Chunk file at {} is in the wrong location; relocating. (Expected {}, got {})", p_222656_3_, p_222656_3_, chunkpos);
--      }
--
--      BiomeContainer biomecontainer = new BiomeContainer(p_222656_0_.func_241828_r().func_243612_b(Registry.field_239720_u_), p_222656_3_, biomeprovider, compoundnbt.func_150297_b("Biomes", 11) ? compoundnbt.func_74759_k("Biomes") : null);
--      UpgradeData upgradedata = compoundnbt.func_150297_b("UpgradeData", 10) ? new UpgradeData(compoundnbt.func_74775_l("UpgradeData")) : UpgradeData.field_196994_a;
--      ChunkPrimerTickList<Block> chunkprimerticklist = new ChunkPrimerTickList<>((p_222652_0_) -> {
--         return p_222652_0_ == null || p_222652_0_.func_176223_P().func_196958_f();
--      }, p_222656_3_, compoundnbt.func_150295_c("ToBeTicked", 9));
--      ChunkPrimerTickList<Fluid> chunkprimerticklist1 = new ChunkPrimerTickList<>((p_222646_0_) -> {
--         return p_222646_0_ == null || p_222646_0_ == Fluids.field_204541_a;
--      }, p_222656_3_, compoundnbt.func_150295_c("LiquidsToBeTicked", 9));
--      boolean flag = compoundnbt.func_74767_n("isLightOn");
--      ListNBT listnbt = compoundnbt.func_150295_c("Sections", 10);
--      int i = 16;
--      ChunkSection[] achunksection = new ChunkSection[16];
--      boolean flag1 = p_222656_0_.func_230315_m_().func_218272_d();
--      AbstractChunkProvider abstractchunkprovider = p_222656_0_.func_72863_F();
--      WorldLightManager worldlightmanager = abstractchunkprovider.func_212863_j_();
--      if (flag) {
--         worldlightmanager.func_223115_b(p_222656_3_, true);
--      }
--
--      for(int j = 0; j < listnbt.size(); ++j) {
--         CompoundNBT compoundnbt1 = listnbt.func_150305_b(j);
--         int k = compoundnbt1.func_74771_c("Y");
--         if (compoundnbt1.func_150297_b("Palette", 9) && compoundnbt1.func_150297_b("BlockStates", 12)) {
--            ChunkSection chunksection = new ChunkSection(k << 4);
--            chunksection.func_186049_g().func_222642_a(compoundnbt1.func_150295_c("Palette", 10), compoundnbt1.func_197645_o("BlockStates"));
--            chunksection.func_76672_e();
--            if (!chunksection.func_76663_a()) {
--               achunksection[k] = chunksection;
--            }
--
--            p_222656_2_.func_219139_a(p_222656_3_, chunksection);
--         }
--
--         if (flag) {
--            if (compoundnbt1.func_150297_b("BlockLight", 7)) {
--               worldlightmanager.func_215574_a(LightType.BLOCK, SectionPos.func_218156_a(p_222656_3_, k), new NibbleArray(compoundnbt1.func_74770_j("BlockLight")), true);
--            }
--
--            if (flag1 && compoundnbt1.func_150297_b("SkyLight", 7)) {
--               worldlightmanager.func_215574_a(LightType.SKY, SectionPos.func_218156_a(p_222656_3_, k), new NibbleArray(compoundnbt1.func_74770_j("SkyLight")), true);
--            }
--         }
--      }
--
--      long k1 = compoundnbt.func_74763_f("InhabitedTime");
--      ChunkStatus.Type chunkstatus$type = func_222651_a(p_222656_4_);
--      IChunk ichunk;
--      if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
--         ITickList<Block> iticklist;
--         if (compoundnbt.func_150297_b("TileTicks", 9)) {
--            iticklist = SerializableTickList.func_222984_a(compoundnbt.func_150295_c("TileTicks", 10), Registry.field_212618_g::func_177774_c, Registry.field_212618_g::func_82594_a);
--         } else {
--            iticklist = chunkprimerticklist;
--         }
--
--         ITickList<Fluid> iticklist1;
--         if (compoundnbt.func_150297_b("LiquidTicks", 9)) {
--            iticklist1 = SerializableTickList.func_222984_a(compoundnbt.func_150295_c("LiquidTicks", 10), Registry.field_212619_h::func_177774_c, Registry.field_212619_h::func_82594_a);
--         } else {
--            iticklist1 = chunkprimerticklist1;
--         }
--
--         ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, biomecontainer, upgradedata, iticklist, iticklist1, k1, achunksection, (p_222648_1_) -> {
--            func_222650_a(compoundnbt, p_222648_1_);
--         });
--      } else {
--         ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist, chunkprimerticklist1);
--         chunkprimer.func_225548_a_(biomecontainer);
--         ichunk = chunkprimer;
--         chunkprimer.func_177415_c(k1);
--         chunkprimer.func_201574_a(ChunkStatus.func_222591_a(compoundnbt.func_74779_i("Status")));
--         if (chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222613_i)) {
--            chunkprimer.func_217306_a(worldlightmanager);
--         }
--
--         if (!flag && chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222614_j)) {
--            for(BlockPos blockpos : BlockPos.func_191531_b(p_222656_3_.func_180334_c(), 0, p_222656_3_.func_180333_d(), p_222656_3_.func_180332_e(), 255, p_222656_3_.func_180330_f())) {
--               if (ichunk.func_180495_p(blockpos).func_185906_d() != 0) {
--                  chunkprimer.func_201637_h(blockpos);
--               }
--            }
--         }
--      }
--
--      ichunk.func_217305_b(flag);
--      CompoundNBT compoundnbt3 = compoundnbt.func_74775_l("Heightmaps");
--      EnumSet<Heightmap.Type> enumset = EnumSet.noneOf(Heightmap.Type.class);
--
--      for(Heightmap.Type heightmap$type : ichunk.func_201589_g().func_222595_h()) {
--         String s = heightmap$type.func_203500_b();
--         if (compoundnbt3.func_150297_b(s, 12)) {
--            ichunk.func_201607_a(heightmap$type, compoundnbt3.func_197645_o(s));
--         } else {
--            enumset.add(heightmap$type);
--         }
--      }
--
--      Heightmap.func_222690_a(ichunk, enumset);
--      CompoundNBT compoundnbt4 = compoundnbt.func_74775_l("Structures");
--      ichunk.func_201612_a(func_235967_a_(p_222656_1_, compoundnbt4, p_222656_0_.func_72905_C()));
--      ichunk.func_201606_b(func_227075_a_(p_222656_3_, compoundnbt4));
--      if (compoundnbt.func_74767_n("shouldSave")) {
--         ichunk.func_177427_f(true);
--      }
--
--      ListNBT listnbt3 = compoundnbt.func_150295_c("PostProcessing", 9);
--
--      for(int l1 = 0; l1 < listnbt3.size(); ++l1) {
--         ListNBT listnbt1 = listnbt3.func_202169_e(l1);
--
--         for(int l = 0; l < listnbt1.size(); ++l) {
--            ichunk.func_201636_b(listnbt1.func_202170_f(l), l1);
--         }
--      }
--
--      if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
--         return new ChunkPrimerWrapper((Chunk)ichunk);
--      } else {
--         ChunkPrimer chunkprimer1 = (ChunkPrimer)ichunk;
--         ListNBT listnbt4 = compoundnbt.func_150295_c("Entities", 10);
--
--         for(int i2 = 0; i2 < listnbt4.size(); ++i2) {
--            chunkprimer1.func_201626_b(listnbt4.func_150305_b(i2));
--         }
--
--         ListNBT listnbt5 = compoundnbt.func_150295_c("TileEntities", 10);
--
--         for(int i1 = 0; i1 < listnbt5.size(); ++i1) {
--            CompoundNBT compoundnbt2 = listnbt5.func_150305_b(i1);
--            ichunk.func_201591_a(compoundnbt2);
--         }
--
--         ListNBT listnbt6 = compoundnbt.func_150295_c("Lights", 9);
--
--         for(int j2 = 0; j2 < listnbt6.size(); ++j2) {
--            ListNBT listnbt2 = listnbt6.func_202169_e(j2);
--
--            for(int j1 = 0; j1 < listnbt2.size(); ++j1) {
--               chunkprimer1.func_201646_a(listnbt2.func_202170_f(j1), j2);
--            }
--         }
--
--         CompoundNBT compoundnbt5 = compoundnbt.func_74775_l("CarvingMasks");
--
--         for(String s1 : compoundnbt5.func_150296_c()) {
--            GenerationStage.Carving generationstage$carving = GenerationStage.Carving.valueOf(s1);
--            chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
--         }
--
--         return chunkprimer1;
--      }
--   }
--
--   public static CompoundNBT func_222645_a(ServerWorld p_222645_0_, IChunk p_222645_1_) {
--      ChunkPos chunkpos = p_222645_1_.func_76632_l();
--      CompoundNBT compoundnbt = new CompoundNBT();
--      CompoundNBT compoundnbt1 = new CompoundNBT();
--      compoundnbt.func_74768_a("DataVersion", SharedConstants.func_215069_a().getWorldVersion());
--      compoundnbt.func_218657_a("Level", compoundnbt1);
--      compoundnbt1.func_74768_a("xPos", chunkpos.field_77276_a);
--      compoundnbt1.func_74768_a("zPos", chunkpos.field_77275_b);
--      compoundnbt1.func_74772_a("LastUpdate", p_222645_0_.func_82737_E());
--      compoundnbt1.func_74772_a("InhabitedTime", p_222645_1_.func_177416_w());
--      compoundnbt1.func_74778_a("Status", p_222645_1_.func_201589_g().func_222596_d());
--      UpgradeData upgradedata = p_222645_1_.func_196966_y();
--      if (!upgradedata.func_196988_a()) {
--         compoundnbt1.func_218657_a("UpgradeData", upgradedata.func_196992_b());
--      }
--
--      ChunkSection[] achunksection = p_222645_1_.func_76587_i();
--      ListNBT listnbt = new ListNBT();
--      WorldLightManager worldlightmanager = p_222645_0_.func_72863_F().func_212863_j_();
--      boolean flag = p_222645_1_.func_217310_r();
--
--      for(int i = -1; i < 17; ++i) {
--         int j = i;
--         ChunkSection chunksection = Arrays.stream(achunksection).filter((p_222657_1_) -> {
--            return p_222657_1_ != null && p_222657_1_.func_222632_g() >> 4 == j;
--         }).findFirst().orElse(Chunk.field_186036_a);
--         NibbleArray nibblearray = worldlightmanager.func_215569_a(LightType.BLOCK).func_215612_a(SectionPos.func_218156_a(chunkpos, j));
--         NibbleArray nibblearray1 = worldlightmanager.func_215569_a(LightType.SKY).func_215612_a(SectionPos.func_218156_a(chunkpos, j));
--         if (chunksection != Chunk.field_186036_a || nibblearray != null || nibblearray1 != null) {
--            CompoundNBT compoundnbt2 = new CompoundNBT();
--            compoundnbt2.func_74774_a("Y", (byte)(j & 255));
--            if (chunksection != Chunk.field_186036_a) {
--               chunksection.func_186049_g().func_196963_b(compoundnbt2, "Palette", "BlockStates");
--            }
--
--            if (nibblearray != null && !nibblearray.func_215655_c()) {
--               compoundnbt2.func_74773_a("BlockLight", nibblearray.func_177481_a());
--            }
--
--            if (nibblearray1 != null && !nibblearray1.func_215655_c()) {
--               compoundnbt2.func_74773_a("SkyLight", nibblearray1.func_177481_a());
--            }
--
--            listnbt.add(compoundnbt2);
--         }
--      }
--
--      compoundnbt1.func_218657_a("Sections", listnbt);
--      if (flag) {
--         compoundnbt1.func_74757_a("isLightOn", true);
--      }
--
--      BiomeContainer biomecontainer = p_222645_1_.func_225549_i_();
--      if (biomecontainer != null) {
--         compoundnbt1.func_74783_a("Biomes", biomecontainer.func_227055_a_());
--      }
--
--      ListNBT listnbt1 = new ListNBT();
--
--      for(BlockPos blockpos : p_222645_1_.func_203066_o()) {
--         CompoundNBT compoundnbt4 = p_222645_1_.func_223134_j(blockpos);
--         if (compoundnbt4 != null) {
--            listnbt1.add(compoundnbt4);
--         }
--      }
--
--      compoundnbt1.func_218657_a("TileEntities", listnbt1);
--      ListNBT listnbt2 = new ListNBT();
--      if (p_222645_1_.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
--         Chunk chunk = (Chunk)p_222645_1_;
--         chunk.func_177409_g(false);
--
--         for(int k = 0; k < chunk.func_177429_s().length; ++k) {
--            for(Entity entity : chunk.func_177429_s()[k]) {
--               CompoundNBT compoundnbt3 = new CompoundNBT();
--               if (entity.func_70039_c(compoundnbt3)) {
--                  chunk.func_177409_g(true);
--                  listnbt2.add(compoundnbt3);
--               }
--            }
--         }
--      } else {
--         ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
--         listnbt2.addAll(chunkprimer.func_201652_l());
--         compoundnbt1.func_218657_a("Lights", func_222647_a(chunkprimer.func_201647_i()));
--         CompoundNBT compoundnbt5 = new CompoundNBT();
--
--         for(GenerationStage.Carving generationstage$carving : GenerationStage.Carving.values()) {
--            BitSet bitset = chunkprimer.func_205749_a(generationstage$carving);
--            if (bitset != null) {
--               compoundnbt5.func_74773_a(generationstage$carving.toString(), bitset.toByteArray());
--            }
--         }
--
--         compoundnbt1.func_218657_a("CarvingMasks", compoundnbt5);
--      }
--
--      compoundnbt1.func_218657_a("Entities", listnbt2);
--      ITickList<Block> iticklist = p_222645_1_.func_205218_i_();
--      if (iticklist instanceof ChunkPrimerTickList) {
--         compoundnbt1.func_218657_a("ToBeTicked", ((ChunkPrimerTickList)iticklist).func_205379_a());
--      } else if (iticklist instanceof SerializableTickList) {
--         compoundnbt1.func_218657_a("TileTicks", ((SerializableTickList)iticklist).func_234857_b_());
--      } else {
--         compoundnbt1.func_218657_a("TileTicks", p_222645_0_.func_205220_G_().func_219503_a(chunkpos));
--      }
--
--      ITickList<Fluid> iticklist1 = p_222645_1_.func_212247_j();
--      if (iticklist1 instanceof ChunkPrimerTickList) {
--         compoundnbt1.func_218657_a("LiquidsToBeTicked", ((ChunkPrimerTickList)iticklist1).func_205379_a());
--      } else if (iticklist1 instanceof SerializableTickList) {
--         compoundnbt1.func_218657_a("LiquidTicks", ((SerializableTickList)iticklist1).func_234857_b_());
--      } else {
--         compoundnbt1.func_218657_a("LiquidTicks", p_222645_0_.func_205219_F_().func_219503_a(chunkpos));
--      }
--
--      compoundnbt1.func_218657_a("PostProcessing", func_222647_a(p_222645_1_.func_201614_D()));
--      CompoundNBT compoundnbt6 = new CompoundNBT();
--
--      for(Entry<Heightmap.Type, Heightmap> entry : p_222645_1_.func_217311_f()) {
--         if (p_222645_1_.func_201589_g().func_222595_h().contains(entry.getKey())) {
--            compoundnbt6.func_218657_a(entry.getKey().func_203500_b(), new LongArrayNBT(entry.getValue().func_202269_a()));
--         }
--      }
--
--      compoundnbt1.func_218657_a("Heightmaps", compoundnbt6);
--      compoundnbt1.func_218657_a("Structures", func_222649_a(chunkpos, p_222645_1_.func_201609_c(), p_222645_1_.func_201604_d()));
--      return compoundnbt;
--   }
--
--   public static ChunkStatus.Type func_222651_a(@Nullable CompoundNBT p_222651_0_) {
--      if (p_222651_0_ != null) {
--         ChunkStatus chunkstatus = ChunkStatus.func_222591_a(p_222651_0_.func_74775_l("Level").func_74779_i("Status"));
--         if (chunkstatus != null) {
--            return chunkstatus.func_202129_d();
--         }
--      }
--
--      return ChunkStatus.Type.PROTOCHUNK;
--   }
--
--   private static void func_222650_a(CompoundNBT p_222650_0_, Chunk p_222650_1_) {
--      ListNBT listnbt = p_222650_0_.func_150295_c("Entities", 10);
--      World world = p_222650_1_.func_177412_p();
--
--      for(int i = 0; i < listnbt.size(); ++i) {
--         CompoundNBT compoundnbt = listnbt.func_150305_b(i);
--         EntityType.func_220335_a(compoundnbt, world, (p_222655_1_) -> {
--            p_222650_1_.func_76612_a(p_222655_1_);
--            return p_222655_1_;
--         });
--         p_222650_1_.func_177409_g(true);
--      }
--
--      ListNBT listnbt1 = p_222650_0_.func_150295_c("TileEntities", 10);
--
--      for(int j = 0; j < listnbt1.size(); ++j) {
--         CompoundNBT compoundnbt1 = listnbt1.func_150305_b(j);
--         boolean flag = compoundnbt1.func_74767_n("keepPacked");
--         if (flag) {
--            p_222650_1_.func_201591_a(compoundnbt1);
--         } else {
--            BlockPos blockpos = new BlockPos(compoundnbt1.func_74762_e("x"), compoundnbt1.func_74762_e("y"), compoundnbt1.func_74762_e("z"));
--            TileEntity tileentity = TileEntity.func_235657_b_(p_222650_1_.func_180495_p(blockpos), compoundnbt1);
--            if (tileentity != null) {
--               p_222650_1_.func_150813_a(tileentity);
--            }
--         }
--      }
--
--   }
--
--   private static CompoundNBT func_222649_a(ChunkPos p_222649_0_, Map<Structure<?>, StructureStart<?>> p_222649_1_, Map<Structure<?>, LongSet> p_222649_2_) {
--      CompoundNBT compoundnbt = new CompoundNBT();
--      CompoundNBT compoundnbt1 = new CompoundNBT();
--
--      for(Entry<Structure<?>, StructureStart<?>> entry : p_222649_1_.entrySet()) {
--         compoundnbt1.func_218657_a(entry.getKey().func_143025_a(), entry.getValue().func_143021_a(p_222649_0_.field_77276_a, p_222649_0_.field_77275_b));
--      }
--
--      compoundnbt.func_218657_a("Starts", compoundnbt1);
--      CompoundNBT compoundnbt2 = new CompoundNBT();
--
--      for(Entry<Structure<?>, LongSet> entry1 : p_222649_2_.entrySet()) {
--         compoundnbt2.func_218657_a(entry1.getKey().func_143025_a(), new LongArrayNBT(entry1.getValue()));
--      }
--
--      compoundnbt.func_218657_a("References", compoundnbt2);
--      return compoundnbt;
--   }
--
--   private static Map<Structure<?>, StructureStart<?>> func_235967_a_(TemplateManager p_235967_0_, CompoundNBT p_235967_1_, long p_235967_2_) {
--      Map<Structure<?>, StructureStart<?>> map = Maps.newHashMap();
--      CompoundNBT compoundnbt = p_235967_1_.func_74775_l("Starts");
--
--      for(String s : compoundnbt.func_150296_c()) {
--         String s1 = s.toLowerCase(Locale.ROOT);
--         Structure<?> structure = Structure.field_236365_a_.get(s1);
--         if (structure == null) {
--            field_222658_a.error("Unknown structure start: {}", (Object)s1);
--         } else {
--            StructureStart<?> structurestart = Structure.func_236393_a_(p_235967_0_, compoundnbt.func_74775_l(s), p_235967_2_);
--            if (structurestart != null) {
--               map.put(structure, structurestart);
--            }
--         }
--      }
--
--      return map;
--   }
--
--   private static Map<Structure<?>, LongSet> func_227075_a_(ChunkPos p_227075_0_, CompoundNBT p_227075_1_) {
--      Map<Structure<?>, LongSet> map = Maps.newHashMap();
--      CompoundNBT compoundnbt = p_227075_1_.func_74775_l("References");
--
--      for(String s : compoundnbt.func_150296_c()) {
--         map.put(Structure.field_236365_a_.get(s.toLowerCase(Locale.ROOT)), new LongOpenHashSet(Arrays.stream(compoundnbt.func_197645_o(s)).filter((p_227074_2_) -> {
--            ChunkPos chunkpos = new ChunkPos(p_227074_2_);
--            if (chunkpos.func_226661_a_(p_227075_0_) > 8) {
--               field_222658_a.warn("Found invalid structure reference [ {} @ {} ] for chunk {}.", s, chunkpos, p_227075_0_);
--               return false;
--            } else {
--               return true;
--            }
--         }).toArray()));
--      }
--
--      return map;
--   }
--
--   public static ListNBT func_222647_a(ShortList[] p_222647_0_) {
--      ListNBT listnbt = new ListNBT();
--
--      for(ShortList shortlist : p_222647_0_) {
--         ListNBT listnbt1 = new ListNBT();
--         if (shortlist != null) {
--            for(Short oshort : shortlist) {
--               listnbt1.add(ShortNBT.func_229701_a_(oshort));
--            }
--         }
--
--         listnbt.add(listnbt1);
--      }
--
--      return listnbt;
--   }
-+    private static final Logger field_222658_a = LogManager.getLogger();
-+
-+    // Paper start
-+    public static final class InProgressChunkHolder {
-+
-+        public final ChunkPrimer protoChunk;
-+        public final java.util.ArrayDeque<Runnable> tasks;
-+
-+        public CompoundNBT poiData;
-+
-+        public InProgressChunkHolder(final ChunkPrimer protoChunk, final java.util.ArrayDeque<Runnable> tasks) {
-+            this.protoChunk = protoChunk;
-+            this.tasks = tasks;
-+        }
-+    }
-+    // Paper end
-+
-+    // Mohist start - prevent mixin error
-+    /*public static ChunkPrimer read(ServerWorld p_222656_0_, TemplateManager p_222656_1_, PointOfInterestManager p_222656_2_, ChunkPos p_222656_3_, CompoundNBT p_222656_4_) {
-+        // Paper start - add variant for async calls
-+        InProgressChunkHolder holder = loadChunk(p_222656_0_, p_222656_1_, p_222656_2_, p_222656_3_, p_222656_4_, true);
-+        holder.tasks.forEach(Runnable::run);
-+        return holder.protoChunk;
-+    }
-+
-+    public static InProgressChunkHolder loadChunk(ServerWorld p_222656_0_, TemplateManager p_222656_1_, PointOfInterestManager p_222656_2_, ChunkPos p_222656_3_, CompoundNBT p_222656_4_, boolean distinguish) {
-+        java.util.ArrayDeque<Runnable> tasksToExecuteOnMain = new java.util.ArrayDeque<>();
-+        // Paper end
-+        */
-+    // Mohist end
-+    public static ChunkPrimer func_222656_a(ServerWorld p_222656_0_, TemplateManager p_222656_1_, PointOfInterestManager p_222656_2_, ChunkPos p_222656_3_, CompoundNBT p_222656_4_) {
-+        java.util.ArrayDeque<Runnable> tasksToExecuteOnMain = new java.util.ArrayDeque<>();
-+
-+        ChunkGenerator chunkgenerator = p_222656_0_.func_72863_F().func_201711_g();
-+        BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
-+        CompoundNBT compoundnbt = p_222656_4_.func_74775_l("Level");
-+        ChunkPos chunkpos = new ChunkPos(compoundnbt.func_74762_e("xPos"), compoundnbt.func_74762_e("zPos"));
-+        if (!Objects.equals(p_222656_3_, chunkpos)) {
-+            field_222658_a.error(com.mohistmc.util.i18n.i18n.get("chunkserializer.1", p_222656_3_, p_222656_3_, chunkpos));
-+        }
-+
-+        BiomeContainer biomecontainer = new BiomeContainer(p_222656_0_.func_241828_r().func_243612_b(Registry.field_239720_u_), p_222656_3_, biomeprovider, compoundnbt.func_150297_b("Biomes", 11) ? compoundnbt.func_74759_k("Biomes") : null);
-+        UpgradeData upgradedata = compoundnbt.func_150297_b("UpgradeData", 10) ? new UpgradeData(compoundnbt.func_74775_l("UpgradeData")) : UpgradeData.field_196994_a;
-+        ChunkPrimerTickList<Block> chunkprimerticklist = new ChunkPrimerTickList<>((p_222652_0_) -> {
-+            return p_222652_0_ == null || p_222652_0_.func_176223_P().func_196958_f();
-+        }, p_222656_3_, compoundnbt.func_150295_c("ToBeTicked", 9));
-+        ChunkPrimerTickList<Fluid> chunkprimerticklist1 = new ChunkPrimerTickList<>((p_222646_0_) -> {
-+            return p_222646_0_ == null || p_222646_0_ == Fluids.field_204541_a;
-+        }, p_222656_3_, compoundnbt.func_150295_c("LiquidsToBeTicked", 9));
-+        boolean flag = compoundnbt.func_74767_n("isLightOn");
-+        ListNBT listnbt = compoundnbt.func_150295_c("Sections", 10);
-+        int i = 16;
-+        ChunkSection[] achunksection = new ChunkSection[16];
-+        boolean flag1 = p_222656_0_.func_230315_m_().func_218272_d();
-+        AbstractChunkProvider abstractchunkprovider = p_222656_0_.func_72863_F();
-+        WorldLightManager worldlightmanager = abstractchunkprovider.func_212863_j_();
-+        if (flag) {
-+            tasksToExecuteOnMain.add(() -> { // Paper - delay this task since we're executing off-main
-+                worldlightmanager.func_223115_b(p_222656_3_, true);
-+            }); // Paper - delay this task since we're executing off-main
-+        }
-+
-+        for (int j = 0; j < listnbt.size(); ++j) {
-+            CompoundNBT compoundnbt1 = listnbt.func_150305_b(j);
-+            int k = compoundnbt1.func_74771_c("Y");
-+            if (compoundnbt1.func_150297_b("Palette", 9) && compoundnbt1.func_150297_b("BlockStates", 12)) {
-+                ChunkSection chunksection = new ChunkSection(k << 4);
-+                chunksection.func_186049_g().func_222642_a(compoundnbt1.func_150295_c("Palette", 10), compoundnbt1.func_197645_o("BlockStates"));
-+                chunksection.func_76672_e();
-+                if (!chunksection.func_76663_a()) {
-+                    achunksection[k] = chunksection;
-+                }
-+
-+                tasksToExecuteOnMain.add(() -> { // Paper - delay this task since we're executing off-main
-+                    p_222656_2_.func_219139_a(p_222656_3_, chunksection);
-+                }); // Paper - delay this task since we're executing off-main
-+            }
-+
-+            if (flag) {
-+                if (compoundnbt1.func_150297_b("BlockLight", 7)) {
-+                    // Paper start - delay this task since we're executing off-main
-+                    NibbleArray blockLight = new NibbleArray(compoundnbt1.func_74770_j("BlockLight"));
-+                    tasksToExecuteOnMain.add(() -> {
-+                        worldlightmanager.func_215574_a(LightType.BLOCK, SectionPos.func_218156_a(p_222656_3_, k), blockLight, true);
-+                    });
-+                    // Paper end - delay this task since we're executing off-main
-+                }
-+
-+                if (flag1 && compoundnbt1.func_150297_b("SkyLight", 7)) {
-+                    // Paper start - delay this task since we're executing off-main
-+                    NibbleArray skyLight = new NibbleArray(compoundnbt1.func_74770_j("SkyLight"));
-+                    tasksToExecuteOnMain.add(() -> {
-+                        worldlightmanager.func_215574_a(LightType.SKY, SectionPos.func_218156_a(p_222656_3_, k), skyLight, true);
-+                    });
-+                    // Paper end - delay this task since we're executing off-main
-+                }
-+            }
-+        }
-+
-+        long k1 = compoundnbt.func_74763_f("InhabitedTime");
-+        ChunkStatus.Type chunkstatus$type = func_222651_a(p_222656_4_);
-+        IChunk ichunk;
-+        if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
-+            ITickList<Block> iticklist;
-+            if (compoundnbt.func_150297_b("TileTicks", 9)) {
-+                iticklist = SerializableTickList.func_222984_a(compoundnbt.func_150295_c("TileTicks", 10), Registry.field_212618_g::func_177774_c, Registry.field_212618_g::func_82594_a);
-+            } else {
-+                iticklist = chunkprimerticklist;
-+            }
-+
-+            ITickList<Fluid> iticklist1;
-+            if (compoundnbt.func_150297_b("LiquidTicks", 9)) {
-+                iticklist1 = SerializableTickList.func_222984_a(compoundnbt.func_150295_c("LiquidTicks", 10), Registry.field_212619_h::func_177774_c, Registry.field_212619_h::func_82594_a);
-+            } else {
-+                iticklist1 = chunkprimerticklist1;
-+            }
-+
-+            ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, biomecontainer, upgradedata, iticklist, iticklist1, k1, achunksection, (p_222648_1_) -> {
-+                func_222650_a(compoundnbt, p_222648_1_);
-+                // CraftBukkit start - load chunk persistent data from nbt
-+                INBT persistentBase = compoundnbt.func_74781_a("ChunkBukkitValues");
-+                if (persistentBase instanceof CompoundNBT) {
-+                    p_222648_1_.persistentDataContainer.putAll((CompoundNBT) persistentBase);
-+                }
-+                // CraftBukkit end
-+            });
-+            if (compoundnbt.func_74764_b("ForgeCaps"))
-+                ((Chunk) ichunk).readCapsFromNBT(compoundnbt.func_74775_l("ForgeCaps"));
-+        } else {
-+            ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist, chunkprimerticklist1);
-+            chunkprimer.func_225548_a_(biomecontainer);
-+            ichunk = chunkprimer;
-+            chunkprimer.func_177415_c(k1);
-+            chunkprimer.func_201574_a(ChunkStatus.func_222591_a(compoundnbt.func_74779_i("Status")));
-+            if (chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222613_i)) {
-+                chunkprimer.func_217306_a(worldlightmanager);
-+            }
-+
-+            if (!flag && chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222614_j)) {
-+                for (BlockPos blockpos : BlockPos.func_191531_b(p_222656_3_.func_180334_c(), 0, p_222656_3_.func_180333_d(), p_222656_3_.func_180332_e(), 255, p_222656_3_.func_180330_f())) {
-+                    if (ichunk.func_180495_p(blockpos).getLightValue(ichunk, blockpos) != 0) {
-+                        chunkprimer.func_201637_h(blockpos);
-+                    }
-+                }
-+            }
-+        }
-+
-+        ichunk.func_217305_b(flag);
-+        CompoundNBT compoundnbt3 = compoundnbt.func_74775_l("Heightmaps");
-+        EnumSet<Heightmap.Type> enumset = EnumSet.noneOf(Heightmap.Type.class);
-+
-+        for (Heightmap.Type heightmap$type : ichunk.func_201589_g().func_222595_h()) {
-+            String s = heightmap$type.func_203500_b();
-+            if (compoundnbt3.func_150297_b(s, 12)) {
-+                ichunk.func_201607_a(heightmap$type, compoundnbt3.func_197645_o(s));
-+            } else {
-+                enumset.add(heightmap$type);
-+            }
-+        }
-+
-+        Heightmap.func_222690_a(ichunk, enumset);
-+        CompoundNBT compoundnbt4 = compoundnbt.func_74775_l("Structures");
-+        ichunk.func_201612_a(func_235967_a_(p_222656_1_, compoundnbt4, p_222656_0_.func_72905_C()));
-+        net.minecraftforge.common.ForgeHooks.fixNullStructureReferences(ichunk, func_227075_a_(p_222656_3_, compoundnbt4));
-+        if (compoundnbt.func_74767_n("shouldSave")) {
-+            ichunk.func_177427_f(true);
-+        }
-+
-+        ListNBT listnbt3 = compoundnbt.func_150295_c("PostProcessing", 9);
-+
-+        for (int l1 = 0; l1 < listnbt3.size(); ++l1) {
-+            ListNBT listnbt1 = listnbt3.func_202169_e(l1);
-+
-+            for (int l = 0; l < listnbt1.size(); ++l) {
-+                ichunk.func_201636_b(listnbt1.func_202170_f(l), l1);
-+            }
-+        }
-+
-+        if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
-+            //return new InProgressChunkHolder(new ChunkPrimerWrapper((Chunk) ichunk), tasksToExecuteOnMain); // Paper - Async chunk loading // Mohist - comment - prevent mixin error
-+            InProgressChunkHolder inProgressChunkHolder = new InProgressChunkHolder(new ChunkPrimerWrapper((Chunk) ichunk), tasksToExecuteOnMain); // Paper - Async chunk loading // Mohist - prevent mixin error
-+            inProgressChunkHolder.tasks.forEach(Runnable::run); // Mohist - prevent mixin error
-+            return inProgressChunkHolder.protoChunk; // Mohist - prevent mixin error
-+        } else {
-+            ChunkPrimer chunkprimer1 = (ChunkPrimer) ichunk;
-+            ListNBT listnbt4 = compoundnbt.func_150295_c("Entities", 10);
-+
-+            for (int i2 = 0; i2 < listnbt4.size(); ++i2) {
-+                chunkprimer1.func_201626_b(listnbt4.func_150305_b(i2));
-+            }
-+
-+            ListNBT listnbt5 = compoundnbt.func_150295_c("TileEntities", 10);
-+
-+            for (int i1 = 0; i1 < listnbt5.size(); ++i1) {
-+                CompoundNBT compoundnbt2 = listnbt5.func_150305_b(i1);
-+                ichunk.func_201591_a(compoundnbt2);
-+            }
-+
-+            ListNBT listnbt6 = compoundnbt.func_150295_c("Lights", 9);
-+
-+            for (int j2 = 0; j2 < listnbt6.size(); ++j2) {
-+                ListNBT listnbt2 = listnbt6.func_202169_e(j2);
-+
-+                for (int j1 = 0; j1 < listnbt2.size(); ++j1) {
-+                    chunkprimer1.func_201646_a(listnbt2.func_202170_f(j1), j2);
-+                }
-+            }
-+
-+            CompoundNBT compoundnbt5 = compoundnbt.func_74775_l("CarvingMasks");
-+
-+            for (String s1 : compoundnbt5.func_150296_c()) {
-+                GenerationStage.Carving generationstage$carving = GenerationStage.Carving.valueOf(s1);
-+                chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
-+            }
-+
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
-+
-+            //return new InProgressChunkHolder(chunkprimer1, tasksToExecuteOnMain); // Paper - Async chunk loading  // Mohist - comment - prevent mixin error
-+            InProgressChunkHolder inProgressChunkHolder = new InProgressChunkHolder(chunkprimer1, tasksToExecuteOnMain); // Paper - Async chunk loading // Mohist - prevent mixin error
-+            inProgressChunkHolder.tasks.forEach(Runnable::run); // Mohist - prevent mixin error
-+            return inProgressChunkHolder.protoChunk; // Mohist - prevent mixin error
-+        }
-+    }
-+
-+
-+    // Mohist start - prevent mixin error - copy read function
-+    public static InProgressChunkHolder loadChunk(ServerWorld p_222656_0_, TemplateManager p_222656_1_, PointOfInterestManager p_222656_2_, ChunkPos p_222656_3_, CompoundNBT p_222656_4_, boolean distinguish) {
-+        java.util.ArrayDeque<Runnable> tasksToExecuteOnMain = new java.util.ArrayDeque<>();
-+
-+        ChunkGenerator chunkgenerator = p_222656_0_.func_72863_F().func_201711_g();
-+        BiomeProvider biomeprovider = chunkgenerator.func_202090_b();
-+        CompoundNBT compoundnbt = p_222656_4_.func_74775_l("Level");
-+        ChunkPos chunkpos = new ChunkPos(compoundnbt.func_74762_e("xPos"), compoundnbt.func_74762_e("zPos"));
-+        if (!Objects.equals(p_222656_3_, chunkpos)) {
-+            field_222658_a.error(com.mohistmc.util.i18n.i18n.get("chunkserializer.1", p_222656_3_, p_222656_3_, chunkpos));
-+        }
-+
-+        BiomeContainer biomecontainer = new BiomeContainer(p_222656_0_.func_241828_r().func_243612_b(Registry.field_239720_u_), p_222656_3_, biomeprovider, compoundnbt.func_150297_b("Biomes", 11) ? compoundnbt.func_74759_k("Biomes") : null);
-+        UpgradeData upgradedata = compoundnbt.func_150297_b("UpgradeData", 10) ? new UpgradeData(compoundnbt.func_74775_l("UpgradeData")) : UpgradeData.field_196994_a;
-+        ChunkPrimerTickList<Block> chunkprimerticklist = new ChunkPrimerTickList<>((p_222652_0_) -> {
-+            return p_222652_0_ == null || p_222652_0_.func_176223_P().func_196958_f();
-+        }, p_222656_3_, compoundnbt.func_150295_c("ToBeTicked", 9));
-+        ChunkPrimerTickList<Fluid> chunkprimerticklist1 = new ChunkPrimerTickList<>((p_222646_0_) -> {
-+            return p_222646_0_ == null || p_222646_0_ == Fluids.field_204541_a;
-+        }, p_222656_3_, compoundnbt.func_150295_c("LiquidsToBeTicked", 9));
-+        boolean flag = compoundnbt.func_74767_n("isLightOn");
-+        ListNBT listnbt = compoundnbt.func_150295_c("Sections", 10);
-+        int i = 16;
-+        ChunkSection[] achunksection = new ChunkSection[16];
-+        boolean flag1 = p_222656_0_.func_230315_m_().func_218272_d();
-+        AbstractChunkProvider abstractchunkprovider = p_222656_0_.func_72863_F();
-+        WorldLightManager worldlightmanager = abstractchunkprovider.func_212863_j_();
-+        if (flag) {
-+            tasksToExecuteOnMain.add(() -> { // Paper - delay this task since we're executing off-main
-+                worldlightmanager.func_223115_b(p_222656_3_, true);
-+            }); // Paper - delay this task since we're executing off-main
-+        }
-+
-+        for (int j = 0; j < listnbt.size(); ++j) {
-+            CompoundNBT compoundnbt1 = listnbt.func_150305_b(j);
-+            int k = compoundnbt1.func_74771_c("Y");
-+            if (compoundnbt1.func_150297_b("Palette", 9) && compoundnbt1.func_150297_b("BlockStates", 12)) {
-+                ChunkSection chunksection = new ChunkSection(k << 4);
-+                chunksection.func_186049_g().func_222642_a(compoundnbt1.func_150295_c("Palette", 10), compoundnbt1.func_197645_o("BlockStates"));
-+                chunksection.func_76672_e();
-+                if (!chunksection.func_76663_a()) {
-+                    achunksection[k] = chunksection;
-+                }
-+
-+                tasksToExecuteOnMain.add(() -> { // Paper - delay this task since we're executing off-main
-+                    p_222656_2_.func_219139_a(p_222656_3_, chunksection);
-+                }); // Paper - delay this task since we're executing off-main
-+            }
-+
-+            if (flag) {
-+                if (compoundnbt1.func_150297_b("BlockLight", 7)) {
-+                    // Paper start - delay this task since we're executing off-main
-+                    NibbleArray blockLight = new NibbleArray(compoundnbt1.func_74770_j("BlockLight"));
-+                    tasksToExecuteOnMain.add(() -> {
-+                        worldlightmanager.func_215574_a(LightType.BLOCK, SectionPos.func_218156_a(p_222656_3_, k), blockLight, true);
-+                    });
-+                    // Paper end - delay this task since we're executing off-main
-+                }
-+
-+                if (flag1 && compoundnbt1.func_150297_b("SkyLight", 7)) {
-+                    // Paper start - delay this task since we're executing off-main
-+                    NibbleArray skyLight = new NibbleArray(compoundnbt1.func_74770_j("SkyLight"));
-+                    tasksToExecuteOnMain.add(() -> {
-+                        worldlightmanager.func_215574_a(LightType.SKY, SectionPos.func_218156_a(p_222656_3_, k), skyLight, true);
-+                    });
-+                    // Paper end - delay this task since we're executing off-main
-+                }
-+            }
-+        }
-+
-+        long k1 = compoundnbt.func_74763_f("InhabitedTime");
-+        ChunkStatus.Type chunkstatus$type = func_222651_a(p_222656_4_);
-+        IChunk ichunk;
-+        if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
-+            ITickList<Block> iticklist;
-+            if (compoundnbt.func_150297_b("TileTicks", 9)) {
-+                iticklist = SerializableTickList.func_222984_a(compoundnbt.func_150295_c("TileTicks", 10), Registry.field_212618_g::func_177774_c, Registry.field_212618_g::func_82594_a);
-+            } else {
-+                iticklist = chunkprimerticklist;
-+            }
-+
-+            ITickList<Fluid> iticklist1;
-+            if (compoundnbt.func_150297_b("LiquidTicks", 9)) {
-+                iticklist1 = SerializableTickList.func_222984_a(compoundnbt.func_150295_c("LiquidTicks", 10), Registry.field_212619_h::func_177774_c, Registry.field_212619_h::func_82594_a);
-+            } else {
-+                iticklist1 = chunkprimerticklist1;
-+            }
-+
-+            ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, biomecontainer, upgradedata, iticklist, iticklist1, k1, achunksection, (p_222648_1_) -> {
-+                func_222650_a(compoundnbt, p_222648_1_);
-+                // CraftBukkit start - load chunk persistent data from nbt
-+                INBT persistentBase = compoundnbt.func_74781_a("ChunkBukkitValues");
-+                if (persistentBase instanceof CompoundNBT) {
-+                    p_222648_1_.persistentDataContainer.putAll((CompoundNBT) persistentBase);
-+                }
-+                // CraftBukkit end
-+            });
-+            if (compoundnbt.func_74764_b("ForgeCaps"))
-+                ((Chunk) ichunk).readCapsFromNBT(compoundnbt.func_74775_l("ForgeCaps"));
-+        } else {
-+            ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist, chunkprimerticklist1);
-+            chunkprimer.func_225548_a_(biomecontainer);
-+            ichunk = chunkprimer;
-+            chunkprimer.func_177415_c(k1);
-+            chunkprimer.func_201574_a(ChunkStatus.func_222591_a(compoundnbt.func_74779_i("Status")));
-+            if (chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222613_i)) {
-+                chunkprimer.func_217306_a(worldlightmanager);
-+            }
-+
-+            if (!flag && chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222614_j)) {
-+                for (BlockPos blockpos : BlockPos.func_191531_b(p_222656_3_.func_180334_c(), 0, p_222656_3_.func_180333_d(), p_222656_3_.func_180332_e(), 255, p_222656_3_.func_180330_f())) {
-+                    if (ichunk.func_180495_p(blockpos).getLightValue(ichunk, blockpos) != 0) {
-+                        chunkprimer.func_201637_h(blockpos);
-+                    }
-+                }
-+            }
-+        }
-+
-+        ichunk.func_217305_b(flag);
-+        CompoundNBT compoundnbt3 = compoundnbt.func_74775_l("Heightmaps");
-+        EnumSet<Heightmap.Type> enumset = EnumSet.noneOf(Heightmap.Type.class);
-+
-+        for (Heightmap.Type heightmap$type : ichunk.func_201589_g().func_222595_h()) {
-+            String s = heightmap$type.func_203500_b();
-+            if (compoundnbt3.func_150297_b(s, 12)) {
-+                ichunk.func_201607_a(heightmap$type, compoundnbt3.func_197645_o(s));
-+            } else {
-+                enumset.add(heightmap$type);
-+            }
-+        }
-+
-+        Heightmap.func_222690_a(ichunk, enumset);
-+        CompoundNBT compoundnbt4 = compoundnbt.func_74775_l("Structures");
-+        ichunk.func_201612_a(func_235967_a_(p_222656_1_, compoundnbt4, p_222656_0_.func_72905_C()));
-+        net.minecraftforge.common.ForgeHooks.fixNullStructureReferences(ichunk, func_227075_a_(p_222656_3_, compoundnbt4));
-+        if (compoundnbt.func_74767_n("shouldSave")) {
-+            ichunk.func_177427_f(true);
-+        }
-+
-+        ListNBT listnbt3 = compoundnbt.func_150295_c("PostProcessing", 9);
-+
-+        for (int l1 = 0; l1 < listnbt3.size(); ++l1) {
-+            ListNBT listnbt1 = listnbt3.func_202169_e(l1);
-+
-+            for (int l = 0; l < listnbt1.size(); ++l) {
-+                ichunk.func_201636_b(listnbt1.func_202170_f(l), l1);
-+            }
-+        }
-+
-+        if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
-+            return new InProgressChunkHolder(new ChunkPrimerWrapper((Chunk) ichunk), tasksToExecuteOnMain); // Paper - Async chunk loading
-+        } else {
-+            ChunkPrimer chunkprimer1 = (ChunkPrimer) ichunk;
-+            ListNBT listnbt4 = compoundnbt.func_150295_c("Entities", 10);
-+
-+            for (int i2 = 0; i2 < listnbt4.size(); ++i2) {
-+                chunkprimer1.func_201626_b(listnbt4.func_150305_b(i2));
-+            }
-+
-+            ListNBT listnbt5 = compoundnbt.func_150295_c("TileEntities", 10);
-+
-+            for (int i1 = 0; i1 < listnbt5.size(); ++i1) {
-+                CompoundNBT compoundnbt2 = listnbt5.func_150305_b(i1);
-+                ichunk.func_201591_a(compoundnbt2);
-+            }
-+
-+            ListNBT listnbt6 = compoundnbt.func_150295_c("Lights", 9);
-+
-+            for (int j2 = 0; j2 < listnbt6.size(); ++j2) {
-+                ListNBT listnbt2 = listnbt6.func_202169_e(j2);
-+
-+                for (int j1 = 0; j1 < listnbt2.size(); ++j1) {
-+                    chunkprimer1.func_201646_a(listnbt2.func_202170_f(j1), j2);
-+                }
-+            }
-+
-+            CompoundNBT compoundnbt5 = compoundnbt.func_74775_l("CarvingMasks");
-+
-+            for (String s1 : compoundnbt5.func_150296_c()) {
-+                GenerationStage.Carving generationstage$carving = GenerationStage.Carving.valueOf(s1);
-+                chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
-+            }
-+
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
-+
-+            return new InProgressChunkHolder(chunkprimer1, tasksToExecuteOnMain); // Paper - Async chunk loading
-+        }
-+    }
-+    // Mohist end
-+
-+    // Paper start - async chunk save for unload
-+    public static final class AsyncSaveData {
-+        public final NibbleArray[] blockLight;
-+        public final NibbleArray[] skyLight;
-+
-+        public final ListNBT blockTickList; // non-null if we had to go to the server's tick list
-+        public final ListNBT fluidTickList; // non-null if we had to go to the server's tick list
-+        public final ListNBT blockEntities;
-+
-+        public final long worldTime;
-+
-+        public AsyncSaveData(NibbleArray[] blockLight, NibbleArray[] skyLight,
-+                             ListNBT blockTickList, ListNBT fluidTickList, ListNBT blockEntities, long worldTime) {
-+            this.blockLight = blockLight;
-+            this.skyLight = skyLight;
-+            this.blockTickList = blockTickList;
-+            this.fluidTickList = fluidTickList;
-+            this.blockEntities = blockEntities;
-+            this.worldTime = worldTime;
-+        }
-+    }
-+
-+    // must be called sync
-+    public static AsyncSaveData getAsyncSaveData(ServerWorld world, IChunk chunk) {
-+        org.spigotmc.AsyncCatcher.catchOp("preparation of chunk data for async save");
-+        ChunkPos chunkPos = chunk.func_76632_l();
-+
-+        ServerWorldLightManager lightenginethreaded = world.func_72863_F().func_212863_j_();
-+
-+        NibbleArray[] blockLight = new NibbleArray[17 - (-1)];
-+        NibbleArray[] skyLight = new NibbleArray[17 - (-1)];
-+
-+        for (int i = -1; i < 17; ++i) {
-+            NibbleArray blockArray = lightenginethreaded.func_215569_a(LightType.BLOCK).func_215612_a(SectionPos.func_218156_a(chunkPos, i));
-+            NibbleArray skyArray = lightenginethreaded.func_215569_a(LightType.SKY).func_215612_a(SectionPos.func_218156_a(chunkPos, i));
-+
-+            // copy data for safety
-+            if (blockArray != null) {
-+                blockArray = blockArray.func_215654_b();
-+            }
-+            if (skyArray != null) {
-+                skyArray = skyArray.func_215654_b();
-+            }
-+
-+            // apply offset of 1 for -1 starting index
-+            blockLight[i + 1] = blockArray;
-+            skyLight[i + 1] = skyArray;
-+        }
-+
-+        ITickList<Block> blockTickList = chunk.func_205218_i_();
-+
-+        ListNBT blockTickListSerialized;
-+        if (blockTickList instanceof ChunkPrimerTickList || blockTickList instanceof ChunkPrimerTickList) {
-+            blockTickListSerialized = null;
-+        } else {
-+            blockTickListSerialized = world.func_205220_G_().func_219503_a(chunkPos);
-+        }
-+
-+        ITickList<Fluid> fluidTickList = chunk.func_212247_j();
-+
-+        ListNBT fluidTickListSerialized;
-+        if (fluidTickList instanceof ChunkPrimerTickList || fluidTickList instanceof ChunkPrimerTickList) {
-+            fluidTickListSerialized = null;
-+        } else {
-+            fluidTickListSerialized = world.func_205219_F_().func_219503_a(chunkPos);
-+        }
-+
-+        ListNBT blockEntitiesSerialized = new ListNBT();
-+        for (final BlockPos blockPos : chunk.func_203066_o()) {
-+            final CompoundNBT blockEntityNbt = chunk.func_223134_j(blockPos);
-+            if (blockEntityNbt != null) {
-+                blockEntitiesSerialized.add(blockEntityNbt);
-+            }
-+        }
-+
-+        return new AsyncSaveData(blockLight, skyLight, blockTickListSerialized, fluidTickListSerialized, blockEntitiesSerialized, world.func_82737_E());
-+
-+    }
-+
-+    public static CompoundNBT func_222645_a(ServerWorld p_222645_0_, IChunk p_222645_1_) {
-+        return saveChunk(p_222645_0_, p_222645_1_, null);
-+    }
-+
-+    public static CompoundNBT saveChunk(ServerWorld p_222645_0_, IChunk p_222645_1_, AsyncSaveData asyncsavedata) {
-+        // Paper end
-+        ChunkPos chunkpos = p_222645_1_.func_76632_l();
-+        CompoundNBT compoundnbt = new CompoundNBT();
-+        CompoundNBT compoundnbt1 = new CompoundNBT();
-+        compoundnbt.func_74768_a("DataVersion", SharedConstants.func_215069_a().getWorldVersion());
-+        compoundnbt.func_218657_a("Level", compoundnbt1);
-+        compoundnbt1.func_74768_a("xPos", chunkpos.field_77276_a);
-+        compoundnbt1.func_74768_a("zPos", chunkpos.field_77275_b);
-+        compoundnbt1.func_74772_a("LastUpdate", asyncsavedata != null ? asyncsavedata.worldTime : p_222645_0_.func_82737_E()); // Paper - async chunk unloading
-+        compoundnbt1.func_74772_a("InhabitedTime", p_222645_1_.func_177416_w());
-+        compoundnbt1.func_74778_a("Status", p_222645_1_.func_201589_g().func_222596_d());
-+        UpgradeData upgradedata = p_222645_1_.func_196966_y();
-+        if (!upgradedata.func_196988_a()) {
-+            compoundnbt1.func_218657_a("UpgradeData", upgradedata.func_196992_b());
-+        }
-+
-+        ChunkSection[] achunksection = p_222645_1_.func_76587_i();
-+        ListNBT listnbt = new ListNBT();
-+        WorldLightManager worldlightmanager = p_222645_0_.func_72863_F().func_212863_j_();
-+        boolean flag = p_222645_1_.func_217310_r();
-+
-+        for (int i = -1; i < 17; ++i) {
-+            int j = i;
-+            ChunkSection chunksection = Arrays.stream(achunksection).filter((p_222657_1_) -> {
-+                return p_222657_1_ != null && p_222657_1_.func_222632_g() >> 4 == j;
-+            }).findFirst().orElse(Chunk.field_186036_a);
-+            // Paper start - async chunk save for unload
-+            NibbleArray nibblearray; // block light
-+            NibbleArray nibblearray1; // sky light
-+            if (asyncsavedata == null) {
-+                nibblearray = worldlightmanager.func_215569_a(LightType.BLOCK).func_215612_a(SectionPos.func_218156_a(chunkpos, i)); /// Paper - diff on method change (see getAsyncSaveData)
-+                nibblearray1 = worldlightmanager.func_215569_a(LightType.SKY).func_215612_a(SectionPos.func_218156_a(chunkpos, i)); // Paper - diff on method change (see getAsyncSaveData)
-+            } else {
-+                nibblearray = asyncsavedata.blockLight[i + 1];
-+                nibblearray1 = asyncsavedata.skyLight[i + 1];
-+            }
-+            // Paper end
-+            if (chunksection != Chunk.field_186036_a || nibblearray != null || nibblearray1 != null) {
-+                CompoundNBT compoundnbt2 = new CompoundNBT();
-+                compoundnbt2.func_74774_a("Y", (byte) (j & 255));
-+                if (chunksection != Chunk.field_186036_a) {
-+                    chunksection.func_186049_g().func_196963_b(compoundnbt2, "Palette", "BlockStates");
-+                }
-+
-+                if (nibblearray != null && !nibblearray.func_215655_c()) {
-+                    compoundnbt2.func_74773_a("BlockLight", nibblearray.func_177481_a());
-+                }
-+
-+                if (nibblearray1 != null && !nibblearray1.func_215655_c()) {
-+                    compoundnbt2.func_74773_a("SkyLight", nibblearray1.func_177481_a());
-+                }
-+
-+                listnbt.add(compoundnbt2);
-+            }
-+        }
-+
-+        compoundnbt1.func_218657_a("Sections", listnbt);
-+        if (flag) {
-+            compoundnbt1.func_74757_a("isLightOn", true);
-+        }
-+
-+        BiomeContainer biomecontainer = p_222645_1_.func_225549_i_();
-+        if (biomecontainer != null) {
-+            compoundnbt1.func_74783_a("Biomes", biomecontainer.func_227055_a_());
-+        }
-+
-+        ListNBT listnbt1 = new ListNBT();
-+
-+        // Paper start
-+        ListNBT nbttaglist1;
-+        Iterator<BlockPos> iterator;
-+        if (asyncsavedata != null) {
-+            nbttaglist1 = asyncsavedata.blockEntities;
-+            iterator = java.util.Collections.emptyIterator();
-+        } else {
-+            nbttaglist1 = new ListNBT();
-+            iterator = p_222645_1_.func_203066_o().iterator();
-+        }
-+        // Paper end
-+
-+        for (BlockPos blockpos : p_222645_1_.func_203066_o()) {
-+            CompoundNBT compoundnbt4 = p_222645_1_.func_223134_j(blockpos);
-+            if (compoundnbt4 != null) {
-+                listnbt1.add(compoundnbt4);
-+            }
-+        }
-+
-+        compoundnbt1.func_218657_a("TileEntities", listnbt1);
-+        ListNBT listnbt2 = new ListNBT();
-+
-+        if (p_222645_1_.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
-+            Chunk chunk = (Chunk) p_222645_1_;
-+            // CraftBukkit start - store chunk persistent data in nbt
-+            if (!chunk.persistentDataContainer.isEmpty()) {
-+                compoundnbt1.func_218657_a("ChunkBukkitValues", chunk.persistentDataContainer.toTagCompound());
++         field_222658_a.error(com.mohistmc.util.i18n.i18n.get("chunkserializer.1", p_222656_3_, p_222656_3_, chunkpos));
+       }
+ 
+       BiomeContainer biomecontainer = new BiomeContainer(p_222656_0_.func_241828_r().func_243612_b(Registry.field_239720_u_), p_222656_3_, biomeprovider, compoundnbt.func_150297_b("Biomes", 11) ? compoundnbt.func_74759_k("Biomes") : null);
+@@ -131,7 +_,14 @@
+ 
+          ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, biomecontainer, upgradedata, iticklist, iticklist1, k1, achunksection, (p_222648_1_) -> {
+             func_222650_a(compoundnbt, p_222648_1_);
++            // CraftBukkit start - load chunk persistent data from nbt
++            INBT persistentBase = compoundnbt.func_74781_a("ChunkBukkitValues");
++            if (persistentBase instanceof CompoundNBT) {
++               p_222648_1_.persistentDataContainer.putAll((CompoundNBT) persistentBase);
 +            }
 +            // CraftBukkit end
-+            chunk.func_177409_g(false);
+          });
++         if (compoundnbt.func_74764_b("ForgeCaps")) ((Chunk)ichunk).readCapsFromNBT(compoundnbt.func_74775_l("ForgeCaps"));
+       } else {
+          ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist, chunkprimerticklist1);
+          chunkprimer.func_225548_a_(biomecontainer);
+@@ -144,7 +_,7 @@
+ 
+          if (!flag && chunkprimer.func_201589_g().func_209003_a(ChunkStatus.field_222614_j)) {
+             for(BlockPos blockpos : BlockPos.func_191531_b(p_222656_3_.func_180334_c(), 0, p_222656_3_.func_180333_d(), p_222656_3_.func_180332_e(), 255, p_222656_3_.func_180330_f())) {
+-               if (ichunk.func_180495_p(blockpos).func_185906_d() != 0) {
++               if (ichunk.func_180495_p(blockpos).getLightValue(ichunk, blockpos) != 0) {
+                   chunkprimer.func_201637_h(blockpos);
+                }
+             }
+@@ -167,7 +_,7 @@
+       Heightmap.func_222690_a(ichunk, enumset);
+       CompoundNBT compoundnbt4 = compoundnbt.func_74775_l("Structures");
+       ichunk.func_201612_a(func_235967_a_(p_222656_1_, compoundnbt4, p_222656_0_.func_72905_C()));
+-      ichunk.func_201606_b(func_227075_a_(p_222656_3_, compoundnbt4));
++      net.minecraftforge.common.ForgeHooks.fixNullStructureReferences(ichunk, func_227075_a_(p_222656_3_, compoundnbt4));
+       if (compoundnbt.func_74767_n("shouldSave")) {
+          ichunk.func_177427_f(true);
+       }
+@@ -183,6 +_,7 @@
+       }
+ 
+       if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
+          return new ChunkPrimerWrapper((Chunk)ichunk);
+       } else {
+          ChunkPrimer chunkprimer1 = (ChunkPrimer)ichunk;
+@@ -216,6 +_,8 @@
+             chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
+          }
+ 
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
 +
-+            for (int k = 0; k < chunk.func_177429_s().length; ++k) {
-+                for (Entity entity : chunk.func_177429_s()[k]) {
-+                    CompoundNBT compoundnbt3 = new CompoundNBT();
+          return chunkprimer1;
+       }
+    }
+@@ -288,18 +_,41 @@
+ 
+       compoundnbt1.func_218657_a("TileEntities", listnbt1);
+       ListNBT listnbt2 = new ListNBT();
 +
-+                    // Paper start
-+                    if (!entity.func_70089_S() || hasPlayerPassenger(entity)) {
-+                        continue;
-+                    }
-+                    // Paper end
-+                    try {
-+                        if (entity.func_70039_c(compoundnbt3)) {
-+                            chunk.func_177409_g(true);
-+                            listnbt2.add(compoundnbt3);
-+                        }
-+                    } catch (Exception e) {
-+                        LogManager.getLogger().error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", entity.func_200600_R(), e);
-+                    }
-+                }
-+            }
+       if (p_222645_1_.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
+          Chunk chunk = (Chunk)p_222645_1_;
++         // CraftBukkit start - store chunk persistent data in nbt
++         if (!chunk.persistentDataContainer.isEmpty()) {
++            compoundnbt1.func_218657_a("ChunkBukkitValues", chunk.persistentDataContainer.toTagCompound());
++         }
++         // CraftBukkit end
+          chunk.func_177409_g(false);
+ 
+          for(int k = 0; k < chunk.func_177429_s().length; ++k) {
+             for(Entity entity : chunk.func_177429_s()[k]) {
+                CompoundNBT compoundnbt3 = new CompoundNBT();
 +
-+            try {
-+                final CompoundNBT capTag = chunk.writeCapsToNBT();
-+                if (capTag != null) compoundnbt1.func_218657_a("ForgeCaps", capTag);
-+            } catch (Exception exception) {
-+                LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
-+            }
-+        } else {
-+            ChunkPrimer chunkprimer = (ChunkPrimer) p_222645_1_;
-+            listnbt2.addAll(chunkprimer.func_201652_l());
-+            compoundnbt1.func_218657_a("Lights", func_222647_a(chunkprimer.func_201647_i()));
-+            CompoundNBT compoundnbt5 = new CompoundNBT();
++               // Paper start
++               if (!entity.func_70089_S() || hasPlayerPassenger(entity)) {
++                  continue;
++               }
++               // Paper end
++               try {
+                if (entity.func_70039_c(compoundnbt3)) {
+                   chunk.func_177409_g(true);
+                   listnbt2.add(compoundnbt3);
+                }
++               } catch (Exception e) {
++                  LogManager.getLogger().error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", entity.func_200600_R(), e);
++               }
+             }
++         }
 +
-+            for (GenerationStage.Carving generationstage$carving : GenerationStage.Carving.values()) {
-+                BitSet bitset = chunkprimer.func_205749_a(generationstage$carving);
-+                if (bitset != null) {
-+                    compoundnbt5.func_74773_a(generationstage$carving.toString(), bitset.toByteArray());
-+                }
-+            }
++         try {
++             final CompoundNBT capTag = chunk.writeCapsToNBT();
++             if (capTag != null) compoundnbt1.func_218657_a("ForgeCaps", capTag);
++         } catch (Exception exception) {
++             LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
+          }
+       } else {
+          ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
+@@ -350,6 +_,20 @@
+       return compoundnbt;
+    }
+ 
++   // Paper start - this is saved with the player
++   private static boolean hasPlayerPassenger(Entity entity) {
++       for (Entity passenger : entity.field_184244_h) {
++           if (passenger instanceof PlayerEntity) {
++               return true;
++           }
++           if (hasPlayerPassenger(passenger)) {
++               return true;
++           }
++       }
++       return false;
++   }
++   // Paper end
 +
-+            compoundnbt1.func_218657_a("CarvingMasks", compoundnbt5);
-+        }
-+
-+        compoundnbt1.func_218657_a("Entities", listnbt2);
-+        ITickList<Block> iticklist = p_222645_1_.func_205218_i_();
-+        if (iticklist instanceof ChunkPrimerTickList) {
-+            compoundnbt1.func_218657_a("ToBeTicked", ((ChunkPrimerTickList) iticklist).func_205379_a());
-+        } else if (iticklist instanceof SerializableTickList) {
-+            compoundnbt1.func_218657_a("TileTicks", ((SerializableTickList) iticklist).func_234857_b_());
-+            // Paper start - async chunk save for unload
-+        } else if (asyncsavedata != null) {
-+            compoundnbt1.func_218657_a("TileTicks", asyncsavedata.blockTickList);
-+            // Paper end
-+        } else {
-+            compoundnbt1.func_218657_a("TileTicks", p_222645_0_.func_205220_G_().func_219503_a(chunkpos));
-+        }
-+
-+        ITickList<Fluid> iticklist1 = p_222645_1_.func_212247_j();
-+        if (iticklist1 instanceof ChunkPrimerTickList) {
-+            compoundnbt1.func_218657_a("LiquidsToBeTicked", ((ChunkPrimerTickList) iticklist1).func_205379_a());
-+        } else if (iticklist1 instanceof SerializableTickList) {
-+            compoundnbt1.func_218657_a("LiquidTicks", ((SerializableTickList) iticklist1).func_234857_b_());
-+            // Paper start - async chunk save for unload
-+        } else if (asyncsavedata != null) {
-+            compoundnbt1.func_218657_a("LiquidTicks", asyncsavedata.fluidTickList);
-+            // Paper end
-+        } else {
-+            compoundnbt1.func_218657_a("LiquidTicks", p_222645_0_.func_205219_F_().func_219503_a(chunkpos));
-+        }
-+
-+        compoundnbt1.func_218657_a("PostProcessing", func_222647_a(p_222645_1_.func_201614_D()));
-+        CompoundNBT compoundnbt6 = new CompoundNBT();
-+
-+        for (Entry<Heightmap.Type, Heightmap> entry : p_222645_1_.func_217311_f()) {
-+            if (p_222645_1_.func_201589_g().func_222595_h().contains(entry.getKey())) {
-+                compoundnbt6.func_218657_a(entry.getKey().func_203500_b(), new LongArrayNBT(entry.getValue().func_202269_a()));
-+            }
-+        }
-+
-+        compoundnbt1.func_218657_a("Heightmaps", compoundnbt6);
-+        compoundnbt1.func_218657_a("Structures", func_222649_a(chunkpos, p_222645_1_.func_201609_c(), p_222645_1_.func_201604_d()));
-+        return compoundnbt;
-+    }
-+
-+    // Paper start - this is saved with the player
-+    private static boolean hasPlayerPassenger(Entity entity) {
-+        for (Entity passenger : entity.field_184244_h) {
-+            if (passenger instanceof PlayerEntity) {
-+                return true;
-+            }
-+            if (hasPlayerPassenger(passenger)) {
-+                return true;
-+            }
-+        }
-+        return false;
-+    }
-+    // Paper end
-+
-+    public static ChunkStatus.Type func_222651_a(@Nullable CompoundNBT p_222651_0_) {
-+        if (p_222651_0_ != null) {
-+            ChunkStatus chunkstatus = ChunkStatus.func_222591_a(p_222651_0_.func_74775_l("Level").func_74779_i("Status"));
-+            if (chunkstatus != null) {
-+                return chunkstatus.func_202129_d();
-+            }
-+        }
-+
-+        return ChunkStatus.Type.PROTOCHUNK;
-+    }
-+
-+    private static void func_222650_a(CompoundNBT p_222650_0_, Chunk p_222650_1_) {
-+        ListNBT listnbt = p_222650_0_.func_150295_c("Entities", 10);
-+        World world = p_222650_1_.func_177412_p();
-+
-+        for (int i = 0; i < listnbt.size(); ++i) {
-+            CompoundNBT compoundnbt = listnbt.func_150305_b(i);
-+            EntityType.func_220335_a(compoundnbt, world, (p_222655_1_) -> {
-+                p_222650_1_.func_76612_a(p_222655_1_);
-+                return p_222655_1_;
-+            });
-+            p_222650_1_.func_177409_g(true);
-+        }
-+
-+        ListNBT listnbt1 = p_222650_0_.func_150295_c("TileEntities", 10);
-+
-+        for (int j = 0; j < listnbt1.size(); ++j) {
-+            CompoundNBT compoundnbt1 = listnbt1.func_150305_b(j);
-+            boolean flag = compoundnbt1.func_74767_n("keepPacked");
-+            if (flag) {
-+                p_222650_1_.func_201591_a(compoundnbt1);
-+            } else {
-+                BlockPos blockpos = new BlockPos(compoundnbt1.func_74762_e("x"), compoundnbt1.func_74762_e("y"), compoundnbt1.func_74762_e("z"));
-+                TileEntity tileentity = TileEntity.func_235657_b_(p_222650_1_.func_180495_p(blockpos), compoundnbt1);
-+                if (tileentity != null) {
-+                    p_222650_1_.func_150813_a(tileentity);
-+                }
-+            }
-+        }
-+
-+    }
-+
-+    private static CompoundNBT func_222649_a(ChunkPos p_222649_0_, Map<Structure<?>, StructureStart<?>> p_222649_1_, Map<Structure<?>, LongSet> p_222649_2_) {
-+        CompoundNBT compoundnbt = new CompoundNBT();
-+        CompoundNBT compoundnbt1 = new CompoundNBT();
-+
-+        for (Entry<Structure<?>, StructureStart<?>> entry : p_222649_1_.entrySet()) {
-+            compoundnbt1.func_218657_a(entry.getKey().func_143025_a(), entry.getValue().func_143021_a(p_222649_0_.field_77276_a, p_222649_0_.field_77275_b));
-+        }
-+
-+        compoundnbt.func_218657_a("Starts", compoundnbt1);
-+        CompoundNBT compoundnbt2 = new CompoundNBT();
-+
-+        for (Entry<Structure<?>, LongSet> entry1 : p_222649_2_.entrySet()) {
-+            compoundnbt2.func_218657_a(entry1.getKey().func_143025_a(), new LongArrayNBT(entry1.getValue()));
-+        }
-+
-+        compoundnbt.func_218657_a("References", compoundnbt2);
-+        return compoundnbt;
-+    }
-+
-+    private static Map<Structure<?>, StructureStart<?>> func_235967_a_(TemplateManager p_235967_0_, CompoundNBT p_235967_1_, long p_235967_2_) {
-+        Map<Structure<?>, StructureStart<?>> map = Maps.newHashMap();
-+        CompoundNBT compoundnbt = p_235967_1_.func_74775_l("Starts");
-+
-+        for (String s : compoundnbt.func_150296_c()) {
-+            String s1 = s.toLowerCase(Locale.ROOT);
-+            Structure<?> structure = Structure.field_236365_a_.get(s1);
-+            if (structure == null) {
-+                field_222658_a.error(com.mohistmc.util.i18n.i18n.get("chunkserializer.2", (Object) s1));
-+            } else {
-+                StructureStart<?> structurestart = Structure.func_236393_a_(p_235967_0_, compoundnbt.func_74775_l(s), p_235967_2_);
-+                if (structurestart != null) {
-+                    map.put(structure, structurestart);
-+                }
-+            }
-+        }
-+
-+        return map;
-+    }
-+
-+    private static Map<Structure<?>, LongSet> func_227075_a_(ChunkPos p_227075_0_, CompoundNBT p_227075_1_) {
-+        Map<Structure<?>, LongSet> map = Maps.newHashMap();
-+        CompoundNBT compoundnbt = p_227075_1_.func_74775_l("References");
-+
-+        for (String s : compoundnbt.func_150296_c()) {
-+            map.put(Structure.field_236365_a_.get(s.toLowerCase(Locale.ROOT)), new LongOpenHashSet(Arrays.stream(compoundnbt.func_197645_o(s)).filter((p_227074_2_) -> {
-+                ChunkPos chunkpos = new ChunkPos(p_227074_2_);
-+                if (chunkpos.func_226661_a_(p_227075_0_) > 8) {
-+                    field_222658_a.warn(com.mohistmc.util.i18n.i18n.get("chunkserializer.3", s, chunkpos, p_227075_0_));
-+                    return false;
-+                } else {
-+                    return true;
-+                }
-+            }).toArray()));
-+        }
-+
-+        return map;
-+    }
-+
-+    public static ListNBT func_222647_a(ShortList[] p_222647_0_) {
-+        ListNBT listnbt = new ListNBT();
-+
-+        for (ShortList shortlist : p_222647_0_) {
-+            ListNBT listnbt1 = new ListNBT();
-+            if (shortlist != null) {
-+                for (Short oshort : shortlist) {
-+                    listnbt1.add(ShortNBT.func_229701_a_(oshort));
-+                }
-+            }
-+
-+            listnbt.add(listnbt1);
-+        }
-+
-+        return listnbt;
-+    }
- }
+    public static ChunkStatus.Type func_222651_a(@Nullable CompoundNBT p_222651_0_) {
+       if (p_222651_0_ != null) {
+          ChunkStatus chunkstatus = ChunkStatus.func_222591_a(p_222651_0_.func_74775_l("Level").func_74779_i("Status"));
+@@ -419,7 +_,7 @@
+          String s1 = s.toLowerCase(Locale.ROOT);
+          Structure<?> structure = Structure.field_236365_a_.get(s1);
+          if (structure == null) {
+-            field_222658_a.error("Unknown structure start: {}", (Object)s1);
++            field_222658_a.error(com.mohistmc.util.i18n.i18n.get("chunkserializer.2", (Object)s1));
+          } else {
+             StructureStart<?> structurestart = Structure.func_236393_a_(p_235967_0_, compoundnbt.func_74775_l(s), p_235967_2_);
+             if (structurestart != null) {
+@@ -439,7 +_,7 @@
+          map.put(Structure.field_236365_a_.get(s.toLowerCase(Locale.ROOT)), new LongOpenHashSet(Arrays.stream(compoundnbt.func_197645_o(s)).filter((p_227074_2_) -> {
+             ChunkPos chunkpos = new ChunkPos(p_227074_2_);
+             if (chunkpos.func_226661_a_(p_227075_0_) > 8) {
+-               field_222658_a.warn("Found invalid structure reference [ {} @ {} ] for chunk {}.", s, chunkpos, p_227075_0_);
++               field_222658_a.warn(com.mohistmc.util.i18n.i18n.get("chunkserializer.3", s, chunkpos, p_227075_0_));
+                return false;
+             } else {
+                return true;

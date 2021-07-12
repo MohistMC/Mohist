@@ -1,14 +1,22 @@
 --- a/net/minecraft/util/registry/WorldSettingsImport.java
 +++ b/net/minecraft/util/registry/WorldSettingsImport.java
+@@ -6,6 +_,7 @@
+ import com.google.gson.JsonIOException;
+ import com.google.gson.JsonParser;
+ import com.google.gson.JsonSyntaxException;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.DataResult;
 @@ -95,9 +_,9 @@
        for(ResourceLocation resourcelocation : collection) {
           String s1 = resourcelocation.func_110623_a();
           if (!s1.endsWith(".json")) {
 -            field_240870_b_.warn("Skipping resource {} since it is not a json file", (Object)resourcelocation);
-+            field_240870_b_.warn(com.mohistmc.util.i18n.i18n.get("worldsettingsimport.1", (Object)resourcelocation));
++            field_240870_b_.warn(i18n.get("worldsettingsimport.1", (Object)resourcelocation));
           } else if (!s1.startsWith(s)) {
 -            field_240870_b_.warn("Skipping resource {} since it does not have a registry name prefix", (Object)resourcelocation);
-+            field_240870_b_.warn(com.mohistmc.util.i18n.i18n.get("worldsettingsimport.2", (Object)resourcelocation));
++            field_240870_b_.warn(i18n.get("worldsettingsimport.2", (Object)resourcelocation));
           } else {
              String s2 = s1.substring(s.length(), s1.length() - ".json".length());
              ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s2);
@@ -25,7 +33,7 @@
              Optional<PartialResult<JsonElement>> optional = dataresult.error();
              if (optional.isPresent()) {
 -               WorldSettingsImport.field_240870_b_.error("Error adding element: {}", (Object)optional.get().message());
-+               WorldSettingsImport.field_240870_b_.error(com.mohistmc.util.i18n.i18n.get("worldsettingsimport.3", (Object)optional.get().message()));
++               WorldSettingsImport.field_240870_b_.error(i18n.get("worldsettingsimport.3", (Object)optional.get().message()));
              } else {
                 this.field_244349_a.put(p_244352_2_, dataresult.result().get());
                 this.field_244350_b.put(p_244352_2_, p_244352_4_);

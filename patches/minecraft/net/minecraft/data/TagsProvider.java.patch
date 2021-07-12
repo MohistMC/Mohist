@@ -1,5 +1,13 @@
 --- a/net/minecraft/data/TagsProvider.java
 +++ b/net/minecraft/data/TagsProvider.java
+@@ -5,6 +_,7 @@
+ import com.google.gson.GsonBuilder;
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.BufferedWriter;
+ import java.io.IOException;
+ import java.nio.file.Files;
 @@ -28,10 +_,28 @@
     protected final DataGenerator field_200433_a;
     protected final Registry<T> field_200435_c;
@@ -50,7 +58,7 @@
                 p_200398_1_.func_208316_a(path, s1);
              } catch (IOException ioexception) {
 -               field_200436_d.error("Couldn't save tags to {}", path, ioexception);
-+               field_200436_d.error(com.mohistmc.util.i18n.i18n.get("tagsprovider.1", path, ioexception));
++               field_200436_d.error(i18n.get("tagsprovider.1", path, ioexception));
              }
  
           }

@@ -165,24 +165,6 @@ public class DummyGeneratorAccess implements IWorld {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    // Paper start - if loaded util
-    @javax.annotation.Nullable
-    @Override
-    public IChunk getChunkIfLoadedImmediately(int x, int z) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public BlockState getTypeIfLoaded(BlockPos blockposition) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public FluidState getFluidIfLoaded(BlockPos blockposition) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    // Paper end
-
     @Override
     public WorldBorder getWorldBorder() {
         throw new UnsupportedOperationException("Not supported yet.");

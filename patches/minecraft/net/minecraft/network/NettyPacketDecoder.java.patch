@@ -1,11 +1,18 @@
 --- a/net/minecraft/network/NettyPacketDecoder.java
 +++ b/net/minecraft/network/NettyPacketDecoder.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.network;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.ByteToMessageDecoder;
 @@ -33,7 +_,7 @@
              } else {
                 p_decode_3_.add(ipacket);
                 if (field_150800_a.isDebugEnabled()) {
 -                  field_150800_a.debug(field_150799_b, " IN: [{}:{}] {}", p_decode_1_.channel().attr(NetworkManager.field_150739_c).get(), i, ipacket.getClass().getName());
-+                  field_150800_a.debug(com.mohistmc.util.i18n.i18n.get("nettypacketdecoder.1", p_decode_1_.channel().attr(NetworkManager.field_150739_c).get(), i, ipacket.getClass().getName()));
++                  field_150800_a.debug(i18n.get("nettypacketdecoder.1", p_decode_1_.channel().attr(NetworkManager.field_150739_c).get(), i, ipacket.getClass().getName()));
                 }
  
              }

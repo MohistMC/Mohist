@@ -1,5 +1,13 @@
 --- a/net/minecraft/loot/LootTable.java
 +++ b/net/minecraft/loot/LootTable.java
+@@ -8,6 +_,7 @@
+ import com.google.gson.JsonParseException;
+ import com.google.gson.JsonSerializationContext;
+ import com.google.gson.JsonSerializer;
++import com.mohistmc.util.i18n.i18n;
+ import java.lang.reflect.Type;
+ import java.util.Collections;
+ import java.util.Iterator;
 @@ -15,6 +_,7 @@
  import java.util.Random;
  import java.util.function.BiFunction;
@@ -38,7 +46,7 @@
           p_216114_1_.func_186490_b(this);
        } else {
 -         field_186465_b.warn("Detected infinite loop in loot tables");
-+         field_186465_b.warn(com.mohistmc.util.i18n.i18n.get("loottable.1"));
++         field_186465_b.warn(i18n.get("loottable.1"));
        }
  
     }
@@ -102,7 +110,7 @@
 +
 +      for(ItemStack itemstack : list) {
 +         if (list1.isEmpty()) {
-+            field_186465_b.warn(com.mohistmc.util.i18n.i18n.get("loottable.2"));
++            field_186465_b.warn(i18n.get("loottable.2"));
 +            return;
 +         }
 +
@@ -127,7 +135,7 @@
 +
 +      for(ItemStack itemstack : list) {
 +         if (list1.isEmpty()) {
-+            field_186465_b.warn(com.mohistmc.util.i18n.i18n.get("loottable.2"));
++            field_186465_b.warn(i18n.get("loottable.2"));
 +            return;
 +         }
 +

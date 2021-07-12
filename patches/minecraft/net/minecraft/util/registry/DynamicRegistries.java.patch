@@ -1,5 +1,13 @@
 --- a/net/minecraft/util/registry/DynamicRegistries.java
 +++ b/net/minecraft/util/registry/DynamicRegistries.java
+@@ -2,6 +_,7 @@
+ 
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.ImmutableMap.Builder;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.JsonOps;
 @@ -90,6 +_,8 @@
        RegistryKey<? extends Registry<E>> registrykey = p_243607_2_.func_243622_a();
        boolean flag = !registrykey.equals(Registry.field_243549_ar) && !registrykey.equals(Registry.field_239698_ad_);
@@ -14,7 +22,7 @@
        DataResult<SimpleRegistry<E>> dataresult = p_243610_0_.func_241797_a_(simpleregistry, p_243610_2_.func_243622_a(), p_243610_2_.func_243623_b());
        dataresult.error().ifPresent((p_243603_0_) -> {
 -         field_243598_a.error("Error loading registry data: {}", (Object)p_243603_0_.message());
-+         field_243598_a.error(com.mohistmc.util.i18n.i18n.get("dynamicregistries.1", (Object)p_243603_0_.message()));
++         field_243598_a.error(i18n.get("dynamicregistries.1", (Object)p_243603_0_.message()));
        });
     }
  

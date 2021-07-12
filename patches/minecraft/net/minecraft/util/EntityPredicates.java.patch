@@ -11,184 +11,25 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.LivingEntity;
  import net.minecraft.entity.player.PlayerEntity;
-@@ -12,89 +_,95 @@
- import net.minecraft.world.Difficulty;
+@@ -30,6 +_,12 @@
+       return !p_233587_0_.func_175149_v();
+    };
  
- public final class EntityPredicates {
--   public static final Predicate<Entity> field_94557_a = Entity::func_70089_S;
--   public static final Predicate<LivingEntity> field_212545_b = LivingEntity::func_70089_S;
--   public static final Predicate<Entity> field_152785_b = (p_200821_0_) -> {
--      return p_200821_0_.func_70089_S() && !p_200821_0_.func_184207_aI() && !p_200821_0_.func_184218_aH();
--   };
--   public static final Predicate<Entity> field_96566_b = (p_200822_0_) -> {
--      return p_200822_0_ instanceof IInventory && p_200822_0_.func_70089_S();
--   };
--   public static final Predicate<Entity> field_188444_d = (p_200824_0_) -> {
--      return !(p_200824_0_ instanceof PlayerEntity) || !p_200824_0_.func_175149_v() && !((PlayerEntity)p_200824_0_).func_184812_l_();
--   };
--   public static final Predicate<Entity> field_233583_f_ = (p_200818_0_) -> {
--      return !(p_200818_0_ instanceof PlayerEntity) || !p_200818_0_.func_175149_v() && !((PlayerEntity)p_200818_0_).func_184812_l_() && p_200818_0_.field_70170_p.func_175659_aa() != Difficulty.PEACEFUL;
--   };
--   public static final Predicate<Entity> field_180132_d = (p_233587_0_) -> {
--      return !p_233587_0_.func_175149_v();
--   };
--
--   public static Predicate<Entity> func_188443_a(double p_188443_0_, double p_188443_2_, double p_188443_4_, double p_188443_6_) {
--      double d0 = p_188443_6_ * p_188443_6_;
--      return (p_233584_8_) -> {
--         return p_233584_8_ != null && p_233584_8_.func_70092_e(p_188443_0_, p_188443_2_, p_188443_4_) <= d0;
--      };
--   }
--
--   public static Predicate<Entity> func_200823_a(Entity p_200823_0_) {
--      Team team = p_200823_0_.func_96124_cp();
--      Team.CollisionRule team$collisionrule = team == null ? Team.CollisionRule.ALWAYS : team.func_186681_k();
--      return (Predicate<Entity>)(team$collisionrule == Team.CollisionRule.NEVER ? Predicates.alwaysFalse() : field_180132_d.and((p_233586_3_) -> {
--         if (!p_233586_3_.func_70104_M()) {
--            return false;
--         } else if (!p_200823_0_.field_70170_p.field_72995_K || p_233586_3_ instanceof PlayerEntity && ((PlayerEntity)p_233586_3_).func_175144_cb()) {
--            Team team1 = p_233586_3_.func_96124_cp();
--            Team.CollisionRule team$collisionrule1 = team1 == null ? Team.CollisionRule.ALWAYS : team1.func_186681_k();
--            if (team$collisionrule1 == Team.CollisionRule.NEVER) {
--               return false;
--            } else {
--               boolean flag = team != null && team.func_142054_a(team1);
--               if ((team$collisionrule == Team.CollisionRule.PUSH_OWN_TEAM || team$collisionrule1 == Team.CollisionRule.PUSH_OWN_TEAM) && flag) {
--                  return false;
--               } else {
--                  return team$collisionrule != Team.CollisionRule.PUSH_OTHER_TEAMS && team$collisionrule1 != Team.CollisionRule.PUSH_OTHER_TEAMS || flag;
--               }
--            }
--         } else {
--            return false;
--         }
--      }));
--   }
--
--   public static Predicate<Entity> func_200820_b(Entity p_200820_0_) {
--      return (p_233585_1_) -> {
--         while(true) {
--            if (p_233585_1_.func_184218_aH()) {
--               p_233585_1_ = p_233585_1_.func_184187_bx();
--               if (p_233585_1_ != p_200820_0_) {
--                  continue;
--               }
--
--               return false;
--            }
--
--            return true;
--         }
--      };
--   }
--
--   public static class ArmoredMob implements Predicate<Entity> {
--      private final ItemStack field_96567_c;
--
--      public ArmoredMob(ItemStack p_i1584_1_) {
--         this.field_96567_c = p_i1584_1_;
--      }
--
--      public boolean test(@Nullable Entity p_test_1_) {
--         if (!p_test_1_.func_70089_S()) {
--            return false;
--         } else if (!(p_test_1_ instanceof LivingEntity)) {
--            return false;
--         } else {
--            LivingEntity livingentity = (LivingEntity)p_test_1_;
--            return livingentity.func_213365_e(this.field_96567_c);
--         }
--      }
--   }
-+    public static final Predicate<Entity> field_94557_a = Entity::func_70089_S;
-+    public static final Predicate<LivingEntity> field_212545_b = LivingEntity::func_70089_S;
-+    public static final Predicate<Entity> field_152785_b = (p_200821_0_) -> {
-+        return p_200821_0_.func_70089_S() && !p_200821_0_.func_184207_aI() && !p_200821_0_.func_184218_aH();
-+    };
-+    public static final Predicate<Entity> field_96566_b = (p_200822_0_) -> {
-+        return p_200822_0_ instanceof IInventory && p_200822_0_.func_70089_S();
-+    };
-+    public static final Predicate<Entity> field_188444_d = (p_200824_0_) -> {
-+        return !(p_200824_0_ instanceof PlayerEntity) || !p_200824_0_.func_175149_v() && !((PlayerEntity) p_200824_0_).func_184812_l_();
-+    };
-+    public static final Predicate<Entity> field_233583_f_ = (p_200818_0_) -> {
-+        return !(p_200818_0_ instanceof PlayerEntity) || !p_200818_0_.func_175149_v() && !((PlayerEntity) p_200818_0_).func_184812_l_() && p_200818_0_.field_70170_p.func_175659_aa() != Difficulty.PEACEFUL;
-+    };
-+    public static final Predicate<Entity> field_180132_d = (p_233587_0_) -> {
-+        return !p_233587_0_.func_175149_v();
-+    };
-+
 +    // Paper start
 +    public static final Predicate<Entity> affectsSpawning = (entity) -> {
 +        return !entity.func_175149_v() && entity.func_70089_S() && (entity instanceof PlayerEntity) && ((PlayerEntity) entity).affectsSpawning;
 +    };
 +    // Paper end
 +
-+    public static Predicate<Entity> func_188443_a(double p_188443_0_, double p_188443_2_, double p_188443_4_, double p_188443_6_) {
-+        double d0 = p_188443_6_ * p_188443_6_;
-+        return (p_233584_8_) -> {
-+            return p_233584_8_ != null && p_233584_8_.func_70092_e(p_188443_0_, p_188443_2_, p_188443_4_) <= d0;
-+        };
-+    }
-+
-+    public static Predicate<Entity> func_200823_a(Entity p_200823_0_) {
-+        Team team = p_200823_0_.func_96124_cp();
-+        Team.CollisionRule team$collisionrule = team == null ? Team.CollisionRule.ALWAYS : team.func_186681_k();
-+        return (Predicate<Entity>) (team$collisionrule == Team.CollisionRule.NEVER ? Predicates.alwaysFalse() : field_180132_d.and((p_233586_3_) -> {
-+            if (!p_233586_3_.canCollideWithCB(p_200823_0_) || !p_200823_0_.canCollideWithCB(p_233586_3_)) { // CraftBukkit - collidable API
-+                return false;
-+            } else if (!p_200823_0_.field_70170_p.field_72995_K || p_233586_3_ instanceof PlayerEntity && ((PlayerEntity) p_233586_3_).func_175144_cb()) {
-+                Team team1 = p_233586_3_.func_96124_cp();
-+                Team.CollisionRule team$collisionrule1 = team1 == null ? Team.CollisionRule.ALWAYS : team1.func_186681_k();
-+                if (team$collisionrule1 == Team.CollisionRule.NEVER) {
-+                    return false;
-+                } else {
-+                    boolean flag = team != null && team.func_142054_a(team1);
-+                    if ((team$collisionrule == Team.CollisionRule.PUSH_OWN_TEAM || team$collisionrule1 == Team.CollisionRule.PUSH_OWN_TEAM) && flag) {
-+                        return false;
-+                    } else {
-+                        return team$collisionrule != Team.CollisionRule.PUSH_OTHER_TEAMS && team$collisionrule1 != Team.CollisionRule.PUSH_OTHER_TEAMS || flag;
-+                    }
-+                }
-+            } else {
-+                return false;
-+            }
-+        }));
-+    }
-+
-+    public static Predicate<Entity> func_200820_b(Entity p_200820_0_) {
-+        return (p_233585_1_) -> {
-+            while (true) {
-+                if (p_233585_1_.func_184218_aH()) {
-+                    p_233585_1_ = p_233585_1_.func_184187_bx();
-+                    if (p_233585_1_ != p_200820_0_) {
-+                        continue;
-+                    }
-+
-+                    return false;
-+                }
-+
-+                return true;
-+            }
-+        };
-+    }
-+
-+    public static class ArmoredMob implements Predicate<Entity> {
-+        private final ItemStack field_96567_c;
-+
-+        public ArmoredMob(ItemStack p_i1584_1_) {
-+            this.field_96567_c = p_i1584_1_;
-+        }
-+
-+        public boolean test(@Nullable Entity p_test_1_) {
-+            if (!p_test_1_.func_70089_S()) {
-+                return false;
-+            } else if (!(p_test_1_ instanceof LivingEntity)) {
-+                return false;
-+            } else {
-+                LivingEntity livingentity = (LivingEntity) p_test_1_;
-+                return livingentity.func_213365_e(this.field_96567_c);
-+            }
-+        }
-+    }
- }
+    public static Predicate<Entity> func_188443_a(double p_188443_0_, double p_188443_2_, double p_188443_4_, double p_188443_6_) {
+       double d0 = p_188443_6_ * p_188443_6_;
+       return (p_233584_8_) -> {
+@@ -41,7 +_,7 @@
+       Team team = p_200823_0_.func_96124_cp();
+       Team.CollisionRule team$collisionrule = team == null ? Team.CollisionRule.ALWAYS : team.func_186681_k();
+       return (Predicate<Entity>)(team$collisionrule == Team.CollisionRule.NEVER ? Predicates.alwaysFalse() : field_180132_d.and((p_233586_3_) -> {
+-         if (!p_233586_3_.func_70104_M()) {
++         if (!p_233586_3_.canCollideWithCB(p_200823_0_) || !p_200823_0_.canCollideWithCB(p_233586_3_)) { // CraftBukkit - collidable API
+             return false;
+          } else if (!p_200823_0_.field_70170_p.field_72995_K || p_233586_3_ instanceof PlayerEntity && ((PlayerEntity)p_233586_3_).func_175144_cb()) {
+             Team team1 = p_233586_3_.func_96124_cp();

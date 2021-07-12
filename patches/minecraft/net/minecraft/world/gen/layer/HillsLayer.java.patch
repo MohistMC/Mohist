@@ -1,11 +1,18 @@
 --- a/net/minecraft/world/gen/layer/HillsLayer.java
 +++ b/net/minecraft/world/gen/layer/HillsLayer.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.gen.layer;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import it.unimi.dsi.fastutil.ints.Int2IntMap;
+ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+ import net.minecraft.util.Util;
 @@ -42,7 +_,7 @@
        int i = p_215723_2_.func_202678_a(this.func_215721_a(p_215723_4_ + 1), this.func_215722_b(p_215723_5_ + 1));
        int j = p_215723_3_.func_202678_a(this.func_215721_a(p_215723_4_ + 1), this.func_215722_b(p_215723_5_ + 1));
        if (i > 255) {
 -         field_151629_c.debug("old! {}", (int)i);
-+         field_151629_c.debug(com.mohistmc.util.i18n.i18n.get("hillslayer.1", (int)i));
++         field_151629_c.debug(i18n.get("hillslayer.1", (int)i));
        }
  
        int k = (j - 2) % 29;

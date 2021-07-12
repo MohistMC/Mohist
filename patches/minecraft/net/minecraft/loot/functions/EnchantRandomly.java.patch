@@ -1,11 +1,19 @@
 --- a/net/minecraft/loot/functions/EnchantRandomly.java
 +++ b/net/minecraft/loot/functions/EnchantRandomly.java
+@@ -10,6 +_,7 @@
+ import com.google.gson.JsonPrimitive;
+ import com.google.gson.JsonSerializationContext;
+ import com.google.gson.JsonSyntaxException;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Collection;
+ import java.util.List;
+ import java.util.Random;
 @@ -53,7 +_,7 @@
              return flag || p_237421_2_.func_92089_a(p_215859_1_);
           }).collect(Collectors.toList());
           if (list.isEmpty()) {
 -            field_186557_a.warn("Couldn't find a compatible enchantment for {}", (Object)p_215859_1_);
-+            field_186557_a.warn(com.mohistmc.util.i18n.i18n.get("enchantrandomly.1", (Object)p_215859_1_));
++            field_186557_a.warn(i18n.get("enchantrandomly.1", (Object)p_215859_1_));
              return p_215859_1_;
           }
  

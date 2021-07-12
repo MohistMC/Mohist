@@ -1,11 +1,18 @@
 --- a/net/minecraft/util/text/SelectorTextComponent.java
 +++ b/net/minecraft/util/text/SelectorTextComponent.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.util.text;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.brigadier.StringReader;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import javax.annotation.Nullable;
 @@ -24,7 +_,7 @@
           EntitySelectorParser entityselectorparser = new EntitySelectorParser(new StringReader(p_i45996_1_));
           entityselector = entityselectorparser.func_201345_m();
        } catch (CommandSyntaxException commandsyntaxexception) {
 -         field_197669_b.warn("Invalid selector component: {}", p_i45996_1_, commandsyntaxexception.getMessage());
-+         field_197669_b.warn(com.mohistmc.util.i18n.i18n.get("selectortextcomponent.1", p_i45996_1_, commandsyntaxexception.getMessage()));
++         field_197669_b.warn(i18n.get("selectortextcomponent.1", p_i45996_1_, commandsyntaxexception.getMessage()));
        }
  
        this.field_197670_d = entityselector;

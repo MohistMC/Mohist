@@ -1,11 +1,18 @@
 --- a/net/minecraft/util/datafix/fixes/LevelUUID.java
 +++ b/net/minecraft/util/datafix/fixes/LevelUUID.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.util.datafix.fixes;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.DSL;
+ import com.mojang.datafixers.TypeRewriteRule;
+ import com.mojang.datafixers.schemas.Schema;
 @@ -46,7 +_,7 @@
                 return p_233317_0_.update("Players", (p_233310_1_) -> {
                    return p_233317_0_.createList(p_233310_1_.asStream().map((p_233318_0_) -> {
                       return func_233054_a_(p_233318_0_).orElseGet(() -> {
 -                        field_233051_a_.warn("CustomBossEvents contains invalid UUIDs.");
-+                        field_233051_a_.warn(com.mohistmc.util.i18n.i18n.get("leveluuid.1"));
++                        field_233051_a_.warn(i18n.get("leveluuid.1"));
                          return p_233318_0_;
                       });
                    }));
