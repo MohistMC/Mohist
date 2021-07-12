@@ -1,19 +1,16 @@
 --- a/net/minecraft/network/PacketThreadUtil.java
 +++ b/net/minecraft/network/PacketThreadUtil.java
-@@ -1,6 +_,12 @@
+@@ -1,5 +_,9 @@
  package net.minecraft.network;
  
 +import co.aikar.timings.MinecraftTimings;
 +import co.aikar.timings.Timing;
 +import net.minecraft.network.play.ServerPlayNetHandler;
-+import net.minecraft.network.play.server.SDisconnectPacket;
 +import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.concurrent.ThreadTaskExecutor;
-+import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-@@ -14,9 +_,28 @@
+@@ -14,9 +_,13 @@
  
     public static <T extends INetHandler> void func_218797_a(IPacket<T> p_218797_0_, T p_218797_1_, ThreadTaskExecutor<?> p_218797_2_) throws ThreadQuickExitException {
        if (!p_218797_2_.func_213162_bc()) {
@@ -24,21 +21,6 @@
 +               try (Timing ignored = timing.startTiming()) { // Paper - timings
                 p_218797_0_.func_148833_a(p_218797_1_);
 +               } // Paper - timings
-+               // Paper start
-+               catch (Exception e) {
-+                  NetworkManager networkmanager = p_218797_1_.func_147298_b();
-+                  if (networkmanager.getPlayer() != null) {
-+                     field_225384_a.error("Error whilst processing packet {} for {}[{}]", p_218797_0_, networkmanager.getPlayer().func_195047_I_(), networkmanager.func_74430_c(), e);
-+                  } else {
-+                     field_225384_a.error("Error whilst processing packet {} for connection from {}", p_218797_0_, networkmanager.func_74430_c(), e);
-+                  }
-+                  StringTextComponent error = new StringTextComponent("Packet processing error");
-+                  networkmanager.func_201058_a(new SDisconnectPacket(error), (future) -> {
-+                     networkmanager.func_150718_a(error);
-+                  });
-+                  networkmanager.func_150721_g();
-+               }
-+               // Paper end
              } else {
                 field_225384_a.debug("Ignoring packet due to disconnection: " + p_218797_0_);
              }

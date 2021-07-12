@@ -1,6 +1,10 @@
 --- a/net/minecraft/item/ItemStack.java
 +++ b/net/minecraft/item/ItemStack.java
-@@ -7,20 +_,23 @@
+@@ -4,23 +_,27 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Multimap;
+ import com.google.gson.JsonParseException;
++import com.mohistmc.util.i18n.i18n;
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
  import com.mojang.serialization.Codec;
@@ -42,64 +46,96 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.text.IFormattableTextComponent;
-@@ -71,910 +_,1056 @@
+@@ -71,8 +_,11 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
--
++import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
++import org.bukkit.event.player.PlayerItemDamageEvent;
+ 
 -public final class ItemStack {
--   public static final Codec<ItemStack> field_234691_a_ = RecordCodecBuilder.create((p_234698_0_) -> {
--      return p_234698_0_.group(Registry.field_212630_s.fieldOf("id").forGetter((p_234706_0_) -> {
--         return p_234706_0_.field_151002_e;
--      }), Codec.INT.fieldOf("Count").forGetter((p_234705_0_) -> {
--         return p_234705_0_.field_77994_a;
--      }), CompoundNBT.field_240597_a_.optionalFieldOf("tag").forGetter((p_234704_0_) -> {
--         return Optional.ofNullable(p_234704_0_.field_77990_d);
--      })).apply(p_234698_0_, ItemStack::new);
--   });
--   private static final Logger field_199558_c = LogManager.getLogger();
--   public static final ItemStack field_190927_a = new ItemStack((Item)null);
--   public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
--      p_234699_0_.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ROOT));
--   });
--   private static final Style field_234692_e_ = Style.field_240709_b_.func_240712_a_(TextFormatting.DARK_PURPLE).func_240722_b_(true);
--   private int field_77994_a;
--   private int field_77992_b;
--   @Deprecated
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
+    public static final Codec<ItemStack> field_234691_a_ = RecordCodecBuilder.create((p_234698_0_) -> {
+       return p_234698_0_.group(Registry.field_212630_s.fieldOf("id").forGetter((p_234706_0_) -> {
+          return p_234706_0_.field_151002_e;
+@@ -82,6 +_,9 @@
+          return Optional.ofNullable(p_234704_0_.field_77990_d);
+       })).apply(p_234698_0_, ItemStack::new);
+    });
++   private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
++   private CompoundNBT capNBT;
++
+    private static final Logger field_199558_c = LogManager.getLogger();
+    public static final ItemStack field_190927_a = new ItemStack((Item)null);
+    public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
+@@ -91,7 +_,7 @@
+    private int field_77994_a;
+    private int field_77992_b;
+    @Deprecated
 -   private final Item field_151002_e;
--   private CompoundNBT field_77990_d;
--   private boolean field_190928_g;
--   private Entity field_234693_k_;
--   private CachedBlockInfo field_179552_h;
--   private boolean field_179553_i;
--   private CachedBlockInfo field_179550_j;
--   private boolean field_179551_k;
--
--   public ItemStack(IItemProvider p_i48203_1_) {
--      this(p_i48203_1_, 1);
--   }
--
--   private ItemStack(IItemProvider p_i231596_1_, int p_i231596_2_, Optional<CompoundNBT> p_i231596_3_) {
--      this(p_i231596_1_, p_i231596_2_);
--      p_i231596_3_.ifPresent(this::func_77982_d);
--   }
--
++   private Item field_151002_e;
+    private CompoundNBT field_77990_d;
+    private boolean field_190928_g;
+    private Entity field_234693_k_;
+@@ -109,41 +_,69 @@
+       p_i231596_3_.ifPresent(this::func_77982_d);
+    }
+ 
 -   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) {
--      this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
--      this.field_77994_a = p_i48204_2_;
++   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) { this(p_i48204_1_, p_i48204_2_, (CompoundNBT) null); }
++   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable CompoundNBT capNBT) {
++      super(ItemStack.class);
++      this.capNBT = capNBT;
+       this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
++      this.delegate = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j().delegate;
+       this.field_77994_a = p_i48204_2_;
 -      if (this.field_151002_e != null && this.field_151002_e.func_77645_m()) {
--         this.func_196085_b(this.func_77952_i());
--      }
--
--      this.func_190923_F();
++      if (this.field_151002_e != null && this.field_151002_e.isDamageable(this)) {
+          this.func_196085_b(this.func_77952_i());
+       }
+ 
+       this.func_190923_F();
 -   }
--
--   private void func_190923_F() {
--      this.field_190928_g = false;
--      this.field_190928_g = this.func_190926_b();
--   }
--
--   private ItemStack(CompoundNBT p_i47263_1_) {
++      this.forgeInit();
++   }
++
++   // CraftBukkit start - Called to run this stack through the data converter to handle older storage methods and serialized items
++   public void convertStack(int version) {
++      if (version > 0 && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
++         CompoundNBT savedStack = new CompoundNBT();
++         this.func_77955_b(savedStack);
++         savedStack = (CompoundNBT) MinecraftServer.getServer().field_184112_s.update(TypeReferences.field_211295_k, new Dynamic<>(NBTDynamicOps.field_210820_a, savedStack), version, CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();
++         this.load(savedStack);
++      }
++   }
++   // CraftBukkit end
+ 
+    private void func_190923_F() {
+       this.field_190928_g = false;
+       this.field_190928_g = this.func_190926_b();
+    }
+ 
++   // CraftBukkit start - break into own method
++   private void load(CompoundNBT compound) {
++      this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
++      Item rawItem =
++      this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(compound.func_74779_i("id")));
++      this.delegate = rawItem.delegate;
++      this.field_77994_a = compound.func_74771_c("Count");
++      if (compound.func_150297_b("tag", 10)) {
++         // CraftBukkit start - make defensive copy as this data may be coming from the save thread
++         this.field_77990_d = compound.func_74775_l("tag").func_74737_b();
++         this.func_77973_b().func_179215_a(this.field_77990_d);
++         // CraftBukkit end
++      }
++
++      if (this.func_77973_b().func_77645_m()) {
++         this.func_196085_b(this.func_77952_i());
++      }
++   }
++
+    private ItemStack(CompoundNBT p_i47263_1_) {
 -      this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
 -      this.field_77994_a = p_i47263_1_.func_74771_c("Count");
 -      if (p_i47263_1_.func_150297_b("tag", 10)) {
@@ -111,830 +147,202 @@
 -         this.func_196085_b(this.func_77952_i());
 -      }
 -
--      this.func_190923_F();
--   }
--
--   public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
--      try {
--         return new ItemStack(p_199557_0_);
--      } catch (RuntimeException runtimeexception) {
++      super(ItemStack.class);
++      this.load(p_i47263_1_);
++      // CraftBukkit stop
+       this.func_190923_F();
++      this.forgeInit();
+    }
+ 
+    public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
+       try {
+          return new ItemStack(p_199557_0_);
+       } catch (RuntimeException runtimeexception) {
 -         field_199558_c.debug("Tried to load invalid item: {}", p_199557_0_, runtimeexception);
--         return field_190927_a;
--      }
--   }
--
--   public boolean func_190926_b() {
--      if (this == field_190927_a) {
--         return true;
--      } else if (this.func_77973_b() != null && this.func_77973_b() != Items.field_190931_a) {
--         return this.field_77994_a <= 0;
--      } else {
--         return true;
--      }
--   }
--
--   public ItemStack func_77979_a(int p_77979_1_) {
--      int i = Math.min(p_77979_1_, this.field_77994_a);
--      ItemStack itemstack = this.func_77946_l();
--      itemstack.func_190920_e(i);
--      this.func_190918_g(i);
--      return itemstack;
--   }
--
--   public Item func_77973_b() {
++         field_199558_c.debug(com.mohistmc.util.i18n.i18n.get("itemstack.1", p_199557_0_, runtimeexception));
+          return field_190927_a;
+       }
+    }
+@@ -167,10 +_,23 @@
+    }
+ 
+    public Item func_77973_b() {
 -      return this.field_190928_g ? Items.field_190931_a : this.field_151002_e;
--   }
--
--   public ActionResultType func_196084_a(ItemUseContext p_196084_1_) {
--      PlayerEntity playerentity = p_196084_1_.func_195999_j();
--      BlockPos blockpos = p_196084_1_.func_195995_a();
--      CachedBlockInfo cachedblockinfo = new CachedBlockInfo(p_196084_1_.func_195991_k(), blockpos, false);
--      if (playerentity != null && !playerentity.field_71075_bZ.field_75099_e && !this.func_206847_b(p_196084_1_.func_195991_k().func_205772_D(), cachedblockinfo)) {
--         return ActionResultType.PASS;
--      } else {
--         Item item = this.func_77973_b();
++      return this.field_190928_g || this.delegate == null ? Items.field_190931_a : this.delegate.get();
+    }
+ 
+    public ActionResultType func_196084_a(ItemUseContext p_196084_1_) {
++      if (!p_196084_1_.func_195991_k().field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
++      return onItemUse(p_196084_1_, (c) -> func_77973_b().func_195939_a(p_196084_1_), p_196084_1_.func_221531_n());  // CraftBukkit - take hand
++   }
++
++   public ActionResultType onItemUseFirst(ItemUseContext p_196084_1_) {
++      return onItemUse(p_196084_1_, (c) -> func_77973_b().onItemUseFirst(this, p_196084_1_), p_196084_1_.func_221531_n());  // CraftBukkit - take hand
++   }
++
++   private ActionResultType onItemUse(ItemUseContext p_196084_1_, java.util.function.Function<ItemUseContext, ActionResultType> callback) {
++      return onItemUse(p_196084_1_, callback, p_196084_1_.func_221531_n());  // CraftBukkit - take hand
++   }
++
++   private ActionResultType onItemUse(ItemUseContext p_196084_1_, java.util.function.Function<ItemUseContext, ActionResultType> callback, Hand hand) { // CraftBukkit - add hand
+       PlayerEntity playerentity = p_196084_1_.func_195999_j();
+       BlockPos blockpos = p_196084_1_.func_195995_a();
+       CachedBlockInfo cachedblockinfo = new CachedBlockInfo(p_196084_1_.func_195991_k(), blockpos, false);
+@@ -178,7 +_,7 @@
+          return ActionResultType.PASS;
+       } else {
+          Item item = this.func_77973_b();
 -         ActionResultType actionresulttype = item.func_195939_a(p_196084_1_);
--         if (playerentity != null && actionresulttype.func_226246_a_()) {
--            playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(item));
--         }
++         ActionResultType actionresulttype = callback.apply(p_196084_1_);
+          if (playerentity != null && actionresulttype.func_226246_a_()) {
+             playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(item));
+          }
+@@ -206,12 +_,15 @@
+       if (this.field_77990_d != null) {
+          p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
+       }
 -
--         return actionresulttype;
--      }
--   }
--
--   public float func_150997_a(BlockState p_150997_1_) {
--      return this.func_77973_b().func_150893_a(this, p_150997_1_);
--   }
--
--   public ActionResult<ItemStack> func_77957_a(World p_77957_1_, PlayerEntity p_77957_2_, Hand p_77957_3_) {
--      return this.func_77973_b().func_77659_a(p_77957_1_, p_77957_2_, p_77957_3_);
--   }
--
--   public ItemStack func_77950_b(World p_77950_1_, LivingEntity p_77950_2_) {
--      return this.func_77973_b().func_77654_b(this, p_77950_1_, p_77950_2_);
--   }
--
--   public CompoundNBT func_77955_b(CompoundNBT p_77955_1_) {
--      ResourceLocation resourcelocation = Registry.field_212630_s.func_177774_c(this.func_77973_b());
--      p_77955_1_.func_74778_a("id", resourcelocation == null ? "minecraft:air" : resourcelocation.toString());
--      p_77955_1_.func_74774_a("Count", (byte)this.field_77994_a);
--      if (this.field_77990_d != null) {
--         p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
--      }
--
--      return p_77955_1_;
--   }
--
--   public int func_77976_d() {
++      CompoundNBT cnbt = this.serializeCaps();
++      if (cnbt != null && !cnbt.isEmpty()) {
++         p_77955_1_.func_218657_a("ForgeCaps", cnbt);
++      }
+       return p_77955_1_;
+    }
+ 
+    public int func_77976_d() {
 -      return this.func_77973_b().func_77639_j();
--   }
--
--   public boolean func_77985_e() {
--      return this.func_77976_d() > 1 && (!this.func_77984_f() || !this.func_77951_h());
--   }
--
--   public boolean func_77984_f() {
++      return this.func_77973_b().getItemStackLimit(this);
+    }
+ 
+    public boolean func_77985_e() {
+@@ -219,7 +_,7 @@
+    }
+ 
+    public boolean func_77984_f() {
 -      if (!this.field_190928_g && this.func_77973_b().func_77612_l() > 0) {
--         CompoundNBT compoundnbt = this.func_77978_p();
--         return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
--      } else {
--         return false;
--      }
--   }
--
--   public boolean func_77951_h() {
++      if (!this.field_190928_g && this.func_77973_b().isDamageable(this)) {
+          CompoundNBT compoundnbt = this.func_77978_p();
+          return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
+       } else {
+@@ -228,19 +_,19 @@
+    }
+ 
+    public boolean func_77951_h() {
 -      return this.func_77984_f() && this.func_77952_i() > 0;
--   }
--
--   public int func_77952_i() {
++      return this.func_77984_f() && func_77973_b().isDamaged(this);
+    }
+ 
+    public int func_77952_i() {
 -      return this.field_77990_d == null ? 0 : this.field_77990_d.func_74762_e("Damage");
--   }
--
--   public void func_196085_b(int p_196085_1_) {
++      return this.func_77973_b().getDamage(this);
+    }
+ 
+    public void func_196085_b(int p_196085_1_) {
 -      this.func_196082_o().func_74768_a("Damage", Math.max(0, p_196085_1_));
--   }
--
--   public int func_77958_k() {
++      this.func_77973_b().setDamage(this, p_196085_1_);
+    }
+ 
+    public int func_77958_k() {
 -      return this.func_77973_b().func_77612_l();
--   }
--
--   public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
--      if (!this.func_77984_f()) {
--         return false;
--      } else {
--         if (p_96631_1_ > 0) {
--            int i = EnchantmentHelper.func_77506_a(Enchantments.field_185307_s, this);
--            int j = 0;
--
--            for(int k = 0; i > 0 && k < p_96631_1_; ++k) {
--               if (UnbreakingEnchantment.func_92097_a(this, i, p_96631_2_)) {
--                  ++j;
--               }
--            }
--
--            p_96631_1_ -= j;
--            if (p_96631_1_ <= 0) {
--               return false;
--            }
--         }
--
--         if (p_96631_3_ != null && p_96631_1_ != 0) {
--            CriteriaTriggers.field_193132_s.func_193158_a(p_96631_3_, this, this.func_77952_i() + p_96631_1_);
--         }
--
--         int l = this.func_77952_i() + p_96631_1_;
--         this.func_196085_b(l);
--         return l >= this.func_77958_k();
--      }
--   }
--
--   public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
--      if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
--         if (this.func_77984_f()) {
--            if (this.func_96631_a(p_222118_1_, p_222118_2_.func_70681_au(), p_222118_2_ instanceof ServerPlayerEntity ? (ServerPlayerEntity)p_222118_2_ : null)) {
--               p_222118_3_.accept(p_222118_2_);
--               Item item = this.func_77973_b();
--               this.func_190918_g(1);
--               if (p_222118_2_ instanceof PlayerEntity) {
--                  ((PlayerEntity)p_222118_2_).func_71029_a(Stats.field_199088_e.func_199076_b(item));
--               }
--
--               this.func_196085_b(0);
--            }
--
--         }
--      }
--   }
--
--   public void func_77961_a(LivingEntity p_77961_1_, PlayerEntity p_77961_2_) {
--      Item item = this.func_77973_b();
--      if (item.func_77644_a(this, p_77961_1_, p_77961_2_)) {
--         p_77961_2_.func_71029_a(Stats.field_75929_E.func_199076_b(item));
--      }
--
--   }
--
--   public void func_179548_a(World p_179548_1_, BlockState p_179548_2_, BlockPos p_179548_3_, PlayerEntity p_179548_4_) {
--      Item item = this.func_77973_b();
--      if (item.func_179218_a(this, p_179548_1_, p_179548_2_, p_179548_3_, p_179548_4_)) {
--         p_179548_4_.func_71029_a(Stats.field_75929_E.func_199076_b(item));
--      }
--
--   }
--
--   public boolean func_150998_b(BlockState p_150998_1_) {
--      return this.func_77973_b().func_150897_b(p_150998_1_);
--   }
--
--   public ActionResultType func_111282_a_(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
--      return this.func_77973_b().func_111207_a(this, p_111282_1_, p_111282_2_, p_111282_3_);
--   }
--
--   public ItemStack func_77946_l() {
--      if (this.func_190926_b()) {
--         return field_190927_a;
--      } else {
--         ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a);
--         itemstack.func_190915_d(this.func_190921_D());
--         if (this.field_77990_d != null) {
--            itemstack.field_77990_d = this.field_77990_d.func_74737_b();
--         }
--
--         return itemstack;
--      }
--   }
--
--   public static boolean func_77970_a(ItemStack p_77970_0_, ItemStack p_77970_1_) {
--      if (p_77970_0_.func_190926_b() && p_77970_1_.func_190926_b()) {
--         return true;
--      } else if (!p_77970_0_.func_190926_b() && !p_77970_1_.func_190926_b()) {
--         if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
--            return false;
--         } else {
--            return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
--         }
--      } else {
--         return false;
--      }
--   }
--
--   public static boolean func_77989_b(ItemStack p_77989_0_, ItemStack p_77989_1_) {
--      if (p_77989_0_.func_190926_b() && p_77989_1_.func_190926_b()) {
--         return true;
--      } else {
--         return !p_77989_0_.func_190926_b() && !p_77989_1_.func_190926_b() ? p_77989_0_.func_77959_d(p_77989_1_) : false;
--      }
--   }
--
--   private boolean func_77959_d(ItemStack p_77959_1_) {
--      if (this.field_77994_a != p_77959_1_.field_77994_a) {
--         return false;
--      } else if (this.func_77973_b() != p_77959_1_.func_77973_b()) {
--         return false;
--      } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
--         return false;
--      } else {
--         return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
--      }
--   }
--
--   public static boolean func_179545_c(ItemStack p_179545_0_, ItemStack p_179545_1_) {
--      if (p_179545_0_ == p_179545_1_) {
--         return true;
--      } else {
--         return !p_179545_0_.func_190926_b() && !p_179545_1_.func_190926_b() ? p_179545_0_.func_77969_a(p_179545_1_) : false;
--      }
--   }
--
--   public static boolean func_185132_d(ItemStack p_185132_0_, ItemStack p_185132_1_) {
--      if (p_185132_0_ == p_185132_1_) {
--         return true;
--      } else {
--         return !p_185132_0_.func_190926_b() && !p_185132_1_.func_190926_b() ? p_185132_0_.func_185136_b(p_185132_1_) : false;
--      }
--   }
--
--   public boolean func_77969_a(ItemStack p_77969_1_) {
--      return !p_77969_1_.func_190926_b() && this.func_77973_b() == p_77969_1_.func_77973_b();
--   }
--
--   public boolean func_185136_b(ItemStack p_185136_1_) {
--      if (!this.func_77984_f()) {
--         return this.func_77969_a(p_185136_1_);
--      } else {
--         return !p_185136_1_.func_190926_b() && this.func_77973_b() == p_185136_1_.func_77973_b();
--      }
--   }
--
--   public String func_77977_a() {
--      return this.func_77973_b().func_77667_c(this);
--   }
--
--   public String toString() {
--      return this.field_77994_a + " " + this.func_77973_b();
--   }
--
--   public void func_77945_a(World p_77945_1_, Entity p_77945_2_, int p_77945_3_, boolean p_77945_4_) {
--      if (this.field_77992_b > 0) {
--         --this.field_77992_b;
--      }
--
--      if (this.func_77973_b() != null) {
--         this.func_77973_b().func_77663_a(this, p_77945_1_, p_77945_2_, p_77945_3_, p_77945_4_);
--      }
--
--   }
--
--   public void func_77980_a(World p_77980_1_, PlayerEntity p_77980_2_, int p_77980_3_) {
--      p_77980_2_.func_71064_a(Stats.field_188066_af.func_199076_b(this.func_77973_b()), p_77980_3_);
--      this.func_77973_b().func_77622_d(this, p_77980_1_, p_77980_2_);
--   }
--
--   public int func_77988_m() {
--      return this.func_77973_b().func_77626_a(this);
--   }
--
--   public UseAction func_77975_n() {
--      return this.func_77973_b().func_77661_b(this);
--   }
--
--   public void func_77974_b(World p_77974_1_, LivingEntity p_77974_2_, int p_77974_3_) {
--      this.func_77973_b().func_77615_a(this, p_77974_1_, p_77974_2_, p_77974_3_);
--   }
--
--   public boolean func_222122_m() {
--      return this.func_77973_b().func_219970_i(this);
--   }
--
--   public boolean func_77942_o() {
--      return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
--   }
--
--   @Nullable
--   public CompoundNBT func_77978_p() {
--      return this.field_77990_d;
--   }
--
--   public CompoundNBT func_196082_o() {
--      if (this.field_77990_d == null) {
--         this.func_77982_d(new CompoundNBT());
--      }
--
--      return this.field_77990_d;
--   }
--
--   public CompoundNBT func_190925_c(String p_190925_1_) {
--      if (this.field_77990_d != null && this.field_77990_d.func_150297_b(p_190925_1_, 10)) {
--         return this.field_77990_d.func_74775_l(p_190925_1_);
--      } else {
--         CompoundNBT compoundnbt = new CompoundNBT();
--         this.func_77983_a(p_190925_1_, compoundnbt);
--         return compoundnbt;
--      }
--   }
--
--   @Nullable
--   public CompoundNBT func_179543_a(String p_179543_1_) {
--      return this.field_77990_d != null && this.field_77990_d.func_150297_b(p_179543_1_, 10) ? this.field_77990_d.func_74775_l(p_179543_1_) : null;
--   }
--
--   public void func_196083_e(String p_196083_1_) {
--      if (this.field_77990_d != null && this.field_77990_d.func_74764_b(p_196083_1_)) {
--         this.field_77990_d.func_82580_o(p_196083_1_);
--         if (this.field_77990_d.isEmpty()) {
-+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
-+import org.bukkit.event.player.PlayerItemDamageEvent;
-+
-+public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
-+    public static final Codec<ItemStack> field_234691_a_ = RecordCodecBuilder.create((p_234698_0_) -> {
-+        return p_234698_0_.group(Registry.field_212630_s.fieldOf("id").forGetter((p_234706_0_) -> {
-+            return p_234706_0_.field_151002_e;
-+        }), Codec.INT.fieldOf("Count").forGetter((p_234705_0_) -> {
-+            return p_234705_0_.field_77994_a;
-+        }), CompoundNBT.field_240597_a_.optionalFieldOf("tag").forGetter((p_234704_0_) -> {
-+            return Optional.ofNullable(p_234704_0_.field_77990_d);
-+        })).apply(p_234698_0_, ItemStack::new);
-+    });
-+    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
-+    private CompoundNBT capNBT;
-+
-+    private static final Logger field_199558_c = LogManager.getLogger();
-+    public static final ItemStack field_190927_a = new ItemStack((Item) null);
-+    public static final ItemStack NULL_ITEM = field_190927_a; // Paper - OBFHELPER
-+    public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
-+        p_234699_0_.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ROOT));
-+    });
-+    private static final Style field_234692_e_ = Style.field_240709_b_.func_240712_a_(TextFormatting.DARK_PURPLE).func_240722_b_(true);
-+    private int field_77994_a;
-+    private int field_77992_b;
-+    @Deprecated
-+    private Item field_151002_e;
-+    private CompoundNBT field_77990_d;
-+    private boolean field_190928_g;
-+    private Entity field_234693_k_;
-+    private CachedBlockInfo field_179552_h;
-+    private boolean field_179553_i;
-+    private CachedBlockInfo field_179550_j;
-+    private boolean field_179551_k;
-+
-+    public ItemStack(IItemProvider p_i48203_1_) {
-+        this(p_i48203_1_, 1);
-+    }
-+
-+    private ItemStack(IItemProvider p_i231596_1_, int p_i231596_2_, Optional<CompoundNBT> p_i231596_3_) {
-+        this(p_i231596_1_, p_i231596_2_);
-+        p_i231596_3_.ifPresent(this::func_77982_d);
-+    }
-+
-+    public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) {
-+        this(p_i48204_1_, p_i48204_2_, (CompoundNBT) null);
-+    }
-+
-+    public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable CompoundNBT capNBT) {
-+        super(ItemStack.class);
-+        this.capNBT = capNBT;
-+        this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
-+        this.delegate = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j().delegate;
-+        this.field_77994_a = p_i48204_2_;
-+        if (this.field_151002_e != null && this.field_151002_e.isDamageable(this)) {
-+            this.func_196085_b(this.func_77952_i());
-+        }
-+
-+        this.func_190923_F();
-+        this.forgeInit();
-+    }
-+
-+    // CraftBukkit start - Called to run this stack through the data converter to handle older storage methods and serialized items
-+    public void convertStack(int version) {
-+        if (version > 0 && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
-+            CompoundNBT savedStack = new CompoundNBT();
-+            this.func_77955_b(savedStack);
-+            savedStack = (CompoundNBT) MinecraftServer.getServer().field_184112_s.update(TypeReferences.field_211295_k, new Dynamic<>(NBTDynamicOps.field_210820_a, savedStack), version, CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();
-+            this.load(savedStack);
-+        }
-+    }
-+    // CraftBukkit end
-+
-+    private void func_190923_F() {
-+        this.field_190928_g = false;
-+        this.field_190928_g = this.func_190926_b();
-+    }
-+
-+    // CraftBukkit start - break into own method
-+    private void load(CompoundNBT compound) {
-+        this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
-+        Item rawItem =
-+                this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(compound.func_74779_i("id")));
-+        this.delegate = rawItem.delegate;
-+        this.field_77994_a = compound.func_74771_c("Count");
-+        if (compound.func_150297_b("tag", 10)) {
-+            // CraftBukkit start - make defensive copy as this data may be coming from the save thread
-+            this.field_77990_d = compound.func_74775_l("tag").func_74737_b();
-+            this.func_77973_b().func_179215_a(this.field_77990_d);
++      return this.func_77973_b().getMaxDamage(this);
+    }
+ 
+    public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
+@@ -258,6 +_,19 @@
+             }
+ 
+             p_96631_1_ -= j;
++            // CraftBukkit start
++            if (p_96631_3_ != null) {
++               PlayerItemDamageEvent event = new PlayerItemDamageEvent(p_96631_3_.getBukkitEntity(), CraftItemStack.asCraftMirror(this), p_96631_1_);
++               event.getPlayer().getServer().getPluginManager().callEvent(event);
++               if (p_96631_1_ != event.getDamage() || event.isCancelled()) {
++                  event.getPlayer().updateInventory();
++               }
++               if (event.isCancelled()) {
++                  return false;
++               }
++               p_96631_1_ = event.getDamage();
++            }
 +            // CraftBukkit end
-+        }
-+
-+        if (this.func_77973_b().func_77645_m()) {
-+            this.func_196085_b(this.func_77952_i());
-+        }
-+    }
-+
-+    private ItemStack(CompoundNBT p_i47263_1_) {
-+        super(ItemStack.class);
-+        this.load(p_i47263_1_);
-+        // CraftBukkit stop
-+        this.func_190923_F();
-+        this.forgeInit();
-+    }
-+
-+    public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
-+        try {
-+            return new ItemStack(p_199557_0_);
-+        } catch (RuntimeException runtimeexception) {
-+            field_199558_c.debug(com.mohistmc.util.i18n.i18n.get("itemstack.1", p_199557_0_, runtimeexception));
-+            return field_190927_a;
-+        }
-+    }
-+
-+    public boolean func_190926_b() {
-+        if (this == field_190927_a) {
-+            return true;
-+        } else if (this.func_77973_b() != null && this.func_77973_b() != Items.field_190931_a) {
-+            return this.field_77994_a <= 0;
-+        } else {
-+            return true;
-+        }
-+    }
-+
-+    public ItemStack func_77979_a(int p_77979_1_) {
-+        int i = Math.min(p_77979_1_, this.field_77994_a);
-+        ItemStack itemstack = this.func_77946_l();
-+        itemstack.func_190920_e(i);
-+        this.func_190918_g(i);
-+        return itemstack;
-+    }
-+
-+    public Item func_77973_b() {
-+        return this.field_190928_g || this.delegate == null ? Items.field_190931_a : this.delegate.get();
-+    }
-+
-+    public ActionResultType func_196084_a(ItemUseContext p_196084_1_) {
-+        if (!p_196084_1_.func_195991_k().field_72995_K)
-+            return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
-+        return onItemUse(p_196084_1_, (c) -> func_77973_b().func_195939_a(p_196084_1_), p_196084_1_.func_221531_n());  // CraftBukkit - take hand
-+    }
-+
-+    public ActionResultType onItemUseFirst(ItemUseContext p_196084_1_) {
-+        return onItemUse(p_196084_1_, (c) -> func_77973_b().onItemUseFirst(this, p_196084_1_), p_196084_1_.func_221531_n());  // CraftBukkit - take hand
-+    }
-+
-+    private ActionResultType onItemUse(ItemUseContext p_196084_1_, java.util.function.Function<ItemUseContext, ActionResultType> callback) {
-+        return onItemUse(p_196084_1_, callback, p_196084_1_.func_221531_n());  // CraftBukkit - take hand
-+    }
-+
-+    private ActionResultType onItemUse(ItemUseContext p_196084_1_, java.util.function.Function<ItemUseContext, ActionResultType> callback, Hand hand) { // CraftBukkit - add hand
-+        PlayerEntity playerentity = p_196084_1_.func_195999_j();
-+        BlockPos blockpos = p_196084_1_.func_195995_a();
-+        CachedBlockInfo cachedblockinfo = new CachedBlockInfo(p_196084_1_.func_195991_k(), blockpos, false);
-+        if (playerentity != null && !playerentity.field_71075_bZ.field_75099_e && !this.func_206847_b(p_196084_1_.func_195991_k().func_205772_D(), cachedblockinfo)) {
-+            return ActionResultType.PASS;
-+        } else {
-+            Item item = this.func_77973_b();
-+            ActionResultType actionresulttype = callback.apply(p_196084_1_);
-+            if (playerentity != null && actionresulttype.func_226246_a_()) {
-+                playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(item));
-+            }
-+
-+            return actionresulttype;
-+        }
-+    }
-+
-+    public float func_150997_a(BlockState p_150997_1_) {
-+        return this.func_77973_b().func_150893_a(this, p_150997_1_);
-+    }
-+
-+    public ActionResult<ItemStack> func_77957_a(World p_77957_1_, PlayerEntity p_77957_2_, Hand p_77957_3_) {
-+        return this.func_77973_b().func_77659_a(p_77957_1_, p_77957_2_, p_77957_3_);
-+    }
-+
-+    public ItemStack func_77950_b(World p_77950_1_, LivingEntity p_77950_2_) {
-+        return this.func_77973_b().func_77654_b(this, p_77950_1_, p_77950_2_);
-+    }
-+
-+    public CompoundNBT func_77955_b(CompoundNBT p_77955_1_) {
-+        ResourceLocation resourcelocation = Registry.field_212630_s.func_177774_c(this.func_77973_b());
-+        p_77955_1_.func_74778_a("id", resourcelocation == null ? "minecraft:air" : resourcelocation.toString());
-+        p_77955_1_.func_74774_a("Count", (byte) this.field_77994_a);
-+        if (this.field_77990_d != null) {
-+            p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
-+        }
-+        CompoundNBT cnbt = this.serializeCaps();
-+        if (cnbt != null && !cnbt.isEmpty()) {
-+            p_77955_1_.func_218657_a("ForgeCaps", cnbt);
-+        }
-+        return p_77955_1_;
-+    }
-+
-+    public int func_77976_d() {
-+        return this.func_77973_b().getItemStackLimit(this);
-+    }
-+
-+    public boolean func_77985_e() {
-+        return this.func_77976_d() > 1 && (!this.func_77984_f() || !this.func_77951_h());
-+    }
-+
-+    public boolean func_77984_f() {
-+        if (!this.field_190928_g && this.func_77973_b().isDamageable(this)) {
-+            CompoundNBT compoundnbt = this.func_77978_p();
-+            return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
-+        } else {
-+            return false;
-+        }
-+    }
-+
-+    public boolean func_77951_h() {
-+        return this.func_77984_f() && func_77973_b().isDamaged(this);
-+    }
-+
-+    public int func_77952_i() {
-+        return this.func_77973_b().getDamage(this);
-+    }
-+
-+    public void func_196085_b(int p_196085_1_) {
-+        this.func_77973_b().setDamage(this, p_196085_1_);
-+    }
-+
-+    public int func_77958_k() {
-+        return this.func_77973_b().getMaxDamage(this);
-+    }
-+
-+    public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
-+        if (!this.func_77984_f()) {
-+            return false;
-+        } else {
-+            if (p_96631_1_ > 0) {
-+                int i = EnchantmentHelper.func_77506_a(Enchantments.field_185307_s, this);
-+                int j = 0;
-+
-+                for (int k = 0; i > 0 && k < p_96631_1_; ++k) {
-+                    if (UnbreakingEnchantment.func_92097_a(this, i, p_96631_2_)) {
-+                        ++j;
-+                    }
-+                }
-+
-+                p_96631_1_ -= j;
-+                // CraftBukkit start
-+                if (p_96631_3_ != null) {
-+                    PlayerItemDamageEvent event = new PlayerItemDamageEvent(p_96631_3_.getBukkitEntity(), CraftItemStack.asCraftMirror(this), p_96631_1_);
-+                    event.getPlayer().getServer().getPluginManager().callEvent(event);
-+                    if (p_96631_1_ != event.getDamage() || event.isCancelled()) {
-+                        event.getPlayer().updateInventory();
-+                    }
-+                    if (event.isCancelled()) {
-+                        return false;
-+                    }
-+                    p_96631_1_ = event.getDamage();
-+                }
-+                // CraftBukkit end
-+                if (p_96631_1_ <= 0) {
-+                    return false;
-+                }
-+            }
-+
-+            if (p_96631_3_ != null && p_96631_1_ != 0) {
-+                CriteriaTriggers.field_193132_s.func_193158_a(p_96631_3_, this, this.func_77952_i() + p_96631_1_);
-+            }
-+
-+            int l = this.func_77952_i() + p_96631_1_;
-+            this.func_196085_b(l);
-+            return l >= this.func_77958_k();
-+        }
-+    }
-+
-+    public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
-+        if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity) p_222118_2_).field_71075_bZ.field_75098_d)) {
-+            if (this.func_77984_f()) {
-+                p_222118_1_ = this.func_77973_b().damageItem(this, p_222118_1_, p_222118_2_, p_222118_3_);
-+                if (this.func_96631_a(p_222118_1_, p_222118_2_.func_70681_au(), p_222118_2_ instanceof ServerPlayerEntity ? (ServerPlayerEntity) p_222118_2_ : null)) {
-+                    p_222118_3_.accept(p_222118_2_);
-+                    Item item = this.func_77973_b();
-+
-+                    // CraftBukkit start - Check for item breaking
-+                    if (this.field_77994_a == 1 && p_222118_2_ instanceof PlayerEntity) {
-+                        org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPlayerItemBreakEvent((PlayerEntity) p_222118_2_, this);
-+                    }
-+                    // CraftBukkit end
-+
-+                    this.func_190918_g(1);
-+                    if (p_222118_2_ instanceof PlayerEntity) {
-+                        ((PlayerEntity) p_222118_2_).func_71029_a(Stats.field_199088_e.func_199076_b(item));
-+                    }
-+
-+                    this.func_196085_b(0);
-+                }
-+
-+            }
-+        }
-+    }
-+
-+    public void func_77961_a(LivingEntity p_77961_1_, PlayerEntity p_77961_2_) {
-+        Item item = this.func_77973_b();
-+        if (item.func_77644_a(this, p_77961_1_, p_77961_2_)) {
-+            p_77961_2_.func_71029_a(Stats.field_75929_E.func_199076_b(item));
-+        }
-+
-+    }
-+
-+    public void func_179548_a(World p_179548_1_, BlockState p_179548_2_, BlockPos p_179548_3_, PlayerEntity p_179548_4_) {
-+        Item item = this.func_77973_b();
-+        if (item.func_179218_a(this, p_179548_1_, p_179548_2_, p_179548_3_, p_179548_4_)) {
-+            p_179548_4_.func_71029_a(Stats.field_75929_E.func_199076_b(item));
-+        }
-+
-+    }
-+
-+    public boolean func_150998_b(BlockState p_150998_1_) {
-+        return this.func_77973_b().canHarvestBlock(this, p_150998_1_);
-+    }
-+
-+    public ActionResultType func_111282_a_(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
-+        return this.func_77973_b().func_111207_a(this, p_111282_1_, p_111282_2_, p_111282_3_);
-+    }
-+
-+    public ItemStack func_77946_l() {
-+        if (this.func_190926_b()) {
-+            return field_190927_a;
-+        } else {
-+            ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a, this.serializeCaps());
-+            itemstack.func_190915_d(this.func_190921_D());
-+            if (this.field_77990_d != null) {
-+                itemstack.field_77990_d = this.field_77990_d.func_74737_b();
-+            }
-+
-+            return itemstack;
-+        }
-+    }
-+
-+    public static boolean func_77970_a(ItemStack p_77970_0_, ItemStack p_77970_1_) {
-+        if (p_77970_0_.func_190926_b() && p_77970_1_.func_190926_b()) {
-+            return true;
-+        } else if (!p_77970_0_.func_190926_b() && !p_77970_1_.func_190926_b()) {
-+            if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
-+                return false;
-+            } else {
-+                return (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_);
-+            }
-+        } else {
-+            return false;
-+        }
-+    }
-+
-+    public static boolean func_77989_b(ItemStack p_77989_0_, ItemStack p_77989_1_) {
-+        if (p_77989_0_.func_190926_b() && p_77989_1_.func_190926_b()) {
-+            return true;
-+        } else {
-+            return !p_77989_0_.func_190926_b() && !p_77989_1_.func_190926_b() && p_77989_0_.func_77959_d(p_77989_1_);
-+        }
-+    }
-+
-+    private boolean func_77959_d(ItemStack p_77959_1_) {
-+        if (this.field_77994_a != p_77959_1_.field_77994_a) {
-+            return false;
-+        } else if (this.func_77973_b() != p_77959_1_.func_77973_b()) {
-+            return false;
-+        } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
-+            return false;
-+        } else {
-+            return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
-+        }
-+    }
-+
-+    public static boolean func_179545_c(ItemStack p_179545_0_, ItemStack p_179545_1_) {
-+        if (p_179545_0_ == p_179545_1_) {
-+            return true;
-+        } else {
-+            return !p_179545_0_.func_190926_b() && !p_179545_1_.func_190926_b() && p_179545_0_.func_77969_a(p_179545_1_);
-+        }
-+    }
-+
-+    public static boolean func_185132_d(ItemStack p_185132_0_, ItemStack p_185132_1_) {
-+        if (p_185132_0_ == p_185132_1_) {
-+            return true;
-+        } else {
-+            return !p_185132_0_.func_190926_b() && !p_185132_1_.func_190926_b() && p_185132_0_.func_185136_b(p_185132_1_);
-+        }
-+    }
-+
-+    public boolean func_77969_a(ItemStack p_77969_1_) {
-+        return !p_77969_1_.func_190926_b() && this.func_77973_b() == p_77969_1_.func_77973_b();
-+    }
-+
-+    public boolean func_185136_b(ItemStack p_185136_1_) {
-+        if (!this.func_77984_f()) {
-+            return this.func_77969_a(p_185136_1_);
-+        } else {
-+            return !p_185136_1_.func_190926_b() && this.func_77973_b() == p_185136_1_.func_77973_b();
-+        }
-+    }
-+
-+    public String func_77977_a() {
-+        return this.func_77973_b().func_77667_c(this);
-+    }
-+
-+    public String toString() {
-+        return this.field_77994_a + " " + this.func_77973_b();
-+    }
-+
-+    public void func_77945_a(World p_77945_1_, Entity p_77945_2_, int p_77945_3_, boolean p_77945_4_) {
-+        if (this.field_77992_b > 0) {
-+            --this.field_77992_b;
-+        }
-+
-+        if (this.func_77973_b() != null) {
-+            this.func_77973_b().func_77663_a(this, p_77945_1_, p_77945_2_, p_77945_3_, p_77945_4_);
-+        }
-+
-+    }
-+
-+    public void func_77980_a(World p_77980_1_, PlayerEntity p_77980_2_, int p_77980_3_) {
-+        p_77980_2_.func_71064_a(Stats.field_188066_af.func_199076_b(this.func_77973_b()), p_77980_3_);
-+        this.func_77973_b().func_77622_d(this, p_77980_1_, p_77980_2_);
-+    }
-+
-+    public int func_77988_m() {
-+        return this.func_77973_b().func_77626_a(this);
-+    }
-+
-+    public UseAction func_77975_n() {
-+        return this.func_77973_b().func_77661_b(this);
-+    }
-+
-+    public void func_77974_b(World p_77974_1_, LivingEntity p_77974_2_, int p_77974_3_) {
-+        this.func_77973_b().func_77615_a(this, p_77974_1_, p_77974_2_, p_77974_3_);
-+    }
-+
-+    public boolean func_222122_m() {
-+        return this.func_77973_b().func_219970_i(this);
-+    }
-+
-+    public boolean func_77942_o() {
-+        return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
-+    }
-+
-+    // CraftBukkit start
-+    @Nullable
-+    private CompoundNBT getTagClone() {
-+        return this.field_77990_d == null ? null : this.field_77990_d.func_74737_b();
-+    }
-+
-+    private void setTagClone(@Nullable CompoundNBT nbtttagcompound) {
-+        this.func_77982_d(nbtttagcompound == null ? null : nbtttagcompound.func_74737_b());
-+    }
-+    // CraftBukkit end
-+
-+    @Nullable
-+    public CompoundNBT func_77978_p() {
-+        return this.field_77990_d;
-+    }
-+
-+    public CompoundNBT func_196082_o() {
-+        if (this.field_77990_d == null) {
-+            this.func_77982_d(new CompoundNBT());
-+        }
-+
-+        return this.field_77990_d;
-+    }
-+
-+    public CompoundNBT func_190925_c(String p_190925_1_) {
-+        if (this.field_77990_d != null && this.field_77990_d.func_150297_b(p_190925_1_, 10)) {
-+            return this.field_77990_d.func_74775_l(p_190925_1_);
-+        } else {
-+            CompoundNBT compoundnbt = new CompoundNBT();
-+            this.func_77983_a(p_190925_1_, compoundnbt);
-+            return compoundnbt;
-+        }
-+    }
-+
-+    @Nullable
-+    public CompoundNBT func_179543_a(String p_179543_1_) {
-+        return this.field_77990_d != null && this.field_77990_d.func_150297_b(p_179543_1_, 10) ? this.field_77990_d.func_74775_l(p_179543_1_) : null;
-+    }
-+
-+    public void func_196083_e(String p_196083_1_) {
-+        if (this.field_77990_d != null && this.field_77990_d.func_74764_b(p_196083_1_)) {
-+            this.field_77990_d.func_82580_o(p_196083_1_);
-+            if (this.field_77990_d.isEmpty()) {
-+                this.field_77990_d = null;
-+            }
-+        }
-+
-+    }
-+
-+    public ListNBT func_77986_q() {
-+        return this.field_77990_d != null ? this.field_77990_d.func_150295_c("Enchantments", 10) : new ListNBT();
-+    }
-+
+             if (p_96631_1_ <= 0) {
+                return false;
+             }
+@@ -276,9 +_,17 @@
+    public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
+       if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
+          if (this.func_77984_f()) {
++            p_222118_1_ = this.func_77973_b().damageItem(this, p_222118_1_, p_222118_2_, p_222118_3_);
+             if (this.func_96631_a(p_222118_1_, p_222118_2_.func_70681_au(), p_222118_2_ instanceof ServerPlayerEntity ? (ServerPlayerEntity)p_222118_2_ : null)) {
+                p_222118_3_.accept(p_222118_2_);
+                Item item = this.func_77973_b();
++
++               // CraftBukkit start - Check for item breaking
++               if (this.field_77994_a == 1 && p_222118_2_ instanceof PlayerEntity) {
++                  org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPlayerItemBreakEvent((PlayerEntity) p_222118_2_, this);
++               }
++               // CraftBukkit end
++
+                this.func_190918_g(1);
+                if (p_222118_2_ instanceof PlayerEntity) {
+                   ((PlayerEntity)p_222118_2_).func_71029_a(Stats.field_199088_e.func_199076_b(item));
+@@ -308,7 +_,7 @@
+    }
+ 
+    public boolean func_150998_b(BlockState p_150998_1_) {
+-      return this.func_77973_b().func_150897_b(p_150998_1_);
++      return this.func_77973_b().canHarvestBlock(this, p_150998_1_);
+    }
+ 
+    public ActionResultType func_111282_a_(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
+@@ -319,7 +_,7 @@
+       if (this.func_190926_b()) {
+          return field_190927_a;
+       } else {
+-         ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a);
++         ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a, this.serializeCaps());
+          itemstack.func_190915_d(this.func_190921_D());
+          if (this.field_77990_d != null) {
+             itemstack.field_77990_d = this.field_77990_d.func_74737_b();
+@@ -336,7 +_,7 @@
+          if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
+             return false;
+          } else {
+-            return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
++            return (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_);
+          }
+       } else {
+          return false;
+@@ -359,7 +_,7 @@
+       } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
+          return false;
+       } else {
+-         return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
++         return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
+       }
+    }
+ 
+@@ -435,6 +_,16 @@
+       return !this.field_190928_g && this.field_77990_d != null && !this.field_77990_d.isEmpty();
+    }
+ 
++   // CraftBukkit start
++   @Nullable
++   private CompoundNBT getTagClone() {
++      return this.field_77990_d == null ? null : this.field_77990_d.func_74737_b();
++   }
++   private void setTagClone(@Nullable CompoundNBT nbtttagcompound) {
++      this.func_77982_d(nbtttagcompound == null ? null : nbtttagcompound.func_74737_b());
++   }
++   // CraftBukkit end
++
+    @Nullable
+    public CompoundNBT func_77978_p() {
+       return this.field_77990_d;
+@@ -477,9 +_,32 @@
+       return this.field_77990_d != null ? this.field_77990_d.func_150295_c("Enchantments", 10) : new ListNBT();
+    }
+ 
 +    // Paper start - (this is just a good no conflict location)
 +    public org.bukkit.inventory.ItemStack asBukkitMirror() {
 +        return CraftItemStack.asCraftMirror(this);
@@ -958,1049 +366,83 @@
 +    }
 +    // Paper end
 +
-+    public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
-+        this.field_77990_d = p_77982_1_;
-+        if (this.func_77973_b().isDamageable(this)) {
-+            this.func_196085_b(this.func_77952_i());
-+        }
-+
-+    }
-+
-+    public ITextComponent func_200301_q() {
-+        CompoundNBT compoundnbt = this.func_179543_a("display");
-+        if (compoundnbt != null && compoundnbt.func_150297_b("Name", 8)) {
-+            try {
-+                ITextComponent itextcomponent = ITextComponent.Serializer.func_240643_a_(compoundnbt.func_74779_i("Name"));
-+                if (itextcomponent != null) {
-+                    return itextcomponent;
-+                }
-+
-+                compoundnbt.func_82580_o("Name");
-+            } catch (JsonParseException jsonparseexception) {
-+                compoundnbt.func_82580_o("Name");
-+            }
-+        }
-+
-+        return this.func_77973_b().func_200295_i(this);
-+    }
-+
-+    public ItemStack func_200302_a(@Nullable ITextComponent p_200302_1_) {
-+        CompoundNBT compoundnbt = this.func_190925_c("display");
-+        if (p_200302_1_ != null) {
-+            compoundnbt.func_74778_a("Name", ITextComponent.Serializer.func_150696_a(p_200302_1_));
-+        } else {
-+            compoundnbt.func_82580_o("Name");
-+        }
-+
-+        return this;
-+    }
-+
-+    public void func_135074_t() {
-+        CompoundNBT compoundnbt = this.func_179543_a("display");
-+        if (compoundnbt != null) {
-+            compoundnbt.func_82580_o("Name");
-+            if (compoundnbt.isEmpty()) {
-+                this.func_196083_e("display");
-+            }
-+        }
-+
-+        if (this.field_77990_d != null && this.field_77990_d.isEmpty()) {
-             this.field_77990_d = null;
--         }
--      }
--
--   }
--
--   public ListNBT func_77986_q() {
--      return this.field_77990_d != null ? this.field_77990_d.func_150295_c("Enchantments", 10) : new ListNBT();
--   }
--
--   public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
--      this.field_77990_d = p_77982_1_;
+    public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
+       this.field_77990_d = p_77982_1_;
 -      if (this.func_77973_b().func_77645_m()) {
--         this.func_196085_b(this.func_77952_i());
--      }
--
--   }
--
--   public ITextComponent func_200301_q() {
--      CompoundNBT compoundnbt = this.func_179543_a("display");
--      if (compoundnbt != null && compoundnbt.func_150297_b("Name", 8)) {
--         try {
--            ITextComponent itextcomponent = ITextComponent.Serializer.func_240643_a_(compoundnbt.func_74779_i("Name"));
--            if (itextcomponent != null) {
--               return itextcomponent;
--            }
--
--            compoundnbt.func_82580_o("Name");
--         } catch (JsonParseException jsonparseexception) {
--            compoundnbt.func_82580_o("Name");
--         }
--      }
--
--      return this.func_77973_b().func_200295_i(this);
--   }
--
--   public ItemStack func_200302_a(@Nullable ITextComponent p_200302_1_) {
--      CompoundNBT compoundnbt = this.func_190925_c("display");
--      if (p_200302_1_ != null) {
--         compoundnbt.func_74778_a("Name", ITextComponent.Serializer.func_150696_a(p_200302_1_));
--      } else {
--         compoundnbt.func_82580_o("Name");
--      }
--
--      return this;
--   }
--
--   public void func_135074_t() {
--      CompoundNBT compoundnbt = this.func_179543_a("display");
--      if (compoundnbt != null) {
--         compoundnbt.func_82580_o("Name");
--         if (compoundnbt.isEmpty()) {
--            this.func_196083_e("display");
--         }
--      }
--
--      if (this.field_77990_d != null && this.field_77990_d.isEmpty()) {
--         this.field_77990_d = null;
--      }
--
--   }
--
--   public boolean func_82837_s() {
--      CompoundNBT compoundnbt = this.func_179543_a("display");
--      return compoundnbt != null && compoundnbt.func_150297_b("Name", 8);
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   public List<ITextComponent> func_82840_a(@Nullable PlayerEntity p_82840_1_, ITooltipFlag p_82840_2_) {
--      List<ITextComponent> list = Lists.newArrayList();
--      IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q()).func_240699_a_(this.func_77953_t().field_77937_e);
--      if (this.func_82837_s()) {
--         iformattabletextcomponent.func_240699_a_(TextFormatting.ITALIC);
--      }
--
--      list.add(iformattabletextcomponent);
--      if (!p_82840_2_.func_194127_a() && !this.func_82837_s() && this.func_77973_b() == Items.field_151098_aY) {
--         list.add((new StringTextComponent("#" + FilledMapItem.func_195949_f(this))).func_240699_a_(TextFormatting.GRAY));
--      }
--
--      int i = this.func_242393_J();
--      if (func_242394_a(i, ItemStack.TooltipDisplayFlags.ADDITIONAL)) {
--         this.func_77973_b().func_77624_a(this, p_82840_1_ == null ? null : p_82840_1_.field_70170_p, list, p_82840_2_);
--      }
--
--      if (this.func_77942_o()) {
--         if (func_242394_a(i, ItemStack.TooltipDisplayFlags.ENCHANTMENTS)) {
--            func_222120_a(list, this.func_77986_q());
--         }
--
--         if (this.field_77990_d.func_150297_b("display", 10)) {
--            CompoundNBT compoundnbt = this.field_77990_d.func_74775_l("display");
--            if (func_242394_a(i, ItemStack.TooltipDisplayFlags.DYE) && compoundnbt.func_150297_b("color", 99)) {
--               if (p_82840_2_.func_194127_a()) {
--                  list.add((new TranslationTextComponent("item.color", String.format("#%06X", compoundnbt.func_74762_e("color")))).func_240699_a_(TextFormatting.GRAY));
--               } else {
--                  list.add((new TranslationTextComponent("item.dyed")).func_240701_a_(new TextFormatting[]{TextFormatting.GRAY, TextFormatting.ITALIC}));
--               }
--            }
--
--            if (compoundnbt.func_150299_b("Lore") == 9) {
--               ListNBT listnbt = compoundnbt.func_150295_c("Lore", 8);
--
--               for(int j = 0; j < listnbt.size(); ++j) {
--                  String s = listnbt.func_150307_f(j);
--
--                  try {
--                     IFormattableTextComponent iformattabletextcomponent1 = ITextComponent.Serializer.func_240643_a_(s);
--                     if (iformattabletextcomponent1 != null) {
--                        list.add(TextComponentUtils.func_240648_a_(iformattabletextcomponent1, field_234692_e_));
--                     }
--                  } catch (JsonParseException jsonparseexception) {
--                     compoundnbt.func_82580_o("Lore");
--                  }
--               }
--            }
--         }
--      }
--
--      if (func_242394_a(i, ItemStack.TooltipDisplayFlags.MODIFIERS)) {
--         for(EquipmentSlotType equipmentslottype : EquipmentSlotType.values()) {
--            Multimap<Attribute, AttributeModifier> multimap = this.func_111283_C(equipmentslottype);
--            if (!multimap.isEmpty()) {
--               list.add(StringTextComponent.field_240750_d_);
--               list.add((new TranslationTextComponent("item.modifiers." + equipmentslottype.func_188450_d())).func_240699_a_(TextFormatting.GRAY));
--
--               for(Entry<Attribute, AttributeModifier> entry : multimap.entries()) {
--                  AttributeModifier attributemodifier = entry.getValue();
--                  double d0 = attributemodifier.func_111164_d();
--                  boolean flag = false;
--                  if (p_82840_1_ != null) {
--                     if (attributemodifier.func_111167_a() == Item.field_111210_e) {
--                        d0 = d0 + p_82840_1_.func_233638_c_(Attributes.field_233823_f_);
--                        d0 = d0 + (double)EnchantmentHelper.func_152377_a(this, CreatureAttribute.field_223222_a_);
--                        flag = true;
--                     } else if (attributemodifier.func_111167_a() == Item.field_185050_h) {
--                        d0 += p_82840_1_.func_233638_c_(Attributes.field_233825_h_);
--                        flag = true;
--                     }
--                  }
--
--                  double d1;
--                  if (attributemodifier.func_220375_c() != AttributeModifier.Operation.MULTIPLY_BASE && attributemodifier.func_220375_c() != AttributeModifier.Operation.MULTIPLY_TOTAL) {
--                     if (entry.getKey().equals(Attributes.field_233820_c_)) {
--                        d1 = d0 * 10.0D;
--                     } else {
--                        d1 = d0;
--                     }
--                  } else {
--                     d1 = d0 * 100.0D;
--                  }
--
--                  if (flag) {
--                     list.add((new StringTextComponent(" ")).func_230529_a_(new TranslationTextComponent("attribute.modifier.equals." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.DARK_GREEN));
--                  } else if (d0 > 0.0D) {
--                     list.add((new TranslationTextComponent("attribute.modifier.plus." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
--                  } else if (d0 < 0.0D) {
--                     d1 = d1 * -1.0D;
--                     list.add((new TranslationTextComponent("attribute.modifier.take." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
--                  }
--               }
--            }
--         }
--      }
--
--      if (this.func_77942_o()) {
--         if (func_242394_a(i, ItemStack.TooltipDisplayFlags.UNBREAKABLE) && this.field_77990_d.func_74767_n("Unbreakable")) {
--            list.add((new TranslationTextComponent("item.unbreakable")).func_240699_a_(TextFormatting.BLUE));
--         }
--
--         if (func_242394_a(i, ItemStack.TooltipDisplayFlags.CAN_DESTROY) && this.field_77990_d.func_150297_b("CanDestroy", 9)) {
--            ListNBT listnbt1 = this.field_77990_d.func_150295_c("CanDestroy", 8);
--            if (!listnbt1.isEmpty()) {
--               list.add(StringTextComponent.field_240750_d_);
--               list.add((new TranslationTextComponent("item.canBreak")).func_240699_a_(TextFormatting.GRAY));
--
--               for(int k = 0; k < listnbt1.size(); ++k) {
--                  list.addAll(func_206845_f(listnbt1.func_150307_f(k)));
--               }
--            }
--         }
--
--         if (func_242394_a(i, ItemStack.TooltipDisplayFlags.CAN_PLACE) && this.field_77990_d.func_150297_b("CanPlaceOn", 9)) {
--            ListNBT listnbt2 = this.field_77990_d.func_150295_c("CanPlaceOn", 8);
--            if (!listnbt2.isEmpty()) {
--               list.add(StringTextComponent.field_240750_d_);
--               list.add((new TranslationTextComponent("item.canPlace")).func_240699_a_(TextFormatting.GRAY));
--
--               for(int l = 0; l < listnbt2.size(); ++l) {
--                  list.addAll(func_206845_f(listnbt2.func_150307_f(l)));
--               }
--            }
--         }
--      }
--
--      if (p_82840_2_.func_194127_a()) {
--         if (this.func_77951_h()) {
--            list.add(new TranslationTextComponent("item.durability", this.func_77958_k() - this.func_77952_i(), this.func_77958_k()));
--         }
--
--         list.add((new StringTextComponent(Registry.field_212630_s.func_177774_c(this.func_77973_b()).toString())).func_240699_a_(TextFormatting.DARK_GRAY));
--         if (this.func_77942_o()) {
--            list.add((new TranslationTextComponent("item.nbt_tags", this.field_77990_d.func_150296_c().size())).func_240699_a_(TextFormatting.DARK_GRAY));
--         }
--      }
--
--      return list;
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   private static boolean func_242394_a(int p_242394_0_, ItemStack.TooltipDisplayFlags p_242394_1_) {
--      return (p_242394_0_ & p_242394_1_.func_242397_a()) == 0;
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   private int func_242393_J() {
--      return this.func_77942_o() && this.field_77990_d.func_150297_b("HideFlags", 99) ? this.field_77990_d.func_74762_e("HideFlags") : 0;
--   }
--
--   public void func_242395_a(ItemStack.TooltipDisplayFlags p_242395_1_) {
--      CompoundNBT compoundnbt = this.func_196082_o();
--      compoundnbt.func_74768_a("HideFlags", compoundnbt.func_74762_e("HideFlags") | p_242395_1_.func_242397_a());
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   public static void func_222120_a(List<ITextComponent> p_222120_0_, ListNBT p_222120_1_) {
--      for(int i = 0; i < p_222120_1_.size(); ++i) {
--         CompoundNBT compoundnbt = p_222120_1_.func_150305_b(i);
--         Registry.field_212628_q.func_241873_b(ResourceLocation.func_208304_a(compoundnbt.func_74779_i("id"))).ifPresent((p_222123_2_) -> {
--            p_222120_0_.add(p_222123_2_.func_200305_d(compoundnbt.func_74762_e("lvl")));
--         });
--      }
--
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   private static Collection<ITextComponent> func_206845_f(String p_206845_0_) {
--      try {
--         BlockStateParser blockstateparser = (new BlockStateParser(new StringReader(p_206845_0_), true)).func_197243_a(true);
--         BlockState blockstate = blockstateparser.func_197249_b();
--         ResourceLocation resourcelocation = blockstateparser.func_199829_d();
--         boolean flag = blockstate != null;
--         boolean flag1 = resourcelocation != null;
--         if (flag || flag1) {
--            if (flag) {
--               return Lists.newArrayList(blockstate.func_177230_c().func_235333_g_().func_240699_a_(TextFormatting.DARK_GRAY));
--            }
--
--            ITag<Block> itag = BlockTags.func_199896_a().func_199910_a(resourcelocation);
--            if (itag != null) {
--               Collection<Block> collection = itag.func_230236_b_();
--               if (!collection.isEmpty()) {
--                  return collection.stream().map(Block::func_235333_g_).map((p_222119_0_) -> {
--                     return p_222119_0_.func_240699_a_(TextFormatting.DARK_GRAY);
--                  }).collect(Collectors.toList());
--               }
--            }
--         }
--      } catch (CommandSyntaxException commandsyntaxexception) {
--      }
--
--      return Lists.newArrayList((new StringTextComponent("missingno")).func_240699_a_(TextFormatting.DARK_GRAY));
--   }
--
--   public boolean func_77962_s() {
--      return this.func_77973_b().func_77636_d(this);
--   }
--
--   public Rarity func_77953_t() {
--      return this.func_77973_b().func_77613_e(this);
--   }
--
--   public boolean func_77956_u() {
--      if (!this.func_77973_b().func_77616_k(this)) {
--         return false;
--      } else {
--         return !this.func_77948_v();
--      }
--   }
--
--   public void func_77966_a(Enchantment p_77966_1_, int p_77966_2_) {
--      this.func_196082_o();
--      if (!this.field_77990_d.func_150297_b("Enchantments", 9)) {
--         this.field_77990_d.func_218657_a("Enchantments", new ListNBT());
--      }
--
--      ListNBT listnbt = this.field_77990_d.func_150295_c("Enchantments", 10);
--      CompoundNBT compoundnbt = new CompoundNBT();
--      compoundnbt.func_74778_a("id", String.valueOf((Object)Registry.field_212628_q.func_177774_c(p_77966_1_)));
--      compoundnbt.func_74777_a("lvl", (short)((byte)p_77966_2_));
--      listnbt.add(compoundnbt);
--   }
--
--   public boolean func_77948_v() {
--      if (this.field_77990_d != null && this.field_77990_d.func_150297_b("Enchantments", 9)) {
--         return !this.field_77990_d.func_150295_c("Enchantments", 10).isEmpty();
--      } else {
--         return false;
--      }
--   }
--
--   public void func_77983_a(String p_77983_1_, INBT p_77983_2_) {
--      this.func_196082_o().func_218657_a(p_77983_1_, p_77983_2_);
--   }
--
--   public boolean func_82839_y() {
--      return this.field_234693_k_ instanceof ItemFrameEntity;
--   }
--
--   public void func_234695_a_(@Nullable Entity p_234695_1_) {
--      this.field_234693_k_ = p_234695_1_;
--   }
--
--   @Nullable
--   public ItemFrameEntity func_82836_z() {
--      return this.field_234693_k_ instanceof ItemFrameEntity ? (ItemFrameEntity)this.func_234694_A_() : null;
--   }
--
--   @Nullable
--   public Entity func_234694_A_() {
--      return !this.field_190928_g ? this.field_234693_k_ : null;
--   }
--
--   public int func_82838_A() {
--      return this.func_77942_o() && this.field_77990_d.func_150297_b("RepairCost", 3) ? this.field_77990_d.func_74762_e("RepairCost") : 0;
--   }
--
--   public void func_82841_c(int p_82841_1_) {
--      this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
--   }
--
--   public Multimap<Attribute, AttributeModifier> func_111283_C(EquipmentSlotType p_111283_1_) {
--      Multimap<Attribute, AttributeModifier> multimap;
--      if (this.func_77942_o() && this.field_77990_d.func_150297_b("AttributeModifiers", 9)) {
--         multimap = HashMultimap.create();
--         ListNBT listnbt = this.field_77990_d.func_150295_c("AttributeModifiers", 10);
--
--         for(int i = 0; i < listnbt.size(); ++i) {
--            CompoundNBT compoundnbt = listnbt.func_150305_b(i);
--            if (!compoundnbt.func_150297_b("Slot", 8) || compoundnbt.func_74779_i("Slot").equals(p_111283_1_.func_188450_d())) {
--               Optional<Attribute> optional = Registry.field_239692_aP_.func_241873_b(ResourceLocation.func_208304_a(compoundnbt.func_74779_i("AttributeName")));
--               if (optional.isPresent()) {
--                  AttributeModifier attributemodifier = AttributeModifier.func_233800_a_(compoundnbt);
--                  if (attributemodifier != null && attributemodifier.func_111167_a().getLeastSignificantBits() != 0L && attributemodifier.func_111167_a().getMostSignificantBits() != 0L) {
--                     multimap.put(optional.get(), attributemodifier);
--                  }
--               }
--            }
--         }
--      } else {
++      if (this.func_77973_b().isDamageable(this)) {
+          this.func_196085_b(this.func_77952_i());
+       }
+ 
+@@ -673,6 +_,7 @@
+          }
+       }
+ 
++      net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
+       return list;
+    }
+ 
+@@ -795,6 +_,12 @@
+    }
+ 
+    public void func_82841_c(int p_82841_1_) {
++      // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
++      if (p_82841_1_ == 0) {
++         this.func_196083_e("RepairCost");
++         return;
++      }
++      // CraftBukkit end
+       this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
+    }
+ 
+@@ -817,9 +_,10 @@
+             }
+          }
+       } else {
 -         multimap = this.func_77973_b().func_111205_h(p_111283_1_);
--      }
--
--      return multimap;
--   }
--
--   public void func_185129_a(Attribute p_185129_1_, AttributeModifier p_185129_2_, @Nullable EquipmentSlotType p_185129_3_) {
--      this.func_196082_o();
--      if (!this.field_77990_d.func_150297_b("AttributeModifiers", 9)) {
--         this.field_77990_d.func_218657_a("AttributeModifiers", new ListNBT());
--      }
--
--      ListNBT listnbt = this.field_77990_d.func_150295_c("AttributeModifiers", 10);
--      CompoundNBT compoundnbt = p_185129_2_.func_233801_e_();
--      compoundnbt.func_74778_a("AttributeName", Registry.field_239692_aP_.func_177774_c(p_185129_1_).toString());
--      if (p_185129_3_ != null) {
--         compoundnbt.func_74778_a("Slot", p_185129_3_.func_188450_d());
--      }
--
--      listnbt.add(compoundnbt);
--   }
--
--   public ITextComponent func_151000_E() {
--      IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
--      if (this.func_82837_s()) {
--         iformattabletextcomponent.func_240699_a_(TextFormatting.ITALIC);
--      }
--
--      IFormattableTextComponent iformattabletextcomponent1 = TextComponentUtils.func_240647_a_(iformattabletextcomponent);
--      if (!this.field_190928_g) {
--         iformattabletextcomponent1.func_240699_a_(this.func_77953_t().field_77937_e).func_240700_a_((p_234702_1_) -> {
--            return p_234702_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230551_b_, new HoverEvent.ItemHover(this)));
--         });
--      }
--
--      return iformattabletextcomponent1;
--   }
--
--   private static boolean func_206846_a(CachedBlockInfo p_206846_0_, @Nullable CachedBlockInfo p_206846_1_) {
--      if (p_206846_1_ != null && p_206846_0_.func_177509_a() == p_206846_1_.func_177509_a()) {
--         if (p_206846_0_.func_177507_b() == null && p_206846_1_.func_177507_b() == null) {
--            return true;
--         } else {
--            return p_206846_0_.func_177507_b() != null && p_206846_1_.func_177507_b() != null ? Objects.equals(p_206846_0_.func_177507_b().func_189515_b(new CompoundNBT()), p_206846_1_.func_177507_b().func_189515_b(new CompoundNBT())) : false;
--         }
--      } else {
--         return false;
--      }
--   }
--
--   public boolean func_206848_a(ITagCollectionSupplier p_206848_1_, CachedBlockInfo p_206848_2_) {
--      if (func_206846_a(p_206848_2_, this.field_179552_h)) {
--         return this.field_179553_i;
--      } else {
--         this.field_179552_h = p_206848_2_;
--         if (this.func_77942_o() && this.field_77990_d.func_150297_b("CanDestroy", 9)) {
--            ListNBT listnbt = this.field_77990_d.func_150295_c("CanDestroy", 8);
--
--            for(int i = 0; i < listnbt.size(); ++i) {
--               String s = listnbt.func_150307_f(i);
--
--               try {
--                  Predicate<CachedBlockInfo> predicate = BlockPredicateArgument.func_199824_a().parse(new StringReader(s)).create(p_206848_1_);
--                  if (predicate.test(p_206848_2_)) {
--                     this.field_179553_i = true;
--                     return true;
--                  }
--               } catch (CommandSyntaxException commandsyntaxexception) {
--               }
--            }
--         }
--
--         this.field_179553_i = false;
--         return false;
--      }
--   }
--
--   public boolean func_206847_b(ITagCollectionSupplier p_206847_1_, CachedBlockInfo p_206847_2_) {
--      if (func_206846_a(p_206847_2_, this.field_179550_j)) {
--         return this.field_179551_k;
--      } else {
--         this.field_179550_j = p_206847_2_;
--         if (this.func_77942_o() && this.field_77990_d.func_150297_b("CanPlaceOn", 9)) {
--            ListNBT listnbt = this.field_77990_d.func_150295_c("CanPlaceOn", 8);
--
--            for(int i = 0; i < listnbt.size(); ++i) {
--               String s = listnbt.func_150307_f(i);
--
--               try {
--                  Predicate<CachedBlockInfo> predicate = BlockPredicateArgument.func_199824_a().parse(new StringReader(s)).create(p_206847_1_);
--                  if (predicate.test(p_206847_2_)) {
--                     this.field_179551_k = true;
--                     return true;
--                  }
--               } catch (CommandSyntaxException commandsyntaxexception) {
--               }
--            }
--         }
--
--         this.field_179551_k = false;
--         return false;
--      }
--   }
--
--   public int func_190921_D() {
--      return this.field_77992_b;
--   }
--
--   public void func_190915_d(int p_190915_1_) {
--      this.field_77992_b = p_190915_1_;
--   }
--
--   public int func_190916_E() {
--      return this.field_190928_g ? 0 : this.field_77994_a;
--   }
--
--   public void func_190920_e(int p_190920_1_) {
--      this.field_77994_a = p_190920_1_;
--      this.func_190923_F();
--   }
--
--   public void func_190917_f(int p_190917_1_) {
--      this.func_190920_e(this.field_77994_a + p_190917_1_);
--   }
--
--   public void func_190918_g(int p_190918_1_) {
--      this.func_190917_f(-p_190918_1_);
--   }
--
--   public void func_222121_b(World p_222121_1_, LivingEntity p_222121_2_, int p_222121_3_) {
--      this.func_77973_b().func_219972_a(p_222121_1_, p_222121_2_, this, p_222121_3_);
--   }
--
--   public boolean func_222117_E() {
--      return this.func_77973_b().func_219971_r();
--   }
--
--   public SoundEvent func_226629_F_() {
--      return this.func_77973_b().func_225520_U__();
--   }
--
--   public SoundEvent func_226630_G_() {
--      return this.func_77973_b().func_225519_S__();
--   }
--
--   public static enum TooltipDisplayFlags {
--      ENCHANTMENTS,
--      MODIFIERS,
--      UNBREAKABLE,
--      CAN_DESTROY,
--      CAN_PLACE,
--      ADDITIONAL,
--      DYE;
--
--      private int field_242396_h = 1 << this.ordinal();
--
--      public int func_242397_a() {
--         return this.field_242396_h;
--      }
--   }
-+        }
-+
-+    }
-+
-+    public boolean func_82837_s() {
-+        CompoundNBT compoundnbt = this.func_179543_a("display");
-+        return compoundnbt != null && compoundnbt.func_150297_b("Name", 8);
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    public List<ITextComponent> func_82840_a(@Nullable PlayerEntity p_82840_1_, ITooltipFlag p_82840_2_) {
-+        List<ITextComponent> list = Lists.newArrayList();
-+        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q()).func_240699_a_(this.func_77953_t().field_77937_e);
-+        if (this.func_82837_s()) {
-+            iformattabletextcomponent.func_240699_a_(TextFormatting.ITALIC);
-+        }
-+
-+        list.add(iformattabletextcomponent);
-+        if (!p_82840_2_.func_194127_a() && !this.func_82837_s() && this.func_77973_b() == Items.field_151098_aY) {
-+            list.add((new StringTextComponent("#" + FilledMapItem.func_195949_f(this))).func_240699_a_(TextFormatting.GRAY));
-+        }
-+
-+        int i = this.func_242393_J();
-+        if (func_242394_a(i, ItemStack.TooltipDisplayFlags.ADDITIONAL)) {
-+            this.func_77973_b().func_77624_a(this, p_82840_1_ == null ? null : p_82840_1_.field_70170_p, list, p_82840_2_);
-+        }
-+
-+        if (this.func_77942_o()) {
-+            if (func_242394_a(i, ItemStack.TooltipDisplayFlags.ENCHANTMENTS)) {
-+                func_222120_a(list, this.func_77986_q());
-+            }
-+
-+            if (this.field_77990_d.func_150297_b("display", 10)) {
-+                CompoundNBT compoundnbt = this.field_77990_d.func_74775_l("display");
-+                if (func_242394_a(i, ItemStack.TooltipDisplayFlags.DYE) && compoundnbt.func_150297_b("color", 99)) {
-+                    if (p_82840_2_.func_194127_a()) {
-+                        list.add((new TranslationTextComponent("item.color", String.format("#%06X", compoundnbt.func_74762_e("color")))).func_240699_a_(TextFormatting.GRAY));
-+                    } else {
-+                        list.add((new TranslationTextComponent("item.dyed")).func_240701_a_(TextFormatting.GRAY, TextFormatting.ITALIC));
-+                    }
-+                }
-+
-+                if (compoundnbt.func_150299_b("Lore") == 9) {
-+                    ListNBT listnbt = compoundnbt.func_150295_c("Lore", 8);
-+
-+                    for (int j = 0; j < listnbt.size(); ++j) {
-+                        String s = listnbt.func_150307_f(j);
-+
-+                        try {
-+                            IFormattableTextComponent iformattabletextcomponent1 = ITextComponent.Serializer.func_240643_a_(s);
-+                            if (iformattabletextcomponent1 != null) {
-+                                list.add(TextComponentUtils.func_240648_a_(iformattabletextcomponent1, field_234692_e_));
-+                            }
-+                        } catch (JsonParseException jsonparseexception) {
-+                            compoundnbt.func_82580_o("Lore");
-+                        }
-+                    }
-+                }
-+            }
-+        }
-+
-+        if (func_242394_a(i, ItemStack.TooltipDisplayFlags.MODIFIERS)) {
-+            for (EquipmentSlotType equipmentslottype : EquipmentSlotType.values()) {
-+                Multimap<Attribute, AttributeModifier> multimap = this.func_111283_C(equipmentslottype);
-+                if (!multimap.isEmpty()) {
-+                    list.add(StringTextComponent.field_240750_d_);
-+                    list.add((new TranslationTextComponent("item.modifiers." + equipmentslottype.func_188450_d())).func_240699_a_(TextFormatting.GRAY));
-+
-+                    for (Entry<Attribute, AttributeModifier> entry : multimap.entries()) {
-+                        AttributeModifier attributemodifier = entry.getValue();
-+                        double d0 = attributemodifier.func_111164_d();
-+                        boolean flag = false;
-+                        if (p_82840_1_ != null) {
-+                            if (attributemodifier.func_111167_a() == Item.field_111210_e) {
-+                                d0 = d0 + p_82840_1_.func_233638_c_(Attributes.field_233823_f_);
-+                                d0 = d0 + (double) EnchantmentHelper.func_152377_a(this, CreatureAttribute.field_223222_a_);
-+                                flag = true;
-+                            } else if (attributemodifier.func_111167_a() == Item.field_185050_h) {
-+                                d0 += p_82840_1_.func_233638_c_(Attributes.field_233825_h_);
-+                                flag = true;
-+                            }
-+                        }
-+
-+                        double d1;
-+                        if (attributemodifier.func_220375_c() != AttributeModifier.Operation.MULTIPLY_BASE && attributemodifier.func_220375_c() != AttributeModifier.Operation.MULTIPLY_TOTAL) {
-+                            if (entry.getKey().equals(Attributes.field_233820_c_)) {
-+                                d1 = d0 * 10.0D;
-+                            } else {
-+                                d1 = d0;
-+                            }
-+                        } else {
-+                            d1 = d0 * 100.0D;
-+                        }
-+
-+                        if (flag) {
-+                            list.add((new StringTextComponent(" ")).func_230529_a_(new TranslationTextComponent("attribute.modifier.equals." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.DARK_GREEN));
-+                        } else if (d0 > 0.0D) {
-+                            list.add((new TranslationTextComponent("attribute.modifier.plus." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
-+                        } else if (d0 < 0.0D) {
-+                            d1 = d1 * -1.0D;
-+                            list.add((new TranslationTextComponent("attribute.modifier.take." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
-+                        }
-+                    }
-+                }
-+            }
-+        }
-+
-+        if (this.func_77942_o()) {
-+            if (func_242394_a(i, ItemStack.TooltipDisplayFlags.UNBREAKABLE) && this.field_77990_d.func_74767_n("Unbreakable")) {
-+                list.add((new TranslationTextComponent("item.unbreakable")).func_240699_a_(TextFormatting.BLUE));
-+            }
-+
-+            if (func_242394_a(i, ItemStack.TooltipDisplayFlags.CAN_DESTROY) && this.field_77990_d.func_150297_b("CanDestroy", 9)) {
-+                ListNBT listnbt1 = this.field_77990_d.func_150295_c("CanDestroy", 8);
-+                if (!listnbt1.isEmpty()) {
-+                    list.add(StringTextComponent.field_240750_d_);
-+                    list.add((new TranslationTextComponent("item.canBreak")).func_240699_a_(TextFormatting.GRAY));
-+
-+                    for (int k = 0; k < listnbt1.size(); ++k) {
-+                        list.addAll(func_206845_f(listnbt1.func_150307_f(k)));
-+                    }
-+                }
-+            }
-+
-+            if (func_242394_a(i, ItemStack.TooltipDisplayFlags.CAN_PLACE) && this.field_77990_d.func_150297_b("CanPlaceOn", 9)) {
-+                ListNBT listnbt2 = this.field_77990_d.func_150295_c("CanPlaceOn", 8);
-+                if (!listnbt2.isEmpty()) {
-+                    list.add(StringTextComponent.field_240750_d_);
-+                    list.add((new TranslationTextComponent("item.canPlace")).func_240699_a_(TextFormatting.GRAY));
-+
-+                    for (int l = 0; l < listnbt2.size(); ++l) {
-+                        list.addAll(func_206845_f(listnbt2.func_150307_f(l)));
-+                    }
-+                }
-+            }
-+        }
-+
-+        if (p_82840_2_.func_194127_a()) {
-+            if (this.func_77951_h()) {
-+                list.add(new TranslationTextComponent("item.durability", this.func_77958_k() - this.func_77952_i(), this.func_77958_k()));
-+            }
-+
-+            list.add((new StringTextComponent(Registry.field_212630_s.func_177774_c(this.func_77973_b()).toString())).func_240699_a_(TextFormatting.DARK_GRAY));
-+            if (this.func_77942_o()) {
-+                list.add((new TranslationTextComponent("item.nbt_tags", this.field_77990_d.func_150296_c().size())).func_240699_a_(TextFormatting.DARK_GRAY));
-+            }
-+        }
-+
-+        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
-+        return list;
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    private static boolean func_242394_a(int p_242394_0_, ItemStack.TooltipDisplayFlags p_242394_1_) {
-+        return (p_242394_0_ & p_242394_1_.func_242397_a()) == 0;
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    private int func_242393_J() {
-+        return this.func_77942_o() && this.field_77990_d.func_150297_b("HideFlags", 99) ? this.field_77990_d.func_74762_e("HideFlags") : 0;
-+    }
-+
-+    public void func_242395_a(ItemStack.TooltipDisplayFlags p_242395_1_) {
-+        CompoundNBT compoundnbt = this.func_196082_o();
-+        compoundnbt.func_74768_a("HideFlags", compoundnbt.func_74762_e("HideFlags") | p_242395_1_.func_242397_a());
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    public static void func_222120_a(List<ITextComponent> p_222120_0_, ListNBT p_222120_1_) {
-+        for (int i = 0; i < p_222120_1_.size(); ++i) {
-+            CompoundNBT compoundnbt = p_222120_1_.func_150305_b(i);
-+            Registry.field_212628_q.func_241873_b(ResourceLocation.func_208304_a(compoundnbt.func_74779_i("id"))).ifPresent((p_222123_2_) -> {
-+                p_222120_0_.add(p_222123_2_.func_200305_d(compoundnbt.func_74762_e("lvl")));
-+            });
-+        }
-+
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    private static Collection<ITextComponent> func_206845_f(String p_206845_0_) {
-+        try {
-+            BlockStateParser blockstateparser = (new BlockStateParser(new StringReader(p_206845_0_), true)).func_197243_a(true);
-+            BlockState blockstate = blockstateparser.func_197249_b();
-+            ResourceLocation resourcelocation = blockstateparser.func_199829_d();
-+            boolean flag = blockstate != null;
-+            boolean flag1 = resourcelocation != null;
-+            if (flag || flag1) {
-+                if (flag) {
-+                    return Lists.newArrayList(blockstate.func_177230_c().func_235333_g_().func_240699_a_(TextFormatting.DARK_GRAY));
-+                }
-+
-+                ITag<Block> itag = BlockTags.func_199896_a().func_199910_a(resourcelocation);
-+                if (itag != null) {
-+                    Collection<Block> collection = itag.func_230236_b_();
-+                    if (!collection.isEmpty()) {
-+                        return collection.stream().map(Block::func_235333_g_).map((p_222119_0_) -> {
-+                            return p_222119_0_.func_240699_a_(TextFormatting.DARK_GRAY);
-+                        }).collect(Collectors.toList());
-+                    }
-+                }
-+            }
-+        } catch (CommandSyntaxException commandsyntaxexception) {
-+        }
-+
-+        return Lists.newArrayList((new StringTextComponent("missingno")).func_240699_a_(TextFormatting.DARK_GRAY));
-+    }
-+
-+    public boolean func_77962_s() {
-+        return this.func_77973_b().func_77636_d(this);
-+    }
-+
-+    public Rarity func_77953_t() {
-+        return this.func_77973_b().func_77613_e(this);
-+    }
-+
-+    public boolean func_77956_u() {
-+        if (!this.func_77973_b().func_77616_k(this)) {
-+            return false;
-+        } else {
-+            return !this.func_77948_v();
-+        }
-+    }
-+
-+    public void func_77966_a(Enchantment p_77966_1_, int p_77966_2_) {
-+        this.func_196082_o();
-+        if (!this.field_77990_d.func_150297_b("Enchantments", 9)) {
-+            this.field_77990_d.func_218657_a("Enchantments", new ListNBT());
-+        }
-+
-+        ListNBT listnbt = this.field_77990_d.func_150295_c("Enchantments", 10);
-+        CompoundNBT compoundnbt = new CompoundNBT();
-+        compoundnbt.func_74778_a("id", String.valueOf(Registry.field_212628_q.func_177774_c(p_77966_1_)));
-+        compoundnbt.func_74777_a("lvl", (byte) p_77966_2_);
-+        listnbt.add(compoundnbt);
-+    }
-+
-+    public boolean func_77948_v() {
-+        if (this.field_77990_d != null && this.field_77990_d.func_150297_b("Enchantments", 9)) {
-+            return !this.field_77990_d.func_150295_c("Enchantments", 10).isEmpty();
-+        } else {
-+            return false;
-+        }
-+    }
-+
-+   public void getOrCreateTagAndSet(String s, INBT nbtbase) { func_77983_a(s, nbtbase);} // Paper - OBFHELPER
-+    public void func_77983_a(String p_77983_1_, INBT p_77983_2_) {
-+        this.func_196082_o().func_218657_a(p_77983_1_, p_77983_2_);
-+    }
-+
-+    public boolean func_82839_y() {
-+        return this.field_234693_k_ instanceof ItemFrameEntity;
-+    }
-+
-+    public void func_234695_a_(@Nullable Entity p_234695_1_) {
-+        this.field_234693_k_ = p_234695_1_;
-+    }
-+
-+    @Nullable
-+    public ItemFrameEntity func_82836_z() {
-+        return this.field_234693_k_ instanceof ItemFrameEntity ? (ItemFrameEntity) this.func_234694_A_() : null;
-+    }
-+
-+    @Nullable
-+    public Entity func_234694_A_() {
-+        return !this.field_190928_g ? this.field_234693_k_ : null;
-+    }
-+
-+    public int func_82838_A() {
-+        return this.func_77942_o() && this.field_77990_d.func_150297_b("RepairCost", 3) ? this.field_77990_d.func_74762_e("RepairCost") : 0;
-+    }
-+
-+    public void func_82841_c(int p_82841_1_) {
-+        // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
-+        if (p_82841_1_ == 0) {
-+            this.func_196083_e("RepairCost");
-+            return;
-+        }
-+        // CraftBukkit end
-+        this.func_196082_o().func_74768_a("RepairCost", p_82841_1_);
-+    }
-+
-+    public Multimap<Attribute, AttributeModifier> func_111283_C(EquipmentSlotType p_111283_1_) {
-+        Multimap<Attribute, AttributeModifier> multimap;
-+        if (this.func_77942_o() && this.field_77990_d.func_150297_b("AttributeModifiers", 9)) {
-+            multimap = HashMultimap.create();
-+            ListNBT listnbt = this.field_77990_d.func_150295_c("AttributeModifiers", 10);
-+
-+            for (int i = 0; i < listnbt.size(); ++i) {
-+                CompoundNBT compoundnbt = listnbt.func_150305_b(i);
-+                if (!compoundnbt.func_150297_b("Slot", 8) || compoundnbt.func_74779_i("Slot").equals(p_111283_1_.func_188450_d())) {
-+                    Optional<Attribute> optional = Registry.field_239692_aP_.func_241873_b(ResourceLocation.func_208304_a(compoundnbt.func_74779_i("AttributeName")));
-+                    if (optional.isPresent()) {
-+                        AttributeModifier attributemodifier = AttributeModifier.func_233800_a_(compoundnbt);
-+                        if (attributemodifier != null && attributemodifier.func_111167_a().getLeastSignificantBits() != 0L && attributemodifier.func_111167_a().getMostSignificantBits() != 0L) {
-+                            multimap.put(optional.get(), attributemodifier);
-+                        }
-+                    }
-+                }
-+            }
-+        } else {
-+            multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
-+        }
-+
-+        multimap = net.minecraftforge.common.ForgeHooks.getAttributeModifiers(this, p_111283_1_, multimap);
-+        return multimap;
-+    }
-+
-+    public void func_185129_a(Attribute p_185129_1_, AttributeModifier p_185129_2_, @Nullable EquipmentSlotType p_185129_3_) {
-+        this.func_196082_o();
-+        if (!this.field_77990_d.func_150297_b("AttributeModifiers", 9)) {
-+            this.field_77990_d.func_218657_a("AttributeModifiers", new ListNBT());
-+        }
-+
-+        ListNBT listnbt = this.field_77990_d.func_150295_c("AttributeModifiers", 10);
-+        CompoundNBT compoundnbt = p_185129_2_.func_233801_e_();
-+        compoundnbt.func_74778_a("AttributeName", Registry.field_239692_aP_.func_177774_c(p_185129_1_).toString());
-+        if (p_185129_3_ != null) {
-+            compoundnbt.func_74778_a("Slot", p_185129_3_.func_188450_d());
-+        }
-+
-+        listnbt.add(compoundnbt);
-+    }
-+
-+    // CraftBukkit start
-+    @Deprecated
-+    public void setItem(Item item) {
-+       this.bukkitStack = null; // Paper
-+        this.field_151002_e = item;
-+        this.delegate = item.delegate;
-+    }
-+    // CraftBukkit end
-+
-+    public ITextComponent func_151000_E() {
-+        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
-+        if (this.func_82837_s()) {
-+            iformattabletextcomponent.func_240699_a_(TextFormatting.ITALIC);
-+        }
-+
-+        IFormattableTextComponent iformattabletextcomponent1 = TextComponentUtils.func_240647_a_(iformattabletextcomponent);
-+        if (!this.field_190928_g) {
-+            iformattabletextcomponent1.func_240699_a_(this.func_77953_t().field_77937_e).func_240700_a_((p_234702_1_) -> {
-+                return p_234702_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230551_b_, new HoverEvent.ItemHover(this)));
-+            });
-+        }
-+
-+        return iformattabletextcomponent1;
-+    }
-+
-+    private static boolean func_206846_a(CachedBlockInfo p_206846_0_, @Nullable CachedBlockInfo p_206846_1_) {
-+        if (p_206846_1_ != null && p_206846_0_.func_177509_a() == p_206846_1_.func_177509_a()) {
-+            if (p_206846_0_.func_177507_b() == null && p_206846_1_.func_177507_b() == null) {
-+                return true;
-+            } else {
-+                return p_206846_0_.func_177507_b() != null && p_206846_1_.func_177507_b() != null && Objects.equals(p_206846_0_.func_177507_b().func_189515_b(new CompoundNBT()), p_206846_1_.func_177507_b().func_189515_b(new CompoundNBT()));
-+            }
-+        } else {
-+            return false;
-+        }
-+    }
-+
-+    public boolean func_206848_a(ITagCollectionSupplier p_206848_1_, CachedBlockInfo p_206848_2_) {
-+        if (func_206846_a(p_206848_2_, this.field_179552_h)) {
-+            return this.field_179553_i;
-+        } else {
-+            this.field_179552_h = p_206848_2_;
-+            if (this.func_77942_o() && this.field_77990_d.func_150297_b("CanDestroy", 9)) {
-+                ListNBT listnbt = this.field_77990_d.func_150295_c("CanDestroy", 8);
-+
-+                for (int i = 0; i < listnbt.size(); ++i) {
-+                    String s = listnbt.func_150307_f(i);
-+
-+                    try {
-+                        Predicate<CachedBlockInfo> predicate = BlockPredicateArgument.func_199824_a().parse(new StringReader(s)).create(p_206848_1_);
-+                        if (predicate.test(p_206848_2_)) {
-+                            this.field_179553_i = true;
-+                            return true;
-+                        }
-+                    } catch (CommandSyntaxException commandsyntaxexception) {
-+                    }
-+                }
-+            }
-+
-+            this.field_179553_i = false;
-+            return false;
-+        }
-+    }
-+
-+    public boolean func_206847_b(ITagCollectionSupplier p_206847_1_, CachedBlockInfo p_206847_2_) {
-+        if (func_206846_a(p_206847_2_, this.field_179550_j)) {
-+            return this.field_179551_k;
-+        } else {
-+            this.field_179550_j = p_206847_2_;
-+            if (this.func_77942_o() && this.field_77990_d.func_150297_b("CanPlaceOn", 9)) {
-+                ListNBT listnbt = this.field_77990_d.func_150295_c("CanPlaceOn", 8);
-+
-+                for (int i = 0; i < listnbt.size(); ++i) {
-+                    String s = listnbt.func_150307_f(i);
-+
-+                    try {
-+                        Predicate<CachedBlockInfo> predicate = BlockPredicateArgument.func_199824_a().parse(new StringReader(s)).create(p_206847_1_);
-+                        if (predicate.test(p_206847_2_)) {
-+                            this.field_179551_k = true;
-+                            return true;
-+                        }
-+                    } catch (CommandSyntaxException commandsyntaxexception) {
-+                    }
-+                }
-+            }
-+
-+            this.field_179551_k = false;
-+            return false;
-+        }
-+    }
-+
-+    public int func_190921_D() {
-+        return this.field_77992_b;
-+    }
-+
-+    public void func_190915_d(int p_190915_1_) {
-+        this.field_77992_b = p_190915_1_;
-+    }
-+
-+    public int func_190916_E() {
-+        return this.field_190928_g ? 0 : this.field_77994_a;
-+    }
-+
-+    public void func_190920_e(int p_190920_1_) {
-+        this.field_77994_a = p_190920_1_;
-+        this.func_190923_F();
-+    }
-+
-+    public void func_190917_f(int p_190917_1_) {
-+        this.func_190920_e(this.field_77994_a + p_190917_1_);
-+    }
-+
-+    public void func_190918_g(int p_190918_1_) {
-+        this.func_190917_f(-p_190918_1_);
-+    }
-+
-+    public void func_222121_b(World p_222121_1_, LivingEntity p_222121_2_, int p_222121_3_) {
-+        this.func_77973_b().func_219972_a(p_222121_1_, p_222121_2_, this, p_222121_3_);
-+    }
-+
-+    public boolean func_222117_E() {
-+        return this.func_77973_b().func_219971_r();
-+    }
-+
-+    // FORGE START
-+    public void deserializeNBT(CompoundNBT nbt) {
-+        final ItemStack itemStack = ItemStack.func_199557_a(nbt);
-+        getStack().func_77982_d(itemStack.func_77978_p());
-+        if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
-+    }
-+
-+    /**
-+     * Set up forge's ItemStack additions.
-+     */
-+    private void forgeInit() {
-+        if (this.delegate != null) {
-+            net.minecraftforge.common.capabilities.ICapabilityProvider provider = field_151002_e.initCapabilities(this, this.capNBT);
-+            this.gatherCapabilities(provider);
-+            if (this.capNBT != null) deserializeCaps(this.capNBT);
-+        }
-+    }
-+
-+    public SoundEvent func_226629_F_() {
-+        return this.func_77973_b().func_225520_U__();
-+    }
-+
-+    public SoundEvent func_226630_G_() {
-+        return this.func_77973_b().func_225519_S__();
-+    }
-+
-+    public enum TooltipDisplayFlags {
-+        ENCHANTMENTS,
-+        MODIFIERS,
-+        UNBREAKABLE,
-+        CAN_DESTROY,
-+        CAN_PLACE,
-+        ADDITIONAL,
-+        DYE;
-+
-+        private final int field_242396_h = 1 << this.ordinal();
-+
-+        public int func_242397_a() {
-+            return this.field_242396_h;
-+        }
-+    }
- }
++         multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
+       }
+ 
++      multimap = net.minecraftforge.common.ForgeHooks.getAttributeModifiers(this, p_111283_1_, multimap);
+       return multimap;
+    }
+ 
+@@ -839,6 +_,14 @@
+       listnbt.add(compoundnbt);
+    }
+ 
++   // CraftBukkit start
++   @Deprecated
++   public void setItem(Item item) {
++      this.field_151002_e = item;
++      this.delegate = item.delegate;
++   }
++   // CraftBukkit end
++
+    public ITextComponent func_151000_E() {
+       IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
+       if (this.func_82837_s()) {
+@@ -952,6 +_,24 @@
+ 
+    public boolean func_222117_E() {
+       return this.func_77973_b().func_219971_r();
++   }
++
++   // FORGE START
++   public void deserializeNBT(CompoundNBT nbt) {
++      final ItemStack itemStack = ItemStack.func_199557_a(nbt);
++      getStack().func_77982_d(itemStack.func_77978_p());
++      if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
++   }
++
++   /**
++    * Set up forge's ItemStack additions.
++    */
++   private void forgeInit() {
++      if (this.delegate != null) {
++         net.minecraftforge.common.capabilities.ICapabilityProvider provider = field_151002_e.initCapabilities(this, this.capNBT);
++         this.gatherCapabilities(provider);
++         if (this.capNBT != null) deserializeCaps(this.capNBT);
++      }
+    }
+ 
+    public SoundEvent func_226629_F_() {

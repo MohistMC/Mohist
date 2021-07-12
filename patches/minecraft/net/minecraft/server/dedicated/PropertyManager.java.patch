@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/dedicated/PropertyManager.java
 +++ b/net/minecraft/server/dedicated/PropertyManager.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.server.dedicated;
+ 
+ import com.google.common.base.MoreObjects;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.OutputStream;
 @@ -19,7 +_,7 @@
  
  public abstract class PropertyManager<T extends PropertyManager<T>> {
@@ -14,7 +22,7 @@
           properties.load(inputstream);
        } catch (IOException ioexception) {
 -         field_164440_a.error("Failed to load properties from file: " + p_218969_0_);
-+         field_164440_a.error(com.mohistmc.util.i18n.i18n.get("propertymanager.1" ,p_218969_0_));
++         field_164440_a.error(i18n.get("propertymanager.1" ,p_218969_0_));
        }
  
        return properties;
@@ -26,7 +34,7 @@
 +         net.minecraftforge.common.util.SortedProperties.store(field_73672_b, outputstream, "Minecraft server properties");
        } catch (IOException ioexception) {
 -         field_164440_a.error("Failed to store properties to file: " + p_218970_1_);
-+         field_164440_a.error(com.mohistmc.util.i18n.i18n.get("propertymanager.1" ,p_218970_1_));
++         field_164440_a.error(i18n.get("propertymanager.1" ,p_218970_1_));
        }
  
     }

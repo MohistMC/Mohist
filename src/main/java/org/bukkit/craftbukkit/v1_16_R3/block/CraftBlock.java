@@ -127,11 +127,6 @@ public class CraftBlock implements Block {
         return position.getZ();
     }
 
-    @Override
-    public Chunk getChunk() {
-        return getWorld().getChunkAt(this);
-    }
-
     public void setData(final byte data) {
         setData(data, 3);
     }

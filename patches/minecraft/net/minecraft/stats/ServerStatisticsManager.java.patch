@@ -1,5 +1,13 @@
 --- a/net/minecraft/stats/ServerStatisticsManager.java
 +++ b/net/minecraft/stats/ServerStatisticsManager.java
+@@ -8,6 +_,7 @@
+ import com.google.gson.JsonPrimitive;
+ import com.google.gson.internal.Streams;
+ import com.google.gson.stream.JsonReader;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.DataFixer;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap;
+ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 @@ -43,28 +_,37 @@
     public ServerStatisticsManager(MinecraftServer p_i45306_1_, File p_i45306_2_) {
        this.field_150890_c = p_i45306_1_;
@@ -16,10 +24,10 @@
              this.func_199062_a(p_i45306_1_.func_195563_aC(), FileUtils.readFileToString(p_i45306_2_));
           } catch (IOException ioexception) {
 -            field_150889_b.error("Couldn't read statistics file {}", p_i45306_2_, ioexception);
-+            field_150889_b.error(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.1", p_i45306_2_, ioexception));
++            field_150889_b.error(i18n.get("serverstatisticsmanager.1", p_i45306_2_, ioexception));
           } catch (JsonParseException jsonparseexception) {
 -            field_150889_b.error("Couldn't parse statistics file {}", p_i45306_2_, jsonparseexception);
-+            field_150889_b.error(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.2", p_i45306_2_, jsonparseexception));
++            field_150889_b.error(i18n.get("serverstatisticsmanager.2", p_i45306_2_, jsonparseexception));
           }
        }
  
@@ -31,7 +39,7 @@
           FileUtils.writeStringToFile(this.field_150887_d, this.func_199061_b());
        } catch (IOException ioexception) {
 -         field_150889_b.error("Couldn't save stats", (Throwable)ioexception);
-+         field_150889_b.error(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.3", (Throwable)ioexception));
++         field_150889_b.error(i18n.get("serverstatisticsmanager.3", (Throwable)ioexception));
        }
  
     }
@@ -46,7 +54,7 @@
           JsonElement jsonelement = Streams.parse(jsonreader);
           if (jsonelement.isJsonNull()) {
 -            field_150889_b.error("Unable to parse Stat data from {}", (Object)this.field_150887_d);
-+            field_150889_b.error(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.4", (Object)this.field_150887_d));
++            field_150889_b.error(i18n.get("serverstatisticsmanager.4", (Object)this.field_150887_d));
              return;
           }
  
@@ -55,24 +63,24 @@
                                this.field_150875_a.put(p_219730_3_, compoundnbt2.func_74762_e(s1));
                             }, () -> {
 -                              field_150889_b.warn("Invalid statistic in {}: Don't know what {} is", this.field_150887_d, s1);
-+                              field_150889_b.warn(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.5", this.field_150887_d, s1));
++                              field_150889_b.warn(i18n.get("serverstatisticsmanager.5", this.field_150887_d, s1));
                             });
                          } else {
 -                           field_150889_b.warn("Invalid statistic value in {}: Don't know what {} is for key {}", this.field_150887_d, compoundnbt2.func_74781_a(s1), s1);
-+                           field_150889_b.warn(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.6", this.field_150887_d, compoundnbt2.func_74781_a(s1), s1));
++                           field_150889_b.warn(i18n.get("serverstatisticsmanager.6", this.field_150887_d, compoundnbt2.func_74781_a(s1), s1));
                          }
                       }
  
                    }, () -> {
 -                     field_150889_b.warn("Invalid statistic type in {}: Don't know what {} is", this.field_150887_d, s);
-+                     field_150889_b.warn(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.7", this.field_150887_d, s));
++                     field_150889_b.warn(i18n.get("serverstatisticsmanager.7", this.field_150887_d, s));
                    });
                 }
              }
           }
        } catch (IOException | JsonParseException jsonparseexception) {
 -         field_150889_b.error("Unable to parse Stat data from {}", this.field_150887_d, jsonparseexception);
-+         field_150889_b.error(com.mohistmc.util.i18n.i18n.get("serverstatisticsmanager.8", this.field_150887_d, jsonparseexception));
++         field_150889_b.error(i18n.get("serverstatisticsmanager.8", this.field_150887_d, jsonparseexception));
        }
  
     }

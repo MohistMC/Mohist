@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
 +++ b/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
-@@ -1,50 +_,64 @@
+@@ -1,50 +_,65 @@
  package net.minecraft.world.chunk.listener;
  
 -import javax.annotation.Nullable;
++import com.mohistmc.util.i18n.i18n;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.ChunkPos;
  import net.minecraft.util.math.MathHelper;
@@ -88,7 +89,7 @@
 +        if (Util.func_211177_b() > this.field_219516_e) {
 +            this.field_219516_e += 500L;
 +            if (lastPercentage != calc) {
-+                field_219512_a.info(com.mohistmc.util.i18n.i18n.get("loggingchunkstatuslistener.2", calc));
++                field_219512_a.info(i18n.get("loggingchunkstatuslistener.2", calc));
 +                lastPercentage = calc;
 +            }
 +        }
@@ -96,7 +97,7 @@
 +    }
 +
 +    public void func_219510_b() {
-+        field_219512_a.info(com.mohistmc.util.i18n.i18n.get("loggingchunkstatuslistener.1", (long) (Util.func_211177_b() - this.field_219515_d)));
++        field_219512_a.info(i18n.get("loggingchunkstatuslistener.1", (long) (Util.func_211177_b() - this.field_219515_d)));
 +        this.field_219516_e = Long.MAX_VALUE;
 +    }
 +

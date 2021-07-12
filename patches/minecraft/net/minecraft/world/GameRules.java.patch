@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/GameRules.java
 +++ b/net/minecraft/world/GameRules.java
+@@ -2,6 +_,7 @@
+ 
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.brigadier.arguments.ArgumentType;
+ import com.mojang.brigadier.arguments.BoolArgumentType;
+ import com.mojang.brigadier.arguments.IntegerArgumentType;
 @@ -15,6 +_,8 @@
  import java.util.function.Function;
  import java.util.function.Supplier;
@@ -92,7 +100,7 @@
                 return Integer.parseInt(p_223563_0_);
              } catch (NumberFormatException numberformatexception) {
 -               GameRules.field_223622_y.warn("Failed to parse integer {}", (Object)p_223563_0_);
-+               GameRules.field_223622_y.warn(com.mohistmc.util.i18n.i18n.get("gamerules.1", (Object)p_223563_0_));
++               GameRules.field_223622_y.warn(i18n.get("gamerules.1", (Object)p_223563_0_));
              }
           }
  

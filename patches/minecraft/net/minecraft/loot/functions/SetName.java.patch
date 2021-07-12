@@ -1,11 +1,19 @@
 --- a/net/minecraft/loot/functions/SetName.java
 +++ b/net/minecraft/loot/functions/SetName.java
+@@ -4,6 +_,7 @@
+ import com.google.gson.JsonDeserializationContext;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonSerializationContext;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import java.util.Set;
+ import java.util.function.UnaryOperator;
 @@ -51,7 +_,7 @@
                 try {
                    return TextComponentUtils.func_240645_a_(commandsource, p_215937_2_, entity, 0);
                 } catch (CommandSyntaxException commandsyntaxexception) {
 -                  field_215939_a.warn("Failed to resolve text component", (Throwable)commandsyntaxexception);
-+                  field_215939_a.warn(com.mohistmc.util.i18n.i18n.get("setname.1", (Throwable)commandsyntaxexception));
++                  field_215939_a.warn(i18n.get("setname.1", (Throwable)commandsyntaxexception));
                    return p_215937_2_;
                 }
              };

@@ -1,5 +1,13 @@
 --- a/net/minecraft/advancements/AdvancementManager.java
 +++ b/net/minecraft/advancements/AdvancementManager.java
+@@ -6,6 +_,7 @@
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Collection;
+ import java.util.Map;
+ import javax.annotation.Nullable;
 @@ -21,8 +_,8 @@
  
  public class AdvancementManager extends JsonReloadListener {
@@ -24,13 +32,13 @@
              JsonObject jsonobject = JSONUtils.func_151210_l(p_240923_3_, "advancement");
              Advancement.Builder advancement$builder = Advancement.Builder.func_241043_a_(jsonobject, new ConditionArrayParser(p_240923_2_, this.field_240922_d_));
 +            if (advancement$builder == null) {
-+                field_192782_a.debug(com.mohistmc.util.i18n.i18n.get("advancementmanager.1", p_240923_2_));
++                field_192782_a.debug(i18n.get("advancementmanager.1", p_240923_2_));
 +                return;
 +            }
              map.put(p_240923_2_, advancement$builder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
 -            field_192782_a.error("Parsing error loading custom advancement {}: {}", p_240923_2_, jsonparseexception.getMessage());
-+            field_192782_a.error(com.mohistmc.util.i18n.i18n.get("advancementmanager.2", p_240923_2_, jsonparseexception.getMessage()));
++            field_192782_a.error(i18n.get("advancementmanager.2", p_240923_2_, jsonparseexception.getMessage()));
           }
  
        });

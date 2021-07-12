@@ -1,5 +1,13 @@
 --- a/net/minecraft/item/crafting/ServerRecipeBook.java
 +++ b/net/minecraft/item/crafting/ServerRecipeBook.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.item.crafting;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.List;
 @@ -16,6 +_,7 @@
  import net.minecraft.util.ResourceLocationException;
  import org.apache.logging.log4j.LogManager;
@@ -30,13 +38,13 @@
              Optional<? extends IRecipe<?>> optional = p_223417_3_.func_215367_a(resourcelocation);
              if (!optional.isPresent()) {
 -               field_192828_d.error("Tried to load unrecognized recipe: {} removed now.", (Object)resourcelocation);
-+               field_192828_d.error(com.mohistmc.util.i18n.i18n.get("serverrecipebook.1", (Object)resourcelocation));
++               field_192828_d.error(i18n.get("serverrecipebook.1", (Object)resourcelocation));
              } else {
                 p_223417_2_.accept(optional.get());
              }
           } catch (ResourceLocationException resourcelocationexception) {
 -            field_192828_d.error("Tried to load improperly formatted recipe: {} removed now.", (Object)s);
-+            field_192828_d.error(com.mohistmc.util.i18n.i18n.get("serverrecipebook.2", (Object)s));
++            field_192828_d.error(i18n.get("serverrecipebook.2", (Object)s));
           }
        }
  

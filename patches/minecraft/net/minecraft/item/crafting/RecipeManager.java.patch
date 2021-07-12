@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -1,24 +_,31 @@
+@@ -1,24 +_,32 @@
  package net.minecraft.item.crafting;
  
 -import com.google.common.collect.ImmutableMap;
@@ -12,6 +12,7 @@
 -import com.google.gson.JsonObject;
 -import com.google.gson.JsonParseException;
 -import com.google.gson.JsonSyntaxException;
++import com.mohistmc.util.i18n.i18n;
  import java.util.Collection;
  import java.util.Collections;
  import java.util.Comparator;
@@ -71,12 +72,12 @@
  
           try {
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
-+               field_199521_c.debug(com.mohistmc.util.i18n.i18n.get("recipemanager.1", resourcelocation));
++               field_199521_c.debug(i18n.get("recipemanager.1", resourcelocation));
 +               continue;
 +            }
              IRecipe<?> irecipe = func_215377_a(resourcelocation, JSONUtils.func_151210_l(entry.getValue(), "top element"));
 +            if (irecipe == null) {
-+               field_199521_c.info(com.mohistmc.util.i18n.i18n.get("recipemanager.2", resourcelocation));
++               field_199521_c.info(i18n.get("recipemanager.2", resourcelocation));
 +               continue;
 +            }
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
@@ -84,7 +85,7 @@
              }).put(resourcelocation, irecipe);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
 -            field_199521_c.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-+            field_199521_c.error(com.mohistmc.util.i18n.i18n.get("recipemanager.3", resourcelocation, jsonparseexception));
++            field_199521_c.error(i18n.get("recipemanager.3", resourcelocation, jsonparseexception));
           }
        }
  
@@ -109,14 +110,14 @@
 +         try {
 +            // Mohist start - Duplicate vanilla checks for CB recipes
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
-+               field_199521_c.debug(com.mohistmc.util.i18n.i18n.get("recipemanager.1", minecraftkey));
++               field_199521_c.debug(i18n.get("recipemanager.1", minecraftkey));
 +               continue;
 +            }
 +            // Mohist end
 +            IRecipe<?> irecipe = func_215377_a(minecraftkey, JSONUtils.func_151210_l(entry.getValue(), "top element"));
 +            // Mohist start - Duplicate vanilla checks for CB recipes
 +            if (irecipe == null) {
-+               field_199521_c.info(com.mohistmc.util.i18n.i18n.get("recipemanager.2", minecraftkey));
++               field_199521_c.info(i18n.get("recipemanager.2", minecraftkey));
 +               continue;
 +            }
 +            // Mohist end
@@ -127,7 +128,7 @@
 +            // CraftBukkit end
 +         } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
 +            String msg; if ((msg = jsonparseexception.getMessage()) == null || !msg.startsWith("Unknown item")) // Mohist - Suppress recipe loading error
-+            field_199521_c.error(com.mohistmc.util.i18n.i18n.get("recipemanager.3", minecraftkey, jsonparseexception));
++            field_199521_c.error(i18n.get("recipemanager.3", minecraftkey, jsonparseexception));
 +         }
 +      }
 +

@@ -1,5 +1,13 @@
 --- a/net/minecraft/tileentity/TileEntityType.java
 +++ b/net/minecraft/tileentity/TileEntityType.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.tileentity;
+ 
+ import com.google.common.collect.ImmutableSet;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.types.Type;
+ import java.util.Set;
+ import java.util.function.Supplier;
 @@ -16,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -22,7 +30,7 @@
     private static <T extends TileEntity> TileEntityType<T> func_200966_a(String p_200966_0_, TileEntityType.Builder<T> p_200966_1_) {
        if (p_200966_1_.field_223044_b.isEmpty()) {
 -         field_206866_A.warn("Block entity type {} requires at least one valid block to be defined!", (Object)p_200966_0_);
-+         field_206866_A.warn(com.mohistmc.util.i18n.i18n.get("tileentitytype.1", (Object)p_200966_0_));
++         field_206866_A.warn(i18n.get("tileentitytype.1", (Object)p_200966_0_));
        }
  
        Type<?> type = Util.func_240976_a_(TypeReferences.field_211294_j, p_200966_0_);

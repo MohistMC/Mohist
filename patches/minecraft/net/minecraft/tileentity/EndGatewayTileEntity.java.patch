@@ -1,5 +1,12 @@
 --- a/net/minecraft/tileentity/EndGatewayTileEntity.java
 +++ b/net/minecraft/tileentity/EndGatewayTileEntity.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.tileentity;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import java.util.List;
+ import java.util.Random;
+ import javax.annotation.Nullable;
 @@ -20,6 +_,7 @@
  import net.minecraft.util.math.ChunkPos;
  import net.minecraft.util.math.MathHelper;
@@ -69,7 +76,7 @@
     private BlockPos func_195502_i() {
        BlockPos blockpos = func_195494_a(this.field_145850_b, this.field_195506_h.func_177982_a(0, 2, 0), 5, false);
 -      field_195503_a.debug("Best exit position for portal at {} is {}", this.field_195506_h, blockpos);
-+      field_195503_a.debug(com.mohistmc.util.i18n.i18n.get("endgatewaytileentity.1", this.field_195506_h, blockpos));
++      field_195503_a.debug(i18n.get("endgatewaytileentity.1", this.field_195506_h, blockpos));
        return blockpos.func_177984_a();
     }
  
@@ -78,31 +85,31 @@
  
        for(int i = 16; func_195495_a(p_227015_1_, vector3d1).func_76625_h() > 0 && i-- > 0; vector3d1 = vector3d1.func_178787_e(vector3d.func_186678_a(-16.0D))) {
 -         field_195503_a.debug("Skipping backwards past nonempty chunk at {}", (Object)vector3d1);
-+         field_195503_a.debug(com.mohistmc.util.i18n.i18n.get("endgatewaytileentity.2", (Object)vector3d1));
++         field_195503_a.debug(i18n.get("endgatewaytileentity.2", (Object)vector3d1));
        }
  
        for(int j = 16; func_195495_a(p_227015_1_, vector3d1).func_76625_h() == 0 && j-- > 0; vector3d1 = vector3d1.func_178787_e(vector3d.func_186678_a(16.0D))) {
 -         field_195503_a.debug("Skipping forward past empty chunk at {}", (Object)vector3d1);
-+         field_195503_a.debug(com.mohistmc.util.i18n.i18n.get("endgatewaytileentity.3", (Object)vector3d1));
++         field_195503_a.debug(i18n.get("endgatewaytileentity.3", (Object)vector3d1));
        }
  
 -      field_195503_a.debug("Found chunk at {}", (Object)vector3d1);
-+      field_195503_a.debug(com.mohistmc.util.i18n.i18n.get("endgatewaytileentity.4", (Object)vector3d1));
++      field_195503_a.debug(i18n.get("endgatewaytileentity.4", (Object)vector3d1));
        Chunk chunk = func_195495_a(p_227015_1_, vector3d1);
        this.field_195506_h = func_195498_a(chunk);
        if (this.field_195506_h == null) {
           this.field_195506_h = new BlockPos(vector3d1.field_72450_a + 0.5D, 75.0D, vector3d1.field_72449_c + 0.5D);
 -         field_195503_a.debug("Failed to find suitable block, settling on {}", (Object)this.field_195506_h);
-+         field_195503_a.debug(com.mohistmc.util.i18n.i18n.get("endgatewaytileentity.5", (Object)this.field_195506_h));
++         field_195503_a.debug(i18n.get("endgatewaytileentity.5", (Object)this.field_195506_h));
           Features.field_243945_e.func_242765_a(p_227015_1_, p_227015_1_.func_72863_F().func_201711_g(), new Random(this.field_195506_h.func_218275_a()), this.field_195506_h);
        } else {
 -         field_195503_a.debug("Found block at {}", (Object)this.field_195506_h);
-+         field_195503_a.debug(com.mohistmc.util.i18n.i18n.get("endgatewaytileentity.6", (Object)this.field_195506_h));
++         field_195503_a.debug(i18n.get("endgatewaytileentity.6", (Object)this.field_195506_h));
        }
  
        this.field_195506_h = func_195494_a(p_227015_1_, this.field_195506_h, 16, true);
 -      field_195503_a.debug("Creating portal at {}", (Object)this.field_195506_h);
-+      field_195503_a.debug(com.mohistmc.util.i18n.i18n.get("endgatewaytileentity.7", (Object)this.field_195506_h));
++      field_195503_a.debug(i18n.get("endgatewaytileentity.7", (Object)this.field_195506_h));
        this.field_195506_h = this.field_195506_h.func_177981_b(10);
        this.func_227016_a_(p_227015_1_, this.field_195506_h);
        this.func_70296_d();

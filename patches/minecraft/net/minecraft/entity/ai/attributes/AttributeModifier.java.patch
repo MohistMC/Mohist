@@ -1,11 +1,18 @@
 --- a/net/minecraft/entity/ai/attributes/AttributeModifier.java
 +++ b/net/minecraft/entity/ai/attributes/AttributeModifier.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.entity.ai.attributes;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import io.netty.util.internal.ThreadLocalRandom;
+ import java.util.Objects;
+ import java.util.UUID;
 @@ -87,7 +_,7 @@
           AttributeModifier.Operation attributemodifier$operation = AttributeModifier.Operation.func_220372_a(p_233800_0_.func_74762_e("Operation"));
           return new AttributeModifier(uuid, p_233800_0_.func_74779_i("Name"), p_233800_0_.func_74769_h("Amount"), attributemodifier$operation);
        } catch (Exception exception) {
 -         field_233799_a_.warn("Unable to create attribute: {}", (Object)exception.getMessage());
-+         field_233799_a_.warn(com.mohistmc.util.i18n.i18n.get("attributemodifier.1", (Object)exception.getMessage()));
++         field_233799_a_.warn(i18n.get("attributemodifier.1", (Object)exception.getMessage()));
           return null;
        }
     }

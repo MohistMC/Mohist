@@ -1,5 +1,13 @@
 --- a/net/minecraft/potion/EffectInstance.java
 +++ b/net/minecraft/potion/EffectInstance.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.potion;
+ 
+ import com.google.common.collect.ComparisonChain;
++import com.mohistmc.util.i18n.i18n;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.nbt.CompoundNBT;
 @@ -9,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -19,7 +27,7 @@
     public boolean func_199308_a(EffectInstance p_199308_1_) {
        if (this.field_188420_b != p_199308_1_.field_188420_b) {
 -         field_180155_a.warn("This method should only be called for matching effects!");
-+         field_180155_a.warn(com.mohistmc.util.i18n.i18n.get("effectinstance.1"));
++         field_180155_a.warn(i18n.get("effectinstance.1"));
        }
  
        boolean flag = false;

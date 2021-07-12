@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/management/PlayerProfileCache.java
 +++ b/net/minecraft/server/management/PlayerProfileCache.java
+@@ -10,6 +_,7 @@
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.authlib.Agent;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.GameProfileRepository;
 @@ -37,6 +_,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import org.apache.logging.log4j.LogManager;
@@ -53,7 +61,7 @@
        } catch (FileNotFoundException filenotfoundexception) {
 +         // Spigot Start
 +      } catch (com.google.gson.JsonSyntaxException | NullPointerException ex) {
-+         UserList.field_152693_a.warn(com.mohistmc.util.i18n.i18n.get( "playerprofilecache.1" ));
++         UserList.field_152693_a.warn(i18n.get( "playerprofilecache.1" ));
 +         this.field_152665_g.delete();
 +         // Spigot End
        } catch (JsonParseException | IOException ioexception) {

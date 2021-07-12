@@ -8,121 +8,26 @@
  import net.minecraft.client.network.play.IClientPlayNetHandler;
  import net.minecraft.network.IPacket;
  import net.minecraft.network.PacketBuffer;
-@@ -11,54 +_,67 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -12,6 +_,7 @@
  
  public class SChatPacket implements IPacket<IClientPlayNetHandler> {
--   private ITextComponent field_148919_a;
--   private ChatType field_179842_b;
--   private UUID field_240809_c_;
--
--   public SChatPacket() {
--   }
--
--   public SChatPacket(ITextComponent p_i232578_1_, ChatType p_i232578_2_, UUID p_i232578_3_) {
--      this.field_148919_a = p_i232578_1_;
--      this.field_179842_b = p_i232578_2_;
--      this.field_240809_c_ = p_i232578_3_;
--   }
--
--   public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
--      this.field_148919_a = p_148837_1_.func_179258_d();
--      this.field_179842_b = ChatType.func_192582_a(p_148837_1_.readByte());
--      this.field_240809_c_ = p_148837_1_.func_179253_g();
--   }
--
--   public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+    private ITextComponent field_148919_a;
++   public net.md_5.bungee.api.chat.BaseComponent[] components; // Spigot
+    private ChatType field_179842_b;
+    private UUID field_240809_c_;
+ 
+@@ -31,7 +_,13 @@
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
 -      p_148840_1_.func_179256_a(this.field_148919_a);
--      p_148840_1_.writeByte(this.field_179842_b.func_192583_a());
--      p_148840_1_.func_179252_a(this.field_240809_c_);
--   }
--
--   public void func_148833_a(IClientPlayNetHandler p_148833_1_) {
--      p_148833_1_.func_147251_a(this);
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   public ITextComponent func_148915_c() {
--      return this.field_148919_a;
--   }
--
--   public boolean func_148916_d() {
--      return this.field_179842_b == ChatType.SYSTEM || this.field_179842_b == ChatType.GAME_INFO;
--   }
--
--   public ChatType func_192590_c() {
--      return this.field_179842_b;
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   public UUID func_240810_e_() {
--      return this.field_240809_c_;
--   }
--
--   public boolean func_211402_a() {
--      return true;
--   }
-+    private ITextComponent field_148919_a;
-+    public net.kyori.adventure.text.Component adventure$message; // Paper
-+    public net.md_5.bungee.api.chat.BaseComponent[] components; // Spigot
-+    private ChatType field_179842_b;
-+    private UUID field_240809_c_;
-+
-+    public SChatPacket() {
-+    }
-+
-+    public SChatPacket(ITextComponent p_i232578_1_, ChatType p_i232578_2_, UUID p_i232578_3_) {
-+        this.field_148919_a = p_i232578_1_;
-+        this.field_179842_b = p_i232578_2_;
-+        this.field_240809_c_ = p_i232578_3_;
-+    }
-+
-+    public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
-+        this.field_148919_a = p_148837_1_.func_179258_d();
-+        this.field_179842_b = ChatType.func_192582_a(p_148837_1_.readByte());
-+        this.field_240809_c_ = p_148837_1_.func_179253_g();
-+    }
-+
-+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
-+        // Paper start
-+        if (this.adventure$message != null) {
-+            p_148840_1_.writeComponent(this.adventure$message);
-+        } else
-+            // Paper end
-+            // Spigot start
-+            if (components != null) {
-+                p_148840_1_.func_180714_a(net.md_5.bungee.chat.ComponentSerializer.toString(components));
-+            } else {
-+                p_148840_1_.func_179256_a(this.field_148919_a);
-+            }
-+        // Spigot end
-+        p_148840_1_.writeByte(this.field_179842_b.func_192583_a());
-+        p_148840_1_.func_179252_a(this.field_240809_c_);
-+    }
-+
-+    public void func_148833_a(IClientPlayNetHandler p_148833_1_) {
-+        p_148833_1_.func_147251_a(this);
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    public ITextComponent func_148915_c() {
-+        return this.field_148919_a;
-+    }
-+
-+    public boolean func_148916_d() {
-+        return this.field_179842_b == ChatType.SYSTEM || this.field_179842_b == ChatType.GAME_INFO;
-+    }
-+
-+    public ChatType func_192590_c() {
-+        return this.field_179842_b;
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    public UUID func_240810_e_() {
-+        return this.field_240809_c_;
-+    }
-+
-+    public boolean func_211402_a() {
-+        return true;
-+    }
- }
++      // Spigot start
++      if (components != null) {
++         p_148840_1_.func_180714_a(net.md_5.bungee.chat.ComponentSerializer.toString(components));
++      } else {
++         p_148840_1_.func_179256_a(this.field_148919_a);
++      }
++      // Spigot end
+       p_148840_1_.writeByte(this.field_179842_b.func_192583_a());
+       p_148840_1_.func_179252_a(this.field_240809_c_);
+    }

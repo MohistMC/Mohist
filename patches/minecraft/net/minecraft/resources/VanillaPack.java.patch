@@ -1,11 +1,19 @@
 --- a/net/minecraft/resources/VanillaPack.java
 +++ b/net/minecraft/resources/VanillaPack.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.File;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
 @@ -53,7 +_,7 @@
                    p_217809_0_.put(resourcepacktype, filesystem);
                 }
              } catch (IOException | URISyntaxException urisyntaxexception) {
 -               field_195784_b.error("Couldn't get a list of all vanilla resources", (Throwable)urisyntaxexception);
-+               field_195784_b.error(com.mohistmc.util.i18n.i18n.get("vanillapack.1", (Throwable)urisyntaxexception));
++               field_195784_b.error(i18n.get("vanillapack.1", (Throwable)urisyntaxexception));
              }
           }
  
@@ -14,7 +22,7 @@
           URL url1 = VanillaPack.class.getResource("/" + p_225637_1_.func_198956_a() + "/.mcassetsroot");
           if (url1 == null) {
 -            field_195784_b.error("Couldn't find .mcassetsroot, cannot load vanilla resources");
-+            field_195784_b.error(com.mohistmc.util.i18n.i18n.get("vanillapack.2"));
++            field_195784_b.error(i18n.get("vanillapack.2"));
              return set;
           }
  
@@ -23,12 +31,12 @@
              func_229867_a_(set, p_225637_4_, "minecraft", path1, p_225637_3_, p_225637_5_);
           } else {
 -            field_195784_b.error("Unsupported scheme {} trying to list vanilla resources (NYI?)", (Object)uri1);
-+            field_195784_b.error(com.mohistmc.util.i18n.i18n.get("vanillapack.3", (Object)uri1));
++            field_195784_b.error(i18n.get("vanillapack.3", (Object)uri1));
           }
        } catch (NoSuchFileException | FileNotFoundException filenotfoundexception) {
        } catch (IOException | URISyntaxException urisyntaxexception) {
 -         field_195784_b.error("Couldn't get a list of all vanilla resources", (Throwable)urisyntaxexception);
-+         field_195784_b.error(com.mohistmc.util.i18n.i18n.get("vanillapack.4", (Throwable)urisyntaxexception));
++         field_195784_b.error(i18n.get("vanillapack.4", (Throwable)urisyntaxexception));
        }
  
        return set;

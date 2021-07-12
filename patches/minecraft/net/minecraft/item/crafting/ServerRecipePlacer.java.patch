@@ -1,11 +1,19 @@
 --- a/net/minecraft/item/crafting/ServerRecipePlacer.java
 +++ b/net/minecraft/item/crafting/ServerRecipePlacer.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.item.crafting;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.util.i18n.i18n;
+ import it.unimi.dsi.fastutil.ints.IntArrayList;
+ import it.unimi.dsi.fastutil.ints.IntList;
+ import java.util.Iterator;
 @@ -69,7 +_,7 @@
              ItemStack itemstack1 = itemstack.func_77946_l();
              itemstack1.func_190920_e(1);
              if (!this.field_201514_c.func_191971_c(i, itemstack1)) {
 -               field_194330_a.error("Can't find any space for item in the inventory");
-+               field_194330_a.error(com.mohistmc.util.i18n.i18n.get("serverrecipeplacer.1"));
++               field_194330_a.error(i18n.get("serverrecipeplacer.1"));
              }
           }
  

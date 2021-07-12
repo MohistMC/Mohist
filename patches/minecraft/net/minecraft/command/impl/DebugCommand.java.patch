@@ -1,11 +1,19 @@
 --- a/net/minecraft/command/impl/DebugCommand.java
 +++ b/net/minecraft/command/impl/DebugCommand.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.command.impl;
+ 
+ import com.google.common.collect.ImmutableMap;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 @@ -92,7 +_,7 @@
           p_225389_0_.func_197030_a(new TranslationTextComponent("commands.debug.reportSaved", s), false);
           return 1;
        } catch (IOException ioexception) {
 -         field_225390_a.error("Failed to save debug dump", (Throwable)ioexception);
-+         field_225390_a.error(com.mohistmc.util.i18n.i18n.get("debugcommand.1", (Throwable)ioexception));
++         field_225390_a.error(i18n.get("debugcommand.1", (Throwable)ioexception));
           p_225389_0_.func_197021_a(new TranslationTextComponent("commands.debug.reportFailed"));
           return 0;
        }

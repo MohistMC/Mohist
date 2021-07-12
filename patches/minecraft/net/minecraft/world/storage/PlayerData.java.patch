@@ -1,7 +1,9 @@
 --- a/net/minecraft/world/storage/PlayerData.java
 +++ b/net/minecraft/world/storage/PlayerData.java
-@@ -2,8 +_,11 @@
+@@ -1,9 +_,13 @@
+ package net.minecraft.world.storage;
  
++import com.mohistmc.util.i18n.i18n;
  import com.mojang.datafixers.DataFixer;
  import java.io.File;
 +import java.io.FileInputStream;
@@ -35,7 +37,7 @@
 +         net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_237335_1_, field_237333_c_, p_237335_1_.func_189512_bd());
        } catch (Exception exception) {
 -         field_237332_b_.warn("Failed to save player data for {}", (Object)p_237335_1_.func_200200_C_().getString());
-+         field_237332_b_.warn(com.mohistmc.util.i18n.i18n.get("playerdata.1", (Object)p_237335_1_.func_200200_C_().getString()));
++         field_237332_b_.warn(i18n.get("playerdata.1", (Object)p_237335_1_.func_200200_C_().getString()));
        }
  
     }
@@ -66,7 +68,7 @@
 +         // Spigot End
        } catch (Exception exception) {
 -         field_237332_b_.warn("Failed to load player data for {}", (Object)p_237336_1_.func_200200_C_().getString());
-+         field_237332_b_.warn(com.mohistmc.util.i18n.i18n.get("playerdata.2", (Object)p_237336_1_.func_200200_C_().getString()));
++         field_237332_b_.warn(i18n.get("playerdata.2", (Object)p_237336_1_.func_200200_C_().getString()));
        }
  
        if (compoundnbt != null) {

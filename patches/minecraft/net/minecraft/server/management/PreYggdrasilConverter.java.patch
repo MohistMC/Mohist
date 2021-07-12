@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/management/PreYggdrasilConverter.java
 +++ b/net/minecraft/server/management/PreYggdrasilConverter.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.io.Files;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.authlib.Agent;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.ProfileLookupCallback;
 @@ -19,6 +_,8 @@
  import java.util.UUID;
  import javax.annotation.Nullable;
@@ -32,7 +40,7 @@
                    String[] astring = map.get(p_onProfileLookupSucceeded_1_.getName().toLowerCase(Locale.ROOT));
                    if (astring == null) {
 -                     PreYggdrasilConverter.field_152732_e.warn("Could not convert user banlist entry for {}", (Object)p_onProfileLookupSucceeded_1_.getName());
-+                     PreYggdrasilConverter.field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.1", (Object)p_onProfileLookupSucceeded_1_.getName()));
++                     PreYggdrasilConverter.field_152732_e.warn(i18n.get("preyggdrasilconverter.1", (Object)p_onProfileLookupSucceeded_1_.getName()));
                       throw new PreYggdrasilConverter.ConversionError("Profile not in the conversionlist");
                    } else {
                       Date date = astring.length > 1 ? PreYggdrasilConverter.func_152713_b(astring[1], (Date)null) : null;
@@ -41,7 +49,7 @@
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
 -                  PreYggdrasilConverter.field_152732_e.warn("Could not lookup user banlist entry for {}", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_);
-+                  PreYggdrasilConverter.field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.2", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
++                  PreYggdrasilConverter.field_152732_e.warn(i18n.get("preyggdrasilconverter.2", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
                    if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException)) {
                       throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
                    }
@@ -50,11 +58,11 @@
              return true;
           } catch (IOException ioexception) {
 -            field_152732_e.warn("Could not read old user banlist to convert it!", (Throwable)ioexception);
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.3", (Throwable)ioexception));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.3", (Throwable)ioexception));
              return false;
           } catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror) {
 -            field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
-+            field_152732_e.error(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.4", (Throwable)preyggdrasilconverter$conversionerror));
++            field_152732_e.error(i18n.get("preyggdrasilconverter.4", (Throwable)preyggdrasilconverter$conversionerror));
              return false;
           }
        } else {
@@ -72,7 +80,7 @@
              return true;
           } catch (IOException ioexception) {
 -            field_152732_e.warn("Could not parse old ip banlist to convert it!", (Throwable)ioexception);
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.5", (Throwable)ioexception));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.5", (Throwable)ioexception));
              return false;
           }
        } else {
@@ -90,7 +98,7 @@
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
 -                  PreYggdrasilConverter.field_152732_e.warn("Could not lookup oplist entry for {}", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_);
-+                  PreYggdrasilConverter.field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.6", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
++                  PreYggdrasilConverter.field_152732_e.warn(i18n.get("preyggdrasilconverter.6", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
                    if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException)) {
                       throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
                    }
@@ -99,11 +107,11 @@
              return true;
           } catch (IOException ioexception) {
 -            field_152732_e.warn("Could not read old oplist to convert it!", (Throwable)ioexception);
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.7", (Throwable)ioexception));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.7", (Throwable)ioexception));
              return false;
           } catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror) {
 -            field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
-+            field_152732_e.error(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.8", (Throwable)preyggdrasilconverter$conversionerror));
++            field_152732_e.error(i18n.get("preyggdrasilconverter.8", (Throwable)preyggdrasilconverter$conversionerror));
              return false;
           }
        } else {
@@ -121,7 +129,7 @@
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
 -                  PreYggdrasilConverter.field_152732_e.warn("Could not lookup user whitelist entry for {}", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_);
-+                  PreYggdrasilConverter.field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.9", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
++                  PreYggdrasilConverter.field_152732_e.warn(i18n.get("preyggdrasilconverter.9", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
                    if (!(p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException)) {
                       throw new PreYggdrasilConverter.ConversionError("Could not request user " + p_onProfileLookupFailed_1_.getName() + " from backend systems", p_onProfileLookupFailed_2_);
                    }
@@ -130,11 +138,11 @@
              return true;
           } catch (IOException ioexception) {
 -            field_152732_e.warn("Could not read old whitelist to convert it!", (Throwable)ioexception);
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.10", (Throwable)ioexception));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.10", (Throwable)ioexception));
              return false;
           } catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror) {
 -            field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
-+            field_152732_e.error(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.11", (Throwable)preyggdrasilconverter$conversionerror));
++            field_152732_e.error(i18n.get("preyggdrasilconverter.11", (Throwable)preyggdrasilconverter$conversionerror));
              return false;
           }
        } else {
@@ -143,7 +151,7 @@
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
 -                  PreYggdrasilConverter.field_152732_e.warn("Could not lookup user whitelist entry for {}", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_);
-+                  PreYggdrasilConverter.field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.12", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
++                  PreYggdrasilConverter.field_152732_e.warn(i18n.get("preyggdrasilconverter.12", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
                 }
              };
              func_152717_a(p_187473_0_, Lists.newArrayList(p_187473_1_), profilelookupcallback);
@@ -152,7 +160,7 @@
  
                 public void onProfileLookupFailed(GameProfile p_onProfileLookupFailed_1_, Exception p_onProfileLookupFailed_2_) {
 -                  PreYggdrasilConverter.field_152732_e.warn("Could not lookup user uuid for {}", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_);
-+                  PreYggdrasilConverter.field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.13", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
++                  PreYggdrasilConverter.field_152732_e.warn(i18n.get("preyggdrasilconverter.13", p_onProfileLookupFailed_1_.getName(), p_onProfileLookupFailed_2_));
                    if (p_onProfileLookupFailed_2_ instanceof ProfileNotFoundException) {
                       String s2 = this.func_152744_a(p_onProfileLookupFailed_1_);
                       this.func_152743_a(file3, s2, s2);
@@ -190,7 +198,7 @@
              return true;
           } catch (PreYggdrasilConverter.ConversionError preyggdrasilconverter$conversionerror) {
 -            field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
-+            field_152732_e.error(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.14", (Throwable)preyggdrasilconverter$conversionerror));
++            field_152732_e.error(i18n.get("preyggdrasilconverter.14", (Throwable)preyggdrasilconverter$conversionerror));
              return false;
           }
        } else {
@@ -200,26 +208,26 @@
        } else {
 -         field_152732_e.warn("**** FAILED TO START THE SERVER AFTER ACCOUNT CONVERSION!");
 -         field_152732_e.warn("** please remove the following files and restart the server:");
-+         field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.15"));
-+         field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.16"));
++         field_152732_e.warn(i18n.get("preyggdrasilconverter.15"));
++         field_152732_e.warn(i18n.get("preyggdrasilconverter.16"));
           if (flag) {
 -            field_152732_e.warn("* {}", (Object)field_152729_b.getName());
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.17", (Object)field_152729_b.getName()));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.17", (Object)field_152729_b.getName()));
           }
  
           if (flag1) {
 -            field_152732_e.warn("* {}", (Object)field_152728_a.getName());
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.18", (Object)field_152728_a.getName()));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.18", (Object)field_152728_a.getName()));
           }
  
           if (flag2) {
 -            field_152732_e.warn("* {}", (Object)field_152730_c.getName());
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.19", (Object)field_152730_c.getName()));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.19", (Object)field_152730_c.getName()));
           }
  
           if (flag3) {
 -            field_152732_e.warn("* {}", (Object)field_152731_d.getName());
-+            field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.20", (Object)field_152731_d.getName()));
++            field_152732_e.warn(i18n.get("preyggdrasilconverter.20", (Object)field_152731_d.getName()));
           }
  
           return false;
@@ -230,9 +238,9 @@
 -         field_152732_e.warn("**** DETECTED OLD PLAYER DIRECTORY IN THE WORLD SAVE");
 -         field_152732_e.warn("**** THIS USUALLY HAPPENS WHEN THE AUTOMATIC CONVERSION FAILED IN SOME WAY");
 -         field_152732_e.warn("** please restart the server and if the problem persists, remove the directory '{}'", (Object)file1.getPath());
-+         field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.21"));
-+         field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.22"));
-+         field_152732_e.warn(com.mohistmc.util.i18n.i18n.get("preyggdrasilconverter.23", (Object)file1.getPath()));
++         field_152732_e.warn(i18n.get("preyggdrasilconverter.21"));
++         field_152732_e.warn(i18n.get("preyggdrasilconverter.22"));
++         field_152732_e.warn(i18n.get("preyggdrasilconverter.23", (Object)file1.getPath()));
           return false;
        }
     }

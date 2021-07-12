@@ -1,5 +1,12 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.gen;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Random;
 @@ -9,7 +_,6 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
@@ -14,38 +21,11 @@
        } else {
 -         field_208303_a.error("Requested chunk : {} {}", p_217353_1_, p_217353_2_);
 -         field_208303_a.error("Region bounds : {} {} | {} {}", this.field_241160_n_.field_77276_a, this.field_241160_n_.field_77275_b, this.field_241161_o_.field_77276_a, this.field_241161_o_.field_77275_b);
-+         field_208303_a.error(com.mohistmc.util.i18n.i18n.get("worldgenregion.1", p_217353_1_, p_217353_2_));
-+         field_208303_a.error(com.mohistmc.util.i18n.i18n.get("worldgenregion.2", this.field_241160_n_.field_77276_a, this.field_241160_n_.field_77275_b, this.field_241161_o_.field_77276_a, this.field_241161_o_.field_77275_b));
++         field_208303_a.error(i18n.get("worldgenregion.1", p_217353_1_, p_217353_2_));
++         field_208303_a.error(i18n.get("worldgenregion.2", this.field_241160_n_.field_77276_a, this.field_241160_n_.field_77275_b, this.field_241161_o_.field_77276_a, this.field_241161_o_.field_77275_b));
           if (ichunk != null) {
              throw (RuntimeException)Util.func_229757_c_(new RuntimeException(String.format("Chunk is not of correct status. Expecting %s, got %s | %s %s", p_217353_3_, ichunk.func_201589_g(), p_217353_1_, p_217353_2_)));
           } else {
-@@ -137,6 +_,26 @@
-       return p_217354_1_ >= this.field_241160_n_.field_77276_a && p_217354_1_ <= this.field_241161_o_.field_77276_a && p_217354_2_ >= this.field_241160_n_.field_77275_b && p_217354_2_ <= this.field_241161_o_.field_77275_b;
-    }
- 
-+   // Paper start - if loaded util
-+   @Nullable
-+   @Override
-+   public IChunk getChunkIfLoadedImmediately(int x, int z) {
-+      return this.func_217353_a(x, z, ChunkStatus.field_222617_m, false);
-+   }
-+
-+   @Override
-+   public BlockState getTypeIfLoaded(BlockPos blockposition) {
-+      IChunk chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
-+      return chunk == null ? null : chunk.func_180495_p(blockposition);
-+   }
-+
-+   @Override
-+   public FluidState getFluidIfLoaded(BlockPos blockposition) {
-+      IChunk chunk = this.getChunkIfLoadedImmediately(blockposition.func_177958_n() >> 4, blockposition.func_177952_p() >> 4);
-+      return chunk == null ? null : chunk.func_204610_c(blockposition);
-+   }
-+    // Paper end
-+
-    public BlockState func_180495_p(BlockPos p_180495_1_) {
-       return this.func_212866_a_(p_180495_1_.func_177958_n() >> 4, p_180495_1_.func_177952_p() >> 4).func_180495_p(p_180495_1_);
-    }
 @@ -173,11 +_,11 @@
  
     public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
@@ -81,7 +61,7 @@
 -         if (blockstate.func_177230_c() instanceof ITileEntityProvider) {
 -            field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
 +         if (blockstate.hasTileEntity()) {
-+            field_208303_a.warn(com.mohistmc.util.i18n.i18n.get("worldgenregion.3", (Object)p_175625_1_, blockstate.func_177230_c().toString()));
++            field_208303_a.warn(i18n.get("worldgenregion.3", (Object)p_175625_1_, blockstate.func_177230_c().toString()));
           }
  
           return null;

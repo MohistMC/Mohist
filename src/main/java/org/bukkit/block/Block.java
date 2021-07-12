@@ -175,14 +175,6 @@ public interface Block extends Metadatable {
     Location getLocation(@Nullable Location loc);
 
     /**
-     * Gets the chunk which contains this block
-     *
-     * @return Containing Chunk
-     */
-    @NotNull
-    Chunk getChunk();
-
-    /**
      * Sets the complete data for this block
      *
      * @param data new block specific data

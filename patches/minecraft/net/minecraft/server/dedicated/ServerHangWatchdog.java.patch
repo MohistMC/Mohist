@@ -1,13 +1,21 @@
 --- a/net/minecraft/server/dedicated/ServerHangWatchdog.java
 +++ b/net/minecraft/server/dedicated/ServerHangWatchdog.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.server.dedicated;
+ 
+ import com.google.common.collect.Streams;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.File;
+ import java.lang.management.ManagementFactory;
+ import java.lang.management.ThreadInfo;
 @@ -35,12 +_,12 @@
           long j = Util.func_211177_b();
           long k = j - i;
           if (k > this.field_180250_c) {
 -            field_180251_a.fatal("A single server tick took {} seconds (should be max {})", String.format(Locale.ROOT, "%.2f", (float)k / 1000.0F), String.format(Locale.ROOT, "%.2f", 0.05F));
 -            field_180251_a.fatal("Considering it to be crashed, server will forcibly shutdown.");
-+            field_180251_a.fatal(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.1", 0.05F));
-+            field_180251_a.fatal(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.2"));
++            field_180251_a.fatal(i18n.get("serverhangwatchdog.1", 0.05F));
++            field_180251_a.fatal(i18n.get("serverhangwatchdog.2"));
              ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
              ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
              StringBuilder stringbuilder = new StringBuilder();
@@ -21,10 +29,10 @@
              File file1 = new File(new File(this.field_180249_b.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
              if (crashreport.func_147149_a(file1)) {
 -               field_180251_a.error("This crash report has been saved to: {}", (Object)file1.getAbsolutePath());
-+               field_180251_a.error(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.3", (Object)file1.getAbsolutePath()));
++               field_180251_a.error(i18n.get("serverhangwatchdog.3", (Object)file1.getAbsolutePath()));
              } else {
 -               field_180251_a.error("We were unable to save this crash report to disk.");
-+               field_180251_a.error(com.mohistmc.util.i18n.i18n.get("serverhangwatchdog.4"));
++               field_180251_a.error(i18n.get("serverhangwatchdog.4"));
              }
  
              this.func_180248_a();

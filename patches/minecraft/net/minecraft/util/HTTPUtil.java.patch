@@ -1,11 +1,19 @@
 --- a/net/minecraft/util/HTTPUtil.java
 +++ b/net/minecraft/util/HTTPUtil.java
+@@ -3,6 +_,7 @@
+ import com.google.common.util.concurrent.ListeningExecutorService;
+ import com.google.common.util.concurrent.MoreExecutors;
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import com.mohistmc.util.i18n.i18n;
+ import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.FileOutputStream;
 @@ -75,7 +_,7 @@
                       return null;
                    }
  
 -                  field_151227_b.warn("Deleting {} as it does not match what we currently have ({} vs our {}).", p_180192_0_, i, j);
-+                  field_151227_b.warn(com.mohistmc.util.i18n.i18n.get("httputil.1", p_180192_0_, i, j));
++                  field_151227_b.warn(i18n.get("httputil.1", p_180192_0_, i, j));
                    FileUtils.deleteQuietly(p_180192_0_);
                 } else if (p_180192_0_.getParentFile() != null) {
                    p_180192_0_.getParentFile().mkdirs();
@@ -14,7 +22,7 @@
  
                    if (Thread.interrupted()) {
 -                     field_151227_b.error("INTERRUPTED");
-+                     field_151227_b.error(com.mohistmc.util.i18n.i18n.get("httputil.2"));
++                     field_151227_b.error(i18n.get("httputil.2"));
                       if (p_180192_4_ != null) {
                          p_180192_4_.func_146586_a();
                       }

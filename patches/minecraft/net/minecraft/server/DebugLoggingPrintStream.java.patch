@@ -1,10 +1,17 @@
 --- a/net/minecraft/server/DebugLoggingPrintStream.java
 +++ b/net/minecraft/server/DebugLoggingPrintStream.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.server;
+ 
++import com.mohistmc.util.i18n.i18n;
+ import java.io.OutputStream;
+ import net.minecraft.util.LoggingPrintStream;
+ 
 @@ -11,6 +_,6 @@
     protected void func_179882_a(String p_179882_1_) {
        StackTraceElement[] astacktraceelement = Thread.currentThread().getStackTrace();
        StackTraceElement stacktraceelement = astacktraceelement[Math.min(3, astacktraceelement.length)];
 -      field_179884_a.info("[{}]@.({}:{}): {}", this.field_179883_b, stacktraceelement.getFileName(), stacktraceelement.getLineNumber(), p_179882_1_);
-+      field_179884_a.info(com.mohistmc.util.i18n.i18n.get("debugloggingprintstream.1", this.field_179883_b, stacktraceelement.getFileName(), stacktraceelement.getLineNumber(), p_179882_1_));
++      field_179884_a.info(i18n.get("debugloggingprintstream.1", this.field_179883_b, stacktraceelement.getFileName(), stacktraceelement.getLineNumber(), p_179882_1_));
     }
  }

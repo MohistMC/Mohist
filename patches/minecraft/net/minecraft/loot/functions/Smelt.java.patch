@@ -1,5 +1,13 @@
 --- a/net/minecraft/loot/functions/Smelt.java
 +++ b/net/minecraft/loot/functions/Smelt.java
+@@ -2,6 +_,7 @@
+ 
+ import com.google.gson.JsonDeserializationContext;
+ import com.google.gson.JsonObject;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Optional;
+ import net.minecraft.inventory.Inventory;
+ import net.minecraft.item.ItemStack;
 @@ -34,12 +_,12 @@
              ItemStack itemstack = optional.get().func_77571_b();
              if (!itemstack.func_190926_b()) {
@@ -11,7 +19,7 @@
           }
  
 -         field_186574_a.warn("Couldn't smelt {} because there is no smelting recipe", (Object)p_215859_1_);
-+         field_186574_a.warn(com.mohistmc.util.i18n.i18n.get("smelt.1", (Object)p_215859_1_));
++         field_186574_a.warn(i18n.get("smelt.1", (Object)p_215859_1_));
           return p_215859_1_;
        }
     }

@@ -1,5 +1,13 @@
 --- a/net/minecraft/util/registry/WorldGenRegistries.java
 +++ b/net/minecraft/util/registry/WorldGenRegistries.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.util.registry;
+ 
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.serialization.Lifecycle;
+ import java.util.Map;
+ import java.util.function.Supplier;
 @@ -44,16 +_,20 @@
     public static final Registry<StructureProcessorList> field_243655_g = func_243667_a(Registry.field_243554_aw, () -> {
        return ProcessorLists.field_244102_b;
@@ -29,7 +37,7 @@
        field_243659_k.forEach((p_243668_0_, p_243668_1_) -> {
           if (p_243668_1_.get() == null) {
 -            field_243649_a.error("Unable to bootstrap registry '{}'", (Object)p_243668_0_);
-+            field_243649_a.error(com.mohistmc.util.i18n.i18n.get("worldgenregistries.1", (Object)p_243668_0_));
++            field_243649_a.error(i18n.get("worldgenregistries.1", (Object)p_243668_0_));
           }
  
        });

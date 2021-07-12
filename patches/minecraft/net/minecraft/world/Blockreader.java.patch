@@ -8,20 +8,3 @@
  
  public final class Blockreader implements IBlockReader {
     private final BlockState[] field_234996_a_;
-@@ -22,6 +_,16 @@
-    public BlockState func_180495_p(BlockPos p_180495_1_) {
-       int i = p_180495_1_.func_177956_o();
-       return i >= 0 && i < this.field_234996_a_.length ? this.field_234996_a_[i] : Blocks.field_150350_a.func_176223_P();
-+   }
-+
-+   @Override
-+   public BlockState getTypeIfLoaded(BlockPos blockposition) {
-+      return null;
-+   }
-+
-+   @Override
-+   public FluidState getFluidIfLoaded(BlockPos blockposition) {
-+      return null;
-    }
- 
-    public FluidState func_204610_c(BlockPos p_204610_1_) {

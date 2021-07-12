@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/gen/feature/structure/Structure.java
 +++ b/net/minecraft/world/gen/feature/structure/Structure.java
+@@ -5,6 +_,7 @@
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.serialization.Codec;
+ import java.util.List;
+ import java.util.Locale;
 @@ -38,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -14,7 +22,7 @@
           Structure<?> structure = Registry.field_218361_B.func_82594_a(new ResourceLocation(s.toLowerCase(Locale.ROOT)));
           if (structure == null) {
 -            field_208204_b.error("Unknown feature id: {}", (Object)s);
-+            field_208204_b.error(com.mohistmc.util.i18n.i18n.get("structure.1", (Object)s));
++            field_208204_b.error(i18n.get("structure.1", (Object)s));
              return null;
           } else {
              int i = p_236393_1_.func_74762_e("ChunkX");
@@ -23,14 +31,14 @@
                    IStructurePieceType istructurepiecetype = Registry.field_218362_C.func_82594_a(resourcelocation1);
                    if (istructurepiecetype == null) {
 -                     field_208204_b.error("Unknown structure piece id: {}", (Object)resourcelocation1);
-+                     field_208204_b.error(com.mohistmc.util.i18n.i18n.get("structure.2", (Object)resourcelocation1));
++                     field_208204_b.error(i18n.get("structure.2", (Object)resourcelocation1));
                    } else {
                       try {
                          StructurePiece structurepiece = istructurepiecetype.load(p_236393_0_, compoundnbt);
                          structurestart.func_186161_c().add(structurepiece);
                       } catch (Exception exception) {
 -                        field_208204_b.error("Exception loading structure piece with id {}", resourcelocation1, exception);
-+                        field_208204_b.error(com.mohistmc.util.i18n.i18n.get("structure.3", resourcelocation1, exception));
++                        field_208204_b.error(i18n.get("structure.3", resourcelocation1, exception));
                       }
                    }
                 }
@@ -38,7 +46,7 @@
                 return structurestart;
              } catch (Exception exception1) {
 -               field_208204_b.error("Failed Start with id {}", s, exception1);
-+               field_208204_b.error(com.mohistmc.util.i18n.i18n.get("structure.4", s, exception1));
++               field_208204_b.error(i18n.get("structure.4", s, exception1));
                 return null;
              }
           }

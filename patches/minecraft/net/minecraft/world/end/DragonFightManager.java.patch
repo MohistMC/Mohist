@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/end/DragonFightManager.java
 +++ b/net/minecraft/world/end/DragonFightManager.java
+@@ -5,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Range;
+ import com.google.common.collect.Sets;
++import com.mohistmc.util.i18n.i18n;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Random;
 @@ -58,8 +_,8 @@
  public class DragonFightManager {
     private static final Logger field_186107_a = LogManager.getLogger();
@@ -46,15 +54,15 @@
  
     private void func_210827_g() {
 -      field_186107_a.info("Scanning for legacy world dragon fight...");
-+      field_186107_a.info(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.1"));
++      field_186107_a.info(i18n.get("dragonfightmanager.1"));
        boolean flag = this.func_229981_i_();
        if (flag) {
 -         field_186107_a.info("Found that the dragon has been killed in this world already.");
-+         field_186107_a.info(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.2"));
++         field_186107_a.info(i18n.get("dragonfightmanager.2"));
           this.field_186118_l = true;
        } else {
 -         field_186107_a.info("Found that the dragon has not yet been killed in this world.");
-+         field_186107_a.info(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.3"));
++         field_186107_a.info(i18n.get("dragonfightmanager.3"));
           this.field_186118_l = false;
           if (this.func_186091_h() == null) {
              this.func_186094_a(false);
@@ -63,11 +71,11 @@
           EnderDragonEntity enderdragonentity = list.get(0);
           this.field_186119_m = enderdragonentity.func_110124_au();
 -         field_186107_a.info("Found that there's a dragon still alive ({})", (Object)enderdragonentity);
-+         field_186107_a.info(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.4", (Object)enderdragonentity));
++         field_186107_a.info(i18n.get("dragonfightmanager.4", (Object)enderdragonentity));
           this.field_186117_k = false;
           if (!flag) {
 -            field_186107_a.info("But we didn't have a portal, let's remove it.");
-+            field_186107_a.info(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.5"));
++            field_186107_a.info(i18n.get("dragonfightmanager.5"));
              enderdragonentity.func_70106_y();
              this.field_186119_m = null;
           }
@@ -76,11 +84,11 @@
        List<EnderDragonEntity> list = this.field_186110_d.func_217439_j();
        if (list.isEmpty()) {
 -         field_186107_a.debug("Haven't seen the dragon, respawning it");
-+         field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.6"));
++         field_186107_a.debug(i18n.get("dragonfightmanager.6"));
           this.func_192445_m();
        } else {
 -         field_186107_a.debug("Haven't seen our dragon, but found another one to use.");
-+         field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.7"));
++         field_186107_a.debug(i18n.get("dragonfightmanager.7"));
           this.field_186119_m = list.get(0).func_110124_au();
        }
  
@@ -105,7 +113,7 @@
        }
  
 -      field_186107_a.debug("Found {} end crystals still alive", (int)this.field_186114_h);
-+      field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.8", (int)this.field_186114_h));
++      field_186107_a.debug(i18n.get("dragonfightmanager.8", (int)this.field_186114_h));
     }
  
     public void func_186096_a(EnderDragonEntity p_186096_1_) {
@@ -123,7 +131,7 @@
     public void func_186090_a(EnderCrystalEntity p_186090_1_, DamageSource p_186090_2_) {
        if (this.field_186122_p != null && this.field_186124_r.contains(p_186090_1_)) {
 -         field_186107_a.debug("Aborting respawn sequence");
-+         field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.9"));
++         field_186107_a.debug(i18n.get("dragonfightmanager.9"));
           this.field_186122_p = null;
           this.field_186123_q = 0;
           this.func_186087_f();
@@ -132,15 +140,15 @@
           BlockPos blockpos = this.field_186121_o;
           if (blockpos == null) {
 -            field_186107_a.debug("Tried to respawn, but need to find the portal first.");
-+            field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.10"));
++            field_186107_a.debug(i18n.get("dragonfightmanager.10"));
              BlockPattern.PatternHelper blockpattern$patternhelper = this.func_186091_h();
              if (blockpattern$patternhelper == null) {
 -               field_186107_a.debug("Couldn't find a portal, so we made one.");
-+               field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.11"));
++               field_186107_a.debug(i18n.get("dragonfightmanager.11"));
                 this.func_186094_a(true);
              } else {
 -               field_186107_a.debug("Found the exit portal & temporarily using it.");
-+               field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.12"));
++               field_186107_a.debug(i18n.get("dragonfightmanager.12"));
              }
  
              blockpos = this.field_186121_o;
@@ -149,7 +157,7 @@
           }
  
 -         field_186107_a.debug("Found all crystals, respawning dragon.");
-+         field_186107_a.debug(com.mohistmc.util.i18n.i18n.get("dragonfightmanager.13"));
++         field_186107_a.debug(i18n.get("dragonfightmanager.13"));
           this.func_186093_a(list1);
        }
  

@@ -1,15 +1,23 @@
 --- a/net/minecraft/data/BiomeProvider.java
 +++ b/net/minecraft/data/BiomeProvider.java
+@@ -3,6 +_,7 @@
+ import com.google.gson.Gson;
+ import com.google.gson.GsonBuilder;
+ import com.google.gson.JsonElement;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.JsonOps;
+ import java.io.IOException;
 @@ -42,10 +_,10 @@
              if (optional.isPresent()) {
                 IDataProvider.func_218426_a(field_244196_c, p_200398_1_, optional.get(), path1);
              } else {
 -               field_244195_b.error("Couldn't serialize biome {}", (Object)path1);
-+               field_244195_b.error(com.mohistmc.util.i18n.i18n.get("biomeprovider.1", (Object)path1));
++               field_244195_b.error(i18n.get("biomeprovider.1", (Object)path1));
              }
           } catch (IOException ioexception) {
 -            field_244195_b.error("Couldn't save biome {}", path1, ioexception);
-+            field_244195_b.error(com.mohistmc.util.i18n.i18n.get("biomeprovider.2", path1, ioexception));
++            field_244195_b.error(i18n.get("biomeprovider.2", path1, ioexception));
           }
        }
  

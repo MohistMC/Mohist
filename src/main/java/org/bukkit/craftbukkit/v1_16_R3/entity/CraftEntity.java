@@ -638,28 +638,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         entity.setYHeadRot(yaw);
     }
 
-    @Override// Paper start
-    public java.util.concurrent.CompletableFuture<Boolean> teleportAsync(Location loc, @javax.annotation.Nonnull org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
-        ChunkManager playerChunkMap = ((CraftWorld) loc.getWorld()).getHandle().getChunkSource().chunkMap;
-        java.util.concurrent.CompletableFuture<Boolean> future = new java.util.concurrent.CompletableFuture<>();
-
-        loc.getWorld().getChunkAtAsyncUrgently(loc).thenCompose(chunk -> {
-            ChunkPos pair = new ChunkPos(chunk.getX(), chunk.getZ());
-            ((CraftWorld) loc.getWorld()).getHandle().getChunkSource().addTicketAtLevel(TicketType.POST_TELEPORT, pair, 31, 0);
-            ChunkHolder updatingChunk = playerChunkMap.getUpdatingChunkIfPresent(pair.toLong());
-            if (updatingChunk != null) {
-                return updatingChunk.getEntityTickingChunkFuture();
-            } else {
-                return java.util.concurrent.CompletableFuture.completedFuture(com.mojang.datafixers.util.Either.left(((org.bukkit.craftbukkit.v1_16_R3.CraftChunk) chunk).getHandle()));
-            }
-        }).thenAccept((chunk) -> future.complete(teleport(loc, cause))).exceptionally(ex -> {
-            future.completeExceptionally(ex);
-            return null;
-        });
-        return future;
-    }
-    // Paper end
-
     @Override
     public boolean teleport(Location location) {
         return teleport(location, TeleportCause.PLUGIN);
@@ -711,12 +689,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             bukkitEntityList.add(e.getBukkitEntity());
         }
         return bukkitEntityList;
-    }
-
-    @Override
-    public Chunk getChunk() {
-        net.minecraft.world.chunk.Chunk currentChunk = entity.getCurrentChunk();
-        return currentChunk != null ? currentChunk.bukkitChunk : getLocation().getChunk();
     }
 
     @Override

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/storage/DimensionSavedDataManager.java
 +++ b/net/minecraft/world/storage/DimensionSavedDataManager.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.storage;
+ 
+ import com.google.common.collect.Maps;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.datafixers.DataFixer;
+ import java.io.DataInputStream;
+ import java.io.File;
 @@ -20,7 +_,7 @@
  
  public class DimensionSavedDataManager {
@@ -28,7 +36,7 @@
           }
        } catch (Exception exception) {
 -         field_212776_a.error("Error loading saved data: {}", p_223409_2_, exception);
-+         field_212776_a.error(com.mohistmc.util.i18n.i18n.get("dimensionsaveddatamanager.1", p_223409_2_, exception));
++         field_212776_a.error(i18n.get("dimensionsaveddatamanager.1", p_223409_2_, exception));
        }
  
        return (T)null;

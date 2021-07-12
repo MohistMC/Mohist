@@ -1,11 +1,19 @@
 --- a/net/minecraft/command/TimerCallbackManager.java
 +++ b/net/minecraft/command/TimerCallbackManager.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.HashBasedTable;
+ import com.google.common.collect.Table;
+ import com.google.common.primitives.UnsignedLong;
++import com.mohistmc.util.i18n.i18n;
+ import com.mojang.serialization.Dynamic;
+ import java.util.Collection;
+ import java.util.Collections;
 @@ -39,7 +_,7 @@
        this.field_216336_d = UnsignedLong.ZERO;
        p_i232176_2_.forEach((p_237478_1_) -> {
           if (!(p_237478_1_.getValue() instanceof CompoundNBT)) {
 -            field_216333_a.warn("Invalid format of events: {}", (Object)p_237478_1_);
-+            field_216333_a.warn(com.mohistmc.util.i18n.i18n.get("timercallbackmanager.1", (Object)p_237478_1_));
++            field_216333_a.warn(i18n.get("timercallbackmanager.1", (Object)p_237478_1_));
           } else {
              this.func_216329_a((CompoundNBT)p_237478_1_.getValue());
           }

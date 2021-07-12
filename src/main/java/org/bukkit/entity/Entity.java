@@ -159,37 +159,6 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      */
     public boolean teleport(@NotNull Entity destination, @NotNull TeleportCause cause);
 
-    // Paper start
-
-    /**
-     * Loads/Generates(in 1.13+) the Chunk asynchronously, and then teleports the entity when the chunk is ready.
-     *
-     * @param loc Location to teleport to
-     * @return A future that will be completed with the result of the teleport
-     */
-    @NotNull
-    public default java.util.concurrent.CompletableFuture<Boolean> teleportAsync(@NotNull Location loc) {
-        return teleportAsync(loc, TeleportCause.PLUGIN);
-    }
-
-    /**
-     * Loads/Generates(in 1.13+) the Chunk asynchronously, and then teleports the entity when the chunk is ready.
-     *
-     * @param loc   Location to teleport to
-     * @param cause Reason for teleport
-     * @return A future that will be completed with the result of the teleport
-     */
-    @NotNull
-    public default java.util.concurrent.CompletableFuture<Boolean> teleportAsync(@NotNull Location loc, @NotNull TeleportCause cause) {
-        java.util.concurrent.CompletableFuture<Boolean> future = new java.util.concurrent.CompletableFuture<>();
-        loc.getWorld().getChunkAtAsyncUrgently(loc).thenAccept((chunk) -> future.complete(teleport(loc, cause))).exceptionally(ex -> {
-            future.completeExceptionally(ex);
-            return null;
-        });
-        return future;
-    }
-    // Paper end
-
     /**
      * Returns a list of entities within a bounding box centered around this
      * entity
@@ -630,14 +599,6 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     @Override
     Spigot spigot();
     // Spigot end
-
-    /**
-     * Gets the latest chunk an entity is currently or was in.
-     *
-     * @return The current, or most recent chunk if the entity is invalid (which may load the chunk)
-     */
-    @NotNull
-    Chunk getChunk();
 
     // Paper start
     @NotNull

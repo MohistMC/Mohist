@@ -849,7 +849,7 @@ public final class CraftServer implements Server {
                 world.ticksPerAmbientSpawns = this.getTicksPerAmbientSpawns();
             }
             world.spigotConfig.init(); // Spigot
-            world.paperConfig.init(); // Paper
+            //world.paperConfig.init(); // Paper
         }
 
         pluginManager.clearPlugins();
