@@ -378,7 +378,6 @@ public final class CraftServer implements Server {
 
     public void loadPlugins() {
         RemapUtils.init();
-        ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) MinecraftServer.options.valueOf("plugins");
