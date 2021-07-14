@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.MerchantInventory;
 import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BarrelTileEntity;
 import net.minecraft.tileentity.BlastFurnaceTileEntity;
@@ -28,7 +29,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MerchantInventory;
 
 public class CraftInventory implements Inventory {
     protected final IInventory inventory;
