@@ -2,22 +2,23 @@ package com.mohistmc;
 
 import com.mohistmc.api.event.MohistNetworkEvent;
 import com.mohistmc.configuration.MohistConfig;
+import org.bukkit.Bukkit;
+
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Bukkit;
 
 public class MohistProxySelector extends ProxySelector {
 
     private ProxySelector defaultSelector;
-    private List<String> intercepts;
+    private List<String> intercepts = new ArrayList<>();
 
     public MohistProxySelector(ProxySelector defaultSelector) {
         this.defaultSelector = defaultSelector;
-        intercepts = MohistConfig.instance.config.getStringList("mohist.networkmanager.intercept");
     }
 
     @Override
@@ -42,6 +43,9 @@ public class MohistProxySelector extends ProxySelector {
                 intercept = true;
             }
         } else {
+            if (intercepts.isEmpty()) {
+                intercepts = MohistConfig.instance.getStringList("mohist.networkmanager.intercept", new ArrayList<>());
+            }
             for (String config_uri : intercepts) {
                 if (uriString.contains(config_uri)) {
                     intercept = true;
@@ -51,7 +55,8 @@ public class MohistProxySelector extends ProxySelector {
         if (intercept) {
             try {
                 throw new IOException(defaultMsg);
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+            }
         }
 
         return this.defaultSelector.select(uri);
