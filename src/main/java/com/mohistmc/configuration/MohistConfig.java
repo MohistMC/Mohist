@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import com.mohistmc.config.MohistConfigUtil;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -40,6 +41,9 @@ public class MohistConfig extends ConfigBase {
 
     // plugin fix
     public final BoolSetting enableworldeditfix = new BoolSetting(this, "mohist.enable_worldedit_fix", true);
+
+    // MohistProxySelector
+    public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
 
     /* ======================================================================== */
 
@@ -121,5 +125,16 @@ public class MohistConfig extends ConfigBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static List<String> getStringList0(String path, List<String> defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        yml.addDefault(path, defValue);
+        return yml.getStringList(path);
+    }
+
+    public static boolean getBoolean0(String path, boolean defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        return yml.getBoolean(path, defValue);
     }
 }

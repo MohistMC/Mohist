@@ -2,6 +2,7 @@ package com.mohistmc;
 
 import com.mohistmc.api.event.MohistNetworkEvent;
 import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.util.IOUtil;
 import org.bukkit.Bukkit;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class MohistProxySelector extends ProxySelector {
 
-    private ProxySelector defaultSelector;
+    private final ProxySelector defaultSelector;
     private List<String> intercepts = new ArrayList<>();
 
     public MohistProxySelector(ProxySelector defaultSelector) {
@@ -23,12 +24,12 @@ public class MohistProxySelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(URI uri) {
-        if (MohistConfig.instance.getBoolean("mohist.networkmanager.debug", false)) {
+        if (MohistConfig.getBoolean0("mohist.networkmanager.debug", false)) {
             MohistMC.LOGGER.error(uri.toString());
         }
 
         String uriString = uri.toString();
-        String defaultMsg = "§6[§aNetworkManager§6] §aNetwork protection and blocked by network rules!";
+        String defaultMsg = "[NetworkManager] Network protection and blocked by network rules!";
         boolean intercept = false;
 
         /*
@@ -36,30 +37,32 @@ public class MohistProxySelector extends ProxySelector {
             return this.defaultSelector.select(uri);
         }
          */
+        if (intercepts.isEmpty()) {
+            intercepts = MohistConfig.getStringList0("mohist.networkmanager.intercept", new ArrayList<>());
+        }
+        for (String config_uri : intercepts) {
+            if (uriString.contains(config_uri)) {
+                intercept = true;
+            }
+        }
         if (Bukkit.getServer() != null) {
             MohistNetworkEvent event = new MohistNetworkEvent(uri, defaultMsg);
             Bukkit.getPluginManager().callEvent(event);
+            event.setCancelled(intercept);
             if (event.isCancelled()) {
                 intercept = true;
-            }
-        } else {
-            if (intercepts.isEmpty()) {
-                intercepts = MohistConfig.instance.getStringList("mohist.networkmanager.intercept", new ArrayList<>());
-            }
-            for (String config_uri : intercepts) {
-                if (uriString.contains(config_uri)) {
-                    intercept = true;
-                }
             }
         }
         if (intercept) {
             try {
-                throw new IOException(defaultMsg);
-            } catch (Throwable ignored) {
+                IOUtil.throwException(new IOException(defaultMsg));
+            } catch (Throwable throwable) {
+                MohistMC.LOGGER.error(throwable.getMessage());
             }
+        } else {
+            return this.defaultSelector.select(uri);
         }
-
-        return this.defaultSelector.select(uri);
+        return null;
     }
 
     @Override
