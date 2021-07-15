@@ -74,7 +74,7 @@ public class IOUtil {
         throwException0(exception);
     }
 
-    private static <T extends Throwable> void throwException0(Throwable exception) throws T, Throwable {
+    private static <T extends Throwable> void throwException0(Throwable exception) throws Throwable {
         if (exception != null) {
             throw exception;
         }
