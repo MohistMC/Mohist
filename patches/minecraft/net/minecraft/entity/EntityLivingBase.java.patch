@@ -768,7 +768,7 @@
              {
                  int i = (this.func_70660_b(MobEffects.field_76429_m).func_76458_c() + 1) * 5;
                  int j = 25 - i;
-@@ -1376,24 +1558,164 @@
+@@ -1376,24 +1558,154 @@
          }
      }
  
@@ -824,14 +824,7 @@
 +            Function<Double, Double> armor = new Function<Double, Double>() {
 +                @Override
 +                public Double apply(Double f) {
-+                    // Mohist: calculating custom armor resist and default armor resist
-+                    float specialArmorCalc = 0.0F;
-+                    if (human && f > 0.0F) {
-+                        specialArmorCalc = ISpecialArmor.ArmorProperties.applyArmor(EntityLivingBase.this, ((EntityPlayer) EntityLivingBase.this).field_71071_by.field_70460_b, damagesource, f);
-+                    }
-+                    float defaultArmorCalc = EntityLivingBase.this.func_70655_b(damagesource, f.floatValue());
-+                    //return -(f - EntityLivingBase.this.applyArmorCalculations(damagesource, f.floatValue()));
-+                    return -(f - Math.max(defaultArmorCalc, specialArmorCalc));
++                    return -(f - EntityLivingBase.this.func_70655_b(damagesource, f.floatValue()));
 +                }
 +            };
 +            float armorModifier = armor.apply((double) f).floatValue();
@@ -874,13 +867,10 @@
 +                return false;
              }
 +
-+            // Mohist: moved in armor modifier calculation
-+            /*
 +            if (human && event.getDamage() > 0) {
-+                float damage = ISpecialArmor.ArmorProperties.applyArmor(EntityLivingBase.this, ((EntityPlayer) EntityLivingBase.this).inventory.armorInventory, damagesource, event.getDamage());
++                float damage = ISpecialArmor.ArmorProperties.applyArmor(EntityLivingBase.this, ((EntityPlayer) EntityLivingBase.this).field_71071_by.field_70460_b, damagesource, event.getDamage());
 +                event.setDamage(damage);
 +            }
-+            */
 +
 +            // Apply damage to helmet
 +            if ((damagesource == DamageSource.field_82728_o || damagesource == DamageSource.field_82729_p) && this.func_184582_a(EntityEquipmentSlot.HEAD) != null) {
@@ -947,7 +937,7 @@
      }
  
      public CombatTracker func_110142_aN()
-@@ -1447,6 +1769,11 @@
+@@ -1447,6 +1759,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
@@ -959,7 +949,7 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1570,6 +1897,7 @@
+@@ -1570,6 +1887,7 @@
          if (this.field_110155_d == null)
          {
              this.field_110155_d = new AttributeMap();
@@ -967,7 +957,7 @@
          }
  
          return this.field_110155_d;
-@@ -1694,7 +2022,7 @@
+@@ -1694,7 +2012,7 @@
  
                      if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                      {
@@ -976,7 +966,7 @@
                          {
                              this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
                              return;
-@@ -1702,14 +2030,14 @@
+@@ -1702,14 +2020,14 @@
  
                          BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
@@ -993,7 +983,7 @@
                      {
                          d1 = d11;
                          d13 = this.field_70163_u + 2.0D;
-@@ -1781,16 +2109,17 @@
+@@ -1781,16 +2099,17 @@
          }
  
          this.field_70160_al = true;
@@ -1013,7 +1003,7 @@
      }
  
      protected float func_189749_co()
-@@ -1807,9 +2136,9 @@
+@@ -1807,9 +2126,9 @@
                  if (!this.func_180799_ab() || this instanceof EntityPlayer && ((EntityPlayer)this).field_71075_bZ.field_75100_b)
                  {
                      if (this.func_184613_cA())
@@ -1025,7 +1015,7 @@
                              this.field_70143_R = 1.0F;
                          }
  
-@@ -1819,27 +2148,27 @@
+@@ -1819,27 +2138,27 @@
                          double d8 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
                          double d1 = vec3d.func_72433_c();
                          float f4 = MathHelper.func_76134_b(f);
@@ -1060,7 +1050,7 @@
                              this.field_70159_w += (vec3d.field_72450_a / d6 * d8 - this.field_70159_w) * 0.1D;
                              this.field_70179_y += (vec3d.field_72449_c / d6 * d8 - this.field_70179_y) * 0.1D;
                          }
-@@ -1850,21 +2179,22 @@
+@@ -1850,21 +2169,22 @@
                          this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
  
                          if (this.field_70123_F && !this.field_70170_p.field_72995_K)
@@ -1089,7 +1079,7 @@
                          }
                      }
                      else
-@@ -1874,7 +2204,8 @@
+@@ -1874,7 +2194,8 @@
  
                          if (this.field_70122_E)
                          {
@@ -1099,7 +1089,7 @@
                          }
  
                          float f7 = 0.16277136F / (f6 * f6 * f6);
-@@ -1894,7 +2225,8 @@
+@@ -1894,7 +2215,8 @@
  
                          if (this.field_70122_E)
                          {
@@ -1109,7 +1099,7 @@
                          }
  
                          if (this.func_70617_f_())
-@@ -2054,6 +2386,7 @@
+@@ -2054,6 +2376,7 @@
  
      public void func_70071_h_()
      {
@@ -1117,7 +1107,7 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2096,7 +2429,9 @@
+@@ -2096,7 +2419,9 @@
  
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
@@ -1127,7 +1117,7 @@
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2304,7 +2639,6 @@
+@@ -2304,7 +2629,6 @@
          }
  
          this.field_70170_p.field_72984_F.func_76320_a("ai");
@@ -1135,7 +1125,7 @@
          if (this.func_70610_aX())
          {
              this.field_70703_bu = false;
-@@ -2385,7 +2719,8 @@
+@@ -2385,7 +2709,8 @@
  
          if (!this.field_70170_p.field_72995_K)
          {
@@ -1145,7 +1135,7 @@
          }
      }
  
-@@ -2519,12 +2854,12 @@
+@@ -2519,12 +2844,12 @@
  
      public boolean func_70067_L()
      {
@@ -1160,7 +1150,7 @@
      }
  
      protected void func_70018_K()
-@@ -2575,6 +2910,40 @@
+@@ -2575,6 +2900,40 @@
          this.field_70752_e = true;
      }
  
@@ -1201,7 +1191,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2592,15 +2961,23 @@
+@@ -2592,15 +2951,23 @@
          if (this.func_184587_cr())
          {
              ItemStack itemstack = this.func_184586_b(this.func_184600_cs());
@@ -1226,7 +1216,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2995,10 @@
+@@ -2618,8 +2985,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -1238,7 +1228,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +3079,27 @@
+@@ -2700,7 +3069,27 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -1267,7 +1257,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +3123,8 @@
+@@ -2724,7 +3113,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -1277,7 +1267,7 @@
          }
  
          this.func_184602_cy();
-@@ -2808,11 +3208,14 @@
+@@ -2808,11 +3198,14 @@
  
              if (flag1)
              {
@@ -1297,7 +1287,7 @@
                  }
              }
          }
-@@ -2847,11 +3250,41 @@
+@@ -2847,11 +3240,41 @@
          }
      }
  
@@ -1339,7 +1329,7 @@
      public boolean func_190631_cK()
      {
          return true;
-@@ -2861,4 +3294,30 @@
+@@ -2861,4 +3284,30 @@
      public void func_191987_a(BlockPos p_191987_1_, boolean p_191987_2_)
      {
      }
