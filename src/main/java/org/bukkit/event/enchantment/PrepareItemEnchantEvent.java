@@ -69,7 +69,6 @@ public class PrepareItemEnchantEvent extends InventoryEvent implements Cancellab
      * @deprecated Use {@link #getOffers()} instead of this method
      */
     @NotNull
-    @Deprecated
     public int[] getExpLevelCostsOffered() {
         int[] levelOffers = new int[offers.length];
         for (int i = 0; i < offers.length; i++) {

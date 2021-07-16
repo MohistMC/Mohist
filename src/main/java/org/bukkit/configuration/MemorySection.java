@@ -706,8 +706,8 @@ public class MemorySection implements ConfigurationSection {
         return getObject(path, clazz, (def != null && clazz.isInstance(def)) ? clazz.cast(def) : null);
     }
 
+    @Contract("_, _, !null -> !null")
     @Nullable
-    @Contract("_, !null -> !null")
     @Override
     public <T extends Object> T getObject(@NotNull String path, @NotNull Class<T> clazz, @Nullable T def) {
         Validate.notNull(clazz, "Class cannot be null");
@@ -721,8 +721,8 @@ public class MemorySection implements ConfigurationSection {
         return getObject(path, clazz);
     }
 
+    @Contract("_, _, !null -> !null")
     @Nullable
-    @Contract("_, !null -> !null")
     @Override
     public <T extends ConfigurationSerializable> T getSerializable(@NotNull String path, @NotNull Class<T> clazz, @Nullable T def) {
         return getObject(path, clazz, def);

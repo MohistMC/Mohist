@@ -18,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
  *     Listening to this event forces chat to wait for the main thread which
  *     causes delays for chat. {@link AsyncPlayerChatEvent} is the encouraged
  *     alternative for thread safe implementations.
- *
- * @deprecated use {@link io.papermc.paper.event.player.ChatEvent} instead
  */
 @Deprecated
 @Warning(reason = "Listening to this event forces chat to wait for the main thread, delaying chat messages.")

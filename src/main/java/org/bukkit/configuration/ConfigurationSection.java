@@ -655,7 +655,6 @@ public interface ConfigurationSection {
      * @param clazz the type of the requested object
      * @return Requested object
      */
-    @Contract("_, !null -> !null")
     @Nullable
     public <T extends Object> T getObject(@NotNull String path, @NotNull Class<T> clazz);
 
@@ -682,6 +681,7 @@ public interface ConfigurationSection {
      * the path
      * @return Requested object
      */
+    @Contract("_, _, !null -> !null")
     @Nullable
     public <T extends Object> T getObject(@NotNull String path, @NotNull Class<T> clazz, @Nullable T def);
 
@@ -698,7 +698,6 @@ public interface ConfigurationSection {
      * @param clazz the type of {@link ConfigurationSerializable}
      * @return Requested {@link ConfigurationSerializable} object
      */
-    @Contract("_, !null -> !null")
     @Nullable
     public <T extends ConfigurationSerializable> T getSerializable(@NotNull String path, @NotNull Class<T> clazz);
 
@@ -717,6 +716,7 @@ public interface ConfigurationSection {
      * the path
      * @return Requested {@link ConfigurationSerializable} object
      */
+    @Contract("_, _, !null -> !null")
     @Nullable
     public <T extends ConfigurationSerializable> T getSerializable(@NotNull String path, @NotNull Class<T> clazz, @Nullable T def);
 
