@@ -108,6 +108,11 @@ public class CraftBlock implements Block {
         return loc;
     }
 
+    @Override
+    public Chunk getChunk() {
+        return getWorld().getChunkAt(this);
+    }
+
     public BlockVector getVector() {
         return new BlockVector(getX(), getY(), getZ());
     }

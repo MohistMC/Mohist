@@ -1,5 +1,6 @@
 package org.bukkit.command.defaults;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -13,8 +14,8 @@ public class PluginsCommand extends BukkitCommand {
         super(name);
         this.description = "Gets a list of plugins running on the server";
         this.usageMessage = "/plugins";
-        this.setAliases(Collections.singletonList("pl"));
         this.setPermission("bukkit.command.plugins");
+        this.setAliases(Arrays.asList("pl"));
     }
 
     @Override

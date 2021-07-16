@@ -5,5 +5,4 @@ package org.bukkit.entity;
  *
  * @deprecated lingering status depends on only on the potion item.
  */
-@Deprecated
 public interface LingeringPotion extends ThrownPotion { }
