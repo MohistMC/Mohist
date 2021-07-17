@@ -240,14 +240,7 @@
        this.field_70180_af.func_187227_b(field_213330_X, p_213301_1_);
     }
  
-@@ -330,12 +_,36 @@
- 
-    public boolean func_233562_a_(Entity p_233562_1_, double p_233562_2_) {
-       double d0 = p_233562_1_.field_233557_ao_.field_72450_a - this.field_233557_ao_.field_72450_a;
-+      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
-       double d1 = p_233562_1_.field_233557_ao_.field_72448_b - this.field_233557_ao_.field_72448_b;
-       double d2 = p_233562_1_.field_233557_ao_.field_72449_c - this.field_233557_ao_.field_72449_c;
-       return d0 * d0 + d1 * d1 + d2 * d2 < p_233562_2_ * p_233562_2_;
+@@ -336,6 +_,29 @@
     }
  
     protected void func_70101_b(float p_70101_1_, float p_70101_2_) {
@@ -924,7 +917,7 @@
 +         return;
 +      }
 +      CraftEventFactory.entityDamage = p_241841_2_;
-+      if (!this.func_70097_a(DamageSource.field_180137_b, 5.0F)) {
++      if (!this.func_70097_a(DamageSource.field_180137_b, p_241841_2_.getDamage())) {
 +         CraftEventFactory.entityDamage = null;
 +         return;
 +      }

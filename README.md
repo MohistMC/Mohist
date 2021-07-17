@@ -2,14 +2,13 @@
 <img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.16.5</h1>
 
-### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+  
+### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-## Plugins compatibility may not be prioritized, it may be 1.17+
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.16.5)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.16.5)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.16.5/LICENSE)
-[![](https://img.shields.io/badge/Forge-1.16.5--36.1.35-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](http://files.minecraftforge.net/net/minecraftforge/forge/index_1.16.5.html)
+[![](https://img.shields.io/badge/Forge-1.16.5--36.1.58-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](http://files.minecraftforge.net/net/minecraftforge/forge/index_1.16.5.html)
 [![](https://img.shields.io/badge/Paper-1.16.5-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads)
 [![](https://img.shields.io/badge/AdoptOpenJDK-11.0.10+9-brightgreen.svg?colorB=469C00&logo=java)](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot)
 [![](https://img.shields.io/badge/Gradle-6.9-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/6.9/release-notes.html)
@@ -29,7 +28,7 @@
 Progress
 ------
 
-- [x] Rectify Forge (39f9f393d)
+- [x] Rectify Forge (f235d80d9)
 - [x] Start patch 
   * CraftBukkit(296df566)  
   * Bukkit(7e29f765)  
