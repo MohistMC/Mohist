@@ -461,7 +461,7 @@
     }
  
     public ServerPlayerEntity func_148545_a(GameProfile p_148545_1_) {
-@@ -400,8 +_,19 @@
+@@ -400,30 +_,28 @@
     }
  
     public ServerPlayerEntity func_232644_a_(ServerPlayerEntity p_232644_1_, boolean p_232644_2_) {
@@ -470,9 +470,6 @@
 +      // CraftBukkit start
 +      return this.moveToWorld(p_232644_1_, this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_()), p_232644_2_, null, true);
 +   }
-+
-+   // Mohist
-+   private static Field permField, modifiersField;
 +
 +   // Mohist start - reset serverPlayerEntity (fix ServerPlayerEntity is recreate when player die or move into other dimension) - rewrite
 +   public ServerPlayerEntity moveToWorld(ServerPlayerEntity p_232644_1_, ServerWorld serverWorld, boolean p_232644_2_, Location location, boolean avoidSuffocation) {
@@ -483,10 +480,25 @@
        BlockPos blockpos = p_232644_1_.func_241140_K_();
        float f = p_232644_1_.func_242109_L();
        boolean flag = p_232644_1_.func_241142_M_();
-@@ -422,8 +_,13 @@
-       }
- 
-       ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, serverworld1, p_232644_1_.func_146103_bH(), playerinteractionmanager);
+-      ServerWorld serverworld = this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_());
+-      Optional<Vector3d> optional;
+-      if (serverworld != null && blockpos != null) {
+-         optional = PlayerEntity.func_242374_a(serverworld, blockpos, f, flag, p_232644_2_);
+-      } else {
+-         optional = Optional.empty();
+-      }
+-
+-      ServerWorld serverworld1 = serverworld != null && optional.isPresent() ? serverworld : this.field_72400_f.func_241755_D_();
+-      PlayerInteractionManager playerinteractionmanager;
+-      if (this.field_72400_f.func_71242_L()) {
+-         playerinteractionmanager = new DemoPlayerInteractionManager(serverworld1);
+-      } else {
+-         playerinteractionmanager = new PlayerInteractionManager(serverworld1);
+-      }
+-
+-      ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, serverworld1, p_232644_1_.func_146103_bH(), playerinteractionmanager);
++
++      ServerPlayerEntity serverplayerentity = p_232644_1_;
 +      org.bukkit.World fromWorld = p_232644_1_.getBukkitEntity().getWorld();
 +      p_232644_1_.field_71136_j = false;
 +      // CraftBukkit end
@@ -497,7 +509,7 @@
        serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
  
-@@ -431,50 +_,115 @@
+@@ -431,50 +_,122 @@
           serverplayerentity.func_184211_a(s);
        }
  
@@ -525,11 +537,18 @@
 +      // CraftBukkit start - fire PlayerRespawnEvent
 +      if (location == null) {
 +         boolean isBedSpawn = false;
-+         if (serverworld1 != null) {
++         ServerWorld serverworld = this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_());
++         if (serverworld != null) {
++            Optional optional;
++            if (blockpos != null) {
++               optional = ServerPlayerEntity.func_242374_a(serverworld, blockpos, f, flag, p_232644_2_);
++            } else {
++               optional = Optional.empty();
++            }
 +            if (optional.isPresent()) {
-+               BlockState blockstate = serverworld1.func_180495_p(blockpos);
++               BlockState blockstate = serverworld.func_180495_p(blockpos);
 +               boolean flag1 = blockstate.func_203425_a(Blocks.field_235400_nj_);
-+               Vector3d vector3d = optional.get();
++               Vector3d vector3d = (Vector3d) optional.get();
 +               float f1;
 +
 +               if (!blockstate.func_235714_a_(BlockTags.field_219747_F) && !flag1) {
@@ -538,19 +557,19 @@
 +                  Vector3d vector3d1 = Vector3d.func_237492_c_(blockpos).func_178788_d(vector3d).func_72432_b();
 +                  f1 = (float) MathHelper.func_76138_g(MathHelper.func_181159_b(vector3d1.field_72449_c, vector3d1.field_72450_a) * (double)(180F / (float)Math.PI) - 90.0D);
 +               }
-+               serverplayerentity.func_242111_a(serverworld1.func_234923_W_(), blockpos, f, flag, false);
++               serverplayerentity.func_242111_a(serverworld.func_234923_W_(), blockpos, f, flag, false);
 +               flag2 = !p_232644_2_ && flag1;
 +               isBedSpawn = true;
-+               location = new Location(serverworld1.getWorld(), vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c, f1, 0.0F);
++               location = new Location(serverworld.getWorld(), vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c, f1, 0.0F);
 +            } else if (blockpos != null) {
 +               serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241764_a_, 0.0F));
 +            }
 +         }
 +
 +         if (location == null) {
-+            serverworld1 = this.field_72400_f.func_71218_a(World.field_234918_g_);
-+            blockpos = serverplayerentity.getSpawnPoint(serverworld1);
-+            location = new Location(serverworld1.getWorld(), (double) ((float) blockpos.func_177958_n() + 0.5F), (double) ((float) blockpos.func_177956_o() + 0.1F), (double) ((float) blockpos.func_177952_p() + 0.5F));
++            serverworld = this.field_72400_f.func_71218_a(World.field_234918_g_);
++            blockpos = serverplayerentity.getSpawnPoint(serverworld);
++            location = new Location(serverworld.getWorld(), (double) ((float) blockpos.func_177958_n() + 0.5F), (double) ((float) blockpos.func_177956_o() + 0.1F), (double) ((float) blockpos.func_177952_p() + 0.5F));
 +         }
 +
 +         Player respawnPlayer = cserver.getPlayer(serverplayerentity);
