@@ -4,7 +4,7 @@
  @OnlyIn(Dist.CLIENT)
  public abstract class RenderState {
     protected final String field_228509_a_;
--   private final Runnable field_228507_Q_;
+-   protected Runnable field_228507_Q_;
 +   protected Runnable field_228507_Q_; // Mohist private -> protected + delete final
     private final Runnable field_228508_R_;
     protected static final RenderState.TransparencyState field_228510_b_ = new RenderState.TransparencyState("no_transparency", () -> {
@@ -13,8 +13,8 @@
     @OnlyIn(Dist.CLIENT)
     public static class TextureState extends RenderState {
        private final Optional<ResourceLocation> field_228602_Q_;
--      private final boolean field_228603_R_;
--      private final boolean field_228604_S_;
+-      protected boolean field_228603_R_;
+-      protected boolean field_228604_S_;
 +      protected boolean field_228603_R_; // Mohist private -> protected + delete final
 +      protected boolean field_228604_S_; // Mohist private -> protected + delete final
  

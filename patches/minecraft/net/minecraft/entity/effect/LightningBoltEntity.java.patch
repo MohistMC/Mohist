@@ -8,7 +8,7 @@
  import net.minecraft.network.play.server.SSpawnObjectPacket;
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
-@@ -22,14 +_,17 @@
+@@ -22,14 +_,18 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,10 +23,26 @@
 +   public boolean field_184529_d; // CraftBukkit private->public
     @Nullable
     private ServerPlayerEntity field_204810_e;
++   private float damage = 5.0F;
 +   public boolean isSilent = false; // Spigot
  
     public LightningBoltEntity(EntityType<? extends LightningBoltEntity> p_i231491_1_, World p_i231491_2_) {
        super(p_i231491_1_, p_i231491_2_);
+@@ -39,6 +_,14 @@
+       this.field_70263_c = this.field_70146_Z.nextInt(3) + 1;
+    }
+ 
++   public void setDamage(float damage){
++      this.damage = damage;
++   }
++
++   public float getDamage(){
++      return this.damage;
++   }
++
+    public void func_233623_a_(boolean p_233623_1_) {
+       this.field_184529_d = p_233623_1_;
+    }
 @@ -53,13 +_,30 @@
  
     public void func_70071_h_() {

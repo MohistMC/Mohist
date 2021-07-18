@@ -851,7 +851,7 @@
              if (!(entity instanceof ServerPlayerEntity)) {
                 if (this.field_217492_a) {
                    throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Removing entity while ticking!"));
-@@ -876,15 +_,43 @@
+@@ -876,13 +_,40 @@
              }
           }
        }
@@ -893,11 +893,8 @@
 +            enderdragonpartentity.remove(keepData);
           }
        }
-+      p_217484_1_.remove(keepData);
  
-       this.field_175741_N.remove(p_217484_1_.func_110124_au());
-       this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -894,13 +_,28 @@
+@@ -894,13 +_,29 @@
        }
  
        this.func_96441_U().func_181140_a(p_217484_1_);
@@ -912,6 +909,7 @@
        }
  
 +      p_217484_1_.onRemovedFromWorld();
++      p_217484_1_.remove(keepData);
 +      p_217484_1_.valid = false; // CraftBukkit
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_217484_1_, this));
     }

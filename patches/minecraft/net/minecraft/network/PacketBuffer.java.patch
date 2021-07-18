@@ -28,6 +28,27 @@
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
+@@ -135,12 +_,10 @@
+       return this;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public long[] func_186873_b(@Nullable long[] p_186873_1_) {
+       return this.func_189423_a(p_186873_1_, this.readableBytes() / 8);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public long[] func_189423_a(@Nullable long[] p_189423_1_, int p_189423_2_) {
+       int i = this.func_150792_a();
+       if (p_189423_1_ == null || p_189423_1_.length != i) {
+@@ -167,7 +_,6 @@
+       return this;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public SectionPos func_218667_g() {
+       return SectionPos.func_218170_a(this.readLong());
+    }
 @@ -292,7 +_,16 @@
     }
  
