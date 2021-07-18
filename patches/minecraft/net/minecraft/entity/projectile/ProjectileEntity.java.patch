@@ -37,7 +37,7 @@
 +   protected void preOnHit(RayTraceResult movingobjectposition) {
 +      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
 +      this.hitCancelled = event != null && event.isCancelled();
-+      if (movingobjectposition.func_216346_c() == RayTraceResult.Type.BLOCK || !this.hitCancelled) {
++      if (movingobjectposition.func_216346_c() == RayTraceResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, movingobjectposition) || movingobjectposition.func_216346_c() == RayTraceResult.Type.BLOCK || !this.hitCancelled) {
 +         this.func_70227_a(movingobjectposition); // PAIL rename onHit
 +      }
 +   }

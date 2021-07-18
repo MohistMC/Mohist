@@ -50,3 +50,12 @@
        return this.field_217063_d.func_70300_a(p_75145_1_);
     }
  
+@@ -150,7 +_,7 @@
+    }
+ 
+    protected boolean func_217058_b(ItemStack p_217058_1_) {
+-      return AbstractFurnaceTileEntity.func_213991_b(p_217058_1_);
++      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_217058_1_, this.field_217065_f) > 0;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
