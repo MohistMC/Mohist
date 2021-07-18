@@ -67,7 +67,7 @@
 +         itemstack.readShareTag(this.func_150793_b());
 +         // CraftBukkit start
 +         if (itemstack.func_77978_p() != null) {
-+            org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++            org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.setItemMeta(itemstack, org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.getItemMeta(itemstack));
 +         }
 +         // CraftBukkit end
           return itemstack;
