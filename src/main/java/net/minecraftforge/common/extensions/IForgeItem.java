@@ -48,7 +48,6 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
@@ -760,13 +759,7 @@ public interface IForgeItem
      *         it not act as a fuel. Return -1 to let the default vanilla logic
      *         decide.
      */
-    default int getBurnTime(ItemStack itemStack, @Nullable IRecipeType<?> recipeType)
-    {
-        return getBurnTime(itemStack);
-    }
-
-    @Deprecated // use variant with IRecipeType
-    default int getBurnTime(ItemStack stack)
+    default int getBurnTime(ItemStack itemStack)
     {
         return -1;
     }

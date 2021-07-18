@@ -395,10 +395,9 @@ public class FluidUtil
         int fillableAmount = fluidDestination.fill(drainable, IFluidHandler.FluidAction.SIMULATE);
         if (fillableAmount > 0)
         {
-            drainable.setAmount(fillableAmount);
             if (doTransfer)
             {
-                FluidStack drained = fluidSource.drain(drainable, IFluidHandler.FluidAction.EXECUTE);
+                FluidStack drained = fluidSource.drain(fillableAmount, IFluidHandler.FluidAction.EXECUTE);
                 if (!drained.isEmpty())
                 {
                     drained.setAmount(fluidDestination.fill(drained, IFluidHandler.FluidAction.EXECUTE));
@@ -407,6 +406,7 @@ public class FluidUtil
             }
             else
             {
+                drainable.setAmount(fillableAmount);
                 return drainable;
             }
         }
