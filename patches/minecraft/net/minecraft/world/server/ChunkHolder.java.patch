@@ -17,7 +17,7 @@
     private int field_219317_l;
     private int field_219318_m;
     private final ChunkPos field_219319_n;
-@@ -58,9 +_,10 @@
+@@ -58,7 +_,7 @@
     private int field_219325_t;
     private final WorldLightManager field_219326_u;
     private final ChunkHolder.IListener field_219327_v;
@@ -25,10 +25,7 @@
 +   public final ChunkHolder.IPlayerProvider field_219328_w;
     private boolean field_219329_x;
     private boolean field_244384_x;
-+   Chunk currentlyLoading; //Forge - Used to bypass future chain when loading chunks.
  
-    public ChunkHolder(ChunkPos p_i50716_1_, int p_i50716_2_, WorldLightManager p_i50716_3_, ChunkHolder.IListener p_i50716_4_, ChunkHolder.IPlayerProvider p_i50716_5_) {
-       this.field_219319_n = p_i50716_1_;
 @@ -73,6 +_,21 @@
        this.func_219292_a(p_i50716_2_);
     }

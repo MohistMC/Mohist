@@ -179,7 +179,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    version = '1.16.5-36.1.58'
+    version = '1.16.5-36.1.35'
     println('Forge Version: ' + version)
 
     patcher {
@@ -249,8 +249,6 @@ project(':forge') {
                 workingDirectory project.file('run')
 
                 environment 'target', 'fmldevdata'
-                environment 'assetIndex', '{asset_index}'
-                environment 'assetDirectory', downloadAssets.output
 
                 environment 'MC_VERSION', MC_VERSION
                 environment 'MCP_VERSION', MCP_VERSION
