@@ -1,14 +1,5 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
-@@ -22,6 +_,8 @@
- import java.util.Date;
- import java.util.UUID;
- import javax.annotation.Nullable;
-+
-+import io.papermc.paper.adventure.PaperAdventure;
- import net.minecraft.item.Item;
- import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.CompoundNBT;
 @@ -29,6 +_,7 @@
  import net.minecraft.nbt.INBT;
  import net.minecraft.nbt.NBTDynamicOps;
@@ -17,39 +8,16 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
-@@ -38,8 +_,9 @@
+@@ -37,7 +_,7 @@
+ import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.util.text.ITextComponent;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
  
 -public class PacketBuffer extends ByteBuf {
 +public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -135,12 +_,10 @@
-       return this;
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public long[] func_186873_b(@Nullable long[] p_186873_1_) {
-       return this.func_189423_a(p_186873_1_, this.readableBytes() / 8);
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public long[] func_189423_a(@Nullable long[] p_189423_1_, int p_189423_2_) {
-       int i = this.func_150792_a();
-       if (p_189423_1_ == null || p_189423_1_.length != i) {
-@@ -167,7 +_,6 @@
-       return this;
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public SectionPos func_218667_g() {
-       return SectionPos.func_218170_a(this.readLong());
-    }
-@@ -292,7 +_,16 @@
+@@ -287,7 +_,16 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
@@ -67,7 +35,7 @@
           this.writeBoolean(false);
        } else {
           this.writeBoolean(true);
-@@ -300,8 +_,21 @@
+@@ -295,8 +_,21 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
@@ -91,7 +59,7 @@
           }
  
           this.func_150786_a(compoundnbt);
-@@ -317,12 +_,16 @@
+@@ -312,7 +_,12 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);
@@ -99,14 +67,9 @@
 +         itemstack.readShareTag(this.func_150793_b());
 +         // CraftBukkit start
 +         if (itemstack.func_77978_p() != null) {
-+            CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++            org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
 +         }
 +         // CraftBukkit end
           return itemstack;
        }
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public String func_218666_n() {
-       return this.func_150789_c(32767);
     }
