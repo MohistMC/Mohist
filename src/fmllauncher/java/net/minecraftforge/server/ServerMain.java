@@ -53,7 +53,7 @@ public class ServerMain {
 
         // Mohist start - Download Java 11 if required
 		float jVersion = Float.parseFloat(System.getProperty("java.class.version"));
-        if (jVersion < 55f || jVersion == 60.0 || MohistConfigUtil.bMohist("use_custom_java11", "false")) {
+        if (jVersion < 55f || MohistConfigUtil.bMohist("use_custom_java11", "false")) {
             if (!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));
             try {
                 DownloadJava.run(); // Mohist - Invoke DownloadJava
