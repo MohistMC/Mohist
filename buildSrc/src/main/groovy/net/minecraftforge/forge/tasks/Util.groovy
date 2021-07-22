@@ -2,10 +2,8 @@ package net.minecraftforge.forge.tasks
 
 import groovy.json.JsonSlurper
 
-import java.io.File
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.Date
 
 public class Util {
 	static void init() {
