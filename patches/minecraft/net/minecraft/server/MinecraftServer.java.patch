@@ -1,0 +1,224 @@
+--- a/net/minecraft/server/MinecraftServer.java
++++ b/net/minecraft/server/MinecraftServer.java
+@@ -254,7 +_,7 @@
+ 
+    public static <S extends MinecraftServer> S m_129872_(Function<Thread, S> p_129873_) {
+       AtomicReference<S> atomicreference = new AtomicReference<>();
+-      Thread thread = new Thread(() -> {
++      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, () -> {
+          atomicreference.get().m_130011_();
+       }, "Server thread");
+       thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
+@@ -402,6 +_,7 @@
+             worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
+             this.f_129762_.put(resourcekey1, serverlevel1);
+          }
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
+       }
+ 
+    }
+@@ -411,6 +_,7 @@
+          p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
+       } else {
+          ChunkGenerator chunkgenerator = p_177897_.m_7726_().m_8481_();
++         if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(p_177897_, p_177898_)) return;
+          BiomeSource biomesource = chunkgenerator.m_62218_();
+          Random random = new Random(p_177897_.m_7328_());
+          BlockPos blockpos = biomesource.m_47909_(0, p_177897_.m_5736_(), 0, 256, (p_177905_) -> {
+@@ -482,6 +_,7 @@
+    }
+ 
+    private void m_129940_(ChunkProgressListener p_129941_) {
++      net.minecraftforge.common.world.StructureSpawnManager.gatherEntitySpawns();
+       ServerLevel serverlevel = this.m_129783_();
+       f_129750_.info("Preparing start region for dimension {}", (Object)serverlevel.m_46472_().m_135782_());
+       BlockPos blockpos = serverlevel.m_8900_();
+@@ -509,6 +_,7 @@
+                ChunkPos chunkpos = new ChunkPos(i);
+                serverlevel1.m_7726_().m_6692_(chunkpos, true);
+             }
++            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverlevel1, forcedchunkssaveddata);
+          }
+       }
+ 
+@@ -604,6 +_,7 @@
+       for(ServerLevel serverlevel1 : this.m_129785_()) {
+          if (serverlevel1 != null) {
+             try {
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(serverlevel1));
+                serverlevel1.close();
+             } catch (IOException ioexception1) {
+                f_129750_.error("Exception closing the level", (Throwable)ioexception1);
+@@ -652,6 +_,7 @@
+    protected void m_130011_() {
+       try {
+          if (this.m_7038_()) {
++            net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerStarted(this);
+             this.f_129726_ = Util.m_137550_();
+             this.f_129757_.m_134908_(new TextComponent(this.f_129709_));
+             this.f_129757_.m_134912_(new ServerStatus.Version(SharedConstants.m_136187_().getName(), SharedConstants.m_136187_().getProtocolVersion()));
+@@ -683,7 +_,10 @@
+                this.m_177946_();
+                this.f_129717_ = true;
+             }
++            net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerStopping(this);
++            net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
+          } else {
++            net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
+             this.m_7268_((CrashReport)null);
+          }
+       } catch (Throwable throwable1) {
+@@ -703,6 +_,7 @@
+             f_129750_.error("We were unable to save this crash report to disk.");
+          }
+ 
++         net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
+          this.m_7268_(crashreport);
+       } finally {
+          try {
+@@ -711,6 +_,7 @@
+          } catch (Throwable throwable) {
+             f_129750_.error("Exception stopping the server", throwable);
+          } finally {
++            net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerStopped(this);
+             this.m_6988_();
+          }
+ 
+@@ -802,6 +_,7 @@
+ 
+    public void m_5705_(BooleanSupplier p_129871_) {
+       long i = Util.m_137569_();
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPreServerTick();
+       ++this.f_129766_;
+       this.m_5703_(p_129871_);
+       if (i - this.f_129724_ >= 5000000000L) {
+@@ -816,6 +_,7 @@
+ 
+          Collections.shuffle(Arrays.asList(agameprofile));
+          this.f_129757_.m_134914_().m_134924_(agameprofile);
++         this.f_129757_.invalidateJson();
+       }
+ 
+       if (this.f_129766_ % 6000 == 0) {
+@@ -843,6 +_,7 @@
+       long i1 = Util.m_137569_();
+       this.f_129735_.m_13755_(i1 - i);
+       this.f_129754_.m_7238_();
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPostServerTick();
+    }
+ 
+    public void m_5703_(BooleanSupplier p_129954_) {
+@@ -850,7 +_,8 @@
+       this.m_129890_().m_136128_();
+       this.f_129754_.m_6182_("levels");
+ 
+-      for(ServerLevel serverlevel : this.m_129785_()) {
++      for(ServerLevel serverlevel : this.getWorldArray()) {
++         long tickStart = Util.m_137569_();
+          this.f_129754_.m_6521_(() -> {
+             return serverlevel + " " + serverlevel.m_46472_().m_135782_();
+          });
+@@ -861,6 +_,7 @@
+          }
+ 
+          this.f_129754_.m_6180_("tick");
++         net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPreWorldTick(serverlevel);
+ 
+          try {
+             serverlevel.m_8793_(p_129954_);
+@@ -869,9 +_,11 @@
+             serverlevel.m_6026_(crashreport);
+             throw new ReportedException(crashreport);
+          }
++         net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPostWorldTick(serverlevel);
+ 
+          this.f_129754_.m_7238_();
+          this.f_129754_.m_7238_();
++         perWorldTickTimes.computeIfAbsent(serverlevel.m_46472_(), k -> new long[100])[this.f_129766_ % 100] = Util.m_137569_() - tickStart;
+       }
+ 
+       this.f_129754_.m_6182_("connection");
+@@ -946,7 +_,7 @@
+ 
+    @DontObfuscate
+    public String m_130001_() {
+-      return "vanilla";
++      return net.minecraftforge.fmllegacy.BrandingControl.getServerBranding();
+    }
+ 
+    public SystemReport m_177935_(SystemReport p_177936_) {
+@@ -959,6 +_,7 @@
+       p_177936_.m_143522_("Data Packs", () -> {
+          StringBuilder stringbuilder = new StringBuilder();
+ 
++            LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
+          for(Pack pack : this.f_129730_.m_10524_()) {
+             if (stringbuilder.length() > 0) {
+                stringbuilder.append(", ");
+@@ -1312,6 +_,7 @@
+          this.m_6846_().m_11315_();
+          this.f_129734_.m_136120_(this.f_129740_.m_136157_());
+          this.f_129741_.m_74335_(this.f_129740_.m_136178_());
++         this.m_6846_().m_11314_().forEach(this.m_6846_()::m_11289_); //Forge: Fix newly added/modified commands not being sent to the client when commands reload.
+       }, this);
+       if (this.m_18695_()) {
+          this.m_18701_(completablefuture::isDone);
+@@ -1321,10 +_,13 @@
+    }
+ 
+    public static DataPackConfig m_129819_(PackRepository p_129820_, DataPackConfig p_129821_, boolean p_129822_) {
++      net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(p_129820_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinder);
+       p_129820_.m_10506_();
++      DataPackConfig.f_45842_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
++      p_129821_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
+       if (p_129822_) {
+-         p_129820_.m_10509_(Collections.singleton("vanilla"));
+-         return new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of());
++         p_129820_.m_10509_(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla());
++         return new DataPackConfig(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla(), ImmutableList.of());
+       } else {
+          Set<String> set = Sets.newLinkedHashSet();
+ 
+@@ -1479,6 +_,31 @@
+ 
+    public abstract boolean m_7779_(GameProfile p_129840_);
+ 
++   private Map<ResourceKey<Level>, long[]> perWorldTickTimes = Maps.newIdentityHashMap();
++   @Nullable
++   public long[] getTickTime(ResourceKey<Level> dim) {
++      return perWorldTickTimes.get(dim);
++   }
++
++   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
++   public synchronized Map<ResourceKey<Level>, ServerLevel> forgeGetWorldMap() {
++      return this.f_129762_;
++   }
++   private int worldArrayMarker = 0;
++   private int worldArrayLast = -1;
++   private ServerLevel[] worldArray;
++   @Deprecated //Forge Internal use Only, use to protect against concurrent modifications in the world tick loop.
++   public synchronized void markWorldsDirty() {
++      worldArrayMarker++;
++   }
++   private ServerLevel[] getWorldArray() {
++      if (worldArrayMarker == worldArrayLast && worldArray != null)
++         return worldArray;
++      worldArray = this.f_129762_.values().stream().toArray(x -> new ServerLevel[x]);
++      worldArrayLast = worldArrayMarker;
++      return worldArray;
++   }
++
+    public void m_142116_(Path p_177911_) throws IOException {
+    }
+ 
+@@ -1677,6 +_,10 @@
+ 
+    public WorldData m_129910_() {
+       return this.f_129749_;
++   }
++
++   public ServerResources getServerResources() {
++       return f_129740_;
+    }
+ 
+    public RegistryAccess m_129911_() {
