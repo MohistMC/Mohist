@@ -21,21 +21,17 @@
 
 | Version  | Support |
 | ------------- | ------------- |
-| 1.17.x  | Wait  |
+| 1.17.1  | Wait  |
 | 1.16.5  | Active  |
 | 1.12.2  | Active  |
 
 Progress
 ------
 
-- [ ] Rectify Forge
-- [ ] Start patch 
-  * CraftBukkit
-  * Bukkit
-  * Spigot
-  * Paper
-- [ ] Beta release
-- [ ] The nms patch is compatible with mms
+- [ ] Rectify Forge(b027a92dd)  
+- [x] Start patch
+  * CraftBukkit(64d149a5)
+  * Bukkit(e7b0f8d6)
 
 Getting Help
 ------
