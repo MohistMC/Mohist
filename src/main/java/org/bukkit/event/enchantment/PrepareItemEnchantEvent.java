@@ -66,7 +66,7 @@ public class PrepareItemEnchantEvent extends InventoryEvent implements Cancellab
      * Get a list of offered experience level costs of the enchantment.
      *
      * @return experience level costs offered
-     * @deprecated Use {@link #getOffers()} instead of this method
+     * Use {@link #getOffers()} instead of this method
      */
     @NotNull
     public int[] getExpLevelCostsOffered() {
