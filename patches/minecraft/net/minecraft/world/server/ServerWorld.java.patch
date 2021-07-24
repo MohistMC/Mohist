@@ -407,7 +407,7 @@
           if (this.field_241105_O_ != null) {
              this.field_241105_O_.func_186105_b();
           }
-@@ -351,19 +_,24 @@
+@@ -351,6 +_,8 @@
           this.field_217492_a = true;
           ObjectIterator<Entry<Entity>> objectiterator = this.field_217498_x.int2ObjectEntrySet().iterator();
  
@@ -416,17 +416,9 @@
           label164:
           while(true) {
              Entity entity1;
-             while(true) {
-                if (!objectiterator.hasNext()) {
-                   this.field_217492_a = false;
-+                  timings.entityTick.stopTiming(); // Spigot
- 
-                   Entity entity;
-                   while((entity = this.field_217499_z.poll()) != null) {
-                      this.func_217465_m(entity);
+@@ -364,6 +_,7 @@
                    }
  
-+                  timings.tickEntities.stopTiming(); // Spigot
                    this.func_217391_K();
 +                  this.spigotConfig.currentPrimedTnt = 0; // Mohist - Fix explosions with Performant (reapplied)
                    break label164;
@@ -441,7 +433,7 @@
                 this.func_217390_a(this::func_217479_a, entity1);
              }
  
-@@ -404,7 +_,7 @@
+@@ -404,11 +_,13 @@
              if (entity1.field_70128_L) {
                 this.func_217454_n(entity1);
                 objectiterator.remove();
@@ -450,6 +442,12 @@
              }
  
              iprofiler.func_76319_b();
+          }
++         timings.entityTick.stopTiming();
++         timings.tickEntities.stopTiming(); // Spigot
+       }
+ 
+       iprofiler.func_76319_b();
 @@ -443,6 +_,8 @@
        });
     }

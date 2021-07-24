@@ -1,8 +1,11 @@
 package com.destroystokyo.paper.config;
 
+import co.aikar.timings.Timings;
+import co.aikar.timings.TimingsManager;
 import com.destroystokyo.paper.PaperCommand;
 import com.google.common.base.Throwables;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -262,6 +265,25 @@ public class PaperConfig {
         if (config.contains("settings.use-optimized-ticklist")) { // don't add default, hopefully temporary config
             useOptimizedTickList = config.getBoolean("settings.use-optimized-ticklist");
         }
+    }
+
+    public static String timingsServerName;
+    private static void timings() {
+        final boolean timings = getBoolean("timings.enabled", true);
+        final boolean verboseTimings = getBoolean("timings.verbose", true);
+        TimingsManager.privacy = getBoolean("timings.server-name-privacy", false);
+        TimingsManager.hiddenConfigs = (List<String>)getList("timings.hidden-config-entries", Lists.newArrayList("database", "settings.bungeecord-addresses", "settings.velocity-support.secret"));
+        if (!TimingsManager.hiddenConfigs.contains("settings.velocity-support.secret")) {
+            TimingsManager.hiddenConfigs.add("settings.velocity-support.secret");
+        }
+        final int timingHistoryInterval = getInt("timings.history-interval", 300);
+        final int timingHistoryLength = getInt("timings.history-length", 3600);
+        PaperConfig.timingsServerName = getString("timings.server-name", "Unknown Server");
+        Timings.setVerboseTimingsEnabled(verboseTimings);
+        Timings.setTimingsEnabled(timings);
+        Timings.setHistoryInterval(timingHistoryInterval * 20);
+        Timings.setHistoryLength(timingHistoryLength * 20);
+        log("Timings: " + timings + " - Verbose: " + verboseTimings + " - Interval: " + timeSummary(Timings.getHistoryInterval() / 20) + " - Length: " + timeSummary(Timings.getHistoryLength() / 20) + " - Server Name: " + PaperConfig.timingsServerName);
     }
 
 }
