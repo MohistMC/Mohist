@@ -917,7 +917,7 @@
 +         return;
 +      }
 +      CraftEventFactory.entityDamage = p_241841_2_;
-+      if (!this.func_70097_a(DamageSource.field_180137_b, p_241841_2_.getDamage())) {
++      if (!this.func_70097_a(DamageSource.field_180137_b, 5.0F)) {
 +         CraftEventFactory.entityDamage = null;
 +         return;
 +      }
