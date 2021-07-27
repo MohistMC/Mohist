@@ -42,11 +42,14 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.v1_12_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -118,13 +121,8 @@ public class TimingHistory {
                         data.entityCounts.get(entity.getType()).increment();
                     }
 
-                    for (BlockState tileEntity : chunk.getTileEntities()) {
-                        if (tileEntity == null) {
-                            Bukkit.getLogger().warning("Null tileentity detected in chunk at position x: " + chunk.getX() + ", z: " + chunk.getZ());
-                            continue;
-                        }
-
-                        data.tileEntityCounts.get(tileEntity.getBlock().getType()).increment();
+                    for (Map.Entry<BlockPos, TileEntity> tileEntity : ((CraftChunk)chunk).getHandle().getTileEntityMap().entrySet()) {
+                        data.tileEntityCounts.get(CraftMagicNumbers.getMaterial(tileEntity.getValue().getBlockType())).increment();
                     }
                 }
                 return pair(
