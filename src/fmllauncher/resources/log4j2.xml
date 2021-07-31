@@ -32,6 +32,14 @@
             </Policies>
             <DefaultRolloverStrategy max="99" fileIndex="min"/>
         </RollingRandomAccessFile>
+                <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.zip">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx" charset="UTF-8"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5" fileIndex="min"/>
+        </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
@@ -39,7 +47,8 @@
         <Logger level="info" name="net.minecraft"/>
         <Root level="all">
             <AppenderRef ref="Console" level="INFO"/>
-            <AppenderRef ref="File" level="ALL"/>
+            <AppenderRef ref="File" level="INFO"/>
+            <AppenderRef ref="DebugFile" level="DEBUG"/>
         </Root>
     </Loggers>
 </Configuration>
