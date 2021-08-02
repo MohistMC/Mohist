@@ -24,6 +24,8 @@ public class MohistMCStart {
         MohistConfigUtil.copyMohistConfig();
         CustomFlagsHandler.handleCustomArgs();
 
+        System.setProperty("nashorn.args","--no-deprecation-warning");
+
         if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
