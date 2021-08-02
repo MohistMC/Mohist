@@ -383,7 +383,7 @@
           this.func_110160_i(true, true);
        }
  
-@@ -1347,7 +_,13 @@
+@@ -1347,7 +_,15 @@
  
        int i = EnchantmentHelper.func_90036_a(this);
        if (i > 0) {
@@ -392,7 +392,9 @@
 +         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_70652_1_.getBukkitEntity(), i * 4);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +         if (!combustEvent.isCancelled()) {
-+            p_70652_1_.setFire(combustEvent.getDuration(), false);
++            p_70652_1_.putCallCombustEvent(false);
++            p_70652_1_.func_70015_d(combustEvent.getDuration());
++            p_70652_1_.putCallCombustEvent(true);
 +         }
 +         // CraftBukkit end
        }

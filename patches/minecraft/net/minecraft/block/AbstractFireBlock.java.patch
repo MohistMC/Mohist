@@ -10,7 +10,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-@@ -111,7 +_,13 @@
+@@ -111,7 +_,15 @@
        if (!p_196262_4_.func_230279_az_()) {
           p_196262_4_.func_241209_g_(p_196262_4_.func_223314_ad() + 1);
           if (p_196262_4_.func_223314_ad() == 0) {
@@ -19,7 +19,9 @@
 +            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock.at(p_196262_2_, p_196262_3_), p_196262_4_.getBukkitEntity(), 8);
 +            p_196262_2_.getCBServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
-+               p_196262_4_.setFire(event.getDuration(), false);
++               p_196262_4_.putCallCombustEvent(false);
++               p_196262_4_.func_70015_d(event.getDuration());
++               p_196262_4_.putCallCombustEvent(true);
 +            }
 +            // CraftBukkit end
           }

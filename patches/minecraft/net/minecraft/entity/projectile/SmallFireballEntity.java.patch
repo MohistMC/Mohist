@@ -20,7 +20,7 @@
     }
  
     public SmallFireballEntity(World p_i1772_1_, double p_i1772_2_, double p_i1772_4_, double p_i1772_6_, double p_i1772_8_, double p_i1772_10_, double p_i1772_12_) {
-@@ -33,7 +_,13 @@
+@@ -33,7 +_,15 @@
           if (!entity.func_230279_az_()) {
              Entity entity1 = this.func_234616_v_();
              int i = entity.func_223314_ad();
@@ -29,7 +29,9 @@
 +            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +            entity.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
-+               entity.setFire(event.getDuration(), false);
++               entity.putCallCombustEvent(false);
++               entity.func_70015_d(event.getDuration());
++               entity.putCallCombustEvent(true);
 +            }
 +            // CraftBukkit end
              boolean flag = entity.func_70097_a(DamageSource.func_233547_a_(this, entity1), 5.0F);

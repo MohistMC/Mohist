@@ -303,12 +303,13 @@
        if (this.func_230269_aK_()) {
           this.func_233569_aL_();
        }
-@@ -449,13 +_,42 @@
+@@ -449,12 +_,50 @@
  
     protected void func_70044_A() {
        if (!this.func_230279_az_()) {
 -         this.func_70015_d(15);
 +         // CraftBukkit start - Fallen in lava TODO: this event spams!
++         putCallCombustEvent(false);
 +         if (this instanceof LivingEntity && field_190534_ay <= 0) {
 +            // not on fire yet
 +            // TODO: shouldn't be sending null for the block
@@ -317,37 +318,43 @@
 +            EntityCombustEvent combustEvent = new org.bukkit.event.entity.EntityCombustByBlockEvent(damager, damagee, 15);
 +            this.field_70170_p.getCBServer().getPluginManager().callEvent(combustEvent);
 +            if (!combustEvent.isCancelled()) {
-+               this.setFire(combustEvent.getDuration(), false);
++               this.func_70015_d(combustEvent.getDuration());
 +            }
 +         } else {
 +            // This will be called every single tick the entity is in lava, so don't throw an event
-+            this.setFire(15, false);
++            this.func_70015_d(15);
 +         }
++         putCallCombustEvent(true);
 +         // CraftBukkit end - we also don't throw an event unless the object in lava is living, to save on some event calls
           this.func_70097_a(DamageSource.field_76371_c, 4.0F);
        }
     }
  
-    public void func_70015_d(int p_70015_1_) {
--      int i = p_70015_1_ * 20;
-+      // CraftBukkit start
-+      this.setFire(p_70015_1_, true);
++   // Mohist - https://github.com/infernalexp/Infernal-Expansion/blob/c6602b0fac69f92622c72e1df96efbc9ead026c7/src/main/java/com/nekomaster1000/infernalexp/mixin/common/MixinEntity.java#L48
++   boolean callCombustEvent = true;
++   public void putCallCombustEvent(boolean callEvent) {
++      callCombustEvent = callEvent;
 +   }
 +
-+   public void setFire(int seconds, boolean callEvent) {
-+      if (callEvent) {
-+         EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), seconds);
++   public void setFire(int p_70015_1_, boolean callEvent) {
++      this.putCallCombustEvent(false);
++      this.func_70015_d(p_70015_1_);
++      this.putCallCombustEvent(true);
++   }
++
+    public void func_70015_d(int p_70015_1_) {
++      if (callCombustEvent) {
++         EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), p_70015_1_);
 +         this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
 +         }
-+         seconds = event.getDuration();
++         p_70015_1_ = event.getDuration();
 +      }
 +      // CraftBukkit end
-+      int i = seconds * 20;
+       int i = p_70015_1_ * 20;
        if (this instanceof LivingEntity) {
           i = ProtectionEnchantment.func_92093_a((LivingEntity)this, i);
-       }
 @@ -546,6 +_,26 @@
              block.func_176216_a(this.field_70170_p, this);
           }
@@ -868,7 +875,7 @@
        byte b0 = this.field_70180_af.func_187225_a(field_184240_ax);
        if (p_70052_2_) {
           this.field_70180_af.func_187227_b(field_184240_ax, (byte)(b0 | 1 << p_70052_1_));
-@@ -1939,16 +_,53 @@
+@@ -1939,16 +_,55 @@
     }
  
     public void func_70050_g(int p_70050_1_) {
@@ -899,7 +906,9 @@
 +         EntityCombustByEntityEvent entityCombustEvent = new EntityCombustByEntityEvent(stormBukkitEntity, thisBukkitEntity, 8);
 +         pluginManager.callEvent(entityCombustEvent);
 +         if (!entityCombustEvent.isCancelled()) {
-+            this.setFire(entityCombustEvent.getDuration(), false);
++            putCallCombustEvent(false);
++            this.func_70015_d(entityCombustEvent.getDuration());
++            putCallCombustEvent(true);
 +         }
 +         // CraftBukkit end
        }
