@@ -45,7 +45,7 @@ Getting Help
 Upstream Projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - plugin support.
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
 * [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.

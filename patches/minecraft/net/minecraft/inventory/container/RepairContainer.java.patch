@@ -86,7 +86,7 @@
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
-@@ -214,17 +_,18 @@
+@@ -214,17 +_,20 @@
              i += k;
              itemstack1.func_200302_a(new StringTextComponent(this.field_82857_m));
           }
@@ -99,6 +99,8 @@
  
 -         if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= 40) {
 -            this.field_82854_e.func_221494_a(39);
++         if (maximumRepairCost == 40) maximumRepairCost = 40;
++
 +         if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= maximumRepairCost) { // CraftBukkit
 +            this.field_82854_e.func_221494_a(maximumRepairCost - 1); // CraftBukkit
           }
