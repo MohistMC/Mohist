@@ -650,7 +650,7 @@ public final class CraftServer implements Server {
     }
 
     public boolean getWarnOnOverload() {
-        return this.configuration.getBoolean("settings.warn-on-overload");
+        return false || this.configuration.getBoolean("settings.warn-on-overload");
     }
 
     public boolean getQueryPlugins() {

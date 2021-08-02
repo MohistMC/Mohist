@@ -470,7 +470,7 @@
                    long j = i / 50L;
 -                  field_147145_h.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
 +                  if (server.getWarnOnOverload()) {
-+                     field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.14", String.valueOf(i), String.valueOf(j)));
++                     field_147145_h.warn(com.mohistmc.util.i18n.i18n.get("minecraftserver.14", i, j));
 +                  }
                    this.field_211151_aa += j * 50L;
                    this.field_71299_R = this.field_211151_aa;
