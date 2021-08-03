@@ -44,13 +44,15 @@ public class DefaultLibraries {
                     i18n.get("libraries.global.percentage") +
                             Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
             try {
-                UpdateUtils.downloadFile(u, lib);
+                UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 if(lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar")) new JarLoader().loadJar(lib);
                 currentSize.addAndGet(lib.length());
                 fail.remove(u.replace(url, ""));
             } catch (Exception e) {
-                System.out.println(i18n.get("file.download.nook", u));
-				lib.delete();
+            	if(!e.getMessage().equals("md5")) {
+					System.out.println(i18n.get("file.download.nook", u));
+					lib.delete();
+				}
 				fail.put(u.replace(url, ""), lib.getAbsolutePath());
 			}
         }

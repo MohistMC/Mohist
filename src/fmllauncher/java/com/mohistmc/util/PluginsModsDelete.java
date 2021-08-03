@@ -53,7 +53,7 @@ public class PluginsModsDelete {
 							System.out.println(i18n.get("update.pluginversion", pom.getName(), fix.version, fix.repo, fix.aim));
 							System.out.println(i18n.get("update.downloadpluginversion", pom.getName()));
 							if(new Scanner(System.in).next().equals("yes"))
-								downloadFile(fix.url, pom);
+								downloadFile(fix.url, pom, fix.md5);
 						}
 					} else if(fix.type.equals(NOT_COMPATIBLE))
 						if(allLines.contains("main: " + fix.main))
@@ -89,14 +89,16 @@ public class PluginsModsDelete {
 		public String repo;
 		public String type;
 		public String aim;
+		public String md5;
 
-		public Fix(String mainClass, String url, String version, String repo, String aim) {
+		public Fix(String mainClass, String url, String version, String repo, String aim, String md5) {
 			this.main = mainClass;
 			this.url = url;
 			this.version = version;
 			this.repo = repo;
 			this.type = FIX;
 			this.aim = aim;
+			this.md5 = md5;
 		}
 
 		public Fix(String mainClass) {

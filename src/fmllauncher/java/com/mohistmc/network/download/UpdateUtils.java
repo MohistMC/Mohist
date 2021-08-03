@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.JarTool;
+import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
 
 import java.io.File;
@@ -53,6 +54,10 @@ public class UpdateUtils {
     }
 
     public static void downloadFile(String URL, File f) throws Exception {
+    	downloadFile(URL, f, null);
+	}
+
+    public static void downloadFile(String URL, File f, String md5) throws Exception {
         URLConnection conn = getConn(URL);
         System.out.println(i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
@@ -72,12 +77,19 @@ public class UpdateUtils {
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
+		percentage = 0;
+		String MD5 = MD5Util.getMd5(f);
+        if(md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
+			f.delete();
+			System.out.println(i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
+			throw new Exception("md5");
+		}
         System.out.println(i18n.get("download.file.ok", f.getName()));
-        percentage = 0;
     }
 
     public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
-        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+		System.out.println(i18n.get("jarfile.restart"));
+		ProcessBuilder processBuilder = new ProcessBuilder(cmd);
         processBuilder.redirectInput(ProcessBuilder.Redirect.INHERIT);
         processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
         Process process = processBuilder.start();
