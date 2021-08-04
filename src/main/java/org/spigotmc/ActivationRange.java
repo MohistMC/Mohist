@@ -218,9 +218,6 @@ public class ActivationRange {
      * @return
      */
     public static boolean checkIfActive(Entity entity) {
-        if (MinecraftServer.entityConfig != null && MinecraftServer.entityConfig.skipActivationRange.getValue())
-            return true;
-
         // Never safe to skip fireworks or entities not yet added to chunk
         // PAIL: inChunk
         if (!entity.addedToChunk || entity instanceof EntityFireworkRocket) {

@@ -74,7 +74,10 @@ world:
   dimensionsNotLoaded: []
   directory_in_client: true
   disableforgegenerate:
-    global: false
+    global:
+      enable: false
+      worlds:
+        - "worldname"
     list:
       worldgen-aaaaaaaa: false
       worldgen-bbbbbbbb: false

@@ -101,6 +101,11 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting showlogo = new BoolSetting(this, "mohist.showlogo", true);
     public final BoolSetting World_Directory_Client = new BoolSetting(this, "world.directory_in_client", true);
     public final BoolSetting bukkitPermissionsHandler = new BoolSetting(this, "mohist.BukkitPermissionsHandler", true);
+
+    public final BoolSetting disableforgegenerate_global = new BoolSetting(this, "world.disableforgegenerate.global.enable", false);
+
+
+
     private final String HEADER = "This is the main configuration file for Mohist.\n"
             + "\n"
             + "Home: https://mohist.red/\n";

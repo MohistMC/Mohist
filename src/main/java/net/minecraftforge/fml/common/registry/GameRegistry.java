@@ -81,6 +81,9 @@ public class GameRegistry
 
     private static Map<String, Boolean> configWorldGenCache = Maps.newHashMap();
     public static Map<String, String> worldGenMap = Maps.newHashMap();
+    public static String generatorName = "";
+    public static boolean generatorEnabled = true;
+
 
     /**
      * Register a world generator - something that inserts new block types into the world
@@ -101,6 +104,16 @@ public class GameRegistry
             sortedGeneratorList = null;
         }
         worldGenMap.put(generator.getClass().getName(), modId);
+
+        if (!configWorldGenCache.containsKey(generator.getClass().getName()))
+        {
+            generatorName = modId + "-" + generator.getClass().getName();
+            generatorEnabled = MohistConfig.instance.getBoolean("world.disableforgegenerate.worldgen-" + generatorName, true);
+            configWorldGenCache.put(generator.getClass().getName(), generatorEnabled);
+        }
+        if (MohistConfig.instance.getString("world.disableforgegenerate.worldgen-" + generatorName)  == null) {
+            MohistConfig.instance.set("world.disableforgegenerate.worldgen-" + generatorName, generatorEnabled);
+        }
     }
 
     /**
@@ -158,6 +171,11 @@ public class GameRegistry
      */
     public static void generateWorld(int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
     {
+        if (MohistConfig.instance.disableforgegenerate_global.getValue().booleanValue()) {
+            if (MohistConfig.instance.getBoolean("world.disableforgegenerate.global.worlds." + world.getWorld().getName(), false)) {
+                return;
+            }
+        }
         if (sortedGeneratorList == null)
         {
             computeSortedGeneratorList();
@@ -167,22 +185,10 @@ public class GameRegistry
         long xSeed = fmlRandom.nextLong() >> 2 + 1L;
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
         long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
-        String generatorName = "";
-        boolean generatorEnabled = true;
 
         for (IWorldGenerator generator : worldGenerators)
         {
-            if (!configWorldGenCache.containsKey(generator.getClass().getName()))
-            {
-                String modId = worldGenMap.get(generator.getClass().getName());
-                generatorName = modId + "-" + generator.getClass().getSimpleName();
-                generatorEnabled = MohistConfig.instance.getBoolean("world.disableforgegenerate.worldgen-" + generatorName, true);
-                configWorldGenCache.put(generatorName, generatorEnabled);
-            }
-            if (MohistConfig.instance.getString("world.disableforgegenerate.worldgen-" + generatorName)  == null) {
-                MohistConfig.instance.set("world.disableforgegenerate.worldgen-" + generatorName, generatorEnabled);
-            }
-            if (configWorldGenCache.get(generatorName))
+            if (configWorldGenCache.get(generator.getClass().getName()))
             {
                 fmlRandom.setSeed(chunkSeed);
                 generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
