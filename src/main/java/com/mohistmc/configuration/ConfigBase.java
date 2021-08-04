@@ -89,6 +89,10 @@ public abstract class ConfigBase {
         return config.getList(path, config.getList(path));
     }
 
+    public String getString(String path) {
+        return config.getString(path);
+    }
+
     public String getString(String path, String def) {
         return getString(path, def, true);
     }

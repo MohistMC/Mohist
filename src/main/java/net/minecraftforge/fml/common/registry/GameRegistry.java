@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import javax.annotation.Nonnull;
+
+import com.mohistmc.configuration.MohistConfig;
 import net.minecraft.block.Block;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
@@ -165,18 +167,22 @@ public class GameRegistry
         long xSeed = fmlRandom.nextLong() >> 2 + 1L;
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
         long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
+        String generatorName = "";
+        boolean generatorEnabled = true;
 
         for (IWorldGenerator generator : worldGenerators)
         {
             if (!configWorldGenCache.containsKey(generator.getClass().getName()))
             {
                 String modId = worldGenMap.get(generator.getClass().getName());
-                String generatorName = "";
                 generatorName = modId + "-" + generator.getClass().getSimpleName();
-                boolean generatorEnabled = world.mohistConfig.getBoolean("worldgen-" + generatorName, true);
-                configWorldGenCache.put(generator.getClass().getName(), generatorEnabled);
+                generatorEnabled = MohistConfig.instance.getBoolean("world.disableforgegenerate.worldgen-" + generatorName, true);
+                configWorldGenCache.put(generatorName, generatorEnabled);
             }
-            if (configWorldGenCache.get(generator.getClass().getName()))
+            if (MohistConfig.instance.getString("world.disableforgegenerate.worldgen-" + generatorName)  == null) {
+                MohistConfig.instance.set("world.disableforgegenerate.worldgen-" + generatorName, generatorEnabled);
+            }
+            if (configWorldGenCache.get(generatorName))
             {
                 fmlRandom.setSeed(chunkSeed);
                 generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
