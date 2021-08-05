@@ -155,7 +155,8 @@ public final class PaperAdventure {
     }
 
     public static ITextComponent asVanilla(final Component component) {
-        if (true) return new AdventureComponent(component);
+        // Mohist : prevent error encoding packet 
+        //if (true) return new AdventureComponent(component); TODO: correct fix bug
         return ITextComponent.Serializer.fromJson(GSON.serializer().toJsonTree(component));
     }
 
