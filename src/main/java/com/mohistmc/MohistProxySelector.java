@@ -45,7 +45,7 @@ public class MohistProxySelector extends ProxySelector {
                 intercept = true;
             }
         }
-        if (Bukkit.getServer() != null) {
+        if (Bukkit.getServer() != null && Bukkit.getServer().isPrimaryThread()) {
             MohistNetworkEvent event = new MohistNetworkEvent(uri, defaultMsg);
             Bukkit.getPluginManager().callEvent(event);
             event.setCancelled(intercept);
