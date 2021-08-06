@@ -1,12 +1,13 @@
 --- a/net/minecraft/inventory/container/WorkbenchContainer.java
 +++ b/net/minecraft/inventory/container/WorkbenchContainer.java
-@@ -19,13 +_,21 @@
+@@ -19,13 +_,22 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryCrafting;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
  
  public class WorkbenchContainer extends RecipeBookContainer<CraftingInventory> {
 -   private final CraftingInventory field_75162_e = new CraftingInventory(this, 3, 3);
@@ -44,12 +45,18 @@
     protected static void func_217066_a(int p_217066_0_, World p_217066_1_, PlayerEntity p_217066_2_, CraftingInventory p_217066_3_, CraftResultInventory p_217066_4_) {
        if (!p_217066_1_.field_72995_K) {
           ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_217066_2_;
-@@ -65,15 +_,24 @@
-                itemstack = icraftingrecipe.func_77572_b(p_217066_3_);
+@@ -66,14 +_,30 @@
              }
           }
-+         itemstack = CraftEventFactory.callPreCraftEvent(p_217066_3_ , p_217066_4_, itemstack, containerA.getBukkitView(), false); // CraftBukkit
  
++         // Mohist start - Fix Quark crafting error w/ backpack
++         InventoryView view = null;
++         if (containerA == null) {
++            view = new CraftInventoryView(serverplayerentity.getBukkitEntity(), new CraftInventoryCrafting(p_217066_3_, p_217066_4_), serverplayerentity.field_71070_bA);
++         }
++         itemstack = CraftEventFactory.callPreCraftEvent(p_217066_3_, p_217066_4_, itemstack, containerA != null ? containerA.getBukkitView() : view, false); // CraftBukkit
++         // Mohist end
++
           p_217066_4_.func_70299_a(0, itemstack);
           serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(p_217066_0_, 0, itemstack));
        }
