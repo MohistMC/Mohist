@@ -125,7 +125,7 @@
              return;
           }
  
-@@ -105,24 +_,46 @@
+@@ -105,24 +_,47 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
           String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
@@ -170,6 +170,7 @@
              datapackregistries = completablefuture.get();
           } catch (Exception exception) {
 -            field_240759_a_.warn("Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode", (Throwable)exception);
++            exception.printStackTrace(); // Mohist - Verbose datapack errors
 +            field_240759_a_.warn(com.mohistmc.util.i18n.i18n.get("main.4", (Throwable)exception));
              resourcepacklist.close();
              return;
