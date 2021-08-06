@@ -302,7 +302,7 @@
     }
  
     public void func_212504_a(ServerWorld p_212504_1_) {
-+      if (field_72412_k != null)  return; // CraftBukkit
++      //if (playerIo != null)  return; // CraftBukkit // Mohist - Fix borders not updating client-side
        p_212504_1_.func_175723_af().func_177737_a(new IBorderListener() {
           public void func_177694_a(WorldBorder p_177694_1_, double p_177694_2_) {
              PlayerList.this.func_148540_a(new SWorldBorderPacket(p_177694_1_, SWorldBorderPacket.Action.SET_SIZE));
