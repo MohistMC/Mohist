@@ -147,7 +147,7 @@
        } else {
           this.func_70606_j(f);
        }
-@@ -500,12 +_,12 @@
+@@ -500,12 +_,23 @@
  
     private void func_213816_g(DamageSource p_213816_1_) {
        this.func_190773_I();
@@ -158,16 +158,38 @@
           ItemStack itemstack = this.field_184799_bw.get(i);
           if (!itemstack.func_190926_b()) {
 -            Block.func_180635_a(this.field_70170_p, this.func_233580_cy_().func_177984_a(), itemstack);
-+            drops.add(CraftItemStack.asCraftMirror(itemstack)); // CraftBukkit - add to drops
++            // Mohist start - Fix Armorstands not dropping items
++            double d0 = (double) (this.field_70170_p.field_73012_v.nextFloat() * 0.5F) + 0.25D;
++            double d1 = (double) (this.field_70170_p.field_73012_v.nextFloat() * 0.5F) + 0.25D;
++            double d2 = (double) (this.field_70170_p.field_73012_v.nextFloat() * 0.5F) + 0.25D;
++            ItemEntity itementity = new ItemEntity(this.field_70170_p, (double) this.func_233580_cy_().func_177984_a().func_177958_n() + d0, (double) this.func_233580_cy_().func_177984_a().func_177956_o() + d1, (double) this.func_233580_cy_().func_177984_a().func_177952_p() + d2, itemstack);
++            itementity.func_174869_p();
++            if (captureDrops() != null) {
++               captureDrops().add(itementity);
++            } else {
++               this.field_70170_p.func_217376_c(itementity);
++            }
++            // Mohist end
              this.field_184799_bw.set(i, ItemStack.field_190927_a);
           }
        }
-@@ -513,11 +_,11 @@
+@@ -513,11 +_,22 @@
        for(int j = 0; j < this.field_184800_bx.size(); ++j) {
           ItemStack itemstack1 = this.field_184800_bx.get(j);
           if (!itemstack1.func_190926_b()) {
 -            Block.func_180635_a(this.field_70170_p, this.func_233580_cy_().func_177984_a(), itemstack1);
-+            drops.add(CraftItemStack.asCraftMirror(itemstack1)); // CraftBukkit - add to drops
++            // Mohist start - Fix Armorstands not dropping items
++            double d0 = (double) (this.field_70170_p.field_73012_v.nextFloat() * 0.5F) + 0.25D;
++            double d1 = (double) (this.field_70170_p.field_73012_v.nextFloat() * 0.5F) + 0.25D;
++            double d2 = (double) (this.field_70170_p.field_73012_v.nextFloat() * 0.5F) + 0.25D;
++            ItemEntity itementity1 = new ItemEntity(this.field_70170_p, (double) this.func_233580_cy_().func_177984_a().func_177958_n() + d0, (double) this.func_233580_cy_().func_177984_a().func_177956_o() + d1, (double) this.func_233580_cy_().func_177984_a().func_177952_p() + d2, itemstack1);
++            itementity1.func_174869_p();
++            if (captureDrops() != null) {
++               captureDrops().add(itementity1);
++            } else {
++               this.field_70170_p.func_217376_c(itementity1);
++            }
++            // Mohist end
              this.field_184800_bx.set(j, ItemStack.field_190927_a);
           }
        }
