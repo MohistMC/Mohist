@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_16_R3.util;
 
-
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
