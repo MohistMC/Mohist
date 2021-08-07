@@ -482,7 +482,7 @@
        BlockPos blockpos = p_232644_1_.func_241140_K_();
        float f = p_232644_1_.func_242109_L();
        boolean flag = p_232644_1_.func_241142_M_();
-@@ -422,56 +_,158 @@
+@@ -422,57 +_,158 @@
        }
  
        ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, serverworld1, p_232644_1_.func_146103_bH(), playerinteractionmanager);
@@ -640,10 +640,10 @@
 +      }
        serverplayerentity.func_71116_b();
        serverplayerentity.func_70606_j(serverplayerentity.func_110143_aJ());
-+      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_232644_2_);
        if (flag2) {
 -         serverplayerentity.field_71135_a.func_147359_a(new SPlaySoundEffectPacket(SoundEvents.field_232818_ms_, SoundCategory.BLOCKS, (double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p(), 1.0F, 1.0F));
 -      }
+-
 +         serverplayerentity.field_71135_a.func_147359_a(new SPlaySoundEffectPacket(SoundEvents.field_232818_ms_, SoundCategory.BLOCKS, (double) blockpos.func_177958_n(), (double) blockpos.func_177956_o(), (double) blockpos.func_177952_p(), 1.0F, 1.0F));
 +      }
 +      // Added from changeDimension
@@ -667,9 +667,10 @@
 +         this.func_72391_b(serverplayerentity);
 +      }
 +      // CraftBukkit end
- 
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_232644_2_);//Mohist - fix player cannot have capability
        return serverplayerentity;
     }
+ 
 @@ -484,12 +_,40 @@
  
     public void func_72374_b() {
