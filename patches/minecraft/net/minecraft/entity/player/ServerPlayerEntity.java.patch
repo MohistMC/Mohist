@@ -76,7 +76,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,13 +_,30 @@
+@@ -130,13 +_,29 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -91,7 +91,6 @@
 +import org.bukkit.event.inventory.InventoryType;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerChangedMainHandEvent;
-+import org.bukkit.event.player.PlayerChangedWorldEvent;
 +import org.bukkit.event.player.PlayerLocaleChangeEvent;
 +import org.bukkit.event.player.PlayerPortalEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
@@ -485,7 +484,7 @@
           }
        }
  
-@@ -603,78 +_,131 @@
+@@ -603,78 +_,127 @@
     }
  
     private boolean func_175400_cq() {
@@ -617,11 +616,7 @@
              this.field_71149_ch = -1.0F;
              this.field_71146_ci = -1;
 +            func_226284_e_(false); // Paper - fix MC-10657
-+            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, registrykey, server.func_234923_W_());
-+            // CraftBukkit start
-+            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverworld.getWorld());
-+            this.field_70170_p.getCBServer().getPluginManager().callEvent(changeEvent);
-+            // CraftBukkit end
++            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, registrykey, server.func_234923_W_(), serverworld.getWorld());
           }
  
           return this;
