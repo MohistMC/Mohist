@@ -92,7 +92,7 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.network.DebugPacketSender;
  import net.minecraft.network.IPacket;
-@@ -138,32 +_,31 @@
+@@ -138,22 +_,21 @@
  import net.minecraft.world.storage.MapData;
  import net.minecraft.world.storage.MapIdTracker;
  import net.minecraft.world.storage.SaveFormat;
@@ -120,19 +120,7 @@
     public boolean field_73058_d;
     private boolean field_73068_P;
     private int field_80004_Q;
-    private final Teleporter field_85177_Q;
-    private final ServerTickList<Block> field_94579_S = new ServerTickList<>(this, (p_205341_0_) -> {
-       return p_205341_0_ == null || p_205341_0_.func_176223_P().func_196958_f();
--   }, Registry.field_212618_g::func_177774_c, this::func_205338_b);
-+   }, Registry.field_212618_g::func_177774_c, this::func_205338_b, "Blocks"); // Paper - Timings
-    private final ServerTickList<Fluid> field_205342_P = new ServerTickList<>(this, (p_205774_0_) -> {
-       return p_205774_0_ == null || p_205774_0_ == Fluids.field_204541_a;
--   }, Registry.field_212619_h::func_177774_c, this::func_205339_a);
-+   }, Registry.field_212619_h::func_177774_c, this::func_205339_a, "Fluids"); // Paper - Timings
-    private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
-    protected final RaidManager field_217494_c;
-    private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,154 @@
+@@ -173,35 +_,157 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -147,9 +135,9 @@
 +   public boolean dummyFreshEntitySpawn = false; // Mohist - Fix Pehkui Startup (#1324)
 +
 +   // Mohist start - Add option to ignore empty time
-+   private static final List<String> IGNORE_EMPTY_TIME_LIST;
++   private static List<String> IGNORE_EMPTY_TIME_LIST;
 +
-+   static {
++   {
 +       IGNORE_EMPTY_TIME_LIST = new ArrayList<>();
 +       String ignoreEmptyTime = MohistConfigUtil.sMohist("ignore_empty_time", "all_worlds");
 +       if (ignoreEmptyTime.contains(";")) {
@@ -158,6 +146,9 @@
 +           }
 +       }
 +       else IGNORE_EMPTY_TIME_LIST.add(ignoreEmptyTime);
++
++      field_94579_S.putTimingsType("Blocks");
++      field_205342_P.putTimingsType("Fluids");
 +   }
 +
 +   private final boolean ignoreEmptyTimeThis;
@@ -448,15 +439,6 @@
        }
  
        iprofiler.func_76319_b();
-@@ -443,6 +_,8 @@
-       });
-    }
- 
-+   private final Random randomTickRandom = new Random(); // Mohist - Optimize Randomtick (2nd attempt)
-+
-    public void func_217441_a(Chunk p_217441_1_, int p_217441_2_) {
-       ChunkPos chunkpos = p_217441_1_.func_76632_l();
-       boolean flag = this.func_72896_J();
 @@ -460,13 +_,13 @@
                 skeletonhorseentity.func_190691_p(true);
                 skeletonhorseentity.func_70873_a(0);

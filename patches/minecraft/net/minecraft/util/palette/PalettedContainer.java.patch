@@ -70,32 +70,10 @@
     public void func_186009_b(PacketBuffer p_186009_1_) {
        this.func_210459_b();
        p_186009_1_.writeByte(this.field_186024_e);
-@@ -237,4 +_,32 @@
+@@ -237,4 +_,10 @@
     public interface ICountConsumer<T> {
        void accept(T p_accept_1_, int p_accept_2_);
     }
-+
-+   // Mohist start - Optimize Randomtick (2nd attempt)
-+   public void count(PalettedContainer.ICountConsumerTriple<T> p_225497_1_) {
-+      // Mohist start - Randomtick Improvements
-+      Int2IntMap key2dat = new Int2IntOpenHashMap();
-+      this.field_186021_b.getAll((dat, key) -> {
-+         key2dat.put(key, dat);
-+      });
-+      for (Entry ent : key2dat.int2IntEntrySet()) {
-+          int key = ent.getIntKey();
-+          int dat = ent.getIntValue();
-+          T state = this.field_186022_c.func_186039_a(dat);
-+          p_225497_1_.accept(state, 1, key);
-+      }
-+      // Mohist end
-+   }
-+
-+   @FunctionalInterface
-+   public interface ICountConsumerTriple<T> {
-+      void accept(T p_accept_1_, int p_accept_2_, int key);
-+   }
-+   // Mohist end
 +
 +   private final IPalette<T> getDataPaletteGlobal() { return this.field_205521_b; } // Paper - OBFHELPER
 +   public final BitArray getDataBits() { return this.field_186021_b; } // Paper - OBFHELPER

@@ -1,26 +1,29 @@
 --- a/net/minecraft/world/server/ServerTickList.java
 +++ b/net/minecraft/world/server/ServerTickList.java
-@@ -38,13 +_,19 @@
+@@ -37,12 +_,23 @@
+    private final Queue<NextTickListEntry<T>> field_205377_g = Queues.newArrayDeque();
     private final List<NextTickListEntry<T>> field_223189_h = Lists.newArrayList();
     private final Consumer<NextTickListEntry<T>> field_205378_h;
++   private String timingsType = "";
  
--   public ServerTickList(ServerWorld p_i231625_1_, Predicate<T> p_i231625_2_, Function<T, ResourceLocation> p_i231625_3_, Consumer<NextTickListEntry<T>> p_i231625_4_) {
-+   public ServerTickList(ServerWorld p_i231625_1_, Predicate<T> p_i231625_2_, Function<T, ResourceLocation> p_i231625_3_, Consumer<NextTickListEntry<T>> p_i231625_4_, String timingsType) { // Paper
+    public ServerTickList(ServerWorld p_i231625_1_, Predicate<T> p_i231625_2_, Function<T, ResourceLocation> p_i231625_3_, Consumer<NextTickListEntry<T>> p_i231625_4_) {
        this.field_205371_a = p_i231625_2_;
        this.field_205372_b = p_i231625_3_;
        this.field_205376_f = p_i231625_1_;
        this.field_205378_h = p_i231625_4_;
 +      this.timingCleanup = co.aikar.timings.WorldTimingsHandler.getTickList(p_i231625_1_, timingsType + " - Cleanup");
 +      this.timingTicking = co.aikar.timings.WorldTimingsHandler.getTickList(p_i231625_1_, timingsType + " - Ticking");
-    }
- 
++   }
++
 +   private final co.aikar.timings.Timing timingCleanup; // Paper
 +   private final co.aikar.timings.Timing timingTicking; // Paper
 +   // Paper end
 +
++   public void putTimingsType(String timingsType) {
++      this.timingsType = timingsType;
+    }
+ 
     public void func_205365_a() {
-       int i = this.field_205375_e.size();
-       if (i != this.field_205374_d.size()) {
 @@ -58,6 +_,7 @@
           Iterator<NextTickListEntry<T>> iterator = this.field_205375_e.iterator();
           this.field_205376_f.func_217381_Z().func_76320_a("cleaning");
