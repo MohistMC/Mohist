@@ -68,9 +68,9 @@ public class ServerMain {
 			}
 		}
 
-		if(jVersion < 60.0)
-			System.setProperty("nashorn.args", "--no-deprecation-warning"); //Others java version under 16
-		if(jVersion == 60.0) System.setProperty("-Dnashorn.args", "--no-deprecation-warning"); //For java 16
+		if(jVersion < 59.0)
+			System.setProperty("nashorn.args", "--no-deprecation-warning"); //Others java version under 15
+		if(jVersion >= 59.0) System.setProperty("-Dnashorn.args", "--no-deprecation-warning"); //For java 15 and +
 
 		if(jVersion == 60.0 && !mainArgs.contains("launchedWithJava16")) {
 			ArrayList<String> command = new ArrayList<>(Arrays.asList("java", "-jar", "--add-exports=java.base/sun.security.util=ALL-UNNAMED", "--add-opens=java.base/java.util.jar=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED"));
