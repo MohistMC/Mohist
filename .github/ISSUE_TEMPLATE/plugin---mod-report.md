@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+<!-- ISSUE_TEMPLATE_1 -> IMPORTANT: DO NOT DELETE THIS LINE.-->
+
 <!-- Thank you for reporting ! Please note that issues can take a lot of time to be fixed and there is no eta.-->
 
 <!-- If you don't know where to upload your logs and crash reports, you can use these websites : -->
