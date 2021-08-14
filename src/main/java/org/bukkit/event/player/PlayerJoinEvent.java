@@ -1,5 +1,6 @@
 package org.bukkit.event.player;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -9,10 +10,22 @@ import org.bukkit.event.HandlerList;
 public class PlayerJoinEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private String joinMessage;
+    private final World world;
 
     public PlayerJoinEvent(final Player playerJoined, final String joinMessage) {
         super(playerJoined);
         this.joinMessage = joinMessage;
+        this.world = playerJoined.getWorld();
+    }
+
+    public PlayerJoinEvent(final Player who, final World world) {
+        super(who);
+        this.joinMessage = "";
+        this.world = world;
+    }
+
+    public World getWorld() {
+        return this.world;
     }
 
     public static HandlerList getHandlerList() {

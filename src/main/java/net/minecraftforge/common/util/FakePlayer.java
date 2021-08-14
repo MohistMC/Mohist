@@ -45,34 +45,14 @@ import com.mohistmc.MohistMC;
 //Preliminary, simple Fake Player class
 public class FakePlayer extends EntityPlayerMP
 {
-    static public ArrayList<FakePlayer> fakePlayers=new ArrayList();
-    static public boolean BukkitInited=false;
+    public static ArrayList<FakePlayer> fakePlayers = new ArrayList();
+
     public FakePlayer(WorldServer world, GameProfile name)
     {
         super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new PlayerInteractionManager(world));
-        //KCauldronX Start
-        if(MinecraftServer.mohistConfig.fakePlayerLogin.getValue()) {
-            if (!BukkitInited) {
-                fakePlayers.add(this);
-            } else {
-                callBukkitLoginEvent();
-            }
-        }
-        //KCauldronX End
+        fakePlayers.add(this);
     }
-    public void callBukkitLoginEvent(){
-        new Thread(() -> {
-            AsyncPlayerPreLoginEvent prelogin2 = new AsyncPlayerPreLoginEvent(getName(), InetAddress.getLoopbackAddress(), getUniqueID());
-            Bukkit.getPluginManager().callEvent(prelogin2);
-            MinecraftServer.getServerInst().processQueue.add(() -> {
-                PlayerPreLoginEvent prelogin1 = new PlayerPreLoginEvent(getName(), InetAddress.getLoopbackAddress(), getUniqueID());
-                Bukkit.getPluginManager().callEvent(prelogin1);
-                PlayerLoginEvent login = new PlayerLoginEvent(getBukkitEntity(), "localhost", InetAddress.getLoopbackAddress());
-                Bukkit.getPluginManager().callEvent(login);
-                MohistMC.LOGGER.info("%s","Fakeplayer "+getName()+" ("+getUniqueID()+") joined server");
-            });
-        }).start();
-    }
+
 
     @Override public Vec3d getPositionVector(){ return new Vec3d(0, 0, 0); }
     @Override public boolean canUseCommand(int i, String s){ return false; }

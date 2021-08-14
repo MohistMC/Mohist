@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.world.WorldServer;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 //To be expanded for generic Mod fake players?
 public class FakePlayerFactory
@@ -70,6 +71,7 @@ public class FakePlayerFactory
         }
         // Cauldron end
         fakePlayers.put(username, fakePlayer);
+        world.getServer().getPluginManager().callEvent(new PlayerJoinEvent(fakePlayer.getBukkitEntity(), world.getWorld()));
         return fakePlayers.get(username);
     }
 

@@ -5,6 +5,7 @@ import com.mohistmc.api.ChatComponentAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.HasteUtils;
+import com.mojang.authlib.GameProfile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,8 @@ import java.util.Locale;
 import java.util.Map;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -31,12 +34,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "bukkit_material", "vanilla_material");
+    private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "bukkit_material", "vanilla_material", "fakeplayer");
     private final List<String> tab_mode = Arrays.asList("file", "web");
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|bukkit_material|vanilla_material]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|bukkit_material|vanilla_material|fakeplayer]";
         this.setPermission("mohist.command.dump");
     }
 
@@ -108,8 +111,9 @@ public class DumpCommand extends Command {
                 case "vanilla_material":
                     dumpVanillaMaterial(sender, mode);
                     break;
+                case "fakeplayer":
+                    dumpFakePlayer(sender, mode);
                 default:
-                    sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                     return false;
             }
         }
@@ -223,6 +227,14 @@ public class DumpCommand extends Command {
         dump(sender, "vanilla_material", sb, mode);
     }
 
+    private void dumpFakePlayer(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (FakePlayer fakePlayerEntry : FakePlayer.fakePlayers) {
+            sb.append(fakePlayerEntry.getUniqueID()).append(" : ").append(fakePlayerEntry.getName()).append("\n");
+        }
+        dump(sender, "fakeplayer", sb, mode);
+    }
+
     private void dumpmsg(CommandSender sender, File file, String type) {
         sender.sendMessage("Successfully dump " + type + ", output path: " + file.getAbsolutePath());
     }
@@ -234,7 +246,7 @@ public class DumpCommand extends Command {
     private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
         switch (mode) {
             case "file":
-                saveToF("dump", type + ".red", sb, sender);
+                saveToF("dump", type + ".txt", sb, sender);
                 break;
             case "web":
                 try {
@@ -247,7 +259,7 @@ public class DumpCommand extends Command {
                     }
                 } catch (IOException e) {
                     sender.sendMessage("Failed to upload to hastebin.");
-                    saveToF("dump", type + ".red", sb, sender);
+                    saveToF("dump", type + ".txt", sb, sender);
                 }
                 break;
         }
@@ -256,7 +268,7 @@ public class DumpCommand extends Command {
     private void saveToF(String parent, String child, StringBuilder sb, CommandSender sender) {
         File file = new File(parent, child);
         writeByteArrayToFile(file, sb);
-        dumpmsg(sender, file, child.replace(".red", ""));
+        dumpmsg(sender, file, child.replace(".txt", ""));
     }
 
     protected void writeByteArrayToFile(File file, StringBuilder sb) {
