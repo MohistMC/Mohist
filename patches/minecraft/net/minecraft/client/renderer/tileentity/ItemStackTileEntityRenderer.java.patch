@@ -5,7 +5,7 @@
  import org.apache.commons.lang3.StringUtils;
  
 -@OnlyIn(Dist.CLIENT)
-+//@OnlyIn(Dist.CLIENT) // Mohist - removed fot plugin
++//@OnlyIn(Dist.CLIENT) // Mohist - removed for plugin
  public class ItemStackTileEntityRenderer {
     private static final ShulkerBoxTileEntity[] field_191274_b = Arrays.stream(DyeColor.values()).sorted(Comparator.comparingInt(DyeColor::func_196059_a)).map(ShulkerBoxTileEntity::new).toArray((p_199929_0_) -> {
        return new ShulkerBoxTileEntity[p_199929_0_];
