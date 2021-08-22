@@ -348,7 +348,7 @@
  
           try {
 +            // CraftBukkit start
-+            CraftWorld world = ((ServerWorld) this).getWorld();
++            CraftWorld world = this.getWorld();
 +            if (world != null) {
 +               BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_190524_1_.func_177958_n(), p_190524_1_.func_177956_o(), p_190524_1_.func_177952_p()), CraftBlockData.fromData(blockstate), world.getBlockAt(p_190524_3_.func_177958_n(), p_190524_3_.func_177956_o(), p_190524_3_.func_177952_p()));
 +               this.getCBServer().getPluginManager().callEvent(event);
