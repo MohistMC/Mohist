@@ -278,6 +278,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     private int damage;
 
     private static final Set<String> HANDLED_TAGS = Sets.newHashSet();
+    private static final Set<String> CRAFTMETA_TAGS = Sets.newHashSet();
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 
     private CompoundNBT internalTag;
@@ -383,6 +384,12 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (!getHandledTags().contains(key)) {
                 unhandledTags.put(key, tag.get(key));
             }
+            else {  // Mohist start - handle modded tags
+              if (getClass() == CraftMetaItem.class && getCraftMetaTags().contains(key)) {
+                  unhandledTags.put(key, tag.get(key));
+              }
+            }
+            // Mohist end
         }
     }
 
@@ -526,6 +533,12 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                     if (!getHandledTags().contains(key)) {
                         unhandledTags.put(key, internalTag.get(key));
                     }
+                    else {// Mohist start - handle modded tgas
+                        if (getClass() == CraftMetaItem.class && getCraftMetaTags().contains(key)) {
+                            unhandledTags.put(key, internalTag.get(key));
+                        }
+                    }
+                    //Mohist end
                 }
             } catch (IOException ex) {
                 Logger.getLogger(CraftMetaItem.class.getName()).log(Level.SEVERE, null, ex);
@@ -1446,4 +1459,58 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             return HANDLED_TAGS;
         }
     }
+
+    // Mohist start - Handle modded tags
+    public static Set<String> getCraftMetaTags() {
+        synchronized (CRAFTMETA_TAGS) {
+            if (CRAFTMETA_TAGS.isEmpty()) {
+                CRAFTMETA_TAGS.addAll(Arrays.asList(
+                        DISPLAY.NBT,
+                        CUSTOM_MODEL_DATA.NBT,
+                        BLOCK_DATA.NBT,
+                        REPAIR.NBT,
+                        ENCHANTMENTS.NBT,
+                        HIDEFLAGS.NBT,
+                        UNBREAKABLE.NBT,
+                        DAMAGE.NBT,
+                        BUKKIT_CUSTOM_TAG.NBT,
+                        ATTRIBUTES.NBT,
+                        ATTRIBUTES_IDENTIFIER.NBT,
+                        ATTRIBUTES_NAME.NBT,
+                        ATTRIBUTES_VALUE.NBT,
+                        ATTRIBUTES_UUID_HIGH.NBT,
+                        ATTRIBUTES_UUID_LOW.NBT,
+                        ATTRIBUTES_SLOT.NBT,
+                        CraftMetaMap.MAP_SCALING.NBT,
+                        CraftMetaMap.MAP_ID.NBT,
+                        CraftMetaPotion.POTION_EFFECTS.NBT,
+                        CraftMetaPotion.DEFAULT_POTION.NBT,
+                        CraftMetaPotion.POTION_COLOR.NBT,
+                        CraftMetaSkull.SKULL_OWNER.NBT,
+                        CraftMetaSkull.SKULL_PROFILE.NBT,
+                        CraftMetaSpawnEgg.ENTITY_TAG.NBT,
+                        CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
+                        CraftMetaBook.BOOK_TITLE.NBT,
+                        CraftMetaBook.BOOK_AUTHOR.NBT,
+                        CraftMetaBook.BOOK_PAGES.NBT,
+                        CraftMetaBook.RESOLVED.NBT,
+                        CraftMetaBook.GENERATION.NBT,
+                        CraftMetaFirework.FIREWORKS.NBT,
+                        CraftMetaEnchantedBook.STORED_ENCHANTMENTS.NBT,
+                        CraftMetaCharge.EXPLOSION.NBT,
+                        CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
+                        CraftMetaKnowledgeBook.BOOK_RECIPES.NBT,
+                        CraftMetaTropicalFishBucket.VARIANT.NBT,
+                        CraftMetaCrossbow.CHARGED.NBT,
+                        CraftMetaCrossbow.CHARGED_PROJECTILES.NBT,
+                        CraftMetaSuspiciousStew.EFFECTS.NBT,
+                        CraftMetaCompass.LODESTONE_DIMENSION.NBT,
+                        CraftMetaCompass.LODESTONE_POS.NBT,
+                        CraftMetaCompass.LODESTONE_TRACKED.NBT
+                ));
+            }
+            return CRAFTMETA_TAGS;
+        }
+    }
+    // Mohist end
 }
