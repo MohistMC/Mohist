@@ -12,7 +12,7 @@
  import java.util.Arrays;
  import java.util.Collection;
  import java.util.Collections;
-@@ -16,13 +_,48 @@
+@@ -16,13 +_,43 @@
  import java.util.UUID;
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.stream.Stream;
@@ -34,12 +34,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftPortalEvent;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Vehicle;
-+import org.bukkit.event.entity.EntityAirChangeEvent;
-+import org.bukkit.event.entity.EntityCombustByEntityEvent;
-+import org.bukkit.event.entity.EntityCombustEvent;
-+import org.bukkit.event.entity.EntityDropItemEvent;
-+import org.bukkit.event.entity.EntityPortalEvent;
-+import org.bukkit.event.entity.EntityPoseChangeEvent;
++import org.bukkit.event.entity.*;
 +import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
@@ -83,7 +78,7 @@
 +
 +   // CraftBukkit start
 +   private static final int CURRENT_LEVEL = 2;
-+   boolean preserveMotion = true; // Paper - keep initial motion on first setPositionRotation
++    boolean preserveMotion = true; // Paper - keep initial motion on first setPositionRotation
 +   static boolean isLevelAtLeast(CompoundNBT tag, int level) {
 +      return tag.func_74764_b("Bukkit.updateLevel") && tag.func_74762_e("Bukkit.updateLevel") >= level;
 +   }
@@ -651,13 +646,14 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Entity being loaded");
-@@ -1537,6 +_,11 @@
+@@ -1537,6 +_,12 @@
        return this.func_70099_a(p_199701_1_, 0.0F);
     }
  
 +   // Mohist start - Exclude Ice&Fire dragons from drop capture
 +   private boolean dragonDone;
 +   private Class<?> dragonClass;
++   public String spawnReason;
 +   // Mohist end
 +
     @Nullable

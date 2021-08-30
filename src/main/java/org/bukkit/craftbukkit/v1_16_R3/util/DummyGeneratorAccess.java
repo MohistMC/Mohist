@@ -18,11 +18,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.EmptyTickList;
-import net.minecraft.world.ITickList;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.border.WorldBorder;
@@ -38,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
 public class DummyGeneratorAccess implements IWorld {
 
     public static final IWorld INSTANCE = new DummyGeneratorAccess();
+
+    public World world;
 
     @Override
     public ITickList<Block> getBlockTicks() {
@@ -152,7 +150,11 @@ public class DummyGeneratorAccess implements IWorld {
 
     @Override
     public TileEntity getBlockEntity(BlockPos blockposition) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (world instanceof ServerWorld){
+            return world.getTileEntity(blockposition, false);
+        } else {
+            return null;
+        }
     }
 
     @Override
