@@ -524,7 +524,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public int undiscoverRecipes(Collection<NamespacedKey> recipes) {
-        return getHandle().awardRecipes(bukkitKeysToMinecraftRecipes(recipes));
+        return getHandle().resetRecipes(bukkitKeysToMinecraftRecipes(recipes));
     }
 
     @Override
