@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -1,5 +_,23 @@
+@@ -1,5 +_,25 @@
  package net.minecraft.command;
  
 +import com.mohistmc.util.i18n.i18n;
@@ -14,6 +14,8 @@
 +
 +import javax.annotation.Nullable;
 +
++import net.minecraftforge.fml.loading.FMLLoader;
++import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
@@ -53,7 +55,7 @@
        AdvancementCommand.func_198199_a(this.field_197062_b);
        AttributeCommand.func_241003_a_(this.field_197062_b);
        ExecuteCommand.func_198378_a(this.field_197062_b);
-@@ -186,16 +_,61 @@
+@@ -186,16 +_,74 @@
        if (p_i232148_1_.field_237219_d_) {
           PublishCommand.func_198581_a(this.field_197062_b);
        }
@@ -87,6 +89,13 @@
 +      String cmd = args[0];
 +      if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
 +      if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
++      // Mohist start - Handle mod commands;
++      for (ModInfo modInfo : FMLLoader.getLoadingModList().getMods()) {
++         if (cmd.startsWith(modInfo.getModId() + ":")) {
++            cmd = cmd.substring((modInfo.getModId() + ":").length());
++         }
++         // Mohist end
++      }
 +      // Block disallowed commands
 +      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
 +          || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
@@ -96,6 +105,12 @@
 +      // Handle vanilla commands;
 +      if (sender.func_197023_e().getCBServer().getCommandBlockOverride(args[0])) {
 +         args[0] = "minecraft:" + args[0];
++      }
++      // Mohist - Handle mod commands;
++      if (sender.func_197023_e().getCBServer().getCommandBlockOverride(args[0])) {
++         for (ModInfo modInfo : FMLLoader.getLoadingModList().getMods()) {
++            args[0] = modInfo.getModId() + ":" + args[0];
++         }
 +      }
 +      return this.func_197059_a(sender, joiner.join(args));
 +   }

@@ -1631,7 +1631,7 @@ public final class CraftServer implements Server {
 
     @Override
     public File getWorldContainer() {
-        return this.getServer().storageSource.getDimensionPath(net.minecraft.world.World.OVERWORLD).getParentFile();
+        return this.getServer().storageSource.levelPath.toFile().getAbsoluteFile();
     }
 
     @Override

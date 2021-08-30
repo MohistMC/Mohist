@@ -9,16 +9,18 @@
  
  public class FilledMapItem extends AbstractMapItem {
     public FilledMapItem(Item.Properties p_i48482_1_) {
-@@ -52,6 +_,16 @@
+@@ -52,17 +_,28 @@
  
     @Nullable
     public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
-+      // FORGE: Add instance method for mods to override
++      // FORGE: Add instance method for mods to override // Mohist start - Fix NPE
 +      Item map = p_195950_0_.func_77973_b();
 +      if (map instanceof FilledMapItem) {
 +        return ((FilledMapItem)map).getCustomMapData(p_195950_0_, p_195950_1_);
++      }else {
++         return null;
 +      }
-+      return null;
++      // Mohist end
 +   }
 +
 +   @Nullable
@@ -26,7 +28,10 @@
        MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
        if (mapdata == null && p_195950_1_ instanceof ServerWorld) {
           mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.func_234923_W_());
-@@ -62,7 +_,7 @@
+       }
+-
+       return mapdata;
+    }
  
     public static int func_195949_f(ItemStack p_195949_0_) {
        CompoundNBT compoundnbt = p_195949_0_.func_77978_p();

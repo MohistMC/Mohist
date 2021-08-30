@@ -29,8 +29,6 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
-import net.minecraftforge.eventbus.api.Event.HasResult;
-
 /**
  * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
  * If a method utilizes this {@link Event} as its parameter, the method will
@@ -94,6 +92,7 @@ public class LivingSpawnEvent extends LivingEvent
             super(entity, world, x, y, z);
             this.spawner = spawner;
             this.spawnReason = spawnReason;
+            entity.spawnReason = "natural"; // Mohist - used to handle CraftBukkit's SpawnReason with CustomSpawners
         }
 
         public boolean isSpawner()
@@ -141,6 +140,7 @@ public class LivingSpawnEvent extends LivingEvent
             super(entity, world, x, y, z);
             this.spawner = spawner;
             this.spawnReason = spawnReason;
+            entity.spawnReason = "spawner"; // Mohist - used to handle CraftBukkit's SpawnReason with CustomSpawners
         }
 
         @Nullable
