@@ -1032,18 +1032,12 @@ project(':forge') {
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
     }
 
-    task javadocJar(type: Jar) {
-        classifier 'javadoc'
-        from javadoc
-    }
-
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
                 artifact userdevJar
                 artifact sourcesJar
-                artifact tasks.javadocJar
 
                 pom {
                     name = 'mohist'
