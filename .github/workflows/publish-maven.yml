@@ -19,10 +19,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Setup, build and publish mohist 1.16.5
+      - name: Setup mohist 1.16.5
         run: |
           chmod +x ./gradlew
-          ./gradlew setup publish
+          ./gradlew setup
+      - name: Build and publish mohist 1.16.5
+        run: |
+          chmod +x ./gradlew
+          ./gradlew publish
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
