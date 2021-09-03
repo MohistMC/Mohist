@@ -17,7 +17,7 @@
  
  public class ComposterBlock extends Block implements ISidedInventoryProvider {
     public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
-@@ -196,37 +_,53 @@
+@@ -196,7 +_,7 @@
  
           return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
        } else if (i == 8) {
@@ -26,14 +26,17 @@
           return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
        } else {
           return ActionResultType.PASS;
-       }
+@@ -204,29 +_,49 @@
     }
  
--   public static BlockState func_235486_a_(BlockState p_235486_0_, ServerWorld p_235486_1_, ItemStack p_235486_2_, BlockPos p_235486_3_) {
+    public static BlockState func_235486_a_(BlockState p_235486_0_, ServerWorld p_235486_1_, ItemStack p_235486_2_, BlockPos p_235486_3_) {
 -      int i = p_235486_0_.func_177229_b(field_220298_a);
 -      if (i < 7 && field_220299_b.containsKey(p_235486_2_.func_77973_b())) {
 -         BlockState blockstate = func_235487_b_(p_235486_0_, p_235486_1_, p_235486_3_, p_235486_2_);
 -         p_235486_2_.func_190918_g(1);
++         return attemptFill(p_235486_0_, p_235486_1_, p_235486_2_, p_235486_3_, null);
++   }
++
 +   public static BlockState attemptFill(BlockState state, ServerWorld world, ItemStack stack, BlockPos pos, Entity entity) { // CraftBukkit
 +      int i = state.func_177229_b(field_220298_a);
 +      if (i < 7 && field_220299_b.containsKey(stack.func_77973_b())) {
