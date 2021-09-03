@@ -39,6 +39,7 @@ if (System.getProperty("_JAVA_OPTIONS") == null) {
     System.out.println("If you want to disable this, you can set '_JAVA_OPTIONS' proprety in your environment variable")
 }
 
+Integer jenkinsNumber = JenkinsNumber()
 
 ext {
     JAR_SIGNER = null
@@ -1048,7 +1049,7 @@ project(':forge') {
                     name = 'mohist'
                     groupId = 'com.mohistmc'
                     artifactId = 'mohist'
-                    version = "1.16.5-" + JenkinsNumber()
+                    version = "1.16.5-" + jenkinsNumber
                     description = 'Minecraft Forge Hybrid server implementing the Spigot/Bukkit/Paper API, formerly known as Thermos/Cauldron/MCPC+.'
                     url = 'https://github.com/MohistMC/Mohist'
 
