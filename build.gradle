@@ -116,6 +116,8 @@ project(':clean') {
 project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
@@ -1027,6 +1029,67 @@ project(':forge') {
             sources.from sourceSets.test.java.srcDirs
         }
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
+    }
+
+    task javadocJar(type: Jar) {
+        classifier 'javadoc'
+        from javadoc
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact universalJar
+                artifact userdevJar
+                artifact sourcesJar
+                artifact tasks.javadocJar
+
+                pom {
+                    name = 'mohist'
+                    groupId = 'com.mohistmc'
+                    artifactId = 'mohist'
+                    version = "1.16.5-" + JenkinsNumber()
+                    description = 'Minecraft Forge Hybrid server implementing the Spigot/Bukkit/Paper API, formerly known as Thermos/Cauldron/MCPC+.'
+                    url = 'https://github.com/MohistMC/Mohist'
+
+                    scm {
+                        url = 'https://github.com/MohistMC/Mohist'
+                        connection = 'scm:git:git://github.com/MohistMC/Mohist.git'
+                        developerConnection = 'scm:git:git://github.com/MohistMC/Mohist.git'
+                    }
+
+                    issueManagement {
+                        system = 'github'
+                        url = 'https://github.com/MohistMC/Mohist/issues'
+                    }
+
+                    licenses {
+                        license {
+                            name = ' GPL-3.0'
+                            url = 'https://github.com/MohistMC/Mohist/blob/1.16.5/LICENSE'
+                            distribution = 'repo'
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username = System.getenv("OSSRH_USERNAME")
+                    password = System.getenv("OSSRH_PASSWORD")
+                }
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/content/repositories/releases/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+    }
+    signing {
+        def signingKey = System.getenv("GPG_PRIVATE_KEY")
+        def signingPassword = System.getenv("GPG_PASSPHRASE")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.mavenJava
     }
 }
 
