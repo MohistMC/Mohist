@@ -1,14 +1,18 @@
 --- a/net/minecraft/block/ComposterBlock.java
 +++ b/net/minecraft/block/ComposterBlock.java
-@@ -4,6 +_,7 @@
+@@ -2,8 +_,11 @@
+ 
+ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
  import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
++
  import java.util.Random;
  import javax.annotation.Nullable;
++
 +import net.minecraft.entity.Entity;
  import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.inventory.ISidedInventory;
-@@ -35,6 +_,8 @@
+@@ -35,348 +_,395 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,159 +20,733 @@
 +import org.bukkit.craftbukkit.v1_16_R3.util.DummyGeneratorAccess;
  
  public class ComposterBlock extends Block implements ISidedInventoryProvider {
-    public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
-@@ -196,7 +_,7 @@
- 
-          return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
-       } else if (i == 8) {
+-   public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
+-   public static final Object2FloatMap<IItemProvider> field_220299_b = new Object2FloatOpenHashMap<>();
+-   private static final VoxelShape field_220300_c = VoxelShapes.func_197868_b();
+-   private static final VoxelShape[] field_220301_d = Util.func_200696_a(new VoxelShape[9], (p_220291_0_) -> {
+-      for(int i = 0; i < 8; ++i) {
+-         p_220291_0_[i] = VoxelShapes.func_197878_a(field_220300_c, Block.func_208617_a(2.0D, (double)Math.max(2, 1 + i * 2), 2.0D, 14.0D, 16.0D, 14.0D), IBooleanFunction.field_223234_e_);
+-      }
+-
+-      p_220291_0_[8] = p_220291_0_[7];
+-   });
+-
+-   public static void func_220297_d() {
+-      field_220299_b.defaultReturnValue(-1.0F);
+-      float f = 0.3F;
+-      float f1 = 0.5F;
+-      float f2 = 0.65F;
+-      float f3 = 0.85F;
+-      float f4 = 1.0F;
+-      func_220290_a(0.3F, Items.field_221640_ah);
+-      func_220290_a(0.3F, Items.field_221634_ae);
+-      func_220290_a(0.3F, Items.field_221636_af);
+-      func_220290_a(0.3F, Items.field_221644_aj);
+-      func_220290_a(0.3F, Items.field_221642_ai);
+-      func_220290_a(0.3F, Items.field_221638_ag);
+-      func_220290_a(0.3F, Items.field_221592_t);
+-      func_220290_a(0.3F, Items.field_221593_u);
+-      func_220290_a(0.3F, Items.field_221594_v);
+-      func_220290_a(0.3F, Items.field_221595_w);
+-      func_220290_a(0.3F, Items.field_221596_x);
+-      func_220290_a(0.3F, Items.field_221597_y);
+-      func_220290_a(0.3F, Items.field_185163_cU);
+-      func_220290_a(0.3F, Items.field_203180_bP);
+-      func_220290_a(0.3F, Items.field_221674_ay);
+-      func_220290_a(0.3F, Items.field_222066_kO);
+-      func_220290_a(0.3F, Items.field_151081_bc);
+-      func_220290_a(0.3F, Items.field_151080_bb);
+-      func_220290_a(0.3F, Items.field_221600_aB);
+-      func_220290_a(0.3F, Items.field_222112_pR);
+-      func_220290_a(0.3F, Items.field_151014_N);
+-      func_220290_a(0.5F, Items.field_222067_kP);
+-      func_220290_a(0.5F, Items.field_221916_fp);
+-      func_220290_a(0.5F, Items.field_221774_cw);
+-      func_220290_a(0.5F, Items.field_222065_kN);
+-      func_220290_a(0.5F, Items.field_221796_dh);
+-      func_220290_a(0.5F, Items.field_234717_bA_);
+-      func_220290_a(0.5F, Items.field_234718_bB_);
+-      func_220290_a(0.5F, Items.field_234719_bC_);
+-      func_220290_a(0.5F, Items.field_151127_ba);
+-      func_220290_a(0.65F, Items.field_221601_aC);
+-      func_220290_a(0.65F, Items.field_221816_dr);
+-      func_220290_a(0.65F, Items.field_221687_cF);
+-      func_220290_a(0.65F, Items.field_221689_cG);
+-      func_220290_a(0.65F, Items.field_221794_dg);
+-      func_220290_a(0.65F, Items.field_151034_e);
+-      func_220290_a(0.65F, Items.field_185164_cV);
+-      func_220290_a(0.65F, Items.field_151172_bF);
+-      func_220290_a(0.65F, Items.field_196130_bo);
+-      func_220290_a(0.65F, Items.field_151174_bG);
+-      func_220290_a(0.65F, Items.field_151015_O);
+-      func_220290_a(0.65F, Items.field_221692_bh);
+-      func_220290_a(0.65F, Items.field_221694_bi);
+-      func_220290_a(0.65F, Items.field_221788_dd);
+-      func_220290_a(0.65F, Items.field_234722_bw_);
+-      func_220290_a(0.65F, Items.field_234723_bx_);
+-      func_220290_a(0.65F, Items.field_151075_bm);
+-      func_220290_a(0.65F, Items.field_234724_by_);
+-      func_220290_a(0.65F, Items.field_234725_bz_);
+-      func_220290_a(0.65F, Items.field_234792_ro_);
+-      func_220290_a(0.65F, Items.field_221619_aU);
+-      func_220290_a(0.65F, Items.field_221620_aV);
+-      func_220290_a(0.65F, Items.field_221621_aW);
+-      func_220290_a(0.65F, Items.field_221622_aX);
+-      func_220290_a(0.65F, Items.field_221623_aY);
+-      func_220290_a(0.65F, Items.field_221624_aZ);
+-      func_220290_a(0.65F, Items.field_221678_ba);
+-      func_220290_a(0.65F, Items.field_221680_bb);
+-      func_220290_a(0.65F, Items.field_221682_bc);
+-      func_220290_a(0.65F, Items.field_221684_bd);
+-      func_220290_a(0.65F, Items.field_221686_be);
+-      func_220290_a(0.65F, Items.field_221688_bf);
+-      func_220290_a(0.65F, Items.field_221690_bg);
+-      func_220290_a(0.65F, Items.field_221676_az);
+-      func_220290_a(0.65F, Items.field_221908_fl);
+-      func_220290_a(0.65F, Items.field_221910_fm);
+-      func_220290_a(0.65F, Items.field_221912_fn);
+-      func_220290_a(0.65F, Items.field_221914_fo);
+-      func_220290_a(0.65F, Items.field_221918_fq);
+-      func_220290_a(0.85F, Items.field_221807_eN);
+-      func_220290_a(0.85F, Items.field_221784_db);
+-      func_220290_a(0.85F, Items.field_221786_dc);
+-      func_220290_a(0.85F, Items.field_221960_gl);
+-      func_220290_a(0.85F, Items.field_234751_hk_);
+-      func_220290_a(0.85F, Items.field_151025_P);
+-      func_220290_a(0.85F, Items.field_151168_bH);
+-      func_220290_a(0.85F, Items.field_151106_aX);
+-      func_220290_a(1.0F, Items.field_222070_lD);
+-      func_220290_a(1.0F, Items.field_151158_bO);
+-   }
+-
+-   private static void func_220290_a(float p_220290_0_, IItemProvider p_220290_1_) {
+-      field_220299_b.put(p_220290_1_.func_199767_j(), p_220290_0_);
+-   }
+-
+-   public ComposterBlock(AbstractBlock.Properties p_i49986_1_) {
+-      super(p_i49986_1_);
+-      this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_220298_a, Integer.valueOf(0)));
+-   }
+-
+-   @OnlyIn(Dist.CLIENT)
+-   public static void func_220292_a(World p_220292_0_, BlockPos p_220292_1_, boolean p_220292_2_) {
+-      BlockState blockstate = p_220292_0_.func_180495_p(p_220292_1_);
+-      p_220292_0_.func_184134_a((double)p_220292_1_.func_177958_n(), (double)p_220292_1_.func_177956_o(), (double)p_220292_1_.func_177952_p(), p_220292_2_ ? SoundEvents.field_219622_bj : SoundEvents.field_219621_bi, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+-      double d0 = blockstate.func_196954_c(p_220292_0_, p_220292_1_).func_197760_b(Direction.Axis.Y, 0.5D, 0.5D) + 0.03125D;
+-      double d1 = (double)0.13125F;
+-      double d2 = (double)0.7375F;
+-      Random random = p_220292_0_.func_201674_k();
+-
+-      for(int i = 0; i < 10; ++i) {
+-         double d3 = random.nextGaussian() * 0.02D;
+-         double d4 = random.nextGaussian() * 0.02D;
+-         double d5 = random.nextGaussian() * 0.02D;
+-         p_220292_0_.func_195594_a(ParticleTypes.field_218420_D, (double)p_220292_1_.func_177958_n() + (double)0.13125F + (double)0.7375F * (double)random.nextFloat(), (double)p_220292_1_.func_177956_o() + d0 + (double)random.nextFloat() * (1.0D - d0), (double)p_220292_1_.func_177952_p() + (double)0.13125F + (double)0.7375F * (double)random.nextFloat(), d3, d4, d5);
+-      }
+-
+-   }
+-
+-   public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
+-      return field_220301_d[p_220053_1_.func_177229_b(field_220298_a)];
+-   }
+-
+-   public VoxelShape func_199600_g(BlockState p_199600_1_, IBlockReader p_199600_2_, BlockPos p_199600_3_) {
+-      return field_220300_c;
+-   }
+-
+-   public VoxelShape func_220071_b(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
+-      return field_220301_d[0];
+-   }
+-
+-   public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
+-      if (p_220082_1_.func_177229_b(field_220298_a) == 7) {
+-         p_220082_2_.func_205220_G_().func_205360_a(p_220082_3_, p_220082_1_.func_177230_c(), 20);
+-      }
+-
+-   }
+-
+-   public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+-      int i = p_225533_1_.func_177229_b(field_220298_a);
+-      ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
+-      if (i < 8 && field_220299_b.containsKey(itemstack.func_77973_b())) {
+-         if (i < 7 && !p_225533_2_.field_72995_K) {
+-            BlockState blockstate = func_235487_b_(p_225533_1_, p_225533_2_, p_225533_3_, itemstack);
+-            p_225533_2_.func_217379_c(1500, p_225533_3_, p_225533_1_ != blockstate ? 1 : 0);
+-            if (!p_225533_4_.field_71075_bZ.field_75098_d) {
+-               itemstack.func_190918_g(1);
+-            }
+-         }
+-
+-         return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
+-      } else if (i == 8) {
 -         func_235489_d_(p_225533_1_, p_225533_2_, p_225533_3_);
-+         empty(p_225533_1_, p_225533_2_, p_225533_3_, (Entity) null); // CraftBukkit - no event for players
-          return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
-       } else {
-          return ActionResultType.PASS;
-@@ -204,29 +_,49 @@
-    }
- 
-    public static BlockState func_235486_a_(BlockState p_235486_0_, ServerWorld p_235486_1_, ItemStack p_235486_2_, BlockPos p_235486_3_) {
+-         return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
+-      } else {
+-         return ActionResultType.PASS;
+-      }
+-   }
+-
+-   public static BlockState func_235486_a_(BlockState p_235486_0_, ServerWorld p_235486_1_, ItemStack p_235486_2_, BlockPos p_235486_3_) {
 -      int i = p_235486_0_.func_177229_b(field_220298_a);
 -      if (i < 7 && field_220299_b.containsKey(p_235486_2_.func_77973_b())) {
 -         BlockState blockstate = func_235487_b_(p_235486_0_, p_235486_1_, p_235486_3_, p_235486_2_);
 -         p_235486_2_.func_190918_g(1);
-+         return attemptFill(p_235486_0_, p_235486_1_, p_235486_2_, p_235486_3_, null);
-+   }
-+
-+   public static BlockState attemptFill(BlockState state, ServerWorld world, ItemStack stack, BlockPos pos, Entity entity) { // CraftBukkit
-+      int i = state.func_177229_b(field_220298_a);
-+      if (i < 7 && field_220299_b.containsKey(stack.func_77973_b())) {
-+         // CraftBukkit start
-+         double rand = world.func_201674_k().nextDouble();
-+         BlockState blockstate = attemptCompost(state, DummyGeneratorAccess.INSTANCE, pos, stack, rand);
-+         if (state == blockstate || org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, blockstate).isCancelled()) {
-+            return state;
-+         }
-+         blockstate = attemptCompost(state, (IWorld) world, pos, stack, rand);
-+         // CraftBukkit end
-+
-+         stack.func_190918_g(1);
-          return blockstate;
-       } else {
+-         return blockstate;
+-      } else {
 -         return p_235486_0_;
-+         return state;
-       }
-    }
- 
+-      }
+-   }
+-
 -   public static BlockState func_235489_d_(BlockState p_235489_0_, World p_235489_1_, BlockPos p_235489_2_) {
 -      if (!p_235489_1_.field_72995_K) {
-+   // CraftBukkit start
-+   public static BlockState empty(BlockState state, World world, BlockPos pos, Entity entity) {
-+      if (entity != null) {
-+         BlockState iblockdata1 = func_235490_d_(state, DummyGeneratorAccess.INSTANCE, pos);
-+         if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, iblockdata1).isCancelled()) {
-+            return state;
-+         }
-+      }
-+      // CraftBukkit end
-+      if (!world.field_72995_K) {
-          float f = 0.7F;
+-         float f = 0.7F;
 -         double d0 = (double)(p_235489_1_.field_73012_v.nextFloat() * 0.7F) + (double)0.15F;
 -         double d1 = (double)(p_235489_1_.field_73012_v.nextFloat() * 0.7F) + (double)0.060000002F + 0.6D;
 -         double d2 = (double)(p_235489_1_.field_73012_v.nextFloat() * 0.7F) + (double)0.15F;
 -         ItemEntity itementity = new ItemEntity(p_235489_1_, (double)p_235489_2_.func_177958_n() + d0, (double)p_235489_2_.func_177956_o() + d1, (double)p_235489_2_.func_177952_p() + d2, new ItemStack(Items.field_196106_bc));
-+         double d0 = (double)(world.field_73012_v.nextFloat() * 0.7F) + (double)0.15F;
-+         double d1 = (double)(world.field_73012_v.nextFloat() * 0.7F) + (double)0.060000002F + 0.6D;
-+         double d2 = (double)(world.field_73012_v.nextFloat() * 0.7F) + (double)0.15F;
-+         ItemEntity itementity = new ItemEntity(world, (double)pos.func_177958_n() + d0, (double)pos.func_177956_o() + d1, (double)pos.func_177952_p() + d2, new ItemStack(Items.field_196106_bc));
-          itementity.func_174869_p();
+-         itementity.func_174869_p();
 -         p_235489_1_.func_217376_c(itementity);
-+         world.func_217376_c(itementity);
-       }
- 
+-      }
+-
 -      BlockState blockstate = func_235490_d_(p_235489_0_, p_235489_1_, p_235489_2_);
 -      p_235489_1_.func_184133_a((PlayerEntity)null, p_235489_2_, SoundEvents.field_219620_bh, SoundCategory.BLOCKS, 1.0F, 1.0F);
-+      BlockState blockstate = func_235490_d_(state, world, pos);
-+      world.func_184133_a((PlayerEntity)null, pos, SoundEvents.field_219620_bh, SoundCategory.BLOCKS, 1.0F, 1.0F);
-       return blockstate;
-    }
- 
-@@ -237,16 +_,22 @@
-    }
- 
-    private static BlockState func_235487_b_(BlockState p_235487_0_, IWorld p_235487_1_, BlockPos p_235487_2_, ItemStack p_235487_3_) {
+-      return blockstate;
+-   }
+-
+-   private static BlockState func_235490_d_(BlockState p_235490_0_, IWorld p_235490_1_, BlockPos p_235490_2_) {
+-      BlockState blockstate = p_235490_0_.func_206870_a(field_220298_a, Integer.valueOf(0));
+-      p_235490_1_.func_180501_a(p_235490_2_, blockstate, 3);
+-      return blockstate;
+-   }
+-
+-   private static BlockState func_235487_b_(BlockState p_235487_0_, IWorld p_235487_1_, BlockPos p_235487_2_, ItemStack p_235487_3_) {
 -      int i = p_235487_0_.func_177229_b(field_220298_a);
 -      float f = field_220299_b.getFloat(p_235487_3_.func_77973_b());
 -      if ((i != 0 || !(f > 0.0F)) && !(p_235487_1_.func_201674_k().nextDouble() < (double)f)) {
 -         return p_235487_0_;
-+      // CraftBukkit start
-+      return attemptCompost(p_235487_0_, p_235487_1_, p_235487_2_, p_235487_3_, p_235487_1_.func_201674_k().nextDouble());
-+   }
-+
-+   private static BlockState attemptCompost(BlockState state, IWorld world, BlockPos pos, ItemStack stack, double rand) {
-+      // CraftBukkit end
-+      int i = state.func_177229_b(field_220298_a);
-+      float f = field_220299_b.getFloat(stack.func_77973_b());
-+      if ((i != 0 || !(f > 0.0F)) && !(rand < (double)f)) {
-+         return state;
-       } else {
-          int j = i + 1;
+-      } else {
+-         int j = i + 1;
 -         BlockState blockstate = p_235487_0_.func_206870_a(field_220298_a, Integer.valueOf(j));
 -         p_235487_1_.func_180501_a(p_235487_2_, blockstate, 3);
-+         BlockState blockstate = state.func_206870_a(field_220298_a, Integer.valueOf(j));
-+         world.func_180501_a(pos, blockstate, 3);
-          if (j == 7) {
+-         if (j == 7) {
 -            p_235487_1_.func_205220_G_().func_205360_a(p_235487_2_, p_235487_0_.func_177230_c(), 20);
-+            world.func_205220_G_().func_205360_a(pos, state.func_177230_c(), 20);
-          }
- 
-          return blockstate;
-@@ -282,13 +_,15 @@
-       if (i == 8) {
-          return new ComposterBlock.FullInventory(p_219966_1_, p_219966_2_, p_219966_3_, new ItemStack(Items.field_196106_bc));
-       } else {
+-         }
+-
+-         return blockstate;
+-      }
+-   }
+-
+-   public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+-      if (p_225534_1_.func_177229_b(field_220298_a) == 7) {
+-         p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_235896_a_(field_220298_a), 3);
+-         p_225534_2_.func_184133_a((PlayerEntity)null, p_225534_3_, SoundEvents.field_219623_bk, SoundCategory.BLOCKS, 1.0F, 1.0F);
+-      }
+-
+-   }
+-
+-   public boolean func_149740_M(BlockState p_149740_1_) {
+-      return true;
+-   }
+-
+-   public int func_180641_l(BlockState p_180641_1_, World p_180641_2_, BlockPos p_180641_3_) {
+-      return p_180641_1_.func_177229_b(field_220298_a);
+-   }
+-
+-   protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+-      p_206840_1_.func_206894_a(field_220298_a);
+-   }
+-
+-   public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+-      return false;
+-   }
+-
+-   public ISidedInventory func_219966_a(BlockState p_219966_1_, IWorld p_219966_2_, BlockPos p_219966_3_) {
+-      int i = p_219966_1_.func_177229_b(field_220298_a);
+-      if (i == 8) {
+-         return new ComposterBlock.FullInventory(p_219966_1_, p_219966_2_, p_219966_3_, new ItemStack(Items.field_196106_bc));
+-      } else {
 -         return (ISidedInventory)(i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory());
-+         // CraftBukkit - empty iworld, blockposition
-+         return (ISidedInventory)(i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory(p_219966_2_, p_219966_3_));
-       }
-    }
- 
-    static class EmptyInventory extends Inventory implements ISidedInventory {
+-      }
+-   }
+-
+-   static class EmptyInventory extends Inventory implements ISidedInventory {
 -      public EmptyInventory() {
-+      public EmptyInventory(IWorld world, BlockPos blockPos) { // CraftBukkit
-          super(0);
-+         this.bukkitOwner = new CraftBlockInventoryHolder(world, blockPos, this); // CraftBukkit
-       }
- 
-       public int[] func_180463_a(Direction p_180463_1_) {
-@@ -315,6 +_,7 @@
-          this.field_213920_a = p_i50463_1_;
-          this.field_213921_b = p_i50463_2_;
-          this.field_213922_c = p_i50463_3_;
-+         this.bukkitOwner = new CraftBlockInventoryHolder(p_i50463_2_, p_i50463_3_, this); // CraftBukkit
-       }
- 
-       public int func_70297_j_() {
-@@ -334,8 +_,15 @@
-       }
- 
-       public void func_70296_d() {
+-         super(0);
+-      }
+-
+-      public int[] func_180463_a(Direction p_180463_1_) {
+-         return new int[0];
+-      }
+-
+-      public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, @Nullable Direction p_180462_3_) {
+-         return false;
+-      }
+-
+-      public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, Direction p_180461_3_) {
+-         return false;
+-      }
+-   }
+-
+-   static class FullInventory extends Inventory implements ISidedInventory {
+-      private final BlockState field_213920_a;
+-      private final IWorld field_213921_b;
+-      private final BlockPos field_213922_c;
+-      private boolean field_213923_d;
+-
+-      public FullInventory(BlockState p_i50463_1_, IWorld p_i50463_2_, BlockPos p_i50463_3_, ItemStack p_i50463_4_) {
+-         super(p_i50463_4_);
+-         this.field_213920_a = p_i50463_1_;
+-         this.field_213921_b = p_i50463_2_;
+-         this.field_213922_c = p_i50463_3_;
+-      }
+-
+-      public int func_70297_j_() {
+-         return 1;
+-      }
+-
+-      public int[] func_180463_a(Direction p_180463_1_) {
+-         return p_180463_1_ == Direction.DOWN ? new int[]{0} : new int[0];
+-      }
+-
+-      public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, @Nullable Direction p_180462_3_) {
+-         return false;
+-      }
+-
+-      public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, Direction p_180461_3_) {
+-         return !this.field_213923_d && p_180461_3_ == Direction.DOWN && p_180461_2_.func_77973_b() == Items.field_196106_bc;
+-      }
+-
+-      public void func_70296_d() {
 -         ComposterBlock.func_235490_d_(this.field_213920_a, this.field_213921_b, this.field_213922_c);
 -         this.field_213923_d = true;
-+         // CraftBukkit start - allow putting items back (eg cancelled InventoryMoveItemEvent)
-+         if (this.func_191420_l()) {
-+            ComposterBlock.func_235490_d_(this.field_213920_a, this.field_213921_b, this.field_213922_c);
-+            this.field_213923_d = true;
-+         } else {
-+            this.field_213921_b.func_180501_a(this.field_213922_c, this.field_213920_a, 3);
-+            this.field_213923_d = false;
-+         }
-+         // CraftBukkit end
-       }
-    }
- 
-@@ -347,6 +_,7 @@
- 
-       public PartialInventory(BlockState p_i50464_1_, IWorld p_i50464_2_, BlockPos p_i50464_3_) {
-          super(1);
-+         this.bukkitOwner = new CraftBlockInventoryHolder(p_i50464_2_, p_i50464_3_, this); // CraftBukkit
-          this.field_213916_a = p_i50464_1_;
-          this.field_213917_b = p_i50464_2_;
-          this.field_213918_c = p_i50464_3_;
+-      }
+-   }
+-
+-   static class PartialInventory extends Inventory implements ISidedInventory {
+-      private final BlockState field_213916_a;
+-      private final IWorld field_213917_b;
+-      private final BlockPos field_213918_c;
+-      private boolean field_213919_d;
+-
+-      public PartialInventory(BlockState p_i50464_1_, IWorld p_i50464_2_, BlockPos p_i50464_3_) {
+-         super(1);
+-         this.field_213916_a = p_i50464_1_;
+-         this.field_213917_b = p_i50464_2_;
+-         this.field_213918_c = p_i50464_3_;
+-      }
+-
+-      public int func_70297_j_() {
+-         return 1;
+-      }
+-
+-      public int[] func_180463_a(Direction p_180463_1_) {
+-         return p_180463_1_ == Direction.UP ? new int[]{0} : new int[0];
+-      }
+-
+-      public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, @Nullable Direction p_180462_3_) {
+-         return !this.field_213919_d && p_180462_3_ == Direction.UP && ComposterBlock.field_220299_b.containsKey(p_180462_2_.func_77973_b());
+-      }
+-
+-      public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, Direction p_180461_3_) {
+-         return false;
+-      }
+-
+-      public void func_70296_d() {
+-         ItemStack itemstack = this.func_70301_a(0);
+-         if (!itemstack.func_190926_b()) {
+-            this.field_213919_d = true;
+-            BlockState blockstate = ComposterBlock.func_235487_b_(this.field_213916_a, this.field_213917_b, this.field_213918_c, itemstack);
+-            this.field_213917_b.func_217379_c(1500, this.field_213918_c, blockstate != this.field_213916_a ? 1 : 0);
+-            this.func_70304_b(0);
+-         }
+-
+-      }
+-   }
++    public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
++    public static final Object2FloatMap<IItemProvider> field_220299_b = new Object2FloatOpenHashMap<>();
++    private static final VoxelShape field_220300_c = VoxelShapes.func_197868_b();
++    private static final VoxelShape[] field_220301_d = Util.func_200696_a(new VoxelShape[9], (p_220291_0_) -> {
++        for (int i = 0; i < 8; ++i) {
++            p_220291_0_[i] = VoxelShapes.func_197878_a(field_220300_c, Block.func_208617_a(2.0D, (double) Math.max(2, 1 + i * 2), 2.0D, 14.0D, 16.0D, 14.0D), IBooleanFunction.field_223234_e_);
++        }
++
++        p_220291_0_[8] = p_220291_0_[7];
++    });
++
++    public static void func_220297_d() {
++        field_220299_b.defaultReturnValue(-1.0F);
++        float f = 0.3F;
++        float f1 = 0.5F;
++        float f2 = 0.65F;
++        float f3 = 0.85F;
++        float f4 = 1.0F;
++        func_220290_a(0.3F, Items.field_221640_ah);
++        func_220290_a(0.3F, Items.field_221634_ae);
++        func_220290_a(0.3F, Items.field_221636_af);
++        func_220290_a(0.3F, Items.field_221644_aj);
++        func_220290_a(0.3F, Items.field_221642_ai);
++        func_220290_a(0.3F, Items.field_221638_ag);
++        func_220290_a(0.3F, Items.field_221592_t);
++        func_220290_a(0.3F, Items.field_221593_u);
++        func_220290_a(0.3F, Items.field_221594_v);
++        func_220290_a(0.3F, Items.field_221595_w);
++        func_220290_a(0.3F, Items.field_221596_x);
++        func_220290_a(0.3F, Items.field_221597_y);
++        func_220290_a(0.3F, Items.field_185163_cU);
++        func_220290_a(0.3F, Items.field_203180_bP);
++        func_220290_a(0.3F, Items.field_221674_ay);
++        func_220290_a(0.3F, Items.field_222066_kO);
++        func_220290_a(0.3F, Items.field_151081_bc);
++        func_220290_a(0.3F, Items.field_151080_bb);
++        func_220290_a(0.3F, Items.field_221600_aB);
++        func_220290_a(0.3F, Items.field_222112_pR);
++        func_220290_a(0.3F, Items.field_151014_N);
++        func_220290_a(0.5F, Items.field_222067_kP);
++        func_220290_a(0.5F, Items.field_221916_fp);
++        func_220290_a(0.5F, Items.field_221774_cw);
++        func_220290_a(0.5F, Items.field_222065_kN);
++        func_220290_a(0.5F, Items.field_221796_dh);
++        func_220290_a(0.5F, Items.field_234717_bA_);
++        func_220290_a(0.5F, Items.field_234718_bB_);
++        func_220290_a(0.5F, Items.field_234719_bC_);
++        func_220290_a(0.5F, Items.field_151127_ba);
++        func_220290_a(0.65F, Items.field_221601_aC);
++        func_220290_a(0.65F, Items.field_221816_dr);
++        func_220290_a(0.65F, Items.field_221687_cF);
++        func_220290_a(0.65F, Items.field_221689_cG);
++        func_220290_a(0.65F, Items.field_221794_dg);
++        func_220290_a(0.65F, Items.field_151034_e);
++        func_220290_a(0.65F, Items.field_185164_cV);
++        func_220290_a(0.65F, Items.field_151172_bF);
++        func_220290_a(0.65F, Items.field_196130_bo);
++        func_220290_a(0.65F, Items.field_151174_bG);
++        func_220290_a(0.65F, Items.field_151015_O);
++        func_220290_a(0.65F, Items.field_221692_bh);
++        func_220290_a(0.65F, Items.field_221694_bi);
++        func_220290_a(0.65F, Items.field_221788_dd);
++        func_220290_a(0.65F, Items.field_234722_bw_);
++        func_220290_a(0.65F, Items.field_234723_bx_);
++        func_220290_a(0.65F, Items.field_151075_bm);
++        func_220290_a(0.65F, Items.field_234724_by_);
++        func_220290_a(0.65F, Items.field_234725_bz_);
++        func_220290_a(0.65F, Items.field_234792_ro_);
++        func_220290_a(0.65F, Items.field_221619_aU);
++        func_220290_a(0.65F, Items.field_221620_aV);
++        func_220290_a(0.65F, Items.field_221621_aW);
++        func_220290_a(0.65F, Items.field_221622_aX);
++        func_220290_a(0.65F, Items.field_221623_aY);
++        func_220290_a(0.65F, Items.field_221624_aZ);
++        func_220290_a(0.65F, Items.field_221678_ba);
++        func_220290_a(0.65F, Items.field_221680_bb);
++        func_220290_a(0.65F, Items.field_221682_bc);
++        func_220290_a(0.65F, Items.field_221684_bd);
++        func_220290_a(0.65F, Items.field_221686_be);
++        func_220290_a(0.65F, Items.field_221688_bf);
++        func_220290_a(0.65F, Items.field_221690_bg);
++        func_220290_a(0.65F, Items.field_221676_az);
++        func_220290_a(0.65F, Items.field_221908_fl);
++        func_220290_a(0.65F, Items.field_221910_fm);
++        func_220290_a(0.65F, Items.field_221912_fn);
++        func_220290_a(0.65F, Items.field_221914_fo);
++        func_220290_a(0.65F, Items.field_221918_fq);
++        func_220290_a(0.85F, Items.field_221807_eN);
++        func_220290_a(0.85F, Items.field_221784_db);
++        func_220290_a(0.85F, Items.field_221786_dc);
++        func_220290_a(0.85F, Items.field_221960_gl);
++        func_220290_a(0.85F, Items.field_234751_hk_);
++        func_220290_a(0.85F, Items.field_151025_P);
++        func_220290_a(0.85F, Items.field_151168_bH);
++        func_220290_a(0.85F, Items.field_151106_aX);
++        func_220290_a(1.0F, Items.field_222070_lD);
++        func_220290_a(1.0F, Items.field_151158_bO);
++    }
++
++    private static void func_220290_a(float p_220290_0_, IItemProvider p_220290_1_) {
++        field_220299_b.put(p_220290_1_.func_199767_j(), p_220290_0_);
++    }
++
++    public ComposterBlock(AbstractBlock.Properties p_i49986_1_) {
++        super(p_i49986_1_);
++        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_220298_a, Integer.valueOf(0)));
++    }
++
++    @OnlyIn(Dist.CLIENT)
++    public static void func_220292_a(World p_220292_0_, BlockPos p_220292_1_, boolean p_220292_2_) {
++        BlockState blockstate = p_220292_0_.func_180495_p(p_220292_1_);
++        p_220292_0_.func_184134_a((double) p_220292_1_.func_177958_n(), (double) p_220292_1_.func_177956_o(), (double) p_220292_1_.func_177952_p(), p_220292_2_ ? SoundEvents.field_219622_bj : SoundEvents.field_219621_bi, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
++        double d0 = blockstate.func_196954_c(p_220292_0_, p_220292_1_).func_197760_b(Direction.Axis.Y, 0.5D, 0.5D) + 0.03125D;
++        double d1 = (double) 0.13125F;
++        double d2 = (double) 0.7375F;
++        Random random = p_220292_0_.func_201674_k();
++
++        for (int i = 0; i < 10; ++i) {
++            double d3 = random.nextGaussian() * 0.02D;
++            double d4 = random.nextGaussian() * 0.02D;
++            double d5 = random.nextGaussian() * 0.02D;
++            p_220292_0_.func_195594_a(ParticleTypes.field_218420_D, (double) p_220292_1_.func_177958_n() + (double) 0.13125F + (double) 0.7375F * (double) random.nextFloat(), (double) p_220292_1_.func_177956_o() + d0 + (double) random.nextFloat() * (1.0D - d0), (double) p_220292_1_.func_177952_p() + (double) 0.13125F + (double) 0.7375F * (double) random.nextFloat(), d3, d4, d5);
++        }
++
++    }
++
++    public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
++        return field_220301_d[p_220053_1_.func_177229_b(field_220298_a)];
++    }
++
++    public VoxelShape func_199600_g(BlockState p_199600_1_, IBlockReader p_199600_2_, BlockPos p_199600_3_) {
++        return field_220300_c;
++    }
++
++    public VoxelShape func_220071_b(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
++        return field_220301_d[0];
++    }
++
++    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
++        if (p_220082_1_.func_177229_b(field_220298_a) == 7) {
++            p_220082_2_.func_205220_G_().func_205360_a(p_220082_3_, p_220082_1_.func_177230_c(), 20);
++        }
++
++    }
++
++    public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
++        int i = p_225533_1_.func_177229_b(field_220298_a);
++        ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
++        if (i < 8 && field_220299_b.containsKey(itemstack.func_77973_b())) {
++            if (i < 7 && !p_225533_2_.field_72995_K) {
++                BlockState blockstate = func_235487_b_(p_225533_1_, p_225533_2_, p_225533_3_, itemstack);
++                p_225533_2_.func_217379_c(1500, p_225533_3_, p_225533_1_ != blockstate ? 1 : 0);
++                if (!p_225533_4_.field_71075_bZ.field_75098_d) {
++                    itemstack.func_190918_g(1);
++                }
++            }
++
++            return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
++        } else if (i == 8) {
++            empty(p_225533_1_, p_225533_2_, p_225533_3_, (Entity) null); // CraftBukkit - no event for players
++            return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
++        } else {
++            return ActionResultType.PASS;
++        }
++    }
++
++    public static BlockState func_235486_a_(BlockState p_235486_0_, ServerWorld p_235486_1_, ItemStack p_235486_2_, BlockPos p_235486_3_) {
++        return attemptFill(p_235486_0_, p_235486_1_, p_235486_2_, p_235486_3_, null);
++    }
++
++    public static BlockState attemptFill(BlockState state, ServerWorld world, ItemStack stack, BlockPos pos, Entity entity) { // CraftBukkit
++        int i = state.func_177229_b(field_220298_a);
++        if (i < 7 && field_220299_b.containsKey(stack.func_77973_b())) {
++            // CraftBukkit start
++            double rand = world.func_201674_k().nextDouble();
++            BlockState blockstate = attemptCompost(state, DummyGeneratorAccess.INSTANCE, pos, stack, rand);
++            if (state == blockstate || (entity == null || org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, blockstate).isCancelled())) {
++                return state;
++            }
++            blockstate = attemptCompost(state, (IWorld) world, pos, stack, rand);
++            // CraftBukkit end
++
++            stack.func_190918_g(1);
++            return blockstate;
++        } else {
++            return state;
++        }
++    }
++
++    public static BlockState func_235489_d_(BlockState p_235489_0_, World p_235489_1_, BlockPos p_235489_2_) {
++        return empty(p_235489_0_, p_235489_1_, p_235489_2_, null);
++    }
++
++    // CraftBukkit start
++    public static BlockState empty(BlockState state, World world, BlockPos pos, Entity entity) {
++        if (entity != null) {
++            BlockState iblockdata1 = func_235490_d_(state, DummyGeneratorAccess.INSTANCE, pos);
++            if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callEntityChangeBlockEvent(entity, pos, iblockdata1).isCancelled()) {
++                return state;
++            }
++        }
++        // CraftBukkit end
++        if (!world.field_72995_K) {
++            float f = 0.7F;
++            double d0 = (double) (world.field_73012_v.nextFloat() * 0.7F) + (double) 0.15F;
++            double d1 = (double) (world.field_73012_v.nextFloat() * 0.7F) + (double) 0.060000002F + 0.6D;
++            double d2 = (double) (world.field_73012_v.nextFloat() * 0.7F) + (double) 0.15F;
++            ItemEntity itementity = new ItemEntity(world, (double) pos.func_177958_n() + d0, (double) pos.func_177956_o() + d1, (double) pos.func_177952_p() + d2, new ItemStack(Items.field_196106_bc));
++            itementity.func_174869_p();
++            world.func_217376_c(itementity);
++        }
++
++        BlockState blockstate = func_235490_d_(state, world, pos);
++        world.func_184133_a((PlayerEntity) null, pos, SoundEvents.field_219620_bh, SoundCategory.BLOCKS, 1.0F, 1.0F);
++        return blockstate;
++    }
++
++    private static BlockState func_235490_d_(BlockState p_235490_0_, IWorld p_235490_1_, BlockPos p_235490_2_) {
++        BlockState blockstate = p_235490_0_.func_206870_a(field_220298_a, Integer.valueOf(0));
++        p_235490_1_.func_180501_a(p_235490_2_, blockstate, 3);
++        return blockstate;
++    }
++
++    private static BlockState func_235487_b_(BlockState p_235487_0_, IWorld p_235487_1_, BlockPos p_235487_2_, ItemStack p_235487_3_) {
++        // CraftBukkit start
++        return attemptCompost(p_235487_0_, p_235487_1_, p_235487_2_, p_235487_3_, p_235487_1_.func_201674_k().nextDouble());
++    }
++
++    private static BlockState attemptCompost(BlockState state, IWorld world, BlockPos pos, ItemStack stack, double rand) {
++        // CraftBukkit end
++        int i = state.func_177229_b(field_220298_a);
++        float f = field_220299_b.getFloat(stack.func_77973_b());
++        if ((i != 0 || !(f > 0.0F)) && !(rand < (double) f)) {
++            return state;
++        } else {
++            int j = i + 1;
++            BlockState blockstate = state.func_206870_a(field_220298_a, Integer.valueOf(j));
++            world.func_180501_a(pos, blockstate, 3);
++            if (j == 7) {
++                world.func_205220_G_().func_205360_a(pos, state.func_177230_c(), 20);
++            }
++
++            return blockstate;
++        }
++    }
++
++    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
++        if (p_225534_1_.func_177229_b(field_220298_a) == 7) {
++            p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_235896_a_(field_220298_a), 3);
++            p_225534_2_.func_184133_a((PlayerEntity) null, p_225534_3_, SoundEvents.field_219623_bk, SoundCategory.BLOCKS, 1.0F, 1.0F);
++        }
++
++    }
++
++    public boolean func_149740_M(BlockState p_149740_1_) {
++        return true;
++    }
++
++    public int func_180641_l(BlockState p_180641_1_, World p_180641_2_, BlockPos p_180641_3_) {
++        return p_180641_1_.func_177229_b(field_220298_a);
++    }
++
++    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
++        p_206840_1_.func_206894_a(field_220298_a);
++    }
++
++    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
++        return false;
++    }
++
++    public ISidedInventory func_219966_a(BlockState p_219966_1_, IWorld p_219966_2_, BlockPos p_219966_3_) {
++        int i = p_219966_1_.func_177229_b(field_220298_a);
++        if (i == 8) {
++            return new ComposterBlock.FullInventory(p_219966_1_, p_219966_2_, p_219966_3_, new ItemStack(Items.field_196106_bc));
++        } else {
++            // CraftBukkit - empty iworld, blockposition
++            return (ISidedInventory) (i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory(p_219966_2_, p_219966_3_));
++        }
++    }
++
++    static class EmptyInventory extends Inventory implements ISidedInventory {
++        public EmptyInventory() { // CraftBukkit
++            super(0);
++        }
++
++        public EmptyInventory(IWorld world, BlockPos blockPos) { // CraftBukkit
++            super(0);
++            this.bukkitOwner = new CraftBlockInventoryHolder(world, blockPos, this); // CraftBukkit
++        }
++
++        public int[] func_180463_a(Direction p_180463_1_) {
++            return new int[0];
++        }
++
++        public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, @Nullable Direction p_180462_3_) {
++            return false;
++        }
++
++        public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, Direction p_180461_3_) {
++            return false;
++        }
++    }
++
++    static class FullInventory extends Inventory implements ISidedInventory {
++        private final BlockState field_213920_a;
++        private final IWorld field_213921_b;
++        private final BlockPos field_213922_c;
++        private boolean field_213923_d;
++
++        public FullInventory(BlockState p_i50463_1_, IWorld p_i50463_2_, BlockPos p_i50463_3_, ItemStack p_i50463_4_) {
++            super(p_i50463_4_);
++            this.field_213920_a = p_i50463_1_;
++            this.field_213921_b = p_i50463_2_;
++            this.field_213922_c = p_i50463_3_;
++            this.bukkitOwner = new CraftBlockInventoryHolder(p_i50463_2_, p_i50463_3_, this); // CraftBukkit
++        }
++
++        public int func_70297_j_() {
++            return 1;
++        }
++
++        public int[] func_180463_a(Direction p_180463_1_) {
++            return p_180463_1_ == Direction.DOWN ? new int[]{0} : new int[0];
++        }
++
++        public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, @Nullable Direction p_180462_3_) {
++            return false;
++        }
++
++        public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, Direction p_180461_3_) {
++            return !this.field_213923_d && p_180461_3_ == Direction.DOWN && p_180461_2_.func_77973_b() == Items.field_196106_bc;
++        }
++
++        public void func_70296_d() {
++            // CraftBukkit start - allow putting items back (eg cancelled InventoryMoveItemEvent)
++            if (this.func_191420_l()) {
++                ComposterBlock.func_235490_d_(this.field_213920_a, this.field_213921_b, this.field_213922_c);
++                this.field_213923_d = true;
++            } else {
++                this.field_213921_b.func_180501_a(this.field_213922_c, this.field_213920_a, 3);
++                this.field_213923_d = false;
++            }
++            // CraftBukkit end
++        }
++    }
++
++    static class PartialInventory extends Inventory implements ISidedInventory {
++        private final BlockState field_213916_a;
++        private final IWorld field_213917_b;
++        private final BlockPos field_213918_c;
++        private boolean field_213919_d;
++
++        public PartialInventory(BlockState p_i50464_1_, IWorld p_i50464_2_, BlockPos p_i50464_3_) {
++            super(1);
++            this.bukkitOwner = new CraftBlockInventoryHolder(p_i50464_2_, p_i50464_3_, this); // CraftBukkit
++            this.field_213916_a = p_i50464_1_;
++            this.field_213917_b = p_i50464_2_;
++            this.field_213918_c = p_i50464_3_;
++        }
++
++        public int func_70297_j_() {
++            return 1;
++        }
++
++        public int[] func_180463_a(Direction p_180463_1_) {
++            return p_180463_1_ == Direction.UP ? new int[]{0} : new int[0];
++        }
++
++        public boolean func_180462_a(int p_180462_1_, ItemStack p_180462_2_, @Nullable Direction p_180462_3_) {
++            return !this.field_213919_d && p_180462_3_ == Direction.UP && ComposterBlock.field_220299_b.containsKey(p_180462_2_.func_77973_b());
++        }
++
++        public boolean func_180461_b(int p_180461_1_, ItemStack p_180461_2_, Direction p_180461_3_) {
++            return false;
++        }
++
++        public void func_70296_d() {
++            ItemStack itemstack = this.func_70301_a(0);
++            if (!itemstack.func_190926_b()) {
++                this.field_213919_d = true;
++                BlockState blockstate = ComposterBlock.func_235487_b_(this.field_213916_a, this.field_213917_b, this.field_213918_c, itemstack);
++                this.field_213917_b.func_217379_c(1500, this.field_213918_c, blockstate != this.field_213916_a ? 1 : 0);
++                this.func_70304_b(0);
++            }
++
++        }
++    }
+ }
