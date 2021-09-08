@@ -30,18 +30,18 @@
 获得帮助
 ------
 
-[MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
+[MohistWiki](https://wiki.mohistmc.com/) (这里有你几乎所有需要的资料)
 
 Upstream Projects
 ------
-* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
-* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
-* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
-* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
-* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - 插件支持.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - 性能优化.
+* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - 插件支持.
+* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - 插件支持.
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - 支持模组载入.
+* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - 提供部分代码.
+* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - 提供部分代码.
+* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - 提供部分代码.
 
 特别感谢:
 -------------
@@ -51,4 +51,4 @@ Upstream Projects
 
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
-[YourKit]（http://www.yourkit.com/）是出色的Java事件探查器的制造商，它们以其功能齐全的[Java]支持各种开源项目。（https://www.yourkit.com/java/ profiler / index.jsp）和[.NET]（https://www.yourkit.com/.net/profiler/index.jsp）应用程序分析器。 我们感谢他们为Mohist授予OSS许可证，以便使我们的软件达到最佳状态。
+[YourKit]（http://www.yourkit.com/）是出色的Java事件探查器的制造商，它们以其功能齐全的[Java]支持各种开源项目。（https://www.yourkit.com/java/ profiler / index.jsp）和[.NET]（https://www.yourkit.com/.net/profiler/index.jsp）应用程序分析器。 我们感谢他们为Mohist授予OSS许可证，以便Mohist达到最佳状态。
