@@ -260,6 +260,21 @@
           if (item instanceof ArmorItem) {
              soundevent = ((ArmorItem)item).func_200880_d().func_200899_b();
           } else if (item == Items.field_185160_cR) {
+@@ -606,7 +_,13 @@
+    }
+ 
+    public void func_70037_a(CompoundNBT p_70037_1_) {
+-      this.func_110149_m(p_70037_1_.func_74760_g("AbsorptionAmount"));
++      // Paper start - jvm keeps optimizing the setter
++      float absorptionAmount = p_70037_1_.func_74760_g("AbsorptionAmount");
++      if (Float.isNaN(absorptionAmount)) {
++         absorptionAmount = 0;
++      }
++      this.func_110149_m(absorptionAmount);
++      // Paper end
+       if (p_70037_1_.func_150297_b("Attributes", 9) && this.field_70170_p != null && !this.field_70170_p.field_72995_K) {
+          this.func_233645_dx_().func_233788_a_(p_70037_1_.func_150295_c("Attributes", 10));
+       }
 @@ -623,6 +_,17 @@
           }
        }
@@ -507,7 +522,7 @@
        if (effectinstance != null) {
           this.func_70688_c(effectinstance);
           return true;
-@@ -894,19 +_,53 @@
+@@ -894,19 +_,57 @@
  
     }
  
@@ -548,6 +563,10 @@
     }
  
     public void func_70606_j(float p_70606_1_) {
++      // Paper start
++      if (Float.isNaN(p_70606_1_)) { p_70606_1_ = func_110138_aP(); if (this.valid) {
++         System.err.println("[NAN-HEALTH] " + func_195047_I_() + " had NaN health set");
++      } } // Paper end
 +      // CraftBukkit start - Handle scaled health
 +      if (this instanceof ServerPlayerEntity && ((ServerPlayerEntity)this).initialized()) {
 +         org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer player = ((ServerPlayerEntity) this).getBukkitEntity();
@@ -1331,6 +1350,15 @@
  
     protected void func_70018_K() {
        this.field_70133_I = this.field_70146_Z.nextDouble() >= this.func_233637_b_(Attributes.field_233820_c_);
+@@ -2639,7 +_,7 @@
+    }
+ 
+    public void func_110149_m(float p_110149_1_) {
+-      if (p_110149_1_ < 0.0F) {
++      if (p_110149_1_ < 0.0F || Float.isNaN(p_110149_1_)) { // Paper
+          p_110149_1_ = 0.0F;
+       }
+ 
 @@ -2668,8 +_,16 @@
  
     private void func_184608_ct() {

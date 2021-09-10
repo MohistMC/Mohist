@@ -1660,6 +1660,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     }
 
     public void setRealHealth(double health) {
+        if (Double.isNaN(health)) {return;} // Paper
         this.health = health;
     }
 
