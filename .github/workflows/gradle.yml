@@ -21,7 +21,3 @@ jobs:
       run: |
         chmod +x ./gradlew
         ./gradlew setup
-    - name: Build mohist 1.12.2
-      run: |
-        chmod +x ./gradlew
-        ./gradlew installerJar
