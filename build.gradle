@@ -95,6 +95,7 @@ project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'signing'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'de.undercouch.download'
@@ -657,6 +658,55 @@ project(':mohist') {
             sources sourceSets.test.java.srcDirs
         }
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact universalJar
+                artifact userdevJar
+                artifact sourcesJar
+
+                pom {
+                    name = 'mohist'
+                    groupId = 'com.mohistmc'
+                    artifactId = 'mohist'
+                    version = "1.12.2-" + JenkinsNumber()
+                    description = 'Minecraft Forge Hybrid server implementing the Spigot/Bukkit/Paper API, formerly known as Thermos/Cauldron/MCPC+.'
+                    url = 'https://github.com/MohistMC/Mohist'
+
+                    scm {
+                        url = 'https://github.com/MohistMC/Mohist'
+                        connection = 'scm:git:git://github.com/MohistMC/Mohist.git'
+                        developerConnection = 'scm:git:git://github.com/MohistMC/Mohist.git'
+                    }
+
+                    issueManagement {
+                        system = 'github'
+                        url = 'https://github.com/MohistMC/Mohist/issues'
+                    }
+
+                    licenses {
+                        license {
+                            name = ' GPL-3.0'
+                            url = 'https://github.com/MohistMC/Mohist/blob/1.12.2/LICENSE'
+                            distribution = 'repo'
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username = System.getenv("OSSRH_USERNAME")
+                    password = System.getenv("OSSRH_PASSWORD")
+                }
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/content/repositories/releases/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
     }
 }
 
