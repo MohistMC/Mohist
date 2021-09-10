@@ -1,9 +1,10 @@
-name: Java CI
+name: Test and build mohist 1.12.2
 
-on: 
+on:
   push:
-    branches:
-    - 1.12.2
+    branches: [ 1.12.2 ]
+  pull_request:
+    branches: [ 1.12.2 ]
 
 jobs:
   build:
@@ -16,17 +17,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Gradle
+    - name: Setup mohist 1.12.2
       run: |
         chmod +x ./gradlew
         ./gradlew setup
-#    - name: Upload artifact
-#      uses: actions/upload-artifact@v1.0.0
-#      with:
-#        name: Mohist-1.12.2--server
-#        path: build/distributions 
-#    - name: Upload a Build Artifact
-#      uses: actions/upload-artifact@v2.0.1
-#      with:
-#        name: Mohist-1.12.2--server
-#        path: build/distributions
+    - name: Build mohist 1.12.2
+      run: |
+        chmod +x ./gradlew
+        ./gradlew installerJar
