@@ -1,0 +1,22 @@
+--- a/mcp/client/Start.java
++++ b/mcp/client/Start.java
+@@ -2,8 +_,6 @@
+ 
+ import java.util.Arrays;
+ 
+-import net.minecraft.client.main.Main;
+-
+ public class Start
+ {
+     public static void main(String[] args)
+@@ -13,8 +_,8 @@
+          * --version is just used as 'launched version' in snoop data and is required
+          * Working directory is used as gameDir if not provided
+          */
+-        String assets = System.getenv().containsKey("assetDirectory") ? System.getenv("assetDirectory") : "assets";
+-        Main.main(concat(new String[]{"--version", "mcp", "--accessToken", "0", "--assetsDir", assets, "--assetIndex", "1.16", "--userProperties", "{}"}, args));
++        /*String assets = System.getenv().containsKey("assetDirectory") ? System.getenv("assetDirectory") : "assets";
++        Main.main(concat(new String[]{"--version", "mcp", "--accessToken", "0", "--assetsDir", assets, "--assetIndex", "1.16", "--userProperties", "{}"}, args));*/
+     }
+ 
+     public static <T> T[] concat(T[] first, T[] second)
