@@ -479,7 +479,7 @@ project(':mohist') {
             output = file('build/install_profile.json')
             INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.4'
         }
-        inputs.file universalJar.archivePath
+        inputs.file universalJar.archiveFile
         inputs.file genClientBinPatches.toolJar
         inputs.file launcherJson.output
         outputs.file output
@@ -707,6 +707,12 @@ project(':mohist') {
                 url = project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             }
         }
+    }
+    signing {
+        def signingKey = System.getenv("GPG_PRIVATE_KEY")
+        def signingPassword = System.getenv("GPG_PASSPHRASE")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.mavenJava
     }
 }
 
