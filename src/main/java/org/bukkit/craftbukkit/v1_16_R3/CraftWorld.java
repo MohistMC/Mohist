@@ -1881,7 +1881,7 @@ public class CraftWorld implements World {
             world.getChunkSource().addRegionTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
         } else {
             // TODO: doesn't work well if spawn changed....
-            world.getChunkSource().addRegionTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
+            world.getChunkSource().removeRegionTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
         }
     }
 

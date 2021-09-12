@@ -1312,6 +1312,17 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
     // Paper start
 
     /**
+     * Gets the current server TPS
+     *
+     * @return current server TPS (1m, 5m, 15m in Paper-Server)
+     */
+    @NotNull
+    public double[] getTPS();
+    // Paper end
+
+    // Paper start
+
+    /**
      * Gets the active {@link org.bukkit.command.CommandMap}
      *
      * @return the active command map
