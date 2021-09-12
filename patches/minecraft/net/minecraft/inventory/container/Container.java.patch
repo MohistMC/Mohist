@@ -70,7 +70,7 @@
 +      }
 +   }
 +
-+   public final ITextComponent getTitle() {
++   public ITextComponent getTitle() {
 +      // Mohist: null title -> empty title
 +      if (this.title == null) {
 +         this.title = new StringTextComponent("");
