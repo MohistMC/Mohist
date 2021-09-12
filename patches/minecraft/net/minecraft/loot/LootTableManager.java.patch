@@ -8,15 +8,21 @@
  import java.util.Map;
  import java.util.Set;
  import net.minecraft.client.resources.JsonReloadListener;
-@@ -17,6 +_,7 @@
-    private static final Logger field_186525_a = LogManager.getLogger();
-    private static final Gson field_186526_b = LootSerializers.func_237388_c_().create();
-    private Map<ResourceLocation, LootTable> field_186527_c = ImmutableMap.of();
-+   public Map<LootTable, ResourceLocation> lootTableToKey = ImmutableMap.of(); // CraftBukkit
-    private final LootPredicateManager field_227507_d_;
+@@ -28,19 +_,29 @@
+       return this.field_186527_c.getOrDefault(p_186521_1_, LootTable.field_186464_a);
+    }
  
-    public LootTableManager(LootPredicateManager p_i225887_1_) {
-@@ -32,15 +_,15 @@
++   public ResourceLocation getKey(LootTable p_186521_1_) {
++      ResourceLocation key = ResourceLocation.func_208304_a("");
++      for (Map.Entry<ResourceLocation, LootTable> tableMap : field_186527_c.entrySet()) {
++         if (p_186521_1_.equals(tableMap.getValue())) {
++            key = tableMap.getKey();
++         }
++      }
++      return key;
++   }
++
+    protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        Builder<ResourceLocation, LootTable> builder = ImmutableMap.builder();
        JsonElement jsonelement = p_212853_1_.remove(LootTables.field_186419_a);
        if (jsonelement != null) {
@@ -36,15 +42,3 @@
           }
  
        });
-@@ -54,6 +_,11 @@
-          field_186525_a.warn("Found validation problem in " + p_215303_0_ + ": " + p_215303_1_);
-       });
-       this.field_186527_c = immutablemap;
-+      // CraftBukkit start - build a reversed registry map
-+      ImmutableMap.Builder<LootTable, ResourceLocation> lootTableToKeyBuilder = ImmutableMap.builder();
-+      this.field_186527_c.forEach((lootTable, key) -> lootTableToKeyBuilder.put(key, lootTable));
-+      this.lootTableToKey = lootTableToKeyBuilder.build();
-+      // CraftBukkit end
-    }
- 
-    public static void func_227508_a_(ValidationTracker p_227508_0_, ResourceLocation p_227508_1_, LootTable p_227508_2_) {
