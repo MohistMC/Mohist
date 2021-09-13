@@ -92,7 +92,7 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.network.DebugPacketSender;
  import net.minecraft.network.IPacket;
-@@ -138,22 +_,21 @@
+@@ -138,32 +_,31 @@
  import net.minecraft.world.storage.MapData;
  import net.minecraft.world.storage.MapIdTracker;
  import net.minecraft.world.storage.SaveFormat;
@@ -120,6 +120,18 @@
     public boolean field_73058_d;
     private boolean field_73068_P;
     private int field_80004_Q;
+    private final Teleporter field_85177_Q;
+    private final ServerTickList<Block> field_94579_S = new ServerTickList<>(this, (p_205341_0_) -> {
+       return p_205341_0_ == null || p_205341_0_.func_176223_P().func_196958_f();
+-   }, Registry.field_212618_g::func_177774_c, this::func_205338_b);
++   }, Registry.field_212618_g::func_177774_c, this::tickBlock_bukkit);
+    private final ServerTickList<Fluid> field_205342_P = new ServerTickList<>(this, (p_205774_0_) -> {
+       return p_205774_0_ == null || p_205774_0_ == Fluids.field_204541_a;
+-   }, Registry.field_212619_h::func_177774_c, this::func_205339_a);
++   }, Registry.field_212619_h::func_177774_c, this::tickLiquid_bukkit);
+    private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
+    protected final RaidManager field_217494_c;
+    private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
 @@ -173,35 +_,156 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
@@ -558,7 +570,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -561,56 +_,102 @@
+@@ -561,56 +_,121 @@
     }
  
     private void func_73051_P() {
@@ -586,13 +598,21 @@
        this.field_80004_Q = 0;
     }
  
-+   // Mohist start - Don't load chunks for scheduled ticks
++   // Mohist start - readd it to compat with mods
     private void func_205339_a(NextTickListEntry<Fluid> p_205339_1_) {
--      FluidState fluidstate = this.func_204610_c(p_205339_1_.field_180282_a);
--      if (fluidstate.func_206886_c() == p_205339_1_.func_151351_a()) {
--         fluidstate.func_206880_a(this, p_205339_1_.field_180282_a);
--      }
+       FluidState fluidstate = this.func_204610_c(p_205339_1_.field_180282_a);
+       if (fluidstate.func_206886_c() == p_205339_1_.func_151351_a()) {
+          fluidstate.func_206880_a(this, p_205339_1_.field_180282_a);
+       }
 -
+-   }
+-
++      // Mohist end
++   }
++
++
++   // Mohist start - Don't load chunks for scheduled ticks - change it to compat for Forge mods
++   private void tickLiquid_bukkit(NextTickListEntry<Fluid> p_205339_1_) {
 +      // Mohist start - Partially rewrite to use ChunkMcAPI
 +      BlockPos pos = p_205339_1_.field_180282_a;
 +      ChunkMcAPI.getTickingChunkNow(this, pos.func_177958_n() >> 4, pos.func_177952_p() >> 4).ifPresent((chunk) -> {
@@ -602,14 +622,21 @@
 +         }
 +      });
 +      // Mohist end
-    }
- 
++   }
++
++   // Mohist start - readd it to compat with mods
     private void func_205338_b(NextTickListEntry<Block> p_205338_1_) {
 -      BlockState blockstate = this.func_180495_p(p_205338_1_.field_180282_a);
 -      if (blockstate.func_203425_a(p_205338_1_.func_151351_a())) {
 -         blockstate.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
--      }
--
++      BlockState blockState = this.func_180495_p(p_205338_1_.field_180282_a);
++      if (blockState.func_177230_c() == p_205338_1_.func_151351_a()) {
++         blockState.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
+       }
++      // Mohist end
++   }
+ 
++   private void tickBlock_bukkit(NextTickListEntry<Block> p_205338_1_) {
 +      // Mohist start - Partially rewrite to use ChunkMcAPI
 +      BlockPos pos = p_205338_1_.field_180282_a;
 +      ChunkMcAPI.getTickingChunkNow(this, pos.func_177958_n() >> 4, pos.func_177952_p() >> 4).ifPresent((chunk) -> {
