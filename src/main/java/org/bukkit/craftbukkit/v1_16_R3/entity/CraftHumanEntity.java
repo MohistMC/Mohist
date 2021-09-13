@@ -266,6 +266,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     public void setHandle(final PlayerEntity entity) {
         super.setHandle(entity);
         this.inventory = new CraftInventoryPlayer(entity.inventory);
+        this.enderChest = null;
     }
 
     @Override

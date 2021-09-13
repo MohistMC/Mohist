@@ -151,7 +151,7 @@
     private final Set<String> field_184236_aF = Sets.newHashSet();
     private boolean field_184237_aG;
     private final double[] field_191505_aI = new double[]{0.0D, 0.0D, 0.0D};
-@@ -194,7 +_,33 @@
+@@ -194,7 +_,47 @@
     private EntitySize field_213325_aI;
     private float field_213326_aJ;
  
@@ -168,6 +168,20 @@
 +   public long activatedTick = Integer.MIN_VALUE;
 +   public void inactiveTick() { }
 +   // Spigot end
++
++   @Deprecated
++   public void setBukkitEntity(CraftEntity bukkitEntity) {
++      this.bukkitEntity = bukkitEntity;
++      if (bukkitEntity instanceof org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer && this instanceof net.minecraft.entity.player.ServerPlayerEntity) {
++         ((org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer) this.bukkitEntity).setHandle((net.minecraft.entity.player.ServerPlayerEntity) this);
++      } else if (bukkitEntity instanceof org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity && this instanceof net.minecraft.entity.player.PlayerEntity) {
++         ((org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity) this.bukkitEntity).setHandle((net.minecraft.entity.player.PlayerEntity) this);
++      } if (bukkitEntity instanceof org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity && this instanceof net.minecraft.entity.LivingEntity) {
++         ((org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity) this.bukkitEntity).setHandle((net.minecraft.entity.LivingEntity) this);
++      } else {
++         this.bukkitEntity.setHandle(this);
++      }
++   }
 +
 +   public boolean needsChunkUpdate = false; // Mohist - Fix "Wrong location"
 +
