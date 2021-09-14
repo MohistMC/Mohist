@@ -766,7 +766,7 @@
 -         }
 -
 -         serverchunkprovider.func_217210_a(p_217445_2_);
-+         org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getWorld())); // CraftBukkit
++         //org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getWorld())); // CraftBukkit // Mohist -removed
 +         try (co.aikar.timings.Timing ignored = timings.worldSave.startTiming()) { // Paper
 +            if (p_217445_1_ != null) {
 +               p_217445_1_.func_200210_a(new TranslationTextComponent("menu.savingLevel"));

@@ -1084,6 +1084,7 @@ public final class CraftServer implements Server {
         getServer().loadSpawn(internal.getChunkSource().chunkMap.progressListener, internal);
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(internal.getWorld().getHandle()));
         return internal.getWorld();
     }
 
