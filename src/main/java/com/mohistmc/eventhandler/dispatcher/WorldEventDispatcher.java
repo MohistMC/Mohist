@@ -13,16 +13,20 @@ public class WorldEventDispatcher {
     //For WorldLoadEvent
     @SubscribeEvent(receiveCanceled = true)
     public void onWorldLoadEvent(WorldEvent.Load event) {
+        if (event.getWorld() instanceof ServerWorld) {
             ServerWorld handle = ((CraftWorld) event.getWorld()).getHandle();
             WorldLoadEvent load = new WorldLoadEvent(handle.getWorld());
             Bukkit.getPluginManager().callEvent(load);
+        }
     }
 
     //For WorldSaveEvent
     @SubscribeEvent(receiveCanceled = true)
     public void onWorldSaveEvent(WorldEvent.Save event) {
+        if (event.getWorld() instanceof ServerWorld) {
             ServerWorld handle = ((CraftWorld) event.getWorld()).getHandle();
             WorldSaveEvent save = new WorldSaveEvent(handle.getWorld());
             Bukkit.getPluginManager().callEvent(save);
+        }
     }
 }
