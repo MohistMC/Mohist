@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -135,7 +136,7 @@ public class DummyGeneratorAccess implements IWorld {
 
     @Override
     public boolean isClientSide() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return false;
     }
 
     @Override
@@ -159,7 +160,7 @@ public class DummyGeneratorAccess implements IWorld {
 
     @Override
     public BlockState getBlockState(BlockPos pos) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Blocks.AIR.defaultBlockState(); // SPIGOT-6515
     }
 
     @Override
@@ -199,6 +200,6 @@ public class DummyGeneratorAccess implements IWorld {
 
     @Override
     public boolean destroyBlock(BlockPos pos, boolean dropBlock, @Nullable Entity entity, int recursionLeft) {
-        return false;
+        return false; // SPIGOT-6515
     }
 }
