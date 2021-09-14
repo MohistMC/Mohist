@@ -1,10 +1,7 @@
 package com.mohistmc.eventhandler;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.eventhandler.dispatcher.BlockEventDispatcher;
-import com.mohistmc.eventhandler.dispatcher.BucketEventDispatcher;
-import com.mohistmc.eventhandler.dispatcher.CommandsEventDispatcher;
-import com.mohistmc.eventhandler.dispatcher.PlayerEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.*;
 import net.minecraftforge.common.MinecraftForge;
 
 public class EventDispatcherRegistry {
@@ -14,6 +11,7 @@ public class EventDispatcherRegistry {
         MinecraftForge.EVENT_BUS.register(new PlayerEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new BucketEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new CommandsEventDispatcher());
+        MinecraftForge.EVENT_BUS.register(new WorldEventDispatcher());
         MohistMC.LOGGER.info("EventDispatcherRegistry initialized");
     }
 }
