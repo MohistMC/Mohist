@@ -4,7 +4,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
@@ -14,7 +13,7 @@ public class WorldEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void onWorldLoadEvent(WorldEvent.Load event) {
         if (event.getWorld() instanceof ServerWorld) {
-            ServerWorld handle = ((CraftWorld) event.getWorld()).getHandle();
+            ServerWorld handle = (ServerWorld) event.getWorld();
             WorldLoadEvent load = new WorldLoadEvent(handle.getWorld());
             Bukkit.getPluginManager().callEvent(load);
         }
@@ -24,7 +23,7 @@ public class WorldEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void onWorldSaveEvent(WorldEvent.Save event) {
         if (event.getWorld() instanceof ServerWorld) {
-            ServerWorld handle = ((CraftWorld) event.getWorld()).getHandle();
+            ServerWorld handle = (ServerWorld) event.getWorld();
             WorldSaveEvent save = new WorldSaveEvent(handle.getWorld());
             Bukkit.getPluginManager().callEvent(save);
         }
