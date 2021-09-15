@@ -459,17 +459,19 @@ public final class CraftServer implements Server {
             Command command = entry.getValue();
 
             if (command instanceof VanillaCommandWrapper) {
-                LiteralCommandNode<CommandSource> node = (LiteralCommandNode<CommandSource>) ((VanillaCommandWrapper) command).vanillaCommand;
-                if (!node.getLiteral().equals(label)) {
-                    LiteralCommandNode<CommandSource> clone = new LiteralCommandNode(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
+                if (((VanillaCommandWrapper) command).vanillaCommand instanceof LiteralCommandNode) {
+                    LiteralCommandNode<CommandSource> node = (LiteralCommandNode<CommandSource>) ((VanillaCommandWrapper) command).vanillaCommand;
+                    if (!node.getLiteral().equals(label)) {
+                        LiteralCommandNode<CommandSource> clone = new LiteralCommandNode(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
 
-                    for (CommandNode<CommandSource> child : node.getChildren()) {
-                        clone.addChild(child);
+                        for (CommandNode<CommandSource> child : node.getChildren()) {
+                            clone.addChild(child);
+                        }
+                        node = clone;
                     }
-                    node = clone;
-                }
 
-                dispatcher.getDispatcher().getRoot().addChild(node);
+                    dispatcher.getDispatcher().getRoot().addChild(node);
+                }
             } else {
                 new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
             }
