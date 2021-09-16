@@ -59,4 +59,11 @@ public class CraftBarrel extends CraftLootable<BarrelTileEntity> implements Barr
         }
         getTileEntity().opened = false;
     }
+
+    // Paper start - More Lidded Block API
+    @Override
+    public boolean isOpen() {
+        return getTileEntity().opened;
+    }
+    // Paper end - More Lidded Block API
 }

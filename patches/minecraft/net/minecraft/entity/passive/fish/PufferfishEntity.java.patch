@@ -8,6 +8,46 @@
  
  public class PufferfishEntity extends AbstractFishEntity {
     private static final DataParameter<Integer> field_203716_b = EntityDataManager.func_187226_a(PufferfishEntity.class, DataSerializers.field_187192_b);
+@@ -86,25 +_,39 @@
+    public void func_70071_h_() {
+       if (!this.field_70170_p.field_72995_K && this.func_70089_S() && this.func_70613_aW()) {
+          if (this.field_203717_c > 0) {
++            boolean increase = true; // Paper - Add PufferFishStateChangeEvent
+             if (this.func_203715_dA() == 0) {
++               if (new io.papermc.paper.event.entity.PufferFishStateChangeEvent((org.bukkit.entity.PufferFish) getBukkitEntity(), 1).callEvent()) { // Paper - Add PufferFishStateChangeEvent
+                this.func_184185_a(SoundEvents.field_203826_go, this.func_70599_aP(), this.func_70647_i());
+                this.func_203714_a(1);
++               } else { increase = false; } // Paper - Add PufferFishStateChangeEvent
+             } else if (this.field_203717_c > 40 && this.func_203715_dA() == 1) {
++               if (new io.papermc.paper.event.entity.PufferFishStateChangeEvent((org.bukkit.entity.PufferFish) getBukkitEntity(), 2).callEvent()) { // Paper - Add PufferFishStateChangeEvent
+                this.func_184185_a(SoundEvents.field_203826_go, this.func_70599_aP(), this.func_70647_i());
+                this.func_203714_a(2);
++               } else { increase = false; } // Paper - Add PufferFishStateChangeEvent
+             }
+ 
++            if (increase) { // Paper - Add PufferFishStateChangeEvent
+             ++this.field_203717_c;
++            } // Paper - Add PufferFishStateChangeEvent
+          } else if (this.func_203715_dA() != 0) {
++            boolean increase = true; // Paper - Add PufferFishStateChangeEvent
+             if (this.field_203718_bx > 60 && this.func_203715_dA() == 2) {
++               if (new io.papermc.paper.event.entity.PufferFishStateChangeEvent((org.bukkit.entity.PufferFish) getBukkitEntity(), 1).callEvent()) { // Paper - Add PufferFishStateChangeEvent
+                this.func_184185_a(SoundEvents.field_203825_gn, this.func_70599_aP(), this.func_70647_i());
+                this.func_203714_a(1);
++               } else { increase = false; } // Paper - Add PufferFishStateChangeEvent
+             } else if (this.field_203718_bx > 100 && this.func_203715_dA() == 1) {
++               if (new io.papermc.paper.event.entity.PufferFishStateChangeEvent((org.bukkit.entity.PufferFish) getBukkitEntity(), 0).callEvent()) { // Paper - Add PufferFishStateChangeEvent
+                this.func_184185_a(SoundEvents.field_203825_gn, this.func_70599_aP(), this.func_70647_i());
+                this.func_203714_a(0);
++               } else { increase = false; } // Paper - Add PufferFishStateChangeEvent
+             }
+ 
++            if (increase) { // Paper - Add PufferFishStateChangeEvent
+             ++this.field_203718_bx;
++            } // Paper - Add PufferFishStateChangeEvent
+          }
+       }
+ 
 @@ -126,7 +_,7 @@
     private void func_205719_a(MobEntity p_205719_1_) {
        int i = this.func_203715_dA();

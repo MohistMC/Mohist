@@ -77,4 +77,11 @@ public class CraftChest extends CraftLootable<ChestTileEntity> implements Chest 
         }
         getTileEntity().opened = false;
     }
+
+    // Paper start - More Lidded Block API
+    @Override
+    public boolean isOpen() {
+        return getTileEntity().opened;
+    }
+    // Paper end - More Lidded Block API
 }
