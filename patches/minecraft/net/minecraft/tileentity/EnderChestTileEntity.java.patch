@@ -1,0 +1,29 @@
+--- a/net/minecraft/tileentity/EnderChestTileEntity.java
++++ b/net/minecraft/tileentity/EnderChestTileEntity.java
+@@ -17,6 +_,12 @@
+    public float field_145975_i;
+    public int field_145973_j;
+    private int field_145974_k;
++   public boolean opened; // Paper - More Lidded Block API
++
++   public int getViewerCount() {
++      return field_145973_j;
++   }
++   // Paper - OBFHELPER
+ 
+    public EnderChestTileEntity() {
+       super(TileEntityType.field_200974_e);
+@@ -80,11 +_,13 @@
+ 
+    public void func_145969_a() {
+       ++this.field_145973_j;
++      if (opened) return; // Paper - More Lidded Block API
+       this.field_145850_b.func_175641_c(this.field_174879_c, Blocks.field_150477_bB, 1, this.field_145973_j);
+    }
+ 
+    public void func_145970_b() {
+       --this.field_145973_j;
++      if (opened) return; // Paper - More Lidded Block API
+       this.field_145850_b.func_175641_c(this.field_174879_c, Blocks.field_150477_bB, 1, this.field_145973_j);
+    }
+ 
