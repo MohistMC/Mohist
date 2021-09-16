@@ -1055,7 +1055,7 @@
           if (this.field_147369_b.field_71071_by.field_70461_c != p_147355_1_.func_149614_c() && this.field_147369_b.func_184600_cs() == Hand.MAIN_HAND) {
              this.field_147369_b.func_184602_cy();
           }
-@@ -1066,61 +_,285 @@
+@@ -1066,61 +_,286 @@
           this.field_147369_b.field_71071_by.field_70461_c = p_147355_1_.func_149614_c();
           this.field_147369_b.func_143004_u();
        } else {
@@ -1331,7 +1331,8 @@
 +         CraftEventFactory.callPlayerInteractEvent(this.field_147369_b, Action.LEFT_CLICK_AIR, this.field_147369_b.field_71071_by.func_70448_g(), Hand.MAIN_HAND);
 +      }
 +      // Arm swing animation
-+      PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
++      io.papermc.paper.event.player.PlayerArmSwingEvent event = new io.papermc.paper.event.player.PlayerArmSwingEvent(this.getPlayer(), p_175087_1_.func_187018_a() == Hand.MAIN_HAND ? org.bukkit.inventory.EquipmentSlot.HAND : org.bukkit.inventory.EquipmentSlot.OFF_HAND); // Paper
++      //PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
 +      this.craftServer.getPluginManager().callEvent(event);
 +      if (event.isCancelled()) return;
 +      // CraftBukkit end

@@ -1,0 +1,19 @@
+--- a/net/minecraft/tileentity/BellTileEntity.java
++++ b/net/minecraft/tileentity/BellTileEntity.java
+@@ -1,6 +_,8 @@
+ package net.minecraft.tileentity;
+ 
+ import java.util.List;
++
++import net.minecraft.addons.server.MCUtil;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
+ import net.minecraft.entity.player.PlayerEntity;
+@@ -154,6 +_,7 @@
+    }
+ 
+    private void func_222827_b(LivingEntity p_222827_1_) {
++      if (!new io.papermc.paper.event.block.BellRevealRaiderEvent(field_145850_b.getWorld().getBlockAt(MCUtil.toLocation(field_145850_b, field_174879_c)), p_222827_1_.getBukkitEntity()).callEvent()) return; // Paper - BellRevealRaiderEvent
+       p_222827_1_.func_195064_c(new EffectInstance(Effects.field_188423_x, 60));
+    }
+ }
