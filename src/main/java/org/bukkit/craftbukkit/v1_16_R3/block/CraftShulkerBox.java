@@ -61,8 +61,15 @@ public class CraftShulkerBox extends CraftLootable<ShulkerBoxTileEntity> impleme
         if (getTileEntity().opened) {
             World world = getTileEntity().getLevel();
             world.blockEvent(getPosition(), getTileEntity().getBlockState().getBlock(), 1, 0);
-            world.playSound(null, getPosition(), SoundEvents.SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+            world.playSound(null, getPosition(), SoundEvents.SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F); // Paper - More Lidded Block API (Wrong sound)
         }
         getTileEntity().opened = false;
     }
+
+    // Paper start - More Lidded Block API
+    @Override
+    public boolean isOpen() {
+        return getTileEntity().opened;
+    }
+    // Paper end - More Lidded Block API
 }
