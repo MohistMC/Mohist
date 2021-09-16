@@ -92,13 +92,14 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
 
     @Override
     public void run() {
-        try (Timing ignored = timings.startTiming()) { // Paper
+        // Mohist start - fix NPC
+        if (timings != null && isSync()) timings.startTiming(); // Paper
         if (rTask != null) {
             rTask.run();
         } else {
             cTask.accept(this);
         }
-        } // Paper
+        if (timings != null && isSync()) timings.stopTiming(); // Paper // Mohist end
     }
 
     long getPeriod() {
