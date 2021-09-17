@@ -1437,7 +1437,7 @@
 +            serverplayerentity.func_70107_b(serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_() + 1.0D, serverplayerentity.func_226281_cx_());
 +        }
 +        // CraftBukkit start
-+        IWorldInfo iworldinfo = serverplayerentity.field_70170_p.func_72912_H();
++        IWorldInfo iworldinfo = worldserver1.func_72912_H();
 +        serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket(serverplayerentity.field_70170_p.func_230315_m_(), serverplayerentity.field_70170_p.func_234923_W_(), BiomeManager.func_235200_a_(serverplayerentity.func_71121_q().func_72905_C()), serverplayerentity.field_71134_c.func_73081_b(), serverplayerentity.field_71134_c.func_241815_c_(), serverplayerentity.func_71121_q().func_234925_Z_(), serverplayerentity.func_71121_q().func_241109_A_(), p_232644_2_));
 +        serverplayerentity.field_71135_a.func_147359_a(new SUpdateViewDistancePacket(worldserver1.spigotConfig.viewDistance)); // Spigot
 +        serverplayerentity.func_70029_a(worldserver1);
@@ -1464,22 +1464,22 @@
 +        }
 +        // Added from changeDimension
 +        func_72385_f(serverplayerentity); // Update health, etc...
-+        serverplayerentity.func_71016_p();
-+        for (Object o1 : serverplayerentity.func_70651_bq()) {
++        p_232644_1_.func_71016_p();
++        for (Object o1 : p_232644_1_.func_70651_bq()) {
 +            EffectInstance mobEffect = (EffectInstance) o1;
-+            serverplayerentity.field_71135_a.func_147359_a(new SPlayEntityEffectPacket(serverplayerentity.func_145782_y(), mobEffect));
++            p_232644_1_.field_71135_a.func_147359_a(new SPlayEntityEffectPacket(p_232644_1_.func_145782_y(), mobEffect));
 +        }
 +
 +        // Fire advancement trigger
-+        serverplayerentity.func_213846_b(((CraftWorld) fromWorld).getHandle());
++        p_232644_1_.func_213846_b(((CraftWorld) fromWorld).getHandle());
 +
 +        // Don't fire on respawn
 +        if (fromWorld != location.getWorld()) {
-+            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(serverplayerentity, ((CraftWorld) fromWorld).getHandle().func_234923_W_(), ((CraftWorld) location.getWorld()).getHandle().func_234923_W_(), (CraftWorld) fromWorld); // Mohist - fire forge changed dimension event
++            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(p_232644_1_, ((CraftWorld) fromWorld).getHandle().func_234923_W_(), ((CraftWorld) location.getWorld()).getHandle().func_234923_W_(), (CraftWorld) fromWorld); // Mohist - fire forge changed dimension event
 +        }
 +        // Save player file again if they were disconnected
-+        if (serverplayerentity.field_71135_a.isDisconnected()) {
-+            this.func_72391_b(serverplayerentity);
++        if (p_232644_1_.field_71135_a.isDisconnected()) {
++            this.func_72391_b(p_232644_1_);
 +        }
 +        // CraftBukkit end
 +        net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_232644_2_);
