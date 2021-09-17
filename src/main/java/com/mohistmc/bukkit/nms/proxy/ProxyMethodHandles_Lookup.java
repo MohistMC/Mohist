@@ -5,6 +5,7 @@ import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 
 /**
@@ -92,6 +93,13 @@ public class ProxyMethodHandles_Lookup {
             name = RemapUtils.mapFieldName(clazz, name);
         }
         return lookup.findStaticSetter(clazz, name, type);
+    }
+	
+	public static VarHandle findVarHandle(MethodHandles.Lookup lookup, Class<?> clazz, String name, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+		if (clazz.getName().startsWith("net.minecraft.")) {
+            name = RemapUtils.mapFieldName(clazz, name);
+        }
+        return lookup.findVarHandle(clazz, name, type);
     }
 
 }
