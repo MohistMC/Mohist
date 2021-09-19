@@ -10,63 +10,30 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PlayerJoinEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    // Paper start
-    private net.kyori.adventure.text.Component joinMessage;
-
-    public PlayerJoinEvent(@NotNull final Player playerJoined, @Nullable final net.kyori.adventure.text.Component joinMessage) {
-        super(playerJoined);
-        this.joinMessage = joinMessage;
-    }
-
-    @Deprecated // Paper end
+    private String joinMessage;
 
     public PlayerJoinEvent(@NotNull final Player playerJoined, @Nullable final String joinMessage) {
         super(playerJoined);
-        this.joinMessage = joinMessage != null ? org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(joinMessage) : null; // Paper end
-    }
-
-    // Paper start
-
-    /**
-     * Gets the join message to send to all online players
-     *
-     * @return string join message. Can be null
-     */
-    public @Nullable net.kyori.adventure.text.Component joinMessage() {
-        return this.joinMessage;
-    }
-
-    /**
-     * Sets the join message to send to all online players
-     *
-     * @param joinMessage join message. If null, no message will be sent
-     */
-    public void joinMessage(@Nullable net.kyori.adventure.text.Component joinMessage) {
         this.joinMessage = joinMessage;
     }
-    // Paper end
 
     /**
      * Gets the join message to send to all online players
      *
      * @return string join message. Can be null
-     * @deprecated in favour of {@link #joinMessage()}
      */
     @Nullable
-    @Deprecated // Paper
     public String getJoinMessage() {
-        return this.joinMessage == null ? null : org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().serialize(this.joinMessage); // Paper
+        return joinMessage;
     }
 
     /**
      * Sets the join message to send to all online players
      *
      * @param joinMessage join message. If null, no message will be sent
-     * @deprecated in favour of {@link #joinMessage(net.kyori.adventure.text.Component)}
      */
-    @Deprecated // Paper
     public void setJoinMessage(@Nullable String joinMessage) {
-        this.joinMessage = joinMessage != null ? org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(joinMessage) : null; // Paper
+        this.joinMessage = joinMessage;
     }
 
     @NotNull

@@ -43,7 +43,7 @@ public abstract class Event {
      * @return false if event was cancelled, if cancellable. otherwise true.
      */
     public boolean callEvent() {
-        org.bukkit.Bukkit.getPluginManager().callEvent(this);
+        Bukkit.getPluginManager().callEvent(this);
         if (this instanceof Cancellable) {
             return !((Cancellable) this).isCancelled();
         } else {
@@ -77,7 +77,7 @@ public abstract class Event {
      * <ul>
      * <li>The event is never fired from inside code triggered by a
      *     synchronous event. Attempting to do so results in an {@link
-     *     java.lang.IllegalStateException}.
+     *     IllegalStateException}.
      * <li>However, asynchronous event handlers may fire synchronous or
      *     asynchronous events
      * <li>The event may be fired multiple times simultaneously and in any

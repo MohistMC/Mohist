@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
  * The current list of inventories that cannot be created via
  * {@link org.bukkit.Bukkit#createInventory} are:<br>
  * <blockquote>
- * {@link InventoryType#CREATIVE}, {@link InventoryType#CRAFTING} and
- * {@link InventoryType#MERCHANT}
+ *     {@link InventoryType#CREATIVE}, {@link InventoryType#CRAFTING} and
+ *     {@link InventoryType#MERCHANT}
  * </blockquote>
- * <p>
+ *
  * See {@link org.bukkit.Bukkit#createInventory} for more information.
  *
  * @see org.bukkit.Bukkit#createInventory(InventoryHolder, InventoryType)
@@ -129,25 +129,13 @@ public enum InventoryType {
     /**
      * Stonecutter inventory with 1 CRAFTING slot, and 1 RESULT slot.
      */
-    STONECUTTER(2, "Stonecutter");
+    STONECUTTER(2, "Stonecutter")
+    ;
 
     private final int size;
     private final String title;
     private final boolean isCreatable;
 
-    // Paper start
-    private final net.kyori.adventure.text.Component defaultTitleComponent;
-
-    /**
-     * Gets the inventory's default title.
-     *
-     * @return the inventory's default title
-     */
-    public @NotNull net.kyori.adventure.text.Component defaultTitle() {
-        return defaultTitleComponent;
-    }
-
-    // Paper end
     private InventoryType(int defaultSize, /*@NotNull*/ String defaultTitle) {
         this(defaultSize, defaultTitle, true);
     }
@@ -156,7 +144,6 @@ public enum InventoryType {
         size = defaultSize;
         title = defaultTitle;
         this.isCreatable = isCreatable;
-        this.defaultTitleComponent = net.kyori.adventure.text.Component.text(defaultTitle); // Paper - Adventure
     }
 
     public int getDefaultSize() {
@@ -164,7 +151,6 @@ public enum InventoryType {
     }
 
     @NotNull
-    @Deprecated // Paper
     public String getDefaultTitle() {
         return title;
     }

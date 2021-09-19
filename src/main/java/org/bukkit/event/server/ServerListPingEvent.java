@@ -2,7 +2,6 @@ package org.bukkit.event.server;
 
 import java.net.InetAddress;
 import java.util.Iterator;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.UndefinedNullability;
 import org.bukkit.entity.Player;
@@ -18,16 +17,15 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
     private static final int MAGIC_PLAYER_COUNT = Integer.MIN_VALUE;
     private static final HandlerList handlers = new HandlerList();
     private final InetAddress address;
-    private net.kyori.adventure.text.Component motd; // Paper
+    private String motd;
     private final int numPlayers;
     private int maxPlayers;
 
-    @Deprecated // Paper
     public ServerListPingEvent(@NotNull final InetAddress address, @NotNull final String motd, final int numPlayers, final int maxPlayers) {
         super(true);
         Validate.isTrue(numPlayers >= 0, "Cannot have negative number of players online", numPlayers);
         this.address = address;
-        this.motd = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(motd); // Paper
+        this.motd = motd;
         this.numPlayers = numPlayers;
         this.maxPlayers = maxPlayers;
     }
@@ -37,65 +35,17 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
      * {@link #iterator()} method, thus provided the {@link #getNumPlayers()}
      * count.
      *
-     * @param address    the address of the pinger
-     * @param motd       the message of the day
+     * @param address the address of the pinger
+     * @param motd the message of the day
      * @param maxPlayers the max number of players
-     * @deprecated in favour of {@link #ServerListPingEvent(java.net.InetAddress, net.kyori.adventure.text.Component, int)}
      */
-    @Deprecated // Paper
     protected ServerListPingEvent(@NotNull final InetAddress address, @NotNull final String motd, final int maxPlayers) {
         super(true);
         this.numPlayers = MAGIC_PLAYER_COUNT;
         this.address = address;
-        this.motd = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(motd); // Paper
-        this.maxPlayers = maxPlayers;
-    }
-
-    // Paper start
-    public ServerListPingEvent(@NotNull final InetAddress address, @NotNull final net.kyori.adventure.text.Component motd, final int numPlayers, final int maxPlayers) {
-        super(true);
-        Validate.isTrue(numPlayers >= 0, "Cannot have negative number of players online", numPlayers);
-        this.address = address;
-        this.motd = motd;
-        this.numPlayers = numPlayers;
-        this.maxPlayers = maxPlayers;
-    }
-
-    /**
-     * This constructor is intended for implementations that provide the
-     * {@link #iterator()} method, thus provided the {@link #getNumPlayers()}
-     * count.
-     *
-     * @param address    the address of the pinger
-     * @param motd       the message of the day
-     * @param maxPlayers the max number of players
-     */
-    protected ServerListPingEvent(@NotNull final InetAddress address, @NotNull final net.kyori.adventure.text.Component motd, final int maxPlayers) {
-        super(true);
-        this.numPlayers = MAGIC_PLAYER_COUNT;
-        this.address = address;
         this.motd = motd;
         this.maxPlayers = maxPlayers;
     }
-
-    /**
-     * Get the message of the day message.
-     *
-     * @return the message of the day
-     */
-    public @NotNull net.kyori.adventure.text.Component motd() {
-        return motd;
-    }
-
-    /**
-     * Change the message of the day message.
-     *
-     * @param motd the message of the day
-     */
-    public void motd(@NotNull net.kyori.adventure.text.Component motd) {
-        this.motd = motd;
-    }
-    // Paper end
 
     /**
      * Get the address the ping is coming from.
@@ -111,23 +61,19 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
      * Get the message of the day message.
      *
      * @return the message of the day
-     * @deprecated in favour of {@link #motd()}
      */
     @NotNull
-    @Deprecated // Paper
     public String getMotd() {
-        return org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().serialize(this.motd); // Paper
+        return motd;
     }
 
     /**
      * Change the message of the day message.
      *
      * @param motd the message of the day
-     * @deprecated in favour of {@link #motd(net.kyori.adventure.text.Component)}
      */
-    @Deprecated // Paper
     public void setMotd(@NotNull String motd) {
-        this.motd = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(motd); // Paper
+        this.motd = motd;
     }
 
     /**
@@ -168,11 +114,11 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
      * Sets the server-icon sent to the client.
      *
      * @param icon the icon to send to the client
-     * @throws IllegalArgumentException      if the {@link CachedServerIcon} is not
-     *                                       created by the caller of this event; null may be accepted for some
-     *                                       implementations
+     * @throws IllegalArgumentException if the {@link CachedServerIcon} is not
+     *     created by the caller of this event; null may be accepted for some
+     *     implementations
      * @throws UnsupportedOperationException if the caller of this event does
-     *                                       not support setting the server icon
+     *     not support setting the server icon
      */
     public void setServerIcon(@UndefinedNullability("implementation dependent") CachedServerIcon icon) throws IllegalArgumentException, UnsupportedOperationException {
         throw new UnsupportedOperationException();
@@ -198,7 +144,7 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
      * any new iterator.
      *
      * @throws UnsupportedOperationException if the caller of this event does
-     *                                       not support removing players
+     *     not support removing players
      */
     @NotNull
     @Override

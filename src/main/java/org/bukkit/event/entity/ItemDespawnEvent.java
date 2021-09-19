@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This event is called when a {@link org.bukkit.entity.Item} is removed from
+ * This event is called when a {@link Item} is removed from
  * the world because it has existed for 5 minutes.
  * <p>
  * Cancelling the event results in the item being allowed to exist for 5 more

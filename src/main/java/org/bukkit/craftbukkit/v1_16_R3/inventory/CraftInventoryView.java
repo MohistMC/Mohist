@@ -64,13 +64,6 @@ public class CraftInventoryView extends InventoryView {
         return CraftItemStack.asCraftMirror(container.getSlot(slot).getItem());
     }
 
-    // Paper start
-    @Override
-    public net.kyori.adventure.text.Component title() {
-        return io.papermc.paper.adventure.PaperAdventure.asAdventure(this.container.getTitle());
-    }
-    // Paper end
-
     @Override
     public String getTitle() {
         return CraftChatMessage.fromComponent(container.getTitle());

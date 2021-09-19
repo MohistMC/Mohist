@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when a player takes action on a resource pack request sent via
- * {@link Player#setResourcePack(java.lang.String)}.
+ * {@link Player#setResourcePack(String)}.
  */
 public class PlayerResourcePackStatusEvent extends PlayerEvent {
 

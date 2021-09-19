@@ -12,7 +12,7 @@ public class HangingBreakByEntityEvent extends HangingBreakEvent {
     private final Entity remover;
 
     public HangingBreakByEntityEvent(@NotNull final Hanging hanging, @Nullable final Entity remover) {
-        this(hanging, remover, HangingBreakEvent.RemoveCause.ENTITY);
+        this(hanging, remover, RemoveCause.ENTITY);
     }
 
     public HangingBreakByEntityEvent(@NotNull final Hanging hanging, @Nullable final Entity remover, @NotNull final HangingBreakEvent.RemoveCause cause) {

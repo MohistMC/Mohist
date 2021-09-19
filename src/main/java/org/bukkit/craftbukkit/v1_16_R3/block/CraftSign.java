@@ -12,10 +12,8 @@ import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements Sign {
 
     // Lazily initialized only if requested:
-    // Paper start
-    private java.util.ArrayList<net.kyori.adventure.text.Component> originalLines = null; // ArrayList for RandomAccess
-    private java.util.ArrayList<net.kyori.adventure.text.Component> lines = null; // ArrayList for RandomAccess
-    // Paper end
+    private String[] originalLines = null;
+    private String[] lines = null;
 
     public CraftSign(final Block block) {
         super(block, SignTileEntity.class);
@@ -25,52 +23,27 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
         super(material, te);
     }
 
-    // Paper start
     @Override
-    public java.util.List<net.kyori.adventure.text.Component> lines() {
-        this.loadLines();
+    public String[] getLines() {
+        if (lines == null) {
+            // Lazy initialization:
+            SignTileEntity sign = this.getSnapshot();
+            lines = new String[sign.messages.length];
+            System.arraycopy(revertComponents(sign.messages), 0, lines, 0, lines.length);
+            originalLines = new String[lines.length];
+            System.arraycopy(lines, 0, originalLines, 0, originalLines.length);
+        }
         return lines;
     }
 
     @Override
-    public net.kyori.adventure.text.Component line(int index) {
-        this.loadLines();
-        return this.lines.get(index);
-    }
-
-    @Override
-    public void line(int index, net.kyori.adventure.text.Component line) {
-        this.loadLines();
-        this.lines.set(index, line);
-    }
-
-    private void loadLines() {
-        if (lines != null) {
-            return;
-        }
-        // Lazy initialization:
-        SignTileEntity sign = this.getSnapshot();
-        lines = io.papermc.paper.adventure.PaperAdventure.asAdventure(com.google.common.collect.Lists.newArrayList(sign.messages));
-        originalLines = new java.util.ArrayList<>(lines);
-    }
-
-    // Paper end
-    @Override
-    public String[] getLines() {
-        this.loadLines();
-        return this.lines.stream().map(io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC::serialize).toArray(String[]::new); // Paper
-    }
-
-    @Override
     public String getLine(int index) throws IndexOutOfBoundsException {
-        this.loadLines();
-        return io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(this.lines.get(index)); // Paper
+        return getLines()[index];
     }
 
     @Override
     public void setLine(int index, String line) throws IndexOutOfBoundsException {
-        this.loadLines();
-        this.lines.set(index, line != null ? io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(line) : net.kyori.adventure.text.Component.empty()); // Paper
+        getLines()[index] = line;
     }
 
     @Override
@@ -98,32 +71,15 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
         super.applyTo(sign);
 
         if (lines != null) {
-            // Paper start
-            for (int i = 0; i < this.lines.size(); ++i) {
-                net.kyori.adventure.text.Component component = this.lines.get(i);
-                net.kyori.adventure.text.Component origComp = this.originalLines.get(i);
-                if (component.equals(origComp)) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = (lines[i] == null) ? "" : lines[i];
+                if (line.equals(originalLines[i])) {
                     continue; // The line contents are still the same, skip.
                 }
-                sign.messages[i] = io.papermc.paper.adventure.PaperAdventure.asVanilla(component);
-            }
-            // Paper end
-        }
-    }
-
-    // Paper start
-    public static ITextComponent[] sanitizeLines(java.util.List<net.kyori.adventure.text.Component> lines) {
-        ITextComponent[] components = new ITextComponent[4];
-        for (int i = 0; i < 4; i++) {
-            if (i < lines.size() && lines.get(i) != null) {
-                components[i] = io.papermc.paper.adventure.PaperAdventure.asVanilla(lines.get(i));
-            } else {
-                components[i] = new StringTextComponent("");
+                sign.messages[i] = CraftChatMessage.fromString(line)[0];
             }
         }
-        return components;
     }
-    // Paper end
 
     public static ITextComponent[] sanitizeLines(String[] lines) {
         ITextComponent[] components = new ITextComponent[4];

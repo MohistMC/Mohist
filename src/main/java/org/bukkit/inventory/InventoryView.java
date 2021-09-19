@@ -450,26 +450,11 @@ public abstract class InventoryView {
         return getPlayer().setWindowProperty(prop, value);
     }
 
-    // Paper start
-
     /**
      * Get the title of this inventory window.
      *
      * @return The title.
      */
-    @NotNull
-    public /*abstract*/ net.kyori.adventure.text.Component title() {
-        return org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(this.getTitle());
-    }
-    // Paper end
-
-    /**
-     * Get the title of this inventory window.
-     *
-     * @return The title.
-     * @deprecated in favour of {@link #title()}
-     */
-    @Deprecated // Paper
     @NotNull
     public abstract String getTitle();
 }

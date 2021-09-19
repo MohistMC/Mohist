@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NettyPacketEncoder.java
 +++ b/net/minecraft/network/NettyPacketEncoder.java
-@@ -1,9 +_,12 @@
+@@ -1,9 +_,11 @@
  package net.minecraft.network;
  
 +import com.mohistmc.util.i18n.i18n;
@@ -9,7 +9,6 @@
  import io.netty.handler.codec.MessageToByteEncoder;
  import java.io.IOException;
 +
-+import io.papermc.paper.adventure.PaperAdventure;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  import org.apache.logging.log4j.Marker;

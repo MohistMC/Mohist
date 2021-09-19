@@ -44,7 +44,7 @@ public class EntityExhaustionEvent extends EntityEvent implements Cancellable {
 
     /**
      * Set the exhaustion to apply to the player.
-     *
+     * <p>
      * The maximum exhaustion that a player can have is 40. No error will be
      * thrown if this limit is hit. This value may be negative, but there is
      * unknown behavior for when exhaustion is below 0.

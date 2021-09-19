@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class HangingBreakEvent extends HangingEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
-    private final HangingBreakEvent.RemoveCause cause;
+    private final RemoveCause cause;
 
     public HangingBreakEvent(@NotNull final Hanging hanging, @NotNull final HangingBreakEvent.RemoveCause cause) {
         super(hanging);

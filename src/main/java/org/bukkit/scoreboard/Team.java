@@ -24,97 +24,13 @@ public interface Team {
     @NotNull
     String getName() throws IllegalStateException;
 
-    // Paper start
-
     /**
      * Gets the name displayed to entries for this team
      *
      * @return Team display name
      * @throws IllegalStateException if this team has been unregistered
-     */
-    @NotNull net.kyori.adventure.text.Component displayName() throws IllegalStateException;
-
-    /**
-     * Sets the name displayed to entries for this team
-     *
-     * @param displayName New display name
-     * @throws IllegalArgumentException if displayName is longer than 128
-     *                                  characters.
-     * @throws IllegalStateException    if this team has been unregistered
-     */
-    void displayName(@Nullable net.kyori.adventure.text.Component displayName) throws IllegalStateException, IllegalArgumentException;
-
-    /**
-     * Gets the prefix prepended to the display of entries on this team.
-     *
-     * @return Team prefix
-     * @throws IllegalStateException if this team has been unregistered
-     */
-    @NotNull net.kyori.adventure.text.Component prefix() throws IllegalStateException;
-
-    /**
-     * Sets the prefix prepended to the display of entries on this team.
-     *
-     * @param prefix New prefix
-     * @throws IllegalArgumentException if prefix is null
-     * @throws IllegalArgumentException if prefix is longer than 64
-     *                                  characters
-     * @throws IllegalStateException    if this team has been unregistered
-     */
-    void prefix(@Nullable net.kyori.adventure.text.Component prefix) throws IllegalStateException, IllegalArgumentException;
-
-    /**
-     * Gets the suffix appended to the display of entries on this team.
-     *
-     * @return the team's current suffix
-     * @throws IllegalStateException if this team has been unregistered
-     */
-    @NotNull net.kyori.adventure.text.Component suffix() throws IllegalStateException;
-
-    /**
-     * Sets the suffix appended to the display of entries on this team.
-     *
-     * @param suffix the new suffix for this team.
-     * @throws IllegalArgumentException if suffix is null
-     * @throws IllegalArgumentException if suffix is longer than 64
-     *                                  characters
-     * @throws IllegalStateException    if this team has been unregistered
-     */
-    void suffix(@Nullable net.kyori.adventure.text.Component suffix) throws IllegalStateException, IllegalArgumentException;
-
-    /**
-     * Gets the color of the team.
-     * <br>
-     * This only sets the team outline, other occurrences of colors such as in
-     * names are handled by prefixes / suffixes.
-     *
-     * @return team color, defaults to {@link ChatColor#RESET}
-     * @throws IllegalStateException if this team has been unregistered
-     */
-    @NotNull net.kyori.adventure.text.format.TextColor color() throws IllegalStateException;
-
-    /**
-     * Sets the color of the team.
-     * <br>
-     * This only sets the team outline, other occurrences of colors such as in
-     * names are handled by prefixes / suffixes.
-     *
-     * @param color new color, must be non-null. Use {@link ChatColor#RESET} for
-     *              no color
-     */
-    void color(@Nullable net.kyori.adventure.text.format.NamedTextColor color);
-    // Paper end
-
-    /**
-     * Gets the name displayed to entries for this team
-     *
-     * @return Team display name
-     * @throws IllegalStateException if this team has been unregistered
-     * @deprecated in favour of {@link #displayName()}
      */
     @NotNull
-    @Deprecated
-    // Paper
     String getDisplayName() throws IllegalStateException;
 
     /**
@@ -124,10 +40,7 @@ public interface Team {
      * @throws IllegalArgumentException if displayName is longer than 128
      *                                  characters.
      * @throws IllegalStateException    if this team has been unregistered
-     * @deprecated in favour of {@link #displayName(net.kyori.adventure.text.Component)}
      */
-    @Deprecated
-    // Paper
     void setDisplayName(@NotNull String displayName) throws IllegalStateException, IllegalArgumentException;
 
     /**
@@ -135,11 +48,8 @@ public interface Team {
      *
      * @return Team prefix
      * @throws IllegalStateException if this team has been unregistered
-     * @deprecated in favour of {@link #prefix()}
      */
     @NotNull
-    @Deprecated
-    // Paper
     String getPrefix() throws IllegalStateException;
 
     /**
@@ -150,10 +60,7 @@ public interface Team {
      * @throws IllegalArgumentException if prefix is longer than 64
      *                                  characters
      * @throws IllegalStateException    if this team has been unregistered
-     * @deprecated in favour of {@link #prefix(net.kyori.adventure.text.Component)}
      */
-    @Deprecated
-    // Paper
     void setPrefix(@NotNull String prefix) throws IllegalStateException, IllegalArgumentException;
 
     /**
@@ -161,11 +68,8 @@ public interface Team {
      *
      * @return the team's current suffix
      * @throws IllegalStateException if this team has been unregistered
-     * @deprecated in favour of {@link #suffix()}
      */
     @NotNull
-    @Deprecated
-    // Paper
     String getSuffix() throws IllegalStateException;
 
     /**
@@ -176,10 +80,7 @@ public interface Team {
      * @throws IllegalArgumentException if suffix is longer than 64
      *                                  characters
      * @throws IllegalStateException    if this team has been unregistered
-     * @deprecated in favour of {@link #suffix(net.kyori.adventure.text.Component)}
      */
-    @Deprecated
-    // Paper
     void setSuffix(@NotNull String suffix) throws IllegalStateException, IllegalArgumentException;
 
     /**
@@ -190,11 +91,8 @@ public interface Team {
      *
      * @return team color, defaults to {@link ChatColor#RESET}
      * @throws IllegalStateException if this team has been unregistered
-     * @deprecated in favour of {@link #color()}
      */
     @NotNull
-    @Deprecated
-    // Paper
     ChatColor getColor() throws IllegalStateException;
 
     /**
@@ -205,10 +103,7 @@ public interface Team {
      *
      * @param color new color, must be non-null. Use {@link ChatColor#RESET} for
      *              no color
-     * @deprecated in favour of {@link #color(net.kyori.adventure.text.format.NamedTextColor)}
      */
-    @Deprecated
-    // Paper
     void setColor(@NotNull ChatColor color);
 
     /**

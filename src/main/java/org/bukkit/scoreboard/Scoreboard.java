@@ -29,8 +29,6 @@ public interface Scoreboard {
     @NotNull
     Objective registerNewObjective(@NotNull String name, @NotNull String criteria) throws IllegalArgumentException;
 
-    // Paper start
-
     /**
      * Registers an Objective on this Scoreboard
      *
@@ -49,52 +47,6 @@ public interface Scoreboard {
      *                                  exists
      */
     @NotNull
-    Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @Nullable net.kyori.adventure.text.Component displayName) throws IllegalArgumentException;
-
-    /**
-     * Registers an Objective on this Scoreboard
-     *
-     * @param name        Name of the Objective
-     * @param criteria    Criteria for the Objective
-     * @param displayName Name displayed to players for the Objective.
-     * @param renderType  Manner of rendering the Objective
-     * @return The registered Objective
-     * @throws IllegalArgumentException if name is null
-     * @throws IllegalArgumentException if name is longer than 16
-     *                                  characters.
-     * @throws IllegalArgumentException if criteria is null
-     * @throws IllegalArgumentException if displayName is null
-     * @throws IllegalArgumentException if displayName is longer than 128
-     *                                  characters.
-     * @throws IllegalArgumentException if renderType is null
-     * @throws IllegalArgumentException if an objective by that name already
-     *                                  exists
-     */
-    @NotNull
-    Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @Nullable net.kyori.adventure.text.Component displayName, @NotNull RenderType renderType) throws IllegalArgumentException;
-    // Paper end
-
-    /**
-     * Registers an Objective on this Scoreboard
-     *
-     * @param name        Name of the Objective
-     * @param criteria    Criteria for the Objective
-     * @param displayName Name displayed to players for the Objective.
-     * @return The registered Objective
-     * @throws IllegalArgumentException if name is null
-     * @throws IllegalArgumentException if name is longer than 16
-     *                                  characters.
-     * @throws IllegalArgumentException if criteria is null
-     * @throws IllegalArgumentException if displayName is null
-     * @throws IllegalArgumentException if displayName is longer than 128
-     *                                  characters.
-     * @throws IllegalArgumentException if an objective by that name already
-     *                                  exists
-     * @deprecated in favour of {@link #registerNewObjective(String, String, net.kyori.adventure.text.Component)}
-     */
-    @NotNull
-    @Deprecated
-    // Paper
     Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @NotNull String displayName) throws IllegalArgumentException;
 
     /**
@@ -115,11 +67,8 @@ public interface Scoreboard {
      * @throws IllegalArgumentException if renderType is null
      * @throws IllegalArgumentException if an objective by that name already
      *                                  exists
-     * @deprecated in favour of {@link #registerNewObjective(String, String, net.kyori.adventure.text.Component, RenderType)}
      */
     @NotNull
-    @Deprecated
-    // Paper
     Objective registerNewObjective(@NotNull String name, @NotNull String criteria, @NotNull String displayName, @NotNull RenderType renderType) throws IllegalArgumentException;
 
     /**

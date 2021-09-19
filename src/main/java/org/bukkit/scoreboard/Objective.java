@@ -20,38 +20,13 @@ public interface Objective {
     @NotNull
     String getName() throws IllegalStateException;
 
-    // Paper start
-
     /**
      * Gets the name displayed to players for this objective
      *
      * @return this objective's display name
      * @throws IllegalStateException if this objective has been unregistered
-     */
-    @NotNull net.kyori.adventure.text.Component displayName() throws IllegalStateException;
-
-    /**
-     * Sets the name displayed to players for this objective.
-     *
-     * @param displayName Display name to set
-     * @throws IllegalStateException    if this objective has been unregistered
-     * @throws IllegalArgumentException if displayName is null
-     * @throws IllegalArgumentException if displayName is longer than 128
-     *                                  characters.
-     */
-    void displayName(@Nullable net.kyori.adventure.text.Component displayName) throws IllegalStateException, IllegalArgumentException;
-    // Paper end
-
-    /**
-     * Gets the name displayed to players for this objective
-     *
-     * @return this objective's display name
-     * @throws IllegalStateException if this objective has been unregistered
-     * @deprecated in favour of {@link #displayName()}
      */
     @NotNull
-    @Deprecated
-    // Paper
     String getDisplayName() throws IllegalStateException;
 
     /**
@@ -62,10 +37,7 @@ public interface Objective {
      * @throws IllegalArgumentException if displayName is null
      * @throws IllegalArgumentException if displayName is longer than 128
      *                                  characters.
-     * @deprecated in favour of {@link #displayName(net.kyori.adventure.text.Component)}
      */
-    @Deprecated
-    // Paper
     void setDisplayName(@NotNull String displayName) throws IllegalStateException, IllegalArgumentException;
 
     /**

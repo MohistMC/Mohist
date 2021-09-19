@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/player/ServerPlayerEntity.java
 +++ b/net/minecraft/entity/player/ServerPlayerEntity.java
-@@ -3,18 +_,18 @@
+@@ -3,18 +_,17 @@
  import com.google.common.collect.Lists;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
@@ -15,7 +15,6 @@
 +import java.util.*;
  import javax.annotation.Nullable;
 +
-+import io.papermc.paper.adventure.PaperAdventure;
 +import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 +import io.papermc.paper.event.packet.PlayerChunkUnloadEvent;
  import net.minecraft.advancements.CriteriaTriggers;
@@ -328,7 +327,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Player being ticked");
-@@ -469,51 +_,89 @@
+@@ -469,19 +_,60 @@
     }
  
     private void func_184849_a(ScoreCriteria p_184849_1_, int p_184849_2_) {
@@ -339,126 +338,85 @@
        });
     }
  
--   public void func_70645_a(DamageSource p_70645_1_) {
--      boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
+    public void func_70645_a(DamageSource p_70645_1_) {
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+       boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
 -      if (flag) {
 -         ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
 -         this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent), (p_212356_2_) -> {
--            if (!p_212356_2_.isSuccess()) {
--               int i = 256;
++
++      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.field_71071_by.func_70302_i_());
++
++      boolean keepInventory = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223600_c) || this.func_175149_v();
++
++      if (!keepInventory) {
++         for (ItemStack item : this.field_71071_by.getContents()) {
++            if (!item.func_190926_b() && !EnchantmentHelper.func_190939_c(item)) {
++               loot.add(CraftItemStack.asCraftMirror(item));
++            }
++         }
++      }
++
++      // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
++      this.func_213354_a(p_70645_1_, this.field_70718_bc > 0);
++      for (org.bukkit.inventory.ItemStack item : this.drops) {
++         loot.add(item);
++      }
++      this.drops.clear(); // SPIGOT-5188: make sure to clear
++
++      ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
++
++      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, itextcomponent.getString(), keepInventory);
++
++      // Mohist start - Fix PlayerDeathEvent drop/xp saving (again)
++      this.mohKeepInventory = event.getKeepInventory();
++      this.mohKeepLevel = event.getKeepLevel();
++      // Mohist end
++
++      // SPIGOT-943 - only call if they have an inventory open
++      if (this.field_71070_bA != this.field_71069_bz) {
++         this.func_71053_j();
++      }
++      String deathMessage = event.getDeathMessage();
++      if (deathMessage != null && deathMessage.length() > 0 && flag) {// TODO: allow plugins to override?
++         ITextComponent ichatbasecomponent = null;
++         if (deathMessage.equals(itextcomponent.toString())) {
++            itextcomponent = this.func_110142_aN().func_151521_b();
++         } else {
++            itextcomponent = org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromStringOrNull(deathMessage);
++         }
++         this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, ichatbasecomponent), (p_212356_2_) -> {
+             if (!p_212356_2_.isSuccess()) {
+                int i = 256;
 -               String s = itextcomponent.func_212636_a(256);
--               ITextComponent itextcomponent1 = new TranslationTextComponent("death.attack.message_too_long", (new StringTextComponent(s)).func_240699_a_(TextFormatting.YELLOW));
--               ITextComponent itextcomponent2 = (new TranslationTextComponent("death.attack.even_more_magic", this.func_145748_c_())).func_240700_a_((p_212357_1_) -> {
--                  return p_212357_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, itextcomponent1));
--               });
--               this.field_71135_a.func_147359_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent2));
--            }
--
--         });
--         Team team = this.func_96124_cp();
--         if (team != null && team.func_178771_j() != Team.Visible.ALWAYS) {
--            if (team.func_178771_j() == Team.Visible.HIDE_FOR_OTHER_TEAMS) {
--               this.field_71133_b.func_184103_al().func_177453_a(this, itextcomponent);
--            } else if (team.func_178771_j() == Team.Visible.HIDE_FOR_OWN_TEAM) {
--               this.field_71133_b.func_184103_al().func_177452_b(this, itextcomponent);
--            }
--         } else {
--            this.field_71133_b.func_184103_al().func_232641_a_(itextcomponent, ChatType.SYSTEM, Util.field_240973_b_);
--         }
--      } else {
--         this.field_71135_a.func_147359_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED));
--      }
--
--      this.func_192030_dh();
--      if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_234895_F_)) {
--         this.func_241157_eT_();
--      }
--
++               String s = ichatbasecomponent.func_212636_a(256);
+                ITextComponent itextcomponent1 = new TranslationTextComponent("death.attack.message_too_long", (new StringTextComponent(s)).func_240699_a_(TextFormatting.YELLOW));
+                ITextComponent itextcomponent2 = (new TranslationTextComponent("death.attack.even_more_magic", this.func_145748_c_())).func_240700_a_((p_212357_1_) -> {
+                   return p_212357_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, itextcomponent1));
+@@ -509,11 +_,12 @@
+          this.func_241157_eT_();
+       }
+ 
 -      if (!this.func_175149_v()) {
--         this.func_213345_d(p_70645_1_);
--      }
--
++      if (!event.getKeepInventory()) {
+          this.func_213345_d(p_70645_1_);
+       }
+ 
 -      this.func_96123_co().func_197893_a(ScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
-+    public void func_70645_a(DamageSource p_70645_1_) {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
-+        boolean flag = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l);
-+
-+        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.field_71071_by.func_70302_i_());
-+
-+        boolean keepInventory = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223600_c) || this.func_175149_v();
-+
-+        if (!keepInventory) {
-+            for (ItemStack item : this.field_71071_by.getContents()) {
-+                if (!item.func_190926_b() && !EnchantmentHelper.func_190939_c(item)) {
-+                    loot.add(CraftItemStack.asCraftMirror(item));
-+                }
-+            }
-+        }
-+
-+        // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
-+        this.func_213354_a(p_70645_1_, this.field_70718_bc > 0);
-+        for (org.bukkit.inventory.ItemStack item : this.drops) {
-+            loot.add(item);
-+        }
-+        this.drops.clear(); // SPIGOT-5188: make sure to clear
-+
-+        ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
-+
-+        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, PaperAdventure.asAdventure(itextcomponent), itextcomponent.getString(), keepInventory); // Paper - Adventure
-+
-+        // Mohist start - Fix PlayerDeathEvent drop/xp saving (again)
-+        this.mohKeepInventory = event.getKeepInventory();
-+        this.mohKeepLevel = event.getKeepLevel();
-+        // Mohist end
-+
-+        // SPIGOT-943 - only call if they have an inventory open
-+        if (this.field_71070_bA != this.field_71069_bz) {
-+            this.func_71053_j();
-+        }
-+        net.kyori.adventure.text.Component deathMessage = event.deathMessage() != null ? event.deathMessage() : net.kyori.adventure.text.Component.empty(); // Paper - Adventure
-+
-+        if (deathMessage != null && deathMessage != net.kyori.adventure.text.Component.empty() && flag) { // Paper - Adventure // TODO: allow plugins to override?
-+            ITextComponent ichatbasecomponent = PaperAdventure.asVanilla(deathMessage); // Paper - Adventure
-+            this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, ichatbasecomponent), (p_212356_2_) -> {
-+                if (!p_212356_2_.isSuccess()) {
-+                    int i = 256;
-+                    String s = ichatbasecomponent.func_212636_a(256);
-+                    ITextComponent itextcomponent1 = new TranslationTextComponent("death.attack.message_too_long", (new StringTextComponent(s)).func_240699_a_(TextFormatting.YELLOW));
-+                    ITextComponent itextcomponent2 = (new TranslationTextComponent("death.attack.even_more_magic", this.func_145748_c_())).func_240700_a_((p_212357_1_) -> {
-+                        return p_212357_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, itextcomponent1));
-+                    });
-+                    this.field_71135_a.func_147359_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent2));
-+                }
-+
-+            });
-+            Team team = this.func_96124_cp();
-+            if (team != null && team.func_178771_j() != Team.Visible.ALWAYS) {
-+                if (team.func_178771_j() == Team.Visible.HIDE_FOR_OTHER_TEAMS) {
-+                    this.field_71133_b.func_184103_al().func_177453_a(this, itextcomponent);
-+                } else if (team.func_178771_j() == Team.Visible.HIDE_FOR_OWN_TEAM) {
-+                    this.field_71133_b.func_184103_al().func_177452_b(this, itextcomponent);
-+                }
-+            } else {
-+                this.field_71133_b.func_184103_al().func_232641_a_(itextcomponent, ChatType.SYSTEM, Util.field_240973_b_);
-+            }
-+        } else {
-+            this.field_71135_a.func_147359_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED));
-+        }
-+
-+        this.func_192030_dh();
-+        if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_234895_F_)) {
-+            this.func_241157_eT_();
-+        }
-+
-+        if (!event.getKeepInventory()) {
-+            this.func_213345_d(p_70645_1_);
-+        }
-+
 +      // CraftBukkit - Get our scores instead
 +      this.field_70170_p.getCBServer().getScoreboardManager().getScoreboardScores(ScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
        LivingEntity livingentity = this.func_94060_bK();
        if (livingentity != null) {
           this.func_71029_a(Stats.field_199091_i.func_199076_b(livingentity.func_200600_R()));
+@@ -521,7 +_,7 @@
+          this.func_226298_f_(livingentity);
+       }
+ 
+-      this.field_70170_p.func_72960_a(this, (byte)3);
++      this.field_70170_p.func_72960_a(this, (byte) 3);
+       this.func_195066_a(Stats.field_188069_A);
+       this.func_175145_a(Stats.field_199092_j.func_199076_b(Stats.field_188098_h));
+       this.func_175145_a(Stats.field_199092_j.func_199076_b(Stats.field_203284_n));
 @@ -545,10 +_,12 @@
           this.func_85039_t(p_191956_2_);
           String s = this.func_195047_I_();

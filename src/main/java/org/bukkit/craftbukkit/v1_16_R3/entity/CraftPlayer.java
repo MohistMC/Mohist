@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
-import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.PlayerAdvancements;
@@ -213,24 +212,9 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     }
 
-
     @Override
-    public void setPlayerListHeaderFooter(BaseComponent[] header, BaseComponent[] footer) {
-        if (header != null) {
-            String headerJson = net.md_5.bungee.chat.ComponentSerializer.toString(header);
-            playerListHeader = net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().deserialize(headerJson);
-        } else {
-            playerListHeader = null;
-        }
+    public void setPlayerListHeaderFooter(@org.jetbrains.annotations.Nullable BaseComponent[] header, @org.jetbrains.annotations.Nullable BaseComponent[] footer) {
 
-        if (footer != null) {
-            String footerJson = net.md_5.bungee.chat.ComponentSerializer.toString(footer);
-            playerListFooter = net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().deserialize(footerJson);
-        } else {
-            playerListFooter = null;
-        }
-
-        updatePlayerListHeaderFooter();
     }
 
     @Override
@@ -303,16 +287,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     }
     // Paper end
 
-    @NotNull
-    @Override
-    public Component displayName() {
-        return null;
-    }
-
-    @Override
-    public void displayName(@org.jetbrains.annotations.Nullable Component displayName) {
-
-    }
 
     @Override
     public String getDisplayName() {
@@ -323,33 +297,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     public void setDisplayName(final String name) {
         getHandle().displayName = name == null ? getName() : name;
     }
-
-    // Paper start
-    @Override
-    public void playerListName(net.kyori.adventure.text.Component name) {
-        getHandle().listName = name == null ? null : io.papermc.paper.adventure.PaperAdventure.asVanilla(name);
-        for (ServerPlayerEntity player : server.getHandle().players) {
-            if (player.getBukkitEntity().canSee(this)) {
-                player.connection.send(new SPlayerListItemPacket(SPlayerListItemPacket.Action.UPDATE_DISPLAY_NAME, getHandle()));
-            }
-        }
-    }
-
-    @Override
-    public net.kyori.adventure.text.Component playerListName() {
-        return getHandle().listName == null ? net.kyori.adventure.text.Component.text(getName()) : io.papermc.paper.adventure.PaperAdventure.asAdventure(getHandle().listName);
-    }
-
-    @Override
-    public net.kyori.adventure.text.Component playerListHeader() {
-        return playerListHeader;
-    }
-
-    @Override
-    public net.kyori.adventure.text.Component playerListFooter() {
-        return playerListFooter;
-    }
-    // Paper end
 
     @Override
     public String getPlayerListName() {
@@ -369,44 +316,45 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
     }
 
-    private net.kyori.adventure.text.Component playerListHeader; // Paper - Adventure
-    private net.kyori.adventure.text.Component playerListFooter; // Paper - Adventure
+    private ITextComponent playerListHeader;
+    private ITextComponent playerListFooter;
 
     @Override
     public String getPlayerListHeader() {
-        return (this.playerListHeader == null) ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(playerListHeader);
+        return (playerListHeader == null) ? null : CraftChatMessage.fromComponent(playerListHeader);
     }
 
     @Override
     public String getPlayerListFooter() {
-        return (this.playerListFooter == null) ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(playerListFooter); // Paper - Adventure
+        return (playerListFooter == null) ? null : CraftChatMessage.fromComponent(playerListFooter);
     }
 
     @Override
     public void setPlayerListHeader(String header) {
-        this.playerListHeader = header == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(header); // Paper - Adventure
+        this.playerListHeader = CraftChatMessage.fromStringOrNull(header, true);
         updatePlayerListHeaderFooter();
     }
 
     @Override
     public void setPlayerListFooter(String footer) {
-        this.playerListFooter = footer == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(footer); // Paper - Adventure
+        this.playerListFooter = CraftChatMessage.fromStringOrNull(footer, true);
         updatePlayerListHeaderFooter();
     }
 
     @Override
     public void setPlayerListHeaderFooter(String header, String footer) {
-        this.playerListHeader = header == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(header); // Paper - Adventure
-        this.playerListFooter = footer == null ? null : io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(footer); // Paper - Adventure
+        this.playerListHeader = CraftChatMessage.fromStringOrNull(header, true);
+        this.playerListFooter = CraftChatMessage.fromStringOrNull(footer, true);
         updatePlayerListHeaderFooter();
     }
+
 
     private void updatePlayerListHeaderFooter() {
         if (getHandle().connection == null) return;
 
         SPlayerListHeaderFooterPacket packet = new SPlayerListHeaderFooterPacket();
-        packet.header = (this.playerListHeader == null) ? new StringTextComponent("") : io.papermc.paper.adventure.PaperAdventure.asVanilla(this.playerListHeader);
-        packet.footer = (this.playerListFooter == null) ? new StringTextComponent("") : io.papermc.paper.adventure.PaperAdventure.asVanilla(this.playerListFooter);
+        packet.header = (this.playerListHeader == null) ? new StringTextComponent("") : this.playerListHeader;
+        packet.footer = (this.playerListFooter == null) ? new StringTextComponent("") : this.playerListFooter;
         getHandle().connection.send(packet);
     }
 
@@ -437,10 +385,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         getHandle().connection.disconnect(message == null ? "" : message);
     }
 
-    @Override
-    public void kick(@org.jetbrains.annotations.Nullable Component message) {
-
-    }
 
     @Override
     public void setCompassTarget(Location loc) {
@@ -672,30 +616,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         getHandle().connection.send(packet);
     }
 
-    // Paper start
-    @Override
-    public void sendSignChange(Location loc, List<net.kyori.adventure.text.Component> lines) {
-        this.sendSignChange(loc, lines, org.bukkit.DyeColor.BLACK);
-    }
-
-    @Override
-    public void sendSignChange(Location loc, List<net.kyori.adventure.text.Component> lines, DyeColor dyeColor) {
-        if (getHandle().connection == null) {
-            return;
-        }
-        if (lines == null) {
-            lines = new java.util.ArrayList<>(4);
-        }
-        Validate.notNull(loc, "Location cannot be null");
-        Validate.notNull(dyeColor, "DyeColor cannot be null");
-        if (lines.size() < 4) {
-            throw new IllegalArgumentException("Must have at least 4 lines");
-        }
-        ITextComponent[] components = CraftSign.sanitizeLines(lines);
-        this.sendSignChange0(components, loc, dyeColor);
-    }
-
-    private void sendSignChange0(ITextComponent[] components, Location loc, DyeColor dyeColor) {
+    private void sendSignChange(ITextComponent[] components, Location loc, DyeColor dyeColor) {
         SignTileEntity sign = new SignTileEntity();
         sign.setPosition(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         sign.setColor(net.minecraft.item.DyeColor.byId(dyeColor.getWoolData()));
@@ -703,7 +624,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
         getHandle().connection.send(sign.getUpdatePacket());
     }
-    // Paper end
 
     @Override
     public void sendSignChange(Location loc, String[] lines) {
@@ -727,12 +647,11 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
 
         ITextComponent[] components = CraftSign.sanitizeLines(lines);
-        /*SignTileEntity sign = new SignTileEntity(); // Paper
+        SignTileEntity sign = new SignTileEntity();
         sign.setPosition(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         sign.setColor(net.minecraft.item.DyeColor.byId(dyeColor.getWoolData()));
         System.arraycopy(components, 0, sign.messages, 0, sign.messages.length);
-        getHandle().connection.send(sign.getUpdatePacket()); */ // Paper
-        this.sendSignChange0(components, loc, dyeColor); // Paper
+        getHandle().connection.send(sign.getUpdatePacket());
     }
 
     @Override

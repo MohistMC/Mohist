@@ -1,7 +1,6 @@
 package org.bukkit.event.player;
 
 import java.net.InetAddress;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -18,17 +17,17 @@ public class PlayerLoginEvent extends PlayerEvent {
     private final InetAddress address;
     private final String hostname;
     private Result result = Result.ALLOWED;
-    private net.kyori.adventure.text.Component message = net.kyori.adventure.text.Component.empty();
+    private String message = "";
     private final InetAddress realAddress; // Spigot
 
     /**
      * This constructor defaults message to an empty string, and result to
      * ALLOWED
      *
-     * @param player      The {@link Player} for this event
-     * @param hostname    The hostname that was used to connect to the server
-     * @param address     The address the player used to connect, provided for
-     *                    timing issues
+     * @param player The {@link Player} for this event
+     * @param hostname The hostname that was used to connect to the server
+     * @param address The address the player used to connect, provided for
+     *     timing issues
      * @param realAddress the actual, unspoofed connecting address
      */
     public PlayerLoginEvent(@NotNull final Player player, @NotNull final String hostname, @NotNull final InetAddress address, final @NotNull InetAddress realAddress) { // Spigot
@@ -47,63 +46,21 @@ public class PlayerLoginEvent extends PlayerEvent {
     /**
      * This constructor pre-configures the event with a result and message
      *
-     * @param player      The {@link Player} for this event
-     * @param hostname    The hostname that was used to connect to the server
-     * @param address     The address the player used to connect, provided for
-     *                    timing issues
-     * @param result      The result status for this event
-     * @param message     The message to be displayed if result denies login
+     * @param player The {@link Player} for this event
+     * @param hostname The hostname that was used to connect to the server
+     * @param address The address the player used to connect, provided for
+     *     timing issues
+     * @param result The result status for this event
+     * @param message The message to be displayed if result denies login
      * @param realAddress the actual, unspoofed connecting address
-     * @deprecated in favour of {@link #PlayerLoginEvent(Player, String, InetAddress, Result, net.kyori.adventure.text.Component, InetAddress)}
      */
-    @Deprecated // Paper
     public PlayerLoginEvent(@NotNull final Player player, @NotNull String hostname, @NotNull final InetAddress address, @NotNull final Result result, @NotNull final String message, @NotNull final InetAddress realAddress) { // Spigot
         this(player, hostname, address, realAddress); // Spigot
         this.result = result;
-        this.message = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(message); // Paper
-    }
-
-    // Paper start
-
-    /**
-     * This constructor pre-configures the event with a result and message
-     *
-     * @param player      The {@link Player} for this event
-     * @param hostname    The hostname that was used to connect to the server
-     * @param address     The address the player used to connect, provided for
-     *                    timing issues
-     * @param result      The result status for this event
-     * @param message     The message to be displayed if result denies login
-     * @param realAddress the actual, unspoofed connecting address
-     */
-    public PlayerLoginEvent(@NotNull final Player player, @NotNull String hostname, @NotNull final InetAddress address, @NotNull final Result result, @NotNull final net.kyori.adventure.text.Component message, @NotNull final InetAddress realAddress) { // Spigot
-        this(player, hostname, address, realAddress); // Spigot
-        this.result = result;
         this.message = message;
     }
-
-    /**
-     * Gets the current kick message that will be used if getResult() !=
-     * Result.ALLOWED
-     *
-     * @return Current kick message
-     */
-    public @NotNull net.kyori.adventure.text.Component kickMessage() {
-        return this.message;
-    }
-
-    /**
-     * Sets the kick message to display if getResult() != Result.ALLOWED
-     *
-     * @param message New kick message
-     */
-    public void kickMessage(@NotNull net.kyori.adventure.text.Component message) {
-        this.message = message;
-    }
-    // Paper end
 
     // Spigot start
-
     /**
      * Gets the connection address of this player, regardless of whether it has been spoofed or not.
      *
@@ -139,23 +96,19 @@ public class PlayerLoginEvent extends PlayerEvent {
      * Result.ALLOWED
      *
      * @return Current kick message
-     * @deprecated in favour of {@link #kickMessage()}
      */
     @NotNull
-    @Deprecated // Papep
     public String getKickMessage() {
-        return org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().serialize(this.message); // Paper
+        return message;
     }
 
     /**
      * Sets the kick message to display if getResult() != Result.ALLOWED
      *
      * @param message New kick message
-     * @deprecated in favour of {@link #kickMessage(net.kyori.adventure.text.Component)}
      */
-    @Deprecated // Paper
     public void setKickMessage(@NotNull final String message) {
-        this.message = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(message); // Paper
+        this.message = message;
     }
 
     /**
@@ -174,30 +127,16 @@ public class PlayerLoginEvent extends PlayerEvent {
      */
     public void allow() {
         result = Result.ALLOWED;
-        message = net.kyori.adventure.text.Component.empty(); // Paper
+        message = "";
     }
 
     /**
      * Disallows the player from logging in, with the given reason
      *
-     * @param result  New result for disallowing the player
+     * @param result New result for disallowing the player
      * @param message Kick message to display to the user
-     * @deprecated in favour of {@link #disallow(Result, net.kyori.adventure.text.Component)}
      */
-    @Deprecated // Paper start
     public void disallow(@NotNull final Result result, @NotNull final String message) {
-        this.result = result;
-        this.message = org.bukkit.Bukkit.getUnsafe().legacyComponentSerializer().deserialize(message);
-    }
-
-    /**
-     * Disallows the player from logging in, with the given reason
-     *
-     * @param result  New result for disallowing the player
-     * @param message Kick message to display to the user
-     */
-    public void disallow(@NotNull final Result result, @NotNull final net.kyori.adventure.text.Component message) {
-        // Paper end
         this.result = result;
         this.message = message;
     }
@@ -208,7 +147,7 @@ public class PlayerLoginEvent extends PlayerEvent {
      * returning null during PlayerLoginEvent.
      *
      * @return The address for this player. For legacy compatibility, this may
-     * be null.
+     *     be null.
      */
     @NotNull
     public InetAddress getAddress() {

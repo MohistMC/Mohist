@@ -1308,16 +1308,7 @@ public final class CraftServer implements Server {
         return configuration.getInt("settings.spawn-radius", -1);
     }
 
-    // Paper start
     @Override
-    public net.kyori.adventure.text.Component shutdownMessage() {
-        String msg = getShutdownMessage();
-        return msg != null ? io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(msg) : null;
-    }
-
-    // Paper end
-    @Override
-    @Deprecated // Paper
     public String getShutdownMessage() {
         return configuration.getString("settings.shutdown-message");
     }
@@ -1433,20 +1424,7 @@ public final class CraftServer implements Server {
     }/**/
 
     @Override
-    @Deprecated // Paper
     public int broadcast(String message, String permission) {
-        // Paper start - Adventure
-        return this.broadcast(io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(message), permission);
-    }
-
-    @Override
-    public int broadcast(net.kyori.adventure.text.Component message) {
-        return this.broadcast(message, BROADCAST_CHANNEL_USERS);
-    }
-
-    @Override
-    public int broadcast(net.kyori.adventure.text.Component message, String permission) {
-        // Paper end
         Set<CommandSender> recipients = new HashSet<>();
         for (Permissible permissible : getPluginManager().getPermissionSubscriptions(permission)) {
             if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
@@ -1460,8 +1438,6 @@ public final class CraftServer implements Server {
         if (broadcastMessageEvent.isCancelled()) {
             return 0;
         }
-
-        message = broadcastMessageEvent.message(); // Paper - Adventure
 
         for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
@@ -1680,28 +1656,11 @@ public final class CraftServer implements Server {
         return result;
     }
 
-    // Paper start
-    @Override
-    public Inventory createInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
-        Validate.isTrue(type.isCreatable(), "Cannot open an inventory of type ", type);
-        return CraftInventoryCreator.INSTANCE.createInventory(owner, type, title);
-    }
-    // Paper end
-
     @Override
     public Inventory createInventory(InventoryHolder owner, InventoryType type) {
         Validate.isTrue(type.isCreatable(), "Cannot open an inventory of type ", type);
         return CraftInventoryCreator.INSTANCE.createInventory(owner, type);
     }
-
-    // Paper start
-    @Override
-    public Inventory createInventory(InventoryHolder owner, int size, net.kyori.adventure.text.Component title) throws IllegalArgumentException {
-        Validate.isTrue(9 <= size && size <= 54 && size % 9 == 0, "Size for custom inventory must be a multiple of 9 between 9 and 54 slots (got " + size + ")");
-        return CraftInventoryCreator.INSTANCE.createInventory(owner, size, title);
-    }
-    // Paper end
-
 
     @Override
     public Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
@@ -1721,15 +1680,7 @@ public final class CraftServer implements Server {
         return CraftInventoryCreator.INSTANCE.createInventory(owner, size, title);
     }
 
-    // Paper start
     @Override
-    public Merchant createMerchant(net.kyori.adventure.text.Component title) {
-        return new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMerchantCustom(title == null ? InventoryType.MERCHANT.defaultTitle() : title);
-    }
-
-    // Paper end
-    @Override
-    @Deprecated // Paper
     public Merchant createMerchant(String title) {
         return new CraftMerchantCustom(title == null ? InventoryType.MERCHANT.getDefaultTitle() : title);
     }
@@ -1773,13 +1724,6 @@ public final class CraftServer implements Server {
         return Thread.currentThread().equals(console.serverThread); // Paper - Fix issues with detecting main thread properlyog)
     }
 
-    // Paper start
-    @Override
-    public net.kyori.adventure.text.Component motd() {
-        return io.papermc.paper.adventure.PaperAdventure.asAdventure(new StringTextComponent(console.getMotd()));
-    }
-    // Paper end
-
     @Override
     public String getMotd() {
         return console.getMotd();
@@ -1803,7 +1747,7 @@ public final class CraftServer implements Server {
             offers = tabCompleteChat(player, message);
         }
 
-        TabCompleteEvent tabEvent = new TabCompleteEvent(player, message, offers, message.startsWith("/") || forceCommand, pos != null ? net.minecraft.addons.server.MCUtil.toLocation(((CraftWorld) player.getWorld()).getHandle(), new BlockPos(pos)) : null); // Paper
+        TabCompleteEvent tabEvent = new TabCompleteEvent(player, message, offers);
         getPluginManager().callEvent(tabEvent);
 
         return tabEvent.isCancelled() ? Collections.EMPTY_LIST : tabEvent.getCompletions();
@@ -2213,48 +2157,4 @@ public final class CraftServer implements Server {
     public void setPlayerList(PlayerList playerList) {
         playerList = playerList;
     }
-
-    // Mohist - fix https://github.com/MohistMC/Mohist/issues/1420 ?
-    /*// Paper start
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static java.nio.file.Path dumpHeap(java.nio.file.Path dir, String name) {
-        try {
-            java.nio.file.Files.createDirectories(dir);
-
-            javax.management.MBeanServer server = java.lang.management.ManagementFactory.getPlatformMBeanServer();
-            java.nio.file.Path file;
-
-            try {
-                Class clazz = Class.forName("openj9.lang.management.OpenJ9DiagnosticsMXBean");
-                Object openj9Mbean = java.lang.management.ManagementFactory.newPlatformMXBeanProxy(server, "openj9.lang.management:type=OpenJ9Diagnostics", clazz);
-                java.lang.reflect.Method m = clazz.getMethod("triggerDumpToFile", String.class, String.class);
-                file = dir.resolve(name + ".phd");
-                m.invoke(openj9Mbean, "heap", file.toString());
-            } catch (ClassNotFoundException e) {
-                Class clazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-                Object hotspotMBean = java.lang.management.ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", clazz);
-                java.lang.reflect.Method m = clazz.getMethod("dumpHeap", String.class, boolean.class);
-                file = dir.resolve(name + ".hprof");
-                m.invoke(hotspotMBean, file.toString(), true);
-            }
-
-            return file;
-        } catch (Throwable t) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not write heap", t);
-            return null;
-        }
-    }
-    // Paper end*/
-
-    // Paper start
-    private Iterable<? extends net.kyori.adventure.audience.Audience> adventure$audiences;
-
-    @Override
-    public Iterable<? extends net.kyori.adventure.audience.Audience> audiences() {
-        if (this.adventure$audiences == null) {
-            this.adventure$audiences = com.google.common.collect.Iterables.concat(java.util.Collections.singleton(this.getConsoleSender()), this.getOnlinePlayers());
-        }
-        return this.adventure$audiences;
-    }
-    // Paper end
 }

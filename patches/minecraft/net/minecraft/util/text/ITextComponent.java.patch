@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/text/ITextComponent.java
 +++ b/net/minecraft/util/text/ITextComponent.java
-@@ -17,10 +_,13 @@
+@@ -17,10 +_,12 @@
  import java.io.StringReader;
  import java.lang.reflect.Field;
  import java.lang.reflect.Type;
@@ -10,7 +10,6 @@
  import java.util.Map.Entry;
  import javax.annotation.Nullable;
 +
-+import io.papermc.paper.adventure.AdventureComponent;
  import net.minecraft.util.EnumTypeAdapterFactory;
  import net.minecraft.util.IReorderingProcessor;
  import net.minecraft.util.JSONUtils;
@@ -37,22 +36,6 @@
     Style func_150256_b();
  
     String func_150261_e();
-@@ -113,6 +_,7 @@
-       private static final Gson field_150700_a = Util.func_199748_a(() -> {
-          GsonBuilder gsonbuilder = new GsonBuilder();
-          gsonbuilder.disableHtmlEscaping();
-+         gsonbuilder.registerTypeAdapter(AdventureComponent.class, new AdventureComponent.Serializer()); // Paper
-          gsonbuilder.registerTypeHierarchyAdapter(ITextComponent.class, new ITextComponent.Serializer());
-          gsonbuilder.registerTypeHierarchyAdapter(Style.class, new Style.Serializer());
-          gsonbuilder.registerTypeAdapterFactory(new EnumTypeAdapterFactory());
-@@ -245,6 +_,7 @@
-       }
- 
-       public JsonElement serialize(ITextComponent p_serialize_1_, Type p_serialize_2_, JsonSerializationContext p_serialize_3_) {
-+         if (p_serialize_1_ instanceof AdventureComponent) return p_serialize_3_.serialize(p_serialize_1_); // Paper
-          JsonObject jsonobject = new JsonObject();
-          if (!p_serialize_1_.func_150256_b().func_150229_g()) {
-             this.func_150695_a(p_serialize_1_.func_150256_b(), jsonobject, p_serialize_3_);
 @@ -325,6 +_,7 @@
           return field_150700_a.toJsonTree(p_200528_0_);
        }
