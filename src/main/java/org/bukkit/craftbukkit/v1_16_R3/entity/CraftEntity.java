@@ -385,6 +385,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         }
                     } else if (entity instanceof ZoglinEntity) {
                         return new CraftZoglin(server, (ZoglinEntity) entity);
+                    } else if (entity instanceof AbstractRaiderEntity) {
+                        return new CraftCustomRaider(server, (AbstractRaiderEntity) entity);
                     } else {
                         return new CraftMonster(server, (MonsterEntity) entity);
                     }
@@ -545,8 +547,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             return new CraftCustomProjectileEntity(server, (ProjectileEntity) entity);
         } else if (entity instanceof ProjectileItemEntity) {
             return new CraftCustomThrowableProjectile(server, (ProjectileItemEntity) entity);
-        } else if (entity instanceof AbstractRaiderEntity) {
-            return new CraftCustomRaider(server, (AbstractRaiderEntity) entity);
         } else if (entity instanceof AbstractMinecartEntity) {
             return new CraftCustomMinecraft(server, (AbstractMinecartEntity) entity);
         } else if (entity instanceof ContainerMinecartEntity) {
