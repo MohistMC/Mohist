@@ -12,9 +12,10 @@
  public class WorkbenchContainer extends RecipeBookContainer<CraftingInventory> {
 -   private final CraftingInventory field_75162_e = new CraftingInventory(this, 3, 3);
 -   private final CraftResultInventory field_75160_f = new CraftResultInventory();
+-   private final IWorldPosCallable field_217070_e;
 +   private final CraftingInventory field_75162_e;
-+   public final CraftResultInventory field_75160_f;
-    private final IWorldPosCallable field_217070_e;
++   private final CraftResultInventory field_75160_f;
++   public final IWorldPosCallable field_217070_e;
     private final PlayerEntity field_192390_i;
  
 +   // CraftBukkit start
