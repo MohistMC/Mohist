@@ -11,10 +11,9 @@
  
  public class WorkbenchContainer extends RecipeBookContainer<CraftingInventory> {
 -   private final CraftingInventory field_75162_e = new CraftingInventory(this, 3, 3);
--   private final CraftResultInventory field_75160_f = new CraftResultInventory();
--   private final IWorldPosCallable field_217070_e;
 +   private final CraftingInventory field_75162_e;
-+   private final CraftResultInventory field_75160_f;
+    private final CraftResultInventory field_75160_f = new CraftResultInventory();
+-   private final IWorldPosCallable field_217070_e;
 +   public final IWorldPosCallable field_217070_e;
     private final PlayerEntity field_192390_i;
  
@@ -32,7 +31,7 @@
        this.field_217070_e = p_i50090_3_;
 +      // CraftBukkit start - Switched order of IInventory construction and stored player
 +      this.field_75162_e = new CraftingInventory(this, 3, 3, p_i50090_2_.field_70458_d); // CraftBukkit - pass player
-+      this.field_75160_f = new CraftResultInventory();
++      this.field_75162_e.resultInventory = this.field_75160_f;
 +      this.playerCB = p_i50090_2_;
 +      // CraftBukkit end
        this.field_192390_i = p_i50090_2_.field_70458_d;
