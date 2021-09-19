@@ -328,14 +328,9 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         container = CraftEventFactory.callInventoryOpenEvent(player, container);
         if (container == null) return;
 
-        //String title = container.getBukkitView().getTitle(); // Paper - comment
-        net.kyori.adventure.text.Component adventure$title = container.getBukkitView().title(); // Paper
-        if (adventure$title == null)
-            adventure$title = io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(container.getBukkitView().getTitle()); // Paper
+        String title = container.getBukkitView().getTitle();
 
-
-        //player.connection.send(new SOpenWindowPacket(container.containerId, windowType, CraftChatMessage.fromString(title)[0])); // Paper // Paper - comment
-        player.connection.send(new SOpenWindowPacket(container.containerId, windowType, io.papermc.paper.adventure.PaperAdventure.asVanilla(adventure$title))); // Paper
+        player.connection.send(new SOpenWindowPacket(container.containerId, windowType, CraftChatMessage.fromString(title)[0]));
 
         getHandle().containerMenu = container;
         getHandle().containerMenu.addSlotListener(player);
@@ -405,12 +400,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
         // Now open the window
         ContainerType<?> windowType = CraftContainer.getNotchInventoryType(inventory.getTopInventory());
-        //String title = inventory.getTitle(); // Paper - comment
-        net.kyori.adventure.text.Component adventure$title = inventory.title(); // Paper
-        if (adventure$title == null)
-            adventure$title = io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(inventory.getTitle()); // Paper
-        //player.connection.send(new SOpenWindowPacket(container.containerId, windowType, CraftChatMessage.fromString(title)[0])); // Paper - comment
-        player.connection.send(new SOpenWindowPacket(container.containerId, windowType, io.papermc.paper.adventure.PaperAdventure.asVanilla(adventure$title))); // Paper
+        String title = inventory.getTitle();
+        player.connection.send(new SOpenWindowPacket(container.containerId, windowType, CraftChatMessage.fromString(title)[0]));
         player.containerMenu = container;
         player.containerMenu.addSlotListener(player);
     }

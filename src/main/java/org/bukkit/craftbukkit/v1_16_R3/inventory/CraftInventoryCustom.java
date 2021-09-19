@@ -20,12 +20,6 @@ public class CraftInventoryCustom extends CraftInventory {
         super(new MinecraftInventory(owner, type));
     }
 
-    // Paper start
-    public CraftInventoryCustom(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
-        super(new MinecraftInventory(owner, type, title));
-    }
-    // Paper end
-
     public CraftInventoryCustom(InventoryHolder owner, InventoryType type, String title) {
         super(new MinecraftInventory(owner, type, title));
     }
@@ -33,13 +27,6 @@ public class CraftInventoryCustom extends CraftInventory {
     public CraftInventoryCustom(InventoryHolder owner, int size) {
         super(new MinecraftInventory(owner, size));
     }
-
-    // Paper start
-    public CraftInventoryCustom(InventoryHolder owner, int size, net.kyori.adventure.text.Component title) {
-        super(new MinecraftInventory(owner, size, title));
-    }
-    // Paper end
-
 
     public CraftInventoryCustom(InventoryHolder owner, int size, String title) {
         super(new MinecraftInventory(owner, size, title));
@@ -54,17 +41,8 @@ public class CraftInventoryCustom extends CraftInventory {
         private int maxStack = MAX_STACK;
         private final List<HumanEntity> viewers;
         private final String title;
-        private final net.kyori.adventure.text.Component adventure$title; // Paper
         private InventoryType type;
         private final InventoryHolder owner;
-
-        // Paper start
-        public MinecraftInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
-            this(owner, type.getDefaultSize(), title);
-            this.type = type;
-        }
-        // Paper end
-
 
         public MinecraftInventory(InventoryHolder owner, InventoryType type) {
             this(owner, type.getDefaultSize(), type.getDefaultTitle());
@@ -84,28 +62,14 @@ public class CraftInventoryCustom extends CraftInventory {
             Validate.notNull(title, "Title cannot be null");
             this.items = NonNullList.withSize(size, ItemStack.EMPTY);
             this.title = title;
-            this.adventure$title = io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(title);
             this.viewers = new ArrayList<HumanEntity>();
             this.owner = owner;
             this.type = InventoryType.CHEST;
         }
-
-        // Paper start
-        public MinecraftInventory(final InventoryHolder owner, final int size, final net.kyori.adventure.text.Component title) {
-            Validate.notNull(title, "Title cannot be null");
-            this.items = NonNullList.withSize(size, ItemStack.EMPTY);
-            this.title = io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(title);
-            this.adventure$title = title;
-            this.viewers = new ArrayList<HumanEntity>();
-            this.owner = owner;
-            this.type = InventoryType.CHEST;
-        }
-        // Paper end
 
         public MinecraftInventory(InventoryHolder owner, NonNullList<ItemStack> items) {
             this.items = items;
             this.title = "Chest";
-            this.adventure$title = io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize("Chest");
             this.viewers = new ArrayList<>();
             this.owner = owner;
             this.type = InventoryType.CHEST;
@@ -232,12 +196,6 @@ public class CraftInventoryCustom extends CraftInventory {
         public Location getLocation() {
             return null;
         }
-
-        // Paper start
-        public net.kyori.adventure.text.Component title() {
-            return this.adventure$title;
-        }
-        // Paper end
 
         public String getTitle() {
             return title;

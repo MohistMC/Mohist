@@ -796,9 +796,9 @@ public class CraftEventFactory {
     }
 
     // TODO
-        public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayerEntity victim, List<org.bukkit.inventory.ItemStack> drops, net.kyori.adventure.text.Component deathMessage, String stringDeathMessage, boolean keepInventory) { // Paper - Adventure
+    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayerEntity victim, List<org.bukkit.inventory.ItemStack> drops, String stringDeathMessage, boolean keepInventory) {
         CraftPlayer entity = victim.getBukkitEntity();
-        PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.getExpReward(), 0, deathMessage, stringDeathMessage); // Paper - Adventure
+        PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.getExpReward(), 0, stringDeathMessage); // Paper - Adventure
         event.setKeepInventory(keepInventory);
         org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -824,7 +824,7 @@ public class CraftEventFactory {
      * Server methods
      */
     public static ServerListPingEvent callServerListPingEvent(Server craftServer, InetAddress address, String motd, int numPlayers, int maxPlayers) {
-        ServerListPingEvent event = new ServerListPingEvent(address, craftServer.motd(), numPlayers, maxPlayers); // Paper - Adventure
+        ServerListPingEvent event = new ServerListPingEvent(address, motd, numPlayers, maxPlayers);
         craftServer.getPluginManager().callEvent(event);
         return event;
     }

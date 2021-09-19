@@ -30,7 +30,7 @@ public abstract class InventoryInteractEvent extends InventoryEvent implements C
      * Sets the result of this event. This will change whether or not this
      * event is considered cancelled.
      *
-     * @param newResult the new {@link org.bukkit.event.Event.Result} for this event
+     * @param newResult the new {@link Result} for this event
      * @see #isCancelled()
      */
     public void setResult(@NotNull Result newResult) {
@@ -38,7 +38,7 @@ public abstract class InventoryInteractEvent extends InventoryEvent implements C
     }
 
     /**
-     * Gets the {@link org.bukkit.event.Event.Result} of this event. The Result describes the
+     * Gets the {@link Result} of this event. The Result describes the
      * behavior that will be applied to the inventory in relation to this
      * event.
      *
@@ -65,8 +65,8 @@ public abstract class InventoryInteractEvent extends InventoryEvent implements C
     }
 
     /**
-     * Proxy method to {@link #setResult(org.bukkit.event.Event.Result)} for the Cancellable
-     * interface. {@link #setResult(org.bukkit.event.Event.Result)} is preferred, as it allows
+     * Proxy method to {@link #setResult(Result)} for the Cancellable
+     * interface. {@link #setResult(Result)} is preferred, as it allows
      * you to specify the Result beyond Result.DENY and Result.ALLOW.
      * <p>
      * {@inheritDoc}

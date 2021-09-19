@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * use this class to encapsulate Materials for which {@link Material#isItem()}
  * returns false.</b>
  */
-public class ItemStack implements Cloneable, ConfigurationSerializable, net.kyori.adventure.text.event.HoverEventSource<net.kyori.adventure.text.event.HoverEvent.ShowItem> { // Paper
+public class ItemStack implements Cloneable, ConfigurationSerializable{
     private Material type = Material.AIR;
     private int amount = 0;
     private MaterialData data = null;
@@ -599,21 +599,4 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, net.kyor
 
         return true;
     }
-
-    // Paper start
-    @NotNull
-    @Override
-    public net.kyori.adventure.text.event.HoverEvent<net.kyori.adventure.text.event.HoverEvent.ShowItem> asHoverEvent(final @NotNull java.util.function.UnaryOperator<net.kyori.adventure.text.event.HoverEvent.ShowItem> op) {
-        return org.bukkit.Bukkit.getServer().getItemFactory().asHoverEvent(this, op);
-    }
-
-    /**
-     * Get the formatted display name of the {@link ItemStack}.
-     *
-     * @return display name of the {@link ItemStack}
-     */
-    public @NotNull net.kyori.adventure.text.Component displayName() {
-        return Bukkit.getServer().getItemFactory().displayName(this);
-    }
-    // Paper end
 }

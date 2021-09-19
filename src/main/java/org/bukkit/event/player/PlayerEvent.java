@@ -14,7 +14,7 @@ public abstract class PlayerEvent extends Event {
         player = who;
     }
 
-    public PlayerEvent(@NotNull final Player who, boolean async) { // Paper - public
+    PlayerEvent(@NotNull final Player who, boolean async) {
         super(async);
         player = who;
 

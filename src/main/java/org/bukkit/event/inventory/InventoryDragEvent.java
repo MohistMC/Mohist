@@ -103,7 +103,7 @@ public class InventoryDragEvent extends InventoryInteractEvent {
      * Gets the slots to be changed in this drag.
      *
      * @return list of converted slot ids, suitable for {@link
-     *     org.bukkit.inventory.Inventory#getItem(int)}.
+     *     Inventory#getItem(int)}.
      */
     @NotNull
     public Set<Integer> getInventorySlots() {

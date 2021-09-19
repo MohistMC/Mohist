@@ -71,19 +71,6 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconTileEntity> impleme
         this.getSnapshot().secondaryPower = (effect != null) ? Effect.byId(effect.getId()) : null;
     }
 
-    // Paper start
-    @Override
-    public net.kyori.adventure.text.Component customName() {
-        final BeaconTileEntity be = this.getSnapshot();
-        return be.name != null ? io.papermc.paper.adventure.PaperAdventure.asAdventure(be.name) : null;
-    }
-
-    @Override
-    public void customName(final net.kyori.adventure.text.Component customName) {
-        this.getSnapshot().setCustomName(customName != null ? io.papermc.paper.adventure.PaperAdventure.asVanilla(customName) : null);
-    }
-    // Paper end
-
     @Override
     public String getCustomName() {
         BeaconTileEntity beacon = this.getSnapshot();

@@ -28,7 +28,7 @@ public class BlockDispenseEvent extends BlockEvent implements Cancellable {
     /**
      * Gets the item that is being dispensed. Modifying the returned item will
      * have no effect, you must use {@link
-     * #setItem(org.bukkit.inventory.ItemStack)} instead.
+     * #setItem(ItemStack)} instead.
      *
      * @return An ItemStack for the item being dispensed
      */
@@ -50,7 +50,7 @@ public class BlockDispenseEvent extends BlockEvent implements Cancellable {
      * Gets the velocity in meters per tick.
      * <p>
      * Note: Modifying the returned Vector will not change the velocity, you
-     * must use {@link #setVelocity(org.bukkit.util.Vector)} instead.
+     * must use {@link #setVelocity(Vector)} instead.
      *
      * @return A Vector for the dispensed item's velocity
      */

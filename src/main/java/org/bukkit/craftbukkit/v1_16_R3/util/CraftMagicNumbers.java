@@ -60,33 +60,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private CraftMagicNumbers() {
     }
 
-    // Paper start
-    @Override
-    public net.kyori.adventure.text.flattener.ComponentFlattener componentFlattener() {
-        return io.papermc.paper.adventure.PaperAdventure.FLATTENER;
-    }
-
-    @Override
-    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer colorDownsamplingGsonComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.COLOR_DOWNSAMPLING_GSON;
-    }
-
-    @Override
-    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer gsonComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.GSON;
-    }
-
-    @Override
-    public net.kyori.adventure.text.serializer.plain.PlainComponentSerializer plainComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.PLAIN;
-    }
-
-    @Override
-    public net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC;
-    }
-    // Paper end
-
     public static BlockState getBlock(MaterialData material) {
         return getBlock(material.getItemType(), material.getData());
     }

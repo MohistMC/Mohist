@@ -76,13 +76,6 @@ public class CraftContainer extends Container {
                 return inventory.getType();
             }
 
-            // Paper start
-            @Override
-            public net.kyori.adventure.text.Component title() {
-                return inventory instanceof CraftInventoryCustom ? ((CraftInventoryCustom.MinecraftInventory) ((CraftInventory) inventory).getInventory()).title() : net.kyori.adventure.text.Component.text(inventory.getType().getDefaultTitle());
-            }
-            // Paper end
-
             @Override
             public String getTitle() {
                 return inventory instanceof CraftInventoryCustom ? ((CraftInventoryCustom.MinecraftInventory) ((CraftInventory) inventory).getInventory()).getTitle() : inventory.getType().getDefaultTitle();

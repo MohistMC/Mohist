@@ -1,8 +1,6 @@
 package org.bukkit.event.server;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
@@ -10,7 +8,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Called when a {@link CommandSender} of any description (ie: player or
@@ -25,21 +22,12 @@ import org.jetbrains.annotations.Nullable;
 public class TabCompleteEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-    //
     private final CommandSender sender;
     private final String buffer;
     private List<String> completions;
     private boolean cancelled;
 
     public TabCompleteEvent(@NotNull CommandSender sender, @NotNull String buffer, @NotNull List<String> completions) {
-        // Paper start
-        this(sender, buffer, completions, sender instanceof org.bukkit.command.ConsoleCommandSender || buffer.startsWith("/"), null);
-    }
-
-    public TabCompleteEvent(@NotNull CommandSender sender, @NotNull String buffer, @NotNull List<String> completions, boolean isCommand, @Nullable org.bukkit.Location location) {
-        this.isCommand = isCommand;
-        this.loc = location;
-        // Paper end
         Validate.notNull(sender, "sender");
         Validate.notNull(buffer, "buffer");
         Validate.notNull(completions, "completions");
@@ -80,36 +68,14 @@ public class TabCompleteEvent extends Event implements Cancellable {
         return completions;
     }
 
-    // Paper start
-    private final boolean isCommand;
-    private final org.bukkit.Location loc;
-
-    /**
-     * @return True if it is a command being tab completed, false if it is a chat message.
-     */
-    public boolean isCommand() {
-        return isCommand;
-    }
-
-    /**
-     * @return The position looked at by the sender, or null if none
-     */
-    @Nullable
-    public org.bukkit.Location getLocation() {
-        return loc;
-    }
-    // Paper end
-
     /**
      * Set the completions offered, overriding any already set.
-     * <p>
-     * The passed collection will be cloned to a new List. You must call {{@link #getCompletions()}} to mutate from here
      *
      * @param completions the new completions
      */
     public void setCompletions(@NotNull List<String> completions) {
         Validate.notNull(completions);
-        this.completions = new ArrayList<>(completions); // Paper
+        this.completions = completions;
     }
 
     @Override

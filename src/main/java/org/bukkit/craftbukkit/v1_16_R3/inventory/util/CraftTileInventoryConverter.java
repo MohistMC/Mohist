@@ -31,18 +31,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         return getInventory(getTileEntity());
     }
 
-    // Paper start
-    @Override
-    public Inventory createInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
-        IInventory te = getTileEntity();
-        if (te instanceof LockableLootTileEntity) {
-            ((LockableLootTileEntity) te).setCustomName(io.papermc.paper.adventure.PaperAdventure.asVanilla(title));
-        }
-
-        return getInventory(te);
-    }
-    // Paper end
-
     @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type, String title) {
         IInventory te = getTileEntity();
@@ -66,15 +54,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
             return furnace;
         }
 
-        // Paper start
-        @Override
-        public Inventory createInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
-            IInventory tileEntity = getTileEntity();
-            ((AbstractFurnaceTileEntity) tileEntity).setCustomName(io.papermc.paper.adventure.PaperAdventure.asVanilla(title));
-            return getInventory(tileEntity);
-        }
-        // Paper end
-
         @Override
         public Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
             IInventory tileEntity = getTileEntity();
@@ -94,18 +73,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         public IInventory getTileEntity() {
             return new BrewingStandTileEntity();
         }
-
-        // Paper start
-        @Override
-        public Inventory createInventory(InventoryHolder owner, InventoryType type, net.kyori.adventure.text.Component title) {
-            // BrewingStand does not extend TileEntityLootable
-            IInventory tileEntity = getTileEntity();
-            if (tileEntity instanceof BrewingStandTileEntity) {
-                ((BrewingStandTileEntity) tileEntity).setCustomName(io.papermc.paper.adventure.PaperAdventure.asVanilla(title));
-            }
-            return getInventory(tileEntity);
-        }
-        // Paper end
 
         @Override
         public Inventory createInventory(InventoryHolder holder, InventoryType type, String title) {

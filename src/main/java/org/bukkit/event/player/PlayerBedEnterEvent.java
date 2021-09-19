@@ -76,11 +76,11 @@ public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
     /**
      * This controls the action to take with the bed that was clicked on.
      * <p>
-     * In case of {@link org.bukkit.event.Event.Result#DEFAULT}, the default outcome is described by
+     * In case of {@link Result#DEFAULT}, the default outcome is described by
      * {@link #getBedEnterResult()}.
      *
      * @return the action to take with the interacted bed
-     * @see #setUseBed(org.bukkit.event.Event.Result)
+     * @see #setUseBed(Result)
      */
     @NotNull
     public Result useBed() {
@@ -90,13 +90,13 @@ public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
     /**
      * Sets the action to take with the interacted bed.
      * <p>
-     * {@link org.bukkit.event.Event.Result#ALLOW} will result in the player sleeping, regardless of
+     * {@link Result#ALLOW} will result in the player sleeping, regardless of
      * the default outcome described by {@link #getBedEnterResult()}.
      * <br>
-     * {@link org.bukkit.event.Event.Result#DENY} will prevent the player from sleeping. This has the
+     * {@link Result#DENY} will prevent the player from sleeping. This has the
      * same effect as canceling the event via {@link #setCancelled(boolean)}.
      * <br>
-     * {@link org.bukkit.event.Event.Result#DEFAULT} will result in the outcome described by
+     * {@link Result#DEFAULT} will result in the outcome described by
      * {@link #getBedEnterResult()}.
      *
      * @param useBed the action to take with the interacted bed
@@ -111,10 +111,10 @@ public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
      * prevent the player from sleeping.
      * <p>
      * Canceling the event has the same effect as setting {@link #useBed()} to
-     * {@link org.bukkit.event.Event.Result#DENY}.
+     * {@link Result#DENY}.
      * <p>
      * For backwards compatibility reasons this also returns true if
-     * {@link #useBed()} is {@link org.bukkit.event.Event.Result#DEFAULT} and the
+     * {@link #useBed()} is {@link Result#DEFAULT} and the
      * {@link #getBedEnterResult() default action} is to prevent bed entering.
      *
      * @return boolean cancellation state
