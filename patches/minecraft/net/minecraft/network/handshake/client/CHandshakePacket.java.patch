@@ -9,7 +9,7 @@
  import net.minecraft.network.IPacket;
  import net.minecraft.network.PacketBuffer;
  import net.minecraft.network.ProtocolType;
-@@ -8,47 +_,81 @@
+@@ -8,12 +_,25 @@
  import net.minecraft.util.SharedConstants;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,114 +21,63 @@
 +import java.util.Objects;
  
  public class CHandshakePacket implements IPacket<IHandshakeNetHandler> {
--   private int field_149600_a;
+    private int field_149600_a;
 -   private String field_149598_b;
 -   private int field_149599_c;
--   private ProtocolType field_149597_d;
--
--   public CHandshakePacket() {
--   }
--
--   @OnlyIn(Dist.CLIENT)
--   public CHandshakePacket(String p_i47613_1_, int p_i47613_2_, ProtocolType p_i47613_3_) {
--      this.field_149600_a = SharedConstants.func_215069_a().getProtocolVersion();
--      this.field_149598_b = p_i47613_1_;
--      this.field_149599_c = p_i47613_2_;
--      this.field_149597_d = p_i47613_3_;
--   }
--
--   public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
--      this.field_149600_a = p_148837_1_.func_150792_a();
++   public String field_149598_b;
++   public String original_ip;
++   public int field_149599_c;
+    private ProtocolType field_149597_d;
++   private String fmlVersion = net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION;
++
++   // Mohist start - Support ip forward
++   private static final String EXTRA_DATA = "extraData";
++   private static final Gson GSON = new Gson();
++   // Mohist end
+ 
+    public CHandshakePacket() {
+    }
+@@ -28,14 +_,31 @@
+ 
+    public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
+       this.field_149600_a = p_148837_1_.func_150792_a();
 -      this.field_149598_b = p_148837_1_.func_150789_c(255);
--      this.field_149599_c = p_148837_1_.readUnsignedShort();
--      this.field_149597_d = ProtocolType.func_150760_a(p_148837_1_.func_150792_a());
--   }
--
--   public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
--      p_148840_1_.func_150787_b(this.field_149600_a);
--      p_148840_1_.func_180714_a(this.field_149598_b);
--      p_148840_1_.writeShort(this.field_149599_c);
--      p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
--   }
--
--   public void func_148833_a(IHandshakeNetHandler p_148833_1_) {
--      p_148833_1_.func_147383_a(this);
--   }
--
--   public ProtocolType func_149594_c() {
--      return this.field_149597_d;
--   }
--
--   public int func_149595_d() {
--      return this.field_149600_a;
--   }
-+    private int field_149600_a;
-+    public String field_149598_b;
-+    public String original_ip;
-+    public int field_149599_c;
-+    private ProtocolType field_149597_d;
-+    private String fmlVersion = net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION;
-+
-+    // Mohist start - Support ip forward
-+    private static final String EXTRA_DATA = "extraData";
-+    private static final Gson GSON = new Gson();
-+    // Mohist end
-+
-+    public CHandshakePacket() {
-+    }
-+
-+    @OnlyIn(Dist.CLIENT)
-+    public CHandshakePacket(String p_i47613_1_, int p_i47613_2_, ProtocolType p_i47613_3_) {
-+        this.field_149600_a = SharedConstants.func_215069_a().getProtocolVersion();
-+        this.field_149598_b = p_i47613_1_;
-+        this.field_149599_c = p_i47613_2_;
-+        this.field_149597_d = p_i47613_3_;
-+    }
-+
-+    public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
-+        this.field_149600_a = p_148837_1_.func_150792_a();
-+        this.field_149598_b = p_148837_1_.func_150789_c(Short.MAX_VALUE);
-+        this.field_149599_c = p_148837_1_.readUnsignedShort();
-+        this.field_149597_d = ProtocolType.func_150760_a(p_148837_1_.func_150792_a());
-+        this.fmlVersion = net.minecraftforge.fml.network.NetworkHooks.getFMLVersion(this.field_149598_b);
-+        // Mohist start - Support ip forward
-+        if (SpigotConfig.bungee && !Objects.equals(this.fmlVersion, FMLNetworkConstants.NETVERSION)) {
-+            String[] split = this.field_149598_b.split("\0");
-+            if (split.length == 4) {
-+                Property[] properties = GSON.fromJson(split[3], Property[].class);
-+                for (Property property : properties) {
-+                    if (Objects.equals(property.getName(), EXTRA_DATA)) {
-+                        String extraData = property.getValue().replace("\1", "\0");
-+                        this.fmlVersion = NetworkHooks.getFMLVersion(split[0] + extraData);
-+                    }
-+                }
++      this.field_149598_b = p_148837_1_.func_150789_c(Short.MAX_VALUE);
+       this.field_149599_c = p_148837_1_.readUnsignedShort();
+       this.field_149597_d = ProtocolType.func_150760_a(p_148837_1_.func_150792_a());
++      this.fmlVersion = net.minecraftforge.fml.network.NetworkHooks.getFMLVersion(this.field_149598_b);
++      // Mohist start - Support ip forward
++      if (SpigotConfig.bungee && !Objects.equals(this.fmlVersion, FMLNetworkConstants.NETVERSION)) {
++         String[] split = this.field_149598_b.split("\0");
++         if (split.length == 4) {
++            Property[] properties = GSON.fromJson(split[3], Property[].class);
++            for (Property property : properties) {
++               if (Objects.equals(property.getName(), EXTRA_DATA)) {
++                  String extraData = property.getValue().replace("\1", "\0");
++                  this.fmlVersion = NetworkHooks.getFMLVersion(split[0] + extraData);
++               }
 +            }
-+        }
-+        // Mohist end 
-+        this.original_ip = this.field_149598_b;
-+        this.field_149598_b = this.field_149598_b.split("\0")[0];
-+    }
++         }
++      }
++      // Mohist end
++      this.original_ip = this.field_149598_b;
++      this.field_149598_b = this.field_149598_b.split("\0")[0];
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+       p_148840_1_.func_150787_b(this.field_149600_a);
+-      p_148840_1_.func_180714_a(this.field_149598_b);
++      p_148840_1_.func_180714_a(this.field_149598_b + "\0" + net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION + "\0");
+       p_148840_1_.writeShort(this.field_149599_c);
+       p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
+    }
+@@ -50,5 +_,9 @@
+ 
+    public int func_149595_d() {
+       return this.field_149600_a;
++   }
 +
-+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
-+        p_148840_1_.func_150787_b(this.field_149600_a);
-+        p_148840_1_.func_180714_a(this.field_149598_b + "\0" + net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION + "\0");
-+        p_148840_1_.writeShort(this.field_149599_c);
-+        p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
-+    }
-+
-+    public void func_148833_a(IHandshakeNetHandler p_148833_1_) {
-+        p_148833_1_.func_147383_a(this);
-+    }
-+
-+    public ProtocolType func_149594_c() {
-+        return this.field_149597_d;
-+    }
-+
-+    public int func_149595_d() {
-+        return this.field_149600_a;
-+    }
-+
-+    public String getFMLVersion() {
-+        return this.fmlVersion;
-+    }
++   public String getFMLVersion() {
++      return this.fmlVersion;
+    }
  }
