@@ -842,7 +842,7 @@
     }
  
     public void func_217460_e(Entity p_217460_1_) {
-@@ -777,11 +_,13 @@
+@@ -777,11 +_,12 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -851,14 +851,13 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
 -         field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-+         field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.2", (Object) p_217448_1_.func_110124_au().toString()));
           entity.func_213319_R();
 -         this.func_217434_e((ServerPlayerEntity)entity);
 +         this.func_217434_e((ServerPlayerEntity) entity);
        }
  
        this.field_217491_A.add(p_217448_1_);
-@@ -795,18 +_,25 @@
+@@ -795,18 +_,24 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
@@ -869,7 +868,6 @@
 +
 +   private boolean addEntity0(Entity entityIn, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      if (entityIn.field_70128_L) {
-+         field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.3", (Object) EntityType.func_200718_a(entityIn.func_200600_R())));
           return false;
 -      } else if (this.func_217478_l(p_72838_1_)) {
 +      } else if (this.func_217478_l(entityIn)) {
@@ -899,12 +897,11 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -827,7 +_,7 @@
+@@ -827,7 +_,6 @@
        if (entity == null) {
           return false;
        } else {
 -         field_147491_a.warn("Trying to add entity with duplicated UUID {}. Existing {}#{}, new: {}#{}", uuid, EntityType.func_200718_a(entity.func_200600_R()), entity.func_145782_y(), EntityType.func_200718_a(p_217478_1_.func_200600_R()), p_217478_1_.func_145782_y());
-+         field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.4", uuid, EntityType.func_200718_a(entity.func_200600_R()), entity.func_145782_y(), EntityType.func_200718_a(p_217478_1_.func_200600_R()), p_217478_1_.func_145782_y()));
           return true;
        }
     }
