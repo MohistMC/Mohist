@@ -1964,7 +1964,7 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
-@@ -1417,4 +_,80 @@
+@@ -1417,4 +_,82 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
@@ -2004,9 +2004,11 @@
 +         }
 +      } else {
 +         try {
++            int readerIndex = p_147349_1_.field_149561_c.readerIndex();
 +            final byte[] data = new byte[p_147349_1_.field_149561_c.readableBytes()];
 +            p_147349_1_.field_149561_c.readBytes(data);
 +            this.craftServer.getMessenger().dispatchIncomingMessage(this.field_147369_b.getBukkitEntity(), p_147349_1_.field_149562_a.toString(), data);
++            p_147349_1_.field_149561_c.readerIndex(readerIndex);
 +         }
 +         catch (Exception ex) {
 +            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.16", ex));

@@ -764,19 +764,11 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         }
 
         // Check if the fromWorld and toWorld are the same.
-        /* if (fromWorld == toWorld) {
+        if (fromWorld == toWorld) {
             entity.connection.teleport(to);
         } else {
             server.getHandle().moveToWorld(entity, toWorld, true, to, true);
-        } */
-
-        // Current implementation of 'moveToWorld' does not
-        // work properly. Luckily, 'changeDimension' with
-        // dummy teleporter does the same thing, but right.
-        if (fromWorld != toWorld)
-            entity.changeDimension(toWorld, new ITeleporter() {
-            });
-        entity.connection.teleport(to);
+        }
         return true;
     }
 
@@ -1351,7 +1343,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     }
 
     public void addChannel(String channel) {
-        Preconditions.checkState(channels.size() < 128, "Cannot register channel '%s'. Too many channels registered!", channel);
         channel = StandardMessenger.validateAndCorrectChannel(channel);
         if (channels.add(channel)) {
             server.getPluginManager().callEvent(new PlayerRegisterChannelEvent(this, channel));
