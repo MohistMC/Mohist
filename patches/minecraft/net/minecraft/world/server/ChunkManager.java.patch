@@ -257,7 +257,7 @@
        });
     }
  
-@@ -942,9 +_,10 @@
+@@ -942,12 +_,14 @@
     }
  
     protected void func_219210_a(Entity p_219210_1_) {
@@ -268,7 +268,12 @@
 +         i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_219210_1_, i); // Spigot
           int j = entitytype.func_220332_l();
           if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
-             throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
+-            throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
++            // throw (IllegalStateException)Util.pauseInIde(new IllegalStateException("Entity is already tracked!"));
++            return;
+          } else {
+             ChunkManager.EntityTracker chunkmanager$entitytracker = new ChunkManager.EntityTracker(p_219210_1_, i, j, entitytype.func_220340_m());
+             this.field_219272_z.put(p_219210_1_.func_145782_y(), chunkmanager$entitytracker);
 @@ -1077,15 +_,30 @@
        });
     }
