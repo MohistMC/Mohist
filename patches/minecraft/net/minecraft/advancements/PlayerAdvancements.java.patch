@@ -8,15 +8,6 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.serialization.Dynamic;
  import com.mojang.serialization.JsonOps;
-@@ -53,7 +_,7 @@
-    private final DataFixer field_240916_d_;
-    private final PlayerList field_240917_e_;
-    private final File field_192757_e;
--   private final Map<Advancement, AdvancementProgress> field_192758_f = Maps.newLinkedHashMap();
-+   public final Map<Advancement, AdvancementProgress> field_192758_f = Maps.newLinkedHashMap();
-    private final Set<Advancement> field_192759_g = Sets.newLinkedHashSet();
-    private final Set<Advancement> field_192760_h = Sets.newLinkedHashSet();
-    private final Set<Advancement> field_192761_i = Sets.newLinkedHashSet();
 @@ -146,24 +_,33 @@
              for(Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
                 Advancement advancement = p_240921_1_.func_192778_a(entry.getKey());
