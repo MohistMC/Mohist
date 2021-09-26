@@ -18,11 +18,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
     public static HashMap<String, String> fail = new HashMap<>();
-	private static String mirror = "";
+    private static String mirror = "";
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
-		String url = mirror.equals("") ? "https://maven.mohistmc.com/" : mirror;
+        String url = mirror.equals("") ? (i18n.isCN() ? "http://120.232.41.28:1001/" : "https://maven.mohistmc.com/") : mirror;
         LinkedHashMap<File, String> libs = getDefaultLibs();
 		AtomicLong currentSize = new AtomicLong();
 		Set<File> defaultLibs = new LinkedHashSet<>();
