@@ -47,18 +47,19 @@ public class DownloadJava {
     }
 
     public static void searchJava() throws Exception {
+        String url = i18n.isCN() ? "http://120.232.41.28:1001/" : "https://github.com/Shawiizz/shawiizz.github.io/releases/download/";
         if (System.getProperty("sun.arch.data.model").equals("64")) {
             if (os().equals("Windows"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javawin64.zip", "java.exe");
+                prepareLaunch(url + "mohist_1_16_5_jre11/javawin64.zip", "java.exe");
             else if (os().equals("Unix"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javalinux64.zip", "java");
+                prepareLaunch(url + "mohist_1_16_5_jre11/javalinux64.zip", "java");
             else if (os().equals("Mac"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javamac64.zip", "java");
+                prepareLaunch(url + "mohist_1_16_5_jre11/javamac64.zip", "java");
         } else {
             if (os().equals("Windows"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javawin32.zip", "java.exe");
+                prepareLaunch(url + "mohist_1_16_5_jre11/javawin32.zip", "java.exe");
             else if (os().equals("Unix"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/mohist_1_16_5_jre11/javalinux32.zip", "java");
+                prepareLaunch(url + "mohist_1_16_5_jre11/javalinux32.zip", "java");
         }
     }
 
