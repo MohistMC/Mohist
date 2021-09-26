@@ -8,17 +8,6 @@
  import java.util.Collection;
  import java.util.Map;
  import javax.annotation.Nullable;
-@@ -21,8 +_,8 @@
- 
- public class AdvancementManager extends JsonReloadListener {
-    private static final Logger field_192782_a = LogManager.getLogger();
--   private static final Gson field_192783_b = (new GsonBuilder()).create();
--   private AdvancementList field_223388_c = new AdvancementList();
-+   public static final Gson field_192783_b = (new GsonBuilder()).create(); // private->public CraftBukkit
-+   public AdvancementList field_223388_c = new AdvancementList(); // private->public CraftBukkit
-    private final LootPredicateManager field_240922_d_;
- 
-    public AdvancementManager(LootPredicateManager p_i232595_1_) {
 @@ -33,12 +_,21 @@
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        Map<ResourceLocation, Advancement.Builder> map = Maps.newHashMap();
