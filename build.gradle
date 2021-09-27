@@ -113,7 +113,7 @@ project(':clean') {
     }
 }
 
-project(':forge') {
+project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -123,7 +123,7 @@ project(':forge') {
     apply plugin: 'org.cadixdev.licenser'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(11)
-    group = 'net.minecraftforge'
+    group = 'com.mohistmc'
 
     sourceSets {
         fmllauncher {
@@ -182,7 +182,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.6'
     }
 
-    version = '1.16.5-36.2.5'
+    version = '1.16.5-' + JenkinsNumber()
     println('Forge Version: ' + version)
 
     patcher {
@@ -389,7 +389,7 @@ project(':forge') {
         installer 'org.apache.maven:maven-resolver-provider:3.8.1'
         installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2'
         installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.6.2'
-        compileOnly 'org.jetbrains:annotations:20.1.0'
+        installer 'org.jetbrains:annotations:20.1.0'
         // craftbukkit
         installer 'org.fusesource.jansi:jansi:1.18'
         installer 'jline:jline:2.14.6'
@@ -1091,7 +1091,7 @@ project(':forge') {
 
 task setup() {
     dependsOn ':clean:extractMapped'
-    dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
+    dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
 def JenkinsNumber() {
