@@ -113,7 +113,7 @@ project(':clean') {
     }
 }
 
-project(':mohist') {
+project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -123,7 +123,7 @@ project(':mohist') {
     apply plugin: 'org.cadixdev.licenser'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(11)
-    group = 'com.mohistmc'
+    group = 'net.minecraftforge'
 
     sourceSets {
         fmllauncher {
@@ -1094,7 +1094,7 @@ project(':mohist') {
 
 task setup() {
     dependsOn ':clean:extractMapped'
-    dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
+    dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
 def JenkinsNumber() {
