@@ -182,7 +182,7 @@ project(':mohist') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.6'
     }
 
-    version = '1.16.5-' + JenkinsNumber()
+    version = '1.16.5-36.2.5'
     println('Forge Version: ' + version)
 
     patcher {
