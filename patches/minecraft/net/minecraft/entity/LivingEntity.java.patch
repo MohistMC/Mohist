@@ -1319,14 +1319,14 @@
        }
  
     }
-@@ -2579,6 +_,7 @@
-    }
- 
+@@ -2581,6 +_,7 @@
     public boolean func_70685_l(Entity p_70685_1_) {
-+      if (this.field_70170_p != p_70685_1_.field_70170_p) return false; // CraftBukkit - SPIGOT-5675, SPIGOT-5798, MC-149563
        Vector3d vector3d = new Vector3d(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
        Vector3d vector3d1 = new Vector3d(p_70685_1_.func_226277_ct_(), p_70685_1_.func_226280_cw_(), p_70685_1_.func_226281_cx_());
++      if (p_70685_1_.field_70170_p != this.field_70170_p || vector3d1.func_72436_e(vector3d) > 128.0D * 128.0D) return false; //Forge Backport MC-209819
        return this.field_70170_p.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this)).func_216346_c() == RayTraceResult.Type.MISS;
+    }
+ 
 @@ -2603,12 +_,19 @@
     }
  
