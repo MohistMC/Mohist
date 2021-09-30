@@ -401,18 +401,6 @@ project(':forge') {
         // spigot
         installer 'net.md-5:bungeecord-chat:1.16-R0.4'
 
-        // paper
-        installer 'co.aikar:cleaner:1.0-SNAPSHOT'
-        /*
-        installer 'net.kyori:adventure-api:4.7.0'
-        installer 'net.kyori:adventure-key:4.7.0'
-        installer 'net.kyori:adventure-text-serializer-gson:4.7.0'
-        installer 'net.kyori:adventure-text-serializer-legacy:4.7.0'
-        installer 'net.kyori:adventure-text-serializer-plain:4.7.0'
-        installer 'net.kyori:examination-api:1.1.0'
-        installer 'net.kyori:examination-string:1.1.0'
-        */
-
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         fmllauncherImplementation 'org.lwjgl:lwjgl:3.2.2'
@@ -755,8 +743,8 @@ project(':forge') {
     }
 
     task launcherJar(type: Jar) {
-        baseName 'mohist'
-        classifier 'launcher'
+        archiveBaseName = 'mohist'
+        archiveClassifier = 'launcher'
         from sourceSets.fmllauncher.output
         doFirst {
             def classpath = new StringBuilder()
@@ -795,7 +783,7 @@ project(':forge') {
     }
 
     task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar', 'signLauncherJar']) {
-        baseName 'mohist'
+        archiveBaseName = 'mohist'
         archiveClassifier = 'installer'
         archiveExtension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDirectory = file('build/libs')
@@ -827,10 +815,10 @@ project(':forge') {
 
     task mohistJar(type: Jar, dependsOn: [genServerBinPatches, 'signUniversalJar']) {
         archiveClassifier = 'server'
-        extension = 'jar'
-        baseName = 'mohist'
-        version = "1.16.5-"+JenkinsNumber()
-        destinationDir = file('build/libs')
+        archiveExtension = 'jar'
+        archiveBaseName = 'mohist'
+        archiveVersion = "1.16.5-" + JenkinsNumber()
+        destinationDirectory = file('build/libs')
         from sourceSets.fmllauncher.output
         doFirst {
             def classpath = new StringBuilder()
@@ -978,9 +966,6 @@ project(':forge') {
             main {
                 files.from = files("$rootDir/src/main/java")
             }
-            test {
-                files.from = files("$rootDir/src/test/java")
-            }
         }
     }
 
@@ -1016,22 +1001,12 @@ project(':forge') {
         dependencies.from jar.archiveFile
         sources.from sourceSets.userdev.java.srcDirs
     }
+
     applyRangeMap {
         sources.from sourceSets.userdev.java.srcDirs
     }
 
     tasks.eclipse.dependsOn('genEclipseRuns')
-
-    if (project.hasProperty('UPDATE_MAPPINGS')) {
-        extractRangeMap {
-            sources.from sourceSets.test.java.srcDirs
-            addDependencies compileTestJava.classpath
-        }
-        applyRangeMap {
-            sources.from sourceSets.test.java.srcDirs
-        }
-        sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
-    }
 
     publishing {
         publications {
