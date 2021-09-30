@@ -47,7 +47,7 @@ public class DownloadJava {
     }
 
     public static void searchJava() throws Exception {
-        String url = i18n.isCN() ? "http://120.232.41.28:1001/" : "https://github.com/Shawiizz/shawiizz.github.io/releases/download/";
+        String url = DownloadSource.get().getUrl();
         if (System.getProperty("sun.arch.data.model").equals("64")) {
             if (os().equals("Windows"))
                 prepareLaunch(url + "mohist_1_16_5_jre11/javawin64.zip", "java.exe");

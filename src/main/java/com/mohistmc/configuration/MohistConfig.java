@@ -6,6 +6,9 @@ import java.lang.reflect.Modifier;
 
 import com.mohistmc.config.MohistConfigUtil;
 import java.util.List;
+
+import com.mohistmc.network.download.DownloadSource;
+import com.mohistmc.util.i18n.i18n;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -44,6 +47,8 @@ public class MohistConfig extends ConfigBase {
 
     // MohistProxySelector
     public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
+
+    public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", i18n.isCN() ? DownloadSource.CHINA.name() : DownloadSource.MOHIST.name());
 
     /* ======================================================================== */
 
