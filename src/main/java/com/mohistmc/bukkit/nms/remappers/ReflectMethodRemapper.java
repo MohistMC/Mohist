@@ -10,7 +10,6 @@ import com.mohistmc.bukkit.nms.utils.ASMUtils;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -81,7 +80,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
-		registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findVarHandle", VarHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
 
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
     }
