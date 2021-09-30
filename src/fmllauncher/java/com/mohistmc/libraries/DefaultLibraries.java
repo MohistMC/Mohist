@@ -1,6 +1,7 @@
 package com.mohistmc.libraries;
 
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
@@ -18,11 +19,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
 	public static HashMap<String, String> fail = new HashMap<>();
-	private static String mirror = "";
 
 	public static void run() throws Exception {
 		System.out.println(i18n.get("libraries.checking.start"));
-		String url = mirror.equals("") ? (i18n.isCN() ? "http://120.232.41.28:1001/" : "https://maven.mohistmc.com/") : mirror;
+		String url = DownloadSource.get().getUrl();
 		LinkedHashMap<File, String> libs = getDefaultLibs();
 		AtomicLong currentSize = new AtomicLong();
 		Set<File> defaultLibs = new LinkedHashSet<>();
@@ -59,16 +59,6 @@ public class DefaultLibraries {
 		}
 		/*FINISHED | RECHECK IF A FILE FAILED*/
 		if(!fail.isEmpty()) {
-			if(!mirror.equals("")) {
-				System.out.println("Looks like there is no maven available at the moment, or you don't have any network connection.\nPlease try again later or come into our Discord server (discord.gg/mohist) to get help.");
-				System.out.println(i18n.get("libraries.check.missing"));
-				for (String lib : fail.keySet())
-					System.out.println("Link : " + lib + "\nPath : " + fail.get(lib) + "\n");
-				System.exit(0);
-			}
-			System.out.println(i18n.get("libraries.check.retry", 0));
-			System.out.println("Something went wrong during download, trying to download with the mirror...");
-			mirror = "http://mavenmirror.mohistmc.com/";
 			run();
 		} else System.out.println(i18n.get("libraries.check.end"));
 	}
