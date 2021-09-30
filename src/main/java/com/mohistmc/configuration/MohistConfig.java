@@ -1,6 +1,7 @@
 package com.mohistmc.configuration;
 
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.util.i18n.Message;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -103,7 +104,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting bukkitPermissionsHandler = new BoolSetting(this, "mohist.BukkitPermissionsHandler", true);
 
     public final BoolSetting disableforgegenerate_global = new BoolSetting(this, "world.disableforgegenerate.global.enable", false);
-
+    public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", Message.isCN() ? DownloadSource.CHINA.name() : DownloadSource.MOHIST.name());
 
 
     private final String HEADER = "This is the main configuration file for Mohist.\n"

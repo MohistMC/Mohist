@@ -41,18 +41,19 @@ public class DownloadJava {
     }
 
     public static void searchJava() throws Exception {
+        String url = DownloadSource.get().getUrl();
         if (System.getProperty("sun.arch.data.model").equals("64")) {
             if (os().equals("Windows"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javawin64.zip", "java.exe");
+                prepareLaunch(url + "mohist_1_12_2_jre8/javawin64.zip", "java.exe");
             else if (os().equals("Unix"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javalinux64.zip", "java");
+                prepareLaunch(url + "mohist_1_12_2_jre8/javalinux64.zip", "java");
             else if (os().equals("Mac"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javamac64.zip", "java");
+                prepareLaunch(url + "mohist_1_12_2_jre8/javamac64.zip", "java");
         } else {
             if (os().equals("Windows"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/janawin32.zip", "java.exe");
+                prepareLaunch(url + "mohist_1_12_2_jre8/javawin32.zip", "java.exe");
             else if (os().equals("Unix"))
-                prepareLaunch("https://github.com/Shawiizz/shawiizz.github.io/releases/download/jrezipfiles/javalinux32.zip", "java");
+                prepareLaunch(url + "mohist_1_12_2_jre8/javalinux32.zip", "java");
         }
     }
 
