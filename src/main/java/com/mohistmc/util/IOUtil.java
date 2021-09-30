@@ -69,4 +69,14 @@ public class IOUtil {
         IOUtil.copy(pIStream, tBAOStream);
         return tBAOStream.toByteArray();
     }
+
+    public static void throwException(Throwable exception) throws Throwable {
+        throwException0(exception);
+    }
+
+    private static <T extends Throwable> void throwException0(Throwable exception) throws Throwable {
+        if (exception != null) {
+            throw exception;
+        }
+    }
 }

@@ -105,7 +105,8 @@ public class MohistConfig extends ConfigBase {
 
     public final BoolSetting disableforgegenerate_global = new BoolSetting(this, "world.disableforgegenerate.global.enable", false);
     public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", Message.isCN() ? DownloadSource.CHINA.name() : DownloadSource.MOHIST.name());
-
+    // MohistProxySelector
+    public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
 
     private final String HEADER = "This is the main configuration file for Mohist.\n"
             + "\n"
@@ -203,5 +204,16 @@ public class MohistConfig extends ConfigBase {
 
     public boolean RealTimeTicking() {
         return RealTimeTicking.getValue();
+    }
+
+    public static List<String> getStringList0(String path, List<String> defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        yml.addDefault(path, defValue);
+        return yml.getStringList(path);
+    }
+
+    public static boolean getBoolean0(String path, boolean defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        return yml.getBoolean(path, defValue);
     }
 }

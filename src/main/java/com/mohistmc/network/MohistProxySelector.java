@@ -1,5 +1,6 @@
 package com.mohistmc.network;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.api.event.MohistNetworkEvent;
 import com.mohistmc.configuration.MohistConfig;
 import java.io.IOException;
@@ -7,13 +8,17 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.mohistmc.util.IOUtil;
 import org.bukkit.Bukkit;
 
 public class MohistProxySelector extends ProxySelector {
 
-    private ProxySelector defaultSelector;
+    private final ProxySelector defaultSelector;
+    private List<String> intercepts = new ArrayList<>();
 
     public MohistProxySelector(ProxySelector defaultSelector) {
         this.defaultSelector = defaultSelector;
@@ -21,18 +26,47 @@ public class MohistProxySelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(URI uri) {
-        if (uri.toString().startsWith("socket")) {
+        if (MohistConfig.getBoolean0("mohist.networkmanager.debug", false)) {
+            MohistMC.LOGGER.error(uri.toString());
+        }
+
+        String uriString = uri.toString();
+        String defaultMsg = "[NetworkManager] Network protection and blocked by network rules!";
+        boolean intercept = false;
+
+        /*
+        if (uriString.startsWith("socket")) {
             return this.defaultSelector.select(uri);
         }
-        MohistNetworkEvent event = new MohistNetworkEvent(uri, "§6[§aNetworkManager§6] §aNetwork protection and blocked by network rules!");
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled() || MohistConfig.instance.getStringList("network_manage.blacklist", Collections.singletonList("www.xxxxxx.com")).contains(uri.toString())) {
-            try {
-                throw new IOException(event.getMsg());
-            } catch (Throwable ignored) {}
+         */
+        if (intercepts.isEmpty()) {
+            intercepts = MohistConfig.getStringList0("mohist.networkmanager.intercept", new ArrayList<>());
         }
-        return this.defaultSelector.select(uri);
+        for (String config_uri : intercepts) {
+            if (uriString.contains(config_uri)) {
+                intercept = true;
+            }
+        }
+        if (Bukkit.getServer() != null && Bukkit.getServer().isPrimaryThread()) {
+            MohistNetworkEvent event = new MohistNetworkEvent(uri, defaultMsg);
+            Bukkit.getPluginManager().callEvent(event);
+            event.setCancelled(intercept);
+            if (event.isCancelled()) {
+                intercept = true;
+            }
+        }
+        if (intercept) {
+            try {
+                IOUtil.throwException(new IOException(defaultMsg));
+            } catch (Throwable throwable) {
+                MohistMC.LOGGER.error(throwable.getMessage());
+            }
+        } else {
+            return this.defaultSelector.select(uri);
+        }
+        return null;
     }
+
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
         this.defaultSelector.connectFailed(uri, sa, ioe);
