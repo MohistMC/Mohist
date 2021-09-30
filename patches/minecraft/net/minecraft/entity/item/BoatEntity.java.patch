@@ -14,22 +14,23 @@
  
  public class BoatEntity extends Entity {
     private static final DataParameter<Integer> field_184460_a = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187192_b);
-@@ -81,6 +_,14 @@
+@@ -81,6 +_,15 @@
     private float field_203062_aP;
     private float field_203063_aQ;
  
 +   // CraftBukkit start
-+   public double maxSpeed;
-+   public double occupiedDeceleration;
-+   public double unoccupiedDeceleration;
-+   public boolean landBoats;
++   // PAIL: Some of these haven't worked since a few updates, and since 1.9 they are less and less applicable.
++   public double maxSpeed = 0.4D;
++   public double occupiedDeceleration = 0.2D;
++   public double unoccupiedDeceleration = -1;
++   public boolean landBoats = false;
 +   private Location lastLocation;
 +   // CraftBukkit end
 +
     public BoatEntity(EntityType<? extends BoatEntity> p_i50129_1_, World p_i50129_2_) {
        super(p_i50129_1_, p_i50129_2_);
        this.field_70156_m = true;
-@@ -141,12 +_,33 @@
+@@ -141,12 +_,32 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
@@ -50,16 +51,15 @@
           this.func_70018_K();
           boolean flag = p_70097_1_.func_76346_g() instanceof PlayerEntity && ((PlayerEntity)p_70097_1_.func_76346_g()).field_71075_bZ.field_75098_d;
           if (flag || this.func_70271_g() > 40.0F) {
-+               // CraftBukkit start
-+               VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
-+               this.field_70170_p.getCBServer().getPluginManager().callEvent(destroyEvent);
++            // CraftBukkit start
++            VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
++            this.field_70170_p.getCBServer().getPluginManager().callEvent(destroyEvent);
 +
-+               if(destroyEvent.isCancelled()){
-+                  this.func_70266_a(40F); // Maximize damage so this doesn't trigger again right away
-+                  return true;
-+               }
-+               // CraftBukkit end
-+
++            if(destroyEvent.isCancelled()){
++               this.func_70266_a(40F); // Maximize damage so this doesn't trigger again right away
++               return true;
++            }
++            // CraftBukkit end
              if (!flag && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
                 this.func_199703_a(this.func_184455_j());
              }
@@ -68,7 +68,7 @@
        if (p_70108_1_ instanceof BoatEntity) {
           if (p_70108_1_.func_174813_aQ().field_72338_b < this.func_174813_aQ().field_72337_e) {
 +            // CraftBukkit start
-+            if(!this.func_184223_x(p_70108_1_)) { // isSameVehicle == isRidingSameEntity maybe?
++            if(!this.func_184223_x(p_70108_1_)) {
 +               VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_70108_1_.getBukkitEntity());
 +               this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +
@@ -81,7 +81,7 @@
           }
        } else if (p_70108_1_.func_174813_aQ().field_72338_b <= this.func_174813_aQ().field_72338_b) {
 +         // CraftBukkit start
-+         if(!this.func_184223_x(p_70108_1_)) { // isSameVehicle == isRidingSameEntity maybe?
++         if(!this.func_184223_x(p_70108_1_)) {
 +            VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_70108_1_.getBukkitEntity());
 +            this.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +
@@ -125,6 +125,26 @@
                          ++k1;
                       }
                    }
+@@ -721,6 +_,11 @@
+ 
+                this.func_225503_b_(this.field_70143_R, 1.0F);
+                if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
++                  // CraftBukkit start
++                  Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++                  VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, null);
++                  this.field_70170_p.getCBServer().getPluginManager().callEvent(destroyEvent);
++                  if (!destroyEvent.isCancelled()) {
+                   this.func_70106_y();
+                   if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
+                      for(int i = 0; i < 3; ++i) {
+@@ -732,6 +_,7 @@
+                      }
+                   }
+                }
++               } // CraftBukkit end
+             }
+ 
+             this.field_70143_R = 0.0F;
 @@ -815,6 +_,17 @@
  
     public boolean func_204231_K() {
