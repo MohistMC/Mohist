@@ -25,28 +25,6 @@
  
  public class AreaEffectCloudEntity extends Entity {
     private static final Logger field_195060_a = LogManager.getLogger();
-@@ -39,15 +_,15 @@
-    private static final DataParameter<Boolean> field_184500_c = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_187198_h);
-    private static final DataParameter<IParticleData> field_184501_d = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_198166_i);
-    private Potion field_184502_e = Potions.field_185229_a;
--   private final List<EffectInstance> field_184503_f = Lists.newArrayList();
-+   public final List<EffectInstance> field_184503_f = Lists.newArrayList(); // private->public CraftBukkit
-    private final Map<Entity, Integer> field_184504_g = Maps.newHashMap();
-    private int field_184505_h = 600;
--   private int field_184506_as = 20;
--   private int field_184507_at = 20;
-+   public int field_184506_as = 20; // private->public CraftBukkit
-+   public int field_184507_at = 20; // private->public CraftBukkit
-    private boolean field_184508_au;
--   private int field_184509_av;
--   private float field_184510_aw;
--   private float field_184511_ax;
-+   public int field_184509_av; // private->public CraftBukkit
-+   public float field_184510_aw; // private->public CraftBukkit
-+   public float field_184511_ax; // private->public CraftBukkit
-    private LivingEntity field_184512_ay;
-    private UUID field_184513_az;
- 
 @@ -113,6 +_,22 @@
  
     }

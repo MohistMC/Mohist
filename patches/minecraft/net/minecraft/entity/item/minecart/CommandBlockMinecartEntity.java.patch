@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
-@@ -19,9 +_,11 @@
+@@ -19,6 +_,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,11 +8,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMinecartCommand;
  
  public class CommandBlockMinecartEntity extends AbstractMinecartEntity {
--   private static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(CommandBlockMinecartEntity.class, DataSerializers.field_187194_d);
-+   public static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(CommandBlockMinecartEntity.class, DataSerializers.field_187194_d); // private->public CraftBukkit
-    private static final DataParameter<ITextComponent> field_184274_b = EntityDataManager.func_187226_a(CommandBlockMinecartEntity.class, DataSerializers.field_187195_e);
-    private final CommandBlockLogic field_145824_a = new CommandBlockMinecartEntity.MinecartCommandLogic();
-    private int field_145823_b;
+    public static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(CommandBlockMinecartEntity.class, DataSerializers.field_187194_d);
 @@ -73,6 +_,8 @@
     }
  

@@ -8,10 +8,8 @@
 +import org.bukkit.event.entity.EntityEnterLoveModeEvent;
  
  public abstract class AnimalEntity extends AgeableEntity {
--   private int field_70881_d;
--   private UUID field_146084_br;
-+   public int field_70881_d; // private->public CraftBukkit
-+   public UUID field_146084_br; // private->public CraftBukkit
+    public int field_70881_d;
+    public UUID field_146084_br;
 +   public ItemStack breedItem; // CraftBukkit - Add breedItem variable
  
     protected AnimalEntity(EntityType<? extends AnimalEntity> p_i48568_1_, World p_i48568_2_) {

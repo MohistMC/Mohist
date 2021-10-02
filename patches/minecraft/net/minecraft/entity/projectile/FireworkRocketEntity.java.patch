@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/entity/projectile/FireworkRocketEntity.java
-@@ -30,17 +_,18 @@
+@@ -30,6 +_,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,20 +8,6 @@
  
  @OnlyIn(
     value = Dist.CLIENT,
-    _interface = IRendersAsItem.class
- )
- public class FireworkRocketEntity extends ProjectileEntity implements IRendersAsItem {
--   private static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
-+   public static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
-    private static final DataParameter<OptionalInt> field_191512_b = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_218814_r);
--   private static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
-+   public static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
-    private int field_92056_a;
--   private int field_92055_b;
-+   public int field_92055_b;
-    private LivingEntity field_191513_e;
- 
-    public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_i50164_1_, World p_i50164_2_) {
 @@ -82,6 +_,21 @@
        this.func_212361_a(p_i231582_3_);
     }

@@ -75,7 +75,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,13 +_,29 @@
+@@ -130,6 +_,22 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -98,33 +98,16 @@
  
  public class ServerPlayerEntity extends PlayerEntity implements IContainerListener {
     private static final Logger field_147102_bM = LogManager.getLogger();
-    public ServerPlayNetHandler field_71135_a;
-    public final MinecraftServer field_71133_b;
-    public final PlayerInteractionManager field_71134_c;
--   private final List<Integer> field_71130_g = Lists.newLinkedList();
-+   public final List<Integer> field_71130_g = Lists.newLinkedList();
-    private final PlayerAdvancements field_192042_bX;
-    private final ServerStatisticsManager field_147103_bO;
-    private float field_130068_bO = Float.MIN_VALUE;
-@@ -148,8 +_,8 @@
-    private float field_71149_ch = -1.0E8F;
+@@ -149,7 +_,7 @@
     private int field_71146_ci = -99999999;
     private boolean field_71147_cj = true;
--   private int field_71144_ck = -99999999;
+    public int field_71144_ck = -99999999;
 -   private int field_147101_bU = 60;
-+   public int field_71144_ck = -99999999;
 +   public int field_147101_bU = 60;
     private ChatVisibility field_71143_cn;
     private boolean field_71140_co = true;
     private long field_143005_bX = Util.func_211177_b();
-@@ -169,12 +_,27 @@
-    private boolean field_241139_cs_;
-    private float field_242108_cn;
-    @Nullable
--   private final IChatFilter field_244528_co;
-+   private IChatFilter field_244528_co;
-    public int field_71139_cq;
-    public boolean field_71137_h;
+@@ -175,6 +_,21 @@
     public int field_71138_i;
     public boolean field_71136_j;
  
@@ -620,7 +603,7 @@
     }
  
 -   private void func_213846_b(ServerWorld p_213846_1_) {
-+   public void func_213846_b(ServerWorld p_213846_1_) { // private->public CraftBukkit
++   public void func_213846_b(ServerWorld p_213846_1_) {
        RegistryKey<World> registrykey = p_213846_1_.func_234923_W_();
        RegistryKey<World> registrykey1 = this.field_70170_p.func_234923_W_();
        CriteriaTriggers.field_193134_u.func_233551_a_(this, registrykey, registrykey1);
@@ -1089,7 +1072,7 @@
        }
     }
  
-+   public String language = "en_us"; // private->public CraftBukkit
++   public String language = "en_us";
 +   /**
 +    * Returns the language last reported by the player as their local language.
 +    * Defaults to en_us if the value is unknown.

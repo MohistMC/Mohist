@@ -84,7 +84,7 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
-@@ -113,22 +_,26 @@
+@@ -113,11 +_,15 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -98,64 +98,8 @@
     private static final AttributeModifier field_110157_c = new AttributeModifier(field_110156_b, "Sprinting speed boost", (double)0.3F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 +   private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
     protected static final DataParameter<Byte> field_184621_as = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187191_a);
--   private static final DataParameter<Float> field_184632_c = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187193_c);
-+   public static final DataParameter<Float> field_184632_c = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187193_c); // private->public CraftBukkit
+    public static final DataParameter<Float> field_184632_c = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187193_c);
     private static final DataParameter<Integer> field_184633_f = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Boolean> field_184634_g = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187198_h);
--   private static final DataParameter<Integer> field_184635_h = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187192_b);
-+   public static final DataParameter<Integer> field_184635_h = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Integer> field_226291_bp_ = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Optional<BlockPos>> field_213379_bs = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187201_k);
-    protected static final EntitySize field_213377_as = EntitySize.func_220311_c(0.2F, 0.2F);
-    private final AttributeModifierManager field_110155_d;
--   private final CombatTracker field_94063_bt = new CombatTracker(this);
--   private final Map<Effect, EffectInstance> field_70713_bf = Maps.newHashMap();
-+   public CombatTracker field_94063_bt = new CombatTracker(this); // private->public CraftBukkit
-+   public final Map<Effect, EffectInstance> field_70713_bf = Maps.newHashMap(); // private->public CraftBukkit
-    private final NonNullList<ItemStack> field_184630_bs = NonNullList.func_191197_a(2, ItemStack.field_190927_a);
-    private final NonNullList<ItemStack> field_184631_bt = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
-    public boolean field_82175_bq;
-@@ -146,7 +_,7 @@
-    public float field_184618_aE;
-    public float field_70721_aZ;
-    public float field_184619_aG;
--   public final int field_70771_an = 20;
-+   public int field_70771_an = 20;
-    public final float field_70769_ao;
-    public final float field_70770_ap;
-    public float field_70761_aq;
-@@ -155,7 +_,7 @@
-    public float field_70758_at;
-    public float field_70747_aH = 0.02F;
-    @Nullable
--   protected PlayerEntity field_70717_bb;
-+   public PlayerEntity field_70717_bb;
-    protected int field_70718_bc;
-    protected boolean field_70729_aU;
-    protected int field_70708_bq;
-@@ -165,7 +_,7 @@
-    protected float field_70763_ax;
-    protected float field_70741_aB;
-    protected int field_70744_aE;
--   protected float field_110153_bc;
-+   public float field_110153_bc;
-    protected boolean field_70703_bu;
-    public float field_70702_br;
-    public float field_70701_bs;
-@@ -178,10 +_,10 @@
-    protected double field_70709_bj;
-    protected double field_208001_bq;
-    protected int field_208002_br;
--   private boolean field_70752_e = true;
-+   public boolean field_70752_e = true;
-    @Nullable
--   private LivingEntity field_70755_b;
--   private int field_70756_c;
-+   public LivingEntity field_70755_b;
-+   public int field_70756_c;
-    private LivingEntity field_110150_bn;
-    private int field_142016_bo;
-    private float field_70746_aG;
 @@ -199,10 +_,37 @@
     private float field_205018_bM;
     protected Brain<?> field_213378_br;

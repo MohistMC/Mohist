@@ -13,11 +13,9 @@
 +import org.bukkit.inventory.InventoryHolder;
  
  public class DoubleSidedInventory implements IInventory {
--   private final IInventory field_70477_b;
--   private final IInventory field_70478_c;
 +
-+   public final IInventory field_70477_b; // private->public CraftBukkit
-+   public final IInventory field_70478_c; // private->public CraftBukkit
+    public final IInventory field_70477_b;
+    public final IInventory field_70478_c;
 +
 +   // CraftBukkit start - add fields and methods
 +   public List<HumanEntity> transaction = new ArrayList<>();

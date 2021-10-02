@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/Container.java
 +++ b/net/minecraft/inventory/container/Container.java
-@@ -21,13 +_,18 @@
+@@ -21,9 +_,14 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Registry;
@@ -14,13 +14,7 @@
 +import org.bukkit.inventory.InventoryView;
  
  public abstract class Container {
--   private final NonNullList<ItemStack> field_75153_a = NonNullList.func_191196_a();
--   public final List<Slot> field_75151_b = Lists.newArrayList();
-+   public NonNullList<ItemStack> field_75153_a = NonNullList.func_191196_a(); // private->public CraftBukkit
-+   public List<Slot> field_75151_b = Lists.newArrayList();
-    private final List<IntReferenceHolder> field_216964_d = Lists.newArrayList();
-    @Nullable
-    private final ContainerType<?> field_216965_e;
+    public NonNullList<ItemStack> field_75153_a = NonNullList.func_191196_a();
 @@ -40,6 +_,64 @@
     private final List<IContainerListener> field_75149_d = Lists.newArrayList();
     private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
