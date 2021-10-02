@@ -15,11 +15,9 @@
 +import org.bukkit.command.CommandSender;
  
 -public class SignTileEntity extends TileEntity {
--   private final ITextComponent[] field_145915_a = new ITextComponent[]{StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_};
--   private boolean field_145916_j = true;
 +public class SignTileEntity extends TileEntity implements ICommandSource { // CraftBukkit - implements
-+   public final ITextComponent[] field_145915_a = new ITextComponent[]{StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_}; // private->public CraftBukkit
-+   public boolean field_145916_j = true; // private->public CraftBukkit
+    public final ITextComponent[] field_145915_a = new ITextComponent[]{StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_, StringTextComponent.field_240750_d_};
+    public boolean field_145916_j = true;
     private PlayerEntity field_145917_k;
     private final IReorderingProcessor[] field_212367_h = new IReorderingProcessor[4];
     private DyeColor field_214073_l = DyeColor.BLACK;

@@ -8,7 +8,7 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -40,13 +_,14 @@
+@@ -40,6 +_,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,14 +16,6 @@
  
  public class FallingBlockEntity extends Entity {
     private BlockState field_175132_d = Blocks.field_150354_m.func_176223_P();
-    public int field_145812_b;
-    public boolean field_145813_c = true;
-    private boolean field_145808_f;
--   private boolean field_145809_g;
-+   public boolean field_145809_g; // private->public CraftBukkit
-    private int field_145815_h = 40;
-    private float field_145816_i = 2.0F;
-    public CompoundNBT field_145810_d;
 @@ -94,13 +_,18 @@
     }
  

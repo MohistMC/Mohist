@@ -52,15 +52,6 @@
  
  public class EnderDragonEntity extends MobEntity implements IMob {
     private static final Logger field_184675_bH = LogManager.getLogger();
-@@ -58,7 +_,7 @@
-    private static final EntityPredicate field_213405_bO = (new EntityPredicate()).func_221013_a(64.0D);
-    public final double[][] field_70979_e = new double[64][3];
-    public int field_70976_f = -1;
--   private final EnderDragonPartEntity[] field_70977_g;
-+   public final EnderDragonPartEntity[] field_70977_g; // private->public CraftBukkit
-    public final EnderDragonPartEntity field_70986_h;
-    private final EnderDragonPartEntity field_184673_bv;
-    private final EnderDragonPartEntity field_70987_i;
 @@ -83,6 +_,8 @@
     private final int[] field_184681_bN = new int[24];
     private final PathHeap field_184682_bO = new PathHeap();

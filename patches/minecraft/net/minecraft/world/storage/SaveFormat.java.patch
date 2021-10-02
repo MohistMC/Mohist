@@ -106,7 +106,7 @@
     public class LevelSave implements AutoCloseable {
        private final SessionLockManager field_237278_b_;
 -      private final Path field_237279_c_;
-+      public final Path field_237279_c_; // private->public CraftBukkit
++      public final Path field_237279_c_;
        private final String field_237280_d_;
        private final Map<FolderName, Path> field_237281_e_ = Maps.newHashMap();
  

@@ -36,8 +36,7 @@
 +   public int field_145946_k;
     private boolean[] field_145943_l;
     private Item field_145944_m;
--   private int field_184278_m;
-+   public int field_184278_m; // private->public CraftBukkit
+    public int field_184278_m;
 +
 +   // CraftBukkit start - add fields and methods
 +   private int lastTick = MinecraftServer.currentTick;

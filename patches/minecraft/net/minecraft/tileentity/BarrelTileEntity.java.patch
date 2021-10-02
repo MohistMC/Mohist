@@ -70,12 +70,12 @@
     }
  
 -   private void func_213963_a(BlockState p_213963_1_, boolean p_213963_2_) {
-+   public void func_213963_a(BlockState p_213963_1_, boolean p_213963_2_) { // private->public CraftBukkit
++   public void func_213963_a(BlockState p_213963_1_, boolean p_213963_2_) {
        this.field_145850_b.func_180501_a(this.func_174877_v(), p_213963_1_.func_206870_a(BarrelBlock.field_220093_b, Boolean.valueOf(p_213963_2_)), 3);
     }
  
 -   private void func_213965_a(BlockState p_213965_1_, SoundEvent p_213965_2_) {
-+   public void func_213965_a(BlockState p_213965_1_, SoundEvent p_213965_2_) { // private->public CraftBukkit
++   public void func_213965_a(BlockState p_213965_1_, SoundEvent p_213965_2_) {
        Vector3i vector3i = p_213965_1_.func_177229_b(BarrelBlock.field_220092_a).func_176730_m();
        double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D + (double)vector3i.func_177958_n() / 2.0D;
        double d1 = (double)this.field_174879_c.func_177956_o() + 0.5D + (double)vector3i.func_177956_o() / 2.0D;

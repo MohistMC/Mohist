@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/RepairContainer.java
 +++ b/net/minecraft/inventory/container/RepairContainer.java
-@@ -19,12 +_,20 @@
+@@ -19,6 +_,9 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -10,19 +10,18 @@
  
  public class RepairContainer extends AbstractRepairContainer {
     private static final Logger field_148326_f = LogManager.getLogger();
-    public int field_82856_l;
--   private String field_82857_m;
--   private final IntReferenceHolder field_82854_e = IntReferenceHolder.func_221492_a();
-+   public String field_82857_m; // private->public CraftBukkit
-+   public final IntReferenceHolder field_82854_e = IntReferenceHolder.func_221492_a(); // private->public CraftBukkit
-+
+@@ -26,6 +_,11 @@
+    public String field_82857_m;
+    public final IntReferenceHolder field_82854_e = IntReferenceHolder.func_221492_a();
+ 
 +   // CraftBukkit start
 +   public int maximumRepairCost = 40;
 +   private CraftInventoryView bukkitEntity;
 +   // CraftBukkit end
- 
++
     public RepairContainer(int p_i50101_1_, PlayerInventory p_i50101_2_) {
        this(p_i50101_1_, p_i50101_2_, IWorldPosCallable.field_221489_a);
+    }
 @@ -48,6 +_,8 @@
           p_230301_1_.func_82242_a(-this.field_82854_e.func_221495_b());
        }

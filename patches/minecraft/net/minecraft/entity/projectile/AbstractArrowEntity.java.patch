@@ -8,7 +8,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.item.ItemStack;
-@@ -44,19 +_,25 @@
+@@ -44,6 +_,12 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,22 +21,6 @@
  
  public abstract class AbstractArrowEntity extends ProjectileEntity {
     private static final DataParameter<Byte> field_184554_g = EntityDataManager.func_187226_a(AbstractArrowEntity.class, DataSerializers.field_187191_a);
-    private static final DataParameter<Byte> field_213876_as = EntityDataManager.func_187226_a(AbstractArrowEntity.class, DataSerializers.field_187191_a);
-    @Nullable
-    private BlockState field_195056_av;
--   protected boolean field_70254_i;
-+   public boolean field_70254_i;
-    protected int field_184552_b;
-    public AbstractArrowEntity.PickupStatus field_70251_a = AbstractArrowEntity.PickupStatus.DISALLOWED;
-    public int field_70249_b;
--   private int field_70252_j;
-+   public int field_70252_j;
-    private double field_70255_ao = 2.0D;
--   private int field_70256_ap;
-+   public int field_70256_ap;
-    private SoundEvent field_213877_ay = this.func_213867_k();
-    private IntOpenHashSet field_213878_az;
-    private List<Entity> field_213875_aA;
 @@ -130,7 +_,7 @@
  
        BlockPos blockpos = this.func_233580_cy_();

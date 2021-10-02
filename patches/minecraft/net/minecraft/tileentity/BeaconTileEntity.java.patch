@@ -16,7 +16,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.PlayerInventory;
  import net.minecraft.entity.player.ServerPlayerEntity;
-@@ -37,21 +_,24 @@
+@@ -37,6 +_,9 @@
  import net.minecraft.world.gen.Heightmap;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -26,28 +26,6 @@
  
  public class BeaconTileEntity extends TileEntity implements INamedContainerProvider, ITickableTileEntity {
     public static final Effect[][] field_146009_a = new Effect[][]{{Effects.field_76424_c, Effects.field_76422_e}, {Effects.field_76429_m, Effects.field_76430_j}, {Effects.field_76420_g}, {Effects.field_76428_l}};
-    private static final Set<Effect> field_184280_f = Arrays.stream(field_146009_a).flatMap(Arrays::stream).collect(Collectors.toSet());
-    private List<BeaconTileEntity.BeamSegment> field_174909_f = Lists.newArrayList();
-    private List<BeaconTileEntity.BeamSegment> field_213934_g = Lists.newArrayList();
--   private int field_146012_l;
-+   public int field_146012_l; // private->public CraftBukkit
-    private int field_213935_i = -1;
-    @Nullable
--   private Effect field_146013_m;
--   @Nullable
--   private Effect field_146010_n;
--   @Nullable
--   private ITextComponent field_146008_p;
--   private LockCode field_213936_m = LockCode.field_180162_a;
-+   public Effect field_146013_m; // private->public CraftBukkit
-+   @Nullable
-+   public Effect field_146010_n; // private->public CraftBukkit
-+   @Nullable
-+   public ITextComponent field_146008_p; // private->public CraftBukkit
-+   public LockCode field_213936_m = LockCode.field_180162_a; // private->public CraftBukkit
-    private final IIntArray field_213937_n = new IIntArray() {
-       public int func_221476_a(int p_221476_1_) {
-          switch(p_221476_1_) {
 @@ -89,6 +_,16 @@
        }
     };

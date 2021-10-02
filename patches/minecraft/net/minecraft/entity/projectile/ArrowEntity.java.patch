@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/ArrowEntity.java
 +++ b/net/minecraft/entity/projectile/ArrowEntity.java
-@@ -17,17 +_,31 @@
+@@ -17,10 +_,12 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionUtils;
  import net.minecraft.potion.Potions;
@@ -13,9 +13,8 @@
  
  public class ArrowEntity extends AbstractArrowEntity {
     private static final DataParameter<Integer> field_184559_f = EntityDataManager.func_187226_a(ArrowEntity.class, DataSerializers.field_187192_b);
-    private Potion field_184560_g = Potions.field_185229_a;
--   private final Set<EffectInstance> field_184561_h = Sets.newHashSet();
-+   public final Set<EffectInstance> field_184561_h = Sets.newHashSet();
+@@ -28,6 +_,18 @@
+    public final Set<EffectInstance> field_184561_h = Sets.newHashSet();
     private boolean field_191509_at;
  
 +   // Spigot Start

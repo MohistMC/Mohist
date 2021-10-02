@@ -12,7 +12,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.MerchantOffer;
-@@ -9,14 +_,66 @@
+@@ -9,6 +_,11 @@
  import net.minecraft.util.NonNullList;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,11 +24,9 @@
  
  public class MerchantInventory implements IInventory {
     private final IMerchant field_70476_a;
-    private final NonNullList<ItemStack> field_70474_b = NonNullList.func_191197_a(3, ItemStack.field_190927_a);
-    @Nullable
+@@ -17,6 +_,53 @@
     private MerchantOffer field_214026_c;
--   private int field_70473_e;
-+   public int field_70473_e; // private->public CraftBukkit
+    public int field_70473_e;
     private int field_214027_e;
 +
 +   // CraftBukkit start - add fields and methods

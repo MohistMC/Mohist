@@ -38,15 +38,6 @@
  
  @OnlyIn(
     value = Dist.CLIENT,
-@@ -71,7 +_,7 @@
-    private final int[] field_82223_h = new int[2];
-    private final int[] field_82224_i = new int[2];
-    private int field_82222_j;
--   private final ServerBossInfo field_184744_bE = (ServerBossInfo)(new ServerBossInfo(this.func_145748_c_(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS)).func_186741_a(true);
-+   public final ServerBossInfo field_184744_bE = (ServerBossInfo)(new ServerBossInfo(this.func_145748_c_(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS)).func_186741_a(true); // private->public CraftBukkit
-    private static final Predicate<LivingEntity> field_82219_bJ = (p_213797_0_) -> {
-       return p_213797_0_.func_70668_bt() != CreatureAttribute.field_223223_b_ && p_213797_0_.func_190631_cK();
-    };
 @@ -213,16 +_,36 @@
        if (this.func_82212_n() > 0) {
           int j1 = this.func_82212_n() - 1;

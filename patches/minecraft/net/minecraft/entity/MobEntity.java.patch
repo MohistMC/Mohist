@@ -46,34 +46,15 @@
  
  public abstract class MobEntity extends LivingEntity {
     private static final DataParameter<Byte> field_184654_a = EntityDataManager.func_187226_a(MobEntity.class, DataSerializers.field_187191_a);
-@@ -83,19 +_,19 @@
-    protected JumpController field_70767_i;
-    private final BodyController field_70762_j;
-    protected PathNavigator field_70699_by;
--   public final GoalSelector field_70714_bg;
--   public final GoalSelector field_70715_bh;
-+   public GoalSelector field_70714_bg;
-+   public GoalSelector field_70715_bh;
-    private LivingEntity field_70696_bz;
-    private final EntitySenses field_70723_bA;
-    private final NonNullList<ItemStack> field_184656_bv = NonNullList.func_191197_a(2, ItemStack.field_190927_a);
--   protected final float[] field_82174_bp = new float[2];
-+   public final float[] field_82174_bp = new float[2];
+@@ -91,7 +_,7 @@
+    public final float[] field_82174_bp = new float[2];
     private final NonNullList<ItemStack> field_184657_bw = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
--   protected final float[] field_184655_bs = new float[4];
+    public final float[] field_184655_bs = new float[4];
 -   private boolean field_82172_bs;
--   private boolean field_82179_bU;
-+   public final float[] field_184655_bs = new float[4];
 +   // private boolean canPickUpLoot; // CraftBukkit - moved up to EntityLiving
-+   public boolean field_82179_bU;
+    public boolean field_82179_bU;
     private final Map<PathNodeType, Float> field_184658_bz = Maps.newEnumMap(PathNodeType.class);
--   private ResourceLocation field_184659_bA;
--   private long field_184653_bB;
-+   public ResourceLocation field_184659_bA;
-+   public long field_184653_bB;
-    @Nullable
-    private Entity field_110168_bw;
-    private int field_213400_bI;
+    public ResourceLocation field_184659_bA;
 @@ -104,6 +_,8 @@
     private BlockPos field_213401_bK = BlockPos.field_177992_a;
     private float field_213402_bL = -1.0F;
@@ -83,14 +64,6 @@
     protected MobEntity(EntityType<? extends MobEntity> p_i48576_1_, World p_i48576_2_) {
        super(p_i48576_1_, p_i48576_2_);
        this.field_70714_bg = new GoalSelector(p_i48576_2_.func_234924_Y_());
-@@ -119,7 +_,6 @@
-       if (p_i48576_2_ != null && !p_i48576_2_.field_72995_K) {
-          this.func_184651_r();
-       }
--
-    }
- 
-    protected void func_184651_r() {
 @@ -196,8 +_,42 @@
        return this.field_70696_bz;
     }
