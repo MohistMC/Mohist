@@ -12,6 +12,7 @@ public class EventDispatcherRegistry {
         MinecraftForge.EVENT_BUS.register(new BucketEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new CommandsEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new WorldEventDispatcher());
+        MinecraftForge.EVENT_BUS.register(new ItemEventDispatcher());
         MohistMC.LOGGER.info("EventDispatcherRegistry initialized");
     }
 }
