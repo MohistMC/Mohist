@@ -14,7 +14,7 @@ public class ItemEventDispatcher {
         if (Bukkit.getServer() instanceof CraftServer) {
             // CraftBukkit start - fire ItemDespawnEvent
             ItemEntity entity = event.getEntityItem();
-            if (CraftEventFactory.callItemDespawnEvent(((ItemEntity) (Object) this)).isCancelled()) {
+            if (CraftEventFactory.callItemDespawnEvent(entity).isCancelled()) {
                 entity.age = 0;
                 return;
             }
