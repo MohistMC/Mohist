@@ -91,19 +91,13 @@
  
           this.field_70160_al |= this.func_233566_aG_();
           if (!this.field_70170_p.field_72995_K) {
-@@ -144,12 +_,46 @@
+@@ -144,12 +_,41 @@
              }
           }
  
 -         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= 6000) {
 +         ItemStack item = this.func_92059_d();
 +         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= field_70170_p.spigotConfig.itemDespawnRate) { // Spigot
-+            // CraftBukkit start - fire ItemDespawnEvent
-+            if (CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
-+               this.field_70292_b = 0;
-+               return;
-+            }
-+            // CraftBukkit end
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +             if (hook < 0) this.func_70106_y();
 +             else          this.lifespan += hook;
@@ -125,13 +119,14 @@
 +      if (this.field_70292_b != -32768) this.field_70292_b += elapsedTicks;
 +      this.lastTick = MinecraftServer.currentTick;
 +      // CraftBukkit end
++      ItemStack item = this.func_92059_d();
 +      if (!this.field_70170_p.field_72995_K && this.field_70292_b >= field_70170_p.spigotConfig.itemDespawnRate) { // Spigot
-+         // CraftBukkit start - fire ItemDespawnEvent
-+         if (org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
-+            this.field_70292_b = 0;
-+            return;
-+         }
-+         // CraftBukkit end
++         int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
++         if (hook < 0) this.func_70106_y();
++         else this.lifespan += hook;
++      }
++
++      if (item.func_190926_b()) {
 +         this.func_70106_y();
 +      }
 +   }
