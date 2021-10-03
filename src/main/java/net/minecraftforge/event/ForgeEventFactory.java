@@ -149,6 +149,8 @@ import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
+import org.bukkit.entity.Item;
+import org.bukkit.event.entity.ItemDespawnEvent;
 
 public class ForgeEventFactory
 {
@@ -438,9 +440,11 @@ public class ForgeEventFactory
 
     public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item)
     {
+        Item bukkitEntity = (Item) entity.getBukkitEntity();
+        ItemDespawnEvent bukkitEvent = new ItemDespawnEvent(bukkitEntity, bukkitEntity.getLocation());
         if (item.isEmpty()) return -1;
         ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.level)));
-        if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
+        if (!MinecraftForge.EVENT_BUS.post(event) && bukkitEvent.isCancelled()) return -1;
         return event.getExtraLife();
     }
 
