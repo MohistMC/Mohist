@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
 +++ b/net/minecraft/world/chunk/listener/LoggingChunkStatusListener.java
-@@ -1,50 +_,65 @@
+@@ -1,14 +_,15 @@
  package net.minecraft.world.chunk.listener;
  
 -import javax.annotation.Nullable;
@@ -16,92 +16,57 @@
 +import javax.annotation.Nullable;
 +
  public class LoggingChunkStatusListener implements IChunkStatusListener {
--   private static final Logger field_219512_a = LogManager.getLogger();
--   private final int field_219513_b;
--   private int field_219514_c;
--   private long field_219515_d;
--   private long field_219516_e = Long.MAX_VALUE;
--
--   public LoggingChunkStatusListener(int p_i50697_1_) {
--      int i = p_i50697_1_ * 2 + 1;
--      this.field_219513_b = i * i;
--   }
--
--   public void func_219509_a(ChunkPos p_219509_1_) {
--      this.field_219516_e = Util.func_211177_b();
--      this.field_219515_d = this.field_219516_e;
--   }
--
--   public void func_219508_a(ChunkPos p_219508_1_, @Nullable ChunkStatus p_219508_2_) {
--      if (p_219508_2_ == ChunkStatus.field_222617_m) {
--         ++this.field_219514_c;
--      }
--
--      int i = this.func_219511_c();
--      if (Util.func_211177_b() > this.field_219516_e) {
--         this.field_219516_e += 500L;
+    private static final Logger field_219512_a = LogManager.getLogger();
+    private int field_219513_b;
+@@ -17,34 +_,48 @@
+    private long field_219516_e = Long.MAX_VALUE;
+ 
+    public LoggingChunkStatusListener(int p_i50697_1_) {
++      // Paper start - Allow changing radius later for configurable spawn patch
++      this.setChunkRadius(p_i50697_1_); // Move to method
++   }
++
++   @Override
++   public void setChunkRadius(int p_i50697_1_) {
++      // Paper - copied from above
+       int i = p_i50697_1_ * 2 + 1;
+       this.field_219513_b = i * i;
+    }
++   // Paper end
+ 
+    public void func_219509_a(ChunkPos p_219509_1_) {
+       this.field_219516_e = Util.func_211177_b();
+       this.field_219515_d = this.field_219516_e;
+    }
+ 
++   private static int lastPercentage = -1;
++
+    public void func_219508_a(ChunkPos p_219508_1_, @Nullable ChunkStatus p_219508_2_) {
+       if (p_219508_2_ == ChunkStatus.field_222617_m) {
+          ++this.field_219514_c;
+       }
+ 
+       int i = this.func_219511_c();
++      int calc = MathHelper.func_76125_a(i, 0, 100);
+       if (Util.func_211177_b() > this.field_219516_e) {
+          this.field_219516_e += 500L;
 -         field_219512_a.info((new TranslationTextComponent("menu.preparingSpawn", MathHelper.func_76125_a(i, 0, 100))).getString());
--      }
--
--   }
--
--   public void func_219510_b() {
++         if (lastPercentage != calc) {
++            field_219512_a.info(i18n.get("loggingchunkstatuslistener.2", calc));
++            lastPercentage = calc;
++         }
+       }
+ 
+    }
+ 
+    public void func_219510_b() {
 -      field_219512_a.info("Time elapsed: {} ms", (long)(Util.func_211177_b() - this.field_219515_d));
--      this.field_219516_e = Long.MAX_VALUE;
--   }
--
--   public int func_219511_c() {
++      field_219512_a.info(i18n.get("loggingchunkstatuslistener.1", (long) (Util.func_211177_b() - this.field_219515_d)));
+       this.field_219516_e = Long.MAX_VALUE;
+    }
+ 
+    public int func_219511_c() {
 -      return MathHelper.func_76141_d((float)this.field_219514_c * 100.0F / (float)this.field_219513_b);
--   }
-+    private static final Logger field_219512_a = LogManager.getLogger();
-+    private int field_219513_b; // Paper - remove final
-+    private int field_219514_c;
-+    private long field_219515_d;
-+    private long field_219516_e = Long.MAX_VALUE;
-+
-+    public LoggingChunkStatusListener(int p_i50697_1_) {
-+        // Paper start - Allow changing radius later for configurable spawn patch
-+        this.setChunkRadius(p_i50697_1_); // Move to method
-+    }
-+
-+    @Override
-+    public void setChunkRadius(int p_i50697_1_) {
-+        // Paper - copied from above
-+        int i = p_i50697_1_ * 2 + 1;
-+        this.field_219513_b = i * i;
-+    }
-+    // Paper end
-+
-+    public void func_219509_a(ChunkPos p_219509_1_) {
-+        this.field_219516_e = Util.func_211177_b();
-+        this.field_219515_d = this.field_219516_e;
-+    }
-+
-+    private static int lastPercentage = -1;
-+
-+    public void func_219508_a(ChunkPos p_219508_1_, @Nullable ChunkStatus p_219508_2_) {
-+        if (p_219508_2_ == ChunkStatus.field_222617_m) {
-+            ++this.field_219514_c;
-+        }
-+
-+        int i = this.func_219511_c();
-+        int calc = MathHelper.func_76125_a(i, 0, 100);
-+        if (Util.func_211177_b() > this.field_219516_e) {
-+            this.field_219516_e += 500L;
-+            if (lastPercentage != calc) {
-+                field_219512_a.info(i18n.get("loggingchunkstatuslistener.2", calc));
-+                lastPercentage = calc;
-+            }
-+        }
-+
-+    }
-+
-+    public void func_219510_b() {
-+        field_219512_a.info(i18n.get("loggingchunkstatuslistener.1", (long) (Util.func_211177_b() - this.field_219515_d)));
-+        this.field_219516_e = Long.MAX_VALUE;
-+    }
-+
-+    public int func_219511_c() {
-+        return MathHelper.func_76141_d((float) this.field_219514_c * 100.0F / (float) this.field_219513_b);
-+    }
++      return MathHelper.func_76141_d((float)this.field_219514_c * 100.0F / (float) this.field_219513_b);
+    }
  }

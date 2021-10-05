@@ -1,17 +1,13 @@
 --- a/net/minecraft/world/raid/RaidManager.java
 +++ b/net/minecraft/world/raid/RaidManager.java
-@@ -24,9 +_,10 @@
+@@ -24,6 +_,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.WorldSavedData;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
  
  public class RaidManager extends WorldSavedData {
--   private final Map<Integer, Raid> field_215175_a = Maps.newHashMap();
-+   public final Map<Integer, Raid> field_215175_a = Maps.newHashMap();
-    private final ServerWorld field_215176_b;
-    private int field_215177_c;
-    private int field_215178_d;
+    public final Map<Integer, Raid> field_215175_a = Maps.newHashMap();
 @@ -108,19 +_,32 @@
              Raid raid = this.func_215168_a(p_215170_1_.func_71121_q(), blockpos1);
              boolean flag = false;

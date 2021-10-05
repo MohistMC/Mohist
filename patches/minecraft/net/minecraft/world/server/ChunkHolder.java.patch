@@ -8,21 +8,8 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.Util;
  import net.minecraft.util.math.BlockPos;
-@@ -48,7 +_,7 @@
-    private volatile CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>> field_219313_h = field_219309_d;
-    private volatile CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>> field_219314_i = field_219309_d;
-    private CompletableFuture<IChunk> field_219315_j = CompletableFuture.completedFuture((IChunk)null);
--   private int field_219316_k;
-+   public int field_219316_k;
-    private int field_219317_l;
-    private int field_219318_m;
-    private final ChunkPos field_219319_n;
-@@ -58,9 +_,10 @@
-    private int field_219325_t;
-    private final WorldLightManager field_219326_u;
-    private final ChunkHolder.IListener field_219327_v;
--   private final ChunkHolder.IPlayerProvider field_219328_w;
-+   public final ChunkHolder.IPlayerProvider field_219328_w;
+@@ -61,6 +_,7 @@
+    public final ChunkHolder.IPlayerProvider field_219328_w;
     private boolean field_219329_x;
     private boolean field_244384_x;
 +   Chunk currentlyLoading; //Forge - Used to bypass future chain when loading chunks.

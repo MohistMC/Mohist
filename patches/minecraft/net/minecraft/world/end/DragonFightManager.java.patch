@@ -8,31 +8,6 @@
  import java.util.Collections;
  import java.util.List;
  import java.util.Random;
-@@ -58,8 +_,8 @@
- public class DragonFightManager {
-    private static final Logger field_186107_a = LogManager.getLogger();
-    private static final Predicate<Entity> field_186108_b = EntityPredicates.field_94557_a.and(EntityPredicates.func_188443_a(0.0D, 128.0D, 0.0D, 192.0D));
--   private final ServerBossInfo field_186109_c = (ServerBossInfo)(new ServerBossInfo(new TranslationTextComponent("entity.minecraft.ender_dragon"), BossInfo.Color.PINK, BossInfo.Overlay.PROGRESS)).func_186742_b(true).func_186743_c(true);
--   private final ServerWorld field_186110_d;
-+   public final ServerBossInfo field_186109_c = (ServerBossInfo)(new ServerBossInfo(new TranslationTextComponent("entity.minecraft.ender_dragon"), BossInfo.Color.PINK, BossInfo.Overlay.PROGRESS)).func_186742_b(true).func_186743_c(true);
-+   public final ServerWorld field_186110_d;
-    private final List<Integer> field_186111_e = Lists.newArrayList();
-    private final BlockPattern field_186112_f;
-    private int field_186113_g;
-@@ -68,10 +_,10 @@
-    private int field_186116_j;
-    private boolean field_186117_k;
-    private boolean field_186118_l;
--   private UUID field_186119_m;
-+   public UUID field_186119_m;
-    private boolean field_186120_n = true;
--   private BlockPos field_186121_o;
--   private DragonSpawnState field_186122_p;
-+   public BlockPos field_186121_o;
-+   public DragonSpawnState field_186122_p;
-    private int field_186123_q;
-    private List<EnderCrystalEntity> field_186124_r;
- 
 @@ -84,6 +_,7 @@
  
           this.field_186117_k = p_i231901_4_.func_74767_n("DragonKilled");

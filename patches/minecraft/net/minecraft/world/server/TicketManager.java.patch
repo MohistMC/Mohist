@@ -39,7 +39,7 @@
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.util.SortedArraySet;
  import net.minecraft.util.concurrent.ITaskExecutor;
-@@ -30,14 +_,12 @@
+@@ -30,8 +_,6 @@
  import net.minecraft.world.chunk.ChunkDistanceGraph;
  import net.minecraft.world.chunk.ChunkStatus;
  import net.minecraft.world.chunk.ChunkTaskPriorityQueueSorter;
@@ -48,13 +48,6 @@
  
  public abstract class TicketManager {
     private static final Logger field_219373_a = LogManager.getLogger();
-    private static final int field_219374_b = 33 + ChunkStatus.func_222599_a(ChunkStatus.field_222617_m) - 2;
-    private final Long2ObjectMap<ObjectSet<ServerPlayerEntity>> field_219375_c = new Long2ObjectOpenHashMap<>();
--   private final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> field_219377_e = new Long2ObjectOpenHashMap<>();
-+   public final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> field_219377_e = new Long2ObjectOpenHashMap<>();
-    private final TicketManager.ChunkTicketTracker field_219378_f = new TicketManager.ChunkTicketTracker();
-    private final TicketManager.PlayerChunkTracker field_219381_i = new TicketManager.PlayerChunkTracker(8);
-    private final TicketManager.PlayerTicketTracker field_219382_j = new TicketManager.PlayerTicketTracker(33);
 @@ -49,6 +_,8 @@
     private final Executor field_219388_p;
     private long field_219389_q;

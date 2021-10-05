@@ -1,31 +1,5 @@
 --- a/net/minecraft/world/raid/Raid.java
 +++ b/net/minecraft/world/raid/Raid.java
-@@ -65,21 +_,21 @@
-    private static final ITextComponent field_221342_f = field_221338_b.func_230532_e_().func_240702_b_(" - ").func_230529_a_(field_221340_d);
-    private final Map<Integer, AbstractRaiderEntity> field_221343_g = Maps.newHashMap();
-    private final Map<Integer, Set<AbstractRaiderEntity>> field_221344_h = Maps.newHashMap();
--   private final Set<UUID> field_221345_i = Sets.newHashSet();
--   private long field_221346_j;
-+   public final Set<UUID> field_221345_i = Sets.newHashSet();
-+   public long field_221346_j;
-    private BlockPos field_221347_k;
-    private final ServerWorld field_221348_l;
-    private boolean field_221349_m;
-    private final int field_221350_n;
-    private float field_221351_o;
--   private int field_221352_p;
-+   public int field_221352_p;
-    private boolean field_221353_q;
-    private int field_221354_r;
-    private final ServerBossInfo field_221355_s = new ServerBossInfo(field_221338_b, BossInfo.Color.RED, BossInfo.Overlay.NOTCHED_10);
-    private int field_221356_t;
-    private int field_221357_u;
-    private final Random field_221358_v = new Random();
--   private final int field_221359_w;
-+   public final int field_221359_w;
-    private Raid.Status field_221360_x;
-    private int field_221361_y;
-    private Optional<BlockPos> field_221362_z = Optional.empty();
 @@ -144,6 +_,12 @@
        return this.field_221360_x == Raid.Status.LOSS;
     }

@@ -92,7 +92,7 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.network.DebugPacketSender;
  import net.minecraft.network.IPacket;
-@@ -138,32 +_,31 @@
+@@ -138,17 +_,16 @@
  import net.minecraft.world.storage.MapData;
  import net.minecraft.world.storage.MapIdTracker;
  import net.minecraft.world.storage.SaveFormat;
@@ -106,20 +106,14 @@
 +public class ServerWorld extends World implements ISeedReader, net.minecraftforge.common.extensions.IForgeWorldServer {
     public static final BlockPos field_241108_a_ = new BlockPos(100, 50, 0);
     private static final Logger field_147491_a = LogManager.getLogger();
--   private final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
-+   public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
+    public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
     private final Map<UUID, Entity> field_175741_N = Maps.newHashMap();
--   private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
+-   public final Queue<Entity> field_217499_z = Queues.newArrayDeque();
 +   public final Queue<Entity> field_217499_z = Queues.newArrayDeque(); // Mohist - Fix "Wrong location" (private -> public)
     private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
     private final ServerChunkProvider field_241102_C_;
     boolean field_217492_a;
-    private final MinecraftServer field_73061_a;
--   private final IServerWorldInfo field_241103_E_;
-+   public final IServerWorldInfo field_241103_E_;
-    public boolean field_73058_d;
-    private boolean field_73068_P;
-    private int field_80004_Q;
+@@ -160,10 +_,10 @@
     private final Teleporter field_85177_Q;
     private final ServerTickList<Block> field_94579_S = new ServerTickList<>(this, (p_205341_0_) -> {
        return p_205341_0_ == null || p_205341_0_.func_176223_P().func_196958_f();
