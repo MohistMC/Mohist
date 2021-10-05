@@ -8,14 +8,13 @@
     public static <T> SerializableTickList<T> func_222984_a(ListNBT p_222984_0_, Function<T, ResourceLocation> p_222984_1_, Function<ResourceLocation, T> p_222984_2_) {
        List<SerializableTickList.TickHolder<T>> list = Lists.newArrayList();
  
-@@ -62,6 +_,15 @@
+@@ -62,6 +_,14 @@
           if (t != null) {
              BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
              list.add(new SerializableTickList.TickHolder<>(t, blockpos, compoundnbt.func_74762_e("t"), TickPriority.func_205397_a(compoundnbt.func_74762_e("p"))));
 +            // Paper start - clean up broken entries
 +            int delay = compoundnbt.func_74762_e("t");
 +            if (MAX_TICK_DELAY > 0 && delay > MAX_TICK_DELAY) {
-+               net.minecraft.server.MinecraftServer.field_147145_h.warn("Dropping tick for pos " + blockpos + ", tick delay " + delay);
 +               continue;
 +            }
 +            // Paper end - clean up broken entries
