@@ -159,6 +159,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ChunkHolder;
@@ -657,10 +658,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         entity.level = ((CraftWorld) location.getWorld()).getHandle();
 
         // Let the server handle cross world teleports
-        //if (!location.getWorld().equals(getWorld())) {
-        //    entity.teleportTo(((CraftWorld) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
-        //    return true;
-        //}
+        if (!location.getWorld().equals(getWorld())) {
+            entity.teleportTo(((CraftWorld) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+            return true;
+        }
 
         // entity.setLocation() throws no event, and so cannot be cancelled
         entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch()); // Paper - use proper setPositionRotation for teleportation

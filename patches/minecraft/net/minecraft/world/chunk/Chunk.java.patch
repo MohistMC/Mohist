@@ -32,7 +32,7 @@
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.FluidState;
  import net.minecraft.fluid.Fluids;
-@@ -52,32 +_,43 @@
+@@ -52,13 +_,15 @@
  import net.minecraft.world.gen.feature.structure.StructureStart;
  import net.minecraft.world.lighting.WorldLightManager;
  import net.minecraft.world.server.ChunkHolder;
@@ -49,37 +49,20 @@
     private static final Logger field_150817_t = LogManager.getLogger();
     @Nullable
     public static final ChunkSection field_186036_a = null;
-    private final ChunkSection[] field_76652_q = new ChunkSection[16];
-    private BiomeContainer field_76651_r;
-    private final Map<BlockPos, CompoundNBT> field_201618_i = Maps.newHashMap();
--   private boolean field_76636_d;
--   private final World field_76637_e;
--   private final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
-+   public boolean field_76636_d;
-+   public final World field_76637_e;
-+   public final Map<Heightmap.Type, Heightmap> field_76634_f = Maps.newEnumMap(Heightmap.Type.class);
-    private final UpgradeData field_196967_n;
--   private final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
--   private final ClassInheritanceMultiMap<Entity>[] field_76645_j;
-+   public final Map<BlockPos, TileEntity> field_150816_i = Maps.newHashMap();
-+   public final ClassInheritanceMultiMap<Entity>[] field_76645_j;
-    private final Map<Structure<?>, StructureStart<?>> field_201619_q = Maps.newHashMap();
-    private final Map<Structure<?>, LongSet> field_201620_r = Maps.newHashMap();
-    private final ShortList[] field_201622_t = new ShortList[16];
+@@ -77,7 +_,16 @@
     private ITickList<Block> field_201621_s;
     private ITickList<Fluid> field_205325_u;
     private boolean field_76644_m;
--   private long field_76641_n;
-+    public final ServerWorld world;
-+    // Paper start - track last save time
-+    public long field_76641_n;
++   public final ServerWorld world;
++   // Paper start - track last save time
+    public long field_76641_n;
 +
-+    @Override
-+    public void setLastSaved(long ticks) {
-+        this.field_76641_n = ticks;
-+    }
++   @Override
++   public void setLastSaved(long ticks) {
++      this.field_76641_n = ticks;
++   }
++   // Paper end
 +
-+    // Paper end
     private volatile boolean field_76643_l;
     private long field_111204_q;
     @Nullable

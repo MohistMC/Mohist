@@ -12,15 +12,6 @@
  import net.minecraft.util.Unit;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
-@@ -9,7 +_,7 @@
- public class TicketType<T> {
-    private final String field_219495_h;
-    private final Comparator<T> field_219496_i;
--   private final long field_223186_k;
-+   public long field_223186_k;
-    public static final TicketType<Unit> field_219488_a = func_219484_a("start", (p_219486_0_, p_219486_1_) -> {
-       return 0;
-    });
 @@ -20,8 +_,16 @@
     public static final TicketType<ChunkPos> field_219491_d = func_219484_a("forced", Comparator.comparingLong(ChunkPos::func_201841_a));
     public static final TicketType<ChunkPos> field_219492_e = func_219484_a("light", Comparator.comparingLong(ChunkPos::func_201841_a));

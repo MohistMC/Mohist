@@ -8,30 +8,8 @@
  import java.util.List;
  import java.util.Optional;
  import java.util.function.Function;
-@@ -31,35 +_,36 @@
- 
- public abstract class AbstractSpawner {
-    private static final Logger field_209160_a = LogManager.getLogger();
--   private int field_98286_b = 20;
-+   public int field_98286_b = 20;
-    private final List<WeightedSpawnerEntity> field_98285_e = Lists.newArrayList();
-    private WeightedSpawnerEntity field_98282_f = new WeightedSpawnerEntity();
-    private double field_98287_c;
-    private double field_98284_d;
--   private int field_98283_g = 200;
--   private int field_98293_h = 800;
--   private int field_98294_i = 4;
-+   public int field_98283_g = 200;
-+   public int field_98293_h = 800;
-+   public int field_98294_i = 4;
-    @Nullable
-    private Entity field_98291_j;
--   private int field_98292_k = 6;
--   private int field_98289_l = 16;
--   private int field_98290_m = 4;
-+   public int field_98292_k = 6;
-+   public int field_98289_l = 16;
-+   public int field_98290_m = 4;
+@@ -46,20 +_,21 @@
+    public int field_98290_m = 4;
  
     @Nullable
 -   private ResourceLocation func_190895_g() {

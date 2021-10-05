@@ -61,7 +61,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
-@@ -88,15 +_,12 @@
+@@ -88,9 +_,6 @@
  import net.minecraft.world.storage.SaveFormat;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -71,28 +71,7 @@
  
  public class ChunkManager extends ChunkLoader implements ChunkHolder.IPlayerProvider {
     private static final Logger field_219250_d = LogManager.getLogger();
-    public static final int field_219249_a = 33 + ChunkStatus.func_222600_b();
-    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219251_e = new Long2ObjectLinkedOpenHashMap<>();
--   private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
-+   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
-    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219253_g = new Long2ObjectLinkedOpenHashMap<>();
-    private final LongSet field_219254_h = new LongOpenHashSet();
-    private final ServerWorld field_219255_i;
-@@ -110,17 +_,39 @@
-    private final ChunkTaskPriorityQueueSorter field_219263_q;
-    private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219264_r;
-    private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219265_s;
--   private final IChunkStatusListener field_219266_t;
--   private final ChunkManager.ProxyTicketManager field_219267_u;
-+   public final IChunkStatusListener field_219266_t;
-+   public final ChunkManager.ProxyTicketManager field_219267_u;
-    private final AtomicInteger field_219268_v = new AtomicInteger();
-    private final TemplateManager field_219269_w;
-    private final File field_219270_x;
-    private final PlayerGenerationTracker field_219271_y = new PlayerGenerationTracker();
--   private final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
-+   public final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
-    private final Long2ByteMap field_241087_z_ = new Long2ByteOpenHashMap();
+@@ -121,6 +_,28 @@
     private final Queue<Runnable> field_223181_A = Queues.newConcurrentLinkedQueue();
     private int field_219247_A;
  

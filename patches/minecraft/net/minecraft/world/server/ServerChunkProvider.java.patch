@@ -25,17 +25,6 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.IPacket;
-@@ -57,8 +_,8 @@
-    public final ChunkManager field_217237_a;
-    private final DimensionSavedDataManager field_217244_j;
-    private long field_217245_k;
--   private boolean field_217246_l = true;
--   private boolean field_217247_m = true;
-+   public boolean field_217246_l = true;
-+   public boolean field_217247_m = true;
-    private final long[] field_222875_n = new long[4];
-    private final ChunkStatus[] field_222876_o = new ChunkStatus[4];
-    private final IChunk[] field_222877_p = new IChunk[4];
 @@ -80,6 +_,24 @@
        this.func_222869_l();
     }

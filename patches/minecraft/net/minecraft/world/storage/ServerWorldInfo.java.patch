@@ -15,7 +15,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.SharedConstants;
  import net.minecraft.util.UUIDCodec;
-@@ -34,14 +_,18 @@
+@@ -34,10 +_,14 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.border.WorldBorder;
  import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
@@ -30,11 +30,6 @@
  
  public class ServerWorldInfo implements IServerWorldInfo, IServerConfiguration {
     private static final Logger field_237341_a_ = LogManager.getLogger();
--   private WorldSettings field_237342_b_;
-+   public WorldSettings field_237342_b_;
-    private final DimensionGeneratorSettings field_237343_c_;
-    private final Lifecycle field_237344_d_;
-    private int field_237345_e_;
 @@ -75,6 +_,7 @@
     private final Set<String> field_237338_B_;
     private boolean field_237339_C_;

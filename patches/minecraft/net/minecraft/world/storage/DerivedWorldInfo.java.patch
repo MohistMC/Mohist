@@ -1,11 +1,8 @@
 --- a/net/minecraft/world/storage/DerivedWorldInfo.java
 +++ b/net/minecraft/world/storage/DerivedWorldInfo.java
-@@ -11,9 +_,17 @@
- import net.minecraft.world.border.WorldBorder;
- 
+@@ -13,7 +_,15 @@
  public class DerivedWorldInfo implements IServerWorldInfo {
--   private final IServerConfiguration field_237244_a_;
-+   public final IServerConfiguration field_237244_a_; // Mohist - private -> public
+    public final IServerConfiguration field_237244_a_;
     private final IServerWorldInfo field_76115_a;
 -
 +   private String properName;
