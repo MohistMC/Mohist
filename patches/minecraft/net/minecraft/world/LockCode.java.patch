@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/LockCode.java
 +++ b/net/minecraft/world/LockCode.java
-@@ -3,18 +_,32 @@
+@@ -3,6 +_,8 @@
  import javax.annotation.concurrent.Immutable;
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.CompoundNBT;
@@ -9,12 +9,7 @@
  
  @Immutable
  public class LockCode {
-    public static final LockCode field_180162_a = new LockCode("");
--   private final String field_180161_b;
-+   public final String field_180161_b;
- 
-    public LockCode(String p_i45903_1_) {
-       this.field_180161_b = p_i45903_1_;
+@@ -14,7 +_,19 @@
     }
  
     public boolean func_219964_a(ItemStack p_219964_1_) {

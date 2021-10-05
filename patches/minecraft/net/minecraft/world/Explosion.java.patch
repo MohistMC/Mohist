@@ -35,14 +35,7 @@
  
  public class Explosion {
     private static final ExplosionContext field_242407_a = new ExplosionContext();
-@@ -52,12 +_,15 @@
-    private final double field_77285_c;
-    private final double field_77282_d;
-    @Nullable
--   private final Entity field_77283_e;
-+   public final Entity field_77283_e;
-    private final float field_77280_f;
-    private final DamageSource field_199593_j;
+@@ -58,6 +_,9 @@
     private final ExplosionContext field_234893_k_;
     private final List<BlockPos> field_77281_g = Lists.newArrayList();
     private final Map<PlayerEntity, Vector3d> field_77288_k = Maps.newHashMap();

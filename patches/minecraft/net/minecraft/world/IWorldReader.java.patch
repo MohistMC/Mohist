@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/IWorldReader.java
 +++ b/net/minecraft/world/IWorldReader.java
-@@ -18,6 +_,7 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
- public interface IWorldReader extends IBlockDisplayReader, ICollisionReader, BiomeManager.IBiomeReader {
-+
-    @Nullable
-    IChunk func_217353_a(int p_217353_1_, int p_217353_2_, ChunkStatus p_217353_3_, boolean p_217353_4_);
- 
 @@ -68,7 +_,7 @@
     }
  
