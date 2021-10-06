@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
@@ -53,6 +54,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 
 import javax.annotation.Nullable;
 
@@ -122,6 +125,7 @@ public class NetworkHooks
         final Set<ResourceLocation> resourceLocations = NetworkRegistry.buildChannelVersions().keySet().stream().
                 filter(rl -> !Objects.equals(rl.getNamespace(), "minecraft")).
                 collect(Collectors.toSet());
+        Bukkit.getMessenger().getIncomingChannels().stream().map(ResourceLocation::new).forEach(resourceLocations::add);
         FMLMCRegisterPacketHandler.INSTANCE.addChannels(resourceLocations, manager);
         FMLMCRegisterPacketHandler.INSTANCE.sendRegistry(manager, NetworkDirection.valueOf(direction));
     }
@@ -225,6 +229,15 @@ public class NetworkHooks
         }
         Container c = containerSupplier.createMenu(openContainerId, player.inventory, player);
         ContainerType<?> type = c.getType();
+        // Mohist start
+        c.setTitle(containerSupplier.getDisplayName());
+        c = CraftEventFactory.callInventoryOpenEvent(player, c);
+        if (c == null) {
+            if (containerSupplier instanceof IInventory) {
+                ((IInventory) containerSupplier).stopOpen(player);
+            }
+        }
+        // Mohist end
         FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
         FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
 
