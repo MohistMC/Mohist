@@ -1976,7 +1976,6 @@
 +
 +   public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
 +      PacketThreadUtil.func_218796_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
-+      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
 +      if (p_147349_1_.field_149562_a.equals(CUSTOM_REGISTER)) {
 +         try {
 +            String channels = p_147349_1_.field_149561_c.toString(Charsets.UTF_8);
@@ -2015,6 +2014,7 @@
 +            this.disconnect("Invalid custom payload!");
 +         }
 +      }
++      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
 +   }
 +
 +   public boolean isDisconnected() {
