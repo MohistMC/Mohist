@@ -24,7 +24,7 @@ public class InstallUtils {
     public static String mcpVer = MohistMCStart.class.getPackage().getSpecificationTitle();
     public static String libPath = JarTool.getJarDir() + "/libraries/";
 
-    public static String forgeStart = libPath + "net/minecraftforge/forge/1.16.5-" + forgeVer + "/forge-1.16.5-" + forgeVer;
+    public static String forgeStart = libPath + "com/mohistmc/mohist/1.16.5-" + forgeVer + "/mohist-1.16.5-" + forgeVer;
     public static File universalJar = new File(forgeStart + "-universal.jar");
     public static File serverJar = new File(forgeStart + "-server.jar");
 
@@ -43,7 +43,7 @@ public class InstallUtils {
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
         copyFileFromJar(lzma, "data/server.lzma");
-        copyFileFromJar(universalJar, "data/forge-1.16.5-" + forgeVer + "-universal.jar");
+        copyFileFromJar(universalJar, "data/mohist-1.16.5-" + forgeVer + "-universal.jar");
 
         if(forgeVer == null || mcpVer == null) {
             System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
