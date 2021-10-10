@@ -61,7 +61,7 @@ public class RemapUtils {
         ReflectMethodRemapper.init();
 
         try {
-            Class.forName("com.mohistmc.bukkit.nms.proxy.ProxyMethodHandles_Lookup");
+            Class.forName("com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
