@@ -444,7 +444,7 @@ public class ForgeEventFactory
         ItemDespawnEvent bukkitEvent = new ItemDespawnEvent(bukkitEntity, bukkitEntity.getLocation());
         if (item.isEmpty()) return -1;
         ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.level)));
-        if (!MinecraftForge.EVENT_BUS.post(event) && bukkitEvent.isCancelled()) return -1;
+        if (!MinecraftForge.EVENT_BUS.post(event) || bukkitEvent.isCancelled()) return -1;
         return event.getExtraLife();
     }
 
