@@ -3,7 +3,7 @@ package com.mohistmc.bukkit.nms.remappers;
 import com.google.common.collect.Maps;
 import com.mohistmc.bukkit.nms.model.MethodRedirectRule;
 import com.mohistmc.bukkit.nms.proxy.ProxyClass;
-import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandles_Lookup;
+import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup;
 import com.mohistmc.bukkit.nms.proxy.ProxyYamlConfiguration;
 import com.mohistmc.bukkit.nms.proxy.asm.ProxyClassWriter;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
@@ -50,15 +50,15 @@ public class ReflectMethodRemapper extends MethodRemapper {
         virtualMethod.put("java/lang/Class;getDeclaredMethods", ProxyClass.class);
         virtualMethod.put("java/lang/reflect/Method;getName", ProxyClass.class);
         virtualMethod.put("java/lang/reflect/Field;getName", ProxyClass.class);
-        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;unreflect", ProxyMethodHandles_Lookup.class);
-        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSpecial", ProxyMethodHandles_Lookup.class);
-        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStatic", ProxyMethodHandles_Lookup.class);
-        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVirtual", ProxyMethodHandles_Lookup.class);
-		virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findGetter", ProxyMethodHandles_Lookup.class);
-        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSetter", ProxyMethodHandles_Lookup.class);
-        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStaticGetter", ProxyMethodHandles_Lookup.class);
-        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStaticSetter", ProxyMethodHandles_Lookup.class);
-		virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVarHandle", ProxyMethodHandles_Lookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;unreflect", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSpecial", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStatic", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVirtual", ProxyMethodHandlesLookup.class);
+		virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findGetter", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSetter", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStaticGetter", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStaticSetter", ProxyMethodHandlesLookup.class);
+		virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVarHandle", ProxyMethodHandlesLookup.class);
         virtualMethod.put(ASMUtils.classLoaderdesc + ";loadClass", ProxyClass.class);
 
         registerMethodRemapper("java/lang/Class", "getField", Field.class, new Class[]{String.class}, ProxyClass.class);
@@ -71,15 +71,15 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/lang/reflect/Method", "getName", String.class, new Class[]{}, ProxyClass.class);
         registerMethodRemapper("java/lang/reflect/Field", "getName", String.class, new Class[]{}, ProxyClass.class);
 
-        registerMethodRemapper("java/lang/invoke/MethodType", "fromMethodDescriptorString", MethodType.class, new Class[]{String.class, ClassLoader.class}, ProxyMethodHandles_Lookup.class);
-        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "unreflect", MethodHandle.class, new Class[]{String.class, ClassLoader.class}, ProxyMethodHandles_Lookup.class);
-        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSpecial", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
-        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStatic", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandles_Lookup.class);
-        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findVirtual", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandles_Lookup.class);
-		registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
-        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
-        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
-        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodType", "fromMethodDescriptorString", MethodType.class, new Class[]{String.class, ClassLoader.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "unreflect", MethodHandle.class, new Class[]{String.class, ClassLoader.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSpecial", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStatic", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findVirtual", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandlesLookup.class);
+		registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
 
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
     }

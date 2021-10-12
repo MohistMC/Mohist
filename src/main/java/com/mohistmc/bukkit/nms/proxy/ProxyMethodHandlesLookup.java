@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * @author pyz
  * @date 2019/7/1 7:45 PM
  */
-public class ProxyMethodHandles_Lookup {
+public class ProxyMethodHandlesLookup {
 
     public static MethodHandle findVirtual(MethodHandles.Lookup lookup, Class<?> clazz, String name, MethodType type) throws NoSuchMethodException, IllegalAccessException {
         if (clazz.getName().startsWith("net.minecraft.")) {
