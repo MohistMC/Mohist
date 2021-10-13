@@ -231,7 +231,7 @@ public final class PluginClassLoader extends URLClassLoader {
                     bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
                     bytecode = RemapUtils.remapFindClass(bytecode);
 
-                    bytecode = modifyByteCode(bytecode); // Mohist: add entry point for asm or mixin
+                    bytecode = modifyByteCode(name, bytecode); // Mohist: add entry point for asm or mixin
 
                     bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
 
@@ -272,7 +272,7 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     // Mohist start: add entry point for asm or mixin
-    private byte[] modifyByteCode(byte[] bytes) {
+    private byte[] modifyByteCode(String className, byte[] bytes) {
         return bytes;
     }
     //Mohist end
