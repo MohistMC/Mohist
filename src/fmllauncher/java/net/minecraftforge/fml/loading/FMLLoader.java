@@ -78,6 +78,7 @@ public class FMLLoader
     private static Path[] mcPaths;
     static String mcVersion;
     private static String mcpVersion;
+    static String mohistVersion;
     static String forgeVersion;
     private static String forgeGroup;
     private static Predicate<String> classLoaderExclusions;
@@ -190,14 +191,15 @@ public class FMLLoader
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
         mcpVersion = (String) arguments.get("mcpVersion");
+        mohistVersion = (String) arguments.get("mohistVersion");
         forgeVersion = (String) arguments.get("forgeVersion");
         forgeGroup = (String) arguments.get("forgeGroup");
 
-        LOGGER.debug(CORE,"Received command line version data  : MC Version: '{}' MCP Version: '{}' Forge Version: '{}' Forge group: '{}'", mcVersion, mcpVersion, forgeVersion, forgeGroup);
-        forgePath = commonLaunchHandler.getForgePath(mcVersion, forgeVersion, forgeGroup);
-        mcPaths = commonLaunchHandler.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup);
+        LOGGER.debug(CORE,"Received command line version data  : MC Version: '{}' MCP Version: '{}' Forge Version: '{}' Forge group: '{}'", mcVersion, mcpVersion, mohistVersion, forgeGroup);
+        forgePath = commonLaunchHandler.getForgePath(mcVersion, mohistVersion, forgeGroup);
+        mcPaths = commonLaunchHandler.getMCPaths(mcVersion, mcpVersion, mohistVersion, forgeGroup);
 
-        commonLaunchHandler.validatePaths(forgePath, mcPaths, forgeVersion, mcVersion, mcpVersion);
+        commonLaunchHandler.validatePaths(forgePath, mcPaths, mohistVersion, mcVersion, mcpVersion);
         commonLaunchHandler.setup(environment, arguments);
         classLoaderExclusions = commonLaunchHandler.getPackagePredicate();
 

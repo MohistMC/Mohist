@@ -122,7 +122,7 @@ public class LanguageLoadingProvider
                 throw new RuntimeException("Huh?", e);
             }
             Optional<String> implementationVersion = JarVersionLookupHandler.getImplementationVersion(lp.getClass());
-            String impl = implementationVersion.orElse(Files.isDirectory(lpPath) ? FMLLoader.forgeVersion.split("\\.")[0] : null);
+            String impl = implementationVersion.orElse(Files.isDirectory(lpPath) ? FMLLoader.mohistVersion.split("\\.")[0] : null);
             if (impl == null) {
                 LOGGER.fatal(CORE, "Found unversioned language provider {}", lp.name());
                 throw new RuntimeException("Failed to find implementation version for language provider "+ lp.name());
