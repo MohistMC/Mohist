@@ -49,7 +49,8 @@ public class ForgeVersion
         if (group == null) {
             group = "net.minecraftforge"; // If all else fails, Our normal group
         }
-        forgeVersion = vers;
+        //forgeVersion = vers;
+        forgeVersion = "36.2.8"; // Mohist - hardcode version (during wait good fix)
         forgeSpec = spec;
         forgeGroup = group;
         LOGGER.debug(CORE, "Found Forge version {}", forgeVersion);
