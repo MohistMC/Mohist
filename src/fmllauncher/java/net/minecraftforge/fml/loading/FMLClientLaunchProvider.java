@@ -59,7 +59,7 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
         final List<String> mavenRoots = new ArrayList<>((List<String>) arguments.get("mavenRoots"));
         final List<String> mods = new ArrayList<>((List<String>) arguments.get("mods"));
         mavenRoots.add(LibraryFinder.findLibsPath().toString());
-        final String forgeVersion = (String) arguments.get("forgeVersion");
+        final String forgeVersion = (String) arguments.get("mohistVersion");
         final String mcVersion = (String) arguments.get("mcVersion");
         final String forgeGroup = (String) arguments.get("forgeGroup");
         mods.add(forgeGroup+":forge:universal:"+mcVersion+"-"+forgeVersion);
