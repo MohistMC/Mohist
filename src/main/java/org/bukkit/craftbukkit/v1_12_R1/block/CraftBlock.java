@@ -300,7 +300,7 @@ public class CraftBlock implements Block {
     public BlockState getState() {
         Material material = getType();
         // Mohist start - check for TE that implements IInventory
-        if (material.isForgeBlock()) {
+        if (material == null) {
             TileEntity tileEntity = chunk.getCraftWorld().getTileEntityAt(x, y, z);
             if (tileEntity != null) {
                 // block with IInventory
