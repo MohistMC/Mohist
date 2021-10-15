@@ -61,6 +61,7 @@ public class LaunchTesting
         lst.putLazy("fml.mcVersion", System.getenv("MC_VERSION"));
         lst.putLazy("fml.forgeGroup", System.getenv("FORGE_GROUP"));
         lst.putLazy("fml.forgeVersion", System.getenv("FORGE_VERSION"));
+        lst.putLazy("fml.mohistVersion", System.getenv("MOHIST_VERSION"));
 
         if (target.contains("client")) {
             hackNatives();
