@@ -59,7 +59,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,31 +_,105 @@
+@@ -47,31 +_,103 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -77,7 +77,6 @@
 +            }
              IRecipe<?> irecipe = func_215377_a(resourcelocation, JSONUtils.func_151210_l(entry.getValue(), "top element"));
 +            if (irecipe == null) {
-+               field_199521_c.info(i18n.get("recipemanager.2", resourcelocation));
 +               continue;
 +            }
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
@@ -117,7 +116,6 @@
 +            IRecipe<?> irecipe = func_215377_a(minecraftkey, JSONUtils.func_151210_l(entry.getValue(), "top element"));
 +            // Mohist start - Duplicate vanilla checks for CB recipes
 +            if (irecipe == null) {
-+               field_199521_c.info(i18n.get("recipemanager.2", minecraftkey));
 +               continue;
 +            }
 +            // Mohist end
