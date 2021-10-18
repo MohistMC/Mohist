@@ -145,7 +145,7 @@
              }
  
              this.field_70143_R = 0.0F;
-@@ -815,6 +_,17 @@
+@@ -815,6 +_,16 @@
  
     public boolean func_204231_K() {
        return this.field_184469_aF == BoatEntity.Status.UNDER_WATER || this.field_184469_aF == BoatEntity.Status.UNDER_FLOWING_WATER;
@@ -153,13 +153,12 @@
 +
 +   // Forge: Fix MC-119811 by instantly completing lerp on board
 +   @Override
-+   protected boolean addPassenger(Entity passenger) {
-+      super.addPassenger(passenger);
++   protected void func_184200_o(Entity passenger) {
++      super.func_184200_o(passenger);
 +      if (this.func_184186_bw() && this.field_184476_at > 0) {
 +         this.field_184476_at = 0;
 +         this.func_70080_a(this.field_70281_h, this.field_184477_av, this.field_184478_aw, (float)this.field_70273_g, (float)this.field_184479_ay);
 +      }
-+      return false;
     }
  
     public static enum Status {

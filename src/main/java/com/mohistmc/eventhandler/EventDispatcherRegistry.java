@@ -13,6 +13,7 @@ public class EventDispatcherRegistry {
         MinecraftForge.EVENT_BUS.register(new CommandsEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new WorldEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new ItemEventDispatcher());
+        MinecraftForge.EVENT_BUS.register(new EntityEventDispatcher());
         MohistMC.LOGGER.info("EventDispatcherRegistry initialized");
     }
 }
