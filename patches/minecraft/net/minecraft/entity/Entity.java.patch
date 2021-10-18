@@ -12,14 +12,13 @@
  import java.util.Arrays;
  import java.util.Collection;
  import java.util.Collections;
-@@ -16,13 +_,43 @@
+@@ -16,13 +_,40 @@
  import java.util.UUID;
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.stream.Stream;
 +
  import javax.annotation.Nullable;
 +
-+import net.minecraft.world.chunk.Chunk;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
@@ -38,8 +37,6 @@
 +import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
-+import org.bukkit.event.vehicle.VehicleEnterEvent;
-+import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
 +
 +import com.google.common.collect.Iterables;
@@ -688,120 +685,14 @@
        if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
           if (this.func_184218_aH()) {
              this.func_184210_p();
-@@ -1634,7 +_,7 @@
- 
-          this.func_213301_b(Pose.STANDING);
-          this.field_184239_as = p_184205_1_;
--         this.field_184239_as.func_184200_o(this);
-+         this.field_184239_as.addPassenger(this);
-          return true;
-       } else {
-          return false;
-@@ -1659,8 +_,9 @@
+@@ -1659,6 +_,7 @@
     public void func_233575_bb_() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
           this.field_184239_as = null;
--         entity.func_184225_p(this);
-+         entity.removePassenger(this);
+          entity.func_184225_p(this);
        }
- 
-    }
-@@ -1669,26 +_,84 @@
-       this.func_233575_bb_();
-    }
- 
--   protected void func_184200_o(Entity p_184200_1_) {
--      if (p_184200_1_.func_184187_bx() != this) {
-+   protected boolean addPassenger(Entity passenger) { // CraftBukkit
-+      if (passenger.func_184187_bx() != this) {
-          throw new IllegalStateException("Use x.startRiding(y), not y.addPassenger(x)");
-       } else {
--         if (!this.field_70170_p.field_72995_K && p_184200_1_ instanceof PlayerEntity && !(this.func_184179_bs() instanceof PlayerEntity)) {
--            this.field_184244_h.add(0, p_184200_1_);
-+         // CraftBukkit start
-+         com.google.common.base.Preconditions.checkState(!passenger.field_184244_h.contains(this), "Circular entity riding! %s %s", this, passenger);
-+         CraftEntity craft = (CraftEntity) passenger.getBukkitEntity().getVehicle();
-+         Entity orig = craft == null ? null : craft.getHandle();
-+         if (getBukkitEntity() instanceof Vehicle && passenger.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
-+            VehicleEnterEvent event = new VehicleEnterEvent(
-+                (Vehicle) getBukkitEntity(),
-+                passenger.getBukkitEntity()
-+            );
-+            // Suppress during worldgen
-+            if (this.valid) {
-+               Bukkit.getPluginManager().callEvent(event);
-+            }
-+            CraftEntity craftn = (CraftEntity) passenger.getBukkitEntity().getVehicle();
-+            Entity n = craftn == null ? null : craftn.getHandle();
-+            if (event.isCancelled() || n != orig) {
-+               return false;
-+            }
-+         }
-+         // CraftBukkit end
-+         // Spigot start
-+         org.spigotmc.event.entity.EntityMountEvent event = new org.spigotmc.event.entity.EntityMountEvent(passenger.getBukkitEntity(), this.getBukkitEntity());
-+         // Suppress during worldgen
-+         if (this.valid) {
-+            Bukkit.getPluginManager().callEvent(event);
-+         }
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         // Spigot end
-+         if (!this.field_70170_p.field_72995_K && passenger instanceof PlayerEntity && !(this.func_184179_bs() instanceof PlayerEntity)) {
-+            this.field_184244_h.add(0, passenger);
-          } else {
--            this.field_184244_h.add(p_184200_1_);
-+            this.field_184244_h.add(passenger);
-          }
- 
-       }
-+      return true; // CraftBukkit
-    }
- 
--   protected void func_184225_p(Entity p_184225_1_) {
--      if (p_184225_1_.func_184187_bx() == this) {
-+   protected boolean removePassenger(Entity passenger) { // CraftBukkit
-+      if (passenger.func_184187_bx() == this) {
-          throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
-       } else {
--         this.field_184244_h.remove(p_184225_1_);
--         p_184225_1_.field_184245_j = 60;
-+         // CraftBukkit start
-+         CraftEntity craft = (CraftEntity) passenger.getBukkitEntity().getVehicle();
-+         Entity orig = craft == null ? null : craft.getHandle();
-+         if (getBukkitEntity() instanceof Vehicle && passenger.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
-+            VehicleExitEvent event = new VehicleExitEvent(
-+                (Vehicle) getBukkitEntity(),
-+                (org.bukkit.entity.LivingEntity) passenger.getBukkitEntity()
-+            );
-+            Bukkit.getPluginManager().callEvent(event);
-+            CraftEntity craftn = (CraftEntity) passenger.getBukkitEntity().getVehicle();
-+            Entity n = craftn == null ? null : craftn.getHandle();
-+            if (event.isCancelled() || n != orig) {
-+               return false;
-+            }
-+         }
-+         // CraftBukkit end
-+         // Spigot start
-+         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(passenger.getBukkitEntity(), this.getBukkitEntity());
-+         // Suppress during worldgen
-+         if (this.valid) {
-+            Bukkit.getPluginManager().callEvent(event);
-+         }
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         // Spigot end
-+         this.field_184244_h.remove(passenger);
-+         passenger.field_184245_j = 60;
-       }
-+      return true; // CraftBukkit
-    }
- 
-    protected boolean func_184219_q(Entity p_184219_1_) {
 @@ -1747,7 +_,13 @@
                 this.field_70170_p.func_217381_Z().func_76320_a("portal");
                 this.field_82153_h = i;
