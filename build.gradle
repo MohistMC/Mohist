@@ -2,8 +2,6 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url = 'https://maven.minecraftforge.net/' }
-        maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -64,7 +62,6 @@ project(':clean') {
 
     repositories {
         mavenCentral()
-        maven { url = 'https://libraries.minecraft.net/' }
     }
 
     dependencies {
