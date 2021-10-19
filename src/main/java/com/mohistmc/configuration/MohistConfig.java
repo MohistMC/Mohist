@@ -39,9 +39,6 @@ public class MohistConfig extends ConfigBase {
     public final StringSetting modswhitelistkickMessage = new StringSetting(this, "forge.modswhitelist.kickmessage", "Use of unauthorized mods");
     public final BoolSetting modswhitelistenable = new BoolSetting(this, "forge.modswhitelist.enable", false);
 
-    // paper optimization
-    public final StringSetting paperoptimization = new StringSetting(this, "mohist.paper_optimization", "only_works");
-
     // plugin fix
     public final BoolSetting enableworldeditfix = new BoolSetting(this, "mohist.enable_worldedit_fix", true);
 
