@@ -19,12 +19,9 @@
  
  @OnlyIn(
     value = Dist.CLIENT,
-@@ -36,8 +_,9 @@
-    private NonNullList<ItemStack> field_145985_p = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
-    protected float field_145989_m;
+@@ -38,6 +_,7 @@
     protected float field_145986_n;
--   protected int field_145987_o;
-+   public int field_145987_o;
+    public int field_145987_o;
     private int field_145983_q;
 +   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
  
@@ -135,6 +132,15 @@
           this.func_195482_p();
        }
  
+@@ -181,7 +_,7 @@
+    protected void func_195482_p() {
+       Block block = this.func_195044_w().func_177230_c();
+       if (block instanceof ChestBlock) {
+-         this.field_145850_b.func_175641_c(this.field_174879_c, block, 1, this.field_145987_o);
++         if (!opened) this.field_145850_b.func_175641_c(this.field_174879_c, block, 1, this.field_145987_o); // CraftBukkit
+          this.field_145850_b.func_195593_d(this.field_174879_c, block);
+       }
+ 
 @@ -202,7 +_,7 @@
  
     public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
@@ -144,10 +150,11 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -221,4 +_,47 @@
+@@ -220,5 +_,41 @@
+ 
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
-    }
++   }
 +
 +   @Override
 +   public void func_145836_u() {
@@ -183,12 +190,5 @@
 +      super.invalidateCaps();
 +      if (chestHandler != null)
 +        chestHandler.invalidate();
-+   }
-+
-+   // CraftBukkit start
-+   @Override
-+   public boolean func_183000_F() {
-+      return true;
-+   }
-+   // CraftBukkit end
+    }
  }
