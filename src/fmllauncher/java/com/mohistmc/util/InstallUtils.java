@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
 public class InstallUtils {
     private static final PrintStream origin = System.out;
     public static String forgeVer = MohistMCStart.class.getPackage().getSpecificationVersion();
-    public static String mcpVer = MohistMCStart.class.getPackage().getSpecificationTitle();
+    public static String mcpVer = "20210115.111550";
     public static String libPath = JarTool.getJarDir() + "/libraries/";
 
     public static String forgeStart = libPath + "com/mohistmc/mohist/1.16.5-" + forgeVer + "/mohist-1.16.5-" + forgeVer;
