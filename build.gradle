@@ -8,10 +8,9 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
     }
 }
+import com.mohistmc.tasks.JenkinsNumber
 
 import groovy.json.JsonBuilder
-import groovy.json.JsonSlurper
-
 import java.nio.file.Files
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
@@ -23,9 +22,8 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
-    id 'org.ajoberstar.grgit' version '4.1.0'
-    id 'com.github.ben-manes.versions' version '0.36.0'
     id 'net.minecraftforge.gradleutils' version '1.+'
+    id 'com.github.ben-manes.versions' version '0.36.0'
     id 'eclipse'
 }
 
@@ -54,6 +52,8 @@ ext {
     MC_VERSION = '1.16.5'
     MCP_VERSION = '20210115.111550'
     SPI_VERSION = '3.2.0'
+
+    MOIHST_VERSION = JenkinsNumber.info()
 }
 
 project(':mcp') {
@@ -182,7 +182,7 @@ project(':mohist') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.6'
     }
 
-    version = "1.16.5-" + JenkinsNumber()
+    version = "1.16.5-" + MOIHST_VERSION
     String forge_version = "36.2.8"
     println('Forge Version: ' + forge_version)
 
@@ -279,8 +279,8 @@ project(':mohist') {
         MANIFESTS = [
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'GitCommit': grgit.head().abbreviatedId,
-                'Git-Branch': grgit.branch.current().getName()
+                'GitCommit': gradleutils.gitInfo.abbreviatedId,
+                'Git-Branch': gradleutils.gitInfo.branch
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
                 'Specification-Title':      'Forge',
@@ -331,11 +331,11 @@ project(':mohist') {
                 'Implementation-Vendor':    'Forge Development LLC'
             ] as LinkedHashMap,
             'com/mohistmc/': [
-                'Specification-Title'   : MCP_VERSION,
+                'Specification-Title'   : 'Mohist',
                 'Specification-Vendor'  : 'MohistMC',
                 'Specification-Version':  project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Title'  : 'Mohist',
-                'Implementation-Version': '1.16.5-' + JenkinsNumber(),
+                'Implementation-Version': '1.16.5-' + MOIHST_VERSION,
                 'Implementation-Vendor' : 'MohistMC'
             ] as LinkedHashMap,
             'org/bukkit/craftbukkit/v1_16_R3/': [
@@ -734,7 +734,7 @@ project(':mohist') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
-                            'Manifest-Version': JenkinsNumber()
+                            'Manifest-Version': MOIHST_VERSION
                     ])
                 } else {
                     manifest.attributes(values, pkg)
@@ -819,7 +819,7 @@ project(':mohist') {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = "1.16.5-" + JenkinsNumber()
+        archiveVersion = "1.16.5-" + MOIHST_VERSION
         destinationDirectory = file('build/libs')
         from sourceSets.fmllauncher.output
         doFirst {
@@ -1005,7 +1005,7 @@ project(':mohist') {
                     name = 'mohist'
                     groupId = 'com.mohistmc'
                     artifactId = 'mohist'
-                    version = "1.16.5-" + JenkinsNumber()
+                    version = "1.16.5-" + MOIHST_VERSION
                     description = 'Minecraft Forge Hybrid server implementing the Spigot/Bukkit/Paper API, formerly known as Thermos/Cauldron/MCPC+.'
                     url = 'https://github.com/MohistMC/Mohist'
 
@@ -1053,20 +1053,4 @@ project(':mohist') {
 task setup() {
     dependsOn ':clean:extractMapped'
     dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
-}
-
-def JenkinsNumber() {
-    try {
-        def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.16.5/api/json").openConnection()
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
-        conn.connect()
-        def root = conn.content.text
-        def jsonSluper = new JsonSlurper()
-
-        String data = jsonSluper.parseText(root)
-        def number = data.substring(data.indexOf("number")).split(",")
-        return Integer.valueOf(number[0].replace("number=", "")).intValue()
-    } catch (Exception e1) {
-        return 'dev-' + grgit.head().abbreviatedId
-    }
 }
