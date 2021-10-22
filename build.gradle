@@ -53,7 +53,7 @@ ext {
     MCP_VERSION = '20210115.111550'
     SPI_VERSION = '3.2.0'
 
-    MOIHST_VERSION = JenkinsNumber.info()
+    MOHIST_VERSION = JenkinsNumber.info()
 }
 
 project(':mcp') {
@@ -62,7 +62,7 @@ project(':mcp') {
         mavenLocal()
     }
     mcp {
-        config MC_VERSION + '-' + MCP_VERSION
+        config C_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
     }
 }
@@ -182,7 +182,7 @@ project(':mohist') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.6'
     }
 
-    version = "1.16.5-" + MOIHST_VERSION
+    version = "1.16.5-" + MOHIST_VERSION
     String forge_version = "36.2.8"
     println('Forge Version: ' + forge_version)
 
@@ -335,7 +335,7 @@ project(':mohist') {
                 'Specification-Vendor'  : 'MohistMC',
                 'Specification-Version':  project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Title'  : 'Mohist',
-                'Implementation-Version': '1.16.5-' + MOIHST_VERSION,
+                'Implementation-Version': '1.16.5-' + MOHIST_VERSION,
                 'Implementation-Vendor' : 'MohistMC'
             ] as LinkedHashMap,
             'org/bukkit/craftbukkit/v1_16_R3/': [
@@ -734,7 +734,7 @@ project(':mohist') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
-                            'Manifest-Version': MOIHST_VERSION
+                            'Manifest-Version': MOHIST_VERSION
                     ])
                 } else {
                     manifest.attributes(values, pkg)
@@ -819,7 +819,7 @@ project(':mohist') {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = "1.16.5-" + MOIHST_VERSION
+        archiveVersion = "1.16.5-" + MOHIST_VERSION
         destinationDirectory = file('build/libs')
         from sourceSets.fmllauncher.output
         doFirst {
@@ -1005,7 +1005,7 @@ project(':mohist') {
                     name = 'mohist'
                     groupId = 'com.mohistmc'
                     artifactId = 'mohist'
-                    version = "1.16.5-" + MOIHST_VERSION
+                    version = "1.16.5-" + MOHIST_VERSION
                     description = 'Minecraft Forge Hybrid server implementing the Spigot/Bukkit/Paper API, formerly known as Thermos/Cauldron/MCPC+.'
                     url = 'https://github.com/MohistMC/Mohist'
 
