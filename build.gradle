@@ -62,7 +62,7 @@ project(':mcp') {
         mavenLocal()
     }
     mcp {
-        config C_VERSION + '-' + MCP_VERSION
+        config MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
     }
 }
