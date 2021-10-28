@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/advancements/AdvancementList.java
 +++ ../src-work/minecraft/net/minecraft/advancements/AdvancementList.java
-@@ -18,7 +18,7 @@
- public class AdvancementList
- {
-     private static final Logger field_192091_a = LogManager.getLogger();
--    private final Map<ResourceLocation, Advancement> field_192092_b = Maps.<ResourceLocation, Advancement>newHashMap();
-+    public final Map<ResourceLocation, Advancement> field_192092_b = Maps.<ResourceLocation, Advancement>newHashMap();
-     private final Set<Advancement> field_192093_c = Sets.<Advancement>newLinkedHashSet();
-     private final Set<Advancement> field_192094_d = Sets.<Advancement>newLinkedHashSet();
-     private AdvancementList.Listener field_192095_e;
 @@ -128,12 +128,12 @@
                      }
  

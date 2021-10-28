@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/InventoryCrafting.java
 +++ ../src-work/minecraft/net/minecraft/inventory/InventoryCrafting.java
-@@ -1,20 +1,80 @@
+@@ -1,12 +1,18 @@
  package net.minecraft.inventory;
  
 +import java.util.List;
@@ -19,11 +19,9 @@
  
  public class InventoryCrafting implements IInventory
  {
-     private final NonNullList<ItemStack> field_70466_a;
-     private final int field_70464_b;
+@@ -15,6 +21,60 @@
      private final int field_174924_c;
--    private final Container field_70465_c;
-+    public final Container field_70465_c;
+     public final Container field_70465_c;
  
 +    // CraftBukkit start - add fields
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();

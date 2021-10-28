@@ -20,12 +20,10 @@
  
  public class InventoryMerchant implements IInventory
  {
-@@ -16,8 +22,41 @@
-     private final NonNullList<ItemStack> field_70474_b = NonNullList.<ItemStack>func_191197_a(3, ItemStack.field_190927_a);
+@@ -17,7 +23,40 @@
      private final EntityPlayer field_70475_c;
      private MerchantRecipe field_70472_d;
--    private int field_70473_e;
-+    public int field_70473_e;
+     public int field_70473_e;
 +    // CraftBukkit start - add fields and methods
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = MAX_STACK;

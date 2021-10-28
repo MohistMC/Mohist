@@ -21,76 +21,7 @@
  {
      protected final WorldServer field_85192_a;
      protected final Random field_77187_a;
-@@ -67,6 +71,57 @@
-         }
-     }
- 
-+    // Split out from original a(Entity, double, double, double, float) method in order to enable being called from createPortal
-+    private BlockPos createEndPortal(double x, double y, double z) {
-+        int i = MathHelper.func_76128_c(x);
-+        int j = MathHelper.func_76128_c(y) - 1;
-+        int k = MathHelper.func_76128_c(z);
-+        // CraftBukkit end
-+
-+        for (int j1 = -2; j1 <= 2; ++j1)
-+        {
-+            for (int k1 = -2; k1 <= 2; ++k1)
-+            {
-+                for (int l1 = -1; l1 < 3; ++l1)
-+                {
-+                    int i2 = i + k1 * 1 + j1 * 0;
-+                    int j2 = j + l1;
-+                    int k2 = k + k1 * 0 - j1 * 1;
-+                    boolean flag = l1 < 0;
-+                    this.field_85192_a.func_175656_a(new BlockPos(i2, j2, k2), flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P());
-+                }
-+            }
-+        }
-+		// CraftBukkit start
-+        return new BlockPos(i, j, k);
-+    }
-+
-+    // use logic based on creation to verify end portal
-+    @Nullable
-+    private BlockPos findEndPortal(BlockPos portal) {
-+        int i = portal.func_177958_n();
-+        int j = portal.func_177956_o() - 1;
-+        int k = portal.func_177952_p();
-+        byte b0 = 1;
-+        byte b1 = 0;
-+
-+        for (int l = -2; l <= 2; ++l) {
-+            for (int i1 = -2; i1 <= 2; ++i1) {
-+                for (int j1 = -1; j1 < 3; ++j1) {
-+                    int k1 = i + i1 * b0 + l * b1;
-+                    int l1 = j + j1;
-+                    int i2 = k + i1 * b1 - l * b0;
-+                    boolean flag = j1 < 0;
-+
-+                    if (this.field_85192_a.func_180495_p(new BlockPos(k1, l1, i2)).func_177230_c() != (flag ? Blocks.field_150343_Z : Blocks.field_150350_a)) {
-+                        return null;
-+                    }
-+                }
-+            }
-+        }
-+        return new BlockPos(i, j, k);
-+    }
-+
-     public boolean func_180620_b(Entity p_180620_1_, float p_180620_2_)
-     {
-         int i = 128;
-@@ -198,6 +253,10 @@
- 
-     public boolean func_85188_a(Entity p_85188_1_)
-     {
-+        if (this.field_85192_a.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
-+            createEndPortal(p_85188_1_.field_70165_t, p_85188_1_.field_70163_u, p_85188_1_.field_70161_v);
-+            return true;
-+        }
-         int i = 16;
-         double d0 = -1.0D;
-         int j = MathHelper.func_76128_c(p_85188_1_.field_70165_t);
-@@ -399,6 +458,371 @@
+@@ -399,6 +403,423 @@
          return true;
      }
  
@@ -251,6 +182,58 @@
 +            position.setPitch(to.getPitch());
 +            velocity.copy(event.getAfter()); // event.getAfter() will never be null, as setAfter() will cause an NPE if null is passed in
 +        }
++    }
++
++
++    // Split out from original a(Entity, double, double, double, float) method in order to enable being called from createPortal
++    private BlockPos createEndPortal(double x, double y, double z) {
++        int i = MathHelper.func_76128_c(x);
++        int j = MathHelper.func_76128_c(y) - 1;
++        int k = MathHelper.func_76128_c(z);
++        // CraftBukkit end
++
++        for (int j1 = -2; j1 <= 2; ++j1)
++        {
++            for (int k1 = -2; k1 <= 2; ++k1)
++            {
++                for (int l1 = -1; l1 < 3; ++l1)
++                {
++                    int i2 = i + k1 * 1 + j1 * 0;
++                    int j2 = j + l1;
++                    int k2 = k + k1 * 0 - j1 * 1;
++                    boolean flag = l1 < 0;
++                    this.field_85192_a.func_175656_a(new BlockPos(i2, j2, k2), flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P());
++                }
++            }
++        }
++        // CraftBukkit start
++        return new BlockPos(i, j, k);
++    }
++
++    // use logic based on creation to verify end portal
++    @Nullable
++    private BlockPos findEndPortal(BlockPos portal) {
++        int i = portal.func_177958_n();
++        int j = portal.func_177956_o() - 1;
++        int k = portal.func_177952_p();
++        byte b0 = 1;
++        byte b1 = 0;
++
++        for (int l = -2; l <= 2; ++l) {
++            for (int i1 = -2; i1 <= 2; ++i1) {
++                for (int j1 = -1; j1 < 3; ++j1) {
++                    int k1 = i + i1 * b0 + l * b1;
++                    int l1 = j + j1;
++                    int i2 = k + i1 * b1 - l * b0;
++                    boolean flag = j1 < 0;
++
++                    if (this.field_85192_a.func_180495_p(new BlockPos(k1, l1, i2)).func_177230_c() != (flag ? Blocks.field_150343_Z : Blocks.field_150350_a)) {
++                        return null;
++                    }
++                }
++            }
++        }
++        return new BlockPos(i, j, k);
 +    }
 +
 +    public boolean createPortal(double x, double y, double z, int b0) {
@@ -462,7 +445,7 @@
      public void func_85189_a(long p_85189_1_)
      {
          if (p_85189_1_ % 100L == 0L)
-@@ -428,4 +852,13 @@
+@@ -428,4 +849,13 @@
              this.field_85087_d = p_i45747_3_;
          }
      }

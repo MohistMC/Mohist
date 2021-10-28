@@ -9,15 +9,6 @@
  
  public class PlayerAdvancements
  {
-@@ -39,7 +41,7 @@
-     };
-     private final MinecraftServer field_192756_d;
-     private final File field_192757_e;
--    private final Map<Advancement, AdvancementProgress> field_192758_f = Maps.<Advancement, AdvancementProgress>newLinkedHashMap();
-+    public final Map<Advancement, AdvancementProgress> field_192758_f = Maps.<Advancement, AdvancementProgress>newLinkedHashMap();
-     private final Set<Advancement> field_192759_g = Sets.<Advancement>newLinkedHashSet();
-     private final Set<Advancement> field_192760_h = Sets.<Advancement>newLinkedHashSet();
-     private final Set<Advancement> field_192761_i = Sets.<Advancement>newLinkedHashSet();
 @@ -142,7 +144,11 @@
  
                      if (advancement == null)

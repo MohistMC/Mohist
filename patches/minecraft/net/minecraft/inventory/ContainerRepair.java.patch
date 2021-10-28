@@ -9,12 +9,8 @@
  
  public class ContainerRepair extends Container
  {
-@@ -28,9 +30,13 @@
-     private final BlockPos field_178156_j;
-     public int field_82854_e;
-     public int field_82856_l;
--    private String field_82857_m;
-+    public String field_82857_m;
+@@ -31,6 +33,10 @@
+     public String field_82857_m;
      private final EntityPlayer field_82855_n;
  
 +    private int lastLevelCost;

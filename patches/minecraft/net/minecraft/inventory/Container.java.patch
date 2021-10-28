@@ -30,12 +30,7 @@
  
  public abstract class Container
  {
-@@ -27,11 +42,93 @@
-     @SideOnly(Side.CLIENT)
-     private short field_75150_e;
-     private int field_94535_f = -1;
--    private int field_94536_g;
-+    public int field_94536_g;
+@@ -31,7 +46,89 @@
      private final Set<Slot> field_94537_h = Sets.<Slot>newHashSet();
      protected List<IContainerListener> field_75149_d = Lists.<IContainerListener>newArrayList();
      private final Set<EntityPlayer> field_75148_f = Sets.<EntityPlayer>newHashSet();

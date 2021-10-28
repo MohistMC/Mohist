@@ -10,7 +10,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.Block;
-@@ -49,14 +49,15 @@
+@@ -49,8 +49,9 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,14 +21,6 @@
  {
      public static final ItemStack field_190927_a = new ItemStack((Item)null);
      public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
--    private int field_77994_a;
-+    public int field_77994_a;
-     private int field_77992_b;
--    private final Item field_151002_e;
-+    public Item field_151002_e;
-     private NBTTagCompound field_77990_d;
-     private boolean field_190928_g;
-     int field_77991_e;
 @@ -66,6 +67,10 @@
      private Block field_179550_j;
      private boolean field_179551_k;

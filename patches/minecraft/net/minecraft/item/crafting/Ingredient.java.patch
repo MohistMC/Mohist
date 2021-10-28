@@ -14,12 +14,10 @@
      public static final Ingredient field_193370_a = new Ingredient(new ItemStack[0])
      {
          public boolean apply(@Nullable ItemStack p_apply_1_)
-@@ -20,18 +20,40 @@
-             return p_apply_1_.func_190926_b();
+@@ -21,17 +21,39 @@
          }
      };
--    private final ItemStack[] field_193371_b;
-+    public final ItemStack[] field_193371_b;
+     public final ItemStack[] field_193371_b;
 +    private final ItemStack[] matchingStacksExploded;
      private IntList field_194140_c;
 +    private final boolean isSimple;

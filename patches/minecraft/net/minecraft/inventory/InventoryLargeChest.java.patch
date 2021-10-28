@@ -8,7 +8,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.player.InventoryPlayer;
  import net.minecraft.item.ItemStack;
-@@ -8,13 +10,56 @@
+@@ -8,6 +10,9 @@
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.world.ILockableContainer;
  import net.minecraft.world.LockCode;
@@ -18,11 +18,9 @@
  
  public class InventoryLargeChest implements ILockableContainer
  {
-     private final String field_70479_a;
--    private final ILockableContainer field_70477_b;
--    private final ILockableContainer field_70478_c;
-+    public final ILockableContainer field_70477_b;
-+    public final ILockableContainer field_70478_c;
+@@ -15,6 +20,46 @@
+     public final ILockableContainer field_70477_b;
+     public final ILockableContainer field_70478_c;
  
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +

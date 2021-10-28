@@ -11,8 +11,7 @@
  
  public class ContainerDispenser extends Container
  {
--    private final IInventory field_178146_a;
-+    public final IInventory field_178146_a;
+     public final IInventory field_178146_a;
 +    private CraftInventoryView bukkitEntity = null;
 +    private InventoryPlayer player;
  

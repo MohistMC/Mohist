@@ -1,16 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/advancements/AdvancementManager.java
 +++ ../src-work/minecraft/net/minecraft/advancements/AdvancementManager.java
-@@ -50,8 +50,8 @@
-             return Advancement.Builder.func_192059_a(jsonobject, p_deserialize_3_);
-         }
-     }).registerTypeAdapter(AdvancementRewards.class, new AdvancementRewards.Deserializer()).registerTypeHierarchyAdapter(ITextComponent.class, new ITextComponent.Serializer()).registerTypeHierarchyAdapter(Style.class, new Style.Serializer()).registerTypeAdapterFactory(new EnumTypeAdapterFactory()).create();
--    private static final AdvancementList field_192784_c = new AdvancementList();
--    private final File field_192785_d;
-+    public static final AdvancementList field_192784_c = new AdvancementList();
-+    public final File field_192785_d;
-     private boolean field_193768_e;
- 
-     public AdvancementManager(@Nullable File p_i47421_1_)
 @@ -66,6 +66,7 @@
          field_192784_c.func_192087_a();
          Map<ResourceLocation, Advancement.Builder> map = this.func_192781_c();

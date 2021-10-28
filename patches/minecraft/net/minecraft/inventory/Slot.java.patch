@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
-@@ -8,7 +8,7 @@
- 
- public class Slot
- {
--    private final int field_75225_a;
-+    public final int field_75225_a;
-     public final IInventory field_75224_c;
-     public int field_75222_d;
-     public int field_75223_e;
 @@ -90,7 +90,7 @@
      @SideOnly(Side.CLIENT)
      public String func_178171_c()

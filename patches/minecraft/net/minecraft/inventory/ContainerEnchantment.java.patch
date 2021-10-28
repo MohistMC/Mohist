@@ -8,7 +8,7 @@
  import java.util.Random;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.enchantment.Enchantment;
-@@ -21,11 +22,19 @@
+@@ -21,6 +22,14 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,12 +23,6 @@
  
  public class ContainerEnchantment extends Container
  {
-     public IInventory field_75168_e;
--    private final World field_75172_h;
-+    private World field_75172_h;
-     private final BlockPos field_178150_j;
-     private final Random field_75169_l;
-     public int field_178149_f;
 @@ -33,6 +42,9 @@
      public int[] field_185001_h;
      public int[] field_185002_i;
