@@ -90,18 +90,6 @@ project(':clean') {
         mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
 
         runs {
-            clean_client {
-                taskName 'clean_client'
-
-                main 'net.minecraft.client.main.Main'
-                workingDirectory project.file('run')
-
-                args '--gameDir', '.'
-                args '--version', MC_VERSION
-                args '--assetsDir', downloadAssets.output
-                args '--assetIndex', '{asset_index}'
-                args '--accessToken', '0'
-            }
 
             clean_server {
                 taskName 'clean_server'
@@ -167,7 +155,7 @@ project(':mohist') {
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://papermc.io/repo/repository/maven-public/' }
         maven { url 'https://repo.aikar.co/content/groups/aikar/' }
-  }
+    }
 
     ext {
         SPEC_VERSION = '36.2' // This is overwritten by git tag, but here so dev time doesnt explode
@@ -196,33 +184,6 @@ project(':mohist') {
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
         runs {
-            forge_client {
-                taskName 'forge_client'
-
-                main 'net.minecraftforge.userdev.LaunchTesting'
-                workingDirectory project.file('run')
-
-                environment 'target', 'fmldevclient'
-                environment 'assetIndex', '{asset_index}'
-                environment 'assetDirectory', downloadAssets.output
-                environment 'nativesDirectory', extractNatives.output.get().asFile
-
-                environment 'MC_VERSION', MC_VERSION
-                environment 'MCP_VERSION', MCP_VERSION
-                environment 'FORGE_GROUP', project.group
-                environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', MOHIST_VERSION
-                environment 'LAUNCHER_VERSION', SPEC_VERSION
-                property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
-                property 'eventbus.checkTypesOnDispatch', 'true'
-
-                ideaModule "${rootProject.name}.${project.name}.userdev"
-
-                mods {
-                    forge { source sourceSets.main }
-                }
-            }
-
             forge_server {
                 taskName 'forge_server'
 
