@@ -8,12 +8,21 @@
  import java.io.IOException;
  import java.io.InputStream;
  import java.io.InputStreamReader;
-@@ -37,10 +_,11 @@
-       try (InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")) {
+@@ -34,13 +_,19 @@
+       Builder<String, String> builder = ImmutableMap.builder();
+       BiConsumer<String, String> biconsumer = builder::put;
+ 
+-      try (InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")) {
++      try (InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/" + i18n.getLocale().toLowerCase() + ".json")) {
           func_240593_a_(inputstream, biconsumer);
        } catch (JsonParseException | IOException ioexception) {
 -         field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);
-+         field_201045_a.error(i18n.get("languagemap.1", (Throwable)ioexception));
++         try (InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")) {
++            func_240593_a_(inputstream, biconsumer);
++         } catch (JsonParseException | IOException ioexception1) {
++            field_201045_a.error(i18n.get("languagemap.1", (Throwable)ioexception1));
++         }
++         field_201045_a.error(i18n.get("languagemap.1.1", i18n.getLocale().toLowerCase()), (Throwable)ioexception);
        }
  
 -      final Map<String, String> map = builder.build();
