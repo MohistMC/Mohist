@@ -26,6 +26,14 @@ public class i18n {
             if (key == 1) return locale.substring(0, 2);
             if (key == 2) return locale.substring(3, 5);
         }
+        return "xx";
+    }
+
+    public static String getMohistLanguage() {
+        String locale = MohistConfigUtil.sMohist("lang", "xx_XX");
+        if (locale.length() == 5) {
+            return locale;
+        }
         return "xx_XX";
     }
 
