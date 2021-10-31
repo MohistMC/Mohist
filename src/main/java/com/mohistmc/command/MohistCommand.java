@@ -75,7 +75,7 @@ public class MohistCommand extends Command {
                 }
                 break;
             case "lang":
-                sender.sendMessage(ChatColor.GREEN + i18n.getLocale());
+                sender.sendMessage("mohist: " + ChatColor.GREEN + i18n.getLocale());
                 break;
             case "item":
                 if (args.length == 1) {

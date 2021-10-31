@@ -29,12 +29,12 @@ public class i18n {
         return "xx";
     }
 
-    public static String getMohistLanguage() {
-        String locale = MohistConfigUtil.sMohist("lang", "xx_XX");
+    public static String getVanillaLanguage() {
+        String locale = MohistConfigUtil.sMohist("lang", "en_us");
         if (locale.length() == 5) {
             return locale;
         }
-        return "xx_XX";
+        return "en_us";
     }
 
     public static String getLanguage() {
