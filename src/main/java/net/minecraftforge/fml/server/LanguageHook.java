@@ -110,7 +110,7 @@ public class LanguageHook
 
     static void loadLanguagesOnServer(MinecraftServer server) {
         modTable = new HashMap<>(5000);
-        // Possible multi-language server support?
+        // Possible multi-language server support? // Mohist Add multi-language here, It is not controlled by mohist.yml
         for (String lang : Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn")) {
             loadLanguage(lang, server);
         }
