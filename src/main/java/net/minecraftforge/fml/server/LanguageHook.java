@@ -100,18 +100,10 @@ public class LanguageHook
 
     public static void loadForgeAndMCLangs() {
         modTable = new HashMap<>(5000);
-        try (InputStream mc = ForgeI18n.class.getResourceAsStream("assets/minecraft/lang/" + i18n.getVanillaLanguage() + ".json")) {
-            loadLocaleData(mc);
-        } catch (JsonParseException | IOException ioexception) {
-            InputStream mc = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/minecraft/lang/en_us.json");
-            loadLocaleData(mc);
-        }
-        try (InputStream forge = ForgeI18n.class.getResourceAsStream("assets/forge/lang/" + i18n.getVanillaLanguage() + ".json")) {
-            loadLocaleData(forge);
-        } catch (JsonParseException | IOException ioexception) {
-            InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");
-            loadLocaleData(forge);
-        }
+        final InputStream mc = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/minecraft/lang/en_us.json");
+        final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");
+        loadLocaleData(mc);
+        loadLocaleData(forge);
         capturedTables.forEach(t->t.putAll(modTable));
         ForgeI18n.loadLanguageData(modTable);
     }
