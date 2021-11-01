@@ -159,7 +159,7 @@
           return new ItemStack(p_199557_0_);
        } catch (RuntimeException runtimeexception) {
 -         field_199558_c.debug("Tried to load invalid item: {}", p_199557_0_, runtimeexception);
-+         field_199558_c.debug(com.mohistmc.util.i18n.i18n.get("itemstack.1", p_199557_0_, runtimeexception));
++         field_199558_c.debug(com.mohistmc.util.i18n.i18n.get("itemstack.1", p_199557_0_), runtimeexception);
           return field_190927_a;
        }
     }

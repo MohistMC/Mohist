@@ -5,7 +5,7 @@
           return this.field_227173_b_.func_227090_a_(p_223138_1_);
        } catch (IOException ioexception) {
 -         field_219120_a.error("Error reading chunk {} data from disk", p_223138_1_, ioexception);
-+         field_219120_a.error(com.mohistmc.util.i18n.i18n.get("regionsectioncache.1", p_223138_1_, ioexception));
++         field_219120_a.error(com.mohistmc.util.i18n.i18n.get("regionsectioncache.1", p_223138_1_), ioexception);
           return null;
        }
     }

@@ -24,7 +24,7 @@
 +                  field_199680_h.warn(i18n.get("rconthread.2", (int)i));
                 } else if (this.field_72618_c.isAlive()) {
 -                  field_199680_h.warn("Thread {} ({}) failed to exit after {} second(s)", this, this.field_72618_c.getState(), i, new Exception("Stack:"));
-+                  field_199680_h.warn(i18n.get("rconthread.3", this, this.field_72618_c.getState(), i, new Exception("Stack:")));
++                  field_199680_h.warn(i18n.get("rconthread.3", this, this.field_72618_c.getState(), i), new Exception("Stack:"));
                    this.field_72618_c.interrupt();
                 }
              } catch (InterruptedException interruptedexception) {

@@ -155,10 +155,10 @@
              }
  
 -            field_219250_d.error("Couldn't load chunk {}", p_223172_1_, throwable);
-+            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.3", p_223172_1_, throwable));
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.3", p_223172_1_), throwable);
           } catch (Exception exception) {
 -            field_219250_d.error("Couldn't load chunk {}", p_223172_1_, exception);
-+            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.4", p_223172_1_, exception));
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.4", p_223172_1_), exception);
           }
  
           this.func_241089_g_(p_223172_1_);
@@ -192,7 +192,7 @@
              return true;
           } catch (Exception exception) {
 -            field_219250_d.error("Failed to save chunk {},{}", chunkpos.field_77276_a, chunkpos.field_77275_b, exception);
-+            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.5", chunkpos.field_77276_a, chunkpos.field_77275_b, exception));
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.5", chunkpos.field_77276_a, chunkpos.field_77275_b), exception);
              return false;
           }
        }
@@ -201,7 +201,7 @@
              }
           } catch (Exception exception) {
 -            field_219250_d.error("Failed to read chunk {}", p_241090_1_, exception);
-+            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.6", p_241090_1_, exception));
++            field_219250_d.error(com.mohistmc.util.i18n.i18n.get("chunkmanager.6", p_241090_1_), exception);
              this.func_241089_g_(p_241090_1_);
              return false;
           }

@@ -72,7 +72,7 @@
 +         this.field_147333_a.func_150718_a(ichatbasecomponent);
 +      }
 +      catch (Exception exception) {
-+         field_147332_c.error(i18n.get("serverloginnethandler.2", exception));
++         field_147332_c.error(i18n.get("serverloginnethandler.2"), exception);
 +      }
 +   }
 +   // CraftBukkit end
@@ -92,7 +92,7 @@
 -      }
 -
 -   }
-+         field_147332_c.error(i18n.get("serverloginnethandler.4", (Throwable)exception));
++         field_147332_c.error(i18n.get("serverloginnethandler.4"), (Throwable)exception);
 +      }
 +
 +   }

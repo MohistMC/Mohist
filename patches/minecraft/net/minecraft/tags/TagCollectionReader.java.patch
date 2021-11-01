@@ -21,7 +21,7 @@
                       }
                    } catch (RuntimeException | IOException ioexception) {
 -                     field_242217_a.error("Couldn't read {} tag list {} from {} in data pack {}", this.field_242222_f, resourcelocation1, resourcelocation, iresource.func_199026_d(), ioexception);
-+                     field_242217_a.error(i18n.get("tagcollectionreader.2", this.field_242222_f, resourcelocation1, resourcelocation, iresource.func_199026_d(), ioexception));
++                     field_242217_a.error(i18n.get("tagcollectionreader.2", this.field_242222_f, resourcelocation1, resourcelocation, iresource.func_199026_d()), ioexception);
                    } finally {
                       IOUtils.closeQuietly((Closeable)iresource);
                    }
