@@ -205,7 +205,7 @@
           Runtime.getRuntime().addShutdownHook(thread);
        } catch (Exception exception1) {
 -         field_240759_a_.fatal("Failed to start the minecraft server", (Throwable)exception1);
-+         field_240759_a_.fatal(com.mohistmc.util.i18n.i18n.get("main.5", (Throwable)exception1));
++         field_240759_a_.fatal(com.mohistmc.util.i18n.i18n.get("main.5"), (Throwable)exception1);
        }
  
     }

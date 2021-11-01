@@ -8,25 +8,16 @@
  import java.io.IOException;
  import java.io.InputStream;
  import java.io.InputStreamReader;
-@@ -21,6 +_,7 @@
- import net.minecraft.util.JSONUtils;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.versions.forge.ForgeVersion;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
 @@ -33,14 +_,14 @@
     private static LanguageMap func_240595_c_() {
        Builder<String, String> builder = ImmutableMap.builder();
        BiConsumer<String, String> biconsumer = builder::put;
 -
--      try (InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")) {
-+      try (InputStream inputstream = ForgeVersion.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")) {
+       try (InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.json")) {
           func_240593_a_(inputstream, biconsumer);
        } catch (JsonParseException | IOException ioexception) {
 -         field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);
-+         field_201045_a.error(i18n.get("languagemap.1", (Throwable)ioexception));
++         field_201045_a.error(i18n.get("languagemap.1"), (Throwable)ioexception);
        }
  
 -      final Map<String, String> map = builder.build();
