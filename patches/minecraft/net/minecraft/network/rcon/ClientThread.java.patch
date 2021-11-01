@@ -7,20 +7,6 @@
  import java.io.BufferedInputStream;
  import java.io.ByteArrayOutputStream;
  import java.io.DataOutputStream;
-@@ -89,11 +_,11 @@
-          } catch (IOException ioexception) {
-             return;
-          } catch (Exception exception1) {
--            field_164005_h.error("Exception whilst parsing RCON input", (Throwable)exception1);
-+            field_164005_h.error(i18n.get("clientthread.1", (Throwable)exception1));
-             return;
-          } finally {
-             this.func_72653_g();
--            field_164005_h.info("Thread {} shutting down", (Object)this.field_164003_c);
-+            field_164005_h.info(i18n.get("clientthread.2", (Object)this.field_164003_c));
-             this.field_72619_a = false;
-          }
-       }
 @@ -116,13 +_,14 @@
     }
  
@@ -39,14 +25,5 @@
 +         i -= j;
 +         start += j;
        } while(0 != i);
- 
-    }
-@@ -137,7 +_,7 @@
-       try {
-          this.field_72659_h.close();
-       } catch (IOException ioexception) {
--         field_164005_h.warn("Failed to close socket", (Throwable)ioexception);
-+         field_164005_h.warn(i18n.get("clientthread.3", (Throwable)ioexception));
-       }
  
     }

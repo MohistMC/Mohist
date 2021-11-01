@@ -108,7 +108,7 @@
              return p_213134_1_.func_200968_a();
           } catch (Throwable throwable) {
 -            field_145852_a.error("Failed to create block entity {}", s, throwable);
-+            field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.1", s, throwable));
++            field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.1", s), throwable);
              return null;
           }
        }).map((p_235656_3_) -> {
@@ -117,7 +117,7 @@
              return p_235656_3_;
           } catch (Throwable throwable) {
 -            field_145852_a.error("Failed to load data for block entity {}", s, throwable);
-+            field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.2", s, throwable));
++            field_145852_a.error(com.mohistmc.util.i18n.i18n.get("tileentity.2", s), throwable);
              return null;
           }
        }).orElseGet(() -> {

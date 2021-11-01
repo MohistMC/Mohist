@@ -89,7 +89,7 @@
                       }
  
 -                     field_151275_b.warn("Failed to handle packet for {}", networkmanager.func_74430_c(), exception);
-+                     field_151275_b.warn(i18n.get("networksystem.4", networkmanager.func_74430_c(), exception));
++                     field_151275_b.warn(i18n.get("networksystem.4", networkmanager.func_74430_c()), exception);
                       ITextComponent itextcomponent = new StringTextComponent("Internal server error");
                       networkmanager.func_201058_a(new SDisconnectPacket(itextcomponent), (p_210474_2_) -> {
                          networkmanager.func_150718_a(itextcomponent);

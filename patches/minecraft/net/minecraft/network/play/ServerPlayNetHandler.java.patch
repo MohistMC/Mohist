@@ -1985,7 +1985,7 @@
 +               }
 +            }
 +         } catch (Exception ex) {
-+            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.14", ex));
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.14"), ex);
 +            this.disconnect("Invalid payload REGISTER!");
 +         }
 +      }
@@ -1998,7 +1998,7 @@
 +               }
 +            }
 +         } catch (Exception ex) {
-+            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.15", ex));
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.15"), ex);
 +            this.disconnect("Invalid payload UNREGISTER!");
 +         }
 +      } else {
@@ -2010,7 +2010,7 @@
 +            p_147349_1_.field_149561_c.readerIndex(readerIndex);
 +         }
 +         catch (Exception ex) {
-+            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.16", ex));
++            field_147370_c.error(com.mohistmc.util.i18n.i18n.get("serverplaynethandler.16"), ex);
 +            this.disconnect("Invalid custom payload!");
 +         }
 +      }

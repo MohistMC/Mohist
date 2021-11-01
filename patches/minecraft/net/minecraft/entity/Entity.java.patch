@@ -572,7 +572,7 @@
                       this.func_200203_b(ITextComponent.Serializer.func_240643_a_(s));
                    } catch (Exception exception) {
 -                     field_184243_a.warn("Failed to parse entity custom name {}", s, exception);
-+                     field_184243_a.warn(i18n.get("entity.1", s, exception));
++                     field_184243_a.warn(i18n.get("entity.1", s), exception);
                    }
                 }
  

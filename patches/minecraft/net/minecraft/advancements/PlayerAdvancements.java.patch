@@ -24,10 +24,10 @@
              }
           } catch (JsonParseException jsonparseexception) {
 -            field_192753_a.error("Couldn't parse player advancements in {}", this.field_192757_e, jsonparseexception);
-+            field_192753_a.error(i18n.get("playeradvancements.2", this.field_192757_e, jsonparseexception));
++            field_192753_a.error(i18n.get("playeradvancements.2", this.field_192757_e), jsonparseexception);
           } catch (IOException ioexception) {
 -            field_192753_a.error("Couldn't access player advancements in {}", this.field_192757_e, ioexception);
-+            field_192753_a.error(i18n.get("playeradvancements.3", this.field_192757_e, ioexception));
++            field_192753_a.error(i18n.get("playeradvancements.3", this.field_192757_e), ioexception);
           }
        }
  
@@ -50,7 +50,7 @@
           field_192754_b.toJson(jsonelement, writer);
        } catch (IOException ioexception) {
 -         field_192753_a.error("Couldn't save player advancements to {}", this.field_192757_e, ioexception);
-+         field_192753_a.error(i18n.get("playeradvancements.4", this.field_192757_e, ioexception));
++         field_192753_a.error(i18n.get("playeradvancements.4", this.field_192757_e), ioexception);
        }
  
     }

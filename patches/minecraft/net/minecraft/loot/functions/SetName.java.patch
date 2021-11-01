@@ -13,7 +13,7 @@
                    return TextComponentUtils.func_240645_a_(commandsource, p_215937_2_, entity, 0);
                 } catch (CommandSyntaxException commandsyntaxexception) {
 -                  field_215939_a.warn("Failed to resolve text component", (Throwable)commandsyntaxexception);
-+                  field_215939_a.warn(i18n.get("setname.1", (Throwable)commandsyntaxexception));
++                  field_215939_a.warn(i18n.get("setname.1"), (Throwable)commandsyntaxexception);
                    return p_215937_2_;
                 }
              };

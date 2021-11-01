@@ -27,7 +27,7 @@
              map.put(p_240923_2_, advancement$builder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
 -            field_192782_a.error("Parsing error loading custom advancement {}: {}", p_240923_2_, jsonparseexception.getMessage());
-+            field_192782_a.error(i18n.get("advancementmanager.2", p_240923_2_, jsonparseexception.getMessage()));
++            field_192782_a.error(i18n.get("advancementmanager.2", p_240923_2_), jsonparseexception.getMessage());
           }
  
        });

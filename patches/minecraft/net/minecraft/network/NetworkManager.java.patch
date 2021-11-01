@@ -100,27 +100,27 @@
     public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) {
        if (p_exceptionCaught_2_ instanceof SkipableEncoderException) {
 -         field_150735_g.debug("Skipping packet due to errors", p_exceptionCaught_2_.getCause());
-+         field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.2", p_exceptionCaught_2_.getCause()));
++         field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.2"), p_exceptionCaught_2_.getCause());
        } else {
           boolean flag = !this.field_211399_v;
           this.field_211399_v = true;
           if (this.field_150746_k.isOpen()) {
              if (p_exceptionCaught_2_ instanceof TimeoutException) {
 -               field_150735_g.debug("Timeout", p_exceptionCaught_2_);
-+               field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.3", p_exceptionCaught_2_));
++               field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.3"), p_exceptionCaught_2_);
                 this.func_150718_a(new TranslationTextComponent("disconnect.timeout"));
              } else {
                 ITextComponent itextcomponent = new TranslationTextComponent("disconnect.genericReason", "Internal Exception: " + p_exceptionCaught_2_);
                 if (flag) {
 -                  field_150735_g.debug("Failed to sent packet", p_exceptionCaught_2_);
-+                  field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.4", p_exceptionCaught_2_));
++                  field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.4"), p_exceptionCaught_2_);
                    this.func_201058_a(new SDisconnectPacket(itextcomponent), (p_211391_2_) -> {
                       this.func_150718_a(itextcomponent);
                    });
                    this.func_150721_g();
                 } else {
 -                  field_150735_g.debug("Double fault", p_exceptionCaught_2_);
-+                  field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.5", p_exceptionCaught_2_));
++                  field_150735_g.debug(com.mohistmc.util.i18n.i18n.get("networkmanager.5"), p_exceptionCaught_2_);
                    this.func_150718_a(itextcomponent);
                 }
              }
