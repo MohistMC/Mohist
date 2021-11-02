@@ -24,10 +24,10 @@
              this.func_199062_a(p_i45306_1_.func_195563_aC(), FileUtils.readFileToString(p_i45306_2_));
           } catch (IOException ioexception) {
 -            field_150889_b.error("Couldn't read statistics file {}", p_i45306_2_, ioexception);
-+            field_150889_b.error(i18n.get("serverstatisticsmanager.1", p_i45306_2_, ioexception));
++            field_150889_b.error(i18n.get("serverstatisticsmanager.1", p_i45306_2_), ioexception);
           } catch (JsonParseException jsonparseexception) {
 -            field_150889_b.error("Couldn't parse statistics file {}", p_i45306_2_, jsonparseexception);
-+            field_150889_b.error(i18n.get("serverstatisticsmanager.2", p_i45306_2_, jsonparseexception));
++            field_150889_b.error(i18n.get("serverstatisticsmanager.2", p_i45306_2_), jsonparseexception);
           }
        }
  
@@ -39,7 +39,7 @@
           FileUtils.writeStringToFile(this.field_150887_d, this.func_199061_b());
        } catch (IOException ioexception) {
 -         field_150889_b.error("Couldn't save stats", (Throwable)ioexception);
-+         field_150889_b.error(i18n.get("serverstatisticsmanager.3", (Throwable)ioexception));
++         field_150889_b.error(i18n.get("serverstatisticsmanager.3"), (Throwable)ioexception);
        }
  
     }

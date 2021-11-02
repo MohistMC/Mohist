@@ -13,7 +13,7 @@
           writer = Files.newBufferedWriter(this.field_208326_c);
        } catch (IOException ioexception) {
 -         field_208324_a.warn("Unable write cachefile {}: {}", this.field_208326_c, ioexception.toString());
-+         field_208324_a.warn(i18n.get("directorycache.1", this.field_208326_c, ioexception.toString()));
++         field_208324_a.warn(i18n.get("directorycache.1", this.field_208326_c), ioexception.toString());
           return;
        }
  

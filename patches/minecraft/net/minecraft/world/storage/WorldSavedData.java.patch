@@ -21,7 +21,7 @@
              CompressedStreamTools.func_244264_a(compoundnbt, p_215158_1_);
           } catch (IOException ioexception) {
 -            field_215159_a.error("Could not save data {}", this, ioexception);
-+            field_215159_a.error(i18n.get("worldsaveddata.1", this, ioexception));
++            field_215159_a.error(i18n.get("worldsaveddata.1", this), ioexception);
           }
  
           this.func_76186_a(false);

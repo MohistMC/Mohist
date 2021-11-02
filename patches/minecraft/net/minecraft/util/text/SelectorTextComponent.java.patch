@@ -12,7 +12,7 @@
           entityselector = entityselectorparser.func_201345_m();
        } catch (CommandSyntaxException commandsyntaxexception) {
 -         field_197669_b.warn("Invalid selector component: {}", p_i45996_1_, commandsyntaxexception.getMessage());
-+         field_197669_b.warn(i18n.get("selectortextcomponent.1", p_i45996_1_, commandsyntaxexception.getMessage()));
++         field_197669_b.warn(i18n.get("selectortextcomponent.1", p_i45996_1_), commandsyntaxexception.getMessage());
        }
  
        this.field_197670_d = entityselector;

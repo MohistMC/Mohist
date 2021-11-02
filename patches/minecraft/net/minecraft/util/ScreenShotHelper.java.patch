@@ -33,7 +33,7 @@
 +               p_228051_5_.accept(new TranslationTextComponent("screenshot.success", itextcomponent));
           } catch (Exception exception) {
 -            field_148261_a.warn("Couldn't save screenshot", (Throwable)exception);
-+            field_148261_a.warn(i18n.get("screenshothelper.1", (Throwable)exception));
++            field_148261_a.warn(i18n.get("screenshothelper.1"), (Throwable)exception);
              p_228051_5_.accept(new TranslationTextComponent("screenshot.failure", exception.getMessage()));
           } finally {
              nativeimage.close();

@@ -31,7 +31,7 @@
              return null;
           } catch (IOException ioexception) {
 -            field_195431_a.error("Couldn't load structure from {}", path, ioexception);
-+            field_195431_a.error(i18n.get("templatemanager.2", path, ioexception));
++            field_195431_a.error(i18n.get("templatemanager.2", path), ioexception);
              return null;
           }
        }

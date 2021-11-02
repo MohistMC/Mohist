@@ -13,7 +13,7 @@
           return 1;
        } catch (IOException ioexception) {
 -         field_225390_a.error("Failed to save debug dump", (Throwable)ioexception);
-+         field_225390_a.error(i18n.get("debugcommand.1", (Throwable)ioexception));
++         field_225390_a.error(i18n.get("debugcommand.1"), (Throwable)ioexception);
           p_225389_0_.func_197021_a(new TranslationTextComponent("commands.debug.reportFailed"));
           return 0;
        }

@@ -38,7 +38,7 @@
                          structurestart.func_186161_c().add(structurepiece);
                       } catch (Exception exception) {
 -                        field_208204_b.error("Exception loading structure piece with id {}", resourcelocation1, exception);
-+                        field_208204_b.error(i18n.get("structure.3", resourcelocation1, exception));
++                        field_208204_b.error(i18n.get("structure.3", resourcelocation1), exception);
                       }
                    }
                 }
@@ -46,7 +46,7 @@
                 return structurestart;
              } catch (Exception exception1) {
 -               field_208204_b.error("Failed Start with id {}", s, exception1);
-+               field_208204_b.error(i18n.get("structure.4", s, exception1));
++               field_208204_b.error(i18n.get("structure.4", s), exception1);
                 return null;
              }
           }

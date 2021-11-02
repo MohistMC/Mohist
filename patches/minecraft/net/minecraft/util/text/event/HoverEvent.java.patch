@@ -13,7 +13,7 @@
                    return new HoverEvent.ItemHover(item, i, compoundnbt);
                 } catch (CommandSyntaxException commandsyntaxexception) {
 -                  HoverEvent.field_240660_a_.warn("Failed to parse tag: {}", s, commandsyntaxexception);
-+                  HoverEvent.field_240660_a_.warn(i18n.get("hoverevent.1", s, commandsyntaxexception));
++                  HoverEvent.field_240660_a_.warn(i18n.get("hoverevent.1", s), commandsyntaxexception);
                 }
              }
  
@@ -22,7 +22,7 @@
              return new HoverEvent.ItemHover(ItemStack.func_199557_a(compoundnbt));
           } catch (CommandSyntaxException commandsyntaxexception) {
 -            HoverEvent.field_240660_a_.warn("Failed to parse item tag: {}", p_240695_0_, commandsyntaxexception);
-+            HoverEvent.field_240660_a_.warn(i18n.get("hoverevent.2", p_240695_0_, commandsyntaxexception));
++            HoverEvent.field_240660_a_.warn(i18n.get("hoverevent.2", p_240695_0_), commandsyntaxexception);
              return null;
           }
        }

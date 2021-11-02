@@ -27,7 +27,7 @@
           }
        } catch (Exception exception) {
 -         field_212776_a.error("Error loading saved data: {}", p_223409_2_, exception);
-+         field_212776_a.error(i18n.get("dimensionsaveddatamanager.1", p_223409_2_, exception));
++         field_212776_a.error(i18n.get("dimensionsaveddatamanager.1", p_223409_2_), exception);
        }
  
        return (T)null;

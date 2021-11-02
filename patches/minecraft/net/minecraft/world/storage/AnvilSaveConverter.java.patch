@@ -52,7 +52,7 @@
                       compoundnbt = CompressedStreamTools.func_74794_a(datainputstream);
                    } catch (IOException ioexception) {
 -                     field_151480_b.warn("Failed to read data for chunk {}", chunkpos, ioexception);
-+                     field_151480_b.warn(i18n.get("anvilsaveconverter.6", chunkpos, ioexception));
++                     field_151480_b.warn(i18n.get("anvilsaveconverter.6", chunkpos), ioexception);
                       continue;
                    }
  
@@ -61,7 +61,7 @@
           }
        } catch (IOException ioexception1) {
 -         field_151480_b.error("Failed to upgrade region file {}", p_242982_2_, ioexception1);
-+         field_151480_b.error(i18n.get("anvilsaveconverter.7", p_242982_2_, ioexception1));
++         field_151480_b.error(i18n.get("anvilsaveconverter.7", p_242982_2_), ioexception1);
        }
  
     }

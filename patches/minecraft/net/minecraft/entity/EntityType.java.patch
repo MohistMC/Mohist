@@ -123,7 +123,7 @@
           return func_220330_a(p_220343_0_, p_220343_1_);
        } catch (RuntimeException runtimeexception) {
 -         field_200731_aJ.warn("Exception loading entity: ", (Throwable)runtimeexception);
-+         field_200731_aJ.warn(i18n.get("entitytype.2", (Throwable)runtimeexception));
++         field_200731_aJ.warn(i18n.get("entitytype.2"), (Throwable)runtimeexception);
           return Optional.empty();
        }
     }
