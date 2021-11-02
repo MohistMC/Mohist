@@ -4,13 +4,11 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.util.NumberUtils;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.TimeZone;
+import java.util.*;
 
 public class i18n {
     public static ResourceBundle rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
+    private static List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn");
 
     public static String get(String key) {
         return rb.getString(key);
@@ -32,7 +30,9 @@ public class i18n {
     public static String getVanillaLanguage() {
         String locale = MohistConfigUtil.sMohist("lang", "en_us");
         if (locale.length() == 5) {
-            return locale;
+            if (a.contains(locale.toLowerCase())) {
+                return locale.toLowerCase();
+            }
         }
         return "en_us";
     }
