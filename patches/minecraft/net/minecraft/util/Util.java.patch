@@ -58,7 +58,7 @@
                 return true;
              } catch (IOException ioexception) {
 -               Util.field_195650_a.error("Failed to rename", (Throwable)ioexception);
-+               Util.field_195650_a.error(i18n.get("util.7", (Throwable)ioexception));
++               Util.field_195650_a.error(i18n.get("util.7"), (Throwable)ioexception);
                 return false;
              }
           }
@@ -67,7 +67,7 @@
                 return true;
              } catch (IOException ioexception) {
 -               Util.field_195650_a.warn("Failed to delete", (Throwable)ioexception);
-+               Util.field_195650_a.warn(i18n.get("util.8", (Throwable)ioexception));
++               Util.field_195650_a.warn(i18n.get("util.8"), (Throwable)ioexception);
                 return false;
              }
           }

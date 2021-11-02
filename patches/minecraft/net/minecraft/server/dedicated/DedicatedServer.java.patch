@@ -95,7 +95,7 @@
                 }
              } catch (IOException ioexception1) {
 -               DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-+               DedicatedServer.field_155771_h.error(i18n.get("dedicatedserver.1", (Throwable)ioexception1));
++               DedicatedServer.field_155771_h.error(i18n.get("dedicatedserver.1"), (Throwable)ioexception1);
              }
  
           }

@@ -115,7 +115,7 @@
              this.func_195059_a(ParticleArgument.func_197189_a(new StringReader(p_70037_1_.func_74779_i("Particle"))));
           } catch (CommandSyntaxException commandsyntaxexception) {
 -            field_195060_a.warn("Couldn't load custom particle {}", p_70037_1_.func_74779_i("Particle"), commandsyntaxexception);
-+            field_195060_a.warn(i18n.get("areaeffectcloudentity.1", p_70037_1_.func_74779_i("Particle"), commandsyntaxexception));
++            field_195060_a.warn(i18n.get("areaeffectcloudentity.1", p_70037_1_.func_74779_i("Particle")), commandsyntaxexception);
           }
        }
  

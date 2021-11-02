@@ -28,7 +28,7 @@
                 }
              } catch (IOException ioexception1) {
 -               field_242217_a.error("Couldn't read {} tag list {} from {}", this.field_242222_f, resourcelocation1, resourcelocation, ioexception1);
-+               field_242217_a.error(i18n.get("tagcollectionreader.3", this.field_242222_f, resourcelocation1, resourcelocation, ioexception1));
++               field_242217_a.error(i18n.get("tagcollectionreader.3", this.field_242222_f, resourcelocation1, resourcelocation), ioexception1);
              }
           }
  

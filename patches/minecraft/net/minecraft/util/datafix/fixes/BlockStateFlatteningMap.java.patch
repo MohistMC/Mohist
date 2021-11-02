@@ -21,7 +21,7 @@
           return new Dynamic<>(NBTDynamicOps.field_210820_a, JsonToNBT.func_180713_a(p_210048_0_.replace('\'', '"')));
        } catch (Exception exception) {
 -         field_199199_a.error("Parsing {}", p_210048_0_, exception);
-+         field_199199_a.error(i18n.get("blockstateflatteningmap.1", p_210048_0_, exception));
++         field_199199_a.error(i18n.get("blockstateflatteningmap.1", p_210048_0_), exception);
           throw new RuntimeException(exception);
        }
     }

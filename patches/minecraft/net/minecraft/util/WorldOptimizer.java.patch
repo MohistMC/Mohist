@@ -31,10 +31,10 @@
                       }
  
 -                     field_212219_a.error("Error upgrading chunk {}", chunkpos, throwable);
-+                     field_212219_a.error(i18n.get("worldoptimizer.3", chunkpos, throwable));
++                     field_212219_a.error(i18n.get("worldoptimizer.3", chunkpos), throwable);
                    } catch (IOException ioexception1) {
 -                     field_212219_a.error("Error upgrading chunk {}", chunkpos, ioexception1);
-+                     field_212219_a.error(i18n.get("worldoptimizer.4", chunkpos, ioexception1));
++                     field_212219_a.error(i18n.get("worldoptimizer.4", chunkpos), ioexception1);
                    }
  
                    if (flag1) {
@@ -43,7 +43,7 @@
                 chunkloader1.close();
              } catch (IOException ioexception) {
 -               field_212219_a.error("Error upgrading chunk", (Throwable)ioexception);
-+               field_212219_a.error(i18n.get("worldoptimizer.5", (Throwable)ioexception));
++               field_212219_a.error(i18n.get("worldoptimizer.5"), (Throwable)ioexception);
              }
           }
  

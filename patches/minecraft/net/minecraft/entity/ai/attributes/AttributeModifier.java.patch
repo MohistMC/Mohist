@@ -12,7 +12,7 @@
           return new AttributeModifier(uuid, p_233800_0_.func_74779_i("Name"), p_233800_0_.func_74769_h("Amount"), attributemodifier$operation);
        } catch (Exception exception) {
 -         field_233799_a_.warn("Unable to create attribute: {}", (Object)exception.getMessage());
-+         field_233799_a_.warn(i18n.get("attributemodifier.1", (Object)exception.getMessage()));
++         field_233799_a_.warn(i18n.get("attributemodifier.1"), (Object)exception.getMessage());
           return null;
        }
     }

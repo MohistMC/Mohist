@@ -12,6 +12,6 @@
  
     public void uncaughtException(Thread p_uncaughtException_1_, Throwable p_uncaughtException_2_) {
 -      this.field_201709_a.error("Caught previously unhandled exception :", p_uncaughtException_2_);
-+      this.field_201709_a.error(i18n.get("defaultuncaughtexceptionhandler.1", p_uncaughtException_2_));
++      this.field_201709_a.error(i18n.get("defaultuncaughtexceptionhandler.1"), p_uncaughtException_2_);
     }
  }

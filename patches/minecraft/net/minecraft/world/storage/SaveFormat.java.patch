@@ -30,7 +30,7 @@
                    flag = SessionLockManager.func_232999_b_(file1.toPath());
                 } catch (Exception exception) {
 -                  field_215785_a.warn("Failed to read {} lock", file1, exception);
-+                  field_215785_a.warn(i18n.get("saveformat.1", file1, exception));
++                  field_215785_a.warn(i18n.get("saveformat.1", file1), exception);
                    continue;
                 }
  
@@ -39,7 +39,7 @@
           return dynamic.get("DataPacks").result().map(SaveFormat::func_237258_a_).orElse(DatapackCodec.field_234880_a_);
        } catch (Exception exception) {
 -         field_215785_a.error("Exception reading {}", p_237272_0_, exception);
-+         field_215785_a.error(i18n.get("saveformat.2", p_237272_0_, exception));
++         field_215785_a.error(i18n.get("saveformat.2", p_237272_0_), exception);
           return null;
        }
     }
@@ -63,7 +63,7 @@
 +            return info;
           } catch (Exception exception) {
 -            field_215785_a.error("Exception reading {}", p_242976_2_, exception);
-+            field_215785_a.error(i18n.get("saveformat.3", p_242976_2_, exception));
++            field_215785_a.error(i18n.get("saveformat.3", p_242976_2_), exception);
              return null;
           }
        };
@@ -72,7 +72,7 @@
              }
           } catch (Exception exception) {
 -            field_215785_a.error("Exception reading {}", p_242977_3_, exception);
-+            field_215785_a.error(i18n.get("saveformat.4", p_242977_3_, exception));
++            field_215785_a.error(i18n.get("saveformat.4", p_242977_3_), exception);
              return null;
           }
        };
@@ -147,7 +147,7 @@
              Util.func_240977_a_(file4, file2, file3);
           } catch (Exception exception) {
 -            SaveFormat.field_215785_a.error("Failed to save level {}", file1, exception);
-+            SaveFormat.field_215785_a.error(i18n.get("saveformat.5", file1, exception));
++            SaveFormat.field_215785_a.error(i18n.get("saveformat.5", file1), exception);
           }
  
        }
@@ -182,7 +182,7 @@
                 }
  
 -               SaveFormat.field_215785_a.warn("Failed to delete {}", this.field_237279_c_, ioexception);
-+               SaveFormat.field_215785_a.warn(i18n.get("saveformat.8", this.field_237279_c_, ioexception));
++               SaveFormat.field_215785_a.warn(i18n.get("saveformat.8", this.field_237279_c_), ioexception);
  
                 try {
                    Thread.sleep(500L);

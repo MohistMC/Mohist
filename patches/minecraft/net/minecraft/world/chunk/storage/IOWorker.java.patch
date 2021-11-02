@@ -31,7 +31,7 @@
           p_227091_2_.field_227114_b_.complete((Void)null);
        } catch (Exception exception) {
 -         field_227080_a_.error("Failed to store chunk {}", p_227091_1_, exception);
-+         field_227080_a_.error(i18n.get("ioworker.3", p_227091_1_, exception));
++         field_227080_a_.error(i18n.get("ioworker.3", p_227091_1_), exception);
           p_227091_2_.field_227114_b_.completeExceptionally(exception);
        }
  
@@ -40,7 +40,7 @@
              this.field_227084_e_.close();
           } catch (Exception exception) {
 -            field_227080_a_.error("Failed to close storage", (Throwable)exception);
-+            field_227080_a_.error(i18n.get("ioworker.4", (Throwable)exception));
++            field_227080_a_.error(i18n.get("ioworker.4"), (Throwable)exception);
           }
  
        }
