@@ -466,13 +466,21 @@
        if (effectinstance != null) {
           this.func_70688_c(effectinstance);
           return true;
-@@ -894,19 +_,57 @@
+@@ -894,19 +_,65 @@
  
     }
  
++   public EntityRegainHealthEvent.RegainReason regainReason = EntityRegainHealthEvent.RegainReason.CUSTOM;
++   public void regainReason_SATIATED() {
++      regainReason = org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED;
++   }
++   public void regainReason_CUSTOM() {
++      regainReason = org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.CUSTOM;
++   }
++
 +   // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
     public void func_70691_i(float p_70691_1_) {
-+      heal(p_70691_1_, EntityRegainHealthEvent.RegainReason.CUSTOM);
++      heal(p_70691_1_, regainReason);
 +   }
 +
 +   public void heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason) {
