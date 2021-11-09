@@ -21,10 +21,10 @@ public class ProxyClass {
     public static Class<?> forName(String className, boolean initialize, ClassLoader loader) throws ClassNotFoundException {
         try {
             return Class.forName(ASMUtils.toClassName(RemapUtils.map(className.replace('.', '/'))), initialize, loader);
-        } catch (ClassNotFoundException e) {
+        } catch (NullPointerException e) {
             try {
                 return Class.forName(className, initialize, loader);
-            } catch (ClassNotFoundException ex) {
+            } catch (NullPointerException ex) {
                 throw new ClassNotFoundException(className);
             }
         }
