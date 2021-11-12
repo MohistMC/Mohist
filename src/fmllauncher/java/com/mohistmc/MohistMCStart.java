@@ -6,6 +6,7 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.*;
 import com.mohistmc.util.i18n.i18n;
+import org.apache.logging.log4j.Level;
 
 import java.util.Scanner;
 
@@ -42,7 +43,8 @@ public class MohistMCStart {
 
         // make sure gson use this EnumTypeAdapter
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
-
+        System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
+        System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
         if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
