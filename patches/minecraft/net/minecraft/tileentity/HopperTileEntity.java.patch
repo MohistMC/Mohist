@@ -107,7 +107,7 @@
        IInventory iinventory = this.func_145895_l();
        if (iinventory == null) {
           return false;
-@@ -144,12 +_,33 @@
+@@ -144,12 +_,37 @@
              for(int i = 0; i < this.func_70302_i_(); ++i) {
                 if (!this.func_70301_a(i).func_190926_b()) {
                    ItemStack itemstack = this.func_70301_a(i).func_77946_l();
@@ -120,9 +120,13 @@
 +                  if (iinventory instanceof DoubleSidedInventory) {
 +                     destinationInventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
 +                  } else {
-+                     destinationInventory = InventoryOwner.get(iinventory).getInventory();
++                     InventoryHolder owner = InventoryOwner.get(iinventory);
++                     destinationInventory = (owner != null ? owner.getInventory() : new CraftCustomInventory(iinventory).getInventory());
 +                  }
-+                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++
++                  InventoryHolder owner = InventoryOwner.get((TileEntity) this);
++                  Inventory hopperOwner = (owner != null ? owner.getInventory() : new CraftCustomInventory(this).getInventory());
++                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(hopperOwner, oitemstack.clone(), destinationInventory, true);
 +                  this.func_145831_w().getCBServer().getPluginManager().callEvent(event);
 +                  if (event.isCancelled()) {
 +                     this.func_70299_a(i, itemstack);
