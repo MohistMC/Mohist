@@ -75,7 +75,17 @@ public class MohistCommand extends Command {
                 }
                 break;
             case "lang":
-                sender.sendMessage("mohist: " + ChatColor.GREEN + i18n.getLocale());
+                if (args.length == 1) {
+                    sender.sendMessage("mohist: " + ChatColor.GREEN + i18n.getLocale());
+                    return false;
+                }
+                if (i18n.b.contains(args[1])) {
+                    MohistConfig.setValueMohist("mohist.lang", args[1]);
+                    sender.sendMessage(ChatColor.GREEN + " Successfully set the mohist language to: " + args[1]);
+                } else {
+                    MohistConfig.setValueMohist("mohist.lang", "xx_XX");
+                    sender.sendMessage(ChatColor.GREEN + args[1] + "For an unsupported language, the default value has been restored..");
+                }
                 break;
             case "item":
                 if (args.length == 1) {

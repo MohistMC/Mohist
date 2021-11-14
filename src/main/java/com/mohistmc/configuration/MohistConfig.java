@@ -109,9 +109,9 @@ public class MohistConfig extends ConfigBase {
         }
     }
 
-    public static void setValueMohist(String oldValue, String value) {
+    public static void setValueMohist(String key, String value) {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
-        yml.set(oldValue, value);
+        yml.set(key, value);
         try {
             yml.save(MohistConfigUtil.mohistyml);
         } catch (IOException e) {
@@ -119,9 +119,9 @@ public class MohistConfig extends ConfigBase {
         }
     }
 
-    public static void setValueMohist(String oldValue, boolean value) {
+    public static void setValueMohist(String key, boolean value) {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
-        yml.set(oldValue, value);
+        yml.set(key, value);
         try {
             yml.save(MohistConfigUtil.mohistyml);
         } catch (IOException e) {
