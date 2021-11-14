@@ -7,10 +7,12 @@ import java.text.MessageFormat;
 import java.util.*;
 
 public class i18n {
-    public static ResourceBundle rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
+    private static ResourceBundle rb;
     private static List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn");
+    public static List<String> b = Arrays.asList("fr_FR", "ru_RU", "zh_CN");
 
     public static String get(String key) {
+        rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
         return rb.getString(key);
     }
 
@@ -46,7 +48,7 @@ public class i18n {
     }
 
     public static String getLocale() {
-        return rb.getLocale().toString();
+        return getLanguage() + "_" + getCountry();
     }
 
     public static boolean isCN() {
