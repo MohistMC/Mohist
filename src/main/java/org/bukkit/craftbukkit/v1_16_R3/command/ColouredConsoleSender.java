@@ -5,6 +5,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.mohistmc.MohistMC;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,15 +55,7 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
         // support jansi passthrough VM option when jansi doesn't detect an ANSI supported terminal
         if (jansiPassthrough || TerminalConsoleAppender.isAnsiSupported()) {
             if (!conversationTracker.isConversingModaly()) {
-                String result = convertRGBColors(message);
-                for (ChatColor color : colors) {
-                    if (replacements.containsKey(color)) {
-                        result = result.replaceAll("(?i)" + color.toString(), replacements.get(color));
-                    } else {
-                        result = result.replaceAll("(?i)" + color.toString(), "");
-                    }
-                }
-                System.out.println(result + Ansi.ansi().reset().toString());
+                MohistMC.LOGGER.info(message);
             }
         } else {
             super.sendMessage(message);

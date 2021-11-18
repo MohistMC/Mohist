@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_16_R3.command;
 
 import java.util.UUID;
 
+import com.mohistmc.MohistMC;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
@@ -27,7 +28,7 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
 
     @Override
     public void sendRawMessage(String message) {
-        System.out.println(ChatColor.stripColor(message));
+        MohistMC.LOGGER.info(message);
     }
 
     @Override
