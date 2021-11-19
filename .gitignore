@@ -1,0 +1,47 @@
+#eclipse
+**/bin
+**/.settings
+**/.classpath
+*.project
+
+#In case people make their workspace in the repo
+/eclipse/
+
+#idea
+/.idea
+/classes
+*.iml
+
+#gradle
+/build
+/.gradle
+/mdk/.gradle
+/mdk/build
+
+#occupational hazards
+/projects/mcp/
+/projects/clean/
+/projects/forge/
+/projects/mohist/
+/projects/**/build/
+/projects/**/out/
+/projects/**/run/
+/projects/**/*.launch
+/repo/
+src/generated/resources/.cache/
+
+#Patch rejects
+/patches-/
+*.patch.rej
+
+# FML changelog
+changelog.txt
+*.py
+*.7z
+/logs/
+
+/projects/forge/rejects/
+
+# Srg2Source causes import bugs on these patches. If you intentionnally change these, remove the ignore.
+/patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch
+/patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch
