@@ -78,27 +78,26 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,41 +_,69 @@
+@@ -109,33 +_,61 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
 -   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) {
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) { this(p_i48204_1_, p_i48204_2_, (CompoundNBT) null); }
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable CompoundNBT capNBT) {
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.capNBT = capNBT;
        this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
 +      this.delegate = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j().delegate;
        this.field_77994_a = p_i48204_2_;
 -      if (this.field_151002_e != null && this.field_151002_e.func_77645_m()) {
++      this.forgeInit();
 +      if (this.field_151002_e != null && this.field_151002_e.isDamageable(this)) {
           this.func_196085_b(this.func_77952_i());
        }
  
        this.func_190923_F();
--   }
-+      this.forgeInit();
-+   }
+    }
 +
 +   // CraftBukkit start - Called to run this stack through the data converter to handle older storage methods and serialized items
 +   public void convertStack(int version) {
@@ -130,6 +129,7 @@
 +         // CraftBukkit end
 +      }
 +
++      this.forgeInit();
 +      if (this.func_77973_b().func_77645_m()) {
 +         this.func_196085_b(this.func_77952_i());
 +      }
@@ -147,14 +147,13 @@
 -         this.func_196085_b(this.func_77952_i());
 -      }
 -
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.load(p_i47263_1_);
 +      // CraftBukkit stop
        this.func_190923_F();
-+      this.forgeInit();
     }
  
-    public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
+@@ -143,7 +_,7 @@
        try {
           return new ItemStack(p_199557_0_);
        } catch (RuntimeException runtimeexception) {
@@ -421,7 +420,7 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -952,6 +_,24 @@
+@@ -952,6 +_,23 @@
  
     public boolean func_222117_E() {
        return this.func_77973_b().func_219971_r();
@@ -439,8 +438,7 @@
 +    */
 +   private void forgeInit() {
 +      if (this.delegate != null) {
-+         net.minecraftforge.common.capabilities.ICapabilityProvider provider = field_151002_e.initCapabilities(this, this.capNBT);
-+         this.gatherCapabilities(provider);
++         this.gatherCapabilities(() -> field_151002_e.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
     }

@@ -16,6 +16,15 @@
  
     public Advancement(ResourceLocation p_i47472_1_, @Nullable Advancement p_i47472_2_, @Nullable DisplayInfo p_i47472_3_, AdvancementRewards p_i47472_4_, Map<String, Criterion> p_i47472_5_, String[][] p_i47472_6_) {
        this.field_192079_d = p_i47472_1_;
+@@ -130,7 +_,7 @@
+       return this.field_193125_h;
+    }
+ 
+-   public static class Builder {
++   public static class Builder implements net.minecraftforge.common.extensions.IForgeAdvancementBuilder {
+       private ResourceLocation field_192061_a;
+       private Advancement field_192062_b;
+       private DisplayInfo field_192063_c;
 @@ -309,6 +_,7 @@
        }
  
