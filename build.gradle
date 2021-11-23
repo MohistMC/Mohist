@@ -1,8 +1,8 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url = 'https://maven.minecraftforge.net/' }
         mavenCentral()
+        maven { url = 'https://maven.minecraftforge.net/' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
