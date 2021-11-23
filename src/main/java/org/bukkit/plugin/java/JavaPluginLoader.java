@@ -97,29 +97,27 @@ public final class JavaPluginLoader implements PluginLoader {
         final File dataFolder = new File(parentFile, description.getName());
         @SuppressWarnings("deprecation")
         final File oldDataFolder = new File(parentFile, description.getRawName());
-
-        // Found old data folder
-        if (dataFolder.equals(oldDataFolder)) {
-            // They are equal -- nothing needs to be done!
-        } else if (dataFolder.isDirectory() && oldDataFolder.isDirectory()) {
-            server.getLogger().warning(String.format(
-                "While loading %s (%s) found old-data folder: `%s' next to the new one `%s'",
-                description.getFullName(),
-                file,
-                oldDataFolder,
-                dataFolder
-            ));
-        } else if (oldDataFolder.isDirectory() && !dataFolder.exists()) {
-            if (!oldDataFolder.renameTo(dataFolder)) {
-                throw new InvalidPluginException("Unable to rename old data folder: `" + oldDataFolder + "' to: `" + dataFolder + "'");
+        if (!dataFolder.equals(oldDataFolder)) {
+            if (dataFolder.isDirectory() && oldDataFolder.isDirectory()) {
+                server.getLogger().warning(String.format(
+                        "While loading %s (%s) found old-data folder: `%s' next to the new one `%s'",
+                        description.getFullName(),
+                        file,
+                        oldDataFolder,
+                        dataFolder
+                ));
+            } else if (oldDataFolder.isDirectory() && !dataFolder.exists()) {
+                if (!oldDataFolder.renameTo(dataFolder)) {
+                    throw new InvalidPluginException("Unable to rename old data folder: `" + oldDataFolder + "' to: `" + dataFolder + "'");
+                }
+                server.getLogger().log(Level.INFO, String.format(
+                        "While loading %s (%s) renamed data folder: `%s' to `%s'",
+                        description.getFullName(),
+                        file,
+                        oldDataFolder,
+                        dataFolder
+                ));
             }
-            server.getLogger().log(Level.INFO, String.format(
-                "While loading %s (%s) renamed data folder: `%s' to `%s'",
-                description.getFullName(),
-                file,
-                oldDataFolder,
-                dataFolder
-            ));
         }
 
         if (dataFolder.exists() && !dataFolder.isDirectory()) {
