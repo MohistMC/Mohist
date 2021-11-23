@@ -2,7 +2,8 @@ package com.mohistmc.tasks
 
 import groovy.json.JsonSlurper
 
-import java.util.function.Supplier
+import java.nio.file.Files
+import java.nio.file.Path
 
 class Env {
     private static final data
@@ -11,8 +12,9 @@ class Env {
         def envFile = new File("env.json");
         def defaultFile = new File("env.default.json");
         if (!envFile.exists()) {
-            new FileOutputStream("env.json").write(
-                    getClass().getResourceAsStream("env.generate.json").readAllBytes()
+            Files.copy(
+                    Path.of("buildSrc/src/main/resources/env.generate.json"),
+                    Path.of("env.json")
             )
         }
         def jsonSluper = new JsonSlurper()
