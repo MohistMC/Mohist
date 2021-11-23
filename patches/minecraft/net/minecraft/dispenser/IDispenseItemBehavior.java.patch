@@ -15,7 +15,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
  import net.minecraft.entity.IEquipable;
-@@ -67,6 +_,12 @@
+@@ -67,8 +_,15 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
@@ -27,8 +27,11 @@
 +import org.bukkit.event.world.StructureGrowEvent;
  
  public interface IDispenseItemBehavior {
++   org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
     IDispenseItemBehavior field_223216_a_ = (p_210297_0_, p_210297_1_) -> {
-@@ -169,8 +_,34 @@
+       return p_210297_1_;
+    };
+@@ -169,8 +_,39 @@
           public ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
              Direction direction = p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a);
              EntityType<?> entitytype = ((SpawnEggItem)p_82487_2_.func_77973_b()).func_208076_b(p_82487_2_.func_77978_p());
@@ -57,8 +60,13 @@
 +               }
 +            }
 +
++            try { // FORGE: fix potential crash
              entitytype.func_220331_a(p_82487_1_.func_197524_h(), p_82487_2_, (PlayerEntity)null, p_82487_1_.func_180699_d().func_177972_a(direction), SpawnReason.DISPENSER, direction != Direction.UP, false);
 -            p_82487_2_.func_190918_g(1);
++            } catch (Exception e) {
++               LOGGER.error("Error while dispensing spawn egg from dispenser at {}", p_82487_1_.func_180699_d(), e);
++               return ItemStack.field_190927_a;
++            }
 +            // stack.shrink(1); // Handled during event processing
 +            // CraftBukkit end
              return p_82487_2_;
