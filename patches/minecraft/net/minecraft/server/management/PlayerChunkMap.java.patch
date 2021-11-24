@@ -48,6 +48,15 @@
      }
  
      public WorldServer func_72688_a()
+@@ -121,7 +127,7 @@
+ 
+         if (!this.field_72697_d.isEmpty())
+         {
+-            for (PlayerChunkMapEntry playerchunkmapentry2 : this.field_72697_d)
++            for (PlayerChunkMapEntry playerchunkmapentry2 : Sets.newHashSet(this.field_72697_d))
+             {
+                 playerchunkmapentry2.func_187280_d();
+             }
 @@ -183,6 +189,9 @@
                              break;
                          }

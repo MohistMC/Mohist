@@ -57,15 +57,17 @@
          if (p_72790_1_ instanceof EntityPlayerMP)
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)p_72790_1_;
-@@ -284,7 +289,7 @@
+@@ -284,8 +289,8 @@
      public void func_72788_a()
      {
          List<EntityPlayerMP> list = Lists.<EntityPlayerMP>newArrayList();
 -
+-        for (EntityTrackerEntry entitytrackerentry : this.field_72793_b)
 +        field_72795_a.timings.tracker1.startTiming(); // Spigot
-         for (EntityTrackerEntry entitytrackerentry : this.field_72793_b)
++        for (EntityTrackerEntry entitytrackerentry : Sets.newHashSet(this.field_72793_b))
          {
              entitytrackerentry.func_73122_a(this.field_72795_a.field_73010_i);
+ 
 @@ -299,7 +304,9 @@
                  }
              }
