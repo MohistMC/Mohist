@@ -66,7 +66,7 @@ public class BackgroundScanHandler
         scannedFiles = new ArrayList<>();
         pendingFiles = new ArrayList<>();
         allFiles = new ArrayList<>();
-		status = ScanStatus.NOT_STARTED
+		status = ScanStatus.NOT_STARTED;
     }
 
     public Map<IModFile.Type, List<ModFile>> getModFiles() {
