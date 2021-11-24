@@ -2,14 +2,13 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url = Env.FORGE_MAVEN_URL }
+        maven { url = "https://maven.minecraftforge.net/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
     }
 }
 
-import com.mohistmc.tasks.Env
 import com.mohistmc.tasks.JenkinsNumber
 
 import groovy.json.JsonBuilder
@@ -154,9 +153,9 @@ project(':mohist') {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url = Env.SPIGOT_MAVEN_URL }
-        maven { url = Env.PAPER_MAVEN_URL }
-        maven { url = Env.AIKAR_MAVEN_URL }
+        maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+        maven { url 'https://papermc.io/repo/repository/maven-public/' }
+        maven { url 'https://repo.aikar.co/content/groups/aikar/' }
     }
 
     ext {
