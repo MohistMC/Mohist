@@ -1103,7 +1103,7 @@ public final class CraftServer implements Server {
 
         ServerWorld handle = ((CraftWorld) world).getHandle();
 
-        if (!(console.levels.containsKey(handle.getTypeKey()))) {
+        if (!(console.levels.containsKey(handle.dimension()))) {
             return false;
         }
 
@@ -1135,7 +1135,7 @@ public final class CraftServer implements Server {
 
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
-        console.levels.remove(handle.getTypeKey());
+        console.levels.remove(handle.dimension());
         return true;
     }
 
@@ -1412,7 +1412,7 @@ public final class CraftServer implements Server {
 
         // Create map with trackPlayer = true, unlimitedTracking = true
         net.minecraft.item.ItemStack stack = FilledMapItem.create(worldServer, structurePosition.getX(), structurePosition.getZ(), MapView.Scale.NORMAL.getValue(), true, true);
-        FilledMapItem.lockMap(worldServer, stack);
+        FilledMapItem.renderBiomePreviewMap(worldServer, stack);
         // "+" map ID taken from EntityVillager
         FilledMapItem.getOrCreateSavedData(stack, worldServer).addTargetDecoration(stack, structurePosition, "+", MapDecoration.Type.byIcon(structureType.getMapIcon().getValue()));
 
