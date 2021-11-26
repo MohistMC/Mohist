@@ -38,7 +38,7 @@ public class CraftAdvancementProgress implements AdvancementProgress {
 
     @Override
     public boolean revokeCriteria(String criteria) {
-        return playerData.award(advancement.getHandle(), criteria);
+        return playerData.revoke(advancement.getHandle(), criteria);
     }
 
     @Override
