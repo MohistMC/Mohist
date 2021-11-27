@@ -986,7 +986,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public String getName() {
-        return CraftChatMessage.fromComponent(getHandle().getDisplayName());
+        return CraftChatMessage.fromComponent(getHandle().getName());
     }
 
     @Override
