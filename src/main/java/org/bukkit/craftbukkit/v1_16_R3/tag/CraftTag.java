@@ -22,7 +22,7 @@ public abstract class CraftTag<N, B extends Keyed> implements Tag<B> {
 
     protected ITag<N> getHandle() {
         if (handle == null) {
-            handle = registry.getTag(tag);
+            handle = registry.getTagOrEmpty(tag);
         }
 
         return handle;

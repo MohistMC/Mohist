@@ -314,7 +314,7 @@ public final class CraftChatMessage {
         for (ITextComponent c : (Iterable<ITextComponent>) component) {
             Style modi = c.getStyle();
             Color color = modi.getColor();
-            if (!c.getString().isEmpty() || color != null) {
+            if (!c.getContents().isEmpty() || color != null) {
                 if (color != null) {
                     if (color.format != null) {
                         out.append(color.format);
@@ -366,7 +366,7 @@ public final class CraftChatMessage {
     private static ITextComponent fixComponent(ITextComponent component, Matcher matcher) {
         if (component instanceof StringTextComponent) {
             StringTextComponent text = ((StringTextComponent) component);
-            String msg = text.getText();
+            String msg = text.getContents();
             if (matcher.reset(msg).find()) {
                 matcher.reset();
 
