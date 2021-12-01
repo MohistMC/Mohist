@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/inventory/ChestMenu.java
++++ b/net/minecraft/world/inventory/ChestMenu.java
+@@ -1,15 +_,42 @@
+ package net.minecraft.world.inventory;
+ 
++import net.minecraft.world.CompoundContainer;
+ import net.minecraft.world.Container;
+ import net.minecraft.world.SimpleContainer;
+ import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class ChestMenu extends AbstractContainerMenu {
+    private static final int f_150511_ = 9;
+    private final Container f_39221_;
+    private final int f_39222_;
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Inventory player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventory inventory;
++      if (this.f_39221_ instanceof Inventory) {
++         inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryPlayer((Inventory) this.f_39221_);
++      } else if (this.f_39221_ instanceof CompoundContainer) {
++         inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((CompoundContainer) this.f_39221_);
++      } else {
++         inventory = new CraftInventory(this.f_39221_);
++      }
++
++      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ 
+    private ChestMenu(MenuType<?> p_39224_, int p_39225_, Inventory p_39226_, int p_39227_) {
+       this(p_39224_, p_39225_, p_39226_, new SimpleContainer(9 * p_39227_), p_39227_);

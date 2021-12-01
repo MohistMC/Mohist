@@ -1,0 +1,30 @@
+--- a/net/minecraft/gametest/framework/GameTestServer.java
++++ b/net/minecraft/gametest/framework/GameTestServer.java
+@@ -13,6 +_,7 @@
+ import net.minecraft.CrashReport;
+ import net.minecraft.SystemReport;
+ import net.minecraft.Util;
++import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.RegistryAccess;
+@@ -39,6 +_,7 @@
+ import net.minecraft.world.level.storage.PrimaryLevelData;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.command.CommandSender;
+ 
+ public class GameTestServer extends MinecraftServer {
+    private static final Logger f_177585_ = LogManager.getLogger();
+@@ -176,6 +_,11 @@
+ 
+    public boolean m_6102_() {
+       return false;
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return null;
+    }
+ 
+    public boolean m_7779_(GameProfile p_177617_) {

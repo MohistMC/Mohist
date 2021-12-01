@@ -1,5 +1,37 @@
 --- a/net/minecraft/world/inventory/AbstractFurnaceMenu.java
 +++ b/net/minecraft/world/inventory/AbstractFurnaceMenu.java
+@@ -11,6 +_,8 @@
+ import net.minecraft.world.item.crafting.RecipeType;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public abstract class AbstractFurnaceMenu extends RecipeBookMenu<Container> {
+    public static final int f_150453_ = 0;
+@@ -28,6 +_,22 @@
+    private final RecipeType<? extends AbstractCookingRecipe> f_38957_;
+    private final RecipeBookType f_38958_;
+ 
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Inventory player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryFurnace inventory = new CraftInventoryFurnace((AbstractFurnaceBlockEntity) this.f_38955_);
++      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
++
+    protected AbstractFurnaceMenu(MenuType<?> p_38960_, RecipeType<? extends AbstractCookingRecipe> p_38961_, RecipeBookType p_38962_, int p_38963_, Inventory p_38964_) {
+       this(p_38960_, p_38961_, p_38962_, p_38963_, p_38964_, new SimpleContainer(3), new SimpleContainerData(4));
+    }
 @@ -147,7 +_,7 @@
     }
  

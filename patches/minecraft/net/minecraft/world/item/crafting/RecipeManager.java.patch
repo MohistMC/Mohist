@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
+@@ -18,6 +_,8 @@
+ import java.util.Map.Entry;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
++
++import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+ import net.minecraft.Util;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.Registry;
+@@ -35,7 +_,7 @@
+ public class RecipeManager extends SimpleJsonResourceReloadListener {
+    private static final Gson f_44005_ = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Logger f_44006_ = LogManager.getLogger();
+-   private Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
++   public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
+    private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
+    private boolean f_44008_;
+ 
 @@ -50,9 +_,18 @@
  
        for(Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
@@ -19,3 +37,22 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
+@@ -153,4 +_,18 @@
+       this.f_44007_ = ImmutableMap.copyOf(map);
+       this.f_199900_ = builder.build();
+    }
++
++   // CraftBukkit start
++   public void addRecipe(final Recipe<?> irecipe) {
++
++   }
++
++   // CraftBukkit start
++   public void clearRecipes() {
++      this.f_44007_ = Maps.newHashMap();
++      for (RecipeType<?> recipeType : Registry.f_122864_) {
++         this.f_44007_.put(recipeType, Collections.emptyMap());
++      }
++   }
++   // CraftBukkit end
+ }

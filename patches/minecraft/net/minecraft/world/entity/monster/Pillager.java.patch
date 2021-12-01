@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/monster/Pillager.java
 +++ b/net/minecraft/world/entity/monster/Pillager.java
+@@ -57,7 +_,7 @@
+    private static final int f_149740_ = 5;
+    private static final int f_149738_ = 300;
+    private static final float f_149739_ = 1.6F;
+-   private final SimpleContainer f_33259_ = new SimpleContainer(5);
++   public final SimpleContainer f_33259_ = new SimpleContainer(5);
+ 
+    public Pillager(EntityType<? extends Pillager> p_33262_, Level p_33263_) {
+       super(p_33262_, p_33263_);
 @@ -119,7 +_,7 @@
     public AbstractIllager.IllagerArmPose m_6768_() {
        if (this.m_33309_()) {

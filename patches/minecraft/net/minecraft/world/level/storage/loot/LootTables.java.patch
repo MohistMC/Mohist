@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/storage/loot/LootTables.java
 +++ b/net/minecraft/world/level/storage/loot/LootTables.java
+@@ -19,6 +_,7 @@
+    private static final Gson f_79189_ = Deserializers.m_78800_().create();
+    private Map<ResourceLocation, LootTable> f_79190_ = ImmutableMap.of();
+    private final PredicateManager f_79191_;
++   public Map<LootTable, ResourceLocation> lootTableToKey = ImmutableMap.of(); // CraftBukkit
+ 
+    public LootTables(PredicateManager p_79194_) {
+       super(f_79189_, "loot_tables");
 @@ -37,8 +_,8 @@
        }
  

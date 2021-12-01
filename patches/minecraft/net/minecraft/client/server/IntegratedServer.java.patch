@@ -1,5 +1,21 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
+@@ -15,6 +_,7 @@
+ import net.minecraft.SharedConstants;
+ import net.minecraft.SystemReport;
+ import net.minecraft.client.Minecraft;
++import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.ServerResources;
+@@ -32,6 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.command.CommandSender;
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class IntegratedServer extends MinecraftServer {
 @@ -62,9 +_,10 @@
        this.m_129997_(true);
        this.m_129999_(true);
@@ -12,6 +28,18 @@
     }
  
     public void m_5705_(BooleanSupplier p_120049_) {
+@@ -114,6 +_,11 @@
+       return true;
+    }
+ 
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return null;
++   }
++
+    public File m_6237_() {
+       return this.f_120015_.f_91069_;
+    }
 @@ -181,6 +_,7 @@
     }
  

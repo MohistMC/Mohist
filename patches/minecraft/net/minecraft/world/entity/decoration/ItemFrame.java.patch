@@ -1,0 +1,60 @@
+--- a/net/minecraft/world/entity/decoration/ItemFrame.java
++++ b/net/minecraft/world/entity/decoration/ItemFrame.java
+@@ -41,8 +_,8 @@
+    private static final EntityDataAccessor<ItemStack> f_31757_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135033_);
+    private static final EntityDataAccessor<Integer> f_31758_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135028_);
+    public static final int f_149619_ = 8;
+-   private float f_31754_ = 1.0F;
+-   private boolean f_31755_;
++   public float f_31754_ = 1.0F;
++   public boolean f_31755_;
+ 
+    public ItemFrame(EntityType<? extends ItemFrame> p_31761_, Level p_31762_) {
+       super(p_31761_, p_31762_);
+@@ -57,7 +_,11 @@
+       this.m_6022_(p_149624_);
+    }
+ 
+-   protected float m_6380_(Pose p_31784_, EntityDimensions p_31785_) {
++    public static AABB calculateBoundingBox(Object o, BlockPos pos, Direction opposite, int width, int height) {
++      return  null;
++    }
++
++    protected float m_6380_(Pose p_31784_, EntityDimensions p_31785_) {
+       return 0.0F;
+    }
+ 
+@@ -66,7 +_,7 @@
+       this.m_20088_().m_135372_(f_31758_, 0);
+    }
+ 
+-   protected void m_6022_(Direction p_31793_) {
++   public void m_6022_(Direction p_31793_) {
+       Validate.notNull(p_31793_);
+       this.f_31699_ = p_31793_;
+       if (p_31793_.m_122434_().m_122479_()) {
+@@ -260,6 +_,24 @@
+ 
+       this.m_20088_().m_135381_(f_31757_, p_31790_);
+       if (!p_31790_.m_41619_()) {
++         this.m_5496_(this.m_142546_(), 1.0F, 1.0F);
++      }
++
++      if (p_31791_ && this.f_31698_ != null) {
++         this.f_19853_.m_46717_(this.f_31698_, Blocks.f_50016_);
++      }
++
++   }
++
++   public void setItem(ItemStack p_31790_, boolean p_31791_, boolean playSound) {
++      if (!p_31790_.m_41619_()) {
++         p_31790_ = p_31790_.m_41777_();
++         p_31790_.m_41764_(1);
++         p_31790_.m_41636_(this);
++      }
++
++      this.m_20088_().m_135381_(f_31757_, p_31790_);
++      if (!p_31790_.m_41619_() && playSound) { // CraftBukkit
+          this.m_5496_(this.m_142546_(), 1.0F, 1.0F);
+       }
+ 

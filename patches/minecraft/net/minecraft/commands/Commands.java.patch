@@ -8,6 +8,19 @@
  
        this.f_82090_.findAmbiguities((p_82108_, p_82109_, p_82110_, p_82111_) -> {
           f_82089_.warn("Ambiguity between arguments {} and {} with inputs: {}", this.f_82090_.getPath(p_82109_), this.f_82090_.getPath(p_82110_), p_82111_);
+@@ -208,7 +_,11 @@
+       });
+    }
+ 
+-   public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
++    public Commands() {
++
++    }
++
++    public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
+       StringReader stringreader = new StringReader(p_82119_);
+       if (stringreader.canRead() && stringreader.peek() == '/') {
+          stringreader.skip();
 @@ -218,7 +_,15 @@
  
        try {
@@ -25,3 +38,15 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              p_82118_.m_81352_(commandruntimeexception.m_79226_());
              return 0;
+@@ -361,7 +_,10 @@
+       }
+    }
+ 
+-   public static enum CommandSelection {
++    public void performCommand(CommandSourceStack icommandlistener, String toDispatcher, String toDispatcher1, boolean b) {
++    }
++
++    public static enum CommandSelection {
+       ALL(true, true),
+       DEDICATED(false, true),
+       INTEGRATED(true, false);

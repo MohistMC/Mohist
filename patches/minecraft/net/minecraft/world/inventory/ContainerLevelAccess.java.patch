@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/inventory/ContainerLevelAccess.java
++++ b/net/minecraft/world/inventory/ContainerLevelAccess.java
+@@ -33,4 +_,18 @@
+          return Optional.empty();
+       });
+    }
++
++   // CraftBukkit start
++   default Level getWorld() {
++      throw new UnsupportedOperationException("Not supported yet.");
++   }
++
++   default BlockPos getPosition() {
++      throw new UnsupportedOperationException("Not supported yet.");
++   }
++
++   default org.bukkit.Location getLocation() {
++      return new org.bukkit.Location(getWorld().getWorld(), getPosition().m_123341_(), getPosition().m_123342_(), getPosition().m_123343_());
++   }
++   // CraftBukkit end
+ }

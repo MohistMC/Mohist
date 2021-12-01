@@ -1,6 +1,16 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -43,6 +_,10 @@
+@@ -35,14 +_,18 @@
+    private static final int f_149659_ = 6000;
+    private static final int f_149660_ = 32767;
+    private static final int f_149661_ = -32768;
+-   private int f_31985_;
+-   private int f_31986_;
++   public int f_31985_;
++   public int f_31986_;
+    private int f_31987_ = 5;
+    @Nullable
+    private UUID f_31988_;
     @Nullable
     private UUID f_31982_;
     public final float f_31983_;

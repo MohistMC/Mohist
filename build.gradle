@@ -98,6 +98,7 @@ subprojects {
             name = 'forge'
             url = 'https://maven.minecraftforge.net/'
         }
+        maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -253,6 +254,24 @@ def sharedDeps = {
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
     installer 'com.google.guava:guava:21.0'
     installer 'com.google.code.gson:gson:2.8.0'
+
+    // bukkit
+    installer 'commons-lang:commons-lang:2.6'
+    installer 'com.google.guava:guava:31.0.1-jre'
+    //installer 'com.google.code.gson:gson:2.8.8'
+    installer 'org.yaml:snakeyaml:1.28'
+    installer 'org.apache.maven:maven-resolver-provider:3.8.1'
+    installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.0'
+    installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.0'
+    installer 'org.jetbrains:annotations:21.0.1'
+    // craftbukkit
+    installer 'org.fusesource.jansi:jansi:1.18'
+    installer 'jline:jline:2.12.1'
+    installer 'com.googlecode.json-simple:json-simple:1.1.1'
+    installer 'org.xerial:sqlite-jdbc:3.36.0.3'
+    installer 'mysql:mysql-connector-java:8.0.27'
+    installer 'org.apache.logging.log4j:log4j-iostreams:2.14.1'
+    installer 'net.md-5:SpecialSource:1.10.0'
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -961,18 +980,12 @@ project(':forge') {
 
     task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
 
-    task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
     task checkPatches(type: CheckPatches, dependsOn: genPatches) {
         patchDir = file("$rootDir/patches")
         autoFix = false
     }
 
     genPatches {
-        finalizedBy checkPatches
         autoHeader true
         lineEnding = '\n'
     }

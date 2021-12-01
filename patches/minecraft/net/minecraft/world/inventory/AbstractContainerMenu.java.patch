@@ -1,5 +1,72 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.inventory;
+ 
++import com.google.common.base.Preconditions;
+ import com.google.common.base.Suppliers;
+ import com.google.common.collect.HashBasedTable;
+ import com.google.common.collect.Lists;
+@@ -18,6 +_,7 @@
+ import net.minecraft.ReportedException;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.Registry;
++import net.minecraft.network.chat.Component;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.Container;
+@@ -27,6 +_,8 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.entity.BlockEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.inventory.InventoryView;
+ 
+ public abstract class AbstractContainerMenu {
+    public static final int f_150385_ = -999;
+@@ -37,11 +_,11 @@
+    public static final int f_150390_ = 1;
+    public static final int f_150391_ = 2;
+    public static final int f_150392_ = Integer.MAX_VALUE;
+-   private final NonNullList<ItemStack> f_38841_ = NonNullList.m_122779_();
+-   public final NonNullList<Slot> f_38839_ = NonNullList.m_122779_();
++   public NonNullList<ItemStack> f_38841_ = NonNullList.m_122779_();
++   public NonNullList<Slot> f_38839_ = NonNullList.m_122779_();
+    private final List<DataSlot> f_38842_ = Lists.newArrayList();
+    private ItemStack f_150393_ = ItemStack.f_41583_;
+-   private final NonNullList<ItemStack> f_150394_ = NonNullList.m_122779_();
++   public NonNullList<ItemStack> f_150394_ = NonNullList.m_122779_();
+    private final IntList f_150395_ = new IntArrayList();
+    private ItemStack f_150396_ = ItemStack.f_41583_;
+    private int f_182405_;
+@@ -56,6 +_,27 @@
+    private ContainerSynchronizer f_150397_;
+    private boolean f_150398_;
+ 
++   // CraftBukkit start
++   public boolean checkReachable = true;
++   public abstract InventoryView getBukkitView();
++   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.entity.CraftHumanEntity player) {
++      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
++      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++      ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++      ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++      ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++   }
++   private Component title;
++   public final Component getTitle() {
++      Preconditions.checkState(this.title != null, "Title not set");
++      return this.title;
++   }
++   public final void setTitle(Component title) {
++      Preconditions.checkState(this.title == null, "Title already set");
++      this.title = title;
++   }
++   // CraftBukkit end
++
+    protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
+       this.f_38843_ = p_38851_;
+       this.f_38840_ = p_38852_;
 @@ -204,9 +_,11 @@
     private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
        ItemStack itemstack = this.f_38841_.get(p_150408_);
@@ -41,3 +108,17 @@
        }
  
        p_38925_.m_41769_(p_38926_);
+@@ -787,4 +_,13 @@
+       this.f_182405_ = this.f_182405_ + 1 & 32767;
+       return this.f_182405_;
+    }
++
++   // CraftBukkit start
++   public void broadcastCarriedItem() {
++      this.f_150396_ = this.m_142621_().m_41777_();
++      if (this.f_150397_ != null) {
++         this.f_150397_.m_142529_(this, this.f_150396_);
++      }
++   }
++   // CraftBukkit end
+ }

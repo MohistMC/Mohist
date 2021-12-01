@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
+@@ -33,7 +_,7 @@
+    private final ServerLevel f_156538_;
+    private final IOWorker f_156539_;
+    private final LongSet f_156540_ = new LongOpenHashSet();
+-   private final ProcessorMailbox<Runnable> f_182485_;
++   public final ProcessorMailbox<Runnable> f_182485_;
+    protected final DataFixer f_156534_;
+ 
+    public EntityStorage(ServerLevel p_196924_, Path p_196925_, DataFixer p_196926_, boolean p_196927_, Executor p_196928_) {
 @@ -90,8 +_,12 @@
           ListTag listtag = new ListTag();
           p_156559_.m_156792_().forEach((p_156567_) -> {

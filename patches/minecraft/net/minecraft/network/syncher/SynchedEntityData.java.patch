@@ -16,3 +16,17 @@
              }
           } catch (ClassNotFoundException classnotfoundexception) {
           }
+@@ -260,6 +_,13 @@
+ 
+       this.f_135346_.readLock().unlock();
+    }
++
++   // CraftBukkit start - add method from above
++   public <T> void markDirty(EntityDataAccessor<T> datawatcherobject) {
++      this.m_135379_(datawatcherobject).m_135401_(true);
++      this.f_135348_ = true;
++   }
++   // CraftBukkit end
+ 
+    public static class DataItem<T> {
+       final EntityDataAccessor<T> f_135390_;

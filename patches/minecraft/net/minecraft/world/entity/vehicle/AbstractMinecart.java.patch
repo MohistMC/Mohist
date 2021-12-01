@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -46,7 +_,7 @@
+@@ -45,8 +_,9 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.util.Vector;
  
 -public abstract class AbstractMinecart extends Entity {
 +public abstract class AbstractMinecart extends Entity implements net.minecraftforge.common.extensions.IForgeAbstractMinecart {
@@ -17,11 +19,22 @@
     private int f_38070_;
     private double f_38071_;
     private double f_38072_;
-@@ -85,6 +_,7 @@
+@@ -85,6 +_,18 @@
     private double f_38076_;
     private double f_38077_;
     private double f_38078_;
 +   private boolean canBePushed = true;
++
++   // CraftBukkit start
++   public boolean slowWhenEmpty = true;
++   private double derailedX = 0.5;
++   private double derailedY = 0.5;
++   private double derailedZ = 0.5;
++   private double flyingX = 0.95;
++   private double flyingY = 0.95;
++   private double flyingZ = 0.95;
++   public double maxSpeed = 0.4D;
++   // CraftBukkit end
  
     protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
        super(p_38087_, p_38088_);
@@ -277,3 +290,30 @@
        return new ItemStack(item);
     }
  
+@@ -841,4 +_,26 @@
+       HOPPER,
+       COMMAND_BLOCK;
+    }
++
++   // CraftBukkit start - Methods for getting and setting flying and derailed velocity modifiers
++   public Vector getFlyingVelocityMod() {
++      return new Vector(flyingX, flyingY, flyingZ);
++   }
++
++   public void setFlyingVelocityMod(Vector flying) {
++      flyingX = flying.getX();
++      flyingY = flying.getY();
++      flyingZ = flying.getZ();
++   }
++
++   public Vector getDerailedVelocityMod() {
++      return new Vector(derailedX, derailedY, derailedZ);
++   }
++
++   public void setDerailedVelocityMod(Vector derailed) {
++      derailedX = derailed.getX();
++      derailedY = derailed.getY();
++      derailedZ = derailed.getZ();
++   }
++   // CraftBukkit end
+ }

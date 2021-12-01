@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
+@@ -40,10 +_,17 @@
+    public static final int f_155128_ = 600;
+    private final List<BeehiveBlockEntity.BeeData> f_58732_ = Lists.newArrayList();
+    @Nullable
+-   private BlockPos f_58733_;
++   public BlockPos f_58733_;
++   public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
+ 
+    public BeehiveBlockEntity(BlockPos p_155134_, BlockState p_155135_) {
+       super(BlockEntityType.f_58912_, p_155134_, p_155135_);
++   }
++
++   // Mohist TODO
++   public List<Entity> releaseBees(BlockState p_226965_1_, BeehiveBlockEntity.BeeReleaseStatus p_226965_2_, boolean force) {
++      List<Entity> list = Lists.newArrayList();
++      return list;
+    }
+ 
+    public void m_6596_() {

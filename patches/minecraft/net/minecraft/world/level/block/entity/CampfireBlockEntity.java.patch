@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
+@@ -25,8 +_,8 @@
+    private static final int f_155298_ = 2;
+    private static final int f_155299_ = 4;
+    private final NonNullList<ItemStack> f_59042_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+-   private final int[] f_59043_ = new int[4];
+-   private final int[] f_59044_ = new int[4];
++   public final int[] f_59043_ = new int[4];
++   public final int[] f_59044_ = new int[4];
+ 
+    public CampfireBlockEntity(BlockPos p_155301_, BlockState p_155302_) {
+       super(BlockEntityType.f_58911_, p_155301_, p_155302_);

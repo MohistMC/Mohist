@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/LockCode.java
++++ b/net/minecraft/world/LockCode.java
+@@ -8,7 +_,7 @@
+ public class LockCode {
+    public static final LockCode f_19102_ = new LockCode("");
+    public static final String f_146668_ = "Lock";
+-   private final String f_19103_;
++   public final String f_19103_;
+ 
+    public LockCode(String p_19106_) {
+       this.f_19103_ = p_19106_;

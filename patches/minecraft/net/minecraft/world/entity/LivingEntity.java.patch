@@ -1,6 +1,30 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -118,7 +_,9 @@
+@@ -8,14 +_,8 @@
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.Dynamic;
+-import java.util.Collection;
+-import java.util.ConcurrentModificationException;
+-import java.util.Iterator;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Optional;
+-import java.util.Random;
+-import java.util.UUID;
++
++import java.util.*;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.BlockUtil;
+@@ -113,12 +_,16 @@
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
++import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ 
+ public abstract class LivingEntity extends Entity {
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
     private static final UUID f_147184_ = UUID.fromString("1eaf83ff-7207-4596-b37a-d7a07b3ec4ce");
@@ -10,6 +34,78 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
+@@ -138,10 +_,10 @@
+    protected static final int f_147177_ = 2;
+    protected static final int f_147163_ = 4;
+    protected static final EntityDataAccessor<Byte> f_20909_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135027_);
+-   private static final EntityDataAccessor<Float> f_20961_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135029_);
++   public static final EntityDataAccessor<Float> f_20961_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135029_);
+    private static final EntityDataAccessor<Integer> f_20962_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Boolean> f_20963_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135035_);
+-   private static final EntityDataAccessor<Integer> f_20940_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
++   public static final EntityDataAccessor<Integer> f_20940_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Integer> f_20941_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Optional<BlockPos>> f_20942_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135039_);
+    protected static final float f_147164_ = 1.74F;
+@@ -149,7 +_,7 @@
+    public static final float f_147165_ = 0.5F;
+    private final AttributeMap f_20943_;
+    private final CombatTracker f_20944_ = new CombatTracker(this);
+-   private final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
++   public final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
+    private final NonNullList<ItemStack> f_20946_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
+    private final NonNullList<ItemStack> f_20947_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+    public boolean f_20911_;
+@@ -168,7 +_,7 @@
+    public float f_20923_;
+    public float f_20924_;
+    public float f_20925_;
+-   public final int f_20926_ = 20;
++   public int f_20926_ = 20;
+    public final float f_20927_;
+    public final float f_20928_;
+    public float f_20883_;
+@@ -177,7 +_,7 @@
+    public float f_20886_;
+    public float f_20887_ = 0.02F;
+    @Nullable
+-   protected Player f_20888_;
++   public Player f_20888_;
+    protected int f_20889_;
+    protected boolean f_20890_;
+    protected int f_20891_;
+@@ -187,7 +_,7 @@
+    protected float f_20895_;
+    protected float f_20896_;
+    protected int f_20897_;
+-   protected float f_20898_;
++   public float f_20898_;
+    protected boolean f_20899_;
+    public float f_20900_;
+    public float f_20901_;
+@@ -222,6 +_,22 @@
+    private float f_20932_;
+    protected Brain<?> f_20939_;
+ 
++   // CraftBukkit start
++   public int expToDrop;
++   public int maxAirTicks = 300;
++   public boolean forceDrops;
++   public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
++   public CraftAttributeMap craftAttributes;
++   public boolean collides = true;
++   public Set<UUID> collidableExemptions = new HashSet<>();
++   public boolean bukkitPickUpLoot;
++
++   @Override
++   public float getBukkitYaw() {
++      return m_6080_();
++   }
++   // CraftBukkit end
++
+    protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
+       super(p_20966_, p_20967_);
+       this.f_20943_ = new AttributeMap(DefaultAttributes.m_22297_(p_20966_));
 @@ -268,7 +_,7 @@
     }
  
@@ -80,6 +176,18 @@
              iterator.remove();
           }
  
+@@ -869,6 +_,11 @@
+       return this.f_20945_.get(p_21125_);
+    }
+ 
++   // Mohist TODO
++   public boolean addEffect(MobEffectInstance p_147208_, EntityPotionEffectEvent.Cause cause) {
++      return m_147207_(p_147208_, (Entity) null);
++   }
++
+    public final boolean m_7292_(MobEffectInstance p_21165_) {
+       return this.m_147207_(p_21165_, (Entity)null);
+    }
 @@ -878,6 +_,7 @@
           return false;
        } else {
@@ -106,6 +214,18 @@
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
+@@ -933,6 +_,11 @@
+       }
+    }
+ 
++   // Mohist TODO
++   public boolean removeEffect(MobEffect p_21196_, EntityPotionEffectEvent.Cause cause) {
++      return m_21195_(p_21196_);
++   }
++
+    protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
+       this.f_20948_ = true;
+       if (!this.f_19853_.f_46443_) {
 @@ -960,6 +_,8 @@
     }
  
@@ -588,3 +708,18 @@
           }
        } else {
           return EquipmentSlot.HEAD;
+@@ -3286,6 +_,14 @@
+       this.m_20334_((double)((float)p_147206_.m_131560_() / 8000.0F), (double)((float)p_147206_.m_131561_() / 8000.0F), (double)((float)p_147206_.m_131562_() / 8000.0F));
+    }
+ 
++   public int getExpReward() {
++      return 0;
++   }
++
+    public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
++   }
++
++   public void setItemSlot(EquipmentSlot slot, ItemStack asNMSCopy, boolean silent) {
++      this.m_8061_(slot, asNMSCopy);
+    }
+ }

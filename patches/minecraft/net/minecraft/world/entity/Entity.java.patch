@@ -1,15 +1,18 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -114,7 +_,7 @@
+@@ -113,8 +_,10 @@
+ import net.minecraft.world.scores.Team;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.entity.CraftEntity;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
     protected static final Logger f_19849_ = LogManager.getLogger();
     public static final String f_146815_ = "id";
     public static final String f_146816_ = "Passengers";
-@@ -133,6 +_,7 @@
+@@ -133,10 +_,11 @@
     private static final double f_146812_ = 0.0023333333333333335D;
     public static final String f_146824_ = "UUID";
     private static double f_19846_ = 1.0D;
@@ -17,9 +20,67 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -227,6 +_,7 @@
+-   private ImmutableList<Entity> f_19823_ = ImmutableList.of();
++   public ImmutableList<Entity> f_19823_ = ImmutableList.of();
+    protected int f_19851_;
+    @Nullable
+    private Entity f_19824_;
+@@ -176,7 +_,7 @@
+    public boolean f_19794_;
+    protected final Random f_19796_ = new Random();
+    public int f_19797_;
+-   private int f_19831_ = -this.m_6101_();
++   public int f_19831_ = -this.m_6101_();
+    protected boolean f_19798_;
+    protected Object2DoubleMap<Tag<Fluid>> f_19799_ = new Object2DoubleArrayMap<>(2);
+    protected boolean f_19800_;
+@@ -204,7 +_,7 @@
+    private Vec3 f_19838_;
+    public boolean f_19811_;
+    public boolean f_19812_;
+-   private int f_19839_;
++   public int f_19839_;
+    protected boolean f_19817_;
+    protected int f_19818_;
+    protected BlockPos f_19819_;
+@@ -222,11 +_,41 @@
+    public boolean f_146810_;
+    private float f_146803_;
+    private int f_146804_;
+-   private boolean f_146813_;
++   public boolean f_146813_;
+    @Nullable
     private BlockState f_185934_ = null;
  
++   public boolean persist = true;
++   public boolean valid;
++   public boolean generation;
++   public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
++   public boolean forceExplosionKnockback; // SPIGOT-949
++   public boolean persistentInvisibility = false;
++   private static final int CURRENT_LEVEL = 2;
++
++   public float getBukkitYaw() {
++      return this.f_19857_;
++   }
++
++   private CraftEntity bukkitEntity;
++   public CraftEntity getBukkitEntity() {
++      if (bukkitEntity == null) {
++         bukkitEntity = CraftEntity.getEntity(f_19853_.getCraftServer(), this);
++      }
++      return bukkitEntity;
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return getBukkitEntity();
++   }
++
++   public boolean isChunkLoaded() {
++      return f_19853_.m_7232_((int) Math.floor(this.m_20185_()) >> 4, (int) Math.floor(this.m_20189_()) >> 4);
++   }
++
     public Entity(EntityType<?> p_19870_, Level p_19871_) {
 +      super(Entity.class);
        this.f_19847_ = p_19870_;
@@ -207,6 +268,20 @@
     public boolean m_6146_() {
        return true;
     }
+@@ -2028,11 +_,11 @@
+       this.m_20115_(5, p_20304_);
+    }
+ 
+-   protected boolean m_20291_(int p_20292_) {
++   public boolean m_20291_(int p_20292_) {
+       return (this.f_19804_.m_135370_(f_19805_) & 1 << p_20292_) != 0;
+    }
+ 
+-   protected void m_20115_(int p_20116_, boolean p_20117_) {
++   public void m_20115_(int p_20116_, boolean p_20117_) {
+       byte b0 = this.f_19804_.m_135370_(f_19805_);
+       if (p_20117_) {
+          this.f_19804_.m_135381_(f_19805_, (byte)(b0 | 1 << p_20116_));
 @@ -2081,7 +_,7 @@
           this.m_20254_(8);
        }
@@ -291,6 +366,15 @@
           });
        }
  
+@@ -2691,7 +_,7 @@
+       return SoundSource.NEUTRAL;
+    }
+ 
+-   protected int m_6101_() {
++   public int m_6101_() {
+       return 1;
+    }
+ 
 @@ -2938,6 +_,7 @@
              gameeventlistenerregistrar.m_157862_(this.f_19853_);
           }
@@ -299,11 +383,10 @@
  
     }
  
-@@ -3045,6 +_,76 @@
-    public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
+@@ -3046,8 +_,81 @@
        return true;
     }
-+
+ 
 +   /* ================================== Forge Start =====================================*/
 +
 +   private boolean canUpdate = true;
@@ -373,6 +456,12 @@
 +
 +   /* ================================== Forge End =====================================*/
 +
- 
++
     public Level m_183503_() {
        return this.f_19853_;
++   }
++
++   public void teleportTo(ServerLevel handle, BlockPos blockPos) {
+    }
+ 
+    @FunctionalInterface

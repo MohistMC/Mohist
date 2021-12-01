@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -150,6 +_,7 @@
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Location;
+ 
+ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
+    static final Logger f_9744_ = LogManager.getLogger();
 @@ -379,9 +_,11 @@
              }
  
@@ -70,3 +78,23 @@
     }
  
     public void m_7477_(ServerboundChangeDifficultyPacket p_9839_) {
+@@ -1422,6 +_,19 @@
+ 
+    public ServerPlayer m_142253_() {
+       return this.f_9743_;
++   }
++
++   public final boolean isDisconnected() {
++      return !this.f_9743_.joining && !this.f_9742_.m_129536_();
++   }
++
++   public void disconnect(String s) {
++   }
++
++    public void chat(String msg, boolean b) {
++    }
++
++   public void teleport(Location to) {
+    }
+ 
+    @FunctionalInterface

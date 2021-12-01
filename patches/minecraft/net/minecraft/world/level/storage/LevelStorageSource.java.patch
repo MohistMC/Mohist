@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
+@@ -49,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelSettings;
+ import net.minecraft.world.level.dimension.DimensionType;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
 @@ -178,6 +_,10 @@
     }
  
@@ -23,6 +31,22 @@
           } catch (Exception exception) {
              f_78191_.error("Exception reading {}", p_193010_, exception);
              return null;
+@@ -250,9 +_,13 @@
+       return new LevelStorageSource.LevelStorageAccess(p_78261_);
+    }
+ 
+-   public class LevelStorageAccess implements AutoCloseable {
++   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> actualDimension) {
++      return null;
++   }
++
++    public class LevelStorageAccess implements AutoCloseable {
+       final DirectoryLock f_78270_;
+-      final Path f_78271_;
++      public final Path f_78271_;
+       private final String f_78272_;
+       private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
+ 
 @@ -296,7 +_,7 @@
        @Nullable
        public WorldData m_78280_(DynamicOps<Tag> p_78281_, DataPackConfig p_78282_) {

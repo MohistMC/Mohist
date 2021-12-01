@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/inventory/SmithingMenu.java
++++ b/net/minecraft/world/inventory/SmithingMenu.java
+@@ -10,12 +_,28 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class SmithingMenu extends ItemCombinerMenu {
+    private final Level f_40241_;
+    @Nullable
+    private UpgradeRecipe f_40242_;
+    private final List<UpgradeRecipe> f_40243_;
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity;
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventorySmithing(
++              f_39770_.getLocation(), this.f_39769_, this.f_39768_);
++      bukkitEntity = new CraftInventoryView(this.f_39771_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ 
+    public SmithingMenu(int p_40245_, Inventory p_40246_) {
+       this(p_40245_, p_40246_, ContainerLevelAccess.f_39287_);

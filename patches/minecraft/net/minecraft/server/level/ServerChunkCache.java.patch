@@ -1,5 +1,16 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
+@@ -58,8 +_,8 @@
+    public final ChunkMap f_8325_;
+    private final DimensionDataStorage f_8333_;
+    private long f_8334_;
+-   private boolean f_8335_ = true;
+-   private boolean f_8336_ = true;
++   public boolean f_8335_ = true;
++   public boolean f_8336_ = true;
+    private static final int f_143226_ = 4;
+    private final long[] f_8337_ = new long[4];
+    private final ChunkStatus[] f_8338_ = new ChunkStatus[4];
 @@ -163,6 +_,7 @@
           if (chunkholder == null) {
              return null;
@@ -8,6 +19,38 @@
              Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.m_140080_(ChunkStatus.f_62326_).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
              if (either == null) {
                 return null;
+@@ -297,11 +_,31 @@
+    }
+ 
+    public void close() throws IOException {
++      // CraftBukkit start
+       this.m_8419_(true);
++   }
++
++   public void close(boolean save) throws IOException {
++      if (save) {
++         this.m_8419_(true);
++      }
++      // CraftBukkit end
+       this.f_8331_.close();
+       this.f_8325_.close();
+    }
+ 
++   // CraftBukkit start - modelled on below
++   public void purgeUnload() {
++      this.f_8329_.m_46473_().m_6180_("purge");
++      this.f_8327_.m_140776_();
++      this.m_8489_();
++      this.f_8329_.m_46473_().m_6182_("unload");
++      this.f_8325_.m_140280_(() -> true);
++      this.f_8329_.m_46473_().m_7238_();
++      this.m_8488_();
++   }
++   // CraftBukkit end
++
+    public void m_142483_(BooleanSupplier p_8415_) {
+       this.f_8329_.m_46473_().m_6180_("purge");
+       this.f_8327_.m_140776_();
 @@ -348,7 +_,7 @@
           for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
              LevelChunk levelchunk1 = serverchunkcache$chunkandholder.f_184028_;

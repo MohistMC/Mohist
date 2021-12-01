@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/item/PrimedTnt.java
++++ b/net/minecraft/world/entity/item/PrimedTnt.java
+@@ -21,7 +_,9 @@
+    private static final EntityDataAccessor<Integer> f_32071_ = SynchedEntityData.m_135353_(PrimedTnt.class, EntityDataSerializers.f_135028_);
+    private static final int f_149679_ = 80;
+    @Nullable
+-   private LivingEntity f_32072_;
++   public LivingEntity f_32072_;
++   public float yield = 4; // CraftBukkit - add field
++   public boolean isIncendiary = false; // CraftBukkit - add field
+ 
+    public PrimedTnt(EntityType<? extends PrimedTnt> p_32076_, Level p_32077_) {
+       super(p_32076_, p_32077_);

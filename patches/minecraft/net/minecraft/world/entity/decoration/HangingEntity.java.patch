@@ -1,5 +1,31 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
+@@ -29,7 +_,7 @@
+       return p_31734_ instanceof HangingEntity;
+    };
+    private int f_31700_;
+-   protected BlockPos f_31698_;
++   public BlockPos f_31698_;
+    protected Direction f_31699_ = Direction.SOUTH;
+ 
+    protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
+@@ -41,10 +_,14 @@
+       this.f_31698_ = p_31708_;
+    }
+ 
+-   protected void m_8097_() {
++    public static AABB calculateBoundingBox(Object o, BlockPos pos, Direction opposite, int width, int height) {
++      return  null;
++    }
++
++    protected void m_8097_() {
+    }
+ 
+-   protected void m_6022_(Direction p_31728_) {
++   public void m_6022_(Direction p_31728_) {
+       Validate.notNull(p_31728_);
+       Validate.isTrue(p_31728_.m_122434_().m_122479_());
+       this.f_31699_ = p_31728_;
 @@ -118,6 +_,8 @@
                 int j1 = (j - 1) / -2;
                 blockpos$mutableblockpos.m_122190_(blockpos).m_122175_(direction, k + i1).m_122175_(Direction.UP, l + j1);

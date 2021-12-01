@@ -1,5 +1,29 @@
 --- a/net/minecraft/world/entity/npc/AbstractVillager.java
 +++ b/net/minecraft/world/entity/npc/AbstractVillager.java
+@@ -34,6 +_,7 @@
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.level.pathfinder.BlockPathTypes;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.inventory.CraftMerchant;
+ 
+ public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {
+    private static final EntityDataAccessor<Integer> f_35262_ = SynchedEntityData.m_135353_(AbstractVillager.class, EntityDataSerializers.f_135028_);
+@@ -45,6 +_,15 @@
+    protected MerchantOffers f_35261_;
+    private final SimpleContainer f_35264_ = new SimpleContainer(8);
+ 
++   // CraftBukkit start
++   private CraftMerchant craftMerchant;
++
++   @Override
++   public CraftMerchant getCraftMerchant() {
++      return (craftMerchant == null) ? craftMerchant = new CraftMerchant(this) : craftMerchant;
++   }
++   // CraftBukkit end
++
+    public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
+       super(p_35267_, p_35268_);
+       this.m_21441_(BlockPathTypes.DANGER_FIRE, 16.0F);
 @@ -164,9 +_,9 @@
     }
  

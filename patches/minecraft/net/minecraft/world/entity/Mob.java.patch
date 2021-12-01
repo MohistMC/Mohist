@@ -1,5 +1,42 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
+@@ -89,21 +_,21 @@
+    protected JumpControl f_21343_;
+    private final BodyRotationControl f_21361_;
+    protected PathNavigation f_21344_;
+-   public final GoalSelector f_21345_;
+-   public final GoalSelector f_21346_;
++   public GoalSelector f_21345_;
++   public GoalSelector f_21346_;
+    @Nullable
+    private LivingEntity f_21362_;
+    private final Sensing f_21349_;
+    private final NonNullList<ItemStack> f_21350_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
+-   protected final float[] f_21347_ = new float[2];
++   public final float[] f_21347_ = new float[2];
+    private final NonNullList<ItemStack> f_21351_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+-   protected final float[] f_21348_ = new float[4];
++   public final float[] f_21348_ = new float[4];
+    private boolean f_21352_;
+    private boolean f_21353_;
+    private final Map<BlockPathTypes, Float> f_21354_ = Maps.newEnumMap(BlockPathTypes.class);
+    @Nullable
+-   private ResourceLocation f_21355_;
+-   private long f_21356_;
++   public ResourceLocation f_21355_;
++   public long f_21356_;
+    @Nullable
+    private Entity f_21357_;
+    private int f_21358_;
+@@ -112,6 +_,8 @@
+    private BlockPos f_21360_ = BlockPos.f_121853_;
+    private float f_21341_ = -1.0F;
+ 
++   public boolean aware = true; // CraftBukkit
++
+    protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
+       super(p_21368_, p_21369_);
+       this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
 @@ -206,6 +_,7 @@
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -8,6 +45,15 @@
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
+@@ -469,7 +_,7 @@
+       return this.f_21355_ == null ? this.m_7582_() : this.f_21355_;
+    }
+ 
+-   protected ResourceLocation m_7582_() {
++   public ResourceLocation m_7582_() {
+       return super.m_5743_();
+    }
+ 
 @@ -493,7 +_,7 @@
     public void m_8107_() {
        super.m_8107_();
@@ -32,3 +78,23 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
+@@ -1000,6 +_,10 @@
+       this.f_21353_ = true;
+    }
+ 
++   public void setPersistenceRequired(boolean f) {
++      this.f_21353_ = f;
++   }
++
+    public void m_21409_(EquipmentSlot p_21410_, float p_21411_) {
+       switch(p_21410_.m_20743_()) {
+       case HAND:
+@@ -1383,5 +_,8 @@
+    public ItemStack m_142340_() {
+       SpawnEggItem spawneggitem = SpawnEggItem.m_43213_(this.m_6095_());
+       return spawneggitem == null ? null : new ItemStack(spawneggitem);
++   }
++
++   public void setTarget(Object o, Object o1, boolean b) {
+    }
+ }

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
+@@ -18,6 +_,8 @@
+    public double f_36813_;
+    public double f_36814_;
+    public double f_36815_;
++   public float bukkitYield = 1; // CraftBukkit
++   public boolean isIncendiary = true; // CraftBukkit
+ 
+    protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36833_, Level p_36834_) {
+       super(p_36833_, p_36834_);
 @@ -64,7 +_,7 @@
           }
  
@@ -9,3 +18,21 @@
              this.m_6532_(hitresult);
           }
  
+@@ -177,4 +_,17 @@
+       }
+ 
+    }
++
++   // CraftBukkit - start
++   public void setDirection(double x, double y, double z) {
++      // CraftBukkit end
++      x += this.f_19796_.nextGaussian() * 0.4;
++      y += this.f_19796_.nextGaussian() * 0.4;
++      z += this.f_19796_.nextGaussian() * 0.4;
++      final double d3 = Math.sqrt(x * x + y * y + z * z);
++      this.f_36813_ = x / d3 * 0.1;
++      this.f_36814_ = y / d3 * 0.1;
++      this.f_36815_ = z / d3 * 0.1;
++   }
++   // CraftBukkit - end
+ }

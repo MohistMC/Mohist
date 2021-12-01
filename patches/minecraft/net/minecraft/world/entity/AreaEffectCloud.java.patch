@@ -1,0 +1,64 @@
+--- a/net/minecraft/world/entity/AreaEffectCloud.java
++++ b/net/minecraft/world/entity/AreaEffectCloud.java
+@@ -4,6 +_,8 @@
+ import com.google.common.collect.Maps;
+ import com.mojang.brigadier.StringReader;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
++
++import java.util.Collection;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.UUID;
+@@ -19,6 +_,7 @@
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.effect.MobEffectInstance;
+@@ -39,15 +_,15 @@
+    private static final EntityDataAccessor<ParticleOptions> f_19700_ = SynchedEntityData.m_135353_(AreaEffectCloud.class, EntityDataSerializers.f_135036_);
+    private static final float f_146781_ = 32.0F;
+    private Potion f_19701_ = Potions.f_43598_;
+-   private final List<MobEffectInstance> f_19685_ = Lists.newArrayList();
++   public final List<MobEffectInstance> f_19685_ = Lists.newArrayList();
+    private final Map<Entity, Integer> f_19686_ = Maps.newHashMap();
+    private int f_19687_ = 600;
+-   private int f_19688_ = 20;
+-   private int f_19689_ = 20;
++   public int f_19688_ = 20;
++   public int f_19689_ = 20;
+    private boolean f_19690_;
+-   private int f_19691_;
+-   private float f_19692_;
+-   private float f_19693_;
++   public int f_19691_;
++   public float f_19692_;
++   public float f_19693_;
+    @Nullable
+    private LivingEntity f_19694_;
+    @Nullable
+@@ -114,6 +_,22 @@
+       }
+ 
+    }
++
++   // CraftBukkit start accessor methods
++   public void refreshEffects() {
++      if (!this.f_19690_) {
++         this.m_20088_().m_135381_(f_19698_, PotionUtils.m_43564_((Collection) PotionUtils.m_43561_(this.f_19701_, (Collection) this.f_19685_))); // PAIL: rename
++      }
++   }
++
++   public String getPotionType() {
++      return ((ResourceLocation) Registry.f_122828_.m_7981_(this.f_19701_)).toString();
++   }
++
++   public void setType(String string) {
++      m_19722_(Registry.f_122828_.m_7745_(new ResourceLocation(string)));
++   }
++   // CraftBukkit end
+ 
+    public int m_19744_() {
+       return this.m_20088_().m_135370_(f_19698_);

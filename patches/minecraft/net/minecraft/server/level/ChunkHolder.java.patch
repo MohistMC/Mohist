@@ -8,3 +8,25 @@
     private CompletableFuture<Void> f_142981_ = CompletableFuture.completedFuture((Void)null);
  
     public ChunkHolder(ChunkPos p_142986_, int p_142987_, LevelHeightAccessor p_142988_, LevelLightEngine p_142989_, ChunkHolder.LevelChangeListener p_142990_, ChunkHolder.PlayerProvider p_142991_) {
+@@ -430,7 +_,20 @@
+       this.m_143017_(CompletableFuture.completedFuture(Either.left(p_140053_.m_62768_())), "replaceProto");
+    }
+ 
+-   public interface ChunkLoadingFailure {
++   // CraftBukkit start
++   public LevelChunk getFullChunk() {
++      if (!m_140083_(this.f_140006_).m_140114_(ChunkHolder.FullChunkStatus.BORDER)) return null; // note: using oldTicketLevel for isLoaded checks
++      return this.getFullChunkUnchecked();
++   }
++
++   public LevelChunk getFullChunkUnchecked() {
++      CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> statusFuture = this.m_140047_(ChunkStatus.f_62326_);
++      Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = (Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>) statusFuture.getNow(null);
++      return (either == null) ? null : (LevelChunk) either.left().orElse(null);
++   }
++   // CraftBukkit end
++
++    public interface ChunkLoadingFailure {
+       ChunkHolder.ChunkLoadingFailure f_140101_ = new ChunkHolder.ChunkLoadingFailure() {
+          public String toString() {
+             return "UNLOADED";

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
++++ b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
+@@ -12,6 +_,7 @@
+ public abstract class ContainerOpenersCounter {
+    private static final int f_155447_ = 5;
+    private int f_155448_;
++   public boolean opened; // CraftBukkit
+ 
+    protected abstract void m_142292_(Level p_155460_, BlockPos p_155461_, BlockState p_155462_);
+ 

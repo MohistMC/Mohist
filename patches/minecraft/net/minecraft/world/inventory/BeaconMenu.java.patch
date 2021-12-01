@@ -1,5 +1,40 @@
 --- a/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/net/minecraft/world/inventory/BeaconMenu.java
+@@ -5,9 +_,11 @@
+ import net.minecraft.world.Container;
+ import net.minecraft.world.SimpleContainer;
+ import net.minecraft.world.effect.MobEffect;
++import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.block.Blocks;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class BeaconMenu extends AbstractContainerMenu {
+    private static final int f_150481_ = 0;
+@@ -30,6 +_,22 @@
+    private final ContainerLevelAccess f_39033_;
+    private final ContainerData f_39034_;
+ 
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Inventory player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryBeacon(this.f_39031_);
++      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
++
+    public BeaconMenu(int p_39036_, Container p_39037_) {
+       this(p_39036_, p_39037_, new SimpleContainerData(3), ContainerLevelAccess.f_39287_);
+    }
 @@ -89,10 +_,8 @@
              }
  

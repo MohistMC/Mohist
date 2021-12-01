@@ -20,3 +20,12 @@
     });
     public static final Codec<Biome> f_47430_ = RecordCodecBuilder.create((p_186632_) -> {
        return p_186632_.group(Biome.ClimateSettings.f_47679_.forGetter((p_186638_) -> {
+@@ -125,7 +_,7 @@
+ 
+    /** @deprecated */
+    @Deprecated
+-   private float m_47505_(BlockPos p_47506_) {
++   public float m_47505_(BlockPos p_47506_) {
+       long i = p_47506_.m_121878_();
+       Long2FloatLinkedOpenHashMap long2floatlinkedopenhashmap = this.f_47444_.get();
+       float f = long2floatlinkedopenhashmap.get(i);

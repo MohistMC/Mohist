@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -60,7 +_,7 @@
+@@ -59,8 +_,9 @@
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
++import org.bukkit.inventory.InventoryView;
  
 -public class Sheep extends Animal implements Shearable {
 +public class Sheep extends Animal implements Shearable, net.minecraftforge.common.IForgeShearable {
@@ -18,6 +20,17 @@
           if (!this.f_19853_.f_46443_ && this.m_6220_()) {
              this.m_5851_(SoundSource.PLAYERS);
              this.m_146852_(GameEvent.f_157781_, p_29853_);
+@@ -346,6 +_,10 @@
+ 
+    private static CraftingContainer m_29831_(DyeColor p_29832_, DyeColor p_29833_) {
+       CraftingContainer craftingcontainer = new CraftingContainer(new AbstractContainerMenu((MenuType)null, -1) {
++         @Override
++         public InventoryView getBukkitView() {
++            return null;
++         }
+          public boolean m_6875_(Player p_29888_) {
+             return false;
+          }
 @@ -357,5 +_,27 @@
  
     protected float m_6431_(Pose p_29850_, EntityDimensions p_29851_) {

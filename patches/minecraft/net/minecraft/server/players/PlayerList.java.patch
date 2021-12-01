@@ -1,5 +1,31 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
+@@ -90,6 +_,7 @@
+ import net.minecraft.world.scores.Team;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Location;
+ 
+ public abstract class PlayerList {
+    public static final File f_11189_ = new File("banned-players.json");
+@@ -100,7 +_,7 @@
+    private static final int f_143987_ = 600;
+    private static final SimpleDateFormat f_11194_ = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+    private final MinecraftServer f_11195_;
+-   private final List<ServerPlayer> f_11196_ = Lists.newArrayList();
++   public final List<ServerPlayer> f_11196_ = Lists.newArrayList();
+    private final Map<UUID, ServerPlayer> f_11197_ = Maps.newHashMap();
+    private final UserBanList f_11198_ = new UserBanList(f_11189_);
+    private final IpBanList f_11199_ = new IpBanList(f_11190_);
+@@ -108,7 +_,7 @@
+    private final UserWhiteList f_11201_ = new UserWhiteList(f_11192_);
+    private final Map<UUID, ServerStatsCounter> f_11202_ = Maps.newHashMap();
+    private final Map<UUID, PlayerAdvancements> f_11203_ = Maps.newHashMap();
+-   private final PlayerDataStorage f_11204_;
++   public final PlayerDataStorage f_11204_;
+    private boolean f_11205_;
+    private final RegistryAccess.RegistryHolder f_11206_;
+    protected final int f_11193_;
 @@ -117,6 +_,7 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
@@ -33,14 +59,18 @@
        this.f_11197_.put(p_11263_.m_142081_(), p_11263_);
        this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
  
-@@ -231,6 +_,7 @@
+@@ -231,9 +_,10 @@
        }
  
        p_11263_.m_143429_();
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedIn( p_11263_ );
     }
  
-    protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+-   protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
++   public void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+       Set<Objective> set = Sets.newHashSet();
+ 
+       for(PlayerTeam playerteam : p_11274_.m_83491_()) {
 @@ -291,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.m_20258_(compoundtag);
@@ -108,6 +138,33 @@
  
           serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
           this.f_11202_.put(uuid, serverstatscounter);
+@@ -748,6 +_,26 @@
+       return serverstatscounter;
+    }
+ 
++   public ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
++      Player player = m_11259_(uuid);
++      ServerStatsCounter serverstatisticsmanager = player == null ? null : this.f_11202_.get(uuid);
++      if (serverstatisticsmanager == null) {
++         File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
++         File file2 = new File(file1, uuid + ".json");
++         if (!file2.exists()) {
++            File file3 = new File(file1, displayName + ".json"); // CraftBukkit
++            if (file3.exists() && file3.isFile()) {
++               file3.renameTo(file2);
++            }
++         }
++
++         serverstatisticsmanager = new ServerStatsCounter(this.f_11195_, file2);
++         this.f_11202_.put(uuid, serverstatisticsmanager);
++      }
++
++      return serverstatisticsmanager;
++   }
++
+    public PlayerAdvancements m_11296_(ServerPlayer p_11297_) {
+       UUID uuid = p_11297_.m_142081_();
+       PlayerAdvancements playeradvancements = this.f_11203_.get(uuid);
 @@ -758,6 +_,8 @@
           this.f_11203_.put(uuid, playeradvancements);
        }
@@ -134,11 +191,10 @@
        this.m_11268_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
  
-@@ -816,5 +_,13 @@
- 
+@@ -817,4 +_,15 @@
     public boolean m_11316_() {
        return this.f_11209_;
-+   }
+    }
 +
 +   public boolean addPlayer(ServerPlayer player) {
 +      return f_11196_.add(player);
@@ -146,5 +202,8 @@
 +
 +   public boolean removePlayer(ServerPlayer player) {
 +       return this.f_11196_.remove(player);
-    }
++   }
++
++    public void respawn(ServerPlayer entity, ServerLevel toWorld, boolean b, Location to, boolean b1) {
++    }
  }

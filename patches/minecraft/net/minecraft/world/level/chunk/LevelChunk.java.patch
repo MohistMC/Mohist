@@ -9,6 +9,33 @@
     static final Logger f_62771_ = LogManager.getLogger();
     private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
        public void m_142224_() {
+@@ -70,7 +_,7 @@
+    private final Map<BlockPos, LevelChunk.RebindableTickingBlockEntityWrapper> f_156362_ = Maps.newHashMap();
+    private boolean f_62775_;
+    private boolean f_196848_ = false;
+-   final Level f_62776_;
++   public final Level f_62776_;
+    @Nullable
+    private Supplier<ChunkHolder.FullChunkStatus> f_62790_;
+    @Nullable
+@@ -79,6 +_,17 @@
+    private final LevelChunkTicks<Block> f_62784_;
+    private final LevelChunkTicks<Fluid> f_187943_;
+ 
++   public org.bukkit.Chunk bukkitChunk;
++   public org.bukkit.Chunk getBukkitChunk() {
++      return bukkitChunk;
++   }
++
++   public boolean mustNotSave;
++   public boolean needsDecoration;
++   private static final org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry();
++   public final org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   // CraftBukkit end
++
+    public LevelChunk(Level p_187945_, ChunkPos p_187946_) {
+       this(p_187945_, p_187946_, UpgradeData.f_63320_, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, (LevelChunkSection[])null, (LevelChunk.PostLoadProcessor)null, (BlendingData)null);
+    }
 @@ -123,6 +_,7 @@
  
        this.m_8094_(p_196851_.m_6332_());

@@ -1,5 +1,46 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
+@@ -15,14 +_,15 @@
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class AnvilMenu extends ItemCombinerMenu {
+    private static final Logger f_38999_ = LogManager.getLogger();
+    private static final boolean f_150469_ = false;
+    public static final int f_150468_ = 50;
+    public int f_39000_;
+-   private String f_39001_;
+-   private final DataSlot f_39002_ = DataSlot.m_39401_();
++   public String f_39001_;
++   public final DataSlot f_39002_ = DataSlot.m_39401_();
+    private static final int f_150470_ = 0;
+    private static final int f_150471_ = 1;
+    private static final int f_150472_ = 1;
+@@ -31,6 +_,22 @@
+    private static final int f_150466_ = 1;
+    private static final int f_150467_ = 1;
+ 
++   // CraftBukkit start
++   public int maximumRepairCost = 40;
++   private CraftInventoryView bukkitEntity;
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(
++              f_39770_.getLocation(), this.f_39769_, this.f_39768_, this);
++      bukkitEntity = new CraftInventoryView(this.f_39771_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
++
+    public AnvilMenu(int p_39005_, Inventory p_39006_) {
+       this(p_39005_, p_39006_, ContainerLevelAccess.f_39287_);
+    }
 @@ -53,6 +_,8 @@
           p_150474_.m_6749_(-this.f_39002_.m_6501_());
        }

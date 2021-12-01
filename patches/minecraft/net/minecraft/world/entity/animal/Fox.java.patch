@@ -1,5 +1,34 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
+@@ -97,8 +_,8 @@
+    private static final int f_148900_ = 32;
+    private static final int f_148901_ = 64;
+    private static final int f_148902_ = 128;
+-   private static final EntityDataAccessor<Optional<UUID>> f_28439_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
+-   private static final EntityDataAccessor<Optional<UUID>> f_28440_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
++   public static final EntityDataAccessor<Optional<UUID>> f_28439_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
++   public static final EntityDataAccessor<Optional<UUID>> f_28440_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
+    static final Predicate<ItemEntity> f_28441_ = (p_28528_) -> {
+       return !p_28528_.m_32063_() && p_28528_.m_6084_();
+    };
+@@ -340,7 +_,7 @@
+       return Fox.Type.m_28812_(this.f_19804_.m_135370_(f_28437_));
+    }
+ 
+-   private void m_28464_(Fox.Type p_28465_) {
++   public void m_28464_(Fox.Type p_28465_) {
+       this.f_19804_.m_135381_(f_28437_, p_28465_.m_28820_());
+    }
+ 
+@@ -424,7 +_,7 @@
+       return this.m_28608_(32);
+    }
+ 
+-   void m_28626_(boolean p_28627_) {
++   public void m_28626_(boolean p_28627_) {
+       this.m_28532_(32, p_28627_);
+    }
+ 
 @@ -802,6 +_,17 @@
        protected void m_8026_() {
           ServerLevel serverlevel = (ServerLevel)this.f_25114_;

@@ -1,6 +1,37 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -176,10 +_,11 @@
+@@ -133,6 +_,7 @@
+ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+ import net.minecraft.world.level.storage.DimensionDataStorage;
+ import net.minecraft.world.level.storage.LevelStorageSource;
++import net.minecraft.world.level.storage.PrimaryLevelData;
+ import net.minecraft.world.level.storage.ServerLevelData;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+@@ -142,6 +_,10 @@
+ import net.minecraft.world.ticks.LevelTicks;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.util.WorldUUID;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.weather.LightningStrikeEvent;
+ 
+ public class ServerLevel extends Level implements WorldGenLevel {
+    public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
+@@ -159,9 +_,9 @@
+    final List<ServerPlayer> f_8546_ = Lists.newArrayList();
+    private final ServerChunkCache f_8547_;
+    private final MinecraftServer f_8548_;
+-   private final ServerLevelData f_8549_;
++   public final ServerLevelData f_8549_;
+    final EntityTickList f_143243_ = new EntityTickList();
+-   private final PersistentEntitySectionManager<Entity> f_143244_;
++   public final PersistentEntitySectionManager<Entity> f_143244_;
+    public boolean f_8564_;
+    private final SleepStatus f_143245_;
+    private int f_8551_;
+@@ -176,13 +_,21 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -10,9 +41,19 @@
     private final StructureCheck f_196556_;
     private final boolean f_8561_;
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
++
++   public PrimaryLevelData worldDataServer;
++   public final LevelStorageSource.LevelStorageAccess convertable;
++   public final UUID uuid;
  
     public ServerLevel(MinecraftServer p_8571_, Executor p_8572_, LevelStorageSource.LevelStorageAccess p_8573_, ServerLevelData p_8574_, ResourceKey<Level> p_8575_, DimensionType p_8576_, ChunkProgressListener p_8577_, ChunkGenerator p_8578_, boolean p_8579_, long p_8580_, List<CustomSpawner> p_8581_, boolean p_8582_) {
        super(p_8574_, p_8575_, p_8576_, p_8571_::m_129905_, false, p_8579_, p_8580_);
++      convertable = p_8573_;
++      this.pvpMode = p_8571_.m_129799_();
++      uuid = WorldUUID.getUUID(p_8573_.f_78271_.toFile());
+       this.f_8561_ = p_8582_;
+       this.f_8548_ = p_8571_;
+       this.f_8558_ = p_8581_;
 @@ -217,6 +_,7 @@
        }
  
@@ -104,6 +145,21 @@
        }
     }
  
+@@ -734,7 +_,13 @@
+    }
+ 
+    public boolean m_7967_(Entity p_8837_) {
+-      return this.m_8872_(p_8837_);
++      // CraftBukkit start
++      return this.addFreshEntity(p_8837_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
++      return this.addEntity(entity, reason);
++      // CraftBukkit end
+    }
+ 
+    public boolean m_8847_(Entity p_8848_) {
 @@ -761,7 +_,48 @@
        this.m_8853_(p_8846_);
     }
@@ -163,7 +219,7 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
-@@ -777,7 +_,12 @@
+@@ -777,7 +_,26 @@
           f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;
        } else {
@@ -174,9 +230,46 @@
 +         } else {
 +            return false;
 +         }
++      }
++   }
++
++   public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
++      if (entity.m_146910_()) {
++         // WorldServer.LOGGER.warn("Tried to add entity {} but it was marked as removed already", EntityTypes.getKey(entity.getType())); // CraftBukkit
++         return false;
++      } else {
++         if (!CraftEventFactory.doEntityAddEventCalling(this, entity, spawnReason)) {
++            return false;
++         }
++         // CraftBukkit end
++
++         return this.f_143244_.m_157533_(entity);
        }
     }
  
+@@ -799,6 +_,22 @@
+       p_143262_.m_142687_(p_143263_);
+    }
+ 
++   // CraftBukkit start
++   public boolean strikeLightning(Entity entitylightning) {
++      return this.strikeLightning(entitylightning, LightningStrikeEvent.Cause.UNKNOWN);
++   }
++
++   public boolean strikeLightning(Entity entitylightning, LightningStrikeEvent.Cause cause) {
++      LightningStrikeEvent lightning = CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
++
++      if (lightning.isCancelled()) {
++         return false;
++      }
++
++      return this.m_7967_(entitylightning);
++   }
++   // CraftBukkit end
++
+    public void m_6801_(int p_8612_, BlockPos p_8613_, int p_8614_) {
+       for(ServerPlayer serverplayer : this.f_8548_.m_6846_().m_11314_()) {
+          if (serverplayer != null && serverplayer.f_19853_ == this && serverplayer.m_142049_() != p_8612_) {
 @@ -814,10 +_,20 @@
     }
  

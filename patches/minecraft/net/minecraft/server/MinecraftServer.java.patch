@@ -1,7 +1,107 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -254,7 +_,7 @@
+@@ -49,6 +_,9 @@
+ import java.util.function.Function;
+ import javax.annotation.Nullable;
+ import javax.imageio.ImageIO;
++
++import jline.console.ConsoleReader;
++import joptsimple.OptionSet;
+ import net.minecraft.CrashReport;
+ import net.minecraft.ReportedException;
+ import net.minecraft.SharedConstants;
+@@ -140,15 +_,7 @@
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+-import net.minecraft.world.level.storage.CommandStorage;
+-import net.minecraft.world.level.storage.DerivedLevelData;
+-import net.minecraft.world.level.storage.DimensionDataStorage;
+-import net.minecraft.world.level.storage.LevelData;
+-import net.minecraft.world.level.storage.LevelResource;
+-import net.minecraft.world.level.storage.LevelStorageSource;
+-import net.minecraft.world.level.storage.PlayerDataStorage;
+-import net.minecraft.world.level.storage.ServerLevelData;
+-import net.minecraft.world.level.storage.WorldData;
++import net.minecraft.world.level.storage.*;
+ import net.minecraft.world.level.storage.loot.ItemModifierManager;
+ import net.minecraft.world.level.storage.loot.LootTables;
+ import net.minecraft.world.level.storage.loot.PredicateManager;
+@@ -157,6 +_,8 @@
+ import org.apache.commons.lang3.Validate;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftServer;
  
+ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
+    private static final Logger f_129750_ = LogManager.getLogger();
+@@ -180,8 +_,8 @@
+    public static final LevelSettings f_129743_ = new LevelSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DataPackConfig.f_45842_);
+    private static final long f_177871_ = 50L;
+    public static final GameProfile f_195496_ = new GameProfile(Util.f_137441_, "Anonymous Player");
+-   protected final LevelStorageSource.LevelStorageAccess f_129744_;
+-   protected final PlayerDataStorage f_129745_;
++   public final LevelStorageSource.LevelStorageAccess f_129744_;
++   public final PlayerDataStorage f_129745_;
+    private final List<Runnable> f_129752_ = Lists.newArrayList();
+    private MetricsRecorder f_177872_ = InactiveMetricsRecorder.f_146153_;
+    private ProfilerFiller f_129754_ = this.f_177872_.m_142610_();
+@@ -195,14 +_,14 @@
+    private MinecraftServer.TimeProfiler f_177876_;
+    private boolean f_177877_;
+    private final ServerConnectionListener f_129755_;
+-   private final ChunkProgressListenerFactory f_129756_;
++   public final ChunkProgressListenerFactory f_129756_;
+    private final ServerStatus f_129757_ = new ServerStatus();
+    private final Random f_129758_ = new Random();
+    private final DataFixer f_129759_;
+    private String f_129760_;
+    private int f_129761_ = -1;
+-   protected final RegistryAccess.RegistryHolder f_129746_;
+-   private final Map<ResourceKey<Level>, ServerLevel> f_129762_ = Maps.newLinkedHashMap();
++   public final RegistryAccess.RegistryHolder f_129746_;
++   public final Map<ResourceKey<Level>, ServerLevel> f_129762_ = Maps.newLinkedHashMap();
+    private PlayerList f_129763_;
+    private volatile boolean f_129764_ = true;
+    private boolean f_129765_;
+@@ -231,7 +_,7 @@
+    @Nullable
+    private final GameProfileCache f_129723_;
+    private long f_129724_;
+-   private final Thread f_129725_;
++   public final Thread f_129725_;
+    protected long f_129726_ = Util.m_137550_();
+    private long f_129727_;
+    private boolean f_129728_;
+@@ -244,17 +_,31 @@
+    private final FrameTimer f_129735_ = new FrameTimer();
+    private boolean f_129736_;
+    private float f_129737_;
+-   private final Executor f_129738_;
++   public final Executor f_129738_;
+    @Nullable
+    private String f_129739_;
+-   private ServerResources f_129740_;
++   public ServerResources f_129740_;
+    private final StructureManager f_129741_;
+    protected final WorldData f_129749_;
+    private volatile boolean f_195494_;
+ 
++   // CraftBukkit start
++   public DataPackConfig datapackconfiguration;
++   public org.bukkit.craftbukkit.CraftServer server;
++   public OptionSet options;
++   public org.bukkit.command.ConsoleCommandSender console;
++   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
++   public ConsoleReader reader;
++   public static int currentTick = (int) (System.currentTimeMillis() / 50);
++   public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
++   public int autosavePeriod;
++   public Commands vanillaCommandDispatcher;
++   private boolean forceTicks;
++   // CraftBukkit end
++
     public static <S extends MinecraftServer> S m_129872_(Function<Thread, S> p_129873_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
 -      Thread thread = new Thread(() -> {
@@ -219,14 +319,42 @@
     public void m_142116_(Path p_177911_) throws IOException {
     }
  
-@@ -1681,6 +_,10 @@
- 
-    public WorldData m_129910_() {
+@@ -1683,6 +_,10 @@
        return this.f_129749_;
-+   }
-+
-+   public ServerResources getServerResources() {
-+       return f_129740_;
     }
  
++   public ServerResources getServerResources() {
++       return f_129740_;
++   }
++
     public RegistryAccess m_129911_() {
+       return this.f_129746_;
+    }
+@@ -1735,6 +_,12 @@
+       }
+    }
+ 
++   public void initWorld(ServerLevel internal, PrimaryLevelData worlddata, PrimaryLevelData worlddata1, WorldGenSettings worldGenSettings) {
++   }
++
++   public void prepareLevels(ChunkProgressListener progressListener, ServerLevel internal) {
++   }
++
+    static class TimeProfiler {
+       final long f_177955_;
+       final int f_177956_;
+@@ -1775,5 +_,14 @@
+             }
+          };
+       }
++   }
++
++   public boolean isDebugging() {
++      return false;
++   }
++
++   @Deprecated
++   public static MinecraftServer getServer() {
++      return (Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
+    }
+ }

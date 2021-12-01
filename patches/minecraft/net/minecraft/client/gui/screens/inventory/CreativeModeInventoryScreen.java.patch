@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
+@@ -49,6 +_,7 @@
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class CreativeModeInventoryScreen extends EffectRenderingInventoryScreen<CreativeModeInventoryScreen.ItemPickerMenu> {
 @@ -74,6 +_,8 @@
     private Slot f_98512_;
     private CreativeInventoryListener f_98513_;
@@ -251,6 +259,18 @@
        this.m_93228_(p_98582_, l, i1, j, k, 28, 32);
        this.f_96542_.f_115093_ = 100.0F;
        l += 6;
+@@ -825,6 +_,11 @@
+          return this.f_98639_.size() > 45;
+       }
+ 
++      @Override
++      public InventoryView getBukkitView() {
++         return null;
++      }
++
+       public ItemStack m_7648_(Player p_98650_, int p_98651_) {
+          if (p_98651_ >= this.f_38839_.size() - 9 && p_98651_ < this.f_38839_.size()) {
+             Slot slot = this.f_38839_.get(p_98651_);
 @@ -909,6 +_,22 @@
  
        public boolean m_8010_(Player p_98665_) {

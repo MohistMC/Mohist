@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/AgeableMob.java
++++ b/net/minecraft/world/entity/AgeableMob.java
+@@ -18,6 +_,7 @@
+    protected int f_146733_;
+    protected int f_146734_;
+    protected int f_146735_;
++   public boolean ageLocked; // CraftBukkit
+ 
+    protected AgeableMob(EntityType<? extends AgeableMob> p_146738_, Level p_146739_) {
+       super(p_146738_, p_146739_);

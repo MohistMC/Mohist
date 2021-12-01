@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
+@@ -61,7 +_,7 @@
+    private static final String f_149570_ = "DragonPhase";
+    public final double[][] f_31092_ = new double[64][3];
+    public int f_31093_ = -1;
+-   private final EnderDragonPart[] f_31089_;
++   public final EnderDragonPart[] f_31089_;
+    public final EnderDragonPart f_31080_;
+    private final EnderDragonPart f_31090_;
+    private final EnderDragonPart f_31091_;
 @@ -420,7 +_,7 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.f_19853_.m_8055_(blockpos);

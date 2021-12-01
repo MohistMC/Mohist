@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/chunk/LevelChunkSection.java
++++ b/net/minecraft/world/level/chunk/LevelChunkSection.java
+@@ -192,4 +_,7 @@
+       }
+ 
+    }
++
++    public void setBiome(int i, int i1, int i2, Biome biome) {
++    }
+ }

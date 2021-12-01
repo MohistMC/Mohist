@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/axolotl/Axolotl.java
++++ b/net/minecraft/world/entity/animal/axolotl/Axolotl.java
+@@ -178,7 +_,7 @@
+       return Axolotl.Variant.f_149230_[this.f_19804_.m_135370_(f_149096_)];
+    }
+ 
+-   private void m_149117_(Axolotl.Variant p_149118_) {
++   public void m_149117_(Axolotl.Variant p_149118_) {
+       this.f_19804_.m_135381_(f_149096_, p_149118_.m_149242_());
+    }
+ 

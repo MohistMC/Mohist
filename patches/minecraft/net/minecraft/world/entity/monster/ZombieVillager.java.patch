@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/monster/ZombieVillager.java
 +++ b/net/minecraft/world/entity/monster/ZombieVillager.java
+@@ -46,7 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ 
+ public class ZombieVillager extends Zombie implements VillagerDataHolder {
+-   private static final EntityDataAccessor<Boolean> f_34359_ = SynchedEntityData.m_135353_(ZombieVillager.class, EntityDataSerializers.f_135035_);
++   public static final EntityDataAccessor<Boolean> f_34359_ = SynchedEntityData.m_135353_(ZombieVillager.class, EntityDataSerializers.f_135035_);
+    private static final EntityDataAccessor<VillagerData> f_34364_ = SynchedEntityData.m_135353_(ZombieVillager.class, EntityDataSerializers.f_135043_);
+    private static final int f_149888_ = 3600;
+    private static final int f_149885_ = 6000;
+@@ -54,7 +_,7 @@
+    private static final int f_149887_ = 4;
+    private int f_34365_;
+    @Nullable
+-   private UUID f_34360_;
++   public UUID f_34360_;
+    @Nullable
+    private Tag f_34361_;
+    @Nullable
 @@ -122,7 +_,7 @@
        if (!this.f_19853_.f_46443_ && this.m_6084_() && this.m_34408_()) {
           int i = this.m_34410_();
@@ -9,6 +27,15 @@
              this.m_34398_((ServerLevel)this.f_19853_);
           }
        }
+@@ -164,7 +_,7 @@
+       return this.m_20088_().m_135370_(f_34359_);
+    }
+ 
+-   private void m_34383_(@Nullable UUID p_34384_, int p_34385_) {
++   public void m_34383_(@Nullable UUID p_34384_, int p_34385_) {
+       this.f_34360_ = p_34384_;
+       this.f_34365_ = p_34385_;
+       this.m_20088_().m_135381_(f_34359_, true);
 @@ -224,7 +_,7 @@
        if (!this.m_20067_()) {
           p_34399_.m_5898_((Player)null, 1027, this.m_142538_(), 0);

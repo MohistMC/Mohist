@@ -1,5 +1,42 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.item;
+ 
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import javax.annotation.Nullable;
+@@ -42,7 +_,28 @@
+       this.f_40563_ = p_40565_;
+    }
+ 
+-   public InteractionResult m_6225_(UseOnContext p_40581_) {
++   public static BlockState getBlockState(BlockState iblockdata, CompoundTag nbttagcompound1) {
++      BlockState iblockdata1 = iblockdata;
++      {
++         // CraftBukkit end
++         StateDefinition<Block, BlockState> blockstatelist = iblockdata.m_60734_().m_49965_();
++         Iterator iterator = nbttagcompound1.m_128431_().iterator();
++
++         while (iterator.hasNext()) {
++            String s = (String) iterator.next();
++            Property<?> iblockstate = blockstatelist.m_61081_(s);
++
++            if (iblockstate != null) {
++               String s1 = nbttagcompound1.m_128423_(s).m_7916_();
++
++               iblockdata1 = m_40593_(iblockdata1, iblockstate, s1);
++            }
++         }
++      }
++      return iblockdata1;
++   }
++
++    public InteractionResult m_6225_(UseOnContext p_40581_) {
+       InteractionResult interactionresult = this.m_40576_(new BlockPlaceContext(p_40581_));
+       if (!interactionresult.m_19077_() && this.m_41472_()) {
+          InteractionResult interactionresult1 = this.m_7203_(p_40581_.m_43725_(), p_40581_.m_43723_(), p_40581_.m_43724_()).m_19089_();
 @@ -80,9 +_,9 @@
                    }
                 }

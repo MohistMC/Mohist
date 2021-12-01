@@ -1,5 +1,52 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -135,6 +_,8 @@
+ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.WeatherType;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
+ 
+ public class ServerPlayer extends Player {
+    private static final Logger f_8907_ = LogManager.getLogger();
+@@ -154,8 +_,8 @@
+    private float f_8917_ = -1.0E8F;
+    private int f_8918_ = -99999999;
+    private boolean f_8919_ = true;
+-   private int f_8920_ = -99999999;
+-   private int f_8921_ = 60;
++   public int f_8920_ = -99999999;
++   public int f_8921_ = 60;
+    private ChatVisiblity f_8922_ = ChatVisiblity.FULL;
+    private boolean f_8923_ = true;
+    private long f_8925_ = Util.m_137550_();
+@@ -227,6 +_,26 @@
+    public int f_8943_;
+    public boolean f_8944_;
+ 
++   // CraftBukkit start
++   public String displayName;
++   public Component listName;
++   public org.bukkit.Location compassTarget;
++   public int newExp = 0;
++   public int newLevel = 0;
++   public int newTotalExp = 0;
++   public boolean keepLevel = false;
++   public double maxHealthCache;
++   public boolean joining = true;
++   public boolean sentListPacket = false;
++   public Integer clientViewDistance;
++   public String locale = "en_us"; // CraftBukkit - add, lowercase
++   // CraftBukkit end
++
++   @Override
++   public CraftPlayer getBukkitEntity() {
++      return (CraftPlayer) super.getBukkitEntity();
++   }
++
+    public ServerPlayer(MinecraftServer p_143384_, ServerLevel p_143385_, GameProfile p_143386_) {
+       super(p_143385_, p_143385_.m_8900_(), p_143385_.m_8901_(), p_143386_);
+       this.f_8939_ = p_143384_.m_7950_(this);
 @@ -541,6 +_,7 @@
     }
  
@@ -96,6 +143,18 @@
        return this.m_9222_(p_9117_) || this.m_9222_(p_9117_.m_142300_(p_9118_.m_122424_()));
     }
  
+@@ -935,6 +_,11 @@
+       this.f_8940_ = this.f_8940_ % 100 + 1;
+    }
+ 
++   public int nextContainerCounterInt() {
++      this.f_8940_ = this.f_8940_ % 100 + 1;
++      return f_8940_; // CraftBukkit
++   }
++
+    public OptionalInt m_5893_(@Nullable MenuProvider p_9033_) {
+       if (p_9033_ == null) {
+          return OptionalInt.empty();
 @@ -955,6 +_,7 @@
              this.f_8906_.m_141995_(new ClientboundOpenScreenPacket(abstractcontainermenu.f_38840_, abstractcontainermenu.m_6772_(), p_9033_.m_5446_()));
              this.m_143399_(abstractcontainermenu);
@@ -245,7 +304,7 @@
     public TextFilter m_8967_() {
        return this.f_8939_;
     }
-@@ -1511,11 +_,13 @@
+@@ -1511,14 +_,57 @@
  
     public boolean m_182294_(boolean p_182295_) {
        Inventory inventory = this.m_150109_();
@@ -260,3 +319,47 @@
     }
  
     public boolean m_184128_() {
+       return this.f_184127_;
++   }
++
++   // CraftBukkit start - Add per-player time and weather.
++   public long timeOffset = 0;
++   public boolean relativeTime = true;
++
++   public long getPlayerTime() {
++      if (this.relativeTime) {
++         // Adds timeOffset to the current server time.
++         return this.f_19853_.m_46468_() + this.timeOffset;
++      } else {
++         // Adds timeOffset to the beginning of this day.
++         return this.f_19853_.m_46468_() - (this.f_19853_.m_46468_() % 24000) + this.timeOffset;
++      }
++   }
++
++   public WeatherType weather = null;
++
++   public WeatherType getPlayerWeather() {
++      return this.weather;
++   }
++
++   public void setPlayerWeather(WeatherType type, boolean plugin) {
++      if (!plugin && this.weather != null) {
++         return;
++      }
++
++      if (plugin) {
++         this.weather = type;
++      }
++
++      if (type == WeatherType.DOWNFALL) {
++         this.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132155_, 0));
++      } else {
++         this.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132154_, 0));
++      }
++   }
++
++   public void resetPlayerWeather() {
++      this.weather = null;
++      this.setPlayerWeather(this.f_19853_.m_6106_().m_6533_() ? WeatherType.DOWNFALL : WeatherType.CLEAR, false);
+    }
+ }

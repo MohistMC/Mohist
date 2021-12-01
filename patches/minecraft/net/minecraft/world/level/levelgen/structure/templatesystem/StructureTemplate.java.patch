@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
+@@ -63,8 +_,8 @@
+    public static final String f_163798_ = "nbt";
+    public static final String f_163799_ = "size";
+    static final int f_163800_ = 16;
+-   private final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
+-   private final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
++   public final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
++   public final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
+    private Vec3i f_74484_ = Vec3i.f_123288_;
+    private String f_74485_ = "?";
+ 
 @@ -200,6 +_,10 @@
        return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
     }

@@ -1,5 +1,32 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
+@@ -104,7 +_,7 @@
+    public static final int f_140127_ = 33 + ChunkStatus.m_62421_();
+    public static final int f_143033_ = 31;
+    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140129_ = new Long2ObjectLinkedOpenHashMap<>();
+-   private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140130_ = this.f_140129_.clone();
++   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140130_ = this.f_140129_.clone();
+    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140131_ = new Long2ObjectLinkedOpenHashMap<>();
+    private final LongSet f_140132_ = new LongOpenHashSet();
+    final ServerLevel f_140133_;
+@@ -118,14 +_,14 @@
+    private final ChunkTaskPriorityQueueSorter f_140141_;
+    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140142_;
+    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140143_;
+-   private final ChunkProgressListener f_140144_;
++   public final ChunkProgressListener f_140144_;
+    private final ChunkStatusUpdateListener f_143031_;
+-   private final ChunkMap.DistanceManager f_140145_;
++   public final ChunkMap.DistanceManager f_140145_;
+    private final AtomicInteger f_140146_ = new AtomicInteger();
+    private final StructureManager f_140147_;
+    private final String f_182284_;
+    private final PlayerMap f_140149_ = new PlayerMap();
+-   private final Int2ObjectMap<ChunkMap.TrackedEntity> f_140150_ = new Int2ObjectOpenHashMap<>();
++   public final Int2ObjectMap<ChunkMap.TrackedEntity> f_140150_ = new Int2ObjectOpenHashMap<>();
+    private final Long2ByteMap f_140151_ = new Long2ByteOpenHashMap();
+    private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
+    int f_140126_;
 @@ -473,6 +_,7 @@
              if (this.f_140131_.remove(p_140182_, p_140183_) && p_198809_ != null) {
                 if (p_198809_ instanceof LevelChunk) {
@@ -48,3 +75,18 @@
           EntityType<?> entitytype = p_140200_.m_6095_();
           int i = entitytype.m_20681_() * 16;
           if (i != 0) {
+@@ -1215,12 +_,12 @@
+       }
+    }
+ 
+-   class TrackedEntity {
++   public class TrackedEntity {
+       final ServerEntity f_140471_;
+       final Entity f_140472_;
+       private final int f_140473_;
+       SectionPos f_140474_;
+-      private final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
++      public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
+ 
+       public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
+          this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);

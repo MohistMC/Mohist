@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
-@@ -39,6 +_,7 @@
+@@ -39,6 +_,9 @@
     private ServerPlayer f_20863_;
     private final Set<Entity> f_147134_ = Sets.newHashSet();
     private int f_147135_;
 +   private float damage = 5.0F;
++
++   public boolean isEffect; // CraftBukkit
  
     public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
        super(p_20865_, p_20866_);

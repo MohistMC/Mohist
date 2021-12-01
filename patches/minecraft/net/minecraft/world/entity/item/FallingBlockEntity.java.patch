@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/item/FallingBlockEntity.java
++++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
+@@ -47,7 +_,7 @@
+    public int f_31942_;
+    public boolean f_31943_ = true;
+    private boolean f_31947_;
+-   private boolean f_31939_;
++   public boolean f_31939_;
+    private int f_31940_ = 40;
+    private float f_149641_;
+    private long f_186263_;

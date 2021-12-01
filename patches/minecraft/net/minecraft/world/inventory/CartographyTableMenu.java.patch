@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/inventory/CartographyTableMenu.java
++++ b/net/minecraft/world/inventory/CartographyTableMenu.java
+@@ -11,6 +_,8 @@
+ import net.minecraft.world.item.MapItem;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
++import org.bukkit.craftbukkit.inventory.CraftInventoryCartography;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ 
+ public class CartographyTableMenu extends AbstractContainerMenu {
+    public static final int f_150501_ = 0;
+@@ -34,6 +_,22 @@
+          super.m_6596_();
+       }
+    };
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.entity.Player player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryCartography inventory = new CraftInventoryCartography(this.f_39135_, this.f_39138_);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ 
+    public CartographyTableMenu(int p_39140_, Inventory p_39141_) {
+       this(p_39140_, p_39141_, ContainerLevelAccess.f_39287_);

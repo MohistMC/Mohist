@@ -1,5 +1,81 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import java.util.Arrays;
++import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+@@ -8,6 +_,7 @@
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.TranslatableComponent;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.world.ContainerHelper;
+ import net.minecraft.world.Containers;
+ import net.minecraft.world.WorldlyContainer;
+@@ -23,6 +_,8 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.BrewingStandBlock;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
+    private static final int f_155280_ = 3;
+@@ -35,10 +_,10 @@
+    public static final int f_155278_ = 1;
+    public static final int f_155279_ = 2;
+    private NonNullList<ItemStack> f_58975_ = NonNullList.m_122780_(5, ItemStack.f_41583_);
+-   int f_58976_;
++   public int f_58976_;
+    private boolean[] f_58977_;
+    private Item f_58978_;
+-   int f_58979_;
++   public int f_58979_;
+    protected final ContainerData f_58971_ = new ContainerData() {
+       public int m_6413_(int p_59038_) {
+          switch(p_59038_) {
+@@ -67,6 +_,37 @@
+       }
+    };
+ 
++   // CraftBukkit start - add fields and methods
++   private int lastTick = MinecraftServer.currentTick;
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   private int maxStack = 64;
++
++   public void onOpen(CraftHumanEntity who) {
++      transaction.add(who);
++   }
++
++   public void onClose(CraftHumanEntity who) {
++      transaction.remove(who);
++   }
++
++   public List<HumanEntity> getViewers() {
++      return transaction;
++   }
++
++   public List<ItemStack> getContents() {
++      return this.f_58975_;
++   }
++
++   @Override
++   public int m_6893_() {
++      return maxStack;
++   }
++
++   public void setMaxStackSize(int size) {
++      maxStack = size;
++   }
++   // CraftBukkit end
++
+    public BrewingStandBlockEntity(BlockPos p_155283_, BlockState p_155284_) {
+       super(BlockEntityType.f_58927_, p_155283_, p_155284_);
+    }
 @@ -148,6 +_,7 @@
  
     private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {

@@ -1,0 +1,90 @@
+--- a/net/minecraft/world/level/block/entity/LecternBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/LecternBlockEntity.java
+@@ -25,13 +_,20 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
++
++import java.util.List;
+ 
+ public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
+    public static final int f_155617_ = 0;
+    public static final int f_155618_ = 1;
+    public static final int f_155619_ = 0;
+    public static final int f_155620_ = 1;
+-   private final Container f_59525_ = new Container() {
++   public final Container f_59525_ = new LecternInventory();
++   public class LecternInventory implements Container {
+       public int m_6643_() {
+          return 1;
+       }
+@@ -91,8 +_,47 @@
+          return false;
+       }
+ 
++      @Override
++      public List<ItemStack> getContents() {
++         return null;
++      }
++
++      @Override
++      public void onOpen(CraftHumanEntity who) {
++
++      }
++
++      @Override
++      public void onClose(CraftHumanEntity who) {
++
++      }
++
++      @Override
++      public List<HumanEntity> getViewers() {
++         return null;
++      }
++
++      @Override
++      public InventoryHolder getOwner() {
++         return null;
++      }
++
++      @Override
++      public void setMaxStackSize(int size) {
++
++      }
++
++      @Override
++      public Location getLocation() {
++         return null;
++      }
++
+       public void m_6211_() {
+       }
++
++      public MenuProvider getLectern() {
++         return LecternBlockEntity.this;
++      }
+    };
+    private final ContainerData f_59526_ = new ContainerData() {
+       public int m_6413_(int p_59600_) {
+@@ -143,7 +_,7 @@
+       this.m_6596_();
+    }
+ 
+-   void m_59532_(int p_59533_) {
++   public void m_59532_(int p_59533_) {
+       int i = Mth.m_14045_(p_59533_, 0, this.f_59529_ - 1);
+       if (i != this.f_59528_) {
+          this.f_59528_ = i;
+@@ -215,7 +_,7 @@
+    }
+ 
+    public AbstractContainerMenu m_7208_(int p_59562_, Inventory p_59563_, Player p_59564_) {
+-      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_);
++      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_, p_59563_);
+    }
+ 
+    public Component m_5446_() {
