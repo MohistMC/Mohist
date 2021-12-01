@@ -74,15 +74,6 @@ println('Version: ' + VERSION +
         ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
         ' Arch: ' + System.getProperty('os.arch'))
 
-def extraTxts = [
-    rootProject.file('CREDITS.txt'),
-    rootProject.file('LICENSE.txt')
-]
-
-def changelog = rootProject.file('build/changelog.txt')
-if (changelog.exists())
-    extraTxts += changelog
-
 subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
@@ -789,19 +780,6 @@ project(':forge') {
                 ]
             }
         }
-        test {
-            java {
-                srcDirs = [
-                    "$rootDir/src/test/java"
-                ]
-            }
-            resources {
-                srcDirs = [
-                    "$rootDir/src/test/resources",
-                    "$rootDir/src/generated_test/resources"
-                ]
-            }
-        }
     }
     //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
     eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
@@ -848,47 +826,12 @@ project(':forge') {
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
         runs {
-            forge_client {
-                property 'eventbus.checkTypesOnDispatch', 'true'
-                args '--launchTarget', 'forgeclientdev'
-                ideaModule "${rootProject.name}.${project.name}.main"
-                mods {
-                    minecraft { source sourceSets.main }
-                }
-            }
-
-            forge_test_client {
-                parent runs.forge_client
-                taskName 'forge_test_client'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
-                }
-            }
-
             forge_server {
                 args '--launchTarget', 'forgeserverdev'
                 ideaModule "${rootProject.name}.${project.name}.main"
 
                 mods {
                     minecraft { source sourceSets.main }
-                }
-            }
-
-            forge_test_server {
-                parent runs.forge_server
-                taskName 'forge_test_server'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
                 }
             }
 
@@ -909,38 +852,6 @@ project(':forge') {
                 }
 
                 args forgeDataArgs
-            }
-
-            forge_test_data {
-                parent runs.forge_data
-                taskName 'forge_test_data'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
-                }
-
-                afterEvaluate {
-                    // Clear forge's main datagen args
-                    args.removeAll {
-                        forgeDataArgs.contains(it instanceof File ? (it as File).absolutePath : it.toString())
-                    }
-
-                    args '--flat', '--all', '--validate',
-                            '--mod', 'data_gen_test',
-                            '--mod', 'piston_event_test',
-                            '--mod', 'global_loot_test',
-                            '--mod', 'scaffolding_test',
-                            '--mod', 'custom_tag_types_test',
-                            '--mod', 'new_model_loader_test',
-                            '--mod', 'remove_tag_datagen_test',
-                            '--output', rootProject.file('src/generated_test/resources/'),
-                            '--existing', sourceSets.main.resources.srcDirs[0],
-                            '--existing', sourceSets.test.resources.srcDirs[0]
-                }
             }
         }
     }
@@ -1278,11 +1189,7 @@ project(':forge') {
     }
 
     universalJar {
-        from extraTxts
 
-        // add crowdin locales
-        from { crowdin.output.present && crowdin.output.get().asFile.exists() ? zipTree(crowdin.output) : null}
-        dependsOn crowdin
         duplicatesStrategy = 'exclude'
 
         doFirst {
@@ -1298,7 +1205,6 @@ project(':forge') {
 
     task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
         packedDependencies = PACKED_DEPS
-        from(extraTxts)
         from(rootProject.file('/forge_installer_logo.png')) {
             rename { 'big_logo.png' }
         }
@@ -1307,38 +1213,6 @@ project(':forge') {
         }
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
-        }
-    }
-
-    task makeMdk(type: Zip) {
-        archiveBaseName = project.name
-        archiveClassifier = 'mdk'
-        archiveVersion = project.version
-        destinationDirectory = file('build/libs')
-
-        from rootProject.file('gradlew')
-        from rootProject.file('gradlew.bat')
-        from extraTxts
-        from(rootProject.file('gradle/')){
-            into('gradle/')
-        }
-        from(rootProject.file('mdk/')){
-            rootProject.file('mdk/gitignore.txt').eachLine{
-                if (!it.trim().isEmpty() && !it.trim().startsWith('#'))
-                    exclude it
-            }
-            filter(ReplaceTokens, tokens: [
-                FORGE_VERSION: project.version,
-                FORGE_GROUP: project.group,
-                FORGE_NAME: project.name,
-                MC_VERSION: MC_VERSION,
-                MAPPING_CHANNEL: MAPPING_CHANNEL,
-                MAPPING_VERSION: MAPPING_VERSION,
-                FORGE_SPEC_VERSION: SPEC_VERSION.split("\\.")[0],
-                MC_NEXT_VERSION: "1."+((MC_VERSION.split("[\\.-]")[1] as int)+1)
-            ])
-            rename 'gitignore\\.txt', '.gitignore'
-            rename 'gitattributes\\.txt', '.gitattributes'
         }
     }
 
@@ -1362,9 +1236,6 @@ project(':forge') {
             main {
                 files.from files("$rootDir/src/main/java")
             }
-            test {
-                files.from files("$rootDir/src/test/java")
-            }
         }
     }
 
@@ -1374,29 +1245,11 @@ project(':forge') {
 
     tasks.eclipse.dependsOn('genEclipseRuns')
 
-    if (project.hasProperty('UPDATE_MAPPINGS')) {
-        extractRangeMap {
-            sources.from sourceSets.test.java.srcDirs
-            addDependencies compileTestJava.classpath
-        }
-        applyRangeMap {
-            sources.from sourceSets.test.java.srcDirs
-        }
-        sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
-    }
-
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
-                if (changelog.exists()) {
-                    artifact(changelog) {
-                        classifier = 'changelog'
-                    }
-                }
                 artifact installerJar
-                //TODO: installer-win
-                artifact makeMdk
                 artifact userdevJar
                 artifact sourcesJar
             }

@@ -7,7 +7,7 @@
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.17.x/LICENSE)
 [![](https://img.shields.io/badge/jdk-17.0.1+12-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
-[![](https://img.shields.io/badge/Gradle-7.2-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.2/release-notes.html)
+[![](https://img.shields.io/badge/Gradle-7.3-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.3/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
@@ -25,7 +25,7 @@
 Progress
 ------
 
-- [ ] Rectify Forge()  
+- [ ] Rectify Forge(5b6d54555)  
 - [ ] Start patch
   * CraftBukkit()
   * Bukkit()
