@@ -28,7 +28,7 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
 
     @Override
     public void sendRawMessage(String message) {
-        MohistMC.LOGGER.info(message);
+        System.out.println(ChatColor.stripColor(message));
     }
 
     @Override
