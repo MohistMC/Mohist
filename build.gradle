@@ -219,8 +219,8 @@ def sharedDeps = {
     installer 'org.apache.logging.log4j:log4j-api:2.14.1'
     installer 'org.apache.logging.log4j:log4j-core:2.14.1'
     installer 'net.minecrell:terminalconsoleappender:1.2.0'
-    installer 'org.jline:jline-reader:3.12.2'   //Dep of TerminaalConsoleeAppender
-    installer 'org.jline:jline-terminal:3.12.2' //Dep of TerminaalConsoleeAppender
+    installer 'org.jline:jline-reader:3.12.1'   //Dep of TerminaalConsoleeAppender
+    installer 'org.jline:jline-terminal:3.12.1' //Dep of TerminaalConsoleeAppender
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
