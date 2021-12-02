@@ -8,10 +8,11 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -142,6 +_,10 @@
+@@ -142,6 +_,11 @@
  import net.minecraft.world.ticks.LevelTicks;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.CraftWorld;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -51,11 +52,13 @@
        this.f_8561_ = p_8582_;
        this.f_8548_ = p_8571_;
        this.f_8558_ = p_8581_;
-@@ -217,6 +_,7 @@
+@@ -217,6 +_,9 @@
        }
  
        this.f_143245_ = new SleepStatus();
 +      this.initCapabilities();
++      this.world = new CraftWorld(this, generator, biomeProvider, environment);
++      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {

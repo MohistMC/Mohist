@@ -106,15 +106,6 @@ subprojects {
 
     group = 'net.minecraftforge'
     version = VERSION
-    //println(name + ' Version: ' + version)
-
-    ext {
-        isNonStable = { String version ->
-            def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { ver -> version.toUpperCase().contains(ver) }
-            def regex = /^[0-9,.v-]+(-r)?$/
-            return !stableKeyword && !(version ==~ regex)
-        }
-    }
 
     repositories {
         mavenLocal()

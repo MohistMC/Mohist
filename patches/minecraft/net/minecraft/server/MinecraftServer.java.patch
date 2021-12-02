@@ -79,6 +79,14 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
+@@ -293,6 +_,7 @@
+       this.f_129741_ = new StructureManager(p_129776_.m_136178_(), p_129771_, p_129775_);
+       this.f_129725_ = p_129769_;
+       this.f_129738_ = Util.m_183991_();
++      this.options = options;
+    }
+ 
+    private void m_129841_(DimensionDataStorage p_129842_) {
 @@ -355,6 +_,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);

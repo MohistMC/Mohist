@@ -1,21 +1,35 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -90,6 +_,7 @@
+@@ -60,6 +_,7 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.PlayerAdvancements;
+ import net.minecraft.server.ServerScoreboard;
++import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.server.network.ServerGamePacketListenerImpl;
+@@ -90,6 +_,8 @@
  import net.minecraft.world.scores.Team;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.CraftServer;
  
  public abstract class PlayerList {
     public static final File f_11189_ = new File("banned-players.json");
-@@ -117,6 +_,7 @@
+@@ -117,8 +_,12 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
 +   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
++
++   private CraftServer cserver;
  
     public PlayerList(MinecraftServer p_11213_, RegistryAccess.RegistryHolder p_11214_, PlayerDataStorage p_11215_, int p_11216_) {
++      this.cserver = p_11213_.server = new CraftServer((DedicatedServer) p_11213_, this);
        this.f_11195_ = p_11213_;
+       this.f_11206_ = p_11214_;
+       this.f_11193_ = p_11216_;
 @@ -152,6 +_,7 @@
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
