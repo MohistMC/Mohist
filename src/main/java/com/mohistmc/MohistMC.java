@@ -48,7 +48,12 @@ public class MohistMC {
         CustomLibraries.loadCustomLibs();
 
         if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
+
+        if(mainArgs.contains("-noserver"))
+			System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
+
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
+
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
             while (!"true".equals(new Scanner(System.in).next()));
