@@ -59,9 +59,8 @@ ext {
     MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
-    // FML_VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, 'FML', MC_VERSION)
-    FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
+    VERSION = '1.18-38.0.8'
+    FORGE_VERSION = '38.0.8'
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
@@ -220,8 +219,8 @@ def sharedDeps = {
     installer 'org.apache.logging.log4j:log4j-api:2.14.1'
     installer 'org.apache.logging.log4j:log4j-core:2.14.1'
     installer 'net.minecrell:terminalconsoleappender:1.2.0'
-    installer 'org.jline:jline-reader:3.12.+'   //Dep of TerminaalConsoleeAppender
-    installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
+    installer 'org.jline:jline-reader:3.12.2'   //Dep of TerminaalConsoleeAppender
+    installer 'org.jline:jline-terminal:3.12.2' //Dep of TerminaalConsoleeAppender
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
@@ -816,7 +815,7 @@ project(':forge') {
     eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
 
     ext {
-        SPEC_VERSION = gradleutils.gitInfo.tag
+        SPEC_VERSION = 38
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
