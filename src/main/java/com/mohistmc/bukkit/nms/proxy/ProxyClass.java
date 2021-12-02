@@ -19,15 +19,7 @@ public class ProxyClass {
     }
 
     public static Class<?> forName(String className, boolean initialize, ClassLoader loader) throws ClassNotFoundException {
-        try {
-            return Class.forName(ASMUtils.toClassName(RemapUtils.map(className.replace('.', '/'))), initialize, loader);
-        } catch (NullPointerException e) {
-            try {
-                return Class.forName(className, initialize, loader);
-            } catch (NullPointerException ex) {
-                throw new ClassNotFoundException(className);
-            }
-        }
+        return Class.forName(ASMUtils.toClassName(RemapUtils.map(className.replace('.', '/'))), initialize, loader);
     }
 
     public static Method getDeclaredMethod(Class<?> clazz, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
