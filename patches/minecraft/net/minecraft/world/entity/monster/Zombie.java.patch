@@ -1,23 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -70,7 +_,7 @@
-    private static final AttributeModifier f_34267_ = new AttributeModifier(f_34259_, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
-    private static final EntityDataAccessor<Boolean> f_34268_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135035_);
-    private static final EntityDataAccessor<Integer> f_34260_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135028_);
--   private static final EntityDataAccessor<Boolean> f_34261_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135035_);
-+   public static final EntityDataAccessor<Boolean> f_34261_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135035_);
-    public static final float f_149884_ = 0.05F;
-    public static final int f_149880_ = 50;
-    public static final int f_149881_ = 40;
-@@ -82,7 +_,7 @@
-    private final BreakDoorGoal f_34263_ = new BreakDoorGoal(this, f_34262_);
-    private boolean f_34264_;
-    private int f_34265_;
--   private int f_34266_;
-+   public int f_34266_;
- 
-    public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
-       super(p_34271_, p_34272_);
 @@ -191,7 +_,7 @@
        if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {
           if (this.m_34329_()) {

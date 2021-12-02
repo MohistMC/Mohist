@@ -1,14 +1,5 @@
 --- a/net/minecraft/commands/CommandSourceStack.java
 +++ b/net/minecraft/commands/CommandSourceStack.java
-@@ -38,7 +_,7 @@
- public class CommandSourceStack implements SharedSuggestionProvider {
-    public static final SimpleCommandExceptionType f_81286_ = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.player"));
-    public static final SimpleCommandExceptionType f_81287_ = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.entity"));
--   private final CommandSource f_81288_;
-+   public final CommandSource f_81288_;
-    private final Vec3 f_81289_;
-    private final ServerLevel f_81290_;
-    private final int f_81291_;
 @@ -260,4 +_,10 @@
     public RegistryAccess m_5894_() {
        return this.f_81294_.m_129911_();

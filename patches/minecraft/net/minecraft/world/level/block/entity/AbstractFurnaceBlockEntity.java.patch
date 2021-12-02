@@ -9,20 +9,6 @@
  
  public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible {
     protected static final int f_154980_ = 0;
-@@ -56,10 +_,10 @@
-    public static final int f_154988_ = 200;
-    public static final int f_154989_ = 2;
-    protected NonNullList<ItemStack> f_58310_ = NonNullList.m_122780_(3, ItemStack.f_41583_);
--   int f_58316_;
-+   public int f_58316_;
-    int f_58317_;
--   int f_58318_;
--   int f_58319_;
-+   public int f_58318_;
-+   public int f_58319_;
-    protected final ContainerData f_58311_ = new ContainerData() {
-       public int m_6413_(int p_58431_) {
-          switch(p_58431_) {
 @@ -105,6 +_,7 @@
        this.f_58312_ = p_154994_;
     }

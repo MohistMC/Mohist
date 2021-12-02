@@ -1,18 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/net/minecraft/world/entity/monster/Skeleton.java
-@@ -14,10 +_,10 @@
- import net.minecraft.world.level.Level;
- 
- public class Skeleton extends AbstractSkeleton {
--   private static final EntityDataAccessor<Boolean> f_149826_ = SynchedEntityData.m_135353_(Skeleton.class, EntityDataSerializers.f_135035_);
-+   public static final EntityDataAccessor<Boolean> f_149826_ = SynchedEntityData.m_135353_(Skeleton.class, EntityDataSerializers.f_135035_);
-    public static final String f_149825_ = "StrayConversionTime";
-    private int f_149827_;
--   private int f_149828_;
-+   public int f_149828_;
- 
-    public Skeleton(EntityType<? extends Skeleton> p_33570_, Level p_33571_) {
-       super(p_33570_, p_33571_);
 @@ -73,7 +_,7 @@
  
     }

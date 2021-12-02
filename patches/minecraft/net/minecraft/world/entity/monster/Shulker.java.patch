@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Shulker.java
 +++ b/net/minecraft/world/entity/monster/Shulker.java
-@@ -59,7 +_,7 @@
-    private static final AttributeModifier f_33395_ = new AttributeModifier(f_33394_, "Covered armor bonus", 20.0D, AttributeModifier.Operation.ADDITION);
-    protected static final EntityDataAccessor<Direction> f_33392_ = SynchedEntityData.m_135353_(Shulker.class, EntityDataSerializers.f_135040_);
-    protected static final EntityDataAccessor<Byte> f_33401_ = SynchedEntityData.m_135353_(Shulker.class, EntityDataSerializers.f_135027_);
--   protected static final EntityDataAccessor<Byte> f_33393_ = SynchedEntityData.m_135353_(Shulker.class, EntityDataSerializers.f_135027_);
-+   public static final EntityDataAccessor<Byte> f_33393_ = SynchedEntityData.m_135353_(Shulker.class, EntityDataSerializers.f_135027_);
-    private static final int f_149756_ = 6;
-    private static final byte f_149757_ = 16;
-    private static final byte f_149758_ = 16;
 @@ -434,7 +_,7 @@
        return this.f_19804_.m_135370_(f_33392_);
     }

@@ -8,27 +8,20 @@
  
  public class BeaconBlockEntity extends BlockEntity implements MenuProvider {
     private static final int f_155085_ = 4;
-@@ -48,15 +_,17 @@
-    private static final int f_155086_ = 10;
-    List<BeaconBlockEntity.BeaconBeamSection> f_58648_ = Lists.newArrayList();
-    private List<BeaconBlockEntity.BeaconBeamSection> f_58649_ = Lists.newArrayList();
--   int f_58650_;
-+   public int f_58650_;
+@@ -51,9 +_,11 @@
+    public int f_58650_;
     private int f_58651_;
     @Nullable
+-   public MobEffect f_58652_;
 +   public
-    MobEffect f_58652_;
++   MobEffect f_58652_;
     @Nullable
+-   public MobEffect f_58653_;
 +   public
-    MobEffect f_58653_;
++   MobEffect f_58653_;
     @Nullable
--   private Component f_58654_;
--   private LockCode f_58655_ = LockCode.f_19102_;
-+   public Component f_58654_;
-+   public LockCode f_58655_ = LockCode.f_19102_;
-    private final ContainerData f_58656_ = new ContainerData() {
-       public int m_6413_(int p_58711_) {
-          switch(p_58711_) {
+    public Component f_58654_;
+    public LockCode f_58655_ = LockCode.f_19102_;
 @@ -98,6 +_,27 @@
        super(BlockEntityType.f_58930_, p_155088_, p_155089_);
     }

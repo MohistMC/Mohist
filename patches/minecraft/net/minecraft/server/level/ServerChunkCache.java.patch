@@ -1,16 +1,5 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -58,8 +_,8 @@
-    public final ChunkMap f_8325_;
-    private final DimensionDataStorage f_8333_;
-    private long f_8334_;
--   private boolean f_8335_ = true;
--   private boolean f_8336_ = true;
-+   public boolean f_8335_ = true;
-+   public boolean f_8336_ = true;
-    private static final int f_143226_ = 4;
-    private final long[] f_8337_ = new long[4];
-    private final ChunkStatus[] f_8338_ = new ChunkStatus[4];
 @@ -163,6 +_,7 @@
           if (chunkholder == null) {
              return null;

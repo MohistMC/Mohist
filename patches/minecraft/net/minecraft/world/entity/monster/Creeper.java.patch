@@ -1,18 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -47,9 +_,9 @@
-    private static final EntityDataAccessor<Boolean> f_32274_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135035_);
-    private static final EntityDataAccessor<Boolean> f_32275_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135035_);
-    private int f_32269_;
--   private int f_32270_;
--   private int f_32271_ = 30;
--   private int f_32272_ = 3;
-+   public int f_32270_;
-+   public int f_32271_ = 30;
-+   public int f_32272_ = 3;
-    private int f_32273_;
- 
-    public Creeper(EntityType<? extends Creeper> p_32278_, Level p_32279_) {
 @@ -201,6 +_,10 @@
        this.f_19804_.m_135381_(f_32274_, true);
     }

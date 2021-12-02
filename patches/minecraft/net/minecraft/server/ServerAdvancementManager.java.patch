@@ -1,16 +1,5 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -24,8 +_,8 @@
- 
- public class ServerAdvancementManager extends SimpleJsonResourceReloadListener {
-    private static final Logger f_136021_ = LogManager.getLogger();
--   private static final Gson f_136022_ = (new GsonBuilder()).create();
--   private AdvancementList f_136023_ = new AdvancementList();
-+   public static final Gson f_136022_ = (new GsonBuilder()).create();
-+   public AdvancementList f_136023_ = new AdvancementList();
-    private final PredicateManager f_136024_;
- 
-    public ServerAdvancementManager(PredicateManager p_136027_) {
 @@ -39,6 +_,10 @@
           try {
              JsonObject jsonobject = GsonHelper.m_13918_(p_136040_, "advancement");

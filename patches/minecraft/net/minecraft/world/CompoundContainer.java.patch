@@ -12,10 +12,8 @@
 +import java.util.List;
  
  public class CompoundContainer implements Container {
--   private final Container f_18910_;
--   private final Container f_18911_;
-+   public final Container f_18910_;
-+   public final Container f_18911_;
+    public final Container f_18910_;
+    public final Container f_18911_;
 +
 +   // CraftBukkit start - add fields and methods
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();

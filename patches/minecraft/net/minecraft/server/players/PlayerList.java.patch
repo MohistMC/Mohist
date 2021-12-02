@@ -8,24 +8,6 @@
  
  public abstract class PlayerList {
     public static final File f_11189_ = new File("banned-players.json");
-@@ -100,7 +_,7 @@
-    private static final int f_143987_ = 600;
-    private static final SimpleDateFormat f_11194_ = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-    private final MinecraftServer f_11195_;
--   private final List<ServerPlayer> f_11196_ = Lists.newArrayList();
-+   public final List<ServerPlayer> f_11196_ = Lists.newArrayList();
-    private final Map<UUID, ServerPlayer> f_11197_ = Maps.newHashMap();
-    private final UserBanList f_11198_ = new UserBanList(f_11189_);
-    private final IpBanList f_11199_ = new IpBanList(f_11190_);
-@@ -108,7 +_,7 @@
-    private final UserWhiteList f_11201_ = new UserWhiteList(f_11192_);
-    private final Map<UUID, ServerStatsCounter> f_11202_ = Maps.newHashMap();
-    private final Map<UUID, PlayerAdvancements> f_11203_ = Maps.newHashMap();
--   private final PlayerDataStorage f_11204_;
-+   public final PlayerDataStorage f_11204_;
-    private boolean f_11205_;
-    private final RegistryAccess.RegistryHolder f_11206_;
-    protected final int f_11193_;
 @@ -117,6 +_,7 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;

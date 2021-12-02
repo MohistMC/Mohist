@@ -17,28 +17,6 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.util.Mth;
  import net.minecraft.world.effect.MobEffectInstance;
-@@ -39,15 +_,15 @@
-    private static final EntityDataAccessor<ParticleOptions> f_19700_ = SynchedEntityData.m_135353_(AreaEffectCloud.class, EntityDataSerializers.f_135036_);
-    private static final float f_146781_ = 32.0F;
-    private Potion f_19701_ = Potions.f_43598_;
--   private final List<MobEffectInstance> f_19685_ = Lists.newArrayList();
-+   public final List<MobEffectInstance> f_19685_ = Lists.newArrayList();
-    private final Map<Entity, Integer> f_19686_ = Maps.newHashMap();
-    private int f_19687_ = 600;
--   private int f_19688_ = 20;
--   private int f_19689_ = 20;
-+   public int f_19688_ = 20;
-+   public int f_19689_ = 20;
-    private boolean f_19690_;
--   private int f_19691_;
--   private float f_19692_;
--   private float f_19693_;
-+   public int f_19691_;
-+   public float f_19692_;
-+   public float f_19693_;
-    @Nullable
-    private LivingEntity f_19694_;
-    @Nullable
 @@ -114,6 +_,22 @@
        }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-@@ -29,12 +_,59 @@
+@@ -29,6 +_,12 @@
  import net.minecraft.world.level.storage.loot.LootTable;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -13,12 +13,10 @@
  
  public abstract class AbstractMinecartContainer extends AbstractMinecart implements Container, MenuProvider {
     private NonNullList<ItemStack> f_38202_ = NonNullList.m_122780_(36, ItemStack.f_41583_);
-    @Nullable
--   private ResourceLocation f_38204_;
--   private long f_38205_;
-+   public ResourceLocation f_38204_;
-+   public long f_38205_;
-+
+@@ -36,6 +_,47 @@
+    public ResourceLocation f_38204_;
+    public long f_38205_;
+ 
 +   // CraftBukkit start
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
@@ -59,9 +57,10 @@
 +      return getBukkitEntity().getLocation();
 +   }
 +   // CraftBukkit end
- 
++
     protected AbstractMinecartContainer(EntityType<?> p_38213_, Level p_38214_) {
        super(p_38213_, p_38214_);
+    }
 @@ -156,6 +_,8 @@
     }
  

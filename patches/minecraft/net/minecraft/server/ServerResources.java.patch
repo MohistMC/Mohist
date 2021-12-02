@@ -1,14 +1,5 @@
 --- a/net/minecraft/server/ServerResources.java
 +++ b/net/minecraft/server/ServerResources.java
-@@ -21,7 +_,7 @@
- public class ServerResources implements AutoCloseable {
-    private static final CompletableFuture<Unit> f_136144_ = CompletableFuture.completedFuture(Unit.INSTANCE);
-    private final ReloadableResourceManager f_136145_ = new SimpleReloadableResourceManager(PackType.SERVER_DATA);
--   private final Commands f_136146_;
-+   public Commands f_136146_;
-    private final RecipeManager f_136147_ = new RecipeManager();
-    private final TagManager f_136148_;
-    private final PredicateManager f_136149_ = new PredicateManager();
 @@ -41,6 +_,7 @@
        this.f_136145_.m_7217_(this.f_180000_);
        this.f_136145_.m_7217_(this.f_136152_);

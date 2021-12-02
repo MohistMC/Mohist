@@ -8,19 +8,6 @@
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
     static final Logger f_139598_ = LogManager.getLogger();
-@@ -69,10 +_,10 @@
-    public final List<ConsoleInput> f_139600_ = Collections.synchronizedList(Lists.newArrayList());
-    @Nullable
-    private QueryThreadGs4 f_139601_;
--   private final RconConsoleSource f_139602_;
-+   public final RconConsoleSource f_139602_;
-    @Nullable
-    private RconThread f_139603_;
--   private final DedicatedServerSettings f_139604_;
-+   public DedicatedServerSettings f_139604_;
-    @Nullable
-    private MinecraftServerGui f_139605_;
-    @Nullable
 @@ -91,6 +_,7 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {

@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -68,7 +_,7 @@
-    private final int[] f_31427_ = new int[2];
-    private final int[] f_31428_ = new int[2];
-    private int f_31429_;
--   private final ServerBossEvent f_31430_ = (ServerBossEvent)(new ServerBossEvent(this.m_5446_(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).m_7003_(true);
-+   public final ServerBossEvent f_31430_ = (ServerBossEvent)(new ServerBossEvent(this.m_5446_(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).m_7003_(true);
-    private static final Predicate<LivingEntity> f_31431_ = (p_31504_) -> {
-       return p_31504_.m_6336_() != MobType.f_21641_ && p_31504_.m_5789_();
-    };
 @@ -219,7 +_,7 @@
           int k1 = this.m_31502_() - 1;
           this.f_31430_.m_142711_(1.0F - (float)k1 / 220.0F);

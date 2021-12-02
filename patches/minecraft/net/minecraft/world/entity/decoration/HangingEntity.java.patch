@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
-@@ -29,7 +_,7 @@
-       return p_31734_ instanceof HangingEntity;
-    };
-    private int f_31700_;
--   protected BlockPos f_31698_;
-+   public BlockPos f_31698_;
-    protected Direction f_31699_ = Direction.SOUTH;
- 
-    protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
 @@ -41,10 +_,14 @@
        this.f_31698_ = p_31708_;
     }

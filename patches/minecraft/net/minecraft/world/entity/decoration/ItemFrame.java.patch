@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/net/minecraft/world/entity/decoration/ItemFrame.java
-@@ -41,8 +_,8 @@
-    private static final EntityDataAccessor<ItemStack> f_31757_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135033_);
-    private static final EntityDataAccessor<Integer> f_31758_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135028_);
-    public static final int f_149619_ = 8;
--   private float f_31754_ = 1.0F;
--   private boolean f_31755_;
-+   public float f_31754_ = 1.0F;
-+   public boolean f_31755_;
- 
-    public ItemFrame(EntityType<? extends ItemFrame> p_31761_, Level p_31762_) {
-       super(p_31761_, p_31762_);
 @@ -57,7 +_,11 @@
        this.m_6022_(p_149624_);
     }

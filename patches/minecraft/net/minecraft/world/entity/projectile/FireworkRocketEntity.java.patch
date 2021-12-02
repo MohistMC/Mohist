@@ -1,31 +1,16 @@
 --- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -28,11 +_,11 @@
- import net.minecraft.world.phys.Vec3;
+@@ -147,6 +_,13 @@
  
- public class FireworkRocketEntity extends Projectile implements ItemSupplier {
--   private static final EntityDataAccessor<ItemStack> f_37019_ = SynchedEntityData.m_135353_(FireworkRocketEntity.class, EntityDataSerializers.f_135033_);
-+   public static final EntityDataAccessor<ItemStack> f_37019_ = SynchedEntityData.m_135353_(FireworkRocketEntity.class, EntityDataSerializers.f_135033_);
-    private static final EntityDataAccessor<OptionalInt> f_37020_ = SynchedEntityData.m_135353_(FireworkRocketEntity.class, EntityDataSerializers.f_135044_);
--   private static final EntityDataAccessor<Boolean> f_37021_ = SynchedEntityData.m_135353_(FireworkRocketEntity.class, EntityDataSerializers.f_135035_);
-+   public static final EntityDataAccessor<Boolean> f_37021_ = SynchedEntityData.m_135353_(FireworkRocketEntity.class, EntityDataSerializers.f_135035_);
-    private int f_37022_;
--   private int f_37023_;
-+   public int f_37023_;
-    @Nullable
-    private LivingEntity f_37024_;
+    }
  
-@@ -145,6 +_,13 @@
-          this.m_37080_();
-       }
- 
-+   }
-+
 +   @Override
 +   protected void m_6532_(HitResult result) {
 +      if (result.m_6662_() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, result)) {
 +         super.m_6532_(result);
 +      }
-    }
- 
++   }
++
     private void m_37080_() {
+       this.f_19853_.m_7605_(this, (byte)17);
+       this.m_146852_(GameEvent.f_157812_, this.m_37282_());

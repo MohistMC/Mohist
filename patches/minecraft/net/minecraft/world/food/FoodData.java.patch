@@ -1,24 +1,16 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -9,11 +_,18 @@
- import net.minecraft.world.level.GameRules;
- 
- public class FoodData {
--   private int f_38696_ = 20;
--   private float f_38697_;
--   private float f_38698_;
-+   public int f_38696_ = 20;
-+   public float f_38697_;
-+   public float f_38698_;
+@@ -15,6 +_,13 @@
     private int f_38699_;
     private int f_38700_ = 20;
-+
+ 
 +   // CraftBukkit start
 +   private Player entityhuman;
 +   public int saturatedRegenRate = 10;
 +   public int unsaturatedRegenRate = 80;
 +   public int starvationRate = 80;
 +   // CraftBukkit end
- 
++
     public FoodData() {
        this.f_38697_ = 5.0F;
+    }
