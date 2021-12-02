@@ -102,7 +102,6 @@ task downloadJson(type: Download, dependsOn: downloadVersionManifest) {
 }
 
 subprojects {
-    apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     apply plugin: 'java'
 
@@ -138,62 +137,10 @@ subprojects {
         ]
         options.addStringOption('Xdoclint:all,-missing', '-public')
     }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                // Normal Maven/old gradle doesn't support '2.+' version wildcards
-                // For now we just suppress. We *should* force the resolution to pinned versions.
-                suppressPomMetadataWarningsFor('apiElements')
-                suppressPomMetadataWarningsFor('runtimeElements')
-                pom {
-                    name = project.name
-                    description = 'Modifactions to Minecraft to enable mod developers.'
-                    url = 'https://github.com/MinecraftForge/MinecraftForge'
-
-                    scm {
-                        url = 'https://github.com/MinecraftForge/MinecraftForge'
-                        connection = 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
-                        developerConnection = 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
-                    }
-
-                    issueManagement {
-                        system = 'github'
-                        url = 'https://github.com/MinecraftForge/MinecraftForge/issues'
-                    }
-
-                    licenses {
-                        license {
-                            name = 'LGPL 2.1'
-                            url = 'https://github.com/MinecraftForge/MinecraftForge/blob/1.13-pre/LICENSE.txt'
-                            distribution = 'repo'
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
-            maven {
-                if (System.env.MAVEN_USER) {
-                    url 'https://maven.minecraftforge.net/releases/'
-                    authentication {
-                        basic(BasicAuthentication)
-                    }
-                    credentials {
-                        username = System.env.MAVEN_USER ?: 'not'
-                        password = System.env.MAVEN_PASSWORD ?: 'set'
-                    }
-                } else {
-                    url 'file://' + rootProject.file('repo').getAbsolutePath()
-                }
-            }
-        }
-    }
 }
 
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
-    tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
@@ -203,7 +150,6 @@ project(':mcp') {
 project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
         implementation 'net.minecraftforge:forgespi:' + SPI_VERSION
@@ -283,7 +229,7 @@ def sharedDeps = {
     installer 'com.google.code.gson:gson:2.8.8'
 
     // bukkit
-    installer 'commons-lang:commons-lang:2.6'
+    //installer 'commons-lang:commons-lang:2.6'
     installer 'org.yaml:snakeyaml:1.28'
     installer 'org.apache.maven:maven-resolver-provider:3.8.1'
     installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.0'
@@ -839,17 +785,6 @@ project(':fmlonly') {
         }
     }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact universalJar
-                artifact installerJar
-                artifact userdevJar
-                artifact sourcesJar
-            }
-        }
-    }
-
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
     afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
 }
@@ -1375,16 +1310,6 @@ project(':forge') {
 
     tasks.eclipse.dependsOn('genEclipseRuns')
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact universalJar
-                artifact installerJar
-                artifact userdevJar
-                artifact sourcesJar
-            }
-        }
-    }
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
     afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
 }

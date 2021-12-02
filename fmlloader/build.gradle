@@ -73,8 +73,3 @@ artifacts {
     archives jar
     archives sourcesJar
 }
-
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
-    artifact sourcesJar
-}
