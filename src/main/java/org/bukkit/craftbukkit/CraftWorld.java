@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundCustomSoundPacket;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 import net.minecraft.resources.ResourceLocation;
@@ -411,21 +412,21 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean refreshChunk(int x, int z) {
-        if (!isChunkLoaded(x, z)) {
-            return false;
-        }
+        ChunkHolder playerChunk = world.getChunkSource().chunkMap.visibleChunkMap.get(ChunkPos.asLong(x, z));
+        if (playerChunk == null) return false;
 
-        int px = x << 4;
-        int pz = z << 4;
+        playerChunk.getTickingChunkFuture().thenAccept(either -> {
+            either.left().ifPresent(chunk -> {
+                List<ServerPlayer> playersInRange = playerChunk.playerProvider.getPlayers(playerChunk.getPos(), false);
+                if (playersInRange.isEmpty()) return;
+                ClientboundLevelChunkWithLightPacket refreshPacket = new ClientboundLevelChunkWithLightPacket(chunk, world.getLightEngine(), null, null, true);
+                for (ServerPlayer player : playersInRange) {
+                    if (player.connection == null) continue;
 
-        // If there are more than 64 updates to a chunk at once, it will update all 'touched' sections within the chunk
-        // And will include biome data if all sections have been 'touched'
-        // This flags 65 blocks distributed across all the sections of the chunk, so that everything is sent, including biomes
-        int height = getMaxHeight() / 16;
-        for (int idx = 0; idx < 64; idx++) {
-            world.sendBlockUpdated(new BlockPos(px + (idx / height), ((idx % height) * 16), pz), Blocks.AIR.defaultBlockState(), Blocks.STONE.defaultBlockState(), 3);
-        }
-        world.sendBlockUpdated(new BlockPos(px + 15, (height * 16) - 1, pz + 15), Blocks.AIR.defaultBlockState(), Blocks.STONE.defaultBlockState(), 3);
+                    player.connection.send(refreshPacket);
+                }
+            });
+        });
 
         return true;
     }

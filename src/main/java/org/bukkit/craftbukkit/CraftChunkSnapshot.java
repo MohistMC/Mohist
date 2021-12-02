@@ -130,8 +130,8 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         validateChunkCoordinates(x, y, z);
 
-        PalettedContainer<net.minecraft.world.level.biome.Biome> biome = this.biome[getSectionIndex(y)];
-        return CraftBlock.biomeBaseToBiome((net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome>) biome.registry, biome.get(x >> 2, y >> 2, z >> 2));
+        PalettedContainer<net.minecraft.world.level.biome.Biome> biome = this.biome[getSectionIndex(y >> 2)];
+        return CraftBlock.biomeBaseToBiome((net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome>) biome.registry, biome.get(x >> 2, (y & 0xF) >> 2, z >> 2));
     }
 
     @Override
@@ -144,8 +144,8 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         validateChunkCoordinates(x, y, z);
 
-        PalettedContainer<net.minecraft.world.level.biome.Biome> biome = this.biome[getSectionIndex(y)];
-        return biome.get(x >> 2, y >> 2, z >> 2).getTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
+        PalettedContainer<net.minecraft.world.level.biome.Biome> biome = this.biome[getSectionIndex(y >> 2)];
+        return biome.get(x >> 2, (y & 0xF) >> 2, z >> 2).getTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
     }
 
     @Override

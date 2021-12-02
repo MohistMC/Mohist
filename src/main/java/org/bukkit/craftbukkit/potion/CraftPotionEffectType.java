@@ -8,7 +8,7 @@ public class CraftPotionEffectType extends PotionEffectType {
     private final MobEffect handle;
 
     public CraftPotionEffectType(MobEffect handle) {
-        super(MobEffect.getId(handle));
+        super(MobEffect.getId(handle), org.bukkit.craftbukkit.util.CraftNamespacedKey.fromMinecraft(net.minecraft.core.Registry.MOB_EFFECT.getKey(handle)));
         this.handle = handle;
     }
 
