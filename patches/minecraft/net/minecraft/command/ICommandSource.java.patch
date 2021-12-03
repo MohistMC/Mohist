@@ -22,10 +22,12 @@
     };
  
     void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_);
-@@ -28,4 +_,6 @@
+@@ -28,4 +_,8 @@
     boolean func_195040_b();
  
     boolean func_195041_r_();
 +
-+   CommandSender getBukkitSender(CommandSource wrapper);
++   default CommandSender getBukkitSender(CommandSource wrapper) {
++      return wrapper.func_197028_i().console;
++   }
  }
