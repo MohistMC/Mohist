@@ -40,29 +40,27 @@
     private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
        return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
     }
-@@ -282,7 +_,20 @@
+@@ -282,7 +_,19 @@
        return Registry.field_212629_r.func_241873_b(ResourceLocation.func_208304_a(p_220327_0_));
     }
  
--   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
-+   public final String id;
 +   // Paper start - timings
++   public static String id = "custom"; // Mohist
 +   public final co.aikar.timings.Timing tickTimer;
 +   public final co.aikar.timings.Timing inactiveTickTimer;
 +   public final co.aikar.timings.Timing passengerTickTimer;
 +   public final co.aikar.timings.Timing passengerInactiveTickTimer;
-+    // Paper end
-+    public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
-+       this(p_i231489_1_, p_i231489_2_, p_i231489_3_, p_i231489_4_, p_i231489_5_, p_i231489_6_, p_i231489_7_, p_i231489_8_, p_i231489_9_, p_i231489_10_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null, "custom");
-+    }
-+   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_, String id) { // Paper - add id
-+       this(p_i231489_1_, p_i231489_2_, p_i231489_3_, p_i231489_4_, p_i231489_5_, p_i231489_6_, p_i231489_7_, p_i231489_8_, p_i231489_9_, p_i231489_10_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null, id);
++   // Paper end
++
+    public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
++      this(p_i231489_1_, p_i231489_2_, p_i231489_3_, p_i231489_4_, p_i231489_5_, p_i231489_6_, p_i231489_7_, p_i231489_8_, p_i231489_9_, p_i231489_10_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null);
 +   }
-+   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory, String id) { // Paper - add id
++
++   public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
        this.field_200732_aK = p_i231489_1_;
        this.field_220355_ba = p_i231489_2_;
        this.field_225438_be = p_i231489_6_;
-@@ -293,6 +_,17 @@
+@@ -293,6 +_,16 @@
        this.field_220359_bi = p_i231489_8_;
        this.field_233594_bl_ = p_i231489_9_;
        this.field_233595_bm_ = p_i231489_10_;
@@ -71,7 +69,6 @@
 +      this.updateIntervalSupplier = updateIntervalSupplier;
 +      this.customClientFactory = customClientFactory;
 +      // Paper start - timings
-+      this.id = id;
 +      this.tickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "tick");
 +      this.inactiveTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "inactiveTick");
 +      this.passengerTickTimer = co.aikar.timings.MinecraftTimings.getEntityTimings(id, "passengerTick");
@@ -181,7 +178,7 @@
        private Builder(EntityType.IFactory<T> p_i50479_1_, EntityClassification p_i50479_2_) {
           this.field_200709_a = p_i50479_1_;
           this.field_220324_b = p_i50479_2_;
-@@ -587,16 +_,46 @@
+@@ -587,16 +_,48 @@
           return this;
        }
  
@@ -215,7 +212,9 @@
           }
  
 -         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, this.field_225436_f, this.field_233603_c_, this.field_220326_f, this.field_233604_h_, this.field_233605_i_);
-+         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, this.field_225436_f, this.field_233603_c_, this.field_220326_f, this.field_233604_h_, this.field_233605_i_, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory, p_206830_1_);
++         id = p_206830_1_; // Mohist
++
++         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, this.field_225436_f, this.field_233603_c_, this.field_220326_f, this.field_233604_h_, this.field_233605_i_, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
        }
     }
  
