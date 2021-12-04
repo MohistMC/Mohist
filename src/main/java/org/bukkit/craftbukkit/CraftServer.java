@@ -981,8 +981,7 @@ public final class CraftServer implements Server {
 
         boolean hardcore = creator.hardcore();
 
-        RegistryReadOps<Tag> registryreadops = RegistryReadOps.createAndLoad((DynamicOps) NbtOps.INSTANCE, console.resources.getResourceManager(), console.registryHolder);
-        PrimaryLevelData worlddata = (PrimaryLevelData) worldSession.getDataTag((DynamicOps) registryreadops, console.datapackconfiguration);
+        PrimaryLevelData worlddata = (PrimaryLevelData) worldSession.getDataTag(console.registryreadops, console.datapackconfiguration);
 
         LevelSettings worldSettings;
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)

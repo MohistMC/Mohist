@@ -10,6 +10,23 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
+@@ -63,6 +_,8 @@
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
+ import net.minecraft.gametest.framework.GameTestTicker;
++import net.minecraft.nbt.NbtOps;
++import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.TextComponent;
+ import net.minecraft.network.chat.TranslatableComponent;
+@@ -70,6 +_,7 @@
+ import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
+ import net.minecraft.network.protocol.status.ServerStatus;
+ import net.minecraft.obfuscate.DontObfuscate;
++import net.minecraft.resources.RegistryReadOps;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.bossevents.CustomBossEvents;
 @@ -140,15 +_,7 @@
  import net.minecraft.world.level.levelgen.WorldGenSettings;
  import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -54,12 +71,13 @@
     @Nullable
     private String f_129739_;
     public ServerResources f_129740_;
-@@ -252,9 +_,23 @@
+@@ -252,9 +_,24 @@
     protected final WorldData f_129749_;
     private volatile boolean f_195494_;
  
 +   // CraftBukkit start
-+   public DataPackConfig datapackconfiguration;
++   public final DataPackConfig datapackconfiguration;
++   public final RegistryReadOps<Tag> registryreadops;
 +   public org.bukkit.craftbukkit.CraftServer server;
 +   public OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
@@ -79,11 +97,13 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -293,6 +_,7 @@
+@@ -293,6 +_,9 @@
        this.f_129741_ = new StructureManager(p_129776_.m_136178_(), p_129771_, p_129775_);
        this.f_129725_ = p_129769_;
        this.f_129738_ = Util.m_183991_();
 +      this.options = options;
++      this.datapackconfiguration = null;
++      this.registryreadops = RegistryReadOps.m_179866_(NbtOps.f_128958_, p_129776_.m_136178_(), p_129770_);
     }
  
     private void m_129841_(DimensionDataStorage p_129842_) {
