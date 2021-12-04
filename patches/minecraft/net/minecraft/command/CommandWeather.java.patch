@@ -14,7 +14,6 @@
              World world = p_184881_1_.field_71305_c[0];
 -            WorldInfo worldinfo = world.func_72912_H();
 +            WorldInfo worldinfo = p_184881_2_ instanceof EntityPlayerMP ? p_184881_2_.func_130014_f_().func_72912_H() : world.func_72912_H();
-\ No newline at end of file
  
              if ("clear".equalsIgnoreCase(p_184881_3_[0]))
              {

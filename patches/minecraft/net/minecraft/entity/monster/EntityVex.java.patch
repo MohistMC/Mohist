@@ -15,7 +15,6 @@
 -            EntityVex.this.func_70624_b(EntityVex.this.field_190665_b.func_70638_az());
 +            // EntityVex.this.setAttackTarget(EntityVex.this.owner.getAttackTarget());
 +            EntityVex.this.setGoalTarget(EntityVex.this.field_190665_b.func_70638_az(), EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true);
-\ No newline at end of file
              super.func_75249_e();
          }
      }

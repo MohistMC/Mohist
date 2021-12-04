@@ -82,7 +82,6 @@
              BlockPos field_180111_a;
              long field_150844_d;
 +            final long getTime() { return this.field_150844_d; } // Paper - OBFHELPER;
-\ No newline at end of file
  
              public Toggle(BlockPos p_i45688_1_, long p_i45688_2_)
              {

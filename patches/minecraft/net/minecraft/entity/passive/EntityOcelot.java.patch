@@ -71,7 +71,6 @@
                  entityocelot.func_70873_a(-24000);
 -                this.field_70170_p.func_72838_d(entityocelot);
 +                this.field_70170_p.addEntity(entityocelot, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.OCELOT_BABY);
-\ No newline at end of file
              }
          }
  

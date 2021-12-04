@@ -42,7 +42,6 @@
 +            if (block == null) throw new IllegalArgumentException("Block registered to block color handler cannot be null!");
 +            if (block.getRegistryName() == null) throw new IllegalArgumentException("Block must be registered before assigning color handler.");
 +            this.blockColorMap.put(block.delegate, p_186722_1_);
-\ No newline at end of file
          }
      }
  }

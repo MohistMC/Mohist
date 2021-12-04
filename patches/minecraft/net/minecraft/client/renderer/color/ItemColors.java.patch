@@ -44,7 +44,6 @@
 +            if (item == null) throw new IllegalArgumentException("Item registered to item color handler cannot be null!");
 +            if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning color handler.");
 +            this.itemColorMap.put(item.delegate, p_186730_1_);
-\ No newline at end of file
          }
      }
  }

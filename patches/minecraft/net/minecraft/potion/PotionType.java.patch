@@ -11,7 +11,6 @@
      private static final ResourceLocation field_185177_b = new ResourceLocation("empty");
 -    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(field_185177_b);
 +    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = net.minecraftforge.registries.GameData.getWrapperDefaulted(PotionType.class);
-\ No newline at end of file
      private static int field_185178_c;
      private final String field_185179_d;
      private final ImmutableList<PotionEffect> field_185180_e;

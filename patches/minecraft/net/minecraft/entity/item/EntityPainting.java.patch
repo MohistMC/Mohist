@@ -5,7 +5,6 @@
      {
          super(p_i1599_1_);
 +        this.field_70522_e = EnumArt.values()[this.field_70146_Z.nextInt(EnumArt.values().length)]; // CraftBukkit - generate a non-null painting
-\ No newline at end of file
      }
  
      public EntityPainting(World p_i45849_1_, BlockPos p_i45849_2_, EnumFacing p_i45849_3_)

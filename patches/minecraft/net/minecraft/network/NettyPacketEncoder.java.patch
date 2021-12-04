@@ -18,7 +18,6 @@
                  {
 -                    field_150798_a.error(throwable);
 +                    throw throwable; // Forge: throw this instead of logging it, to prevent corrupt packets from being sent to the client where they are much harder to debug.
-\ No newline at end of file
                  }
              }
          }

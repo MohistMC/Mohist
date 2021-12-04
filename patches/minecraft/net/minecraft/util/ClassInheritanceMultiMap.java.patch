@@ -16,7 +16,6 @@
      {
 -        return (Iterator<T>)(this.field_181745_e.isEmpty() ? Collections.emptyIterator() : Iterators.unmodifiableIterator(this.field_181745_e.iterator()));
 +        return (Iterator<T>)(this.field_181745_e.isEmpty() ? Collections.emptyIterator() : this.field_181745_e.iterator());
-\ No newline at end of file
      }
  
      public int size()

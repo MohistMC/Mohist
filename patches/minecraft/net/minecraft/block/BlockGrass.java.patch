@@ -84,7 +84,6 @@
 -                                p_176474_1_.func_180501_a(blockpos1, iblockstate1, 3);
 +//                                worldIn.setBlockState(blockpos1, iblockstate1, 3);
 +                                CraftEventFactory.handleBlockGrowEvent(p_176474_1_, blockpos1.func_177958_n(), blockpos1.func_177956_o(), blockpos1.func_177952_p(), iblockstate1.func_177230_c(), iblockstate1.func_177230_c().func_176201_c(iblockstate1));
-\ No newline at end of file
                              }
                          }
                      }

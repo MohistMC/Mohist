@@ -6,7 +6,6 @@
  
 -            if (iblockstate.func_185904_a() != Material.field_151579_a && iblockstate.func_177230_c() != Blocks.field_150348_b)
 +            if (!iblockstate.func_177230_c().isAir(iblockstate, p_180709_1_, p_180709_3_) && iblockstate.func_177230_c() != Blocks.field_150348_b)
-\ No newline at end of file
              {
                  return false;
              }

@@ -13,7 +13,6 @@
      public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
      {
 +        this.timestamp = System.currentTimeMillis(); // Spigot
-\ No newline at end of file
          this.field_179725_b = p_148837_1_.func_179259_c();
          this.field_149579_d = (EnumFacing)p_148837_1_.func_179257_a(EnumFacing.class);
          this.field_187027_c = (EnumHand)p_148837_1_.func_179257_a(EnumHand.class);

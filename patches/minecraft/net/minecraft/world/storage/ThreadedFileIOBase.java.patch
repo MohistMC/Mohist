@@ -80,7 +80,6 @@
 -            Thread.sleep(10L);
 +        while (this.queuedChunkCounter.get() != 0) {
 +            Thread.sleep(9L);
-\ No newline at end of file
          }
  
          this.field_75738_e = false;

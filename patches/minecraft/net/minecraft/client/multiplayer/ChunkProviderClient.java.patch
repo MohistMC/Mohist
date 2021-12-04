@@ -5,7 +5,6 @@
          Chunk chunk = new Chunk(this.field_73235_d, p_73158_1_, p_73158_2_);
          this.field_73236_b.put(ChunkPos.func_77272_a(p_73158_1_, p_73158_2_), chunk);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
-\ No newline at end of file
          chunk.func_177417_c(true);
          return chunk;
      }

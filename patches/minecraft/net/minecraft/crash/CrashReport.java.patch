@@ -129,7 +129,6 @@
              {
 -                field_147150_a.error("Could not save crash report to {}", p_147149_1_, throwable);
 +                field_147150_a.error(Message.getFormatString("minecraft.crashreport17", new Object[] {p_147149_1_}), throwable);
-\ No newline at end of file
                  flag1 = false;
              }
              finally

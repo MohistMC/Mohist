@@ -216,4 +216,9 @@ public class MohistConfig extends ConfigBase {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         return yml.getBoolean(path, defValue);
     }
+
+    public static String getString0(String path, String defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        return yml.getString(path, defValue);
+    }
 }

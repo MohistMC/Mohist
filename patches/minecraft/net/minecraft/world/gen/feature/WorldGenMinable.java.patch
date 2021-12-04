@@ -7,7 +7,6 @@
 -                                    if (this.field_175919_c.apply(p_180709_1_.func_180495_p(blockpos)))
 +                                    IBlockState state = p_180709_1_.func_180495_p(blockpos);
 +                                    if (state.func_177230_c().isReplaceableOreGen(state, p_180709_1_, blockpos, this.field_175919_c))
-\ No newline at end of file
                                      {
                                          p_180709_1_.func_180501_a(blockpos, this.field_175920_a, 2);
                                      }

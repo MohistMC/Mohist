@@ -54,7 +54,6 @@
 +                String type = net.minecraftforge.common.ForgeHooks.getLootEntryType(p_serialize_1_);
 +                if (type != null) jsonobject.addProperty("type", type);
 +                else
-\ No newline at end of file
                  if (p_serialize_1_ instanceof LootEntryItem)
                  {
                      jsonobject.addProperty("type", "item");

@@ -188,7 +188,6 @@
 +                if (entry != null) return (EntityLiving) entry.newInstance(world);
 +                return this.field_76300_b.getConstructor(World.class).newInstance(world);
 +            }
-\ No newline at end of file
          }
  
      public static enum TempCategory

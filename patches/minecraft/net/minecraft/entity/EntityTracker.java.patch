@@ -57,17 +57,15 @@
          if (p_72790_1_ instanceof EntityPlayerMP)
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)p_72790_1_;
-@@ -284,8 +289,8 @@
+@@ -284,7 +289,7 @@
      public void func_72788_a()
      {
          List<EntityPlayerMP> list = Lists.<EntityPlayerMP>newArrayList();
 -
--        for (EntityTrackerEntry entitytrackerentry : this.field_72793_b)
 +        field_72795_a.timings.tracker1.startTiming(); // Spigot
-+        for (EntityTrackerEntry entitytrackerentry : Sets.newHashSet(this.field_72793_b))
+         for (EntityTrackerEntry entitytrackerentry : this.field_72793_b)
          {
              entitytrackerentry.func_73122_a(this.field_72795_a.field_73010_i);
- 
 @@ -299,7 +304,9 @@
                  }
              }
@@ -109,7 +107,6 @@
 +
 +    /* ======================================== FORGE END   =====================================*/
 +
-\ No newline at end of file
      public void func_151248_b(Entity p_151248_1_, Packet<?> p_151248_2_)
      {
          EntityTrackerEntry entitytrackerentry = this.field_72794_c.func_76041_a(p_151248_1_.func_145782_y());

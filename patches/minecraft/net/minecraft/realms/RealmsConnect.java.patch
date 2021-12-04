@@ -14,7 +14,6 @@
  
 -                    RealmsConnect.this.connection.func_179290_a(new C00Handshake(p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN));
 +                    RealmsConnect.this.connection.func_179290_a(new C00Handshake(p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN, true));
-\ No newline at end of file
  
                      if (RealmsConnect.this.aborted)
                      {

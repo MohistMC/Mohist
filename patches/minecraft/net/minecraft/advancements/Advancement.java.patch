@@ -5,7 +5,6 @@
      private final Set<Advancement> field_192082_g = Sets.<Advancement>newLinkedHashSet();
      private final ITextComponent field_193125_h;
 +    public final org.bukkit.advancement.Advancement bukkit = new org.bukkit.craftbukkit.v1_12_R1.advancement.CraftAdvancement(this); // CraftBukkit
-\ No newline at end of file
  
      public Advancement(ResourceLocation p_i47472_1_, @Nullable Advancement p_i47472_2_, @Nullable DisplayInfo p_i47472_3_, AdvancementRewards p_i47472_4_, Map<String, Criterion> p_i47472_5_, String[][] p_i47472_6_)
      {

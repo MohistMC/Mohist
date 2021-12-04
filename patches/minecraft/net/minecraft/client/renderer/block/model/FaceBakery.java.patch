@@ -100,7 +100,6 @@
 -            return p_188011_4_.func_177520_a(p_188011_2_, p_188011_3_);
 +            net.minecraftforge.client.ForgeHooksClient.transform(p_188011_1_, p_188011_4_.getMatrix());
 +            return p_188011_4_.rotate(p_188011_2_, p_188011_3_);
-\ No newline at end of file
          }
      }
  

@@ -6,7 +6,6 @@
      {
 -        this.field_75299_d.func_70624_b(this.field_75313_b);
 +        this.field_75299_d.setGoalTarget(this.field_75313_b, org.bukkit.event.entity.EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true);
-\ No newline at end of file
          EntityLivingBase entitylivingbase = this.field_75314_a.func_70902_q();
  
          if (entitylivingbase != null)

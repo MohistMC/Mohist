@@ -15,7 +15,6 @@
                      pathnodetype = PathNodeType.DAMAGE_CACTUS;
                  }
 +                else if (pathnodetype1 == PathNodeType.DAMAGE_OTHER) pathnodetype = PathNodeType.DAMAGE_OTHER;
-\ No newline at end of file
                  else
                  {
                      pathnodetype = pathnodetype1 != PathNodeType.WALKABLE && pathnodetype1 != PathNodeType.OPEN && pathnodetype1 != PathNodeType.WATER ? PathNodeType.WALKABLE : PathNodeType.OPEN;

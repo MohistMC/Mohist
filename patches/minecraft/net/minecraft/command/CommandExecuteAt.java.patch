@@ -29,7 +29,6 @@
 +                if (var23 instanceof CommandException) {
 +                    throw (CommandException) var23;
 +                }
-\ No newline at end of file
                  throw new CommandException("commands.execute.failed", new Object[] {s, entity.func_70005_c_()});
              }
          }

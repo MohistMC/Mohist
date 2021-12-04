@@ -13,7 +13,6 @@
 -
 +            // Forge: moved this call down, fixes incorrect offset while sneaking.
 +            this.func_191361_a(p_188358_4_);
-\ No newline at end of file
              GlStateManager.func_179114_b(-90.0F, 1.0F, 0.0F, 0.0F);
              GlStateManager.func_179114_b(180.0F, 0.0F, 1.0F, 0.0F);
              boolean flag = p_188358_4_ == EnumHandSide.LEFT;

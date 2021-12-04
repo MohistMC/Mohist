@@ -31,7 +31,6 @@
              this.field_146321_E.field_146125_m = this.field_146344_y;
 -            this.field_146322_F.field_146125_m = this.field_146344_y && (WorldType.field_77139_a[this.field_146331_K] == WorldType.field_77138_c || WorldType.field_77139_a[this.field_146331_K] == WorldType.field_180271_f);
 +            this.field_146322_F.field_146125_m = this.field_146344_y && WorldType.field_77139_a[this.field_146331_K].isCustomizable();
-\ No newline at end of file
          }
  
          this.func_146319_h();

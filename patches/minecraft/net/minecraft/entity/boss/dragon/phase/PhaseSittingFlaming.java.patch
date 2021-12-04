@@ -6,7 +6,6 @@
  
 -            while (this.field_188661_a.field_70170_p.func_175623_d(blockpos$mutableblockpos))
 +            while (this.field_188661_a.field_70170_p.func_175623_d(blockpos$mutableblockpos) && d2 >= 0) //Forge: Fix infinite loop if ground is missing.
-\ No newline at end of file
              {
                  --d2;
                  blockpos$mutableblockpos.func_181079_c(MathHelper.func_76128_c(d0), MathHelper.func_76128_c(d2), MathHelper.func_76128_c(d1));

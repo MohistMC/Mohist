@@ -8,7 +8,6 @@
 +        {
 +            throw new RuntimeException("StructureComponent \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +        }
-\ No newline at end of file
          NBTTagCompound nbttagcompound = new NBTTagCompound();
          nbttagcompound.func_74778_a("id", MapGenStructureIO.func_143036_a(this));
          nbttagcompound.func_74782_a("BB", this.field_74887_e.func_151535_h());

@@ -22,7 +22,6 @@
 -            this.field_70170_p.func_72838_d(entityskeleton);
 +            // this.world.spawnEntity(entityskeleton);
 +            this.field_70170_p.addEntity(entityskeleton, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY);
-\ No newline at end of file
              entityskeleton.func_184220_m(this);
          }
  

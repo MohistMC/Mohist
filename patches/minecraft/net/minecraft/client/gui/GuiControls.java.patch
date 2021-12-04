@@ -45,7 +45,6 @@
          {
 -            if (keybinding.func_151463_i() != keybinding.func_151469_h())
 +            if (!keybinding.isSetToDefaultValue())
-\ No newline at end of file
              {
                  flag = true;
                  break;

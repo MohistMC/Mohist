@@ -19,7 +19,6 @@
 +            GameProfile gameprofile = p_184881_1_.func_71266_T() || MohistConfig.isProxyOnlineMode() ? p_184881_1_.func_152358_ax().func_152655_a(p_184881_3_[0]) : new GameProfile(EntityPlayer.func_175147_b(p_184881_3_[0]), p_184881_3_[0]);
  
 +
-\ No newline at end of file
              if (gameprofile == null)
              {
                  throw new CommandException("commands.op.failed", new Object[] {p_184881_3_[0]});

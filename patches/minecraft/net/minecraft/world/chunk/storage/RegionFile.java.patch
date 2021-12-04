@@ -96,7 +96,6 @@
                      this.func_76712_a(j, p_76706_3_, p_76706_4_);
 -                    this.func_76711_a(p_76706_1_, p_76706_2_, j << 8 | l);
 +                    this.func_76711_a(p_76706_1_, p_76706_2_, j << 8 | (l > 255 ? 255 : l));
-\ No newline at end of file
                  }
              }
  

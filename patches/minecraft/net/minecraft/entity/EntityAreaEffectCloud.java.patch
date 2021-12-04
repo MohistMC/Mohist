@@ -117,7 +117,6 @@
 +                            for (LivingEntity entity : event.getAffectedEntities()) {
 +                                if (entity instanceof CraftLivingEntity) {
 +                                    EntityLivingBase entitylivingbase = ((CraftLivingEntity) entity).getHandle();
-\ No newline at end of file
                                      this.field_184504_g.put(entitylivingbase, Integer.valueOf(this.field_70173_aa + this.field_184507_at));
  
                                      for (PotionEffect potioneffect : potions)

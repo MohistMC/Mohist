@@ -14,7 +14,6 @@
          field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.FERN);
  
 +        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, new net.minecraft.util.math.ChunkPos(p_180624_3_), net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
-\ No newline at end of file
          for (int i1 = 0; i1 < 7; ++i1)
          {
              int j1 = p_180624_2_.nextInt(16) + 8;

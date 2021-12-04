@@ -163,7 +163,6 @@
 +        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(p_76797_1_, p_76797_2_, field_76831_p, field_180294_c, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.LAPIS))
          this.func_76793_b(p_76797_1_, p_76797_2_, this.field_180293_d.field_177820_ax, this.field_76831_p, this.field_180293_d.field_177807_ay, this.field_180293_d.field_177805_az);
 +        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Post(p_76797_1_, p_76797_2_, field_180294_c));
-\ No newline at end of file
      }
  
      protected void func_76795_a(World p_76795_1_, Random p_76795_2_, int p_76795_3_, WorldGenerator p_76795_4_, int p_76795_5_, int p_76795_6_)

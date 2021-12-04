@@ -44,7 +44,6 @@
      protected void func_184567_a(RayTraceResult p_184567_1_)
      {
 +        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callProjectileHitEvent(this, p_184567_1_); // CraftBukkit
-\ No newline at end of file
          if (p_184567_1_.field_72308_g == null)
          {
              ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.EXPLOSION_LARGE, this.field_70165_t, this.field_70163_u, this.field_70161_v, 2, 0.2D, 0.2D, 0.2D, 0.0D);

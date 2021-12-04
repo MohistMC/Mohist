@@ -38,7 +38,6 @@
                  if (ibehaviordispenseitem != IBehaviorDispenseItem.field_82483_a)
                  {
 +                    eventFired = false; // CraftBukkit - reset event status
-\ No newline at end of file
                      tileentitydispenser.func_70299_a(i, ibehaviordispenseitem.func_82482_a(blocksourceimpl, itemstack));
                  }
              }

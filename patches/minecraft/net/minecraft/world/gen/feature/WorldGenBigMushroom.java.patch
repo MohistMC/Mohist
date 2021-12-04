@@ -29,7 +29,6 @@
  
 -                        if (!iblockstate.func_185913_b())
 +                        if (iblockstate.func_177230_c().canBeReplacedByLeaves(iblockstate, p_180709_1_, p_180709_3_.func_177981_b(i3)))
-\ No newline at end of file
                          {
                              this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(i3), block.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, BlockHugeMushroom.EnumType.STEM));
                          }

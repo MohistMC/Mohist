@@ -34,7 +34,6 @@
              String s1 = this.field_186844_a.func_146179_b().substring(this.field_186844_a.func_146197_a(-1, this.field_186844_a.func_146198_h(), false));
              String s2 = org.apache.commons.lang3.StringUtils.getCommonPrefix(p_186840_1_);
 +            s2 = net.minecraft.util.text.TextFormatting.func_110646_a(s2);
-\ No newline at end of file
  
              if (!s2.isEmpty() && !s1.equalsIgnoreCase(s2))
              {

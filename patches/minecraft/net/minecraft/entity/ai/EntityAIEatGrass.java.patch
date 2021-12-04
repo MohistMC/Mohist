@@ -24,7 +24,6 @@
                  {
 -                    if (this.field_151501_c.func_82736_K().func_82766_b("mobGriefing"))
 +                    if (!CraftEventFactory.callEntityChangeBlockEvent(this.field_151500_b, this.field_151500_b.field_70170_p.getWorld().getBlockAt(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p()), Material.AIR, !net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_151501_c, this.field_151500_b)).isCancelled())
-\ No newline at end of file
                      {
                          this.field_151501_c.func_175718_b(2001, blockpos1, Block.func_149682_b(Blocks.field_150349_c));
                          this.field_151501_c.func_180501_a(blockpos1, Blocks.field_150346_d.func_176223_P(), 2);

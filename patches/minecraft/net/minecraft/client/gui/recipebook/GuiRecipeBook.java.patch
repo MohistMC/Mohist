@@ -24,7 +24,6 @@
  
 -                if (ingredient != Ingredient.field_193370_a)
 +                if (ingredient.func_193365_a().length > 0)
-\ No newline at end of file
                  {
                      Slot slot = p_193951_2_.get(l);
                      this.field_191915_z.func_194187_a(ingredient, slot.field_75223_e, slot.field_75221_f);

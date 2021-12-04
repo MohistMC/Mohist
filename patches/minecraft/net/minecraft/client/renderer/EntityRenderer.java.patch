@@ -291,7 +291,6 @@
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);
              }
 +            net.minecraftforge.client.ForgeHooksClient.onFogRender(this, entity, iblockstate, p_78468_2_, p_78468_1_, f);
-\ No newline at end of file
          }
  
          GlStateManager.func_179142_g();

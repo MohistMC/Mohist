@@ -19,7 +19,6 @@
 +        {
 +            latch.await();
 +        } catch (InterruptedException e){} //Prevent logging until after constructor has ended.
-\ No newline at end of file
          if (!SwingUtilities.isEventDispatchThread())
          {
              SwingUtilities.invokeLater(new Runnable()

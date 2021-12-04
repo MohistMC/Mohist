@@ -20,7 +20,6 @@
      public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_)
      {
 +        if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
-\ No newline at end of file
          this.field_145824_a.func_175574_a(p_184230_1_);
          return false;
      }

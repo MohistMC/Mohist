@@ -232,7 +232,6 @@
  
 -            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
 +            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
-\ No newline at end of file
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {

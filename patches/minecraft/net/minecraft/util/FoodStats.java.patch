@@ -117,7 +117,6 @@
 -                this.func_75113_a(6.0F);
 +                p_75118_1_.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED);
 +                this.func_75113_a(entityhuman == null ? 6.0F : entityhuman.field_70170_p.spigotConfig.regenExhaustion); // Spigot - Change to use configurable value
-\ No newline at end of file
                  this.field_75123_d = 0;
              }
          }

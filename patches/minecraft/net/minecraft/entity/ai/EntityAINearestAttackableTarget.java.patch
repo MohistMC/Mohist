@@ -6,7 +6,6 @@
      {
 -        this.field_75299_d.func_70624_b(this.field_75309_a);
 +        this.field_75299_d.setGoalTarget(this.field_75309_a, field_75309_a instanceof EntityPlayer ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
-\ No newline at end of file
          super.func_75249_e();
      }
  

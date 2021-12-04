@@ -29,7 +29,6 @@
 -            this.field_75075_a.add(MapGenStructureIO.func_143032_b(nbttaglist.func_150305_b(i), p_143020_1_));
 +            StructureComponent tmp = MapGenStructureIO.func_143032_b(nbttaglist.func_150305_b(i), p_143020_1_);
 +            if (tmp != null) this.field_75075_a.add(tmp); //Forge: Prevent NPEs further down the line when a componenet can't be loaded.
-\ No newline at end of file
          }
  
          this.func_143017_b(p_143020_2_);

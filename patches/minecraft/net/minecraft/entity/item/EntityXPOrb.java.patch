@@ -196,5 +196,4 @@
 +        double floor = Math.floor(value);
 +        return (int) floor + (Math.random() < value - floor ? 1 : 0);
 +    }
-\ No newline at end of file
  }

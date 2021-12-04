@@ -33,7 +33,6 @@
          i = 31 * i + this.field_177356_c.hashCode();
          i = 31 * i + this.field_177353_d;
 +        this.hashCode = i;
-\ No newline at end of file
          return i;
      }
  }

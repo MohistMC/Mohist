@@ -59,7 +59,6 @@
  
 -        if (material == Material.field_151579_a || material == Material.field_151584_j)
 +        if (state.func_177230_c().isAir(state, p_175924_1_, p_175924_2_) || state.func_177230_c().isLeaves(state, p_175924_1_, p_175924_2_))
-\ No newline at end of file
          {
              this.func_175903_a(p_175924_1_, p_175924_2_, field_181644_b);
          }

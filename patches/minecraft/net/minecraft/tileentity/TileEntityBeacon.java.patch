@@ -217,7 +217,6 @@
      {
 -        return p_94041_2_.func_77973_b() == Items.field_151166_bC || p_94041_2_.func_77973_b() == Items.field_151045_i || p_94041_2_.func_77973_b() == Items.field_151043_k || p_94041_2_.func_77973_b() == Items.field_151042_j;
 +        return p_94041_2_.func_77973_b() != null && p_94041_2_.func_77973_b().isBeaconPayment(p_94041_2_);
-\ No newline at end of file
      }
  
      public String func_174875_k()

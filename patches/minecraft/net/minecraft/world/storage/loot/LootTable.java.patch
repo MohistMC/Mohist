@@ -70,7 +70,6 @@
 +    }
 +    //======================== FORGE END ===============================================
 +
-\ No newline at end of file
      public static class Serializer implements JsonDeserializer<LootTable>, JsonSerializer<LootTable>
          {
              public LootTable deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException

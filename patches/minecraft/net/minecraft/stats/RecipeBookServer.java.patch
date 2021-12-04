@@ -15,6 +15,5 @@
      {
 -        p_192826_1_.field_71135_a.func_147359_a(new SPacketRecipeBook(SPacketRecipeBook.State.INIT, this.func_194079_d(), this.func_194080_e(), this.field_192818_b, this.field_192819_c));
 +        net.minecraftforge.common.ForgeHooks.sendRecipeBook(p_192826_1_.field_71135_a, SPacketRecipeBook.State.INIT, this.func_194079_d(), this.func_194080_e(), this.field_192818_b, this.field_192819_c);
-\ No newline at end of file
      }
  }

@@ -1,5 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
+@@ -81,7 +81,7 @@
+         }
+         catch (Throwable throwable)
+         {
+-            final ITextureObject p_110579_2_f = p_110579_2_;
++            final ITextureObject textureObjf = p_110579_2_;
+             CrashReport crashreport = CrashReport.func_85055_a(throwable, "Registering texture");
+             CrashReportCategory crashreportcategory = crashreport.func_85058_a("Resource location being registered");
+             crashreportcategory.func_71507_a("Resource location", p_110579_1_);
+@@ -89,7 +89,7 @@
+             {
+                 public String call() throws Exception
+                 {
+-                    return p_110579_2_f.getClass().getName();
++                    return textureObjf.getClass().getName();
+                 }
+             });
+             throw new ReportedException(crashreport);
 @@ -137,17 +137,20 @@
  
          if (itextureobject != null)
@@ -26,6 +44,5 @@
              }
          }
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
-\ No newline at end of file
      }
  }

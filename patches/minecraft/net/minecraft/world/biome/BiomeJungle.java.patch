@@ -13,7 +13,6 @@
          WorldGenVines worldgenvines = new WorldGenVines();
  
 +        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, new net.minecraft.util.math.ChunkPos(p_180624_3_), net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
-\ No newline at end of file
          for (int j1 = 0; j1 < 50; ++j1)
          {
              k = p_180624_2_.nextInt(16) + 8;

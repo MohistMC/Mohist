@@ -18,6 +18,5 @@
      {
 -        return new LootEntryEmpty(p_186372_2_, p_186372_3_, p_186372_4_);
 +        return new LootEntryEmpty(p_186372_2_, p_186372_3_, p_186372_4_, net.minecraftforge.common.ForgeHooks.readLootEntryName(p_186372_0_, "empty"));
-\ No newline at end of file
      }
  }

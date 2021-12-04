@@ -7,7 +7,6 @@
 +            org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.blockDamage = p_176199_1_.getWorld().getBlockAt(p_176199_2_.func_177958_n(), p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p());
              p_176199_3_.func_70097_a(DamageSource.field_190095_e, 1.0F);
 +            org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.blockDamage = null;
-\ No newline at end of file
          }
  
          super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);

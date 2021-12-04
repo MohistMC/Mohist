@@ -18,7 +18,6 @@
 -        }
 +        IBlockState state = p_176594_1_.func_180495_p(p_176594_2_);
 +        return state.func_177230_c().canPlaceTorchOnTop(state, p_176594_1_, p_176594_2_);
-\ No newline at end of file
      }
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)

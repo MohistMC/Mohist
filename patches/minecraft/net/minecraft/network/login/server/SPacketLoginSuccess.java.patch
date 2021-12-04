@@ -6,7 +6,6 @@
          String s1 = p_148837_1_.func_150789_c(16);
 -        UUID uuid = UUID.fromString(s);
 +        UUID uuid = s.length() > 0 ? UUID.fromString(s) : null;
-\ No newline at end of file
          this.field_149602_a = new GameProfile(uuid, s1);
      }
  

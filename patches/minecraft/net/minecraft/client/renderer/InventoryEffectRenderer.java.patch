@@ -35,7 +35,6 @@
  
 +                potion.renderInventoryEffect(potioneffect, this, i, j, this.field_73735_i);
 +                if (!potion.shouldRenderInvText(potioneffect)) { j += l; continue; }
-\ No newline at end of file
                  String s1 = I18n.func_135052_a(potion.func_76393_a());
  
                  if (potioneffect.func_76458_c() == 1)

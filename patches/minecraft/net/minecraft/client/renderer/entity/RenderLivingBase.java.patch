@@ -67,7 +67,6 @@
              }
          }
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Post<T>(p_177067_1_, this, p_177067_2_, p_177067_4_, p_177067_6_));
-\ No newline at end of file
      }
  
      protected boolean func_177070_b(T p_177070_1_)
