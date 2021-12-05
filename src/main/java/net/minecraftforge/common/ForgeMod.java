@@ -179,7 +179,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public void preInit(FMLCommonSetupEvent evt)
     {
-        VersionChecker.startVersionCheck();
+        // VersionChecker.startVersionCheck(); Mohist
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
