@@ -4,7 +4,7 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
  
  public abstract class Player extends LivingEntity {
 +   public static final String PERSISTED_NBT_TAG = "PlayerPersisted";

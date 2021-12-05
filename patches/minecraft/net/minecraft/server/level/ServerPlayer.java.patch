@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogManager.getLogger();

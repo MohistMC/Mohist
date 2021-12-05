@@ -4,7 +4,7 @@
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftMerchant;
  
  public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {
     private static final EntityDataAccessor<Integer> f_35262_ = SynchedEntityData.m_135353_(AbstractVillager.class, EntityDataSerializers.f_135028_);

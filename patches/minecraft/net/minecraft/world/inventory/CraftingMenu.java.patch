@@ -4,8 +4,8 @@
  import net.minecraft.world.item.crafting.RecipeType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150539_ = 0;

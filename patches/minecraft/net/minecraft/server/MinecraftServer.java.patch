@@ -44,12 +44,14 @@
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
  import net.minecraft.world.level.storage.loot.LootTables;
  import net.minecraft.world.level.storage.loot.PredicateManager;
-@@ -157,6 +_,8 @@
+@@ -157,6 +_,10 @@
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
++import org.bukkit.craftbukkit.Main;
++import org.bukkit.event.server.ServerLoadEvent;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
     private static final Logger f_129750_ = LogManager.getLogger();
@@ -78,7 +80,7 @@
 +   // CraftBukkit start
 +   public final DataPackConfig datapackconfiguration;
 +   public final RegistryReadOps<Tag> registryreadops;
-+   public org.bukkit.craftbukkit.CraftServer server;
++   public org.bukkit.craftbukkit.v1_18_R1.CraftServer server;
 +   public OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
@@ -97,13 +99,36 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -293,6 +_,9 @@
+@@ -293,6 +_,32 @@
        this.f_129741_ = new StructureManager(p_129776_.m_136178_(), p_129771_, p_129775_);
        this.f_129725_ = p_129769_;
        this.f_129738_ = Util.m_183991_();
 +      this.options = options;
 +      this.datapackconfiguration = null;
++      this.vanillaCommandDispatcher = p_129776_.f_136146_; // CraftBukkit
 +      this.registryreadops = RegistryReadOps.m_179866_(NbtOps.f_128958_, p_129776_.m_136178_(), p_129770_);
++      // Try to see if we're actually running in a terminal, disable jline if not
++      if (System.console() == null && System.getProperty("jline.terminal") == null) {
++         System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++         org.bukkit.craftbukkit.Main.useJline = false;
++      }
++
++      try {
++         reader = new ConsoleReader(System.in, System.out);
++         reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
++      } catch (Throwable e) {
++         try {
++            // Try again with jline disabled for Windows users without C++ 2008 Redistributable
++            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++            System.setProperty("user.language", "en");
++            Main.useJline = false;
++            reader = new ConsoleReader(System.in, System.out);
++            reader.setExpandEvents(false);
++         } catch (IOException ex) {
++            f_129750_.warn((String) null, ex);
++         }
++      }
++      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_18_R1.util.ServerShutdownThread(this));
     }
  
     private void m_129841_(DimensionDataStorage p_129842_) {
@@ -115,13 +140,18 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -391,6 +_,7 @@
+@@ -391,9 +_,11 @@
              ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, dimensiontype1, p_129816_, chunkgenerator1, flag, j, ImmutableList.of(), false);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
           }
        }
+-
++      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
++      this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
+       worldborder.m_61931_(serverleveldata.m_5813_());
+    }
  
 @@ -402,6 +_,7 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);

@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {

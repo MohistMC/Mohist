@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
  
  public class HopperBlockEntity extends RandomizableContainerBlockEntity implements Hopper {

@@ -4,8 +4,8 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.enchantment.EnchantmentInstance;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryEnchanting;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryEnchanting;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
  
  public class EnchantmentMenu extends AbstractContainerMenu {
     private final Container f_39449_ = new SimpleContainer(2) {

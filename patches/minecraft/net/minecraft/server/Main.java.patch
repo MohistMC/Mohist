@@ -8,7 +8,7 @@
  import java.util.Optional;
  import java.util.concurrent.CompletableFuture;
  import java.util.function.BooleanSupplier;
-@@ -76,6 +_,20 @@
+@@ -76,6 +_,26 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -26,6 +26,12 @@
 +              .ofType(File.class)
 +              .defaultsTo(new File("commands.yml"))
 +              .describedAs("Yml file");
++
++      optionparser.acceptsAll(Arrays.asList("P", "plugins"), "Plugin directory to use")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("plugins"))
++              .describedAs("Plugin directory");
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
@@ -86,14 +92,18 @@
              worlddata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
           }
  
-@@ -181,6 +_,7 @@
+@@ -181,9 +_,10 @@
              dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
              dedicatedserver1.m_129975_(optionset.has(optionspec2));
              dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
 +            dedicatedserver1.options = optionset;
              boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
              if (flag1 && !GraphicsEnvironment.isHeadless()) {
-                dedicatedserver1.m_139667_();
+-               dedicatedserver1.m_139667_();
++               // dedicatedserver1.showGui();
+             }
+ 
+             return dedicatedserver1;
 @@ -191,6 +_,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {

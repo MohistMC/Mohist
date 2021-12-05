@@ -1,22 +1,71 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -60,6 +_,7 @@
+@@ -60,6 +_,8 @@
  import net.minecraft.world.level.storage.WorldData;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
     static final Logger f_139598_ = LogManager.getLogger();
-@@ -91,6 +_,7 @@
+@@ -91,12 +_,34 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
- 
+-
++            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
++            try {
++               System.in.available();
++            } catch (IOException ex) {
++               return;
++            }
++            // CraftBukkit end
              String s1;
-@@ -169,11 +_,13 @@
+             try {
+-               while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
+-                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
++               // CraftBukkit start - JLine disabling compatibility
++               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_()) {
++                  s1 = bufferedreader.readLine();
++
++                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
++                  if (s1 == null) {
++                     try {
++                        Thread.sleep(50L);
++                     } catch (InterruptedException ex) {
++                        Thread.currentThread().interrupt();
++                     }
++                     continue;
++                  }
++                  if (s1.trim().length() > 0) { // Trim to filter lines which are just spaces
++                     DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
++                  }
++                  // CraftBukkit end
+                }
+             } catch (IOException ioexception1) {
+                DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
+@@ -151,6 +_,12 @@
+          return false;
+       }
+ 
++      // CraftBukkit start
++      this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
++      server.loadPlugins();
++      server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++      // CraftBukkit end
++
+       if (!this.m_129797_()) {
+          f_139598_.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+          f_139598_.warn("The server will make no attempt to authenticate usernames. Beware.");
+@@ -165,15 +_,17 @@
+       if (!OldUsersConverter.m_11106_(this)) {
+          return false;
+       } else {
+-         this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
++         // this.setPlayerList(new DedicatedPlayerList(this, this.registryHolder, this.playerDataStorage));
           long i = Util.m_137569_();
           SkullBlockEntity.m_196700_(this.m_129927_(), this.m_129925_(), this);
           GameProfileCache.m_11004_(this.m_129797_());

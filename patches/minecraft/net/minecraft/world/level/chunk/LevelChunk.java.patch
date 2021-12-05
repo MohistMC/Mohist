@@ -20,8 +20,8 @@
 +
 +   public boolean mustNotSave;
 +   public boolean needsDecoration;
-+   private static final org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry();
-+   public final org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   private static final org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataTypeRegistry();
++   public final org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +   // CraftBukkit end
 +
     public LevelChunk(Level p_187945_, ChunkPos p_187946_) {

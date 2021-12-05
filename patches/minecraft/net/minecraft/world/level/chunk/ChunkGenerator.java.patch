@@ -40,7 +40,7 @@
 +      org.bukkit.World world = generatoraccessseed.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
-+         org.bukkit.craftbukkit.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.m_7697_());
++         org.bukkit.craftbukkit.v1_18_R1.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.v1_18_R1.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.m_7697_());
 +         int x = ichunkaccess.m_7697_().f_45578_;
 +         int z = ichunkaccess.m_7697_().f_45579_;
 +         for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {

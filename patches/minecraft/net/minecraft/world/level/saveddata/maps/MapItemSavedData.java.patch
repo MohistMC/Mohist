@@ -17,8 +17,8 @@
  import net.minecraft.world.level.saveddata.SavedData;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.map.CraftMapView;
++import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_18_R1.map.CraftMapView;
  
  public class MapItemSavedData extends SavedData {
     private static final Logger f_77895_ = LogManager.getLogger();
