@@ -4,6 +4,7 @@
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.18-dev)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.18-dev)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.17.x/LICENSE)
 [![](https://img.shields.io/badge/Forge-1.18--38.0.14-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.18.html)

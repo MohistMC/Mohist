@@ -99,7 +99,7 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -293,6 +_,32 @@
+@@ -293,6 +_,10 @@
        this.f_129741_ = new StructureManager(p_129776_.m_136178_(), p_129771_, p_129775_);
        this.f_129725_ = p_129769_;
        this.f_129738_ = Util.m_183991_();
@@ -107,28 +107,6 @@
 +      this.datapackconfiguration = null;
 +      this.vanillaCommandDispatcher = p_129776_.f_136146_; // CraftBukkit
 +      this.registryreadops = RegistryReadOps.m_179866_(NbtOps.f_128958_, p_129776_.m_136178_(), p_129770_);
-+      // Try to see if we're actually running in a terminal, disable jline if not
-+      if (System.console() == null && System.getProperty("jline.terminal") == null) {
-+         System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+         org.bukkit.craftbukkit.Main.useJline = false;
-+      }
-+
-+      try {
-+         reader = new ConsoleReader(System.in, System.out);
-+         reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
-+      } catch (Throwable e) {
-+         try {
-+            // Try again with jline disabled for Windows users without C++ 2008 Redistributable
-+            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+            System.setProperty("user.language", "en");
-+            Main.useJline = false;
-+            reader = new ConsoleReader(System.in, System.out);
-+            reader.setExpandEvents(false);
-+         } catch (IOException ex) {
-+            f_129750_.warn((String) null, ex);
-+         }
-+      }
-+      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_18_R1.util.ServerShutdownThread(this));
     }
  
     private void m_129841_(DimensionDataStorage p_129842_) {

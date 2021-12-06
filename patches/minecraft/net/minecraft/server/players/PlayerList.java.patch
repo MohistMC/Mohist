@@ -1,6 +1,36 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -60,6 +_,7 @@
+@@ -31,35 +_,12 @@
+ import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.chat.TranslatableComponent;
+ import net.minecraft.network.protocol.Packet;
+-import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
+-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+-import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
+-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+-import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
+-import net.minecraft.network.protocol.game.ClientboundLoginPacket;
+-import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
+-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+-import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket;
+-import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket;
+-import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDelayPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDistancePacket;
+-import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
+-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
+-import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
+-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+-import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+-import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
+-import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
++import net.minecraft.network.protocol.game.*;
+ import net.minecraft.resources.ResourceKey;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.ServerScoreboard;
@@ -8,13 +38,17 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.ServerGamePacketListenerImpl;
-@@ -90,6 +_,9 @@
+@@ -90,6 +_,13 @@
  import net.minecraft.world.scores.Team;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_18_R1.command.ColouredConsoleSender;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
++import org.bukkit.event.player.PlayerJoinEvent;
  
  public abstract class PlayerList {
     public static final File f_11189_ = new File("banned-players.json");
@@ -49,15 +83,86 @@
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
        this.m_11289_(p_11263_);
-@@ -176,7 +_,7 @@
- 
-       this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
+@@ -173,19 +_,57 @@
+       } else {
+          mutablecomponent = new TranslatableComponent("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
+       }
+-
+-      this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
++      // CraftBukkit start
++      mutablecomponent.m_130940_(ChatFormatting.YELLOW);
++      String joinMessage = CraftChatMessage.fromComponent(mutablecomponent);
++      CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
++      // Ensure that player inventory is populated with its viewer
++      p_11263_.f_36096_.transferTo(p_11263_.f_36096_, bukkitPlayer);
++
++      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, joinMessage);
++      Bukkit.getPluginManager().callEvent(playerJoinEvent);
++
++      joinMessage = playerJoinEvent.getJoinMessage();
++
++      if (joinMessage != null && joinMessage.length() > 0) {
++         for (Component line : org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage.fromString(joinMessage)) {
++            f_11195_.m_6846_().m_11268_(new ClientboundChatPacket(line, ChatType.SYSTEM, Util.f_137441_));
++         }
++      }
++      // CraftBukkit end
++
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
 -      this.f_11196_.add(p_11263_);
 +      this.addPlayer(p_11263_);
        this.f_11197_.put(p_11263_.m_142081_(), p_11263_);
-       this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
+-      this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
+-
+-      for(int i = 0; i < this.f_11196_.size(); ++i) {
+-         p_11263_.f_8906_.m_141995_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.f_11196_.get(i)));
+-      }
+-
+-      serverlevel1.m_8834_(p_11263_);
+-      this.f_11195_.m_129901_().m_136293_(p_11263_);
++      // CraftBukkit start - sendAll above replaced with this loop
++      ClientboundPlayerInfoPacket packet = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_);
++
++      for (int i = 0; i < this.f_11196_.size(); ++i) {
++         ServerPlayer entityplayer1 = (ServerPlayer) this.f_11196_.get(i);
++
++         if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer)) {
++            entityplayer1.f_8906_.m_141995_(packet);
++         }
++
++         if (!bukkitPlayer.canSee(entityplayer1.getBukkitEntity())) {
++            continue;
++         }
++
++         p_11263_.f_8906_.m_141995_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, new ServerPlayer[]{entityplayer1}));
++      }
++      p_11263_.sentListPacket = true;
++      // CraftBukkit end
++
++      p_11263_.f_8906_.m_141995_(new ClientboundSetEntityDataPacket(p_11263_.m_142049_(), p_11263_.m_20088_(), true)); // CraftBukkit - BungeeCord#2321, send complete data to self on spawn
++
++      // CraftBukkit start - Only add if the player wasn't moved in the event
++      if (p_11263_.f_19853_ == serverlevel1 && !serverlevel1.m_6907_().contains(p_11263_)) {
++         serverlevel1.m_8834_(p_11263_);
++         this.f_11195_.m_129901_().m_136293_(p_11263_);
++      }
++
++      serverlevel1 = p_11263_.m_183503_(); // CraftBukkit - Update in case join event changed it
++      // CraftBukkit end
+       this.m_11229_(p_11263_, serverlevel1);
+       if (!this.f_11195_.m_129795_().isEmpty()) {
+          p_11263_.m_143408_(this.f_11195_.m_129795_(), this.f_11195_.m_129796_(), this.f_11195_.m_142205_(), this.f_11195_.m_141958_());
+@@ -197,8 +_,9 @@
  
+       if (compoundtag != null && compoundtag.m_128425_("RootVehicle", 10)) {
+          CompoundTag compoundtag1 = compoundtag.m_128469_("RootVehicle");
++         ServerLevel finalServerlevel = serverlevel1;
+          Entity entity1 = EntityType.m_20645_(compoundtag1.m_128469_("Entity"), serverlevel1, (p_11223_) -> {
+-            return !serverlevel1.m_8847_(p_11223_) ? null : p_11223_;
++            return !finalServerlevel.m_8847_(p_11223_) ? null : p_11223_;
+          });
+          if (entity1 != null) {
+             UUID uuid;
 @@ -231,9 +_,10 @@
        }
  

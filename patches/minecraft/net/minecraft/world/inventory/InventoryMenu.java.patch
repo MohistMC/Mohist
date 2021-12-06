@@ -9,7 +9,7 @@
  
  public class InventoryMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150579_ = 0;
-@@ -37,6 +_,21 @@
+@@ -37,10 +_,27 @@
     public final boolean f_39698_;
     private final Player f_39703_;
  
@@ -31,6 +31,12 @@
     public InventoryMenu(Inventory p_39706_, boolean p_39707_, Player p_39708_) {
        super((MenuType<?>)null, 0);
        this.f_39698_ = p_39707_;
+       this.f_39703_ = p_39708_;
++      this.f_39701_.resultInventory = this.f_39702_; // CraftBukkit - let InventoryCrafting know about its result slot
++      this.player = p_39706_; // CraftBukkit - save player
+       this.m_38897_(new ResultSlot(p_39706_.f_35978_, this.f_39701_, this.f_39702_, 0, 154, 28));
+ 
+       for(int i = 0; i < 2; ++i) {
 @@ -57,7 +_,7 @@
              }
  

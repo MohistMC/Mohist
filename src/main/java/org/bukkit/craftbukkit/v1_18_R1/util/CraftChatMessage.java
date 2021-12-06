@@ -286,7 +286,7 @@ public final class CraftChatMessage {
         StringBuilder out = new StringBuilder();
 
         boolean hadFormat = false;
-        for (Component c : (Iterable<Component>)component) {
+        for (Component c : component) {
             Style modi = c.getStyle();
             TextColor color = modi.getColor();
             if (!c.getContents().isEmpty() || color != null) {

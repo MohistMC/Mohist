@@ -49,6 +49,26 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
+@@ -104,6 +_,19 @@
+ 
+          }
+       };
++      // CraftBukkit start - TODO: handle command-line logging arguments
++      java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
++      global.setUseParentHandlers(false);
++      for (java.util.logging.Handler handler : global.getHandlers()) {
++         global.removeHandler(handler);
++      }
++      global.addHandler(new org.bukkit.craftbukkit.v1_18_R1.util.ForwardLogHandler());
++
++      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
++
++      System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
++      System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
++      // CraftBukkit end
+       thread.setDaemon(true);
+       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
+       thread.start();
 @@ -151,6 +_,12 @@
           return false;
        }
