@@ -1,5 +1,31 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.commands;
+ 
++import com.google.common.base.Joiner;
+ import com.google.common.collect.Maps;
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.ParseResults;
+@@ -11,6 +_,9 @@
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.tree.CommandNode;
+ import com.mojang.brigadier.tree.RootCommandNode;
++
++import java.util.Collection;
++import java.util.LinkedHashSet;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.function.Predicate;
+@@ -105,6 +_,8 @@
+ import net.minecraft.util.profiling.jfr.JvmProfiler;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.event.player.PlayerCommandSendEvent;
++import org.bukkit.event.server.ServerCommandEvent;
+ 
+ public class Commands {
+    private static final Logger f_82089_ = LogManager.getLogger();
 @@ -199,6 +_,7 @@
        if (p_82093_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
@@ -8,19 +34,63 @@
  
        this.f_82090_.findAmbiguities((p_82108_, p_82109_, p_82110_, p_82111_) -> {
           f_82089_.warn("Ambiguity between arguments {} and {} with inputs: {}", this.f_82090_.getPath(p_82109_), this.f_82090_.getPath(p_82110_), p_82111_);
-@@ -208,7 +_,11 @@
+@@ -208,9 +_,55 @@
        });
     }
  
--   public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
 +    public Commands() {
-+
++       this.f_82090_.setConsumer((p_82104_, p_82105_, p_82106_) -> {
++          p_82104_.getSource().m_81342_(p_82104_, p_82105_, p_82106_);
++       });
 +    }
 +
-+    public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
++   // CraftBukkit start
++   public int dispatchServerCommand(CommandSourceStack sender, String command) {
++      Joiner joiner = Joiner.on(" ");
++      if (command.startsWith("/")) {
++         command = command.substring(1);
++      }
++
++      ServerCommandEvent event = new ServerCommandEvent(sender.getBukkitSender(), command);
++      org.bukkit.Bukkit.getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return 0;
++      }
++      command = event.getCommand();
++
++      String[] args = command.split(" ");
++
++      String cmd = args[0];
++      if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
++      if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
++
++      // Block disallowed commands
++      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
++              || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
++              || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++         return 0;
++      }
++
++      // Handle vanilla commands;
++      if (sender.m_81372_().getCraftServer().getCommandBlockOverride(args[0])) {
++         args[0] = "minecraft:" + args[0];
++      }
++
++      String newCommand = joiner.join(args);
++      return this.performCommand(sender, newCommand, newCommand, false);
++   }
++
+    public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
++      return this.performCommand(p_82118_, p_82119_, p_82119_, true);
++   }
++
++    public int performCommand(CommandSourceStack p_82118_, String p_82119_, String label, boolean stripSlash) {
        StringReader stringreader = new StringReader(p_82119_);
-       if (stringreader.canRead() && stringreader.peek() == '/') {
+-      if (stringreader.canRead() && stringreader.peek() == '/') {
++      if (stripSlash && stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
+       }
+ 
 @@ -218,7 +_,15 @@
  
        try {
@@ -38,14 +108,58 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              p_82118_.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -361,7 +_,10 @@
+@@ -227,7 +_,7 @@
+             if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
+                int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
+                MutableComponent mutablecomponent1 = (new TextComponent("")).m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
+-                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, p_82119_));
++                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
+                });
+                if (j > 10) {
+                   mutablecomponent1.m_130946_("...");
+@@ -271,10 +_,36 @@
+    }
+ 
+    public void m_82095_(ServerPlayer p_82096_) {
+-      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
++      // CraftBukkit start
++      // Register Vanilla commands into builtRoot as before
++      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newIdentityHashMap(); // Use identity to prevent aliasing issues
++      RootCommandNode vanillaRoot = new RootCommandNode();
++
++      RootCommandNode<CommandSourceStack> vanilla = p_82096_.f_8924_.vanillaCommandDispatcher.m_82094_().getRoot();
++      map.put(vanilla, vanillaRoot);
++      this.m_82112_(vanilla, vanillaRoot, p_82096_.m_20203_(), (Map) map);
++
++      // Now build the global commands in a second pass
+       RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
++
+       map.put(this.f_82090_.getRoot(), rootcommandnode);
+       this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
++
++      Collection<String> bukkit = new LinkedHashSet<>();
++      for (CommandNode node : rootcommandnode.getChildren()) {
++         bukkit.add(node.getName());
++      }
++
++      PlayerCommandSendEvent event = new PlayerCommandSendEvent(p_82096_.getBukkitEntity(), new LinkedHashSet<>(bukkit));
++      event.getPlayer().getServer().getPluginManager().callEvent(event);
++
++      // Remove labels that were removed during the event
++      for (String orig : bukkit) {
++         if (!event.getCommands().contains(orig)) {
++            //rootcommandnode.removeCommand(orig); Mohsit TODO
++         }
++      }
++      // CraftBukkit end
+       p_82096_.f_8906_.m_141995_(new ClientboundCommandsPacket(rootcommandnode));
+    }
+ 
+@@ -361,7 +_,7 @@
        }
     }
  
 -   public static enum CommandSelection {
-+    public void performCommand(CommandSourceStack icommandlistener, String toDispatcher, String toDispatcher1, boolean b) {
-+    }
-+
 +    public static enum CommandSelection {
        ALL(true, true),
        DEDICATED(false, true),

@@ -291,6 +291,14 @@
           for(Pack pack : this.f_129730_.m_10524_()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
+@@ -1254,6 +_,7 @@
+       }).thenAcceptAsync((p_199996_) -> {
+          this.f_129740_.close();
+          this.f_129740_ = p_199996_;
++         this.server.syncCommands(); // SPIGOT-5884: Lost on reload
+          this.f_129730_.m_10509_(p_129862_);
+          this.f_129749_.m_6645_(m_129817_(this.f_129730_));
+          p_199996_.m_136179_();
 @@ -1261,6 +_,7 @@
           this.m_6846_().m_11315_();
           this.f_129734_.m_136120_(this.f_129740_.m_136157_());

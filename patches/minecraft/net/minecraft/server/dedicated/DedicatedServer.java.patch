@@ -1,11 +1,13 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -60,6 +_,8 @@
+@@ -60,6 +_,10 @@
  import net.minecraft.world.level.storage.WorldData;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
++import org.bukkit.event.server.RemoteServerCommandEvent;
++import org.bukkit.event.server.ServerCommandEvent;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
     static final Logger f_139598_ = LogManager.getLogger();
@@ -94,6 +96,26 @@
        }
     }
  
+@@ -335,8 +_,17 @@
+ 
+    public void m_139665_() {
+       while(!this.f_139600_.isEmpty()) {
+-         ConsoleInput consoleinput = this.f_139600_.remove(0);
+-         this.m_129892_().m_82117_(consoleinput.f_135929_, consoleinput.f_135928_);
++         ConsoleInput servercommand = (ConsoleInput) this.f_139600_.remove(0);
++
++         // CraftBukkit start - ServerCommand for preprocessing
++         ServerCommandEvent event = new ServerCommandEvent(console, servercommand.f_135928_);
++         server.getPluginManager().callEvent(event);
++         if (event.isCancelled()) continue;
++         servercommand = new ConsoleInput(event.getCommand(), servercommand.f_135929_);
++
++         // this.getCommands().performCommand(servercommand.source, servercommand.msg); // Called in dispatchServerCommand
++         server.dispatchServerCommand(console, servercommand);
++         // CraftBukkit end
+       }
+ 
+    }
 @@ -441,6 +_,11 @@
        return this.m_7913_().f_139718_;
     }
@@ -105,6 +127,23 @@
 +
     public int m_6329_() {
        return this.m_7913_().f_139719_;
+    }
+@@ -526,7 +_,15 @@
+    public String m_7261_(String p_139644_) {
+       this.f_139602_.m_11512_();
+       this.m_18709_(() -> {
+-         this.m_129892_().m_82117_(this.f_139602_.m_11514_(), p_139644_);
++         // CraftBukkit start - fire RemoteServerCommandEvent
++         RemoteServerCommandEvent event = new RemoteServerCommandEvent(remoteConsole, p_139644_);
++         server.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return;
++         }
++         ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), f_139602_.m_11514_());
++         server.dispatchServerCommand(remoteConsole, serverCommand);
++         // CraftBukkit end
+       });
+       return this.f_139602_.m_11513_();
     }
 @@ -545,6 +_,11 @@
  
