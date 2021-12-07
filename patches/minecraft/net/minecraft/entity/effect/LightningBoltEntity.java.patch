@@ -8,7 +8,7 @@
  import net.minecraft.network.play.server.SSpawnObjectPacket;
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
-@@ -22,14 +_,18 @@
+@@ -22,6 +_,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,11 +16,8 @@
  
  public class LightningBoltEntity extends Entity {
     private int field_70262_b;
-    public long field_70264_a;
-    private int field_70263_c;
--   private boolean field_184529_d;
-+   public boolean isEffect; // CraftBukkit
-+   public boolean field_184529_d; // CraftBukkit private->public
+@@ -30,6 +_,8 @@
+    public boolean field_184529_d;
     @Nullable
     private ServerPlayerEntity field_204810_e;
 +   private float damage = 5.0F;
@@ -82,7 +79,7 @@
  
 -      if (this.field_70262_b >= 0) {
 -         if (!(this.field_70170_p instanceof ServerWorld)) {
-+      if (this.field_70262_b >= 0 && !this.isEffect) { // CraftBukkit - add !this.isEffect
++      if (this.field_70262_b >= 0 && !this.field_184529_d) { // CraftBukkit - add !this.visualOnly
 +         if (this.field_70170_p.field_72995_K) {
              this.field_70170_p.func_225605_c_(2);
           } else if (!this.field_184529_d) {
@@ -99,8 +96,8 @@
           BlockState blockstate = AbstractFireBlock.func_235326_a_(this.field_70170_p, blockpos);
           if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
 -            this.field_70170_p.func_175656_a(blockpos, blockstate);
-+            // CraftBukkit start - add "!isEffect"
-+            if (!isEffect && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) {
++            // CraftBukkit start - add "!visualOnly"
++            if (!field_184529_d && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) {
 +               this.field_70170_p.func_175656_a(blockpos, blockstate);
 +            }
 +            // CraftBukkit end
@@ -112,8 +109,8 @@
              blockstate = AbstractFireBlock.func_235326_a_(this.field_70170_p, blockpos1);
              if (this.field_70170_p.func_180495_p(blockpos1).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos1)) {
 -               this.field_70170_p.func_175656_a(blockpos1, blockstate);
-+               // CraftBukkit start - add "!isEffect"
-+               if (!isEffect && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos1, this).isCancelled()) {
++               // CraftBukkit start - add "!visualOnly"
++               if (!field_184529_d && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos1, this).isCancelled()) {
 +                  this.field_70170_p.func_175656_a(blockpos1, blockstate);
 +               }
 +               // CraftBukkit end

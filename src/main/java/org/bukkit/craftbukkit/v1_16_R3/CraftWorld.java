@@ -2380,7 +2380,7 @@ public class CraftWorld implements World {
         public LightningStrike strikeLightningEffect(Location loc, boolean isSilent) {
             LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
             lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
-            lightning.isEffect = true;
+            lightning.visualOnly = true;
             lightning.isSilent = isSilent;
             return (LightningStrike) lightning.getBukkitEntity();
         }
