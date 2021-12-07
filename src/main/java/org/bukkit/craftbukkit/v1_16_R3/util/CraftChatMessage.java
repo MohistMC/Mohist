@@ -311,7 +311,7 @@ public final class CraftChatMessage {
         StringBuilder out = new StringBuilder();
 
         boolean hadFormat = false;
-        for (ITextComponent c : (Iterable<ITextComponent>) component) {
+        for (ITextComponent c : component) {
             Style modi = c.getStyle();
             Color color = modi.getColor();
             if (!c.getContents().isEmpty() || color != null) {
