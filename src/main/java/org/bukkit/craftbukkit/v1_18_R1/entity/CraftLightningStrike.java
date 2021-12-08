@@ -11,7 +11,7 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
 
     @Override
     public boolean isEffect() {
-        return getHandle().isEffect;
+        return getHandle().visualOnly;
     }
 
     @Override
@@ -28,4 +28,15 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
     public EntityType getType() {
         return EntityType.LIGHTNING;
     }
+
+    // Spigot start
+    private final LightningStrike.Spigot spigot = new LightningStrike.Spigot() {
+
+    };
+
+    @Override
+    public LightningStrike.Spigot spigot() {
+        return spigot;
+    }
+    // Spigot end
 }

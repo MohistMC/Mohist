@@ -296,7 +296,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public Location getLocation() {
-        return new Location(getWorld(), entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
+        return new Location(getWorld(), entity.getX(), entity.getY(), entity.getZ(), entity.getBukkitYaw(), entity.getXRot());
     }
 
     @Override
@@ -306,7 +306,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             loc.setX(entity.getX());
             loc.setY(entity.getY());
             loc.setZ(entity.getZ());
-            loc.setYaw(entity.getYRot());
+            loc.setYaw(entity.getBukkitYaw());
             loc.setPitch(entity.getXRot());
         }
 
@@ -747,7 +747,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     @Override
-    public void sendMessage(UUID sender, String[] messages) {
+    public void sendMessage(UUID sender, String... messages) {
         this.sendMessage(messages); // Most entities don't know about senders
     }
 
@@ -924,7 +924,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         CompoundTag nbttagcompound = new CompoundTag();
 
         nbttagcompound.putString("id", getHandle().getEncodeId());
-        getHandle().save(nbttagcompound);
+        getHandle().saveWithoutId(nbttagcompound);
 
         return nbttagcompound;
     }
@@ -962,4 +962,15 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
         return perm;
     }
+
+    // Spigot start
+    private final org.bukkit.entity.Entity.Spigot spigot = new org.bukkit.entity.Entity.Spigot()
+    {
+    };
+
+    public org.bukkit.entity.Entity.Spigot spigot()
+    {
+        return spigot;
+    }
+    // Spigot end
 }

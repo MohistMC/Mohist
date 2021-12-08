@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_18_R1.block;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -8,7 +9,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
+import org.bukkit.entity.Player;
 
 public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements Sign {
 
@@ -18,6 +21,17 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
 
     public CraftSign(World world, final SignBlockEntity te) {
         super(world, te);
+    }
+
+    public static void openSign(Sign sign, Player player) {
+        Preconditions.checkArgument(sign != null, "sign == null");
+        Preconditions.checkArgument(sign.isPlaced(), "Sign must be placed");
+        Preconditions.checkArgument(sign.getWorld() == player.getWorld(), "Sign must be in same world as Player");
+
+        SignBlockEntity handle = ((CraftSign) sign).getTileEntity();
+        handle.isEditable = true;
+
+        ((CraftPlayer) player).getHandle().openTextEdit(handle);
     }
 
     @Override

@@ -33,6 +33,7 @@ import net.minecraft.server.level.*;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.SortedArraySet;
 import net.minecraft.util.Unit;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -238,6 +239,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftWorld extends CraftRegionAccessor implements World {
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
@@ -1864,6 +1866,44 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     }
 
     @Override
+    public int getViewDistance() {
+        return 0;
+    }
+
+    @Override
+    public int getSimulationDistance() {
+        return 0;
+    }
+
+    // Spigot start
+    private final Spigot spigot = new Spigot() {
+
+        @Override
+        public LightningStrike strikeLightning(Location loc, boolean isSilent) {
+            LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
+            lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
+            lightning.isSilent = isSilent;
+            world.strikeLightning(lightning);
+            return (LightningStrike) lightning.getBukkitEntity();
+        }
+
+        @Override
+        public LightningStrike strikeLightningEffect(Location loc, boolean isSilent) {
+            LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
+            lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
+            lightning.visualOnly = true;
+            lightning.isSilent = isSilent;
+            return (LightningStrike) lightning.getBukkitEntity();
+        }
+
+    };
+
+    public Spigot spigot() {
+        return spigot;
+    }
+    // Spigot end
+
+    @Override
     public Raid locateNearestRaid(Location location, int radius) {
         Validate.notNull(location, "Location cannot be null");
         Validate.isTrue(radius >= 0, "Radius cannot be negative");
@@ -1883,4 +1923,6 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     public DragonBattle getEnderDragonBattle() {
         return (getHandle().dragonFight() == null) ? null : new CraftDragonBattle(getHandle().dragonFight());
     }
+
+
 }

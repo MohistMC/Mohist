@@ -776,6 +776,7 @@ public final class CraftServer implements Server {
             logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
         }
 
+        org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
         for (ServerLevel world : console.getAllLevels()) {
             world.getServer().getWorldData().setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
@@ -808,11 +809,13 @@ public final class CraftServer implements Server {
             } else {
                 world.ticksPerAmbientSpawns = this.getTicksPerAmbientSpawns();
             }
+            world.spigotConfig.init(); // Spigot
         }
 
         pluginManager.clearPlugins();
         commandMap.clearCommands();
         reloadData();
+        org.spigotmc.SpigotConfig.registerCommands(); // Spigot
         overrideAllCommandCommandBlocks = commandsConfiguration.getStringList("command-block-overrides").contains("*");
         ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
 
@@ -2166,4 +2169,16 @@ public final class CraftServer implements Server {
     public UnsafeValues getUnsafe() {
         return CraftMagicNumbers.INSTANCE;
     }
+
+    // Spigot start
+    private final org.bukkit.Server.Spigot spigot = new org.bukkit.Server.Spigot()
+    {
+
+    };
+
+    public org.bukkit.Server.Spigot spigot()
+    {
+        return spigot;
+    }
+    // Spigot end
 }

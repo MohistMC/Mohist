@@ -1,6 +1,8 @@
 package org.bukkit.entity;
 
 import java.net.InetSocketAddress;
+import java.util.UUID;
+
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -16,6 +18,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -538,10 +541,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     /**
      * Forces an update of the player's entire inventory.
      *
-     * @deprecated This method should not be relied upon as it is a temporary
-     *     work-around for a larger, more complicated issue.
      */
-    @Deprecated
+    //@Deprecated // Spigot - undeprecate
     public void updateInventory();
 
     /**
@@ -1342,6 +1343,15 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     public void openBook(@NotNull ItemStack book);
 
     /**
+     * Open a Sign for editing by the Player.
+     *
+     * The Sign must be placed in the same world as the player.
+     *
+     * @param sign The sign to edit
+     */
+    public void openSign(@NotNull Sign sign);
+
+    /**
      * Shows the demo screen to the player, this screen is normally only seen in
      * the demo version of the game.
      * <br>
@@ -1355,4 +1365,116 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @return whether the player allows server listings
      */
     public boolean isAllowingServerListings();
+
+    // Spigot start
+    public class Spigot extends Entity.Spigot {
+
+        /**
+         * Gets the connection address of this player, regardless of whether it
+         * has been spoofed or not.
+         *
+         * @return the player's connection address
+         */
+        @NotNull
+        public InetSocketAddress getRawAddress() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Gets whether the player collides with entities
+         *
+         * @return the player's collision toggle state
+         * @deprecated see {@link LivingEntity#isCollidable()}
+         */
+        @Deprecated
+        public boolean getCollidesWithEntities() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sets whether the player collides with entities
+         *
+         * @param collides whether the player should collide with entities or
+         * not.
+         * @deprecated {@link LivingEntity#setCollidable(boolean)}
+         */
+        @Deprecated
+        public void setCollidesWithEntities(boolean collides) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Respawns the player if dead.
+         */
+        public void respawn() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Gets all players hidden with {@link #hidePlayer(org.bukkit.entity.Player)}.
+         *
+         * @return a Set with all hidden players
+         */
+        @NotNull
+        public java.util.Set<Player> getHiddenPlayers() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends the component to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param component the components to send
+         */
+        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends an array of components as a single message to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param components the components to send
+         */
+        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends the component to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param sender the sender of the message
+         * @param component the components to send
+         */
+        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends an array of components as a single message to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param sender the sender of the message
+         * @param components the components to send
+         */
+        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    @NotNull
+    @Override
+    Spigot spigot();
+    // Spigot end
 }

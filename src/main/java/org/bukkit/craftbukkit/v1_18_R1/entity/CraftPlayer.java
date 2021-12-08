@@ -59,6 +59,7 @@ import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
@@ -1700,6 +1701,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    public void openSign(Sign sign) {
+        CraftSign.openSign(sign, this);
+    }
+
+    @Override
     public void showDemoScreen() {
         if (getHandle().connection == null) return;
 
@@ -1710,4 +1716,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public boolean isAllowingServerListings() {
         return  getHandle().allowsListing();
     }
+
+    // Spigot start
+    private final Player.Spigot spigot = new Player.Spigot()
+    {
+    };
+
+    public Player.Spigot spigot()
+    {
+        return spigot;
+    }
+    // Spigot end
 }

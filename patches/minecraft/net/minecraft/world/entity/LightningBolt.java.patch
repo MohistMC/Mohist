@@ -1,12 +1,17 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
-@@ -39,6 +_,9 @@
+@@ -34,11 +_,13 @@
+    private int f_20860_;
+    public long f_20859_;
+    private int f_20861_;
+-   private boolean f_20862_;
++   public boolean f_20862_;
+    @Nullable
     private ServerPlayer f_20863_;
     private final Set<Entity> f_147134_ = Sets.newHashSet();
     private int f_147135_;
 +   private float damage = 5.0F;
-+
-+   public boolean isEffect; // CraftBukkit
++   public boolean isSilent = false; // Spigot
  
     public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
        super(p_20865_, p_20866_);

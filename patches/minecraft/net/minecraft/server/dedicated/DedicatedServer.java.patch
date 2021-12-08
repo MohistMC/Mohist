@@ -69,6 +69,19 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
+@@ -122,6 +_,12 @@
+          this.m_129913_(dedicatedserverproperties.f_139730_);
+       }
+ 
++      // Spigot start
++      this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
++      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
++      org.spigotmc.SpigotConfig.registerCommands();
++      // Spigot end
++
+       this.m_129997_(dedicatedserverproperties.f_139733_);
+       this.m_129999_(dedicatedserverproperties.f_139734_);
+       this.m_129853_(dedicatedserverproperties.f_139735_, this.m_139664_());
 @@ -151,6 +_,12 @@
           return false;
        }
