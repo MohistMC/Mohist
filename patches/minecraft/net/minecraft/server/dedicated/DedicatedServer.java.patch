@@ -69,38 +69,19 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -122,6 +_,12 @@
-          this.m_129913_(dedicatedserverproperties.f_139730_);
-       }
- 
-+      // Spigot start
-+      this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
-+      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
-+      org.spigotmc.SpigotConfig.registerCommands();
-+      // Spigot end
-+
-       this.m_129997_(dedicatedserverproperties.f_139733_);
-       this.m_129999_(dedicatedserverproperties.f_139734_);
-       this.m_129853_(dedicatedserverproperties.f_139735_, this.m_139664_());
-@@ -151,6 +_,12 @@
-          return false;
-       }
- 
-+      // CraftBukkit start
-+      this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
-+      server.loadPlugins();
-+      server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-+      // CraftBukkit end
-+
-       if (!this.m_129797_()) {
-          f_139598_.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-          f_139598_.warn("The server will make no attempt to authenticate usernames. Beware.");
-@@ -165,15 +_,17 @@
-       if (!OldUsersConverter.m_11106_(this)) {
+@@ -166,14 +_,25 @@
           return false;
        } else {
--         this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
-+         // this.setPlayerList(new DedicatedPlayerList(this, this.registryHolder, this.playerDataStorage));
+          this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
++         // CraftBukkit start
++         server.loadPlugins();
++         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++         // CraftBukkit end
++         // Spigot start
++         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
++         org.spigotmc.SpigotConfig.registerCommands();
++         // Spigot end
++
           long i = Util.m_137569_();
           SkullBlockEntity.m_196700_(this.m_129927_(), this.m_129925_(), this);
           GameProfileCache.m_11004_(this.m_129797_());

@@ -8,7 +8,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -142,6 +_,11 @@
+@@ -142,6 +_,12 @@
  import net.minecraft.world.ticks.LevelTicks;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -17,6 +17,7 @@
 +import org.bukkit.craftbukkit.v1_18_R1.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
++import org.spigotmc.SpigotWorldConfig;
  
  public class ServerLevel extends Level implements WorldGenLevel {
     public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
@@ -52,11 +53,12 @@
        this.f_8561_ = p_8582_;
        this.f_8548_ = p_8571_;
        this.f_8558_ = p_8581_;
-@@ -217,6 +_,9 @@
+@@ -217,6 +_,10 @@
        }
  
        this.f_143245_ = new SleepStatus();
 +      this.initCapabilities();
++      this.spigotConfig = new SpigotWorldConfig(p_8574_.m_5462_());
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
     }
