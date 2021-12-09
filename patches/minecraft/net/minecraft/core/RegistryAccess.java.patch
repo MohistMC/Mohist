@@ -1,5 +1,17 @@
 --- a/net/minecraft/core/RegistryAccess.java
 +++ b/net/minecraft/core/RegistryAccess.java
+@@ -81,6 +_,11 @@
+       });
+    }
+ 
++
++   public Registry<DimensionType> dimensionTypes() {
++      return this.m_175515_(Registry.f_122818_);
++   }
++
+    private static <E> void m_123053_(Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> p_123054_, ResourceKey<? extends Registry<E>> p_123055_, Codec<E> p_123056_) {
+       p_123054_.put(p_123055_, new RegistryAccess.RegistryData<>(p_123055_, p_123056_, (Codec<E>)null));
+    }
 @@ -109,6 +_,8 @@
        ResourceKey<? extends Registry<E>> resourcekey = p_194617_.f_123101_();
        boolean flag = !resourcekey.equals(Registry.f_122878_) && !resourcekey.equals(Registry.f_122818_);

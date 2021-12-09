@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.forge.ForgeInjectBukkit;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.serialization.Dynamic;
+ import io.netty.buffer.Unpooled;
 @@ -31,35 +_,12 @@
  import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.network.chat.TranslatableComponent;
@@ -52,7 +60,7 @@
  
  public abstract class PlayerList {
     public static final File f_11189_ = new File("banned-players.json");
-@@ -117,9 +_,14 @@
+@@ -117,9 +_,15 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -64,6 +72,7 @@
 +      this.cserver = p_11213_.server = new CraftServer((DedicatedServer) p_11213_, this);
        this.f_11195_ = p_11213_;
 +      p_11213_.console = ColouredConsoleSender.getInstance();
++      ForgeInjectBukkit.init();
        this.f_11206_ = p_11214_;
        this.f_11193_ = p_11216_;
        this.f_11204_ = p_11215_;

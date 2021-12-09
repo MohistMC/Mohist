@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import com.mohistmc.entity.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
@@ -39,6 +41,10 @@ import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.EntityEffect;
@@ -289,8 +295,18 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.world.entity.projectile.EvokerFangs) { return new CraftEvokerFangs(server, (net.minecraft.world.entity.projectile.EvokerFangs) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.LlamaSpit) { return new CraftLlamaSpit(server, (net.minecraft.world.entity.projectile.LlamaSpit) entity); }
         else if (entity instanceof Marker) { return new CraftMarker(server, (Marker) entity); }
+        else if (entity instanceof Projectile) {
+            return new MohistModsProjectileEntity(server, (Projectile) entity);
+        } else if (entity instanceof ThrowableItemProjectile) {
+            return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile) entity);
+        } else if (entity instanceof AbstractMinecart) {
+            return new MohistModsMinecraft(server, (AbstractMinecart) entity);
+        } else if (entity instanceof AbstractMinecartContainer) {
+            return new MohistModsMinecartContainer(server, (AbstractMinecartContainer) entity);
+        } else {
+            return new MohistModsEntity(server, entity);
+        }
         // CHECKSTYLE:ON
-
         throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
     }
 

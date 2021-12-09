@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import com.mohistmc.api.ServerAPI;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -68,6 +70,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+    public String entityName;
     private CraftEntityEquipment equipment;
 
     public CraftLivingEntity(final CraftServer server, final net.minecraft.world.entity.LivingEntity entity) {
@@ -75,6 +78,10 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
         if (entity instanceof Mob || entity instanceof net.minecraft.world.entity.decoration.ArmorStand) {
             equipment = new CraftEntityEquipment(this);
+        }
+        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
+        if (entityName == null) {
+            entityName = entity.getName().getString();
         }
     }
 

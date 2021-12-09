@@ -3,6 +3,10 @@ package org.bukkit.entity;
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.mohistmc.entity.MohistModsAbstractHorse;
+import com.mohistmc.entity.MohistModsChestHorse;
+import com.mohistmc.entity.MohistModsProjectileEntity;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -285,7 +289,10 @@ public enum EntityType implements Keyed {
     /**
      * An unknown entity without an Entity Class
      */
-    UNKNOWN(null, null, -1, false);
+    UNKNOWN(null, null, -1, false),
+    FORGE_MOD_PROJECTILE("forge_mod_projectile", MohistModsProjectileEntity.class, -1, false),
+    FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", MohistModsChestHorse.class, -1, false),
+    FORGE_MOD_HORSE("forge_mod_horse", MohistModsAbstractHorse.class, -1, false);
 
     private final String name;
     private final Class<? extends Entity> clazz;
