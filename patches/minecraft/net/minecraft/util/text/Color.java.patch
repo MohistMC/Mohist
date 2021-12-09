@@ -9,13 +9,10 @@
     }));
     private static final Map<String, Color> field_240739_b_ = field_240738_a_.values().stream().collect(ImmutableMap.toImmutableMap((p_240746_0_) -> {
        return p_240746_0_.field_240741_d_;
-@@ -20,15 +_,22 @@
+@@ -20,15 +_,28 @@
     @Nullable
     private final String field_240741_d_;
  
--   private Color(int p_i232573_1_, String p_i232573_2_) {
--      this.field_240740_c_ = p_i232573_1_;
--      this.field_240741_d_ = p_i232573_2_;
 +   // CraftBukkit start
 +   @Nullable
 +   public final TextFormatting format;
@@ -24,6 +21,12 @@
 +      this.field_240740_c_ = color;
 +      this.field_240741_d_ = name;
 +      this.format = format;
++   }
++
+    private Color(int p_i232573_1_, String p_i232573_2_) {
+       this.field_240740_c_ = p_i232573_1_;
+       this.field_240741_d_ = p_i232573_2_;
++      this.format = null;
     }
  
     private Color(int p_i232572_1_) {
