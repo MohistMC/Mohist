@@ -20,12 +20,12 @@
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg}%n">
+                <LoggerNamePatternSelector defaultPattern="[%highlightTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg{nolookups}}%n">
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n" charset="UTF-8"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg{nolookups}}{strip}%n" charset="UTF-8"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
                 <OnStartupTriggeringPolicy/>
@@ -33,7 +33,7 @@
             <DefaultRolloverStrategy max="99" fileIndex="min"/>
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.zip">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx" charset="UTF-8"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg{nolookups}}{strip}%n%xEx" charset="UTF-8"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="200MB"/>
