@@ -53,6 +53,7 @@
             <AppenderRef ref="File" />
         </Logger>
         <Root level="all" >
+            <RegexFilter regex=".*\$\{[^}]*\}.*" onMatch="DENY" onMismatch="NEUTRAL"/>
             <AppenderRef ref="TerminalConsole" level="INFO" />
             <AppenderRef ref="File" level="INFO" />
             <!-- Set FmlFile to TRACE/DEBUG if you require more logging -->
