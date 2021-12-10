@@ -60,8 +60,8 @@ public class ForgeInjectBukkit {
         //addEnumEnchantment();
         //addEnumPotion();
         //addEnumPattern();
-        addEnumEntity();
-        addEnumVillagerProfession();
+        //addEnumEntity();
+        //addEnumVillagerProfession();
         //addEnumAttribute();
         //addEnumArt();
     }
@@ -173,17 +173,14 @@ public class ForgeInjectBukkit {
     }
 
     public static void addEnumEntity() {
-        Map<String, EntityType> NAME_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
-        Map<Short, EntityType> ID_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
-
         for (Map.Entry<ResourceKey<net.minecraft.world.entity.EntityType<?>>, net.minecraft.world.entity.EntityType<?>> entity : ForgeRegistries.ENTITIES.getEntries()) {
             ResourceLocation resourceLocation = entity.getValue().getRegistryName();
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 String entityType = normalizeName(resourceLocation.toString());
                 int typeId = entityType.hashCode();
                 EntityType bukkitType = MohistEnumHelper.addEnum0(EntityType.class, entityType, new Class[]{String.class, Class.class, Integer.TYPE, Boolean.TYPE}, entityType.toLowerCase(), MohistModsEntity.class, typeId, false);
-                NAME_MAP.put(entityType.toLowerCase(), bukkitType);
-                ID_MAP.put((short) typeId, bukkitType);
+                EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
+                EntityType.ID_MAP.put((short) typeId, bukkitType);
                 ServerAPI.entityTypeMap.put(entity.getValue(), entityType);
             }
         }

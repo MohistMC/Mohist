@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MohistJDK9EnumHelper
@@ -166,25 +167,18 @@ public class MohistJDK9EnumHelper
 
         valuesField.setAccessible(true);
 
-        try
-        {
-            T[] previousValues = (T[])valuesField.get(enumType);
-            T newValue = makeEnum(enumType, enumName, previousValues.length, paramTypes, paramValues);
-            Object base = com.mohistmc.util.Unsafe.staticFieldBase(valuesField);
-            long offset = com.mohistmc.util.Unsafe.staticFieldOffset(valuesField);
-            T[] arr = (T[]) com.mohistmc.util.Unsafe.getObject(base, offset);
-            T[] newArr = (T[]) Array.newInstance(enumType, arr.length + 1);
-            System.arraycopy(arr, 0, newArr, 0, arr.length);
-            newArr[arr.length] = newValue;
-            com.mohistmc.util.Unsafe.putObject(base, offset, newArr);
+        try {
+            T[] previousValues = (T[]) valuesField.get(enumType);
+            List<T> values = new ArrayList<T>(Arrays.asList(previousValues));
+            T newValue = (T) makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
+            values.add(newValue);
+            setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));
             cleanEnumCache(enumType);
 
             return newValue;
-        }
-        catch (Throwable t)
-        {
-            //FMLLog.log.error("Error adding enum with EnumHelper.", e);
-            throw new RuntimeException(t);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            throw new RuntimeException(throwable.getMessage(), throwable);
         }
     }
 

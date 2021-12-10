@@ -79,10 +79,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         if (entity instanceof Mob || entity instanceof net.minecraft.world.entity.decoration.ArmorStand) {
             equipment = new CraftEntityEquipment(this);
         }
-        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
-        if (entityName == null) {
-            entityName = entity.getName().getString();
-        }
+        entityName = entity.getName().getString();
     }
 
     @Override
