@@ -3,10 +3,10 @@
     <Appenders>
         <Console name="WINDOWS_COMPAT" target="SYSTEM_OUT"/>
         <Queue name="TerminalConsole">
-            <PatternLayout pattern="[%hTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg%n}" />
+            <PatternLayout pattern="[%hTime{%d{HH:mm:ss}} %highlightLevel{%level}]: %highlightMsg{%msg{nolookups}%n}" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg{nolookups}}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
             <DefaultRolloverStrategy max="20" fileIndex="min"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
