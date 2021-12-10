@@ -86,15 +86,13 @@ public class UpdateUtils {
         return null;
     }
 
-    public static void restartServer(ArrayList<String> cmd) throws Exception {
-        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-        processBuilder.redirectInput(ProcessBuilder.Redirect.INHERIT);
-        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-        Process process = processBuilder.start();
-        process.waitFor();
-        Thread.sleep(2000);
-        System.exit(0);
-    }
+	public static void restartServer(ArrayList<String> cmd) throws Exception {
+		if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
+			System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
+		new ProcessBuilder(cmd).inheritIO().start().waitFor();
+		Thread.sleep(2000);
+		System.exit(0);
+	}
 
     public static String getSize(long size) {
         return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
