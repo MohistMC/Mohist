@@ -34,6 +34,7 @@ import java.util.jar.Manifest;
 
 public class ServerMain {
     public static void main(String[] args) {
+        System.setProperty("log4j2.formatMsgNoLookups", "true");
         try {
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
