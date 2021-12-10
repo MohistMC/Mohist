@@ -89,11 +89,9 @@ public class UpdateUtils {
 
 	public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
 		System.out.println(i18n.get("jarfile.restart"));
-		ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-		processBuilder.redirectInput(ProcessBuilder.Redirect.INHERIT);
-		processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-		Process process = processBuilder.start();
-		process.waitFor();
+		if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
+			System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
+		new ProcessBuilder(cmd).inheritIO().start().waitFor();
 		Thread.sleep(2000);
 		if(shutdown) System.exit(0);
 	}
