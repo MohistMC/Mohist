@@ -72,12 +72,12 @@ public class ServerMain {
 			System.setProperty("nashorn.args", "--no-deprecation-warning"); //Others java version under 15
 		if(jVersion >= 59.0) System.setProperty("-Dnashorn.args", "--no-deprecation-warning"); //For java 15 and +
 
-		if(jVersion == 60.0 && !mainArgs.contains("launchedWithJava16")) {
+		if(jVersion >= 60.0 && !mainArgs.contains("launchedWithJava16+")) {
 			ArrayList<String> command = new ArrayList<>(Arrays.asList("java", "-jar", "--add-exports=java.base/sun.security.util=ALL-UNNAMED", "--add-opens=java.base/java.util.jar=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED"));
 			command.addAll(getCustomFlags());
 			command.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
 			command.addAll(ServerMain.mainArgs);
-			command.add("launchedWithJava16");
+			command.add("launchedWithJava16+");
 			if(hasCustomFlags)
 				command.add("launchedWithCustomArgs"); //Handle custom args and do not restart the server twice.
 			System.out.println(i18n.get("java16.run", String.join(" ", command)));
