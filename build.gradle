@@ -168,7 +168,7 @@ project(':mohist') {
                 environment 'MCP_MAPPINGS',     '{mcp_mappings}'
                 environment 'MCP_TO_SRG',       '{mcp_to_srg}'
                 environment 'FORGE_GROUP',      'net.minecraftforge'
-                environment 'FORGE_VERSION',    '14.23.5.2858'
+                environment 'FORGE_VERSION',    '14.23.5.2859'
             }
         }
     }
@@ -229,6 +229,9 @@ project(':mohist') {
         installer 'net.sf.trove4j:trove4j:3.0.3'
         installer 'org.apache.maven:maven-artifact:3.5.3'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.3'
+        installer 'org.apache.logging.log4j:log4j-api:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-core:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
 
         installer 'com.googlecode.json-simple:json-simple:1.1.1'
         installer 'org.yaml:snakeyaml:1.19'
@@ -579,7 +582,7 @@ project(':mohist') {
     }
 
     task downloadInstaller(type: DownloadMavenArtifact) {
-        artifact = 'net.minecraftforge:installer:2.0.+:shrunk'
+        artifact = 'net.minecraftforge:installer:2.1.+:shrunk'
         changing = true
     }
 
@@ -640,7 +643,7 @@ project(':mohist') {
                 environment 'MCP_MAPPINGS',     '{mcp_mappings}'
                 environment 'MCP_TO_SRG',       '{mcp_to_srg}'
                 environment 'FORGE_GROUP',      "${project.group}"
-                environment 'FORGE_VERSION',    "14.23.5.2858"
+                environment 'FORGE_VERSION',    "14.23.5.2859"
             }
         }
     }

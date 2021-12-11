@@ -86,7 +86,7 @@ public class MohistConfig extends ConfigBase {
     public final IntSetting forgeversionmajor = new IntSetting(this, "forge.version.major", 14);
     public final IntSetting forgeversionminor = new IntSetting(this, "forge.version.minor", 23);
     public final IntSetting forgeversionrevision = new IntSetting(this, "forge.version.revision", 5);
-    public final IntSetting forgeversionbuild = new IntSetting(this, "forge.version.build", 2858);
+    public final IntSetting forgeversionbuild = new IntSetting(this, "forge.version.build", 2859);
     public final BoolSetting autounloadworldenable = new BoolSetting(this, "forge.autounloadworld.enable", false);
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false);
     public final BoolSetting CloseChatInConsole = new BoolSetting(this, "mohist.CloseChatInConsole", false);

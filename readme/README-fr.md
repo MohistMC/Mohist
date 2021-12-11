@@ -9,7 +9,7 @@
 [![](https://ci.codemc.org/buildStatus/icon?job=MohistMC%2FMohist-1.12.2)](https://ci.codemc.org/job/MohistMC/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars)
 ![](https://img.shields.io/github/license/MohistMC/Mohist.svg)
-[![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2858-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
+[![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2859-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 ![](https://img.shields.io/badge/AdoptOpenJDK-8u242-brightgreen.svg?colorB=469C00)
 [![](https://img.shields.io/badge/Gradle-4.10.3-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/4.10.3/release-notes.html)
