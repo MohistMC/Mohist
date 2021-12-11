@@ -256,7 +256,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = "1.18";
+        this.serverVersion = "1.18.1";
         this.structureManager = new CraftStructureManager(console.getStructureManager());
 
         Bukkit.setServer(this);
