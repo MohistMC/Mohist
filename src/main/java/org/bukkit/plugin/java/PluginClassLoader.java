@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import com.mohistmc.bukkit.nms.model.ClassMapping;
 import net.md_5.specialsource.repo.RuntimeRepo;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.server.MinecraftServer;
@@ -105,7 +107,11 @@ public final class PluginClassLoader extends URLClassLoader {
         Class<?> result;
         try {
             if (name.replace("/", ".").startsWith("net.minecraft.server.v1_12_R1")) {
-                String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
+                ClassMapping remappedClassMapping = RemapUtils.jarMapping.byNMSName.get(name);
+                if(remappedClassMapping == null){
+                    throw new ClassNotFoundException(name.replace('/','.'));
+                }
+                String remappedClass = remappedClassMapping.getMcpName();
                 return launchClassLoader.findClass(remappedClass);
             }
 
