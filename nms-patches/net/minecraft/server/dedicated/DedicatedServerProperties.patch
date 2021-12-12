@@ -1,0 +1,50 @@
+--- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
++++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
+@@ -10,8 +10,14 @@
+ import net.minecraft.world.level.EnumGamemode;
+ import net.minecraft.world.level.levelgen.GeneratorSettings;
+ 
++// CraftBukkit start
++import joptsimple.OptionSet;
++import net.minecraft.server.dedicated.PropertyManager.EditableProperty;
++// CraftBukkit end
++
+ public class DedicatedServerProperties extends PropertyManager<DedicatedServerProperties> {
+ 
++    public final boolean debug = this.get("debug", false); // CraftBukkit
+     public final boolean onlineMode = this.get("online-mode", true);
+     public final boolean preventProxyConnections = this.get("prevent-proxy-connections", false);
+     public final String serverIp = this.get("server-ip", "");
+@@ -67,8 +73,10 @@
+     @Nullable
+     private GeneratorSettings worldGenSettings;
+ 
+-    public DedicatedServerProperties(Properties properties) {
+-        super(properties);
++    // CraftBukkit start
++    public DedicatedServerProperties(Properties properties, OptionSet optionset) {
++        super(properties, optionset);
++        // CraftBukkit end
+         this.difficulty = (EnumDifficulty) this.get("difficulty", dispatchNumberOrString(EnumDifficulty::byId, EnumDifficulty::byName), EnumDifficulty::getKey, EnumDifficulty.EASY);
+         this.gamemode = (EnumGamemode) this.get("gamemode", dispatchNumberOrString(EnumGamemode::byId, EnumGamemode::byName), EnumGamemode::getName, EnumGamemode.SURVIVAL);
+         this.levelName = this.get("level-name", "world");
+@@ -112,13 +120,15 @@
+         this.whiteList = this.getMutable("white-list", false);
+     }
+ 
+-    public static DedicatedServerProperties fromFile(Path path) {
+-        return new DedicatedServerProperties(loadFromFile(path));
++    // CraftBukkit start
++    public static DedicatedServerProperties fromFile(Path path, OptionSet optionset) {
++        return new DedicatedServerProperties(loadFromFile(path), optionset);
+     }
+ 
+     @Override
+-    protected DedicatedServerProperties reload(IRegistryCustom iregistrycustom, Properties properties) {
+-        DedicatedServerProperties dedicatedserverproperties = new DedicatedServerProperties(properties);
++    protected DedicatedServerProperties reload(IRegistryCustom iregistrycustom, Properties properties, OptionSet optionset) {
++        DedicatedServerProperties dedicatedserverproperties = new DedicatedServerProperties(properties, optionset);
++        // CraftBukkit end
+ 
+         dedicatedserverproperties.getWorldGenSettings(iregistrycustom);
+         return dedicatedserverproperties;

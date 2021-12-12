@@ -1,0 +1,347 @@
+--- a/net/minecraft/world/level/World.java
++++ b/net/minecraft/world/level/World.java
+@@ -67,6 +67,29 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++// CraftBukkit start
++import java.util.HashMap;
++import java.util.Map;
++import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket;
++import net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket;
++import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket;
++import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDelayPacket;
++import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDistancePacket;
++import net.minecraft.server.level.WorldServer;
++import net.minecraft.world.entity.item.EntityItem;
++import net.minecraft.world.level.border.IWorldBorderListener;
++import net.minecraft.world.level.dimension.WorldDimension;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.block.CapturedBlockState;
++import org.bukkit.craftbukkit.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.util.CraftNamespacedKey;
++import org.bukkit.event.block.BlockPhysicsEvent;
++import org.bukkit.event.world.GenericGameEvent;
++// CraftBukkit end
++
+ public abstract class World implements GeneratorAccess, AutoCloseable {
+ 
+     protected static final Logger LOGGER = LogManager.getLogger();
+@@ -104,7 +127,46 @@
+     private final ResourceKey<World> dimension;
+     private long subTickCount;
+ 
+-    protected World(WorldDataMutable worlddatamutable, ResourceKey<World> resourcekey, final DimensionManager dimensionmanager, Supplier<GameProfilerFiller> supplier, boolean flag, boolean flag1, long i) {
++    // CraftBukkit start Added the following
++    private final CraftWorld world;
++    public boolean pvpMode;
++    public boolean keepSpawnInMemory = true;
++    public org.bukkit.generator.ChunkGenerator generator;
++
++    public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
++    public boolean captureBlockStates = false;
++    public boolean captureTreeGeneration = false;
++    public Map<BlockPosition, CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
++    public Map<BlockPosition, TileEntity> capturedTileEntities = new HashMap<>();
++    public List<EntityItem> captureDrops;
++    public long ticksPerAnimalSpawns;
++    public long ticksPerMonsterSpawns;
++    public long ticksPerWaterSpawns;
++    public long ticksPerWaterAmbientSpawns;
++    public long ticksPerWaterUndergroundCreatureSpawns;
++    public long ticksPerAmbientSpawns;
++    public boolean populating;
++
++    public CraftWorld getWorld() {
++        return this.world;
++    }
++
++    public CraftServer getCraftServer() {
++        return (CraftServer) Bukkit.getServer();
++    }
++
++    public abstract ResourceKey<WorldDimension> getTypeKey();
++
++    protected World(WorldDataMutable worlddatamutable, ResourceKey<World> resourcekey, final DimensionManager dimensionmanager, Supplier<GameProfilerFiller> supplier, boolean flag, boolean flag1, long i, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env) {
++        this.generator = gen;
++        this.world = new CraftWorld((WorldServer) this, gen, biomeProvider, env);
++        this.ticksPerAnimalSpawns = this.getCraftServer().getTicksPerAnimalSpawns(); // CraftBukkit
++        this.ticksPerMonsterSpawns = this.getCraftServer().getTicksPerMonsterSpawns(); // CraftBukkit
++        this.ticksPerWaterSpawns = this.getCraftServer().getTicksPerWaterSpawns(); // CraftBukkit
++        this.ticksPerWaterAmbientSpawns = this.getCraftServer().getTicksPerWaterAmbientSpawns(); // CraftBukkit
++        this.ticksPerWaterUndergroundCreatureSpawns = this.getCraftServer().getTicksPerWaterUndergroundCreatureSpawns(); // CraftBukkit
++        this.ticksPerAmbientSpawns = this.getCraftServer().getTicksPerAmbientSpawns(); // CraftBukkit
++        // CraftBukkit end
+         this.profiler = supplier;
+         this.levelData = worlddatamutable;
+         this.dimensionType = dimensionmanager;
+@@ -114,12 +176,12 @@
+             this.worldBorder = new WorldBorder() {
+                 @Override
+                 public double getCenterX() {
+-                    return super.getCenterX() / dimensionmanager.coordinateScale();
++                    return super.getCenterX(); // CraftBukkit
+                 }
+ 
+                 @Override
+                 public double getCenterZ() {
+-                    return super.getCenterZ() / dimensionmanager.coordinateScale();
++                    return super.getCenterZ(); // CraftBukkit
+                 }
+             };
+         } else {
+@@ -129,6 +191,42 @@
+         this.thread = Thread.currentThread();
+         this.biomeManager = new BiomeManager(this, i);
+         this.isDebug = flag1;
++        // CraftBukkit start
++        getWorldBorder().world = (WorldServer) this;
++        // From PlayerList.setPlayerFileData
++        getWorldBorder().addListener(new IWorldBorderListener() {
++            @Override
++            public void onBorderSizeSet(WorldBorder worldborder, double d0) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderSizePacket(worldborder), worldborder.world);
++            }
++
++            @Override
++            public void onBorderSizeLerping(WorldBorder worldborder, double d0, double d1, long i) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderLerpSizePacket(worldborder), worldborder.world);
++            }
++
++            @Override
++            public void onBorderCenterSet(WorldBorder worldborder, double d0, double d1) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderCenterPacket(worldborder), worldborder.world);
++            }
++
++            @Override
++            public void onBorderSetWarningTime(WorldBorder worldborder, int i) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDelayPacket(worldborder), worldborder.world);
++            }
++
++            @Override
++            public void onBorderSetWarningBlocks(WorldBorder worldborder, int i) {
++                getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDistancePacket(worldborder), worldborder.world);
++            }
++
++            @Override
++            public void onBorderSetDamagePerBlock(WorldBorder worldborder, double d0) {}
++
++            @Override
++            public void onBorderSetDamageSafeZOne(WorldBorder worldborder, double d0) {}
++        });
++        // CraftBukkit end
+     }
+ 
+     @Override
+@@ -186,6 +284,17 @@
+ 
+     @Override
+     public boolean setBlock(BlockPosition blockposition, IBlockData iblockdata, int i, int j) {
++        // CraftBukkit start - tree generation
++        if (this.captureTreeGeneration) {
++            CapturedBlockState blockstate = capturedBlockStates.get(blockposition);
++            if (blockstate == null) {
++                blockstate = CapturedBlockState.getTreeBlockState(this, blockposition, i);
++                this.capturedBlockStates.put(blockposition.immutable(), blockstate);
++            }
++            blockstate.setData(iblockdata);
++            return true;
++        }
++        // CraftBukkit end
+         if (this.isOutsideBuildHeight(blockposition)) {
+             return false;
+         } else if (!this.isClientSide && this.isDebug()) {
+@@ -193,9 +302,24 @@
+         } else {
+             Chunk chunk = this.getChunkAt(blockposition);
+             Block block = iblockdata.getBlock();
+-            IBlockData iblockdata1 = chunk.setBlockState(blockposition, iblockdata, (i & 64) != 0);
++
++            // CraftBukkit start - capture blockstates
++            boolean captured = false;
++            if (this.captureBlockStates && !this.capturedBlockStates.containsKey(blockposition)) {
++                CapturedBlockState blockstate = CapturedBlockState.getBlockState(this, blockposition, i);
++                this.capturedBlockStates.put(blockposition.immutable(), blockstate);
++                captured = true;
++            }
++            // CraftBukkit end
++
++            IBlockData iblockdata1 = chunk.setBlockState(blockposition, iblockdata, (i & 64) != 0, (i & 1024) == 0); // CraftBukkit custom NO_PLACE flag
+ 
+             if (iblockdata1 == null) {
++                // CraftBukkit start - remove blockstate if failed (or the same)
++                if (this.captureBlockStates && captured) {
++                    this.capturedBlockStates.remove(blockposition);
++                }
++                // CraftBukkit end
+                 return false;
+             } else {
+                 IBlockData iblockdata2 = this.getBlockState(blockposition);
+@@ -206,6 +330,7 @@
+                     this.getProfiler().pop();
+                 }
+ 
++                /*
+                 if (iblockdata2 == iblockdata) {
+                     if (iblockdata1 != iblockdata2) {
+                         this.setBlocksDirty(blockposition, iblockdata1, iblockdata2);
+@@ -232,12 +357,69 @@
+ 
+                     this.onBlockStateChange(blockposition, iblockdata1, iblockdata2);
+                 }
++                */
++
++                // CraftBukkit start
++                if (!this.captureBlockStates) { // Don't notify clients or update physics while capturing blockstates
++                    // Modularize client and physic updates
++                    notifyAndUpdatePhysics(blockposition, chunk, iblockdata1, iblockdata, iblockdata2, i, j);
++                }
++                // CraftBukkit end
+ 
+                 return true;
+             }
+         }
+     }
+ 
++    // CraftBukkit start - Split off from above in order to directly send client and physic updates
++    public void notifyAndUpdatePhysics(BlockPosition blockposition, Chunk chunk, IBlockData oldBlock, IBlockData newBlock, IBlockData actualBlock, int i, int j) {
++        IBlockData iblockdata = newBlock;
++        IBlockData iblockdata1 = oldBlock;
++        IBlockData iblockdata2 = actualBlock;
++        if (iblockdata2 == iblockdata) {
++            if (iblockdata1 != iblockdata2) {
++                this.setBlocksDirty(blockposition, iblockdata1, iblockdata2);
++            }
++
++            if ((i & 2) != 0 && (!this.isClientSide || (i & 4) == 0) && (this.isClientSide || chunk == null || (chunk.getFullStatus() != null && chunk.getFullStatus().isOrAfter(PlayerChunk.State.TICKING)))) { // allow chunk to be null here as chunk.isReady() is false when we send our notification during block placement
++                this.sendBlockUpdated(blockposition, iblockdata1, iblockdata, i);
++            }
++
++            if ((i & 1) != 0) {
++                this.blockUpdated(blockposition, iblockdata1.getBlock());
++                if (!this.isClientSide && iblockdata.hasAnalogOutputSignal()) {
++                    this.updateNeighbourForOutputSignal(blockposition, newBlock.getBlock());
++                }
++            }
++
++            if ((i & 16) == 0 && j > 0) {
++                int k = i & -34;
++
++                // CraftBukkit start
++                iblockdata1.updateIndirectNeighbourShapes(this, blockposition, k, j - 1); // Don't call an event for the old block to limit event spam
++                CraftWorld world = ((WorldServer) this).getWorld();
++                if (world != null) {
++                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()), CraftBlockData.fromData(iblockdata));
++                    this.getCraftServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        return;
++                    }
++                }
++                // CraftBukkit end
++                iblockdata.updateNeighbourShapes(this, blockposition, k, j - 1);
++                iblockdata.updateIndirectNeighbourShapes(this, blockposition, k, j - 1);
++            }
++
++            // CraftBukkit start - SPIGOT-5710
++            if (!preventPoiUpdated) {
++                this.onBlockStateChange(blockposition, iblockdata1, iblockdata2);
++            }
++            // CraftBukkit end
++        }
++    }
++    // CraftBukkit end
++
+     public void onBlockStateChange(BlockPosition blockposition, IBlockData iblockdata, IBlockData iblockdata1) {}
+ 
+     @Override
+@@ -327,6 +509,17 @@
+             IBlockData iblockdata = this.getBlockState(blockposition);
+ 
+             try {
++                // CraftBukkit start
++                CraftWorld world = ((WorldServer) this).getWorld();
++                if (world != null) {
++                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()), CraftBlockData.fromData(iblockdata), world.getBlockAt(blockposition1.getX(), blockposition1.getY(), blockposition1.getZ()));
++                    this.getCraftServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        return;
++                    }
++                }
++                // CraftBukkit end
+                 iblockdata.neighborChanged(this, blockposition, block, blockposition1, false);
+             } catch (Throwable throwable) {
+                 CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception while updating neighbours");
+@@ -369,6 +562,14 @@
+ 
+     @Override
+     public IBlockData getBlockState(BlockPosition blockposition) {
++        // CraftBukkit start - tree generation
++        if (captureTreeGeneration) {
++            CapturedBlockState previous = capturedBlockStates.get(blockposition);
++            if (previous != null) {
++                return previous.getHandle();
++            }
++        }
++        // CraftBukkit end
+         if (this.isOutsideBuildHeight(blockposition)) {
+             return Blocks.VOID_AIR.defaultBlockState();
+         } else {
+@@ -494,6 +695,16 @@
+     @Nullable
+     @Override
+     public TileEntity getBlockEntity(BlockPosition blockposition) {
++        // CraftBukkit start
++        return getBlockEntity(blockposition, true);
++    }
++
++    @Nullable
++    public TileEntity getBlockEntity(BlockPosition blockposition, boolean validate) {
++        if (capturedTileEntities.containsKey(blockposition)) {
++            return capturedTileEntities.get(blockposition);
++        }
++        // CraftBukkit end
+         return this.isOutsideBuildHeight(blockposition) ? null : (!this.isClientSide && Thread.currentThread() != this.thread ? null : this.getChunkAt(blockposition).getBlockEntity(blockposition, Chunk.EnumTileEntityState.IMMEDIATE));
+     }
+ 
+@@ -501,6 +712,12 @@
+         BlockPosition blockposition = tileentity.getBlockPos();
+ 
+         if (!this.isOutsideBuildHeight(blockposition)) {
++            // CraftBukkit start
++            if (captureBlockStates) {
++                capturedTileEntities.put(blockposition.immutable(), tileentity);
++                return;
++            }
++            // CraftBukkit end
+             this.getChunkAt(blockposition).addAndRegisterBlockEntity(tileentity);
+         }
+     }
+@@ -605,7 +822,7 @@
+ 
+                 for (int j = 0; j < i; ++j) {
+                     EntityComplexPart entitycomplexpart = aentitycomplexpart[j];
+-                    T t0 = (Entity) entitytypetest.tryCast(entitycomplexpart);
++                    T t0 = entitytypetest.tryCast(entitycomplexpart); // CraftBukkit - decompile error
+ 
+                     if (t0 != null && predicate.test(t0)) {
+                         list.add(t0);
+@@ -931,6 +1148,14 @@
+     public abstract LevelEntityGetter<Entity> getEntities();
+ 
+     protected void postGameEventInRadius(@Nullable Entity entity, GameEvent gameevent, BlockPosition blockposition, int i) {
++        // CraftBukkit start
++        GenericGameEvent event = new GenericGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(IRegistry.GAME_EVENT.getKey(gameevent))), new Location(this.getWorld(), blockposition.getX(), blockposition.getY(), blockposition.getZ()), (entity == null) ? null : entity.getBukkitEntity(), i);
++        getCraftServer().getPluginManager().callEvent(event);
++        if (event.isCancelled()) {
++            return;
++        }
++        i = event.getRadius();
++        // CraftBukkit end
+         int j = SectionPosition.blockToSectionCoord(blockposition.getX() - i);
+         int k = SectionPosition.blockToSectionCoord(blockposition.getZ() - i);
+         int l = SectionPosition.blockToSectionCoord(blockposition.getX() + i);

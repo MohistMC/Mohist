@@ -1,0 +1,27 @@
+--- a/net/minecraft/network/chat/IChatBaseComponent.java
++++ b/net/minecraft/network/chat/IChatBaseComponent.java
+@@ -29,7 +29,23 @@
+ import net.minecraft.util.ChatTypeAdapterFactory;
+ import net.minecraft.util.FormattedString;
+ 
+-public interface IChatBaseComponent extends Message, IChatFormatted {
++// CraftBukkit start
++import com.google.common.collect.Streams;
++import java.util.stream.Stream;
++// CraftBukkit end
++
++public interface IChatBaseComponent extends Message, IChatFormatted, Iterable<IChatBaseComponent> { // CraftBukkit
++
++    // CraftBukkit start
++    default Stream<IChatBaseComponent> stream() {
++        return Streams.concat(new Stream[]{Stream.of(this), this.getSiblings().stream().flatMap(IChatBaseComponent::stream)});
++    }
++
++    @Override
++    default Iterator<IChatBaseComponent> iterator() {
++        return this.stream().iterator();
++    }
++    // CraftBukkit end
+ 
+     ChatModifier getStyle();
+ 

@@ -1,0 +1,72 @@
+--- a/net/minecraft/world/level/chunk/ChunkGenerator.java
++++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -225,7 +225,7 @@
+         }
+     }
+ 
+-    public void applyBiomeDecoration(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager) {
++    public void addVanillaDecorations(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager) { // CraftBukkit
+         ChunkCoordIntPair chunkcoordintpair = ichunkaccess.getPos();
+ 
+         if (!SharedConstants.debugVoidTerrain(chunkcoordintpair)) {
+@@ -249,7 +249,7 @@
+ 
+                     for (int k = 0; k < j; ++k) {
+                         ChunkSection chunksection = achunksection[k];
+-                        DataPaletteBlock datapaletteblock = chunksection.getBiomes();
++                        DataPaletteBlock<BiomeBase> datapaletteblock = chunksection.getBiomes(); // CraftBukkit - decompile error
+ 
+                         Objects.requireNonNull(set);
+                         datapaletteblock.getAll(set::add);
+@@ -278,7 +278,7 @@
+                             StructureGenerator<?> structuregenerator = (StructureGenerator) iterator.next();
+ 
+                             seededrandom.setFeatureSeed(i, i1, l);
+-                            Supplier supplier = () -> {
++                            Supplier<String> supplier = () -> { // CraftBukkit - decompile error
+                                 Optional optional = iregistry1.getResourceKey(structuregenerator).map(Object::toString);
+ 
+                                 Objects.requireNonNull(structuregenerator);
+@@ -363,6 +363,33 @@
+         }
+     }
+ 
++    public void applyBiomeDecoration(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager) {
++        // CraftBukkit start
++        applyBiomeDecoration(generatoraccessseed, ichunkaccess, structuremanager, true);
++    }
++
++    public void applyBiomeDecoration(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager, boolean vanilla) {
++        if (vanilla) {
++            addVanillaDecorations(generatoraccessseed, ichunkaccess, structuremanager);
++        }
++
++        org.bukkit.World world = generatoraccessseed.getMinecraftWorld().getWorld();
++        // only call when a populator is present (prevents unnecessary entity conversion)
++        if (!world.getPopulators().isEmpty()) {
++            org.bukkit.craftbukkit.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.getPos());
++            int x = ichunkaccess.getPos().x;
++            int z = ichunkaccess.getPos().z;
++            for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
++                SeededRandom seededrandom = new SeededRandom(new net.minecraft.world.level.levelgen.LegacyRandomSource(generatoraccessseed.getSeed()));
++                seededrandom.setDecorationSeed(generatoraccessseed.getSeed(), x, z);
++                populator.populate(world, seededrandom, x, z, limitedRegion);
++            }
++            limitedRegion.saveEntities();
++            limitedRegion.breakLink();
++        }
++        // CraftBukkit end
++    }
++
+     private static StructureBoundingBox getWritableArea(IChunkAccess ichunkaccess) {
+         ChunkCoordIntPair chunkcoordintpair = ichunkaccess.getPos();
+         int i = chunkcoordintpair.getMinBlockX();
+@@ -438,7 +465,7 @@
+ 
+                             Entry<StructureFeature<?, ?>, Collection<ResourceKey<BiomeBase>>> entry = (Entry) unmodifiableiterator.next();
+ 
+-                            structurestart3 = ((StructureFeature) entry.getKey()).generate(iregistrycustom, this, this.biomeSource, definedstructuremanager, i, chunkcoordintpair, j, structuresettingsfeature1, ichunkaccess, (biomebase) -> {
++                            structurestart3 = (entry.getKey()).generate(iregistrycustom, this, this.biomeSource, definedstructuremanager, i, chunkcoordintpair, j, structuresettingsfeature1, ichunkaccess, (biomebase) -> { // CraftBukkit - decompile error
+                                 Collection collection = (Collection) entry.getValue();
+ 
+                                 Objects.requireNonNull(collection);
