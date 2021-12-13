@@ -2173,7 +2173,11 @@ public final class CraftServer implements Server {
     // Spigot start
     private final org.bukkit.Server.Spigot spigot = new org.bukkit.Server.Spigot()
     {
-
+        @Override
+        public YamlConfiguration getConfig()
+        {
+            return org.spigotmc.SpigotConfig.config;
+        }
     };
 
     public org.bukkit.Server.Spigot spigot()
