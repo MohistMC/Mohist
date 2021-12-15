@@ -44,15 +44,7 @@
          this.field_75768_d = new File(this.field_75770_b, "data");
          this.field_75768_d.mkdirs();
          this.field_75767_f = p_i46648_2_;
-@@ -44,6 +58,7 @@
-         if (p_i46648_3_)
-         {
-             this.field_75771_c.mkdirs();
-+            field_151478_a.error("SaveHandler:" + field_75771_c.getAbsolutePath());
-             this.field_186342_h = new TemplateManager((new File(this.field_75770_b, "structures")).toString(), p_i46648_4_);
-         }
-         else
-@@ -116,10 +131,9 @@
+@@ -116,10 +130,9 @@
      public WorldInfo func_75757_d()
      {
          File file1 = new File(this.field_75770_b, "level.dat");
@@ -64,7 +56,7 @@
  
              if (worldinfo != null)
              {
-@@ -127,8 +141,9 @@
+@@ -127,8 +140,9 @@
              }
          }
  
@@ -75,7 +67,7 @@
      }
  
      public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_)
-@@ -137,6 +152,8 @@
+@@ -137,6 +151,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
@@ -84,7 +76,7 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -189,6 +206,7 @@
+@@ -189,6 +205,7 @@
              }
  
              file1.renameTo(file2);
@@ -92,7 +84,7 @@
          }
          catch (Exception var5)
          {
-@@ -217,12 +235,39 @@
+@@ -217,12 +234,39 @@
  
          if (nbttagcompound != null)
          {
@@ -132,7 +124,7 @@
      public IPlayerFileData func_75756_e()
      {
          return this;
-@@ -261,4 +306,79 @@
+@@ -261,4 +305,79 @@
      {
          return this.field_186342_h;
      }
