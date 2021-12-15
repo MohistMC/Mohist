@@ -10,7 +10,7 @@ buildscript {
         }
         maven {
             name 'sonatype'
-            url 'http://oss.sonatype.org/content/repositories/snapshots/'
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
         }
         maven {
             name 'spigot'
@@ -31,7 +31,7 @@ repositories {
     mavenLocal()
     maven {
         name 'sonatype'
-        url 'http://oss.sonatype.org/content/repositories/snapshots/'
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
     maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
     maven { url 'https://maven.mohistmc.com/' }

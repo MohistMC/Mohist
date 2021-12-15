@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/stream/TwitchStream.java
++++ ../src-work/minecraft/net/minecraft/client/stream/TwitchStream.java
+@@ -31,7 +31,7 @@
+ import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.Marker;
+ import org.apache.logging.log4j.MarkerManager;
+-import org.apache.logging.log4j.core.helpers.Strings;
++import org.apache.logging.log4j.util.Strings;
+ import org.lwjgl.opengl.GL11;
+ import tv.twitch.AuthToken;
+ import tv.twitch.ErrorCode;
