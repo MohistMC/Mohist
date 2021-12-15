@@ -5,7 +5,7 @@ import com.mohistmc.config.MohistConfigUtil;
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("http://120.232.41.28:1001/"),
+    CHINA("http://s1.devicloud.cn:25119/"),
     GITHUB("https://mavenmirror.mohistmc.com/");
 
     String url;
