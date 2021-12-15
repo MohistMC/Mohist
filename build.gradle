@@ -115,6 +115,7 @@ subprojects {
             url = 'https://maven.minecraftforge.net/'
         }
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+        maven { url 'https://maven.mohistmc.com/' }
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
