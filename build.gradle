@@ -229,8 +229,8 @@ project(':mohist') {
         installer 'net.sf.trove4j:trove4j:3.0.3'
         installer 'org.apache.maven:maven-artifact:3.5.3'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.3'
-        installer 'org.apache.logging.log4j:log4j-api:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
-        installer 'org.apache.logging.log4j:log4j-core:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-api:2.16.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-core:2.16.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
 
         installer 'com.googlecode.json-simple:json-simple:1.1.1'
         installer 'org.yaml:snakeyaml:1.19'
