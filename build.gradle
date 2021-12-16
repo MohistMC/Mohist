@@ -15,6 +15,7 @@ import java.nio.file.Files
 import java.util.Date
 import java.util.LinkedHashMap
 import net.minecraftforge.forge.tasks.*
+import com.mohistmc.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
@@ -61,6 +62,7 @@ ext {
     GIT_INFO = gradleutils.gitInfo
     VERSION = '1.18.1-39.0.0'
     FORGE_VERSION = '39.0.0'
+    MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
@@ -225,7 +227,7 @@ def sharedDeps = {
     installer 'org.apache.maven:maven-resolver-provider:3.8.1'
     installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.0'
     installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.0'
-    installer 'org.jetbrains:annotations:21.0.1'
+    compileOnly 'org.jetbrains:annotations:21.0.1'
     // craftbukkit
     installer 'org.fusesource.jansi:jansi:1.18'
     installer 'jline:jline:2.12.1'
@@ -1243,6 +1245,62 @@ project(':forge') {
                 ]
             ]
             getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
+        }
+    }
+
+    task mohistJar(type: Jar, dependsOn: [genServerBinPatches, 'signUniversalJar']) {
+        archiveClassifier = 'server'
+        archiveExtension = 'jar'
+        archiveBaseName = 'mohist'
+        archiveVersion = "1.18.x-" + JenkinsNumber.info()
+        destinationDirectory = file('build/libs')
+
+        def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
+                [
+                        'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
+                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
+                ]
+
+        println(CLASS_PATH)
+
+        from(genServerBinPatches.output) {
+            rename { 'data/server.lzma' }
+        }
+        from(universalJar) {
+            rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-universal.jar' }
+        }
+        from(project(':fmlloader').tasks.jar.outputs) {
+            rename { 'data/fmlloader-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(project(':fmlcore').tasks.jar.outputs) {
+            rename { 'data/fmlcore-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(project(':javafmllanguage').tasks.jar.outputs) {
+            rename { 'data/javafmllanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(project(':mclanguage').tasks.jar.outputs) {
+            rename { 'data/mclanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])
+            rename { 'versions/mohist.txt' }
+        }
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: MC_VERSION])
+            rename { 'versions/minecraft.txt' }
+        }
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: FORGE_VERSION])
+            rename { 'versions/forge.txt' }
+        }
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: MCP_VERSION])
+            rename { 'versions/mcp.txt' }
+        }
+
+        from(rootProject.file('server_files/libraries.txt')) {
+            filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
+            rename { 'data/libraries.txt' }
         }
     }
 
