@@ -117,6 +117,7 @@ subprojects {
             url = 'https://maven.minecraftforge.net/'
         }
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+        maven { url 'https://maven.mohistmc.com/' }
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -209,9 +210,9 @@ def sharedDeps = {
     installer 'org.apache.maven:maven-artifact:3.6.3'
     installer 'org.apache.commons:commons-lang3:3.12.0'
     installer 'net.jodah:typetools:0.8.3'
-    installer 'org.apache.logging.log4j:log4j-api:2.15.0'
-    installer 'org.apache.logging.log4j:log4j-core:2.15.0'
-    installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0'
+    installer 'org.apache.logging.log4j:log4j-api:2.16.0'
+    installer 'org.apache.logging.log4j:log4j-core:2.16.0'
+    installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0'
     installer 'net.minecrell:terminalconsoleappender:1.2.0'
     installer 'org.jline:jline-reader:3.12.1'   //Dep of TerminaalConsoleeAppender
     installer 'org.jline:jline-terminal:3.12.1' //Dep of TerminaalConsoleeAppender
@@ -234,11 +235,13 @@ def sharedDeps = {
     installer 'com.googlecode.json-simple:json-simple:1.1.1'
     installer 'org.xerial:sqlite-jdbc:3.36.0.3'
     installer 'mysql:mysql-connector-java:8.0.27'
-    installer 'org.apache.logging.log4j:log4j-iostreams:2.14.1'
+    installer 'org.apache.logging.log4j:log4j-iostreams:2.16.0'
     installer 'net.md-5:SpecialSource:1.10.0'
 
     // spigot
     installer 'net.md-5:bungeecord-chat:1.16-R0.4'
+
+    installer 'com.mohistmc.dynamicenumutil:DynamicEnumUtil:0.1'
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'

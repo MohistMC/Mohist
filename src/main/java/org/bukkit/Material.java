@@ -1,12 +1,12 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+import com.mohistmc.dynamicenumutil.MohistEnumHelper;
 import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.mohistmc.util.MohistEnumHelper;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.AnaloguePowerable;
