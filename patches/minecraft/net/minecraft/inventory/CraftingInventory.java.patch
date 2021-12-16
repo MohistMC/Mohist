@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/CraftingInventory.java
 +++ b/net/minecraft/inventory/CraftingInventory.java
-@@ -1,16 +_,85 @@
+@@ -1,16 +_,89 @@
  package net.minecraft.inventory;
  
 +import java.util.List;
@@ -76,6 +76,10 @@
 +   @Override
 +   public void setCurrentRecipe(IRecipe currentRecipe) {
 +      this.currentRecipe = currentRecipe;
++   }
++
++   public void setOwner (PlayerEntity player) {
++      this.owner = player;
 +   }
 +
 +   public CraftingInventory(Container container, int i, int j, PlayerEntity player) {

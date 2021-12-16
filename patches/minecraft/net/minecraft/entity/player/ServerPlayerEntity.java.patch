@@ -310,7 +310,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Player being ticked");
-@@ -469,19 +_,60 @@
+@@ -469,19 +_,65 @@
     }
  
     private void func_184849_a(ScoreCriteria p_184849_1_, int p_184849_2_) {
@@ -327,6 +327,10 @@
 -      if (flag) {
 -         ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
 -         this.field_71135_a.func_211148_a(new SCombatPacket(this.func_110142_aN(), SCombatPacket.Event.ENTITY_DIED, itextcomponent), (p_212356_2_) -> {
++      // CraftBukkit start - fire PlayerDeathEvent
++      if (this.field_70128_L) {
++         return;
++      }
 +
 +      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.field_71071_by.func_70302_i_());
 +
@@ -349,7 +353,8 @@
 +
 +      ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
 +
-+      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, itextcomponent.getString(), keepInventory);
++      String deathmessage = itextcomponent.getString();
++      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
 +
 +      // Mohist start - Fix PlayerDeathEvent drop/xp saving (again)
 +      this.mohKeepInventory = event.getKeepInventory();
@@ -363,7 +368,7 @@
 +      String deathMessage = event.getDeathMessage();
 +      if (deathMessage != null && deathMessage.length() > 0 && flag) {// TODO: allow plugins to override?
 +         ITextComponent ichatbasecomponent = null;
-+         if (deathMessage.equals(itextcomponent.toString())) {
++         if (deathMessage.equals(deathmessage)) {
 +            itextcomponent = this.func_110142_aN().func_151521_b();
 +         } else {
 +            itextcomponent = org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage.fromStringOrNull(deathMessage);
@@ -376,7 +381,7 @@
                 ITextComponent itextcomponent1 = new TranslationTextComponent("death.attack.message_too_long", (new StringTextComponent(s)).func_240699_a_(TextFormatting.YELLOW));
                 ITextComponent itextcomponent2 = (new TranslationTextComponent("death.attack.even_more_magic", this.func_145748_c_())).func_240700_a_((p_212357_1_) -> {
                    return p_212357_1_.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, itextcomponent1));
-@@ -509,11 +_,12 @@
+@@ -509,11 +_,13 @@
           this.func_241157_eT_();
        }
  
@@ -384,6 +389,7 @@
 +      if (!event.getKeepInventory()) {
           this.func_213345_d(p_70645_1_);
        }
++      this.func_175399_e(this); // Remove spectated target
  
 -      this.func_96123_co().func_197893_a(ScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
 +      // CraftBukkit - Get our scores instead
