@@ -20,6 +20,7 @@
 package net.minecraftforge.common.util;
 
 import com.google.common.collect.Maps;
+import com.mohistmc.configuration.MohistConfig;
 import com.mojang.authlib.GameProfile;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
@@ -71,7 +72,7 @@ public class FakePlayerFactory
         }
         // Cauldron end
         fakePlayers.put(username, fakePlayer);
-        world.getServer().getPluginManager().callEvent(new PlayerJoinEvent(fakePlayer.getBukkitEntity(), world.getWorld()));
+        if (MohistConfig.instance.fakePlayerLogin.getValue().booleanValue()) world.getServer().getPluginManager().callEvent(new PlayerJoinEvent(fakePlayer.getBukkitEntity(), world.getWorld()));
         return fakePlayers.get(username);
     }
 
