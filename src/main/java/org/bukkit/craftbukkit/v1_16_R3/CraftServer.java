@@ -2152,10 +2152,5 @@ public final class CraftServer implements Server {
     public String getPermissionMessage() {
         return PaperConfig.noPermissionMessage;
     }
-
     // Paper end
-
-    public void setPlayerList(PlayerList playerList) {
-        playerList = playerList;
-    }
 }

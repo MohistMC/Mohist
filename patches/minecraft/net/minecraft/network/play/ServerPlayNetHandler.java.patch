@@ -1055,7 +1055,7 @@
           if (this.field_147369_b.field_71071_by.field_70461_c != p_147355_1_.func_149614_c() && this.field_147369_b.func_184600_cs() == Hand.MAIN_HAND) {
              this.field_147369_b.func_184602_cy();
           }
-@@ -1066,61 +_,284 @@
+@@ -1066,61 +_,288 @@
           this.field_147369_b.field_71071_by.field_70461_c = p_147355_1_.func_149614_c();
           this.field_147369_b.func_143004_u();
        } else {
@@ -1294,11 +1294,15 @@
 +         MinecraftTimings.playerCommandTimer.stopTiming(); // Paper
 +         return;
 +      }
++
 +      try {
-+         this.craftServer.dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
++         if (this.craftServer.dispatchCommand(event.getPlayer(), event.getMessage().substring(1))) {
++            return;
++         }
 +      } catch (org.bukkit.command.CommandException ex) {
 +         player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
 +         java.util.logging.Logger.getLogger(ServerPlayNetHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
++         return;
 +      } finally {
 +         MinecraftTimings.playerCommandTimer.stopTiming(); // Paper
 +      }
