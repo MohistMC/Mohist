@@ -1,5 +1,13 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
+@@ -31,6 +_,7 @@
+    public CrashReport(String p_127509_, Throwable p_127510_) {
+       this.f_127500_ = p_127509_;
+       this.f_127501_ = p_127510_;
++      this.f_178624_.m_143522_("CraftBukkit Information", new org.bukkit.craftbukkit.v1_18_R1.CraftCrashReport()); // CraftBukkit
+    }
+ 
+    public String m_127511_() {
 @@ -55,14 +_,8 @@
        if (this.f_127506_ != null && this.f_127506_.length > 0) {
           p_127520_.append("-- Head --\n");

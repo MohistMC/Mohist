@@ -163,6 +163,36 @@
           }
        }
  
+@@ -565,8 +_,29 @@
+       this.m_7041_();
+    }
+ 
++   // CraftBukkit start
++   private boolean hasStopped = false;
++   private final Object stopLock = new Object();
++   public final boolean hasStopped() {
++      synchronized (stopLock) {
++         return hasStopped;
++      }
++   }
++   // CraftBukkit end
++
+    public void m_7041_() {
++      // CraftBukkit start - prevent double stopping on multiple threads
++      synchronized(stopLock) {
++         if (hasStopped) return;
++         hasStopped = true;
++      }
++      // CraftBukkit end
+       f_129750_.info("Stopping server");
++      // CraftBukkit start
++      if (this.server != null) {
++         this.server.disablePlugins();
++      }
++      // CraftBukkit end
+       if (this.m_129919_() != null) {
+          this.m_129919_().m_9718_();
+       }
 @@ -591,6 +_,7 @@
        for(ServerLevel serverlevel1 : this.m_129785_()) {
           if (serverlevel1 != null) {

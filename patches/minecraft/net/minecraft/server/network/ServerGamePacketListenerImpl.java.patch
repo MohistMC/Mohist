@@ -11,11 +11,17 @@
  
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
     static final Logger f_9744_ = LogManager.getLogger();
-@@ -188,6 +_,12 @@
+@@ -188,14 +_,28 @@
     private int f_9740_;
     private int f_9741_;
  
 +   private final org.bukkit.craftbukkit.v1_18_R1.CraftServer cserver;
++   public boolean processedDisconnect;
++   private int lastTick = MinecraftServer.currentTick;
++   private int allowedPlayerTicks = 1;
++   private int lastDropTick = MinecraftServer.currentTick;
++   private int lastBookTick  = MinecraftServer.currentTick;
++   private int dropCount = 0;
 +
 +   public CraftPlayer getCraftPlayer() {
 +      return (this.f_9743_ == null) ? null : (CraftPlayer) this.f_9743_.getBukkitEntity();
@@ -24,9 +30,10 @@
     public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_) {
        this.f_9745_ = p_9770_;
        this.f_9742_ = p_9771_;
-@@ -196,6 +_,9 @@
+       p_9771_.m_129505_(this);
+       this.f_9743_ = p_9772_;
        p_9772_.f_8906_ = this;
-       this.f_9747_ = Util.m_137550_();
+-      this.f_9747_ = Util.m_137550_();
        p_9772_.m_8967_().m_7674_();
 +
 +      // CraftBukkit start - add fields and methods

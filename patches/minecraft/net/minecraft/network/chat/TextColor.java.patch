@@ -1,5 +1,14 @@
 --- a/net/minecraft/network/chat/TextColor.java
 +++ b/net/minecraft/network/chat/TextColor.java
+@@ -11,7 +_,7 @@
+ public final class TextColor {
+    private static final String f_178538_ = "#";
+    private static final Map<ChatFormatting, TextColor> f_131255_ = Stream.of(ChatFormatting.values()).filter(ChatFormatting::m_126664_).collect(ImmutableMap.toImmutableMap(Function.identity(), (p_131276_) -> {
+-      return new TextColor(p_131276_.m_126665_(), p_131276_.m_126666_());
++      return new TextColor(p_131276_.m_126665_(), p_131276_.m_126666_(), p_131276_); // CraftBukkit
+    }));
+    private static final Map<String, TextColor> f_131256_ = f_131255_.values().stream().collect(ImmutableMap.toImmutableMap((p_131273_) -> {
+       return p_131273_.f_131258_;
 @@ -20,14 +_,26 @@
     @Nullable
     private final String f_131258_;

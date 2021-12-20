@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/protocol/game/ServerboundChatPacket.java
++++ b/net/minecraft/network/protocol/game/ServerboundChatPacket.java
+@@ -16,7 +_,7 @@
+    }
+ 
+    public ServerboundChatPacket(FriendlyByteBuf p_179545_) {
+-      this.f_133827_ = p_179545_.m_130136_(256);
++      this.f_133827_ = org.apache.commons.lang3.StringUtils.normalizeSpace(p_179545_.m_130136_(256)); // CraftBukkit - see PlayerConnection
+    }
+ 
+    public void m_5779_(FriendlyByteBuf p_133839_) {
