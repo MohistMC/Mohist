@@ -149,23 +149,7 @@
              {
                  field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
                  return false;
-@@ -374,9 +380,14 @@
-     public static boolean func_152723_a(final DedicatedServer p_152723_0_, PropertyManager p_152723_1_)
-     {
-         final File file1 = func_152725_d(p_152723_1_);
--        final File file2 = new File(file1.getParentFile(), "playerdata");
-+        final File file22 = new File(file1.getParentFile(), "playerdata");
-+        String configfile = MohistConfig.getString0("playersdirectory", file22.getAbsolutePath());
-+
-+        final File file2 = new File(configfile);
-         final File file3 = new File(file1.getParentFile(), "unknownplayers");
- 
-+        MohistConfig.setValueMohist("playersdirectory", file2.getAbsolutePath());
-+
-         if (file1.exists() && file1.isDirectory())
-         {
-             File[] afile = file1.listFiles();
-@@ -409,7 +420,7 @@
+@@ -409,7 +415,7 @@
  
                          if (uuid == null)
                          {
@@ -174,7 +158,7 @@
                          }
                          else
                          {
-@@ -427,18 +438,41 @@
+@@ -427,18 +433,41 @@
                          }
                          else
                          {
@@ -218,7 +202,7 @@
                          }
                      }
                      private String func_152744_a(GameProfile p_152744_1_)
-@@ -456,7 +490,7 @@
+@@ -456,7 +485,7 @@
  
                          if (s2 == null)
                          {
@@ -227,7 +211,7 @@
                          }
                          else
                          {
-@@ -467,7 +501,7 @@
+@@ -467,7 +496,7 @@
                  func_152717_a(p_152723_0_, Lists.newArrayList(astring), profilelookupcallback);
                  return true;
              }
@@ -236,7 +220,7 @@
              {
                  field_152732_e.error("Conversion failed, please try again later", (Throwable)preyggdrasilconverter$conversionerror);
                  return false;
-@@ -486,12 +520,12 @@
+@@ -486,12 +515,12 @@
          {
              if (!p_152711_0_.isDirectory())
              {
@@ -251,7 +235,7 @@
          }
      }
  
-@@ -589,7 +623,7 @@
+@@ -589,7 +618,7 @@
      private static File func_152725_d(PropertyManager p_152725_0_)
      {
          String s = p_152725_0_.func_73671_a("level-name", "world");
