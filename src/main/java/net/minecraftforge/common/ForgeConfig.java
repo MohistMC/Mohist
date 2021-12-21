@@ -42,6 +42,8 @@ public class ForgeConfig {
 
         public final BooleanValue fixAdvancementLoading;
 
+        public final ForgeConfigSpec.ConfigValue<String> permissionHandler;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
@@ -79,6 +81,11 @@ public class ForgeConfig {
                     .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
                     .translation("forge.configgui.fixAdvancementLoading")
                     .define("fixAdvancementLoading", true);
+
+            permissionHandler = builder
+                    .comment("")
+                    .translation("forge.configgui.permissionHandler")
+                    .define("permissionHandler", "forge:default_handler");
 
             builder.pop();
         }
