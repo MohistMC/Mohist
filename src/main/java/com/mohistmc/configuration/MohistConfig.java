@@ -90,6 +90,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting RealTimeTicking = new BoolSetting(this, "mohist.realtimeticking", false);
     public final BoolSetting FailOnUnresolvedGameProfile = new BoolSetting(this, "mohist.fail-on-unresolved-gameprofile", true);
     public final IntSetting entityTickLimit = new IntSetting(this, "entity-tick-limit", 300); // by CraftDream
+    public final BoolSetting skipEntityActivationRange = new BoolSetting(this, "skip-entity-activation-range", false); // by SmylerMC
     public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb");
     public final BoolSetting hideJoinModsList = new BoolSetting(this, "hidejoinmodslist", false);
     public final BoolSetting watchdog_spigot = new BoolSetting(this, "mohist.watchdog_spigot", true);
