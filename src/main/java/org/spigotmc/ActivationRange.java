@@ -215,8 +215,8 @@ public class ActivationRange {
     /**
      * Checks if the entity is active for this tick.
      *
-     * @param entity
-     * @return
+     * @param entity - an entity to check
+     * @return whether a given entity is currently active.
      */
     public static boolean checkIfActive(Entity entity) {
 
@@ -229,29 +229,26 @@ public class ActivationRange {
             return true;
         }
 
-        boolean isActive = entity.activatedTick >= MinecraftServer.currentTick || entity.defaultActivationState;
-
-        // Should this entity tick?
-        if (!isActive) {
-            if ((MinecraftServer.currentTick - entity.activatedTick - 1) % 20 == 0) {
-                // Check immunities every 20 ticks.
-                if (checkEntityImmunities(entity)) {
-                    // Triggered some sort of immunity, give 20 full ticks before we check again.
-                    entity.activatedTick = MinecraftServer.currentTick + 20;
-                }
-                isActive = true;
+        // Is the entity not active anymore or not active by default ?
+        if (entity.activatedTick < MinecraftServer.currentTick && !entity.defaultActivationState) {
+            // Ignore the entity 95 % of the time (19 ticks out of 20)
+            if ((MinecraftServer.currentTick - entity.activatedTick) % 20 != 1) {
+                return false;
             }
-            // Add a little performance juice to active entities. Skip 1/4 if not immune.
+            // It is time to check if the entity has acquired some sort of immunity
+            if (checkEntityImmunities(entity)) {
+                // Triggered some sort of immunity, give 20 full ticks before we check again.
+                entity.activatedTick = MinecraftServer.currentTick + 20;
+            }
+        // Only tick 75% of the time if there is not a good reason to always tick, to gain some performance
         } else if (!entity.defaultActivationState && entity.ticksExisted % 4 == 0 && !checkEntityImmunities(entity)) {
             return false;
         }
+
+        // Only active if the chunk and its neighbors are loaded
         int x = MathHelper.floor(entity.posX);
         int z = MathHelper.floor(entity.posZ);
-        // Make sure not on edge of unloaded chunk
         Chunk chunk = entity.world.getChunkIfLoaded(x >> 4, z >> 4);
-        if (isActive && !(chunk != null && chunk.areNeighborsLoaded(1))) {
-            return false;
-        }
-        return isActive;
+        return chunk != null && chunk.areNeighborsLoaded(1);
     }
 }
