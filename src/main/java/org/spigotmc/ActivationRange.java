@@ -1,6 +1,7 @@
 package org.spigotmc;
 
 import co.aikar.timings.MinecraftTimings;
+import com.mohistmc.configuration.MohistConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
@@ -218,6 +219,10 @@ public class ActivationRange {
      * @return
      */
     public static boolean checkIfActive(Entity entity) {
+
+        // Let users disable this in cases where is does not play well with some mods
+        if (MohistConfig.instance.skipEntityActivationRange.getValue()) return true;
+
         // Never safe to skip fireworks or entities not yet added to chunk
         // PAIL: inChunk
         if (!entity.addedToChunk || entity instanceof EntityFireworkRocket) {
@@ -238,14 +243,14 @@ public class ActivationRange {
             }
             // Add a little performance juice to active entities. Skip 1/4 if not immune.
         } else if (!entity.defaultActivationState && entity.ticksExisted % 4 == 0 && !checkEntityImmunities(entity)) {
-            isActive = false;
+            return false;
         }
         int x = MathHelper.floor(entity.posX);
         int z = MathHelper.floor(entity.posZ);
         // Make sure not on edge of unloaded chunk
         Chunk chunk = entity.world.getChunkIfLoaded(x >> 4, z >> 4);
         if (isActive && !(chunk != null && chunk.areNeighborsLoaded(1))) {
-            isActive = false;
+            return false;
         }
         return isActive;
     }
