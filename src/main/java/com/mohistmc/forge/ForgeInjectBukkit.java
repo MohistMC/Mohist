@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.*;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_18_R1.enchantments.CraftEnchantment;
@@ -30,10 +29,7 @@ import org.bukkit.craftbukkit.v1_18_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.permissions.DefaultPermissions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -184,24 +180,6 @@ public class ForgeInjectBukkit {
                 ServerAPI.entityTypeMap.put(entity.getValue(), entityType);
             }
         }
-    }
-
-    public static void registerDefaultPermission(String name, DefaultPermissionLevel level, String desc) {
-        PermissionDefault permissionDefault;
-        switch (level) {
-            case ALL:
-                permissionDefault = PermissionDefault.TRUE;
-                break;
-            case OP:
-                permissionDefault = PermissionDefault.OP;
-                break;
-            case NONE:
-            default:
-                permissionDefault = PermissionDefault.FALSE;
-                break;
-        }
-        Permission permission = new Permission(name, desc, permissionDefault);
-        DefaultPermissions.registerPermission(permission, false);
     }
 
     public static void addEnumVillagerProfession() {
