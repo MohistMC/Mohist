@@ -62,14 +62,6 @@
     public void m_10053_(Component p_10054_) {
        try {
           f_10015_.info("Disconnecting {}: {}", this.m_10056_(), p_10054_.getString());
-@@ -97,6 +_,7 @@
-       }
- 
-       Component component = this.f_10018_.m_6846_().m_6418_(this.f_10013_.m_129523_(), this.f_10021_);
-+      ServerPlayer s = this.f_10018_.m_6846_().canPlayerLogin(this, this.f_10021_, hostname);
-       if (component != null) {
-          this.m_10053_(component);
-       } else {
 @@ -147,7 +_,7 @@
           this.f_10019_ = ServerLoginPacketListenerImpl.State.KEY;
           this.f_10013_.m_129512_(new ClientboundHelloPacket("", this.f_10018_.m_129790_().getPublic().getEncoded(), this.f_10017_));
