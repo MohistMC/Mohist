@@ -75,7 +75,10 @@ public class ServerMain {
 		if(jVersion >= 60.0 && !mainArgs.contains("launchedWithJava16+")) {
 			ArrayList<String> command = new ArrayList<>(Arrays.asList("java", "-jar", "--add-exports=java.base/sun.security.util=ALL-UNNAMED", "--add-opens=java.base/java.util.jar=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED"));
 			command.addAll(getCustomFlags());
-			command.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+			if (mainArgs.contains("customServerPath"))
+				command.add(mainArgs.get(mainArgs.indexOf("customServerPath") + 1));
+			else
+				command.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
 			command.addAll(ServerMain.mainArgs);
 			command.add("launchedWithJava16+");
 			if(hasCustomFlags)
