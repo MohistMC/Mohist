@@ -12,6 +12,8 @@ buildscript {
 import com.mohistmc.tasks.JenkinsNumber
 
 import groovy.json.JsonBuilder
+import org.apache.tools.ant.filters.ReplaceTokens
+
 import java.nio.file.Files
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
@@ -785,13 +787,13 @@ project(':mohist') {
         archiveVersion = "1.16.5-" + MOHIST_VERSION
         destinationDirectory = file('build/libs')
         from sourceSets.fmllauncher.output
-        doFirst {
-            def classpath = new StringBuilder()
-            def artifacts = getArtifacts(project, project.configurations.installer, false)
-            artifacts.each { key, lib ->
-                classpath += "libraries/${lib.downloads.artifact.path} "
-            }
 
+        def classpath = new StringBuilder()
+        def artifacts = getArtifacts(project, project.configurations.installer, false)
+        artifacts.each { key, lib ->
+            classpath += "libraries/${lib.downloads.artifact.path} "
+        }
+        doFirst {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
@@ -819,6 +821,19 @@ project(':mohist') {
         }
         from(universalJar) {
             into "/data/"
+        }
+
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: forge_version])
+            rename { 'versions/forge.txt' }
+        }
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: MCP_VERSION])
+            rename { 'versions/mcp.txt' }
+        }
+        from(rootProject.file('server_files/libraries.txt')) {
+            filter(ReplaceTokens, tokens: [CLASS_PATH: classpath.toString()])
+            rename { 'data/libraries.txt' }
         }
     }
 
