@@ -1255,7 +1255,7 @@ project(':forge') {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = "1.18.x-" + JenkinsNumber.info()
+        archiveVersion = "1.18.1-" + JenkinsNumber.info()
         destinationDirectory = file('build/libs')
 
         def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
