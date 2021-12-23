@@ -12,7 +12,7 @@
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
  import io.netty.util.concurrent.Future;
-@@ -14,14 +_,14 @@
+@@ -14,6 +_,8 @@
  import java.util.Optional;
  import java.util.Set;
  import java.util.concurrent.CompletableFuture;
@@ -20,8 +20,8 @@
 +import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
--import java.util.stream.Collectors;
- import java.util.stream.Stream;
+ import java.util.stream.Collectors;
+@@ -21,7 +_,6 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.Advancement;
  import net.minecraft.advancements.CriteriaTriggers;
@@ -1871,27 +1871,16 @@
        int i = this.field_147369_b.field_71070_bA.field_75152_c;
        if (i == p_147339_1_.func_149532_c() && this.field_147372_n.getOrDefault(i, (short)(p_147339_1_.func_149533_d() + 1)) == p_147339_1_.func_149533_d() && !this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75128_a(this.field_147369_b, true);
-@@ -1347,16 +_,11 @@
+@@ -1354,6 +_,8 @@
     }
  
-    public void func_147343_a(CUpdateSignPacket p_147343_1_) {
--      List<String> list = Stream.of(p_147343_1_.func_187017_b()).map(TextFormatting::func_110646_a).collect(Collectors.toList());
--      this.func_244537_a(list, (p_244547_2_) -> {
--         this.func_244542_a(p_147343_1_, p_244547_2_);
--      });
--   }
--
--   private void func_244542_a(CUpdateSignPacket p_244542_1_, List<String> p_244542_2_) {
-+      PacketThreadUtil.func_218796_a(p_147343_1_, this, this.field_147369_b.func_71121_q());
+    private void func_244542_a(CUpdateSignPacket p_244542_1_, List<String> p_244542_2_) {
++      PacketThreadUtil.func_218796_a(p_244542_1_, this, this.field_147369_b.func_71121_q());
 +      if (this.field_147369_b.func_70610_aX()) return; // CraftBukkit
        this.field_147369_b.func_143004_u();
        ServerWorld serverworld = this.field_147369_b.func_71121_q();
--      BlockPos blockpos = p_244542_1_.func_179722_a();
-+      BlockPos blockpos = p_147343_1_.func_179722_a();
-       if (serverworld.func_175667_e(blockpos)) {
-          BlockState blockstate = serverworld.func_180495_p(blockpos);
-          TileEntity tileentity = serverworld.func_175625_s(blockpos);
-@@ -1365,14 +_,32 @@
+       BlockPos blockpos = p_244542_1_.func_179722_a();
+@@ -1365,14 +_,30 @@
           }
  
           SignTileEntity signtileentity = (SignTileEntity)tileentity;
@@ -1902,21 +1891,18 @@
 +            this.func_147359_a(tileentity.func_189518_D_()); // CraftBukkit
              return;
           }
- 
--         for(int i = 0; i < p_244542_2_.size(); ++i) {
--            signtileentity.func_212365_a(i, new StringTextComponent(p_244542_2_.get(i)));
--         }
-+         String[] astring = p_147343_1_.func_187017_b();
 +
 +         // CraftBukkit start
 +         Player player = this.craftServer.getPlayer(this.field_147369_b);
-+         int x = p_147343_1_.func_179722_a().func_177958_n();
-+         int y = p_147343_1_.func_179722_a().func_177956_o();
-+         int z = p_147343_1_.func_179722_a().func_177952_p();
++         int x = p_244542_1_.func_179722_a().func_177958_n();
++         int y = p_244542_1_.func_179722_a().func_177956_o();
++         int z = p_244542_1_.func_179722_a().func_177952_p();
 +         String[] lines = new String[4];
-+
-+         for(int i = 0; i < astring.length; ++i) {
-+            lines[i] = SharedConstants.filterAllowedChatCharacters(astring[i]); // Paper - Replaced with anvil color stripping method to stop exploits that allow colored signs to be created.
+ 
+          for(int i = 0; i < p_244542_2_.size(); ++i) {
+-            signtileentity.func_212365_a(i, new StringTextComponent(p_244542_2_.get(i)));
+-         }
++            lines[i] = SharedConstants.filterAllowedChatCharacters(new StringTextComponent(TextFormatting.func_110646_a((String) p_244542_2_.get(i))).getString());
 +         }
 +
 +         SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), this.craftServer.getPlayer(this.field_147369_b), lines);
