@@ -53,13 +53,14 @@
        this.f_8561_ = p_8582_;
        this.f_8548_ = p_8571_;
        this.f_8558_ = p_8581_;
-@@ -220,6 +_,10 @@
+@@ -220,6 +_,11 @@
        }
  
        this.f_143245_ = new SleepStatus();
 +      this.initCapabilities();
 +      this.spigotConfig = new SpigotWorldConfig(p_8574_.m_5462_());
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
++      m_6857_().world = this;
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
     }
  
