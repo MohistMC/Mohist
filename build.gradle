@@ -202,7 +202,7 @@ project(':mohist') {
                 environment 'FORGE_VERSION', forge_version
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 environment 'MOHIST_VERSION', MOHIST_VERSION
-"
+
                 property 'eventbus.checkTypesOnDispatch', 'true'
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
