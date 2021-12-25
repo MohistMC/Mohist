@@ -199,8 +199,10 @@ project(':mohist') {
                 environment 'MCP_VERSION', MCP_VERSION
                 environment 'FORGE_GROUP', project.group
                 environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', MOHIST_VERSION
+                environment 'FORGE_VERSION', forge_version
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+                environment 'MOHIST_VERSION', MOHIST_VERSION
+"
                 property 'eventbus.checkTypesOnDispatch', 'true'
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
@@ -224,8 +226,9 @@ project(':mohist') {
                 environment 'MCP_VERSION', MCP_VERSION
                 environment 'FORGE_GROUP', project.group
                 environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', MOHIST_VERSION
+                environment 'FORGE_VERSION', forge_version
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+                environment 'MOHIST_VERSION', MOHIST_VERSION
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
