@@ -334,7 +334,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,187 +_,314 @@
+@@ -293,187 +_,315 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -784,6 +784,7 @@
 +       this.func_72354_b(serverplayerentity, worldserver1);
 +       this.func_187243_f(serverplayerentity);
 +       if (!p_232644_1_.field_71135_a.isDisconnected()) {
++           serverplayerentity.gatherCapsAndRevive(); // Mohist - Re-gather the invalidated capabilities, since we don't create a new ServerPlayerEntity.
 +           worldserver1.func_217433_d(serverplayerentity);
 +           this.addPlayer(serverplayerentity);
 +           this.playersByName.put(serverplayerentity.func_195047_I_().toLowerCase(java.util.Locale.ROOT), serverplayerentity); // Spigot
