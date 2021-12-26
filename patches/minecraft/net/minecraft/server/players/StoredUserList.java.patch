@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/players/StoredUserList.java
++++ b/net/minecraft/server/players/StoredUserList.java
+@@ -72,6 +_,12 @@
+       return this.f_11377_.keySet().toArray(new String[0]);
+    }
+ 
++   // CraftBukkit start
++   public Collection<V> getValues() {
++      return this.f_11377_.values();
++   }
++   // CraftBukkit end
++
+    public boolean m_11390_() {
+       return this.f_11377_.size() < 1;
+    }

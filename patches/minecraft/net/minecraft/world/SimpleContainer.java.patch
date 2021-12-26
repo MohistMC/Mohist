@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/SimpleContainer.java
 +++ b/net/minecraft/world/SimpleContainer.java
-@@ -12,12 +_,53 @@
+@@ -12,6 +_,10 @@
  import net.minecraft.world.inventory.StackedContentsCompatible;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
@@ -11,10 +11,10 @@
  
  public class SimpleContainer implements Container, StackedContentsCompatible {
     private final int f_19146_;
-    private final NonNullList<ItemStack> f_19147_;
+@@ -19,9 +_,62 @@
     @Nullable
     private List<ContainerListener> f_19148_;
-+
+ 
 +   // CraftBukkit start - add fields and methods
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
@@ -32,17 +32,19 @@
 +      transaction.remove(who);
 +   }
 +
-+   @Override
 +   public List<HumanEntity> getViewers() {
 +      return transaction;
 +   }
 +
-+   @Override
 +   public InventoryHolder getOwner() {
 +      return bukkitOwner;
 +   }
 +
 +   @Override
++   public int m_6893_() {
++      return maxStack;
++   }
++
 +   public void setMaxStackSize(int size) {
 +      maxStack = size;
 +   }
@@ -51,6 +53,24 @@
 +   public Location getLocation() {
 +      return null;
 +   }
- 
++
++   public SimpleContainer(SimpleContainer original) {
++      this(original.f_19146_);
++      for (int slot = 0; slot < original.f_19146_; slot++) {
++         this.f_19147_.set(slot, original.f_19147_.get(slot).m_41777_());
++      }
++   }
++
     public SimpleContainer(int p_19150_) {
++      this.bukkitOwner = null;
        this.f_19146_ = p_19150_;
+       this.f_19147_ = NonNullList.m_122780_(p_19150_, ItemStack.f_41583_);
++   }
++
++   public SimpleContainer(int i, org.bukkit.inventory.InventoryHolder owner) {
++      this.bukkitOwner = owner;
++      this.f_19146_ = i;
++      this.f_19147_ = NonNullList.m_122780_(i, ItemStack.f_41583_);
+    }
+ 
+    public SimpleContainer(ItemStack... p_19152_) {
