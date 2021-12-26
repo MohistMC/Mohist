@@ -603,7 +603,6 @@ public final class SimplePluginManager implements PluginManager {
                 server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex);
             }
         }
-        server.getLogger().log(Level.SEVERE, event.getEventName());
     }
 
     @Override
