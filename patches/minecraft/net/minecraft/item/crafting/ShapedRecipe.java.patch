@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/item/crafting/ShapedRecipe.java
-@@ -20,8 +_,25 @@
+@@ -20,8 +_,26 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
@@ -9,6 +9,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftRecipe;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftShapedRecipe;
++import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
 +import org.bukkit.inventory.RecipeChoice;
 +
 +public class ShapedRecipe implements ICraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingInventory> {
@@ -34,22 +35,22 @@
  
 +   // CraftBukkit start
 +   public org.bukkit.inventory.ShapedRecipe toBukkitRecipe() {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77575_e);
-+      CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
-+      recipe.setGroup(this.field_194137_e);
++      CraftItemStack result = CraftItemStack.asCraftCopy(CraftItemStack.asBukkitCopy(this.func_77571_b()));
++      CraftShapedRecipe craftRecipe = new CraftShapedRecipe(result, this);
++      craftRecipe.setGroup(this.field_194137_e);
 +      switch (this.field_77577_c) {
 +         case 1: {
 +            switch (this.field_77576_b) {
 +               case 1: {
-+                  recipe.shape("a");
++                  craftRecipe.shape("a");
 +                  break;
 +               }
 +               case 2: {
-+                  recipe.shape("ab");
++                  craftRecipe.shape("ab");
 +                  break;
 +               }
 +               case 3: {
-+                  recipe.shape("abc");
++                  craftRecipe.shape("abc");
 +                  break;
 +               }
 +            }
@@ -58,15 +59,15 @@
 +         case 2: {
 +            switch (this.field_77576_b) {
 +               case 1: {
-+                  recipe.shape("a", "b");
++                  craftRecipe.shape("a", "b");
 +                  break;
 +               }
 +               case 2: {
-+                  recipe.shape("ab", "cd");
++                  craftRecipe.shape("ab", "cd");
 +                  break;
 +               }
 +               case 3: {
-+                  recipe.shape("abc", "def");
++                  craftRecipe.shape("abc", "def");
 +                  break;
 +               }
 +            }
@@ -75,15 +76,15 @@
 +         case 3: {
 +            switch (this.field_77576_b) {
 +               case 1: {
-+                  recipe.shape("a", "b", "c");
++                  craftRecipe.shape("a", "b", "c");
 +                  break;
 +               }
 +               case 2: {
-+                  recipe.shape("ab", "cd", "ef");
++                  craftRecipe.shape("ab", "cd", "ef");
 +                  break;
 +               }
 +               case 3: {
-+                  recipe.shape("abc", "def", "ghi");
++                  craftRecipe.shape("abc", "def", "ghi");
 +                  break;
 +               }
 +            }
@@ -94,11 +95,11 @@
 +      for (Ingredient list : this.field_77574_d) {
 +         RecipeChoice choice = CraftRecipe.toBukkit(list);
 +         if (choice != null) {
-+            recipe.setIngredient(c, choice);
++            craftRecipe.setIngredient(c, choice);
 +         }
 +         c++;
 +      }
-+      return recipe;
++      return craftRecipe;
 +   }
 +   // CraftBukkit end
 +
