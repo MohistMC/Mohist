@@ -20,7 +20,7 @@
 +   // CraftBukkit start
 +   @Override
 +   public Recipe toBukkitRecipe() {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.field_234839_c_);
++      CraftItemStack result = CraftItemStack.asCraftCopy(CraftItemStack.asBukkitCopy(this.func_77571_b()));
 +      CraftSmithingRecipe recipe = new CraftSmithingRecipe(CraftNamespacedKey.fromMinecraft(this.field_234840_d_), result, CraftRecipe.toBukkit(this.field_234837_a_), CraftRecipe.toBukkit(this.field_234838_b_));
 +      return recipe;
 +   }

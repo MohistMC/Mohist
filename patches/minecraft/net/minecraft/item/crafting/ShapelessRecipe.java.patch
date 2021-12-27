@@ -35,7 +35,7 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.field_77580_a);
++      CraftItemStack result = CraftItemStack.asCraftCopy(CraftItemStack.asBukkitCopy(this.func_77571_b()));
 +      CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
 +      recipe.setGroup(this.field_194138_c);
 +      for (Ingredient list : this.field_77579_b) {
