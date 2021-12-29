@@ -1391,7 +1391,7 @@ public final class CraftServer implements Server {
         Validate.notNull(world, "World cannot be null");
 
         net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(Items.MAP, 1);
-        MapData worldmap = FilledMapItem.getOrCreateSavedData(stack, ((CraftWorld) world).getHandle());
+        MapData worldmap = FilledMapItem.getCustomMapData(stack, ((CraftWorld) world).getHandle());
         return worldmap.mapView;
     }
 
