@@ -1,5 +1,15 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
+@@ -68,6 +_,9 @@
+ import net.minecraft.world.level.material.Fluid;
+ import net.minecraft.world.level.pathfinder.BlockPathTypes;
+ import net.minecraft.world.level.storage.loot.LootContext;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+ 
+ public abstract class Mob extends LivingEntity {
+    private static final EntityDataAccessor<Byte> f_21340_ = SynchedEntityData.m_135353_(Mob.class, EntityDataSerializers.f_135027_);
 @@ -89,8 +_,8 @@
     protected JumpControl f_21343_;
     private final BodyRotationControl f_21361_;
@@ -29,14 +39,68 @@
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
        this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
-@@ -206,6 +_,7 @@
+@@ -128,7 +_,14 @@
+          this.m_8099_();
+       }
+ 
+-   }
++      // CraftBukkit start - default persistance to type's persistance value
++      this.f_21353_ = !m_6785_(0);
++   }
++
++   public void setPersistenceRequired(boolean persistenceRequired) {
++      this.f_21353_ = persistenceRequired;
++   }
++   // CraftBukkit end
+ 
+    protected void m_8099_() {
+    }
+@@ -205,7 +_,36 @@
+    }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
++      setTarget(p_21544_, EntityTargetEvent.TargetReason.UNKNOWN, true);
++   }
++
++   public boolean setTarget(@Nullable LivingEntity p_21544_, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++      if (m_5448_() == p_21544_) return false;
++      if (fireEvent) {
++         if (reason == EntityTargetEvent.TargetReason.UNKNOWN && m_5448_() != null && p_21544_ == null) {
++            reason = m_5448_().m_6084_() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
++         }
++         if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
++            net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_21544_);
++         }
++         CraftLivingEntity ctarget = null;
++         if (p_21544_ != null) {
++            ctarget = (CraftLivingEntity) p_21544_.getBukkitEntity();
++         }
++         EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
++         f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return false;
++         }
++         if (event.getTarget() != null) {
++            p_21544_ = ((CraftLivingEntity) event.getTarget()).getHandle();
++         } else {
++            p_21544_ = null;
++         }
++      }
        this.f_21362_ = p_21544_;
-+      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_21544_);
++      return true;
++      // CraftBukkit end
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
+@@ -401,7 +_,7 @@
+       if (this.m_21525_()) {
+          p_21484_.m_128379_("NoAI", this.m_21525_());
+       }
+-
++      p_21484_.m_128379_("Bukkit.Aware", this.aware); // CraftBukkit
+    }
+ 
+    public void m_7378_(CompoundTag p_21450_) {
 @@ -469,7 +_,7 @@
        return this.f_21355_ == null ? this.m_7582_() : this.f_21355_;
     }
@@ -70,23 +134,3 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1000,6 +_,10 @@
-       this.f_21353_ = true;
-    }
- 
-+   public void setPersistenceRequired(boolean f) {
-+      this.f_21353_ = f;
-+   }
-+
-    public void m_21409_(EquipmentSlot p_21410_, float p_21411_) {
-       switch(p_21410_.m_20743_()) {
-       case HAND:
-@@ -1383,5 +_,8 @@
-    public ItemStack m_142340_() {
-       SpawnEggItem spawneggitem = SpawnEggItem.m_43213_(this.m_6095_());
-       return spawneggitem == null ? null : new ItemStack(spawneggitem);
-+   }
-+
-+   public void setTarget(Object o, Object o1, boolean b) {
-    }
- }

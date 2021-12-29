@@ -8,6 +8,130 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.ListTag;
+@@ -165,6 +_,12 @@
+       return this.f_37687_ == Raid.RaidStatus.LOSS;
+    }
+ 
++   // CraftBukkit start
++   public boolean isInProgress() {
++      return this.f_37687_ == Raid.RaidStatus.ONGOING;
++   }
++   // CraftBukkit end
++
+    public float m_150220_() {
+       return this.f_37678_;
+    }
+@@ -249,6 +_,7 @@
+             boolean flag = this.f_37680_;
+             this.f_37680_ = this.f_37675_.m_46805_(this.f_37674_);
+             if (this.f_37675_.m_46791_() == Difficulty.PEACEFUL) {
++               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.PEACE); // CraftBukkit
+                this.m_37774_();
+                return;
+             }
+@@ -267,14 +_,17 @@
+ 
+             if (!this.f_37675_.m_8802_(this.f_37674_)) {
+                if (this.f_37681_ > 0) {
++                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidFinishEvent(this, new java.util.ArrayList<>()); // CraftBukkit
+                   this.f_37687_ = Raid.RaidStatus.LOSS;
+                } else {
++                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.NOT_IN_VILLAGE); // CraftBukkit
+                   this.m_37774_();
+                }
+             }
+ 
+             ++this.f_37673_;
+             if (this.f_37673_ >= 48000L) {
++               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.TIMEOUT); // CraftBukkit
+                this.m_37774_();
+                return;
+             }
+@@ -345,6 +_,7 @@
+                }
+ 
+                if (k > 3) {
++                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.UNSPAWNABLE);  // CraftBukkit
+                   this.m_37774_();
+                   break;
+                }
+@@ -355,7 +_,7 @@
+                   ++this.f_37683_;
+                } else {
+                   this.f_37687_ = Raid.RaidStatus.VICTORY;
+-
++                  List<org.bukkit.entity.Player> winners = new java.util.ArrayList<>(); // CraftBukkit
+                   for(UUID uuid : this.f_37672_) {
+                      Entity entity = this.f_37675_.m_8791_(uuid);
+                      if (entity instanceof LivingEntity && !entity.m_5833_()) {
+@@ -365,9 +_,11 @@
+                            ServerPlayer serverplayer = (ServerPlayer)livingentity;
+                            serverplayer.m_36220_(Stats.f_12950_);
+                            CriteriaTriggers.f_10557_.m_53645_(serverplayer);
++                           winners.add(serverplayer.getBukkitEntity()); // CraftBukkit
+                         }
+                      }
+                   }
++                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidFinishEvent(this, winners); // CraftBukkit
+                }
+             }
+ 
+@@ -375,6 +_,7 @@
+          } else if (this.m_37706_()) {
+             ++this.f_37688_;
+             if (this.f_37688_ >= 600) {
++               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.FINISHED); // CraftBukkit
+                this.m_37774_();
+                return;
+             }
+@@ -495,7 +_,10 @@
+       this.f_37678_ = 0.0F;
+       DifficultyInstance difficultyinstance = this.f_37675_.m_6436_(p_37756_);
+       boolean flag1 = this.m_37702_();
+-
++      // CraftBukkit start
++      Raider leader = null;
++      List<Raider> raiders = new java.util.ArrayList<>();
++      // CraftBukkit end
+       for(Raid.RaiderType raid$raidertype : Raid.RaiderType.f_37813_) {
+          int j = this.m_37730_(raid$raidertype, i, flag1) + this.m_37734_(raid$raidertype, this.f_37685_, i, difficultyinstance, flag1);
+          int k = 0;
+@@ -506,9 +_,11 @@
+                raider.m_33075_(true);
+                this.m_37710_(i, raider);
+                flag = true;
++               leader = raider; // CraftBukkit
+             }
+ 
+             this.m_37713_(i, raider, p_37756_, false);
++            raiders.add(raider); // CraftBukkit
+             if (raid$raidertype.f_37814_ == EntityType.f_20518_) {
+                Raider raider1 = null;
+                if (i == this.m_37724_(Difficulty.NORMAL)) {
+@@ -526,6 +_,7 @@
+                   this.m_37713_(i, raider1, p_37756_, false);
+                   raider1.m_20035_(p_37756_, 0.0F, 0.0F);
+                   raider1.m_20329_(raider);
++                  raiders.add(raider); // CraftBukkit
+                }
+             }
+          }
+@@ -535,6 +_,7 @@
+       ++this.f_37681_;
+       this.m_37776_();
+       this.m_37705_();
++      org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidSpawnWaveEvent(this, leader, raiders); // CraftBukkit
+    }
+ 
+    public void m_37713_(int p_37714_, Raider p_37715_, @Nullable BlockPos p_37716_, boolean p_37717_) {
+@@ -550,6 +_,7 @@
+             p_37715_.m_7895_(p_37714_, false);
+             p_37715_.m_6853_(true);
+             this.f_37675_.m_47205_(p_37715_);
++            // this.level.addFreshEntityWithPassengers(entityraider, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID); // CraftBukkit TODO
+          }
+       }
+ 
 @@ -789,6 +_,12 @@
        this.f_37672_.add(p_37727_.m_142081_());
     }

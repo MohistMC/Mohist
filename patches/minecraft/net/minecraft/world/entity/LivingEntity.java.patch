@@ -17,11 +17,12 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
-@@ -113,12 +_,16 @@
+@@ -113,12 +_,17 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
 +import org.bukkit.craftbukkit.v1_18_R1.attribute.CraftAttributeMap;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
  
  public abstract class LivingEntity extends Entity {
@@ -133,7 +134,7 @@
  
 +   // Mohist TODO
 +   public boolean addEffect(MobEffectInstance p_147208_, EntityPotionEffectEvent.Cause cause) {
-+      return m_147207_(p_147208_, (Entity) null);
++      return addEffect(p_147208_, (Entity) null, cause);
 +   }
 +
     public final boolean m_7292_(MobEffectInstance p_21165_) {
@@ -147,9 +148,48 @@
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
-@@ -892,6 +_,9 @@
+@@ -891,7 +_,48 @@
+       }
     }
  
++   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
++      if (isTickingEffects) {
++         effectsToProcess.add(new ProcessableEffect(p_147208_, cause));
++         return true;
++      }
++
++      if (!this.m_7301_(p_147208_)) {
++         return false;
++      } else {
++         MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionAddedEvent(this, mobeffectinstance, p_147208_, p_147209_));
++         // CraftBukkit start
++         boolean override = false;
++         if (mobeffectinstance != null) {
++            override = new MobEffectInstance(mobeffectinstance).m_19558_(p_147208_);
++         }
++
++         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, cause, override);
++         if (event.isCancelled()) {
++            return false;
++         }
++         // CraftBukkit end
++         if (mobeffectinstance == null) {
++            this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
++            this.m_142540_(p_147208_, p_147209_);
++            return true;
++            // CraftBukkit start
++         } else if (event.isOverride()) {
++            mobeffectinstance.m_19558_(p_147208_);
++            this.m_141973_(mobeffectinstance, true, p_147209_);
++            // CraftBukkit end
++            return true;
++         } else {
++            return false;
++         }
++      }
++   }
++
     public boolean m_7301_(MobEffectInstance p_21197_) {
 +      net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(this, p_21197_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
@@ -659,7 +699,7 @@
           }
        } else {
           return EquipmentSlot.HEAD;
-@@ -3286,6 +_,14 @@
+@@ -3286,6 +_,36 @@
        this.m_20334_((double)((float)p_147206_.m_131560_() / 8000.0F), (double)((float)p_147206_.m_131561_() / 8000.0F), (double)((float)p_147206_.m_131562_() / 8000.0F));
     }
  
@@ -668,9 +708,31 @@
 +   }
 +
     public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
-+   }
+    }
 +
 +   public void setItemSlot(EquipmentSlot slot, ItemStack asNMSCopy, boolean silent) {
 +      this.m_8061_(slot, asNMSCopy);
-    }
++   }
++
++   // CraftBukkit start
++   private boolean isTickingEffects = false;
++   private List<ProcessableEffect> effectsToProcess = Lists.newArrayList();
++
++   private static class ProcessableEffect {
++
++      private MobEffect type;
++      private MobEffectInstance effect;
++      private final EntityPotionEffectEvent.Cause cause;
++
++      private ProcessableEffect(MobEffectInstance effect, EntityPotionEffectEvent.Cause cause) {
++         this.effect = effect;
++         this.cause = cause;
++      }
++
++      private ProcessableEffect(MobEffect type, EntityPotionEffectEvent.Cause cause) {
++         this.type = type;
++         this.cause = cause;
++      }
++    }
++    // CraftBukkit end
  }

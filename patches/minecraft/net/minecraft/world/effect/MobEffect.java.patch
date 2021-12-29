@@ -9,8 +9,12 @@
     private final Map<Attribute, AttributeModifier> f_19446_ = Maps.newHashMap();
     private final MobEffectCategory f_19447_;
     private final int f_19448_;
-@@ -37,6 +_,7 @@
-    protected MobEffect(MobEffectCategory p_19451_, int p_19452_) {
+@@ -34,9 +_,10 @@
+       return Registry.f_122823_.m_7447_(p_19460_);
+    }
+ 
+-   protected MobEffect(MobEffectCategory p_19451_, int p_19452_) {
++   public MobEffect(MobEffectCategory p_19451_, int p_19452_) {
        this.f_19447_ = p_19451_;
        this.f_19448_ = p_19452_;
 +      initClient();
