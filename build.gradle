@@ -9,11 +9,7 @@ buildscript {
     }
 }
 
-import groovy.json.JsonBuilder
-
 import java.nio.file.Files
-import java.util.Date
-import java.util.LinkedHashMap
 import net.minecraftforge.forge.tasks.*
 import com.mohistmc.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
@@ -1054,6 +1050,7 @@ project(':forge') {
                 path: null,
                 minecraft: MC_VERSION,
                 serverJarPath: '{LIBRARY_DIR}/net/minecraft/server/{MINECRAFT_VERSION}/server-{MINECRAFT_VERSION}.jar',
+                welcome: "Welcome to the simple FML installer.",
                 data: [
                     MAPPINGS: [
                         client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@txt]",
@@ -1323,6 +1320,7 @@ project(':forge') {
     }
 
     task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
+        archiveBaseName = 'mohist'
         packedDependencies = PACKED_DEPS
         from(rootProject.file('/forge_installer_logo.png')) {
             rename { 'big_logo.png' }

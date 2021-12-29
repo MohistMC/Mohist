@@ -1,5 +1,6 @@
 package net.minecraftforge.forge.tasks
 
+import com.mohistmc.tasks.JenkinsNumber
 import groovy.json.JsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -25,7 +26,7 @@ abstract class LauncherJson extends DefaultTask {
         "Our efforts are supported by ads from the download page.",
         "If you MUST automate this, please consider supporting the project through https://www.patreon.com/LexManos/"
     ]
-    @Internal final id = "${project.rootProject.ext.MC_VERSION}-${project.name}${project.version.substring(project.rootProject.ext.MC_VERSION.length())}"
+    @Internal final id = "${project.rootProject.ext.MC_VERSION}-Mohist-" + JenkinsNumber.info()
 
     LauncherJson() {
         getOutput().convention(project.layout.buildDirectory.file('version.json'))
