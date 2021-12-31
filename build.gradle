@@ -342,9 +342,9 @@ project(':mohist') {
         installer 'org.jline:jline:3.12.1'
         installer 'org.apache.maven:maven-artifact:3.6.3'
         installer 'net.jodah:typetools:0.8.3'
-        installer 'org.apache.logging.log4j:log4j-api:2.17.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
-        installer 'org.apache.logging.log4j:log4j-core:2.17.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
-        installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.17.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-api:2.17.1' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-core:2.17.1' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.17.1' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
         installer 'net.minecrell:terminalconsoleappender:1.2.0'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         installer 'org.spongepowered:mixin:0.8.4'
@@ -365,7 +365,7 @@ project(':mohist') {
         installer 'com.googlecode.json-simple:json-simple:1.1.1'
         installer 'org.xerial:sqlite-jdbc:3.34.0'
         installer 'mysql:mysql-connector-java:5.1.49'
-        installer 'org.apache.logging.log4j:log4j-iostreams:2.17.0'
+        installer 'org.apache.logging.log4j:log4j-iostreams:2.17.1'
         installer 'net.md-5:SpecialSource:1.8.5'
         // spigot
         installer 'net.md-5:bungeecord-chat:1.16-R0.4'
