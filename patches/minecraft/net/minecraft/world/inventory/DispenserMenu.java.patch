@@ -9,11 +9,10 @@
  
  public class DispenserMenu extends AbstractContainerMenu {
     private static final int f_150557_ = 9;
-@@ -13,6 +_,22 @@
-    private static final int f_150560_ = 36;
+@@ -14,6 +_,22 @@
     private static final int f_150561_ = 45;
     private final Container f_39431_;
-+
+ 
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
@@ -29,6 +28,23 @@
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
- 
++
     public DispenserMenu(int p_39433_, Inventory p_39434_) {
        this(p_39433_, p_39434_, new SimpleContainer(9));
+    }
+@@ -22,6 +_,7 @@
+       super(MenuType.f_39963_, p_39436_);
+       m_38869_(p_39438_, 9);
+       this.f_39431_ = p_39438_;
++      this.player = p_39437_;
+       p_39438_.m_5856_(p_39437_.f_35978_);
+ 
+       for(int i = 0; i < 3; ++i) {
+@@ -43,6 +_,7 @@
+    }
+ 
+    public boolean m_6875_(Player p_39440_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.f_39431_.m_6542_(p_39440_);
+    }
+ 

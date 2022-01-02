@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/ChestMenu.java
 +++ b/net/minecraft/world/inventory/ChestMenu.java
-@@ -1,15 +_,42 @@
+@@ -1,16 +_,43 @@
  package net.minecraft.world.inventory;
  
 +import net.minecraft.world.CompoundContainer;
@@ -16,7 +16,7 @@
     private static final int f_150511_ = 9;
     private final Container f_39221_;
     private final int f_39222_;
-+
+ 
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
@@ -40,6 +40,24 @@
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
- 
++
     private ChestMenu(MenuType<?> p_39224_, int p_39225_, Inventory p_39226_, int p_39227_) {
        this(p_39224_, p_39225_, p_39226_, new SimpleContainer(9 * p_39227_), p_39227_);
+    }
+@@ -54,7 +_,7 @@
+       this.f_39222_ = p_39233_;
+       p_39232_.m_5856_(p_39231_.f_35978_);
+       int i = (this.f_39222_ - 4) * 18;
+-
++      this.player = p_39231_;
+       for(int j = 0; j < this.f_39222_; ++j) {
+          for(int k = 0; k < 9; ++k) {
+             this.m_38897_(new Slot(p_39232_, k + j * 9, 8 + k * 18, 18 + j * 18));
+@@ -74,6 +_,7 @@
+    }
+ 
+    public boolean m_6875_(Player p_39242_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.f_39221_.m_6542_(p_39242_);
+    }
+ 

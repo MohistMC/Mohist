@@ -1,14 +1,17 @@
 --- a/net/minecraft/world/inventory/LecternMenu.java
 +++ b/net/minecraft/world/inventory/LecternMenu.java
-@@ -2,8 +_,11 @@
+@@ -2,8 +_,14 @@
  
  import net.minecraft.world.Container;
  import net.minecraft.world.SimpleContainer;
 +import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.level.block.entity.LecternBlockEntity;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryLectern;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
++import org.bukkit.event.player.PlayerTakeLecternBookEvent;
  
  public class LecternMenu extends AbstractContainerMenu {
     private static final int f_150610_ = 1;
@@ -53,3 +56,27 @@
     }
  
     public boolean m_6366_(Player p_39833_, int p_39834_) {
+@@ -53,7 +_,13 @@
+             if (!p_39833_.m_36326_()) {
+                return false;
+             }
+-
++            // CraftBukkit start - Event for taking the book
++            PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(player, ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
++            Bukkit.getServer().getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               return false;
++                                }
++                                // CraftBukkit end
+             ItemStack itemstack = this.f_39819_.m_8016_(0);
+             this.f_39819_.m_6596_();
+             if (!p_39833_.m_150109_().m_36054_(itemstack)) {
+@@ -73,6 +_,8 @@
+    }
+ 
+    public boolean m_6875_(Player p_39831_) {
++      // if (lectern instanceof LecternBlockEntity.LecternInventory && !((LecternBlockEntity.LecternInventory) lectern).getLectern().hasBook()) return false; // CraftBukkit Mohist TODO
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.f_39819_.m_6542_(p_39831_);
+    }
+ 

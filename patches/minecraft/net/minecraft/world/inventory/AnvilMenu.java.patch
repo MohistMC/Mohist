@@ -49,7 +49,16 @@
              BlockState blockstate1 = AnvilBlock.m_48824_(blockstate);
              if (blockstate1 == null) {
                 p_150479_.m_7471_(p_150480_, false);
-@@ -100,8 +_,11 @@
+@@ -92,7 +_,7 @@
+       int j = 0;
+       int k = 0;
+       if (itemstack.m_41619_()) {
+-         this.f_39768_.m_6836_(0, ItemStack.f_41583_);
++         org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+          this.f_39002_.m_6422_(0);
+       } else {
+          ItemStack itemstack1 = itemstack.m_41777_();
+@@ -100,12 +_,15 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.m_44831_(itemstack1);
           j += itemstack.m_41610_() + (itemstack2.m_41619_() ? 0 : itemstack2.m_41610_());
           this.f_39000_ = 0;
@@ -62,7 +71,30 @@
              if (itemstack1.m_41763_() && itemstack1.m_41720_().m_6832_(itemstack, itemstack2)) {
                 int l2 = Math.min(itemstack1.m_41773_(), itemstack1.m_41776_() / 4);
                 if (l2 <= 0) {
-@@ -218,6 +_,7 @@
+-                  this.f_39768_.m_6836_(0, ItemStack.f_41583_);
++                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+                   this.f_39002_.m_6422_(0);
+                   return;
+                }
+@@ -121,7 +_,7 @@
+                this.f_39000_ = i3;
+             } else {
+                if (!flag && (!itemstack1.m_150930_(itemstack2.m_41720_()) || !itemstack1.m_41763_())) {
+-                  this.f_39768_.m_6836_(0, ItemStack.f_41583_);
++                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+                   this.f_39002_.m_6422_(0);
+                   return;
+                }
+@@ -200,7 +_,7 @@
+                }
+ 
+                if (flag3 && !flag2) {
+-                  this.f_39768_.m_6836_(0, ItemStack.f_41583_);
++                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+                   this.f_39002_.m_6422_(0);
+                   return;
+                }
+@@ -218,17 +_,18 @@
              i += k;
              itemstack1.m_41714_(new TextComponent(this.f_39001_));
           }
@@ -70,6 +102,30 @@
  
           this.f_39002_.m_6422_(j + i);
           if (i <= 0) {
+             itemstack1 = ItemStack.f_41583_;
+          }
+ 
+-         if (k == i && k > 0 && this.f_39002_.m_6501_() >= 40) {
+-            this.f_39002_.m_6422_(39);
++         if (k == i && k > 0 && this.f_39002_.m_6501_() >= maximumRepairCost) {
++            this.f_39002_.m_6422_(maximumRepairCost - 1);
+          }
+ 
+-         if (this.f_39002_.m_6501_() >= 40 && !this.f_39771_.m_150110_().f_35937_) {
++         if (this.f_39002_.m_6501_() >= maximumRepairCost && !this.f_39771_.m_150110_().f_35937_) {
+             itemstack1 = ItemStack.f_41583_;
+          }
+ 
+@@ -246,7 +_,8 @@
+             EnchantmentHelper.m_44865_(map, itemstack1);
+          }
+ 
+-         this.f_39768_.m_6836_(0, itemstack1);
++         org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemstack1); // CraftBukkit
++         m_150429_(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
+          this.m_38946_();
+       }
+    }
 @@ -271,5 +_,9 @@
  
     public int m_39028_() {

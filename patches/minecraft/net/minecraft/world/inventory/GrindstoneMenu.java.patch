@@ -1,15 +1,24 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -17,6 +_,8 @@
+@@ -17,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryGrindstone;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
  
  public class GrindstoneMenu extends AbstractContainerMenu {
     public static final int f_150565_ = 35;
-@@ -36,6 +_,22 @@
+@@ -33,9 +_,30 @@
+          super.m_6596_();
+          GrindstoneMenu.this.m_6199_(this);
+       }
++
++      @Override
++      public Location getLocation() {
++         return f_39560_.getLocation();
++      }
     };
     private final ContainerLevelAccess f_39561_;
  
@@ -32,6 +41,15 @@
     public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
        this(p_39563_, p_39564_, ContainerLevelAccess.f_39287_);
     }
+@@ -107,7 +_,7 @@
+       for(int k = 0; k < 9; ++k) {
+          this.m_38897_(new Slot(p_39567_, k, 8 + k * 18, 142));
+       }
+-
++      player = (org.bukkit.entity.Player) p_39567_.f_35978_.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    public void m_6199_(Container p_39570_) {
 @@ -144,12 +_,13 @@
              }
  
@@ -51,3 +69,11 @@
                 if (!ItemStack.m_41728_(itemstack, itemstack1)) {
                    this.f_39559_.m_6836_(0, ItemStack.f_41583_);
                    this.m_38946_();
+@@ -222,6 +_,7 @@
+    }
+ 
+    public boolean m_6875_(Player p_39572_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return m_38889_(this.f_39561_, p_39572_, Blocks.f_50623_);
+    }
+ 

@@ -158,6 +158,26 @@
        }
     }
  
+@@ -454,7 +_,19 @@
+       this.f_58320_.clear();
+    }
+ 
++   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) {
++      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.m_183503_(), p_155004_.m_20182_(), this.f_58858_, p_155004_, itemstack, amount); // CraftBukkit
++      p_155004_.m_7281_(list);
++      this.f_58320_.clear();
++   }
++
+    public List<Recipe<?>> m_154995_(ServerLevel p_154996_, Vec3 p_154997_) {
++      // CraftBukkit start
++      return this.getRecipesToAwardAndPopExperience(p_154996_, p_154997_, this.f_58858_, null, null, 0);
++   }
++
++   public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_, BlockPos blockposition, ServerPlayer entityplayer, ItemStack itemstack, int amount) {
++      // CraftBukkit end
+       List<Recipe<?>> list = Lists.newArrayList();
+ 
+       for(Entry<ResourceLocation> entry : this.f_58320_.object2IntEntrySet()) {
 @@ -483,4 +_,63 @@
        }
  

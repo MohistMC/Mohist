@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/CraftingContainer.java
 +++ b/net/minecraft/world/inventory/CraftingContainer.java
-@@ -6,12 +_,81 @@
+@@ -6,12 +_,86 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.player.StackedContents;
  import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,7 @@
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private Recipe currentRecipe;
 +   public Container resultInventory;
-+   private Player owner;
++   public Player owner;
 +   private int maxStack = MAX_STACK;
 +
 +   public List<ItemStack> getContents() {
@@ -48,6 +48,11 @@
 +   public org.bukkit.inventory.InventoryHolder getOwner() {
 +      return (owner == null) ? null : owner.getBukkitEntity();
 +   }
++
++   public void setOwner(Player owner) {
++      this.owner = owner;
++   }
++
 +
 +   @Override
 +   public int m_6893_() {
