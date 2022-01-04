@@ -334,7 +334,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,187 +_,314 @@
+@@ -293,187 +_,313 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -697,7 +697,7 @@
 +       // CraftBukkit end
 +       serverplayerentity.field_71135_a = p_232644_1_.field_71135_a;
 +       serverplayerentity.func_193104_a(p_232644_1_, p_232644_2_);
-+       serverplayerentity.remove(false); // Forge: clone event had a chance to see old data, now discard it
++       p_232644_1_.remove(false); // Forge: clone event had a chance to see old data, now discard it
 +       serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
 +       serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
 +
@@ -706,7 +706,6 @@
 +       }
 +
 +       boolean flag2 = false;
-+       serverplayerentity.gatherCapsAndRevive(); // Mohist - Re-gather the invalidated capabilities, since we don't create a new ServerPlayerEntity. - Moved call up, to accomodate for other event calls, where caps are maybe needed.
 +       // CraftBukkit start - fire PlayerRespawnEvent
 +       if (location == null) {
 +           boolean isBedSpawn = false;
@@ -789,8 +788,9 @@
 +           this.playersByName.put(serverplayerentity.func_195047_I_().toLowerCase(java.util.Locale.ROOT), serverplayerentity); // Spigot
 +           this.field_177454_f.put(serverplayerentity.func_110124_au(), serverplayerentity);
 +       }
-+       //serverplayerentity.initMenu();
++       serverplayerentity.func_71116_b();
 +       serverplayerentity.func_70606_j(serverplayerentity.func_110143_aJ());
++       net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_232644_2_);
 +       if (flag2) {
 +           serverplayerentity.field_71135_a.func_147359_a(new SPlaySoundEffectPacket(SoundEvents.field_232818_ms_, SoundCategory.BLOCKS, (double) blockpos.func_177958_n(), (double) blockpos.func_177956_o(), (double) blockpos.func_177952_p(), 1.0F, 1.0F));
 +       }
@@ -814,7 +814,6 @@
 +           this.func_72391_b(p_232644_1_);
 +       }
 +       // CraftBukkit end
-+       net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_232644_2_);
 +       return serverplayerentity;
     }
  
