@@ -28,8 +28,7 @@ public class SendPacketTransformer implements IClassTransformer {
      * @return
      */
     private byte[] transformClass(byte[] basicClass) {
-        ClassNode classNode = new ClassNode();
-        new ClassReader(basicClass).accept(classNode, 0);
+        ClassNode classNode = TransformerUtils.accept(basicClass);
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         // Add main method

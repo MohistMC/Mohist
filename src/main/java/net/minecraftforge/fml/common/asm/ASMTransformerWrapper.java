@@ -33,6 +33,8 @@ import java.net.URLStreamHandler;
 import java.security.Permission;
 import java.util.Map;
 import javax.annotation.Nullable;
+
+import com.mohistmc.forge.LibrarianLibFix;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.objectweb.asm.ClassVisitor;
@@ -236,7 +238,13 @@ public class ASMTransformerWrapper
         {
             try
             {
-                this.parent = (IClassTransformer)this.getClass().getClassLoader().loadClass(getParentClass()).newInstance();
+                IClassTransformer originTransformer = (IClassTransformer)this.getClass().getClassLoader().loadClass(getParentClass()).newInstance();
+                if (originTransformer.getClass().getName().equals("com.teamwizardry.librarianlib.asm.LibLibTransformer")) {
+                    this.parent = (IClassTransformer) LibrarianLibFix.class.getConstructor(IClassTransformer.class).newInstance(originTransformer);
+                } else {
+                    this.parent = (IClassTransformer)this.getClass().getClassLoader().loadClass(getParentClass()).newInstance();
+                }
+
             }
             catch(Exception e)
             {
