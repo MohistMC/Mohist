@@ -1249,7 +1249,7 @@ project(':forge') {
         }
     }
 
-    task mohistJar(type: Jar, dependsOn: [genServerBinPatches, 'signUniversalJar']) {
+    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
@@ -1261,6 +1261,15 @@ project(':forge') {
                         'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
                         "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
                 ]
+        def claimed = CLASS_PATH.collect{ it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
+        if (rootProject.downloadServerRaw.dest.exists()) {
+            try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
+                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
+                        .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
+            }
+        } else {
+            println("Can't read server")
+        }
 
         println(CLASS_PATH)
 
