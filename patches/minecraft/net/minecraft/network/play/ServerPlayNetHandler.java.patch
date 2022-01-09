@@ -1055,7 +1055,7 @@
           if (this.field_147369_b.field_71071_by.field_70461_c != p_147355_1_.func_149614_c() && this.field_147369_b.func_184600_cs() == Hand.MAIN_HAND) {
              this.field_147369_b.func_184602_cy();
           }
-@@ -1066,61 +_,288 @@
+@@ -1066,61 +_,298 @@
           this.field_147369_b.field_71071_by.field_70461_c = p_147355_1_.func_149614_c();
           this.field_147369_b.func_143004_u();
        } else {
@@ -1092,11 +1092,28 @@
           this.func_147359_a(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_240699_a_(TextFormatting.RED), ChatType.SYSTEM, Util.field_240973_b_));
        } else {
           this.field_147369_b.func_143004_u();
-+         String s = org.apache.commons.lang3.StringUtils.normalizeSpace(p_147354_1_.func_149439_c());
- 
+-
 -         for(int i = 0; i < p_244548_1_.length(); ++i) {
 -            if (!SharedConstants.func_71566_a(p_244548_1_.charAt(i))) {
 -               this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
+-               return;
+-            }
+-         }
+-
+-         if (p_244548_1_.startsWith("/")) {
+-            this.func_147361_d(p_244548_1_);
+-         } else {
+-            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), p_244548_1_);
+-            this.field_147367_d.func_184103_al().func_232641_a_(itextcomponent, ChatType.CHAT, this.field_147369_b.func_110124_au());
+-         }
+-
+-         this.field_147374_l += 20;
+-         if (this.field_147374_l > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
+-            this.func_194028_b(new TranslationTextComponent("disconnect.spam"));
+-         }
+-
++         String s = org.apache.commons.lang3.StringUtils.normalizeSpace(p_147354_1_.func_149439_c());
++
 +         for(int i = 0; i < s.length(); ++i) {
 +            if (!SharedConstants.func_71566_a(s.charAt(i))) {
 +               // CraftBukkit start - threadsafety
@@ -1122,12 +1139,10 @@
 +                  }
 +               }
 +               // CraftBukkit end
-                return;
-             }
-          }
- 
--         if (p_244548_1_.startsWith("/")) {
--            this.func_147361_d(p_244548_1_);
++               return;
++            }
++         }
++
 +    //    if (s.startsWith("/")) {
 +    //       this.handleSlashCommand(s);
 +         // CraftBukkit start
@@ -1155,19 +1170,16 @@
 +         } else if (true) {
 +            this.chat(s, true);
 +            // CraftBukkit end - the below is for reference. :)
-          } else {
--            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), p_244548_1_);
-+            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
++         } else {
++            /** Moved to {@link this#chat}
++            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.player.getDisplayName(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
 +            itextcomponent = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, itextcomponent);
 +            if (itextcomponent == null) return;
-             this.field_147367_d.func_184103_al().func_232641_a_(itextcomponent, ChatType.CHAT, this.field_147369_b.func_110124_au());
-          }
- 
--         this.field_147374_l += 20;
--         if (this.field_147374_l > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
--            this.func_194028_b(new TranslationTextComponent("disconnect.spam"));
--         }
--
++            this.server.getPlayerList().broadcastMessage(itextcomponent, ChatType.CHAT, this.player.getUUID());
++            */
++         }
++
++
 +    //    this.chatSpamThresholdCount += 20;
 +    //    if (this.chatSpamThresholdCount > 200 && !this.server.getPlayerList().canSendCommands(this.player.getGameProfile())) {
 +    //       this.disconnect(new TranslationTextComponent("disconnect.spam"));
@@ -1219,6 +1231,13 @@
 +      } else if (this.field_147369_b.func_147096_v() == ChatVisibility.SYSTEM) {
 +         // Do nothing, this is coming from a plugin
 +      } else {
++         // Mohist start - Fire the forge event first, and replace the message sent to bukkit, removing the <player>
++         ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
++         itextcomponent = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, itextcomponent);
++         if (itextcomponent == null) return;
++         s = itextcomponent.getString().substring(3 + this.field_147369_b.func_145748_c_().getString().length());
++         // Mohist end
++
 +         Player player = this.getPlayer();
 +         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(field_147367_d));
 +         this.craftServer.getPluginManager().callEvent(event);
