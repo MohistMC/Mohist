@@ -1,24 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -1,6 +1,6 @@
+@@ -1,6 +1,7 @@
  package net.minecraft.item.crafting;
  
--import com.google.common.collect.Maps;
+ import com.google.common.collect.Maps;
 +import java.util.LinkedHashMap;
  import java.util.Map;
  import java.util.Map.Entry;
  import net.minecraft.block.Block;
-@@ -15,15 +15,18 @@
+@@ -15,15 +16,18 @@
  public class FurnaceRecipes
  {
      private static final FurnaceRecipes field_77606_a = new FurnaceRecipes();
 -    private final Map<ItemStack, ItemStack> field_77604_b = Maps.<ItemStack, ItemStack>newHashMap();
--    private final Map<ItemStack, Float> field_77605_c = Maps.<ItemStack, Float>newHashMap();
-+    public Map<ItemStack, ItemStack> field_77604_b = new LinkedHashMap();
-+    private final Map<ItemStack, Float> field_77605_c = new LinkedHashMap();
++    public Map<ItemStack, ItemStack> field_77604_b = Maps.<ItemStack, ItemStack>newHashMap();
+     private final Map<ItemStack, Float> field_77605_c = Maps.<ItemStack, Float>newHashMap();
  
-+    public Map<ItemStack,ItemStack> customRecipes = new LinkedHashMap();
-+    public Map<ItemStack,Float> customExperience = new LinkedHashMap();
++    public Map<ItemStack,ItemStack> customRecipes = Maps.newHashMap();
++    public Map<ItemStack,Float> customExperience = Maps.newHashMap();
 +
      public static FurnaceRecipes func_77602_a()
      {
@@ -30,7 +29,7 @@
      {
          this.func_151393_a(Blocks.field_150366_p, new ItemStack(Items.field_151042_j), 0.7F);
          this.func_151393_a(Blocks.field_150352_o, new ItemStack(Items.field_151043_k), 1.0F);
-@@ -101,6 +104,11 @@
+@@ -101,6 +105,11 @@
          this.func_151394_a(new ItemStack(Blocks.field_150406_ce, 1, EnumDyeColor.BLACK.func_176765_a()), new ItemStack(Blocks.field_192442_dQ), 0.1F);
      }
  
@@ -42,7 +41,7 @@
      public void func_151393_a(Block p_151393_1_, ItemStack p_151393_2_, float p_151393_3_)
      {
          this.func_151396_a(Item.func_150898_a(p_151393_1_), p_151393_2_, p_151393_3_);
-@@ -113,12 +121,21 @@
+@@ -113,12 +122,21 @@
  
      public void func_151394_a(ItemStack p_151394_1_, ItemStack p_151394_2_, float p_151394_3_)
      {
@@ -64,7 +63,7 @@
          for (Entry<ItemStack, ItemStack> entry : this.field_77604_b.entrySet())
          {
              if (this.func_151397_a(p_151395_1_, entry.getKey()))
-@@ -142,6 +159,17 @@
+@@ -142,6 +160,17 @@
  
      public float func_151398_b(ItemStack p_151398_1_)
      {
