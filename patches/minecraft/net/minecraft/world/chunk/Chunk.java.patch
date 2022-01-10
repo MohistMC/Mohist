@@ -73,7 +73,7 @@
 +      super(Chunk.class);
        this.field_76645_j = new ClassInheritanceMultiMap[16];
        this.field_76637_e = p_i225781_1_;
-+      this.world = (ServerWorld) p_i225781_1_;
++      this.world = p_i225781_1_ instanceof ServerWorld ? (ServerWorld) p_i225781_1_ : null;
        this.field_212816_F = p_i225781_2_;
        this.field_196967_n = p_i225781_4_;
  
