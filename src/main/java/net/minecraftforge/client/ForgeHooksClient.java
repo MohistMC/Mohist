@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
+import java.util.Comparator;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -31,6 +32,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.locale.Language;
@@ -1045,4 +1047,19 @@ public class ForgeHooksClient
                 .toList();
     }
 
+    public static Comparator<ParticleRenderType> makeParticleRenderTypeComparator(List<ParticleRenderType> renderOrder)
+    {
+        Comparator<ParticleRenderType> vanillaComparator = Comparator.comparingInt(renderOrder::indexOf);
+        return (typeOne, typeTwo) ->
+        {
+            boolean vanillaOne = renderOrder.contains(typeOne);
+            boolean vanillaTwo = renderOrder.contains(typeTwo);
+
+            if (vanillaOne && vanillaTwo)
+            {
+                return vanillaComparator.compare(typeOne, typeTwo);
+            }
+            return Boolean.compare(vanillaTwo, vanillaOne);
+        };
+    }
 }
