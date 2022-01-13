@@ -1019,7 +1019,7 @@
  
 +      p_217484_1_.onRemovedFromWorld();
 +      p_217484_1_.remove(keepData);
-+      p_217484_1_.valid = false; // CraftBukkit
++      // p_217484_1_.valid = false; // CraftBukkit // Mohist Duplicate net/minecraftforge/common/capabilities/CapabilityProvider.java:165
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_217484_1_, this));
     }
  
@@ -1048,8 +1048,8 @@
 -         }
 +         // CraftBukkit start - SPIGOT-5278
 +         if (p_217465_1_ instanceof DrownedEntity) {
-+            this.field_217495_I.remove(((DrownedEntity) p_217465_1_).field_204716_a);
-+            this.field_217495_I.remove(((DrownedEntity) p_217465_1_).field_204717_b);
++            this.field_217495_I.add(((DrownedEntity) p_217465_1_).field_204716_a);
++            this.field_217495_I.add(((DrownedEntity) p_217465_1_).field_204717_b);
 +         } else
 +            // CraftBukkit end
 +            if (p_217465_1_ instanceof MobEntity) {

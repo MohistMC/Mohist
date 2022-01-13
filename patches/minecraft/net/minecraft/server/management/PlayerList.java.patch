@@ -334,7 +334,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,187 +_,314 @@
+@@ -293,187 +_,315 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -707,6 +707,7 @@
 +       }
 +
 +       boolean flag2 = false;
++       serverplayerentity.gatherCapsAndRevive(); // Mohist - Re-gather the invalidated capabilities, since we don't create a new ServerPlayerEntity. - net/minecraft/entity/Entity.java:295.
 +       // CraftBukkit start - fire PlayerRespawnEvent
 +       if (location == null) {
 +           boolean isBedSpawn = false;
