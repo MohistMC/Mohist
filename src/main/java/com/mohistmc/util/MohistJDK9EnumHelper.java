@@ -14,6 +14,7 @@ public class MohistJDK9EnumHelper
 {
     private static MethodHandles.Lookup implLookup = null;
     private static boolean isSetup                 = false;
+    public static sun.misc.Unsafe unsafe;
 
     private static void setup()
     {
@@ -33,7 +34,7 @@ public class MohistJDK9EnumHelper
             Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
             Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
             unsafeField.setAccessible(true);
-            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            unsafe = (Unsafe) unsafeField.get(null);
             Field implLookupField = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             implLookup = (MethodHandles.Lookup) unsafe.getObject(unsafe.staticFieldBase(implLookupField), unsafe.staticFieldOffset(implLookupField));
         }
@@ -192,6 +193,48 @@ public class MohistJDK9EnumHelper
         if (!isSetup)
         {
             setup();
+        }
+    }
+
+    public static void setField(Object obj, Object value, Field field) throws ReflectiveOperationException {
+        if (obj == null) {
+            setStaticField(field, value);
+        } else {
+            try {
+                unsafe.putObject(obj, unsafe.objectFieldOffset(field), value);
+            } catch (Exception e) {
+                throw new ReflectiveOperationException(e);
+            }
+        }
+    }
+
+    public static void setStaticField(Field field, Object value) throws ReflectiveOperationException {
+        try {
+            unsafe.ensureClassInitialized(field.getDeclaringClass());
+            unsafe.putObject(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field), value);
+        } catch (Exception e) {
+            throw new ReflectiveOperationException(e);
+        }
+    }
+
+    public static <T> T getField(Object obj, Field field) throws ReflectiveOperationException {
+        if (obj == null) {
+            return getStaticField(field);
+        } else {
+            try {
+                return (T)unsafe.getObject(obj, unsafe.objectFieldOffset(field));
+            } catch (Exception e) {
+                throw new ReflectiveOperationException(e);
+            }
+        }
+    }
+
+    public static <T> T getStaticField(Field field) throws ReflectiveOperationException {
+        try {
+            unsafe.ensureClassInitialized(field.getDeclaringClass());
+            return (T)unsafe.getObject(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field));
+        } catch (Exception e) {
+            throw new ReflectiveOperationException(e);
         }
     }
 }
