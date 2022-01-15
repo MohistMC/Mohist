@@ -37,28 +37,59 @@ import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
+import org.apache.logging.log4j.util.PropertiesUtil;
 
 @Plugin(name = "highlightMsg", category = PatternConverter.CATEGORY)
 @ConverterKeys({"highlightMsg"})
 @PerformanceSensitive("allocation")
 public class HighlightMsgConverter extends LogEventPatternConverter {
-    private static final String ANSI_RESET = "\u001B[39;0m";
-    private static final String ANSI_ERROR = "\u001B[31;1m";
-    private static final String ANSI_WARN = "\u001B[33;1m";
-    private static final String ANSI_INFO = "\u001B[39;0m";
-    private static final String ANSI_FATAL = "\u001B[31;1m";
-    private static final String ANSI_TRACE = "\u001B[31;1m";
+    private static final String ANSI_RESET = "\u001B[m";
 
+    public static final String KEEP_FORMATTING_PROPERTY = "terminal.keepMinecraftFormatting";
+
+    private static final boolean KEEP_FORMATTING = PropertiesUtil.getProperties().getBooleanProperty(KEEP_FORMATTING_PROPERTY);
+
+
+    private final boolean ansi;
     private final List<PatternFormatter> formatters;
+
+    private static final char COLOR_CHAR = '\u00A7'; // §
+    private static final String LOOKUP = "0123456789abcdefklmnor";
+
+    private static final String[] ansiCodes = new String[] {
+            "\u001B[0;30m", // Black §0
+            "\u001B[0;34m", // Dark Blue §1
+            "\u001B[0;32m", // Dark Green §2
+            "\u001B[0;36m", // Dark Aqua §3
+            "\u001B[0;31m", // Dark Red §4
+            "\u001B[0;35m", // Dark Purple §5
+            "\u001B[0;33m", // Gold §6
+            "\u001B[0;37m", // Gray §7
+            "\u001B[0;30;1m",  // Dark Gray §8
+            "\u001B[0;34;1m",  // Blue §9
+            "\u001B[0;32;1m",  // Green §a
+            "\u001B[0;36;1m",  // Aqua §b
+            "\u001B[0;31;1m",  // Red §c
+            "\u001B[0;35;1m",  // Light Purple §d
+            "\u001B[0;33;1m",  // Yellow §e
+            "\u001B[0;37;1m",  // White §f
+            "\u001B[5m",       // Obfuscated §k
+            "\u001B[21m",      // Bold §l
+            "\u001B[9m",       // Strikethrough §m
+            "\u001B[4m",       // Underline §n
+            "\u001B[3m",       // Italic §o
+            ANSI_RESET,        // Reset §r
+    };
 
     /**
      * Construct the converter.
      *
      * @param formatters The pattern formatters to generate the text to highlight
      */
-    protected HighlightMsgConverter(List<PatternFormatter> formatters) {
+    protected HighlightMsgConverter(List<PatternFormatter> formatters, boolean strip) {
         super("highlightMsg", null);
         this.formatters = formatters;
+        this.ansi = !strip;
     }
 
     /**
@@ -82,53 +113,68 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
 
         PatternParser parser = PatternLayout.createPatternParser(config);
         List<PatternFormatter> formatters = parser.parse(options[0]);
-        return new HighlightMsgConverter(formatters);
+        boolean strip = options.length > 1 && "strip".equals(options[1]);
+        return new HighlightMsgConverter(formatters, strip);
     }
 
     @Override
     public void format(LogEvent event, StringBuilder toAppendTo) {
-        if (TerminalConsoleAppender.isAnsiSupported()) {
-            Level level = event.getLevel();
-            if (level.isMoreSpecificThan(Level.ERROR)) {
-                format(ANSI_ERROR, event, toAppendTo);
-                return;
-            } else if (level.isMoreSpecificThan(Level.WARN)) {
-                format(ANSI_WARN, event, toAppendTo);
-                return;
-            } else if (level.isMoreSpecificThan(Level.INFO)) {
-                format(ANSI_INFO, event, toAppendTo);
-                return;
-            } else if (level.isMoreSpecificThan(Level.FATAL)) {
-                format(ANSI_FATAL, event, toAppendTo);
-                return;
-            } else if (level.isMoreSpecificThan(Level.TRACE)) {
-                format(ANSI_TRACE, event, toAppendTo);
-                return;
-            }
-        }
-
+        int start = toAppendTo.length();
         //noinspection ForLoopReplaceableByForEach
-        for (int i = 0, size = formatters.size(); i < size; i++) {
+        for (int i = 0, size = formatters.size(); i < size; i++)
+        {
             formatters.get(i).format(event, toAppendTo);
         }
+
+        if (KEEP_FORMATTING || toAppendTo.length() == start)
+        {
+            // Skip replacement if disabled or if the content is empty
+            return;
+        }
+
+        String content = toAppendTo.substring(start);
+        format(content, toAppendTo, start, ansi && TerminalConsoleAppender.isAnsiSupported());
     }
 
-    private void format(String style, LogEvent event, StringBuilder toAppendTo) {
-        int start = toAppendTo.length();
-        toAppendTo.append(style);
-        int end = toAppendTo.length();
-
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0, size = formatters.size(); i < size; i++) {
-            formatters.get(i).format(event, toAppendTo);
+    private static void format(String s, StringBuilder result, int start, boolean ansi)
+    {
+        int next = s.indexOf(COLOR_CHAR);
+        int last = s.length() - 1;
+        if (next == -1 || next == last)
+        {
+            return;
         }
 
-        if (toAppendTo.length() == end) {
-            // No content so we don't need to append the ANSI escape code
-            toAppendTo.setLength(start);
-        } else {
-            // Append reset code after the line
-            toAppendTo.append(ANSI_RESET);
+        result.setLength(start + next);
+
+        int pos = next;
+        do
+        {
+            int format = LOOKUP.indexOf(Character.toLowerCase(s.charAt(next + 1)));
+            if (format != -1)
+            {
+                if (pos != next)
+                {
+                    result.append(s, pos, next);
+                }
+                if (ansi)
+                {
+                    result.append(ansiCodes[format]);
+                }
+                pos = next += 2;
+            }
+            else
+            {
+                next++;
+            }
+
+            next = s.indexOf(COLOR_CHAR, next);
+        } while (next != -1 && next < last);
+
+        result.append(s, pos, s.length());
+        if (ansi)
+        {
+            result.append(ANSI_RESET);
         }
     }
 
