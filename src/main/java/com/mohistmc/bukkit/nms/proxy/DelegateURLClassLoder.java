@@ -1,6 +1,7 @@
 package com.mohistmc.bukkit.nms.proxy;
 
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+import com.mohistmc.util.MohistJDK9EnumHelper;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -16,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
@@ -131,12 +131,16 @@ public class DelegateURLClassLoder extends URLClassLoader {
                     if (attributes != null) {
                         try {
                             try {
-                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), "implTitle");
-                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), "implVersion");
-                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), "implVendor");
-                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), "specTitle");
-                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), "specVersion");
-                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), "specVendor");
+                                Object versionInfo = MohistJDK9EnumHelper.getField(pkg, Package.class.getDeclaredField("versionInfo"));
+                                if (versionInfo != null) {
+                                    Class<?> Package$VersionInfo = Class.forName("java.lang.Package$VersionInfo");
+                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), Package$VersionInfo.getDeclaredField("implTitle"));
+                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), Package$VersionInfo.getDeclaredField("implVersion"));
+                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), Package$VersionInfo.getDeclaredField("implVendor"));
+                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), Package$VersionInfo.getDeclaredField("specTitle"));
+                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), Package$VersionInfo.getDeclaredField("specVersion"));
+                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), Package$VersionInfo.getDeclaredField("specVendor"));
+                                }
                             } catch (Exception ignored) {
                             }
                         } finally {
