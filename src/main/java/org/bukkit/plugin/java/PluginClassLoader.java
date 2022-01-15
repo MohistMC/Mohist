@@ -248,9 +248,10 @@ public final class PluginClassLoader extends URLClassLoader {
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     URL jarURL = jarURLConnection.getJarFileURL();
 
-                    fixPackage(name);
-                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+                    final Manifest manifest = jarURLConnection.getManifest();
+                    fixPackage(manifest, url, name);
 
+                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
                     result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
                     if (result != null) {
                         // Resolve it - sets the class loader of the class
@@ -271,7 +272,7 @@ public final class PluginClassLoader extends URLClassLoader {
     }
     //Mohist end
 
-    private void fixPackage(String name) {
+    private void fixPackage(Manifest manifest, URL url, String name) {
         int dot = name.lastIndexOf('.');
         if (dot != -1) {
             String pkgName = name.substring(0, dot);
@@ -286,20 +287,23 @@ public final class PluginClassLoader extends URLClassLoader {
                 } catch (IllegalArgumentException ignored) {
                 }
             }
-            if (!packageCache.contains(pkg)) {
-                Attributes attributes = manifest.getMainAttributes();
-                if (attributes != null) {
-                    try {
+            if (pkg != null && manifest != null) {
+                if (!packageCache.contains(pkg)) {
+                    Attributes attributes = manifest.getMainAttributes();
+                    if (attributes != null) {
                         try {
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), "implTitle");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), "implVersion");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), "implVendor");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), "specTitle");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), "specVersion");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), "specVendor");
-                        } catch (Exception ignored) {}
-                    } finally {
-                        packageCache.add(pkg);
+                            try {
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), "implTitle");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), "implVersion");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), "implVendor");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), "specTitle");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), "specVersion");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), "specVendor");
+                            } catch (Exception ignored) {
+                            }
+                        } finally {
+                            packageCache.add(pkg);
+                        }
                     }
                 }
             }
