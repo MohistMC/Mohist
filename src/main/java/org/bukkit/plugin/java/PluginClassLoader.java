@@ -10,10 +10,12 @@ import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -50,7 +52,7 @@ public final class PluginClassLoader extends URLClassLoader {
     private IllegalStateException pluginState;
     private final LaunchClassLoader launchClassLoader;
 
-    private final List<Package> packageCache = new ArrayList<>();
+    private final Set<Package> packageCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException {
         super(new URL[]{file.toURI().toURL()}, parent);
@@ -191,7 +193,7 @@ public final class PluginClassLoader extends URLClassLoader {
                     byte[] classBytes = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
                     classBytes = RemapUtils.remapFindClass(classBytes);
 
-                    fixPackage(name);
+                    fixPackage(manifest, url, name);
 
                     CodeSigner[] signers = entry.getCodeSigners();
                     CodeSource source = new CodeSource(this.url, signers);
@@ -212,7 +214,8 @@ public final class PluginClassLoader extends URLClassLoader {
                         final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                         final URL jarURL = jarURLConnection.getJarFileURL();
 
-                        fixPackage(name);
+                        final Manifest manifest = jarURLConnection.getManifest();
+                        fixPackage(manifest, url, name);
 
                         final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
                         result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
@@ -229,7 +232,7 @@ public final class PluginClassLoader extends URLClassLoader {
         return result;
     }
 
-    private void fixPackage(String name) {
+    private void fixPackage(Manifest manifest, URL url, String name) {
         int dot = name.lastIndexOf('.');
         if (dot != -1) {
             String pkgName = name.substring(0, dot);
@@ -244,20 +247,23 @@ public final class PluginClassLoader extends URLClassLoader {
                 } catch (IllegalArgumentException ignored) {
                 }
             }
-            if (!packageCache.contains(pkg)) {
-                Attributes attributes = manifest.getMainAttributes();
-                if (attributes != null) {
-                    try {
+            if (pkg != null && manifest != null) {
+                if (!packageCache.contains(pkg)) {
+                    Attributes attributes = manifest.getMainAttributes();
+                    if (attributes != null) {
                         try {
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), "implTitle");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), "implVersion");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), "implVendor");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), "specTitle");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), "specVersion");
-                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), "specVendor");
-                        } catch (Exception ignored) {}
-                    } finally {
-                        packageCache.add(pkg);
+                            try {
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), "implTitle");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), "implVersion");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), "implVendor");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), "specTitle");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), "specVersion");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), "specVendor");
+                            } catch (Exception ignored) {
+                            }
+                        } finally {
+                            packageCache.add(pkg);
+                        }
                     }
                 }
             }
