@@ -8,9 +8,15 @@ import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
 import java.security.CodeSigner;
 import java.security.CodeSource;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import net.md_5.specialsource.repo.RuntimeRepo;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
@@ -23,6 +29,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
 
     public static final String desc = DelegateURLClassLoder.class.getName().replace('.', '/');
     private final Map<String, Class<?>> classeCache = new HashMap<>();
+    private final Set<Package> packageCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public DelegateURLClassLoder(final URL[] urls, final ClassLoader parent) {
         super(urls, parent);
@@ -79,6 +86,10 @@ public class DelegateURLClassLoder extends URLClassLoader {
                     bytecode = RemapUtils.remapFindClass(bytecode);
                     final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     final URL jarURL = jarURLConnection.getJarFileURL();
+
+                    final Manifest manifest = jarURLConnection.getManifest();
+                    fixPackage(manifest, url, name);
+
                     final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
                     result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
                     if (result != null) {
@@ -96,6 +107,44 @@ public class DelegateURLClassLoder extends URLClassLoader {
         this.classeCache.put(name, clazz);
         if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
             ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz);
+        }
+    }
+
+    private void fixPackage(Manifest manifest, URL url, String name) {
+        int dot = name.lastIndexOf('.');
+        if (dot != -1) {
+            String pkgName = name.substring(0, dot);
+            Package pkg = getPackage(pkgName);
+            if (pkg == null) {
+                try {
+                    if (manifest != null) {
+                        pkg = definePackage(pkgName, manifest, url);
+                    } else {
+                        pkg = definePackage(pkgName, null, null, null, null, null, null, null);
+                    }
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+            if (pkg != null && manifest != null) {
+                if (!packageCache.contains(pkg)) {
+                    Attributes attributes = manifest.getMainAttributes();
+                    if (attributes != null) {
+                        try {
+                            try {
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), "implTitle");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), "implVersion");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), "implVendor");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), "specTitle");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), "specVersion");
+                                ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), "specVendor");
+                            } catch (Exception ignored) {
+                            }
+                        } finally {
+                            packageCache.add(pkg);
+                        }
+                    }
+                }
+            }
         }
     }
 }
