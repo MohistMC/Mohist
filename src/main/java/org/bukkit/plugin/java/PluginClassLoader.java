@@ -9,18 +9,22 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
 import com.mohistmc.bukkit.nms.model.ClassMapping;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -52,6 +56,7 @@ public final class PluginClassLoader extends URLClassLoader {
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
     private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Package> packageCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     static {
         ClassLoader.registerAsParallelCapable();
@@ -243,23 +248,7 @@ public final class PluginClassLoader extends URLClassLoader {
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     URL jarURL = jarURLConnection.getJarFileURL();
 
-                    int dot = name.lastIndexOf('.');
-                    if (dot != -1) {
-                        String pkgName = name.substring(0, dot);
-                        if (getPackage(pkgName) == null) {
-                            try {
-                                if (manifest != null) {
-                                    definePackage(pkgName, manifest, url);
-                                } else {
-                                    definePackage(pkgName, null, null, null, null, null, null, null);
-                                }
-                            } catch (IllegalArgumentException ex) {
-                                if (getPackage(pkgName) == null) {
-                                    throw new IllegalStateException("Cannot find package " + pkgName);
-                                }
-                            }
-                        }
-                    }
+                    fixPackage(name);
                     CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
 
                     result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
@@ -281,4 +270,39 @@ public final class PluginClassLoader extends URLClassLoader {
         return bytes;
     }
     //Mohist end
+
+    private void fixPackage(String name) {
+        int dot = name.lastIndexOf('.');
+        if (dot != -1) {
+            String pkgName = name.substring(0, dot);
+            Package pkg = getPackage(pkgName);
+            if (pkg == null) {
+                try {
+                    if (manifest != null) {
+                        pkg = definePackage(pkgName, manifest, url);
+                    } else {
+                        pkg = definePackage(pkgName, null, null, null, null, null, null, null);
+                    }
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+            if (!packageCache.contains(pkg)) {
+                Attributes attributes = manifest.getMainAttributes();
+                if (attributes != null) {
+                    try {
+                        try {
+                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), "implTitle");
+                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), "implVersion");
+                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), "implVendor");
+                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), "specTitle");
+                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), "specVersion");
+                            ObfuscationReflectionHelper.setPrivateValue(Package.class, pkg, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), "specVendor");
+                        } catch (Exception ignored) {}
+                    } finally {
+                        packageCache.add(pkg);
+                    }
+                }
+            }
+        }
+    }
 }
