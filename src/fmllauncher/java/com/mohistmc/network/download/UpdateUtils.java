@@ -40,7 +40,7 @@ public class UpdateUtils {
 			String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timestamp").toString())));
 
 			if(jar_sha.equals(build_number))
-				System.out.println(i18n.get("update.latest", "1.0", jar_sha, build_number));
+				System.out.println(i18n.get("update.latest", jar_sha, build_number));
 			else {
 				System.out.println(i18n.get("update.detect", build_number, jar_sha, time));
 				if(bMohist("check_update_auto_download", "false")) {
