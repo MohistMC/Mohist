@@ -10,6 +10,7 @@ public enum DownloadSource {
     GITHUB("https://mavenmirror.mohistmc.com/");
 
     String url;
+    public static DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
 
     DownloadSource(String url) {
         this.url = url;
@@ -20,7 +21,6 @@ public enum DownloadSource {
     }
 
     public static DownloadSource get(){
-        DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
         String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds))

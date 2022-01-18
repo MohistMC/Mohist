@@ -45,7 +45,7 @@ public class MohistConfig extends ConfigBase {
     // MohistProxySelector
     public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
 
-    public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", i18n.isCN() ? DownloadSource.CHINA.name() : DownloadSource.MOHIST.name());
+    public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", DownloadSource.defaultSource.name());
 
     /* ======================================================================== */
 
