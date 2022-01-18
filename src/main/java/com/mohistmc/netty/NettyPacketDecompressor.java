@@ -29,8 +29,8 @@ public class NettyPacketDecompressor extends ByteToMessageDecoder {
                throw new DecoderException("Badly compressed packet - size of " + i + " is below server threshold of " + this.threshold);
             }
 
-            if (i > 2097152) {
-               throw new DecoderException("Badly compressed packet - size of " + i + " is larger than protocol maximum of " + 2097152);
+            if (i > 16777216) {
+               throw new DecoderException("Badly compressed packet - size of " + i + " is larger than protocol maximum of " + 16777216);
             }
 
             byte[] abyte = new byte[packetbuffer.readableBytes()];
