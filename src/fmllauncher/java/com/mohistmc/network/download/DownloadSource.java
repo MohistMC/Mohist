@@ -1,6 +1,7 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.util.i18n.i18n;
 
 public enum DownloadSource {
 
@@ -19,11 +20,12 @@ public enum DownloadSource {
     }
 
     public static DownloadSource get(){
-        String ds = MohistConfigUtil.sMohist("libraries_downloadsource", "MOHIST");
+        DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
+        String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds))
                 return me;
         }
-        return DownloadSource.MOHIST;
+        return defaultSource;
     }
 }
