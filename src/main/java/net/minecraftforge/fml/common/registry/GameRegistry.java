@@ -186,7 +186,7 @@ public class GameRegistry
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
         long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
 
-        for (IWorldGenerator generator : worldGenerators)
+        for (IWorldGenerator generator : sortedGeneratorList)
         {
             if (configWorldGenCache.get(generator.getClass().getName()))
             {
