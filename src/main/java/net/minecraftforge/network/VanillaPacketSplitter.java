@@ -66,7 +66,7 @@ public class VanillaPacketSplitter
 
     private static final String VERSION_11 = "1.1";
 
-    private static final int PROTOCOL_MAX = 2097152;
+    private static final int PROTOCOL_MAX = 16777216;
 
     private static final int PAYLOAD_TO_CLIENT_MAX = 1048576;
     // 1 byte for state, 5 byte for VarInt PacketID
