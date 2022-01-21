@@ -76,6 +76,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         return itemStack;
     }
 
+
     /**
      * @return The PoseStack rendering context.
      */

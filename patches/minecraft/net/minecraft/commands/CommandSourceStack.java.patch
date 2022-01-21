@@ -8,6 +8,15 @@
  import java.util.Collection;
  import java.util.Objects;
  import java.util.Set;
+@@ -35,7 +_,7 @@
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public class CommandSourceStack implements SharedSuggestionProvider {
++public class CommandSourceStack implements SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
+    public static final SimpleCommandExceptionType f_81286_ = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.player"));
+    public static final SimpleCommandExceptionType f_81287_ = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.entity"));
+    public final CommandSource f_81288_;
 @@ -53,6 +_,8 @@
     private final EntityAnchorArgument.Anchor f_81298_;
     private final Vec2 f_81299_;

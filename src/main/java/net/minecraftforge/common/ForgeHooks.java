@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import com.mojang.datafixers.kinds.App;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -63,6 +64,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -144,6 +146,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
+import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -1247,6 +1250,57 @@ public class ForgeHooks
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
     {
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
+    }
+
+    public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked)
+    {
+        ShieldBlockEvent e = new ShieldBlockEvent(blocker, source, blocked);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e;
+    }
+
+    /**
+     * Called when dimension jsons are parsed.
+     * Creates a copy of the worldgen settings and its dimension registry,
+     * where dimensions that specify that they should use the server seed will use the server seed
+     * instead of the seed that mojang requires be specified in the json.
+     **/
+    public static WorldGenSettings loadDimensionsWithServerSeed(WorldGenSettings wgs)
+    {
+        // get the original worldgen settings' settings
+        long seed = wgs.seed();
+        boolean generateFeatures = wgs.generateFeatures();
+        boolean generateBonusChest = wgs.generateBonusChest();
+        MappedRegistry<LevelStem> originalRegistry = wgs.dimensions();
+        Optional<String> legacyCustomOptions = wgs.legacyCustomOptions;
+
+        // make a copy of the dimension registry; for dimensions that specify that they should use the server seed instead
+        // of the hardcoded json seed, recreate them with the correct seed
+        MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
+        for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : originalRegistry.entrySet())
+        {
+            ResourceKey<LevelStem> key = entry.getKey();
+            LevelStem dimension = entry.getValue();
+            if (dimension.useServerSeed())
+            {
+                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed), true), originalRegistry.lifecycle(entry.getValue()));
+            }
+            else
+            {
+                seededRegistry.register(key, dimension, originalRegistry.lifecycle(dimension));
+            }
+        }
+
+        return new WorldGenSettings(seed, generateFeatures, generateBonusChest, seededRegistry, legacyCustomOptions);
+    }
+
+    /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
+    public static App<RecordCodecBuilder.Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, Supplier<App<RecordCodecBuilder.Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
+    {
+        App<RecordCodecBuilder.Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
+        return builder.group(vanillaFields).and(
+                        Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).forGetter(levelStem -> levelStem.useServerSeed()))
+                .apply(builder, (stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed));
     }
 
     public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag)
