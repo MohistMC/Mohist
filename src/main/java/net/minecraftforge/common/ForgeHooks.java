@@ -1299,8 +1299,8 @@ public class ForgeHooks
     {
         App<RecordCodecBuilder.Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
         return builder.group(vanillaFields).and(
-                        Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).forGetter(levelStem -> levelStem.useServerSeed()))
-                .apply(builder, (stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed));
+                        Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
+                .apply(builder, builder.stable((stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed)));
     }
 
     public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag)
