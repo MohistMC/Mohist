@@ -97,7 +97,7 @@
      private boolean field_72409_l;
      protected int field_72405_c;
      private int field_72402_d;
-@@ -92,8 +124,16 @@
+@@ -92,21 +124,29 @@
      private boolean field_72407_n;
      private int field_72408_o;
  
@@ -114,7 +114,13 @@
          this.field_72401_g = new UserListBans(field_152613_a);
          this.field_72413_h = new UserListIPBans(field_152614_b);
          this.field_72414_i = new UserListOps(field_152615_c);
-@@ -106,7 +146,7 @@
+         this.field_72411_j = new UserListWhitelist(field_152616_d);
+         this.field_148547_k = Maps.<UUID, StatisticsManagerServer>newHashMap();
+-        this.field_192055_p = Maps.<UUID, PlayerAdvancements>newHashMap();
++        this.field_192055_p = Maps.newIdentityHashMap();
+         this.field_72400_f = p_i1500_1_;
+         this.field_72401_g.func_152686_a(false);
+         this.field_72413_h.func_152686_a(false);
          this.field_72405_c = 8;
      }
  
