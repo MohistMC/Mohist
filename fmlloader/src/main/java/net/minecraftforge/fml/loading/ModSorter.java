@@ -21,7 +21,6 @@ package net.minecraftforge.fml.loading;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-import java.util.stream.Collectors;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
@@ -39,6 +38,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -240,6 +240,7 @@ public class ModSorter
             if (missingVersions.size() - mandatoryMissing > 0) {
                 LOGGER.error(LOADING, "Unsupported installed optional dependencies: {}", missingVersions.stream().filter(ver -> !ver.isMandatory()).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", ")));
             }
+
             return missingVersions.stream()
                     .map(mv -> new ExceptionData(mv.isMandatory() ? "fml.modloading.missingdependency" : "fml.modloading.missingdependency.optional",
                             mv.getOwner(), mv.getModId(), mv.getOwner().getModId(), mv.getVersionRange(),
