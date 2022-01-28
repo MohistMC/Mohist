@@ -17,13 +17,14 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
-@@ -113,12 +_,17 @@
+@@ -113,12 +_,18 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
 +import org.bukkit.craftbukkit.v1_18_R1.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
++import org.bukkit.event.entity.EntityRegainHealthEvent;
  
  public abstract class LivingEntity extends Entity {
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
@@ -217,15 +218,35 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.f_19853_.f_46443_) {
-@@ -960,6 +_,8 @@
+@@ -959,10 +_,27 @@
+ 
     }
  
++   public EntityRegainHealthEvent.RegainReason healRegainReason = EntityRegainHealthEvent.RegainReason.CUSTOM;
++   public void putHealRegainReason(EntityRegainHealthEvent.RegainReason healRegainReason) {
++      this.healRegainReason = healRegainReason;
++   }
++   public void resetHealRegainReason() {
++      this.healRegainReason = EntityRegainHealthEvent.RegainReason.CUSTOM;
++   }
     public void m_5634_(float p_21116_) {
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
        float f = this.m_21223_();
        if (f > 0.0F) {
-          this.m_21153_(f + p_21116_);
+-         this.m_21153_(f + p_21116_);
++         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, healRegainReason);
++         // Suppress during worldgen
++         if (this.valid) {
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         }
++         if (!event.isCancelled()) {
++            this.m_21153_((float) (this.m_21223_() + event.getAmount()));
++         }
++         // CraftBukkit end
+       }
+ 
+    }
 @@ -980,6 +_,7 @@
     }
  

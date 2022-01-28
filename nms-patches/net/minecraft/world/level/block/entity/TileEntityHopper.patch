@@ -140,17 +140,3 @@
  
              if (itemstack2.isEmpty()) {
                  iinventory.setChanged();
-@@ -242,6 +332,13 @@
- 
-     public static boolean addItem(IInventory iinventory, EntityItem entityitem) {
-         boolean flag = false;
-+        // CraftBukkit start
-+        InventoryPickupItemEvent event = new InventoryPickupItemEvent(iinventory.getOwner().getInventory(), (org.bukkit.entity.Item) entityitem.getBukkitEntity());
-+        entityitem.level.getCraftServer().getPluginManager().callEvent(event);
-+        if (event.isCancelled()) {
-+            return false;
-+        }
-+        // CraftBukkit end
-         ItemStack itemstack = entityitem.getItem().copy();
-         ItemStack itemstack1 = addItem((IInventory) null, iinventory, itemstack, (EnumDirection) null);
- 

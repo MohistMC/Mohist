@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -31,6 +_,8 @@
+@@ -31,6 +_,9 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
 +import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.InventoryPickupItemEvent;
  
  public class HopperBlockEntity extends RandomizableContainerBlockEntity implements Hopper {
     public static final int f_155547_ = 8;
@@ -73,6 +74,20 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
+@@ -211,6 +_,13 @@
+ 
+    public static boolean m_59331_(Container p_59332_, ItemEntity p_59333_) {
+       boolean flag = false;
++      // CraftBukkit start
++      InventoryPickupItemEvent event = new InventoryPickupItemEvent(p_59332_.getOwner().getInventory(), (org.bukkit.entity.Item) p_59333_.getBukkitEntity());
++      p_59333_.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return false;
++      }
++      // CraftBukkit end
+       ItemStack itemstack = p_59333_.m_32055_().m_41777_();
+       ItemStack itemstack1 = m_59326_((Container)null, p_59332_, itemstack, (Direction)null);
+       if (itemstack1.m_41619_()) {
 @@ -399,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {
