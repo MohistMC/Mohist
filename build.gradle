@@ -2,12 +2,10 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url = 'https://maven.minecraftforge.net/' }
-        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
         mavenCentral()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.26,)'
-        classpath 'dev.vankka.dependencydownload:gradle-plugin:1.1.5-SNAPSHOT'
     }
 }
 
@@ -22,7 +20,6 @@ import net.minecraftforge.gradle.common.tasks.SignJar
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
-import dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask
 
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
@@ -30,10 +27,7 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
-    id 'java'
 }
-
-apply plugin: 'dev.vankka.dependencydownload.plugin'
 
 Util.init() //Init all our extension methods!
 
@@ -72,9 +66,6 @@ ext {
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
     MIN_TAG_FOR_CHANGELOG = "39.0"
-
-    // remove :fatjar
-    BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
 }
 
 println('Version: ' + VERSION +
@@ -255,12 +246,6 @@ def sharedDeps = {
     installer 'org.lwjgl:lwjgl-opengl:3.2.2'
     installer 'org.lwjgl:lwjgl-stb:3.2.2'
     */
-
-    autolibraries BIN_PATCHER
-    autolibraries SPECIAL_SOURCE
-    autolibraries INSTALLER_TOOLS
-    autolibraries JAR_SPLITTER
-    autolibraries FART
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -844,11 +829,6 @@ project(':forge') {
         }
         moduleonly
         api.extendsFrom(installer)
-
-        autolibraries
-        autolibraries.extendsFrom(installer)
-        autolibraries.extendsFrom(moduleonly)
-        runtimeDownloadOnly
     }
 
     dependencies {
@@ -1269,14 +1249,7 @@ project(':forge') {
         }
     }
 
-    task generateMohistLibraries(type: GenerateDependencyDownloadResourceTask) {
-        var conf = configurations.autolibraries
-        configuration = conf
-        file = "data/mohist_libraries.txt"
-        // Not necessary to include in the resource
-        includeShadowJarRelocations = false
-    }
-    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar', generateMohistLibraries]) {
+    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
@@ -1297,17 +1270,8 @@ project(':forge') {
         } else {
             println("Can't read server")
         }
-        def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
-        def tokens = [
-                TASK:          project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
-                MAVEN_PATH:    project.ext.MAVEN_PATH.toString(),
-                FORGE_VERSION: FORGE_VERSION,
-                MC_VERSION:    MC_VERSION,
-                MCP_VERSION:   MCP_VERSION,
-                FORGE_GROUP:   project.group,
-                IGNORE_LIST: Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
-                MODULES: 'ALL-MODULE-PATH'
-        ]
+
+        println(CLASS_PATH)
 
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
@@ -1347,20 +1311,6 @@ project(':forge') {
         from(rootProject.file('server_files/libraries.txt')) {
             filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
             rename { 'data/libraries.txt' }
-        }
-        from(generateMohistLibraries)
-        from(rootProject.file('server_files/args.txt')) {
-            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
-            rename { 'data/win_args.txt' }
-        }
-
-        from(rootProject.file('server_files/args.txt')) {
-            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
-            rename { 'data/unix_args.txt' }
-        }
-
-        from(rootProject.file('server_files/user_jvm_args.txt')) {
-            rename { 'data/user_jvm_args.txt' }
         }
     }
 
