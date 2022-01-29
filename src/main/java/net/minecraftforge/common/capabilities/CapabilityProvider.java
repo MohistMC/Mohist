@@ -65,7 +65,6 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     }
 
     public final void gatherCapsAndRevive() {
-        gatherCapabilities();
         reviveCaps();
     }
 

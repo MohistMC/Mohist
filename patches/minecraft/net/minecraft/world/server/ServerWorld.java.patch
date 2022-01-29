@@ -205,6 +205,9 @@
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
++      this.craftWorld = new CraftWorld(this, generator, environment);
++      func_175723_af().world = this;
++      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +      // CraftBukkit end
 +      this.field_241107_Q_ = p_i241885_13_;
 +      this.field_73061_a = p_i241885_1_;
@@ -231,9 +234,6 @@
 +         this.field_241105_O_ = null;
 +      }
 +      this.initCapabilities();
-+      this.craftWorld = new CraftWorld(this, generator, environment);
-+      func_175723_af().world = this;
-+      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +   }
 +
 +   public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen) {
@@ -248,6 +248,9 @@
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
++      this.craftWorld = new CraftWorld(this, generator, environment);
++      func_175723_af().world = this;
++      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +      // CraftBukkit end
 +      this.field_241107_Q_ = p_i241885_13_;
 +      this.field_73061_a = p_i241885_1_;
@@ -274,9 +277,6 @@
 +         this.field_241105_O_ = null;
 +      }
 +      this.initCapabilities();
-+      this.craftWorld = new CraftWorld(this, generator, environment);
-+      func_175723_af().world = this;
-+      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +   }
 +
 +   // Mohist start - Add isPosLoaded method to IBlockReader
@@ -1019,7 +1019,7 @@
  
 +      p_217484_1_.onRemovedFromWorld();
 +      p_217484_1_.remove(keepData);
-+      // p_217484_1_.valid = false; // CraftBukkit // Mohist Duplicate net/minecraftforge/common/capabilities/CapabilityProvider.java:165
++      p_217484_1_.valid = false; // CraftBukkit
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_217484_1_, this));
     }
  
