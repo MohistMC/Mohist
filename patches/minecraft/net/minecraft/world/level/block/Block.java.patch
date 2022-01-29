@@ -22,7 +22,7 @@
     }
  
     public static boolean m_152463_(BlockState p_152464_) {
-@@ -322,7 +_,7 @@
+@@ -322,20 +_,27 @@
     }
  
     private static void m_152440_(Level p_152441_, Supplier<ItemEntity> p_152442_, ItemStack p_152443_) {
@@ -30,8 +30,15 @@
 +      if (!p_152441_.f_46443_ && !p_152443_.m_41619_() && p_152441_.m_46469_().m_46207_(GameRules.f_46136_) && !p_152441_.restoringBlockSnapshots) {
           ItemEntity itementity = p_152442_.get();
           itementity.m_32060_();
-          p_152441_.m_7967_(itementity);
-@@ -330,12 +_,13 @@
+-         p_152441_.m_7967_(itementity);
++         // CraftBukkit start
++         if (p_152441_.captureDrops != null) {
++            p_152441_.captureDrops.add(itementity);
++         } else {
++            p_152441_.m_7967_(itementity);
++         }
++         // CraftBukkit end
+       }
     }
  
     public void m_49805_(ServerLevel p_49806_, BlockPos p_49807_, int p_49808_) {
@@ -46,6 +53,15 @@
     public float m_7325_() {
        return this.f_60444_;
     }
+@@ -353,7 +_,7 @@
+ 
+    public void m_6240_(Level p_49827_, Player p_49828_, BlockPos p_49829_, BlockState p_49830_, @Nullable BlockEntity p_49831_, ItemStack p_49832_) {
+       p_49828_.m_36246_(Stats.f_12949_.m_12902_(this));
+-      p_49828_.m_36399_(0.005F);
++      p_49828_.causeFoodExhaustion(0.005F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED); // CraftBukkit - EntityExhaustionEvent
+       m_49881_(p_49830_, p_49827_, p_49829_, p_49831_, p_49828_, p_49832_);
+    }
+ 
 @@ -382,8 +_,10 @@
  
     public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {
@@ -91,7 +107,7 @@
     }
  
     public void m_5871_(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> p_49818_, TooltipFlag p_49819_) {
-@@ -485,6 +_,82 @@
+@@ -485,6 +_,88 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
@@ -169,6 +185,12 @@
 +   public final java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
 +   }
++
++   // CraftBukkit start
++   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack) {
++      return 0;
++   }
++   // CraftBukkit end
 +
 +   /* ========================================= FORGE END ======================================*/
  
