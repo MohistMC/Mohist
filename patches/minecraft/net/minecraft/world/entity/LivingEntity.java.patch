@@ -118,13 +118,26 @@
        return d0;
     }
  
-@@ -844,7 +_,9 @@
+@@ -836,7 +_,7 @@
+       this.f_19804_.m_135381_(f_20962_, 0);
+    }
+ 
+-   public boolean m_21219_() {
++   public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
+       if (this.f_19853_.f_46443_) {
+          return false;
+       } else {
+@@ -844,7 +_,13 @@
  
           boolean flag;
           for(flag = false; iterator.hasNext(); flag = true) {
 -            this.m_7285_(iterator.next());
 +            MobEffectInstance effect = iterator.next();
 +            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))) continue;
++            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, EntityPotionEffectEvent.Action.CLEARED);
++            if (event.isCancelled()) {
++               continue;
++            }
 +            this.m_7285_(effect);
              iterator.remove();
           }
@@ -310,7 +323,7 @@
              }
           }
  
-@@ -1159,7 +_,7 @@
+@@ -1159,12 +_,12 @@
           if (itemstack != null) {
              if (this instanceof ServerPlayer) {
                 ServerPlayer serverplayer = (ServerPlayer)this;
@@ -319,6 +332,12 @@
                 CriteriaTriggers.f_10551_.m_74431_(serverplayer, itemstack);
              }
  
+             this.m_21153_(1.0F);
+-            this.m_21219_();
++            this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TOTEM);
+             this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 900, 1));
+             this.m_7292_(new MobEffectInstance(MobEffects.f_19617_, 100, 1));
+             this.m_7292_(new MobEffectInstance(MobEffects.f_19607_, 800, 0));
 @@ -1229,6 +_,7 @@
     }
  

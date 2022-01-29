@@ -21,6 +21,7 @@ package net.minecraftforge.client.event;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -55,7 +56,7 @@ public class ScreenEvent extends Event
      */
     public Screen getScreen()
     {
-        return screen;
+        return Objects.requireNonNull(screen);
     }
 
     public static class InitScreenEvent extends ScreenEvent
