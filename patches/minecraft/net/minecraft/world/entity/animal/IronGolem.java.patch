@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/animal/IronGolem.java
 +++ b/net/minecraft/world/entity/animal/IronGolem.java
+@@ -100,7 +_,7 @@
+ 
+    protected void m_7324_(Entity p_28839_) {
+       if (p_28839_ instanceof Enemy && !(p_28839_ instanceof Creeper) && this.m_21187_().nextInt(20) == 0) {
+-         this.m_6710_((LivingEntity)p_28839_);
++         this.setTarget((LivingEntity)p_28839_, org.bukkit.event.entity.EntityTargetLivingEntityEvent.TargetReason.COLLISION, true); // CraftBukkit - set reason
+       }
+ 
+       super.m_7324_(p_28839_);
 @@ -120,9 +_,10 @@
           int i = Mth.m_14107_(this.m_20185_());
           int j = Mth.m_14107_(this.m_20186_() - (double)0.2F);

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
++++ b/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
+@@ -32,6 +_,7 @@
+       if (configuredfeature == null) {
+          return false;
+       } else {
++         // setTreeType(worldgenfeatureconfigured); // CraftBukkit Mohist TODO
+          BlockState blockstate = Blocks.f_50016_.m_49966_();
+          p_59991_.m_7731_(p_59993_.m_142082_(p_59996_, 0, p_59997_), blockstate, 4);
+          p_59991_.m_7731_(p_59993_.m_142082_(p_59996_ + 1, 0, p_59997_), blockstate, 4);
