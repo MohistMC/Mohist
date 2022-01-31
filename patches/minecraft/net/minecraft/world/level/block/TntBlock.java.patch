@@ -56,11 +56,16 @@
           p_57451_.m_7731_(p_57452_, Blocks.f_50016_.m_49966_(), 11);
           Item item = itemstack.m_41720_();
           if (!p_57453_.m_7500_()) {
-@@ -109,7 +_,7 @@
+@@ -109,7 +_,12 @@
           BlockPos blockpos = p_57431_.m_82425_();
           Entity entity = p_57432_.m_37282_();
           if (p_57432_.m_6060_() && p_57432_.m_142265_(p_57429_, blockpos)) {
 -            m_57436_(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++               return;
++            }
++            // CraftBukkit end
 +            onCaughtFire(p_57430_, p_57429_, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);
              p_57429_.m_7471_(blockpos, false);
           }

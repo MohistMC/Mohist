@@ -170,6 +170,19 @@
        }
  
     }
+@@ -1374,6 +_,12 @@
+       return false;
+    }
+ 
++   // CraftBukkit start - collidable API
++   public boolean canCollideWithBukkit(Entity entity) {
++      return m_6094_();
++   }
++   // CraftBukkit end
++
+    public void m_5993_(Entity p_19953_, int p_19954_, DamageSource p_19955_) {
+       if (p_19953_ instanceof ServerPlayer) {
+          CriteriaTriggers.f_10569_.m_48104_((ServerPlayer)p_19953_, this, p_19955_);
 @@ -1465,6 +_,7 @@
           if (this.f_146813_) {
              p_20241_.m_128379_("HasVisualFire", this.f_146813_);

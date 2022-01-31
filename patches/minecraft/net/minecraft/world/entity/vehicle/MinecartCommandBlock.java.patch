@@ -25,7 +25,7 @@
 +
 +      @Override
 +      public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+         return null;
++         return (org.bukkit.craftbukkit.v1_18_R1.entity.CraftMinecartCommand) MinecartCommandBlock.this.getBukkitEntity();
        }
     }
  }

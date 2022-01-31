@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -34,6 +_,31 @@
+@@ -34,6 +_,32 @@
        Level level = p_40637_.m_43725_();
        BlockPos blockpos = p_40637_.m_8083_();
        BlockPos blockpos1 = blockpos.m_142300_(p_40637_.m_43719_());
@@ -25,6 +25,7 @@
 +      }
 +   }
 +
++   // CraftBukkit Mohist start
 +   public static InteractionResult applyBonemeal(UseOnContext p_40637_) {
 +      Level level = p_40637_.m_43725_();
 +      BlockPos blockpos = p_40637_.m_8083_();
@@ -32,9 +33,11 @@
        if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
           if (!level.f_46443_) {
              level.m_46796_(1505, blockpos, 0);
-@@ -55,8 +_,17 @@
+@@ -54,9 +_,19 @@
+          }
        }
     }
++   // CraftBukkit Mohist end
  
 +   @Deprecated //Forge: Use Player/Hand version
     public static boolean m_40627_(ItemStack p_40628_, Level p_40629_, BlockPos p_40630_) {

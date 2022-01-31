@@ -18,3 +18,15 @@
        NONE(0, 0.0D, 0.0D, 0.0D),
        SUMMON_VEX(1, 0.7D, 0.7D, 0.8D),
        FANGS(2, 0.4D, 0.3D, 0.35D),
+@@ -184,6 +_,11 @@
+       public void m_8037_() {
+          --this.f_33774_;
+          if (this.f_33774_ == 0) {
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.m_7269_())) {
++               return;
++            }
++            // CraftBukkit end
+             this.m_8130_();
+             SpellcasterIllager.this.m_5496_(SpellcasterIllager.this.m_7894_(), 1.0F, 1.0F);
+          }

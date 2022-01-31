@@ -8,3 +8,15 @@
           return blockstate.m_60713_(this) && blockstate.m_61143_(f_52858_) == DoubleBlockHalf.LOWER;
        }
     }
+@@ -84,6 +_,11 @@
+    }
+ 
+    protected static void m_52903_(Level p_52904_, BlockPos p_52905_, BlockState p_52906_, Player p_52907_) {
++      // CraftBukkit start
++      if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockPhysicsEvent(p_52904_, p_52905_).isCancelled()) {
++         return;
++      }
++      // CraftBukkit end
+       DoubleBlockHalf doubleblockhalf = p_52906_.m_61143_(f_52858_);
+       if (doubleblockhalf == DoubleBlockHalf.UPPER) {
+          BlockPos blockpos = p_52905_.m_7495_();

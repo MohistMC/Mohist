@@ -12,7 +12,15 @@
     private double f_45445_;
     private double f_45446_;
     public int f_45447_ = 200;
-@@ -125,11 +_,12 @@
+@@ -43,6 +_,7 @@
+ 
+    public void m_45462_(EntityType<?> p_45463_) {
+       this.f_45444_.m_186567_().m_128359_("id", Registry.f_122826_.m_7981_(p_45463_).toString());
++      this.f_45443_ = SimpleWeightedRandomList.m_185864_(); // CraftBukkit - SPIGOT-3496, MC-92282
+    }
+ 
+    private boolean m_151343_(Level p_151344_, BlockPos p_151345_) {
+@@ -125,16 +_,17 @@
                    entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), p_151312_.f_46441_.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
@@ -25,6 +33,12 @@
 +                        if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this, MobSpawnType.SPAWNER))
                          ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_142538_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
                       }
+                   }
+ 
+-                  if (!p_151312_.m_8860_(entity)) {
++                  if (!p_151312_.m_8860_(entity)) { // Mohist TODO
+                      this.m_151350_(p_151312_, p_151313_);
+                      return;
                    }
 @@ -271,4 +_,12 @@
     public double m_45474_() {
