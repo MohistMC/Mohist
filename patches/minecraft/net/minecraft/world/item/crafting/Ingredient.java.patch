@@ -39,6 +39,22 @@
        if (this.f_43903_ == null) {
           this.f_43903_ = Arrays.stream(this.f_43902_).flatMap((p_43916_) -> {
              return p_43916_.m_6223_().stream();
+@@ -67,6 +_,15 @@
+             return p_43914_.m_41619_();
+          } else {
+             for(ItemStack itemstack : this.f_43903_) {
++               // CraftBukkit start
++               if (exact) {
++                  if (itemstack.m_41720_() == itemstack.m_41720_() && ItemStack.m_41658_(itemstack, itemstack)) {
++                     return true;
++                  }
++
++                  continue;
++               }
++               // CraftBukkit end
+                if (itemstack.m_150930_(p_43914_.m_41720_())) {
+                   return true;
+                }
 @@ -78,7 +_,7 @@
     }
  

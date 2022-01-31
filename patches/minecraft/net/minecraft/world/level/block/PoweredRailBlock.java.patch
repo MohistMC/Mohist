@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/level/block/PoweredRailBlock.java
 +++ b/net/minecraft/world/level/block/PoweredRailBlock.java
-@@ -14,10 +_,16 @@
+@@ -10,14 +_,21 @@
+ import net.minecraft.world.level.block.state.properties.EnumProperty;
+ import net.minecraft.world.level.block.state.properties.Property;
+ import net.minecraft.world.level.block.state.properties.RailShape;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
+ 
  public class PoweredRailBlock extends BaseRailBlock {
     public static final EnumProperty<RailShape> f_55214_ = BlockStateProperties.f_61404_;
     public static final BooleanProperty f_55215_ = BlockStateProperties.f_61448_;
@@ -35,6 +40,20 @@
                    return p_55226_.m_46753_(p_55227_) ? true : this.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
                 } else {
                    return false;
+@@ -123,6 +_,13 @@
+       boolean flag = p_55232_.m_61143_(f_55215_);
+       boolean flag1 = p_55233_.m_46753_(p_55234_) || this.m_55219_(p_55233_, p_55234_, p_55232_, true, 0) || this.m_55219_(p_55233_, p_55234_, p_55232_, false, 0);
+       if (flag1 != flag) {
++         // CraftBukkit start
++         int power = flag ? 15 : 0;
++         int newPower = CraftEventFactory.callRedstoneChange(p_55233_, p_55234_, power, 15 - power).getNewCurrent();
++         if (newPower == power) {
++            return;
++         }
++         // CraftBukkit end
+          p_55233_.m_7731_(p_55234_, p_55232_.m_61124_(f_55215_, Boolean.valueOf(flag1)), 3);
+          p_55233_.m_46672_(p_55234_.m_7495_(), this);
+          if (p_55232_.m_61143_(f_55214_).m_61745_()) {
 @@ -156,6 +_,9 @@
              return p_55240_.m_61124_(f_55214_, RailShape.SOUTH_EAST);
           case NORTH_EAST:

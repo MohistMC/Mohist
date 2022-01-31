@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/block/NetherPortalBlock.java
++++ b/net/minecraft/world/level/block/NetherPortalBlock.java
+@@ -26,6 +_,7 @@
+ import net.minecraft.world.level.portal.PortalShape;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.entity.EntityPortalEnterEvent;
+ 
+ public class NetherPortalBlock extends Block {
+    public static final EnumProperty<Direction.Axis> f_54904_ = BlockStateProperties.f_61364_;
+@@ -55,7 +_,7 @@
+          }
+ 
+          if (p_54938_.m_8055_(p_54939_).m_60643_(p_54938_, p_54939_, EntityType.f_20531_)) {
+-            Entity entity = EntityType.f_20531_.m_20600_(p_54938_, (CompoundTag)null, (Component)null, (Player)null, p_54939_.m_7494_(), MobSpawnType.STRUCTURE, false, false);
++            Entity entity = EntityType.f_20531_.m_20600_(p_54938_, (CompoundTag)null, (Component)null, (Player)null, p_54939_.m_7494_(), MobSpawnType.STRUCTURE, false, false); // Mohist TODO
+             if (entity != null) {
+                entity.m_20091_();
+             }
+@@ -73,6 +_,10 @@
+ 
+    public void m_7892_(BlockState p_54915_, Level p_54916_, BlockPos p_54917_, Entity p_54918_) {
+       if (!p_54918_.m_20159_() && !p_54918_.m_20160_() && p_54918_.m_6072_()) {
++         // CraftBukkit start - Entity in portal
++         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_54918_.getBukkitEntity(), new org.bukkit.Location(p_54916_.getWorld(), p_54917_.m_123341_(), p_54917_.m_123342_(), p_54917_.m_123343_()));
++         p_54916_.getCraftServer().getPluginManager().callEvent(event);
++         // CraftBukkit end
+          p_54918_.m_20221_(p_54917_);
+       }
+ 

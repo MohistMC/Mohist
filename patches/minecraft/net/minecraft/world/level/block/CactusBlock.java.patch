@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/level/block/CactusBlock.java
 +++ b/net/minecraft/world/level/block/CactusBlock.java
-@@ -21,7 +_,7 @@
+@@ -20,8 +_,9 @@
+ import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
  
 -public class CactusBlock extends Block {
 +public class CactusBlock extends Block implements net.minecraftforge.common.IPlantable {
@@ -17,15 +19,17 @@
        if (!p_51138_.m_60710_(p_51139_, p_51140_)) {
           p_51139_.m_46961_(p_51140_, true);
        }
-@@ -49,6 +_,7 @@
+@@ -49,15 +_,17 @@
  
           if (i < 3) {
              int j = p_51166_.m_61143_(f_51131_);
 +            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_51167_, blockpos, p_51166_, true)) {
              if (j == 15) {
-                p_51167_.m_46597_(blockpos, this.m_49966_());
+-               p_51167_.m_46597_(blockpos, this.m_49966_());
++               CraftEventFactory.handleBlockGrowEvent(p_51167_, blockpos, this.m_49966_()); // CraftBukkit
                 BlockState blockstate = p_51166_.m_61124_(f_51131_, Integer.valueOf(0));
-@@ -57,7 +_,8 @@
+                p_51167_.m_7731_(p_51168_, blockstate, 4);
+                blockstate.m_60690_(p_51167_, blockpos, this, p_51168_, false);
              } else {
                 p_51167_.m_7731_(p_51168_, p_51166_.m_61124_(f_51131_, Integer.valueOf(j + 1)), 4);
              }
@@ -35,7 +39,7 @@
           }
        }
     }
-@@ -88,7 +_,7 @@
+@@ -88,11 +_,13 @@
        }
  
        BlockState blockstate1 = p_51154_.m_8055_(p_51155_.m_7495_());
@@ -44,6 +48,12 @@
     }
  
     public void m_7892_(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
++      CraftEventFactory.blockDamage = p_51149_.getWorld().getBlockAt(p_51150_.m_123341_(), p_51150_.m_123342_(), p_51150_.m_123343_()); // CraftBukkit
+       p_51151_.m_6469_(DamageSource.f_19314_, 1.0F);
++      CraftEventFactory.blockDamage = null; // CraftBukkit
+    }
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51164_) {
 @@ -101,5 +_,15 @@
  
     public boolean m_7357_(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {

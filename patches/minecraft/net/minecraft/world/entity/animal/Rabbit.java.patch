@@ -1,27 +1,20 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
-@@ -89,7 +_,7 @@
+@@ -89,7 +_,13 @@
        this.m_29725_(0.0D);
     }
  
 -   protected void m_8099_() {
-+   public void m_8099_() {
-       this.f_21345_.m_25352_(1, new FloatGoal(this));
-       this.f_21345_.m_25352_(1, new Rabbit.RabbitPanicGoal(this, 2.2D));
-       this.f_21345_.m_25352_(2, new BreedGoal(this, 0.8D));
-@@ -143,6 +_,12 @@
-       this.f_21342_.m_6849_(this.f_21342_.m_25000_(), this.f_21342_.m_25001_(), this.f_21342_.m_25002_(), p_29726_);
-    }
- 
-+   // CraftBukkit start - code from constructor
++   // CraftBukkit start - code from constructor    \
 +   public void initializePathFinderGoals(){
 +      this.m_29725_(0.0D);
 +   }
 +   // CraftBukkit end
 +
-    public void m_6862_(boolean p_29732_) {
-       super.m_6862_(p_29732_);
-       if (p_29732_) {
++   public void m_8099_() {
+       this.f_21345_.m_25352_(1, new FloatGoal(this));
+       this.f_21345_.m_25352_(1, new Rabbit.RabbitPanicGoal(this, 2.2D));
+       this.f_21345_.m_25352_(2, new BreedGoal(this, 0.8D));
 @@ -507,7 +_,7 @@
  
        public boolean m_8036_() {
@@ -31,3 +24,27 @@
                 return false;
              }
  
+@@ -534,9 +_,23 @@
+             if (this.f_29780_ && block instanceof CarrotBlock) {
+                int i = blockstate.m_61143_(CarrotBlock.f_52244_);
+                if (i == 0) {
++                  // CraftBukkit start
++                  if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_29778_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++                     return;
++                  }
++                  // CraftBukkit end
+                   level.m_7731_(blockpos, Blocks.f_50016_.m_49966_(), 2);
+                   level.m_46953_(blockpos, true, this.f_29778_);
+                } else {
++                  // CraftBukkit starts
++                  if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(
++                          this.f_29778_,
++                          blockpos,
++                          blockstate.m_61124_(CarrotBlock.f_52244_, i - 1)
++                  ).isCancelled()) {
++                     return;
++                  }
++                  // CraftBukkit end
+                   level.m_7731_(blockpos, blockstate.m_61124_(CarrotBlock.f_52244_, Integer.valueOf(i - 1)), 2);
+                   level.m_46796_(2001, blockpos, Block.m_49956_(blockstate));
+                }

@@ -1,6 +1,23 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
-@@ -69,7 +_,7 @@
+@@ -13,6 +_,7 @@
+ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.TreeType;
+ 
+ public class MushroomBlock extends BushBlock implements BonemealableBlock {
+    protected static final float f_153980_ = 3.0F;
+@@ -53,7 +_,7 @@
+          }
+ 
+          if (p_54885_.m_46859_(blockpos1) && p_54884_.m_60710_(p_54885_, blockpos1)) {
+-            p_54885_.m_7731_(blockpos1, p_54884_, 2);
++            org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_54885_, p_54886_, blockpos1, p_54884_, 2); // CraftBukkit
+          }
+       }
+ 
+@@ -69,12 +_,13 @@
        if (blockstate.m_60620_(BlockTags.f_13057_)) {
           return true;
        } else {
@@ -9,3 +26,9 @@
        }
     }
  
+    public boolean m_54859_(ServerLevel p_54860_, BlockPos p_54861_, BlockState p_54862_, Random p_54863_) {
+       p_54860_.m_7471_(p_54861_, false);
++      SaplingBlock.treeType = (this == Blocks.f_50072_) ? TreeType.BROWN_MUSHROOM : TreeType.BROWN_MUSHROOM; // CraftBukkit
+       if (this.f_153981_.get().m_65385_(p_54860_, p_54860_.m_7726_().m_8481_(), p_54863_, p_54861_)) {
+          return true;
+       } else {

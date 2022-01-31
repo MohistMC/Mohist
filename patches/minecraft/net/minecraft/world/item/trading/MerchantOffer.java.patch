@@ -35,8 +35,11 @@
     public MerchantOffer(CompoundTag p_45351_) {
        this.f_45310_ = ItemStack.m_41712_(p_45351_.m_128469_("buy"));
        this.f_45311_ = ItemStack.m_41712_(p_45351_.m_128469_("buyB"));
-@@ -75,7 +_,7 @@
+@@ -73,9 +_,10 @@
+ 
+    public ItemStack m_45358_() {
        int i = this.f_45310_.m_41613_();
++      if (i <= 0) return ItemStack.f_41583_; // CraftBukkit - SPIGOT-5476
        ItemStack itemstack = this.f_45310_.m_41777_();
        int j = Math.max(0, Mth.m_14143_((float)(i * this.f_45317_) * this.f_45318_));
 -      itemstack.m_41764_(Mth.m_14045_(i + j + this.f_45316_, 1, this.f_45310_.m_41720_().m_41459_()));

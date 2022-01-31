@@ -9,7 +9,21 @@
     public BushBlock(BlockBehaviour.Properties p_51021_) {
        super(p_51021_);
     }
-@@ -25,6 +_,8 @@
+@@ -20,11 +_,21 @@
+    }
+ 
+    public BlockState m_7417_(BlockState p_51032_, Direction p_51033_, BlockState p_51034_, LevelAccessor p_51035_, BlockPos p_51036_, BlockPos p_51037_) {
+-      return !p_51032_.m_60710_(p_51035_, p_51036_) ? Blocks.f_50016_.m_49966_() : super.m_7417_(p_51032_, p_51033_, p_51034_, p_51035_, p_51036_, p_51037_);
++      //return !p_51032_.canSurvive(p_51035_, p_51036_) ? Blocks.AIR.defaultBlockState() : super.updateShape(p_51032_, p_51033_, p_51034_, p_51035_, p_51036_, p_51037_);
++      // CraftBukkit start
++      if (!p_51032_.m_60710_(p_51035_, p_51036_)) {
++         if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockPhysicsEvent(p_51035_, p_51036_).isCancelled()) {
++            return Blocks.f_50016_.m_49966_();
++         }
++      }
++      return super.m_7417_(p_51032_, p_51033_, p_51034_, p_51035_, p_51036_, p_51037_);
++      // CraftBukkit end
+    }
  
     public boolean m_7898_(BlockState p_51028_, LevelReader p_51029_, BlockPos p_51030_) {
        BlockPos blockpos = p_51030_.m_7495_();

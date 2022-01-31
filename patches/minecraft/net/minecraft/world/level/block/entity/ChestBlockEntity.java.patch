@@ -62,12 +62,10 @@
        ChestType chesttype = p_155341_.m_61143_(ChestBlock.f_51479_);
        if (chesttype != ChestType.LEFT) {
           double d0 = (double)p_155340_.m_123341_() + 0.5D;
-@@ -159,6 +_,45 @@
- 
-    protected AbstractContainerMenu m_6555_(int p_59082_, Inventory p_59083_) {
+@@ -161,6 +_,45 @@
        return ChestMenu.m_39237_(p_59082_, p_59083_, this);
-+   }
-+
+    }
+ 
 +   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
 +   @Override
 +   public void m_155250_(BlockState p_155251_) {
@@ -105,6 +103,20 @@
 +         chestHandler.invalidate();
 +         chestHandler = null;
 +      }
-    }
- 
++   }
++
     public void m_155350_() {
+       if (!this.f_58859_) {
+          this.f_155324_.m_155476_(this.m_58904_(), this.m_58899_(), this.m_58900_());
+@@ -172,4 +_,11 @@
+       Block block = p_155335_.m_60734_();
+       p_155333_.m_7696_(p_155334_, block, 1, p_155337_);
+    }
++
++   // CraftBukkit start
++   @Override
++   public boolean m_6326_() {
++      return true;
++   }
++   // CraftBukkit end
+ }

@@ -14,7 +14,7 @@
  
  public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
     private NonNullList<ItemStack> f_58591_ = NonNullList.m_122780_(27, ItemStack.f_41583_);
-@@ -108,15 +_,55 @@
+@@ -108,15 +_,51 @@
  
     }
  
@@ -57,8 +57,8 @@
 +   }
 +
 +   @Override
-+   public InventoryHolder getOwner() {
-+      return null;
++   public int m_6893_() {
++      return maxStack;
 +   }
 +
 +   @Override
@@ -66,9 +66,5 @@
 +      maxStack = size;
 +   }
 +
-+   @Override
-+   public Location getLocation() {
-+      return null;
-+   }
 +   // CraftBukkit end
  }

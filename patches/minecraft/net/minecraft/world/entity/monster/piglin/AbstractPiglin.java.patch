@@ -21,8 +21,12 @@
           this.m_7580_();
           this.m_8063_((ServerLevel)this.f_19853_);
        }
-@@ -97,6 +_,7 @@
-       ZombifiedPiglin zombifiedpiglin = this.m_21406_(EntityType.f_20531_, true);
+@@ -94,9 +_,10 @@
+    }
+ 
+    protected void m_8063_(ServerLevel p_34663_) {
+-      ZombifiedPiglin zombifiedpiglin = this.m_21406_(EntityType.f_20531_, true);
++      ZombifiedPiglin zombifiedpiglin = this.m_21406_(EntityType.f_20531_, true); // Mohist TODO
        if (zombifiedpiglin != null) {
           zombifiedpiglin.m_7292_(new MobEffectInstance(MobEffects.f_19604_, 200, 0));
 +         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
