@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -113,8 +_,10 @@
+@@ -113,8 +_,11 @@
  import net.minecraft.world.scores.Team;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
++import org.bukkit.event.entity.EntityCombustEvent;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
@@ -79,6 +80,43 @@
  
     }
  
+@@ -504,6 +_,36 @@
+    }
+ 
+    public void m_20254_(int p_20255_) {
++      EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), p_20255_);
++      this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++      if (event.isCancelled()) {
++         return;
++      }
++
++      p_20255_ = event.getDuration();
++      int i = p_20255_ * 20;
++      if (this instanceof LivingEntity) {
++         i = ProtectionEnchantment.m_45138_((LivingEntity)this, i);
++      }
++
++      if (this.f_19831_ < i) {
++         this.m_7311_(i);
++      }
++
++   }
++
++   public void setSecondsOnFire(int p_20255_, boolean callEvent) {
++      if (callEvent) {
++         EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), p_20255_);
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (event.isCancelled()) {
++            return;
++         }
++
++         p_20255_ = event.getDuration();
++      }
+       int i = p_20255_ * 20;
+       if (this instanceof LivingEntity) {
+          i = ProtectionEnchantment.m_45138_((LivingEntity)this, i);
 @@ -612,13 +_,13 @@
                 double d0 = vec3.f_82479_;
                 double d1 = vec3.f_82480_;

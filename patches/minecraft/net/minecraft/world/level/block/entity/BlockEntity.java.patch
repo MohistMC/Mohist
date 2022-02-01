@@ -33,15 +33,33 @@
     }
  
     public static BlockPos m_187472_(CompoundTag p_187473_) {
-@@ -48,6 +_,8 @@
+@@ -48,6 +_,14 @@
     }
  
     public void m_142466_(CompoundTag p_155245_) {
 +      if (p_155245_.m_128441_("ForgeData")) this.customTileData = p_155245_.m_128469_("ForgeData");
 +      if (getCapabilities() != null && p_155245_.m_128441_("ForgeCaps")) deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
++      this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++
++      net.minecraft.nbt.Tag persistentDataTag = p_155245_.m_128423_("PublicBukkitValues");
++      if (persistentDataTag instanceof CompoundTag) {
++         this.persistentDataContainer.putAll((CompoundTag) persistentDataTag);
++      }
     }
  
     protected void m_183515_(CompoundTag p_187471_) {
+@@ -68,6 +_,11 @@
+    public final CompoundTag m_187482_() {
+       CompoundTag compoundtag = new CompoundTag();
+       this.m_183515_(compoundtag);
++      // CraftBukkit start - store container
++      if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
++         compoundtag.m_128365_("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
++      }
++      // CraftBukkit end
+       return compoundtag;
+    }
+ 
 @@ -93,6 +_,8 @@
        p_187479_.m_128405_("x", this.f_58858_.m_123341_());
        p_187479_.m_128405_("y", this.f_58858_.m_123342_());

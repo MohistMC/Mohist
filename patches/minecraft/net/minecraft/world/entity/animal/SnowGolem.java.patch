@@ -18,15 +18,17 @@
              return;
           }
  
-@@ -108,7 +_,7 @@
+@@ -108,8 +_,8 @@
              j = Mth.m_14107_(this.m_20186_());
              k = Mth.m_14107_(this.m_20189_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos1 = new BlockPos(i, j, k);
 -            if (this.f_19853_.m_8055_(blockpos1).m_60795_() && blockstate.m_60710_(this.f_19853_, blockpos1)) {
+-               this.f_19853_.m_46597_(blockpos1, blockstate);
 +            if (this.f_19853_.m_46859_(blockpos) && blockstate.m_60710_(this.f_19853_, blockpos)) {
-                this.f_19853_.m_46597_(blockpos1, blockstate);
++               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockFormEvent(this.f_19853_, blockpos1, blockstate, this); // CraftBukkit
              }
           }
+       }
 @@ -134,7 +_,7 @@
  
     protected InteractionResult m_6071_(Player p_29920_, InteractionHand p_29921_) {
@@ -36,6 +38,16 @@
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_29920_);
           if (!this.f_19853_.f_46443_) {
+@@ -153,7 +_,9 @@
+       this.f_19853_.m_6269_((Player)null, this, SoundEvents.f_12480_, p_29907_, 1.0F, 1.0F);
+       if (!this.f_19853_.m_5776_()) {
+          this.m_29936_(false);
++         this.forceDrops = true; // CraftBukkit
+          this.m_5552_(new ItemStack(Items.f_42047_), 1.7F);
++         this.forceDrops = false; // CraftBukkit
+       }
+ 
+    }
 @@ -193,5 +_,21 @@
  
     public Vec3 m_7939_() {

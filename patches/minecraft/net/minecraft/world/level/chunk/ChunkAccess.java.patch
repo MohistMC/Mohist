@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -68,14 +_,16 @@
+@@ -51,6 +_,7 @@
+ import net.minecraft.world.ticks.TickContainerAccess;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer;
+ 
+ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, FeatureAccess {
+    private static final Logger f_187613_ = LogManager.getLogger();
+@@ -68,14 +_,17 @@
     protected final UpgradeData f_187606_;
     @Nullable
     protected BlendingData f_187607_;
@@ -15,6 +23,7 @@
     protected final LevelChunkSection[] f_187612_;
  
 +   public final Registry<Biome> biomeRegistry;
++   public CraftPersistentDataContainer persistentDataContainer;
 +
     public ChunkAccess(ChunkPos p_187621_, UpgradeData p_187622_, LevelHeightAccessor p_187623_, Registry<Biome> p_187624_, long p_187625_, @Nullable LevelChunkSection[] p_187626_, @Nullable BlendingData p_187627_) {
        this.f_187604_ = p_187621_;

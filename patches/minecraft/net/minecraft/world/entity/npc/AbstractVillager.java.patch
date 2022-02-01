@@ -1,17 +1,23 @@
 --- a/net/minecraft/world/entity/npc/AbstractVillager.java
 +++ b/net/minecraft/world/entity/npc/AbstractVillager.java
-@@ -34,6 +_,7 @@
+@@ -34,6 +_,10 @@
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftMerchantRecipe;
++import org.bukkit.event.entity.VillagerAcquireTradeEvent;
  
  public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {
     private static final EntityDataAccessor<Integer> f_35262_ = SynchedEntityData.m_135353_(AbstractVillager.class, EntityDataSerializers.f_135028_);
-@@ -45,6 +_,15 @@
+@@ -43,7 +_,16 @@
+    private Player f_35263_;
+    @Nullable
     protected MerchantOffers f_35261_;
-    private final SimpleContainer f_35264_ = new SimpleContainer(8);
- 
+-   private final SimpleContainer f_35264_ = new SimpleContainer(8);
++   private final SimpleContainer f_35264_ = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_18_R1.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
++
 +   // CraftBukkit start
 +   private CraftMerchant craftMerchant;
 +
@@ -20,10 +26,9 @@
 +      return (craftMerchant == null) ? craftMerchant = new CraftMerchant(this) : craftMerchant;
 +   }
 +   // CraftBukkit end
-+
+ 
     public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
        super(p_35267_, p_35268_);
-       this.m_21441_(BlockPathTypes.DANGER_FIRE, 16.0F);
 @@ -164,9 +_,9 @@
     }
  
@@ -36,3 +41,20 @@
     }
  
     protected void m_7996_() {
+@@ -220,6 +_,16 @@
+          MerchantOffer merchantoffer = villagertrades$itemlisting.m_5670_(this, this.f_19796_);
+          if (merchantoffer != null) {
+             p_35278_.add(merchantoffer);
++            // CraftBukkit start
++            VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent((org.bukkit.entity.AbstractVillager) getBukkitEntity(), merchantoffer.asBukkit());
++            // Suppress during worldgen
++            if (this.valid) {
++               Bukkit.getPluginManager().callEvent(event);
++            }
++            if (!event.isCancelled()) {
++               p_35278_.add(CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
++            }
++            // CraftBukkit end
+          }
+       }
+ 

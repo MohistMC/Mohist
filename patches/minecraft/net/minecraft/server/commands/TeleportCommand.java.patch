@@ -1,5 +1,15 @@
 --- a/net/minecraft/server/commands/TeleportCommand.java
 +++ b/net/minecraft/server/commands/TeleportCommand.java
+@@ -32,6 +_,9 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
++import org.bukkit.event.entity.EntityTeleportEvent;
+ 
+ public class TeleportCommand {
+    private static final SimpleCommandExceptionType f_139006_ = new SimpleCommandExceptionType(new TranslatableComponent("commands.teleport.invalidPosition"));
 @@ -126,6 +_,9 @@
     }
  
@@ -10,3 +20,35 @@
        BlockPos blockpos = new BlockPos(p_139018_, p_139019_, p_139020_);
        if (!Level.m_46741_(blockpos)) {
           throw f_139006_.create();
+@@ -141,14 +_,29 @@
+             }
+ 
+             if (p_139017_ == p_139016_.f_19853_) {
+-               ((ServerPlayer)p_139016_).f_8906_.m_9780_(p_139018_, p_139019_, p_139020_, f, f1, p_139021_);
++               ((ServerPlayer)p_139016_).f_8906_.m_9780_(p_139018_, p_139019_, p_139020_, f, f1, p_139021_); // Mohist TODO
+             } else {
+-               ((ServerPlayer)p_139016_).m_8999_(p_139017_, p_139018_, p_139019_, p_139020_, f, f1);
++               ((ServerPlayer)p_139016_).m_8999_(p_139017_, p_139018_, p_139019_, p_139020_, f, f1); // Mohist TODO
+             }
+ 
+             p_139016_.m_5616_(f);
+          } else {
+             float f2 = Mth.m_14036_(f1, -90.0F, 90.0F);
++            // CraftBukkit start - Teleport event
++            Location to = new Location(p_139017_.getWorld(), p_139018_, p_139019_, p_139020_, f, f2);
++            EntityTeleportEvent eventCB = new EntityTeleportEvent(p_139016_.getBukkitEntity(), p_139016_.getBukkitEntity().getLocation(), to);
++            p_139017_.getCraftServer().getPluginManager().callEvent(eventCB);
++            if (eventCB.isCancelled()) {
++               return;
++            }
++
++            p_139018_ = to.getX();
++            p_139019_ = to.getY();
++            p_139020_ = to.getZ();
++            f = to.getYaw();
++            f2 = to.getPitch();
++            p_139017_ = ((CraftWorld) to.getWorld()).getHandle();
++            // CraftBukkit end
+             if (p_139017_ == p_139016_.f_19853_) {
+                p_139016_.m_7678_(p_139018_, p_139019_, p_139020_, f, f2);
+                p_139016_.m_5616_(f);
