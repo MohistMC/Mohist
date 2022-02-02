@@ -1,24 +1,32 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -42,7 +_,7 @@
+@@ -41,8 +_,10 @@
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import org.apache.commons.lang3.tuple.Pair;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTransformEvent;
  
 -public class MushroomCow extends Cow implements Shearable {
 +public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
     private static final EntityDataAccessor<String> f_28908_ = SynchedEntityData.m_135353_(MushroomCow.class, EntityDataSerializers.f_135030_);
     private static final int f_148934_ = 1024;
     @Nullable
-@@ -104,7 +_,7 @@
+@@ -104,7 +_,12 @@
  
           this.m_5496_(soundevent, 1.0F, 1.0F);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
 -      } else if (itemstack.m_150930_(Items.f_42574_) && this.m_6220_()) {
 +      } else if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared
++         // CraftBukkit start
++         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_28941_, this, itemstack, p_28942_)) {
++            return InteractionResult.PASS;
++         }
++         // CraftBukkit end
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_28941_);
           if (!this.f_19853_.f_46443_) {
-@@ -145,7 +_,16 @@
+@@ -145,7 +_,17 @@
        }
     }
  
@@ -31,6 +39,7 @@
 +      shearInternal(p_28924_).forEach(s -> this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), s)));
 +   }
 +
++   // Mohist TODO
 +   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
        this.f_19853_.m_6269_((Player)null, this, SoundEvents.f_12075_, p_28924_, 1.0F, 1.0F);
        if (!this.f_19853_.m_5776_()) {

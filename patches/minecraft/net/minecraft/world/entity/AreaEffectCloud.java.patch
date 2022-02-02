@@ -17,11 +17,18 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.util.Mth;
  import net.minecraft.world.effect.MobEffectInstance;
-@@ -114,6 +_,22 @@
-       }
+@@ -29,6 +_,7 @@
+ import net.minecraft.world.level.material.PushReaction;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
+ 
+ public class AreaEffectCloud extends Entity {
+    private static final Logger f_19696_ = LogManager.getLogger();
+@@ -115,6 +_,22 @@
  
     }
-+
+ 
 +   // CraftBukkit start accessor methods
 +   public void refreshEffects() {
 +      if (!this.f_19690_) {
@@ -33,10 +40,44 @@
 +      return ((ResourceLocation) Registry.f_122828_.m_7981_(this.f_19701_)).toString();
 +   }
 +
-+   public void setType(String string) {
++   public void setPotionType(String string) {
 +      m_19722_(Registry.f_122828_.m_7745_(new ResourceLocation(string)));
 +   }
 +   // CraftBukkit end
- 
++
     public int m_19744_() {
        return this.m_20088_().m_135370_(f_19698_);
+    }
+@@ -237,19 +_,31 @@
+             } else {
+                List<LivingEntity> list1 = this.f_19853_.m_45976_(LivingEntity.class, this.m_142469_());
+                if (!list1.isEmpty()) {
++                  List<org.bukkit.entity.LivingEntity> entities = new java.util.ArrayList<org.bukkit.entity.LivingEntity>(); // CraftBukkit
+                   for(LivingEntity livingentity : list1) {
+                      if (!this.f_19686_.containsKey(livingentity) && livingentity.m_5801_()) {
+                         double d8 = livingentity.m_20185_() - this.m_20185_();
+                         double d1 = livingentity.m_20189_() - this.m_20189_();
+                         double d3 = d8 * d8 + d1 * d1;
+                         if (d3 <= (double)(f * f)) {
++                           // CraftBukkit start
++                           entities.add((org.bukkit.entity.LivingEntity) livingentity.getBukkitEntity());
++                        }
++                     }
++                  }
++                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
++                  if (!event.isCancelled()) {
++                     for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
++                        if (entity instanceof CraftLivingEntity) {
++                           LivingEntity livingentity = ((CraftLivingEntity) entity).getHandle();
++                           // CraftBukkit end
+                            this.f_19686_.put(livingentity, this.f_19797_ + this.f_19689_);
+ 
+                            for(MobEffectInstance mobeffectinstance1 : list) {
+                               if (mobeffectinstance1.m_19544_().m_8093_()) {
+                                  mobeffectinstance1.m_19544_().m_19461_(this, this.m_19749_(), livingentity, mobeffectinstance1.m_19564_(), 0.5D);
+                               } else {
+-                                 livingentity.m_147207_(new MobEffectInstance(mobeffectinstance1), this);
++                                 livingentity.addEffect(new MobEffectInstance(mobeffectinstance1), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD); // CraftBukkit
+                               }
+                            }
+ 

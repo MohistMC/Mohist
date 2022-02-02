@@ -23,3 +23,39 @@
     }
  
     protected void m_48910_(BlockState p_48911_, Level p_48912_, BlockPos p_48913_, Random p_48914_, int p_48915_) {
+@@ -179,13 +_,17 @@
+       BlockPos blockpos = p_48913_.m_6625_(2);
+       BlockState blockstate1 = p_48912_.m_8055_(blockpos);
+       BambooLeaves bambooleaves = BambooLeaves.NONE;
++      boolean shouldUpdateOthers = false; // CraftBukkit
+       if (p_48915_ >= 1) {
+          if (blockstate.m_60713_(Blocks.f_50571_) && blockstate.m_61143_(f_48870_) != BambooLeaves.NONE) {
+             if (blockstate.m_60713_(Blocks.f_50571_) && blockstate.m_61143_(f_48870_) != BambooLeaves.NONE) {
+                bambooleaves = BambooLeaves.LARGE;
+                if (blockstate1.m_60713_(Blocks.f_50571_)) {
+-                  p_48912_.m_7731_(p_48913_.m_7495_(), blockstate.m_61124_(f_48870_, BambooLeaves.SMALL), 3);
+-                  p_48912_.m_7731_(blockpos, blockstate1.m_61124_(f_48870_, BambooLeaves.NONE), 3);
++                  // CraftBukkit start - moved down
++                  // world.setBlock(blockposition.below(), (IBlockData) iblockdata1.setValue(BlockBamboo.LEAVES, BlockPropertyBambooSize.SMALL), 3);
++                  // world.setBlock(blockposition1, (IBlockData) iblockdata2.setValue(BlockBamboo.LEAVES, BlockPropertyBambooSize.NONE), 3);
++                  shouldUpdateOthers = true;
++                  // CraftBukkit end
+                }
+             }
+          } else {
+@@ -195,7 +_,14 @@
+ 
+       int i = p_48911_.m_61143_(f_48869_) != 1 && !blockstate1.m_60713_(Blocks.f_50571_) ? 0 : 1;
+       int j = (p_48915_ < 11 || !(p_48914_.nextFloat() < 0.25F)) && p_48915_ != 15 ? 0 : 1;
+-      p_48912_.m_7731_(p_48913_.m_7494_(), this.m_49966_().m_61124_(f_48869_, Integer.valueOf(i)).m_61124_(f_48870_, bambooleaves).m_61124_(f_48871_, Integer.valueOf(j)), 3);
++      // CraftBukkit start
++      if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_48912_, p_48913_, p_48913_.m_7494_(), ((this.m_49966_().m_61124_(BambooBlock.f_48869_, j)).m_61124_(BambooBlock.f_48870_, bambooleaves)).m_61124_(BambooBlock.f_48871_, Integer.valueOf(j)), 3)) {
++         if (shouldUpdateOthers) {
++            p_48912_.m_7731_(p_48913_.m_7495_(), blockstate.m_61124_(f_48870_, BambooLeaves.SMALL), 3);
++            p_48912_.m_7731_(blockpos, blockstate1.m_61124_(f_48870_, BambooLeaves.NONE), 3);
++         }
++      }
++      // CraftBukkit end
+    }
+ 
+    protected int m_48882_(BlockGetter p_48883_, BlockPos p_48884_) {

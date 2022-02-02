@@ -240,7 +240,7 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.f_19853_.f_46443_) {
-@@ -959,10 +_,27 @@
+@@ -959,12 +_,35 @@
  
     }
  
@@ -268,7 +268,15 @@
 +         // CraftBukkit end
        }
  
++   }
++
++   public void heal(float p_21116_, EntityRegainHealthEvent.RegainReason healRegainReason) {
++      putHealRegainReason(healRegainReason);
++      m_5634_(p_21116_);
++      resetHealRegainReason();
     }
+ 
+    public float m_21223_() {
 @@ -980,6 +_,7 @@
     }
  

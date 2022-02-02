@@ -204,7 +204,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
     @Override
     public void setBasePotionData(PotionData data) {
         Validate.notNull(data, "PotionData cannot be null");
-        getHandle().setType(CraftPotionUtil.fromBukkit(data));
+        getHandle().setPotionType(CraftPotionUtil.fromBukkit(data));
     }
 
     @Override

@@ -9,3 +9,12 @@
        this.f_19804_.m_135381_(f_149096_, p_149118_.m_149242_());
     }
  
+@@ -369,7 +_,7 @@
+       int i = mobeffectinstance != null ? mobeffectinstance.m_19557_() : 0;
+       if (i < 2400) {
+          i = Math.min(2400, 100 + i);
+-         p_149174_.m_147207_(new MobEffectInstance(MobEffects.f_19605_, i, 0), this);
++         p_149174_.addEffect(new MobEffectInstance(MobEffects.f_19605_, i, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.AXOLOTL); // CraftBukkit
+       }
+ 
+       p_149174_.m_21195_(MobEffects.f_19599_);

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
+@@ -16,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.level.block.state.properties.IntegerProperty;
+ import net.minecraft.world.phys.BlockHitResult;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
+ 
+ public class ChorusFlowerBlock extends Block {
+    public static final int f_153067_ = 5;
 @@ -43,7 +_,7 @@
        BlockPos blockpos = p_51704_.m_7494_();
        if (p_51703_.m_46859_(blockpos) && blockpos.m_123342_() < p_51703_.m_151558_()) {
@@ -9,9 +17,53 @@
              boolean flag = false;
              boolean flag1 = false;
              BlockState blockstate = p_51703_.m_8055_(p_51704_.m_7495_());
-@@ -99,7 +_,7 @@
+@@ -72,8 +_,12 @@
+             }
+ 
+             if (flag && m_51697_(p_51703_, blockpos, (Direction)null) && p_51703_.m_46859_(p_51704_.m_6630_(2))) {
+-               p_51703_.m_7731_(p_51704_, this.f_51648_.m_51710_(p_51703_, p_51704_), 2);
+-               this.m_51661_(p_51703_, blockpos, i);
++               // CraftBukkit start - add event
++               if (CraftEventFactory.handleBlockSpreadEvent(p_51703_, p_51704_, blockpos, this.m_49966_().m_61124_(ChorusFlowerBlock.f_51647_, Integer.valueOf(i)), 2)) {
++                  p_51703_.m_7731_(p_51704_, this.f_51648_.m_51710_(p_51703_, blockpos), 2);
++                  this.m_51661_(p_51703_, blockpos, i);
++               }
++               // CraftBukkit end
+             } else if (i < 4) {
+                int l = p_51705_.nextInt(4);
+                if (flag1) {
+@@ -86,20 +_,32 @@
+                   Direction direction = Direction.Plane.HORIZONTAL.m_122560_(p_51705_);
+                   BlockPos blockpos1 = p_51704_.m_142300_(direction);
+                   if (p_51703_.m_46859_(blockpos1) && p_51703_.m_46859_(blockpos1.m_7495_()) && m_51697_(p_51703_, blockpos1, direction.m_122424_())) {
+-                     this.m_51661_(p_51703_, blockpos1, i + 1);
+-                     flag2 = true;
++                     // CraftBukkit start - add event
++                     if (CraftEventFactory.handleBlockSpreadEvent(p_51703_, p_51704_, blockpos1, this.m_49966_().m_61124_(ChorusFlowerBlock.f_51647_, Integer.valueOf(i + 1)), 2)) {
++                        this.m_51661_(p_51703_, blockpos1, i + 1);
++                        flag2 = true;
++                     }
++                     // CraftBukkit end
+                   }
+                }
+ 
+                if (flag2) {
+                   p_51703_.m_7731_(p_51704_, this.f_51648_.m_51710_(p_51703_, p_51704_), 2);
+                } else {
+-                  this.m_51658_(p_51703_, p_51704_);
++                  // CraftBukkit - add event
++                  if (CraftEventFactory.handleBlockGrowEvent(p_51703_, p_51704_, this.m_49966_().m_61124_(ChorusFlowerBlock.f_51647_, Integer.valueOf(5)), 2)) {
++                     this.m_51658_(p_51703_, p_51704_);
++                  }
++                  // CraftBukkit end
+                }
              } else {
-                this.m_51658_(p_51703_, p_51704_);
+-               this.m_51658_(p_51703_, p_51704_);
++               // CraftBukkit - add event
++               if (CraftEventFactory.handleBlockGrowEvent(p_51703_, p_51704_, this.m_49966_().m_61124_(ChorusFlowerBlock.f_51647_, Integer.valueOf(5)), 2)) {
++                  this.m_51658_(p_51703_, p_51704_);
++               }
++               // CraftBukkit end
              }
 -
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_51703_, p_51704_, p_51702_);

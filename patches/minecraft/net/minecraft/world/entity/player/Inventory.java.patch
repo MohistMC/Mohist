@@ -115,7 +115,7 @@
 +         if (itemstack1.m_41619_()) return itemstack.m_41613_();
 +
 +         if (this.m_36014_(itemstack1, itemstack)) {
-+                            remains -= (itemstack1.m_41741_() < this.m_6893_() ? itemstack1.m_41741_() : this.m_6893_()) - itemstack1.m_41613_();
++            remains -= (itemstack1.m_41741_() < this.m_6893_() ? itemstack1.m_41741_() : this.m_6893_()) - itemstack1.m_41613_();
 +         }
 +         if (remains <= 0) return itemstack.m_41613_();
 +      }
@@ -124,7 +124,7 @@
 +         remains -= (offhandItemStack.m_41741_() < this.m_6893_() ? offhandItemStack.m_41741_() : this.m_6893_()) - offhandItemStack.m_41613_();
 +      }
 +      if (remains <= 0) return itemstack.m_41613_();
-+         return itemstack.m_41613_() - remains;
++      return itemstack.m_41613_() - remains;
 +   }
 +   // CraftBukkit end
  }

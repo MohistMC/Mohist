@@ -1,16 +1,87 @@
 --- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -147,6 +_,13 @@
+@@ -26,6 +_,7 @@
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
  
-    }
+ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
+    public static final EntityDataAccessor<ItemStack> f_37019_ = SynchedEntityData.m_135353_(FireworkRocketEntity.class, EntityDataSerializers.f_135033_);
+@@ -127,7 +_,7 @@
  
+       HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);
+       if (!this.f_19794_) {
+-         this.m_6532_(hitresult);
++         this.preOnHit(hitresult); // CraftBukkit - projectile hit event
+          this.f_19812_ = true;
+       }
+ 
+@@ -142,9 +_,20 @@
+       }
+ 
+       if (!this.f_19853_.f_46443_ && this.f_37022_ > this.f_37023_) {
+-         this.m_37080_();
+-      }
+-
++         // CraftBukkit start
++         if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.m_37080_();
++         }
++         // CraftBukkit end
++      }
++
++   }
++
 +   @Override
 +   protected void m_6532_(HitResult result) {
 +      if (result.m_6662_() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, result)) {
 +         super.m_6532_(result);
 +      }
-+   }
-+
+    }
+ 
     private void m_37080_() {
-       this.f_19853_.m_7605_(this, (byte)17);
-       this.m_146852_(GameEvent.f_157812_, this.m_37282_());
+@@ -158,6 +_,11 @@
+       super.m_5790_(p_37071_);
+       if (!this.f_19853_.f_46443_) {
+          this.m_37080_();
++         // CraftBukkit start
++         if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.m_37080_();
++         }
++         // CraftBukkit end
+       }
+    }
+ 
+@@ -166,6 +_,11 @@
+       this.f_19853_.m_8055_(blockpos).m_60682_(this.f_19853_, blockpos, this);
+       if (!this.f_19853_.m_5776_() && this.m_37086_()) {
+          this.m_37080_();
++         // CraftBukkit start
++         if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.m_37080_();
++         }
++         // CraftBukkit end
+       }
+ 
+       super.m_8060_(p_37069_);
+@@ -189,7 +_,9 @@
+ 
+       if (f > 0.0F) {
+          if (this.f_37024_ != null) {
++            CraftEventFactory.entityDamage = this; // CraftBukkit
+             this.f_37024_.m_6469_(DamageSource.m_19352_(this, this.m_37282_()), 5.0F + (float)(listtag.size() * 2));
++            CraftEventFactory.entityDamage = null; // CraftBukkit
+          }
+ 
+          double d0 = 5.0D;
+@@ -210,7 +_,9 @@
+ 
+                if (flag) {
+                   float f1 = f * (float)Math.sqrt((5.0D - (double)this.m_20270_(livingentity)) / 5.0D);
++                  CraftEventFactory.entityDamage = this; // CraftBukkit
+                   livingentity.m_6469_(DamageSource.m_19352_(this, this.m_37282_()), f1);
++                  CraftEventFactory.entityDamage = null; // CraftBukkit
+                }
+             }
+          }
