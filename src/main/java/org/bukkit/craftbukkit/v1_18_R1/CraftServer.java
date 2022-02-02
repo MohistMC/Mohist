@@ -622,6 +622,26 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    public String getResourcePack() {
+        return this.getServer().getResourcePack();
+    }
+
+    @Override
+    public String getResourcePackHash() {
+        return this.getServer().getResourcePackHash().toUpperCase(Locale.ROOT);
+    }
+
+    @Override
+    public String getResourcePackPrompt() {
+        return CraftChatMessage.fromComponent(this.getServer().getResourcePackPrompt());
+    }
+
+    @Override
+    public boolean isResourcePackRequired() {
+        return this.getServer().isResourcePackRequired();
+    }
+
+    @Override
     public boolean hasWhitelist() {
         return this.getProperties().whiteList.get();
     }
@@ -1307,13 +1327,7 @@ public final class CraftServer implements Server {
         Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
 
         ResourceLocation mcKey = CraftNamespacedKey.toMinecraft(recipeKey);
-        for (Map<ResourceLocation, net.minecraft.world.item.crafting.Recipe<?>> recipes : getServer().getRecipeManager().recipes.values()) {
-            if (recipes.remove(mcKey) != null) {
-                return true;
-            }
-        }
-
-        return false;
+        return getServer().getRecipeManager().removeRecipe(mcKey);
     }
 
     @Override

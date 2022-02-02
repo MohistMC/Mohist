@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -63,8 +_,8 @@
+@@ -49,6 +_,8 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
+ import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
++import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataTypeRegistry;
+ 
+ public class StructureTemplate {
+    public static final String f_163789_ = "palette";
+@@ -63,11 +_,16 @@
     public static final String f_163798_ = "nbt";
     public static final String f_163799_ = "size";
     static final int f_163800_ = 16;
@@ -11,6 +20,14 @@
     private Vec3i f_74484_ = Vec3i.f_123288_;
     private String f_74485_ = "?";
  
++   // CraftBukkit start - data containers
++   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
++   public CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   // CraftBukkit end
++
+    public Vec3i m_163801_() {
+       return this.f_74484_;
+    }
 @@ -200,6 +_,10 @@
        return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
     }

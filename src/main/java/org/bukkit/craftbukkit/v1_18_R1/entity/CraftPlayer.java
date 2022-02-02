@@ -80,7 +80,9 @@ import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerHideEntityEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
+import org.bukkit.event.player.PlayerShowEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -454,6 +456,19 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (loc == null || sound == null || category == null || getHandle().connection == null) return;
 
         ClientboundCustomSoundPacket packet = new ClientboundCustomSoundPacket(new ResourceLocation(sound), net.minecraft.sounds.SoundSource.valueOf(category.name()), new Vec3(loc.getX(), loc.getY(), loc.getZ()), volume, pitch);
+        getHandle().connection.send(packet);
+    }
+
+    @Override
+    public void playSound(org.bukkit.entity.Entity entity, Sound sound, float volume, float pitch) {
+        playSound(entity, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
+    }
+
+    @Override
+    public void playSound(org.bukkit.entity.Entity entity, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        if (!(entity instanceof CraftEntity craftEntity) || sound == null || category == null || getHandle().connection == null) return;
+
+        ClientboundSoundEntityPacket packet = new ClientboundSoundEntityPacket(CraftSound.getSoundEffect(sound), net.minecraft.sounds.SoundSource.valueOf(category.name()), craftEntity.getHandle(), volume, pitch);
         getHandle().connection.send(packet);
     }
 
@@ -943,6 +958,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    public GameMode getPreviousGameMode() {
+        GameType previousGameMode = getHandle().gameMode.getPreviousGameModeForPlayer();
+
+        return (previousGameMode == null) ? null : GameMode.getByValue(previousGameMode.getId());
+    }
+
+    @Override
     public void giveExp(int exp) {
         getHandle().giveExperiencePoints(exp);
     }
@@ -1061,6 +1083,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 getHandle().connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, otherPlayer));
             }
         }
+        server.getPluginManager().callEvent(new PlayerHideEntityEvent(this, entity));
     }
 
     @Override
@@ -1109,6 +1132,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (entry != null && !entry.seenBy.contains(getHandle().connection)) {
             entry.updatePlayer(getHandle());
         }
+        server.getPluginManager().callEvent(new PlayerShowEntityEvent(this, entity));
     }
 
     public void onEntityRemove(Entity entity) {
@@ -1262,9 +1286,28 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setResourcePack(String url) {
-        Validate.notNull(url, "Resource pack URL cannot be null");
+        setResourcePack(url);
+    }
 
-        getHandle().sendTexturePack(url, "null", false, null);
+    @Override
+    public void setResourcePack(String url, byte[] hash, String prompt) {
+        setResourcePack(url, hash, prompt, false);
+    }
+
+    @Override
+    public void setResourcePack(String url, byte[] hash, boolean force) {
+        setResourcePack(url, hash, null, force);
+    }
+
+    @Override
+    public void setResourcePack(String url, byte[] hash, String prompt, boolean force) {
+        if (hash != null) {
+            Validate.isTrue(hash.length == 20, "Resource pack hash should be 20 bytes long but was " + hash.length);
+
+            getHandle().sendTexturePack(url, BaseEncoding.base16().lowerCase().encode(hash), force, CraftChatMessage.fromStringOrNull(prompt, true));
+        } else {
+            getHandle().sendTexturePack(url, "", force, CraftChatMessage.fromStringOrNull(prompt, true));
+        }
     }
 
     @Override

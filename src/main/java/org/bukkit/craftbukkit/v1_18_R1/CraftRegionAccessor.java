@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_18_R1;
 
 import com.google.common.base.Preconditions;
 
+import com.google.common.base.Predicate;
 import java.util.*;
 
 import net.minecraft.core.BlockPos;
@@ -267,16 +268,22 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public boolean generateTree(Location location, Random random, TreeType treeType, Consumer<BlockState> consumer) {
+        return generateTree(location, random, treeType, (consumer == null) ? null : (block) -> {
+            consumer.accept(block);
+            return true;
+        });
+    }
+
+    public boolean generateTree(Location location, Random random, TreeType treeType, Predicate<BlockState> predicate) {
         BlockPos pos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         BlockStateListPopulator populator = new BlockStateListPopulator(getHandle());
         boolean result = generateTree(populator, getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, random, treeType);
         populator.refreshTiles();
 
         for (BlockState blockState : populator.getList()) {
-            if (consumer != null) {
-                consumer.accept(blockState);
+            if (predicate == null || predicate.test(blockState)) {
+                blockState.update(true, true);
             }
-            blockState.update(true, true);
         }
 
         return result;

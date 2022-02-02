@@ -469,14 +469,16 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public boolean hasCooldown(Material material) {
-        Preconditions.checkArgument(material != null, "material");
+        Preconditions.checkArgument(material != null, "Material cannot be null");
+        Preconditions.checkArgument(material.isItem(), "Material %s is not an item", material);
 
         return getHandle().getCooldowns().isOnCooldown(CraftMagicNumbers.getItem(material));
     }
 
     @Override
     public int getCooldown(Material material) {
-        Preconditions.checkArgument(material != null, "material");
+        Preconditions.checkArgument(material != null, "Material cannot be null");
+        Preconditions.checkArgument(material.isItem(), "Material %s is not an item", material);
 
         ItemCooldowns.CooldownInstance cooldown = getHandle().getCooldowns().cooldowns.get(CraftMagicNumbers.getItem(material));
         return (cooldown == null) ? 0 : Math.max(0, cooldown.endTime - getHandle().getCooldowns().tickCount);
@@ -484,8 +486,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public void setCooldown(Material material, int ticks) {
-        Preconditions.checkArgument(material != null, "material");
-        Preconditions.checkArgument(ticks >= 0, "Cannot have negative cooldown");
+        Preconditions.checkArgument(material != null, "Material cannot be null");
+        Preconditions.checkArgument(material.isItem(), "Material %s is not an item", material);
 
         getHandle().getCooldowns().addCooldown(CraftMagicNumbers.getItem(material), ticks);
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/trading/MerchantOffer.java
 +++ b/net/minecraft/world/item/trading/MerchantOffer.java
-@@ -4,19 +_,33 @@
+@@ -4,19 +_,37 @@
  import net.minecraft.nbt.NbtUtils;
  import net.minecraft.util.Mth;
  import net.minecraft.world.item.ItemStack;
@@ -14,8 +14,10 @@
 -   public final int f_45314_;
 +   public int f_45314_;
     public boolean f_45315_ = true;
-    private int f_45316_;
-    private int f_45317_;
+-   private int f_45316_;
+-   private int f_45317_;
++   public int f_45316_;
++   public int f_45317_;
     public float f_45318_;
     public int f_45319_ = 1;
  
@@ -27,7 +29,11 @@
 +   }
 +
 +   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, CraftMerchantRecipe bukkit) {
-+      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier);
++      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, 0, bukkit);
++   }
++
++   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, int demand, CraftMerchantRecipe bukkit) {
++      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, demand);
 +      this.bukkitHandle = bukkit;
 +   }
 +   // CraftBukkit end
@@ -56,3 +62,16 @@
              itemstack.m_41721_(itemstack.m_41773_());
           }
  
+@@ -191,7 +_,11 @@
+       if (!this.m_45355_(p_45362_, p_45363_)) {
+          return false;
+       } else {
+-         p_45362_.m_41774_(this.m_45358_().m_41613_());
++         // CraftBukkit start
++         if (!this.m_45358_().m_41619_()) {
++            p_45362_.m_41774_(this.m_45358_().m_41613_());
++         }
++         // CraftBukkit end
+          if (!this.m_45364_().m_41619_()) {
+             p_45363_.m_41774_(this.m_45364_().m_41613_());
+          }

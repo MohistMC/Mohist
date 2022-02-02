@@ -1,5 +1,28 @@
 --- a/net/minecraft/world/entity/animal/Dolphin.java
 +++ b/net/minecraft/world/entity/animal/Dolphin.java
+@@ -72,6 +_,13 @@
+       return !p_28369_.m_32063_() && p_28369_.m_6084_() && p_28369_.m_20069_();
+    };
+ 
++   // CraftBukkit start - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++   @Override
++   public int getDefaultMaxAirSupply() {
++      return f_148892_;
++   }
++   // CraftBukkit end
++
+    public Dolphin(EntityType<? extends Dolphin> p_28316_, Level p_28317_) {
+       super(p_28316_, p_28317_);
+       this.f_21342_ = new SmoothSwimmingMoveControl(this, 85, 10, 0.02F, 0.1F, true);
+@@ -178,7 +_,7 @@
+    }
+ 
+    public int m_6062_() {
+-      return 4800;
++      return maxAirTicks;
+    }
+ 
+    protected int m_7305_(int p_28389_) {
 @@ -214,6 +_,12 @@
        if (this.m_6844_(EquipmentSlot.MAINHAND).m_41619_()) {
           ItemStack itemstack = p_28357_.m_32055_();

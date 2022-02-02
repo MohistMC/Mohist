@@ -37,7 +37,6 @@
      protected BehaviorController<?> brain;
 +    // CraftBukkit start
 +    public int expToDrop;
-+    public int maxAirTicks = 300;
 +    public boolean forceDrops;
 +    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 +    public final org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
@@ -395,7 +394,6 @@
 -            if ((float) this.invulnerableTime > 10.0F) {
 +            if ((float) this.invulnerableTime > (float) this.invulnerableDuration / 2.0F) { // CraftBukkit - restore use of maxNoDamageTicks
                  if (f <= this.lastHurt) {
-+                    this.forceExplosionKnockback = true; // CraftBukkit - SPIGOT-949 - for vanilla consistency, cooldown does not prevent explosion knockback
                      return false;
                  }
  

@@ -114,7 +114,6 @@
          if (this.isInvulnerableTo(damagesource)) {
              return false;
          } else if (this.abilities.invulnerable && !damagesource.isBypassInvul()) {
-+            this.forceExplosionKnockback = true; // SPIGOT-5258 - Make invulnerable players get knockback from explosions
              return false;
          } else {
              this.noActionTime = 0;

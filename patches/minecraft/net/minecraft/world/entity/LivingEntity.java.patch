@@ -45,13 +45,12 @@
     private LivingEntity f_20951_;
     private int f_20952_;
     private float f_20953_;
-@@ -222,6 +_,22 @@
+@@ -222,6 +_,21 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
  
 +   // CraftBukkit start
 +   public int expToDrop;
-+   public int maxAirTicks = 300;
 +   public boolean forceDrops;
 +   public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 +   public CraftAttributeMap craftAttributes;

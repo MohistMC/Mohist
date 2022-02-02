@@ -1,5 +1,25 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -85,6 +_,10 @@
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.AABB;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTransformEvent;
++import org.bukkit.event.entity.VillagerReplenishTradeEvent;
+ 
+ public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
+    private static final EntityDataAccessor<VillagerData> f_35371_ = SynchedEntityData.m_135353_(Villager.class, EntityDataSerializers.f_135043_);
+@@ -216,7 +_,7 @@
+                this.f_35374_ = false;
+             }
+ 
+-            this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 200, 0));
++            this.addEffect(new MobEffectInstance(MobEffects.f_19605_, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
+          }
+       }
+ 
 @@ -251,7 +_,7 @@
  
     public InteractionResult m_6071_(Player p_35472_, InteractionHand p_35473_) {
@@ -18,6 +38,20 @@
        this.m_35319_(40);
        if (!this.f_19853_.m_5776_()) {
           this.m_5496_(SoundEvents.f_12507_, this.m_6121_(), this.m_6100_());
+@@ -394,6 +_,13 @@
+       if (i != 0) {
+          for(MerchantOffer merchantoffer : this.m_6616_()) {
+             merchantoffer.m_45353_(-Mth.m_14143_((float)i * merchantoffer.m_45378_()));
++            // CraftBukkit start
++            VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
++            Bukkit.getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++               merchantoffer.m_45372_();
++            }
++            // CraftBukkit end
+          }
+       }
+ 
 @@ -555,7 +_,7 @@
        super.m_6667_(p_35419_);
     }
@@ -46,11 +80,41 @@
           f_19849_.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
           witch.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
-@@ -719,6 +_,7 @@
+@@ -719,7 +_,13 @@
           }
  
           witch.m_21530_();
+-         p_35409_.m_47205_(witch);
 +         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
-          p_35409_.m_47205_(witch);
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, witch, EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
++            return;
++         }
++         p_35409_.addFreshEntityWithPassengers(witch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++         // CraftBukkit end
           this.m_35524_();
           this.m_146870_();
+       } else {
+@@ -736,7 +_,12 @@
+          if (!flag) {
+             return;
+          }
+-
++         // CraftBukkit start
++         ItemStack remaining = new SimpleContainer(simplecontainer).m_19173_(itemstack);
++         if (CraftEventFactory.callEntityPickupItemEvent(this, p_35467_, remaining.m_41613_(), false).isCancelled()) {
++            return;
++         }
++         // CraftBukkit end
+          this.m_21053_(p_35467_);
+          this.m_7938_(p_35467_, itemstack.m_41613_());
+          ItemStack itemstack1 = simplecontainer.m_19173_(itemstack);
+@@ -840,7 +_,7 @@
+             IronGolem irongolem = EntityType.f_20460_.m_20655_(p_35491_, (CompoundTag)null, (Component)null, (Player)null, blockpos1, MobSpawnType.MOB_SUMMONED, false, false);
+             if (irongolem != null) {
+                if (irongolem.m_5545_(p_35491_, MobSpawnType.MOB_SUMMONED) && irongolem.m_6914_(p_35491_)) {
+-                  p_35491_.m_47205_(irongolem);
++                  p_35491_.addFreshEntityWithPassengers(irongolem, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE); // CraftBukkit
+                   return irongolem;
+                }
+ 

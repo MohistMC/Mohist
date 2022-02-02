@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -109,8 +_,10 @@
+@@ -109,8 +_,12 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityExhaustionEvent;
  
  public abstract class Player extends LivingEntity {
 +   public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
@@ -375,6 +377,42 @@
        this.f_36078_ += p_36276_;
        if (this.f_36078_ < 0) {
           this.f_36078_ = 0;
+@@ -1572,10 +_,31 @@
+       if (!this.f_36077_.f_35934_) {
+          if (!this.f_19853_.f_46443_) {
+             this.f_36097_.m_38703_(p_36400_);
+-         }
+-
+-      }
+-   }
++            // CraftBukkit start
++            EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent(this, EntityExhaustionEvent.ExhaustionReason.UNKNOWN, p_36400_);
++            if (!event.isCancelled()) {
++               this.f_36097_.m_38703_(event.getExhaustion());
++            }
++            // CraftBukkit end
++         }
++
++      }
++   }
++
++   // CraftBukkit start
++   public void causeFoodExhaustion(float f, EntityExhaustionEvent.ExhaustionReason reason) {
++      if (!this.f_36077_.f_35934_) {
++         if (!this.f_19853_.f_46443_) {
++            this.f_36097_.m_38703_(f);
++
++            EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent(this, reason, f);
++            if (!event.isCancelled()) {
++               this.f_36097_.m_38703_(event.getExhaustion());
++            }
++         }
++      }
++   }
++   // CraftBukkit end
+ 
+    public FoodData m_36324_() {
+       return this.f_36097_;
 @@ -1732,7 +_,11 @@
     }
  

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.WorldGenRegion;
@@ -28,6 +29,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CraftLimitedRegion extends CraftRegionAccessor implements LimitedRegion {
 
@@ -38,29 +41,19 @@ public class CraftLimitedRegion extends CraftRegionAccessor implements LimitedRe
     // there the order is {..., FEATURES, LIQUID_CARVERS, STRUCTURE_STARTS, ...}
     private final int buffer = 16;
     private final BoundingBox region;
+    boolean entitiesLoaded = false;
     // Minecraft saves the entities as NBTTagCompound during chunk generation. This causes that
     // changes made to the returned bukkit entity are not saved. To combat this we keep them and
     // save them when the population is finished.
     private final List<net.minecraft.world.entity.Entity> entities = new ArrayList<>();
+    // SPIGOT-6891: Save outside Entities extra, since they are not part of the region.
+    // Prevents crash for chunks which are converting from 1.17 to 1.18
+    private final List<net.minecraft.world.entity.Entity> outsideEntities = new ArrayList<>();
 
     public CraftLimitedRegion(WorldGenLevel access, ChunkPos center) {
         this.weakAccess = new WeakReference<>(access);
         centerChunkX = center.x;
         centerChunkZ = center.z;
-
-        // load entities which are already present
-        for (int x = -(buffer >> 4); x <= (buffer >> 4); x++) {
-            for (int z = -(buffer >> 4); z <= (buffer >> 4); z++) {
-                ProtoChunk chunk = (ProtoChunk) access.getChunk(centerChunkX + x, centerChunkZ + z);
-                for (CompoundTag compound : chunk.getEntities()) {
-                    net.minecraft.world.entity.EntityType.loadEntityRecursive(compound, access.getMinecraftWorld(), (entity) -> {  // PAIL rename fromNBTTag
-                        entity.generation = true;
-                        entities.add(entity);
-                        return entity;
-                    });
-                }
-            }
-        }
 
         World world = access.getMinecraftWorld().getWorld();
         int xCenter = centerChunkX << 4;
@@ -83,12 +76,40 @@ public class CraftLimitedRegion extends CraftRegionAccessor implements LimitedRe
         return handle;
     }
 
-    public void saveEntities() {
+    public void loadEntities() {
+        if (entitiesLoaded) {
+            return;
+        }
         WorldGenLevel access = getHandle();
+        // load entities which are already present
         for (int x = -(buffer >> 4); x <= (buffer >> 4); x++) {
             for (int z = -(buffer >> 4); z <= (buffer >> 4); z++) {
                 ProtoChunk chunk = (ProtoChunk) access.getChunk(centerChunkX + x, centerChunkZ + z);
-                chunk.getEntities().clear();
+                for (CompoundTag compound : chunk.getEntities()) {
+                    net.minecraft.world.entity.EntityType.loadEntityRecursive(compound, access.getMinecraftWorld(), (entity) -> {
+                        if (region.contains(entity.getX(), entity.getY(), entity.getZ())) {
+                            entity.generation = true;
+                            entities.add(entity);
+                        } else {
+                            outsideEntities.add(entity);
+                        }
+                        return entity;
+                    });
+                }
+            }
+        }
+
+        entitiesLoaded = true;
+    }
+    public void saveEntities() {
+        WorldGenLevel access = getHandle();
+        // We don't clear existing entities when they are not loaded and therefore not modified
+        if (entitiesLoaded) {
+            for (int x = -(buffer >> 4); x <= (buffer >> 4); x++) {
+                for (int z = -(buffer >> 4); z <= (buffer >> 4); z++) {
+                    ProtoChunk chunk = (ProtoChunk) access.getChunk(centerChunkX + x, centerChunkZ + z);
+                    chunk.getEntities().clear();
+                }
             }
         }
 
@@ -98,6 +119,9 @@ public class CraftLimitedRegion extends CraftRegionAccessor implements LimitedRe
                 Preconditions.checkState(region.contains(entity.getX(), entity.getY(), entity.getZ()), "Entity %s is not in the region", entity);
                 access.addFreshEntity(entity);
             }
+        }
+        for (net.minecraft.world.entity.Entity entity : outsideEntities) {
+            access.addFreshEntity(entity);
         }
     }
 
@@ -186,7 +210,14 @@ public class CraftLimitedRegion extends CraftRegionAccessor implements LimitedRe
     }
 
     @Override
+    public boolean generateTree(@NotNull Location location, @NotNull Random random, @NotNull TreeType type, @Nullable Predicate<BlockState> statePredicate) {
+        return false;
+    }
+
+    @Override
     public Collection<net.minecraft.world.entity.Entity> getNMSEntities() {
+        // Only load entities if we need them
+        loadEntities();
         return new ArrayList<>(entities);
     }
 

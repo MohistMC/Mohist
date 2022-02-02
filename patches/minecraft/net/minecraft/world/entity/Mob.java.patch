@@ -134,3 +134,13 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
+@@ -1248,7 +_,9 @@
+          }
+ 
+          if (this.f_19797_ > 100) {
++            this.forceDrops = true; // CraftBukkit
+             this.m_19998_(Items.f_42655_);
++            this.forceDrops = false; // CraftBukkit
+             this.f_21359_ = null;
+          }
+       }

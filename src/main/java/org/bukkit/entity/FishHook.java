@@ -146,7 +146,7 @@ public interface FishHook extends Projectile {
     /**
      * Represents a state in which a fishing hook may be.
      */
-    public static enum HookState {
+    public enum HookState {
 
         /**
          * The fishing hook has been cast and is either in the air or resting

@@ -12,7 +12,7 @@ import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 
-public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderDragon {
+public class CraftEnderDragon extends CraftMob implements EnderDragon {
 
     public CraftEnderDragon(CraftServer server, net.minecraft.world.entity.boss.enderdragon.EnderDragon entity) {
         super(server, entity);

@@ -2,7 +2,9 @@ package org.bukkit.craftbukkit.v1_18_R1.util;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -42,10 +44,16 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_18_R1.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.v1_18_R1.attribute.CraftAttributeInstance;
+import org.bukkit.craftbukkit.v1_18_R1.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_18_R1.legacy.CraftLegacy;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
@@ -328,6 +336,19 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         return clazz;
+    }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(Material material, EquipmentSlot slot) {
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> defaultAttributes = ImmutableMultimap.builder();
+
+        Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> nmsDefaultAttributes = getItem(material).getDefaultAttributeModifiers(CraftEquipmentSlot.getNMS(slot));
+        for (Map.Entry<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> mapEntry : nmsDefaultAttributes.entries()) {
+            Attribute attribute = CraftAttributeMap.fromMinecraft(net.minecraft.core.Registry.ATTRIBUTE.getKey(mapEntry.getKey()).toString());
+            defaultAttributes.put(attribute, CraftAttributeInstance.convert(mapEntry.getValue(), slot));
+        }
+
+        return defaultAttributes.build();
     }
 
     /**

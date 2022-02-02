@@ -21,6 +21,7 @@ import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.craftbukkit.v1_18_R1.CraftRegionAccessor;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.entity.Entity;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.structure.Palette;
 import org.bukkit.structure.Structure;
 import org.bukkit.util.BlockVector;
@@ -119,6 +120,11 @@ public class CraftStructure implements Structure {
     @Override
     public int getPaletteCount() {
         return structure.palettes.size();
+    }
+
+    @Override
+    public PersistentDataContainer getPersistentDataContainer() {
+        return getHandle().persistentDataContainer;
     }
 
     public StructureTemplate getHandle() {

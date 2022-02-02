@@ -28,7 +28,7 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
-@@ -153,4 +_,18 @@
+@@ -153,4 +_,26 @@
        this.f_44007_ = ImmutableMap.copyOf(map);
        this.f_199900_ = builder.build();
     }
@@ -44,6 +44,14 @@
 +      for (RecipeType<?> recipeType : Registry.f_122864_) {
 +         this.f_44007_.put(recipeType, Collections.emptyMap());
 +      }
++   }
++
++   public boolean removeRecipe(ResourceLocation mcKey) {
++      for (Map<ResourceLocation, Recipe<?>> recipes : f_44007_.values()) {
++         recipes.remove(mcKey);
++      }
++
++      return f_199900_.remove(mcKey) != null;
 +   }
 +   // CraftBukkit end
  }

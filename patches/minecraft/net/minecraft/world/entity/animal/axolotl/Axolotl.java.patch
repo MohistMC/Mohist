@@ -1,6 +1,28 @@
 --- a/net/minecraft/world/entity/animal/axolotl/Axolotl.java
 +++ b/net/minecraft/world/entity/animal/axolotl/Axolotl.java
-@@ -178,7 +_,7 @@
+@@ -80,6 +_,13 @@
+    private final Map<String, Vector3f> f_149101_ = Maps.newHashMap();
+    private static final int f_149102_ = 100;
+ 
++   // CraftBukkit start - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++   @Override
++   public int getDefaultMaxAirSupply() {
++      return f_149099_;
++   }
++   // CraftBukkit end
++
+    public Axolotl(EntityType<? extends Axolotl> p_149105_, Level p_149106_) {
+       super(p_149105_, p_149106_);
+       this.m_21441_(BlockPathTypes.WATER, 0.0F);
+@@ -171,14 +_,14 @@
+    }
+ 
+    public int m_6062_() {
+-      return 6000;
++      return maxAirTicks; // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
+    }
+ 
+    public Axolotl.Variant m_149179_() {
        return Axolotl.Variant.f_149230_[this.f_19804_.m_135370_(f_149096_)];
     }
  

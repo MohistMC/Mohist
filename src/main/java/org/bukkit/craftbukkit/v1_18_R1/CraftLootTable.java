@@ -39,7 +39,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
 
     @Override
     public Collection<ItemStack> populateLoot(Random random, LootContext context) {
-        net.minecraft.world.level.storage.loot.LootContext nmsContext = convertContext(context);
+        net.minecraft.world.level.storage.loot.LootContext nmsContext = convertContext(context, random);
         List<net.minecraft.world.item.ItemStack> nmsItems = handle.getRandomItems(nmsContext);
         Collection<ItemStack> bukkit = new ArrayList<>(nmsItems.size());
 
@@ -55,7 +55,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
 
     @Override
     public void fillInventory(Inventory inventory, Random random, LootContext context) {
-        net.minecraft.world.level.storage.loot.LootContext nmsContext = convertContext(context);
+        net.minecraft.world.level.storage.loot.LootContext nmsContext = convertContext(context, random);
         CraftInventory craftInventory = (CraftInventory) inventory;
         Container handle = craftInventory.getInventory();
 
@@ -68,11 +68,14 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
         return key;
     }
 
-    private net.minecraft.world.level.storage.loot.LootContext convertContext(LootContext context) {
+    private net.minecraft.world.level.storage.loot.LootContext convertContext(LootContext context, Random random) {
         Location loc = context.getLocation();
         ServerLevel handle = ((CraftWorld) loc.getWorld()).getHandle();
 
         net.minecraft.world.level.storage.loot.LootContext.Builder builder = new net.minecraft.world.level.storage.loot.LootContext.Builder(handle);
+        if (random != null) {
+            builder = builder.withRandom(random);
+        }
         setMaybe(builder, LootContextParams.ORIGIN, new Vec3(loc.getX(), loc.getY(), loc.getZ()));
         if (getHandle() != LootTable.EMPTY) {
             // builder.luck(context.getLuck());

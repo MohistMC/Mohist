@@ -21,15 +21,16 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -226,7 +_,37 @@
+@@ -226,7 +_,44 @@
     @Nullable
     private BlockState f_185934_ = null;
  
 +   public boolean persist = true;
 +   public boolean valid;
 +   public boolean generation;
++   public int maxAirTicks = getDefaultMaxAirSupply(); // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
 +   public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
-+   public boolean forceExplosionKnockback; // SPIGOT-949
++   public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
 +   public boolean persistentInvisibility = false;
 +   private static final int CURRENT_LEVEL = 2;
 +
@@ -44,6 +45,12 @@
 +      }
 +      return bukkitEntity;
 +   }
++
++   // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++   public int getDefaultMaxAirSupply() {
++      return f_146818_;
++   }
++   // CraftBukkit end
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
