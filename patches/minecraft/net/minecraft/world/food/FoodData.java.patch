@@ -9,10 +9,18 @@
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.player.Player;
-@@ -15,6 +_,13 @@
+@@ -10,14 +_,26 @@
+ 
+ public class FoodData {
+    public int f_38696_ = 20;
+-   public float f_38697_;
++   public float f_38697_ = 5.0F;
+    public float f_38698_;
     private int f_38699_;
     private int f_38700_ = 20;
  
+-   public FoodData() {
+-      this.f_38697_ = 5.0F;
 +   // CraftBukkit start
 +   private Player entityhuman;
 +   public int saturatedRegenRate = 10;
@@ -20,9 +28,17 @@
 +   public int starvationRate = 80;
 +   // CraftBukkit end
 +
-    public FoodData() {
-       this.f_38697_ = 5.0F;
++   public FoodData() { throw new AssertionError("Whoopsie, we missed the bukkit."); } // CraftBukkit start - throw an error
++
++   // CraftBukkit start - added EntityHuman constructor
++   public FoodData(Player entityhuman) {
++      org.apache.commons.lang3.Validate.notNull(entityhuman);
++      this.entityhuman = entityhuman;
     }
++    // CraftBukkit end
+ 
+    public void m_38707_(int p_38708_, float p_38709_) {
+       this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
 @@ -27,7 +_,16 @@
     public void m_38712_(Item p_38713_, ItemStack p_38714_) {
        if (p_38713_.m_41472_()) {
