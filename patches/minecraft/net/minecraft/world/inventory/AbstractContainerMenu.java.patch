@@ -111,7 +111,7 @@
 -               itemstack3.m_41764_(j1);
 -               this.m_142503_(itemstack3);
 +                     //slot1.set(itemstack2);
-+                     draggedSlots.put(slot1.f_40219_, itemstack3); // CraftBukkit - Put in map instead of setting
++                     draggedSlots.put(slot1.f_40219_, itemstack2); // CraftBukkit - Put in map instead of setting
 +                  }
 +               }
 +
@@ -130,7 +130,7 @@
 +
 +               InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != org.bukkit.Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.f_38845_ == 1, eventmap);
 +               p_150434_.f_19853_.getCraftServer().getPluginManager().callEvent(event);
-+                                   // Whether or not a change was made to the inventory that requires an update.
++               // Whether or not a change was made to the inventory that requires an update.
 +               boolean needsUpdate = event.getResult() != Event.Result.DEFAULT;
 +
 +               if (event.getResult() != Event.Result.DENY) {
