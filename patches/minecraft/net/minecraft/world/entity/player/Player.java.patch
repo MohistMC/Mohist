@@ -80,6 +80,15 @@
     }
  
     public boolean m_36341_() {
+@@ -292,7 +_,7 @@
+    private void m_36372_() {
+       ItemStack itemstack = this.m_6844_(EquipmentSlot.HEAD);
+       if (itemstack.m_150930_(Items.f_42354_) && !this.m_19941_(FluidTags.f_13131_)) {
+-         this.m_7292_(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true));
++         this.addEffect(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TURTLE_HELMET); // CraftBukkit
+       }
+ 
+    }
 @@ -345,6 +_,10 @@
     }
  
@@ -100,6 +109,15 @@
        return 20;
     }
  
+@@ -468,7 +_,7 @@
+ 
+       if (this.f_19853_.m_46791_() == Difficulty.PEACEFUL && this.f_19853_.m_46469_().m_46207_(GameRules.f_46139_)) {
+          if (this.m_21223_() < this.m_21233_() && this.f_19797_ % 20 == 0) {
+-            this.m_5634_(1.0F);
++            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
+          }
+ 
+          if (this.f_36097_.m_38721_() && this.f_19797_ % 10 == 0) {
 @@ -559,6 +_,7 @@
     }
  
@@ -350,6 +368,32 @@
              this.m_36320_();
              return true;
           }
+@@ -1475,12 +_,22 @@
+    }
+ 
+    public void m_36320_() {
+-      this.m_20115_(7, true);
++      // CraftBukkit start
++      if (!CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++         this.m_20115_(7, true);
++      } else {
++         // SPIGOT-5542: must toggle like below
++         this.m_20115_(7, true);
++         this.m_20115_(7, false);
++      }
++      // CraftBukkit end
+    }
+ 
+    public void m_36321_() {
+-      this.m_20115_(7, true);
+-      this.m_20115_(7, false);
++      if (!CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         this.m_20115_(7, true);
++         this.m_20115_(7, false);
++      }
+    }
+ 
+    protected void m_5841_() {
 @@ -1506,6 +_,10 @@
     }
  
@@ -381,10 +425,11 @@
        this.f_36078_ += p_36276_;
        if (this.f_36078_ < 0) {
           this.f_36078_ = 0;
-@@ -1572,10 +_,31 @@
+@@ -1571,11 +_,29 @@
+    public void m_36399_(float p_36400_) {
        if (!this.f_36077_.f_35934_) {
           if (!this.f_19853_.f_46443_) {
-             this.f_36097_.m_38703_(p_36400_);
+-            this.f_36097_.m_38703_(p_36400_);
 -         }
 -
 -      }
@@ -404,8 +449,6 @@
 +   public void causeFoodExhaustion(float f, EntityExhaustionEvent.ExhaustionReason reason) {
 +      if (!this.f_36077_.f_35934_) {
 +         if (!this.f_19853_.f_46443_) {
-+            this.f_36097_.m_38703_(f);
-+
 +            EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent(this, reason, f);
 +            if (!event.isCancelled()) {
 +               this.f_36097_.m_38703_(event.getExhaustion());
