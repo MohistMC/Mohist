@@ -8,7 +8,7 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
  import net.minecraft.network.ConnectionProtocol;
-@@ -16,15 +_,55 @@
+@@ -16,12 +_,18 @@
     private final MinecraftServer f_9965_;
     private final Connection f_9966_;
  
@@ -27,48 +27,3 @@
        switch(p_9975_.m_134735_()) {
        case LOGIN:
           this.f_9966_.m_129498_(ConnectionProtocol.LOGIN);
-+         // CraftBukkit start - Connection throttle
-+         try {
-+            long currentTime = System.currentTimeMillis();
-+            long connectionThrottle = this.f_9965_.server.getConnectionThrottle();
-+            InetAddress address = ((java.net.InetSocketAddress) this.f_9966_.m_129523_()).getAddress();
-+
-+            synchronized (throttleTracker) {
-+               if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle) {
-+                  throttleTracker.put(address, currentTime);
-+                  TranslatableComponent chatmessage = new TranslatableComponent("Connection throttled! Please wait before reconnecting.");
-+                  this.f_9966_.m_129512_(new ClientboundLoginDisconnectPacket(chatmessage));
-+                  this.f_9966_.m_129507_(chatmessage);
-+                  return;
-+               }
-+
-+               throttleTracker.put(address, currentTime);
-+               throttleCounter++;
-+               if (throttleCounter > 200) {
-+                  throttleCounter = 0;
-+
-+                  // Cleanup stale entries
-+                  java.util.Iterator iter = throttleTracker.entrySet().iterator();
-+                  while (iter.hasNext()) {
-+                     java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
-+                     if (entry.getValue() > connectionThrottle) {
-+                        iter.remove();
-+                     }
-+                  }
-+               }
-+            }
-+         } catch (Throwable t) {
-+            org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
-+         }
-+         // CraftBukkit end
-          if (p_9975_.m_134738_() != SharedConstants.m_183709_().getProtocolVersion()) {
-             Component component;
-             if (p_9975_.m_134738_() < 754) {
-@@ -36,6 +_,7 @@
-             this.f_9966_.m_129512_(new ClientboundLoginDisconnectPacket(component));
-             this.f_9966_.m_129507_(component);
-          } else {
-+            ((ServerLoginPacketListenerImpl) this.f_9966_.m_129538_()).hostname = p_9975_.f_134721_ + ":" + p_9975_.f_134722_; // CraftBukkit - set hostname
-             this.f_9966_.m_129505_(new ServerLoginPacketListenerImpl(this.f_9965_, this.f_9966_));
-          }
-          break;
