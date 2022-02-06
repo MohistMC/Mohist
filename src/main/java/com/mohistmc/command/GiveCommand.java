@@ -9,12 +9,12 @@ import org.bukkit.inventory.ItemStack;
 
 public class GiveCommand {
 
-    public static void info(CommandSender sender, String[] args) {
+    public static boolean info(CommandSender sender, String[] args) {
         if (args.length >= 3) {
             for (Player player0 : Bukkit.getOnlinePlayers()) {
-                if (player0.getName().toLowerCase().equals(args[1])) {
+                if (player0.getName().equals(args[1])) {
                     Player player = Bukkit.getPlayer(args[1]);
-                    if (player == null) return;
+                    if (player == null) return false;
                     String args2 = args[2];
                     String[] s = args2.split(":");
                     String j = args2.contains(":") ? s[1] : String.valueOf(0);
@@ -49,5 +49,6 @@ public class GiveCommand {
                 }
             }
         }
+        return true;
     }
 }
