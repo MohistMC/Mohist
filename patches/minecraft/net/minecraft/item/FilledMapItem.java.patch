@@ -9,27 +9,38 @@
  
  public class FilledMapItem extends AbstractMapItem {
     public FilledMapItem(Item.Properties p_i48482_1_) {
-@@ -52,17 +_,28 @@
+@@ -52,17 +_,35 @@
  
     @Nullable
     public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
-+      // FORGE: Add instance method for mods to override // Mohist start - Fix NPE
+-      MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
+-      if (mapdata == null && p_195950_1_ instanceof ServerWorld) {
+-         mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.func_234923_W_());
+-      }
+-
++      // FORGE: Add instance method for mods to override
 +      Item map = p_195950_0_.func_77973_b();
 +      if (map instanceof FilledMapItem) {
 +        return ((FilledMapItem)map).getCustomMapData(p_195950_0_, p_195950_1_);
-+      }else {
-+         return null;
 +      }
-+      // Mohist end
++      return null;
 +   }
 +
 +   @Nullable
-+   public static MapData getCustomMapData(ItemStack p_195950_0_, World p_195950_1_) {
-       MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
-       if (mapdata == null && p_195950_1_ instanceof ServerWorld) {
-          mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.func_234923_W_());
-       }
--
++   protected MapData getCustomMapData(ItemStack p_195950_0_, World p_195950_1_) {
++      MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
++      if (mapdata == null && p_195950_1_ instanceof ServerWorld) {
++         mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.func_234923_W_());
++      }
++      return mapdata;
++   }
++
++   @Nullable
++   public static MapData getSavedMap(ItemStack p_195950_0_, World p_195950_1_) {
++      MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
++      if (mapdata == null && p_195950_1_ instanceof ServerWorld) {
++         mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.func_234923_W_());
++      }
        return mapdata;
     }
  

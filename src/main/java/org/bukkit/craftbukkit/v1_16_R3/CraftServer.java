@@ -1391,7 +1391,7 @@ public final class CraftServer implements Server {
         Validate.notNull(world, "World cannot be null");
 
         net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(Items.MAP, 1);
-        MapData worldmap = FilledMapItem.getCustomMapData(stack, ((CraftWorld) world).getHandle());
+        MapData worldmap = FilledMapItem.getSavedMap(stack, ((CraftWorld) world).getHandle());
         return worldmap.mapView;
     }
 
@@ -1414,7 +1414,7 @@ public final class CraftServer implements Server {
         net.minecraft.item.ItemStack stack = FilledMapItem.create(worldServer, structurePosition.getX(), structurePosition.getZ(), MapView.Scale.NORMAL.getValue(), true, true);
         FilledMapItem.renderBiomePreviewMap(worldServer, stack);
         // "+" map ID taken from EntityVillager
-        FilledMapItem.getOrCreateSavedData(stack, worldServer).addTargetDecoration(stack, structurePosition, "+", MapDecoration.Type.byIcon(structureType.getMapIcon().getValue()));
+        FilledMapItem.getSavedMap(stack, worldServer).addTargetDecoration(stack, structurePosition, "+", MapDecoration.Type.byIcon(structureType.getMapIcon().getValue()));
 
         return CraftItemStack.asBukkitCopy(stack);
     }

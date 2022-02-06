@@ -158,6 +158,15 @@
                 this.func_229860_a_(p_225416_1_, p_225416_2_, "insta mine");
              } else {
                 if (this.field_73088_d) {
+@@ -195,7 +_,7 @@
+          } else if (p_225416_2_ == CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK) {
+             this.field_73088_d = false;
+             if (!Objects.equals(this.field_180240_f, p_225416_1_)) {
+-               field_225418_c.warn("Mismatch in destroy block pos: " + this.field_180240_f + " " + p_225416_1_);
++               // LOGGER.warn("Mismatch in destroy block pos: " + this.destroyPos + " " + p_225416_1_);
+                this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
+                this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(this.field_180240_f, this.field_73092_a.func_180495_p(this.field_180240_f), p_225416_2_, true, "aborted mismatched destroying"));
+             }
 @@ -218,7 +_,9 @@
  
     public boolean func_180237_b(BlockPos p_180237_1_) {
