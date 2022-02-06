@@ -20,6 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -185,6 +186,15 @@ public class ItemAPI {
             }
         }
         return null;
+    }
+
+    public static ItemStack doItem(Material material, int menge, int sid, String name, ArrayList<String> lore) {
+        ItemStack item = new ItemStack(material, menge, (short)sid);
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(lore);
+        meta.setDisplayName(name);
+        item.setItemMeta(meta);
+        return item;
     }
 
     public static Material getBlockMaterial(int id) {

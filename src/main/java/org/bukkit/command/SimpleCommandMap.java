@@ -3,6 +3,7 @@ package org.bukkit.command;
 import co.aikar.timings.Timing;
 import com.mohistmc.command.*;
 import com.mohistmc.command.PluginCommand;
+import com.mohistmc.plugins.worldmanager.WorldCommand;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -39,6 +40,7 @@ public class SimpleCommandMap implements CommandMap {
         register("mohist", new DumpCommand("dump"));
 		register("mohist", new BackupWorldCommand("backupworld"));
         register("mohist", new PluginCommand("plugin"));
+        register("world", new WorldCommand("world"));
     }
 
     public void setFallbackCommands() {
