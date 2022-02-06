@@ -212,40 +212,18 @@
           }
  
           this.field_73251_h.func_217381_Z().func_76319_b();
-@@ -429,6 +_,14 @@
-       this.field_217240_d.func_219362_d(p_217222_1_, p_217222_2_, p_217222_3_, p_217222_4_);
-    }
+@@ -427,6 +_,14 @@
  
+    public <T> void func_217222_b(TicketType<T> p_217222_1_, ChunkPos p_217222_2_, int p_217222_3_, T p_217222_4_) {
+       this.field_217240_d.func_219362_d(p_217222_1_, p_217222_2_, p_217222_3_, p_217222_4_);
++   }
++
 +   public <T> void registerTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
 +      this.field_217240_d.registerTicking(type, pos, distance, value);
 +   }
 +
 +   public <T> void releaseTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
 +      this.field_217240_d.releaseTicking(type, pos, distance, value);
-+   }
-+
-    public void func_217206_a(ChunkPos p_217206_1_, boolean p_217206_2_) {
-       this.field_217240_d.func_219364_a(p_217206_1_, p_217206_2_);
     }
-@@ -507,11 +_,16 @@
-       }
  
-       protected boolean func_213168_p() {
--         if (ServerChunkProvider.this.func_217235_l()) {
--            return true;
--         } else {
--            ServerChunkProvider.this.field_217242_h.func_215588_z_();
--            return super.func_213168_p();
-+         // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
-+         try {
-+            if (ServerChunkProvider.this.func_217235_l()) {
-+               return true;
-+            } else {
-+               ServerChunkProvider.this.field_217242_h.func_215588_z_();
-+               return super.func_213168_p();
-+            }
-+         } finally {
-+            field_217237_a.callbackExecutor.run();
-          }
-       }
-    }
+    public void func_217206_a(ChunkPos p_217206_1_, boolean p_217206_2_) {

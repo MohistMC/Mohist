@@ -71,35 +71,6 @@
  
  public class ChunkManager extends ChunkLoader implements ChunkHolder.IPlayerProvider {
     private static final Logger field_219250_d = LogManager.getLogger();
-@@ -121,6 +_,28 @@
-    private final Queue<Runnable> field_223181_A = Queues.newConcurrentLinkedQueue();
-    private int field_219247_A;
- 
-+   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
-+   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
-+   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
-+      private Runnable queued;
-+      @Override
-+      public void execute(Runnable runnable) {
-+         if (queued != null) {
-+            throw new IllegalStateException("Already queued");
-+         }
-+         queued = runnable;
-+      }
-+      @Override
-+      public void run() {
-+         Runnable task = queued;
-+         queued = null;
-+         if (task != null) {
-+            task.run();
-+         }
-+      }
-+   };
-+   // CraftBukkit end
-+
-    public ChunkManager(ServerWorld p_i232602_1_, SaveFormat.LevelSave p_i232602_2_, DataFixer p_i232602_3_, TemplateManager p_i232602_4_, Executor p_i232602_5_, ThreadTaskExecutor<Runnable> p_i232602_6_, IChunkLightProvider p_i232602_7_, ChunkGenerator p_i232602_8_, IChunkStatusListener p_i232602_9_, Supplier<DimensionSavedDataManager> p_i232602_10_, int p_i232602_11_, boolean p_i232602_12_) {
-       super(new File(p_i232602_2_.func_237291_a_(p_i232602_1_.func_234923_W_()), "region"), p_i232602_3_, p_i232602_12_);
-       this.field_219269_w = p_i232602_4_;
 @@ -176,12 +_,12 @@
     }
  
