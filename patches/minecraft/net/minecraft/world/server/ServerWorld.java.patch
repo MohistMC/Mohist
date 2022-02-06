@@ -202,6 +202,8 @@
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
 +      }
++      this.craftWorld = new CraftWorld(this, generator, environment);
++      func_175723_af().world = this;
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
@@ -230,8 +232,6 @@
 +      } else {
 +         this.field_241105_O_ = null;
 +      }
-+      this.craftWorld = new CraftWorld(this, generator, environment);
-+      func_175723_af().world = this;
 +      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +      this.initCapabilities();
 +   }
@@ -245,6 +245,8 @@
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
 +      }
++      this.craftWorld = new CraftWorld(this, generator, environment);
++      func_175723_af().world = this;
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
@@ -273,8 +275,6 @@
 +      } else {
 +         this.field_241105_O_ = null;
 +      }
-+      this.craftWorld = new CraftWorld(this, generator, environment);
-+      func_175723_af().world = this;
 +      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +      this.initCapabilities();
 +   }
