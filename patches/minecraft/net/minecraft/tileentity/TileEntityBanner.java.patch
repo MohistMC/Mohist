@@ -1,16 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBanner.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBanner.java
-@@ -19,8 +19,8 @@
- public class TileEntityBanner extends TileEntity implements IWorldNameable
- {
-     private String field_190617_a;
--    private EnumDyeColor field_175120_a = EnumDyeColor.BLACK;
--    private NBTTagList field_175118_f;
-+    public EnumDyeColor field_175120_a = EnumDyeColor.BLACK;
-+    public NBTTagList field_175118_f;
-     private boolean field_175119_g;
-     private List<BannerPattern> field_175122_h;
-     private List<EnumDyeColor> field_175123_i;
 @@ -34,6 +34,11 @@
          if (nbttagcompound != null && nbttagcompound.func_150297_b("Patterns", 9))
          {

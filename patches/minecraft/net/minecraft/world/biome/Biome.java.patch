@@ -11,17 +11,15 @@
  {
      private static final Logger field_150586_aC = LogManager.getLogger();
      protected static final IBlockState field_185365_a = Blocks.field_150348_b.func_176223_P();
-@@ -68,8 +69,8 @@
+@@ -68,7 +69,7 @@
      protected static final WorldGenTrees field_76757_N = new WorldGenTrees(false);
      protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);
      protected static final WorldGenSwamp field_76763_Q = new WorldGenSwamp();
 -    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = new RegistryNamespaced<ResourceLocation, Biome>();
--    private final String field_76791_y;
 +    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = net.minecraftforge.registries.GameData.getWrapper(Biome.class);
-+    public final String field_76791_y;
+     public final String field_76791_y;
      private final float field_76748_D;
      private final float field_76749_E;
-     private final float field_76750_F;
 @@ -86,6 +87,8 @@
      protected List<Biome.SpawnListEntry> field_76762_K = Lists.<Biome.SpawnListEntry>newArrayList();
      protected List<Biome.SpawnListEntry> field_76755_L = Lists.<Biome.SpawnListEntry>newArrayList();

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -23,18 +23,24 @@
+@@ -23,9 +23,14 @@
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -15,10 +15,7 @@
  
  public class ChunkProviderServer implements IChunkProvider
  {
-     private static final Logger field_147417_b = LogManager.getLogger();
--    private final Set<Long> field_73248_b = Sets.<Long>newHashSet();
-+    public final Set<Long> field_73248_b = Sets.<Long>newHashSet();
-     public final IChunkGenerator field_186029_c;
+@@ -35,6 +40,7 @@
      public final IChunkLoader field_73247_e;
      public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
      public final WorldServer field_73251_h;

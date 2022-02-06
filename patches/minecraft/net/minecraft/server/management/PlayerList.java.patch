@@ -88,15 +88,6 @@
      private final Map<UUID, EntityPlayerMP> field_177454_f = Maps.<UUID, EntityPlayerMP>newHashMap();
      private final UserListBans field_72401_g;
      private final UserListIPBans field_72413_h;
-@@ -84,7 +116,7 @@
-     private final UserListWhitelist field_72411_j;
-     private final Map<UUID, StatisticsManagerServer> field_148547_k;
-     private final Map<UUID, PlayerAdvancements> field_192055_p;
--    private IPlayerFileData field_72412_k;
-+    public IPlayerFileData field_72412_k;
-     private boolean field_72409_l;
-     protected int field_72405_c;
-     private int field_72402_d;
 @@ -92,21 +124,29 @@
      private boolean field_72407_n;
      private int field_72408_o;

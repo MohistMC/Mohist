@@ -24,29 +24,15 @@
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -68,16 +78,16 @@
-     protected EntityJumpHelper field_70767_i;
-     private final EntityBodyHelper field_70762_j;
-     protected PathNavigate field_70699_by;
--    public final EntityAITasks field_70714_bg;
--    public final EntityAITasks field_70715_bh;
-+    public EntityAITasks field_70714_bg;
-+    public EntityAITasks field_70715_bh;
-     private EntityLivingBase field_70696_bz;
-     private final EntitySenses field_70723_bA;
-     private final NonNullList<ItemStack> field_184656_bv = NonNullList.<ItemStack>func_191197_a(2, ItemStack.field_190927_a);
--    protected float[] field_82174_bp = new float[2];
-+    public float[] field_82174_bp = new float[2];
+@@ -76,7 +86,7 @@
+     public float[] field_82174_bp = new float[2];
      private final NonNullList<ItemStack> field_184657_bw = NonNullList.<ItemStack>func_191197_a(4, ItemStack.field_190927_a);
--    protected float[] field_184655_bs = new float[4];
+     public float[] field_184655_bs = new float[4];
 -    private boolean field_82172_bs;
--    private boolean field_82179_bU;
-+    public float[] field_184655_bs = new float[4];
 +    private boolean canPickUpLoot_vanilla = false; // Mohist - Compatible with RoughMobs 2 / RoughMobs
-+    public boolean field_82179_bU;
+     public boolean field_82179_bU;
      private final Map<PathNodeType, Float> field_184658_bz = Maps.newEnumMap(PathNodeType.class);
      private ResourceLocation field_184659_bA;
-     private long field_184653_bB;
 @@ -169,9 +179,43 @@
  
      public void func_70624_b(@Nullable EntityLivingBase p_70624_1_)

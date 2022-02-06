@@ -10,7 +10,7 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.StringUtils;
-@@ -21,16 +23,18 @@
+@@ -21,10 +23,12 @@
  import net.minecraft.util.registry.RegistryNamespaced;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,13 +25,6 @@
      private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
      private final boolean field_76418_K;
      private final int field_76414_N;
-     private String field_76416_I = "";
-     private int field_76417_J = -1;
--    private double field_76412_L;
-+    public double field_76412_L;
-     private boolean field_188415_h;
- 
-     @Nullable
 @@ -78,14 +82,14 @@
          {
              if (p_76394_1_.func_110143_aJ() < p_76394_1_.func_110138_aP())

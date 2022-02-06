@@ -32,24 +32,6 @@
  {
      private static final Logger field_150817_t = LogManager.getLogger();
      public static final ExtendedBlockStorage field_186036_a = null;
-@@ -50,13 +55,13 @@
-     private final int[] field_76638_b;
-     private final boolean[] field_76639_c;
-     private boolean field_76636_d;
--    private final World field_76637_e;
--    private final int[] field_76634_f;
-+    public final World field_76637_e;
-+    public final int[] field_76634_f;
-     public final int field_76635_g;
-     public final int field_76647_h;
-     private boolean field_76650_s;
--    private final Map<BlockPos, TileEntity> field_150816_i;
--    private final ClassInheritanceMultiMap<Entity>[] field_76645_j;
-+    public final Map<BlockPos, TileEntity> field_150816_i;
-+    public final ClassInheritanceMultiMap<Entity>[] field_76645_j;  // Spigot
-     private boolean field_76646_k;
-     private boolean field_150814_l;
-     private boolean field_150815_m;
 @@ -68,7 +73,37 @@
      private int field_76649_t;
      private final ConcurrentLinkedQueue<BlockPos> field_177447_w;

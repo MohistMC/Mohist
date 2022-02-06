@@ -63,7 +63,7 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.IProgressUpdate;
  import net.minecraft.util.IThreadListener;
-@@ -77,16 +100,22 @@
+@@ -77,12 +100,18 @@
  import net.minecraft.world.storage.WorldInfo;
  import net.minecraft.world.storage.WorldSavedDataCallableSave;
  import net.minecraft.world.storage.loot.LootTableManager;
@@ -83,11 +83,6 @@
  {
      private static final Logger field_147491_a = LogManager.getLogger();
      private final MinecraftServer field_73061_a;
--    private final EntityTracker field_73062_L;
-+    public EntityTracker field_73062_L;
-     private final PlayerChunkMap field_73063_M;
-     private final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet();
-     private final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>();
 @@ -101,50 +130,108 @@
      private int field_147489_T;
      private final List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();

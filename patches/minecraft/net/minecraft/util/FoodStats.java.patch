@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/FoodStats.java
 +++ ../src-work/minecraft/net/minecraft/util/FoodStats.java
-@@ -1,21 +1,48 @@
+@@ -1,12 +1,18 @@
  package net.minecraft.util;
  
 +import java.lang.reflect.Field;
@@ -19,16 +19,9 @@
  
  public class FoodStats
  {
--    private int field_75127_a = 20;
--    private float field_75125_b = 5.0F;
--    private float field_75126_c;
--    private int field_75123_d;
--    private int field_75124_e = 20;
-+    public int field_75127_a = 20;
-+    public float field_75125_b = 5.0F;
-+    public float field_75126_c;
-+    public int field_75123_d;
-+    public int field_75124_e = 20;
+@@ -16,6 +22,27 @@
+     public int field_75123_d;
+     public int field_75124_e = 20;
  
 +    private EntityPlayer entityhuman; // CraftBukkit
 +

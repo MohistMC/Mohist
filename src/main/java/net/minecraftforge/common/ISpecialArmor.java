@@ -210,10 +210,6 @@ public interface ISpecialArmor
                         }
                         if (stack.isEmpty())
                         {
-                            /*if (entity instanceof EntityPlayer)
-                            {
-                                stack.onItemDestroyedByUse((EntityPlayer)entity);
-                            }*/
                             inventory.set(prop.Slot, ItemStack.EMPTY);
                         }
                     }
@@ -362,6 +358,75 @@ public interface ISpecialArmor
                     System.out.println(prop);
                 }
             }
+        }
+
+        public static float applyArmor0(EntityLivingBase entity, NonNullList<ItemStack> inventory, DamageSource source, double damage)
+        {
+            double totalArmor = entity.getTotalArmorValue();
+            double totalToughness = entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
+
+            if (source.isUnblockable())
+            {
+                totalArmor = 0;
+                totalToughness = 0;
+            }
+
+            ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
+            for (int slot = 0; slot < inventory.size(); slot++)
+            {
+                ItemStack stack = inventory.get(slot);
+
+                if (stack.isEmpty())
+                {
+                    continue;
+                }
+
+                ArmorProperties prop = null;
+                if (stack.getItem() instanceof ISpecialArmor)
+                {
+                    if (!source.isUnblockable() || ((ISpecialArmor) stack.getItem()).handleUnblockableDamage(entity, stack, source, damage, slot)) {
+                        ISpecialArmor armor = (ISpecialArmor)stack.getItem();
+                        prop = armor.getProperties(entity, stack, source, damage, slot).copy();
+                        totalArmor += prop.Armor;
+                        totalToughness += prop.Toughness;
+                    }
+                }
+                else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
+                {
+                    ItemArmor armor = (ItemArmor)stack.getItem();
+                    prop = new ArmorProperties(0, 0, Integer.MAX_VALUE);
+                    prop.Armor = armor.damageReduceAmount;
+                    prop.Toughness = armor.toughness;
+                }
+                if (prop != null)
+                {
+                    prop.Slot = slot;
+                    dmgVals.add(prop);
+                }
+            }
+            if (dmgVals.size() > 0)
+            {
+                ArmorProperties[] props = dmgVals.toArray(new ArmorProperties[dmgVals.size()]);
+                StandardizeList(props, damage);
+                int level = props[0].Priority;
+                double ratio = 0;
+                for (ArmorProperties prop : props)
+                {
+                    if (level != prop.Priority)
+                    {
+                        damage -= (damage * ratio);
+                        ratio = 0;
+                        level = prop.Priority;
+                    }
+                    ratio += prop.AbsorbRatio;
+                }
+                damage -= (damage * ratio);
+            }
+            if (damage > 0 && (totalArmor > 0 || totalToughness > 0))
+            {
+                damage = CombatRules.getDamageAfterAbsorb((float)damage, (float)totalArmor, (float)totalToughness);
+            }
+            return (float)(damage);
         }
 
         @Override

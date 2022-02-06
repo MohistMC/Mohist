@@ -29,25 +29,6 @@
          }
      };
      private final NonNullList<ItemStack> field_184799_bw;
-@@ -67,12 +72,12 @@
-     public long field_175437_i;
-     private int field_175442_bg;
-     private boolean field_181028_bj;
--    private Rotations field_175443_bh;
--    private Rotations field_175444_bi;
--    private Rotations field_175438_bj;
--    private Rotations field_175439_bk;
--    private Rotations field_175440_bl;
--    private Rotations field_175441_bm;
-+    public Rotations field_175443_bh;
-+    public Rotations field_175444_bi;
-+    public Rotations field_175438_bj;
-+    public Rotations field_175439_bk;
-+    public Rotations field_175440_bl;
-+    public Rotations field_175441_bm;
- 
-     public EntityArmorStand(World p_i45854_1_)
-     {
 @@ -95,6 +100,13 @@
          this.func_70107_b(p_i45855_2_, p_i45855_4_, p_i45855_6_);
      }

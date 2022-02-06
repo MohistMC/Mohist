@@ -1,16 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/util/CooldownTracker.java
 +++ ../src-work/minecraft/net/minecraft/util/CooldownTracker.java
-@@ -11,8 +11,8 @@
- 
- public class CooldownTracker
- {
--    private final Map<Item, CooldownTracker.Cooldown> field_185147_a = Maps.<Item, CooldownTracker.Cooldown>newHashMap();
--    private int field_185148_b;
-+    public final Map<Item, CooldownTracker.Cooldown> field_185147_a = Maps.<Item, CooldownTracker.Cooldown>newHashMap();
-+    public int field_185148_b;
- 
-     public boolean func_185141_a(Item p_185141_1_)
-     {
 @@ -77,10 +77,10 @@
      {
      }

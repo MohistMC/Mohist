@@ -1,17 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
-@@ -23,21 +23,30 @@
- {
-     private static final Logger field_187281_a = LogManager.getLogger();
-     private final PlayerChunkMap field_187282_b;
--    private final List<EntityPlayerMP> field_187283_c = Lists.<EntityPlayerMP>newArrayList();
-+    public final List<EntityPlayerMP> field_187283_c = Lists.<EntityPlayerMP>newArrayList();
-     private final ChunkPos field_187284_d;
-     private short[] field_187285_e = new short[64];
-     @Nullable
--    private Chunk field_187286_f;
-+    public Chunk field_187286_f;
-     private int field_187287_g;
+@@ -32,12 +32,21 @@
      private int field_187288_h;
      private long field_187289_i;
      private boolean field_187290_j;

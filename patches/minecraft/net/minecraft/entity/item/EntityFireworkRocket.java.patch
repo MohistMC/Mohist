@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityFireworkRocket.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityFireworkRocket.java
-@@ -23,13 +23,14 @@
+@@ -23,6 +23,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -8,15 +8,6 @@
  
  public class EntityFireworkRocket extends Entity
  {
--    private static final DataParameter<ItemStack> field_184566_a = EntityDataManager.<ItemStack>func_187226_a(EntityFireworkRocket.class, DataSerializers.field_187196_f);
-+    public static final DataParameter<ItemStack> field_184566_a = EntityDataManager.<ItemStack>func_187226_a(EntityFireworkRocket.class, DataSerializers.field_187196_f);
-     private static final DataParameter<Integer> field_191512_b = EntityDataManager.<Integer>func_187226_a(EntityFireworkRocket.class, DataSerializers.field_187192_b);
-     private int field_92056_a;
--    private int field_92055_b;
-+    public int field_92055_b;
-     private EntityLivingBase field_191513_e;
- 
-     public EntityFireworkRocket(World p_i1762_1_)
 @@ -38,6 +39,14 @@
          this.func_70105_a(0.25F, 0.25F);
      }

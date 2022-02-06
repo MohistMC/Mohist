@@ -16,12 +16,9 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -14,8 +18,9 @@
- public class PropertyManager
- {
+@@ -16,6 +20,7 @@
      private static final Logger field_164440_a = LogManager.getLogger();
--    private final Properties field_73672_b = new Properties();
-+    public final Properties field_73672_b = new Properties();
+     public final Properties field_73672_b = new Properties();
      private final File field_73673_c;
 +    private OptionSet options = null;
  

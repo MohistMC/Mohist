@@ -60,7 +60,7 @@
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.IProgressUpdate;
-@@ -79,33 +88,46 @@
+@@ -79,22 +88,35 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
  import net.minecraft.world.chunk.storage.AnvilSaveConverter;
@@ -88,23 +88,17 @@
 -public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
 +public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo, RealTimeTicking
  {
--    private static final Logger field_147145_h = LogManager.getLogger();
 +    private static MinecraftServer SERVER;
-+    public static final Logger field_147145_h = LogManager.getLogger();
+     public static final Logger field_147145_h = LogManager.getLogger();
      public static final File field_152367_a = new File("usercache.json");
--    private final ISaveFormat field_71310_m;
-+    public ISaveFormat field_71310_m;
+     public ISaveFormat field_71310_m;
      private final Snooper field_71307_n = new Snooper("server", this, func_130071_aq());
--    private final File field_71308_o;
+-    public final File field_71308_o;
 +    public File field_71308_o;
      private final List<ITickable> field_71322_p = Lists.<ITickable>newArrayList();
      public final ICommandManager field_71321_q;
      public final Profiler field_71304_b = new Profiler();
-     private final NetworkSystem field_147144_o;
-     private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
-     private final Random field_147146_q = new Random();
--    private final DataFixer field_184112_s;
-+    public final DataFixer field_184112_s;
+@@ -105,7 +127,7 @@
      @SideOnly(Side.SERVER)
      private String field_71320_r;
      private int field_71319_s = -1;

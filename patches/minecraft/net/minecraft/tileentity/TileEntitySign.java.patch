@@ -1,11 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySign.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySign.java
-@@ -24,9 +24,11 @@
- {
-     public final ITextComponent[] field_145915_a = new ITextComponent[] {new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")};
-     public int field_145918_i = -1;
--    private boolean field_145916_j = true;
-+    public boolean field_145916_j = true;
+@@ -27,6 +27,8 @@
+     public boolean field_145916_j = true;
      private EntityPlayer field_145917_k;
      private final CommandResultStats field_174883_i = new CommandResultStats();
 +    private static final boolean CONVERT_LEGACY_SIGNS = Boolean.getBoolean("convertLegacySigns");

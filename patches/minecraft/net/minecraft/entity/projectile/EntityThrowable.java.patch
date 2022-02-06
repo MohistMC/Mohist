@@ -1,16 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
-@@ -31,8 +31,8 @@
-     private Block field_174853_f;
-     protected boolean field_174854_a;
-     public int field_70191_b;
--    protected EntityLivingBase field_70192_c;
--    private String field_85053_h;
-+    public EntityLivingBase field_70192_c;
-+    public String field_85053_h;
-     private int field_70194_h;
-     private int field_70195_i;
-     public Entity field_184539_c;
 @@ -57,6 +57,7 @@
      {
          this(p_i1777_1_, p_i1777_2_.field_70165_t, p_i1777_2_.field_70163_u + (double)p_i1777_2_.func_70047_e() - 0.10000000149011612D, p_i1777_2_.field_70161_v);

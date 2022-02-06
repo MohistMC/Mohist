@@ -30,7 +30,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.init.Blocks;
-@@ -84,19 +87,58 @@
+@@ -84,9 +87,47 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -79,37 +79,15 @@
      private static final Logger field_184243_a = LogManager.getLogger();
      private static final List<ItemStack> field_190535_b = Collections.<ItemStack>emptyList();
      private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-     private static double field_70155_l = 1.0D;
--    private static int field_70152_a;
-+    private static int field_70152_a = 1; // Paper - MC-111480 - ID 0 is treated as special for DataWatchers, start 1
-     private int field_145783_c;
-     public boolean field_70156_m;
--    private final List<Entity> field_184244_h;
-+    public final List<Entity> field_184244_h;  // Spigot
+@@ -97,6 +138,7 @@
+     public final List<Entity> field_184244_h;
      protected int field_184245_j;
      private Entity field_184239_as;
 +    public void setVehicle(Entity entity) { this.field_184239_as = entity; } // Paper // OBFHELPER
      public boolean field_98038_p;
      public World field_70170_p;
      public double field_70169_q;
-@@ -137,8 +179,8 @@
-     public float field_70144_Y;
-     protected Random field_70146_Z;
-     public int field_70173_aa;
--    private int field_190534_ay;
--    protected boolean field_70171_ac;
-+    public int field_190534_ay;
-+    public boolean field_70171_ac;
-     public int field_70172_ad;
-     protected boolean field_70148_d;
-     protected boolean field_70178_ae;
-@@ -172,12 +214,40 @@
-     protected UUID field_96093_i;
-     protected String field_189513_ar;
-     private final CommandResultStats field_174837_as;
--    protected boolean field_184238_ar;
-+    public boolean field_184238_ar;
-     private final Set<String> field_184236_aF;
+@@ -177,7 +219,35 @@
      private boolean field_184237_aG;
      private final double[] field_191505_aI;
      private long field_191506_aJ;
@@ -145,15 +123,6 @@
      public Entity(World p_i1582_1_)
      {
          this.field_145783_c = field_70152_a++;
-@@ -190,7 +260,7 @@
-         this.field_70146_Z = new Random();
-         this.field_190534_ay = -this.func_190531_bD();
-         this.field_70148_d = true;
--        this.field_96093_i = MathHelper.func_180182_a(this.field_70146_Z);
-+        this.field_96093_i = new UUID(ThreadLocalRandom.current().nextLong(), ThreadLocalRandom.current().nextLong());
-         this.field_189513_ar = this.field_96093_i.toString();
-         this.field_174837_as = new CommandResultStats();
-         this.field_184236_aF = Sets.<String>newHashSet();
 @@ -200,8 +270,13 @@
  
          if (p_i1582_1_ != null)
@@ -500,26 +469,7 @@
      }
  
      protected SoundEvent func_184184_Z()
-@@ -1027,8 +1186,16 @@
- 
-                         try
-                         {
--                            iblockstate.func_177230_c().func_180634_a(this.field_70170_p, blockpos$pooledmutableblockpos2, iblockstate, this);
--                            this.func_191955_a(iblockstate);
-+                            if (this.field_70170_p.getWorld() != null) {
-+                                CraftEventFactory.blockDamage = this.field_70170_p.getWorld().getBlockAt(blockpos$pooledmutableblockpos2.func_177958_n(), blockpos$pooledmutableblockpos2.func_177956_o(), blockpos$pooledmutableblockpos2.func_177952_p());
-+                                iblockstate.func_177230_c().func_180634_a(this.field_70170_p, blockpos$pooledmutableblockpos2, iblockstate, this);
-+                                this.func_191955_a(iblockstate);
-+                                CraftEventFactory.blockDamage = null;
-+
-+                            } else {
-+                                iblockstate.func_177230_c().func_180634_a(this.field_70170_p, blockpos$pooledmutableblockpos2, iblockstate, this);
-+                                this.func_191955_a(iblockstate);
-+                            }
-                         }
-                         catch (Throwable throwable)
-                         {
-@@ -1053,7 +1220,7 @@
+@@ -1053,7 +1212,7 @@
  
      protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
      {
@@ -528,7 +478,7 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -1140,6 +1307,14 @@
+@@ -1140,6 +1299,14 @@
          }
      }
  
@@ -543,7 +493,7 @@
      public final boolean func_70045_F()
      {
          return this.field_70178_ae;
-@@ -1259,6 +1434,7 @@
+@@ -1259,6 +1426,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -551,7 +501,7 @@
          if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE)
          {
              this.field_70170_p.func_175688_a(EnumParticleTypes.BLOCK_CRACK, this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, this.func_174813_aQ().field_72338_b + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, -this.field_70159_w * 4.0D, 1.5D, -this.field_70179_y * 4.0D, Block.func_176210_f(iblockstate));
-@@ -1277,12 +1453,12 @@
+@@ -1277,12 +1445,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -568,7 +518,7 @@
              }
              else
              {
-@@ -1293,7 +1469,12 @@
+@@ -1293,7 +1461,12 @@
  
      public boolean func_180799_ab()
      {
@@ -582,7 +532,7 @@
      }
  
      public void func_191958_b(float p_191958_1_, float p_191958_2_, float p_191958_3_, float p_191958_4_)
-@@ -1354,6 +1535,11 @@
+@@ -1354,6 +1527,11 @@
  
      public void func_70029_a(World p_70029_1_)
      {
@@ -594,7 +544,7 @@
          this.field_70170_p = p_70029_1_;
      }
  
-@@ -1382,6 +1568,7 @@
+@@ -1382,6 +1560,7 @@
              this.field_70126_B -= 360.0F;
          }
  
@@ -602,7 +552,7 @@
          this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
          this.func_70101_b(p_70080_7_, p_70080_8_);
      }
-@@ -1671,6 +1858,16 @@
+@@ -1671,6 +1850,16 @@
          {
              p_189511_1_.func_74782_a("Pos", this.func_70087_a(this.field_70165_t, this.field_70163_u, this.field_70161_v));
              p_189511_1_.func_74782_a("Motion", this.func_70087_a(this.field_70159_w, this.field_70181_x, this.field_70179_y));
@@ -619,13 +569,11 @@
              p_189511_1_.func_74782_a("Rotation", this.func_70049_a(this.field_70177_z, this.field_70125_A));
              p_189511_1_.func_74776_a("FallDistance", this.field_70143_R);
              p_189511_1_.func_74777_a("Fire", (short)this.field_190534_ay);
-@@ -1680,7 +1877,17 @@
+@@ -1680,7 +1869,15 @@
              p_189511_1_.func_74757_a("Invulnerable", this.field_83001_bt);
              p_189511_1_.func_74768_a("PortalCooldown", this.field_71088_bW);
              p_189511_1_.func_186854_a("UUID", this.func_110124_au());
 -
-+            AxisAlignedBB aabb = this.func_174813_aQ();
-+            p_189511_1_.func_74782_a("AABB", this.func_70087_a(aabb.field_72340_a, aabb.field_72338_b, aabb.field_72339_c, aabb.field_72336_d, aabb.field_72337_e, aabb.field_72334_f));
 +            // CraftBukkit start
 +            // PAIL: Check above UUID reads 1.8 properly, ie: UUIDMost / UUIDLeast
 +            if (this.field_70170_p != null) {
@@ -638,7 +586,7 @@
              if (this.func_145818_k_())
              {
                  p_189511_1_.func_74778_a("CustomName", this.func_95999_t());
-@@ -1707,6 +1914,7 @@
+@@ -1707,6 +1904,7 @@
              {
                  p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
              }
@@ -646,7 +594,7 @@
  
              if (!this.field_184236_aF.isEmpty())
              {
-@@ -1720,6 +1928,9 @@
+@@ -1720,6 +1918,9 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
@@ -656,7 +604,7 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1741,7 +1952,6 @@
+@@ -1741,7 +1942,6 @@
                      p_189511_1_.func_74782_a("Passengers", nbttaglist1);
                  }
              }
@@ -664,7 +612,7 @@
              return p_189511_1_;
          }
          catch (Throwable throwable)
-@@ -1764,21 +1974,6 @@
+@@ -1764,21 +1964,6 @@
              this.field_70181_x = nbttaglist2.func_150309_d(1);
              this.field_70179_y = nbttaglist2.func_150309_d(2);
  
@@ -686,7 +634,7 @@
              this.field_70165_t = nbttaglist.func_150309_d(0);
              this.field_70163_u = nbttaglist.func_150309_d(1);
              this.field_70161_v = nbttaglist.func_150309_d(2);
-@@ -1826,7 +2021,11 @@
+@@ -1826,7 +2011,11 @@
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
              this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
              this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -698,29 +646,10 @@
              if (p_70020_1_.func_150297_b("Tags", 9))
              {
                  this.field_184236_aF.clear();
-@@ -1845,6 +2044,72 @@
+@@ -1845,6 +2034,53 @@
              {
                  this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
              }
-+
-+            if (p_70020_1_.func_150297_b("AABB", 9))
-+            {
-+                NBTTagList aabb_tag = p_70020_1_.func_150295_c("AABB", 6);
-+
-+                AxisAlignedBB aabb = new AxisAlignedBB(aabb_tag.func_150309_d(0), aabb_tag.func_150309_d(1), aabb_tag.func_150309_d(2), aabb_tag.func_150309_d(3), aabb_tag.func_150309_d(4), aabb_tag.func_150309_d(5));
-+
-+                double deltaX = ((aabb.field_72340_a + aabb.field_72336_d) / 2.0D) - this.field_70165_t;
-+                double deltaY = aabb.field_72338_b - this.field_70163_u;
-+                double deltaZ = ((aabb.field_72339_c + aabb.field_72334_f) / 2.0D) - this.field_70161_v;
-+
-+                // If the position and AABB center point are > 0.1 blocks apart then do not restore the AABB. In vanilla
-+                // this should never happen, but mods might not be aware that the AABB is stored and that the entity
-+                // position will be reset to it. A good example of this is the ExtraUtils2 golden lasso.
-+                if (((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ)) < 0.01D)
-+                {
-+                    this.func_174826_a(aabb);
-+                }
-+            }
 +            if (this instanceof EntityLivingBase) {
 +                EntityLivingBase entity = (EntityLivingBase) this;
 +                this.field_70173_aa = p_70020_1_.func_74762_e("Spigot.ticksLived");
@@ -771,7 +700,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1861,7 +2126,7 @@
+@@ -1861,7 +2097,7 @@
      }
  
      @Nullable
@@ -780,7 +709,7 @@
      {
          ResourceLocation resourcelocation = EntityList.func_191301_a(this);
          return resourcelocation == null ? null : resourcelocation.toString();
-@@ -1918,7 +2183,10 @@
+@@ -1918,7 +2154,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -792,7 +721,7 @@
              return entityitem;
          }
      }
-@@ -1985,6 +2253,7 @@
+@@ -1985,6 +2224,7 @@
              this.field_70159_w = 0.0D;
              this.field_70181_x = 0.0D;
              this.field_70179_y = 0.0D;
@@ -800,7 +729,7 @@
              this.func_70071_h_();
  
              if (this.func_184218_aH())
-@@ -2032,6 +2301,7 @@
+@@ -2032,6 +2272,7 @@
              }
          }
  
@@ -808,7 +737,7 @@
          if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
          {
              if (this.func_184218_aH())
-@@ -2067,6 +2337,7 @@
+@@ -2067,6 +2308,7 @@
          if (this.field_184239_as != null)
          {
              Entity entity = this.field_184239_as;
@@ -816,7 +745,7 @@
              this.field_184239_as = null;
              entity.func_184225_p(this);
          }
-@@ -2080,6 +2351,28 @@
+@@ -2080,6 +2322,28 @@
          }
          else
          {
@@ -845,7 +774,7 @@
              if (!this.field_70170_p.field_72995_K && p_184200_1_ instanceof EntityPlayer && !(this.func_184179_bs() instanceof EntityPlayer))
              {
                  this.field_184244_h.add(0, p_184200_1_);
-@@ -2099,6 +2392,27 @@
+@@ -2099,6 +2363,27 @@
          }
          else
          {
@@ -873,7 +802,7 @@
              this.field_184244_h.remove(p_184225_1_);
              p_184225_1_.field_184245_j = 60;
          }
-@@ -2295,12 +2609,12 @@
+@@ -2295,12 +2580,12 @@
          this.func_70052_a(5, p_82142_1_);
      }
  
@@ -888,7 +817,7 @@
      {
          byte b0 = ((Byte)this.field_70180_af.func_187225_a(field_184240_ax)).byteValue();
  
-@@ -2321,17 +2635,52 @@
+@@ -2321,17 +2606,52 @@
  
      public void func_70050_g(int p_70050_1_)
      {
@@ -943,7 +872,7 @@
          }
      }
  
-@@ -2472,7 +2821,7 @@
+@@ -2472,7 +2792,7 @@
  
      public String toString()
      {
@@ -952,7 +881,7 @@
      }
  
      public boolean func_180431_b(DamageSource p_180431_1_)
-@@ -2509,57 +2858,62 @@
+@@ -2509,57 +2829,62 @@
      @Nullable
      public Entity func_184204_a(int p_184204_1_)
      {
@@ -977,7 +906,7 @@
 +            // WorldServer worldserver = minecraftserver.getWorld(i);
 +            // WorldServer worldserver1 = minecraftserver.getWorld(dimensionIn);
 +            // Cauldron start - Allow Forge hotloading on teleport
-+			WorldServer exitWorld = minecraftserver.getWorldServer(p_184204_1_);
++			WorldServer exitWorld = minecraftserver.func_71218_a(p_184204_1_);
  
 -            if (i == 1 && p_184204_1_ == 1)
 -            {
@@ -985,7 +914,7 @@
 -                this.field_71093_bK = 0;
 -            }
 +            Location enter = this.getBukkitEntity().getLocation();
-+            Location exit = exitWorld != null ? minecraftserver.func_184103_al().calculateTarget(enter, minecraftserver.getWorldServer(p_184204_1_)) : null;
++            Location exit = exitWorld != null ? minecraftserver.func_184103_al().calculateTarget(enter, minecraftserver.func_71218_a(p_184204_1_)) : null;
 +            boolean useTravelAgent = exitWorld != null && !(this.field_71093_bK == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
 +            // Cauldron start - check if teleporter is instance of TravelAgent before attempting to cast to it
 +            TravelAgent agent = (teleporter != null && teleporter instanceof TravelAgent) ? (TravelAgent)teleporter : org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT;  // return arbitrary TA to compensate for implementation dependent plugins
@@ -1057,7 +986,7 @@
              this.field_70170_p.field_72984_F.func_76318_c("reloading");
              Entity entity = EntityList.func_191304_a(this.getClass(), worldserver1);
  
-@@ -2567,28 +2921,26 @@
+@@ -2567,28 +2892,26 @@
              {
                  entity.func_180432_n(this);
  
@@ -1095,7 +1024,7 @@
              return entity;
          }
          else
-@@ -2604,7 +2956,7 @@
+@@ -2604,7 +2927,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -1104,7 +1033,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2717,6 +3069,11 @@
+@@ -2717,6 +3040,11 @@
  
      public void func_96094_a(String p_96094_1_)
      {
@@ -1116,7 +1045,7 @@
          this.field_70180_af.func_187227_b(field_184242_az, p_96094_1_);
      }
  
-@@ -2859,11 +3216,11 @@
+@@ -2859,11 +3187,11 @@
  
      public void func_174794_a(CommandResultStats.Type p_174794_1_, int p_174794_2_)
      {
@@ -1132,7 +1061,7 @@
  
      @Nullable
      public MinecraftServer func_184102_h()
-@@ -2901,6 +3258,217 @@
+@@ -2901,6 +3229,217 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -1350,7 +1279,7 @@
      public void func_184178_b(EntityPlayerMP p_184178_1_)
      {
      }
-@@ -3069,7 +3637,7 @@
+@@ -3069,7 +3608,7 @@
          return SoundCategory.NEUTRAL;
      }
  

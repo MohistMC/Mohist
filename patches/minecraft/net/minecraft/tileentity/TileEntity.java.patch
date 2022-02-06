@@ -8,7 +8,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockJukebox;
-@@ -20,22 +22,30 @@
+@@ -20,8 +22,10 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -20,9 +20,7 @@
  {
      private static final Logger field_145852_a = LogManager.getLogger();
      private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
--    protected World field_145850_b;
-+    public World field_145850_b;
-     protected BlockPos field_174879_c = BlockPos.field_177992_a;
+@@ -30,12 +34,18 @@
      protected boolean field_145846_f;
      private int field_145847_g = -1;
      protected Block field_145854_h;

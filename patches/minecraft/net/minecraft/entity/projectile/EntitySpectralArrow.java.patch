@@ -1,11 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntitySpectralArrow.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntitySpectralArrow.java
-@@ -12,8 +12,19 @@
- 
- public class EntitySpectralArrow extends EntityArrow
+@@ -14,6 +14,17 @@
  {
--    private int field_184562_f = 200;
-+    public int field_184562_f = 200;
+     public int field_184562_f = 200;
  
 +    @Override
 +    protected ItemStack getItemStack() {

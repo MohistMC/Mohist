@@ -19,30 +19,10 @@
  
  public abstract class EntityArrow extends Entity implements IProjectile
  {
-@@ -47,21 +52,39 @@
-         }
-     });
-     private static final DataParameter<Byte> field_184554_g = EntityDataManager.<Byte>func_187226_a(EntityArrow.class, DataSerializers.field_187191_a);
--    private int field_145791_d;
--    private int field_145792_e;
--    private int field_145789_f;
-+    public int field_145791_d;
-+    public int field_145792_e;
-+    public int field_145789_f;
-     private Block field_145790_g;
-     private int field_70253_h;
--    protected boolean field_70254_i;
-+    public boolean field_70254_i; // Spigot
-     protected int field_184552_b;
--    public EntityArrow.PickupStatus field_70251_a;
-+    public PickupStatus field_70251_a;
-     public int field_70249_b;
-     public Entity field_70250_c;
-     private int field_70252_j;
+@@ -61,7 +66,25 @@
      private int field_70257_an;
      private double field_70255_ao;
--    private int field_70256_ap;
-+    public int field_70256_ap;
+     public int field_70256_ap;
 +    protected abstract ItemStack getItemStack();
  
 +    public ItemStack getOriginalItemStack() {

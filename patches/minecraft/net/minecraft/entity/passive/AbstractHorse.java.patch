@@ -8,24 +8,6 @@
  
  public abstract class AbstractHorse extends EntityAnimal implements IInventoryChangedListener, IJumpingMount
  {
-@@ -66,7 +67,7 @@
-             return p_apply_1_ instanceof AbstractHorse && ((AbstractHorse)p_apply_1_).func_110205_ce();
-         }
-     };
--    protected static final IAttribute field_110271_bv = (new RangedAttribute((IAttribute)null, "horse.jumpStrength", 0.7D, 0.0D, 2.0D)).func_111117_a("Jump Strength").func_111112_a(true);
-+    public static final IAttribute field_110271_bv = (new RangedAttribute((IAttribute)null, "horse.jumpStrength", 0.7D, 0.0D, 2.0D)).func_111117_a("Jump Strength").func_111112_a(true);
-     private static final DataParameter<Byte> field_184787_bE = EntityDataManager.<Byte>func_187226_a(AbstractHorse.class, DataSerializers.field_187191_a);
-     private static final DataParameter<Optional<UUID>> field_184790_bH = EntityDataManager.<Optional<UUID>>func_187226_a(AbstractHorse.class, DataSerializers.field_187203_m);
-     private int field_190689_bJ;
-@@ -75,7 +76,7 @@
-     public int field_110278_bp;
-     public int field_110279_bq;
-     protected boolean field_110275_br;
--    protected ContainerHorseChest field_110296_bG;
-+    public ContainerHorseChest field_110296_bG;
-     protected int field_110274_bs;
-     protected float field_110277_bt;
-     private boolean field_110294_bI;
 @@ -88,6 +89,8 @@
      protected boolean field_190688_bE = true;
      protected int field_110285_bP;

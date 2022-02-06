@@ -16,7 +16,7 @@
  import net.minecraft.init.Items;
  import net.minecraft.init.SoundEvents;
  import net.minecraft.item.Item;
-@@ -32,20 +30,23 @@
+@@ -32,6 +30,9 @@
  import net.minecraft.world.storage.loot.LootTableList;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,22 +26,6 @@
  
  public class EntityFishHook extends Entity
  {
-     private static final DataParameter<Integer> field_184528_c = EntityDataManager.<Integer>func_187226_a(EntityFishHook.class, DataSerializers.field_187192_b);
-     private boolean field_146051_au;
-     private int field_146049_av;
--    private EntityPlayer field_146042_b;
-+    public EntityPlayer field_146042_b;
-     private int field_146047_aw;
-     private int field_146045_ax;
-     private int field_146040_ay;
-     private int field_146038_az;
-     private float field_146054_aA;
-     public Entity field_146043_c;
--    private EntityFishHook.State field_190627_av = EntityFishHook.State.FLYING;
-+    private State field_190627_av = State.FLYING;
-     private int field_191518_aw;
-     private int field_191519_ax;
- 
 @@ -169,14 +170,14 @@
                  f = BlockLiquid.func_190973_f(iblockstate, this.field_70170_p, blockpos);
              }

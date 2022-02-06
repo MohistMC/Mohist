@@ -26,7 +26,7 @@
  import net.minecraft.command.ICommandSender;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.ICrashReportDetail;
-@@ -45,23 +43,40 @@
+@@ -45,15 +43,31 @@
  import net.minecraft.world.WorldType;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -57,11 +57,9 @@
 -    public final List<PendingCommand> field_71341_l = Collections.<PendingCommand>synchronizedList(Lists.newArrayList());
 +    public final java.util.Queue<PendingCommand> field_71341_l = new java.util.concurrent.ConcurrentLinkedQueue<>(); // Paper - use a proper queue
      private RConThreadQuery field_71342_m;
--    private final RConConsoleSource field_184115_n = new RConConsoleSource(this);
-+    public final RConConsoleSource field_184115_n = new RConConsoleSource(this);
+     public final RConConsoleSource field_184115_n = new RConConsoleSource(this);
      private RConThreadMain field_71339_n;
--    private PropertyManager field_71340_o;
-+    public PropertyManager field_71340_o;
+@@ -61,7 +75,8 @@
      private ServerEula field_154332_n;
      private boolean field_71338_p;
      private GameType field_71337_q;

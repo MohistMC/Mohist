@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityCreeper.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityCreeper.java
-@@ -36,16 +36,18 @@
+@@ -36,12 +36,14 @@
  import net.minecraft.world.storage.loot.LootTableList;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,13 +15,7 @@
 +    private static final DataParameter<Boolean> field_184715_c = EntityDataManager.<Boolean>func_187226_a(EntityCreeper.class, DataSerializers.field_187198_h); private static final DataParameter<Boolean> isIgnitedDW = field_184715_c; // Paper OBFHELPER
      private int field_70834_e;
      private int field_70833_d;
--    private int field_82225_f = 30;
--    private int field_82226_g = 3;
-+    public int field_82225_f = 30;
-+    public int field_82226_g = 3;
-     private int field_175494_bm;
- 
-     public EntityCreeper(World p_i1733_1_)
+     public int field_82225_f = 30;
 @@ -184,7 +186,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)

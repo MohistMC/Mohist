@@ -1,28 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
-@@ -22,21 +22,21 @@
- 
- public abstract class MobSpawnerBaseLogic
- {
--    private int field_98286_b = 20;
-+    public int field_98286_b = 20;
-     private final List<WeightedSpawnerEntity> field_98285_e = Lists.<WeightedSpawnerEntity>newArrayList();
-     private WeightedSpawnerEntity field_98282_f = new WeightedSpawnerEntity();
-     private double field_98287_c;
-     private double field_98284_d;
--    private int field_98283_g = 200;
--    private int field_98293_h = 800;
--    private int field_98294_i = 4;
-+    public int field_98283_g = 200;
-+    public int field_98293_h = 800;
-+    public int field_98294_i = 4;
-     private Entity field_98291_j;
--    private int field_98292_k = 6;
--    private int field_98289_l = 16;
--    private int field_98290_m = 4;
-+    public int field_98292_k = 6; // CraftBukkit private -> public
-+    public int field_98289_l = 16; // CraftBukkit private -> public
-+    public int field_98290_m = 4; // CraftBukkit private -> public
+@@ -36,7 +36,7 @@
+     public int field_98290_m = 4;
  
      @Nullable
 -    private ResourceLocation func_190895_g()

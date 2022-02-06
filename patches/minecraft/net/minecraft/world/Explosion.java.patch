@@ -23,18 +23,7 @@
  
  public class Explosion
  {
-@@ -34,14 +41,17 @@
-     private final boolean field_82755_b;
-     private final Random field_77290_i;
-     private final World field_77287_j;
--    private final double field_77284_b;
--    private final double field_77285_c;
--    private final double field_77282_d;
--    private final Entity field_77283_e;
-+    public final double field_77284_b;
-+    public final double field_77285_c;
-+    public final double field_77282_d;
-+    public final Entity field_77283_e;
+@@ -41,7 +48,10 @@
      private final float field_77280_f;
      private final List<BlockPos> field_77281_g;
      private final Map<EntityPlayer, Vec3d> field_77288_k;

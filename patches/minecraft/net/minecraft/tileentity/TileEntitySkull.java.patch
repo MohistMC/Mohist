@@ -31,7 +31,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.ITickable;
-@@ -18,17 +33,65 @@
+@@ -18,6 +33,7 @@
  import net.minecraft.util.StringUtils;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -39,11 +39,7 @@
  
  public class TileEntitySkull extends TileEntity implements ITickable
  {
-     private int field_145908_a;
--    private int field_145910_i;
-+    public int field_145910_i;
-     private GameProfile field_152110_j;
-     private int field_184296_h;
+@@ -28,7 +44,54 @@
      private boolean field_184297_i;
      private static PlayerProfileCache field_184298_j;
      private static MinecraftSessionService field_184299_k;

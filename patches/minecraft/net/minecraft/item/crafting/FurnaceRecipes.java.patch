@@ -8,12 +8,8 @@
  import java.util.Map;
  import java.util.Map.Entry;
  import net.minecraft.block.Block;
-@@ -15,15 +16,18 @@
- public class FurnaceRecipes
- {
-     private static final FurnaceRecipes field_77606_a = new FurnaceRecipes();
--    private final Map<ItemStack, ItemStack> field_77604_b = Maps.<ItemStack, ItemStack>newHashMap();
-+    public Map<ItemStack, ItemStack> field_77604_b = Maps.<ItemStack, ItemStack>newHashMap();
+@@ -18,12 +19,15 @@
+     public Map<ItemStack, ItemStack> field_77604_b = Maps.<ItemStack, ItemStack>newHashMap();
      private final Map<ItemStack, Float> field_77605_c = Maps.<ItemStack, Float>newHashMap();
  
 +    public Map<ItemStack,ItemStack> customRecipes = Maps.newHashMap();

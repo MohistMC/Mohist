@@ -1,13 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
 +++ ../src-work/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
-@@ -11,9 +11,10 @@
- public class C00Handshake implements Packet<INetHandlerHandshakeServer>
- {
-     private int field_149600_a;
--    private String field_149598_b;
--    private int field_149599_c;
-+    public String field_149598_b;
-+    public int field_149599_c;
+@@ -14,6 +14,7 @@
+     public String field_149598_b;
+     public int field_149599_c;
      private EnumConnectionState field_149597_d;
 +    private boolean hasFMLMarker = false;
  

@@ -9,15 +9,6 @@
  
  public class EntityShulker extends EntityGolem implements IMob
  {
-@@ -55,7 +57,7 @@
-     protected static final DataParameter<EnumFacing> field_184700_a = EntityDataManager.<EnumFacing>func_187226_a(EntityShulker.class, DataSerializers.field_187202_l);
-     protected static final DataParameter<Optional<BlockPos>> field_184701_b = EntityDataManager.<Optional<BlockPos>>func_187226_a(EntityShulker.class, DataSerializers.field_187201_k);
-     protected static final DataParameter<Byte> field_184702_c = EntityDataManager.<Byte>func_187226_a(EntityShulker.class, DataSerializers.field_187191_a);
--    protected static final DataParameter<Byte> field_190770_bw = EntityDataManager.<Byte>func_187226_a(EntityShulker.class, DataSerializers.field_187191_a);
-+    public static final DataParameter<Byte> field_190770_bw = EntityDataManager.<Byte>func_187226_a(EntityShulker.class, DataSerializers.field_187191_a);
-     public static final EnumDyeColor field_190771_bx = EnumDyeColor.PURPLE;
-     private float field_184705_bx;
-     private float field_184706_by;
 @@ -311,6 +313,7 @@
              this.field_70165_t = (double)blockpos.func_177958_n() + 0.5D;
              this.field_70163_u = (double)blockpos.func_177956_o();

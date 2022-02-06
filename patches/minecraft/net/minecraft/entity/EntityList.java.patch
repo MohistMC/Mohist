@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -107,10 +107,13 @@
+@@ -107,9 +107,12 @@
      public static final ResourceLocation field_191307_a = new ResourceLocation("lightning_bolt");
      private static final ResourceLocation field_191310_e = new ResourceLocation("player");
      private static final Logger field_151516_b = LogManager.getLogger();
@@ -9,14 +9,12 @@
 +    public static final RegistryNamespaced< ResourceLocation, Class <? extends Entity >> field_191308_b = new RegistryNamespaced < ResourceLocation, Class <? extends Entity >> ();
      public static final Map<ResourceLocation, EntityList.EntityEggInfo> field_75627_a = Maps.<ResourceLocation, EntityList.EntityEggInfo>newLinkedHashMap();
 -    public static final Set<ResourceLocation> field_191309_d = Sets.<ResourceLocation>newHashSet();
--    private static final List<String> field_191311_g = Lists.<String>newArrayList();
 +    // Mohist private -> public compatible imiPet(KNOWN_TYPES -> EXTRA_NAMES)
 +    public static final Set<ResourceLocation> EXTRA_NAMES = Sets.newHashSet();
 +    // Mohist compatible SilkSpawners
-+    public static final List<String> field_191311_g = Lists.<String>newArrayList();
+     public static final List<String> field_191311_g = Lists.<String>newArrayList();
  
      @Nullable
-     public static ResourceLocation func_191301_a(Entity p_191301_0_)
 @@ -121,38 +124,54 @@
      @Nullable
      public static ResourceLocation func_191306_a(Class <? extends Entity > p_191306_0_)

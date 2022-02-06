@@ -16,15 +16,6 @@
  
  public class EntityFallingBlock extends Entity
  {
-@@ -38,7 +38,7 @@
-     public int field_145812_b;
-     public boolean field_145813_c = true;
-     private boolean field_145808_f;
--    private boolean field_145809_g;
-+    public boolean field_145809_g;
-     private int field_145815_h = 40;
-     private float field_145816_i = 2.0F;
-     public NBTTagCompound field_145810_d;
 @@ -114,7 +114,7 @@
              {
                  BlockPos blockpos = new BlockPos(this);

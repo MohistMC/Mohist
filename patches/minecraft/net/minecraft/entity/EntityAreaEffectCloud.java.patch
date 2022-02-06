@@ -18,28 +18,6 @@
  
  public class EntityAreaEffectCloud extends Entity
  {
-@@ -33,15 +37,15 @@
-     private static final DataParameter<Integer> field_189736_e = EntityDataManager.<Integer>func_187226_a(EntityAreaEffectCloud.class, DataSerializers.field_187192_b);
-     private static final DataParameter<Integer> field_189737_f = EntityDataManager.<Integer>func_187226_a(EntityAreaEffectCloud.class, DataSerializers.field_187192_b);
-     private PotionType field_184502_e;
--    private final List<PotionEffect> field_184503_f;
-+    public final List<PotionEffect> field_184503_f;
-     private final Map<Entity, Integer> field_184504_g;
-     private int field_184505_h;
--    private int field_184506_as;
--    private int field_184507_at;
-+    public int field_184506_as;
-+    public int field_184507_at;
-     private boolean field_184508_au;
--    private int field_184509_av;
--    private float field_184510_aw;
--    private float field_184511_ax;
-+    public int field_184509_av;
-+    public float field_184510_aw;
-+    public float field_184511_ax;
-     private EntityLivingBase field_184512_ay;
-     private UUID field_184513_az;
- 
 @@ -126,6 +130,22 @@
          }
      }

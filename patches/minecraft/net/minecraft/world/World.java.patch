@@ -92,36 +92,7 @@
      private int field_181546_a = 63;
      protected boolean field_72999_e;
      public final List<Entity> field_72996_f = Lists.<Entity>newArrayList();
-@@ -86,30 +121,148 @@
-     public float field_73017_q;
-     private int field_73016_r;
-     public final Random field_73012_v = new Random();
--    public final WorldProvider field_73011_w;
-+    public WorldProvider field_73011_w;
-     protected PathWorldListener field_184152_t = new PathWorldListener();
-     protected List<IWorldEventListener> field_73021_x;
--    protected IChunkProvider field_73020_y;
-+    public IChunkProvider field_73020_y;
-     protected final ISaveHandler field_73019_z;
--    protected WorldInfo field_72986_A;
-+    public WorldInfo field_72986_A;
-     protected boolean field_72987_B;
--    protected MapStorage field_72988_C;
-+    public MapStorage field_72988_C;
-     public VillageCollection field_72982_D;
-     protected LootTableManager field_184151_B;
-     protected AdvancementManager field_191951_C;
-     protected FunctionManager field_193036_D;
-     public final Profiler field_72984_F;
-     private final Calendar field_83016_L;
--    protected Scoreboard field_96442_D;
-+    public Scoreboard field_96442_D;
-     public final boolean field_72995_K;
--    protected boolean field_72985_G;
--    protected boolean field_72992_H;
-+    public boolean field_72985_G;
-+    public boolean field_72992_H;
-     private boolean field_147481_N;
+@@ -108,8 +143,126 @@
      private final WorldBorder field_175728_M;
      int[] field_72994_J;
  

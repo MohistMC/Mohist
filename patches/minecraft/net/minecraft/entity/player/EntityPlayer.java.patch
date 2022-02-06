@@ -64,18 +64,6 @@
      protected int field_71101_bC;
      public float field_71107_bF;
      public float field_71109_bG;
-@@ -117,9 +130,9 @@
-     public double field_71094_bP;
-     public double field_71095_bQ;
-     public double field_71085_bR;
--    protected boolean field_71083_bS;
-+    public boolean field_71083_bS;
-     public BlockPos field_71081_bT;
--    private int field_71076_b;
-+    public int field_71076_b;
-     public float field_71079_bU;
-     @SideOnly(Side.CLIENT)
-     public float field_71082_cx;
 @@ -141,6 +154,15 @@
      @Nullable
      public EntityFishHook field_71104_cf;
@@ -1052,12 +1040,8 @@
      {
          this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
      }
-@@ -2418,9 +2716,171 @@
- 
-     public boolean func_189808_dh()
-     {
--        return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
-+        return this.field_71075_bZ.field_75098_d && (this.func_70003_b(2, ""));
+@@ -2421,6 +2719,168 @@
+         return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  
 +    /**
