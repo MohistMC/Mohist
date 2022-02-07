@@ -518,6 +518,7 @@ project(':fmlonly') {
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
         implementation project(':mclanguage')
+        implementation project(':mohistlauncher')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
@@ -1270,8 +1271,20 @@ project(':forge') {
         } else {
             println("Can't read server")
         }
+        doFirst {
+            MANIFESTS.each{ pkg, values ->
+                if (pkg == '/') {
+                    manifest.attributes(values += [
+                            'Main-Class': 'com.mohistmc.server.MohistMCStart',
+                            'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
+                    ])
+                } else {
+                    manifest.attributes(values, pkg)
+                }
+            }
+        }
 
-        println(CLASS_PATH)
+        //println(CLASS_PATH)
 
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
@@ -1291,6 +1304,10 @@ project(':forge') {
         from(project(':mclanguage').tasks.jar.outputs) {
             rename { 'data/mclanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
+
+        from(project(':mohistlauncher').project.sourceSets.main.output){
+        }
+
         from(rootProject.file('server_files/version.txt')) {
             filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])
             rename { 'versions/mohist.txt' }

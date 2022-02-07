@@ -1,0 +1,19 @@
+plugins {
+    id 'com.github.ben-manes.versions'
+    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+}
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+apply plugin: 'org.javamodularity.moduleplugin'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.mohistmc.com/' }
+}
+
+dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+
+
+dependencies {
+    implementation "com.mohistmc.yaml:Yaml:0.1"
+}
