@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
+@@ -51,7 +_,7 @@
+    private CompletableFuture<ChunkAccess> f_140005_ = CompletableFuture.completedFuture((ChunkAccess)null);
+    @Nullable
+    private final DebugBuffer<ChunkHolder.ChunkSaveDebug> f_142984_ = null;
+-   private int f_140006_;
++   public int f_140006_;
+    private int f_140007_;
+    private int f_140008_;
+    final ChunkPos f_140009_;
 @@ -64,6 +_,7 @@
     public final ChunkHolder.PlayerProvider f_140016_;
     private boolean f_140017_;
