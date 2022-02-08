@@ -1,5 +1,50 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
+@@ -46,6 +_,7 @@
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Chunk;
+ 
+ public class ServerChunkCache extends ChunkSource {
+    private static final Logger f_199839_ = LogManager.getLogger();
+@@ -82,6 +_,24 @@
+       this.m_8488_();
+    }
+ 
++   // CraftBukkit start - properly implement isChunkLoaded
++   public boolean isChunkLoaded(int chunkX, int chunkZ) {
++      ChunkHolder chunk = this.f_8325_.m_140174_(ChunkPos.m_45589_(chunkX, chunkZ));
++      if (chunk == null) {
++         return false;
++      }
++      return chunk.getFullChunk() != null;
++   }
++
++   public LevelChunk getChunkUnchecked( int chunkX, int chunkZ) {
++      ChunkHolder chunk = this.f_8325_.m_140174_(ChunkPos.m_45589_(chunkX, chunkZ));
++      if (chunk == null) {
++         return null;
++      }
++      return chunk.getFullChunkUnchecked();
++   }
++   // CraftBukkit end
++
+    public ThreadedLevelLightEngine m_7827_() {
+       return this.f_8331_;
+    }
+@@ -155,7 +_,10 @@
+          for(int j = 0; j < 4; ++j) {
+             if (i == this.f_8337_[j] && this.f_8338_[j] == ChunkStatus.f_62326_) {
+                ChunkAccess chunkaccess = this.f_8339_[j];
+-               return chunkaccess instanceof LevelChunk ? (LevelChunk)chunkaccess : null;
++               if (chunkaccess != null)
++               { // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
++                  return chunkaccess instanceof LevelChunk ? ( LevelChunk ) chunkaccess : null;
++               }
+             }
+          }
+ 
 @@ -163,6 +_,7 @@
           if (chunkholder == null) {
              return null;
@@ -8,12 +53,39 @@
              Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.m_140080_(ChunkStatus.f_62326_).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
              if (either == null) {
                 return null;
+@@ -209,7 +_,15 @@
+       long i = chunkpos.m_45588_();
+       int j = 33 + ChunkStatus.m_62370_(p_8459_);
+       ChunkHolder chunkholder = this.m_8364_(i);
+-      if (p_8460_) {
++      // CraftBukkit start - don't add new ticket for currently unloading chunk
++      boolean currentlyUnloading = false;
++      if (chunkholder != null) {
++         ChunkHolder.FullChunkStatus oldChunkState = ChunkHolder.m_140083_(chunkholder.f_140006_);
++         ChunkHolder.FullChunkStatus currentChunkState = ChunkHolder.m_140083_(chunkholder.m_140093_());
++         currentlyUnloading = (oldChunkState.m_140114_(ChunkHolder.FullChunkStatus.BORDER) && !currentChunkState.m_140114_(ChunkHolder.FullChunkStatus.BORDER));
++      }
++      if (p_8460_ && !currentlyUnloading) {
++         // CraftBukkit end
+          this.f_8327_.m_140792_(TicketType.f_9449_, chunkpos, j, chunkpos);
+          if (this.m_8416_(chunkholder, j)) {
+             ProfilerFiller profilerfiller = this.f_8329_.m_46473_();
+@@ -227,7 +_,7 @@
+    }
+ 
+    private boolean m_8416_(@Nullable ChunkHolder p_8417_, int p_8418_) {
+-      return p_8417_ == null || p_8417_.m_140093_() > p_8418_;
++      return p_8417_ == null || p_8417_.f_140006_ > p_8418_;
+    }
+ 
+    public boolean m_5563_(int p_8429_, int p_8430_) {
 @@ -297,11 +_,31 @@
     }
  
     public void close() throws IOException {
+-      this.m_8419_(true);
 +      // CraftBukkit start
-       this.m_8419_(true);
++      close(true);
 +   }
 +
 +   public void close(boolean save) throws IOException {
@@ -40,7 +112,23 @@
     public void m_142483_(BooleanSupplier p_8415_) {
        this.f_8329_.m_46473_().m_6180_("purge");
        this.f_8327_.m_140776_();
-@@ -348,7 +_,7 @@
+@@ -326,7 +_,7 @@
+          ProfilerFiller profilerfiller = this.f_8329_.m_46473_();
+          profilerfiller.m_6180_("pollingChunks");
+          int k = this.f_8329_.m_46469_().m_46215_(GameRules.f_46143_);
+-         boolean flag1 = leveldata.m_6793_() % 400L == 0L;
++         boolean flag1 = f_8329_.ticksPerAnimalSpawns != 0L && leveldata.m_6793_() % f_8329_.ticksPerAnimalSpawns == 0L; // CraftBukkit
+          profilerfiller.m_6180_("naturalSpawnCount");
+          int l = this.f_8327_.m_140816_();
+          NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.m_186524_(l, this.f_8329_.m_8583_(), this::m_8370_, new LocalMobCapCalculator(this.f_8325_));
+@@ -342,13 +_,13 @@
+          }
+ 
+          profilerfiller.m_6182_("spawnAndTick");
+-         boolean flag2 = this.f_8329_.m_46469_().m_46207_(GameRules.f_46134_);
++         boolean flag2 = this.f_8329_.m_46469_().m_46207_(GameRules.f_46134_) && !f_8329_.m_6907_().isEmpty(); // CraftBukkit
+          Collections.shuffle(list);
+ 
           for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
              LevelChunk levelchunk1 = serverchunkcache$chunkandholder.f_184028_;
              ChunkPos chunkpos = levelchunk1.m_7697_();
@@ -49,18 +137,42 @@
                 levelchunk1.m_187632_(j);
                 if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
                    NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);
-@@ -426,6 +_,14 @@
- 
-    public <T> void m_8438_(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
+@@ -428,6 +_,14 @@
        this.f_8327_.m_140849_(p_8439_, p_8440_, p_8441_, p_8442_);
-+   }
-+
+    }
+ 
 +   public <T> void registerTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
 +      this.f_8327_.registerTicking(type, pos, distance, value);
 +   }
 +
 +   public <T> void releaseTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
 +      this.f_8327_.releaseTicking(type, pos, distance, value);
-    }
- 
++   }
++
     public void m_6692_(ChunkPos p_8400_, boolean p_8401_) {
+       this.f_8327_.m_140799_(p_8400_, p_8401_);
+    }
+@@ -521,13 +_,17 @@
+          super.m_6367_(p_8502_);
+       }
+ 
++      // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
+       public boolean m_7245_() {
+-         if (ServerChunkCache.this.m_8489_()) {
+-            return true;
+-         } else {
+-            ServerChunkCache.this.f_8331_.m_9409_();
+-            return super.m_7245_();
++            if ( ServerChunkCache.this.m_8489_() )
++            {
++               return true;
++            }
++            else
++            {
++               ServerChunkCache.this.f_8331_.m_9409_();
++               return super.m_7245_();
++            }
+          }
+       }
+-   }
+ }
