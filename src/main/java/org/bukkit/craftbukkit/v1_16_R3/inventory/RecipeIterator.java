@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
+import com.mohistmc.recipe.RecipeUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -36,8 +37,10 @@ public class RecipeIterator implements Iterator<Recipe> {
         if (current == null || !current.hasNext()) {
             current = recipes.next().getValue().values().iterator();
         }
-
-        return current.next().toBukkitRecipe();
+        // Mohist start - handle custom recipe classes without Bukkit API equivalents
+        IRecipe recipe = current.next();
+        return RecipeUtils.toBukkitRecipe(recipe);
+        // Mohist end
     }
 
     @Override
