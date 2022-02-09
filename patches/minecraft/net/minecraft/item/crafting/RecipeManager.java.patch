@@ -84,7 +84,7 @@
              }).put(resourcelocation, irecipe);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
 -            field_199521_c.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-+            field_199521_c.error(i18n.get("recipemanager.3", resourcelocation), jsonparseexception);
++            field_199521_c.debug(i18n.get("recipemanager.3", resourcelocation), jsonparseexception);
           }
        }
  
@@ -126,7 +126,7 @@
 +            // CraftBukkit end
 +         } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
 +            String msg; if ((msg = jsonparseexception.getMessage()) == null || !msg.startsWith("Unknown item")) // Mohist - Suppress recipe loading error
-+            field_199521_c.error(i18n.get("recipemanager.3", minecraftkey), jsonparseexception);
++            field_199521_c.debug(i18n.get("recipemanager.3", minecraftkey), jsonparseexception);
 +         }
 +      }
 +

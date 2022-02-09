@@ -173,7 +173,7 @@
           serverworld1 = this.field_72400_f.func_241755_D_();
        } else {
           serverworld1 = serverworld;
-@@ -142,20 +_,34 @@
+@@ -142,20 +_,35 @@
           s1 = p_72355_1_.func_74430_c().toString();
        }
  
@@ -183,8 +183,9 @@
 +      PlayerSpawnLocationEvent ev = new PlayerSpawnLocationEvent(bukkitPlayer, bukkitPlayer.getLocation());
 +      Bukkit.getPluginManager().callEvent(ev);
 +      Location loc = ev.getSpawnLocation();
-+      serverworld = ((CraftWorld) loc.getWorld()).getHandle();
-+      p_72355_2_.func_70029_a(serverworld);
++      serverworld1 = ((CraftWorld) loc.getWorld()).getHandle();
++      p_72355_2_.func_70029_a(serverworld1);
++      p_72355_2_.field_71134_c.func_73080_a((ServerWorld) p_72355_2_.field_70170_p);
 +      p_72355_2_.func_70080_a(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 +      // Spigot end
 +
