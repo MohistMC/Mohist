@@ -1,5 +1,4 @@
 <div align="center">
-<img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.16.5</h1>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
@@ -34,7 +33,7 @@ Progress
   * Bukkit(7e29f765)  
   * Spigot(9fb885e8)
 - [x] Beta release
-- [ ] The nms patch is compatible with mms - 50%
+- [ ] The nms patch is compatible with mms - 55%
 
 Getting Help
 ------

@@ -41,7 +41,7 @@ public class WorldCommand extends Command {
             ArrayList<String> infoLore = new ArrayList<String>();
 
             infoLore.add("§bWorldBorder §8》 §7" + w.getWorldBorder().getSize());
-            infoLore.add("§bWorldType §8》 §7" + w.getWorldType());
+            infoLore.add("§bWorldType §8》 §7" + w.getEnvironment().name()); // TODO
             infoLore.add("§bDifficulty §8》 §7" + w.getDifficulty());
             infoLore.add("§bPlayers §8》 §7" + w.getPlayers().size());
 
