@@ -1,43 +1,58 @@
 package com.mohistmc.forge;
 
+import com.mohistmc.api.PlayerAPI;
 import com.mojang.authlib.GameProfile;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nullable;
+import java.util.stream.Collectors;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.IPermissionHandler;
 import net.minecraftforge.server.permission.context.IContext;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * https://github.com/CJ-MC-Mods/ForgeToBukkitPermissions
  */
 public class BukkitPermissionsHandler implements IPermissionHandler {
 
-    private final Map<String, String> registeredNodes = new HashMap<>();
-
     @Override
-    public void registerNode(String node, DefaultPermissionLevel level, String desc) {
+    public void registerNode(@NotNull String node, @NotNull DefaultPermissionLevel level, @NotNull String desc) {
         ForgeInjectBukkit.registerDefaultPermission(node, level, desc);
-        registeredNodes.put(node, desc);
     }
 
     @Override
-    public Collection<String> getRegisteredNodes() {
-        return registeredNodes.keySet();
+    public @NotNull Collection<String> getRegisteredNodes() {
+        return Bukkit.getPluginManager().getPermissions().stream().map(Permission::getName).collect(Collectors.toList());
     }
 
     @Override
-    public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context) {
-        Player player = Bukkit.getServer().getPlayer(profile.getId());
-
-        return player != null && player.hasPermission(node);
+    public boolean hasPermission(@NotNull GameProfile profile, @NotNull String node, @NotNull IContext context) {
+        if (context != null) {
+            PlayerEntity player = context.getPlayer();
+            if (player != null) {
+                return player.getBukkitEntity().hasPermission(node);
+            }
+        }
+        Player player = Bukkit.getPlayer(profile.getId());
+        if (player != null) {
+            return player.hasPermission(node);
+        } else {
+            Permission permission = Bukkit.getPluginManager().getPermission(node);
+            boolean op = PlayerAPI.isOp(profile);
+            if (permission != null) {
+                return permission.getDefault().getValue(op);
+            } else {
+                return Permission.DEFAULT_PERMISSION.getValue(op);
+            }
+        }
     }
 
     @Override
-    public String getNodeDescription(String node) {
-        return registeredNodes.getOrDefault(node, "No Description Set");
+    public @NotNull String getNodeDescription(@NotNull String desc) {
+        Permission permission = Bukkit.getPluginManager().getPermission(desc);
+        return permission !=null ? permission.getDescription() : "No Description Set";
     }
 }

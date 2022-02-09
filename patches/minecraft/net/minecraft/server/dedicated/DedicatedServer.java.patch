@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,11 +_,16 @@
+@@ -1,11 +_,17 @@
  package net.minecraft.server.dedicated;
  
 +import co.aikar.timings.MinecraftTimings;
@@ -8,6 +8,7 @@
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
 +import com.mohistmc.configuration.MohistConfig;
++import com.mohistmc.forge.BukkitPermissionsHandler;
 +import com.mohistmc.util.i18n.i18n;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
@@ -25,10 +26,11 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.SharedConstants;
  import net.minecraft.util.Util;
-@@ -55,17 +_,24 @@
+@@ -55,17 +_,25 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.IServerConfiguration;
  import net.minecraft.world.storage.SaveFormat;
++import net.minecraftforge.server.permission.PermissionAPI;
 +import org.apache.logging.log4j.Level;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -169,7 +171,7 @@
        }
  
        if (this.func_152368_aE()) {
-@@ -157,45 +_,44 @@
+@@ -157,45 +_,45 @@
           return false;
        } else {
           this.func_184105_a(new DedicatedPlayerList(this, this.field_240767_f_, this.field_240766_e_));
@@ -222,6 +224,7 @@
           }
 -
 -         return true;
++         PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
        }
 +

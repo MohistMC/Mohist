@@ -1,5 +1,6 @@
 package com.mohistmc.api;
 
+import com.mojang.authlib.GameProfile;
 import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +50,11 @@ public class PlayerAPI {
     public static boolean isOp(PlayerEntity ep)
     {
         return MinecraftServer.getServer().getPlayerList().isOp(ep.getGameProfile());
+    }
+
+    public static boolean isOp(GameProfile gp)
+    {
+        return MinecraftServer.getServer().getPlayerList().isOp(gp);
     }
 
     public static SocketAddress getRemoteAddress(Player player)

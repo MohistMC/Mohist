@@ -195,20 +195,14 @@ public class ForgeInjectBukkit {
 
     public static void registerDefaultPermission(String name, DefaultPermissionLevel level, String desc) {
         PermissionDefault permissionDefault;
-        switch (level) {
-            case ALL:
-                permissionDefault = PermissionDefault.TRUE;
-                break;
-            case OP:
-                permissionDefault = PermissionDefault.OP;
-                break;
-            case NONE:
-            default:
-                permissionDefault = PermissionDefault.FALSE;
-                break;
+        if (level == DefaultPermissionLevel.ALL) {
+            permissionDefault = PermissionDefault.TRUE;
+        } else if (level == DefaultPermissionLevel.OP) {
+            permissionDefault = PermissionDefault.OP;
+        } else {
+            permissionDefault = PermissionDefault.FALSE;
         }
-        Permission permission = new Permission(name, desc, permissionDefault);
-        DefaultPermissions.registerPermission(permission, false);
+        DefaultPermissions.registerPermission(name, desc, permissionDefault);
     }
 
     public static void addEnumVillagerProfession() {
