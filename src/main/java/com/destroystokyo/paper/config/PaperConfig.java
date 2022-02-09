@@ -4,7 +4,6 @@ import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
 import com.destroystokyo.paper.PaperCommand;
 import com.google.common.base.Throwables;
-
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

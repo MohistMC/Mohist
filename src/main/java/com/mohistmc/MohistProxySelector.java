@@ -3,8 +3,6 @@ package com.mohistmc;
 import com.mohistmc.api.event.MohistNetworkEvent;
 import com.mohistmc.configuration.MohistConfig;
 import com.mohistmc.util.IOUtil;
-import org.bukkit.Bukkit;
-
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -12,6 +10,7 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Bukkit;
 
 public class MohistProxySelector extends ProxySelector {
 

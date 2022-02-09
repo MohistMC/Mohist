@@ -1,7 +1,6 @@
 package com.mohistmc.eventhandler.dispatcher;
 
 import net.minecraft.entity.Entity;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;

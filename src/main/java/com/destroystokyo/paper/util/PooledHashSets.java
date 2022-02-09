@@ -2,7 +2,6 @@ package com.destroystokyo.paper.util;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
-
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 

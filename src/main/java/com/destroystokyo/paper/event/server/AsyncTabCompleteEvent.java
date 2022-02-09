@@ -23,7 +23,8 @@
 
 package com.destroystokyo.paper.event.server;
 
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -31,10 +32,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

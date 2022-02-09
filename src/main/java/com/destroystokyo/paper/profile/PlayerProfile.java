@@ -3,7 +3,6 @@ package com.destroystokyo.paper.profile;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

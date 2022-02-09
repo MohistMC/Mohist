@@ -1,7 +1,13 @@
 package com.mohistmc.eventhandler;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.eventhandler.dispatcher.*;
+import com.mohistmc.eventhandler.dispatcher.BlockEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.BucketEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.CommandsEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.EntityEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.ItemEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.PlayerEventDispatcher;
+import com.mohistmc.eventhandler.dispatcher.WorldEventDispatcher;
 import net.minecraftforge.common.MinecraftForge;
 
 public class EventDispatcherRegistry {

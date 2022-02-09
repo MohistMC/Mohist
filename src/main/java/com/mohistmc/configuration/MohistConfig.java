@@ -1,14 +1,11 @@
 package com.mohistmc.configuration;
 
+import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.network.download.DownloadSource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import com.mohistmc.config.MohistConfigUtil;
 import java.util.List;
-
-import com.mohistmc.network.download.DownloadSource;
-import com.mohistmc.util.i18n.i18n;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 

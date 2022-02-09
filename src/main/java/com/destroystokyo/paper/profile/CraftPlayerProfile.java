@@ -1,24 +1,22 @@
 package com.destroystokyo.paper.profile;
 
-import com.destroystokyo.paper.config.PaperConfig;
 import com.google.common.base.Charsets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerProfileCache;
-import org.apache.commons.lang3.Validate;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.spigotmc.SpigotConfig;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerProfileCache;
+import org.apache.commons.lang3.Validate;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.spigotmc.SpigotConfig;
 
 public class CraftPlayerProfile implements PlayerProfile {
 

@@ -1,6 +1,5 @@
 package com.mohistmc.inventory;
 
-import com.mohistmc.MohistMC;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

@@ -1,12 +1,23 @@
 package org.bukkit.command;
 
 import co.aikar.timings.TimingsCommand;
+import com.mohistmc.command.BackupWorldCommand;
+import com.mohistmc.command.DownloadFileCommand;
+import com.mohistmc.command.DumpCommand;
+import com.mohistmc.command.GetPluginListCommand;
+import com.mohistmc.command.MohistCommand;
 import com.mohistmc.command.PluginCommand;
-import com.mohistmc.command.*;
+import com.mohistmc.command.UpdateMohistCommand;
+import com.mohistmc.command.WhitelistModsCommand;
+import com.mohistmc.plugins.WorldCommand;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.command.defaults.*;
+import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.command.defaults.HelpCommand;
+import org.bukkit.command.defaults.PluginsCommand;
+import org.bukkit.command.defaults.ReloadCommand;
+import org.bukkit.command.defaults.VersionCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +48,7 @@ public class SimpleCommandMap implements CommandMap {
 		register("mohist", new UpdateMohistCommand("updatemohist"));
 		register("mohist", new BackupWorldCommand("backupworld"));
         register("mohist", new WhitelistModsCommand("whitelistmods"));
+        register("mohist", new WorldCommand("world"));
     }
 
     public void setFallbackCommands() {

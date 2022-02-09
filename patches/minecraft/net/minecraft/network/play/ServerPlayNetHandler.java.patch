@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -1,8 +_,11 @@
+@@ -1,8 +_,12 @@
  package net.minecraft.network.play;
  
 +import co.aikar.timings.MinecraftTimings;
@@ -9,6 +9,7 @@
  import com.google.common.primitives.Doubles;
  import com.google.common.primitives.Floats;
 +import com.mohistmc.config.MohistConfigUtil;
++import com.mohistmc.plugins.WorldCommand;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
  import io.netty.util.concurrent.Future;
@@ -1521,7 +1522,7 @@
              NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
              for(int i = 0; i < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++i) {
-@@ -1255,8 +_,287 @@
+@@ -1255,8 +_,288 @@
  
              this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist);
           } else {
@@ -1741,6 +1742,7 @@
 +               event.setCancelled(cancelled);
 +               Container oldContainer = this.field_147369_b.field_71070_bA; // SPIGOT-1224
 +               craftServer.getPluginManager().callEvent(event);
++               WorldCommand.onWorldManager(event);
 +               if (this.field_147369_b.field_71070_bA != oldContainer) {
 +                  return;
 +               }
