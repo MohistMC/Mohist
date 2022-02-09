@@ -21,6 +21,7 @@ package net.minecraftforge.common;
 
 import com.mohistmc.MohistProxySelector;
 import com.mohistmc.eventhandler.EventDispatcherRegistry;
+import com.mohistmc.forge.BukkitPermissionsHandler;
 import java.net.ProxySelector;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
@@ -55,6 +56,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ModIdArgument;
+import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -164,6 +166,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(this);
         BiomeDictionary.init();
         EventDispatcherRegistry.init();
+        PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
         ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
     }
 

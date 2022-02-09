@@ -1,8 +1,9 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -1,5 +_,25 @@
+@@ -1,5 +_,26 @@
  package net.minecraft.command;
  
++import com.mohistmc.forge.ModsCommandDispatcher;
 +import com.mohistmc.util.i18n.i18n;
 +import java.lang.reflect.Field;
 +import java.util.Collection;
@@ -39,7 +40,7 @@
  import net.minecraft.command.arguments.ArgumentTypes;
  import net.minecraft.command.arguments.SuggestionProviders;
  import net.minecraft.command.impl.AdvancementCommand;
-@@ -100,14 +_,13 @@
+@@ -100,12 +_,10 @@
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.util.text.event.ClickEvent;
  import net.minecraft.util.text.event.HoverEvent;
@@ -48,14 +49,12 @@
  
  public class Commands {
     private static final Logger field_197061_a = LogManager.getLogger();
-    private final CommandDispatcher<CommandSource> field_197062_b = new CommandDispatcher<>();
+-   private final CommandDispatcher<CommandSource> field_197062_b = new CommandDispatcher<>();
++   private final CommandDispatcher<CommandSource> field_197062_b = new ModsCommandDispatcher(this);
  
     public Commands(Commands.EnvironmentType p_i232148_1_) {
-+      this(); // CraftBukkit
        AdvancementCommand.func_198199_a(this.field_197062_b);
-       AttributeCommand.func_241003_a_(this.field_197062_b);
-       ExecuteCommand.func_198378_a(this.field_197062_b);
-@@ -186,16 +_,74 @@
+@@ -186,16 +_,77 @@
        if (p_i232148_1_.field_237219_d_) {
           PublishCommand.func_198581_a(this.field_197062_b);
        }
@@ -63,17 +62,26 @@
  
        this.field_197062_b.findAmbiguities((p_201302_1_, p_201302_2_, p_201302_3_, p_201302_4_) -> {
 -         field_197061_a.warn("Ambiguity between arguments {} and {} with inputs: {}", this.field_197062_b.getPath(p_201302_2_), this.field_197062_b.getPath(p_201302_3_), p_201302_4_);
+-      });
+-      this.field_197062_b.setConsumer((p_197058_0_, p_197058_1_, p_197058_2_) -> {
+-         p_197058_0_.getSource().func_197038_a(p_197058_0_, p_197058_1_, p_197058_2_);
+-      });
+-   }
+-
 +         //LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", this.dispatcher.getPath(p_201302_2_), this.dispatcher.getPath(p_201302_3_), p_201302_4_); // CraftBukkit
-       });
++      });
++      this.field_197062_b.setConsumer((p_197058_0_, p_197058_1_, p_197058_2_) -> {
++         p_197058_0_.getSource().func_197038_a(p_197058_0_, p_197058_1_, p_197058_2_);
++      });
 +   }
 +
 +   // CraftBukkit start
 +   public Commands() {
-       this.field_197062_b.setConsumer((p_197058_0_, p_197058_1_, p_197058_2_) -> {
-          p_197058_0_.getSource().func_197038_a(p_197058_0_, p_197058_1_, p_197058_2_);
-       });
-    }
- 
++      this.field_197062_b.setConsumer((p_197058_0_, p_197058_1_, p_197058_2_) -> {
++         p_197058_0_.getSource().func_197038_a(p_197058_0_, p_197058_1_, p_197058_2_);
++      });
++   }
++
 +   public int dispatchServerCommand(CommandSource sender, String command) {
 +      Joiner joiner = Joiner.on(" ");
 +      if (command.startsWith("/")) {

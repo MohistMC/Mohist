@@ -14,7 +14,9 @@ public class CommandsEventDispatcher {
         if (Bukkit.getServer() instanceof CraftServer) {
             CraftServer craftServer = (CraftServer) Bukkit.getServer();
             Commands dispatcher = craftServer.getServer().getCommands();
-            craftServer.getCommandMap().register("minecraft", new VanillaCommandWrapper(dispatcher, event.getDispatcher().getRoot()));
+            VanillaCommandWrapper wrapper = new VanillaCommandWrapper(dispatcher, event.getDispatcher().getRoot());
+            craftServer.getCommandMap().register("forge", wrapper);
+            Bukkit.getLogger().info("ModsCommandDispatcher register " + wrapper.toString());
         }
     }
 }
