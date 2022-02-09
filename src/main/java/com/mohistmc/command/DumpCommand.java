@@ -219,7 +219,7 @@ public class DumpCommand extends Command {
   private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
     switch (mode) {
       case "file":
-        saveToF("dump", type + ".red", sb, sender);
+        saveToF("dump", type, sb, sender);
         break;
       case "web":
         try {
@@ -232,16 +232,16 @@ public class DumpCommand extends Command {
           }
         } catch (IOException e) {
           sender.sendMessage("Failed to upload to hastebin.");
-          saveToF("dump", type + ".red", sb, sender);
+          saveToF("dump", type, sb, sender);
         }
         break;
     }
   }
 
-  private void saveToF(String parent, String child, StringBuilder sb, CommandSender sender) {
-    File file = new File(parent, child);
+  private void saveToF(String parent, String type, StringBuilder sb, CommandSender sender) {
+    File file = new File(parent, type + ".txt");
     writeByteArrayToFile(file, sb);
-    dumpmsg(sender, file, child.replace(".red", ""));
+    dumpmsg(sender, file, type);
   }
 
     protected void writeByteArrayToFile(File file, StringBuilder sb){

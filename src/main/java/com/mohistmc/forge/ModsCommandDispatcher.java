@@ -9,7 +9,6 @@ import net.minecraft.command.Commands;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.command.BukkitCommandWrapper;
-import org.bukkit.craftbukkit.v1_16_R3.command.VanillaCommandWrapper;
 import org.bukkit.help.GenericCommandHelpTopic;
 
 public class ModsCommandDispatcher extends CommandDispatcher<CommandSource> {
@@ -24,7 +23,7 @@ public class ModsCommandDispatcher extends CommandDispatcher<CommandSource> {
     public LiteralCommandNode<CommandSource> register(LiteralArgumentBuilder<CommandSource> command) {
         LiteralCommandNode<CommandSource> node = command.build();
         if (Bukkit.getServer() != null && !(node.getCommand() instanceof BukkitCommandWrapper)) {
-            VanillaCommandWrapper wrapper = new VanillaCommandWrapper(this.commands, node);
+            ModCustomCommand wrapper = new ModCustomCommand(this.commands, node);
             CraftServer craftServer = (CraftServer) Bukkit.getServer();
             craftServer.getCommandMap().register("forge", wrapper);
             ServerAPI.forgecmdper.put(wrapper.getName(), wrapper.getPermission());
