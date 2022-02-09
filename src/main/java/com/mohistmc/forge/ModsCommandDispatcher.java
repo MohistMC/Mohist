@@ -1,5 +1,6 @@
 package com.mohistmc.forge;
 
+import com.mohistmc.api.ServerAPI;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -24,6 +25,7 @@ public class ModsCommandDispatcher extends CommandDispatcher<CommandSource> {
         if (Bukkit.getServer() != null && !(node.getCommand() instanceof BukkitCommandWrapper)) {
             VanillaCommandWrapper wrapper = new VanillaCommandWrapper(this.commands, node);
             ((CraftServer) Bukkit.getServer()).getCommandMap().register("forge", wrapper);
+            ServerAPI.forgecmdper.put(wrapper.getName(), wrapper.getPermission());
             Bukkit.getLogger().info("ModsCommandDispatcher register " + wrapper.toString());
         }
         getRoot().addChild(node);

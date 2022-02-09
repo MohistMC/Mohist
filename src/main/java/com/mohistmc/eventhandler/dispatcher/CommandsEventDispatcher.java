@@ -1,5 +1,6 @@
 package com.mohistmc.eventhandler.dispatcher;
 
+import com.mohistmc.api.ServerAPI;
 import net.minecraft.command.Commands;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,6 +17,7 @@ public class CommandsEventDispatcher {
             Commands dispatcher = craftServer.getServer().getCommands();
             VanillaCommandWrapper wrapper = new VanillaCommandWrapper(dispatcher, event.getDispatcher().getRoot());
             craftServer.getCommandMap().register("forge", wrapper);
+            ServerAPI.forgecmdper.put(wrapper.getName(), wrapper.getPermission());
             Bukkit.getLogger().info("ModsCommandDispatcher register " + wrapper.toString());
         }
     }
