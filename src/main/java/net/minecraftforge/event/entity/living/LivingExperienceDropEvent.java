@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity.living;
 
+import javax.annotation.Nullable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -31,12 +32,12 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @Cancelable
 public class LivingExperienceDropEvent extends LivingEvent
 {
-    private final Player attackingPlayer;
+    @Nullable private final Player attackingPlayer;
     private final int originalExperiencePoints;
 
     private int droppedExperiencePoints;
 
-    public LivingExperienceDropEvent(LivingEntity entity, Player attackingPlayer, int originalExperience)
+    public LivingExperienceDropEvent(LivingEntity entity, @Nullable Player attackingPlayer, int originalExperience)
     {
         super(entity);
 
@@ -54,6 +55,10 @@ public class LivingExperienceDropEvent extends LivingEvent
         this.droppedExperiencePoints = droppedExperience;
     }
 
+    /**
+     * @return The player that last attacked the entity and thus caused the experience. This can be null, in case the player has since logged out.
+     */
+    @Nullable
     public Player getAttackingPlayer()
     {
         return attackingPlayer;
