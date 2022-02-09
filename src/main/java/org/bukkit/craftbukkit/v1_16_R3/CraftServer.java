@@ -242,7 +242,7 @@ public final class CraftServer implements Server {
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
     private final CraftCommandMap commandMap = new CraftCommandMap(this);
-    private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
+    public final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
     protected final DedicatedServer console;

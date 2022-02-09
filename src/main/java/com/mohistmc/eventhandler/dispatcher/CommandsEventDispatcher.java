@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.command.VanillaCommandWrapper;
+import org.bukkit.help.GenericCommandHelpTopic;
 
 public class CommandsEventDispatcher {
 
@@ -18,6 +19,7 @@ public class CommandsEventDispatcher {
             VanillaCommandWrapper wrapper = new VanillaCommandWrapper(dispatcher, event.getDispatcher().getRoot());
             craftServer.getCommandMap().register("forge", wrapper);
             ServerAPI.forgecmdper.put(wrapper.getName(), wrapper.getPermission());
+            craftServer.helpMap.addTopic(new GenericCommandHelpTopic(wrapper));
             Bukkit.getLogger().info("ModsCommandDispatcher register " + wrapper.toString());
         }
     }
