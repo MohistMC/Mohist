@@ -1,0 +1,46 @@
+From cecb088da9510d8b83c13b503a1b82ae28f557ef Mon Sep 17 00:00:00 2001
+From: Jonas Konrad <me@yawk.at>
+Date: Fri, 4 Jul 2014 23:03:13 +0200
+Subject: [PATCH] Make "moved wrongly" limit configurable
+
+
+diff --git a/src/main/java/net/minecraft/server/network/PlayerConnection.java b/src/main/java/net/minecraft/server/network/PlayerConnection.java
+index 53b4c8a0c..d4679a29b 100644
+--- a/src/main/java/net/minecraft/server/network/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/network/PlayerConnection.java
+@@ -554,7 +554,7 @@ public class PlayerConnection implements PacketListenerPlayIn {
+                 d10 = d6 * d6 + d7 * d7 + d8 * d8;
+                 boolean flag1 = false;
+ 
+-                if (d10 > 0.0625D) {
++                if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
+                     flag1 = true;
+                     PlayerConnection.LOGGER.warn("{} (vehicle of {}) moved wrongly! {}", entity.getDisplayName().getString(), this.player.getDisplayName().getString(), Math.sqrt(d10));
+                 }
+@@ -1182,7 +1182,7 @@ public class PlayerConnection implements PacketListenerPlayIn {
+                             d11 = d7 * d7 + d8 * d8 + d9 * d9;
+                             boolean flag1 = false;
+ 
+-                            if (!this.player.H() && d11 > 0.0625D && !this.player.isSleeping() && !this.player.playerInteractManager.isCreative() && this.player.playerInteractManager.getGameMode() != EnumGamemode.SPECTATOR) {
++                            if (!this.player.H() && d11 > org.spigotmc.SpigotConfig.movedWronglyThreshold && !this.player.isSleeping() && !this.player.playerInteractManager.isCreative() && this.player.playerInteractManager.getGameMode() != EnumGamemode.SPECTATOR) { // Spigot
+                                 flag1 = true;
+                                 PlayerConnection.LOGGER.warn("{} moved wrongly!", this.player.getDisplayName().getString());
+                             }
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index d75cdfe03..e2a95702a 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -326,4 +326,10 @@ public class SpigotConfig
+     {
+         saveUserCacheOnStopOnly = getBoolean( "settings.save-user-cache-on-stop-only", false );
+     }
++
++    public static double movedWronglyThreshold;
++    private static void movedWronglyThreshold()
++    {
++        movedWronglyThreshold = getDouble( "settings.moved-wrongly-threshold", 0.0625D );
++    }
+ }
+-- 
+2.25.1
+

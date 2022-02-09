@@ -807,7 +807,7 @@ project(':mohist') {
                             'ServerLaunchArgs': [
                                     '--gameDir',          '.',
                                     '--launchTarget',     'fmlserver',
-                                    '--fml.mohistVersion',  "${MOHIST_VERSION}".toString(),
+                                    '--fml.mohistVersion',  MOHIST_VERSION,
                                     '--fml.forgeVersion', forge_version,
                                     '--fml.mcpVersion',   MCP_VERSION,
                                     '--fml.mcVersion',    MC_VERSION,

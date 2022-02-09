@@ -1,0 +1,44 @@
+From 971075cb4449acd90636f0e9d4532268c284b99d Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Thu, 27 Jun 2013 17:26:09 +1000
+Subject: [PATCH] Properly Close Inventories
+
+Properly close inventories when unloading and switching worlds.
+
+diff --git a/src/main/java/net/minecraft/server/level/WorldServer.java b/src/main/java/net/minecraft/server/level/WorldServer.java
+index df514ebd3..82312527b 100644
+--- a/src/main/java/net/minecraft/server/level/WorldServer.java
++++ b/src/main/java/net/minecraft/server/level/WorldServer.java
+@@ -1100,6 +1100,15 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+     }
+ 
+     public void unloadChunk(Chunk chunk) {
++        // Spigot Start
++        for (TileEntity tileentity : chunk.getTileEntities().values()) {
++            if (tileentity instanceof net.minecraft.world.IInventory) {
++                for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((net.minecraft.world.IInventory) tileentity).getViewers())) {
++                    h.closeInventory();
++                }
++            }
++        }
++        // Spigot End
+         this.tileEntityListUnload.addAll(chunk.getTileEntities().values());
+         EntitySlice[] aentityslice = chunk.getEntitySlices();
+         int i = aentityslice.length;
+@@ -1126,6 +1135,13 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+ 
+     public void unregisterEntity(Entity entity) {
+         org.spigotmc.AsyncCatcher.catchOp("entity unregister"); // Spigot
++        // Spigot Start
++        if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder) {
++            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) entity.getBukkitEntity()).getInventory().getViewers())) {
++                h.closeInventory();
++            }
++        }
++        // Spigot End
+         if (entity instanceof EntityEnderDragon) {
+             EntityComplexPart[] aentitycomplexpart = ((EntityEnderDragon) entity).eJ();
+             int i = aentitycomplexpart.length;
+-- 
+2.25.1
+

@@ -1,0 +1,119 @@
+From b8c6d8d2edbbb3eff7e3d4822712513668eb8058 Mon Sep 17 00:00:00 2001
+From: Thinkofdeath <thinkofdeath@spigotmc.org>
+Date: Wed, 2 Jul 2014 23:35:51 +0100
+Subject: [PATCH] Better item validation
+
+
+diff --git a/src/main/java/net/minecraft/network/PacketDataSerializer.java b/src/main/java/net/minecraft/network/PacketDataSerializer.java
+index 6dc364cd8..f94e96406 100644
+--- a/src/main/java/net/minecraft/network/PacketDataSerializer.java
++++ b/src/main/java/net/minecraft/network/PacketDataSerializer.java
+@@ -294,6 +294,10 @@ public class PacketDataSerializer extends ByteBuf {
+             NBTTagCompound nbttagcompound = null;
+ 
+             if (item.usesDurability() || item.n()) {
++                // Spigot start - filter
++                itemstack = itemstack.cloneItemStack();
++                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++                // Spigot end
+                 nbttagcompound = itemstack.getTag();
+             }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+index 6bd05ea36..2d403ad21 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBook.java
+@@ -22,6 +22,10 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.inventory.meta.BookMeta;
+ import org.bukkit.inventory.meta.BookMeta.Generation;
+ 
++// Spigot start
++import static org.spigotmc.ValidateUtils.*;
++// Spigot end
++
+ @DelegateDeserialization(SerializableMeta.class)
+ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
+     static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
+@@ -82,11 +86,11 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
+         super(tag);
+ 
+         if (tag.hasKey(BOOK_TITLE.NBT)) {
+-            this.title = tag.getString(BOOK_TITLE.NBT);
++            this.title = limit( tag.getString(BOOK_TITLE.NBT), 8192 ); // Spigot
+         }
+ 
+         if (tag.hasKey(BOOK_AUTHOR.NBT)) {
+-            this.author = tag.getString(BOOK_AUTHOR.NBT);
++            this.author = limit( tag.getString(BOOK_AUTHOR.NBT), 8192 ); // Spigot
+         }
+ 
+         if (tag.hasKey(RESOLVED.NBT)) {
+@@ -114,7 +118,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
+                 } else {
+                     page = validatePage(page);
+                 }
+-                this.pages.add(page);
++                this.pages.add( limit( page, 16384 ) ); // Spigot
+             }
+         }
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 2a1deb8d9..1221c06c3 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -77,6 +77,10 @@ import org.bukkit.inventory.meta.Repairable;
+ import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
+ import org.bukkit.persistence.PersistentDataContainer;
+ 
++// Spigot start
++import static org.spigotmc.ValidateUtils.*;
++// Spigot end
++
+ /**
+  * Children must include the following:
+  *
+@@ -326,18 +330,18 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
+             NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+ 
+             if (display.hasKey(NAME.NBT)) {
+-                displayName = display.getString(NAME.NBT);
++                displayName = limit( display.getString(NAME.NBT), 8192 ); // Spigot
+             }
+ 
+             if (display.hasKey(LOCNAME.NBT)) {
+-                locName = display.getString(LOCNAME.NBT);
++                locName = limit( display.getString(LOCNAME.NBT), 8192 ); // Spigot
+             }
+ 
+             if (display.hasKey(LORE.NBT)) {
+                 NBTTagList list = display.getList(LORE.NBT, CraftMagicNumbers.NBT.TAG_STRING);
+                 lore = new ArrayList<String>(list.size());
+                 for (int index = 0; index < list.size(); index++) {
+-                    String line = list.getString(index);
++                    String line = limit( list.getString(index), 8192 ); // Spigot
+                     lore.add(line);
+                 }
+             }
+diff --git a/src/main/java/org/spigotmc/ValidateUtils.java b/src/main/java/org/spigotmc/ValidateUtils.java
+new file mode 100644
+index 000000000..58a953481
+--- /dev/null
++++ b/src/main/java/org/spigotmc/ValidateUtils.java
+@@ -0,0 +1,14 @@
++package org.spigotmc;
++
++public class ValidateUtils
++{
++
++    public static String limit(String str, int limit)
++    {
++        if ( str.length() > limit )
++        {
++            return str.substring( 0, limit );
++        }
++        return str;
++    }
++}
+-- 
+2.25.1
+

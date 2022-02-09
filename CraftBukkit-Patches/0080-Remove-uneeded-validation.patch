@@ -1,0 +1,47 @@
+From 8a2ce4e090846d8de687c705359ceb497cfd9392 Mon Sep 17 00:00:00 2001
+From: drXor <mcyoung@mit.edu>
+Date: Fri, 15 Aug 2014 18:11:09 -0400
+Subject: [PATCH] Remove uneeded validation
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 1221c06c3..928328c29 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -302,7 +302,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
+         this.customModelData = meta.customModelData;
+         this.blockData = meta.blockData;
+ 
+-        if (meta.hasEnchants()) {
++        if (meta.enchantments != null) { // Spigot
+             this.enchantments = new LinkedHashMap<Enchantment, Integer>(meta.enchantments);
+         }
+ 
+@@ -674,7 +674,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
+     }
+ 
+     static void applyEnchantments(Map<Enchantment, Integer> enchantments, NBTTagCompound tag, ItemMetaKey key) {
+-        if (enchantments == null || enchantments.size() == 0) {
++        if (enchantments == null /*|| enchantments.size() == 0*/) { // Spigot - remove size check
+             return;
+         }
+ 
+@@ -823,7 +823,14 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
+     @Override
+     public boolean removeEnchant(Enchantment ench) {
+         Validate.notNull(ench, "Enchantment cannot be null");
+-        return hasEnchants() && enchantments.remove(ench) != null;
++        // Spigot start
++        boolean b = hasEnchants() && enchantments.remove( ench ) != null;
++        if ( enchantments != null && enchantments.isEmpty() )
++        {
++            this.enchantments = null;
++        }
++        return b;
++        // Spigot end
+     }
+ 
+     @Override
+-- 
+2.25.1
+

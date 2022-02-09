@@ -1,0 +1,48 @@
+From 64d19960bf2d010be45eb7fa9a6581e4c293a3c7 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 13 Dec 2013 11:58:58 +1100
+Subject: [PATCH] Configurable Amount of Netty Threads
+
+This brings back the option that the Spigot version of netty saw. By default Netty will try and use cores*2 threads, however if running multiple servers on the same machine, this can be too many threads. Additionally some people have 16 core servers. If 32 Netty threads are allowed in this setup, then the lock contention, and thus blocking between threads becomes much greater, leading to decreased performance.
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index f75477e85..db0bbc45e 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -299,7 +299,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+         this.minecraftSessionService = minecraftsessionservice;
+         this.gameProfileRepository = gameprofilerepository;
+         this.userCache = usercache;
+-        this.serverConnection = new ServerConnection(this);
++        // this.serverConnection = new ServerConnection(this); // Spigot
+         this.worldLoadListenerFactory = worldloadlistenerfactory;
+         this.convertable = convertable_conversionsession;
+         this.worldNBTStorage = convertable_conversionsession.b();
+@@ -1521,7 +1521,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+ 
+     @Nullable
+     public ServerConnection getServerConnection() {
+-        return this.serverConnection;
++        return this.serverConnection == null ? this.serverConnection = new ServerConnection(this) : this.serverConnection; // Spigot
+     }
+ 
+     public boolean ah() {
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 642f3a39a..a7bf7f860 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -224,4 +224,11 @@ public class SpigotConfig
+         }
+         bungee = getBoolean( "settings.bungeecord", false );
+     }
++
++    private static void nettyThreads()
++    {
++        int count = getInt( "settings.netty-threads", 4 );
++        System.setProperty( "io.netty.eventLoopThreads", Integer.toString( count ) );
++        Bukkit.getLogger().log( Level.INFO, "Using {0} threads for Netty based IO", count );
++    }
+ }
+-- 
+2.25.1
+
