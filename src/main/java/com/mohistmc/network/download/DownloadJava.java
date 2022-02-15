@@ -2,6 +2,8 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMC;
 import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
+
+import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.Message;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,10 +72,11 @@ public class DownloadJava {
 
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
         launchArgs.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
-        launchArgs.add(new File(MohistMC.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+        launchArgs.add(JarTool.getJarName());
         launchArgs.addAll(MohistMC.mainArgs);
         launchArgs.add("launchedWithCustomJava8");
         command.addAll(launchArgs);
+		command.removeIf(s -> s.toLowerCase().contains("-xms"));
         System.out.println(Message.getFormatString("customjava.run", new Object[]{os(), command}));
         UpdateUtils.restartServer(command);
     }

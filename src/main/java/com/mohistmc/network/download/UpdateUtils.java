@@ -6,6 +6,8 @@ import com.mohistmc.MohistMC;
 import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 import static com.mohistmc.network.download.NetworkUtil.getConn;
 import static com.mohistmc.network.download.NetworkUtil.getInput;
+
+import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.Message;
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +91,9 @@ public class UpdateUtils {
 	public static void restartServer(ArrayList<String> cmd) throws Exception {
 		if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
 			System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
-		new ProcessBuilder(cmd).inheritIO().start().waitFor();
+		ProcessBuilder pb = new ProcessBuilder(cmd);
+		pb.directory(JarTool.getJarDir());
+		pb.inheritIO().start().waitFor();
 		Thread.sleep(2000);
 		System.exit(0);
 	}

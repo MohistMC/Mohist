@@ -1,9 +1,7 @@
 package com.mohistmc.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author Mgazul
@@ -19,13 +17,21 @@ public class JarTool {
         return file.getAbsolutePath();
     }
 
-    public static String getJarDir() {
+    public static File getJarDir() {
         File file = getFile();
         if (file == null) {
             return null;
         }
-        return getFile().getParent();
+        return getFile().getParentFile();
     }
+
+	public static String getJarDirStr() {
+		File file = getFile();
+		if (file == null) {
+			return null;
+		}
+		return getFile().getParent();
+	}
 
     public static String getJarName() {
         File file = getFile();
@@ -36,15 +42,9 @@ public class JarTool {
     }
 
     private static File getFile() {
-
-        String path = JarTool.class.getProtectionDomain().getCodeSource()
-                .getLocation().getFile();
-        try {
-            path = java.net.URLDecoder.decode(path, "UTF-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            return null;
-        }
-        return new File(path);
+        String path = JarTool.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		path = java.net.URLDecoder.decode(path, StandardCharsets.UTF_8);
+		return new File(path);
     }
 
     public static void inputStreamFile(InputStream inputStream, String targetFilePath) {
