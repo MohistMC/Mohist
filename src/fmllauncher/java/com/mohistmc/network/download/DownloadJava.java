@@ -1,14 +1,13 @@
 package com.mohistmc.network.download;
 
-import static com.mohistmc.config.MohistConfigUtil.bMohist;
-import static com.mohistmc.util.CustomFlagsHandler.getCustomFlags;
-import static com.mohistmc.util.CustomFlagsHandler.hasCustomFlags;
+import com.mohistmc.util.JarTool;
+import com.mohistmc.util.i18n.i18n;
+import net.minecraftforge.server.ServerMain;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -20,9 +19,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.mohistmc.MohistMCStart;
-import com.mohistmc.util.i18n.i18n;
-import net.minecraftforge.server.ServerMain;
+import static com.mohistmc.config.MohistConfigUtil.bMohist;
+import static com.mohistmc.util.CustomFlagsHandler.getCustomFlags;
+import static com.mohistmc.util.CustomFlagsHandler.hasCustomFlags;
 
 public class DownloadJava {
     public static File java = new File("CustomJAVA/");
@@ -78,12 +77,13 @@ public class DownloadJava {
 
         ArrayList<String> command = new ArrayList<>(Arrays.asList(java.getAbsolutePath() + "/bin/" + javaName, "-jar"));
         launchArgs.addAll(getCustomFlags());
-        launchArgs.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+        launchArgs.add(JarTool.getJarName());
         launchArgs.addAll(ServerMain.mainArgs);
         launchArgs.add("launchedWithCustomJava11");
         if(hasCustomFlags) launchArgs.add("launchedWithCustomArgs");
         command.addAll(launchArgs);
-        System.out.println(i18n.get("oldjava.run", os(), String.join(" ", command)));
+		command.removeIf(s -> s.toLowerCase().contains("-xms"));
+		System.out.println(i18n.get("oldjava.run", os(), String.join(" ", command)));
         UpdateUtils.restartServer(command, true);
     }
 

@@ -19,12 +19,12 @@ public class JarTool {
         return file.getAbsolutePath();
     }
 
-    public static String getJarDir() {
+    public static File getJarDir() {
         File file = getFile();
         if (file == null) {
             return null;
         }
-        return getFile().getParent();
+        return getFile().getParentFile();
     }
 
     public static String getJarName() {
