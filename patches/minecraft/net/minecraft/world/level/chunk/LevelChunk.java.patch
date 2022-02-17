@@ -16,7 +16,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -49,659 +_,1054 @@
+@@ -49,659 +_,1055 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -1021,7 +1021,7 @@
 +            blockEntity = ( BlockEntity ) this.f_187610_.get( p_62868_ );
 +        }
 +        // CraftBukkit end
-+        if ( blockEntity != null && blockEntity.m_58901_() )
++        if ( blockEntity != null && !blockEntity.m_58901_() )
 +        {
 +            f_187610_.remove( p_62868_ );
 +            blockEntity = null;
@@ -1034,6 +1034,7 @@
 +                BlockEntity blockentity1 = this.m_62870_( p_62868_, compoundtag );
 +                if ( blockentity1 != null )
 +                {
++                    blockentity1.m_7651_();
 +                    return blockentity1;
 +                }
 +            }
