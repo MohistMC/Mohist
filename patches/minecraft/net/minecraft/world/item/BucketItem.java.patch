@@ -9,7 +9,7 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -28,18 +_,38 @@
+@@ -28,18 +_,43 @@
  import net.minecraft.world.level.material.Material;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
@@ -21,8 +21,7 @@
 +import org.bukkit.event.player.PlayerBucketFillEvent;
  
  public class BucketItem extends Item implements DispensibleContainerItem {
--   private final Fluid f_40687_;
-+   public final Fluid f_40687_;
+    private final Fluid f_40687_;
  
 +   // Forge: Use the other constructor that takes a Supplier
 +   @Deprecated
@@ -30,6 +29,11 @@
        super(p_40690_);
        this.f_40687_ = p_40689_;
 +      this.fluidSupplier = p_40689_.delegate;
++   }
++
++   public Fluid getContent ( )
++   {
++      return f_40687_;
 +   }
 +
 +   /**
