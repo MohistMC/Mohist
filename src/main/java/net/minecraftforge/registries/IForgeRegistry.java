@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.registries;
 
+import com.mojang.serialization.Codec;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -55,6 +56,8 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @Nonnull Set<ResourceLocation>         getKeys();
     @Nonnull Collection<V>                 getValues();
     @Nonnull Set<Entry<ResourceKey<V>, V>> getEntries();
+
+    @Nonnull Codec<V> getCodec();
 
     /**
      * Retrieve the slave map of type T from the registry.

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.Locale;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -105,6 +106,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
             {
                 throw new RuntimeException(
                         String.format(
+                                Locale.ENGLISH,
                                 "Provider %s.getCapability() returned null; return LazyOptional.empty() instead!",
                                 c.getClass().getTypeName()
                         )

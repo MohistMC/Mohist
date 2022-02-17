@@ -1,6 +1,17 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -18,6 +_,8 @@
+@@ -9,15 +_,13 @@
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
+ import com.google.gson.JsonSyntaxException;
+-import java.util.Collection;
+-import java.util.Collections;
+-import java.util.Comparator;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Optional;
++
++import java.util.*;
  import java.util.Map.Entry;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -9,6 +20,14 @@
  import net.minecraft.Util;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.Registry;
+@@ -36,6 +_,7 @@
+    private static final Gson f_44005_ = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Logger f_44006_ = LogManager.getLogger();
+    public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
++   public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> recipesCB = ImmutableMap.of(); // CraftBukkit
+    private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
+    private boolean f_44008_;
+ 
 @@ -50,9 +_,18 @@
  
        for(Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
@@ -28,21 +47,101 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
-@@ -153,4 +_,26 @@
+@@ -67,6 +_,46 @@
+       }));
+       this.f_199900_ = builder.build();
+       f_44006_.info("Loaded {} recipes", (int)map.size());
++
++      // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
++      Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> map1 = Maps.newHashMap();
++      for (RecipeType<?> recipeType : Registry.f_122864_) {
++         map1.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
++      }
++      // CraftBukkit end
++
++      Iterator iterator = p_44037_.entrySet().iterator();
++      while (iterator.hasNext()) {
++         Entry<ResourceLocation, JsonElement> entry = (Entry) iterator.next();
++         ResourceLocation minecraftkey = entry.getKey();
++
++         try {
++            // Mohist start - Duplicate vanilla checks for CB recipes
++            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
++               f_44006_.debug("Skipping loading recipe {} as it's conditions were not met", minecraftkey);
++               continue;
++            }
++            // Mohist end
++            Recipe<?> recipe = m_44045_(minecraftkey, GsonHelper.m_13918_(entry.getValue(), "top element"));
++            // Mohist start - Duplicate vanilla checks for CB recipes
++            if (recipe == null) {
++               f_44006_.info("Skipping loading recipe {} as it's serializer returned null", minecraftkey);
++               continue;
++            }
++            // Mohist end
++            // CraftBukkit start - SPIGOT-4638: last recipe gets priority
++            map1.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
++               return new Object2ObjectLinkedOpenHashMap<>();
++            }).putAndMoveToFirst(minecraftkey, recipe);
++            // CraftBukkit end
++         } catch (IllegalArgumentException | JsonParseException jsonparseexception) { // Mohist - Suppress recipe loading error
++            f_44006_.error("Parsing error loading recipe {}", minecraftkey, jsonparseexception);
++         }
++      }
++
++      this.recipesCB = (Map) map1.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (entry1) -> {
++         return entry1.getValue(); // CraftBukkit
++      }));
+    }
+ 
+    public boolean m_151269_() {
+@@ -74,9 +_,13 @@
+    }
+ 
+    public <C extends Container, T extends Recipe<C>> Optional<T> m_44015_(RecipeType<T> p_44016_, C p_44017_, Level p_44018_) {
+-      return this.m_44054_(p_44016_).values().stream().flatMap((p_44064_) -> {
++      // CraftBukkit start
++      Optional<T> recipe = this.m_44054_(p_44016_).values().stream().flatMap((p_44064_) -> {
+          return Util.m_137519_(p_44016_.m_44115_(p_44064_, p_44018_, p_44017_));
+       }).findFirst();
++      p_44017_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
++      // CraftBukkit end
++      return recipe;
+    }
+ 
+    public <C extends Container, T extends Recipe<C>> List<T> m_44013_(RecipeType<T> p_44014_) {
+@@ -153,4 +_,44 @@
        this.f_44007_ = ImmutableMap.copyOf(map);
        this.f_199900_ = builder.build();
     }
 +
 +   // CraftBukkit start
 +   public void addRecipe(final Recipe<?> irecipe) {
-+
++      final Map<ResourceLocation, Recipe<?>> map = this.f_44007_.get(irecipe.m_6671_());
++      Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> map1 = this.recipesCB.get(irecipe.m_6671_()); // CraftBukkit
++      if (map.containsKey(irecipe.m_6423_()) || map1.containsKey(irecipe.m_6423_())) {
++         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.m_6423_());
++      }
++      // Mohist start - Fix Bukkit.addRecipe(...)
++      Map newmap = new HashMap();
++      newmap.putAll(map);
++      newmap.put(irecipe.m_6423_(), irecipe);
++      newmap = ImmutableMap.copyOf(newmap);
++      Map newrecipes = new HashMap();
++      newrecipes.putAll(this.f_44007_);
++      newrecipes.put(irecipe.m_6671_(), newmap);
++      this.f_44007_ = ImmutableMap.copyOf(newrecipes);
++      // Mohist end
++      map1.putAndMoveToFirst(irecipe.m_6423_(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
 +   }
++   // CraftBukkit end
 +
 +   // CraftBukkit start
 +   public void clearRecipes() {
 +      this.f_44007_ = Maps.newHashMap();
++      this.recipesCB = Maps.newHashMap();
 +      for (RecipeType<?> recipeType : Registry.f_122864_) {
 +         this.f_44007_.put(recipeType, Collections.emptyMap());
++         this.recipesCB.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
 +      }
 +   }
 +

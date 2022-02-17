@@ -56,8 +56,8 @@ ext {
     MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.1-39.0.66'
-    FORGE_VERSION = '39.0.66'
+    VERSION = '1.18.1-39.0.79'
+    FORGE_VERSION = '39.0.79'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
@@ -225,7 +225,7 @@ def sharedDeps = {
     installer 'org.apache.maven:maven-resolver-provider:3.8.4'
     installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.2'
     installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.2'
-    installer 'org.jetbrains:annotations:21.0.1'
+    compileOnly 'org.jetbrains:annotations:21.0.1'
     // craftbukkit
     installer 'org.fusesource.jansi:jansi:1.18'
     installer 'jline:jline:2.12.1'
@@ -518,6 +518,7 @@ project(':fmlonly') {
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
         implementation project(':mclanguage')
+        implementation project(':mohistlauncher')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
@@ -1270,8 +1271,20 @@ project(':forge') {
         } else {
             println("Can't read server")
         }
+        doFirst {
+            MANIFESTS.each{ pkg, values ->
+                if (pkg == '/') {
+                    manifest.attributes(values += [
+                            'Main-Class': 'com.mohistmc.server.MohistMCStart',
+                            'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
+                    ])
+                } else {
+                    manifest.attributes(values, pkg)
+                }
+            }
+        }
 
-        println(CLASS_PATH)
+        //println(CLASS_PATH)
 
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
@@ -1291,6 +1304,10 @@ project(':forge') {
         from(project(':mclanguage').tasks.jar.outputs) {
             rename { 'data/mclanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
+
+        from(project(':mohistlauncher').project.sourceSets.main.output){
+        }
+
         from(rootProject.file('server_files/version.txt')) {
             filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])
             rename { 'versions/mohist.txt' }
