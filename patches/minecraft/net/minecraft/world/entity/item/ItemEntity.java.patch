@@ -1,9 +1,28 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -43,6 +_,10 @@
+@@ -12,6 +_,7 @@
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.stats.Stats;
+@@ -29,6 +_,8 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.entity.EntityPickupItemEvent;
++import org.bukkit.event.player.PlayerPickupItemEvent;
+ 
+ public class ItemEntity extends Entity {
+    private static final EntityDataAccessor<ItemStack> f_31984_ = SynchedEntityData.m_135353_(ItemEntity.class, EntityDataSerializers.f_135033_);
+@@ -43,6 +_,12 @@
     @Nullable
     private UUID f_31982_;
     public final float f_31983_;
++   private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
++
 +   /**
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
@@ -19,7 +38,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -82,6 +_,7 @@
+@@ -82,13 +_,17 @@
     }
  
     public void m_8119_() {
@@ -27,6 +46,19 @@
        if (this.m_32055_().m_41619_()) {
           this.m_146870_();
        } else {
+          super.m_8119_();
+-         if (this.f_31986_ > 0 && this.f_31986_ != 32767) {
+-            --this.f_31986_;
+-         }
++         // CraftBukkit start - Use wall time for pickup and despawn timers
++         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++         if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
++         if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
++         this.lastTick = MinecraftServer.currentTick;
++         // CraftBukkit end
+ 
+          this.f_19854_ = this.m_20185_();
+          this.f_19855_ = this.m_20186_();
 @@ -116,7 +_,7 @@
              this.m_6478_(MoverType.SELF, this.m_20184_());
              float f1 = 0.98F;
@@ -36,13 +68,35 @@
              }
  
              this.m_20256_(this.m_20184_().m_82542_((double)f1, 0.98D, (double)f1));
-@@ -146,7 +_,14 @@
+@@ -133,11 +_,11 @@
+          if (this.f_19797_ % i == 0 && !this.f_19853_.f_46443_ && this.m_32070_()) {
+             this.m_32069_();
+          }
+-
+-         if (this.f_31985_ != -32768) {
+-            ++this.f_31985_;
++/* CraftBukkit start - moved up
++         if (this.age != -32768) {
++            ++this.age;
+          }
+-
++ // CraftBukkit end */
+          this.f_19812_ |= this.m_20073_();
+          if (!this.f_19853_.f_46443_) {
+             double d0 = this.m_20184_().m_82546_(vec3).m_82556_();
+@@ -146,7 +_,20 @@
              }
           }
  
 -         if (!this.f_19853_.f_46443_ && this.f_31985_ >= 6000) {
 +         ItemStack item = this.m_32055_();
 +         if (!this.f_19853_.f_46443_ && this.f_31985_ >= lifespan) {
++            // CraftBukkit start - fire ItemDespawnEvent
++            if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++               this.f_31985_ = 0;
++               return;
++            }
++            // CraftBukkit end
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +             if (hook < 0) this.m_146870_();
 +             else          this.lifespan += hook;
@@ -61,6 +115,19 @@
        } else {
           return !p_32028_.m_41782_() || p_32028_.m_41783_().equals(p_32027_.m_41783_());
        }
+@@ -219,10 +_,11 @@
+ 
+    private static void m_32022_(ItemEntity p_32023_, ItemStack p_32024_, ItemStack p_32025_) {
+       ItemStack itemstack = m_32029_(p_32024_, p_32025_, 64);
+-      p_32023_.m_32045_(itemstack);
++      if (!itemstack.m_41619_()) p_32023_.m_32045_(itemstack); // CraftBukkit - don't set empty stacks
+    }
+ 
+    private static void m_32017_(ItemEntity p_32018_, ItemStack p_32019_, ItemEntity p_32020_, ItemStack p_32021_) {
++      if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callItemMergeEvent(p_32020_, p_32018_).isCancelled()) return; // CraftBukkit
+       m_32022_(p_32018_, p_32019_, p_32021_);
+       p_32018_.f_31986_ = Math.max(p_32018_.f_31986_, p_32020_.f_31986_);
+       p_32018_.f_31985_ = Math.min(p_32018_.f_31985_, p_32020_.f_31985_);
 @@ -237,6 +_,7 @@
     }
  
@@ -69,6 +136,18 @@
        if (this.m_6673_(p_32013_)) {
           return false;
        } else if (!this.m_32055_().m_41619_() && this.m_32055_().m_150930_(Items.f_42686_) && p_32013_.m_19372_()) {
+@@ -244,6 +_,11 @@
+       } else if (!this.m_32055_().m_41720_().m_41386_(p_32013_)) {
+          return false;
+       } else {
++         // CraftBukkit start
++         if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_32013_, p_32014_)) {
++            return false;
++         }
++         // CraftBukkit end
+          this.m_5834_();
+          this.f_31987_ = (int)((float)this.f_31987_ - p_32014_);
+          this.m_146852_(GameEvent.f_157808_, p_32013_.m_7639_());
 @@ -260,6 +_,7 @@
        p_32050_.m_128376_("Health", (short)this.f_31987_);
        p_32050_.m_128376_("Age", (short)this.f_31985_);
@@ -85,7 +164,7 @@
  
        if (p_32034_.m_128403_("Owner")) {
           this.f_31982_ = p_32034_.m_128342_("Owner");
-@@ -299,10 +_,18 @@
+@@ -299,10 +_,58 @@
  
     public void m_6123_(Player p_32040_) {
        if (!this.f_19853_.f_46443_) {
@@ -94,6 +173,46 @@
           Item item = itemstack.m_41720_();
           int i = itemstack.m_41613_();
 -         if (this.f_31986_ == 0 && (this.f_31982_ == null || this.f_31982_.equals(p_32040_.m_142081_())) && p_32040_.m_150109_().m_36054_(itemstack)) {
++
++         // CraftBukkit start - fire PlayerPickupItemEvent
++         int canHold = p_32040_.m_150109_().canHold(itemstack);
++         int remaining = i - canHold;
++
++         if (this.f_31986_ <= 0 && canHold > 0) {
++            itemstack.m_41764_(canHold);
++            // Call legacy event
++            PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
++            playerEvent.setCancelled(!playerEvent.getPlayer().getCanPickupItems());
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(playerEvent);
++            if (playerEvent.isCancelled()) {
++               itemstack.m_41764_(i); // SPIGOT-5294 - restore count
++               return;
++            }
++
++            // Call newer event afterwards
++            EntityPickupItemEvent entityEvent = new EntityPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
++            entityEvent.setCancelled(!entityEvent.getEntity().getCanPickupItems());
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(entityEvent);
++            if (entityEvent.isCancelled()) {
++               itemstack.m_41764_(i); // SPIGOT-5294 - restore count
++               return;
++            }
++
++            // Update the ItemStack if it was changed in the event
++            ItemStack current = this.m_32055_();
++            if (!itemstack.equals(current)) {
++               itemstack = current;
++            } else {
++               itemstack.m_41764_(canHold + remaining); // = i
++            }
++
++            // Possibly < 0; fix here so we do not have to modify code below
++            this.f_31986_ = 0;
++         } else if (this.f_31986_ == 0) {
++            // ensure that the code below isn't triggered if canHold says we can't pick the items up
++            this.f_31986_ = -1;
++         }
++         // CraftBukkit end
 +
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
 +         if (hook < 0) return;
@@ -116,6 +235,16 @@
        if (!this.f_19853_.f_46443_ && entity instanceof ItemEntity) {
           ((ItemEntity)entity).m_32069_();
        }
+@@ -340,7 +_,9 @@
+    }
+ 
+    public void m_32045_(ItemStack p_32046_) {
++      com.google.common.base.Preconditions.checkArgument(!p_32046_.m_41619_(), "Cannot drop air"); // CraftBukkit
+       this.m_20088_().m_135381_(f_31984_, p_32046_);
++      this.m_20088_().markDirty(ItemEntity.f_31984_); // CraftBukkit - SPIGOT-4591, must mark dirty
+    }
+ 
+    public void m_7350_(EntityDataAccessor<?> p_32036_) {
 @@ -403,7 +_,7 @@
  
     public void m_32065_() {
