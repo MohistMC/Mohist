@@ -16,7 +16,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -49,659 +_,1044 @@
+@@ -49,659 +_,1055 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -1038,7 +1038,18 @@
 +                    return blockentity1;
 +                }
 +            }
++            // CraftBukkit start
++            else
++            {
++                System.out.println( "Attempted to place a tile entity (" + blockEntity + ") at " + blockEntity.m_58899_().m_123341_() + "," + blockEntity.m_58899_().m_123342_() + "," + blockEntity.m_58899_().m_123343_()
++                        + " (" + m_8055_( p_62868_ ) + ") where there was no entity tile!" );
++                System.out.println( "Chunk coordinates: " + ( this.f_187604_.f_45578_ * 16 ) + "," + ( this.f_187604_.f_45579_ * 16 ) );
++                new Exception().printStackTrace();
++                // CraftBukkit end
++            }
 +        }
++
++
 +        if ( blockEntity == null )
 +        {
 +            if ( p_62869_ == LevelChunk.EntityCreationType.IMMEDIATE )
