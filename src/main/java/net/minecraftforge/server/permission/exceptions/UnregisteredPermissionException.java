@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.server.permission.exceptions;
 
+import java.util.Locale;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
 public class UnregisteredPermissionException extends RuntimeException
@@ -27,7 +28,7 @@ public class UnregisteredPermissionException extends RuntimeException
 
     public UnregisteredPermissionException(PermissionNode node)
     {
-        super(String.format("Tried to query PermissionNode '%s' although it has not been Registered", node.getNodeName()));
+        super(String.format(Locale.ENGLISH, "Tried to query PermissionNode '%s' although it has not been Registered", node.getNodeName()));
         this.node = node;
     }
 

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import java.util.Locale;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 
 public class InvalidModFileException extends RuntimeException
@@ -27,7 +28,7 @@ public class InvalidModFileException extends RuntimeException
 
     public InvalidModFileException(String message, IModFileInfo modFileInfo)
     {
-        super(String.format("%s (%s)", message, ((ModFileInfo)modFileInfo).getFile().getFileName()));
+        super(String.format(Locale.ENGLISH,"%s (%s)", message, ((ModFileInfo)modFileInfo).getFile().getFileName()));
         this.modFileInfo = modFileInfo;
     }
 }
