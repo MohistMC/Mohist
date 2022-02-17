@@ -44,7 +44,7 @@
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
  import net.minecraft.world.level.storage.loot.LootTables;
  import net.minecraft.world.level.storage.loot.PredicateManager;
-@@ -157,6 +_,11 @@
+@@ -157,9 +_,14 @@
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -55,7 +55,11 @@
 +import org.spigotmc.SlackActivityAccountant;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
-    private static final Logger f_129750_ = LogManager.getLogger();
+-   private static final Logger f_129750_ = LogManager.getLogger();
++   public static final Logger f_129750_ = LogManager.getLogger();
+    public static final String f_195495_ = "vanilla";
+    private static final float f_177884_ = 0.8F;
+    private static final int f_177885_ = 100;
 @@ -195,7 +_,7 @@
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;

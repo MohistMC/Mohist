@@ -9,6 +9,35 @@
     private final ChunkStatusUpdateListener f_143031_;
     public final ChunkMap.DistanceManager f_140145_;
     private final AtomicInteger f_140146_ = new AtomicInteger();
+@@ -130,6 +_,28 @@
+    private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
+    int f_140126_;
+ 
++   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
++   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
++   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
++
++      private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
++
++      @Override
++      public void execute(Runnable runnable) {
++         queue.add(runnable);
++      }
++
++      @Override
++      public void run() {
++         Runnable task;
++         while ((task = queue.poll()) != null) {
++            task.run();
++         }
++      }
++   };
++   // CraftBukkit end
++
++
+    public ChunkMap(ServerLevel p_143040_, LevelStorageSource.LevelStorageAccess p_143041_, DataFixer p_143042_, StructureManager p_143043_, Executor p_143044_, BlockableEventLoop<Runnable> p_143045_, LightChunkGetter p_143046_, ChunkGenerator p_143047_, ChunkProgressListener p_143048_, ChunkStatusUpdateListener p_143049_, Supplier<DimensionDataStorage> p_143050_, int p_143051_, boolean p_143052_) {
+       super(p_143041_.m_197394_(p_143040_.m_46472_()).resolve("region"), p_143042_, p_143052_);
+       this.f_140147_ = p_143043_;
 @@ -440,6 +_,7 @@
              if (this.f_140131_.remove(p_140182_, p_140183_) && p_198809_ != null) {
                 if (p_198809_ instanceof LevelChunk) {
@@ -17,6 +46,30 @@
                 }
  
                 this.m_140258_(p_198809_);
+@@ -593,7 +_,22 @@
+ 
+    private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
+       if (!p_143066_.isEmpty()) {
+-         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
++
++         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
++         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter((entity) -> {
++            boolean needsRemoval = false;
++            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++            if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++               entity.m_146870_();
++               needsRemoval = true;
++            }
++            if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++               entity.m_146870_();
++               needsRemoval = true;
++            }
++            return !needsRemoval;
++         }));
++         // CraftBukkit end
+       }
+ 
+    }
 @@ -621,8 +_,14 @@
              levelchunk.m_62952_();
              if (this.f_140132_.add(chunkpos.m_45588_())) {
@@ -72,3 +125,23 @@
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
           this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
+@@ -1238,11 +_,18 @@
+ 
+       public void m_140497_(ServerPlayer p_140498_) {
+          if (p_140498_ != this.f_140472_) {
+-            Vec3 vec3 = p_140498_.m_20182_().m_82546_(this.f_140471_.m_8540_());
++            Vec3 vec3 = p_140498_.m_20182_().m_82546_(this.f_140472_.m_20182_()); // MC-155077, SPIGOT-5113
+             double d0 = (double)Math.min(this.m_140496_(), (ChunkMap.this.f_140126_ - 1) * 16);
+             double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
+             double d2 = d0 * d0;
+             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
++
++            // CraftBukkit start - respect vanish API
++            if (!p_140498_.getBukkitEntity().canSee(this.f_140472_.getBukkitEntity())) {
++               flag = false;
++            }
++            // CraftBukkit end
++
+             if (flag) {
+                if (this.f_140475_.add(p_140498_.f_8906_)) {
+                   this.f_140471_.m_8541_(p_140498_);
