@@ -257,7 +257,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownPotion) { return new CraftThrownPotion(server, (net.minecraft.world.entity.projectile.ThrownPotion) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownEnderpearl) { return new CraftEnderPearl(server, (net.minecraft.world.entity.projectile.ThrownEnderpearl) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownExperienceBottle) { return new CraftThrownExpBottle(server, (net.minecraft.world.entity.projectile.ThrownExperienceBottle) entity); }
-            else if (entity instanceof ThrowableItemProjectile) { return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile) entity); }
         }
         else if (entity instanceof net.minecraft.world.entity.item.FallingBlockEntity) { return new CraftFallingBlock(server, (net.minecraft.world.entity.item.FallingBlockEntity) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.AbstractHurtingProjectile) {
@@ -280,8 +279,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.world.entity.vehicle.MinecartSpawner) { return new CraftMinecartMobSpawner(server, (net.minecraft.world.entity.vehicle.MinecartSpawner) entity); }
             else if (entity instanceof net.minecraft.world.entity.vehicle.Minecart) { return new CraftMinecartRideable(server, (net.minecraft.world.entity.vehicle.Minecart) entity); }
             else if (entity instanceof MinecartCommandBlock) { return new CraftMinecartCommand(server, (MinecartCommandBlock) entity); }
-            else if (entity instanceof AbstractMinecartContainer) { return new MohistModsMinecartContainer(server, (AbstractMinecartContainer) entity); }
-            return new MohistModsMinecraft(server, (AbstractMinecart) entity);
         } else if (entity instanceof net.minecraft.world.entity.decoration.HangingEntity) {
             if (entity instanceof net.minecraft.world.entity.decoration.Painting) { return new CraftPainting(server, (net.minecraft.world.entity.decoration.Painting) entity); }
             else if (entity instanceof net.minecraft.world.entity.decoration.ItemFrame) {
@@ -298,8 +295,17 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.world.entity.projectile.EvokerFangs) { return new CraftEvokerFangs(server, (net.minecraft.world.entity.projectile.EvokerFangs) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.LlamaSpit) { return new CraftLlamaSpit(server, (net.minecraft.world.entity.projectile.LlamaSpit) entity); }
         else if (entity instanceof Marker) { return new CraftMarker(server, (Marker) entity); }
-        else if (entity instanceof Projectile) { return new MohistModsProjectileEntity(server, (Projectile) entity);
-        } else  { return new MohistModsEntity(server, entity); }
+        else if (entity instanceof Projectile) {
+            return new MohistModsProjectileEntity(server, (Projectile) entity);
+        } else if (entity instanceof ThrowableItemProjectile) {
+            return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile) entity);
+        } else if (entity instanceof AbstractMinecart) {
+            return new MohistModsMinecraft(server, (AbstractMinecart) entity);
+        } else if (entity instanceof AbstractMinecartContainer) {
+            return new MohistModsMinecartContainer(server, (AbstractMinecartContainer) entity);
+        } else {
+            return new MohistModsEntity(server, entity);
+        }
         // CHECKSTYLE:ON
         throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
     }
