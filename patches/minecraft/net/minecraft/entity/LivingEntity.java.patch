@@ -556,7 +556,7 @@
           float f1 = 0.0F;
           if (p_70097_2_ > 0.0F && this.func_184583_d(p_70097_1_)) {
              this.func_184590_k(p_70097_2_);
-@@ -955,22 +_,39 @@
+@@ -955,8 +_,9 @@
  
           this.field_70721_aZ = 1.5F;
           boolean flag1 = true;
@@ -567,23 +567,13 @@
                 return false;
              }
  
--            this.func_70665_d(p_70097_1_, p_70097_2_ - this.field_110153_bc);
-+            // CraftBukkit start
-+            if(!this.damageEntity0(p_70097_1_, p_70097_2_ - this.field_110153_bc)){
-+               return false;
-+            }
-+            // CraftBukkit end
-             this.field_110153_bc = p_70097_2_;
+@@ -965,12 +_,21 @@
              flag1 = false;
           } else {
-+            // CraftBukkit start
-+            this.damageEntity0(p_70097_1_, p_70097_2_);
-+
-+            // CraftBukkit end
              this.field_110153_bc = p_70097_2_;
 -            this.field_70172_ad = 20;
--            this.func_70665_d(p_70097_1_, p_70097_2_);
 +            this.field_70172_ad = this.field_70771_an; // CraftBukkit - restore use of maxNoDamageTicks
+             this.func_70665_d(p_70097_1_, p_70097_2_);
              this.field_70738_aO = 10;
              this.field_70737_aN = this.field_70738_aO;
           }
@@ -831,7 +821,7 @@
           this.func_184185_a(this.func_184588_d(i), 1.0F, 1.0F);
           this.func_226295_cZ_();
 -         this.func_70097_a(DamageSource.field_76379_h, (float)i);
-+         // this.attackEntityFrom(DamageSource.FALL, (float)i); // CraftBukkit - moved up
++         // this.hurt(DamageSource.FALL, (float)i); // CraftBukkit - moved up
           return true;
        } else {
           return flag;
