@@ -1,12 +1,14 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -113,8 +_,11 @@
+@@ -113,8 +_,13 @@
  import net.minecraft.world.scores.Team;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 +import org.bukkit.event.entity.EntityCombustEvent;
++import org.bukkit.event.entity.EntityPoseChangeEvent;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
@@ -21,7 +23,7 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -226,7 +_,44 @@
+@@ -226,7 +_,49 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -33,6 +35,11 @@
 +   public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
 +   public boolean persistentInvisibility = false;
 +   private static final int CURRENT_LEVEL = 2;
++
++   // CraftBukkit start
++   static boolean isLevelAtLeast(CompoundTag tag, int level) {
++      return tag.m_128441_("Bukkit.updateLevel") && tag.m_128451_("Bukkit.updateLevel") >= level;
++   }
 +
 +   public float getBukkitYaw() {
 +      return this.f_19857_;
@@ -87,6 +94,80 @@
  
     }
  
+@@ -348,6 +_,13 @@
+    }
+ 
+    public void m_20124_(Pose p_20125_) {
++
++      // CraftBukkit start
++      if (p_20125_ == this.m_20089_()) {
++         return;
++      }
++      this.f_19853_.getCraftServer().getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
++      // CraftBukkit end
+       this.f_19804_.m_135381_(f_19806_, p_20125_);
+    }
+ 
+@@ -363,6 +_,34 @@
+    }
+ 
+    protected void m_19915_(float p_19916_, float p_19917_) {
++
++      // CraftBukkit start - yaw was sometimes set to NaN, so we need to set it back to 0
++      if (Float.isNaN(p_19916_)) {
++         p_19916_ = 0;
++      }
++
++      if (p_19916_ == Float.POSITIVE_INFINITY || p_19916_ == Float.NEGATIVE_INFINITY) {
++         if (this instanceof ServerPlayer) {
++            this.f_19853_.getCraftServer().getLogger().warning(this.m_6302_() + " was caught trying to crash the server with an invalid yaw");
++            (( CraftPlayer ) this.getBukkitEntity()).kickPlayer("Infinite yaw (Hacking?)");
++         }
++         p_19916_ = 0;
++      }
++
++      // pitch was sometimes set to NaN, so we need to set it back to 0
++      if (Float.isNaN(p_19917_)) {
++         p_19917_ = 0;
++      }
++
++      if (p_19917_ == Float.POSITIVE_INFINITY || p_19917_ == Float.NEGATIVE_INFINITY) {
++         if (this instanceof ServerPlayer) {
++            this.f_19853_.getCraftServer().getLogger().warning(this.m_6302_() + " was caught trying to crash the server with an invalid pitch");
++            ((CraftPlayer) this.getBukkitEntity()).kickPlayer("Infinite pitch (Hacking?)");
++         }
++         p_19917_ = 0;
++      }
++      // CraftBukkit end
++
+       this.m_146922_(p_19916_ % 360.0F);
+       this.m_146926_(p_19917_ % 360.0F);
+    }
+@@ -403,6 +_,15 @@
+       this.m_6075_();
+    }
+ 
++   // CraftBukkit start
++   public void postTick() {
++      // No clean way to break out of ticking once the entity has been copied to a new world, so instead we move the portalling later in the tick cycle
++      if (!(this instanceof ServerPlayer)) {
++         this.m_20157_();
++      }
++   }
++   // CraftBukkit end
++
+    public void m_6075_() {
+       this.f_19853_.m_46473_().m_6180_("entityBaseTick");
+       this.f_185934_ = null;
+@@ -417,7 +_,7 @@
+       this.f_19867_ = this.f_19787_;
+       this.f_19860_ = this.m_146909_();
+       this.f_19859_ = this.m_146908_();
+-      this.m_20157_();
++      if (this instanceof ServerPlayer) this.m_20157_(); // CraftBukkit - // Moved up to postTick
+       if (this.m_5843_()) {
+          this.m_20076_();
+       }
 @@ -504,6 +_,36 @@
     }
  
