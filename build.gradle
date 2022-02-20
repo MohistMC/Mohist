@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.26,)'
+        classpath "dev.vankka:gradle-plugin:1.2.1"
     }
 }
 
@@ -66,6 +67,9 @@ ext {
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
     MIN_TAG_FOR_CHANGELOG = "39.0"
+
+    // remove :fatjar
+    BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
 }
 
 println('Version: ' + VERSION +
@@ -246,6 +250,12 @@ def sharedDeps = {
     installer 'org.lwjgl:lwjgl-opengl:3.2.2'
     installer 'org.lwjgl:lwjgl-stb:3.2.2'
     */
+
+    autolibraries BIN_PATCHER
+    autolibraries SPECIAL_SOURCE
+    autolibraries INSTALLER_TOOLS
+    autolibraries JAR_SPLITTER
+    autolibraries FART
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -791,6 +801,7 @@ project(':forge') {
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'dev.vankka.dependencydownload.plugin'
 
     sourceSets {
         main {
@@ -830,6 +841,9 @@ project(':forge') {
         }
         moduleonly
         api.extendsFrom(installer)
+        autolibraries
+        autolibraries.extendsFrom(installer)
+        autolibraries.extendsFrom(moduleonly)
     }
 
     dependencies {
@@ -1250,6 +1264,15 @@ project(':forge') {
         }
     }
 
+    task generateMohistLibraries(type: dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
+        var conf = configurations.autolibraries
+        configuration = conf
+        file = "data/mohist_libraries.txt"
+        // Not necessary to include in the resource
+        includeShadowJarRelocations = false
+    }
+
+
     task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
@@ -1257,12 +1280,12 @@ project(':forge') {
         archiveVersion = "1.18.1-" + JenkinsNumber.info()
         destinationDirectory = file('build/libs')
 
-        def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
+        def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
                 [
                         'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
                         "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
                 ]
-        def claimed = CLASS_PATH.collect{ it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
+        def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
         if (rootProject.downloadServerRaw.dest.exists()) {
             try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
                 CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
@@ -1271,8 +1294,20 @@ project(':forge') {
         } else {
             println("Can't read server")
         }
+        def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
+        def tokens = [
+                TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
+                MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
+                FORGE_VERSION: FORGE_VERSION,
+                MC_VERSION   : MC_VERSION,
+                MCP_VERSION  : MCP_VERSION,
+                FORGE_GROUP  : project.group,
+                IGNORE_LIST  : Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
+                MODULES      : 'ALL-MODULE-PATH'
+        ]
+
         doFirst {
-            MANIFESTS.each{ pkg, values ->
+            MANIFESTS.each { pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
                             'Main-Class': 'com.mohistmc.server.MohistMCStart',
@@ -1328,6 +1363,21 @@ project(':forge') {
         from(rootProject.file('server_files/libraries.txt')) {
             filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
             rename { 'data/libraries.txt' }
+        }
+
+        from(generateMohistLibraries)
+        from(rootProject.file('server_files/args.txt')) {
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
+            rename { 'data/win_args.txt' }
+        }
+
+        from(rootProject.file('server_files/args.txt')) {
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
+            rename { 'data/unix_args.txt' }
+        }
+
+        from(rootProject.file('server_files/user_jvm_args.txt')) {
+            rename { 'data/user_jvm_args.txt' }
         }
     }
 
