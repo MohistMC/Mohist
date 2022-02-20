@@ -103,7 +103,7 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -678,20 +_,28 @@
+@@ -678,7 +_,7 @@
        PortalInfo portalinfo = super.m_7937_(p_8998_);
        if (portalinfo != null && this.f_19853_.m_46472_() == Level.f_46428_ && p_8998_.m_46472_() == Level.f_46430_) {
           Vec3 vec3 = portalinfo.f_77676_.m_82520_(0.0D, -1.0D, 0.0D);
@@ -112,12 +112,20 @@
        } else {
           return portalinfo;
        }
-    }
+@@ -686,12 +_,29 @@
  
     @Nullable
--   public Entity m_5489_(ServerLevel p_9180_) {
-+   public Entity changeDimension(ServerLevel p_9180_, PlayerTeleportEvent.TeleportCause cause) {
+    public Entity m_5489_(ServerLevel p_9180_) {
 +      // CraftBukkit start
++      return changeDimension(p_9180_,  p_9180_.m_8871_(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   }
++   @Nullable
++   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      return changeDimension(p_9180_, teleporter, PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   }
++
++   @Nullable
++   public Entity changeDimension(ServerLevel p_9180_, PlayerTeleportEvent.TeleportCause cause) {
 +      return changeDimension(p_9180_,  p_9180_.m_8871_(), cause);
 +   }
 +
