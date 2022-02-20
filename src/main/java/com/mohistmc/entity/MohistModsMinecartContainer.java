@@ -1,38 +1,38 @@
 package com.mohistmc.entity;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.Level;
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftMinecartContainer;
 import org.bukkit.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
 
 public class MohistModsMinecartContainer extends CraftMinecartContainer {
 
-    private final EntityType entityType;
+    public String entityName;
 
     public MohistModsMinecartContainer(CraftServer server, AbstractMinecartContainer entity) {
         super(server, entity);
-        this.entityType = EntityType.valueOf(ServerAPI.entityTypeMap.get(ForgeRegistries.ENTITIES.getKey(entity.getType())));
-    }
+        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
+        if (entityName == null) {
+            entityName = entity.getName().getString();
+        }    }
 
     @Override
     public AbstractMinecartContainer getHandle() {
         return (AbstractMinecartContainer) this.entity;
     }
 
-
-    @NotNull
     @Override
     public EntityType getType() {
-        return entityType;
+        EntityType type = EntityType.fromName(this.entityName);
+        if (type != null) {
+            return type;
+        } else {
+            return EntityType.FORGE_MOD_MINECART_CONTAINER;
+        }
     }
-
     @Override
     public String toString() {
-        return "CraftCustomMinecartContainer{" + entityType + '}';
+        return "CraftCustomMinecartContainer{" + getType() + '}';
     }
 }
