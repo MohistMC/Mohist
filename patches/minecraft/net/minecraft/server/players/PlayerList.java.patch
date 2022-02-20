@@ -60,7 +60,7 @@
  
  public abstract class PlayerList {
     public static final File f_11189_ = new File("banned-players.json");
-@@ -117,9 +_,15 @@
+@@ -117,9 +_,14 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -72,7 +72,6 @@
 +      this.cserver = p_11213_.server = new CraftServer((DedicatedServer) p_11213_, this);
        this.f_11195_ = p_11213_;
 +      p_11213_.console = ColouredConsoleSender.getInstance();
-+      ForgeInjectBukkit.init();
        this.f_11206_ = p_11214_;
        this.f_11193_ = p_11216_;
        this.f_11204_ = p_11215_;

@@ -292,7 +292,8 @@ public enum EntityType implements Keyed {
     FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", MohistModsChestHorse.class, -1, false),
     FORGE_MOD_HORSE("forge_mod_horse", MohistModsAbstractHorse.class, -1, false),
     FORGE_MOD_TAMEABLE_ANIMALS("forge_mod_tameable_animal", MohistModsTameableEntity.class, -1, false ),
-    FORGE_MOD_ANIMAL("forge_mod_animal", MohistModsAnimals.class, -1, false );
+    FORGE_MOD_ANIMAL("forge_mod_animal", MohistModsAnimals.class, -1, false ),
+    FORGE_MOD_MONSTER("forge_mod_monster", MohistModsMonster.class, -1, false);
 
     private final String name;
     private final Class<? extends Entity> clazz;
