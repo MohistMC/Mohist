@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/portal/PortalShape.java
 +++ b/net/minecraft/world/level/portal/PortalShape.java
-@@ -17,6 +_,7 @@
+@@ -17,6 +_,8 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftPortalEvent;
 +import org.bukkit.event.world.PortalCreateEvent;
  
  public class PortalShape {
@@ -99,11 +100,21 @@
     }
  
     public boolean m_77744_() {
-@@ -195,6 +_,7 @@
+@@ -195,7 +_,8 @@
        return new Vec3(d2, d4, d3);
     }
  
+-   public static PortalInfo m_77699_(ServerLevel p_77700_, BlockUtil.FoundRectangle p_77701_, Direction.Axis p_77702_, Vec3 p_77703_, EntityDimensions p_77704_, Vec3 p_77705_, float p_77706_, float p_77707_) {
 +   // Mohist TODO
-    public static PortalInfo m_77699_(ServerLevel p_77700_, BlockUtil.FoundRectangle p_77701_, Direction.Axis p_77702_, Vec3 p_77703_, EntityDimensions p_77704_, Vec3 p_77705_, float p_77706_, float p_77707_) {
++   public static PortalInfo createPortalInfo(ServerLevel p_77700_, BlockUtil.FoundRectangle p_77701_, Direction.Axis p_77702_, Vec3 p_77703_, EntityDimensions p_77704_, Vec3 p_77705_, float p_77706_, float p_77707_, CraftPortalEvent portalEventInfo) {
        BlockPos blockpos = p_77701_.f_124348_;
        BlockState blockstate = p_77700_.m_8055_(blockpos);
+       Direction.Axis direction$axis = blockstate.m_61145_(BlockStateProperties.f_61364_).orElse(Direction.Axis.X);
+@@ -208,6 +_,6 @@
+       double d4 = 0.5D + p_77703_.m_7094_();
+       boolean flag = direction$axis == Direction.Axis.X;
+       Vec3 vec31 = new Vec3((double)blockpos.m_123341_() + (flag ? d2 : d4), (double)blockpos.m_123342_() + d3, (double)blockpos.m_123343_() + (flag ? d4 : d2));
+-      return new PortalInfo(vec31, vec3, p_77706_ + (float)i, p_77707_);
++      return new PortalInfo(vec31, vec3, p_77706_ + (float)i, p_77707_, p_77700_, portalEventInfo);
+    }
+ }

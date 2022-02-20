@@ -552,12 +552,12 @@
      }
  
      public static void makeObsidianPlatform(WorldServer worldserver) {
-+        // CraftBukkit start
-+        WorldServer.makeObsidianPlatform(worldserver, null);
-+    }
-+
-+    public static void makeObsidianPlatform(WorldServer worldserver, Entity entity) {
-+        // CraftBukkit end
+        // CraftBukkit start
+        WorldServer.makeObsidianPlatform(worldserver, null);
+    }
+
+    public static void makeObsidianPlatform(WorldServer worldserver, Entity entity) {
+        // CraftBukkit end
          BlockPosition blockposition = WorldServer.END_SPAWN_POINT;
          int i = blockposition.getX();
          int j = blockposition.getY() - 2;

@@ -87,23 +87,7 @@
              this.level.broadcastEntityEvent(this, (byte) 60);
              this.remove(Entity.RemovalReason.KILLED);
          }
-@@ -653,9 +700,15 @@
-     }
- 
-     protected void equipEventAndSound(ItemStack itemstack) {
-+        // CraftBukkit start
-+        this.equipEventAndSound(itemstack, false);
-+    }
-+
-+    protected void equipEventAndSound(ItemStack itemstack, boolean silent) {
-         SoundEffect soundeffect = itemstack.getEquipSound();
- 
--        if (!itemstack.isEmpty() && soundeffect != null && !this.isSpectator()) {
-+        if (!itemstack.isEmpty() && soundeffect != null && !this.isSpectator() && !silent) {
-+            // CraftBukkit end
-             this.gameEvent(GameEvent.EQUIP);
-             this.playSound(soundeffect, 1.0F, 1.0F);
-         }
+
 @@ -717,6 +770,17 @@
              }
          }

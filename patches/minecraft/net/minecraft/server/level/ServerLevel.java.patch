@@ -302,6 +302,19 @@
        explosion.m_46061_();
        explosion.m_46075_(false);
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
+@@ -1397,6 +_,12 @@
+    }
+ 
+    public static void m_8617_(ServerLevel p_8618_) {
++      // CraftBukkit start
++      makeObsidianPlatform(p_8618_, null);
++   }
++
++   public static void makeObsidianPlatform(ServerLevel p_8618_, Entity p_8619_) {
++      // CraftBukkit end
+       BlockPos blockpos = f_8562_;
+       int i = blockpos.m_123341_();
+       int j = blockpos.m_123342_() - 2;
 @@ -1409,6 +_,12 @@
        });
     }

@@ -1,11 +1,12 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -135,6 +_,8 @@
+@@ -135,6 +_,9 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
++import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogManager.getLogger();
@@ -44,12 +45,27 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -685,13 +_,14 @@
+@@ -678,20 +_,28 @@
+       PortalInfo portalinfo = super.m_7937_(p_8998_);
+       if (portalinfo != null && this.f_19853_.m_46472_() == Level.f_46428_ && p_8998_.m_46472_() == Level.f_46430_) {
+          Vec3 vec3 = portalinfo.f_77676_.m_82520_(0.0D, -1.0D, 0.0D);
+-         return new PortalInfo(vec3, Vec3.f_82478_, 90.0F, 0.0F);
++         return new PortalInfo(vec3, Vec3.f_82478_, 90.0F, 0.0F, p_8998_, portalinfo.event);
+       } else {
+          return portalinfo;
+       }
     }
  
     @Nullable
 -   public Entity m_5489_(ServerLevel p_9180_) {
-+   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
++   public Entity changeDimension(ServerLevel p_9180_, PlayerTeleportEvent.TeleportCause cause) {
++      // CraftBukkit start
++      return changeDimension(p_9180_,  p_9180_.m_8871_(), cause);
++   }
++
++   @Nullable
++   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter, PlayerTeleportEvent.TeleportCause cause) {
++      // CraftBukkit end
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
        this.f_8927_ = true;
        ServerLevel serverlevel = this.m_183503_();
@@ -105,6 +121,24 @@
           }
  
           return this;
+@@ -756,13 +_,13 @@
+ 
+    }
+ 
+-   protected Optional<BlockUtil.FoundRectangle> m_183318_(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
+-      Optional<BlockUtil.FoundRectangle> optional = super.m_183318_(p_184131_, p_184132_, p_184133_, p_184134_);
+-      if (optional.isPresent()) {
++   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_, int searchRadius, boolean canCreatePortal, int createRadius) { // CraftBukkit
++      Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(p_184131_, p_184132_, p_184133_, p_184134_, searchRadius, canCreatePortal, createRadius);
++      if (optional.isPresent() || !canCreatePortal) { // CraftBukkit
+          return optional;
+       } else {
+          Direction.Axis direction$axis = this.f_19853_.m_8055_(this.f_19819_).m_61145_(NetherPortalBlock.f_54904_).orElse(Direction.Axis.X);
+-         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().m_77666_(p_184132_, direction$axis);
++         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().createPortal(p_184132_, direction$axis, this, createRadius); // CraftBukkit
+          if (!optional1.isPresent()) {
+             f_8907_.error("Unable to create a portal, likely target out of worldborder");
+          }
 @@ -799,6 +_,9 @@
     }
  

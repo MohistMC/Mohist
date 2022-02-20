@@ -95,6 +95,23 @@
                 this.m_8127_();
              }
           } else if (this.m_20146_() < this.m_6062_()) {
+@@ -615,8 +_,15 @@
+    }
+ 
+    protected void m_147218_(ItemStack p_147219_) {
++      // CraftBukkit start
++      this.equipEventAndSound(p_147219_, false);
++   }
++
++   protected void equipEventAndSound(ItemStack p_147219_, boolean silent) {
+       SoundEvent soundevent = p_147219_.m_150920_();
+-      if (!p_147219_.m_41619_() && soundevent != null && !this.m_5833_()) {
++      if (!p_147219_.m_41619_() && soundevent != null && !this.m_5833_() && !silent) {
++         // CraftBukkit end
++
+          this.m_146850_(GameEvent.f_157811_);
+          this.m_5496_(soundevent, 1.0F, 1.0F);
+       }
 @@ -714,7 +_,7 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
