@@ -1,0 +1,62 @@
+--- a/net/minecraft/world/level/storage/Convertable.java
++++ b/net/minecraft/world/level/storage/Convertable.java
+@@ -56,6 +56,10 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++// CraftBukkit start
++import net.minecraft.world.level.dimension.WorldDimension;
++// CraftBukkit end
++
+ public class Convertable {
+ 
+     static final Logger LOGGER = LogManager.getLogger();
+@@ -277,9 +281,23 @@
+         return this.backupDir;
+     }
+ 
+-    public Convertable.ConversionSession createAccess(String s) throws IOException {
+-        return new Convertable.ConversionSession(s);
++    // CraftBukkit start
++    public Convertable.ConversionSession createAccess(String s, ResourceKey<WorldDimension> dimensionType) throws IOException {
++        return new Convertable.ConversionSession(s, dimensionType);
++    }
++
++    public static Path getStorageFolder(Path path, ResourceKey<WorldDimension> dimensionType) {
++        if (dimensionType == WorldDimension.OVERWORLD) {
++            return path;
++        } else if (dimensionType == WorldDimension.NETHER) {
++            return path.resolve("DIM-1");
++        } else if (dimensionType == WorldDimension.END) {
++            return path.resolve("DIM1");
++        } else {
++            return path.resolve("dimensions").resolve(dimensionType.location().getNamespace()).resolve(dimensionType.location().getPath());
++        }
+     }
++    // CraftBukkit end
+ 
+     public class ConversionSession implements AutoCloseable {
+ 
+@@ -287,8 +305,12 @@
+         public final Path levelPath;
+         private final String levelId;
+         private final Map<SavedFile, Path> resources = Maps.newHashMap();
++        // CraftBukkit start
++        public final ResourceKey<WorldDimension> dimensionType;
+ 
+-        public ConversionSession(String s) throws IOException {
++        public ConversionSession(String s, ResourceKey<WorldDimension> dimensionType) throws IOException {
++            this.dimensionType = dimensionType;
++            // CraftBukkit end
+             this.levelId = s;
+             this.levelPath = Convertable.this.baseDir.resolve(s);
+             this.lock = SessionLock.create(this.levelPath);
+@@ -305,7 +327,7 @@
+         }
+ 
+         public Path getDimensionPath(ResourceKey<World> resourcekey) {
+-            return DimensionManager.getStorageFolder(resourcekey, this.levelPath);
++            return getStorageFolder(this.levelPath, this.dimensionType); // CraftBukkit
+         }
+ 
+         private void checkLock() {
