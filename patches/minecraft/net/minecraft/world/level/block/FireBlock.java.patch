@@ -76,7 +76,7 @@
           } else {
              int j = Math.min(15, i + p_53452_.nextInt(3) / 2);
              if (i != j) {
-@@ -147,26 +_,28 @@
+@@ -147,26 +_,26 @@
                 if (!this.m_53485_(p_53450_, p_53451_)) {
                    BlockPos blockpos = p_53451_.m_7495_();
                    if (!p_53450_.m_8055_(blockpos).m_60783_(p_53450_, blockpos, Direction.UP) || i > 3) {
@@ -103,14 +103,12 @@
 -            this.m_53431_(p_53450_, p_53451_.m_7494_(), 250 + k, p_53452_, i);
 -            this.m_53431_(p_53450_, p_53451_.m_142127_(), 300 + k, p_53452_, i);
 -            this.m_53431_(p_53450_, p_53451_.m_142128_(), 300 + k, p_53452_, i);
-+            // CraftBukkit start - add source blockposition to burn calls
-+            this.trySpread(p_53450_, p_53451_.m_142126_(), 300 + k, p_53452_, i, p_53451_, Direction.EAST);
-+            this.trySpread(p_53450_, p_53451_.m_142125_(), 300 + k, p_53452_, i, p_53451_, Direction.WEST);
-+            this.trySpread(p_53450_, p_53451_.m_7495_(), 250 + k, p_53452_, i, p_53451_, Direction.UP);
-+            this.trySpread(p_53450_, p_53451_.m_7494_(), 250 + k, p_53452_, i, p_53451_, Direction.DOWN);
-+            this.trySpread(p_53450_, p_53451_.m_142127_(), 300 + k, p_53452_, i, p_53451_, Direction.NORTH);
-+            this.trySpread(p_53450_, p_53451_.m_142128_(), 300 + k, p_53452_, i, p_53451_, Direction.SOUTH);
-+            // CraftBukkit end
++            this.tryCatchFire(p_53450_, p_53451_.m_142126_(), 300 + k, p_53452_, i, Direction.EAST);
++            this.tryCatchFire(p_53450_, p_53451_.m_142125_(), 300 + k, p_53452_, i, Direction.WEST);
++            this.tryCatchFire(p_53450_, p_53451_.m_7495_(), 250 + k, p_53452_, i, Direction.UP);
++            this.tryCatchFire(p_53450_, p_53451_.m_7494_(), 250 + k, p_53452_, i, Direction.DOWN);
++            this.tryCatchFire(p_53450_, p_53451_.m_142127_(), 300 + k, p_53452_, i, Direction.NORTH);
++            this.tryCatchFire(p_53450_, p_53451_.m_142128_(), 300 + k, p_53452_, i, Direction.SOUTH);
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
              for(int l = -1; l <= 1; ++l) {
@@ -133,7 +131,7 @@
                             }
                          }
                       }
-@@ -204,18 +_,37 @@
+@@ -204,18 +_,34 @@
        return p_53429_.m_46758_(p_53430_) || p_53429_.m_46758_(p_53430_.m_142125_()) || p_53429_.m_46758_(p_53430_.m_142126_()) || p_53429_.m_46758_(p_53430_.m_142127_()) || p_53429_.m_46758_(p_53430_.m_142128_());
     }
  
@@ -149,18 +147,15 @@
  
 -   private void m_53431_(Level p_53432_, BlockPos p_53433_, int p_53434_, Random p_53435_, int p_53436_) {
 -      int i = this.m_53492_(p_53432_.m_8055_(p_53433_));
-+   public void tryCatchFire(Level p_53432_, BlockPos p_53433_, int p_53434_, Random p_53435_, int p_53436_, BlockPos p_53437_, Direction face){
-+      trySpread( p_53432_, p_53433_, p_53434_, p_53435_, p_53436_, p_53437_, face);
-+   }
-+
-+   private void trySpread(Level p_53432_, BlockPos p_53433_, int p_53434_, Random p_53435_, int p_53436_, BlockPos p_53437_, Direction face) {
++   private void tryCatchFire(Level p_53432_, BlockPos p_53433_, int p_53434_, Random p_53435_, int p_53436_, Direction face) {
 +      int i = p_53432_.m_8055_(p_53433_).getFlammability(p_53432_, p_53433_, face);
        if (p_53435_.nextInt(p_53434_) < i) {
           BlockState blockstate = p_53432_.m_8055_(p_53433_);
 +
 +         // CraftBukkit start
++         BlockPos sourcePos = p_53433_.m_142300_(face); // Mohist
 +         org.bukkit.block.Block theBlock = p_53432_.getWorld().getBlockAt(p_53433_.m_123341_(), p_53433_.m_123342_(), p_53433_.m_123343_());
-+         org.bukkit.block.Block sourceBlock = p_53432_.getWorld().getBlockAt(p_53437_.m_123341_(), p_53437_.m_123342_(), p_53437_.m_123343_());
++         org.bukkit.block.Block sourceBlock = p_53432_.getWorld().getBlockAt(sourcePos.m_123341_(), sourcePos.m_123342_(), sourcePos.m_123343_());
 +
 +         BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
 +         p_53432_.getCraftServer().getPluginManager().callEvent(event);
