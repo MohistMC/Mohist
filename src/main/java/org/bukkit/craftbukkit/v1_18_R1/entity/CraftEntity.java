@@ -281,7 +281,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.world.entity.vehicle.Minecart) { return new CraftMinecartRideable(server, (net.minecraft.world.entity.vehicle.Minecart) entity); }
             else if (entity instanceof MinecartCommandBlock) { return new CraftMinecartCommand(server, (MinecartCommandBlock) entity); }
             else if (entity instanceof AbstractMinecartContainer) { return new MohistModsMinecartContainer(server, (AbstractMinecartContainer) entity); }
-            return new MohistModsMinecraft(server, (AbstractMinecart) entity);
+            else { return new MohistModsMinecart(server, (AbstractMinecart) entity); }
         } else if (entity instanceof net.minecraft.world.entity.decoration.HangingEntity) {
             if (entity instanceof net.minecraft.world.entity.decoration.Painting) { return new CraftPainting(server, (net.minecraft.world.entity.decoration.Painting) entity); }
             else if (entity instanceof net.minecraft.world.entity.decoration.ItemFrame) {
