@@ -53,8 +53,8 @@ public class ForgeInjectBukkit {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumBiome();
-        addEnumEnchantment();
-        addEnumPotion();
+        //addEnumEnchantment();
+        //addEnumPotion();
         addEnumPattern();
         addEnumEnvironment();
         addEnumEntity();
