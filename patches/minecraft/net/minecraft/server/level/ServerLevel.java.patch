@@ -302,6 +302,28 @@
        explosion.m_46061_();
        explosion.m_46075_(false);
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
+@@ -953,12 +_,19 @@
+    }
+ 
+    public <T extends ParticleOptions> int m_8767_(T p_8768_, double p_8769_, double p_8770_, double p_8771_, int p_8772_, double p_8773_, double p_8774_, double p_8775_, double p_8776_) {
+-      ClientboundLevelParticlesPacket clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(p_8768_, false, p_8769_, p_8770_, p_8771_, (float)p_8773_, (float)p_8774_, (float)p_8775_, (float)p_8776_, p_8772_);
++      // CraftBukkit - visibility api support
++      return sendParticles(null, p_8768_, p_8769_, p_8770_, p_8771_, p_8772_,p_8773_,p_8774_,p_8775_, p_8776_, false);
++   }
++
++   public <T extends ParticleOptions> int sendParticles(ServerPlayer p_8767_, T p_8768_, double p_8769_, double p_8770_, double p_8771_, int p_8772_, double p_8773_, double p_8774_, double p_8775_, double p_8776_, boolean force) {
++      // CraftBukkit end
++      Packet<?> packet = new ClientboundLevelParticlesPacket(p_8768_, force, p_8769_, p_8770_, p_8771_, (float) p_8773_, (float) p_8774_, (float) p_8775_, (float) p_8776_, p_8772_);
+       int i = 0;
+ 
+       for(int j = 0; j < this.f_8546_.size(); ++j) {
+          ServerPlayer serverplayer = this.f_8546_.get(j);
+-         if (this.m_8636_(serverplayer, false, p_8769_, p_8770_, p_8771_, clientboundlevelparticlespacket)) {
++         if (p_8767_ != null && !serverplayer.getBukkitEntity().canSee(p_8767_.getBukkitEntity())) continue; // CraftBukkit
++         if (this.m_8636_(serverplayer, force, p_8769_, p_8770_, p_8771_, packet)) {// CraftBukkit
+             ++i;
+          }
+       }
 @@ -1397,6 +_,12 @@
     }
  

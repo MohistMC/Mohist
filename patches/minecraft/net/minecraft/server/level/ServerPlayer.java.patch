@@ -37,7 +37,7 @@
     public ServerPlayer(MinecraftServer p_143384_, ServerLevel p_143385_, GameProfile p_143386_) {
        super(p_143385_, p_143385_.m_8900_(), p_143385_.m_8901_(), p_143386_);
        this.f_8939_ = p_143384_.m_7950_(this);
-@@ -236,7 +_,51 @@
+@@ -236,11 +_,55 @@
        this.f_8909_ = p_143384_.m_6846_().m_11296_(this);
        this.f_19793_ = 1.0F;
        this.m_9201_(p_143385_);
@@ -90,6 +90,11 @@
  
     private void m_9201_(ServerLevel p_9202_) {
        BlockPos blockpos = p_9202_.m_8900_();
+-      if (p_9202_.m_6042_().m_63935_() && p_9202_.m_142572_().m_129910_().m_5464_() != GameType.ADVENTURE) {
++      if (p_9202_.m_6042_().m_63935_() && p_9202_.f_8549_.m_5464_() != GameType.ADVENTURE) { // CraftBukkit
+          int i = Math.max(0, this.f_8924_.m_129803_(p_9202_));
+          int j = Mth.m_14107_(p_9202_.m_6857_().m_61941_((double)blockpos.m_123341_(), (double)blockpos.m_123343_()));
+          if (j < i) {
 @@ -541,6 +_,7 @@
     }
  
