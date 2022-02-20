@@ -22,7 +22,6 @@ public class MohistModsMinecraft extends CraftMinecart {
         return (AbstractMinecart) this.entity;
     }
 
-
     @NotNull
     @Override
     public EntityType getType() {
