@@ -43,7 +43,11 @@ public class JarTool {
 
     private static File getFile() {
         String path = JarTool.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-		path = java.net.URLDecoder.decode(path, StandardCharsets.UTF_8);
+        try {
+            path = java.net.URLDecoder.decode(path, "UTF-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            return new File(path);
+        }
 		return new File(path);
     }
 
