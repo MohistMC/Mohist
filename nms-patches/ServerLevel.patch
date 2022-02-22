@@ -47,10 +47,6 @@
 +        return this.chunkSource.getChunk(x, z, false);
 +    }
 +
-+    @Override
-+    public ResourceKey<WorldDimension> getTypeKey() {
-+        return convertable.dimensionType;
-+    }
 +
 +    // Add env and gen to constructor, WorldData -> WorldDataServer
 +    public WorldServer(MinecraftServer minecraftserver, Executor executor, Convertable.ConversionSession convertable_conversionsession, IWorldDataServer iworlddataserver, ResourceKey<World> resourcekey, DimensionManager dimensionmanager, WorldLoadListener worldloadlistener, ChunkGenerator chunkgenerator, boolean flag, long i, List<MobSpawner> list, boolean flag1, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
@@ -448,29 +444,7 @@
          if (explosion_effect == Explosion.Effect.NONE) {
              explosion.clearToBlow();
          }
-@@ -1068,13 +1242,20 @@
-     }
- 
-     public <T extends ParticleParam> int sendParticles(T t0, double d0, double d1, double d2, int i, double d3, double d4, double d5, double d6) {
--        PacketPlayOutWorldParticles packetplayoutworldparticles = new PacketPlayOutWorldParticles(t0, false, d0, d1, d2, (float) d3, (float) d4, (float) d5, (float) d6, i);
-+        // CraftBukkit - visibility api support
-+        return sendParticles(null, t0, d0, d1, d2, i, d3, d4, d5, d6, false);
-+    }
-+
-+    public <T extends ParticleParam> int sendParticles(EntityPlayer sender, T t0, double d0, double d1, double d2, int i, double d3, double d4, double d5, double d6, boolean force) {
-+        PacketPlayOutWorldParticles packetplayoutworldparticles = new PacketPlayOutWorldParticles(t0, force, d0, d1, d2, (float) d3, (float) d4, (float) d5, (float) d6, i);
-+        // CraftBukkit end
-         int j = 0;
- 
-         for (int k = 0; k < this.players.size(); ++k) {
-             EntityPlayer entityplayer = (EntityPlayer) this.players.get(k);
-+            if (sender != null && !entityplayer.getBukkitEntity().canSee(sender.getBukkitEntity())) continue; // CraftBukkit
- 
--            if (this.sendParticles(entityplayer, false, d0, d1, d2, packetplayoutworldparticles)) {
-+            if (this.sendParticles(entityplayer, force, d0, d1, d2, packetplayoutworldparticles)) { // CraftBukkit
-                 ++j;
-             }
-         }
+
 @@ -1125,7 +1306,7 @@
  
      @Nullable
@@ -552,12 +526,12 @@
      }
  
      public static void makeObsidianPlatform(WorldServer worldserver) {
-+        // CraftBukkit start
-+        WorldServer.makeObsidianPlatform(worldserver, null);
-+    }
-+
-+    public static void makeObsidianPlatform(WorldServer worldserver, Entity entity) {
-+        // CraftBukkit end
+        // CraftBukkit start
+        WorldServer.makeObsidianPlatform(worldserver, null);
+    }
+
+    public static void makeObsidianPlatform(WorldServer worldserver, Entity entity) {
+        // CraftBukkit end
          BlockPosition blockposition = WorldServer.END_SPAWN_POINT;
          int i = blockposition.getX();
          int j = blockposition.getY() - 2;

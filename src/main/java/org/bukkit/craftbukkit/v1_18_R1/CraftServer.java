@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -260,6 +261,8 @@ public final class CraftServer implements Server {
         this.structureManager = new CraftStructureManager(console.getStructureManager());
 
         Bukkit.setServer(this);
+
+        ForgeInjectBukkit.init();
 
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
         Enchantments.SHARPNESS.getClass();
@@ -992,8 +995,10 @@ public final class CraftServer implements Server {
                 throw new IllegalArgumentException("Illegal dimension");
         }
 
-        LevelStorageSource.LevelStorageAccess worldSession;
-        worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
+        LevelStorageSource.LevelStorageAccess worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name,
+                actualDimension);
+
+        if(worldSession == null) return null;
 
         boolean hardcore = creator.hardcore();
 
