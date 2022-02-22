@@ -38,7 +38,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -179,13 +_,27 @@
+@@ -179,13 +_,21 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -52,12 +52,6 @@
 +   public PrimaryLevelData worldDataServer;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
-+
-+   @Override
-+   public ResourceKey< LevelStem > getTypeKey ( )
-+   {
-+      return convertable.dimensionType;
-+   }
  
     public ServerLevel(MinecraftServer p_8571_, Executor p_8572_, LevelStorageSource.LevelStorageAccess p_8573_, ServerLevelData p_8574_, ResourceKey<Level> p_8575_, DimensionType p_8576_, ChunkProgressListener p_8577_, ChunkGenerator p_8578_, boolean p_8579_, long p_8580_, List<CustomSpawner> p_8581_, boolean p_8582_) {
        super(p_8574_, p_8575_, p_8576_, p_8571_::m_129905_, false, p_8579_, p_8580_);

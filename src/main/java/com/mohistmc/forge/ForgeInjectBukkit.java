@@ -55,12 +55,11 @@ public class ForgeInjectBukkit {
         addEnumBiome();
         //addEnumEnchantment();
         //addEnumPotion();
-        addEnumPattern();
+        //addEnumPattern();
         addEnumEnvironment();
         addEnumEntity();
-        addEnumVillagerProfession();
-        addEnumAttribute();
-        addEnumArt();
+        //addEnumVillagerProfession();
+        //addEnumArt();
     }
 
 

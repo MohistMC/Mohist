@@ -103,15 +103,6 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -678,7 +_,7 @@
-       PortalInfo portalinfo = super.m_7937_(p_8998_);
-       if (portalinfo != null && this.f_19853_.m_46472_() == Level.f_46428_ && p_8998_.m_46472_() == Level.f_46430_) {
-          Vec3 vec3 = portalinfo.f_77676_.m_82520_(0.0D, -1.0D, 0.0D);
--         return new PortalInfo(vec3, Vec3.f_82478_, 90.0F, 0.0F);
-+         return new PortalInfo(vec3, Vec3.f_82478_, 90.0F, 0.0F, p_8998_, portalinfo.event);
-       } else {
-          return portalinfo;
-       }
 @@ -686,12 +_,29 @@
  
     @Nullable
@@ -187,23 +178,19 @@
           }
  
           return this;
-@@ -757,12 +_,16 @@
-    }
+@@ -755,14 +_,13 @@
+       }
  
+    }
+-
     protected Optional<BlockUtil.FoundRectangle> m_183318_(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
--      Optional<BlockUtil.FoundRectangle> optional = super.m_183318_(p_184131_, p_184132_, p_184133_, p_184134_);
--      if (optional.isPresent()) {
-+      return this.getExitPortal( p_184131_, p_184132_, p_184133_, p_184134_, 0, false, 0 );
-+   }
-+
-+   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_, int searchRadius, boolean canCreatePortal, int createRadius) { // CraftBukkit
-+      Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(p_184131_, p_184132_, p_184133_, p_184134_, searchRadius, canCreatePortal, createRadius);
-+      if (optional.isPresent() || !canCreatePortal) { // CraftBukkit
+       Optional<BlockUtil.FoundRectangle> optional = super.m_183318_(p_184131_, p_184132_, p_184133_, p_184134_);
+       if (optional.isPresent()) {
           return optional;
        } else {
           Direction.Axis direction$axis = this.f_19853_.m_8055_(this.f_19819_).m_61145_(NetherPortalBlock.f_54904_).orElse(Direction.Axis.X);
 -         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().m_77666_(p_184132_, direction$axis);
-+         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().createPortal(p_184132_, direction$axis, this, createRadius); // CraftBukkit
++         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().m_77666_(p_184132_, direction$axis); // CraftBukkit
           if (!optional1.isPresent()) {
              f_8907_.error("Unable to create a portal, likely target out of worldborder");
           }
