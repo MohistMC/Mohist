@@ -41,7 +41,7 @@
     protected static final Logger f_46426_ = LogManager.getLogger();
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(Registry.f_122819_), ResourceKey::m_135782_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
-@@ -93,15 +_,56 @@
+@@ -93,15 +_,53 @@
     public float f_46440_;
     public final Random f_46441_ = new Random();
     private final DimensionType f_46445_;
@@ -90,9 +90,7 @@
 +      return (CraftServer) Bukkit.getServer();
 +   }
 +
-+   public ResourceKey<LevelStem> getTypeKey() {
-+      return typeKey;
-+   }
++   public abstract ResourceKey<LevelStem> getTypeKey();
  
     protected Level(WritableLevelData p_46450_, ResourceKey<Level> p_46451_, final DimensionType p_46452_, Supplier<ProfilerFiller> p_46453_, boolean p_46454_, boolean p_46455_, long p_46456_) {
 +      super(Level.class);
