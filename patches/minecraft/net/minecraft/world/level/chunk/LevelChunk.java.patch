@@ -16,7 +16,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -49,659 +_,1055 @@
+@@ -49,659 +_,1048 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -1021,11 +1021,6 @@
 +            blockEntity = ( BlockEntity ) this.f_187610_.get( p_62868_ );
 +        }
 +        // CraftBukkit end
-+        if ( blockEntity != null && blockEntity.m_58901_() )
-+        {
-+            f_187610_.remove( p_62868_ );
-+            blockEntity = null;
-+        }
 +        if ( blockEntity == null )
 +        {
 +            CompoundTag compoundtag = this.f_187609_.remove( p_62868_ );
@@ -1034,18 +1029,8 @@
 +                BlockEntity blockentity1 = this.m_62870_( p_62868_, compoundtag );
 +                if ( blockentity1 != null )
 +                {
-+                    blockentity1.m_7651_();
 +                    return blockentity1;
 +                }
-+            }
-+            // CraftBukkit start
-+            else
-+            {
-+                System.out.println( "Attempted to place a tile entity (" + blockEntity + ") at " + blockEntity.m_58899_().m_123341_() + "," + blockEntity.m_58899_().m_123342_() + "," + blockEntity.m_58899_().m_123343_()
-+                        + " (" + m_8055_( p_62868_ ) + ") where there was no entity tile!" );
-+                System.out.println( "Chunk coordinates: " + ( this.f_187604_.f_45578_ * 16 ) + "," + ( this.f_187604_.f_45579_ * 16 ) );
-+                new Exception().printStackTrace();
-+                // CraftBukkit end
 +            }
 +        }
 +
@@ -1115,7 +1100,15 @@
 +            {
 +                blockentity.m_7651_();
 +            }
-+
++        }
++        // CraftBukkit start
++        else
++        {
++            System.out.println( "Attempted to place a tile entity (" + p_156374_ + ") at " + p_156374_.m_58899_().m_123341_() + "," + p_156374_.m_58899_().m_123342_() + "," + p_156374_.m_58899_().m_123343_()
++                    + " (" + m_8055_( blockpos ) + ") where there was no entity tile!" );
++            System.out.println( "Chunk coordinates: " + ( this.f_187604_.f_45578_ * 16 ) + "," + ( this.f_187604_.f_45579_ * 16 ) );
++            new Exception().printStackTrace();
++            // CraftBukkit end
 +        }
 +    }
 +
