@@ -1,11 +1,12 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -135,6 +_,8 @@
+@@ -135,6 +_,9 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
++import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogManager.getLogger();
@@ -36,6 +37,64 @@
     public ServerPlayer(MinecraftServer p_143384_, ServerLevel p_143385_, GameProfile p_143386_) {
        super(p_143385_, p_143385_.m_8900_(), p_143385_.m_8901_(), p_143386_);
        this.f_8939_ = p_143384_.m_7950_(this);
+@@ -236,11 +_,55 @@
+       this.f_8909_ = p_143384_.m_6846_().m_11296_(this);
+       this.f_19793_ = 1.0F;
+       this.m_9201_(p_143385_);
+-   }
++
++      // CraftBukkit start
++      this.displayName = this.m_6302_();
++      this.bukkitPickUpLoot = true;
++      this.maxHealthCache = this.m_21233_();
++   }
++
++   // Yes, this doesn't match Vanilla, but it's the best we can do for now.
++   // If this is an issue, PRs are welcome
++   public final BlockPos getSpawnPoint(ServerLevel worldserver) {
++      BlockPos blockposition = worldserver.m_8900_();
++
++      if (worldserver.m_6042_().m_63935_() && worldserver.f_8549_.m_5464_() != GameType.ADVENTURE) {
++         int i = Math.max(0, this.f_8924_.m_129803_(worldserver));
++         int j = Mth.m_14107_(worldserver.m_6857_().m_61941_((double) blockposition.m_123341_(), (double) blockposition.m_123343_()));
++
++         if (j < i) {
++            i = j;
++         }
++
++         if (j <= 1) {
++            i = 1;
++         }
++
++         long k = (long) (i * 2 + 1);
++         long l = k * k;
++         int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
++         int j1 = this.m_9237_(i1);
++         int k1 = (new Random()).nextInt(i1);
++
++         for (int l1 = 0; l1 < i1; ++l1) {
++            int i2 = (k1 + j1 * l1) % i1;
++            int j2 = i2 % (i * 2 + 1);
++            int k2 = i2 / (i * 2 + 1);
++            BlockPos blockposition1 = PlayerRespawnLogic.m_183928_(worldserver, blockposition.m_123341_() + j2 - i, blockposition.m_123343_() + k2 - i);
++
++            if (blockposition1 != null) {
++               return blockposition1;
++            }
++         }
++      }
++
++      return blockposition;
++   }
++   // CraftBukkit end
+ 
+    private void m_9201_(ServerLevel p_9202_) {
+       BlockPos blockpos = p_9202_.m_8900_();
+-      if (p_9202_.m_6042_().m_63935_() && p_9202_.m_142572_().m_129910_().m_5464_() != GameType.ADVENTURE) {
++      if (p_9202_.m_6042_().m_63935_() && p_9202_.f_8549_.m_5464_() != GameType.ADVENTURE) { // CraftBukkit
+          int i = Math.max(0, this.f_8924_.m_129803_(p_9202_));
+          int j = Mth.m_14107_(p_9202_.m_6857_().m_61941_((double)blockpos.m_123341_(), (double)blockpos.m_123343_()));
+          if (j < i) {
 @@ -541,6 +_,7 @@
     }
  
@@ -44,12 +103,26 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -685,13 +_,14 @@
-    }
+@@ -686,12 +_,29 @@
  
     @Nullable
--   public Entity m_5489_(ServerLevel p_9180_) {
+    public Entity m_5489_(ServerLevel p_9180_) {
++      // CraftBukkit start
++      return changeDimension(p_9180_,  p_9180_.m_8871_(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   }
++   @Nullable
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      return changeDimension(p_9180_, teleporter, PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   }
++
++   @Nullable
++   public Entity changeDimension(ServerLevel p_9180_, PlayerTeleportEvent.TeleportCause cause) {
++      return changeDimension(p_9180_,  p_9180_.m_8871_(), cause);
++   }
++
++   @Nullable
++   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter, PlayerTeleportEvent.TeleportCause cause) {
++      // CraftBukkit end
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
        this.f_8927_ = true;
        ServerLevel serverlevel = this.m_183503_();
@@ -105,6 +178,22 @@
           }
  
           return this;
+@@ -755,14 +_,13 @@
+       }
+ 
+    }
+-
+    protected Optional<BlockUtil.FoundRectangle> m_183318_(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
+       Optional<BlockUtil.FoundRectangle> optional = super.m_183318_(p_184131_, p_184132_, p_184133_, p_184134_);
+       if (optional.isPresent()) {
+          return optional;
+       } else {
+          Direction.Axis direction$axis = this.f_19853_.m_8055_(this.f_19819_).m_61145_(NetherPortalBlock.f_54904_).orElse(Direction.Axis.X);
+-         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().m_77666_(p_184132_, direction$axis);
++         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().m_77666_(p_184132_, direction$axis); // CraftBukkit
+          if (!optional1.isPresent()) {
+             f_8907_.error("Unable to create a portal, likely target out of worldborder");
+          }
 @@ -799,6 +_,9 @@
     }
  

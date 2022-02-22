@@ -25,7 +25,7 @@
                          ++k1;
                       }
                    }
-@@ -821,6 +_,16 @@
+@@ -821,6 +_,17 @@
  
     public boolean m_5842_() {
        return this.f_38279_ == Boat.Status.UNDER_WATER || this.f_38279_ == Boat.Status.UNDER_FLOWING_WATER;
@@ -33,12 +33,13 @@
 +
 +   // Forge: Fix MC-119811 by instantly completing lerp on board
 +   @Override
-+   protected void m_20348_(Entity passenger) {
-+      super.m_20348_(passenger);
++   protected boolean addPassenger(Entity passenger) {
++      super.addPassenger(passenger);
 +      if (this.m_6109_() && this.f_38267_ > 0) {
 +         this.f_38267_ = 0;
 +         this.m_19890_(this.f_38268_, this.f_38269_, this.f_38270_, (float)this.f_38271_, (float)this.f_38272_);
 +      }
++      return true;
     }
  
     public ItemStack m_142340_() {
