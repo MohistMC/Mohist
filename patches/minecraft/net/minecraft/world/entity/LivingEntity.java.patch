@@ -17,10 +17,11 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
-@@ -113,12 +_,18 @@
+@@ -113,12 +_,19 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
++import org.bukkit.craftbukkit.v1_18_R1.CraftParticle;
 +import org.bukkit.craftbukkit.v1_18_R1.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
@@ -45,7 +46,7 @@
     private LivingEntity f_20951_;
     private int f_20952_;
     private float f_20953_;
-@@ -222,6 +_,21 @@
+@@ -222,10 +_,28 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
  
@@ -67,6 +68,14 @@
     protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
        super(p_20966_, p_20967_);
        this.f_20943_ = new AttributeMap(DefaultAttributes.m_22297_(p_20966_));
+-      this.m_21153_(this.m_21233_());
++      this.craftAttributes = new CraftAttributeMap(f_20943_); // CraftBukkit
++      // CraftBukkit - setHealth(getMaxHealth()) inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
++      this.f_19804_.m_135381_(LivingEntity.f_20961_, (float) this.m_21051_(Attributes.f_22276_).m_22135_());
++
+       this.f_19850_ = true;
+       this.f_20928_ = (float)((Math.random() + 1.0D) * (double)0.01F);
+       this.m_20090_();
 @@ -268,7 +_,7 @@
     }
  
@@ -76,13 +85,29 @@
     }
  
     protected void m_7840_(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
-@@ -286,7 +_,8 @@
-          if (!p_20992_.m_60795_()) {
-             double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
-             int i = (int)(150.0D * d0);
+@@ -283,10 +_,21 @@
+ 
+       if (!this.f_19853_.f_46443_ && this.f_19789_ > 3.0F && p_20991_) {
+          float f = (float)Mth.m_14167_(this.f_19789_ - 3.0F);
+-         if (!p_20992_.m_60795_()) {
+-            double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
+-            int i = (int)(150.0D * d0);
 -            ((ServerLevel)this.f_19853_).m_8767_(new BlockParticleOption(ParticleTypes.f_123794_, p_20992_), this.m_20185_(), this.m_20186_(), this.m_20189_(), i, 0.0D, 0.0D, 0.0D, (double)0.15F);
-+            if (!p_20992_.addLandingEffects((ServerLevel)this.f_19853_, p_20993_, p_20992_, this, i))
-+            ((ServerLevel)this.f_19853_).m_8767_(new BlockParticleOption(ParticleTypes.f_123794_, p_20992_).setPos(p_20993_), this.m_20185_(), this.m_20186_(), this.m_20189_(), i, 0.0D, 0.0D, 0.0D, (double)0.15F);
++         if (!p_20992_.m_60795_())
++         {
++            double d0 = Math.min( ( double ) ( 0.2F + f / 15.0F ), 2.5D );
++            int i = ( int ) ( 150.0D * d0 );
++            if ( !p_20992_.addLandingEffects( ( ServerLevel ) this.f_19853_, p_20993_, p_20992_, this, i ) )
++               // CraftBukkit start - visiblity api
++               if ( this instanceof ServerPlayer )
++               {
++                  ( ( ServerLevel ) this.f_19853_ ).sendParticles( ( ServerPlayer ) this, new BlockParticleOption( ParticleTypes.f_123794_, p_20992_ ), this.m_20185_(), this.m_20186_(), this.m_20189_(), i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, false );
++               }
++               else
++               {
++                  ( ( ServerLevel ) this.f_19853_ ).m_8767_( new BlockParticleOption( ParticleTypes.f_123794_, p_20992_ ), this.m_20185_(), this.m_20186_(), this.m_20189_(), i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D );
++               }
++            // CraftBukkit end
           }
        }
  
@@ -95,6 +120,32 @@
                 this.m_8127_();
              }
           } else if (this.m_20146_() < this.m_6062_()) {
+@@ -524,7 +_,7 @@
+ 
+    protected void m_6153_() {
+       ++this.f_20919_;
+-      if (this.f_20919_ == 20 && !this.f_19853_.m_5776_()) {
++      if (this.f_20919_ >= 20 && !this.m_146910_() && !this.f_19853_.m_5776_()) { // CraftBukkit - (this.deathTicks == 20) -> (this.deathTicks >= 20 && !this.dead)
+          this.f_19853_.m_7605_(this, (byte)60);
+          this.m_142687_(Entity.RemovalReason.KILLED);
+       }
+@@ -615,8 +_,15 @@
+    }
+ 
+    protected void m_147218_(ItemStack p_147219_) {
++      // CraftBukkit start
++      this.equipEventAndSound(p_147219_, false);
++   }
++
++   protected void equipEventAndSound(ItemStack p_147219_, boolean silent) {
+       SoundEvent soundevent = p_147219_.m_150920_();
+-      if (!p_147219_.m_41619_() && soundevent != null && !this.m_5833_()) {
++      if (!p_147219_.m_41619_() && soundevent != null && !this.m_5833_() && !silent) {
++         // CraftBukkit end
++
+          this.m_146850_(GameEvent.f_157811_);
+          this.m_5496_(soundevent, 1.0F, 1.0F);
+       }
 @@ -714,7 +_,7 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);

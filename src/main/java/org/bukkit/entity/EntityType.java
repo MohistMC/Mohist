@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mohistmc.entity.MohistModsAbstractHorse;
-import com.mohistmc.entity.MohistModsChestHorse;
-import com.mohistmc.entity.MohistModsProjectileEntity;
+import com.mohistmc.entity.*;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -292,7 +290,11 @@ public enum EntityType implements Keyed {
     UNKNOWN(null, null, -1, false),
     FORGE_MOD_PROJECTILE("forge_mod_projectile", MohistModsProjectileEntity.class, -1, false),
     FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", MohistModsChestHorse.class, -1, false),
-    FORGE_MOD_HORSE("forge_mod_horse", MohistModsAbstractHorse.class, -1, false);
+    FORGE_MOD_MINECART_CONTAINER("forge_mod_minecart_container", MohistModsMinecartContainer.class, -1, false),
+    FORGE_MOD_HORSE("forge_mod_horse", MohistModsAbstractHorse.class, -1, false),
+    FORGE_MOD_TAMEABLE_ANIMALS("forge_mod_tameable_animal", MohistModsTameableEntity.class, -1, false ),
+    FORGE_MOD_ANIMAL("forge_mod_animal", MohistModsAnimals.class, -1, false ),
+    FORGE_MOD_MONSTER("forge_mod_monster", MohistModsMonster.class, -1, false);
 
     private final String name;
     private final Class<? extends Entity> clazz;

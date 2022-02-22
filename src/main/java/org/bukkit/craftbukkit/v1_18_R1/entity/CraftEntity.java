@@ -17,18 +17,15 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.GlowSquid;
-import net.minecraft.world.entity.Marker;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.monster.Ghast;
@@ -128,6 +125,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         if (entity instanceof net.minecraft.world.entity.animal.Wolf) { return new CraftWolf(server, (net.minecraft.world.entity.animal.Wolf) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.Cat) { return new CraftCat(server, (net.minecraft.world.entity.animal.Cat) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.Parrot) { return new CraftParrot(server, (net.minecraft.world.entity.animal.Parrot) entity); }
+                        else { return new MohistModsTameableEntity( server, ( TamableAnimal ) entity); }
                     }
                     else if (entity instanceof net.minecraft.world.entity.animal.Sheep) { return new CraftSheep(server, (net.minecraft.world.entity.animal.Sheep) entity); }
                     else if (entity instanceof net.minecraft.world.entity.animal.horse.AbstractHorse) {
@@ -136,9 +134,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                             else if (entity instanceof net.minecraft.world.entity.animal.horse.Mule) { return new CraftMule(server, (net.minecraft.world.entity.animal.horse.Mule) entity); }
                             else if (entity instanceof net.minecraft.world.entity.animal.horse.TraderLlama) { return new CraftTraderLlama(server, (net.minecraft.world.entity.animal.horse.TraderLlama) entity); }
                             else if (entity instanceof net.minecraft.world.entity.animal.horse.Llama) { return new CraftLlama(server, (net.minecraft.world.entity.animal.horse.Llama) entity); }
+                            else { return new MohistModsChestHorse( server, ( AbstractChestedHorse ) entity); }
                         } else if (entity instanceof net.minecraft.world.entity.animal.horse.Horse) { return new CraftHorse(server, (net.minecraft.world.entity.animal.horse.Horse) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.horse.SkeletonHorse) { return new CraftSkeletonHorse(server, (net.minecraft.world.entity.animal.horse.SkeletonHorse) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.horse.ZombieHorse) { return new CraftZombieHorse(server, (net.minecraft.world.entity.animal.horse.ZombieHorse) entity); }
+                        else { return new MohistModsAbstractHorse( server, ( AbstractHorse ) entity); }
                     }
                     else if (entity instanceof net.minecraft.world.entity.animal.Rabbit) { return new CraftRabbit(server, (net.minecraft.world.entity.animal.Rabbit) entity); }
                     else if (entity instanceof net.minecraft.world.entity.animal.PolarBear) { return new CraftPolarBear(server, (net.minecraft.world.entity.animal.PolarBear) entity); }
@@ -151,7 +151,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     else if (entity instanceof Strider) { return new CraftStrider(server, (Strider) entity); }
                     else if (entity instanceof Axolotl) { return new CraftAxolotl(server, (Axolotl) entity); }
                     else if (entity instanceof Goat) { return new CraftGoat(server, (Goat) entity); }
-                    else  { return new CraftAnimals(server, (Animal) entity); }
+                    else  { return new MohistModsAnimals(server, (Animal) entity); }
                 }
                 // Monsters
                 else if (entity instanceof Monster) {
@@ -202,7 +202,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     }
                     else if (entity instanceof net.minecraft.world.entity.monster.Zoglin) { return new CraftZoglin(server, (net.minecraft.world.entity.monster.Zoglin) entity); }
 
-                    else  { return new CraftMonster(server, (Monster) entity); }
+                    else  { return new MohistModsMonster(server, (Monster) entity); }
                 }
                 else if (entity instanceof AbstractGolem) {
                     if (entity instanceof net.minecraft.world.entity.animal.SnowGolem) { return new CraftSnowman(server, (net.minecraft.world.entity.animal.SnowGolem) entity); }
@@ -281,7 +281,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.world.entity.vehicle.Minecart) { return new CraftMinecartRideable(server, (net.minecraft.world.entity.vehicle.Minecart) entity); }
             else if (entity instanceof MinecartCommandBlock) { return new CraftMinecartCommand(server, (MinecartCommandBlock) entity); }
             else if (entity instanceof AbstractMinecartContainer) { return new MohistModsMinecartContainer(server, (AbstractMinecartContainer) entity); }
-            return new MohistModsMinecraft(server, (AbstractMinecart) entity);
+            else { return new MohistModsMinecart(server, (AbstractMinecart) entity); }
         } else if (entity instanceof net.minecraft.world.entity.decoration.HangingEntity) {
             if (entity instanceof net.minecraft.world.entity.decoration.Painting) { return new CraftPainting(server, (net.minecraft.world.entity.decoration.Painting) entity); }
             else if (entity instanceof net.minecraft.world.entity.decoration.ItemFrame) {

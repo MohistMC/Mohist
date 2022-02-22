@@ -8,6 +8,14 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.tags.BlockTags;
+@@ -68,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.chunk.LevelChunk;
+ import net.minecraft.world.level.dimension.DimensionType;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.entity.EntityTickList;
+ import net.minecraft.world.level.entity.LevelCallback;
+ import net.minecraft.world.level.entity.LevelEntityGetter;
 @@ -130,6 +_,8 @@
        this.f_194123_ = p_194134_;
        this.m_46465_();
@@ -72,6 +80,21 @@
     protected Map<String, MapItemSavedData> m_171684_() {
        return ImmutableMap.copyOf(this.f_104556_);
     }
+@@ -753,7 +_,13 @@
+       return "Chunks[C] W: " + this.f_104559_.m_6754_() + " E: " + this.f_171631_.m_157664_();
+    }
+ 
+-   public void m_142052_(BlockPos p_171667_, BlockState p_171668_) {
++   @Override
++   public ResourceKey< LevelStem > getTypeKey ( )
++   {
++      return null;
++   }
++
++   public void m_142052_( BlockPos p_171667_, BlockState p_171668_) {
+       this.f_104565_.f_91061_.m_107355_(p_171667_, p_171668_);
+    }
+ 
 @@ -879,6 +_,7 @@
        }
  

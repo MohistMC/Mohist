@@ -59,7 +59,6 @@
 +   private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
-+   private ResourceKey<LevelStem> typeKey;
 +   public CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
@@ -81,6 +80,7 @@
 +   public long ticksPerAmbientSpawns;
 +   public boolean populating;
 +   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++   private ResourceKey<LevelStem> typeKey;
 +
 +   public CraftWorld getWorld() {
 +      return this.world;
@@ -288,6 +288,14 @@
     }
  
     public boolean m_46753_(BlockPos p_46754_) {
+@@ -688,6 +_,7 @@
+       return this.f_46442_;
+    }
+ 
++
+    public GameRules m_46469_() {
+       return this.f_46442_.m_5470_();
+    }
 @@ -779,16 +_,15 @@
     public abstract Scoreboard m_6188_();
  
