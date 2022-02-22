@@ -85,7 +85,7 @@
     }
  
     protected void m_7840_(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
-@@ -283,10 +_,21 @@
+@@ -283,10 +_,12 @@
  
        if (!this.f_19853_.f_46443_ && this.f_19789_ > 3.0F && p_20991_) {
           float f = (float)Mth.m_14167_(this.f_19789_ - 3.0F);
@@ -98,16 +98,7 @@
 +            double d0 = Math.min( ( double ) ( 0.2F + f / 15.0F ), 2.5D );
 +            int i = ( int ) ( 150.0D * d0 );
 +            if ( !p_20992_.addLandingEffects( ( ServerLevel ) this.f_19853_, p_20993_, p_20992_, this, i ) )
-+               // CraftBukkit start - visiblity api
-+               if ( this instanceof ServerPlayer )
-+               {
-+                  ( ( ServerLevel ) this.f_19853_ ).sendParticles( ( ServerPlayer ) this, new BlockParticleOption( ParticleTypes.f_123794_, p_20992_ ), this.m_20185_(), this.m_20186_(), this.m_20189_(), i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, false );
-+               }
-+               else
-+               {
 +                  ( ( ServerLevel ) this.f_19853_ ).m_8767_( new BlockParticleOption( ParticleTypes.f_123794_, p_20992_ ), this.m_20185_(), this.m_20186_(), this.m_20189_(), i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D );
-+               }
-+            // CraftBukkit end
           }
        }
  
