@@ -56,7 +56,7 @@
        this.m_29878_(false);
        if (this.m_6162_()) {
           this.m_146758_(60);
-@@ -346,16 +_,43 @@
+@@ -346,16 +_,44 @@
  
     private static CraftingContainer m_29831_(DyeColor p_29832_, DyeColor p_29833_) {
        CraftingContainer craftingcontainer = new CraftingContainer(new AbstractContainerMenu((MenuType)null, -1) {
@@ -87,6 +87,7 @@
 +   @Override
 +   public java.util.List<ItemStack> onSheared(@Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
 +      world.m_6269_(null, this, SoundEvents.f_12344_, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
++      this.m_146852_(GameEvent.f_157781_, player);
 +      if (!world.f_46443_) {
 +         this.m_29878_(true);
 +         int i = 1 + this.f_19796_.nextInt(3);
