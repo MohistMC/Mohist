@@ -128,7 +128,10 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
         try {
             return Profession.valueOf(net.minecraft.core.Registry.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT));
         }catch ( IllegalArgumentException exception ){
-            LogManager.getLogger().warn( "If you use mods like pokecube with custom Villager Professions, just restart your server and everything works fine!\nIf the error stays after a restart report it. Error: "+exception.getMessage() );
+            LogManager.getLogger().warn( "If you use mods with custom Villager Professions, " +
+                    "just restart your server and everything should works fine!\n" +
+                    "Otherwise the Villager Profession \""+nms.getName()+"\" is not registered.\n" +
+                    "Error: "+exception.getMessage() );
             return null;
         }
     }
