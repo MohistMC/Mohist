@@ -329,7 +329,7 @@ public abstract class Enchantment implements Keyed {
      */
     public static void registerEnchantment(@NotNull Enchantment enchantment) {
         if (byKey.containsKey(enchantment.key) || byName.containsKey(enchantment.getName())) {
-            throw new IllegalArgumentException("Cannot set already-set enchantment");
+            return;
         } else if (!isAcceptingRegistrations()) {
             throw new IllegalStateException("No longer accepting new enchantments (can only be done by the server implementation)");
         }
@@ -352,6 +352,13 @@ public abstract class Enchantment implements Keyed {
      */
     public static void stopAcceptingRegistrations() {
         acceptingNew = false;
+    }
+
+    /**
+     * Starts accepting any enchantment registrations
+     */
+    public static void startAcceptingRegistrations() {
+        acceptingNew = true;
     }
 
     /**
