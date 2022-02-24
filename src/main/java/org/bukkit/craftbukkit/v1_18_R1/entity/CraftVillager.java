@@ -3,9 +3,14 @@ package org.bukkit.craftbukkit.v1_18_R1.entity;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
+import com.mohistmc.dynamicenumutil.MohistEnumHelper;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.level.block.BedBlock;
@@ -20,123 +25,166 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Villager.Type;
 
-public class CraftVillager extends CraftAbstractVillager implements Villager {
+public class CraftVillager
+        extends CraftAbstractVillager
+        implements Villager
+{
 
-    public CraftVillager(CraftServer server, net.minecraft.world.entity.npc.Villager entity) {
-        super(server, entity);
+    public CraftVillager ( CraftServer server, net.minecraft.world.entity.npc.Villager entity )
+    {
+        super( server, entity );
     }
 
     @Override
-    public net.minecraft.world.entity.npc.Villager getHandle() {
-        return (net.minecraft.world.entity.npc.Villager) entity;
+    public net.minecraft.world.entity.npc.Villager getHandle ( )
+    {
+        return ( net.minecraft.world.entity.npc.Villager ) entity;
     }
 
     @Override
-    public String toString() {
+    public String toString ( )
+    {
         return "CraftVillager";
     }
 
     @Override
-    public EntityType getType() {
+    public EntityType getType ( )
+    {
         return EntityType.VILLAGER;
     }
 
     @Override
-    public void remove() {
+    public void remove ( )
+    {
         getHandle().releaseAllPois();
 
         super.remove();
     }
 
     @Override
-    public Profession getProfession() {
-        return CraftVillager.nmsToBukkitProfession(getHandle().getVillagerData().getProfession());
+    public Profession getProfession ( )
+    {
+        return CraftVillager.nmsToBukkitProfession( getHandle().getVillagerData().getProfession() );
     }
 
     @Override
-    public void setProfession(Profession profession) {
-        Validate.notNull(profession);
-        getHandle().setVillagerData(getHandle().getVillagerData().setProfession(CraftVillager.bukkitToNmsProfession(profession)));
+    public void setProfession ( Profession profession )
+    {
+        Validate.notNull( profession );
+        getHandle().setVillagerData( getHandle().getVillagerData().setProfession( CraftVillager.bukkitToNmsProfession( profession ) ) );
     }
 
     @Override
-    public Type getVillagerType() {
-        return Type.valueOf(net.minecraft.core.Registry.VILLAGER_TYPE.getKey(getHandle().getVillagerData().getType()).getPath().toUpperCase(Locale.ROOT));
+    public Type getVillagerType ( )
+    {
+        return Type.valueOf( net.minecraft.core.Registry.VILLAGER_TYPE.getKey( getHandle().getVillagerData().getType() ).getPath().toUpperCase( Locale.ROOT ) );
     }
 
     @Override
-    public void setVillagerType(Type type) {
-        Validate.notNull(type);
-        getHandle().setVillagerData(getHandle().getVillagerData().setType(net.minecraft.core.Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
+    public void setVillagerType ( Type type )
+    {
+        Validate.notNull( type );
+        getHandle().setVillagerData( getHandle().getVillagerData().setType( net.minecraft.core.Registry.VILLAGER_TYPE.get( CraftNamespacedKey.toMinecraft( type.getKey() ) ) ) );
     }
 
     @Override
-    public int getVillagerLevel() {
+    public int getVillagerLevel ( )
+    {
         return getHandle().getVillagerData().getLevel();
     }
 
     @Override
-    public void setVillagerLevel(int level) {
-        Preconditions.checkArgument(1 <= level && level <= 5, "level must be between [1, 5]");
+    public void setVillagerLevel ( int level )
+    {
+        Preconditions.checkArgument( 1 <= level && level <= 5, "level must be between [1, 5]" );
 
-        getHandle().setVillagerData(getHandle().getVillagerData().setLevel(level));
+        getHandle().setVillagerData( getHandle().getVillagerData().setLevel( level ) );
     }
 
     @Override
-    public int getVillagerExperience() {
+    public int getVillagerExperience ( )
+    {
         return getHandle().getVillagerXp();
     }
 
     @Override
-    public void setVillagerExperience(int experience) {
-        Preconditions.checkArgument(experience >= 0, "Experience must be positive");
+    public void setVillagerExperience ( int experience )
+    {
+        Preconditions.checkArgument( experience >= 0, "Experience must be positive" );
 
-        getHandle().setVillagerXp(experience);
+        getHandle().setVillagerXp( experience );
     }
 
     @Override
-    public boolean sleep(Location location) {
-        Preconditions.checkArgument(location != null, "Location cannot be null");
-        Preconditions.checkArgument(location.getWorld() != null, "Location needs to be in a world");
-        Preconditions.checkArgument(location.getWorld().equals(getWorld()), "Cannot sleep across worlds");
-        Preconditions.checkState(!getHandle().generation, "Cannot sleep during world generation");
+    public boolean sleep ( Location location )
+    {
+        Preconditions.checkArgument( location != null, "Location cannot be null" );
+        Preconditions.checkArgument( location.getWorld() != null, "Location needs to be in a world" );
+        Preconditions.checkArgument( location.getWorld().equals( getWorld() ), "Cannot sleep across worlds" );
+        Preconditions.checkState( !getHandle().generation, "Cannot sleep during world generation" );
 
-        BlockPos position = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        BlockState iblockdata = getHandle().level.getBlockState(position);
-        if (!(iblockdata.getBlock() instanceof BedBlock)) {
+        BlockPos position = new BlockPos( location.getBlockX(), location.getBlockY(), location.getBlockZ() );
+        BlockState iblockdata = getHandle().level.getBlockState( position );
+        if ( !( iblockdata.getBlock() instanceof BedBlock ) )
+        {
             return false;
         }
 
-        getHandle().startSleeping(position);
+        getHandle().startSleeping( position );
         return true;
     }
 
     @Override
-    public void wakeup() {
-        Preconditions.checkState(isSleeping(), "Cannot wakeup if not sleeping");
-        Preconditions.checkState(!getHandle().generation, "Cannot wakeup during world generation");
+    public void wakeup ( )
+    {
+        Preconditions.checkState( isSleeping(), "Cannot wakeup if not sleeping" );
+        Preconditions.checkState( !getHandle().generation, "Cannot wakeup during world generation" );
 
         getHandle().stopSleeping();
     }
 
     @Override
-    public void shakeHead() {
+    public void shakeHead ( )
+    {
         getHandle().setUnhappy();
     }
 
-    public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        try {
-            return Profession.valueOf(net.minecraft.core.Registry.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT));
-        }catch ( IllegalArgumentException exception ){
-            LogManager.getLogger().warn( "If you use mods with custom Villager Professions, " +
-                    "just restart your server and everything should works fine!\n" +
-                    "Otherwise the Villager Profession \""+nms.getName()+"\" is not registered.\n" +
-                    "Error: "+exception.getMessage() );
+    public static Profession nmsToBukkitProfession ( VillagerProfession nms )
+    {
+        try
+        {
+            return Profession.valueOf( net.minecraft.core.Registry.VILLAGER_PROFESSION.getKey( nms ).getPath().toUpperCase( Locale.ROOT ) );
+        } catch ( IllegalArgumentException exception )
+        {
+            // Mohist
+            // Add Villager Profession, if a mod profession has been added on startup,
+            // which contains the name of the given nms profession
+            // Only adds it if it isnt already registered
+            String name = ForgeInjectBukkit.normalizeName( nms.getName() );
+            for ( Profession profession : ForgeInjectBukkit.profession.keySet() )
+            {
+                if ( profession.getKey().getKey().contains( name ) )
+                {
+                    List< String > enumNames = Stream.of( Villager.Profession.values() )
+                            .map( Villager.Profession::name )
+                            .collect( Collectors.toList() );
+                    String found =
+                            enumNames.parallelStream().filter( x -> x.contains( name ) ).findFirst().orElse( null );
+                    if ( found != null || !found.isEmpty() || !found.isBlank() ) return Profession.valueOf( found );
+                    Villager.Profession vp = MohistEnumHelper.addEnum0( Villager.Profession.class, name,
+                            new Class[ 0 ]
+                    );
+                    ForgeInjectBukkit.profession.put( vp, nms.getRegistryName() );
+                    return vp;
+                }
+            }
+            exception.printStackTrace();
             return null;
         }
     }
 
-    public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
-        return net.minecraft.core.Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
+    public static VillagerProfession bukkitToNmsProfession ( Profession bukkit )
+    {
+        return net.minecraft.core.Registry.VILLAGER_PROFESSION.get( CraftNamespacedKey.toMinecraft( bukkit.getKey() ) );
     }
 }
