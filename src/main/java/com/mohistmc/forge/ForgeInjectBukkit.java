@@ -22,8 +22,11 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.*;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_18_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
@@ -31,10 +34,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ForgeInjectBukkit {
 
@@ -53,14 +55,14 @@ public class ForgeInjectBukkit {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumBiome();
+        addEnumVillagerProfession();
+        addEnumEntity();
+        addEnumEnvironment();
         addEnumEnchantment();
         addEnumPotion();
-        addEnumPattern();
-        addEnumEnvironment();
-        addEnumAttribute();
-        addEnumEntity();
-        addEnumVillagerProfession();
-        addEnumArt();
+        //addEnumPattern();
+        //addEnumAttribute();
+        //addEnumArt();
     }
 
 
@@ -192,7 +194,6 @@ public class ForgeInjectBukkit {
                 String name = normalizeName(resourceLocation.toString());
                 Villager.Profession vp = MohistEnumHelper.addEnum0(Villager.Profession.class, name, new Class[0]);
                 profession.put(vp, resourceLocation);
-                MohistMC.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
             }
         }
     }

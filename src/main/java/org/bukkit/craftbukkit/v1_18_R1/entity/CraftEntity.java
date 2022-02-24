@@ -258,7 +258,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownPotion) { return new CraftThrownPotion(server, (net.minecraft.world.entity.projectile.ThrownPotion) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownEnderpearl) { return new CraftEnderPearl(server, (net.minecraft.world.entity.projectile.ThrownEnderpearl) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownExperienceBottle) { return new CraftThrownExpBottle(server, (net.minecraft.world.entity.projectile.ThrownExperienceBottle) entity); }
-            else if (entity instanceof ThrowableItemProjectile || entity instanceof ThrowableProjectile ) { return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile ) entity); }
+            else { return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile ) entity); }
         }
         else if (entity instanceof net.minecraft.world.entity.item.FallingBlockEntity) { return new CraftFallingBlock(server, (net.minecraft.world.entity.item.FallingBlockEntity) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.AbstractHurtingProjectile) {

@@ -261,7 +261,6 @@ public final class CraftServer implements Server {
         this.structureManager = new CraftStructureManager(console.getStructureManager());
 
         Bukkit.setServer(this);
-        
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
         Enchantments.SHARPNESS.getClass();
         org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();

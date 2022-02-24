@@ -1,12 +1,17 @@
 package org.bukkit.craftbukkit.v1_18_R1.entity;
 
 import com.google.common.base.Preconditions;
+
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.Collectors;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
@@ -120,7 +125,12 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Profession.valueOf(net.minecraft.core.Registry.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT));
+        try {
+            return Profession.valueOf(net.minecraft.core.Registry.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT));
+        }catch ( IllegalArgumentException exception ){
+            LogManager.getLogger().warn( "If you use mods like pokecube with custom Villager Professions, just restart your server and everything works fine!\nIf the error stays after a restart report it. Error: "+exception.getMessage() );
+            return null;
+        }
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
