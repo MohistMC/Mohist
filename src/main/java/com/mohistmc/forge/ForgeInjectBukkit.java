@@ -50,6 +50,8 @@ public class ForgeInjectBukkit {
     public static Map<Motive, Art> artMap = new HashMap<>();
 
     public static void init(){
+
+
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumBiome();
@@ -188,8 +190,8 @@ public class ForgeInjectBukkit {
     public static void addEnumVillagerProfession() {
         for (VillagerProfession villagerProfession : ForgeRegistries.PROFESSIONS) {
             ResourceLocation resourceLocation = villagerProfession.getRegistryName();
-            String name = normalizeName(resourceLocation.toString());
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                String name = normalizeName(resourceLocation.toString());
                 Villager.Profession vp = MohistEnumHelper.addEnum0(Villager.Profession.class, name, new Class[0]);
                 profession.put(vp, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
@@ -200,8 +202,8 @@ public class ForgeInjectBukkit {
     public static void addEnumAttribute() {
         for (Attribute attribute : ForgeRegistries.ATTRIBUTES) {
             ResourceLocation resourceLocation = attribute.getRegistryName();
-            String name = normalizeName(resourceLocation.getPath());
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                String name = normalizeName(resourceLocation.getPath());
                 org.bukkit.attribute.Attribute ab = MohistEnumHelper.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class}, resourceLocation.getPath());
                 attributemap.put(ab, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
