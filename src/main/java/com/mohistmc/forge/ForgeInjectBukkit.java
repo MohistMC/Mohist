@@ -50,8 +50,6 @@ public class ForgeInjectBukkit {
     public static Map<Motive, Art> artMap = new HashMap<>();
 
     public static void init(){
-
-
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumBiome();
