@@ -5,12 +5,14 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftThrowableProjectile;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ThrowableProjectile;
 
-public class MohistModsThrowableProjectile extends CraftThrowableProjectile {
+public class MohistModsThrowableProjectile
+        extends CraftThrowableProjectile {
 
     public String entityName;
 
-    public MohistModsThrowableProjectile(CraftServer server, ThrowableItemProjectile entity) {
+    public MohistModsThrowableProjectile ( CraftServer server, ThrowableItemProjectile entity) {
         super(server, entity);
         this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
@@ -30,7 +32,7 @@ public class MohistModsThrowableProjectile extends CraftThrowableProjectile {
         if (type != null) {
             return type;
         } else {
-            return EntityType.UNKNOWN;
+            return EntityType.FORGE_MOD_THROWABLE_PROJECTILE;
         }
     }
 

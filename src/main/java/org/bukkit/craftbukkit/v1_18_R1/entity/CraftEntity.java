@@ -58,6 +58,7 @@ import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataTypeRegist
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftVector;
 import org.bukkit.entity.Pose;
+import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
@@ -257,7 +258,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownPotion) { return new CraftThrownPotion(server, (net.minecraft.world.entity.projectile.ThrownPotion) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownEnderpearl) { return new CraftEnderPearl(server, (net.minecraft.world.entity.projectile.ThrownEnderpearl) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownExperienceBottle) { return new CraftThrownExpBottle(server, (net.minecraft.world.entity.projectile.ThrownExperienceBottle) entity); }
-            else if (entity instanceof ThrowableItemProjectile) { return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile) entity); }
+            else if (entity instanceof ThrowableItemProjectile || entity instanceof ThrowableProjectile ) { return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile ) entity); }
         }
         else if (entity instanceof net.minecraft.world.entity.item.FallingBlockEntity) { return new CraftFallingBlock(server, (net.minecraft.world.entity.item.FallingBlockEntity) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.AbstractHurtingProjectile) {
