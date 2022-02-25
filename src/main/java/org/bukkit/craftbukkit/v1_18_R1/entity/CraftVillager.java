@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_18_R1.entity;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -12,11 +13,13 @@ import com.google.common.collect.Lists;
 import com.mohistmc.dynamicenumutil.MohistEnumHelper;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.message.LoggerNameAwareMessage;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
@@ -160,26 +163,29 @@ public class CraftVillager
             // Add Villager Profession, if a mod profession has been added on startup,
             // which contains the name of the given nms profession
             // Only adds it if it isnt already registered
-            String name = ForgeInjectBukkit.normalizeName( nms.getName() );
+            ResourceLocation resourceLocation = nms.getRegistryName();
+            String name = ForgeInjectBukkit.normalizeName( resourceLocation.toString() );
             for ( Profession profession : ForgeInjectBukkit.profession.keySet() )
             {
                 if ( profession.getKey().getKey().contains( name ) )
                 {
-                    List< String > enumNames = Stream.of( Villager.Profession.values() )
-                            .map( Villager.Profession::name )
+                    List< String > enumNames = Stream.of( Profession.values() )
+                            .map( Profession::name )
                             .collect( Collectors.toList() );
                     String found =
                             enumNames.parallelStream().filter( x -> x.contains( name ) ).findFirst().orElse( null );
-                    if ( found != null || !found.isEmpty() || !found.isBlank() ) return Profession.valueOf( found );
-                    Villager.Profession vp = MohistEnumHelper.addEnum0( Villager.Profession.class, name,
+                    if ( found != null) {
+                        return Profession.valueOf( found.toUpperCase( Locale.ROOT ) );
+                    }
+                    Profession vp = MohistEnumHelper.addEnum0( Profession.class, name,
                             new Class[ 0 ]
                     );
-                    ForgeInjectBukkit.profession.put( vp, nms.getRegistryName() );
+                    ForgeInjectBukkit.profession.put( vp, resourceLocation );
                     return vp;
                 }
             }
-            exception.printStackTrace();
-            return null;
+            LogManager.getLogger().warn( exception.getMessage() );
+            return Profession.NONE;
         }
     }
 
