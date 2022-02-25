@@ -58,7 +58,7 @@ public class ForgeInjectBukkit {
         //addEnumPattern();
         addEnumEnvironment();
         addEnumEntity();
-        //addEnumVillagerProfession();
+        addEnumVillagerProfession();
         //addEnumArt();
     }
 
@@ -185,8 +185,8 @@ public class ForgeInjectBukkit {
     public static void addEnumVillagerProfession() {
         for (VillagerProfession villagerProfession : ForgeRegistries.PROFESSIONS) {
             ResourceLocation resourceLocation = villagerProfession.getRegistryName();
-            String name = normalizeName(resourceLocation.toString());
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                String name = normalizeName(resourceLocation.toString());
                 Villager.Profession vp = MohistEnumHelper.addEnum0(Villager.Profession.class, name, new Class[0]);
                 profession.put(vp, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
