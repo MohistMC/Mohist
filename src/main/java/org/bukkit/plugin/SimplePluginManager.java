@@ -487,17 +487,28 @@ public final class SimplePluginManager implements PluginManager {
 
     @Override
     public void disablePlugins() {
+        disablePlugins(false);
+    }
+
+    public void disablePlugins(boolean closeClassloaders) {
+        // Paper end - close Classloader on disable
         Plugin[] plugins = getPlugins();
         for (int i = plugins.length - 1; i >= 0; i--) {
-            disablePlugin(plugins[i]);
+            disablePlugin(plugins[i], closeClassloaders); // Paper - close Classloader on disable
         }
     }
 
     @Override
-    public void disablePlugin(@NotNull final Plugin plugin) {
+    public synchronized void disablePlugin(@NotNull final Plugin plugin) {
+        disablePlugin(plugin, false);
+    }
+
+    @Override
+    public void disablePlugin(@NotNull final Plugin plugin, boolean closeClassloader) {
+        // Paper end - close Classloader on disable
         if (plugin.isEnabled()) {
             try {
-                plugin.getPluginLoader().disablePlugin(plugin);
+                plugin.getPluginLoader().disablePlugin(plugin, closeClassloader); // Paper - close Classloader on disable
             } catch (Throwable ex) {
                 server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
@@ -540,7 +551,7 @@ public final class SimplePluginManager implements PluginManager {
     @Override
     public void clearPlugins() {
         synchronized (this) {
-            disablePlugins();
+            disablePlugins(true); // Paper - close Classloader on disable
             plugins.clear();
             lookupNames.clear();
             dependencyGraph = GraphBuilder.directed().build();
@@ -552,6 +563,8 @@ public final class SimplePluginManager implements PluginManager {
         }
     }
 
+    private void fireEvent(Event event) { callEvent(event); } // Paper - support old method incase plugin uses reflection
+
     /**
      * Calls an event with the given details.
      * <p>
@@ -560,24 +573,17 @@ public final class SimplePluginManager implements PluginManager {
      * @param event Event details
      */
     public void callEvent(Event event) {
-        if (event.isAsynchronous()) {
-            if (Thread.holdsLock(this)) {
-                throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
-            }
-            if (server.isPrimaryThread()) {
-                throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
-            }
-            fireEvent(event);
-        } else {
-            synchronized (this) {
-                fireEvent(event);
-            }
-        }
-    }
-
-    private void fireEvent(Event event) {
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
+        if (listeners.length == 0) {
+            return;
+        }
+        // Paper - replace callEvent by merging to below method
+        if (event.isAsynchronous() && server.isPrimaryThread()) {
+            throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
+        } else if (!event.isAsynchronous() && !server.isPrimaryThread()) {
+            throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
+        }
 
         for (RegisteredListener registration : listeners) {
             if (!registration.getPlugin().isEnabled()) {

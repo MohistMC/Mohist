@@ -9,7 +9,35 @@
  import net.minecraft.util.SharedConstants;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-@@ -25,12 +_,13 @@
+@@ -16,21 +_,36 @@
+ 
+    public ServerEula(Path p_i50746_1_) {
+       this.field_154350_b = p_i50746_1_;
+-      this.field_154351_c = SharedConstants.field_206244_b || this.func_218822_b();
+-   }
+-
+-   private boolean func_218822_b() {
+-      try (InputStream inputstream = Files.newInputStream(this.field_154350_b)) {
++      this.field_154351_c = SharedConstants.field_206244_b || globalEula() || this.readFile(p_i50746_1_);
++   }
++
++   // Yatopia start - global eula file
++   private boolean globalEula() {
++      java.io.File globalEula = new java.io.File(System.getProperty("user.home"), "eula.txt");
++
++      if (globalEula.exists()) {
++         System.out.println("Loaded global eula file from " + globalEula.getAbsolutePath());
++         return readFile(globalEula.toPath());
++      } else {
++         System.out.println("No global eula file found at " + globalEula.getAbsolutePath());
++      }
++      return false;
++   }
++   // Yatopia end
++
++   private boolean readFile(java.nio.file.Path path) {
++      try (InputStream inputstream = Files.newInputStream(path)) {
+          Properties properties = new Properties();
           properties.load(inputstream);
           return Boolean.parseBoolean(properties.getProperty("eula", "false"));
        } catch (Exception exception) {
