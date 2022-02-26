@@ -7,7 +7,7 @@
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.18-dev)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.18-dev)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.18.x/LICENSE)
-[![](https://img.shields.io/badge/Forge-1.18.1--39.0.79-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.18.html)
+[![](https://img.shields.io/badge/Forge-1.18.1--39.0.88-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.18.html)
 [![](https://img.shields.io/badge/jdk-17.0.2+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
 [![](https://img.shields.io/badge/Gradle-7.3.3-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.3.3/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -26,7 +26,7 @@
 Progress
 ------
 
-- [ ] Rectify Forge(bc24487d0)  
+- [ ] Rectify Forge(f0c2554b1)  
 - [ ] Start patch
   * CraftBukkit(e5f8a767)
   * Bukkit(71564210)

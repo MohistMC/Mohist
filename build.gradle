@@ -57,8 +57,8 @@ ext {
     MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.1-39.0.85'
-    FORGE_VERSION = '39.0.85'
+    VERSION = '1.18.1-39.0.88'
+    FORGE_VERSION = '39.0.88'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
@@ -342,6 +342,9 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
                 property 'nativesDirectory', '{natives}'
+                if (prj.name == 'forge') {
+                    property 'forge.enableGameTest', 'true'
+                }
 
                 args '--launchTarget', "${launchPrefix}clientuserdev"
                 args '--version', 'MOD_DEV'
@@ -353,7 +356,20 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
+                if (prj.name == 'forge') {
+                    property 'forge.enableGameTest', 'true'
+                }
+
                 args '--launchTarget', "${launchPrefix}serveruserdev"
+            }
+
+            if (prj.name == 'forge') {
+                gameTestServer {
+                    environment 'MOD_CLASSES', '{source_roots}'
+                    environment 'MCP_MAPPINGS', '{mcp_mappings}'
+
+                    args '--launchTarget', "${launchPrefix}gametestserveruserdev"
+                }
             }
 
             data {
@@ -870,6 +886,16 @@ project(':forge') {
         runs {
             forge_server {
                 args '--launchTarget', 'forgeserverdev'
+                ideaModule "${rootProject.name}.${project.name}.main"
+
+                mods {
+                    minecraft { source sourceSets.main }
+                }
+            }
+
+            forge_gameTestServer {
+                taskName 'forge_gameTestServer'
+                args '--launchTarget', 'forgegametestserverdev'
                 ideaModule "${rootProject.name}.${project.name}.main"
 
                 mods {
