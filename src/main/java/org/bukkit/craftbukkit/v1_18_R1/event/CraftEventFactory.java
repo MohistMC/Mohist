@@ -1623,7 +1623,7 @@ public class CraftEventFactory {
         try {
             owner = inventory.getOwner();
         }catch ( AbstractMethodError error ){
-            MohistMC.LOGGER.error( "An error occured while handling Mod inventory: "+error.getMessage() );
+            MohistMC.LOGGER.error( "An error occurred while handling Mod inventory: "+error.getMessage() );
             owner = null;
         }
 
