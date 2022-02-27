@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -52,6 +_,7 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.CreativeModeTab;
+ import net.minecraft.world.item.Items;
++import net.minecraft.world.level.DataPackConfig;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.Level;
 @@ -60,6 +_,10 @@
  import net.minecraft.world.level.storage.WorldData;
  import org.apache.logging.log4j.LogManager;
@@ -11,6 +19,17 @@
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
     static final Logger f_139598_ = LogManager.getLogger();
+@@ -80,8 +_,8 @@
+    @Nullable
+    private final Component f_142863_;
+ 
+-   public DedicatedServer(Thread p_139609_, RegistryAccess.RegistryHolder p_139610_, LevelStorageSource.LevelStorageAccess p_139611_, PackRepository p_139612_, ServerResources p_139613_, WorldData p_139614_, DedicatedServerSettings p_139615_, DataFixer p_139616_, MinecraftSessionService p_139617_, GameProfileRepository p_139618_, GameProfileCache p_139619_, ChunkProgressListenerFactory p_139620_) {
+-      super(p_139609_, p_139610_, p_139611_, p_139614_, p_139612_, Proxy.NO_PROXY, p_139616_, p_139613_, p_139617_, p_139618_, p_139619_, p_139620_);
++   public DedicatedServer( joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, Thread p_139609_, RegistryAccess.RegistryHolder p_139610_, LevelStorageSource.LevelStorageAccess p_139611_, PackRepository p_139612_, ServerResources p_139613_, WorldData p_139614_, DedicatedServerSettings p_139615_, DataFixer p_139616_, MinecraftSessionService p_139617_, GameProfileRepository p_139618_, GameProfileCache p_139619_, ChunkProgressListenerFactory p_139620_) {
++      super(p_139607_,p_139608_,p_139609_, p_139610_, p_139611_, p_139614_, p_139612_, Proxy.NO_PROXY, p_139616_, p_139613_, p_139617_, p_139618_, p_139619_, p_139620_);
+       this.f_139604_ = p_139615_;
+       this.f_139602_ = new RconConsoleSource(this);
+       this.f_139606_ = TextFilterClient.m_143736_(p_139615_.m_139777_().f_139724_);
 @@ -91,12 +_,34 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {

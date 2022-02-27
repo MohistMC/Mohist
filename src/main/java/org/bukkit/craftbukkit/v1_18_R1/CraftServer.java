@@ -40,6 +40,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.server.ConsoleInput;
+import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.commands.ReloadCommand;
 import net.minecraft.server.players.*;
 import net.minecraft.tags.*;
@@ -259,7 +260,7 @@ public final class CraftServer implements Server {
         }));
         this.serverVersion = "1.18.1";
         this.structureManager = new CraftStructureManager(console.getStructureManager());
-
+        this.scoreboardManager = new CraftScoreboardManager( console, new ServerScoreboard( console ) );
         Bukkit.setServer(this);
 
         ForgeInjectBukkit.init();

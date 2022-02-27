@@ -73,6 +73,15 @@
              InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
              if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                 Component component = (new TranslatableComponent("build.tooHigh", i - 1)).m_130940_(ChatFormatting.RED);
+@@ -1040,7 +_,7 @@
+       this.f_9745_.m_129929_();
+       this.f_9745_.m_6846_().m_11264_((new TranslatableComponent("multiplayer.player.left", this.f_9743_.m_5446_())).m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
+       this.f_9743_.m_9231_();
+-      this.f_9745_.m_6846_().m_11286_(this.f_9743_);
++      this.f_9745_.m_6846_().remove(this.f_9743_);
+       this.f_9743_.m_8967_().m_7670_();
+       if (this.m_9956_()) {
+          f_9744_.info("Stopping singleplayer server as player logged out");
 @@ -1081,7 +_,7 @@
     }
  

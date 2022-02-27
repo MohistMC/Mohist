@@ -1,34 +1,5 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -61,6 +61,15 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-+// CraftBukkit start
-+import net.minecraft.world.level.DataPackConfiguration;
-+import org.apache.logging.log4j.Level;
-+import org.apache.logging.log4j.io.IoBuilder;
-+import org.bukkit.command.CommandSender;
-+import org.bukkit.event.server.ServerCommandEvent;
-+import org.bukkit.event.server.RemoteServerCommandEvent;
-+// CraftBukkit end
-+
- public class DedicatedServer extends MinecraftServer implements IMinecraftServer {
- 
-     static final Logger LOGGER = LogManager.getLogger();
-@@ -81,8 +90,10 @@
-     @Nullable
-     private final IChatBaseComponent resourcePackPrompt;
- 
--    public DedicatedServer(Thread thread, IRegistryCustom.Dimension iregistrycustom_dimension, Convertable.ConversionSession convertable_conversionsession, ResourcePackRepository resourcepackrepository, DataPackResources datapackresources, SaveData savedata, DedicatedServerSettings dedicatedserversettings, DataFixer datafixer, MinecraftSessionService minecraftsessionservice, GameProfileRepository gameprofilerepository, UserCache usercache, WorldLoadListenerFactory worldloadlistenerfactory) {
--        super(thread, iregistrycustom_dimension, convertable_conversionsession, savedata, resourcepackrepository, Proxy.NO_PROXY, datafixer, datapackresources, minecraftsessionservice, gameprofilerepository, usercache, worldloadlistenerfactory);
-+    // CraftBukkit start - Signature changed
-+    public DedicatedServer(joptsimple.OptionSet options, DataPackConfiguration datapackconfiguration, Thread thread, IRegistryCustom.Dimension iregistrycustom_dimension, Convertable.ConversionSession convertable_conversionsession, ResourcePackRepository resourcepackrepository, DataPackResources datapackresources, SaveData savedata, DedicatedServerSettings dedicatedserversettings, DataFixer datafixer, MinecraftSessionService minecraftsessionservice, GameProfileRepository gameprofilerepository, UserCache usercache, WorldLoadListenerFactory worldloadlistenerfactory) {
-+        super(options, datapackconfiguration, thread, iregistrycustom_dimension, convertable_conversionsession, savedata, resourcepackrepository, Proxy.NO_PROXY, datafixer, datapackresources, minecraftsessionservice, gameprofilerepository, usercache, worldloadlistenerfactory);
-+        // CraftBukkit end
-         this.settings = dedicatedserversettings;
-         this.rconConsoleSource = new RemoteControlCommandListener(this);
-         this.textFilterClient = TextFilter.createFromConfig(dedicatedserversettings.getProperties().textFilteringConfig);
 @@ -93,13 +104,44 @@
      public boolean initServer() throws IOException {
          Thread thread = new Thread("Server console handler") {

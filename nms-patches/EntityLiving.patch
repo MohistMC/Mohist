@@ -682,20 +682,6 @@
 @@ -1664,8 +2081,18 @@
      }
  
-     public final void setArrowCount(int i) {
--        this.entityData.set(EntityLiving.DATA_ARROW_COUNT_ID, i);
-+        // CraftBukkit start
-+        setArrowCount(i, false);
-+    }
-+
-+    public final void setArrowCount(int i, boolean flag) {
-+        ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent(this, getArrowCount(), i, flag);
-+        if (event.isCancelled()) {
-+            return;
-+        }
-+        this.entityData.set(EntityLiving.DATA_ARROW_COUNT_ID, event.getNewAmount());
-     }
-+    // CraftBukkit end
  
      public final int getStingerCount() {
          return (Integer) this.entityData.get(EntityLiving.DATA_STINGER_COUNT_ID);

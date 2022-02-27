@@ -17,13 +17,14 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
-@@ -113,12 +_,19 @@
+@@ -113,12 +_,20 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
 +import org.bukkit.craftbukkit.v1_18_R1.CraftParticle;
 +import org.bukkit.craftbukkit.v1_18_R1.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  
@@ -37,11 +38,25 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
-@@ -203,7 +_,7 @@
-    private boolean f_20948_ = true;
+@@ -148,7 +_,7 @@
+    protected static final EntityDimensions f_20910_ = EntityDimensions.m_20398_(0.2F, 0.2F);
+    public static final float f_147165_ = 0.5F;
+    private final AttributeMap f_20943_;
+-   private final CombatTracker f_20944_ = new CombatTracker(this);
++   protected CombatTracker f_20944_ = new CombatTracker(this);
+    public final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
+    private final NonNullList<ItemStack> f_20946_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
+    private final NonNullList<ItemStack> f_20947_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+@@ -200,10 +_,10 @@
+    protected double f_20908_;
+    protected double f_20933_;
+    protected int f_20934_;
+-   private boolean f_20948_ = true;
++   protected boolean f_20948_ = true;
     @Nullable
-    private LivingEntity f_20949_;
+-   private LivingEntity f_20949_;
 -   private int f_20950_;
++   protected LivingEntity f_20949_;
 +   public int f_20950_;
     private LivingEntity f_20951_;
     private int f_20952_;
@@ -557,6 +572,29 @@
              this.m_7911_(this.m_6103_() - f2);
              this.m_146852_(GameEvent.f_157808_, p_21240_.m_7639_());
           }
+@@ -1554,9 +_,19 @@
+    }
+ 
+    public final void m_21317_(int p_21318_) {
+-      this.f_19804_.m_135381_(f_20940_, p_21318_);
+-   }
+-
++      // CraftBukkit start
++      setArrowCount( p_21318_, false );
++   }
++
++   public final void setArrowCount(int p_21318_, boolean flag){
++      ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent( this, m_21234_(), p_21318_, flag );
++      if(event.isCancelled()){
++         return;
++      }
++
++      this.f_19804_.m_135381_(f_20940_, event.getNewAmount());
++   }
++   // CraftBukkit end
+    public final int m_21235_() {
+       return this.f_19804_.m_135370_(f_20941_);
+    }
 @@ -1578,6 +_,8 @@
     }
  
