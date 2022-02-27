@@ -12,6 +12,7 @@ import java.util.Date;
 
 public class EulaUtil {
     private static File eula = new File("eula.txt");
+    private static File globalEula = new File(System.getProperty("user.home"), "eula.txt");
 
     public static void writeInfos() throws IOException {
         eula.createNewFile();
@@ -21,6 +22,6 @@ public class EulaUtil {
     }
 
     public static boolean hasAcceptedEULA() throws IOException {
-        return eula.exists() && Files.readAllLines(eula.toPath()).contains("eula=true");
+        return (globalEula.exists() && Files.readAllLines(globalEula.toPath()).contains("eula=true")) || (eula.exists() && Files.readAllLines(eula.toPath()).contains("eula=true"));
     }
 }
