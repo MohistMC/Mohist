@@ -111,17 +111,51 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -293,6 +_,10 @@
+@@ -270,7 +_,7 @@
+       return s;
+    }
+ 
+-   public MinecraftServer(Thread p_129769_, RegistryAccess.RegistryHolder p_129770_, LevelStorageSource.LevelStorageAccess p_129771_, WorldData p_129772_, PackRepository p_129773_, Proxy p_129774_, DataFixer p_129775_, ServerResources p_129776_, @Nullable MinecraftSessionService p_129777_, @Nullable GameProfileRepository p_129778_, @Nullable GameProfileCache p_129779_, ChunkProgressListenerFactory p_129780_) {
++   public MinecraftServer(OptionSet p_129767_, DataPackConfig p_129768_, Thread p_129769_, RegistryAccess.RegistryHolder p_129770_, LevelStorageSource.LevelStorageAccess p_129771_, WorldData p_129772_, PackRepository p_129773_, Proxy p_129774_, DataFixer p_129775_, ServerResources p_129776_, @Nullable MinecraftSessionService p_129777_, @Nullable GameProfileRepository p_129778_, @Nullable GameProfileCache p_129779_, ChunkProgressListenerFactory p_129780_) {
+       super("Server");
+       this.f_129746_ = p_129770_;
+       this.f_129749_ = p_129772_;
+@@ -293,7 +_,35 @@
        this.f_129741_ = new StructureManager(p_129776_.m_136178_(), p_129771_, p_129775_);
        this.f_129725_ = p_129769_;
        this.f_129738_ = Util.m_183991_();
++      // CraftBukkit start
 +      this.options = options;
-+      this.datapackconfiguration = null;
-+      this.vanillaCommandDispatcher = p_129776_.f_136146_; // CraftBukkit
++      this.datapackconfiguration = p_129768_;
 +      this.registryreadops = RegistryReadOps.m_179866_(NbtOps.f_128958_, p_129776_.m_136178_(), p_129770_);
++      this.vanillaCommandDispatcher = p_129776_.f_136146_; // CraftBukkit
++      // Try to see if we're actually running in a terminal, disable jline if not
++      if (System.console() == null && System.getProperty("jline.terminal") == null) {
++         System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++         Main.useJline = false;
++      }
++
++      try {
++         reader = new ConsoleReader(System.in, System.out);
++         reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
++      } catch (Throwable e) {
++         try {
++            // Try again with jline disabled for Windows users without C++ 2008 Redistributable
++            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++            System.setProperty("user.language", "en");
++            Main.useJline = false;
++            reader = new ConsoleReader(System.in, System.out);
++            reader.setExpandEvents(false);
++         } catch (IOException ex) {
++            f_129750_.warn((String) null, ex);
++         }
++      }
++      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_18_R1.util.ServerShutdownThread(this));
     }
++   // CraftBukkit end
  
     private void m_129841_(DimensionDataStorage p_129842_) {
+       p_129842_.m_164861_(this.m_129896_()::m_180013_, this.m_129896_()::m_180015_, "scoreboard");
 @@ -355,6 +_,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);

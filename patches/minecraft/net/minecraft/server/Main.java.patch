@@ -124,9 +124,9 @@
 +               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
 +               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.m_127724_(net.minecraft.gametest.framework.GameTestRegistry.m_127658_());
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
-+               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, serverresources, testBatches, spawnPos, registryaccess$registryholder);
++               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(optionset, datapackconfig1, p_129697_, levelstoragesource$levelstorageaccess, packrepository, serverresources, testBatches, spawnPos, registryaccess$registryholder);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++               dedicatedserver1 = new DedicatedServer(optionset, datapackconfig1, p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
 +            }
              dedicatedserver1.m_129981_(optionset.valueOf(optionspec8));
              dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));

@@ -16,6 +16,23 @@
  
  public class GameTestServer extends MinecraftServer {
     private static final Logger f_177585_ = LogManager.getLogger();
+@@ -53,12 +_,12 @@
+    @Nullable
+    private MultipleTestTracker f_177591_;
+ 
+-   public GameTestServer(Thread p_177594_, LevelStorageSource.LevelStorageAccess p_177595_, PackRepository p_177596_, ServerResources p_177597_, Collection<GameTestBatch> p_177598_, BlockPos p_177599_, RegistryAccess.RegistryHolder p_177600_) {
+-      this(p_177594_, p_177595_, p_177596_, p_177597_, p_177598_, p_177599_, p_177600_, p_177600_.m_175515_(Registry.f_122885_), p_177600_.m_175515_(Registry.f_122818_));
++   public GameTestServer(joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, Thread p_177594_, LevelStorageSource.LevelStorageAccess p_177595_, PackRepository p_177596_, ServerResources p_177597_, Collection<GameTestBatch> p_177598_, BlockPos p_177599_, RegistryAccess.RegistryHolder p_177600_) {
++      this(p_139607_, p_139608_, p_177594_, p_177595_, p_177596_, p_177597_, p_177598_, p_177599_, p_177600_, p_177600_.m_175515_(Registry.f_122885_), p_177600_.m_175515_(Registry.f_122818_));
+    }
+ 
+-   private GameTestServer(Thread p_177602_, LevelStorageSource.LevelStorageAccess p_177603_, PackRepository p_177604_, ServerResources p_177605_, Collection<GameTestBatch> p_177606_, BlockPos p_177607_, RegistryAccess.RegistryHolder p_177608_, Registry<Biome> p_177609_, Registry<DimensionType> p_177610_) {
+-      super(p_177602_, p_177608_, p_177603_, new PrimaryLevelData(f_177590_, new WorldGenSettings(0L, false, false, WorldGenSettings.m_64633_(p_177610_, DimensionType.m_188317_(p_177608_, 0L), new FlatLevelSource(FlatLevelGeneratorSettings.m_70376_(p_177609_)))), Lifecycle.stable()), p_177604_, Proxy.NO_PROXY, DataFixers.m_14512_(), p_177605_, (MinecraftSessionService)null, (GameProfileRepository)null, (GameProfileCache)null, LoggerChunkProgressListener::new);
++   private GameTestServer(joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, Thread p_177602_, LevelStorageSource.LevelStorageAccess p_177603_, PackRepository p_177604_, ServerResources p_177605_, Collection<GameTestBatch> p_177606_, BlockPos p_177607_, RegistryAccess.RegistryHolder p_177608_, Registry<Biome> p_177609_, Registry<DimensionType> p_177610_) {
++      super(p_139607_,p_139608_,p_177602_, p_177608_, p_177603_, new PrimaryLevelData(f_177590_, new WorldGenSettings(0L, false, false, WorldGenSettings.m_64633_(p_177610_, DimensionType.m_188317_(p_177608_, 0L), new FlatLevelSource(FlatLevelGeneratorSettings.m_70376_(p_177609_)))), Lifecycle.stable()), p_177604_, Proxy.NO_PROXY, DataFixers.m_14512_(), p_177605_, (MinecraftSessionService)null, (GameProfileRepository)null, (GameProfileCache)null, LoggerChunkProgressListener::new);
+       this.f_177587_ = Lists.newArrayList(p_177606_);
+       this.f_177588_ = p_177607_;
+       if (p_177606_.isEmpty()) {
 @@ -69,12 +_,13 @@
     public boolean m_7038_() {
        this.m_129823_(new PlayerList(this, this.f_129746_, this.f_129745_, 1) {

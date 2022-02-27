@@ -368,7 +368,7 @@
              GameProfileCache.m_11004_(false);
              this.f_91007_ = MinecraftServer.m_129872_((p_167898_) -> {
 -               return new IntegratedServer(p_167898_, this, p_91221_, levelstoragesource$levelstorageaccess, minecraft$serverstem.m_91432_(), minecraft$serverstem.m_91433_(), worlddata, minecraftsessionservice, gameprofilerepository, gameprofilecache, (p_168000_) -> {
-+               return new IntegratedServer(p_167898_, this, registryHolder, levelstoragesource$levelstorageaccess, minecraft$serverstem.m_91432_(), minecraft$serverstem.m_91433_(), worlddata, minecraftsessionservice, gameprofilerepository, gameprofilecache, (p_168000_) -> {
++               return new IntegratedServer(null , null, p_167898_, this, registryHolder, levelstoragesource$levelstorageaccess, minecraft$serverstem.m_91432_(), minecraft$serverstem.m_91433_(), worlddata, minecraftsessionservice, gameprofilerepository, gameprofilecache, (p_168000_) -> {
                    StoringChunkProgressListener storingchunkprogresslistener = new StoringChunkProgressListener(p_168000_ + 0);
                    this.f_90999_.set(storingchunkprogresslistener);
                    return ProcessorChunkProgressListener.m_143583_(storingchunkprogresslistener, this.f_91023_::add);
