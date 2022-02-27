@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
+@@ -47,6 +_,12 @@
+ import net.minecraft.world.phys.shapes.BooleanOp;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.Location;
++import org.bukkit.entity.Vehicle;
++import org.bukkit.event.vehicle.VehicleDamageEvent;
++import org.bukkit.event.vehicle.VehicleDestroyEvent;
++import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
++import org.bukkit.event.vehicle.VehicleMoveEvent;
+ 
+ public class Boat extends Entity {
+    private static final EntityDataAccessor<Integer> f_38282_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
 @@ -87,6 +_,15 @@
     private float f_38260_;
     private float f_38261_;
@@ -16,6 +29,102 @@
     public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
        super(p_38290_, p_38291_);
        this.f_19850_ = true;
+@@ -146,6 +_,18 @@
+       if (this.m_6673_(p_38319_)) {
+          return false;
+       } else if (!this.f_19853_.f_46443_ && !this.m_146910_()) {
++         // CraftBukkit start
++         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++         org.bukkit.entity.Entity attacker = (p_38319_.m_7639_() == null) ? null : p_38319_.m_7639_().getBukkitEntity();
++
++         VehicleDamageEvent event = new VehicleDamageEvent(vehicle, attacker, (double) p_38320_);
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (event.isCancelled()) {
++            return false;
++         }
++         // f = event.getDamage(); // TODO Why don't we do this?
++         // CraftBukkit end
+          this.m_38362_(-this.m_38386_());
+          this.m_38354_(10);
+          this.m_38311_(this.m_38384_() + p_38320_ * 10.0F);
+@@ -153,6 +_,15 @@
+          this.m_146852_(GameEvent.f_157808_, p_38319_.m_7639_());
+          boolean flag = p_38319_.m_7639_() instanceof Player && ((Player)p_38319_.m_7639_()).m_150110_().f_35937_;
+          if (flag || this.m_38384_() > 40.0F) {
++            // CraftBukkit start
++            VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(destroyEvent);
++
++            if (destroyEvent.isCancelled()) {
++               this.m_38311_(40F); // Maximize damage so this doesn't get triggered again right away
++               return true;
++            }
++            // CraftBukkit end
+             if (!flag && this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_)) {
+                this.m_19998_(this.m_38369_());
+             }
+@@ -186,9 +_,29 @@
+    public void m_7334_(Entity p_38373_) {
+       if (p_38373_ instanceof Boat) {
+          if (p_38373_.m_142469_().f_82289_ < this.m_142469_().f_82292_) {
++            // CraftBukkit start
++            if (!this.m_20365_(p_38373_)) {
++               VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_38373_.getBukkitEntity());
++               this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++               if (event.isCancelled()) {
++                  return;
++               }
++            }
++            // CraftBukkit end
+             super.m_7334_(p_38373_);
+          }
+       } else if (p_38373_.m_142469_().f_82289_ <= this.m_142469_().f_82289_) {
++         // CraftBukkit start
++         if (!this.m_20365_(p_38373_)) {
++            VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_38373_.getBukkitEntity());
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++               return;
++            }
++         }
++         // CraftBukkit end
+          super.m_7334_(p_38373_);
+       }
+ 
+@@ -235,6 +_,7 @@
+       return this.m_6350_().m_122427_();
+    }
+ 
++   private Location lastLocation; // CraftBukkit
+    public void m_8119_() {
+       this.f_38280_ = this.f_38279_;
+       this.f_38279_ = this.m_38392_();
+@@ -274,6 +_,22 @@
+          this.m_20256_(Vec3.f_82478_);
+       }
+ 
++      // CraftBukkit start
++      org.bukkit.Server server = this.f_19853_.getCraftServer();
++      org.bukkit.World bworld = this.f_19853_.getWorld();
++
++      Location to = new Location(bworld, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
++      Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++
++      server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
++
++      if (lastLocation != null && !lastLocation.equals(to)) {
++         VehicleMoveEvent event = new VehicleMoveEvent(vehicle, lastLocation, to);
++         server.getPluginManager().callEvent(event);
++      }
++      lastLocation = vehicle.getLocation();
++      // CraftBukkit end
++
+       this.m_38388_();
+ 
+       for(int i = 0; i <= 1; ++i) {
 @@ -475,7 +_,7 @@
                       blockpos$mutableblockpos.m_122178_(l1, k2, i2);
                       BlockState blockstate = this.f_19853_.m_8055_(blockpos$mutableblockpos);
@@ -25,6 +134,38 @@
                          ++k1;
                       }
                    }
+@@ -730,17 +_,23 @@
+ 
+                this.m_142535_(this.f_19789_, 1.0F, DamageSource.f_19315_);
+                if (!this.f_19853_.f_46443_ && !this.m_146910_()) {
+-                  this.m_6074_();
+-                  if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_)) {
+-                     for(int i = 0; i < 3; ++i) {
+-                        this.m_19998_(this.m_38387_().m_38434_());
+-                     }
++                  // CraftBukkit start
++                  Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++                  VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, null);
++                  this.f_19853_.getCraftServer().getPluginManager().callEvent(destroyEvent);
++                  if (!destroyEvent.isCancelled()) {
++                     this.m_6074_();
++                     if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_)) {
++                        for(int i = 0; i < 3; ++i) {
++                           this.m_19998_(this.m_38387_().m_38434_());
++                        }
+ 
+-                     for(int j = 0; j < 2; ++j) {
+-                        this.m_19998_(Items.f_42398_);
++                        for(int j = 0; j < 2; ++j) {
++                           this.m_19998_(Items.f_42398_);
++                        }
+                      }
+                   }
+-               }
++               } // CraftBukkit end
+             }
+ 
+             this.m_183634_();
 @@ -821,6 +_,16 @@
  
     public boolean m_5842_() {
