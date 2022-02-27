@@ -1,9 +1,14 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -45,8 +_,9 @@
+@@ -45,8 +_,14 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.Location;
++import org.bukkit.entity.Vehicle;
++import org.bukkit.event.vehicle.VehicleDamageEvent;
++import org.bukkit.event.vehicle.VehicleDestroyEvent;
++import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 +import org.bukkit.util.Vector;
  
 -public abstract class AbstractMinecart extends Entity {
@@ -62,6 +67,57 @@
     }
  
     protected Vec3 m_7643_(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
+@@ -200,6 +_,19 @@
+          if (this.m_6673_(p_38117_)) {
+             return false;
+          } else {
++            // CraftBukkit start - fire VehicleDamageEvent
++            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++            org.bukkit.entity.Entity passenger = (p_38117_.m_7639_() == null) ? null : p_38117_.m_7639_().getBukkitEntity();
++
++            VehicleDamageEvent event = new VehicleDamageEvent(vehicle, passenger, p_38118_);
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++               return false;
++            }
++
++            p_38118_ = (float) event.getDamage();
++            // CraftBukkit end
+             this.m_38160_(-this.m_38177_());
+             this.m_38154_(10);
+             this.m_5834_();
+@@ -207,6 +_,15 @@
+             this.m_146852_(GameEvent.f_157808_, p_38117_.m_7639_());
+             boolean flag = p_38117_.m_7639_() instanceof Player && ((Player)p_38117_.m_7639_()).m_150110_().f_35937_;
+             if (flag || this.m_38169_() > 40.0F) {
++               // CraftBukkit start
++               VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, passenger);
++               this.f_19853_.getCraftServer().getPluginManager().callEvent(destroyEvent);
++
++               if (destroyEvent.isCancelled()) {
++                  this.m_38109_(40); // Maximize damage so this doesn't get triggered again right away
++                  return true;
++               }
++               // CraftBukkit end
+                this.m_20153_();
+                if (flag && !this.m_8077_()) {
+                   this.m_146870_();
+@@ -259,6 +_,14 @@
+    }
+ 
+    public void m_8119_() {
++      // CraftBukkit start
++      double prevX = this.m_20185_();
++      double prevY = this.m_20186_();
++      double prevZ = this.m_20189_();
++      float prevYaw = this.m_146908_();
++      float prevPitch = this.m_146909_();
++      // CraftBukkit end
++
+       if (this.m_38176_() > 0) {
+          this.m_38154_(this.m_38176_() - 1);
+       }
 @@ -300,9 +_,9 @@
  
           BlockPos blockpos = new BlockPos(k, i, j);
@@ -74,12 +130,26 @@
                 this.m_6025_(k, i, j, blockstate.m_61143_(PoweredRailBlock.f_55215_));
              }
           } else {
-@@ -327,8 +_,11 @@
+@@ -327,21 +_,64 @@
           }
  
           this.m_19915_(this.m_146908_(), this.m_146909_());
 -         if (this.m_6064_() == AbstractMinecart.Type.RIDEABLE && this.m_20184_().m_165925_() > 0.01D) {
 -            List<Entity> list = this.f_19853_.m_6249_(this, this.m_142469_().m_82377_((double)0.2F, 0.0D, (double)0.2F), EntitySelector.m_20421_(this));
++
++         // CraftBukkit start
++         org.bukkit.World bworld = this.f_19853_.getWorld();
++         Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
++         Location to = new Location(bworld, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
++         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
++
++         if (!from.equals(to)) {
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, from, to));
++         }
++         // CraftBukkit end
++
 +         AABB box;
 +         if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
 +         else                               box = this.m_142469_().m_82377_(0.2F, 0.0D, 0.2F);
@@ -88,16 +158,55 @@
              if (!list.isEmpty()) {
                 for(int l = 0; l < list.size(); ++l) {
                    Entity entity1 = list.get(l);
-@@ -340,7 +_,7 @@
+                   if (!(entity1 instanceof Player) && !(entity1 instanceof IronGolem) && !(entity1 instanceof AbstractMinecart) && !this.m_20160_() && !entity1.m_20159_()) {
++                     // CraftBukkit start
++                     VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent(vehicle, entity1.getBukkitEntity());
++                     this.f_19853_.getCraftServer().getPluginManager().callEvent(collisionEvent);
++
++                     if (collisionEvent.isCancelled()) {
++                        continue;
++                     }
++                     // CraftBukkit end
+                      entity1.m_20329_(this);
+                   } else {
++                     // CraftBukkit start
++                     if (!this.m_20365_(entity1)) {
++                        VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent(vehicle, entity1.getBukkitEntity());
++                        this.f_19853_.getCraftServer().getPluginManager().callEvent(collisionEvent);
++
++                        if (collisionEvent.isCancelled()) {
++                           continue;
++                        }
++                     }
++                     // CraftBukkit end
+                      entity1.m_7334_(this);
+                   }
                 }
              }
           } else {
 -            for(Entity entity : this.f_19853_.m_45933_(this, this.m_142469_().m_82377_((double)0.2F, 0.0D, (double)0.2F))) {
 +            for(Entity entity : this.f_19853_.m_45933_(this, box)) {
                 if (!this.m_20363_(entity) && entity.m_6094_() && entity instanceof AbstractMinecart) {
++                  // CraftBukkit start
++                  VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent(vehicle, entity.getBukkitEntity());
++                  this.f_19853_.getCraftServer().getPluginManager().callEvent(collisionEvent);
++
++                  if (collisionEvent.isCancelled()) {
++                     continue;
++                  }
++                  // CraftBukkit end
                    entity.m_7334_(this);
                 }
-@@ -365,16 +_,23 @@
+             }
+@@ -358,23 +_,34 @@
+    }
+ 
+    protected double m_7097_() {
+-      return (this.m_20069_() ? 4.0D : 8.0D) / 20.0D;
++      return (this.m_20069_() ? this.maxSpeed / 2.0D: this.maxSpeed); // CraftBukkit
+    }
+ 
+    public void m_6025_(int p_38111_, int p_38112_, int p_38113_, boolean p_38114_) {
     }
  
     protected void m_38163_() {
@@ -106,20 +215,25 @@
        Vec3 vec3 = this.m_20184_();
        this.m_20334_(Mth.m_14008_(vec3.f_82479_, -d0, d0), vec3.f_82480_, Mth.m_14008_(vec3.f_82481_, -d0, d0));
        if (this.f_19861_) {
-          this.m_20256_(this.m_20184_().m_82490_(0.5D));
-       }
- 
+-         this.m_20256_(this.m_20184_().m_82490_(0.5D));
++         // CraftBukkit start - replace magic numbers with our variables
++         this.m_20256_(new Vec3(this.m_20184_().f_82479_ * this.derailedX, this.m_20184_().f_82480_ * this.derailedY, this.m_20184_().f_82481_ * this.derailedZ));
++         // CraftBukkit end
++      }
++
 +      if (getMaxSpeedAirVertical() > 0 && m_20184_().f_82480_ > getMaxSpeedAirVertical()) {
 +          if(Math.abs(m_20184_().f_82479_) < 0.3f && Math.abs(m_20184_().f_82481_) < 0.3f)
 +              m_20256_(new Vec3(m_20184_().f_82479_, 0.15f, m_20184_().f_82481_));
 +          else
 +              m_20256_(new Vec3(m_20184_().f_82479_, getMaxSpeedAirVertical(), m_20184_().f_82481_));
-+      }
-+
+       }
+ 
        this.m_6478_(MoverType.SELF, this.m_20184_());
        if (!this.f_19861_) {
 -         this.m_20256_(this.m_20184_().m_82490_(0.95D));
-+         this.m_20256_(this.m_20184_().m_82490_(getDragAir()));
++         // CraftBukkit start - replace magic numbers with our variables
++         this.m_20256_(new Vec3(this.m_20184_().f_82479_ * this.flyingX, this.m_20184_().f_82480_ * this.flyingY, this.m_20184_().f_82481_ * this.flyingZ));
++         // CraftBukkit end
        }
  
     }
@@ -194,6 +308,15 @@
           Vec3 vec36 = this.m_20184_();
           double d27 = vec36.m_165924_();
           if (d27 > 0.01D) {
+@@ -544,7 +_,7 @@
+    }
+ 
+    protected void m_7114_() {
+-      double d0 = this.m_20160_() ? 0.997D : 0.96D;
++      double d0 = this.m_20160_() || !this.slowWhenEmpty ? 0.997D : 0.96D; // CraftBukkit - add !this.slowWhenEmpty
+       Vec3 vec3 = this.m_20184_();
+       vec3 = vec3.m_82542_(d0, 0.0D, d0);
+       if (this.m_20069_()) {
 @@ -565,7 +_,7 @@
  
        BlockState blockstate = this.f_19853_.m_8055_(new BlockPos(i, j, k));
@@ -212,7 +335,7 @@
           Pair<Vec3i, Vec3i> pair = m_38125_(railshape);
           Vec3i vec3i = pair.getFirst();
           Vec3i vec3i1 = pair.getSecond();
-@@ -666,6 +_,10 @@
+@@ -666,9 +_,22 @@
     }
  
     public void m_7334_(Entity p_38165_) {
@@ -223,6 +346,18 @@
        if (!this.f_19853_.f_46443_) {
           if (!p_38165_.f_19794_ && !this.f_19794_) {
              if (!this.m_20363_(p_38165_)) {
++               // CraftBukkit start
++               VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_38165_.getBukkitEntity());
++               this.f_19853_.getCraftServer().getPluginManager().callEvent(collisionEvent);
++
++               if (collisionEvent.isCancelled()) {
++                  return;
++               }
++               // CraftBukkit end
++
+                double d0 = p_38165_.m_20185_() - this.m_20185_();
+                double d1 = p_38165_.m_20189_() - this.m_20189_();
+                double d2 = d0 * d0 + d1 * d1;
 @@ -699,11 +_,11 @@
  
                       Vec3 vec32 = this.m_20184_();
