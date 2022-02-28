@@ -104,6 +104,9 @@ public class MohistConfig extends ConfigBase {
     // MohistProxySelector
     public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
 
+    public final BoolSetting allowBlockLoadChunk = new BoolSetting(this, "allowBlockLoadChunk", true);
+    public final BoolSetting forceUnloadChunks = new BoolSetting(this, "forceUnloadChunks", false);
+
     private final String HEADER = "This is the main configuration file for Mohist.\n"
             + "\n"
             + "Home: https://mohistmc.com/\n";
