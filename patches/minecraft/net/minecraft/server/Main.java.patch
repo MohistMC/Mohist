@@ -50,7 +50,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -83,6 +_,13 @@
+@@ -83,39 +_,46 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -63,8 +63,11 @@
 +         }
  
           CrashReport.m_127529_();
-          if (optionset.has(optionspec13)) {
-@@ -92,30 +_,30 @@
+-         if (optionset.has(optionspec13)) {
++         if (optionset.has("jfrProfile")) { // CraftBukkit
+             JvmProfiler.f_185340_.m_183425_(Environment.SERVER);
+          }
+ 
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
@@ -76,7 +79,8 @@
           dedicatedserversettings.m_139780_();
 -         Path path1 = Paths.get("eula.txt");
 -         Eula eula = new Eula(path1);
-          if (optionset.has(optionspec1)) {
+-         if (optionset.has(optionspec1)) {
++         if (optionset.has("initSettings")) { // CraftBukkit
              f_129670_.info("Initialized '{}' and '{}'", path.toAbsolutePath(), path1.toAbsolutePath());
              return;
           }
@@ -86,7 +90,8 @@
 -            return;
 -         }
 -
-          File file1 = new File(optionset.valueOf(optionspec9));
+-         File file1 = new File(optionset.valueOf(optionspec9));
++         File file1 = (File) optionset.valueOf("universe"); // CraftBukkit
           YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
           MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
@@ -103,6 +108,39 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
+@@ -130,12 +_,31 @@
+          }
+ 
+          DataPackConfig datapackconfig = levelstoragesource$levelstorageaccess.m_78309_();
+-         boolean flag = optionset.has(optionspec6);
++         boolean flag = optionset.has("safeMode");
+          if (flag) {
+             f_129670_.warn("Safe mode active, only vanilla datapack will be loaded");
+          }
+ 
+          PackRepository packrepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), PackSource.f_10529_));
++
++         // CraftBukkit start
++         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), "bukkit");
++         if (!bukkitDataPackFolder.exists()) {
++            bukkitDataPackFolder.mkdirs();
++         }
++         File mcMeta = new File(bukkitDataPackFolder, "pack.mcmeta");
++         try {
++            com.google.common.io.Files.write("{\n"
++                    + "    \"pack\": {\n"
++                    + "        \"description\": \"Data pack for resources provided by Bukkit plugins\",\n"
++                    + "        \"pack_format\": " + SharedConstants.m_183709_().getPackVersion() + "\n"
++                    + "    }\n"
++                    + "}\n", mcMeta, com.google.common.base.Charsets.UTF_8);
++         } catch (java.io.IOException ex) {
++            throw new RuntimeException("Could not initialize Bukkit datapack", ex);
++         }
++         // CraftBukkit end
++
+          DataPackConfig datapackconfig1 = MinecraftServer.m_129819_(packrepository, datapackconfig == null ? DataPackConfig.f_45842_ : datapackconfig, flag);
+          CompletableFuture<ServerResources> completablefuture = ServerResources.m_180005_(packrepository.m_10525_(), registryaccess$registryholder, Commands.CommandSelection.DEDICATED, dedicatedserversettings.m_139777_().f_139711_, Util.m_183991_(), Runnable::run);
+ 
 @@ -164,6 +_,8 @@
                 worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$registryholder).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$registryholder);
              }
@@ -112,12 +150,20 @@
              worlddata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
           }
  
-@@ -175,22 +_,34 @@
+@@ -175,34 +_,58 @@
  
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$registryholder, worlddata);
           WorldData worlddata1 = worlddata;
 -         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
 -            DedicatedServer dedicatedserver1 = new DedicatedServer(p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
+-            dedicatedserver1.m_129981_(optionset.valueOf(optionspec8));
+-            dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
+-            dedicatedserver1.m_129975_(optionset.has(optionspec2));
+-            dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
+-            boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
+-            if (flag1 && !GraphicsEnvironment.isHeadless()) {
+-               dedicatedserver1.m_139667_();
+-            }
 +         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
@@ -128,35 +174,52 @@
 +            } else {
 +               dedicatedserver1 = new DedicatedServer(optionset, datapackconfig1, p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
 +            }
-             dedicatedserver1.m_129981_(optionset.valueOf(optionspec8));
-             dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
-             dedicatedserver1.m_129975_(optionset.has(optionspec2));
-             dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
++            /*
++            dedicatedserver1.setSingleplayerName(optionset.valueOf(optionspec8));
++            dedicatedserver1.setPort(optionset.valueOf(optionspec11));
++            dedicatedserver1.setDemo(optionset.has(optionspec2));
++            dedicatedserver1.setId(optionset.valueOf(optionspec12));
++            */
++            boolean flag1 = !optionset.has("nogui") && !optionset.nonOptionArguments().contains("nogui");
 +            dedicatedserver1.options = optionset;
-             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
--            if (flag1 && !GraphicsEnvironment.isHeadless()) {
--               dedicatedserver1.m_139667_();
 +            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
 +               // dedicatedserver1.showGui();
-             }
++            }
++
++            if (optionset.has("port")) {
++               int port = (Integer) optionset.valueOf("port");
++               if (port > 0) {
++                  dedicatedserver1.m_129801_(port);
++               }
++            }
++
  
              return dedicatedserver1;
           });
++         /* CraftBukkit start
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
+-               dedicatedserver.m_7570_(true);
 +               // FORGE: Halting as GameTestServer will cause issues as it always calls System#exit on both crash and normal exit, so skip it
 +               if (!(dedicatedserver instanceof net.minecraft.gametest.framework.GameTestServer))
-                dedicatedserver.m_7570_(true);
++               dedicatedserver.halt(true);
 +               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
              }
           };
-          thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
-@@ -201,7 +_,7 @@
+-         thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
++         thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
+          Runtime.getRuntime().addShutdownHook(thread);
++         */ // CraftBukkit end
+       } catch (Exception exception1) {
+          f_129670_.fatal("Failed to start the minecraft server", (Throwable)exception1);
+       }
  
     }
  
 -   private static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
+-      f_129670_.info("Forcing world upgrade!");
 +   public static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
-       f_129670_.info("Forcing world upgrade!");
++      Main.f_129670_.info("Forcing world upgrade! {}", p_195489_.m_78277_()); // CraftBukkit
        WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_195493_, p_195491_);
        Component component = null;
+ 

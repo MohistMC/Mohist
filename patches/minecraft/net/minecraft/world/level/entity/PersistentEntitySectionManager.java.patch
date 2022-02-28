@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -33,7 +_,7 @@
+@@ -26,14 +_,16 @@
+ import net.minecraft.util.VisibleForDebug;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.level.ChunkPos;
++import net.minecraft.world.level.chunk.storage.EntityStorage;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
+ 
+ public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
     static final Logger f_157490_ = LogManager.getLogger();
     final Set<UUID> f_157491_ = Sets.newHashSet();
     final LevelCallback<T> f_157492_;
@@ -35,22 +44,88 @@
        PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.f_157498_.get(p_157556_);
        if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.FRESH) {
           this.m_157562_(p_157556_);
-@@ -348,13 +_,29 @@
+@@ -187,6 +_,12 @@
+    }
+ 
+    private boolean m_157512_(long p_157513_, Consumer<T> p_157514_) {
++      // CraftBukkit start - add boolean for event call
++      return storeChunkSections(p_157513_, p_157514_, false);
++   }
++
++   private boolean storeChunkSections(long p_157513_, Consumer<T> p_157514_, boolean callEvent) {
++      // CraftBukkit end
+       PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.f_157498_.get(p_157513_);
+       if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.PENDING) {
+          return false;
+@@ -196,6 +_,7 @@
+          }).collect(Collectors.toList());
+          if (list.isEmpty()) {
+             if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
++               if (callEvent) CraftEventFactory.callEntitiesUnloadEvent((( EntityStorage ) f_157493_).f_156538_, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
+                this.f_157493_.m_141971_(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
+             }
+ 
+@@ -204,6 +_,7 @@
+             this.m_157562_(p_157513_);
+             return false;
+          } else {
++            if (callEvent) CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) f_157493_).f_156538_, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
+             this.f_157493_.m_141971_(new ChunkEntities<>(new ChunkPos(p_157513_), list));
+             list.forEach(p_157514_);
+             return true;
+@@ -221,9 +_,9 @@
+    }
+ 
+    private boolean m_157568_(long p_157569_) {
+-      boolean flag = this.m_157512_(p_157569_, (p_157595_) -> {
++      boolean flag = this.storeChunkSections(p_157569_, (p_157595_) -> {
+          p_157595_.m_142429_().forEach(this::m_157585_);
+-      });
++      }, true); // CraftBukkit - add boolean for event call
+       if (!flag) {
+          return false;
+       } else {
+@@ -250,6 +_,10 @@
+             this.m_157538_(p_157593_, true);
+          });
+          this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
++         // CraftBukkit start - call entity load event
++         List<Entity> entities = getEntities(chunkentities.m_156791_());
++         CraftEventFactory.callEntitiesLoadEvent(((EntityStorage) f_157493_).f_156538_, chunkentities.m_156791_(), entities);
++         // CraftBukkit end
+       }
+ 
+    }
+@@ -301,7 +_,15 @@
+    }
+ 
+    public void close() throws IOException {
+-      this.m_157561_();
++      // CraftBukkit start - add save boolean
++      close(true);
++   }
++
++   public void close(boolean save) throws IOException {
++      if (save) {
++         this.m_157561_();
++      }
++      // CraftBukkit end
+       this.f_157493_.close();
+    }
+ 
+@@ -348,13 +_,26 @@
        return this.f_157491_.size() + "," + this.f_157494_.m_156821_() + "," + this.f_157495_.m_156887_() + "," + this.f_157498_.size() + "," + this.f_157497_.size() + "," + this.f_157500_.size() + "," + this.f_157499_.size();
     }
  
 +   // CraftBukkit start - add method to get all entities in chunk
 +   public List<Entity> getEntities(ChunkPos chunkCoordIntPair) {
-+      return f_157495_.m_156888_(chunkCoordIntPair.m_45588_()).flatMap(EntitySection::m_156845_).map(entiy -> (Entity) entiy).collect(Collectors.toList());
++      return f_157495_.m_156888_(chunkCoordIntPair.m_45588_()).flatMap(EntitySection::m_156845_).map(entity -> (Entity) entity).collect(Collectors.toList());
 +   }
 +
 +   public boolean isPending(long pair) {
 +      return f_157498_.get(pair) == ChunkLoadStatus.PENDING;
 +   }
 +
-+   public void close(boolean save) {
-+   }
-+   // CraftBukkit end
 +
 +
     class Callback implements EntityInLevelCallback {

@@ -231,6 +231,14 @@
        if (this.m_129919_() != null) {
           this.m_129919_().m_9718_();
        }
+@@ -576,6 +_,7 @@
+          f_129750_.info("Saving players");
+          this.f_129763_.m_11302_();
+          this.f_129763_.m_11313_();
++         try { Thread.sleep(100); } catch (InterruptedException ex) {} // CraftBukkit - SPIGOT-625 - give server at least a chance to send packets
+       }
+ 
+       f_129750_.info("Saving worlds");
 @@ -591,6 +_,7 @@
        for(ServerLevel serverlevel1 : this.m_129785_()) {
           if (serverlevel1 != null) {
@@ -239,7 +247,7 @@
                 serverlevel1.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -636,14 +_,19 @@
+@@ -636,16 +_,22 @@
     protected void m_130011_() {
        try {
           if (this.m_7038_()) {
@@ -257,14 +265,19 @@
 -               long i = Util.m_137550_() - this.f_129726_;
 -               if (i > 2000L && this.f_129726_ - this.f_129718_ >= 15000L) {
 +               long i = ((curTime = System.nanoTime()) / (1000L * 1000L)) - this.f_129726_; // Paper
-+               if (i > 5000L && this.f_129726_ - this.f_129718_ >= 30000L) {
++               if (i > 5000L && this.f_129726_ - this.f_129718_ >= 30000L) { // CraftBukkit
                    long j = i / 50L;
-                   f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
+-                  f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
++                  if (server.getWarnOnOverload()) // CraftBukkit
++                     f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
                    this.f_129726_ += j * 50L;
-@@ -655,6 +_,25 @@
+                   this.f_129718_ = this.f_129726_;
+                }
+@@ -655,6 +_,27 @@
                    this.f_177876_ = new MinecraftServer.TimeProfiler(Util.m_137569_(), this.f_129766_);
                 }
  
++
 +               if ( ++MinecraftServer.currentTick % MinecraftServer.SAMPLE_INTERVAL == 0 )
 +               {
 +                  final long diff = curTime - tickSection;
@@ -281,6 +294,7 @@
 +               }
 +               // Spigot end
 +
++               MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
 +               currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit // Paper - don't overwrite current tick time
 +               lastTick = curTime;
 +
@@ -306,14 +320,38 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -700,6 +_,7 @@
+@@ -700,6 +_,14 @@
                 this.f_129723_.m_196559_();
              }
  
 +            net.minecraftforge.server.ServerLifecycleHooks.handleServerStopped(this);
++
++            // CraftBukkit start - Restore terminal to original settings
++            try {
++               reader.getTerminal().restore();
++            } catch (Exception ignored) {
++            }
++            // CraftBukkit end
              this.m_6988_();
           }
  
+@@ -708,9 +_,15 @@
+    }
+ 
+    private boolean m_129960_() {
+-      return this.m_18767_() || Util.m_137550_() < (this.f_129728_ ? this.f_129727_ : this.f_129726_);
++      // CraftBukkit start
++      return this.forceTicks || this.m_18767_() || Util.m_137550_() < (this.f_129728_ ? this.f_129727_ : this.f_129726_);
+    }
+ 
++   private void executeModerately() {
++      this.m_18699_();
++      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
++   }
++   // CraftBukkit end
+    protected void m_130012_() {
+       this.m_18699_();
+       this.m_18701_(() -> {
 @@ -790,7 +_,9 @@
     }
  
@@ -324,15 +362,19 @@
        ++this.f_129766_;
        this.m_5703_(p_129871_);
        if (i - this.f_129724_ >= 5000000000L) {
-@@ -812,6 +_,7 @@
+@@ -812,9 +_,10 @@
              Collections.shuffle(Arrays.asList(agameprofile));
              this.f_129757_.m_134914_().m_134924_(agameprofile);
           }
 +         this.f_129757_.invalidateJson();
        }
  
-       if (this.f_129766_ % 6000 == 0) {
-@@ -828,6 +_,8 @@
+-      if (this.f_129766_ % 6000 == 0) {
++      if (autosavePeriod > 0 && this.f_129766_ % autosavePeriod == 0) { // CraftBukkit
+          f_129750_.debug("Autosave started");
+          this.f_129754_.m_6180_("save");
+          this.m_195514_(true, false, false);
+@@ -828,24 +_,45 @@
        long i1 = Util.m_137569_();
        this.f_129735_.m_13755_(i1 - i);
        this.f_129754_.m_7238_();
@@ -341,18 +383,42 @@
     }
  
     public void m_5703_(BooleanSupplier p_129954_) {
-@@ -835,7 +_,8 @@
++      this.server.getScheduler().mainThreadHeartbeat(this.f_129766_); // CraftBukkit
+       this.f_129754_.m_6180_("commandFunctions");
        this.m_129890_().m_136128_();
        this.f_129754_.m_6182_("levels");
  
 -      for(ServerLevel serverlevel : this.m_129785_()) {
++      // CraftBukkit start
++      // Run tasks that are waiting on processing
++      while (!processQueue.isEmpty()) {
++         processQueue.remove().run();
++      }
++
++      // Send time updates to everyone, it will get the right time from the world the player is in.
++      if (this.f_129766_ % 20 == 0) {
++         for (int i = 0; i < this.m_6846_().f_11196_.size(); ++i) {
++            ServerPlayer entityplayer = (ServerPlayer) this.m_6846_().f_11196_.get(i);
++            entityplayer.f_8906_.m_141995_(new ClientboundSetTimePacket(entityplayer.f_19853_.m_46467_(), entityplayer.getPlayerTime(), entityplayer.f_19853_.m_46469_().m_46207_(GameRules.f_46140_))); // Add support for per player time
++         }
++      }
++
 +      for(ServerLevel serverlevel : this.getWorldArray()) {
 +         long tickStart = Util.m_137569_();
           this.f_129754_.m_6521_(() -> {
              return serverlevel + " " + serverlevel.m_46472_().m_135782_();
           });
-@@ -846,6 +_,7 @@
+-         if (this.f_129766_ % 20 == 0) {
+-            this.f_129754_.m_6180_("timeSync");
+-            this.f_129763_.m_11270_(new ClientboundSetTimePacket(serverlevel.m_46467_(), serverlevel.m_46468_(), serverlevel.m_46469_().m_46207_(GameRules.f_46140_)), serverlevel.m_46472_());
+-            this.f_129754_.m_7238_();
++         /* Drop global time updates
++         if (this.tickCount % 20 == 0) {
++            this.profiler.push("timeSync");
++            this.playerList.broadcastAll(new ClientboundSetTimePacket(serverlevel.getGameTime(), serverlevel.getDayTime(), serverlevel.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)), serverlevel.dimension());
++            this.profiler.pop();
           }
++         // CraftBukkit end */
  
           this.f_129754_.m_6180_("tick");
 +         net.minecraftforge.event.ForgeEventFactory.onPreWorldTick(serverlevel);
@@ -460,6 +526,24 @@
     public void m_142116_(Path p_177911_) throws IOException {
     }
  
+@@ -1625,6 +_,17 @@
+ 
+    }
+ 
++   // CraftBukkit start
++   @Override
++   public boolean m_18695_() {
++      return super.m_18695_() || this.m_129918_(); // CraftBukkit - MC-142590
++   }
++
++   public boolean isDebugging() {
++      return false;
++   }
++   // CraftBukkit end
++
+    private void m_177945_() {
+       if (this.f_177875_) {
+          this.f_177872_ = ActiveMetricsRecorder.m_146132_(new ServerMetricsSamplersProvider(Util.f_137440_, this.m_6982_()), Util.f_137440_, Util.m_183992_(), new MetricsPersister("server"), this.f_177873_, (p_200004_) -> {
 @@ -1683,6 +_,10 @@
        return this.f_129749_;
     }
@@ -484,18 +568,14 @@
     static class TimeProfiler {
        final long f_177955_;
        final int f_177956_;
-@@ -1776,4 +_,73 @@
+@@ -1776,4 +_,69 @@
           };
        }
     }
 +
-+   public boolean isDebugging() {
-+      return false;
-+   }
-+
 +   @Deprecated
 +   public static MinecraftServer getServer() {
-+      return (Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
++      return ( Bukkit.getServer() instanceof CraftServer ) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
 +   }
 +
 +   // Spigot Start

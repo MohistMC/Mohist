@@ -51,6 +51,7 @@ import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
@@ -69,11 +70,7 @@ import org.bukkit.Statistic.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_18_R1.CraftLootTable;
-import org.bukkit.craftbukkit.v1_18_R1.CraftRaid;
-import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R1.CraftStatistic;
-import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.*;
 import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlockStates;
@@ -209,6 +206,8 @@ import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
+import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
@@ -1667,5 +1666,15 @@ public class CraftEventFactory {
         PiglinBarterEvent event = new PiglinBarterEvent((org.bukkit.entity.Piglin) piglin.getBukkitEntity(), CraftItemStack.asBukkitCopy(input), outcome.stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList()));
         Bukkit.getPluginManager().callEvent(event);
         return event;
+    }
+    public static void callEntitiesLoadEvent( Level world, ChunkPos coords, List<Entity> entities) {
+        List<org.bukkit.entity.Entity> bukkitEntities = Collections.unmodifiableList(entities.stream().map(Entity::getBukkitEntity).collect(Collectors.toList()));
+        EntitiesLoadEvent event = new EntitiesLoadEvent(new CraftChunk((ServerLevel ) world, coords.x, coords.z), bukkitEntities);
+        Bukkit.getPluginManager().callEvent(event);
+    }
+    public static void callEntitiesUnloadEvent(Level world, ChunkPos coords, List<Entity> entities) {
+        List<org.bukkit.entity.Entity> bukkitEntities = Collections.unmodifiableList(entities.stream().map(Entity::getBukkitEntity).collect(Collectors.toList()));
+        EntitiesUnloadEvent event = new EntitiesUnloadEvent(new CraftChunk((ServerLevel ) world, coords.x, coords.z), bukkitEntities);
+        Bukkit.getPluginManager().callEvent(event);
     }
 }

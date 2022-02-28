@@ -245,7 +245,7 @@
     }
  
     public void m_32045_(ItemStack p_32046_) {
-+      com.google.common.base.Preconditions.checkArgument(!p_32046_.m_41619_(), "Cannot drop air"); // CraftBukkit
++      if(p_32046_.m_41619_()) return; //Mohist fix Mod compatibility
        this.m_20088_().m_135381_(f_31984_, p_32046_);
 +      this.m_20088_().markDirty(ItemEntity.f_31984_); // CraftBukkit - SPIGOT-4591, must mark dirty
     }

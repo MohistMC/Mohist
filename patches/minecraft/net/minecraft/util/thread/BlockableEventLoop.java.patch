@@ -1,0 +1,10 @@
+--- a/net/minecraft/util/thread/BlockableEventLoop.java
++++ b/net/minecraft/util/thread/BlockableEventLoop.java
+@@ -9,6 +_,7 @@
+ import java.util.concurrent.locks.LockSupport;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Supplier;
++
+ import net.minecraft.util.profiling.metrics.MetricCategory;
+ import net.minecraft.util.profiling.metrics.MetricSampler;
+ import net.minecraft.util.profiling.metrics.MetricsRegistry;
