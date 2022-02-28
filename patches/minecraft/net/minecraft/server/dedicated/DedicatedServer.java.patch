@@ -30,17 +30,13 @@
        this.f_139604_ = p_139615_;
        this.f_139602_ = new RconConsoleSource(this);
        this.f_139606_ = TextFilterClient.m_143736_(p_139615_.m_139777_().f_139724_);
-@@ -91,12 +_,43 @@
+@@ -91,12 +_,36 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
--            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.Main.useConsole) {
-+               return;
-+            }
-+            jline.console.ConsoleReader bufferedreader = reader;
+             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
 +            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
 +            try {
@@ -55,11 +51,7 @@
 -                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
 +               // CraftBukkit start - JLine disabling compatibility
 +               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_()) {
-+                  if (org.bukkit.craftbukkit.Main.useJline) {
-+                     s1 = bufferedreader.readLine(">", null);
-+                  } else {
-+                     s1 = bufferedreader.readLine();
-+                  }
++                  s1 = bufferedreader.readLine();
 +
 +                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
 +                  if (s1 == null) {
@@ -77,7 +69,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
-@@ -104,6 +_,26 @@
+@@ -104,6 +_,21 @@
  
           }
        };
@@ -89,12 +81,7 @@
 +      }
 +      global.addHandler(new org.bukkit.craftbukkit.v1_18_R1.util.ForwardLogHandler());
 +
-+      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
-+      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
-+         if (appender instanceof org.apache.logging.log4j.core.appender.ConsoleAppender) {
-+            logger.removeAppender(appender);
-+         }
-+      }
++      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
 +
 +      new org.bukkit.craftbukkit.v1_18_R1.util.TerminalConsoleWriterThread(System.out, this.reader).start();
 +
