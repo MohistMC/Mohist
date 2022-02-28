@@ -1,14 +1,15 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -1,5 +_,6 @@
+@@ -1,16 +_,16 @@
  package net.minecraft.world.inventory;
  
 +import com.google.common.base.Preconditions;
  import com.google.common.base.Suppliers;
  import com.google.common.collect.HashBasedTable;
  import com.google.common.collect.Lists;
-@@ -7,10 +_,8 @@
+ import com.google.common.collect.Sets;
  import com.google.common.collect.Table;
++import com.mohistmc.MohistMC;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
 -import java.util.List;
@@ -29,11 +30,13 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -27,6 +_,12 @@
+@@ -27,6 +_,14 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 +import org.bukkit.event.Event;
 +import org.bukkit.event.inventory.InventoryDragEvent;
@@ -42,11 +45,12 @@
  
  public abstract class AbstractContainerMenu {
     public static final int f_150385_ = -999;
-@@ -56,6 +_,27 @@
+@@ -56,6 +_,28 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
-+   // CraftBukkit start
++   // CraftBukkit star
++   private CraftInventoryView bukkitEntity = null;
 +   public boolean checkReachable = true;
 +   public abstract InventoryView getBukkitView();
 +   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity player) {
@@ -153,7 +157,7 @@
              }
  
              this.m_38951_();
-@@ -423,6 +_,15 @@
+@@ -423,6 +_,21 @@
              }
  
              slot7.m_6654_();
@@ -161,8 +165,14 @@
 +            if (p_150434_ instanceof ServerPlayer && slot7.m_6641_() != 64) {
 +               ((ServerPlayer) p_150434_).f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), slot7.f_40219_, slot7.m_7993_()));
 +               // Updating a crafting inventory makes the client reset the result slot, have to send it again
-+               if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
++               try {
++                  if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
++                     ((ServerPlayer) p_150434_).f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
++                  }
++               } catch ( AbstractMethodError error ){
++                  MohistMC.LOGGER.error( error );
 +                  ((ServerPlayer) p_150434_).f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
++
 +               }
 +            }
 +            // CraftBukkit end

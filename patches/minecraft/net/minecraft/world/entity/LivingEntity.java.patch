@@ -673,6 +673,15 @@
        super.m_8119_();
        this.m_21329_();
        this.m_21333_();
+@@ -2287,7 +_,7 @@
+ 
+    }
+ 
+-   private void m_21315_() {
++   public void m_21315_ ( ) {
+       Map<EquipmentSlot, ItemStack> map = this.m_21319_();
+       if (map != null) {
+          this.m_21091_(map);
 @@ -2317,6 +_,7 @@
  
           ItemStack itemstack1 = this.m_6844_(equipmentslot);

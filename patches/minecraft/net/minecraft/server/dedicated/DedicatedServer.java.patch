@@ -30,13 +30,18 @@
        this.f_139604_ = p_139615_;
        this.f_139602_ = new RconConsoleSource(this);
        this.f_139606_ = TextFilterClient.m_143736_(p_139615_.m_139777_().f_139724_);
-@@ -91,12 +_,34 @@
+@@ -91,12 +_,43 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
+-            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
--
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.Main.useConsole) {
++               return;
++            }
++            jline.console.ConsoleReader bufferedreader = reader;
+ 
 +            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
 +            try {
 +               System.in.available();
@@ -50,7 +55,11 @@
 -                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
 +               // CraftBukkit start - JLine disabling compatibility
 +               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_()) {
-+                  s1 = bufferedreader.readLine();
++                  if (org.bukkit.craftbukkit.Main.useJline) {
++                     s1 = bufferedreader.readLine(">", null);
++                  } else {
++                     s1 = bufferedreader.readLine();
++                  }
 +
 +                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
 +                  if (s1 == null) {
@@ -68,7 +77,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
-@@ -104,6 +_,19 @@
+@@ -104,6 +_,26 @@
  
           }
        };
@@ -80,19 +89,27 @@
 +      }
 +      global.addHandler(new org.bukkit.craftbukkit.v1_18_R1.util.ForwardLogHandler());
 +
-+      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
++      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
++      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
++         if (appender instanceof org.apache.logging.log4j.core.appender.ConsoleAppender) {
++            logger.removeAppender(appender);
++         }
++      }
 +
-+      System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
-+      System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
++      new org.bukkit.craftbukkit.v1_18_R1.util.TerminalConsoleWriterThread(System.out, this.reader).start();
++
++      System.setOut(IoBuilder.forLogger(logger).setLevel( org.apache.logging.log4j.Level.INFO).buildPrintStream());
++      System.setErr(IoBuilder.forLogger(logger).setLevel( org.apache.logging.log4j.Level.WARN).buildPrintStream());
 +      // CraftBukkit end
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -166,14 +_,25 @@
+@@ -165,15 +_,26 @@
+       if (!OldUsersConverter.m_11106_(this)) {
           return false;
        } else {
-          this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
 +         // CraftBukkit start
+          this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +         // CraftBukkit end
@@ -114,6 +131,15 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
+@@ -186,6 +_,8 @@
+          if (dedicatedserverproperties.f_139747_) {
+             f_139598_.info("Starting remote control listener");
+             this.f_139603_ = RconThread.m_11615_(this);
++            this.remoteConsole = new org.bukkit.craftbukkit.v1_18_R1.command.CraftRemoteConsoleCommandSender(this.f_139602_); // CraftBukkit
++
+          }
+ 
+          if (this.m_139669_() > 0L) {
 @@ -197,12 +_,13 @@
           }
  
@@ -129,6 +155,14 @@
        }
     }
  
+@@ -318,6 +_,7 @@
+          this.f_139601_.m_7530_();
+       }
+ 
++      System.exit( 0 );
+    }
+ 
+    public void m_5703_(BooleanSupplier p_139661_) {
 @@ -335,8 +_,17 @@
  
     public void m_139665_() {
@@ -155,13 +189,43 @@
  
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return null;
++      return console;
 +   }
 +
     public int m_6329_() {
        return this.m_7913_().f_139719_;
     }
-@@ -526,7 +_,15 @@
+@@ -520,13 +_,44 @@
+    }
+ 
+    public String m_7138_() {
+-      return "";
++      // CraftBukkit start - Whole method
++      StringBuilder result = new StringBuilder();
++      org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
++
++      result.append(server.getName());
++      result.append(" on Bukkit ");
++      result.append(server.getBukkitVersion());
++
++      if (plugins.length > 0 && server.getQueryPlugins()) {
++         result.append(": ");
++
++         for (int i = 0; i < plugins.length; i++) {
++            if (i > 0) {
++               result.append("; ");
++            }
++
++            result.append(plugins[i].getDescription().getName());
++            result.append(" ");
++            result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
++         }
++      }
++
++      return result.toString();
++      // CraftBukkit end
+    }
+ 
     public String m_7261_(String p_139644_) {
        this.f_139602_.m_11512_();
        this.m_18709_(() -> {
@@ -178,15 +242,27 @@
        });
        return this.f_139602_.m_11513_();
     }
-@@ -545,6 +_,11 @@
- 
-    public boolean m_7779_(GameProfile p_139642_) {
+@@ -547,6 +_,11 @@
        return false;
-+   }
-+
+    }
+ 
 +   @Override //Forge: Enable formated text for colors in console.
 +   public void m_6352_(net.minecraft.network.chat.Component message, java.util.UUID p_108776_) {
 +      f_139598_.info(message.getString());
-    }
- 
++   }
++
     public int m_7186_(int p_139659_) {
+       return this.m_7913_().f_139723_ * p_139659_ / 100;
+    }
+@@ -590,4 +_,11 @@
+    public Component m_141958_() {
+       return this.f_142863_;
+    }
++
++   // CraftBukkit start
++   public boolean isDebugging() {
++      return this.m_7913_().debug;
++   }
++
++   // CraftBukkit end
+ }

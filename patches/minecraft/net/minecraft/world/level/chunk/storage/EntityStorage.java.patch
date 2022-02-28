@@ -1,7 +1,11 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
-@@ -33,7 +_,7 @@
-    private final ServerLevel f_156538_;
+@@ -30,10 +_,10 @@
+    private static final Logger f_156535_ = LogManager.getLogger();
+    private static final String f_156536_ = "Entities";
+    private static final String f_156537_ = "Position";
+-   private final ServerLevel f_156538_;
++   public final ServerLevel f_156538_;
     private final IOWorker f_156539_;
     private final LongSet f_156540_ = new LongOpenHashSet();
 -   private final ProcessorMailbox<Runnable> f_182485_;

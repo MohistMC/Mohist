@@ -101,6 +101,15 @@
           if (p_183759_ && !p_183758_) {
              ChunkHolder chunkholder = this.m_140327_(p_183756_.m_45588_());
              if (chunkholder != null) {
+@@ -840,7 +_,7 @@
+    @Nullable
+    private CompoundTag m_140427_(ChunkPos p_140428_) throws IOException {
+       CompoundTag compoundtag = this.m_63512_(p_140428_);
+-      return compoundtag == null ? null : this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, compoundtag, this.f_140136_.m_187743_());
++      return compoundtag == null ? null : this.upgradeChunkTag(this.f_140133_.m_46472_(), this.f_140137_, compoundtag, this.f_140136_.m_187743_(), p_140428_, f_140133_);
+    }
+ 
+    boolean m_183879_(ChunkPos p_183880_) {
 @@ -1020,7 +_,7 @@
     }
  
@@ -110,7 +119,7 @@
           EntityType<?> entitytype = p_140200_.m_6095_();
           int i = entitytype.m_20681_() * 16;
           if (i != 0) {
-@@ -1181,12 +_,12 @@
+@@ -1181,15 +_,15 @@
        }
     }
  
@@ -124,7 +133,11 @@
 +      public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
-          this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
+-         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
++         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_, f_140475_); // CraftBukkit
+          this.f_140472_ = p_140478_;
+          this.f_140473_ = p_140479_;
+          this.f_140474_ = SectionPos.m_123194_(p_140478_);
 @@ -1238,11 +_,18 @@
  
        public void m_140497_(ServerPlayer p_140498_) {
