@@ -90,8 +90,7 @@
 -            return;
 -         }
 -
--         File file1 = new File(optionset.valueOf(optionspec9));
-+         File file1 = (File) optionset.valueOf("universe"); // CraftBukkit
+          File file1 = new File(optionset.valueOf(optionspec9));
           YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
           MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
