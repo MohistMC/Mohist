@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2022.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading.moddiscovery;
@@ -42,7 +28,8 @@ public class ModInfo implements IModInfo, IConfigurable
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
-    private static final Pattern VALID_LABEL = Pattern.compile("^[a-z][a-z0-9_-]{1,63}$");
+    private static final Pattern VALID_MODID = Pattern.compile("^[a-z][a-z0-9_]{1,63}$");
+    private static final Pattern VALID_NAMESPACE = Pattern.compile("^[a-z][a-z0-9_.-]{1,63}$");
 
     private final ModFileInfo owningFile;
     private final String modId;
@@ -64,13 +51,13 @@ public class ModInfo implements IModInfo, IConfigurable
         this.config = config;
         this.modId = config.<String>getConfigElement("modId")
                 .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
-        if (!VALID_LABEL.matcher(this.modId).matches()) {
-            LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_LABEL.pattern());
+        if (!VALID_MODID.matcher(this.modId).matches()) {
+            LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_MODID.pattern());
             throw new InvalidModFileException("Invalid modId found : " + this.modId, owningFile);
         }
         this.namespace = config.<String>getConfigElement("namespace").orElse(this.modId);
-        if (!VALID_LABEL.matcher(this.namespace).matches()) {
-            LOGGER.fatal("Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_LABEL.pattern());
+        if (!VALID_NAMESPACE.matcher(this.namespace).matches()) {
+            LOGGER.fatal("Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_NAMESPACE.pattern());
             throw new InvalidModFileException("Invalid override namespace found : " + this.namespace, owningFile);
         }
         this.version = config.<String>getConfigElement("version")
