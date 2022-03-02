@@ -288,7 +288,7 @@
        ExperienceOrb.m_147082_(p_154999_, p_155000_, i);
     }
  
-@@ -483,4 +_,63 @@
+@@ -483,4 +_,67 @@
        }
  
     }
@@ -349,6 +349,10 @@
 +
 +   public void setMaxStackSize(int size) {
 +      maxStack = size;
++   }
++
++   public Object2IntOpenHashMap<ResourceLocation> getRecipesUsed() {
++      return this.f_58320_; // PAIL private -> public
 +   }
 +   // CraftBukkit end
  }

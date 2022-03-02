@@ -117,7 +117,7 @@
           profilerfiller.m_6180_("pollingChunks");
           int k = this.f_8329_.m_46469_().m_46215_(GameRules.f_46143_);
 -         boolean flag1 = leveldata.m_6793_() % 400L == 0L;
-+         boolean flag1 = f_8329_.ticksPerAnimalSpawns != 0L && leveldata.m_6793_() % f_8329_.ticksPerAnimalSpawns == 0L; // CraftBukkit
++         boolean flag1 = f_8329_.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && leveldata.m_6793_() % f_8329_.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
           profilerfiller.m_6180_("naturalSpawnCount");
           int l = this.f_8327_.m_140816_();
           NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.m_186524_(l, this.f_8329_.m_8583_(), this::m_8370_, new LocalMobCapCalculator(this.f_8325_));

@@ -73,7 +73,7 @@
        this.m_140784_(p_140794_.m_45588_(), new Ticket<>(p_140793_, p_140795_, p_140796_));
     }
  
-+   public <T> boolean addTicketAtLevel(TicketType<T> ticketType, ChunkPos chunkcoordintpair, int level, T identifier) {
++   public <T> boolean addRegionTicketAtDistance(TicketType<T> ticketType, ChunkPos chunkcoordintpair, int level, T identifier) {
 +      return this.addTicketCB(chunkcoordintpair.m_45588_(), new Ticket<>(ticketType, level, identifier));
 +      // CraftBukkit end
 +   }

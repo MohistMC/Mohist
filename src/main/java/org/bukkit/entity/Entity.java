@@ -639,6 +639,14 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     @NotNull
     Pose getPose();
 
+    /**
+     * Get the category of spawn to which this entity belongs.
+     *
+     * @return the entity´s category spawn
+     */
+    @NotNull
+    SpawnCategory getSpawnCategory();
+
     // Spigot start
     public class Spigot extends CommandSender.Spigot {
 

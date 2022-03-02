@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -153,6 +154,7 @@ import org.bukkit.craftbukkit.v1_18_R1.metadata.EntityMetadataStore;
 import org.bukkit.craftbukkit.v1_18_R1.metadata.PlayerMetadataStore;
 import org.bukkit.craftbukkit.v1_18_R1.metadata.WorldMetadataStore;
 import org.bukkit.craftbukkit.v1_18_R1.potion.CraftPotionBrewer;
+import org.bukkit.craftbukkit.v1_18_R1.profile.CraftPlayerProfile;
 import org.bukkit.craftbukkit.v1_18_R1.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.v1_18_R1.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.v1_18_R1.structure.CraftStructureManager;
@@ -164,11 +166,13 @@ import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftIconCache;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_18_R1.util.CraftSpawnCategory;
 import org.bukkit.craftbukkit.v1_18_R1.util.DatFileFilter;
 import org.bukkit.craftbukkit.v1_18_R1.util.Versioning;
 import org.bukkit.craftbukkit.v1_18_R1.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
@@ -196,6 +200,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
@@ -226,12 +231,7 @@ public final class CraftServer implements Server {
     private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
     private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
     private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
-    private int monsterSpawn = -1;
-    private int animalSpawn = -1;
-    private int waterAnimalSpawn = -1;
-    private int waterAmbientSpawn = -1;
-    private int waterUndergroundCreatureSpawn = -1;
-    private int ambientSpawn = -1;
+    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
     private File container;
     private WarningState warningState = WarningState.DEFAULT;
     public String minimumAPI;
@@ -246,6 +246,7 @@ public final class CraftServer implements Server {
 
     static {
         ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
+        ConfigurationSerialization.registerClass(CraftPlayerProfile.class);
         CraftItemFactory.instance();
     }
 
@@ -317,12 +318,7 @@ public final class CraftServer implements Server {
         overrideAllCommandCommandBlocks = commandsConfiguration.getStringList("command-block-overrides").contains("*");
         ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
         pluginManager.useTimings(configuration.getBoolean("settings.plugin-profiling"));
-        monsterSpawn = configuration.getInt("spawn-limits.monsters");
-        animalSpawn = configuration.getInt("spawn-limits.animals");
-        waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
-        waterAmbientSpawn = configuration.getInt("spawn-limits.water-ambient");
-        waterUndergroundCreatureSpawn = configuration.getInt("spawn-limits.water-underground-creature");
-        ambientSpawn = configuration.getInt("spawn-limits.ambient");
+        overrideSpawnLimits();
         console.autosavePeriod = configuration.getInt("ticks-per.autosave");
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
         TicketType.PLUGIN.timeout = configuration.getInt("chunk-gc.period-in-ticks");
@@ -340,6 +336,14 @@ public final class CraftServer implements Server {
 
     private File getCommandsConfigFile() {
         return (File) console.options.valueOf("commands-settings");
+    }
+
+    private void overrideSpawnLimits() {
+        for (SpawnCategory spawnCategory : SpawnCategory.values()) {
+            if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
+                spawnCategoryLimit.put(spawnCategory, configuration.getInt(CraftSpawnCategory.getConfigNameSpawnLimit(spawnCategory)));
+            }
+        }
     }
 
     private void saveConfig() {
@@ -672,33 +676,46 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    @Deprecated
     public int getTicksPerAnimalSpawns() {
-        return this.configuration.getInt("ticks-per.animal-spawns");
+        return getTicksPerSpawns(SpawnCategory.ANIMAL);
     }
 
     @Override
+    @Deprecated
     public int getTicksPerMonsterSpawns() {
-        return this.configuration.getInt("ticks-per.monster-spawns");
+        return getTicksPerSpawns(SpawnCategory.MONSTER);
     }
 
     @Override
+    @Deprecated
     public int getTicksPerWaterSpawns() {
-        return this.configuration.getInt("ticks-per.water-spawns");
+        return getTicksPerSpawns(SpawnCategory.WATER_ANIMAL);
     }
 
     @Override
+    @Deprecated
     public int getTicksPerWaterAmbientSpawns() {
-        return this.configuration.getInt("ticks-per.water-ambient-spawns");
+        return getTicksPerSpawns(SpawnCategory.WATER_AMBIENT);
     }
 
     @Override
+    @Deprecated
     public int getTicksPerWaterUndergroundCreatureSpawns() {
-        return this.configuration.getInt("ticks-per.water-underground-creature-spawns");
+        return getTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE);
     }
 
     @Override
+    @Deprecated
     public int getTicksPerAmbientSpawns() {
-        return this.configuration.getInt("ticks-per.ambient-spawns");
+        return getTicksPerSpawns(SpawnCategory.AMBIENT);
+    }
+
+    @Override
+    public int getTicksPerSpawns(SpawnCategory spawnCategory) {
+        Validate.notNull(spawnCategory, "SpawnCategory cannot be null");
+        Validate.isTrue(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " are not supported.");
+        return this.configuration.getInt(CraftSpawnCategory.getConfigNameTicksPerSpawn(spawnCategory));
     }
 
     @Override
@@ -776,12 +793,7 @@ public final class CraftServer implements Server {
         console.setPvpAllowed(config.pvp);
         console.setFlightAllowed(config.allowFlight);
         console.setMotd(config.motd);
-        monsterSpawn = configuration.getInt("spawn-limits.monsters");
-        animalSpawn = configuration.getInt("spawn-limits.animals");
-        waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
-        waterAmbientSpawn = configuration.getInt("spawn-limits.water-ambient");
-        waterUndergroundCreatureSpawn = configuration.getInt("spawn-limits.water-underground-creature");
-        ambientSpawn = configuration.getInt("spawn-limits.ambient");
+        overrideSpawnLimits();
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
         TicketType.PLUGIN.timeout = configuration.getInt("chunk-gc.period-in-ticks");
         minimumAPI = configuration.getString("settings.minimum-api");
@@ -804,34 +816,15 @@ public final class CraftServer implements Server {
         for (ServerLevel world : console.getAllLevels()) {
             world.getServer().getWorldData().setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
-            if (this.getTicksPerAnimalSpawns() < 0) {
-                world.ticksPerAnimalSpawns = 400;
-            } else {
-                world.ticksPerAnimalSpawns = this.getTicksPerAnimalSpawns();
-            }
-
-            if (this.getTicksPerMonsterSpawns() < 0) {
-                world.ticksPerMonsterSpawns = 1;
-            } else {
-                world.ticksPerMonsterSpawns = this.getTicksPerMonsterSpawns();
-            }
-
-            if (this.getTicksPerWaterSpawns() < 0) {
-                world.ticksPerWaterSpawns = 1;
-            } else {
-                world.ticksPerWaterSpawns = this.getTicksPerWaterSpawns();
-            }
-
-            if (this.getTicksPerWaterAmbientSpawns() < 0) {
-                world.ticksPerWaterAmbientSpawns = 1;
-            } else {
-                world.ticksPerWaterAmbientSpawns = this.getTicksPerWaterAmbientSpawns();
-            }
-
-            if (this.getTicksPerAmbientSpawns() < 0) {
-                world.ticksPerAmbientSpawns = 1;
-            } else {
-                world.ticksPerAmbientSpawns = this.getTicksPerAmbientSpawns();
+            for (SpawnCategory spawnCategory : SpawnCategory.values()) {
+                if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
+                    long ticksPerCategorySpawn = this.getTicksPerSpawns(spawnCategory);
+                    if (ticksPerCategorySpawn < 0) {
+                        world.ticksPerSpawnCategory.put(spawnCategory, CraftSpawnCategory.getDefaultTicksPerSpawn(spawnCategory));
+                    } else {
+                        world.ticksPerSpawnCategory.put(spawnCategory, ticksPerCategorySpawn);
+                    }
+                }
             }
             world.spigotConfig.init(); // Spigot
         }
@@ -1591,6 +1584,21 @@ public final class CraftServer implements Server {
         return result;
     }
 
+    @Override
+    public PlayerProfile createPlayerProfile(UUID uniqueId, String name) {
+        return new CraftPlayerProfile(uniqueId, name);
+    }
+
+    @Override
+    public PlayerProfile createPlayerProfile(UUID uniqueId) {
+        return new CraftPlayerProfile(uniqueId, null);
+    }
+
+    @Override
+    public PlayerProfile createPlayerProfile(String name) {
+        return new CraftPlayerProfile(null, name);
+    }
+
     public OfflinePlayer getOfflinePlayer(GameProfile profile) {
         OfflinePlayer player = new CraftOfflinePlayer(this, profile);
         offlinePlayers.put(profile.getId(), player);
@@ -1803,36 +1811,48 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    @Deprecated
     public int getMonsterSpawnLimit() {
-        return monsterSpawn;
+        return getSpawnLimit(SpawnCategory.ANIMAL);
     }
 
     @Override
+    @Deprecated
     public int getAnimalSpawnLimit() {
-        return animalSpawn;
+        return getSpawnLimit(SpawnCategory.WATER_ANIMAL);
     }
 
     @Override
+    @Deprecated
     public int getWaterAnimalSpawnLimit() {
-        return waterAnimalSpawn;
+        return getSpawnLimit(SpawnCategory.WATER_AMBIENT);
     }
 
     @Override
+    @Deprecated
     public int getWaterAmbientSpawnLimit() {
-        return waterAmbientSpawn;
+        return getSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE);
     }
 
     @Override
+    @Deprecated
     public int getWaterUndergroundCreatureSpawnLimit() {
-        return waterUndergroundCreatureSpawn;
+        return getSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE);
     }
 
     @Override
+    @Deprecated
     public int getAmbientSpawnLimit() {
-        return ambientSpawn;
+        return getSpawnLimit(SpawnCategory.AMBIENT);
     }
 
     @Override
+    public int getSpawnLimit(SpawnCategory spawnCategory) {
+        return spawnCategoryLimit.getOrDefault(spawnCategory, -1);
+    }
+
+    @Override
+    @Deprecated
     public boolean isPrimaryThread() {
         return Thread.currentThread().equals(console.serverThread)/* || console.hasStopped()*/; // All bets are off if we have shut down (e.g. due to watchdog)
     }

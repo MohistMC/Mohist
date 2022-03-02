@@ -93,6 +93,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
                 setMaybe(builder, LootContextParams.DAMAGE_SOURCE, DamageSource.playerAttack(nmsKiller));
                 setMaybe(builder, LootContextParams.LAST_DAMAGE_PLAYER, nmsKiller); // SPIGOT-5603 - Set minecraft:killed_by_player
+                setMaybe(builder, LootContextParams.TOOL, nmsKiller.getUseItem()); // SPIGOT-6925 - Set minecraft:match_tool
             }
 
             // SPIGOT-5603 - Use LootContext#lootingModifier

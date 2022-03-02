@@ -28,6 +28,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.generator.ChunkGenerator;
@@ -45,6 +46,7 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.messaging.Messenger;
+import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.structure.StructureManager;
@@ -351,8 +353,8 @@ public final class Bukkit {
     /**
      * Broadcast a message to all players.
      * <p>
-     * This is the same as calling {@link #broadcast(java.lang.String,
-     * java.lang.String)} to {@link Server#BROADCAST_CHANNEL_USERS}
+     * This is the same as calling {@link #broadcast(String,
+     * String)} to {@link Server#BROADCAST_CHANNEL_USERS}
      *
      * @param message the message
      * @return the number of players
@@ -412,7 +414,9 @@ public final class Bukkit {
      * Minecraft default: 400.
      *
      * @return the default ticks per animal spawns value
+     * @deprecated Deprecated in favor of {@link #getTicksPerSpawns(SpawnCategory)}
      */
+    @Deprecated
     public static int getTicksPerAnimalSpawns() {
         return server.getTicksPerAnimalSpawns();
     }
@@ -435,7 +439,9 @@ public final class Bukkit {
      * Minecraft default: 1.
      *
      * @return the default ticks per monsters spawn value
+     * @deprecated Deprecated in favor of {@link #getTicksPerSpawns(SpawnCategory)}
      */
+    @Deprecated
     public static int getTicksPerMonsterSpawns() {
         return server.getTicksPerMonsterSpawns();
     }
@@ -457,7 +463,9 @@ public final class Bukkit {
      * Minecraft default: 1.
      *
      * @return the default ticks per water mobs spawn value
+     * @deprecated Deprecated in favor of {@link #getTicksPerSpawns(SpawnCategory)}
      */
+    @Deprecated
     public static int getTicksPerWaterSpawns() {
         return server.getTicksPerWaterSpawns();
     }
@@ -479,7 +487,9 @@ public final class Bukkit {
      * Minecraft default: 1.
      *
      * @return the default ticks per ambient mobs spawn value
+     * @deprecated Deprecated in favor of {@link #getTicksPerSpawns(SpawnCategory)}
      */
+    @Deprecated
     public static int getTicksPerAmbientSpawns() {
         return server.getTicksPerAmbientSpawns();
     }
@@ -501,10 +511,13 @@ public final class Bukkit {
      * Minecraft default: 1.
      *
      * @return the default ticks per water ambient mobs spawn value
+     * @deprecated Deprecated in favor of {@link #getTicksPerSpawns(SpawnCategory)}
      */
+    @Deprecated
     public static int getTicksPerWaterAmbientSpawns() {
         return server.getTicksPerAmbientSpawns();
     }
+
     /**
      * Gets the default ticks per water underground creature spawns value.
      * <p>
@@ -522,9 +535,36 @@ public final class Bukkit {
      * Minecraft default: 1.
      *
      * @return the default ticks per water underground creature spawn value
+     * @deprecated Deprecated in favor of {@link #getTicksPerSpawns(SpawnCategory)}
      */
+    @Deprecated
     public static int getTicksPerWaterUndergroundCreatureSpawns() {
         return server.getTicksPerWaterUndergroundCreatureSpawns();
+    }
+
+    /**
+     * Gets the default ticks per {@link SpawnCategory} spawns value.
+     * <p>
+     * <b>Example Usage:</b>
+     * <ul>
+     * <li>A value of 1 will mean the server will attempt to spawn {@link SpawnCategory} mobs
+     *     every tick.
+     * <li>A value of 400 will mean the server will attempt to spawn {@link SpawnCategory} mobs
+     *     every 400th tick.
+     * <li>A value below 0 will be reset back to Minecraft's default.
+     * </ul>
+     * <p>
+     * <b>Note:</b> If set to 0, {@link SpawnCategory} mobs spawning will be disabled.
+     * <p>
+     * Minecraft default: 1.
+     * <br>
+     * <b>Note: </b> the {@link SpawnCategory#MISC} are not consider.
+     *
+     * @param spawnCategory the category of spawn
+     * @return the default ticks per {@link SpawnCategory} mobs spawn value
+     */
+    public static int getTicksPerSpawns(@NotNull SpawnCategory spawnCategory) {
+        return server.getTicksPerSpawns(spawnCategory);
     }
 
     /**
@@ -712,8 +752,8 @@ public final class Bukkit {
      * @param structureType the type of structure to find
      * @return a newly created item stack
      *
-     * @see World#locateNearestStructure(org.bukkit.Location,
-     *      org.bukkit.StructureType, int, boolean)
+     * @see World#locateNearestStructure(Location,
+     *      StructureType, int, boolean)
      */
     @NotNull
     public static ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull StructureType structureType) {
@@ -735,8 +775,8 @@ public final class Bukkit {
      * @param findUnexplored whether to find unexplored structures
      * @return the newly created item stack
      *
-     * @see World#locateNearestStructure(org.bukkit.Location,
-     *      org.bukkit.StructureType, int, boolean)
+     * @see World#locateNearestStructure(Location,
+     *      StructureType, int, boolean)
      */
     @NotNull
     public static ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull StructureType structureType, int radius, boolean findUnexplored) {
@@ -1024,7 +1064,7 @@ public final class Bukkit {
      *
      * @param name the name the player to retrieve
      * @return an offline player
-     * @see #getOfflinePlayer(java.util.UUID)
+     * @see #getOfflinePlayer(UUID)
      * @deprecated Persistent storage of users should be by UUID as names are no longer
      *             unique past a single session.
      */
@@ -1047,6 +1087,45 @@ public final class Bukkit {
     @NotNull
     public static OfflinePlayer getOfflinePlayer(@NotNull UUID id) {
         return server.getOfflinePlayer(id);
+    }
+
+    /**
+     * Creates a new {@link PlayerProfile}.
+     *
+     * @param uniqueId the unique id
+     * @param name the name
+     * @return the new PlayerProfile
+     * @throws IllegalArgumentException if both the unique id is
+     * <code>null</code> and the name is <code>null</code> or blank
+     */
+    @NotNull
+    public static PlayerProfile createPlayerProfile(@Nullable UUID uniqueId, @Nullable String name) {
+        return server.createPlayerProfile(uniqueId, name);
+    }
+
+    /**
+     * Creates a new {@link PlayerProfile}.
+     *
+     * @param uniqueId the unique id
+     * @return the new PlayerProfile
+     * @throws IllegalArgumentException if the unique id is <code>null</code>
+     */
+    @NotNull
+    public static PlayerProfile createPlayerProfile(@NotNull UUID uniqueId) {
+        return server.createPlayerProfile(uniqueId);
+    }
+
+    /**
+     * Creates a new {@link PlayerProfile}.
+     *
+     * @param name the name
+     * @return the new PlayerProfile
+     * @throws IllegalArgumentException if the name is <code>null</code> or
+     * blank
+     */
+    @NotNull
+    public static PlayerProfile createPlayerProfile(@NotNull String name) {
+        return server.createPlayerProfile(name);
     }
 
     /**
@@ -1283,7 +1362,9 @@ public final class Bukkit {
      * chunk.
      *
      * @return the monster spawn limit
+     * @deprecated Deprecated in favor of {@link #getSpawnLimit(SpawnCategory)}
      */
+    @Deprecated
     public static int getMonsterSpawnLimit() {
         return server.getMonsterSpawnLimit();
     }
@@ -1293,7 +1374,9 @@ public final class Bukkit {
      * chunk.
      *
      * @return the animal spawn limit
+     * @deprecated Deprecated in favor of {@link #getSpawnLimit(SpawnCategory)}
      */
+    @Deprecated
     public static int getAnimalSpawnLimit() {
         return server.getAnimalSpawnLimit();
     }
@@ -1303,7 +1386,9 @@ public final class Bukkit {
      * a chunk.
      *
      * @return the water animal spawn limit
+     * @deprecated Deprecated in favor of {@link #getSpawnLimit(SpawnCategory)}
      */
+    @Deprecated
     public static int getWaterAnimalSpawnLimit() {
         return server.getWaterAnimalSpawnLimit();
     }
@@ -1313,7 +1398,9 @@ public final class Bukkit {
      * in a chunk.
      *
      * @return the water ambient spawn limit
+     * @deprecated Deprecated in favor of {@link #getSpawnLimit(SpawnCategory)}
      */
+    @Deprecated
     public static int getWaterAmbientSpawnLimit() {
         return server.getAmbientSpawnLimit();
     }
@@ -1321,8 +1408,11 @@ public final class Bukkit {
     /**
      * Get user-specified limit for number of water creature underground that can spawn
      * in a chunk.
+     *
      * @return the water underground creature limit
+     * @deprecated Deprecated in favor of {@link #getSpawnLimit(SpawnCategory)}
      */
+    @Deprecated
     public static int getWaterUndergroundCreatureSpawnLimit() {
         return server.getWaterUndergroundCreatureSpawnLimit();
     }
@@ -1332,9 +1422,24 @@ public final class Bukkit {
      * a chunk.
      *
      * @return the ambient spawn limit
+     * @deprecated Deprecated in favor of {@link #getSpawnLimit(SpawnCategory)}
      */
+    @Deprecated
     public static int getAmbientSpawnLimit() {
         return server.getAmbientSpawnLimit();
+    }
+
+    /**
+     * Gets user-specified limit for number of {@link SpawnCategory} mobs that can spawn in
+     * a chunk.
+     *
+     * <b>Note: the {@link SpawnCategory#MISC} are not consider.</b>
+     *
+     * @param spawnCategory the category spawn
+     * @return the {@link SpawnCategory} spawn limit
+     */
+    public static int getSpawnLimit(@NotNull SpawnCategory spawnCategory) {
+        return server.getSpawnLimit(spawnCategory);
     }
 
     /**
@@ -1479,7 +1584,7 @@ public final class Bukkit {
     /**
      * Create a ChunkData for use in a generator.
      *
-     * See {@link ChunkGenerator#generateChunkData(org.bukkit.World, java.util.Random, int, int, org.bukkit.generator.ChunkGenerator.BiomeGrid)}
+     * See {@link ChunkGenerator#generateChunkData(World, java.util.Random, int, int, ChunkGenerator.BiomeGrid)}
      *
      * @param world the world to create the ChunkData for
      * @return a new ChunkData for the world

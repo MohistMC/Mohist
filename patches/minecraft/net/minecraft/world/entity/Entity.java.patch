@@ -714,7 +714,7 @@
     }
  
     public int m_20146_() {
-@@ -2051,7 +_,17 @@
+@@ -2051,7 +_,18 @@
     }
  
     public void m_20301_(int p_20302_) {
@@ -725,7 +725,8 @@
 +      if (this.valid) {
 +         event.getEntity().getServer().getPluginManager().callEvent(event);
 +      }
-+      if (event.isCancelled()) {
++      if (event.isCancelled() && this.m_20146_() != p_20302_) {
++         this.f_19804_.markDirty(Entity.f_19832_);
 +         return;
 +      }
 +      this.f_19804_.m_135381_(Entity.f_19832_, event.getAmount());

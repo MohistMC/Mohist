@@ -56,8 +56,10 @@ import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_18_R1.util.CraftSpawnCategory;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftVector;
 import org.bukkit.entity.Pose;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
@@ -917,6 +919,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public Pose getPose() {
         return Pose.values()[getHandle().getPose().ordinal()];
+    }
+
+    @Override
+    public SpawnCategory getSpawnCategory() {
+        return CraftSpawnCategory.toBukkit(getHandle().getType().getCategory());
     }
 
     public void storeBukkitValues(CompoundTag c) {

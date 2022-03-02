@@ -12,6 +12,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_18_R1.profile.CraftPlayerProfile;
+import org.bukkit.profile.PlayerProfile;
 
 public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implements Skull {
 
@@ -95,6 +97,24 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
             this.profile = ((CraftPlayer) player).getProfile();
         } else {
             this.profile = new GameProfile(player.getUniqueId(), player.getName());
+        }
+    }
+
+    @Override
+    public PlayerProfile getOwnerProfile() {
+        if (!hasOwner()) {
+            return null;
+        }
+
+        return new CraftPlayerProfile(profile);
+    }
+
+    @Override
+    public void setOwnerProfile(PlayerProfile profile) {
+        if (profile == null) {
+            this.profile = null;
+        } else {
+            this.profile = CraftPlayerProfile.validateSkullProfile(((CraftPlayerProfile) profile).buildGameProfile());
         }
     }
 
