@@ -5,7 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import com.mojang.serialization.Codec;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -13,6 +12,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
@@ -28,7 +28,8 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 
     void register(V value);
 
-    void registerAll(@SuppressWarnings("unchecked") V... values);
+    @SuppressWarnings("unchecked")
+    void registerAll(V... values);
 
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);

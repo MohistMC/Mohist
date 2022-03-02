@@ -14,6 +14,8 @@ import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+
 
 public class ForgeConfig {
     public static class Server {
@@ -28,7 +30,7 @@ public class ForgeConfig {
 
         public final BooleanValue fixAdvancementLoading;
 
-        public final ForgeConfigSpec.ConfigValue<String> permissionHandler;
+        public final ConfigValue<String> permissionHandler;
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")

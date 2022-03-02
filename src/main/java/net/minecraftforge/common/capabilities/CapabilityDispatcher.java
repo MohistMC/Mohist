@@ -5,11 +5,11 @@
 
 package net.minecraftforge.common.capabilities;
 
-import java.util.Locale;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.google.common.collect.Lists;

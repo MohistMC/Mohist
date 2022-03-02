@@ -6,7 +6,6 @@
 package net.minecraftforge.resource;
 
 import com.google.common.base.Joiner;
-import java.util.Locale;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
@@ -20,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

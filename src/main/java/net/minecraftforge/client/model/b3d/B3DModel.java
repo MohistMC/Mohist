@@ -1122,7 +1122,7 @@ public class B3DModel
         /*@Override
         public String toString()
         {
-            return String.format(Locale.ENGLISH, "Bone [data=%s]", data);
+            return String.format("Bone [data=%s]", data);
         }*/
 
         @Override

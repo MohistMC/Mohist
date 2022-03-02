@@ -34,7 +34,7 @@ public class ScreenEvent extends Event
 
     public ScreenEvent(Screen screen)
     {
-        this.screen = screen;
+        this.screen = Objects.requireNonNull(screen);
     }
 
     /**
@@ -42,7 +42,7 @@ public class ScreenEvent extends Event
      */
     public Screen getScreen()
     {
-        return Objects.requireNonNull(screen);
+        return screen;
     }
 
     public static class InitScreenEvent extends ScreenEvent
@@ -126,7 +126,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * The MatrixStack to render with.
+         * The PoseStack to render with.
          */
         public PoseStack getPoseStack()
         {
@@ -164,9 +164,9 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends DrawScreenEvent
         {
-            public Pre(Screen screen, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Pre(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, mStack, mouseX, mouseY, renderPartialTicks);
+                super(screen, poseStack, mouseX, mouseY, partialTick);
             }
         }
 
@@ -175,9 +175,9 @@ public class ScreenEvent extends Event
          */
         public static class Post extends DrawScreenEvent
         {
-            public Post(Screen screen, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Post(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, mStack, mouseX, mouseY, renderPartialTicks);
+                super(screen, poseStack, mouseX, mouseY, partialTick);
             }
         }
     }
@@ -197,7 +197,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * The MatrixStack to render with.
+         * The PoseStack to render with.
          */
         public PoseStack getPoseStack()
         {

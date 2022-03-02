@@ -9,7 +9,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import com.mojang.blaze3d.platform.Window;
-import java.util.Locale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -21,6 +20,7 @@ import org.lwjgl.system.MemoryUtil;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
 public class EarlyLoaderGUI {
     private final Minecraft minecraft;
@@ -32,7 +32,6 @@ public class EarlyLoaderGUI {
         this.window = minecraft.getWindow();
     }
 
-    @SuppressWarnings("deprecation")
     private void setupMatrix() {
         RenderSystem.clear(256, Minecraft.ON_OSX);
         GL11.glMatrixMode(5889);
@@ -51,7 +50,6 @@ public class EarlyLoaderGUI {
         renderMessages();
     }
 
-    @SuppressWarnings("deprecation")
     void renderTick() {
         if (handledElsewhere) return;
         // int guiScale = window.calculateScale(0, false);
@@ -115,7 +113,6 @@ public class EarlyLoaderGUI {
         renderMessage(memory, memorycolour, 1, 1.0f);
     }
 
-    @SuppressWarnings("deprecation")
     void renderMessage(final String message, final float[] colour, int line, float alpha) {
         // GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         // ByteBuffer charBuffer = MemoryUtil.memAlloc(message.length() * 270);

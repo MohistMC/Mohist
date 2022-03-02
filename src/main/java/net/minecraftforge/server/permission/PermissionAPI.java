@@ -103,6 +103,7 @@ public final class PermissionAPI
         }
 
         PermissionAPI.activeHandler = null;
+
         PermissionGatherEvent.Handler handlerEvent = new PermissionGatherEvent.Handler();
         MinecraftForge.EVENT_BUS.post(handlerEvent);
         Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = handlerEvent.getAvailablePermissionHandlerFactories();

@@ -5,16 +5,16 @@
 
 package net.minecraftforge.registries;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
 import java.util.*;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -172,14 +172,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return tagFolder;
     }
 
-    @Override
     public Codec<V> getCodec()
     {
         return this.codec;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void registerAll(@SuppressWarnings("unchecked") V... values)
+    public void registerAll(V... values)
     {
         for (V value : values)
             register(value);
@@ -509,7 +509,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             /*
             // entry is blocked, thus should be empty
             if (blockedIds.contains(id))
-                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for %s %s, id %d, name %s, marked as dangling.", registryName, obj, id, name));
+                throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", registryName, obj, id, name));
              */
 
             // registry-specific validation

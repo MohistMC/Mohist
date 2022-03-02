@@ -5,8 +5,9 @@
 
 package net.minecraftforge.server.permission.exceptions;
 
-import java.util.Locale;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
+
+import java.util.Locale;
 
 public class UnregisteredPermissionException extends RuntimeException
 {

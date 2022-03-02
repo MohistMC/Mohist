@@ -91,7 +91,6 @@ public class CompoundIngredient extends Ingredient
     {
         this.itemIds = null;
         this.stacks = null;
-        //Shouldn't need to invalidate children as this is only called form invalidateAll..
     }
 
     @Override

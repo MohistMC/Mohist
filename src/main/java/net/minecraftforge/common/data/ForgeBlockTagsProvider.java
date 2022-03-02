@@ -42,7 +42,8 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(COBBLESTONE_NORMAL).add(Blocks.COBBLESTONE);
         tag(COBBLESTONE_INFESTED).add(Blocks.INFESTED_COBBLESTONE);
         tag(COBBLESTONE_MOSSY).add(Blocks.MOSSY_COBBLESTONE);
-        tag(COBBLESTONE_DEEPSLATE).add(Blocks.COBBLED_DEEPSLATE);tag(END_STONES).add(Blocks.END_STONE);
+        tag(COBBLESTONE_DEEPSLATE).add(Blocks.COBBLED_DEEPSLATE);
+        tag(END_STONES).add(Blocks.END_STONE);
         tag(ENDERMAN_PLACE_ON_BLACKLIST);
         tag(FENCE_GATES).addTags(FENCE_GATES_WOODEN);
         tag(FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.CRIMSON_FENCE_GATE, Blocks.WARPED_FENCE_GATE);

@@ -131,7 +131,6 @@ public class LivingSpawnEvent extends LivingEvent
 
         public SpecialSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
-
             super(entity, world, x, y, z);
             this.spawner = spawner;
             this.spawnReason = spawnReason;

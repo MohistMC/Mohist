@@ -6,11 +6,12 @@
 package net.minecraftforge.server.command;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import java.util.Locale;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.ModList;
+
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 class ModListCommand {

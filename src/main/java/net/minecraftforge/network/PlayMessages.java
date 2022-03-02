@@ -6,7 +6,6 @@
 package net.minecraftforge.network;
 
 import io.netty.buffer.Unpooled;
-import java.util.Locale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -28,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;

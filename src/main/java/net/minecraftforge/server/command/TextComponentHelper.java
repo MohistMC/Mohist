@@ -5,7 +5,6 @@
 
 package net.minecraftforge.server.command;
 
-import java.util.Locale;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -15,6 +14,8 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkHooks;
+
+import java.util.Locale;
 
 public class TextComponentHelper
 {
