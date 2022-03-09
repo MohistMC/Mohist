@@ -80,7 +80,7 @@
        } else {
           CompoundTag compoundtag = p_155140_.f_58782_.m_6426_();
 @@ -174,6 +_,18 @@
-                if (!entity.m_6095_().m_20609_(EntityTypeTags.f_13122_)) {
+                if (!entity.m_6095_().m_204039_(EntityTypeTags.f_13122_)) {
                    return false;
                 } else {
 +                  // CraftBukkit start
@@ -98,7 +98,18 @@
                    if (entity instanceof Bee) {
                       Bee bee = (Bee)entity;
                       if (p_155143_ != null && !bee.m_27852_() && p_155137_.f_46441_.nextFloat() < 0.9F) {
-@@ -199,17 +_,19 @@
+@@ -182,9 +_,7 @@
+ 
+                      if (p_155142_ == BeehiveBlockEntity.BeeReleaseStatus.HONEY_DELIVERED) {
+                         bee.m_27864_();
+-                        if (p_155139_.m_204338_(BlockTags.f_13072_, (p_202037_) -> {
+-                           return p_202037_.m_61138_(BeehiveBlock.f_49564_);
+-                        })) {
++                        if (p_155139_.m_204336_(BlockTags.f_13072_)) {
+                            int i = m_58752_(p_155139_);
+                            if (i < 5) {
+                               int j = p_155137_.f_46441_.nextInt(100) == 0 ? 2 : 1;
+@@ -201,17 +_,19 @@
                       if (p_155141_ != null) {
                          p_155141_.add(bee);
                       }
@@ -125,7 +136,7 @@
                 }
              } else {
                 return false;
-@@ -251,6 +_,10 @@
+@@ -253,6 +_,10 @@
              if (m_155136_(p_155150_, p_155151_, p_155152_, beehiveblockentity$beedata, (List<Entity>)null, beehiveblockentity$beereleasestatus, p_155154_)) {
                 flag = true;
                 iterator.remove();
@@ -136,7 +147,7 @@
              }
           }
        }
-@@ -289,6 +_,12 @@
+@@ -291,6 +_,12 @@
           this.f_58733_ = NbtUtils.m_129239_(p_155156_.m_128469_("FlowerPos"));
        }
  
@@ -149,7 +160,7 @@
     }
  
     protected void m_183515_(CompoundTag p_187467_) {
-@@ -297,6 +_,8 @@
+@@ -299,6 +_,8 @@
        if (this.m_58780_()) {
           p_187467_.m_128365_("FlowerPos", NbtUtils.m_129224_(this.f_58733_));
        }

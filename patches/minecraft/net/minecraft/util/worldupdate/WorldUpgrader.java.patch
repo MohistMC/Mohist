@@ -3,7 +3,7 @@
 @@ -123,9 +_,9 @@
                       if (compoundtag != null) {
                          int j = ChunkStorage.m_63505_(compoundtag);
-                         ChunkGenerator chunkgenerator = this.f_185925_.m_64663_().m_6246_(WorldGenSettings.m_190052_(resourcekey2)).m_63990_();
+                         ChunkGenerator chunkgenerator = this.f_185925_.m_204655_().m_6246_(WorldGenSettings.m_190052_(resourcekey2)).m_63990_();
 -                        CompoundTag compoundtag1 = chunkstorage.m_188288_(resourcekey2, () -> {
 +                        CompoundTag compoundtag1 = chunkstorage.upgradeChunkTag(resourcekey2, () -> {
                             return this.f_18813_;

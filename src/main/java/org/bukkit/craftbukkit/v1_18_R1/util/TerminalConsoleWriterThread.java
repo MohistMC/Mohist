@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_18_R1.util;
 
-import com.mojang.util.QueueLogAppender;
+import com.mojang.logging.LogQueues;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
@@ -28,7 +28,7 @@ public class TerminalConsoleWriterThread extends Thread {
 
         // Using name from log4j config in vanilla jar
         while (true) {
-            message = QueueLogAppender.getNextLogEvent("TerminalConsole");
+            message = LogQueues.getNextLogEvent("TerminalConsole");
             if (message == null) {
                 continue;
             }

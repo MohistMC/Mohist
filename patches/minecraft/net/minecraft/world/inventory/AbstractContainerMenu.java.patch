@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -1,16 +_,16 @@
+@@ -1,17 +_,17 @@
  package net.minecraft.world.inventory;
  
 +import com.google.common.base.Preconditions;
@@ -10,6 +10,7 @@
  import com.google.common.collect.Sets;
  import com.google.common.collect.Table;
 +import com.mohistmc.MohistMC;
+ import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
 -import java.util.List;
@@ -21,7 +22,7 @@
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
  import net.minecraft.CrashReport;
-@@ -18,6 +_,8 @@
+@@ -19,6 +_,8 @@
  import net.minecraft.ReportedException;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.Registry;
@@ -30,7 +31,7 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -27,6 +_,14 @@
+@@ -28,6 +_,14 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,10 +43,10 @@
 +import org.bukkit.event.inventory.InventoryDragEvent;
 +import org.bukkit.event.inventory.InventoryType;
 +import org.bukkit.inventory.InventoryView;
+ import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-    public static final int f_150385_ = -999;
-@@ -56,6 +_,28 @@
+@@ -59,6 +_,28 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
@@ -74,7 +75,7 @@
     protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
        this.f_38843_ = p_38851_;
        this.f_38840_ = p_38852_;
-@@ -204,9 +_,11 @@
+@@ -211,9 +_,11 @@
     private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
        ItemStack itemstack = this.f_38841_.get(p_150408_);
        if (!ItemStack.m_41728_(itemstack, p_150409_)) {
@@ -86,7 +87,7 @@
           for(ContainerListener containerlistener : this.f_38848_) {
              containerlistener.m_7934_(this, p_150408_, itemstack1);
           }
-@@ -322,7 +_,7 @@
+@@ -333,7 +_,7 @@
              }
           } else if (this.f_38846_ == 2) {
              if (!this.f_38847_.isEmpty()) {
@@ -95,7 +96,7 @@
                    int l = (this.f_38847_.iterator().next()).f_40219_;
                    this.m_38951_();
                    this.m_150430_(l, this.f_38845_, ClickType.PICKUP, p_150434_);
-@@ -331,7 +_,7 @@
+@@ -342,7 +_,7 @@
  
                 ItemStack itemstack3 = this.m_142621_().m_41777_();
                 int j1 = this.m_142621_().m_41613_();
@@ -104,7 +105,7 @@
                 for(Slot slot1 : this.f_38847_) {
                    ItemStack itemstack1 = this.m_142621_();
                    if (slot1 != null && m_38899_(slot1, itemstack1, true) && slot1.m_5857_(itemstack1) && (this.f_38845_ == 2 || itemstack1.m_41613_() >= this.f_38847_.size()) && this.m_5622_(slot1)) {
-@@ -344,12 +_,46 @@
+@@ -355,12 +_,46 @@
                       }
  
                       j1 -= itemstack2.m_41613_() - j;
@@ -157,7 +158,7 @@
              }
  
              this.m_38951_();
-@@ -423,6 +_,21 @@
+@@ -434,6 +_,21 @@
              }
  
              slot7.m_6654_();
@@ -179,7 +180,7 @@
           }
        } else if (p_150433_ == ClickType.SWAP) {
           Slot slot2 = this.f_38839_.get(p_150431_);
-@@ -518,13 +_,14 @@
+@@ -529,13 +_,14 @@
        if (p_38940_ instanceof ServerPlayer) {
           ItemStack itemstack = this.m_142621_();
           if (!itemstack.m_41619_()) {
@@ -195,7 +196,7 @@
           }
        }
  
-@@ -592,14 +_,15 @@
+@@ -603,14 +_,15 @@
              ItemStack itemstack = slot.m_7993_();
              if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
                 int j = itemstack.m_41613_() + p_38904_.m_41613_();
@@ -215,7 +216,7 @@
                    slot.m_6654_();
                    flag = true;
                 }
-@@ -699,7 +_,7 @@
+@@ -710,7 +_,7 @@
           p_38925_.m_41764_(1);
           break;
        case 2:
@@ -224,7 +225,7 @@
        }
  
        p_38925_.m_41769_(p_38926_);
-@@ -784,7 +_,21 @@
+@@ -795,7 +_,21 @@
     }
  
     public int m_182425_() {

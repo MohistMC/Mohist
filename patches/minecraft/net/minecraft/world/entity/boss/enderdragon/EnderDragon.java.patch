@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -35,8 +_,12 @@
+@@ -36,8 +_,12 @@
  import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManager;
  import net.minecraft.world.entity.monster.Enemy;
  import net.minecraft.world.entity.player.Player;
@@ -13,7 +13,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.levelgen.Heightmap;
-@@ -45,10 +_,15 @@
+@@ -46,9 +_,14 @@
  import net.minecraft.world.level.pathfinder.BinaryHeap;
  import net.minecraft.world.level.pathfinder.Node;
  import net.minecraft.world.level.pathfinder.Path;
@@ -21,14 +21,13 @@
 +import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import org.slf4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  
  public class EnderDragon extends Mob implements Enemy {
-    private static final Logger f_31087_ = LogManager.getLogger();
+    private static final Logger f_31087_ = LogUtils.getLogger();
 @@ -85,6 +_,7 @@
     private final Node[] f_31077_ = new Node[24];
     private final int[] f_31078_ = new int[24];
@@ -49,15 +48,6 @@
        this.m_146874_();
        if (this.f_19853_.f_46443_) {
           this.m_21153_(this.m_21223_());
-@@ -219,7 +_,7 @@
-                }
- 
-                Vec3 vec31 = dragonphaseinstance.m_5535_();
--               if (vec31 != null) {
-+               if (vec31 != null && dragonphaseinstance.m_7309_() != EnderDragonPhase.f_31387_) { // CraftBukkit - Don't move when hovering
-                   double d8 = vec31.f_82479_ - this.m_20185_();
-                   double d9 = vec31.f_82480_ - this.m_20186_();
-                   double d10 = vec31.f_82481_ - this.m_20189_();
 @@ -349,7 +_,14 @@
           if (this.f_31086_.m_146910_()) {
              this.f_31086_ = null;
@@ -88,9 +78,9 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.f_19853_.m_8055_(blockpos);
                 if (!blockstate.m_60795_() && blockstate.m_60767_() != Material.f_76309_) {
--                  if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_60620_(BlockTags.f_13069_)) {
+-                  if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_204336_(BlockTags.f_13069_)) {
 -                     flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
-+                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_19853_, blockpos, this) && !BlockTags.f_13069_.m_8110_(blockstate.m_60734_())) {
++                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_19853_, blockpos, this) && !blockstate.m_204336_(BlockTags.f_13069_)) {
 +                     // CraftBukkit start - Add blocks to list rather than destroying them
 +                     // flag1 = this.level.removeBlock(blockpos, false) || flag1;
 +                     flag1 = true;

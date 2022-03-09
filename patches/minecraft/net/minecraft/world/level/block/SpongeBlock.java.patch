@@ -37,7 +37,7 @@
 +            FluidState fluidstate = blockList.m_6425_(blockpos1);
 +            // CraftBukkit end
              Material material = blockstate.m_60767_();
-             if (fluidstate.m_76153_(FluidTags.f_13131_)) {
+             if (fluidstate.m_205070_(FluidTags.f_13131_)) {
 -               if (blockstate.m_60734_() instanceof BucketPickup && !((BucketPickup)blockstate.m_60734_()).m_142598_(p_56808_, blockpos1, blockstate).m_41619_()) {
 +               if (blockstate.m_60734_() instanceof BucketPickup && !((BucketPickup)blockstate.m_60734_()).m_142598_(blockList, blockpos1, blockstate).m_41619_()) {
                    ++i;
@@ -76,7 +76,7 @@
 +            FluidState fluid = p_56808_.m_6425_(blockposition2);
 +            Material material = iblockdata.m_60767_();
 +
-+            if (fluid.m_76153_(FluidTags.f_13131_)) {
++            if (fluid.m_205070_(FluidTags.f_13131_)) {
 +               if (iblockdata.m_60734_() instanceof BucketPickup && !((BucketPickup) iblockdata.m_60734_()).m_142598_(blockList, blockposition2, iblockdata).m_41619_()) {
 +                  // NOP
 +               } else if (iblockdata.m_60734_() instanceof LiquidBlock) {

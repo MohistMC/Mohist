@@ -1,21 +1,21 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -51,6 +_,7 @@
+@@ -53,6 +_,7 @@
+ import net.minecraft.world.ticks.SerializableTickContainer;
  import net.minecraft.world.ticks.TickContainerAccess;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import org.slf4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer;
  
  public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, FeatureAccess {
-    private static final Logger f_187613_ = LogManager.getLogger();
-@@ -68,14 +_,20 @@
+    private static final Logger f_187613_ = LogUtils.getLogger();
+@@ -71,14 +_,20 @@
     protected final UpgradeData f_187606_;
     @Nullable
     protected BlendingData f_187607_;
 -   protected final Map<Heightmap.Types, Heightmap> f_187608_ = Maps.newEnumMap(Heightmap.Types.class);
 +   public final Map<Heightmap.Types, Heightmap> f_187608_ = Maps.newEnumMap(Heightmap.Types.class);
-    private final Map<StructureFeature<?>, StructureStart<?>> f_187617_ = Maps.newHashMap();
-    private final Map<StructureFeature<?>, LongSet> f_187618_ = Maps.newHashMap();
+    private final Map<ConfiguredStructureFeature<?, ?>, StructureStart> f_187617_ = Maps.newHashMap();
+    private final Map<ConfiguredStructureFeature<?, ?>, LongSet> f_187618_ = Maps.newHashMap();
     protected final Map<BlockPos, CompoundTag> f_187609_ = Maps.newHashMap();
 -   protected final Map<BlockPos, BlockEntity> f_187610_ = Maps.newHashMap();
 +   public final Map<BlockPos, BlockEntity> f_187610_ = Maps.newHashMap();
@@ -31,7 +31,7 @@
     public ChunkAccess(ChunkPos p_187621_, UpgradeData p_187622_, LevelHeightAccessor p_187623_, Registry<Biome> p_187624_, long p_187625_, @Nullable LevelChunkSection[] p_187626_, @Nullable BlendingData p_187627_) {
        this.f_187604_ = p_187621_;
        this.f_187606_ = p_187622_;
-@@ -93,6 +_,7 @@
+@@ -96,6 +_,7 @@
        }
  
        m_187634_(p_187623_, p_187624_, this.f_187612_);
@@ -39,7 +39,7 @@
     }
  
     private static void m_187634_(LevelHeightAccessor p_187635_, Registry<Biome> p_187636_, LevelChunkSection[] p_187637_) {
-@@ -247,10 +_,11 @@
+@@ -248,10 +_,11 @@
  
     public void m_8092_(boolean p_62094_) {
        this.f_187603_ = p_62094_;
@@ -52,12 +52,12 @@
     }
  
     public abstract ChunkStatus m_6415_();
-@@ -408,6 +_,30 @@
+@@ -409,6 +_,30 @@
        return this;
     }
  
 +   // CraftBukkit start
-+   public void setBiome(int i, int j, int k, Biome biome) {
++   public void setBiome(int i, int j, int k, Holder<Biome> biome) {
 +      try {
 +         int l = QuartPos.m_175400_(this.m_141937_());
 +         int i1 = l + QuartPos.m_175400_(this.m_141928_()) - 1;

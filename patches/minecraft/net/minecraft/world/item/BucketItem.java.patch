@@ -9,7 +9,7 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -28,18 +_,43 @@
+@@ -28,18 +_,38 @@
  import net.minecraft.world.level.material.Material;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
@@ -29,11 +29,6 @@
        super(p_40690_);
        this.f_40687_ = p_40689_;
 +      this.fluidSupplier = p_40689_.delegate;
-+   }
-+
-+   public Fluid getContent ( )
-+   {
-+      return f_40687_;
 +   }
 +
 +   /**
@@ -125,7 +120,7 @@
           if (!flag1) {
 -            return p_150719_ != null && this.m_142073_(p_150716_, p_150717_, p_150719_.m_82425_().m_142300_(p_150719_.m_82434_()), (BlockHitResult)null);
 +            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_142300_(p_150719_.m_82434_()), (BlockHitResult)null, enumdirection, clicked, itemstack); // CraftBukkit
-          } else if (p_150717_.m_6042_().m_63951_() && this.f_40687_.m_76108_(FluidTags.f_13131_)) {
+          } else if (p_150717_.m_6042_().m_63951_() && this.f_40687_.m_205067_(FluidTags.f_13131_)) {
              int i = p_150718_.m_123341_();
              int j = p_150718_.m_123342_();
 @@ -120,7 +_,7 @@
@@ -141,9 +136,9 @@
     }
  
     protected void m_7718_(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
--      SoundEvent soundevent = this.f_40687_.m_76108_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
+-      SoundEvent soundevent = this.f_40687_.m_205067_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
 +      SoundEvent soundevent = this.f_40687_.getAttributes().getEmptySound();
-+      if(soundevent == null) soundevent = this.f_40687_.m_76108_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
++      if(soundevent == null) soundevent = this.f_40687_.m_205067_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
        p_40697_.m_5594_(p_40696_, p_40698_, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
        p_40697_.m_142346_(p_40696_, GameEvent.f_157769_, p_40698_);
 +   }

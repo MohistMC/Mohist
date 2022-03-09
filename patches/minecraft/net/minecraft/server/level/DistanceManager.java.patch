@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
-@@ -58,6 +_,8 @@
+@@ -59,6 +_,8 @@
     private long f_140771_;
     private int f_183902_ = 10;
  
@@ -9,7 +9,7 @@
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
-@@ -163,6 +_,25 @@
+@@ -164,6 +_,25 @@
           this.f_140762_.m_140715_(p_140785_, p_140786_.m_9433_(), true);
        }
  
@@ -35,7 +35,7 @@
     }
  
     void m_140818_(long p_140819_, Ticket<?> p_140820_) {
-@@ -175,17 +_,57 @@
+@@ -176,17 +_,57 @@
        }
  
        this.f_140762_.m_140715_(p_140819_, m_140797_(sortedarrayset), false);
@@ -93,7 +93,7 @@
     public <T> void m_140840_(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_) {
        Ticket<T> ticket = new Ticket<>(p_140841_, 33 - p_140843_, p_140844_);
        long i = p_140842_.m_45588_();
-@@ -200,6 +_,14 @@
+@@ -201,6 +_,14 @@
        this.f_183901_.m_184165_(i, ticket);
     }
  
@@ -108,7 +108,7 @@
     private SortedArraySet<Ticket<?>> m_140857_(long p_140858_) {
        return this.f_140761_.computeIfAbsent(p_140858_, (p_183923_) -> {
           return SortedArraySet.m_14246_(4);
-@@ -287,6 +_,11 @@
+@@ -288,6 +_,11 @@
        return this.f_140766_.m_140558_();
     }
  
@@ -120,11 +120,10 @@
     private void m_143207_(String p_143208_) {
        try {
           FileOutputStream fileoutputstream = new FileOutputStream(new File(p_143208_));
-@@ -320,6 +_,26 @@
-    TickingTracker m_183915_() {
+@@ -322,6 +_,26 @@
        return this.f_183901_;
     }
-+
+ 
 +   // CraftBukkit start
 +   public <T> void removeAllTicketsFor(TicketType<T> ticketType, int ticketLevel, T ticketIdentifier) {
 +      Ticket<T> target = new Ticket<>(ticketType, ticketLevel, ticketIdentifier);
@@ -144,6 +143,16 @@
 +      }
 +   }
 +   // CraftBukkit end
++   
+    public void m_201910_() {
+       ImmutableSet<TicketType<?>> immutableset = ImmutableSet.of(TicketType.f_9449_, TicketType.f_9448_, TicketType.f_9446_);
+       ObjectIterator<Entry<SortedArraySet<Ticket<?>>>> objectiterator = this.f_140761_.long2ObjectEntrySet().fastIterator();
+@@ -460,7 +_,7 @@
  
-    class ChunkTicketTracker extends ChunkTracker {
-       public ChunkTicketTracker() {
+             fileoutputstream.close();
+          } catch (IOException ioexception) {
+-            DistanceManager.f_140758_.error("Failed to dump chunks to {}", p_143213_, ioexception);
++            DistanceManager.f_140758_.error(String.valueOf(ioexception)); // TODO
+          }
+ 
+       }

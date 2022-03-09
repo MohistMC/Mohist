@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundCustomSoundPacket;
@@ -35,6 +36,7 @@ import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.*;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.SortedArraySet;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.LightningBolt;
@@ -96,6 +98,7 @@ import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.v1_18_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftRayTraceResult;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftSpawnCategory;
 import org.bukkit.entity.AbstractArrow;
@@ -870,7 +873,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     }
 
     @Override
-    public void setBiome(int x, int y, int z, net.minecraft.world.level.biome.Biome bb) {
+    public void setBiome(int x, int y, int z, Holder<net.minecraft.world.level.biome.Biome> bb) {
         BlockPos pos = new BlockPos(x, 0, z);
         if (this.world.hasChunkAt(pos)) {
             net.minecraft.world.level.chunk.LevelChunk chunk = this.world.getChunkAt(pos);
@@ -891,7 +894,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public double getTemperature(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).getTemperature(pos);
+        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().getTemperature(pos);
     }
 
     @Override
@@ -901,7 +904,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public double getHumidity(int x, int y, int z) {
-        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).getDownfall();
+        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().getDownfall();
     }
 
     @Override
@@ -1921,7 +1924,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public Location locateNearestStructure(Location origin, StructureType structureType, int radius, boolean findUnexplored) {
         BlockPos originPos = new BlockPos(origin.getX(), origin.getY(), origin.getZ());
-        BlockPos nearest = getHandle().getChunkSource().getGenerator().findNearestMapFeature(getHandle(), StructureFeature.STRUCTURES_REGISTRY.get(structureType.getName()), originPos, radius, findUnexplored);
+        BlockPos nearest = getHandle().findNearestMapFeature(TagKey.create(net.minecraft.core.Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY, CraftNamespacedKey.toMinecraft(structureType.getKey())), originPos, radius, findUnexplored);
         return (nearest == null) ? null : new Location(this, nearest.getX(), nearest.getY(), nearest.getZ());
     }
 

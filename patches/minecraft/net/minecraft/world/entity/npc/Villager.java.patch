@@ -1,17 +1,26 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
-@@ -85,6 +_,10 @@
- import net.minecraft.world.level.ServerLevelAccessor;
+@@ -87,6 +_,10 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
+ import org.slf4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.VillagerReplenishTradeEvent;
  
  public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
-    private static final EntityDataAccessor<VillagerData> f_35371_ = SynchedEntityData.m_135353_(Villager.class, EntityDataSerializers.f_135043_);
-@@ -216,7 +_,7 @@
+    private static final Logger f_201976_ = LogUtils.getLogger();
+@@ -109,7 +_,7 @@
+    @Nullable
+    private Player f_35375_;
+    private boolean f_150007_;
+-   private int f_35376_;
++   private byte f_35376_;
+    private final GossipContainer f_35377_ = new GossipContainer();
+    private long f_35378_;
+    private long f_35361_;
+@@ -219,7 +_,7 @@
                 this.f_35374_ = false;
              }
  
@@ -20,7 +29,7 @@
           }
        }
  
-@@ -251,7 +_,7 @@
+@@ -254,7 +_,7 @@
  
     public InteractionResult m_6071_(Player p_35472_, InteractionHand p_35473_) {
        ItemStack itemstack = p_35472_.m_21120_(p_35473_);
@@ -29,7 +38,7 @@
           if (this.m_6162_()) {
              this.m_35518_();
              return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-@@ -280,7 +_,7 @@
+@@ -283,7 +_,7 @@
        }
     }
  
@@ -38,7 +47,7 @@
        this.m_35319_(40);
        if (!this.f_19853_.m_5776_()) {
           this.m_5496_(SoundEvents.f_12507_, this.m_6121_(), this.m_6100_());
-@@ -394,6 +_,13 @@
+@@ -397,6 +_,13 @@
        if (i != 0) {
           for(MerchantOffer merchantoffer : this.m_6616_()) {
              merchantoffer.m_45353_(-Mth.m_14143_((float)i * merchantoffer.m_45378_()));
@@ -52,7 +61,7 @@
           }
        }
  
-@@ -555,7 +_,7 @@
+@@ -558,7 +_,7 @@
        super.m_6667_(p_35419_);
     }
  
@@ -61,7 +70,7 @@
        this.m_35428_(MemoryModuleType.f_26359_);
        this.m_35428_(MemoryModuleType.f_26360_);
        this.m_35428_(MemoryModuleType.f_26361_);
-@@ -655,7 +_,8 @@
+@@ -658,7 +_,8 @@
     }
  
     protected Component m_5677_() {
@@ -71,16 +80,16 @@
     }
  
     public void m_7822_(byte p_35391_) {
-@@ -707,7 +_,7 @@
+@@ -710,7 +_,7 @@
     }
  
     public void m_8038_(ServerLevel p_35409_, LightningBolt p_35410_) {
 -      if (p_35409_.m_46791_() != Difficulty.PEACEFUL) {
 +      if (p_35409_.m_46791_() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20495_, (timer) -> {})) {
-          f_19849_.info("Villager {} was struck by lightning {}.", this, p_35410_);
+          f_201976_.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
           witch.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
-@@ -719,7 +_,13 @@
+@@ -722,7 +_,13 @@
           }
  
           witch.m_21530_();
@@ -95,7 +104,7 @@
           this.m_35524_();
           this.m_146870_();
        } else {
-@@ -736,7 +_,12 @@
+@@ -739,7 +_,12 @@
           if (!flag) {
              return;
           }
@@ -109,7 +118,7 @@
           this.m_21053_(p_35467_);
           this.m_7938_(p_35467_, itemstack.m_41613_());
           ItemStack itemstack1 = simplecontainer.m_19173_(itemstack);
-@@ -840,7 +_,7 @@
+@@ -843,7 +_,7 @@
              IronGolem irongolem = EntityType.f_20460_.m_20655_(p_35491_, (CompoundTag)null, (Component)null, (Player)null, blockpos1, MobSpawnType.MOB_SUMMONED, false, false);
              if (irongolem != null) {
                 if (irongolem.m_5545_(p_35491_, MobSpawnType.MOB_SUMMONED) && irongolem.m_6914_(p_35491_)) {

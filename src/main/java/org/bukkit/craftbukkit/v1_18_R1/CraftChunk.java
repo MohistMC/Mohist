@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -292,10 +293,10 @@ public class CraftChunk implements Chunk {
         byte[][] sectionSkyLights = new byte[cs.length][];
         byte[][] sectionEmitLights = new byte[cs.length][];
         boolean[] sectionEmpty = new boolean[cs.length];
-        PalettedContainer<Biome>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[cs.length] : null;
+        PalettedContainer<Holder<Biome>>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[cs.length] : null;
 
         net.minecraft.core.Registry<Biome> iregistry = worldServer.registryAccess().registryOrThrow(net.minecraft.core.Registry.BIOME_REGISTRY);
-        Codec<PalettedContainer<Biome>> biomeCodec = PalettedContainer.codec(iregistry, iregistry.byNameCodec(), PalettedContainer.Strategy.SECTION_BIOMES, iregistry.getOrThrow(Biomes.PLAINS));
+        Codec<PalettedContainer<Holder<Biome>>> biomeCodec = PalettedContainer.codec(iregistry.asHolderIdMap(), iregistry.holderByNameCodec(), PalettedContainer.Strategy.SECTION_BIOMES, iregistry.getHolderOrThrow(Biomes.PLAINS));
 
         for (int i = 0; i < cs.length; i++) {
             CompoundTag data = new CompoundTag();
@@ -333,7 +334,7 @@ public class CraftChunk implements Chunk {
         }
 
         World world = getWorld();
-        return new CraftChunkSnapshot(getX(), getZ(), chunk.getMinBuildHeight(), chunk.getMaxBuildHeight(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
+        return new CraftChunkSnapshot(getX(), getZ(), chunk.getMinBuildHeight(), chunk.getMaxBuildHeight(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, iregistry, biome);
     }
 
     @Override
@@ -350,7 +351,8 @@ public class CraftChunk implements Chunk {
         byte[][] skyLight = new byte[hSection][];
         byte[][] emitLight = new byte[hSection][];
         boolean[] empty = new boolean[hSection];
-        PalettedContainer<Biome>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[hSection] : null;
+        net.minecraft.core.Registry<Biome> iregistry = world.getHandle().registryAccess().registryOrThrow(net.minecraft.core.Registry.BIOME_REGISTRY);
+        PalettedContainer<Holder<Biome>>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[hSection] : null;
 
         for (int i = 0; i < hSection; i++) {
             blockIDs[i] = emptyBlockIDs;
@@ -359,12 +361,11 @@ public class CraftChunk implements Chunk {
             empty[i] = true;
 
             if (biome != null) {
-                net.minecraft.core.Registry<Biome> iregistry = world.getHandle().registryAccess().registryOrThrow(net.minecraft.core.Registry.BIOME_REGISTRY);
-                biome[i] = new PalettedContainer<>(iregistry, iregistry.getOrThrow(Biomes.PLAINS), PalettedContainer.Strategy.SECTION_BIOMES);
+                biome[i] = new PalettedContainer<>(iregistry.asHolderIdMap(), iregistry.getHolderOrThrow(Biomes.PLAINS), PalettedContainer.Strategy.SECTION_BIOMES);
             }
         }
 
-        return new CraftChunkSnapshot(x, z, world.getMinHeight(), world.getMaxHeight(), world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(actual, Heightmap.Types.MOTION_BLOCKING), biome);
+        return new CraftChunkSnapshot(x, z, world.getMinHeight(), world.getMaxHeight(), world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(actual, Heightmap.Types.MOTION_BLOCKING), iregistry, biome);
     }
 
     static void validateChunkCoordinates(int minY, int maxY, int x, int y, int z) {

@@ -1,14 +1,17 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -4,6 +_,7 @@
+@@ -2,9 +_,9 @@
+ 
+ import com.google.common.collect.ImmutableList;
  import com.google.common.collect.Maps;
+-import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
  import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 +
  import java.util.Map;
  import java.util.Map.Entry;
  import java.util.function.Consumer;
-@@ -11,6 +_,7 @@
+@@ -12,6 +_,7 @@
  import java.util.stream.Stream;
  import java.util.stream.StreamSupport;
  import javax.annotation.Nullable;
@@ -16,12 +19,14 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -49,659 +_,1048 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
+@@ -47,659 +_,1051 @@
+ import net.minecraft.world.level.material.Fluids;
+ import net.minecraft.world.ticks.LevelChunkTicks;
+ import net.minecraft.world.ticks.TickContainerAccess;
+-import org.slf4j.Logger;
+-
 -public class LevelChunk extends ChunkAccess {
--   static final Logger f_62771_ = LogManager.getLogger();
+-   static final Logger f_62771_ = LogUtils.getLogger();
 -   private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
 -      public void m_142224_() {
 -      }
@@ -298,6 +303,9 @@
 -      } else {
 -         Level level = this.f_62776_;
 -         if (!(level instanceof ServerLevel)) {
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
 +public class LevelChunk
 +        extends ChunkAccess
 +        implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl< LevelChunk >
@@ -612,9 +620,7 @@
 -                     this.f_156430_ = false;
 -                  } else if (!this.f_156430_) {
 -                     this.f_156430_ = true;
--                     LevelChunk.f_62771_.warn("Block entity {} @ {} state {} invalid for ticking:", this::m_142280_, this::m_142689_, () -> {
--                        return blockstate;
--                     });
+-                     LevelChunk.f_62771_.warn("Block entity {} @ {} state {} invalid for ticking:", LogUtils.defer(this::m_142280_), LogUtils.defer(this::m_142689_), blockstate);
 -                  }
 -
 -                  profilerfiller.m_7238_();

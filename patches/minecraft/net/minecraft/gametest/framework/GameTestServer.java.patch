@@ -1,41 +1,33 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
-@@ -13,6 +_,7 @@
+@@ -15,6 +_,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.SystemReport;
  import net.minecraft.Util;
 +import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.commands.Commands;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Registry;
- import net.minecraft.core.RegistryAccess;
-@@ -39,6 +_,7 @@
+@@ -42,6 +_,7 @@
+ import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.level.storage.PrimaryLevelData;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import net.minecraft.world.level.storage.WorldData;
 +import org.bukkit.command.CommandSender;
+ import org.slf4j.Logger;
  
  public class GameTestServer extends MinecraftServer {
-    private static final Logger f_177585_ = LogManager.getLogger();
-@@ -53,12 +_,12 @@
-    @Nullable
-    private MultipleTestTracker f_177591_;
- 
--   public GameTestServer(Thread p_177594_, LevelStorageSource.LevelStorageAccess p_177595_, PackRepository p_177596_, ServerResources p_177597_, Collection<GameTestBatch> p_177598_, BlockPos p_177599_, RegistryAccess.RegistryHolder p_177600_) {
--      this(p_177594_, p_177595_, p_177596_, p_177597_, p_177598_, p_177599_, p_177600_, p_177600_.m_175515_(Registry.f_122885_), p_177600_.m_175515_(Registry.f_122818_));
-+   public GameTestServer(joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, Thread p_177594_, LevelStorageSource.LevelStorageAccess p_177595_, PackRepository p_177596_, ServerResources p_177597_, Collection<GameTestBatch> p_177598_, BlockPos p_177599_, RegistryAccess.RegistryHolder p_177600_) {
-+      this(p_139607_, p_139608_, p_177594_, p_177595_, p_177596_, p_177597_, p_177598_, p_177599_, p_177600_, p_177600_.m_175515_(Registry.f_122885_), p_177600_.m_175515_(Registry.f_122818_));
+@@ -85,7 +_,7 @@
     }
  
--   private GameTestServer(Thread p_177602_, LevelStorageSource.LevelStorageAccess p_177603_, PackRepository p_177604_, ServerResources p_177605_, Collection<GameTestBatch> p_177606_, BlockPos p_177607_, RegistryAccess.RegistryHolder p_177608_, Registry<Biome> p_177609_, Registry<DimensionType> p_177610_) {
--      super(p_177602_, p_177608_, p_177603_, new PrimaryLevelData(f_177590_, new WorldGenSettings(0L, false, false, WorldGenSettings.m_64633_(p_177610_, DimensionType.m_188317_(p_177608_, 0L), new FlatLevelSource(FlatLevelGeneratorSettings.m_70376_(p_177609_)))), Lifecycle.stable()), p_177604_, Proxy.NO_PROXY, DataFixers.m_14512_(), p_177605_, (MinecraftSessionService)null, (GameProfileRepository)null, (GameProfileCache)null, LoggerChunkProgressListener::new);
-+   private GameTestServer(joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, Thread p_177602_, LevelStorageSource.LevelStorageAccess p_177603_, PackRepository p_177604_, ServerResources p_177605_, Collection<GameTestBatch> p_177606_, BlockPos p_177607_, RegistryAccess.RegistryHolder p_177608_, Registry<Biome> p_177609_, Registry<DimensionType> p_177610_) {
-+      super(p_139607_,p_139608_,p_177602_, p_177608_, p_177603_, new PrimaryLevelData(f_177590_, new WorldGenSettings(0L, false, false, WorldGenSettings.m_64633_(p_177610_, DimensionType.m_188317_(p_177608_, 0L), new FlatLevelSource(FlatLevelGeneratorSettings.m_70376_(p_177609_)))), Lifecycle.stable()), p_177604_, Proxy.NO_PROXY, DataFixers.m_14512_(), p_177605_, (MinecraftSessionService)null, (GameProfileRepository)null, (GameProfileCache)null, LoggerChunkProgressListener::new);
-       this.f_177587_ = Lists.newArrayList(p_177606_);
-       this.f_177588_ = p_177607_;
-       if (p_177606_.isEmpty()) {
-@@ -69,12 +_,13 @@
+    public GameTestServer(Thread p_206597_, LevelStorageSource.LevelStorageAccess p_206598_, PackRepository p_206599_, WorldStem p_206600_, Collection<GameTestBatch> p_206601_, BlockPos p_206602_) {
+-      super(p_206597_, p_206598_, p_206599_, p_206600_, Proxy.NO_PROXY, DataFixers.m_14512_(), (MinecraftSessionService)null, (GameProfileRepository)null, (GameProfileCache)null, LoggerChunkProgressListener::new);
++      super(null, null, null, p_206597_, p_206598_, p_206599_, p_206600_, Proxy.NO_PROXY, DataFixers.m_14512_(), (MinecraftSessionService)null, (GameProfileRepository)null, (GameProfileCache)null, LoggerChunkProgressListener::new);
+       this.f_177587_ = Lists.newArrayList(p_206601_);
+       this.f_177588_ = p_206602_;
+    }
+@@ -93,12 +_,13 @@
     public boolean m_7038_() {
-       this.m_129823_(new PlayerList(this, this.f_129746_, this.f_129745_, 1) {
+       this.m_129823_(new PlayerList(this, this.m_206579_(), this.f_129745_, 1) {
        });
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
        this.m_130006_();
@@ -48,7 +40,7 @@
     }
  
     public void m_5705_(BooleanSupplier p_177619_) {
-@@ -176,6 +_,11 @@
+@@ -200,6 +_,11 @@
  
     public boolean m_6102_() {
        return false;

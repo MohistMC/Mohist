@@ -2,10 +2,12 @@ package org.bukkit.craftbukkit.v1_18_R1.generator;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
@@ -69,18 +71,18 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
         @Override
         public Biome getBiome(int x, int y, int z) {
-            return CraftBlock.biomeBaseToBiome((net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome>) biome.biomeRegistry, biome.getNoiseBiome(x >> 2, y >> 2, z >> 2));
+            return CraftBlock.biomeBaseToBiome(biome.biomeRegistry, biome.getNoiseBiome(x >> 2, y >> 2, z >> 2));
         }
 
         @Override
         public void setBiome(int x, int y, int z, Biome bio) {
             Preconditions.checkArgument(bio != Biome.CUSTOM, "Cannot set the biome to %s", bio);
-            biome.setBiome(x >> 2, y >> 2, z >> 2, CraftBlock.biomeToBiomeBase((net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome>) biome.biomeRegistry, bio));
+            biome.setBiome(x >> 2, y >> 2, z >> 2, CraftBlock.biomeToBiomeBase(biome.biomeRegistry, bio));
         }
     }
 
     public CustomChunkGenerator(ServerLevel world, net.minecraft.world.level.chunk.ChunkGenerator delegate, ChunkGenerator generator) {
-        super(delegate.getBiomeSource(), delegate.getSettings());
+        super(delegate.structureSets, delegate.structureOverrides, delegate.getBiomeSource());
 
         this.world = world;
         this.delegate = delegate;
@@ -275,13 +277,18 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     }
 
     @Override
-    public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobsAt(net.minecraft.world.level.biome.Biome biomebase, StructureFeatureManager structuremanager, MobCategory enumcreaturetype, BlockPos blockposition) {
-        return delegate.getMobsAt(biomebase, structuremanager, enumcreaturetype, blockposition);
+    public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobsAt(Holder<net.minecraft.world.level.biome.Biome> holder, StructureFeatureManager structuremanager, MobCategory enumcreaturetype, BlockPos blockposition) {
+        return delegate.getMobsAt(holder, structuremanager, enumcreaturetype, blockposition);
     }
 
     @Override
     public void applyBiomeDecoration(WorldGenLevel generatoraccessseed, ChunkAccess ichunkaccess, StructureFeatureManager structuremanager) {
-        super.applyBiomeDecoration(generatoraccessseed, ichunkaccess, structuremanager, generator.shouldGenerateDecorations());
+        //super.applyBiomeDecoration(generatoraccessseed, ichunkaccess, structuremanager, generator.shouldGenerateDecorations()); // Mohist TODO
+    }
+
+    @Override
+    public void addDebugScreenInfo(List<String> list, BlockPos blockposition) {
+        delegate.addDebugScreenInfo(list, blockposition);
     }
 
     @Override

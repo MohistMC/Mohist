@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/commands/ReloadCommand.java
 +++ b/net/minecraft/server/commands/ReloadCommand.java
-@@ -7,6 +_,7 @@
- import net.minecraft.commands.Commands;
- import net.minecraft.network.chat.TranslatableComponent;
- import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.dedicated.DedicatedServer;
- import net.minecraft.server.packs.repository.PackRepository;
- import net.minecraft.world.level.storage.WorldData;
- import org.apache.logging.log4j.LogManager;
 @@ -52,4 +_,14 @@
           return 0;
        }));

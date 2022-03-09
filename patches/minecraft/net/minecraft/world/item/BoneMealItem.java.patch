@@ -1,6 +1,22 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -34,6 +_,32 @@
+@@ -1,5 +_,7 @@
+ package net.minecraft.world.item;
+ 
++import java.util.Objects;
++import java.util.Optional;
+ import java.util.Random;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+@@ -7,6 +_,7 @@
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.particles.ParticleTypes;
++import net.minecraft.resources.ResourceKey;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.InteractionResult;
+@@ -33,6 +_,32 @@
        Level level = p_40637_.m_43725_();
        BlockPos blockpos = p_40637_.m_8083_();
        BlockPos blockpos1 = blockpos.m_142300_(p_40637_.m_43719_());
@@ -33,7 +49,7 @@
        if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
           if (!level.f_46443_) {
              level.m_46796_(1505, blockpos, 0);
-@@ -54,9 +_,19 @@
+@@ -53,9 +_,19 @@
           }
        }
     }

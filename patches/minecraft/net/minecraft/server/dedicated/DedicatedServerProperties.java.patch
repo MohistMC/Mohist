@@ -1,7 +1,7 @@
 --- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
-@@ -69,6 +_,7 @@
-    public final Settings<DedicatedServerProperties>.MutableValue<Boolean> f_139726_ = this.m_139873_("white-list", false);
+@@ -77,6 +_,7 @@
+    }, "default"));
     @Nullable
     private WorldGenSettings f_139727_;
 +   public final boolean debug = this.m_139836_("debug", false); // CraftBukkit

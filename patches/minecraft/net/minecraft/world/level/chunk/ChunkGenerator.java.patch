@@ -1,57 +1,22 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -48,15 +_,7 @@
- import net.minecraft.world.level.biome.BiomeSource;
- import net.minecraft.world.level.biome.Climate;
- import net.minecraft.world.level.biome.MobSpawnSettings;
--import net.minecraft.world.level.levelgen.DebugLevelSource;
--import net.minecraft.world.level.levelgen.FlatLevelSource;
--import net.minecraft.world.level.levelgen.GenerationStep;
--import net.minecraft.world.level.levelgen.Heightmap;
--import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
--import net.minecraft.world.level.levelgen.RandomSupport;
--import net.minecraft.world.level.levelgen.StructureSettings;
--import net.minecraft.world.level.levelgen.WorldgenRandom;
--import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
-+import net.minecraft.world.level.levelgen.*;
- import net.minecraft.world.level.levelgen.blending.Blender;
- import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
- import net.minecraft.world.level.levelgen.feature.StructureFeature;
-@@ -72,7 +_,7 @@
+@@ -88,16 +_,16 @@
+ public abstract class ChunkGenerator implements BiomeManager.NoiseBiomeSource {
+    private static final Logger f_211627_;
+    public static final Codec<ChunkGenerator> f_62136_;
+-   protected final Registry<StructureSet> f_207955_;
++   public final Registry<StructureSet> f_207955_;
     protected final BiomeSource f_62137_;
     protected final BiomeSource f_62138_;
-    private final StructureSettings f_62139_;
--   private final long f_62140_;
-+   public final long f_62140_;
-    private final List<ChunkPos> f_62141_ = Lists.newArrayList();
+-   protected final Optional<HolderSet<StructureSet>> f_207956_;
++   public final Optional<HolderSet<StructureSet>> f_207956_;
+    private final Map<ConfiguredStructureFeature<?, ?>, List<StructurePlacement>> f_207957_ = new Object2ObjectOpenHashMap<>();
+    private final Map<ConcentricRingsStructurePlacement, CompletableFuture<List<ChunkPos>>> f_204350_ = new Object2ObjectArrayMap<>();
+    private boolean f_207958_;
+    /** @deprecated */
+    @Deprecated
+-   private final long f_212255_;
++   public final long f_212255_;
  
-    public ChunkGenerator(BiomeSource p_62149_, StructureSettings p_62150_) {
-@@ -195,6 +_,28 @@
-             return null;
-          }
-       }
-+   }
-+
-+   public void applyBiomeDecoration(WorldGenLevel generatoraccessseed, ChunkAccess ichunkaccess, StructureFeatureManager structuremanager, boolean vanilla) {
-+      if (vanilla) {
-+         m_183372_(generatoraccessseed, ichunkaccess, structuremanager);
-+      }
-+
-+      org.bukkit.World world = generatoraccessseed.getMinecraftWorld().getWorld();
-+      // only call when a populator is present (prevents unnecessary entity conversion)
-+      if (!world.getPopulators().isEmpty()) {
-+         org.bukkit.craftbukkit.v1_18_R1.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.v1_18_R1.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.m_7697_());
-+         int x = ichunkaccess.m_7697_().f_45578_;
-+         int z = ichunkaccess.m_7697_().f_45579_;
-+         for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
-+            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(generatoraccessseed.m_7328_()));
-+            seededrandom.m_64690_(generatoraccessseed.m_7328_(), x, z);
-+            populator.populate(world, seededrandom, x, z, limitedRegion);
-+         }
-+         limitedRegion.saveEntities();
-+         limitedRegion.breakLink();
-+      }
-+      // CraftBukkit end
-    }
- 
-    public void m_183372_(WorldGenLevel p_187712_, ChunkAccess p_187713_, StructureFeatureManager p_187714_) {
+    protected static final <T extends ChunkGenerator> P1<Mu<T>, Registry<StructureSet>> m_208005_(Instance<T> p_208006_) {
+       return p_208006_.group(RegistryOps.m_206832_(Registry.f_211073_).forGetter((p_208008_) -> {

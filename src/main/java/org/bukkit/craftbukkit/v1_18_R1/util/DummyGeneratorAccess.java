@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -53,11 +54,6 @@ public class DummyGeneratorAccess implements WorldGenLevel {
 
     @Override
     public long getSeed() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<? extends StructureStart<?>> startsForFeature(SectionPos sp, StructureFeature<?> sg) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -172,7 +168,7 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public Biome getUncachedNoiseBiome(int i, int i1, int i2) {
+    public Holder<Biome> getUncachedNoiseBiome(int i, int i1, int i2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

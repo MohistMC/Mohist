@@ -1,17 +1,22 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -1,6 +_,7 @@
+@@ -1,10 +_,9 @@
  package net.minecraft.world.inventory;
  
  import java.util.List;
 +import java.util.Map;
  import java.util.Random;
+-import net.minecraft.Util;
  import net.minecraft.advancements.CriteriaTriggers;
+-import net.minecraft.core.BlockPos;
  import net.minecraft.core.Registry;
-@@ -19,6 +_,17 @@
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.server.level.ServerPlayer;
+@@ -21,7 +_,17 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.enchantment.EnchantmentInstance;
  import net.minecraft.world.level.block.Blocks;
+-import net.minecraft.world.level.block.EnchantmentTableBlock;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.NamespacedKey;
@@ -26,7 +31,7 @@
  
  public class EnchantmentMenu extends AbstractContainerMenu {
     private final Container f_39449_ = new SimpleContainer(2) {
-@@ -26,6 +_,11 @@
+@@ -29,6 +_,11 @@
           super.m_6596_();
           EnchantmentMenu.this.m_6199_(this);
        }
@@ -38,7 +43,7 @@
     };
     private final ContainerLevelAccess f_39450_;
     private final Random f_39451_ = new Random();
-@@ -34,6 +_,23 @@
+@@ -37,6 +_,23 @@
     public final int[] f_39447_ = new int[]{-1, -1, -1};
     public final int[] f_39448_ = new int[]{-1, -1, -1};
  
@@ -62,16 +67,16 @@
     public EnchantmentMenu(int p_39454_, Inventory p_39455_) {
        this(p_39454_, p_39455_, ContainerLevelAccess.f_39287_);
     }
-@@ -52,7 +_,7 @@
+@@ -55,7 +_,7 @@
        });
        this.m_38897_(new Slot(this.f_39449_, 1, 35, 47) {
           public boolean m_5857_(ItemStack p_39517_) {
 -            return p_39517_.m_150930_(Items.f_42534_);
-+            return p_39517_.m_150922_(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS);
++            return p_39517_.m_204117_(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS);
           }
        });
  
-@@ -76,42 +_,33 @@
+@@ -79,43 +_,92 @@
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 0));
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 1));
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 2));
@@ -91,60 +96,58 @@
 +         if (!itemstack.m_41619_()) { // CraftBukkit - relax condition
              this.f_39450_.m_39292_((p_39485_, p_39486_) -> {
 -               int j = 0;
-+               int power = 0;
- 
-                for(int k = -1; k <= 1; ++k) {
-                   for(int l = -1; l <= 1; ++l) {
-                      if ((k != 0 || l != 0) && p_39485_.m_46859_(p_39486_.m_142082_(l, 0, k)) && p_39485_.m_46859_(p_39486_.m_142082_(l, 1, k))) {
--                        if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 0, k * 2)).m_60713_(Blocks.f_50078_)) {
--                           ++j;
--                        }
 -
--                        if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 1, k * 2)).m_60713_(Blocks.f_50078_)) {
--                           ++j;
--                        }
+-               for(BlockPos blockpos : EnchantmentTableBlock.f_207902_) {
+-                  if (EnchantmentTableBlock.m_207909_(p_39485_, p_39486_, blockpos)) {
+-                     ++j;
++               int power = 0;
++
++               for(int k = -1; k <= 1; ++k) {
++                  for(int l = -1; l <= 1; ++l) {
++                     if ((k != 0 || l != 0) && p_39485_.m_46859_(p_39486_.m_142082_(l, 0, k)) && p_39485_.m_46859_(p_39486_.m_142082_(l, 1, k))) {
 +                        power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 0, k * 2));
 +                        power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 1, k * 2));
- 
-                         if (l != 0 && k != 0) {
--                           if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 0, k)).m_60713_(Blocks.f_50078_)) {
--                              ++j;
--                           }
--
--                           if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 1, k)).m_60713_(Blocks.f_50078_)) {
--                              ++j;
--                           }
--
--                           if (p_39485_.m_8055_(p_39486_.m_142082_(l, 0, k * 2)).m_60713_(Blocks.f_50078_)) {
--                              ++j;
--                           }
--
--                           if (p_39485_.m_8055_(p_39486_.m_142082_(l, 1, k * 2)).m_60713_(Blocks.f_50078_)) {
--                              ++j;
--                           }
++
++                        if (l != 0 && k != 0) {
 +                           power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 0, k));
 +                           power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 1, k));
 +                           power += getPower(p_39485_, p_39486_.m_142082_(l, 0, k * 2));
 +                           power += getPower(p_39485_, p_39486_.m_142082_(l, 1, k * 2));
-                         }
-                      }
++                        }
++                     }
                    }
-@@ -120,12 +_,13 @@
+                }
+ 
                 this.f_39451_.setSeed((long)this.f_39452_.m_6501_());
  
-                for(int i1 = 0; i1 < 3; ++i1) {
--                  this.f_39446_[i1] = EnchantmentHelper.m_44872_(this.f_39451_, i1, j, itemstack);
+-               for(int k = 0; k < 3; ++k) {
+-                  this.f_39446_[k] = EnchantmentHelper.m_44872_(this.f_39451_, k, j, itemstack);
+-                  this.f_39447_[k] = -1;
+-                  this.f_39448_[k] = -1;
+-                  if (this.f_39446_[k] < k + 1) {
+-                     this.f_39446_[k] = 0;
++               for(int i1 = 0; i1 < 3; ++i1) {
 +                  this.f_39446_[i1] = EnchantmentHelper.m_44872_(this.f_39451_, i1, (int)power, itemstack);
-                   this.f_39447_[i1] = -1;
-                   this.f_39448_[i1] = -1;
-                   if (this.f_39446_[i1] < i1 + 1) {
-                      this.f_39446_[i1] = 0;
++                  this.f_39447_[i1] = -1;
++                  this.f_39448_[i1] = -1;
++                  if (this.f_39446_[i1] < i1 + 1) {
++                     this.f_39446_[i1] = 0;
                    }
 +                  this.f_39446_[i1] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_39485_, p_39486_, i1, (int)power, itemstack, f_39446_[i1]);
                 }
  
-                for(int j1 = 0; j1 < 3; ++j1) {
-@@ -138,7 +_,38 @@
+-               for(int l = 0; l < 3; ++l) {
+-                  if (this.f_39446_[l] > 0) {
+-                     List<EnchantmentInstance> list = this.m_39471_(itemstack, l, this.f_39446_[l]);
++               for(int j1 = 0; j1 < 3; ++j1) {
++                  if (this.f_39446_[j1] > 0) {
++                     List<EnchantmentInstance> list = this.m_39471_(itemstack, j1, this.f_39446_[j1]);
+                      if (list != null && !list.isEmpty()) {
+                         EnchantmentInstance enchantmentinstance = list.get(this.f_39451_.nextInt(list.size()));
+-                        this.f_39447_[l] = Registry.f_122825_.m_7447_(enchantmentinstance.f_44947_);
+-                        this.f_39448_[l] = enchantmentinstance.f_44948_;
++                        this.f_39447_[j1] = Registry.f_122825_.m_7447_(enchantmentinstance.f_44947_);
++                        this.f_39448_[j1] = enchantmentinstance.f_44948_;
                       }
                    }
                 }
@@ -183,15 +186,47 @@
                 this.m_38946_();
              });
           } else {
-@@ -164,9 +_,21 @@
-          this.f_39450_.m_39292_((p_39481_, p_39482_) -> {
-             ItemStack itemstack2 = itemstack;
-             List<EnchantmentInstance> list = this.m_39471_(itemstack, p_39466_, this.f_39446_[p_39466_]);
--            if (!list.isEmpty()) {
--               p_39465_.m_7408_(itemstack, i);
+@@ -130,64 +_,82 @@
+    }
+ 
+    public boolean m_6366_(Player p_39465_, int p_39466_) {
+-      if (p_39466_ >= 0 && p_39466_ < this.f_39446_.length) {
+-         ItemStack itemstack = this.f_39449_.m_8020_(0);
+-         ItemStack itemstack1 = this.f_39449_.m_8020_(1);
+-         int i = p_39466_ + 1;
+-         if ((itemstack1.m_41619_() || itemstack1.m_41613_() < i) && !p_39465_.m_150110_().f_35937_) {
+-            return false;
+-         } else if (this.f_39446_[p_39466_] <= 0 || itemstack.m_41619_() || (p_39465_.f_36078_ < i || p_39465_.f_36078_ < this.f_39446_[p_39466_]) && !p_39465_.m_150110_().f_35937_) {
+-            return false;
+-         } else {
+-            this.f_39450_.m_39292_((p_39481_, p_39482_) -> {
+-               ItemStack itemstack2 = itemstack;
+-               List<EnchantmentInstance> list = this.m_39471_(itemstack, p_39466_, this.f_39446_[p_39466_]);
+-               if (!list.isEmpty()) {
+-                  p_39465_.m_7408_(itemstack, i);
+-                  boolean flag = itemstack.m_150930_(Items.f_42517_);
+-                  if (flag) {
+-                     itemstack2 = new ItemStack(Items.f_42690_);
+-                     CompoundTag compoundtag = itemstack.m_41783_();
+-                     if (compoundtag != null) {
+-                        itemstack2.m_41751_(compoundtag.m_6426_());
+-                     }
+-
+-                     this.f_39449_.m_6836_(0, itemstack2);
++      ItemStack itemstack = this.f_39449_.m_8020_(0);
++      ItemStack itemstack1 = this.f_39449_.m_8020_(1);
++      int i = p_39466_ + 1;
++      if ((itemstack1.m_41619_() || itemstack1.m_41613_() < i) && !p_39465_.m_150110_().f_35937_) {
++         return false;
++      } else if (this.f_39446_[p_39466_] <= 0 || itemstack.m_41619_() || (p_39465_.f_36078_ < i || p_39465_.f_36078_ < this.f_39446_[p_39466_]) && !p_39465_.m_150110_().f_35937_) {
++         return false;
++      } else {
++         this.f_39450_.m_39292_((p_39481_, p_39482_) -> {
++            ItemStack itemstack2 = itemstack;
++            List<EnchantmentInstance> list = this.m_39471_(itemstack, p_39466_, this.f_39446_[p_39466_]);
 +            if (true || !list.isEmpty()) {
 +               // p_39465_.onEnchantmentPerformed(itemstack, i);
-                boolean flag = itemstack.m_150930_(Items.f_42517_);
++               boolean flag = itemstack.m_150930_(Items.f_42517_);
 +               Map<Enchantment, Integer> enchants = new java.util.HashMap<org.bukkit.enchantments.Enchantment, Integer>();
 +               for (Object obj : list) {
 +                  EnchantmentInstance instance = (EnchantmentInstance) obj;
@@ -204,22 +239,22 @@
 +               if (event.isCancelled() || (level > p_39465_.f_36078_ && !p_39465_.m_150110_().f_35937_) || event.getEnchantsToAdd().isEmpty()) {
 +                  return;
 +               }
-                if (flag) {
-                   itemstack2 = new ItemStack(Items.f_42690_);
-                   CompoundTag compoundtag = itemstack.m_41783_();
-@@ -177,14 +_,25 @@
-                   this.f_39449_.m_6836_(0, itemstack2);
-                }
++               if (flag) {
++                  itemstack2 = new ItemStack(Items.f_42690_);
++                  CompoundTag compoundtag = itemstack.m_41783_();
++                  if (compoundtag != null) {
++                     itemstack2.m_41751_(compoundtag.m_6426_());
+                   }
  
--               for(int j = 0; j < list.size(); ++j) {
--                  EnchantmentInstance enchantmentinstance = list.get(j);
--                  if (flag) {
--                     EnchantedBookItem.m_41153_(itemstack2, enchantmentinstance);
--                  } else {
--                     itemstack2.m_41663_(enchantmentinstance.f_44947_, enchantmentinstance.f_44948_);
+-                  for(int j = 0; j < list.size(); ++j) {
+-                     EnchantmentInstance enchantmentinstance = list.get(j);
++                  this.f_39449_.m_6836_(0, itemstack2);
++               }
++
 +               for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : event.getEnchantsToAdd().entrySet()) {
 +                  try {
-+                     if (flag) {
+                      if (flag) {
+-                        EnchantedBookItem.m_41153_(itemstack2, enchantmentinstance);
 +                        NamespacedKey enchantId = entry.getKey().getKey();
 +                        net.minecraft.world.item.enchantment.Enchantment nms = Registry.f_122825_.m_7745_(CraftNamespacedKey.toMinecraft(enchantId));
 +                        if (nms == null) {
@@ -227,19 +262,68 @@
 +                        }
 +                        EnchantmentInstance weightedrandomenchant = new EnchantmentInstance(nms, entry.getValue());
 +                        EnchantedBookItem.m_41153_(itemstack2, weightedrandomenchant);
-+                     } else {
+                      } else {
+-                        itemstack2.m_41663_(enchantmentinstance.f_44947_, enchantmentinstance.f_44948_);
+-                     }
+-                  }
+-
+-                  if (!p_39465_.m_150110_().f_35937_) {
+-                     itemstack1.m_41774_(i);
+-                     if (itemstack1.m_41619_()) {
+-                        this.f_39449_.m_6836_(1, ItemStack.f_41583_);
+-                     }
+-                  }
+-
+-                  p_39465_.m_36220_(Stats.f_12964_);
+-                  if (p_39465_ instanceof ServerPlayer) {
+-                     CriteriaTriggers.f_10575_.m_27668_((ServerPlayer)p_39465_, itemstack2, i);
+-                  }
+-
+-                  this.f_39449_.m_6596_();
+-                  this.f_39452_.m_6422_(p_39465_.m_36322_());
+-                  this.m_6199_(this.f_39449_);
+-                  p_39481_.m_5594_((Player)null, p_39482_, SoundEvents.f_11887_, SoundSource.BLOCKS, 1.0F, p_39481_.f_46441_.nextFloat() * 0.1F + 0.9F);
+-               }
+-
+-            });
+-            return true;
+-         }
+-      } else {
+-         Util.m_143785_(p_39465_.m_7755_() + " pressed invalid button id: " + p_39466_);
+-         return false;
 +                        item.addUnsafeEnchantment(entry.getKey(), entry.getValue());
 +                     }
 +                  } catch (IllegalArgumentException e) {
 +                     /* Just swallow invalid enchantments */
-                   }
-                }
++                  }
++               }
 +
 +               p_39465_.m_7408_(itemstack, i);
++
++               if (!p_39465_.m_150110_().f_35937_) {
++                  itemstack1.m_41774_(i);
++                  if (itemstack1.m_41619_()) {
++                     this.f_39449_.m_6836_(1, ItemStack.f_41583_);
++                  }
++               }
++
++               p_39465_.m_36220_(Stats.f_12964_);
++               if (p_39465_ instanceof ServerPlayer) {
++                  CriteriaTriggers.f_10575_.m_27668_((ServerPlayer)p_39465_, itemstack2, i);
++               }
++
++               this.f_39449_.m_6596_();
++               this.f_39452_.m_6422_(p_39465_.m_36322_());
++               this.m_6199_(this.f_39449_);
++               p_39481_.m_5594_((Player)null, p_39482_, SoundEvents.f_11887_, SoundSource.BLOCKS, 1.0F, p_39481_.f_46441_.nextFloat() * 0.1F + 0.9F);
++            }
++
++         });
++         return true;
+       }
+    }
  
-                if (!p_39465_.m_150110_().f_35937_) {
-                   itemstack1.m_41774_(i);
-@@ -236,6 +_,7 @@
+@@ -218,6 +_,7 @@
     }
  
     public boolean m_6875_(Player p_39463_) {
@@ -247,12 +331,12 @@
        return m_38889_(this.f_39450_, p_39463_, Blocks.f_50201_);
     }
  
-@@ -253,7 +_,7 @@
+@@ -235,7 +_,7 @@
              if (!this.m_38903_(itemstack1, 2, 38, true)) {
                 return ItemStack.f_41583_;
              }
 -         } else if (itemstack1.m_150930_(Items.f_42534_)) {
-+         } else if (itemstack1.m_150922_(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS)) {
++         } else if (itemstack1.m_204117_(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS)) {
              if (!this.m_38903_(itemstack1, 1, 2, true)) {
                 return ItemStack.f_41583_;
              }

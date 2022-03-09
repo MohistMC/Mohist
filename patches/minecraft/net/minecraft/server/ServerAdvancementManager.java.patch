@@ -1,5 +1,27 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
+@@ -5,7 +_,6 @@
+ import com.google.gson.GsonBuilder;
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+-import com.mojang.logging.LogUtils;
+ import java.util.Collection;
+ import java.util.Map;
+ import javax.annotation.Nullable;
+@@ -19,10 +_,11 @@
+ import net.minecraft.util.GsonHelper;
+ import net.minecraft.util.profiling.ProfilerFiller;
+ import net.minecraft.world.level.storage.loot.PredicateManager;
+-import org.slf4j.Logger;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
+ 
+ public class ServerAdvancementManager extends SimpleJsonResourceReloadListener {
+-   private static final Logger f_136021_ = LogUtils.getLogger();
++   private static final Logger f_136021_ = LogManager.getLogger();
+    public static final Gson f_136022_ = (new GsonBuilder()).create();
+    public AdvancementList f_136023_ = new AdvancementList();
+    private final PredicateManager f_136024_;
 @@ -38,6 +_,10 @@
           try {
              JsonObject jsonobject = GsonHelper.m_13918_(p_136040_, "advancement");

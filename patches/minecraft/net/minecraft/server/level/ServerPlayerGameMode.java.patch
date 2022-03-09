@@ -1,10 +1,48 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -123,7 +_,15 @@
+@@ -1,6 +_,5 @@
+ package net.minecraft.server.level;
+ 
+-import com.mojang.logging.LogUtils;
+ import java.util.Objects;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+@@ -15,19 +_,18 @@
+ import net.minecraft.world.MenuProvider;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.context.UseOnContext;
+-import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+-import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.GameMasterBlock;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.BlockHitResult;
+-import org.slf4j.Logger;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
+ 
+ public class ServerPlayerGameMode {
+-   private static final Logger f_9246_ = LogUtils.getLogger();
++   private static final Logger f_9246_ = LogManager.getLogger();
+    protected ServerLevel f_9244_;
+    protected final ServerPlayer f_9245_;
+    private GameType f_9247_ = GameType.f_151492_;
+@@ -125,15 +_,16 @@
        double d1 = this.f_9245_.m_20186_() - ((double)p_9282_.m_123342_() + 0.5D) + 1.5D;
        double d2 = this.f_9245_.m_20189_() - ((double)p_9282_.m_123343_() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 -      if (d3 > 36.0D) {
+-         BlockState blockstate1;
+-         if (this.f_9245_.f_19853_.m_142572_() != null && this.f_9245_.m_146902_().m_45594_(new ChunkPos(p_9282_)) < this.f_9245_.f_19853_.m_142572_().m_6846_().m_11312_()) {
+-            blockstate1 = this.f_9244_.m_8055_(p_9282_);
+-         } else {
+-            blockstate1 = Blocks.f_50016_.m_49966_();
+-         }
+-
+-         this.f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, blockstate1, p_9283_, false, "too far"));
 +      double dist = f_9245_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 1;
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_9282_, p_9284_);
 +      if (event.isCanceled() || (!this.m_9295_() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) { // Restore block and te data
@@ -14,10 +52,11 @@
 +      }
 +      dist *= dist;
 +      if (d3 > dist) {
-          this.f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, this.f_9244_.m_8055_(p_9282_), p_9283_, false, "too far"));
++         this.f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, this.f_9244_.m_8055_(p_9282_), p_9283_, false, "too far"));
        } else if (p_9282_.m_123342_() >= p_9285_) {
           this.f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, this.f_9244_.m_8055_(p_9282_), p_9283_, false, "too high"));
-@@ -148,6 +_,7 @@
+       } else {
+@@ -157,6 +_,7 @@
              float f = 1.0F;
              BlockState blockstate = this.f_9244_.m_8055_(p_9282_);
              if (!blockstate.m_60795_()) {
@@ -25,7 +64,20 @@
                 blockstate.m_60686_(this.f_9244_, p_9282_, this.f_9245_);
                 f = blockstate.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_9282_);
              }
-@@ -215,7 +_,8 @@
+@@ -178,9 +_,9 @@
+          } else if (p_9283_ == ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK) {
+             if (p_9282_.equals(this.f_9251_)) {
+                int j = this.f_9252_ - this.f_9250_;
+-               BlockState blockstate2 = this.f_9244_.m_8055_(p_9282_);
+-               if (!blockstate2.m_60795_()) {
+-                  float f1 = blockstate2.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_9282_) * (float)(j + 1);
++               BlockState blockstate1 = this.f_9244_.m_8055_(p_9282_);
++               if (!blockstate1.m_60795_()) {
++                  float f1 = blockstate1.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_9282_) * (float)(j + 1);
+                   if (f1 >= 0.7F) {
+                      this.f_9249_ = false;
+                      this.f_9244_.m_6801_(this.f_9245_.m_142049_(), p_9282_, -1);
+@@ -224,7 +_,8 @@
  
     public boolean m_9280_(BlockPos p_9281_) {
        BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
@@ -35,7 +87,7 @@
           return false;
        } else {
           BlockEntity blockentity = this.f_9244_.m_7702_(p_9281_);
-@@ -223,30 +_,42 @@
+@@ -232,30 +_,42 @@
           if (block instanceof GameMasterBlock && !this.f_9245_.m_36337_()) {
              this.f_9244_.m_7260_(p_9281_, blockstate, blockstate, 3);
              return false;
@@ -85,7 +137,7 @@
     }
  
     public InteractionResult m_6261_(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
-@@ -255,6 +_,8 @@
+@@ -264,6 +_,8 @@
        } else if (p_9262_.m_36335_().m_41519_(p_9264_.m_41720_())) {
           return InteractionResult.PASS;
        } else {
@@ -94,7 +146,7 @@
           int i = p_9264_.m_41613_();
           int j = p_9264_.m_41773_();
           InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.m_41682_(p_9263_, p_9262_, p_9265_);
-@@ -288,6 +_,8 @@
+@@ -297,6 +_,8 @@
     public InteractionResult m_7179_(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
        BlockPos blockpos = p_9270_.m_82425_();
        BlockState blockstate = p_9267_.m_8055_(blockpos);
@@ -103,7 +155,7 @@
        if (this.f_9247_ == GameType.SPECTATOR) {
           MenuProvider menuprovider = blockstate.m_60750_(p_9267_, blockpos);
           if (menuprovider != null) {
-@@ -297,10 +_,15 @@
+@@ -306,10 +_,15 @@
              return InteractionResult.PASS;
           }
        } else {
@@ -121,7 +173,7 @@
              InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
              if (interactionresult.m_19077_()) {
                 CriteriaTriggers.f_10562_.m_45482_(p_9266_, blockpos, itemstack);
-@@ -308,8 +_,8 @@
+@@ -317,8 +_,8 @@
              }
           }
  

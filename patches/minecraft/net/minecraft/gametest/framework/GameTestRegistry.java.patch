@@ -13,7 +13,7 @@
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
     public static void m_177503_(Method p_177504_) {
-+      register(p_177504_, java.util.Set.of());
++       register(p_177504_, java.util.Set.of());
 +   }
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
@@ -31,7 +31,7 @@
 -         f_177495_.addAll(m_177513_(p_177504_));
 +         Collection<TestFunction> testFunctions = new java.util.ArrayList<>(m_177513_(p_177504_));
 +         if (!allowedNamespaces.isEmpty())
-+            testFunctions.removeIf(t -> !allowedNamespaces.contains(new net.minecraft.resources.ResourceLocation(t.m_128078_()).m_135827_()));
++             testFunctions.removeIf(t -> !allowedNamespaces.contains(new net.minecraft.resources.ResourceLocation(t.m_128078_()).m_135827_()));
 +         f_177495_.addAll(testFunctions);
           f_177496_.add(s);
        }
@@ -43,7 +43,7 @@
 -         Object object = p_177514_.getDeclaringClass().newInstance();
 +         Object object = null;
 +         if (!java.lang.reflect.Modifier.isStatic(p_177514_.getModifiers()))
-+            object = p_177514_.getDeclaringClass().newInstance();
++             object = p_177514_.getDeclaringClass().newInstance();
           return (Collection)p_177514_.invoke(object);
        } catch (ReflectiveOperationException reflectiveoperationexception) {
           throw new RuntimeException(reflectiveoperationexception);
@@ -66,7 +66,7 @@
 -            Object object = p_177520_.getDeclaringClass().newInstance();
 +            Object object = null;
 +            if (!java.lang.reflect.Modifier.isStatic(p_177520_.getModifiers()))
-+               object = p_177520_.getDeclaringClass().newInstance();
++                object = p_177520_.getDeclaringClass().newInstance();
              p_177520_.invoke(object, p_177512_);
           } catch (InvocationTargetException invocationtargetexception) {
              if (invocationtargetexception.getCause() instanceof RuntimeException) {

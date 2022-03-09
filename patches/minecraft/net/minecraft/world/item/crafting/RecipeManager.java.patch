@@ -1,34 +1,36 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -9,15 +_,13 @@
+@@ -9,16 +_,15 @@
  import com.google.gson.JsonObject;
  import com.google.gson.JsonParseException;
  import com.google.gson.JsonSyntaxException;
++
+ import com.mojang.logging.LogUtils;
 -import java.util.Collection;
 -import java.util.Collections;
 -import java.util.Comparator;
 -import java.util.List;
 -import java.util.Map;
 -import java.util.Optional;
-+
 +import java.util.*;
  import java.util.Map.Entry;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
 +
 +import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
- import net.minecraft.Util;
++import net.minecraft.Util;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.Registry;
-@@ -36,6 +_,7 @@
+ import net.minecraft.resources.ResourceLocation;
+@@ -35,6 +_,7 @@
     private static final Gson f_44005_ = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Logger f_44006_ = LogManager.getLogger();
+    private static final Logger f_44006_ = LogUtils.getLogger();
     public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
 +   public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> recipesCB = ImmutableMap.of(); // CraftBukkit
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
     private boolean f_44008_;
  
-@@ -50,9 +_,18 @@
+@@ -49,9 +_,18 @@
  
        for(Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -47,7 +49,7 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
-@@ -67,6 +_,46 @@
+@@ -66,6 +_,46 @@
        }));
        this.f_199900_ = builder.build();
        f_44006_.info("Loaded {} recipes", (int)map.size());
@@ -94,14 +96,14 @@
     }
  
     public boolean m_151269_() {
-@@ -74,9 +_,13 @@
+@@ -73,9 +_,13 @@
     }
  
     public <C extends Container, T extends Recipe<C>> Optional<T> m_44015_(RecipeType<T> p_44016_, C p_44017_, Level p_44018_) {
 -      return this.m_44054_(p_44016_).values().stream().flatMap((p_44064_) -> {
 +      // CraftBukkit start
 +      Optional<T> recipe = this.m_44054_(p_44016_).values().stream().flatMap((p_44064_) -> {
-          return Util.m_137519_(p_44016_.m_44115_(p_44064_, p_44018_, p_44017_));
+          return p_44016_.m_44115_(p_44064_, p_44018_, p_44017_).stream();
        }).findFirst();
 +      p_44017_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
 +      // CraftBukkit end
@@ -109,7 +111,7 @@
     }
  
     public <C extends Container, T extends Recipe<C>> List<T> m_44013_(RecipeType<T> p_44014_) {
-@@ -153,4 +_,44 @@
+@@ -152,4 +_,44 @@
        this.f_44007_ = ImmutableMap.copyOf(map);
        this.f_199900_ = builder.build();
     }

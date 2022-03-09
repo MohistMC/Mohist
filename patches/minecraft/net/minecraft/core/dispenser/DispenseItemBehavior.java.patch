@@ -1,6 +1,13 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -35,34 +_,12 @@
+@@ -1,6 +_,5 @@
+ package net.minecraft.core.dispenser;
+ 
+-import com.mojang.logging.LogUtils;
+ import java.util.List;
+ import java.util.Optional;
+ import java.util.Random;
+@@ -36,34 +_,12 @@
  import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
  import net.minecraft.world.entity.projectile.ThrownPotion;
  import net.minecraft.world.entity.vehicle.Boat;
@@ -37,15 +44,16 @@
  import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-@@ -70,10 +_,22 @@
+@@ -71,12 +_,25 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.level.material.Material;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+-import org.slf4j.Logger;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
@@ -59,7 +67,11 @@
 +import javax.xml.crypto.Data;
  
  public interface DispenseItemBehavior {
-    Logger f_181892_ = LogManager.getLogger();
+-   Logger f_181892_ = LogUtils.getLogger();
++   Logger f_181892_ = LogManager.getLogger();
+    DispenseItemBehavior f_123393_ = (p_123400_, p_123401_) -> {
+       return p_123401_;
+    };
 @@ -178,14 +_,43 @@
              Direction direction = p_123523_.m_6414_().m_61143_(DispenserBlock.f_52659_);
              EntityType<?> entitytype = ((SpawnEggItem)p_123524_.m_41720_()).m_43228_(p_123524_.m_41783_());
@@ -346,107 +358,6 @@
              return p_123557_;
           }
  
-@@ -335,9 +_,52 @@
-             DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem)p_123562_.m_41720_();
-             BlockPos blockpos = p_123561_.m_7961_().m_142300_(p_123561_.m_6414_().m_61143_(DispenserBlock.f_52659_));
-             Level level = p_123561_.m_7727_();
-+            // CraftBukkit start
-+            int x = blockpos.m_123341_();
-+            int y = blockpos.m_123342_();
-+            int z = blockpos.m_123343_();
-+            BlockState iblockdata = level.m_8055_(blockpos);
-+            Material material = iblockdata.m_60767_();
-+            if (level.m_46859_(blockpos) || !material.m_76333_() || material.m_76336_() || (dispensiblecontaineritem instanceof BucketItem && iblockdata.m_60734_() instanceof LiquidBlockContainer && ((LiquidBlockContainer) iblockdata.m_60734_()).m_6044_(level, blockpos, iblockdata, ((BucketItem) dispensiblecontaineritem).getContent()))) {
-+               org.bukkit.block.Block block = level.getWorld().getBlockAt(p_123561_.m_7961_().m_123341_(), p_123561_.m_7961_().m_123342_(), p_123561_.m_7961_().m_123343_());
-+               CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123562_);
-+
-+               BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(x, y, z));
-+               if (!DispenserBlock.eventFired) {
-+                  level.getCraftServer().getPluginManager().callEvent(event);
-+               }
-+
-+               if (event.isCancelled()) {
-+                  return p_123562_;
-+               }
-+
-+               if (!event.getItem().equals(craftItem)) {
-+                  // Chain to handler for new item
-+                  ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+                  DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.f_52661_.get(eventStack.m_41720_());
-+                  if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != this) {
-+                     idispensebehavior.m_6115_(p_123561_, eventStack);
-+                     return p_123562_;
-+                  }
-+               }
-+
-+               dispensiblecontaineritem = (DispensibleContainerItem) CraftItemStack.asNMSCopy(event.getItem()).m_41720_();
-+            }
-+            // CraftBukkit end
-+
-             if (dispensiblecontaineritem.m_142073_((Player)null, level, blockpos, (BlockHitResult)null)) {
-                dispensiblecontaineritem.m_142131_((Player)null, level, p_123562_, blockpos);
--               return new ItemStack(Items.f_42446_);
-+               // CraftBukkit start - Handle stacked buckets
-+               Item item = Items.f_42446_;
-+               p_123562_.m_41774_(1);
-+               if (p_123562_.m_41619_()) {
-+                  p_123562_.setItem(Items.f_42446_);
-+                  p_123562_.m_41764_(1);
-+               } else if (((DispenserBlockEntity) p_123561_.m_8118_()).m_59237_(new ItemStack(item)) < 0) {
-+                  this.f_123558_.m_6115_(p_123561_, new ItemStack(item));
-+               }
-+               return p_123562_;
-+               // CraftBukkit end
-             } else {
-                return this.f_123558_.m_6115_(p_123561_, p_123562_);
-             }
-@@ -355,17 +_,44 @@
-          private final DefaultDispenseItemBehavior f_123563_ = new DefaultDispenseItemBehavior();
- 
-          public ItemStack m_7498_(BlockSource p_123566_, ItemStack p_123567_) {
--            LevelAccessor levelaccessor = p_123566_.m_7727_();
-+            ServerLevel levelaccessor = p_123566_.m_7727_();
-             BlockPos blockpos = p_123566_.m_7961_().m_142300_(p_123566_.m_6414_().m_61143_(DispenserBlock.f_52659_));
-             BlockState blockstate = levelaccessor.m_8055_(blockpos);
-             Block block = blockstate.m_60734_();
-             if (block instanceof BucketPickup) {
--               ItemStack itemstack = ((BucketPickup)block).m_142598_(levelaccessor, blockpos, blockstate);
-+               ItemStack itemstack = ((BucketPickup) block).m_142598_( DummyGeneratorAccess.INSTANCE, blockpos, blockstate); // CraftBukkit
-                if (itemstack.m_41619_()) {
-                   return super.m_7498_(p_123566_, p_123567_);
-                } else {
-                   levelaccessor.m_142346_((Entity)null, GameEvent.f_157816_, blockpos);
-                   Item item = itemstack.m_41720_();
-+
-+                  // CraftBukkit start
-+                  org.bukkit.block.Block bukkitBlock = levelaccessor.getWorld().getBlockAt(p_123566_.m_7961_().m_123341_(), p_123566_.m_7961_().m_123342_(), p_123566_.m_7961_().m_123343_());
-+                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123567_);
-+
-+                  BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_()));
-+                  if (!DispenserBlock.eventFired) {
-+                     levelaccessor.getCraftServer().getPluginManager().callEvent(event);
-+                  }
-+
-+                  if (event.isCancelled()) {
-+                     return p_123567_;
-+                  }
-+
-+                  if (!event.getItem().equals(craftItem)) {
-+                     // Chain to handler for new item
-+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+                     DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.f_52661_.get(eventStack.m_41720_());
-+                     if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != this) {
-+                        idispensebehavior.m_6115_(p_123566_, eventStack);
-+                        return p_123567_;
-+                     }
-+                  }
-+
-+                  itemstack = ((BucketPickup) block).m_142598_(levelaccessor, blockpos, blockstate); // From above
-+                  // CraftBukkit end
-+
-                   p_123567_.m_41774_(1);
-                   if (p_123567_.m_41619_()) {
-                      return new ItemStack(item);
 @@ -385,17 +_,47 @@
        DispenserBlock.m_52672_(Items.f_42409_, new OptionalDispenseItemBehavior() {
           protected ItemStack m_7498_(BlockSource p_123412_, ItemStack p_123413_) {
@@ -675,7 +586,7 @@
              if (level.m_46859_(blockpos) && carvedpumpkinblock.m_51381_(level, blockpos)) {
                 if (!level.f_46443_) {
                    level.m_7731_(blockpos, carvedpumpkinblock.m_49966_(), 3);
-@@ -518,6 +_,31 @@
+@@ -518,8 +_,33 @@
              ServerLevel serverlevel = p_123444_.m_7727_();
              BlockPos blockpos = p_123444_.m_7961_().m_142300_(p_123444_.m_6414_().m_61143_(DispenserBlock.f_52659_));
              BlockState blockstate = serverlevel.m_8055_(blockpos);
@@ -704,6 +615,9 @@
 +            }
 +            // CraftBukkit end
 +
-             if (blockstate.m_60622_(BlockTags.f_13072_, (p_123442_) -> {
-                return p_123442_.m_61138_(BeehiveBlock.f_49564_);
+             if (blockstate.m_204338_(BlockTags.f_13072_, (p_123442_) -> {
+-               return p_123442_.m_61138_(BeehiveBlock.f_49564_) && p_123442_.m_60734_() instanceof BeehiveBlock;
++               return p_123442_.m_61138_(BeehiveBlock.f_49564_);
              }) && blockstate.m_61143_(BeehiveBlock.f_49564_) >= 5) {
+                ((BeehiveBlock)blockstate.m_60734_()).m_49594_(serverlevel, blockstate, blockpos, (Player)null, BeehiveBlockEntity.BeeReleaseStatus.BEE_RELEASED);
+                this.m_123573_(true);

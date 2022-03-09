@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -40,6 +_,16 @@
+@@ -42,6 +_,16 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
@@ -17,29 +17,23 @@
  
  public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible {
     protected static final int f_154980_ = 0;
-@@ -60,6 +_,9 @@
+@@ -62,6 +_,7 @@
     int f_58317_;
     public int f_58318_;
     public int f_58319_;
 +
-+   private static AbstractFurnaceBlockEntity instance;
-+
     protected final ContainerData f_58311_ = new ContainerData() {
        public int m_6413_(int p_58431_) {
           switch(p_58431_) {
-@@ -103,8 +_,11 @@
-    protected AbstractFurnaceBlockEntity(BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_) {
-       super(p_154991_, p_154992_, p_154993_);
+@@ -107,6 +_,7 @@
        this.f_58312_ = p_154994_;
-+
-+      instance = this;
     }
  
 +   /**@deprecated Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)*/ @Deprecated
     public static Map<Item, Integer> m_58423_() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        m_58374_(map, Items.f_42448_, 20000);
-@@ -204,9 +_,9 @@
+@@ -206,9 +_,9 @@
        super.m_142466_(p_155025_);
        this.f_58310_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
        ContainerHelper.m_18980_(p_155025_, this.f_58310_);
@@ -52,7 +46,7 @@
        this.f_58317_ = this.m_7743_(this.f_58310_.get(1));
        CompoundTag compoundtag = p_155025_.m_128469_("RecipesUsed");
  
-@@ -218,9 +_,9 @@
+@@ -220,9 +_,9 @@
  
     protected void m_183515_(CompoundTag p_187452_) {
        super.m_183515_(p_187452_);
@@ -65,7 +59,7 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -238,34 +_,60 @@
+@@ -240,34 +_,60 @@
  
        ItemStack itemstack = p_155017_.f_58310_.get(1);
        if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
@@ -126,7 +120,7 @@
                 p_155017_.f_58318_ = 0;
                 p_155017_.f_58319_ = m_155009_(p_155014_, p_155017_.f_58312_, p_155017_);
 -               if (m_155026_(recipe, p_155017_.f_58310_, i)) {
-+               if (burn(p_155017_.f_58857_, p_155017_.f_58858_, recipe, p_155017_.f_58310_, i)) { // CraftBukkit
++               if (p_155017_.m_155026_(recipe, p_155017_.f_58310_, i)) {
                    p_155017_.m_6029_(recipe);
                 }
  
@@ -134,16 +128,19 @@
              }
           } else {
              p_155017_.f_58318_ = 0;
-@@ -288,7 +_,7 @@
+@@ -288,9 +_,9 @@
  
-    private static boolean m_155005_(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
+    }
+ 
+-   private static boolean m_155005_(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
++   private boolean m_155005_(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
        if (!p_155007_.get(0).m_41619_() && p_155006_ != null) {
 -         ItemStack itemstack = p_155006_.m_8043_();
-+         ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).m_5874_(instance);
++         ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).m_5874_(this);
           if (itemstack.m_41619_()) {
              return false;
           } else {
-@@ -297,10 +_,10 @@
+@@ -299,10 +_,10 @@
                 return true;
              } else if (!itemstack1.m_41656_(itemstack)) {
                 return false;
@@ -156,60 +153,27 @@
              }
           }
        } else {
-@@ -308,16 +_,45 @@
+@@ -310,15 +_,15 @@
        }
     }
  
 -   private static boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
-+   private static boolean burn ( Level level, BlockPos blockposition, @Nullable Recipe< ? > p_155027_,
-+                                 NonNullList< ItemStack > p_155028_, int p_155029_ ) {
-       if (p_155027_ != null && m_155005_(p_155027_, p_155028_, p_155029_)) {
+-      if (p_155027_ != null && m_155005_(p_155027_, p_155028_, p_155029_)) {
++   private boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
++      if (p_155027_ != null && this.m_155005_(p_155027_, p_155028_, p_155029_)) {
           ItemStack itemstack = p_155028_.get(0);
 -         ItemStack itemstack1 = p_155027_.m_8043_();
-+         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_155027_).m_5874_(instance);
++         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_155027_).m_5874_(this);
           ItemStack itemstack2 = p_155028_.get(2);
--         if (itemstack2.m_41619_()) {
--            p_155028_.set(2, itemstack1.m_41777_());
--         } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
+          if (itemstack2.m_41619_()) {
+             p_155028_.set(2, itemstack1.m_41777_());
+          } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
 -            itemstack2.m_41769_(1);
--         }
-+
-+         // CraftBukkit start - fire FurnaceSmeltEvent
-+         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
-+         org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
-+
-+         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(level, blockposition), source, result);
-+         level.getCraftServer().getPluginManager().callEvent(furnaceSmeltEvent);
-+
-+         if (furnaceSmeltEvent.isCancelled()) {
-+            return false;
-+         }
-+
-+         result = furnaceSmeltEvent.getResult();
-+         itemstack1 = CraftItemStack.asNMSCopy(result);
-+
-+         if (!itemstack1.m_41619_()) {
-+            if (itemstack2.m_41619_()) {
-+               p_155028_.set(2, itemstack1.m_41777_());
-+            } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
-+               itemstack2.m_41769_(itemstack1.m_41613_());
-+            } else {
-+               return false;
-+            }
-+         }
-+
-+         /*
-+         if (itemstack2.isEmpty()) {
-+            p_155028_.set(2, itemstack1.copy());
-+         } else if (itemstack2.is(itemstack1.getItem())) {
-+            itemstack2.grow(itemstack1.getCount());
-+         }
-+         */
-+         // CraftBukkit end
++            itemstack2.m_41769_(itemstack1.m_41613_());
+          }
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
-             p_155028_.set(1, new ItemStack(Items.f_42447_));
-@@ -335,7 +_,7 @@
+@@ -337,7 +_,7 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
@@ -218,7 +182,7 @@
        }
     }
  
-@@ -344,7 +_,7 @@
+@@ -346,7 +_,7 @@
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -227,7 +191,7 @@
     }
  
     public int[] m_7071_(Direction p_58363_) {
-@@ -424,7 +_,7 @@
+@@ -426,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
@@ -236,7 +200,7 @@
        }
     }
  
-@@ -454,26 +_,49 @@
+@@ -456,26 +_,49 @@
        this.f_58320_.clear();
     }
  
@@ -288,7 +252,7 @@
        ExperienceOrb.m_147082_(p_154999_, p_155000_, i);
     }
  
-@@ -483,4 +_,67 @@
+@@ -485,4 +_,67 @@
        }
  
     }

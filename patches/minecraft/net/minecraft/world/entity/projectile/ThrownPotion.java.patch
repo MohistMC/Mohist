@@ -173,7 +173,7 @@
 @@ -184,13 +_,25 @@
     private void m_150192_(BlockPos p_150193_) {
        BlockState blockstate = this.f_19853_.m_8055_(p_150193_);
-       if (blockstate.m_60620_(BlockTags.f_13076_)) {
+       if (blockstate.m_204336_(BlockTags.f_13076_)) {
 -         this.f_19853_.m_7471_(p_150193_, false);
 +         // CraftBukkit start
 +         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, Blocks.f_50016_.m_49966_()).isCancelled()) {

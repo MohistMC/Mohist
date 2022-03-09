@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/net/minecraft/world/level/chunk/LevelChunkSection.java
-@@ -192,4 +_,10 @@
+@@ -202,4 +_,10 @@
        }
  
     }
 +
 +   // CraftBukkit start
-+    public void setBiome(int i, int j, int k, Biome biome) {
++    public void setBiome(int i, int j, int k, Holder<Biome> biome) {
 +       this.f_187995_.m_156470_(i, j, k, biome);
 +    }
 +   // CraftBukkit end

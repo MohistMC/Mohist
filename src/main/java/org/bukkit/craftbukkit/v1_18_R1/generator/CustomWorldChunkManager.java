@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import org.bukkit.block.Biome;
@@ -17,8 +18,8 @@ public class CustomWorldChunkManager extends BiomeSource {
     private final BiomeProvider biomeProvider;
     private final net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry;
 
-    private static List<net.minecraft.world.level.biome.Biome> biomeListToBiomeBaseList(List<Biome> biomes, net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry) {
-        List<net.minecraft.world.level.biome.Biome> biomeBases = new ArrayList<>();
+    private static List<Holder<net.minecraft.world.level.biome.Biome>> biomeListToBiomeBaseList(List<Biome> biomes, net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry) {
+        List<Holder<net.minecraft.world.level.biome.Biome>> biomeBases = new ArrayList<>();
 
         for (Biome biome : biomes) {
             Preconditions.checkArgument(biome != Biome.CUSTOM, "Cannot use the biome %s", biome);
@@ -48,7 +49,7 @@ public class CustomWorldChunkManager extends BiomeSource {
     }
 
     @Override
-    public net.minecraft.world.level.biome.Biome getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
+    public Holder<net.minecraft.world.level.biome.Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
         Biome biome = biomeProvider.getBiome(worldInfo, x << 2, y << 2, z << 2);
         Preconditions.checkArgument(biome != Biome.CUSTOM, "Cannot set the biome to %s", biome);
 

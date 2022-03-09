@@ -1,6 +1,22 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -52,6 +_,7 @@
+@@ -7,6 +_,7 @@
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
++import com.mojang.serialization.DynamicOps;
+ import java.io.BufferedReader;
+ import java.io.IOException;
+ import java.io.InputStreamReader;
+@@ -30,6 +_,7 @@
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.NonNullList;
++import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.server.ConsoleInput;
+ import net.minecraft.server.MinecraftServer;
+@@ -52,12 +_,19 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.CreativeModeTab;
  import net.minecraft.world.item.Items;
@@ -8,29 +24,30 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -60,6 +_,10 @@
- import net.minecraft.world.level.storage.WorldData;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import net.minecraft.world.level.block.entity.SkullBlockEntity;
+ import net.minecraft.world.level.storage.LevelStorageSource;
++import net.minecraft.world.level.storage.WorldData;
++import org.apache.logging.log4j.LogManager;
+ import org.slf4j.Logger;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-    static final Logger f_139598_ = LogManager.getLogger();
-@@ -80,8 +_,8 @@
+    static final Logger f_139598_ = LogUtils.getLogger();
+@@ -78,8 +_,8 @@
     @Nullable
     private final Component f_142863_;
  
--   public DedicatedServer(Thread p_139609_, RegistryAccess.RegistryHolder p_139610_, LevelStorageSource.LevelStorageAccess p_139611_, PackRepository p_139612_, ServerResources p_139613_, WorldData p_139614_, DedicatedServerSettings p_139615_, DataFixer p_139616_, MinecraftSessionService p_139617_, GameProfileRepository p_139618_, GameProfileCache p_139619_, ChunkProgressListenerFactory p_139620_) {
--      super(p_139609_, p_139610_, p_139611_, p_139614_, p_139612_, Proxy.NO_PROXY, p_139616_, p_139613_, p_139617_, p_139618_, p_139619_, p_139620_);
-+   public DedicatedServer( joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, Thread p_139609_, RegistryAccess.RegistryHolder p_139610_, LevelStorageSource.LevelStorageAccess p_139611_, PackRepository p_139612_, ServerResources p_139613_, WorldData p_139614_, DedicatedServerSettings p_139615_, DataFixer p_139616_, MinecraftSessionService p_139617_, GameProfileRepository p_139618_, GameProfileCache p_139619_, ChunkProgressListenerFactory p_139620_) {
-+      super(p_139607_,p_139608_,p_139609_, p_139610_, p_139611_, p_139614_, p_139612_, Proxy.NO_PROXY, p_139616_, p_139613_, p_139617_, p_139618_, p_139619_, p_139620_);
-       this.f_139604_ = p_139615_;
+-   public DedicatedServer(Thread p_203713_, LevelStorageSource.LevelStorageAccess p_203714_, PackRepository p_203715_, WorldStem p_203716_, DedicatedServerSettings p_203717_, DataFixer p_203718_, MinecraftSessionService p_203719_, GameProfileRepository p_203720_, GameProfileCache p_203721_, ChunkProgressListenerFactory p_203722_) {
+-      super(p_203713_, p_203714_, p_203715_, p_203716_, Proxy.NO_PROXY, p_203718_, p_203719_, p_203720_, p_203721_, p_203722_);
++   public DedicatedServer(joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, DynamicOps<Tag> registryreadops, Thread p_203713_, LevelStorageSource.LevelStorageAccess p_203714_, PackRepository p_203715_, WorldStem p_203716_, DedicatedServerSettings p_203717_, DataFixer p_203718_, MinecraftSessionService p_203719_, GameProfileRepository p_203720_, GameProfileCache p_203721_, ChunkProgressListenerFactory p_203722_) {
++      super(p_139607_, p_139608_, registryreadops, p_203713_, p_203714_, p_203715_, p_203716_, Proxy.NO_PROXY, p_203718_, p_203719_, p_203720_, p_203721_, p_203722_);
+       this.f_139604_ = p_203717_;
        this.f_139602_ = new RconConsoleSource(this);
-       this.f_139606_ = TextFilterClient.m_143736_(p_139615_.m_139777_().f_139724_);
-@@ -91,12 +_,36 @@
+       this.f_139606_ = TextFilterClient.m_143736_(p_203717_.m_139777_().f_139724_);
+@@ -89,12 +_,36 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -69,7 +86,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
-@@ -104,6 +_,21 @@
+@@ -102,6 +_,21 @@
  
           }
        };
@@ -91,12 +108,13 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -165,15 +_,26 @@
+@@ -163,15 +_,26 @@
        if (!OldUsersConverter.m_11106_(this)) {
           return false;
        } else {
+-         this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
 +         // CraftBukkit start
-          this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
++         this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +         // CraftBukkit end
@@ -118,7 +136,7 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -186,6 +_,8 @@
+@@ -184,6 +_,8 @@
           if (dedicatedserverproperties.f_139747_) {
              f_139598_.info("Starting remote control listener");
              this.f_139603_ = RconThread.m_11615_(this);
@@ -127,7 +145,7 @@
           }
  
           if (this.m_139669_() > 0L) {
-@@ -197,12 +_,13 @@
+@@ -195,12 +_,13 @@
           }
  
           Items.f_41852_.m_6787_(CreativeModeTab.f_40754_, NonNullList.m_122779_());
@@ -142,15 +160,7 @@
        }
     }
  
-@@ -318,6 +_,7 @@
-          this.f_139601_.m_7530_();
-       }
- 
-+      System.exit( 0 );
-    }
- 
-    public void m_5703_(BooleanSupplier p_139661_) {
-@@ -335,8 +_,17 @@
+@@ -333,8 +_,17 @@
  
     public void m_139665_() {
        while(!this.f_139600_.isEmpty()) {
@@ -170,7 +180,7 @@
        }
  
     }
-@@ -441,6 +_,11 @@
+@@ -439,6 +_,11 @@
        return this.m_7913_().f_139718_;
     }
  
@@ -182,7 +192,7 @@
     public int m_6329_() {
        return this.m_7913_().f_139719_;
     }
-@@ -520,13 +_,44 @@
+@@ -518,13 +_,44 @@
     }
  
     public String m_7138_() {
@@ -229,7 +239,7 @@
        });
        return this.f_139602_.m_11513_();
     }
-@@ -547,6 +_,11 @@
+@@ -545,6 +_,11 @@
        return false;
     }
  
@@ -241,7 +251,7 @@
     public int m_7186_(int p_139659_) {
        return this.m_7913_().f_139723_ * p_139659_ / 100;
     }
-@@ -590,4 +_,11 @@
+@@ -588,4 +_,11 @@
     public Component m_141958_() {
        return this.f_142863_;
     }

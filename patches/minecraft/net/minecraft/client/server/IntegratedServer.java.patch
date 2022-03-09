@@ -1,41 +1,31 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
-@@ -15,6 +_,7 @@
+@@ -16,6 +_,7 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.SystemReport;
  import net.minecraft.client.Minecraft;
 +import net.minecraft.commands.CommandSourceStack;
- import net.minecraft.core.RegistryAccess;
  import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.ServerResources;
-@@ -25,6 +_,7 @@
- import net.minecraft.stats.Stats;
- import net.minecraft.util.ModCheck;
- import net.minecraft.util.profiling.ProfilerFiller;
-+import net.minecraft.world.level.DataPackConfig;
- import net.minecraft.world.level.GameType;
+ import net.minecraft.server.WorldStem;
+ import net.minecraft.server.level.ServerPlayer;
+@@ -29,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelStorageSource;
- import net.minecraft.world.level.storage.WorldData;
-@@ -32,6 +_,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
 +import org.bukkit.command.CommandSender;
+ import org.slf4j.Logger;
  
  @OnlyIn(Dist.CLIENT)
- public class IntegratedServer extends MinecraftServer {
-@@ -48,8 +_,8 @@
-    private UUID f_120019_;
+@@ -47,7 +_,7 @@
     private int f_194467_ = 0;
  
--   public IntegratedServer(Thread p_120022_, Minecraft p_120023_, RegistryAccess.RegistryHolder p_120024_, LevelStorageSource.LevelStorageAccess p_120025_, PackRepository p_120026_, ServerResources p_120027_, WorldData p_120028_, MinecraftSessionService p_120029_, GameProfileRepository p_120030_, GameProfileCache p_120031_, ChunkProgressListenerFactory p_120032_) {
--      super(p_120022_, p_120024_, p_120025_, p_120028_, p_120026_, p_120023_.m_91096_(), p_120023_.m_91295_(), p_120027_, p_120029_, p_120030_, p_120031_, p_120032_);
-+   public IntegratedServer( joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, Thread p_120022_, Minecraft p_120023_, RegistryAccess.RegistryHolder p_120024_, LevelStorageSource.LevelStorageAccess p_120025_, PackRepository p_120026_, ServerResources p_120027_, WorldData p_120028_, MinecraftSessionService p_120029_, GameProfileRepository p_120030_, GameProfileCache p_120031_, ChunkProgressListenerFactory p_120032_) {
-+      super(p_139607_, p_139608_, p_120022_, p_120024_, p_120025_, p_120028_, p_120026_, p_120023_.m_91096_(), p_120023_.m_91295_(), p_120027_, p_120029_, p_120030_, p_120031_, p_120032_);
-       this.m_129981_(p_120023_.m_91094_().m_92546_());
-       this.m_129975_(p_120023_.m_91402_());
-       this.m_129823_(new IntegratedPlayerList(this, this.f_129746_, this.f_129745_));
-@@ -62,9 +_,10 @@
+    public IntegratedServer(Thread p_205653_, Minecraft p_205654_, LevelStorageSource.LevelStorageAccess p_205655_, PackRepository p_205656_, WorldStem p_205657_, MinecraftSessionService p_205658_, GameProfileRepository p_205659_, GameProfileCache p_205660_, ChunkProgressListenerFactory p_205661_) {
+-      super(p_205653_, p_205655_, p_205656_, p_205657_, p_205654_.m_91096_(), p_205654_.m_91295_(), p_205658_, p_205659_, p_205660_, p_205661_);
++      super(null, null, null, p_205653_, p_205655_, p_205656_, p_205657_, p_205654_.m_91096_(), p_205654_.m_91295_(), p_205658_, p_205659_, p_205660_, p_205661_);
+       this.m_129981_(p_205654_.m_91094_().m_92546_());
+       this.m_129975_(p_205654_.m_91402_());
+       this.m_129823_(new IntegratedPlayerList(this, this.m_206579_(), this.f_129745_));
+@@ -60,9 +_,10 @@
        this.m_129997_(true);
        this.m_129999_(true);
        this.m_129793_();
@@ -47,7 +37,7 @@
     }
  
     public void m_5705_(BooleanSupplier p_120049_) {
-@@ -114,6 +_,11 @@
+@@ -112,6 +_,11 @@
        return true;
     }
  
@@ -59,7 +49,7 @@
     public File m_6237_() {
        return this.f_120015_.f_91069_;
     }
-@@ -181,10 +_,11 @@
+@@ -179,10 +_,11 @@
     }
  
     public void m_7570_(boolean p_120053_) {

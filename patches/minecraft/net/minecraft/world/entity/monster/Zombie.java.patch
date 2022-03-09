@@ -27,6 +27,15 @@
  
     public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
        super(p_34271_, p_34272_);
+@@ -157,7 +_,7 @@
+ 
+    protected int m_6552_(Player p_34322_) {
+       if (this.m_6162_()) {
+-         this.f_21364_ = (int)((double)this.f_21364_ * 2.5D);
++         this.f_21364_ = (int)((float)this.f_21364_ * 2.5F);
+       }
+ 
+       return super.m_6552_(p_34322_);
 @@ -190,8 +_,11 @@
     public void m_8119_() {
        if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {

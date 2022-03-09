@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -2,6 +_,8 @@
- 
+@@ -3,6 +_,8 @@
  import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
  import java.io.File;
 +import java.io.FileInputStream;
 +import java.io.InputStream;

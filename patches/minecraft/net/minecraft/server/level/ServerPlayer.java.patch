@@ -1,6 +1,14 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -81,6 +_,7 @@
+@@ -3,7 +_,6 @@
+ import com.google.common.collect.Lists;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.datafixers.util.Either;
+-import com.mojang.logging.LogUtils;
+ import java.util.Collection;
+ import java.util.List;
+ import java.util.Optional;
+@@ -82,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.MenuProvider;
@@ -8,7 +16,7 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.damagesource.EntityDamageSource;
  import net.minecraft.world.effect.MobEffectInstance;
-@@ -98,6 +_,7 @@
+@@ -99,6 +_,7 @@
  import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -16,15 +24,16 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -131,10 +_,16 @@
+@@ -132,12 +_,19 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
 +import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+-import org.slf4j.Logger;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
@@ -32,7 +41,11 @@
 +import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class ServerPlayer extends Player {
-    private static final Logger f_8907_ = LogManager.getLogger();
+-   private static final Logger f_8907_ = LogUtils.getLogger();
++   private static final Logger f_8907_ = LogManager.getLogger();
+    private static final int f_143381_ = 32;
+    private static final int f_143382_ = 10;
+    public ServerGamePacketListenerImpl f_8906_;
 @@ -227,20 +_,84 @@
     public int f_8943_;
     public boolean f_8944_;
@@ -159,7 +172,7 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -686,12 +_,29 @@
+@@ -686,10 +_,27 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_9180_) {
@@ -186,11 +199,8 @@
 -      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
 +      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
           this.m_19877_();
--         this.m_183503_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
-+         serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
+          this.m_183503_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.f_8944_) {
-             this.f_8944_ = true;
-             this.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132157_, this.f_8928_ ? 0.0F : 1.0F));
 @@ -706,13 +_,14 @@
           PlayerList playerlist = this.f_8924_.m_6846_();
           playerlist.m_11289_(this);
@@ -372,7 +382,7 @@
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1350,21 +_,22 @@
+@@ -1350,21 +_,23 @@
        this.m_8127_();
        if (p_9000_ == this.f_19853_) {
           this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
@@ -380,10 +390,10 @@
 +      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.m_46472_())) {
           ServerLevel serverlevel = this.m_183503_();
           LevelData leveldata = p_9000_.m_6106_();
-          this.f_8906_.m_141995_(new ClientboundRespawnPacket(p_9000_.m_6042_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), true));
+          this.f_8906_.m_141995_(new ClientboundRespawnPacket(p_9000_.m_204156_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), true));
           this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
           this.f_8924_.m_6846_().m_11289_(this);
--         serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
+          serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 -         this.m_146912_();
 +         this.revive();
           this.m_7678_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);

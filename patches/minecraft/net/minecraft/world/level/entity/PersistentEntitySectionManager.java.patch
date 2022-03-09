@@ -1,16 +1,15 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -26,14 +_,16 @@
+@@ -27,13 +_,15 @@
  import net.minecraft.util.VisibleForDebug;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.level.ChunkPos;
 +import net.minecraft.world.level.chunk.storage.EntityStorage;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import org.slf4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
  
  public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
-    static final Logger f_157490_ = LogManager.getLogger();
+    static final Logger f_157490_ = LogUtils.getLogger();
     final Set<UUID> f_157491_ = Sets.newHashSet();
     final LevelCallback<T> f_157492_;
 -   private final EntityPersistentStorage<T> f_157493_;

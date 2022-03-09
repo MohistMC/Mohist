@@ -42,9 +42,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.18.1'
-    MC_VERSION = '1.18.1'
-    MCP_VERSION = '20211210.034407'
+    MAPPING_VERSION = '1.18.2'
+    MC_VERSION = '1.18.2'
+    MCP_VERSION = '20220228.144236'
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
@@ -57,9 +57,9 @@ ext {
     MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.1-39.1.2'
-    FORGE_VERSION = '39.1.2'
-    MOHIST_VERSION = JenkinsNumber.info()
+    VERSION = '1.18.2-40.0.1'
+    FORGE_VERSION = '40.0.1'
+    MOHIST_VERSION = '0'
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
@@ -211,17 +211,11 @@ def sharedDeps = {
     installer 'org.apache.maven:maven-artifact:3.6.3'
     installer 'org.apache.commons:commons-lang3:3.12.0'
     installer 'net.jodah:typetools:0.8.3'
-    installer 'org.apache.logging.log4j:log4j-api:2.17.1'
-    installer 'org.apache.logging.log4j:log4j-core:2.17.1'
-    installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.17.1'
     installer 'net.minecrell:terminalconsoleappender:1.2.0'
     installer 'org.jline:jline-reader:3.12.1'   //Dep of TerminaalConsoleeAppender
     installer 'org.jline:jline-terminal:3.12.1' //Dep of TerminaalConsoleeAppender
-    installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer 'com.google.guava:guava:31.0.1-jre'
-    installer 'com.google.code.gson:gson:2.8.8'
 
     // bukkit
     //installer 'commons-lang:commons-lang:2.6'
@@ -403,6 +397,7 @@ def sharedFmlonlyForge = { Project prj ->
 
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
+        // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
         run.property 'mergeModules', 'jna-5.8.0.jar,jna-platform-58.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
@@ -871,6 +866,7 @@ project(':forge') {
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
         implementation project(':mclanguage')
+        runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
 

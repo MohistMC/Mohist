@@ -1,15 +1,15 @@
 <div align="center">
 <img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
-  <h1>Mohist 1.18.x</h1>
+  <h1>Mohist 1.18.2</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.18-dev)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.18-dev)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.18.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.18.2)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.18.x/LICENSE)
-[![](https://img.shields.io/badge/Forge-1.18.1--39.1.2-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.18.html)
+[![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.18.2/LICENSE)
+[![](https://img.shields.io/badge/Forge-1.18.2--40.0.1-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.18.2.html)
 [![](https://img.shields.io/badge/jdk-17.0.2+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
-[![](https://img.shields.io/badge/Gradle-7.3.3-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.3.3/release-notes.html)
+[![](https://img.shields.io/badge/Gradle-7.4-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.4/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
@@ -17,16 +17,16 @@
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
 
-| Version  | Support |
-| ------------- | ------------- |
-| 1.18.x  | Wait  |
+| Version | Support |
+|---------| ------------- |
+| 1.18.2  | Wait  |
 | 1.16.5  | Active  |
 | 1.12.2  | Active  |
 
 Progress
 ------
 
-- [ ] Rectify Forge(34291c1fb)  
+- [ ] Rectify Forge(14bca0d75)  
 - [ ] Start patch
   * CraftBukkit(2c1e4998)
   * Bukkit(0edc0e04)

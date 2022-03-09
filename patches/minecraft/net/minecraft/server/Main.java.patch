@@ -1,14 +1,17 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -10,6 +_,7 @@
+@@ -13,7 +_,10 @@
  import java.net.Proxy;
  import java.nio.file.Path;
  import java.nio.file.Paths;
 +import java.util.Arrays;
  import java.util.Optional;
- import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BooleanSupplier;
-@@ -76,6 +_,41 @@
+ import joptsimple.OptionParser;
+ import joptsimple.OptionSet;
+@@ -77,6 +_,41 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -50,7 +53,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -83,39 +_,46 @@
+@@ -84,6 +_,13 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -63,24 +66,18 @@
 +         }
  
           CrashReport.m_127529_();
--         if (optionset.has(optionspec13)) {
-+         if (optionset.has("jfrProfile")) { // CraftBukkit
-             JvmProfiler.f_185340_.m_183425_(Environment.SERVER);
-          }
- 
+          if (optionset.has(optionspec13)) {
+@@ -93,29 +_,28 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
--         RegistryAccess.RegistryHolder registryaccess$registryholder = RegistryAccess.m_123086_();
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
-+         RegistryAccess.RegistryHolder registryaccess$registryholder; // RegistryAccess.builtin(); // Delay initialization until after we read additional save data
           Path path = Paths.get("server.properties");
           DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path);
           dedicatedserversettings.m_139780_();
 -         Path path1 = Paths.get("eula.txt");
 -         Eula eula = new Eula(path1);
--         if (optionset.has(optionspec1)) {
-+         if (optionset.has("initSettings")) { // CraftBukkit
+          if (optionset.has(optionspec1)) {
              f_129670_.info("Initialized '{}' and '{}'", path.toAbsolutePath(), path1.toAbsolutePath());
              return;
           }
@@ -103,75 +100,38 @@
           LevelStorageSource levelstoragesource = LevelStorageSource.m_78242_(file1.toPath());
           LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_(s);
 +         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
-+         registryaccess$registryholder = RegistryAccess.m_123086_();
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -130,12 +_,31 @@
-          }
- 
-          DataPackConfig datapackconfig = levelstoragesource$levelstorageaccess.m_78309_();
--         boolean flag = optionset.has(optionspec6);
-+         boolean flag = optionset.has("safeMode");
-          if (flag) {
-             f_129670_.warn("Safe mode active, only vanilla datapack will be loaded");
+@@ -135,7 +_,8 @@
           }
  
           PackRepository packrepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), PackSource.f_10529_));
-+
-+         // CraftBukkit start
-+         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), "bukkit");
-+         if (!bukkitDataPackFolder.exists()) {
-+            bukkitDataPackFolder.mkdirs();
-+         }
-+         File mcMeta = new File(bukkitDataPackFolder, "pack.mcmeta");
-+         try {
-+            com.google.common.io.Files.write("{\n"
-+                    + "    \"pack\": {\n"
-+                    + "        \"description\": \"Data pack for resources provided by Bukkit plugins\",\n"
-+                    + "        \"pack_format\": " + SharedConstants.m_183709_().getPackVersion() + "\n"
-+                    + "    }\n"
-+                    + "}\n", mcMeta, com.google.common.base.Charsets.UTF_8);
-+         } catch (java.io.IOException ex) {
-+            throw new RuntimeException("Could not initialize Bukkit datapack", ex);
-+         }
-+         // CraftBukkit end
-+
-          DataPackConfig datapackconfig1 = MinecraftServer.m_129819_(packrepository, datapackconfig == null ? DataPackConfig.f_45842_ : datapackconfig, flag);
-          CompletableFuture<ServerResources> completablefuture = ServerResources.m_180005_(packrepository.m_10525_(), registryaccess$registryholder, Commands.CommandSelection.DEDICATED, dedicatedserversettings.m_139777_().f_139711_, Util.m_183991_(), Runnable::run);
- 
-@@ -164,6 +_,8 @@
-                worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$registryholder).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$registryholder);
-             }
- 
-+            // Forge: Deserialize the DimensionGeneratorSettings to ensure modded dims are loaded on first server load (see SimpleRegistryCodec#decode). Vanilla behaviour only loads from the server.properties and deserializes only after the 2nd server load.
-+            worldgensettings = WorldGenSettings.f_64600_.encodeStart(net.minecraft.resources.RegistryWriteOps.m_135767_(NbtOps.f_128958_, registryaccess$registryholder), worldgensettings).flatMap(nbt -> WorldGenSettings.f_64600_.parse(registryreadops, nbt)).getOrThrow(false, errorMsg->{});
-             worlddata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
+-
++         AtomicReference<DataPackConfig> config = new AtomicReference<>();
++         AtomicReference<DynamicOps<Tag>> ops = new AtomicReference<>();
+          WorldStem worldstem;
+          try {
+             WorldStem.InitConfig worldstem$initconfig = new WorldStem.InitConfig(packrepository, Commands.CommandSelection.DEDICATED, dedicatedserversettings.m_139777_().f_139711_, flag);
+@@ -181,34 +_,58 @@
           }
  
-@@ -175,34 +_,58 @@
- 
-          levelstoragesource$levelstorageaccess.m_78287_(registryaccess$registryholder, worlddata);
-          WorldData worlddata1 = worlddata;
--         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
--            DedicatedServer dedicatedserver1 = new DedicatedServer(p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
+          levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
+-         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_206536_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_206536_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
 -            dedicatedserver1.m_129981_(optionset.valueOf(optionspec8));
 -            dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
 -            dedicatedserver1.m_129975_(optionset.has(optionspec2));
 -            dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
--            boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
--            if (flag1 && !GraphicsEnvironment.isHeadless()) {
--               dedicatedserver1.m_139667_();
--            }
 +         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
 +               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
 +               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.m_127724_(net.minecraft.gametest.framework.GameTestRegistry.m_127658_());
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
-+               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(optionset, datapackconfig1, p_129697_, levelstoragesource$levelstorageaccess, packrepository, serverresources, testBatches, spawnPos, registryaccess$registryholder);
++               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(optionset, datapackconfig1, p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++               dedicatedserver1 = new DedicatedServer(optionset, config.get(), ops.get(),p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
 +            }
 +            /*
 +            dedicatedserver1.setSingleplayerName(optionset.valueOf(optionspec8));
@@ -179,8 +139,11 @@
 +            dedicatedserver1.setDemo(optionset.has(optionspec2));
 +            dedicatedserver1.setId(optionset.valueOf(optionspec12));
 +            */
-+            boolean flag1 = !optionset.has("nogui") && !optionset.nonOptionArguments().contains("nogui");
-+            dedicatedserver1.options = optionset;
+             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
+-            if (flag1 && !GraphicsEnvironment.isHeadless()) {
+-               dedicatedserver1.m_139667_();
+-            }
++			dedicatedserver1.options = optionset;
 +            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
 +               // dedicatedserver1.showGui();
 +            }
@@ -210,7 +173,7 @@
           Runtime.getRuntime().addShutdownHook(thread);
 +         */ // CraftBukkit end
        } catch (Exception exception1) {
-          f_129670_.fatal("Failed to start the minecraft server", (Throwable)exception1);
+          f_129670_.error(LogUtils.FATAL_MARKER, "Failed to start the minecraft server", (Throwable)exception1);
        }
  
     }

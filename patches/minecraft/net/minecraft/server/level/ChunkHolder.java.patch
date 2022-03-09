@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
-@@ -19,6 +_,7 @@
+@@ -21,6 +_,7 @@
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundLightUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
@@ -8,7 +8,7 @@
  import net.minecraft.util.DebugBuffer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.level.ChunkPos;
-@@ -51,7 +_,7 @@
+@@ -54,7 +_,7 @@
     private CompletableFuture<ChunkAccess> f_140005_ = CompletableFuture.completedFuture((ChunkAccess)null);
     @Nullable
     private final DebugBuffer<ChunkHolder.ChunkSaveDebug> f_142984_ = null;
@@ -17,7 +17,7 @@
     private int f_140007_;
     private int f_140008_;
     final ChunkPos f_140009_;
-@@ -64,6 +_,7 @@
+@@ -67,6 +_,7 @@
     public final ChunkHolder.PlayerProvider f_140016_;
     private boolean f_140017_;
     private boolean f_140018_;
@@ -25,7 +25,7 @@
     private CompletableFuture<Void> f_142981_ = CompletableFuture.completedFuture((Void)null);
  
     public ChunkHolder(ChunkPos p_142986_, int p_142987_, LevelHeightAccessor p_142988_, LevelLightEngine p_142989_, ChunkHolder.LevelChangeListener p_142990_, ChunkHolder.PlayerProvider p_142991_) {
-@@ -144,6 +_,7 @@
+@@ -154,6 +_,7 @@
        LevelChunk levelchunk = this.m_140085_();
        if (levelchunk != null) {
           int i = this.f_142983_.m_151564_(p_140057_.m_123342_());
@@ -33,7 +33,7 @@
           if (this.f_140011_[i] == null) {
              this.f_140010_ = true;
              this.f_140011_[i] = new ShortOpenHashSet();
-@@ -333,6 +_,30 @@
+@@ -350,6 +_,29 @@
        boolean flag1 = this.f_140007_ <= ChunkMap.f_140127_;
        ChunkHolder.FullChunkStatus chunkholder$fullchunkstatus = m_140083_(this.f_140006_);
        ChunkHolder.FullChunkStatus chunkholder$fullchunkstatus1 = m_140083_(this.f_140007_);
@@ -53,7 +53,6 @@
 +            }
 +         }).exceptionally((throwable) -> {
 +            // ensure exceptions are printed, by default this is not the case
-+            MinecraftServer.f_129750_.fatal("Failed to schedule unload callback for chunk " + ChunkHolder.this.f_140009_, throwable);
 +            return null;
 +         });
 +
@@ -64,7 +63,7 @@
        if (flag) {
           Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = Either.right(new ChunkHolder.ChunkLoadingFailure() {
              public String toString() {
-@@ -398,6 +_,26 @@
+@@ -415,6 +_,25 @@
  
        this.f_140015_.m_6250_(this.f_140009_, this::m_140094_, this.f_140007_, this::m_140086_);
        this.f_140006_ = this.f_140007_;
@@ -80,7 +79,6 @@
 +            }
 +         }).exceptionally((throwable) -> {
 +            // ensure exceptions are printed, by default this is not the case
-+            MinecraftServer.f_129750_.fatal("Failed to schedule load callback for chunk " + ChunkHolder.this.f_140009_, throwable);
 +            return null;
 +         });
 +
@@ -91,17 +89,12 @@
     }
  
     public static ChunkStatus m_140074_(int p_140075_) {
-@@ -430,7 +_,20 @@
-       this.m_143017_(CompletableFuture.completedFuture(Either.left(p_140053_.m_62768_())), "replaceProto");
+@@ -457,7 +_,15 @@
+       return list;
     }
  
 -   public interface ChunkLoadingFailure {
 +   // CraftBukkit start
-+   public LevelChunk getFullChunk() {
-+      if (!m_140083_(this.f_140006_).m_140114_(ChunkHolder.FullChunkStatus.BORDER)) return null; // note: using oldTicketLevel for isLoaded checks
-+      return this.getFullChunkUnchecked();
-+   }
-+
 +   public LevelChunk getFullChunkUnchecked() {
 +      CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> statusFuture = this.m_140047_(ChunkStatus.f_62326_);
 +      Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = (Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>) statusFuture.getNow(null);

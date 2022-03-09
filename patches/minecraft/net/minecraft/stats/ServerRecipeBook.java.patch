@@ -1,13 +1,13 @@
 --- a/net/minecraft/stats/ServerRecipeBook.java
 +++ b/net/minecraft/stats/ServerRecipeBook.java
-@@ -18,6 +_,7 @@
+@@ -17,6 +_,7 @@
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.crafting.RecipeManager;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
+ import org.slf4j.Logger;
  
  public class ServerRecipeBook extends RecipeBook {
-    public static final String f_144248_ = "recipeBook";
 @@ -29,7 +_,7 @@
  
        for(Recipe<?> recipe : p_12792_) {

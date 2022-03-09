@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -41,6 +_,8 @@
- import net.minecraft.world.phys.EntityHitResult;
+@@ -43,6 +_,8 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
+ import org.slf4j.Logger;
 +import org.bukkit.entity.FishHook;
 +import org.bukkit.event.player.PlayerFishEvent;
  
  public class FishingHook extends Projectile {
-    private final Random f_37098_ = new Random();
-@@ -57,10 +_,16 @@
+    private static final Logger f_201977_ = LogUtils.getLogger();
+@@ -60,10 +_,16 @@
     private boolean f_37093_ = true;
     @Nullable
     public Entity f_37094_;
@@ -27,7 +27,7 @@
     private FishingHook(EntityType<? extends FishingHook> p_150141_, Level p_150142_, int p_150143_, int p_150144_) {
        super(p_150141_, p_150142_);
        this.f_19811_ = true;
-@@ -237,7 +_,9 @@
+@@ -240,7 +_,9 @@
  
     private void m_37171_() {
        HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);
@@ -38,7 +38,7 @@
     }
  
     protected boolean m_5603_(Entity p_37135_) {
-@@ -280,6 +_,10 @@
+@@ -283,6 +_,10 @@
              this.f_37090_ = 0;
              this.f_37091_ = 0;
              this.m_20088_().m_135381_(f_37102_, false);
@@ -49,7 +49,7 @@
           }
        } else if (this.f_37091_ > 0) {
           this.f_37091_ -= i;
-@@ -292,7 +_,7 @@
+@@ -295,7 +_,7 @@
              double d1 = (double)((float)Mth.m_14107_(this.m_20186_()) + 1.0F);
              double d2 = this.m_20189_() + (double)(f2 * (float)this.f_37091_ * 0.1F);
              BlockState blockstate = serverlevel.m_8055_(new BlockPos(d0, d1 - 1.0D, d2));
@@ -58,7 +58,7 @@
                 if (this.f_19796_.nextFloat() < 0.15F) {
                    serverlevel.m_8767_(ParticleTypes.f_123795_, d0, d1 - (double)0.1F, d2, 1, (double)f1, 0.1D, (double)f2, 0.0D);
                 }
-@@ -303,6 +_,13 @@
+@@ -306,6 +_,13 @@
                 serverlevel.m_8767_(ParticleTypes.f_123816_, d0, d1, d2, 0, (double)(-f4), 0.01D, (double)f3, 1.0D);
              }
           } else {
@@ -72,29 +72,28 @@
              this.m_5496_(SoundEvents.f_11940_, 0.25F, 1.0F + (this.f_19796_.nextFloat() - this.f_19796_.nextFloat()) * 0.4F);
              double d3 = this.m_20186_() + 0.5D;
              serverlevel.m_8767_(ParticleTypes.f_123795_, this.m_20185_(), d3, this.m_20189_(), (int)(1.0F + this.m_20205_() * 20.0F), (double)this.m_20205_(), 0.0D, (double)this.m_20205_(), (double)0.2F);
-@@ -328,7 +_,7 @@
+@@ -331,7 +_,7 @@
              double d5 = (double)((float)Mth.m_14107_(this.m_20186_()) + 1.0F);
-             double d6 = this.m_20189_() + (double)(Mth.m_14089_(f6) * f7 * 0.1F);
+             double d6 = this.m_20189_() + (double)(Mth.m_14089_(f6) * f7) * 0.1D;
              BlockState blockstate1 = serverlevel.m_8055_(new BlockPos(d4, d5 - 1.0D, d6));
 -            if (blockstate1.m_60713_(Blocks.f_49990_)) {
 +            if (serverlevel.m_8055_(new BlockPos(d4, d5 - 1.0D, d6)).m_60767_() == net.minecraft.world.level.material.Material.f_76305_) {
                 serverlevel.m_8767_(ParticleTypes.f_123769_, d4, d5, d6, 2 + this.f_19796_.nextInt(2), (double)0.1F, 0.0D, (double)0.1F, 0.0D);
              }
           }
-@@ -338,8 +_,10 @@
+@@ -341,8 +_,10 @@
              this.f_37091_ = Mth.m_14072_(this.f_19796_, 20, 80);
           }
        } else {
 -         this.f_37090_ = Mth.m_14072_(this.f_19796_, 100, 600);
--         this.f_37090_ -= this.f_37097_ * 20 * 5;
 +         // CraftBukkit start - logic to modify fishing wait time
 +         this.f_37090_ = Mth.m_14072_(this.f_19796_, this.minWaitTime, this.maxWaitTime);
-+         this.f_37090_ -= (this.applyLure) ? this.f_37097_ * 20 * 5 : 0;
+          this.f_37090_ -= this.f_37097_ * 20 * 5;
 +         // CraftBukkit end
        }
  
     }
-@@ -399,26 +_,55 @@
+@@ -402,26 +_,55 @@
        Player player = this.m_37168_();
        if (!this.f_19853_.f_46443_ && player != null && !this.m_37136_(player)) {
           int i = 0;
@@ -148,10 +147,10 @@
 +                  player.f_19853_.m_7967_(new ExperienceOrb(player.f_19853_, player.m_20185_(), player.m_20186_() + 0.5D, player.m_20189_() + 0.5D, playerFishEvent.getExpToDrop()));
 +               }
 +               // CraftBukkit end
-                if (itemstack.m_150922_(ItemTags.f_13156_)) {
+                if (itemstack.m_204117_(ItemTags.f_13156_)) {
                    player.m_36222_(Stats.f_12939_, 1);
                 }
-@@ -428,11 +_,29 @@
+@@ -431,11 +_,29 @@
           }
  
           if (this.f_19861_) {
@@ -182,7 +181,7 @@
        } else {
           return 0;
        }
-@@ -446,7 +_,7 @@
+@@ -449,7 +_,7 @@
        super.m_7822_(p_37123_);
     }
  

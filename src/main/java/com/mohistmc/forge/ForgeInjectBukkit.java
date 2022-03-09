@@ -56,7 +56,7 @@ public class ForgeInjectBukkit {
         //addEnumEnchantment();
         //addEnumPotion();
         //addEnumPattern();
-        addEnumEnvironment();
+        //addEnumEnvironment();
         addEnumEntity();
         addEnumVillagerProfession();
         //addEnumArt();
@@ -143,6 +143,7 @@ public class ForgeInjectBukkit {
         }
     }
 
+    /*
     public static void addEnumEnvironment() {
         int i = World.Environment.values().length;
         net.minecraft.core.Registry<DimensionType> registry = MinecraftServer.getServer().registryHolder.dimensionTypes();
@@ -159,6 +160,7 @@ public class ForgeInjectBukkit {
             }
         }
     }
+     */
 
     public static WorldType addEnumWorldType(String name)
     {

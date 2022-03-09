@@ -1,9 +1,17 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -113,8 +_,27 @@
+@@ -89,6 +_,7 @@
+ import net.minecraft.world.level.block.RenderShape;
+ import net.minecraft.world.level.block.Rotation;
+ import net.minecraft.world.level.block.SoundType;
++import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.level.border.WorldBorder;
+@@ -115,8 +_,27 @@
+ import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import org.slf4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.Server;
@@ -26,10 +34,10 @@
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
-    protected static final Logger f_19849_ = LogManager.getLogger();
+    private static final Logger f_19849_ = LogUtils.getLogger();
     public static final String f_146815_ = "id";
     public static final String f_146816_ = "Passengers";
-@@ -133,6 +_,7 @@
+@@ -135,6 +_,7 @@
     private static final double f_146812_ = 0.0023333333333333335D;
     public static final String f_146824_ = "UUID";
     private static double f_19846_ = 1.0D;
@@ -37,7 +45,7 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -226,7 +_,52 @@
+@@ -228,7 +_,52 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -90,7 +98,7 @@
        this.f_19847_ = p_19870_;
        this.f_19853_ = p_19871_;
        this.f_19815_ = p_19870_.m_20680_();
-@@ -245,7 +_,11 @@
+@@ -247,7 +_,11 @@
        this.f_19804_.m_135372_(f_146800_, 0);
        this.m_8097_();
        this.m_6034_(0.0D, 0.0D, 0.0D);
@@ -103,7 +111,7 @@
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
-@@ -341,6 +_,7 @@
+@@ -343,6 +_,7 @@
        if (p_146834_ == Entity.RemovalReason.KILLED) {
           this.m_146850_(GameEvent.f_157809_);
        }
@@ -111,7 +119,7 @@
  
     }
  
-@@ -348,6 +_,13 @@
+@@ -350,6 +_,13 @@
     }
  
     public void m_20124_(Pose p_20125_) {
@@ -125,7 +133,16 @@
        this.f_19804_.m_135381_(f_19806_, p_20125_);
     }
  
-@@ -363,6 +_,34 @@
+@@ -357,7 +_,7 @@
+       return this.f_19804_.m_135370_(f_19806_);
+    }
+ 
+-   public boolean m_19950_(Entity p_19951_, double p_19952_) {
++   public boolean closerToCenterThan(Entity p_19951_, double p_19952_) {
+       double d0 = p_19951_.f_19825_.f_82479_ - this.f_19825_.f_82479_;
+       double d1 = p_19951_.f_19825_.f_82480_ - this.f_19825_.f_82480_;
+       double d2 = p_19951_.f_19825_.f_82481_ - this.f_19825_.f_82481_;
+@@ -365,6 +_,34 @@
     }
  
     protected void m_19915_(float p_19916_, float p_19917_) {
@@ -160,7 +177,7 @@
        this.m_146922_(p_19916_ % 360.0F);
        this.m_146926_(p_19917_ % 360.0F);
     }
-@@ -403,6 +_,15 @@
+@@ -405,6 +_,15 @@
        this.m_6075_();
     }
  
@@ -176,7 +193,7 @@
     public void m_6075_() {
        this.f_19853_.m_46473_().m_6180_("entityBaseTick");
        this.f_185934_ = null;
-@@ -417,7 +_,7 @@
+@@ -419,7 +_,7 @@
        this.f_19867_ = this.f_19787_;
        this.f_19860_ = this.m_146909_();
        this.f_19859_ = this.m_146908_();
@@ -185,7 +202,7 @@
        if (this.m_5843_()) {
           this.m_20076_();
        }
-@@ -452,6 +_,11 @@
+@@ -454,6 +_,11 @@
        if (this.m_20077_()) {
           this.m_20093_();
           this.f_19789_ *= 0.5F;
@@ -197,7 +214,7 @@
        }
  
        this.m_146871_();
-@@ -495,15 +_,64 @@
+@@ -497,15 +_,64 @@
  
     public void m_20093_() {
        if (!this.m_5825_()) {
@@ -263,7 +280,7 @@
        int i = p_20255_ * 20;
        if (this instanceof LivingEntity) {
           i = ProtectionEnchantment.m_45138_((LivingEntity)this, i);
-@@ -603,6 +_,28 @@
+@@ -612,6 +_,28 @@
                 block.m_5548_(this.f_19853_, this);
              }
  
@@ -272,13 +289,13 @@
 +               Vehicle vehicle = ( Vehicle ) this.getBukkitEntity();
 +               org.bukkit.block.Block bl = this.f_19853_.getWorld().getBlockAt(Mth.m_14107_(this.m_20185_()), Mth.m_14107_(this.m_20186_()), Mth.m_14107_(this.m_20189_()));
 +
-+               if (vec3.f_82479_ > vec31.f_82479_) {
++               if (vec3.f_82479_ > p_19974_.f_82479_) {
 +                  bl = bl.getRelative(BlockFace.EAST);
-+               } else if (vec3.f_82479_ < vec31.f_82479_) {
++               } else if (vec3.f_82479_ < p_19974_.f_82479_) {
 +                  bl = bl.getRelative(BlockFace.WEST);
-+               } else if (vec3.f_82481_ > vec31.f_82481_) {
++               } else if (vec3.f_82481_ > p_19974_.f_82481_) {
 +                  bl = bl.getRelative(BlockFace.SOUTH);
-+               } else if (vec3.f_82481_ < vec31.f_82481_) {
++               } else if (vec3.f_82481_ < p_19974_.f_82481_) {
 +                  bl = bl.getRelative( BlockFace.NORTH);
 +               }
 +
@@ -292,30 +309,22 @@
              if (this.f_19861_ && !this.m_20161_()) {
                 block.m_141947_(this.f_19853_, blockpos, blockstate, this);
              }
-@@ -612,13 +_,13 @@
-                double d0 = vec3.f_82479_;
-                double d1 = vec3.f_82480_;
-                double d2 = vec3.f_82481_;
--               this.f_146794_ = (float)((double)this.f_146794_ + vec3.m_82553_() * 0.6D);
+@@ -621,7 +_,7 @@
+                double d1 = vec3.f_82479_;
+                double d2 = vec3.f_82480_;
+                double d3 = vec3.f_82481_;
+-               this.f_146794_ += (float)(vec3.m_82553_() * 0.6D);
 +               this.f_146794_ = (float) ((double) this.f_146794_ + vec3.m_82553_() * 0.6D);
-                if (!blockstate.m_60620_(BlockTags.f_13082_) && !blockstate.m_60713_(Blocks.f_152499_)) {
-                   d1 = 0.0D;
+                if (!blockstate.m_204336_(BlockTags.f_13082_) && !blockstate.m_60713_(Blocks.f_152499_)) {
+                   d2 = 0.0D;
                 }
- 
--               this.f_19787_ += (float)vec3.m_165924_() * 0.6F;
--               this.f_19788_ += (float)Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2) * 0.6F;
-+               this.f_19787_ += (float) vec3.m_165924_() * 0.6F;
-+               this.f_19788_ += (float) Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2) * 0.6F;
-                if (this.f_19788_ > this.f_19829_ && !blockstate.m_60795_()) {
-                   this.f_19829_ = this.m_6059_();
-                   if (this.m_20069_()) {
-@@ -650,25 +_,23 @@
+@@ -659,25 +_,23 @@
  
              this.m_146872_();
              float f2 = this.m_6041_();
 -            this.m_20256_(this.m_20184_().m_82542_((double)f2, 1.0D, (double)f2));
 -            if (this.f_19853_.m_46847_(this.m_142469_().m_82406_(1.0E-6D)).noneMatch((p_20127_) -> {
--               return p_20127_.m_60620_(BlockTags.f_13076_) || p_20127_.m_60713_(Blocks.f_49991_);
+-               return p_20127_.m_204336_(BlockTags.f_13076_) || p_20127_.m_60713_(Blocks.f_49991_);
 -            })) {
 -               if (this.f_19831_ <= 0) {
 -                  this.m_7311_(-this.m_6101_());
@@ -329,7 +338,7 @@
 -            if (this.m_6060_() && (this.f_146808_ || this.m_20071_())) {
 +            this.m_20256_(this.m_20184_().m_82542_((double) f2, 1.0D, (double) f2));
 +         }
-+         if (this.f_19853_.m_46847_(this.m_142469_().m_82406_(1.0E-6D)).noneMatch((p_20127_) -> p_20127_.m_60620_(BlockTags.f_13076_) || p_20127_.m_60713_(Blocks.f_49991_))) {
++         if (this.f_19853_.m_46847_(this.m_142469_().m_82406_(1.0E-6D)).noneMatch((p_20127_) -> p_20127_.m_204336_(BlockTags.f_13076_) || p_20127_.m_60713_(Blocks.f_49991_))) {
 +            if (this.f_19831_ <= 0) {
                 this.m_7311_(-this.m_6101_());
              }
@@ -349,7 +358,7 @@
        }
     }
  
-@@ -706,10 +_,10 @@
+@@ -715,10 +_,10 @@
        int j = Mth.m_14107_(this.f_19825_.f_82480_ - (double)0.2F);
        int k = Mth.m_14107_(this.f_19825_.f_82481_);
        BlockPos blockpos = new BlockPos(i, j, k);
@@ -357,21 +366,21 @@
 +      if (this.f_19853_.m_46859_(blockpos)) {
           BlockPos blockpos1 = blockpos.m_7495_();
           BlockState blockstate = this.f_19853_.m_8055_(blockpos1);
--         if (blockstate.m_60620_(BlockTags.f_13039_) || blockstate.m_60620_(BlockTags.f_13032_) || blockstate.m_60734_() instanceof FenceGateBlock) {
+-         if (blockstate.m_204336_(BlockTags.f_13039_) || blockstate.m_204336_(BlockTags.f_13032_) || blockstate.m_60734_() instanceof FenceGateBlock) {
 +         if (blockstate.collisionExtendsVertically(this.f_19853_, blockpos1, this)) {
              return blockpos1;
           }
        }
-@@ -920,7 +_,7 @@
+@@ -929,7 +_,7 @@
     protected void m_7355_(BlockPos p_20135_, BlockState p_20136_) {
        if (!p_20136_.m_60767_().m_76332_()) {
           BlockState blockstate = this.f_19853_.m_8055_(p_20135_.m_7494_());
--         SoundType soundtype = blockstate.m_60620_(BlockTags.f_144271_) ? blockstate.m_60827_() : p_20136_.m_60827_();
+-         SoundType soundtype = blockstate.m_204336_(BlockTags.f_144271_) ? blockstate.m_60827_() : p_20136_.m_60827_();
 +         SoundType soundtype = blockstate.m_60713_(Blocks.f_50125_) ? blockstate.getSoundType(f_19853_, p_20135_, this) : p_20136_.getSoundType(f_19853_, p_20135_, this);
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
-@@ -1142,9 +_,10 @@
+@@ -1144,9 +_,10 @@
        int k = Mth.m_14107_(this.m_20189_());
        BlockPos blockpos = new BlockPos(i, j, k);
        BlockState blockstate = this.f_19853_.m_8055_(blockpos);
@@ -383,7 +392,7 @@
        }
  
     }
-@@ -1193,6 +_,7 @@
+@@ -1195,6 +_,7 @@
        this.f_19855_ = p_20250_;
        this.f_19856_ = d1;
        this.m_6034_(d0, p_20250_, d1);
@@ -391,7 +400,7 @@
     }
  
     public void m_20219_(Vec3 p_20220_) {
-@@ -1374,6 +_,12 @@
+@@ -1376,6 +_,12 @@
        return false;
     }
  
@@ -404,7 +413,7 @@
     public void m_5993_(Entity p_19953_, int p_19954_, DamageSource p_19955_) {
        if (p_19953_ instanceof ServerPlayer) {
           CriteriaTriggers.f_10569_.m_48104_((ServerPlayer)p_19953_, this, p_19955_);
-@@ -1404,7 +_,7 @@
+@@ -1406,7 +_,7 @@
           return false;
        } else {
           String s = this.m_20078_();
@@ -413,7 +422,7 @@
              return false;
           } else {
              p_20087_.m_128359_("id", s);
-@@ -1428,6 +_,19 @@
+@@ -1430,6 +_,19 @@
  
           Vec3 vec3 = this.m_20184_();
           p_20241_.m_128365_("Motion", this.m_20063_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_));
@@ -433,7 +442,7 @@
           p_20241_.m_128365_("Rotation", this.m_20065_(this.m_146908_(), this.m_146909_()));
           p_20241_.m_128350_("FallDistance", this.f_19789_);
           p_20241_.m_128376_("Fire", (short)this.f_19831_);
-@@ -1436,6 +_,24 @@
+@@ -1438,6 +_,24 @@
           p_20241_.m_128379_("Invulnerable", this.f_19840_);
           p_20241_.m_128405_("PortalCooldown", this.f_19839_);
           p_20241_.m_128362_("UUID", this.m_142081_());
@@ -458,7 +467,7 @@
           Component component = this.m_7770_();
           if (component != null) {
              p_20241_.m_128359_("CustomName", Component.Serializer.m_130703_(component));
-@@ -1465,6 +_,7 @@
+@@ -1467,6 +_,7 @@
           if (this.f_146813_) {
              p_20241_.m_128379_("HasVisualFire", this.f_146813_);
           }
@@ -466,7 +475,7 @@
  
           if (!this.f_19841_.isEmpty()) {
              ListTag listtag = new ListTag();
-@@ -1476,6 +_,10 @@
+@@ -1478,6 +_,10 @@
              p_20241_.m_128365_("Tags", listtag);
           }
  
@@ -477,7 +486,7 @@
           this.m_7380_(p_20241_);
           if (this.m_20160_()) {
              ListTag listtag1 = new ListTag();
-@@ -1492,6 +_,12 @@
+@@ -1494,6 +_,12 @@
              }
           }
  
@@ -490,7 +499,7 @@
           return p_20241_;
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Saving entity NBT");
-@@ -1550,6 +_,9 @@
+@@ -1552,6 +_,9 @@
                 this.m_146915_(p_20259_.m_128471_("Glowing"));
                 this.m_146917_(p_20259_.m_128451_("TicksFrozen"));
                 this.f_146813_ = p_20259_.m_128471_("HasVisualFire");
@@ -500,7 +509,7 @@
                 if (p_20259_.m_128425_("Tags", 9)) {
                    this.f_19841_.clear();
                    ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
-@@ -1571,6 +_,53 @@
+@@ -1573,6 +_,53 @@
           } else {
              throw new IllegalStateException("Entity has invalid position");
           }
@@ -554,7 +563,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being loaded");
-@@ -1636,8 +_,25 @@
+@@ -1638,8 +_,25 @@
        } else if (this.f_19853_.f_46443_) {
           return null;
        } else {
@@ -580,7 +589,7 @@
           this.f_19853_.m_7967_(itementity);
           return itementity;
        }
-@@ -1675,6 +_,7 @@
+@@ -1676,6 +_,7 @@
  
     public void m_6083_() {
        this.m_20256_(Vec3.f_82478_);
@@ -588,7 +597,7 @@
        this.m_8119_();
        if (this.m_20159_()) {
           this.m_20202_().m_7332_(this);
-@@ -1721,6 +_,7 @@
+@@ -1722,6 +_,7 @@
              }
           }
  
@@ -596,7 +605,7 @@
           if (p_19967_ || this.m_7341_(p_19966_) && p_19966_.m_7310_(this)) {
              if (this.m_20159_()) {
                 this.m_8127_();
-@@ -1759,6 +_,7 @@
+@@ -1760,6 +_,7 @@
     public void m_6038_() {
        if (this.f_19824_ != null) {
           Entity entity = this.f_19824_;
@@ -604,7 +613,7 @@
           this.f_19824_ = null;
           entity.m_20351_(this);
        }
-@@ -1773,6 +_,28 @@
+@@ -1774,6 +_,28 @@
        if (p_20349_.m_20202_() != this) {
           throw new IllegalStateException("Use x.startRiding(y), not y.addPassenger(x)");
        } else {
@@ -633,7 +642,7 @@
           if (this.f_19823_.isEmpty()) {
              this.f_19823_ = ImmutableList.of(p_20349_);
           } else {
-@@ -1793,6 +_,26 @@
+@@ -1794,6 +_,26 @@
        if (p_20352_.m_20202_() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
@@ -660,7 +669,7 @@
           if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
              this.f_19823_ = ImmutableList.of();
           } else {
-@@ -1924,6 +_,7 @@
+@@ -1936,6 +_,7 @@
        return !this.f_19823_.isEmpty();
     }
  
@@ -668,7 +677,7 @@
     public boolean m_6146_() {
        return true;
     }
-@@ -1977,6 +_,13 @@
+@@ -1989,6 +_,13 @@
     }
  
     public void m_20282_(boolean p_20283_) {
@@ -682,7 +691,7 @@
        this.m_20115_(4, p_20283_);
     }
  
-@@ -2024,15 +_,19 @@
+@@ -2036,15 +_,19 @@
        return this.m_5647_() != null ? this.m_5647_().m_83536_(p_20032_) : false;
     }
  
@@ -705,7 +714,7 @@
        byte b0 = this.f_19804_.m_135370_(f_19805_);
        if (p_20117_) {
           this.f_19804_.m_135381_(f_19805_, (byte)(b0 | 1 << p_20116_));
-@@ -2043,7 +_,7 @@
+@@ -2055,7 +_,7 @@
     }
  
     public int m_6062_() {
@@ -714,7 +723,7 @@
     }
  
     public int m_20146_() {
-@@ -2051,7 +_,18 @@
+@@ -2063,7 +_,18 @@
     }
  
     public void m_20301_(int p_20302_) {
@@ -734,7 +743,7 @@
     }
  
     public int m_146888_() {
-@@ -2077,11 +_,40 @@
+@@ -2089,11 +_,40 @@
  
     public void m_8038_(ServerLevel p_19927_, LightningBolt p_19928_) {
        this.m_7311_(this.f_19831_ + 1);
@@ -779,7 +788,7 @@
     }
  
     public void m_6845_(boolean p_20313_) {
-@@ -2169,7 +_,7 @@
+@@ -2181,7 +_,7 @@
     }
  
     protected Component m_5677_() {
@@ -788,7 +797,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2225,14 +_,19 @@
+@@ -2237,14 +_,19 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -809,7 +818,7 @@
              this.f_19853_.m_46473_().m_6182_("reloading");
              Entity entity = this.m_6095_().m_20615_(p_20118_);
              if (entity != null) {
-@@ -2240,17 +_,27 @@
+@@ -2252,17 +_,27 @@
                 entity.m_7678_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, entity.m_146909_());
                 entity.m_20256_(portalinfo.f_77677_);
                 p_20118_.m_143334_(entity);
@@ -839,7 +848,7 @@
           }
        } else {
           return null;
-@@ -2273,6 +_,10 @@
+@@ -2285,6 +_,10 @@
              WorldBorder worldborder = p_19923_.m_6857_();
              double d0 = DimensionType.m_63908_(this.f_19853_.m_6042_(), p_19923_.m_6042_());
              BlockPos blockpos1 = worldborder.m_187569_(this.m_20185_() * d0, this.m_20186_(), this.m_20189_() * d0);
@@ -850,7 +859,7 @@
              return this.m_183318_(p_19923_, blockpos1, flag2, worldborder).map((p_185941_) -> {
                 BlockState blockstate = this.f_19853_.m_8055_(this.f_19819_);
                 Direction.Axis direction$axis;
-@@ -2299,10 +_,29 @@
+@@ -2311,10 +_,29 @@
              blockpos = p_19923_.m_5452_(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p_19923_.m_8900_());
           }
  
@@ -880,7 +889,7 @@
     protected Vec3 m_7643_(Direction.Axis p_20045_, BlockUtil.FoundRectangle p_20046_) {
        return PortalShape.m_77738_(p_20046_, p_20045_, this.m_20182_(), this.m_6972_(this.m_20089_()));
     }
-@@ -2451,8 +_,10 @@
+@@ -2463,8 +_,10 @@
        EntityDimensions entitydimensions = this.f_19815_;
        Pose pose = this.m_20089_();
        EntityDimensions entitydimensions1 = this.m_6972_(pose);
@@ -892,7 +901,7 @@
        this.m_20090_();
        boolean flag = (double)entitydimensions1.f_20377_ <= 4.0D && (double)entitydimensions1.f_20378_ <= 4.0D;
        if (!this.f_19853_.f_46443_ && !this.f_19803_ && !this.f_19794_ && flag && (entitydimensions1.f_20377_ > entitydimensions.f_20377_ || entitydimensions1.f_20378_ > entitydimensions.f_20378_) && !(this instanceof Player)) {
-@@ -2460,8 +_,9 @@
+@@ -2472,8 +_,9 @@
           double d0 = (double)Math.max(0.0F, entitydimensions1.f_20377_ - entitydimensions.f_20377_) + 1.0E-6D;
           double d1 = (double)Math.max(0.0F, entitydimensions1.f_20378_ - entitydimensions.f_20378_) + 1.0E-6D;
           VoxelShape voxelshape = Shapes.m_83064_(AABB.m_165882_(vec3, d0, d1, d0));
@@ -903,7 +912,7 @@
           });
        }
  
-@@ -2500,7 +_,26 @@
+@@ -2512,7 +_,26 @@
     }
  
     public final void m_20011_(AABB p_20012_) {
@@ -931,7 +940,7 @@
     }
  
     protected float m_6380_(Pose p_19976_, EntityDimensions p_19977_) {
-@@ -2691,7 +_,7 @@
+@@ -2703,7 +_,7 @@
        return SoundSource.NEUTRAL;
     }
  
@@ -940,19 +949,19 @@
        return 1;
     }
  
-@@ -2769,6 +_,11 @@
+@@ -2781,6 +_,11 @@
                             vec3 = vec3.m_82549_(vec31);
                             ++k1;
                          }
 +                        // CraftBukkit start - store last lava contact location
-+                        if (p_19944_ == FluidTags.f_13132_) {
++                        if (p_204032_ == FluidTags.f_13132_) {
 +                           this.lastLavaContact = blockpos$mutableblockpos.m_7949_();
 +                        }
 +                        // CraftBukkit end
                       }
                    }
                 }
-@@ -2938,6 +_,7 @@
+@@ -2950,6 +_,7 @@
              gameeventlistenerregistrar.m_157862_(this.f_19853_);
           }
        }
@@ -960,7 +969,16 @@
  
     }
  
-@@ -3020,7 +_,7 @@
+@@ -3023,7 +_,7 @@
+       return this.f_146795_;
+    }
+ 
+-   public final void m_142467_(Entity.RemovalReason p_146876_) {
++   public void m_142467_(Entity.RemovalReason p_146876_) {
+       if (this.f_146795_ == null) {
+          this.f_146795_ = p_146876_;
+       }
+@@ -3036,7 +_,7 @@
        this.f_146801_.m_142472_(p_146876_);
     }
  
@@ -969,7 +987,7 @@
        this.f_146795_ = null;
     }
  
-@@ -3046,8 +_,81 @@
+@@ -3062,8 +_,81 @@
        return true;
     }
  

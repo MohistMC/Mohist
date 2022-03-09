@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/axolotl/Axolotl.java
 +++ b/net/minecraft/world/entity/animal/axolotl/Axolotl.java
-@@ -80,6 +_,13 @@
+@@ -83,6 +_,13 @@
     private final Map<String, Vector3f> f_149101_ = Maps.newHashMap();
     private static final int f_149102_ = 100;
  
@@ -14,7 +14,7 @@
     public Axolotl(EntityType<? extends Axolotl> p_149105_, Level p_149106_) {
        super(p_149105_, p_149106_);
        this.m_21441_(BlockPathTypes.WATER, 0.0F);
-@@ -171,14 +_,14 @@
+@@ -174,14 +_,14 @@
     }
  
     public int m_6062_() {
@@ -31,7 +31,7 @@
        this.f_19804_.m_135381_(f_149096_, p_149118_.m_149242_());
     }
  
-@@ -369,7 +_,7 @@
+@@ -378,7 +_,7 @@
        int i = mobeffectinstance != null ? mobeffectinstance.m_19557_() : 0;
        if (i < 2400) {
           i = Math.min(2400, 100 + i);

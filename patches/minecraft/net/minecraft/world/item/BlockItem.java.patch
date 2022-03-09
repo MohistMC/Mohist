@@ -22,16 +22,6 @@
  public class BlockItem extends Item {
     private static final String f_150696_ = "BlockEntityTag";
     public static final String f_150697_ = "BlockStateTag";
-@@ -41,8 +_,7 @@
-       super(p_40566_);
-       this.f_40563_ = p_40565_;
-    }
--
--   public InteractionResult m_6225_(UseOnContext p_40581_) {
-+    public InteractionResult m_6225_(UseOnContext p_40581_) {
-       InteractionResult interactionresult = this.m_40576_(new BlockPlaceContext(p_40581_));
-       if (!interactionresult.m_19077_() && this.m_41472_()) {
-          InteractionResult interactionresult1 = this.m_7203_(p_40581_.m_43725_(), p_40581_.m_43723_(), p_40581_.m_43724_()).m_19089_();
 @@ -61,6 +_,12 @@
              return InteractionResult.FAIL;
           } else {

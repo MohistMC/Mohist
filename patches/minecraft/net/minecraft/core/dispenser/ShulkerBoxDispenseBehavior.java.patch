@@ -1,14 +1,28 @@
 --- a/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
 +++ b/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
-@@ -10,6 +_,8 @@
+@@ -1,6 +_,5 @@
+ package net.minecraft.core.dispenser;
+ 
+-import com.mojang.logging.LogUtils;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.BlockSource;
+ import net.minecraft.core.Direction;
+@@ -9,10 +_,13 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.context.DirectionalPlaceContext;
  import net.minecraft.world.level.block.DispenserBlock;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+-import org.slf4j.Logger;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class ShulkerBoxDispenseBehavior extends OptionalDispenseItemBehavior {
-    private static final Logger f_175749_ = LogManager.getLogger();
+-   private static final Logger f_175749_ = LogUtils.getLogger();
++   private static final Logger f_175749_ = LogManager.getLogger();
+ 
+    protected ItemStack m_7498_(BlockSource p_123587_, ItemStack p_123588_) {
+       this.m_123573_(false);
 @@ -21,6 +_,30 @@
           Direction direction = p_123587_.m_6414_().m_61143_(DispenserBlock.f_52659_);
           BlockPos blockpos = p_123587_.m_7961_().m_142300_(direction);

@@ -88,6 +88,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     private final Codec<V> codec = new RegistryCodec();
 
+    @SuppressWarnings("unchecked")
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
@@ -207,6 +208,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public boolean isEmpty()
     {
         return this.names.isEmpty();
+    }
+
+    int size()
+    {
+        return this.names.size();
     }
 
     @Override
@@ -1138,6 +1144,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         if (failed.isEmpty() && ignored > 0)
             LOGGER.debug(REGISTRIES,"There were {} missing mappings that have been ignored", ignored);
+    }
+
+    RegistryBuilder<V> getBuilder()
+    {
+        return this.builder;
     }
 
     private record OverrideOwner<V>(String owner, ResourceKey<V> key){};

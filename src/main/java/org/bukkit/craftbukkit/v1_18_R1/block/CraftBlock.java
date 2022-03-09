@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -331,6 +333,10 @@ public class CraftBlock implements Block {
         getWorld().setBiome(getX(), getY(), getZ(), bio);
     }
 
+    public static Biome biomeBaseToBiome(net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry, Holder<net.minecraft.world.level.biome.Biome> base) {
+        return biomeBaseToBiome(registry, base.value());
+    }
+
     public static Biome biomeBaseToBiome(net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry, net.minecraft.world.level.biome.Biome base) {
         if (base == null) {
             return null;
@@ -340,17 +346,17 @@ public class CraftBlock implements Block {
         return (biome == null) ? Biome.CUSTOM : biome;
     }
 
-    public static net.minecraft.world.level.biome.Biome biomeToBiomeBase(net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry, Biome bio) {
+    public static Holder<net.minecraft.world.level.biome.Biome> biomeToBiomeBase(net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry, Biome bio) {
         if (bio == null || bio == Biome.CUSTOM) {
             return null;
         }
 
-        return registry.get(CraftNamespacedKey.toMinecraft(bio.getKey()));
+        return registry.getHolderOrThrow(ResourceKey.create(net.minecraft.core.Registry.BIOME_REGISTRY, CraftNamespacedKey.toMinecraft(bio.getKey())));
     }
 
     @Override
     public double getTemperature() {
-        return world.getBiome(position).getTemperature(position);
+        return world.getBiome(position).value().getTemperature(position);
     }
 
     @Override

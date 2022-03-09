@@ -1,19 +1,30 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -14,8 +_,11 @@
+@@ -1,6 +_,5 @@
+ package net.minecraft.world.level.block.entity;
+ 
+-import com.mojang.logging.LogUtils;
+ import javax.annotation.Nullable;
+ import net.minecraft.CrashReportCategory;
+ import net.minecraft.core.BlockPos;
+@@ -13,21 +_,33 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockState;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+-import org.slf4j.Logger;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.v1_18_R1.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.inventory.InventoryHolder;
  
 -public abstract class BlockEntity {
+-   private static final Logger f_58854_ = LogUtils.getLogger();
 +public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
-    private static final Logger f_58854_ = LogManager.getLogger();
++   private static final Logger f_58854_ = LogManager.getLogger();
     private final BlockEntityType<?> f_58855_;
     @Nullable
-@@ -23,11 +_,19 @@
+    protected Level f_58857_;
     protected final BlockPos f_58858_;
     protected boolean f_58859_;
     private BlockState f_58856_;

@@ -1,37 +1,55 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -40,6 +_,7 @@
- import net.minecraft.world.phys.BlockHitResult;
+@@ -42,6 +_,7 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
+ import org.slf4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
  
  public class FallingBlockEntity extends Entity {
-    private static final int f_186264_ = 50;
-@@ -107,7 +_,7 @@
+    private static final Logger f_201970_ = LogUtils.getLogger();
+@@ -60,7 +_,7 @@
+       super(p_31950_, p_31951_);
+    }
+ 
+-   private FallingBlockEntity(Level p_31953_, double p_31954_, double p_31955_, double p_31956_, BlockState p_31957_) {
++   public FallingBlockEntity(Level p_31953_, double p_31954_, double p_31955_, double p_31956_, BlockState p_31957_) {
+       this(EntityType.f_20450_, p_31953_);
+       this.f_31946_ = p_31957_;
+       this.f_19850_ = true;
+@@ -108,7 +_,16 @@
+          this.m_146870_();
+       } else {
           Block block = this.f_31946_.m_60734_();
-          if (this.f_31942_++ == 0) {
-             BlockPos blockpos = this.m_142538_();
--            if (this.f_19853_.m_8055_(blockpos).m_60713_(block)) {
+-         ++this.f_31942_;
++         if (this.f_31942_++ == 0) {
++            BlockPos blockpos = this.m_142538_();
 +            if (this.f_19853_.m_8055_(blockpos).m_60713_(block) && !CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
-                this.f_19853_.m_7471_(blockpos, false);
-             } else if (!this.f_19853_.f_46443_) {
-                this.m_146870_();
-@@ -153,7 +_,12 @@
-                         if (this.f_31946_.m_61138_(BlockStateProperties.f_61362_) && this.f_19853_.m_6425_(blockpos1).m_76152_() == Fluids.f_76193_) {
++               this.f_19853_.m_7471_(blockpos, false);
++            } else if (!this.f_19853_.f_46443_) {
++               this.m_146870_();
++               return;
++            }
++         }
++
+          if (!this.m_20068_()) {
+             this.m_20256_(this.m_20184_().m_82520_(0.0D, -0.04D, 0.0D));
+          }
+@@ -147,7 +_,12 @@
+                         if (this.f_31946_.m_61138_(BlockStateProperties.f_61362_) && this.f_19853_.m_6425_(blockpos).m_76152_() == Fluids.f_76193_) {
                             this.f_31946_ = this.f_31946_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(true));
                          }
 -
 +                        // CraftBukkit start
-+                        if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos1, this.f_31946_).isCancelled()) {
++                        if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_).isCancelled()) {
 +                           this.m_146870_(); // SPIGOT-6586 called before the event in previous versions
 +                           return;
 +                        }
 +                        // CraftBukkit end
-                         if (this.f_19853_.m_7731_(blockpos1, this.f_31946_, 3)) {
-                            ((ServerLevel)this.f_19853_).m_7726_().f_8325_.m_140201_(this, new ClientboundBlockUpdatePacket(blockpos1, this.f_19853_.m_8055_(blockpos1)));
+                         if (this.f_19853_.m_7731_(blockpos, this.f_31946_, 3)) {
+                            ((ServerLevel)this.f_19853_).m_7726_().f_8325_.m_140201_(this, new ClientboundBlockUpdatePacket(blockpos, this.f_19853_.m_8055_(blockpos)));
                             this.m_146870_();
-@@ -239,7 +_,9 @@
+@@ -225,7 +_,9 @@
  
              float f = (float)Math.min(Mth.m_14143_((float)i * this.f_149641_), this.f_31940_);
              this.f_19853_.m_6249_(this, this.m_142469_(), predicate).forEach((p_149649_) -> {
@@ -39,5 +57,5 @@
                 p_149649_.m_6469_(damagesource, f);
 +               CraftEventFactory.entityDamage = null; // CraftBukkit
              });
-             boolean flag = this.f_31946_.m_60620_(BlockTags.f_13033_);
+             boolean flag = this.f_31946_.m_204336_(BlockTags.f_13033_);
              if (flag && f > 0.0F && this.f_19796_.nextFloat() < 0.05F + (float)i * 0.05F) {

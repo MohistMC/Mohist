@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
 @@ -4,6 +_,8 @@
+ import javax.annotation.Nullable;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import org.slf4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEnderDragon;
 +import org.bukkit.event.entity.EnderDragonChangePhaseEvent;
  
  public class EnderDragonPhaseManager {
-    private static final Logger f_31408_ = LogManager.getLogger();
+    private static final Logger f_31408_ = LogUtils.getLogger();
 @@ -22,6 +_,19 @@
           if (this.f_31411_ != null) {
              this.f_31411_.m_7081_();
