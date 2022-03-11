@@ -57,9 +57,9 @@ ext {
     MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.0.1'
-    FORGE_VERSION = '40.0.1'
-    MOHIST_VERSION = '0'
+    VERSION = '1.18.2-40.0.12'
+    FORGE_VERSION = '40.0.12'
+    MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
@@ -925,7 +925,8 @@ project(':forge') {
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': gradleutils.gitInfo.abbreviatedId,
-                'Git-Branch': gradleutils.gitInfo.branch
+                'Git-Branch': gradleutils.gitInfo.branch,
+                'FML-System-Mods': 'forge'
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
                 'Specification-Title':      'Forge',
@@ -1460,6 +1461,10 @@ project(':forge') {
 
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
     afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    }
 }
 
 //evaluationDependsOnChildren()

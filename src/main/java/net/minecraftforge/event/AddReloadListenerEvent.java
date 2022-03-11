@@ -7,6 +7,7 @@ package net.minecraftforge.event;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -30,14 +31,12 @@ import net.minecraft.server.packs.resources.PreparableReloadListener.Preparation
 public class AddReloadListenerEvent extends Event
 {
     private final List<PreparableReloadListener> listeners = new ArrayList<>();
-    /*
-    private final MinecraftServer.ReloadableResources dataPackRegistries;
+    private final ReloadableServerResources serverResources;
 
-    public AddReloadListenerEvent(MinecraftServer.ReloadableResources dataPackRegistries)
+    public AddReloadListenerEvent(ReloadableServerResources serverResources)
     {
-        this.dataPackRegistries = dataPackRegistries;
+        this.serverResources = serverResources;
     }
-    */
 
    /**
     * @param listener the listener to add to the ResourceManager on reload
@@ -52,12 +51,12 @@ public class AddReloadListenerEvent extends Event
        return ImmutableList.copyOf(listeners);
     }
 
-   /*
-    public MinecraftServer.ReloadableResources getDataPackRegistries()
+
+    public ReloadableServerResources getServerResources()
     {
-        return dataPackRegistries;
+        return serverResources;
     }
-    */
+
     private static class WrappedStateAwareListener implements PreparableReloadListener {
         private final PreparableReloadListener wrapped;
 
