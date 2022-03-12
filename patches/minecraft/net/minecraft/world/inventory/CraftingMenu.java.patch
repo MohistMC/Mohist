@@ -7,8 +7,8 @@
 +import net.minecraft.world.item.crafting.RepairItemRecipe;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150539_ = 0;
@@ -49,7 +49,7 @@
              }
           }
 -
-+         itemstack = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof RepairItemRecipe); // CraftBukkit
++         itemstack = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof RepairItemRecipe); // CraftBukkit
           p_150551_.m_6836_(0, itemstack);
           p_150547_.m_150404_(0, itemstack);
           serverplayer.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(p_150547_.f_38840_, p_150547_.m_182425_(), 0, itemstack));

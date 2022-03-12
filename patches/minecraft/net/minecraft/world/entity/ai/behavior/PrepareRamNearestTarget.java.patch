@@ -12,8 +12,8 @@
  import net.minecraft.world.level.pathfinder.Path;
  import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
  
  public class PrepareRamNearestTarget<E extends PathfinderMob> extends Behavior<E> {

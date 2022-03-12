@@ -13,7 +13,7 @@
                 BlockState blockstate = this.f_19853_.m_8055_(blockpos);
                 Block block = blockstate.m_60734_();
 -               if (block instanceof LeavesBlock) {
-+               if (block instanceof LeavesBlock && !org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_()).isCancelled()) { // CraftBukkit
++               if (block instanceof LeavesBlock && !org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_()).isCancelled()) { // CraftBukkit
                    flag = this.f_19853_.m_46953_(blockpos, true, this) || flag;
                 }
              }

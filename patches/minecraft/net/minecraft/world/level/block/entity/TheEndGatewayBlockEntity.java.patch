@@ -6,7 +6,7 @@
  import org.slf4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
@@ -18,7 +18,7 @@
 +
 +            // CraftBukkit start - Fire PlayerTeleportEvent
 +            if (entity instanceof ServerPlayer) {
-+               org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
++               org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
 +               org.bukkit.Location location = new Location(p_155829_.getWorld(), (double) blockpos1.m_123341_() + 0.5D, (double) blockpos1.m_123342_() + 0.5D, (double) blockpos1.m_123343_() + 0.5D);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());

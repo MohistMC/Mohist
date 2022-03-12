@@ -12,7 +12,7 @@
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.GameRules;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -77,7 +77,7 @@
 +            if (entityhuman == null) {
 +               this.f_38696_ = Math.max(this.f_38696_ - 1, 0);
 +            } else {
-+               org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.f_38696_ - 1, 0));
++               org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.f_38696_ - 1, 0));
 +
 +               if (!event.isCancelled()) {
 +                  this.f_38696_ = event.getFoodLevel();

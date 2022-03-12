@@ -21,7 +21,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.material.PushReaction;
  import org.slf4j.Logger;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
  
  public class AreaEffectCloud extends Entity {
     private static final Logger f_19696_ = LogUtils.getLogger();
@@ -64,7 +64,7 @@
 +                        }
 +                     }
 +                  }
-+                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
++                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
 +                  if (!event.isCancelled()) {
 +                     for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
 +                        if (entity instanceof CraftLivingEntity) {

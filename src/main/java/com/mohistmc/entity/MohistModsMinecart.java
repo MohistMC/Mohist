@@ -3,8 +3,8 @@ package com.mohistmc.entity;
 import com.mohistmc.api.ServerAPI;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftMinecart;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 

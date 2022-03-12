@@ -54,7 +54,7 @@
  import org.apache.commons.lang3.Validate;
  import org.slf4j.Logger;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 +import org.bukkit.craftbukkit.Main;
 +import org.bukkit.event.server.ServerLoadEvent;
 +import org.spigotmc.SlackActivityAccountant;
@@ -86,7 +86,7 @@
 +   // CraftBukkit start
 +   public final DataPackConfig datapackconfiguration;
 +   public final DynamicOps<Tag> registryreadops;
-+   public org.bukkit.craftbukkit.v1_18_R1.CraftServer server;
++   public org.bukkit.craftbukkit.v1_18_R2.CraftServer server;
 +   public OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
@@ -151,7 +151,7 @@
 +            f_129750_.warn((String) null, ex);
 +         }
 +      }
-+      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_18_R1.util.ServerShutdownThread(this));
++      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_18_R2.util.ServerShutdownThread(this));
     }
 +   // CraftBukkit end
  

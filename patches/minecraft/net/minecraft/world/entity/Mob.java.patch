@@ -14,8 +14,8 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.level.storage.loot.LootContext;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.*;
  
  public abstract class Mob extends LivingEntity {
@@ -187,7 +187,7 @@
 +        // CraftBukkit start
 +        boolean canPickup = flag && this.m_7252_(itemstack);
 +        if (entityitem != null) {
-+            canPickup = !org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, entityitem, 0, !canPickup).isCancelled();
++            canPickup = !org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, entityitem, 0, !canPickup).isCancelled();
 +        }
 +        if (canPickup) {
 +            // CraftBukkit end

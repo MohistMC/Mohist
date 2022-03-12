@@ -103,11 +103,11 @@
 +import org.apache.logging.log4j.LogManager;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
-+import org.bukkit.craftbukkit.v1_18_R1.command.ColouredConsoleSender;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
++import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_18_R2.command.ColouredConsoleSender;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage;
 +import org.bukkit.event.player.*;
  import org.slf4j.Logger;
  
@@ -142,8 +142,8 @@
  
     public PlayerList(MinecraftServer p_203842_, RegistryAccess.Frozen p_203843_, PlayerDataStorage p_203844_, int p_203845_) {
 +      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
-+      p_203842_.console = org.bukkit.craftbukkit.v1_18_R1.command.ColouredConsoleSender.getInstance();
-+      p_203842_.reader.addCompleter(new org.bukkit.craftbukkit.v1_18_R1.command.ConsoleCommandCompleter(p_203842_.server));
++      p_203842_.console = org.bukkit.craftbukkit.v1_18_R2.command.ColouredConsoleSender.getInstance();
++      p_203842_.reader.addCompleter(new org.bukkit.craftbukkit.v1_18_R2.command.ConsoleCommandCompleter(p_203842_.server));
 +      // CraftBukkit end
 +
        this.f_11195_ = p_203842_;
@@ -207,7 +207,7 @@
 +      joinMessage = playerJoinEvent.getJoinMessage();
 +
 +      if (joinMessage != null && joinMessage.length() > 0) {
-+         for (Component line : org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage.fromString(joinMessage)) {
++         for (Component line : org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage.fromString(joinMessage)) {
 +            f_11195_.m_6846_().m_11268_(new ClientboundChatPacket(line, ChatType.SYSTEM, Util.f_137441_));
 +         }
 +      }

@@ -18,8 +18,8 @@
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerHarvestBlockEvent;
  
  public interface CaveVines {
@@ -31,7 +31,7 @@
 -         Block.m_49840_(p_152955_, p_152956_, new ItemStack(Items.f_151079_, 1));
 +         /*
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_152956_, p_152954_.setValue(CaveVines.BERRIES, false)).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_152956_, p_152954_.setValue(CaveVines.BERRIES, false)).isCancelled()) {
 +            return InteractionResult.SUCCESS;
 +         }
 +

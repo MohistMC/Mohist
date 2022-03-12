@@ -35,10 +35,10 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryBrewer;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.Event;
 +import org.bukkit.event.inventory.InventoryDragEvent;
 +import org.bukkit.event.inventory.InventoryType;
@@ -54,7 +54,7 @@
 +   private CraftInventoryView bukkitEntity = null;
 +   public boolean checkReachable = true;
 +   public abstract InventoryView getBukkitView();
-+   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity player) {
++   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
 +      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
 +      ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);

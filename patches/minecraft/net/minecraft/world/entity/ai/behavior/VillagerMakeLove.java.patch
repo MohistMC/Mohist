@@ -8,7 +8,7 @@
 -         p_24658_.m_146762_(6000);
           villager.m_146762_(-24000);
           villager.m_7678_(p_24657_.m_20185_(), p_24657_.m_20186_(), p_24657_.m_20189_(), 0.0F, 0.0F);
-+         if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityBreedEvent(villager, p_24657_, p_24658_, null, null, 0).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityBreedEvent(villager, p_24657_, p_24658_, null, null, 0).isCancelled()) {
 +            return Optional.empty();
 +         }
 +         // CraftBukkit end

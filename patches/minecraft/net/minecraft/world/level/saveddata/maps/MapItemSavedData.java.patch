@@ -18,10 +18,10 @@
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.saveddata.SavedData;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
-+import org.bukkit.craftbukkit.v1_18_R1.map.CraftMapView;
-+import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
++import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_18_R2.map.CraftMapView;
++import org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage;
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
@@ -138,7 +138,7 @@
        @Nullable
        Packet<?> m_164815_(int p_164816_) {
           MapItemSavedData.MapPatch mapitemsaveddata$mappatch;
-+         org.bukkit.craftbukkit.v1_18_R1.map.RenderData render = MapItemSavedData.this.mapView.render((org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer) this.f_77959_.getBukkitEntity()); // CraftBukkit
++         org.bukkit.craftbukkit.v1_18_R2.map.RenderData render = MapItemSavedData.this.mapView.render((org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer) this.f_77959_.getBukkitEntity()); // CraftBukkit
 +
           if (this.f_77962_) {
              this.f_77962_ = false;

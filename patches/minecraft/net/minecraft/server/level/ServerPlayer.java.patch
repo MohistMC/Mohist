@@ -26,8 +26,8 @@
  import org.slf4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class ServerPlayer extends Player {

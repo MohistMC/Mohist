@@ -13,7 +13,7 @@
  
     protected static void m_52903_(Level p_52904_, BlockPos p_52905_, BlockState p_52906_, Player p_52907_) {
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockPhysicsEvent(p_52904_, p_52905_).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockPhysicsEvent(p_52904_, p_52905_).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end

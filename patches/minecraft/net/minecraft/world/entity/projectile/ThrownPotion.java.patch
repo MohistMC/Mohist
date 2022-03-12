@@ -31,8 +31,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
  
  public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplier {
     public static final double f_150190_ = 4.0D;
@@ -103,7 +103,7 @@
 +            }
 +         }
 +      }
-+      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPotionSplashEvent( this, affected );
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callPotionSplashEvent( this, affected );
 +      if ( !event.isCancelled() && list != null && !list.isEmpty() )
 +      { // do not process effects if there are no effects to process
 +         Entity entity1 = this.m_150173_();
@@ -160,7 +160,7 @@
  
 -      this.f_19853_.m_7967_(areaeffectcloud);
 +      // CraftBukkit start
-+      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloud);
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloud);
 +      if (!(event.isCancelled() || areaeffectcloud.m_146910_())) {
 +         this.f_19853_.m_7967_(areaeffectcloud);
 +      } else {

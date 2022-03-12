@@ -13,8 +13,8 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.entity.PiglinBarterEvent;
  
  public class PiglinAi {
@@ -25,12 +25,12 @@
        ItemStack itemstack;
 -      if (p_34845_.m_32055_().m_150930_(Items.f_42587_)) {
 +      // CraftBukkit start
-+      if (p_34845_.m_32055_().m_150930_(Items.f_42587_) && !org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, 0, false).isCancelled()) {
++      if (p_34845_.m_32055_().m_150930_(Items.f_42587_) && !org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, 0, false).isCancelled()) {
           p_34844_.m_7938_(p_34845_, p_34845_.m_32055_().m_41613_());
           itemstack = p_34845_.m_32055_();
           p_34845_.m_146870_();
 -      } else {
-+      } else if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, p_34845_.m_32055_().m_41613_() - 1, false).isCancelled()) {
++      } else if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, p_34845_.m_32055_().m_41613_() - 1, false).isCancelled()) {
           p_34844_.m_7938_(p_34845_, 1);
           itemstack = m_34822_(p_34845_);
 +      } else {

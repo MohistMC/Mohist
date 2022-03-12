@@ -4,7 +4,7 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class FarmBlock extends Block {
@@ -14,13 +14,13 @@
        if (!m_53258_(p_53286_, p_53287_) && !p_53286_.m_46758_(p_53287_.m_7494_())) {
           if (i > 0) {
 -            p_53286_.m_7731_(p_53287_, p_53285_.m_61124_(f_53243_, Integer.valueOf(i - 1)), 2);
-+            org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleMoistureChangeEvent(p_53286_, p_53287_, p_53285_.m_61124_(f_53243_, i - 1), 2); // CraftBukkit
++            org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleMoistureChangeEvent(p_53286_, p_53287_, p_53285_.m_61124_(f_53243_, i - 1), 2); // CraftBukkit
           } else if (!m_53250_(p_53286_, p_53287_)) {
              m_53296_(p_53285_, p_53286_, p_53287_);
           }
        } else if (i < 7) {
 -         p_53286_.m_7731_(p_53287_, p_53285_.m_61124_(f_53243_, Integer.valueOf(7)), 2);
-+         org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleMoistureChangeEvent(p_53286_, p_53287_, p_53285_.m_61124_(f_53243_, 7), 2); // CraftBukkit
++         org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleMoistureChangeEvent(p_53286_, p_53287_, p_53285_.m_61124_(f_53243_, 7), 2); // CraftBukkit
        }
  
     }

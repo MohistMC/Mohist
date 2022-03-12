@@ -14,7 +14,7 @@
     protected void m_7581_(ItemEntity p_29121_) {
 -      if (this.m_6844_(EquipmentSlot.MAINHAND).m_41619_() && f_29071_.test(p_29121_)) {
 +     // if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(p_29121_)) {
-+      if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.m_6844_(EquipmentSlot.MAINHAND).m_41619_() && f_29071_.test(p_29121_))).isCancelled()) { // CraftBukkit
++      if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.m_6844_(EquipmentSlot.MAINHAND).m_41619_() && f_29071_.test(p_29121_))).isCancelled()) { // CraftBukkit
           this.m_21053_(p_29121_);
           ItemStack itemstack = p_29121_.m_32055_();
           this.m_8061_(EquipmentSlot.MAINHAND, itemstack);

@@ -33,7 +33,7 @@
 +      // CraftBukkit start
 +      CommandNode currentCommand = this.currentCommand;
 +      if (currentCommand != null) {
-+         return hasPermission(p_81370_, org.bukkit.craftbukkit.v1_18_R1.command.VanillaCommandWrapper.getPermission(currentCommand));
++         return hasPermission(p_81370_, org.bukkit.craftbukkit.v1_18_R2.command.VanillaCommandWrapper.getPermission(currentCommand));
 +      }
 +      // CraftBukkit end
        return this.f_81291_ >= p_81370_;

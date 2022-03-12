@@ -17,7 +17,7 @@
  import net.minecraft.network.protocol.status.ServerboundStatusRequestPacket;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerPlayer;
-+import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage;
  
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
     private static final Component f_10081_ = new TranslatableComponent("multiplayer.status.request_handled");

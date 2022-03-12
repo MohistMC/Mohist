@@ -22,7 +22,7 @@
  import net.minecraft.world.phys.Vec3;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.entity.ComplexEntityPart;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +import org.bukkit.Location;
@@ -203,7 +203,7 @@
              if (this.f_46011_.nextInt(3) == 0 && this.f_46012_.m_8055_(blockpos2).m_60795_() && this.f_46012_.m_8055_(blockpos2.m_7495_()).m_60804_(this.f_46012_, blockpos2.m_7495_())) {
 -               this.f_46012_.m_46597_(blockpos2, BaseFireBlock.m_49245_(this.f_46012_, blockpos2));
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockIgniteEvent(this.f_46012_, blockpos2.m_123341_(), blockpos2.m_123342_(), blockpos2.m_123343_(), this).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockIgniteEvent(this.f_46012_, blockpos2.m_123341_(), blockpos2.m_123342_(), blockpos2.m_123343_(), this).isCancelled()) {
 +                  this.f_46012_.m_46597_(blockpos2, BaseFireBlock.m_49245_(this.f_46012_, blockpos2));
 +               }
 +               // CraftBukkit end

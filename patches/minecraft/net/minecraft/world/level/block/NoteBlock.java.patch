@@ -20,7 +20,7 @@
        if (p_55020_.m_8055_(p_55021_.m_7494_()).m_60795_()) {
 -         p_55020_.m_7696_(p_55021_, this, 0, 0);
 +         // CraftBukkit start
-+         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callNotePlayEvent(p_55020_, p_55021_, data.m_61143_(f_55011_), data.m_61143_(f_55013_));
++         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callNotePlayEvent(p_55020_, p_55021_, data.m_61143_(f_55011_), data.m_61143_(f_55013_));
 +         if (!event.isCancelled()) {
 +            p_55020_.m_7696_(p_55021_, this, 0, 0);
 +         }

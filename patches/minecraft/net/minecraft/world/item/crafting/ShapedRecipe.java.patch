@@ -6,9 +6,9 @@
  import net.minecraft.world.level.Level;
 -
 -public class ShapedRecipe implements CraftingRecipe {
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftShapedRecipe;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.RecipeChoice;
 +
 +public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {

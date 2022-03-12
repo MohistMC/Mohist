@@ -10,6 +10,6 @@
  
     protected void m_48972_(Level p_48973_, BlockPos p_48974_) {
 -      p_48973_.m_7731_(p_48974_.m_7494_(), Blocks.f_50571_.m_49966_().m_61124_(BambooBlock.f_48870_, BambooLeaves.SMALL), 3);
-+      org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_48973_, p_48974_, p_48974_.m_7494_(), Blocks.f_50571_.m_49966_().m_61124_(BambooBlock.f_48870_, BambooLeaves.SMALL), 3); // CraftBukkit - BlockSpreadEvent
++      org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_48973_, p_48974_, p_48974_.m_7494_(), Blocks.f_50571_.m_49966_().m_61124_(BambooBlock.f_48870_, BambooLeaves.SMALL), 3); // CraftBukkit - BlockSpreadEvent
     }
  }

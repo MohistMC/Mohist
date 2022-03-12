@@ -5,8 +5,8 @@
  import org.apache.commons.lang3.StringUtils;
  import org.slf4j.Logger;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_18_R1.util.LazyPlayerSet;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_18_R2.util.LazyPlayerSet;
 +import org.bukkit.event.player.PlayerCommandPreprocessEvent;
  
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
@@ -15,7 +15,7 @@
     private int f_9740_;
     private int f_9741_;
  
-+   private final org.bukkit.craftbukkit.v1_18_R1.CraftServer cserver;
++   private final org.bukkit.craftbukkit.v1_18_R2.CraftServer cserver;
 +   public boolean processedDisconnect;
 +   private int lastTick = MinecraftServer.currentTick;
 +   private int allowedPlayerTicks = 1;

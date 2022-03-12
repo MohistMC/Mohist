@@ -14,7 +14,7 @@
  
        if (this.f_25082_ == this.m_25100_() && this.m_25094_(this.f_25189_.f_19853_.m_46791_())) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityBreakDoorEvent(this.f_25189_, this.f_25190_).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityBreakDoorEvent(this.f_25189_, this.f_25190_).isCancelled()) {
 +            this.m_8056_();
 +            return;
 +         }

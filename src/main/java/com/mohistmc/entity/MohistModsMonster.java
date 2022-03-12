@@ -1,10 +1,9 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.ServerAPI;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Monster;
-import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftMonster;
+import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftMonster;
 import org.bukkit.entity.EntityType;
 
 /**

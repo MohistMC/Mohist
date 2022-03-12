@@ -4,7 +4,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
  
@@ -27,7 +27,7 @@
 +      boolean cancelled = false;
 +      if (this.f_20771_ != prevTarget) {
 +         EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this, f_20771_, (f_20771_ != null) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.FORGOT_TARGET);
-+         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
++         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         cancelled = event.isCancelled();
 +
 +         if (cancelled) {

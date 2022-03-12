@@ -31,7 +31,7 @@
              BlockState blockstate = levelaccessor.m_8055_(blockpos);
              if (InfestedBlock.m_54195_(blockstate)) {
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_25725_, blockpos, InfestedBlock.m_153430_(blockstate)).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_25725_, blockpos, InfestedBlock.m_153430_(blockstate)).isCancelled()) {
 +                  return;
 +               }
 +               // CraftBukkit end

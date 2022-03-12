@@ -9,7 +9,7 @@
 +         //this.level.levelEvent(2002, this.blockPosition(), PotionUtils.getColor(Potions.WATER));
           int i = 3 + this.f_19853_.f_46441_.nextInt(5) + this.f_19853_.f_46441_.nextInt(5);
 +         // CraftBukkit start
-+         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callExpBottleEvent(this, i);
++         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callExpBottleEvent(this, i);
 +         i = event.getExperience();
 +         if (event.getShowEffect()) {
 +            this.f_19853_.m_46796_(2002, this.m_142538_(), PotionUtils.m_43559_(Potions.f_43599_));

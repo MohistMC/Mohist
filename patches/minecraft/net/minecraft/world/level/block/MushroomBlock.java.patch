@@ -13,7 +13,7 @@
  
           if (p_54885_.m_46859_(blockpos1) && p_54884_.m_60710_(p_54885_, blockpos1)) {
 -            p_54885_.m_7731_(blockpos1, p_54884_, 2);
-+            org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_54885_, p_54886_, blockpos1, p_54884_, 2); // CraftBukkit
++            org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_54885_, p_54886_, blockpos1, p_54884_, 2); // CraftBukkit
           }
        }
  

@@ -13,8 +13,8 @@
  
 +// CraftBukkit start
 +import net.minecraft.server.level.ServerLevel;
-+import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
 +import org.bukkit.event.block.BlockCanBuildEvent;
 +// CraftBukkit end
 +
@@ -29,7 +29,7 @@
 +            // CraftBukkit start - special case for handling block placement with water lilies and snow buckets
 +            org.bukkit.block.BlockState bblockstate = null;
 +            if (this instanceof WaterLilyBlockItem || this instanceof SolidBucketItem) {
-+               bblockstate = org.bukkit.craftbukkit.v1_18_R1.block.CraftBlockStates.getBlockState(blockplacecontext.m_43725_(), blockplacecontext.m_8083_());
++               bblockstate = org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockStates.getBlockState(blockplacecontext.m_43725_(), blockplacecontext.m_8083_());
 +            }
 +            // CraftBukkit end
              if (blockstate == null) {
@@ -41,7 +41,7 @@
                    blockstate1.m_60734_().m_6402_(level, blockpos, blockstate1, player, itemstack);
 +                  // CraftBukkit start
 +                  if (bblockstate != null) {
-+                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockPlaceEvent((ServerLevel ) level, player, blockplacecontext.m_43724_(), bblockstate, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockPlaceEvent((ServerLevel ) level, player, blockplacecontext.m_43724_(), bblockstate, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
 +                     if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
 +                        bblockstate.update(true, false);
 +
