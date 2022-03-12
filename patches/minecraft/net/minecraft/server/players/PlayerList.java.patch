@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -1,8 +_,10 @@
+@@ -1,25 +_,23 @@
  package net.minecraft.server.players;
  
 +import com.google.common.base.Predicate;
@@ -11,9 +11,10 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Dynamic;
-@@ -11,13 +_,12 @@
+ import io.netty.buffer.Unpooled;
+ import java.io.File;
  import java.net.SocketAddress;
- import java.nio.file.Path;
+-import java.nio.file.Path;
  import java.text.SimpleDateFormat;
 -import java.util.List;
 -import java.util.Map;
@@ -25,11 +26,12 @@
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
 +
-+import net.md_5.bungee.api.ChatMessageType;
  import net.minecraft.ChatFormatting;
- import net.minecraft.FileUtil;
+-import net.minecraft.FileUtil;
  import net.minecraft.Util;
-@@ -27,50 +_,28 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.RegistryAccess;
+@@ -27,43 +_,18 @@
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.network.Connection;
  import net.minecraft.network.FriendlyByteBuf;
@@ -77,29 +79,10 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
- import net.minecraft.stats.Stats;
- import net.minecraft.tags.BlockTags;
-+import net.minecraft.tags.Tag;
- import net.minecraft.tags.TagNetworkSerialization;
-+import net.minecraft.util.FormattedCharSequence;
- import net.minecraft.util.Mth;
-+import net.minecraft.world.effect.MobEffect;
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
-@@ -78,6 +_,7 @@
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.biome.BiomeManager;
-+import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.border.BorderChangeListener;
-@@ -90,6 +_,16 @@
+@@ -90,6 +_,15 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
-+import org.apache.commons.lang3.SystemUtils;
 +import org.apache.logging.log4j.LogManager;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;

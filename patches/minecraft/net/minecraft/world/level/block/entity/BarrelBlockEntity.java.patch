@@ -1,13 +1,11 @@
 --- a/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BarrelBlockEntity.java
-@@ -19,6 +_,13 @@
+@@ -19,6 +_,11 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BarrelBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
-+import org.bukkit.inventory.InventoryHolder;
 +
 +import java.util.ArrayList;
 +import java.util.List;

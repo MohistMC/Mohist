@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -53,6 +_,7 @@
- import net.minecraft.world.ticks.SerializableTickContainer;
- import net.minecraft.world.ticks.TickContainerAccess;
- import org.slf4j.Logger;
-+import org.bukkit.craftbukkit.v1_18_R2.persistence.CraftPersistentDataContainer;
- 
- public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, FeatureAccess {
-    private static final Logger f_187613_ = LogUtils.getLogger();
 @@ -71,14 +_,20 @@
     protected final UpgradeData f_187606_;
     @Nullable

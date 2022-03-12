@@ -1,29 +1,14 @@
 --- a/net/minecraft/world/level/block/CaveVines.java
 +++ b/net/minecraft/world/level/block/CaveVines.java
-@@ -1,11 +_,13 @@
- package net.minecraft.world.level.block;
- 
-+import java.util.Collections;
- import java.util.function.ToIntFunction;
- import net.minecraft.core.BlockPos;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.sounds.SoundSource;
+@@ -7,8 +_,6 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.InteractionResult;
-+import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
-@@ -14,6 +_,9 @@
+-import net.minecraft.world.item.ItemStack;
+-import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
- import net.minecraft.world.level.block.state.properties.BooleanProperty;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
-+import org.bukkit.event.player.PlayerHarvestBlockEvent;
- 
- public interface CaveVines {
-    VoxelShape f_152948_ = Block.m_49796_(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
 @@ -21,7 +_,24 @@
  
     static InteractionResult m_152953_(BlockState p_152954_, Level p_152955_, BlockPos p_152956_) {

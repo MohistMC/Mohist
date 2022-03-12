@@ -37,25 +37,17 @@
  import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-@@ -71,9 +_,21 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.block.state.properties.BlockStateProperties;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import net.minecraft.world.level.material.Material;
+@@ -74,6 +_,13 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
  import org.slf4j.Logger;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_18_R2.util.DummyGeneratorAccess;
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
 +import org.bukkit.event.block.BlockDispenseEvent;
 +import org.bukkit.event.block.BlockFertilizeEvent;
 +import org.bukkit.event.world.StructureGrowEvent;
-+import org.lwjgl.system.CallbackI;
-+
-+import javax.xml.crypto.Data;
  
  public interface DispenseItemBehavior {
     Logger f_181892_ = LogUtils.getLogger();

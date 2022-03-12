@@ -8,6 +8,14 @@
  import net.minecraft.world.entity.ai.goal.FloatGoal;
  import net.minecraft.world.entity.ai.goal.Goal;
  import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+@@ -25,7 +_,6 @@
+ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+ import net.minecraft.world.entity.player.Player;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
 @@ -44,7 +_,6 @@
     protected void m_8099_() {
        this.f_33521_ = new Silverfish.SilverfishWakeUpFriendsGoal(this);

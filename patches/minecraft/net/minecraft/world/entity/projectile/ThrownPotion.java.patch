@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrownPotion.java
 +++ b/net/minecraft/world/entity/projectile/ThrownPotion.java
-@@ -1,15 +_,19 @@
+@@ -1,11 +_,14 @@
  package net.minecraft.world.entity.projectile;
  
 +import java.util.HashMap;
@@ -15,11 +15,6 @@
  import net.minecraft.tags.BlockTags;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.effect.MobEffect;
- import net.minecraft.world.effect.MobEffectInstance;
-+import net.minecraft.world.effect.MobEffects;
- import net.minecraft.world.entity.AreaEffectCloud;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
 @@ -24,12 +_,15 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;

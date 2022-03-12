@@ -18,16 +18,10 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -61,10 +_,13 @@
- import net.minecraft.commands.Commands;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Holder;
-+import net.minecraft.core.MappedRegistry;
- import net.minecraft.core.Registry;
+@@ -65,6 +_,7 @@
  import net.minecraft.core.RegistryAccess;
  import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
  import net.minecraft.gametest.framework.GameTestTicker;
-+import net.minecraft.nbt.NbtOps;
 +import net.minecraft.nbt.Tag;
  import net.minecraft.network.chat.Component;
  import net.minecraft.network.chat.TextComponent;
@@ -121,7 +115,7 @@
        super("Server");
        this.f_129746_ = p_206549_.f_206894_();
        this.f_129749_ = p_206549_.f_206895_();
-@@ -296,7 +_,35 @@
+@@ -296,7 +_,13 @@
        this.f_129741_ = new StructureManager(p_206549_.f_206892_(), p_206547_, p_206551_);
        this.f_129725_ = p_206546_;
        this.f_129738_ = Util.m_183991_();
@@ -130,28 +124,6 @@
 +      this.datapackconfiguration = datapackconfiguration;
 +      this.registryreadops = registryreadops;
 +      this.vanillaCommandDispatcher = p_206549_.f_206893_().f_206847_; // CraftBukkit
-+      // Try to see if we're actually running in a terminal, disable jline if not
-+      if (System.console() == null && System.getProperty("jline.terminal") == null) {
-+         System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+         Main.useJline = false;
-+      }
-+
-+      try {
-+         reader = new ConsoleReader(System.in, System.out);
-+         reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
-+      } catch (Throwable e) {
-+         try {
-+            // Try again with jline disabled for Windows users without C++ 2008 Redistributable
-+            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+            System.setProperty("user.language", "en");
-+            Main.useJline = false;
-+            reader = new ConsoleReader(System.in, System.out);
-+            reader.setExpandEvents(false);
-+         } catch (IOException ex) {
-+            f_129750_.warn((String) null, ex);
-+         }
-+      }
-+      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_18_R2.util.ServerShutdownThread(this));
     }
 +   // CraftBukkit end
  

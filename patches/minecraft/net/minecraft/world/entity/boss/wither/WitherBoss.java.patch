@@ -14,11 +14,12 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -51,8 +_,13 @@
+@@ -49,10 +_,13 @@
+ import net.minecraft.world.entity.projectile.WitherSkull;
+ import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Explosion;
- import net.minecraft.world.level.GameRules;
+-import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
-+import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;

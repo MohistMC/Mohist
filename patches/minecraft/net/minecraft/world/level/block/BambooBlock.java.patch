@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/BambooBlock.java
 +++ b/net/minecraft/world/level/block/BambooBlock.java
+@@ -7,7 +_,6 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.entity.player.Player;
+-import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
 @@ -114,10 +_,11 @@
  
     public void m_7455_(BlockState p_48936_, ServerLevel p_48937_, BlockPos p_48938_, Random p_48939_) {

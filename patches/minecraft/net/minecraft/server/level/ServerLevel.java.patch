@@ -1,13 +1,13 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -128,6 +_,7 @@
- import net.minecraft.world.level.gameevent.vibrations.VibrationPath;
- import net.minecraft.world.level.levelgen.Heightmap;
- import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
-+import net.minecraft.world.level.levelgen.feature.StructureFeature;
- import net.minecraft.world.level.levelgen.structure.BoundingBox;
- import net.minecraft.world.level.levelgen.structure.StructureCheck;
- import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+@@ -87,7 +_,6 @@
+ import net.minecraft.world.entity.animal.Animal;
+ import net.minecraft.world.entity.animal.WaterAnimal;
+ import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ import net.minecraft.world.entity.npc.Npc;
+ import net.minecraft.world.entity.player.Player;
 @@ -138,6 +_,7 @@
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.level.storage.DimensionDataStorage;

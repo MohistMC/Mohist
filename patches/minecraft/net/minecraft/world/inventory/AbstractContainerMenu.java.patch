@@ -31,12 +31,11 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -28,6 +_,14 @@
+@@ -28,6 +_,13 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryBrewer;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.Event;

@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -18,6 +_,7 @@
- import net.minecraft.ChatFormatting;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.core.BlockPos;
-+import net.minecraft.core.Registry;
- import net.minecraft.core.SectionPos;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.nbt.ListTag;
 @@ -165,6 +_,12 @@
        return this.f_37687_ == Raid.RaidStatus.LOSS;
     }

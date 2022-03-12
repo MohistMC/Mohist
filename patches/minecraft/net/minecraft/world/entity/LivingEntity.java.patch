@@ -17,11 +17,18 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
-@@ -115,6 +_,12 @@
+@@ -75,7 +_,6 @@
+ import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+ import net.minecraft.world.entity.animal.FlyingAnimal;
+-import net.minecraft.world.entity.animal.Wolf;
+ import net.minecraft.world.entity.boss.wither.WitherBoss;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+@@ -115,6 +_,11 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
-+import org.bukkit.craftbukkit.v1_18_R2.CraftParticle;
 +import org.bukkit.craftbukkit.v1_18_R2.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.ArrowBodyCountChangeEvent;

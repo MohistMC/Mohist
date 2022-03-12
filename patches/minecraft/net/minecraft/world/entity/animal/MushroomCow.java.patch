@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -41,8 +_,10 @@
+@@ -41,8 +_,9 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import org.apache.commons.lang3.tuple.Pair;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTransformEvent;
  
 -public class MushroomCow extends Cow implements Shearable {
 +public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
