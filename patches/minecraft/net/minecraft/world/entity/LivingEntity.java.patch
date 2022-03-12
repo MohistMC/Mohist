@@ -1,5 +1,12 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.entity;
+ 
++import com.google.common.base.Function;
+ import com.google.common.base.Objects;
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
 @@ -9,14 +_,8 @@
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.DataResult;
@@ -17,23 +24,47 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
-@@ -75,7 +_,6 @@
+@@ -28,10 +_,7 @@
+ import net.minecraft.core.particles.BlockParticleOption;
+ import net.minecraft.core.particles.ItemParticleOption;
+ import net.minecraft.core.particles.ParticleTypes;
+-import net.minecraft.nbt.CompoundTag;
+-import net.minecraft.nbt.ListTag;
+-import net.minecraft.nbt.NbtOps;
+-import net.minecraft.nbt.Tag;
++import net.minecraft.nbt.*;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientboundAddMobPacket;
+ import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+@@ -42,6 +_,7 @@
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
+ import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.commands.TeleportCommand;
+ import net.minecraft.server.level.ServerChunkCache;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+@@ -74,8 +_,8 @@
+ import net.minecraft.world.entity.ai.attributes.Attributes;
  import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
  import net.minecraft.world.entity.ai.targeting.TargetingConditions;
++import net.minecraft.world.entity.animal.Animal;
  import net.minecraft.world.entity.animal.FlyingAnimal;
 -import net.minecraft.world.entity.animal.Wolf;
  import net.minecraft.world.entity.boss.wither.WitherBoss;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
-@@ -115,6 +_,11 @@
+@@ -115,6 +_,13 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
++import org.bukkit.Location;
++import org.bukkit.Statistic;
 +import org.bukkit.craftbukkit.v1_18_R2.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
-+import org.bukkit.event.entity.EntityPotionEffectEvent;
-+import org.bukkit.event.entity.EntityRegainHealthEvent;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
++import org.bukkit.event.entity.*;
++import org.bukkit.event.player.PlayerItemConsumeEvent;
  import org.slf4j.Logger;
  
  public abstract class LivingEntity extends Entity {
@@ -145,15 +176,66 @@
           this.m_146850_(GameEvent.f_157811_);
           this.m_5496_(soundevent, 1.0F, 1.0F);
        }
-@@ -718,7 +_,7 @@
+@@ -673,6 +_,17 @@
+          }
+       }
+ 
++      // CraftBukkit start
++      if (p_21096_.m_128441_("Bukkit.MaxHealth")) {
++         Tag nbtbase = p_21096_.m_128423_("Bukkit.MaxHealth");
++         if (nbtbase.m_7060_() == 5) {
++            this.m_21051_(Attributes.f_22276_).m_22100_(((FloatTag) nbtbase).m_7061_());
++         } else if (nbtbase.m_7060_() == 3) {
++            this.m_21051_(Attributes.f_22276_).m_22100_(((IntTag) nbtbase).m_7061_());
++         }
++      }
++      // CraftBukkit end
++
+       if (p_21096_.m_128425_("Health", 99)) {
+          this.m_21153_(p_21096_.m_128457_("Health"));
+       }
+@@ -711,6 +_,7 @@
+    protected void m_21217_() {
+       Iterator<MobEffect> iterator = this.f_20945_.keySet().iterator();
+ 
++      isTickingEffects = true; // CraftBukkit
+       try {
+          while(iterator.hasNext()) {
+             MobEffect mobeffect = iterator.next();
+@@ -718,7 +_,13 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
              })) {
 -               if (!this.f_19853_.f_46443_) {
 +               if (!this.f_19853_.f_46443_ && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent(this, mobeffectinstance))) {
++                  // CraftBukkit start
++                  EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, null, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.EXPIRATION);
++                  if (event.isCancelled()) {
++                     continue;
++                  }
++                  // CraftBukkit end
                    iterator.remove();
                    this.m_7285_(mobeffectinstance);
                 }
+@@ -729,6 +_,18 @@
+       } catch (ConcurrentModificationException concurrentmodificationexception) {
+       }
+ 
++      // CraftBukkit start
++      isTickingEffects = false;
++      for (ProcessableEffect e : effectsToProcess) {
++         if (e.effect != null) {
++            addEffect(e.effect, e.cause);
++         } else {
++            removeEffect(e.type, e.cause);
++         }
++      }
++      effectsToProcess.clear();
++      // CraftBukkit end
++
+       if (this.f_20948_) {
+          if (!this.f_19853_.f_46443_) {
+             this.m_8034_();
 @@ -768,8 +_,10 @@
           this.m_6842_(false);
        } else {
@@ -176,16 +258,20 @@
        return d0;
     }
  
-@@ -840,7 +_,7 @@
+@@ -840,7 +_,12 @@
        this.f_19804_.m_135381_(f_20962_, 0);
     }
  
--   public boolean m_21219_() {
-+   public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
++   // CraftBukkit start
+    public boolean m_21219_() {
++      return removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
++   }
++
++      public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
        if (this.f_19853_.f_46443_) {
           return false;
        } else {
-@@ -848,7 +_,13 @@
+@@ -848,7 +_,14 @@
  
           boolean flag;
           for(flag = false; iterator.hasNext(); flag = true) {
@@ -197,10 +283,11 @@
 +               continue;
 +            }
 +            this.m_7285_(effect);
++            // CraftBukkit end
              iterator.remove();
           }
  
-@@ -873,6 +_,11 @@
+@@ -873,21 +_,50 @@
        return this.f_20945_.get(p_21125_);
     }
  
@@ -212,28 +299,21 @@
     public final boolean m_7292_(MobEffectInstance p_21165_) {
        return this.m_147207_(p_21165_, (Entity)null);
     }
-@@ -882,6 +_,7 @@
-          return false;
-       } else {
-          MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionAddedEvent(this, mobeffectinstance, p_147208_, p_147209_));
-          if (mobeffectinstance == null) {
-             this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
-             this.m_142540_(p_147208_, p_147209_);
-@@ -895,7 +_,48 @@
-       }
-    }
  
+    public boolean m_147207_(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
++      return addEffect(p_147208_, p_147209_, EntityPotionEffectEvent.Cause.UNKNOWN);
++   }
++
 +   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(p_147208_, cause));
 +         return true;
 +      }
 +
-+      if (!this.m_7301_(p_147208_)) {
-+         return false;
-+      } else {
-+         MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
+       if (!this.m_7301_(p_147208_)) {
+          return false;
+       } else {
+          MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionAddedEvent(this, mobeffectinstance, p_147208_, p_147209_));
 +         // CraftBukkit start
 +         boolean override = false;
@@ -246,22 +326,22 @@
 +            return false;
 +         }
 +         // CraftBukkit end
-+         if (mobeffectinstance == null) {
-+            this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
-+            this.m_142540_(p_147208_, p_147209_);
-+            return true;
+          if (mobeffectinstance == null) {
+             this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
+             this.m_142540_(p_147208_, p_147209_);
+             return true;
+-         } else if (mobeffectinstance.m_19558_(p_147208_)) {
 +            // CraftBukkit start
 +         } else if (event.isOverride()) {
 +            mobeffectinstance.m_19558_(p_147208_);
-+            this.m_141973_(mobeffectinstance, true, p_147209_);
+             this.m_141973_(mobeffectinstance, true, p_147209_);
 +            // CraftBukkit end
-+            return true;
-+         } else {
-+            return false;
-+         }
-+      }
-+   }
-+
+             return true;
+          } else {
+             return false;
+@@ -896,6 +_,9 @@
+    }
+ 
     public boolean m_7301_(MobEffectInstance p_21197_) {
 +      net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(this, p_21197_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
@@ -269,27 +349,45 @@
        if (this.m_6336_() == MobType.f_21641_) {
           MobEffect mobeffect = p_21197_.m_19544_();
           if (mobeffect == MobEffects.f_19605_ || mobeffect == MobEffects.f_19614_) {
-@@ -928,6 +_,7 @@
+@@ -922,12 +_,36 @@
+       return this.m_6336_() == MobType.f_21641_;
     }
  
+-   @Nullable
+    public MobEffectInstance m_6234_(@Nullable MobEffect p_21164_) {
++      return removeEffectNoUpdate(p_21164_, EntityPotionEffectEvent.Cause.UNKNOWN);
++   }
++   @Nullable
++   public MobEffectInstance removeEffectNoUpdate(@Nullable MobEffect p_21164_, EntityPotionEffectEvent.Cause cause) {
++      if (isTickingEffects) {
++         effectsToProcess.add(new ProcessableEffect(p_21164_, cause));
++         return null;
++      }
++
++      MobEffectInstance effect = this.f_20945_.get(p_21164_);
++      if (effect == null) {
++         return null;
++      }
++
++      EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause);
++      if (event.isCancelled()) {
++         return null;
++      }
++
+       return this.f_20945_.remove(p_21164_);
+    }
+ 
++   // Mohist TODO
     public boolean m_21195_(MobEffect p_21196_) {
++      return removeEffect(p_21196_, EntityPotionEffectEvent.Cause.UNKNOWN);
++   }
++
++   public boolean removeEffect(MobEffect p_21196_, EntityPotionEffectEvent.Cause cause) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, p_21196_))) return false;
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
-@@ -937,6 +_,11 @@
-       }
-    }
- 
-+   // Mohist TODO
-+   public boolean removeEffect(MobEffect p_21196_, EntityPotionEffectEvent.Cause cause) {
-+      return m_21195_(p_21196_);
-+   }
-+
-    protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
-       this.f_20948_ = true;
-       if (!this.f_19853_.f_46443_) {
-@@ -963,12 +_,35 @@
+@@ -963,19 +_,64 @@
  
     }
  
@@ -300,7 +398,14 @@
 +   public void resetHealRegainReason() {
 +      this.healRegainReason = EntityRegainHealthEvent.RegainReason.CUSTOM;
 +   }
++
++   // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
     public void m_5634_(float p_21116_) {
++      heal(p_21116_, EntityRegainHealthEvent.RegainReason.CUSTOM);
++   }
++
++   public void heal(float p_21116_, EntityRegainHealthEvent.RegainReason regainReason) {
++      putHealRegainReason(healRegainReason);
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
        float f = this.m_21223_();
@@ -316,17 +421,40 @@
 +         }
 +         // CraftBukkit end
        }
- 
-+   }
-+
-+   public void heal(float p_21116_, EntityRegainHealthEvent.RegainReason healRegainReason) {
-+      putHealRegainReason(healRegainReason);
-+      m_5634_(p_21116_);
+-
 +      resetHealRegainReason();
     }
  
     public float m_21223_() {
-@@ -984,6 +_,7 @@
++      // CraftBukkit start - Use unscaled health
++      if (this instanceof ServerPlayer) {
++         return (float) ((ServerPlayer) this).getBukkitEntity().getHealth();
++      }
++      // CraftBukkit end
+       return this.f_19804_.m_135370_(f_20961_);
+    }
+ 
+    public void m_21153_(float p_21154_) {
++      // CraftBukkit start - Handle scaled health
++      if (this instanceof ServerPlayer) {
++         org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer player = ((ServerPlayer) this).getBukkitEntity();
++         // Squeeze
++         if (p_21154_ < 0.0F) {
++            player.setRealHealth(0.0D);
++         } else if (p_21154_ > player.getMaxHealth()) {
++            player.setRealHealth(player.getMaxHealth());
++         } else {
++            player.setRealHealth(p_21154_);
++         }
++
++         player.updateScaledHealth(false);
++         return;
++      }
++      // CraftBukkit end
+       this.f_19804_.m_135381_(f_20961_, Mth.m_14036_(p_21154_, 0.0F, this.m_21233_()));
+    }
+ 
+@@ -984,11 +_,12 @@
     }
  
     public boolean m_6469_(DamageSource p_21016_, float p_21017_) {
@@ -334,10 +462,20 @@
        if (this.m_6673_(p_21016_)) {
           return false;
        } else if (this.f_19853_.f_46443_) {
-@@ -1002,17 +_,20 @@
-          boolean flag = false;
+          return false;
+-      } else if (this.m_21224_()) {
++      } else if (this.m_146910_() || this.f_20890_ || this.m_21223_() <= 0.0F) { // CraftBukkit - Don't allow entities that got set to dead/killed elsewhere to get damaged and die
+          return false;
+       } else if (p_21016_.m_19384_() && this.m_21023_(MobEffects.f_19607_)) {
+          return false;
+@@ -999,45 +_,69 @@
+ 
+          this.f_20891_ = 0;
+          float f = p_21017_;
+-         boolean flag = false;
++         boolean flag = f > 0.0F && this.m_21275_(p_21016_); // Copied from below
           float f1 = 0.0F;
-          if (p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
+-         if (p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
 -            this.m_7909_(p_21017_);
 -            f1 = p_21017_;
 -            p_21017_ = 0.0F;
@@ -345,6 +483,8 @@
 -               Entity entity = p_21016_.m_7640_();
 -               if (entity instanceof LivingEntity) {
 -                  this.m_6728_((LivingEntity)entity);
++         //CraftBukkit - Moved into damageEntity0(DamageSource, float)
++         if (false && f > 0.0F && this.m_21275_(p_21016_)) {
 +            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, p_21016_, p_21017_);
 +            if(!ev.isCanceled()) {
 +               if (ev.shieldTakesDamage()) this.m_7909_(p_21017_);
@@ -364,6 +504,56 @@
           }
  
           this.f_20924_ = 1.5F;
+          boolean flag1 = true;
+-         if ((float)this.f_19802_ > 10.0F) {
++         if ((float) this.f_19802_ > (float) this.f_20926_ / 2.0F) { // CraftBukkit - restore use of maxNoDamageTicks
+             if (p_21017_ <= this.f_20898_) {
+                return false;
+             }
+ 
+-            this.m_6475_(p_21016_, p_21017_ - this.f_20898_);
++            // CraftBukkit start
++            if (!this.damageEntity0(p_21016_, p_21017_ - this.f_20898_)) {
++               return false;
++            }
++            // CraftBukkit end
+             this.f_20898_ = p_21017_;
+             flag1 = false;
+          } else {
++            // CraftBukkit start
++            if (!this.damageEntity0(p_21016_, f)) {
++               return false;
++            }
+             this.f_20898_ = p_21017_;
+-            this.f_19802_ = 20;
+-            this.m_6475_(p_21016_, p_21017_);
++            this.f_19802_ = this.f_20926_; // CraftBukkit - restore use of maxNoDamageTicks
++            // this.damageEntity0(damagesource, f);
++            // CraftBukkit end
+             this.f_20917_ = 10;
+             this.f_20916_ = this.f_20917_;
+          }
+ 
+-         if (p_21016_.m_146705_() && !this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++         // CraftBukkit - Moved into damageEntity0(DamageSource, float)
++         if (false && p_21016_.m_146705_() && !this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
+             this.m_142642_(p_21016_, p_21017_);
+             p_21017_ *= 0.75F;
+          }
+ 
++         // CraftBukkit start
++         if (this instanceof Animal) {
++            ((Animal) this).m_27594_();
++            if (this instanceof TamableAnimal) {
++               ((TamableAnimal) this).m_21839_(false);
++            }
++         }
++         // CraftBukkit end
++
++
+          this.f_20918_ = 0.0F;
+          Entity entity1 = p_21016_.m_7639_();
+          if (entity1 != null) {
 @@ -1048,11 +_,11 @@
              if (entity1 instanceof Player) {
                 this.f_20889_ = 100;
@@ -389,21 +579,62 @@
              }
           }
  
-@@ -1163,12 +_,12 @@
-          if (itemstack != null) {
-             if (this instanceof ServerPlayer) {
+@@ -1151,31 +_,42 @@
+       } else {
+          ItemStack itemstack = null;
+ 
++         // CraftBukkit start
++         ItemStack itemstack1 = ItemStack.f_41583_;
+          for(InteractionHand interactionhand : InteractionHand.values()) {
+-            ItemStack itemstack1 = this.m_21120_(interactionhand);
++            itemstack1 = this.m_21120_(interactionhand);
+             if (itemstack1.m_150930_(Items.f_42747_)) {
+                itemstack = itemstack1.m_41777_();
++               // itemstack1.subtract(1); // CraftBukkit
++               break;
++            }
++         }
++
++         EntityResurrectEvent event = new EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity());
++         event.setCancelled(itemstack == null);
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (!event.isCancelled()) {
++            if (!itemstack1.m_41619_()) {
+                itemstack1.m_41774_(1);
+-               break;
+             }
+-         }
+-
+-         if (itemstack != null) {
+-            if (this instanceof ServerPlayer) {
++            if (itemstack != null && this instanceof ServerPlayer) {
++               // CraftBukkit end
                 ServerPlayer serverplayer = (ServerPlayer)this;
 -               serverplayer.m_36246_(Stats.f_12982_.m_12902_(Items.f_42747_));
 +               serverplayer.m_6278_(Stats.f_12982_.m_12902_(Items.f_42747_), 1);
                 CriteriaTriggers.f_10551_.m_74431_(serverplayer, itemstack);
              }
  
-             this.m_21153_(1.0F);
+-            this.m_21153_(1.0F);
 -            this.m_21219_();
+-            this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 900, 1));
+-            this.m_7292_(new MobEffectInstance(MobEffects.f_19617_, 100, 1));
+-            this.m_7292_(new MobEffectInstance(MobEffects.f_19607_, 800, 0));
++            // CraftBukkit start
 +            this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TOTEM);
-             this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 900, 1));
-             this.m_7292_(new MobEffectInstance(MobEffects.f_19617_, 100, 1));
-             this.m_7292_(new MobEffectInstance(MobEffects.f_19607_, 800, 0));
++            this.addEffect(new MobEffectInstance(MobEffects.f_19605_, 900, 1), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TOTEM);
++            this.addEffect(new MobEffectInstance(MobEffects.f_19617_, 100, 1), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TOTEM);
++            this.addEffect(new MobEffectInstance(MobEffects.f_19607_, 800, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TOTEM);
++            // CraftBukkit end
+             this.f_19853_.m_7605_(this, (byte)35);
+          }
+ 
+-         return itemstack != null;
++         return !event.isCancelled();
+       }
+    }
+ 
 @@ -1233,6 +_,7 @@
     }
  
@@ -412,7 +643,7 @@
        if (!this.m_146910_() && !this.f_20890_) {
           Entity entity = p_21014_.m_7639_();
           LivingEntity livingentity = this.m_21232_();
-@@ -1268,10 +_,10 @@
+@@ -1268,17 +_,25 @@
        if (!this.f_19853_.f_46443_) {
           boolean flag = false;
           if (p_21269_ instanceof WitherBoss) {
@@ -421,11 +652,28 @@
                 BlockPos blockpos = this.m_142538_();
                 BlockState blockstate = Blocks.f_50070_.m_49966_();
 -               if (this.f_19853_.m_8055_(blockpos).m_60795_() && blockstate.m_60710_(this.f_19853_, blockpos)) {
+-                  this.f_19853_.m_7731_(blockpos, blockstate, 3);
+-                  flag = true;
 +               if (this.f_19853_.m_46859_(blockpos) && blockstate.m_60710_(this.f_19853_, blockpos)) {
-                   this.f_19853_.m_7731_(blockpos, blockstate, 3);
-                   flag = true;
++                  // CraftBukkit start - call EntityBlockFormEvent for Wither Rose
++                  flag = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockFormEvent(this.f_19853_, blockpos, blockstate, 3, this);
++                  // CraftBukkit end
                 }
-@@ -1288,12 +_,9 @@
+             }
+ 
+             if (!flag) {
+                ItemEntity itementity = new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20186_(), this.m_20189_(), new ItemStack(Items.f_41951_));
++               // CraftBukkit start
++               org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
++               CraftEventFactory.callEvent(event);
++               if (event.isCancelled()) {
++                  return;
++               }
++               // CraftBukkit end
+                this.f_19853_.m_7967_(itementity);
+             }
+          }
+@@ -1288,31 +_,42 @@
  
     protected void m_6668_(DamageSource p_21192_) {
        Entity entity = p_21192_.m_7639_();
@@ -440,10 +688,20 @@
 +      this.captureDrops(new java.util.ArrayList<>());
  
        boolean flag = this.f_20889_ > 0;
++      this.m_5907_(); // CraftBukkit - from below
        if (this.m_6125_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_)) {
-@@ -1303,6 +_,10 @@
- 
-       this.m_5907_();
+          this.m_7625_(p_21192_, flag);
+          this.m_7472_(p_21192_, i, flag);
+       }
+-
+-      this.m_5907_();
++      // CraftBukkit start - Call death event
++      CraftEventFactory.callEntityDeathEvent(this, this.drops);
++      this.drops = new ArrayList<>();
++      // CraftBukkit end
++
++
++      // this.dropInventory();// CraftBukkit - moved up
        this.m_21226_();
 +
 +      Collection<ItemEntity> drops = captureDrops(null);
@@ -452,16 +710,24 @@
     }
  
     protected void m_5907_() {
-@@ -1310,7 +_,8 @@
- 
-    protected void m_21226_() {
-       if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
--         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), this.m_6552_(this.f_20888_));
-+         int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, this.m_6552_(this.f_20888_));
-+         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), reward);
-       }
- 
     }
+ 
++
+    protected void m_21226_() {
+-      if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
+-         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), this.m_6552_(this.f_20888_));
+-      }
+-
++      // CraftBukkit start - Update getExpReward() above if the removed if() changes!
++       if(true){
++          int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, this.expToDrop);
++          ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), reward);
++          this.expToDrop = 0;
++       }
++      // CraftBukkit end
+    }
+ 
+    protected void m_7472_(DamageSource p_21018_, int p_21019_, boolean p_21020_) {
 @@ -1326,7 +_,8 @@
        ResourceLocation resourcelocation = this.m_5743_();
        LootTable loottable = this.f_19853_.m_142572_().m_129898_().m_79217_(resourcelocation);
@@ -503,7 +769,7 @@
        }
     }
  
-@@ -1420,6 +_,11 @@
+@@ -1420,12 +_,22 @@
     }
  
     public boolean m_142535_(float p_147187_, float p_147188_, DamageSource p_147189_) {
@@ -515,6 +781,18 @@
        boolean flag = super.m_142535_(p_147187_, p_147188_, p_147189_);
        int i = this.m_5639_(p_147187_, p_147188_);
        if (i > 0) {
++         // CraftBukkit start
++         if (!this.m_6469_(p_147189_, (float) i)) {
++            return true;
++         }
++         // CraftBukkit end
+          this.m_5496_(this.m_5896_(i), 1.0F, 1.0F);
+          this.m_21229_();
+-         this.m_6469_(p_147189_, (float)i);
++         // this.damageEntity(damagesource, (float) i); // CraftBukkit - moved up
+          return true;
+       } else {
+          return flag;
 @@ -1443,9 +_,10 @@
           int i = Mth.m_14107_(this.m_20185_());
           int j = Mth.m_14107_(this.m_20186_() - (double)0.2F);
@@ -528,6 +806,25 @@
              this.m_5496_(soundtype.m_56779_(), soundtype.m_56773_() * 0.5F, soundtype.m_56774_() * 0.75F);
           }
  
+@@ -1473,7 +_,7 @@
+ 
+    protected float m_21161_(DamageSource p_21162_, float p_21163_) {
+       if (!p_21162_.m_19376_()) {
+-         this.m_6472_(p_21162_, p_21163_);
++         // this.damageArmor(damagesource, f); // CraftBukkit - Moved into damageEntity0(DamageSource, float)
+          p_21163_ = CombatRules.m_19272_(p_21163_, (float)this.m_21230_(), (float)this.m_21133_(Attributes.f_22285_));
+       }
+ 
+@@ -1484,7 +_,8 @@
+       if (p_21193_.m_19379_()) {
+          return p_21194_;
+       } else {
+-         if (this.m_21023_(MobEffects.f_19606_) && p_21193_ != DamageSource.f_19317_) {
++         // CraftBukkit - Moved to damageEntity0(DamageSource, float)
++         if (false && this.m_21023_(MobEffects.f_19606_) && p_21193_ != DamageSource.f_19317_) {
+             int i = (this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
+             int j = 25 - i;
+             float f = p_21194_ * (float)j;
 @@ -1493,9 +_,9 @@
              float f2 = f1 - p_21194_;
              if (f2 > 0.0F && f2 < 3.4028235E37F) {
@@ -540,31 +837,203 @@
                 }
              }
           }
-@@ -1515,19 +_,22 @@
+@@ -1513,25 +_,182 @@
+       }
+    }
  
-    protected void m_6475_(DamageSource p_21240_, float p_21241_) {
+-   protected void m_6475_(DamageSource p_21240_, float p_21241_) {
++   protected void m_6475_(final DamageSource p_21240_, float p_21241_){
++      damageEntity0(p_21240_, p_21241_);
++   }
++
++   // CraftBukkit start
++   protected boolean damageEntity0(final DamageSource p_21240_, float p_21241_) { // void -> boolean, add final
        if (!this.m_6673_(p_21240_)) {
 +         p_21241_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
-+         if (p_21241_ <= 0) return;
++         if (p_21241_ <= 0) return false;
           p_21241_ = this.m_21161_(p_21240_, p_21241_);
           p_21241_ = this.m_6515_(p_21240_, p_21241_);
-          float f2 = Math.max(p_21241_ - this.m_6103_(), 0.0F);
-          this.m_7911_(this.m_6103_() - (p_21241_ - f2));
-          float f = p_21241_ - f2;
-          if (f > 0.0F && f < 3.4028235E37F && p_21240_.m_7639_() instanceof ServerPlayer) {
+-         float f2 = Math.max(p_21241_ - this.m_6103_(), 0.0F);
+-         this.m_7911_(this.m_6103_() - (p_21241_ - f2));
+-         float f = p_21241_ - f2;
+-         if (f > 0.0F && f < 3.4028235E37F && p_21240_.m_7639_() instanceof ServerPlayer) {
 -            ((ServerPlayer)p_21240_.m_7639_()).m_36222_(Stats.f_12929_, Math.round(f * 10.0F));
-+            ((ServerPlayer)p_21240_.m_7639_()).m_6278_(Stats.f_12988_.m_12902_(Stats.f_12929_), Math.round(f * 10.0F));
-          }
- 
-+         f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, f2);
-          if (f2 != 0.0F) {
-             float f1 = this.m_21223_();
+-         }
+-
+-         if (f2 != 0.0F) {
+-            float f1 = this.m_21223_();
 -            this.m_21153_(f1 - f2);
-             this.m_21231_().m_19289_(p_21240_, f1, f2);
-+            this.m_21153_(f1 - f2); // Forge: moved to fix MC-121048
-             this.m_7911_(this.m_6103_() - f2);
-             this.m_146852_(GameEvent.f_157808_, p_21240_.m_7639_());
+-            this.m_21231_().m_19289_(p_21240_, f1, f2);
+-            this.m_7911_(this.m_6103_() - f2);
+-            this.m_146852_(GameEvent.f_157808_, p_21240_.m_7639_());
++         final boolean human = this instanceof Player;
++         float originalDamage = p_21241_;
++         Function<Double, Double> hardHat = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double f) {
++               if (p_21240_.m_146705_() && !LivingEntity.this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++                  return -(f - (f * 0.75F));
++
++               }
++               return -0.0;
++            }
++         };
++         float hardHatModifier = hardHat.apply((double) p_21241_).floatValue();
++         p_21241_ += hardHatModifier;
++
++         Function<Double, Double> blocking = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double f) {
++               return -((LivingEntity.this.m_21275_(p_21240_)) ? f : 0.0);
++            }
++         };
++         float blockingModifier = blocking.apply((double) p_21241_).floatValue();
++         p_21241_ += blockingModifier;
++
++         Function<Double, Double> armor = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double f) {
++               return -(f - LivingEntity.this.m_21161_(p_21240_, f.floatValue()));
++            }
++         };
++         float armorModifier = armor.apply((double) p_21241_).floatValue();
++         p_21241_ += armorModifier;
++
++         Function<Double, Double> resistance = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double f) {
++               if (!p_21240_.m_19379_() && LivingEntity.this.m_21023_(MobEffects.f_19606_) && p_21240_ != DamageSource.f_19317_) {
++                  int i = (LivingEntity.this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
++                  int j = 25 - i;
++                  float f1 = f.floatValue() * (float) j;
++                  return -(f - (f1 / 25.0F));
++               }
++               return -0.0;
++            }
++         };
++         float resistanceModifier = resistance.apply((double) p_21241_).floatValue();
++         p_21241_ += resistanceModifier;
++
++         Function<Double, Double> magic = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double f) {
++               return -(f - LivingEntity.this.m_6515_(p_21240_, f.floatValue()));
++            }
++         };
++         float magicModifier = magic.apply((double) p_21241_).floatValue();
++         p_21241_ += magicModifier;
++
++         Function<Double, Double> absorption = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double f) {
++               return -(Math.max(f - Math.max(f - LivingEntity.this.m_6103_(), 0.0F), 0.0F));
++            }
++         };
++         float absorptionModifier = absorption.apply((double) p_21241_).floatValue();
++
++         EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, p_21240_, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
++         if (p_21240_.m_7639_() instanceof Player) {
++            ((Player) p_21240_.m_7639_()).m_36334_(); // Moved from EntityHuman in order to make the cooldown reset get called after the damage event is fired
++         }
++         if (event.isCancelled()) {
++            return false;
++         }
++
++         p_21241_ = (float) event.getFinalDamage();
++
++         // Resistance
++         if (event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) < 0) {
++            float f3 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE);
++            if (f3 > 0.0F && f3 < 3.4028235E37F) {
++               if (this instanceof ServerPlayer) {
++                  ((ServerPlayer) this).m_36222_(Stats.f_12934_, Math.round(f3 * 10.0F));
++               } else if (p_21240_.m_7639_() instanceof ServerPlayer) {
++                  ((ServerPlayer) p_21240_.m_7639_()).m_36222_(Stats.f_12930_, Math.round(f3 * 10.0F));
++               }
++            }
++         }
++
++         // Apply damage to helmet
++         if (p_21240_.m_146705_() && !this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++            this.m_142642_(p_21240_, p_21241_);
++         }
++
++         // Apply damage to armor
++         if (!p_21240_.m_19376_()) {
++            float armorDamage = (float) (event.getDamage() + event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) + event.getDamage(EntityDamageEvent.DamageModifier.HARD_HAT));
++            this.m_6472_(p_21240_, armorDamage);
++         }
++
++         // Apply blocking code // PAIL: steal from above
++         if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
++            this.f_19853_.m_7605_(this, (byte) 29); // SPIGOT-4635 - shield damage sound
++            this.m_7909_((float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING));
++            Entity entity = p_21240_.m_7640_();
++
++            if (entity instanceof LivingEntity) {
++               this.m_6728_((LivingEntity) entity);
++            }
++         }
++
++         absorptionModifier = (float) -event.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION);
++         this.m_7911_(Math.max(this.m_6103_() - absorptionModifier, 0.0F));
++         float f2 = absorptionModifier;
++
++         if (f2 > 0.0F && f2 < 3.4028235E37F && this instanceof Player) {
++            ((Player) this).m_36222_(Stats.f_12933_, Math.round(f2 * 10.0F));
++         }
++         if (f2 > 0.0F && f2 < 3.4028235E37F && p_21240_.m_7639_() instanceof ServerPlayer) {
++            ((ServerPlayer)  p_21240_.m_7639_()).m_36222_(Stats.f_12929_, Math.round(f2 * 10.0F));
++         }
++
++         if (p_21241_ > 0 || !human) {
++            if (human) {
++               // PAIL: Be sure to drag all this code from the EntityHuman subclass each update.
++               ((Player) this).causeFoodExhaustion(p_21240_.m_19377_(), org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
++               if (p_21241_ < 3.4028235E37F) {
++                  ((Player) this).m_36222_(Stats.f_12931_, Math.round(p_21241_ * 10.0F));
++               }
++            }
++            // CraftBukkit end
++            f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, f2);
++            if (f2 != 0.0F) {
++               float f1 = this.m_21223_();
++               this.m_21231_().m_19289_(p_21240_, f1, f2);
++               this.m_21153_(f1 - f2); // Forge: moved to fix MC-121048+                /
++               // CraftBukkit start
++               if (!human) {
++                  this.m_7911_(this.m_6103_() - p_21241_);
++               }
++               this.m_146852_(GameEvent.f_157808_, p_21240_.m_7639_());
++            }
++
++            return true;
++         } else {
++            // Duplicate triggers if blocking
++            if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
++               if (this instanceof ServerPlayer) {
++                  CriteriaTriggers.f_10574_.m_35174_((ServerPlayer) this, p_21240_, p_21241_, originalDamage, true);
++                  f2 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
++                  if (f2 > 0.0F && f2 < 3.4028235E37F) {
++                     ((ServerPlayer) this).m_36222_(Stats.f_12932_, Math.round(originalDamage * 10.0F));
++                  }
++               }
++
++               if (p_21240_.m_7639_() instanceof ServerPlayer) {
++                  CriteriaTriggers.f_10573_.m_60112_((ServerPlayer) p_21240_.m_7639_(), this, p_21240_, p_21241_, originalDamage, true);
++               }
++
++               return false;
++            } else {
++               return originalDamage > 0;
++            }
++            // CraftBukkit end
           }
+       }
++      return false; // CraftBukkit
+    }
+ 
+    public CombatTracker m_21231_() {
 @@ -1558,9 +_,19 @@
     }
  
@@ -597,6 +1066,14 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
+@@ -1847,6 +_,7 @@
+ 
+    public abstract ItemStack m_6844_(EquipmentSlot p_21127_);
+ 
++
+    public abstract void m_8061_(EquipmentSlot p_21036_, ItemStack p_21037_);
+ 
+    protected void m_181122_(ItemStack p_181123_) {
 @@ -1941,14 +_,15 @@
        }
  
@@ -640,7 +1117,12 @@
              this.m_19920_(f5, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
-@@ -2069,7 +_,7 @@
+@@ -2065,11 +_,12 @@
+             }
+ 
+             if (this.f_19861_ && !this.f_19853_.f_46443_) {
++               if (m_20291_(7) && !CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) // CraftBukkit
+                this.m_20115_(7, false);
              }
           } else {
              BlockPos blockpos = this.m_20099_();
@@ -692,6 +1174,37 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
+@@ -2565,6 +_,7 @@
+       }
+ 
+       if (!this.f_19853_.f_46443_) {
++         if (flag != this.m_20291_(7) && !CraftEventFactory.callToggleGlideEvent(this, flag).isCancelled()) // CraftBukkit
+          this.m_20115_(7, flag);
+       }
+ 
+@@ -2714,12 +_,19 @@
+    }
+ 
+    public boolean m_6087_() {
+-      return !this.m_146910_();
++      return !this.m_146910_() && this.collides; // CraftBukkit
+    }
+ 
+    public boolean m_6094_() {
+-      return this.m_6084_() && !this.m_5833_() && !this.m_6147_();
+-   }
++      return this.m_6084_() && !this.m_5833_() && !this.m_6147_() && this.collides; // CraftBukkit
++   }
++
++   // CraftBukkit start - collidable API
++   @Override
++   public boolean canCollideWithBukkit(Entity entity) {
++      return m_6094_() && this.collides != this.collidableExemptions.contains(entity.m_142081_());
++   }
++   // CraftBukkit end
+ 
+    public float m_6080_() {
+       return this.f_20885_;
 @@ -2775,8 +_,16 @@
  
     private void m_21329_() {
@@ -733,16 +1246,38 @@
           this.f_19853_.m_7106_(new ItemParticleOption(ParticleTypes.f_123752_, p_21061_), vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, vec3.f_82479_, vec3.f_82480_ + 0.05D, vec3.f_82481_);
        }
  
-@@ -2903,7 +_,8 @@
+@@ -2903,8 +_,29 @@
           } else {
              if (!this.f_20935_.m_41619_() && this.m_6117_()) {
                 this.m_21137_(this.f_20935_, 16);
 -               ItemStack itemstack = this.f_20935_.m_41671_(this.f_19853_, this);
-+            ItemStack copy = this.f_20935_.m_41777_();
-+            ItemStack itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), this.f_20935_.m_41671_(this.f_19853_, this));
-                if (itemstack != this.f_20935_) {
+-               if (itemstack != this.f_20935_) {
++               ItemStack copy = this.f_20935_.m_41777_();
++               // CraftBukkit start - fire PlayerItemConsumeEvent
++               ItemStack itemstack;
++               if (this instanceof ServerPlayer) {
++                  org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(this.f_20935_);
++                  PlayerItemConsumeEvent event = new PlayerItemConsumeEvent((org.bukkit.entity.Player) this.getBukkitEntity(), craftItem);
++                  f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++                  if (event.isCancelled()) {
++                     // Update client
++                     ((ServerPlayer) this).getBukkitEntity().updateInventory();
++                     ((ServerPlayer) this).getBukkitEntity().updateScaledHealth();
++                     return;
++                  }
++
++                  //Bukkit Method: itemstack = (craftItem.equals(event.getItem())) ? this.useItem.finishUsingItem(this.level, this) : CraftItemStack.asNMSCopy(event.getItem()).finishUsingItem(level, this);
++                  itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), this.f_20935_.m_41671_(this.f_19853_, this));
++               } else {
++                  itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), this.f_20935_.m_41671_(this.f_19853_, this));
++               }
++               // CraftBukkit end
++
++            if (itemstack != this.f_20935_) {
                    this.m_21008_(interactionhand, itemstack);
                 }
+ 
 @@ -2929,7 +_,11 @@
  
     public void m_21253_() {
@@ -755,6 +1290,75 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
+@@ -2977,6 +_,12 @@
+    }
+ 
+    public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
++      // CraftBukkit start
++      return randomTeleport(p_20985_, p_20986_, p_20987_, p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN).orElse(false);
++   }
++
++   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      // CraftBukkit end
+       double d0 = this.m_20185_();
+       double d1 = this.m_20186_();
+       double d2 = this.m_20189_();
+@@ -2998,17 +_,42 @@
+             }
+          }
+ 
+-         if (flag1) {
+-            this.m_6021_(p_20985_, d3, p_20987_);
++         if (p_20988_) {
++            // CraftBukkit start - Teleport event
++            // this.teleportTo(p_20985_, d3, p_20987_);
++
++            // first set position, to check if the place to teleport is valid
++            this.m_6034_(p_20985_, d3, p_20987_);
+             if (level.m_45786_(this) && !level.m_46855_(this.m_142469_())) {
+                flag = true;
+             }
++            // now revert and call event if the teleport place is valid
++            this.m_6034_(d0, d1, d2);
++
++            if (flag1) {
++               if (!(this instanceof ServerPlayer)) {
++                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.f_19853_.getWorld(), d0, d1, d2), new Location(this.f_19853_.getWorld(), d0, d3, d2));
++                  this.f_19853_.getCraftServer().getPluginManager().callEvent(teleport);
++                  if (!teleport.isCancelled()) {
++                     Location to = teleport.getTo();
++                     this.m_6021_(to.getX(), to.getY(), to.getZ());
++                  } else {
++                     return Optional.empty();
++                  }
++               } else {
++                  // player teleport event is called in the underlining code
++                  if (((ServerPlayer) this).f_8906_.teleport(d0, d3, d2, this.m_146908_(), this.m_146909_(), java.util.Collections.emptySet(), false, cause)) {
++                     return Optional.empty();
++                  }
++               }
++            }
++            // CraftBukkit end
+          }
+       }
+ 
+       if (!flag) {
+-         this.m_6021_(d0, d1, d2);
+-         return false;
++         // this.enderTeleportTo(d3, d4, d5); // CraftBukkit - already set the location back
++         return Optional.of(false); // CraftBukkit
+       } else {
+          if (p_20988_) {
+             level.m_7605_(this, (byte)46);
+@@ -3018,7 +_,7 @@
+             ((PathfinderMob)this).m_21573_().m_26573_();
+          }
+ 
+-         return true;
++         return Optional.of(true); // CraftBukkit
+       }
+    }
+ 
 @@ -3076,8 +_,8 @@
        }
  
@@ -796,6 +1400,15 @@
     }
  
     public boolean m_5830_() {
+@@ -3162,7 +_,7 @@
+       if (item.m_41472_()) {
+          for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {
+             if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.nextFloat() < pair.getSecond()) {
+-               p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
++               p_21066_.addEffect(new MobEffectInstance(pair.getFirst()), EntityPotionEffectEvent.Cause.FOOD);
+             }
+          }
+       }
 @@ -3196,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
@@ -879,20 +1492,30 @@
           }
        } else {
           return EquipmentSlot.HEAD;
-@@ -3278,6 +_,36 @@
+@@ -3278,6 +_,46 @@
        this.m_20334_((double)((float)p_147206_.m_131560_() / 8000.0F), (double)((float)p_147206_.m_131561_() / 8000.0F), (double)((float)p_147206_.m_131562_() / 8000.0F));
     }
  
++   // CraftBukkit start
 +   public int getExpReward() {
-+      return 0;
++      if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
++         int i = this.m_6552_(this.f_20888_);
++         return i;
++      } else {
++         return 0;
++      }
 +   }
++   // CraftBukkit end
++
 +
     public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
     }
 +
-+   public void setItemSlot(EquipmentSlot slot, ItemStack asNMSCopy, boolean silent) {
-+      this.m_8061_(slot, asNMSCopy);
++   // CraftBukkit start
++   public void setItemSlot(EquipmentSlot enumitemslot, ItemStack itemstack, boolean silent) {
++      this.m_8061_(enumitemslot, itemstack);
 +   }
++   // CraftBukkit end
 +
 +   // CraftBukkit start
 +   private boolean isTickingEffects = false;

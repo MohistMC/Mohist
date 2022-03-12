@@ -278,44 +278,7 @@
          }
  
          this.getChunkSource().getDataStorage().save();
-@@ -812,15 +906,34 @@
- 
-     @Override
-     public boolean addFreshEntity(Entity entity) {
--        return this.addEntity(entity);
-+        // CraftBukkit start
-+        return this.addFreshEntity(entity, CreatureSpawnEvent.SpawnReason.DEFAULT);
-+    }
-+
-+    @Override
-+    public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-+        return this.addEntity(entity, reason);
-+        // CraftBukkit end
-     }
- 
-     public boolean addWithUUID(Entity entity) {
--        return this.addEntity(entity);
-+        // CraftBukkit start
-+        return this.addWithUUID(entity, CreatureSpawnEvent.SpawnReason.DEFAULT);
-+    }
-+
-+    public boolean addWithUUID(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-+        return this.addEntity(entity, reason);
-+        // CraftBukkit end
-     }
- 
-     public void addDuringTeleport(Entity entity) {
--        this.addEntity(entity);
-+        // CraftBukkit start
-+        this.addDuringTeleport(entity, CreatureSpawnEvent.SpawnReason.DEFAULT);
-+    }
-+
-+    public void addDuringTeleport(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-+        this.addEntity(entity, reason);
-+        // CraftBukkit end
-     }
- 
-     public void addDuringCommandTeleport(EntityPlayer entityplayer) {
+
 @@ -851,24 +964,36 @@
          this.entityManager.addNewEntity(entityplayer);
      }

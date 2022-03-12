@@ -156,7 +156,7 @@
        }
     }
  
-@@ -740,7 +_,13 @@
+@@ -740,15 +_,33 @@
     }
  
     public boolean m_7967_(Entity p_8837_) {
@@ -171,6 +171,28 @@
     }
  
     public boolean m_8847_(Entity p_8848_) {
+-      return this.m_8872_(p_8848_);
++      // CraftBukkit start
++      return this.addWithUUID(p_8848_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   public boolean addWithUUID(Entity p_8848_, CreatureSpawnEvent.SpawnReason reason) {
++      return this.addEntity(p_8848_, reason);
++      // CraftBukkit end
+    }
+ 
+    public void m_143334_(Entity p_143335_) {
+-      this.m_8872_(p_143335_);
++      // CraftBukkit start
++      this.addDuringTeleport(p_143335_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   public void addDuringTeleport(Entity p_143335_, CreatureSpawnEvent.SpawnReason reason) {
++      this.addEntity(p_143335_, reason);
++      // CraftBukkit end
+    }
+ 
+    public void m_8622_(ServerPlayer p_8623_) {
 @@ -767,7 +_,55 @@
        this.m_8853_(p_8846_);
     }
