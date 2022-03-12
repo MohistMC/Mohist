@@ -1,12 +1,5 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -1,6 +_,5 @@
- package net.minecraft.core.dispenser;
- 
--import com.mojang.logging.LogUtils;
- import java.util.List;
- import java.util.Optional;
- import java.util.Random;
 @@ -36,34 +_,12 @@
  import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
  import net.minecraft.world.entity.projectile.ThrownPotion;
@@ -44,16 +37,14 @@
  import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-@@ -71,12 +_,25 @@
+@@ -71,9 +_,21 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.level.material.Material;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
--import org.slf4j.Logger;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
+ import org.slf4j.Logger;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
@@ -67,11 +58,7 @@
 +import javax.xml.crypto.Data;
  
  public interface DispenseItemBehavior {
--   Logger f_181892_ = LogUtils.getLogger();
-+   Logger f_181892_ = LogManager.getLogger();
-    DispenseItemBehavior f_123393_ = (p_123400_, p_123401_) -> {
-       return p_123401_;
-    };
+    Logger f_181892_ = LogUtils.getLogger();
 @@ -178,14 +_,43 @@
              Direction direction = p_123523_.m_6414_().m_61143_(DispenserBlock.f_52659_);
              EntityType<?> entitytype = ((SpawnEggItem)p_123524_.m_41720_()).m_43228_(p_123524_.m_41783_());

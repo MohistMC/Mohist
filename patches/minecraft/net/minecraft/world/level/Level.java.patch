@@ -27,12 +27,10 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -62,8 +_,16 @@
+@@ -62,8 +_,14 @@
  import net.minecraft.world.level.storage.WritableLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.scores.Scoreboard;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;

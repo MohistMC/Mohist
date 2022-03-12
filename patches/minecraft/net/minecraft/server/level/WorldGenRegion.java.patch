@@ -1,12 +1,5 @@
 --- a/net/minecraft/server/level/WorldGenRegion.java
 +++ b/net/minecraft/server/level/WorldGenRegion.java
-@@ -1,6 +_,5 @@
- package net.minecraft.server.level;
- 
--import com.mojang.logging.LogUtils;
- import java.util.Collections;
- import java.util.List;
- import java.util.Random;
 @@ -43,6 +_,8 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -16,20 +9,6 @@
  import net.minecraft.world.level.lighting.LevelLightEngine;
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.material.FluidState;
-@@ -50,10 +_,11 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.ticks.LevelTickAccess;
- import net.minecraft.world.ticks.WorldGenTickAccess;
--import org.slf4j.Logger;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
- 
- public class WorldGenRegion implements WorldGenLevel {
--   private static final Logger f_9474_ = LogUtils.getLogger();
-+   private static final Logger f_9474_ = LogManager.getLogger();
-    private final List<ChunkAccess> f_9475_;
-    private final ChunkAccess f_143479_;
-    private final int f_9478_;
 @@ -288,6 +_,11 @@
     }
  

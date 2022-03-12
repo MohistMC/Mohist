@@ -1,27 +1,5 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -13,7 +_,6 @@
- import com.google.gson.reflect.TypeToken;
- import com.google.gson.stream.JsonReader;
- import com.mojang.datafixers.DataFixer;
--import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Dynamic;
- import com.mojang.serialization.JsonOps;
- import java.io.File;
-@@ -50,10 +_,11 @@
- import net.minecraft.server.players.PlayerList;
- import net.minecraft.util.datafix.DataFixTypes;
- import net.minecraft.world.level.GameRules;
--import org.slf4j.Logger;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
- 
- public class PlayerAdvancements {
--   private static final Logger f_135958_ = LogUtils.getLogger();
-+   private static final Logger f_135958_ = LogManager.getLogger();
-    private static final int f_179926_ = 2;
-    private static final Gson f_135959_ = (new GsonBuilder()).registerTypeAdapter(AdvancementProgress.class, new AdvancementProgress.Serializer()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).setPrettyPrinting().create();
-    private static final TypeToken<Map<ResourceLocation, AdvancementProgress>> f_135960_ = new TypeToken<Map<ResourceLocation, AdvancementProgress>>() {
 @@ -181,6 +_,10 @@
        }
  

@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
-@@ -2,12 +_,9 @@
- 
- import com.google.common.collect.Lists;
+@@ -4,10 +_,8 @@
  import com.google.common.collect.Maps;
--import com.mojang.logging.LogUtils;
+ import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Dynamic;
 -import java.util.Collection;
 -import java.util.Iterator;
@@ -15,25 +13,18 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
-@@ -27,10 +_,16 @@
+@@ -27,6 +_,11 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.saveddata.SavedData;
--import org.slf4j.Logger;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_18_R1.map.CraftMapView;
 +import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
+ import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
--   private static final Logger f_77895_ = LogUtils.getLogger();
-+   private static final Logger f_77895_ = LogManager.getLogger();
-    private static final int f_164765_ = 128;
-    private static final int f_164766_ = 64;
-    public static final int f_164764_ = 4;
 @@ -50,6 +_,13 @@
     private final Map<String, MapFrame> f_77898_ = Maps.newHashMap();
     private int f_181308_;
