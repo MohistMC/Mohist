@@ -1,6 +1,7 @@
 package org.spigotmc;
 
 import com.google.common.base.Throwables;
+import com.mohistmc.util.i18n.i18n;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -176,7 +177,7 @@ public class SpigotConfig
     public static String whitelistMessage;
     public static String unknownCommandMessage;
     public static String serverFullMessage;
-    public static String outdatedClientMessage = "Outdated client! Please use {0}";
+    public static String outdatedClientMessage = i18n.get("spigotconfig.19");
     public static String outdatedServerMessage = "Outdated server! I\'m still on {0}";
     private static String transform(String s)
     {
