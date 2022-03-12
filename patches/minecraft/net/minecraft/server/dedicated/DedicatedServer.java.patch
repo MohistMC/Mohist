@@ -46,7 +46,7 @@
        this.f_139604_ = p_203717_;
        this.f_139602_ = new RconConsoleSource(this);
        this.f_139606_ = TextFilterClient.m_143736_(p_203717_.m_139777_().f_139724_);
-@@ -89,19 +_,72 @@
+@@ -89,19 +_,69 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -54,9 +54,6 @@
  
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.Main.useConsole) {
-+               return;
-+            }
 +            jline.console.ConsoleReader bufferedreader = reader;
 +            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
 +            try {
