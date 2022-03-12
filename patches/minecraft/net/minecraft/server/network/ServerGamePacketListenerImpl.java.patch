@@ -8,11 +8,12 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
-@@ -149,8 +_,11 @@
+@@ -149,8 +_,12 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
 -import org.apache.commons.lang3.StringUtils;
++import org.bukkit.event.player.PlayerTeleportEvent;
  import org.slf4j.Logger;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
@@ -71,6 +72,38 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
+@@ -890,14 +_,31 @@
+       this.m_143617_(p_143612_, p_143613_, p_143614_, p_143615_, p_143616_, Collections.emptySet(), true);
+    }
+ 
++   //MOHIST TODO
++   public void teleport(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_, PlayerTeleportEvent.TeleportCause cause) {
++      this.m_143617_(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet(), false);
++   }
++
+    public void m_9774_(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_) {
+       this.m_143617_(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet(), false);
+    }
+ 
++   //MOHIST TODO
++   public void teleport(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_9786_,  PlayerTeleportEvent.TeleportCause cause) {
++      this.m_143617_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, false);
++   }
++
+    public void m_9780_(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_9786_) {
+       this.m_143617_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, false);
+    }
+ 
++
++   //MOHIST TODO
++   public boolean teleport(double p_143618_, double p_143619_, double p_143620_, float p_143621_, float p_143622_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_143623_, boolean p_143624_, PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit - Return event status
++      this.m_143617_(p_143618_, p_143619_, p_143620_, p_143621_, p_143622_, p_143623_, p_143624_);
++      return false;
++   }
++
+    public void m_143617_(double p_143618_, double p_143619_, double p_143620_, float p_143621_, float p_143622_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_143623_, boolean p_143624_) {
+       double d0 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.X) ? this.f_9743_.m_20185_() : 0.0D;
+       double d1 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.Y) ? this.f_9743_.m_20186_() : 0.0D;
 @@ -979,7 +_,9 @@
              this.f_9743_.m_9243_();
              int i = this.f_9743_.f_19853_.m_151558_();
