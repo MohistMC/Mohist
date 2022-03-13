@@ -23,7 +23,7 @@
     protected void m_7581_(ItemEntity p_28514_) {
        ItemStack itemstack = p_28514_.m_32055_();
 -      if (this.m_7252_(itemstack)) {
-+      if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28514_, itemstack.m_41613_() - 1, !this.m_7252_(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
++      if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28514_, itemstack.m_41613_() - 1, !this.m_7252_(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
 +         itemstack = p_28514_.m_32055_(); // CraftBukkit - update ItemStack from event
           int i = itemstack.m_41613_();
           if (i > 1) {
@@ -74,7 +74,7 @@
 +            fox.m_146762_(-24000);
 +            fox.m_7678_(this.f_25113_.m_20185_(), this.f_25113_.m_20186_(), this.f_25113_.m_20189_(), 0.0F, 0.0F);
 +            int experience = this.f_25113_.m_21187_().nextInt(7) + 1;
-+            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityBreedEvent(fox, f_25113_, f_25115_, serverplayer, this.f_25113_.breedItem, experience);
++            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityBreedEvent(fox, f_25113_, f_25115_, serverplayer, this.f_25113_.breedItem, experience);
 +            if (entityBreedEvent.isCancelled()) {
 +               return;
 +            }
@@ -116,7 +116,7 @@
           int i = p_148929_.m_61143_(SweetBerryBushBlock.f_57244_);
           p_148929_.m_61124_(SweetBerryBushBlock.f_57244_, Integer.valueOf(1));
 +         // CraftBukkit start - call EntityChangeBlockEvent
-+         if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.f_25602_, p_148929_.m_61124_(SweetBerryBushBlock.f_57244_, 1)).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.f_25602_, p_148929_.m_61124_(SweetBerryBushBlock.f_57244_, 1)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

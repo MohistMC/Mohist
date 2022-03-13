@@ -1,10 +1,9 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.ServerAPI;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
-import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftAnimals;
+import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftAnimals;
 import org.bukkit.entity.EntityType;
 
 /**

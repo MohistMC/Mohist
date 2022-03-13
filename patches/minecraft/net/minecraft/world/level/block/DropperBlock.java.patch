@@ -12,7 +12,7 @@
  import net.minecraft.world.level.block.entity.HopperBlockEntity;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
  
  public class DropperBlock extends DispenserBlock {
@@ -48,7 +48,7 @@
 +               org.bukkit.inventory.Inventory destinationInventory;
 +               // Have to special case large chests as they work oddly
 +               if (container instanceof CompoundContainer) {
-+                  destinationInventory = new org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryDoubleChest((CompoundContainer) container);
++                  destinationInventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryDoubleChest((CompoundContainer) container);
 +               } else {
 +                  destinationInventory = container.getOwner().getInventory();
 +               }

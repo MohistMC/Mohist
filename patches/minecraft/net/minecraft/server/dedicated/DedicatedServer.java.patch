@@ -16,7 +16,7 @@
  import net.minecraft.network.chat.Component;
  import net.minecraft.server.ConsoleInput;
  import net.minecraft.server.MinecraftServer;
-@@ -52,12 +_,19 @@
+@@ -52,12 +_,18 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.CreativeModeTab;
  import net.minecraft.world.item.Items;
@@ -26,7 +26,6 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
-+import net.minecraft.world.level.storage.WorldData;
 +import org.apache.logging.log4j.LogManager;
  import org.slf4j.Logger;
 +import org.apache.logging.log4j.io.IoBuilder;
@@ -47,74 +46,20 @@
        this.f_139604_ = p_203717_;
        this.f_139602_ = new RconConsoleSource(this);
        this.f_139606_ = TextFilterClient.m_143736_(p_203717_.m_139777_().f_139724_);
-@@ -89,12 +_,36 @@
+@@ -89,6 +_,7 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-+            // CraftBukkit start
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
-+            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
-+            try {
-+               System.in.available();
-+            } catch (IOException ex) {
-+               return;
-+            }
-+            // CraftBukkit end
              String s1;
-             try {
--               while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
--                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
-+               // CraftBukkit start - JLine disabling compatibility
-+               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_()) {
-+                  s1 = bufferedreader.readLine();
-+
-+                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
-+                  if (s1 == null) {
-+                     try {
-+                        Thread.sleep(50L);
-+                     } catch (InterruptedException ex) {
-+                        Thread.currentThread().interrupt();
-+                     }
-+                     continue;
-+                  }
-+                  if (s1.trim().length() > 0) { // Trim to filter lines which are just spaces
-+                     DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
-+                  }
-+                  // CraftBukkit end
-                }
-             } catch (IOException ioexception1) {
-                DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
-@@ -102,6 +_,21 @@
- 
-          }
-       };
-+      // CraftBukkit start - TODO: handle command-line logging arguments
-+      java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
-+      global.setUseParentHandlers(false);
-+      for (java.util.logging.Handler handler : global.getHandlers()) {
-+         global.removeHandler(handler);
-+      }
-+      global.addHandler(new org.bukkit.craftbukkit.v1_18_R1.util.ForwardLogHandler());
-+
-+      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
-+
-+      new org.bukkit.craftbukkit.v1_18_R1.util.TerminalConsoleWriterThread(System.out, this.reader).start();
-+
-+      System.setOut(IoBuilder.forLogger(logger).setLevel( org.apache.logging.log4j.Level.INFO).buildPrintStream());
-+      System.setErr(IoBuilder.forLogger(logger).setLevel( org.apache.logging.log4j.Level.WARN).buildPrintStream());
-+      // CraftBukkit end
-       thread.setDaemon(true);
-       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
-       thread.start();
 @@ -163,15 +_,26 @@
        if (!OldUsersConverter.m_11106_(this)) {
           return false;
        } else {
--         this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
 +         // CraftBukkit start
-+         this.m_129823_(new DedicatedPlayerList(this, this.f_129746_, this.f_129745_));
+          this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +         // CraftBukkit end
@@ -140,7 +85,7 @@
           if (dedicatedserverproperties.f_139747_) {
              f_139598_.info("Starting remote control listener");
              this.f_139603_ = RconThread.m_11615_(this);
-+            this.remoteConsole = new org.bukkit.craftbukkit.v1_18_R1.command.CraftRemoteConsoleCommandSender(this.f_139602_); // CraftBukkit
++            this.remoteConsole = new org.bukkit.craftbukkit.v1_18_R2.command.CraftRemoteConsoleCommandSender(this.f_139602_); // CraftBukkit
 +
           }
  

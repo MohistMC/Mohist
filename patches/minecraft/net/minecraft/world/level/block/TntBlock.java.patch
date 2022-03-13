@@ -62,7 +62,7 @@
           if (p_57432_.m_6060_() && p_57432_.m_142265_(p_57429_, blockpos)) {
 -            m_57436_(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
 +               return;
 +            }
 +            // CraftBukkit end

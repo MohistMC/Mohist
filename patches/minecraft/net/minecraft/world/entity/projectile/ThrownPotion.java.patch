@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrownPotion.java
 +++ b/net/minecraft/world/entity/projectile/ThrownPotion.java
-@@ -1,15 +_,19 @@
+@@ -1,11 +_,14 @@
  package net.minecraft.world.entity.projectile;
  
 +import java.util.HashMap;
@@ -15,11 +15,6 @@
  import net.minecraft.tags.BlockTags;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.effect.MobEffect;
- import net.minecraft.world.effect.MobEffectInstance;
-+import net.minecraft.world.effect.MobEffects;
- import net.minecraft.world.entity.AreaEffectCloud;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
 @@ -24,12 +_,15 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
@@ -31,8 +26,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
  
  public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplier {
     public static final double f_150190_ = 4.0D;
@@ -103,7 +98,7 @@
 +            }
 +         }
 +      }
-+      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPotionSplashEvent( this, affected );
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callPotionSplashEvent( this, affected );
 +      if ( !event.isCancelled() && list != null && !list.isEmpty() )
 +      { // do not process effects if there are no effects to process
 +         Entity entity1 = this.m_150173_();
@@ -160,7 +155,7 @@
  
 -      this.f_19853_.m_7967_(areaeffectcloud);
 +      // CraftBukkit start
-+      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloud);
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloud);
 +      if (!(event.isCancelled() || areaeffectcloud.m_146910_())) {
 +         this.f_19853_.m_7967_(areaeffectcloud);
 +      } else {

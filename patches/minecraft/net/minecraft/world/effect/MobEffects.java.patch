@@ -16,7 +16,7 @@
 +   // CraftBukkit start
 +   static {
 +      for (Object effect : Registry.f_122823_) {
-+         org.bukkit.potion.PotionEffectType.registerPotionEffectType(new org.bukkit.craftbukkit.v1_18_R1.potion.CraftPotionEffectType((MobEffect) effect));
++         org.bukkit.potion.PotionEffectType.registerPotionEffectType(new org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionEffectType((MobEffect) effect));
 +      }
 +   }
 +   // CraftBukkit end

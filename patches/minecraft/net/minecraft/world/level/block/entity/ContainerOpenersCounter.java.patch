@@ -18,7 +18,7 @@
 +      if (p_155454_.m_8055_(p_155455_).m_60713_(net.minecraft.world.level.block.Blocks.f_50325_)) {
 +         int newPower = Math.max(0, Math.min(15, this.f_155448_));
 +         if (oldPower != newPower) {
-+            org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRedstoneChange(p_155454_, p_155455_, oldPower, newPower);
++            org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRedstoneChange(p_155454_, p_155455_, oldPower, newPower);
 +         }
 +      }
 +      // CraftBukkit end
@@ -36,7 +36,7 @@
 +         int newPower = Math.max(0, Math.min(15, this.f_155448_));
 +
 +         if (oldPower != newPower) {
-+            org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRedstoneChange(p_155470_, p_155471_, oldPower, newPower);
++            org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRedstoneChange(p_155470_, p_155471_, oldPower, newPower);
 +         }
 +      }
 +      // CraftBukkit end

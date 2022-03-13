@@ -6,7 +6,7 @@
           if (p_49263_.m_20094_() == 0) {
 -            p_49263_.m_20254_(8);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock.at(p_49261_, p_49262_), p_49263_.getBukkitEntity(), 8);
++            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock.at(p_49261_, p_49262_), p_49263_.getBukkitEntity(), 8);
 +            p_49261_.getCraftServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
 +               p_49263_.setSecondsOnFire(event.getDuration(), false);
@@ -40,7 +40,7 @@
 +
 +   // CraftBukkit start
 +   protected void fireExtinguished(net.minecraft.world.level.LevelAccessor world, BlockPos position) {
-+      if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.f_50016_.m_49966_()).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.f_50016_.m_49966_()).isCancelled()) {
 +         world.m_7471_(position, false);
 +      }
 +   }

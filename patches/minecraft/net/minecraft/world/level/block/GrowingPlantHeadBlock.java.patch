@@ -9,7 +9,7 @@
           BlockPos blockpos = p_53965_.m_142300_(this.f_53859_);
           if (this.m_5971_(p_53964_.m_8055_(blockpos))) {
 -            p_53964_.m_46597_(blockpos, this.m_142452_(p_53963_, p_53964_.f_46441_));
-+            org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_53964_, p_53965_, blockpos, this.m_142452_(p_53963_, p_53964_.f_46441_)); // CraftBukkit
++            org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_53964_, p_53965_, blockpos, this.m_142452_(p_53963_, p_53964_.f_46441_)); // CraftBukkit
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_53964_, blockpos, p_53964_.m_8055_(blockpos));
           }
        }

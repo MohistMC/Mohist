@@ -4,7 +4,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
  
  public class SmithingMenu extends ItemCombinerMenu {
     private final Level f_40241_;
@@ -20,7 +20,7 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventorySmithing(
++      org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventorySmithing(
 +              f_39770_.getLocation(), this.f_39769_, this.f_39768_);
 +      bukkitEntity = new CraftInventoryView(this.f_39771_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
@@ -36,14 +36,14 @@
        if (list.isEmpty()) {
 -         this.f_39768_.m_6836_(0, ItemStack.f_41583_);
 +         //this.resultSlots.setItem(0, ItemStack.EMPTY);
-+         org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
++         org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
        } else {
           this.f_40242_ = list.get(0);
           ItemStack itemstack = this.f_40242_.m_5874_(this.f_39769_);
           this.f_39768_.m_6029_(this.f_40242_);
 -         this.f_39768_.m_6836_(0, itemstack);
 +         //this.resultSlots.setItem(0, itemstack);
-+         org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
++         org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
        }
  
     }

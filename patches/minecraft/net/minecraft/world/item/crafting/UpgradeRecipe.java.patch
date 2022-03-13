@@ -4,10 +4,10 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftSmithingRecipe;
-+import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftSmithingRecipe;
++import org.bukkit.craftbukkit.v1_18_R2.util.CraftNamespacedKey;
  
  public class UpgradeRecipe implements Recipe<Container> {
     final Ingredient f_44518_;

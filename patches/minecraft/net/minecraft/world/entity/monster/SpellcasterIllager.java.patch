@@ -23,7 +23,7 @@
           --this.f_33774_;
           if (this.f_33774_ == 0) {
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.m_7269_())) {
++            if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.m_7269_())) {
 +               return;
 +            }
 +            // CraftBukkit end

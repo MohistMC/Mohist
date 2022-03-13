@@ -13,7 +13,7 @@
     private final BaseCommandBlock f_59127_ = new BaseCommandBlock() {
 +      @Override
 +      public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+         return new org.bukkit.craftbukkit.v1_18_R1.command.CraftBlockCommandSender(wrapper, CommandBlockEntity.this);
++         return new org.bukkit.craftbukkit.v1_18_R2.command.CraftBlockCommandSender(wrapper, CommandBlockEntity.this);
 +      }
 +
        public void m_6590_(String p_59157_) {

@@ -5,7 +5,7 @@
                 armorstand.m_7678_(armorstand.m_20185_(), armorstand.m_20186_(), armorstand.m_20189_(), f, 0.0F);
                 this.m_40506_(armorstand, level.f_46441_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityPlaceEvent(p_40510_, armorstand).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityPlaceEvent(p_40510_, armorstand).isCancelled()) {
 +                  return InteractionResult.FAIL;
 +               }
 +               // CraftBukkit end

@@ -6,7 +6,7 @@
  import net.minecraft.world.level.ChunkPos;
 +import net.minecraft.world.level.chunk.storage.EntityStorage;
  import org.slf4j.Logger;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
  
  public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
     static final Logger f_157490_ = LogUtils.getLogger();

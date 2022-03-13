@@ -1,24 +1,6 @@
 --- a/net/minecraft/server/Eula.java
 +++ b/net/minecraft/server/Eula.java
-@@ -1,22 +_,22 @@
- package net.minecraft.server;
- 
--import com.mojang.logging.LogUtils;
- import java.io.InputStream;
- import java.io.OutputStream;
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.util.Properties;
- import net.minecraft.SharedConstants;
--import org.slf4j.Logger;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
- 
- public class Eula {
--   private static final Logger f_135938_ = LogUtils.getLogger();
-+   private static final Logger f_135938_ = LogManager.getLogger();
-    private final Path f_135939_;
-    private final boolean f_135940_;
+@@ -16,7 +_,7 @@
  
     public Eula(Path p_135943_) {
        this.f_135939_ = p_135943_;

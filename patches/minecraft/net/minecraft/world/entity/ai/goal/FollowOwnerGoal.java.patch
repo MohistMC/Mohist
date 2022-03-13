@@ -5,7 +5,7 @@
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 +import org.bukkit.event.entity.EntityTeleportEvent;
  
  public class FollowOwnerGoal extends Goal {

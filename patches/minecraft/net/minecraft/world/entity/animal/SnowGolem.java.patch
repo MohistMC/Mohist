@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/SnowGolem.java
 +++ b/net/minecraft/world/entity/animal/SnowGolem.java
+@@ -32,7 +_,6 @@
+ import net.minecraft.world.entity.projectile.Snowball;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.biome.Biome;
+ import net.minecraft.world.level.block.Blocks;
 @@ -40,7 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
@@ -25,7 +33,7 @@
 -            if (this.f_19853_.m_8055_(blockpos1).m_60795_() && blockstate.m_60710_(this.f_19853_, blockpos1)) {
 -               this.f_19853_.m_46597_(blockpos1, blockstate);
 +            if (this.f_19853_.m_46859_(blockpos) && blockstate.m_60710_(this.f_19853_, blockpos)) {
-+               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockFormEvent(this.f_19853_, blockpos1, blockstate, this); // CraftBukkit
++               org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockFormEvent(this.f_19853_, blockpos1, blockstate, this); // CraftBukkit
              }
           }
        }

@@ -21,7 +21,7 @@
     private BlockPos f_77690_;
     private int f_77691_;
     private final int f_77692_;
-+   org.bukkit.craftbukkit.v1_18_R1.util.BlockStateListPopulator blocks; // CraftBukkit - add field
++   org.bukkit.craftbukkit.v1_18_R2.util.BlockStateListPopulator blocks; // CraftBukkit - add field
  
     public static Optional<PortalShape> m_77708_(LevelAccessor p_77709_, BlockPos p_77710_, Direction.Axis p_77711_) {
        return m_77712_(p_77709_, p_77710_, (p_77727_) -> {
@@ -29,7 +29,7 @@
     }
  
     public PortalShape(LevelAccessor p_77695_, BlockPos p_77696_, Direction.Axis p_77697_) {
-+      blocks = new org.bukkit.craftbukkit.v1_18_R1.util.BlockStateListPopulator(p_77695_.getMinecraftWorld()); // CraftBukkit
++      blocks = new org.bukkit.craftbukkit.v1_18_R2.util.BlockStateListPopulator(p_77695_.getMinecraftWorld()); // CraftBukkit
        this.f_77686_ = p_77695_;
        this.f_77687_ = p_77697_;
        this.f_77688_ = p_77697_ == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;

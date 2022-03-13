@@ -1,10 +1,18 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -20,6 +_,8 @@
+@@ -12,14 +_,14 @@
+ import net.minecraft.world.item.BlockItem;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+-import net.minecraft.world.item.enchantment.Enchantments;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class RedStoneOreBlock extends Block {
@@ -25,7 +33,7 @@
 +      // interact(iblomckdata, world, blockgposition);
 +      // super.stepOn(world, blockposition, iblockdata, entity);
 +      if (p_154302_ instanceof Player) {
-+         org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
++         org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
 +         if (!event.isCancelled()) {
 +            interact(p_154299_.m_8055_(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
 +            super.m_141947_(p_154299_, p_154300_, p_154301_, p_154302_);

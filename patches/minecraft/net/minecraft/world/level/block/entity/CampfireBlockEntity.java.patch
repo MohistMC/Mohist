@@ -4,8 +4,8 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.CampfireBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockCookEvent;
  
  public class CampfireBlockEntity extends BlockEntity implements Clearable {
