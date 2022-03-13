@@ -46,7 +46,7 @@
        this.f_139604_ = p_203717_;
        this.f_139602_ = new RconConsoleSource(this);
        this.f_139606_ = TextFilterClient.m_143736_(p_203717_.m_139777_().f_139724_);
-@@ -89,19 +_,50 @@
+@@ -89,8 +_,16 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -63,15 +63,10 @@
 +            // CraftBukkit end
              String s1;
              try {
--               while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
-+               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
-                   DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
-+
-                }
--            } catch (IOException ioexception1) {
--               DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
-+            }catch (IOException ioexception1) {
-+               DedicatedServer.f_139598_.error("Exception handling console input", (Throwable) ioexception1);
+                while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
+@@ -99,9 +_,31 @@
+             } catch (IOException ioexception1) {
+                DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
              }
 -
           }
