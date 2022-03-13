@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,20 +26,20 @@ public class FileUtils
         }
         if (!Files.isDirectory(dirPath))
         {
-            LOGGER.debug(CORE,"Making {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE, i18n.get("fileutils.1", dirLabel, dirPath));
             try {
                 Files.createDirectory(dirPath);
             } catch (IOException e) {
                 if (e instanceof FileAlreadyExistsException) {
-                    LOGGER.fatal(CORE,"Failed to create {} directory - there is a file in the way", dirLabel);
+                    LOGGER.fatal(CORE, i18n.get("fileutils.2", dirLabel));
                 } else {
-                    LOGGER.fatal(CORE,"Problem with creating {} directory (Permissions?)", dirLabel, e);
+                    LOGGER.fatal(CORE, i18n.get("fileutils.3", dirLabel), e);
                 }
                 throw new RuntimeException("Problem creating directory", e);
             }
-            LOGGER.debug(CORE,"Created {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE, i18n.get("fileutils.4", dirLabel, dirPath));
         } else {
-            LOGGER.debug(CORE,"Found existing {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE, i18n.get("fileutils.5", dirLabel, dirPath));
         }
         return dirPath;
     }

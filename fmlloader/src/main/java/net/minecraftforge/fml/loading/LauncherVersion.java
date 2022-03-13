@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +19,7 @@ public class LauncherVersion {
         String vers = JarVersionLookupHandler.getImplementationVersion(LauncherVersion.class).orElse(System.getenv("LAUNCHER_VERSION"));
         if (vers == null) throw new RuntimeException("Missing FMLLauncher version, cannot continue");
         launcherVersion = vers;
-        LOGGER.debug(CORE, "Found FMLLauncher version {}", launcherVersion);
+        LOGGER.debug(CORE, i18n.get("launcherversion.1", launcherVersion));
     }
 
     public static String getVersion()

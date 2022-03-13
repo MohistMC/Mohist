@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.targets;
 
 import com.google.common.base.Strings;
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.jarhandling.SecureJar;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         final var mcstream = Stream.<Path>builder();
 
         // The extra jar is on the classpath, so try and pull it out of the legacy classpath
-        var legacyCP = Objects.requireNonNull(System.getProperty("legacyClassPath"), "Missing legacyClassPath, cannot find client-extra").split(File.pathSeparator);
+        var legacyCP = Objects.requireNonNull(System.getProperty("legacyClassPath"), i18n.get("commondevlaunchhandler.1")).split(File.pathSeparator);
         var extra = Paths.get(Arrays.stream(legacyCP).filter(e -> e.contains("client-extra")).findFirst().orElseThrow(() -> new IllegalStateException("Could not find client-extra in legacy classpath")));
         mcstream.add(extra);
 

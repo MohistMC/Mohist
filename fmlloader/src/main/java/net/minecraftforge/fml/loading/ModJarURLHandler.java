@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,7 +70,7 @@ public class ModJarURLHandler extends URLStreamHandler
         public InputStream getInputStream() throws IOException
         {
             connect();
-            LOGGER.trace(CORE, "Loading modjar URL {} got resource {} {}", url, resource, resource != null ? Files.exists(resource) : "missing");
+            LOGGER.trace(CORE, i18n.get("modjarurlhandler.1", url, resource, resource != null ? Files.exists(resource) : "missing"));
             return Files.newInputStream(resource);
         }
 

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.LogMarkers;
@@ -41,10 +42,10 @@ public abstract class AbstractModLocator implements IModLocator {
         IModFile mod;
         var type = sj.getManifest().getMainAttributes().getValue(ModFile.TYPE);
         if (sj.findFile(MODS_TOML).isPresent()) {
-            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
+            LOGGER.debug(LogMarkers.SCAN, i18n.get("abstractmodlocator.1", MODS_TOML, type, path));
             mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
         } else if (type != null) {
-            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
+            LOGGER.debug(LogMarkers.SCAN, i18n.get("abstractmodlocator.2", MANIFEST, type, path));
             mod = new ModFile(sj, this, this::manifestParser);
         } else {
             return Optional.empty();

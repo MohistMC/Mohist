@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.targets;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.VersionInfo;
 
@@ -28,7 +29,7 @@ public abstract class CommonUserdevLaunchHandler extends CommonDevLaunchHandler 
         final var modstream = Stream.<List<Path>>builder();
 
         // The MC extra and forge jars are on the classpath, so try and pull them out
-        var legacyCP = Objects.requireNonNull(System.getProperty("legacyClassPath"), "Missing legacyClassPath, cannot find userdev jars").split(File.pathSeparator);
+        var legacyCP = Objects.requireNonNull(System.getProperty("legacyClassPath"), i18n.get("commonuserdevlaunchhandler.1")).split(File.pathSeparator);
         var extra = findJarOnClasspath(legacyCP, "client-extra");
 
         processStreams(legacyCP, vers, mcstream, modstream);

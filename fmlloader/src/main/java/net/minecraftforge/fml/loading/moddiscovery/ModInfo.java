@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.StringSubstitutor;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
@@ -52,12 +53,12 @@ public class ModInfo implements IModInfo, IConfigurable
         this.modId = config.<String>getConfigElement("modId")
                 .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
         if (!VALID_MODID.matcher(this.modId).matches()) {
-            LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_MODID.pattern());
+            LOGGER.fatal(i18n.get("modinfo.1", this.owningFile.getFile().getFilePath(), this.modId, VALID_MODID.pattern()));
             throw new InvalidModFileException("Invalid modId found : " + this.modId, owningFile);
         }
         this.namespace = config.<String>getConfigElement("namespace").orElse(this.modId);
         if (!VALID_NAMESPACE.matcher(this.namespace).matches()) {
-            LOGGER.fatal("Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_NAMESPACE.pattern());
+            LOGGER.fatal(i18n.get("modinfo.2", this.owningFile.getFile().getFilePath(), this.namespace, VALID_NAMESPACE.pattern()));
             throw new InvalidModFileException("Invalid override namespace found : " + this.namespace, owningFile);
         }
         this.version = config.<String>getConfigElement("version")

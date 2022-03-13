@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ITransformerDiscoveryService;
@@ -40,7 +41,7 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
         try (var walk = Files.walk(modsDir, 1)){
             walk.forEach(ModDirTransformerDiscoverer::visitFile);
         } catch (IOException | IllegalStateException ioe) {
-            LogManager.getLogger().error("Error during early discovery", ioe);
+            LogManager.getLogger().error(i18n.get("moddirtransformerdiscoverer.1", ioe));
         }
     }
 
@@ -55,7 +56,7 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
                 found.add(new NamedPath(zf.getName(), path));
             }
         } catch (IOException ioe) {
-            LogManager.getLogger().error("Zip Error when loading jar file {}", path, ioe);
+            LogManager.getLogger().error(i18n.get("moddirtransformerdiscoverer.2", path, ioe));
         }
     }
 }

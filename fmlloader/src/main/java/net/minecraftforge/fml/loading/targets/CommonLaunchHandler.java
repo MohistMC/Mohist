@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.targets;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.fml.loading.LogMarkers;
@@ -48,7 +49,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
 
     protected final Map<String, List<Path>> getModClasses() {
         final String modClasses = Optional.ofNullable(System.getenv("MOD_CLASSES")).orElse("");
-        LOGGER.debug(LogMarkers.CORE, "Got mod coordinates {} from env", modClasses);
+        LOGGER.debug(LogMarkers.CORE, i18n.get("commonlaunchhandler.1", modClasses));
 
         record ExplodedModPath(String modid, Path path) {}
         // "a/b/;c/d/;" -> "modid%%c:\fish\pepper;modid%%c:\fish2\pepper2\;modid2%%c:\fishy\bums;modid2%%c:\hmm"
@@ -57,7 +58,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
                 .map(splitString -> new ExplodedModPath(splitString.length == 1 ? "defaultmodid" : splitString[0], Paths.get(splitString[splitString.length - 1])))
                 .collect(Collectors.groupingBy(ExplodedModPath::modid, Collectors.mapping(ExplodedModPath::path, Collectors.toList())));
 
-        LOGGER.debug(LogMarkers.CORE, "Found supplied mod coordinates [{}]", modClassPaths);
+        LOGGER.debug(LogMarkers.CORE, i18n.get("commonlaunchhandler.2", modClassPaths));
 
         //final var explodedTargets = ((Map<String, List<ExplodedDirectoryLocator.ExplodedMod>>)arguments).computeIfAbsent("explodedTargets", a -> new ArrayList<>());
         //modClassPaths.forEach((modlabel,paths) -> explodedTargets.add(new ExplodedDirectoryLocator.ExplodedMod(modlabel, paths)));

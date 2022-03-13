@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -71,7 +72,7 @@ public class BackgroundScanHandler
     private void addCompletedFile(final ModFile file, final ModFileScanData modFileScanData, final Throwable throwable) {
         if (throwable != null) {
             status = ScanStatus.ERRORED;
-            LOGGER.error(LogMarkers.SCAN,"An error occurred scanning file {}", file, throwable);
+            LOGGER.error(LogMarkers.SCAN, i18n.get("backgroundscanhandler.1", file), throwable);
         }
         pendingFiles.remove(file);
         scannedFiles.add(file);

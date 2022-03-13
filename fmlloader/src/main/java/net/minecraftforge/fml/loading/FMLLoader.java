@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.*;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
@@ -58,40 +59,40 @@ public class FMLLoader
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
         final String version = LauncherVersion.getVersion();
-        LOGGER.debug(CORE,"FML {} loading", version);
+        LOGGER.debug(CORE, i18n.get("fmlloader.1", version));
         final Package modLauncherPackage = ITransformationService.class.getPackage();
-        LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
+        LOGGER.debug(CORE, i18n.get("fmlloader.2", modLauncherPackage.getImplementationVersion()));
         if (!modLauncherPackage.isCompatibleWith("4.0")) {
-            LOGGER.fatal(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
+            LOGGER.fatal(CORE, i18n.get("fmlloader.3", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor()));
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
 
         accessTransformer = (AccessTransformerService) environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> {
-            LOGGER.fatal(CORE,"Access Transformer library is missing, we need this to run");
+            LOGGER.fatal(CORE, i18n.get("fmlloader.4"));
             return new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run");
         });
 
         final Package atPackage = accessTransformer.getClass().getPackage();
-        LOGGER.debug(CORE,"FML found AccessTransformer version : {}", atPackage.getImplementationVersion());
+        LOGGER.debug(CORE, i18n.get("fmlloader.5", atPackage.getImplementationVersion()));
         if (!atPackage.isCompatibleWith("1.0")) {
-            LOGGER.fatal(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
+            LOGGER.fatal(CORE, i18n.get("fmlloader.6", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor()));
             throw new IncompatibleEnvironmentException("Incompatible accesstransformer found "+atPackage.getSpecificationVersion());
         }
 
         eventBus = environment.findLaunchPlugin("eventbus").orElseThrow(()-> {
-            LOGGER.fatal(CORE,"Event Bus library is missing, we need this to run");
+            LOGGER.fatal(CORE,i18n.get("fmlloader.7"));
             return new IncompatibleEnvironmentException("Missing EventBus, cannot run");
         });
 
         final Package eventBusPackage = eventBus.getClass().getPackage();
-        LOGGER.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
+        LOGGER.debug(CORE, i18n.get("fmlloader.8", eventBusPackage.getImplementationVersion()));
         if (!eventBusPackage.isCompatibleWith("1.0")) {
-            LOGGER.fatal(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
+            LOGGER.fatal(CORE, i18n.get("fmlloader.9", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor()));
             throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
 
         runtimeDistCleaner = (RuntimeDistCleaner)environment.findLaunchPlugin("runtimedistcleaner").orElseThrow(()-> {
-            LOGGER.fatal(CORE,"Dist Cleaner is missing, we need this to run");
+            LOGGER.fatal(CORE, i18n.get("fmlloader.10"));
             return new IncompatibleEnvironmentException("Missing DistCleaner, cannot run!");
         });
         LOGGER.debug(CORE, "Found Runtime Dist Cleaner");
@@ -99,22 +100,22 @@ public class FMLLoader
         var coreModProviders = ServiceLoaderUtils.streamWithErrorHandling(ServiceLoader.load(FMLLoader.class.getModule().getLayer(), ICoreModProvider.class), sce -> LOGGER.fatal(CORE, "Failed to load a coremod library, expect problems", sce)).toList();
 
         if (coreModProviders.isEmpty()) {
-            LOGGER.fatal(CORE, "Found no coremod provider. Cannot run");
+            LOGGER.fatal(CORE, i18n.get("fmlloader.11"));
             throw new IncompatibleEnvironmentException("No coremod library found");
         } else if (coreModProviders.size() > 1) {
-            LOGGER.fatal(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
+            LOGGER.fatal(CORE, i18n.get("fmlloader.12", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList())));
             throw new IncompatibleEnvironmentException("Multiple coremod libraries found");
         }
 
         coreModProvider = coreModProviders.get(0);
         final Package coremodPackage = coreModProvider.getClass().getPackage();
-        LOGGER.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
+        LOGGER.debug(CORE, i18n.get("fmlloader.13", coremodPackage.getImplementationVersion()));
 
 
-        LOGGER.debug(CORE, "Found ForgeSPI package implementation version {}", Environment.class.getPackage().getImplementationVersion());
-        LOGGER.debug(CORE, "Found ForgeSPI package specification {}", Environment.class.getPackage().getSpecificationVersion());
+        LOGGER.debug(CORE, i18n.get("fmlloader.14", Environment.class.getPackage().getImplementationVersion()));
+        LOGGER.debug(CORE, i18n.get("fmlloader.15", Environment.class.getPackage().getSpecificationVersion()));
         if (Integer.parseInt(Environment.class.getPackage().getSpecificationVersion()) < 2) {
-            LOGGER.fatal(CORE, "Found an out of date ForgeSPI implementation: {}, loading cannot continue", Environment.class.getPackage().getSpecificationVersion());
+            LOGGER.fatal(CORE, i18n.get("fmlloader.16", Environment.class.getPackage().getSpecificationVersion()));
             throw new IncompatibleEnvironmentException("ForgeSPI is out of date, we cannot continue");
         }
 
@@ -122,7 +123,7 @@ public class FMLLoader
             Class.forName("com.electronwill.nightconfig.core.Config", false, environment.getClass().getClassLoader());
             Class.forName("com.electronwill.nightconfig.toml.TomlFormat", false, environment.getClass().getClassLoader());
         } catch (ClassNotFoundException e) {
-            LOGGER.fatal(CORE, "Failed to load NightConfig");
+            LOGGER.fatal(CORE, i18n.get("fmlloader.17"));
             throw new IncompatibleEnvironmentException("Missing NightConfig");
         }
     }
@@ -132,14 +133,14 @@ public class FMLLoader
         final String launchTarget = environment.getProperty(IEnvironment.Keys.LAUNCHTARGET.get()).orElse("MISSING");
         arguments.put("launchTarget", launchTarget);
         final Optional<ILaunchHandlerService> launchHandler = environment.findLaunchHandler(launchTarget);
-        LOGGER.debug(CORE, "Using {} as launch service", launchTarget);
+        LOGGER.debug(CORE, i18n.get("fmlloader.18", launchTarget));
         if (launchHandler.isEmpty()) {
-            LOGGER.fatal(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
+            LOGGER.fatal(CORE, i18n.get("fmlloader.19", launchTarget));
             throw new RuntimeException("Missing launch handler: " + launchTarget);
         }
 
         if (!(launchHandler.get() instanceof CommonLaunchHandler)) {
-            LOGGER.fatal(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
+            LOGGER.fatal(CORE, i18n.get("fmlloader.20", launchHandler.get().getClass().getName()));
             throw new RuntimeException("Incompatible launch handler found");
         }
         commonLaunchHandler = (CommonLaunchHandler)launchHandler.get();
@@ -155,13 +156,13 @@ public class FMLLoader
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
-        LOGGER.debug(CORE,"Received command line version data  : {}", versionInfo);
+        LOGGER.debug(CORE, i18n.get("fmlloader.21", versionInfo));
 
         runtimeDistCleaner.getExtension().accept(dist);
     }
     public static List<ITransformationService.Resource> beginModScan(final Map<String,?> arguments)
     {
-        LOGGER.debug(SCAN,"Scanning for Mod Locators");
+        LOGGER.debug(SCAN, i18n.get("fmlloader.22"));
         modDiscoverer = new ModDiscoverer(arguments);
         modValidator = modDiscoverer.discoverMods();
         var pluginResources = modValidator.getPluginResources();
@@ -196,7 +197,7 @@ public class FMLLoader
 
     public static void addAccessTransformer(Path atPath, ModFile modName)
     {
-        LOGGER.debug(SCAN, "Adding Access Transformer in {}", modName.getFilePath());
+        LOGGER.debug(SCAN, i18n.get("fmlloader.23", modName.getFilePath()));
         accessTransformer.offerResource(atPath, modName.getFileName());
     }
 

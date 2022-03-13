@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.log4j;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecrell.terminalconsole.HighlightErrorConverter;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,7 @@ public class ForgeHighlight {
             method.setAccessible(true);
             method.invoke(null);
         } catch (ReflectiveOperationException e) {
-            LOGGER.warn("Failed to invoke initializeTerminal on TCA", e);
+            LOGGER.warn(i18n.get("forgehighlight.1"), e);
         }
         if (!TerminalConsoleAppender.isAnsiSupported() && Arrays.stream(options).noneMatch(s -> s.equals("disableAnsi=true"))) {
             List<String> optionList = new ArrayList<>();

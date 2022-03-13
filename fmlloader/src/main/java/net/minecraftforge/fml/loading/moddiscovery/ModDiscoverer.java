@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
@@ -32,9 +33,9 @@ public class ModDiscoverer {
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.PROGRESSMESSAGE.get(), v-> StartupMessageManager.locatorConsumer().orElseGet(()-> s->{}));
         final var moduleLayerManager = Launcher.INSTANCE.environment().findModuleLayerManager().orElseThrow();
         locators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
-        locatorList = ServiceLoaderUtils.streamServiceLoader(()->locators, sce->LOGGER.error("Failed to load locator list", sce)).collect(Collectors.toList());
+        locatorList = ServiceLoaderUtils.streamServiceLoader(()->locators, sce->LOGGER.error(i18n.get("moddiscoverer.1"), sce)).collect(Collectors.toList());
         locatorList.forEach(l->l.initArguments(arguments));
-        LOGGER.debug(LogMarkers.CORE,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
+        LOGGER.debug(LogMarkers.CORE, i18n.get("moddiscoverer.2"), ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
     }
 
     ModDiscoverer(List<IModLocator> locatorList) {
@@ -43,13 +44,13 @@ public class ModDiscoverer {
     }
 
     public ModValidator discoverMods() {
-        LOGGER.debug(LogMarkers.SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
+        LOGGER.debug(LogMarkers.SCAN, i18n.get("moddiscoverer.3", locatorList.size()));
         var loadedFiles = new ArrayList<>();
         for (IModLocator locator : locatorList) {
-            LOGGER.debug(LogMarkers.SCAN,"Trying locator {}", locator);
+            LOGGER.debug(LogMarkers.SCAN, i18n.get("moddiscoverer.4", locator));
             var modFiles = locator.scanMods();
             for (IModFile mf : modFiles) {
-                LOGGER.info(LogMarkers.SCAN, "Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator());
+                LOGGER.info(LogMarkers.SCAN, i18n.get("moddiscoverer.5", mf.getFileName(), mf.getType(), mf.getLocator()));
                 StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found mod file "+mf.getFileName()+" of type "+mf.getType()));
             }
             loadedFiles.addAll(modFiles);

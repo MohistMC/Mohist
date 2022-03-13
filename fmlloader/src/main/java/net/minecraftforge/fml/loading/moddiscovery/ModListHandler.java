@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
@@ -44,14 +45,14 @@ public class ModListHandler {
                         filter(path -> Files.exists(path.getLeft())).
                         findFirst().
                         orElseGet(()->{
-                            LOGGER.warn(LogMarkers.CORE, "Failed to find coordinate {}", mc);
+                            LOGGER.warn(LogMarkers.CORE, i18n.get("modlisthandler.1", mc));
                             return null;
                 })).
                 filter(Objects::nonNull).
                 collect(Collectors.toList());
 
         final List<String> found = foundCoordinates.stream().map(Pair::getRight).collect(Collectors.toList());
-        LOGGER.debug(LogMarkers.CORE, "Found mod coordinates from lists: {}", found);
+        LOGGER.debug(LogMarkers.CORE, i18n.get("modlisthandler.2", found));
         return found;
     }
 
@@ -59,7 +60,7 @@ public class ModListHandler {
         LOGGER.debug(LogMarkers.CORE, "Reading mod list {}", path);
         Path filePath = FMLPaths.GAMEDIR.get().resolve(path);
         if (!Files.exists(filePath)) {
-            LOGGER.warn(LogMarkers.CORE, "Failed to find modlist file at {}", filePath);
+            LOGGER.warn(LogMarkers.CORE, i18n.get("modlisthandler.3", filePath));
             return Collections.emptyList();
         }
 
@@ -67,7 +68,7 @@ public class ModListHandler {
         if (Objects.equals("list",extension)) {
             return readListFile(filePath).stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         } else {
-            LOGGER.warn(LogMarkers.CORE, "Failed to read unknown file list type {} for file {}", extension, filePath);
+            LOGGER.warn(LogMarkers.CORE, i18n.get("modlisthandler.4", extension, filePath));
         }
         return Collections.emptyList();
     }
@@ -81,7 +82,7 @@ public class ModListHandler {
         try {
             return Files.readAllLines(filePath);
         } catch (IOException e) {
-            LOGGER.warn(LogMarkers.CORE, "Failed to read file list {}", filePath, e);
+            LOGGER.warn(LogMarkers.CORE, i18n.get("modlisthandler.5", filePath), e);
             return Collections.emptyList();
         }
     }

@@ -1,5 +1,6 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
@@ -36,7 +37,8 @@ public class ModValidator {
 
     public void stage1Validation() {
         brokenFiles = validateFiles(candidateMods);
-        LOGGER.debug(LogMarkers.SCAN,"Found {} mod files with {} mods", candidateMods::size, ()-> candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
+        //TODO: lambda for i18n format
+        LOGGER.debug(LogMarkers.SCAN, i18n.get("modvalidator.1"), candidateMods::size, ()-> candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateMods.size()+" modfiles to load"));
     }
 
@@ -47,7 +49,7 @@ public class ModValidator {
         {
             ModFile mod = iterator.next();
             if (!mod.getLocator().isValid(mod) || !mod.identifyMods()) {
-                LOGGER.warn(LogMarkers.SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
+                LOGGER.warn(LogMarkers.SCAN, i18n.get("modvalidator.2", mod.getFilePath()));
                 iterator.remove();
                 brokenFiles.add(mod);
             }

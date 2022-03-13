@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.IEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,7 +62,8 @@ public enum FMLPaths
             {
                 FileUtils.getOrCreateDirectory(path.absolutePath, path.name());
             }
-            LOGGER.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
+            // TODO: lambda i18n
+            LOGGER.debug(CORE, i18n.get("fmlpaths.1"), ()-> path, ()-> path.absolutePath);
         }
     }
 

@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.base.Strings;
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.StringUtils;
@@ -68,7 +69,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.mods = modConfigs.stream()
                 .map(mi-> new ModInfo(this, mi))
                 .collect(Collectors.toList());
-        LOGGER.debug(LogMarkers.LOADING, "Found valid mod file {} with {} mods - versions {}",
+        //TODO: lambda i18n
+        LOGGER.debug(LogMarkers.LOADING, i18n.get("modfileinfo.1"),
                 this.modFile::getFileName,
                 () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
                 () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));

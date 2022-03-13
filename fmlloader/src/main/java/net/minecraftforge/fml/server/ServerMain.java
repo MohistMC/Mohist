@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.server;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
 import cpw.mods.modlauncher.Launcher;
 
@@ -24,7 +25,7 @@ public class ServerMain {
             Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
             Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
         } catch (ClassNotFoundException cnfe) {
-            System.err.println("FATAL ERROR, You need to run the installer. The libraries required to launch a server are missing");
+            System.err.println(i18n.get("servermain.1"));
             System.exit(1);
         }
 
@@ -48,7 +49,7 @@ public class ServerMain {
             try {
                 Launcher.main(result);
             } catch (InvalidLauncherSetupException e) {
-                System.err.println("The server is missing critical libraries and cannot load. Please run the installer to correct this");
+                System.err.println(i18n.get("servermain.2"));
                 System.exit(1);
             }
         }
@@ -62,7 +63,7 @@ public class ServerMain {
     }
 
     private static RuntimeException throwMissingManifest() {
-        System.err.println("This is not being run from a valid JAR file, essential data is missing.");
+        System.err.println(i18n.get("servermain.3"));
         return new RuntimeException("Missing the manifest");
     }
 }

@@ -7,6 +7,7 @@ package net.minecraftforge.fml.loading.toposort;
 
 import com.google.common.base.Preconditions;
 import com.google.common.graph.Graph;
+import com.mohistmc.util.i18n.i18n;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
@@ -60,8 +61,8 @@ public final class TopologicalSort {
      * @throws CyclePresentException    if the graph contains cycles
      */
     public static <T> List<T> topologicalSort(Graph<T> graph, @Nullable Comparator<? super T> comparator) throws IllegalArgumentException {
-        Preconditions.checkArgument(graph.isDirected(), "Cannot topologically sort an undirected graph!");
-        Preconditions.checkArgument(!graph.allowsSelfLoops(), "Cannot topologically sort a graph with self loops!");
+        Preconditions.checkArgument(graph.isDirected(), i18n.get("topologicalsort.1"));
+        Preconditions.checkArgument(!graph.allowsSelfLoops(), i18n.get("topologicalsort.2"));
 
         final Queue<T> queue = comparator == null ? new ArrayDeque<>() : new PriorityQueue<>(comparator);
         final Map<T, Integer> degrees = new HashMap<>();
@@ -80,7 +81,7 @@ public final class TopologicalSort {
             final T current = queue.remove();
             results.add(current);
             for (final T successor : graph.successors(current)) {
-                final int updated = degrees.compute(successor, (node, degree) -> Objects.requireNonNull(degree, () -> "Invalid degree present for " + node) - 1);
+                final int updated = degrees.compute(successor, (node, degree) -> Objects.requireNonNull(degree, () -> i18n.get("topologicalsort.3", node)) - 1);
                 if (updated == 0) {
                     queue.add(successor);
                     degrees.remove(successor);

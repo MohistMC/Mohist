@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
@@ -36,7 +37,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
                         jar->jar.findFile("/META-INF/mods.toml").isPresent(),
                         (a,b) -> true,
                         explodedMod.paths().toArray(Path[]::new))
-                .ifPresentOrElse(f->mods.put(explodedMod, f), () -> LOGGER.warn(LogMarkers.LOADING, "Failed to find exploded resource mods.toml in directory {}", explodedMod.paths().get(0).toString())));
+                .ifPresentOrElse(f->mods.put(explodedMod, f), () -> LOGGER.warn(LogMarkers.LOADING, i18n.get("explodeddirectorylocator.1", explodedMod.paths().get(0).toString()))));
         return List.copyOf(mods.values());
     }
 
@@ -47,13 +48,13 @@ public class ExplodedDirectoryLocator implements IModLocator {
 
     @Override
     public void scanFile(final IModFile file, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(LogMarkers.SCAN,"Scanning exploded directory {}", file.getFilePath().toString());
+        LOGGER.debug(LogMarkers.SCAN, i18n.get("explodeddirectorylocator.2", file.getFilePath().toString()));
         try (Stream<Path> files = Files.find(file.getSecureJar().getRootPath(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LOGGER.debug(LogMarkers.SCAN,"Exploded directory scan complete {}", file.getFilePath().toString());
+        LOGGER.debug(LogMarkers.SCAN, i18n.get("explodeddirectorylocator.3", file.getFilePath().toString()));
     }
 
     @Override

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.targets;
 
+import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,7 +66,7 @@ class ArgumentList {
         String key = raw.substring(idx);
         EntryValue entry = new EntryValue(split, prefix, key, value);
         if (values.containsKey(key)) {
-            LOGGER.info("Duplicate entries for " + key + " Unindexable");
+            LOGGER.info(i18n.get("argumentlist.1", key));
         } else {
             values.put(key, entry);
         }

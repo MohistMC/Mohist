@@ -7,6 +7,7 @@ package net.minecraftforge.fml.loading;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.jarhandling.SecureJar;
 import java.util.jar.Manifest;
 import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
@@ -157,13 +158,13 @@ public class ModSorter
                 .filter(Objects::nonNull)
                 .findFirst()
                 .ifPresent(value -> systemMods.addAll(Arrays.asList(value.split(","))));
-        LOGGER.debug("Configured system mods: {}", systemMods);
+        LOGGER.debug(i18n.get("modsorter.1", systemMods));
 
         this.systemMods = new ArrayList<>();
         for (String systemMod : systemMods) {
             var container = modFilesByFirstId.get(systemMod);
             if (container != null && !container.isEmpty()) {
-                LOGGER.debug("Found system mod: {}", systemMod);
+                LOGGER.debug(i18n.get("modsorter.2", systemMod));
                 this.systemMods.add((ModFile) container.get(0));
             } else {
                 throw new IllegalStateException("Failed to find system mod: " + systemMod);
@@ -205,9 +206,9 @@ public class ModSorter
     private Map.Entry<String, IModFile> selectNewestModInfo(Map.Entry<String, List<IModFile>> fullList) {
         List<IModFile> modInfoList = fullList.getValue();
         if (modInfoList.size() > 1) {
-            LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
+            LOGGER.debug(i18n.get("modsorter.3", modInfoList.size(), fullList.getKey()));
             modInfoList.sort(Comparator.<IModFile, ArtifactVersion>comparing(mf -> mf.getModInfos().get(0).getVersion()).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), modInfoList.get(0).getModInfos().get(0).getVersion());
+            LOGGER.debug(i18n.get("modsorter.4", modInfoList.get(0).getFileName(), fullList.getKey(), modInfoList.get(0).getModInfos().get(0).getVersion()));
         }
         return Map.entry(fullList.getKey(), modInfoList.get(0));
     }
@@ -230,19 +231,19 @@ public class ModSorter
                 .collect(toSet());
 
         final long mandatoryRequired = modRequirements.stream().filter(IModInfo.ModVersion::isMandatory).count();
-        LOGGER.debug(LOADING, "Found {} mod requirements ({} mandatory, {} optional)", modRequirements.size(), mandatoryRequired, modRequirements.size() - mandatoryRequired);
+        LOGGER.debug(LOADING, i18n.get("modsorter.5", modRequirements.size(), mandatoryRequired, modRequirements.size() - mandatoryRequired));
         final var missingVersions = modRequirements.stream()
                 .filter(mv -> (mv.isMandatory() || modVersions.containsKey(mv.getModId())) && this.modVersionNotContained(mv, modVersions))
                 .collect(toSet());
         final long mandatoryMissing = missingVersions.stream().filter(IModInfo.ModVersion::isMandatory).count();
-        LOGGER.debug(LOADING, "Found {} mod requirements missing ({} mandatory, {} optional)", missingVersions.size(), mandatoryMissing, missingVersions.size() - mandatoryMissing);
+        LOGGER.debug(LOADING, i18n.get("modsorter.6", missingVersions.size(), mandatoryMissing, missingVersions.size() - mandatoryMissing));
 
         if (!missingVersions.isEmpty()) {
             if (mandatoryMissing > 0) {
-                LOGGER.error(LOADING, "Missing mandatory dependencies: {}", missingVersions.stream().filter(IModInfo.ModVersion::isMandatory).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", ")));
+                LOGGER.error(LOADING, i18n.get("modsorter.7", missingVersions.stream().filter(IModInfo.ModVersion::isMandatory).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", "))));
             }
             if (missingVersions.size() - mandatoryMissing > 0) {
-                LOGGER.error(LOADING, "Unsupported installed optional dependencies: {}", missingVersions.stream().filter(ver -> !ver.isMandatory()).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", ")));
+                LOGGER.error(LOADING, i18n.get("modsorter.8", missingVersions.stream().filter(ver -> !ver.isMandatory()).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", "))));
             }
 
             return missingVersions.stream()

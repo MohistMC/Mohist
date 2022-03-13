@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Streams;
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -53,7 +54,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         AtomicBoolean changes = new AtomicBoolean();
         if (remove(classNode.visibleAnnotations, DIST))
         {
-            LOGGER.fatal(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
+            LOGGER.fatal(DISTXFORM, i18n.get("runtimedistcleaner.1", classNode.name, DIST));
             throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
         }
 
@@ -66,7 +67,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 .map(ann -> ((Type)ann.values.get(ann.values.indexOf("_interface") + 1)).getInternalName())
                 .forEach(intf -> {
                     if (classNode.interfaces.remove(intf)) {
-                        LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, intf);
+                        LOGGER.debug(DISTXFORM,i18n.get("runtimedistcleaner.2", classNode.name, intf));
                         changes.compareAndSet(false, true);
                     }
                 });
@@ -77,7 +78,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 while (itr.hasNext()) {
                     AnnotationNode ann = itr.next();
                     if (Objects.equals(ann.desc, ONLYIN) || Objects.equals(ann.desc, ONLYINS)) {
-                        LOGGER.debug(DISTXFORM,"Removing Class Annotation: {} @{}", classNode.name, ann.desc);
+                        LOGGER.debug(DISTXFORM,i18n.get("runtimedistcleaner.3", classNode.name, ann.desc));
                         itr.remove();
                         changes.compareAndSet(false, true);
                     }
@@ -91,7 +92,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
             FieldNode field = fields.next();
             if (remove(field.visibleAnnotations, DIST))
             {
-                LOGGER.debug(DISTXFORM,"Removing field: {}.{}", classNode.name, field.name);
+                LOGGER.debug(DISTXFORM,i18n.get("runtimedistcleaner.4", classNode.name, field.name));
                 fields.remove();
                 changes.compareAndSet(false, true);
             }
@@ -104,7 +105,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
             MethodNode method = methods.next();
             if (remove(method.visibleAnnotations, DIST))
             {
-                LOGGER.debug(DISTXFORM,"Removing method: {}.{}{}", classNode.name, method.name, method.desc);
+                LOGGER.debug(DISTXFORM,i18n.get("runtimedistcleaner.5", classNode.name, method.name, method.desc));
                 methods.remove();
                 lambdaGatherer.accept(method);
                 changes.compareAndSet(false, true);
@@ -125,7 +126,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 {
                     if (method.name.equals(dynamicLambdaHandle.getName()) && method.desc.equals(dynamicLambdaHandle.getDesc()))
                     {
-                        LOGGER.debug(DISTXFORM,"Removing lambda method: {}.{}{}", classNode.name, method.name, method.desc);
+                        LOGGER.debug(DISTXFORM,i18n.get("runtimedistcleaner.6", classNode.name, method.name, method.desc));
                         methods.remove();
                         lambdaGatherer.accept(method);
                         changes.compareAndSet(false, true);
@@ -161,7 +162,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     {
         return (s)-> {
             DIST = s.name();
-            LOGGER.debug(DISTXFORM, "Configuring for Dist {}", DIST);
+            LOGGER.debug(DISTXFORM, i18n.get("runtimedistcleaner.7", DIST));
         };
     }
 

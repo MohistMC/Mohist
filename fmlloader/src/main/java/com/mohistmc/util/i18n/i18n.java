@@ -15,7 +15,16 @@ public class i18n {
     }
 
     public static String get(String key, Object... f) {
-        return new MessageFormat(get(key)).format(f);
+        MessageFormat mf = new MessageFormat(get(key));
+        // TODO: fill params position with "{}" for MessageFormat when params is not enough.
+        ArrayList<Object> list = new ArrayList<>(Arrays.stream(f).toList());
+        list.addAll(new ArrayList<>(){{
+            for (int i = 0; i < mf.getFormats().length - list.size(); i++) {
+                add("{}");
+            }
+        }
+        });
+        return mf.format(list.toArray());
     }
 
     public static String getLocale(int key) {

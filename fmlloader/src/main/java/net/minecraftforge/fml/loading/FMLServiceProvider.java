@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.*;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpecBuilder;
@@ -59,11 +60,11 @@ public class FMLServiceProvider implements ITransformationService
 
     @Override
     public void initialize(IEnvironment environment) {
-        LOGGER.debug(CORE, "Setting up basic FML game directories");
+        LOGGER.debug(CORE, i18n.get("fmlserviceprovider.1"));
         FMLPaths.setup(environment);
-        LOGGER.debug(CORE, "Loading configuration");
+        LOGGER.debug(CORE, i18n.get("fmlserviceprovider.2"));
         FMLConfig.load();
-        LOGGER.debug(CORE, "Preparing ModFile");
+        LOGGER.debug(CORE, i18n.get("fmlserviceprovider.3"));
         environment.computePropertyIfAbsent(Environment.Keys.MODFILEFACTORY.get(), k->ModFile::new);
         arguments = new HashMap<>();
         arguments.put("modLists", modListsArgumentList);
@@ -74,7 +75,7 @@ public class FMLServiceProvider implements ITransformationService
         arguments.put("mcVersion", targetMcVersion);
         arguments.put("mcpVersion", targetMcpVersion);
         arguments.put("mcpMappings", targetMcpMappings);
-        LOGGER.debug(CORE, "Preparing launch handler");
+        LOGGER.debug(CORE, i18n.get("fmlserviceprovider.4"));
         FMLLoader.setupLaunchHandler(environment, arguments);
         FMLEnvironment.setupInteropEnvironment(environment);
         Environment.build(environment);
@@ -82,7 +83,7 @@ public class FMLServiceProvider implements ITransformationService
 
     @Override
     public List<Resource> beginScanning(final IEnvironment environment) {
-        LOGGER.debug(CORE,"Initiating mod scan");
+        LOGGER.debug(CORE, i18n.get("fmlserviceprovider.5"));
         return FMLLoader.beginModScan(arguments);
     }
 
@@ -129,7 +130,7 @@ public class FMLServiceProvider implements ITransformationService
     @Override
     public @NotNull List<ITransformer> transformers()
     {
-        LOGGER.debug(CORE, "Loading coremod transformers");
+        LOGGER.debug(CORE, i18n.get("fmlserviceprovider.6"));
         return new ArrayList<>(FMLLoader.getCoreModProvider().getCoreModTransformers());
     }
 

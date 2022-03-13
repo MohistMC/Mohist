@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -33,7 +34,7 @@ public class Scanner {
         final List<IModLanguageProvider> loaders = fileToScan.getLoaders();
         if (loaders != null) {
             loaders.forEach(loader -> {
-                LOGGER.debug(LogMarkers.SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
+                LOGGER.debug(LogMarkers.SCAN, i18n.get("scanner.1", fileToScan.getFilePath(), loader.name()));
                 loader.getFileVisitor().accept(result);
             });
         }
@@ -41,7 +42,7 @@ public class Scanner {
     }
 
     private void fileVisitor(final Path path, final ModFileScanData result) {
-        LOGGER.debug(LogMarkers.SCAN,"Scanning {} path {}", fileToScan, path);
+        LOGGER.debug(LogMarkers.SCAN,i18n.get("scanner.2", fileToScan, path));
         try (InputStream in = Files.newInputStream(path)){
             ModClassVisitor mcv = new ModClassVisitor();
             ClassReader cr = new ClassReader(in);

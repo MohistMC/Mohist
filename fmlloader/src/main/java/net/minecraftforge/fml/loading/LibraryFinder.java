@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +27,7 @@ public class LibraryFinder {
 
     static Path getForgeLibraryPath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
         Path forgePath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", "universal", mcVersion+"-"+forgeVersion));
-        LOGGER.debug(LogMarkers.CORE, "Found forge path {} is {}", forgePath, pathStatus(forgePath));
+        LOGGER.debug(LogMarkers.CORE, i18n.get("libraryfinder.1", forgePath, pathStatus(forgePath)));
         return forgePath;
     }
 
@@ -38,9 +39,9 @@ public class LibraryFinder {
         Path srgMcPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "srg", mcVersion+"-"+mcpVersion));
         Path mcExtrasPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "extra", mcVersion+"-"+mcpVersion));
         Path patchedBinariesPath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", type, mcVersion+"-"+forgeVersion));
-        LOGGER.debug(LogMarkers.CORE,"SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
-        LOGGER.debug(LogMarkers.CORE,"MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));
-        LOGGER.debug(LogMarkers.CORE,"Forge patches at {} is {}", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath));
+        LOGGER.debug(LogMarkers.CORE, i18n.get("libraryfinder.2", srgMcPath.toString(), pathStatus(srgMcPath)));
+        LOGGER.debug(LogMarkers.CORE, i18n.get("libraryfinder.3", mcExtrasPath.toString(), pathStatus(mcExtrasPath)));
+        LOGGER.debug(LogMarkers.CORE, i18n.get("libraryfinder.4", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath)));
         return new Path[] { patchedBinariesPath, mcExtrasPath, srgMcPath };
     }
 

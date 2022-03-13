@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
@@ -81,7 +82,7 @@ public class LanguageLoadingProvider
         loadLanguageProviders();
     }
     private void loadLanguageProviders() {
-        LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderUtils.streamServiceLoader(()->serviceLoader, sce->LOGGER.fatal("Problem with language loaders")).count());
+        LOGGER.debug(CORE, i18n.get("languageloadingprovider.1", ServiceLoaderUtils.streamServiceLoader(()->serviceLoader, sce->LOGGER.fatal("Problem with language loaders")).count()));
         serviceLoader.forEach(languageProviders::add);
 
         languageProviders.forEach(lp -> {
@@ -94,10 +95,10 @@ public class LanguageLoadingProvider
             Optional<String> implementationVersion = JarVersionLookupHandler.getImplementationVersion(lp.getClass());
             String impl = implementationVersion.orElse(Files.isDirectory(lpPath) ? FMLLoader.versionInfo().forgeVersion().split("\\.")[0] : null);
             if (impl == null) {
-                LOGGER.fatal(CORE, "Found unversioned language provider {}", lp.name());
+                LOGGER.fatal(CORE, i18n.get("languageloadingprovider.2", lp.name()));
                 throw new RuntimeException("Failed to find implementation version for language provider "+ lp.name());
             }
-            LOGGER.debug(CORE, "Found language provider {}, version {}", lp.name(), impl);
+            LOGGER.debug(CORE, i18n.get("languageloadingprovider.3", lp.name(), impl));
             StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Loaded language provider "+lp.name()+ " " + impl));
             languageProviderMap.put(lp.name(), new ModLanguageWrapper(lp, new DefaultArtifactVersion(impl)));
         });
@@ -110,7 +111,7 @@ public class LanguageLoadingProvider
             serviceLoader.reload();
             loadLanguageProviders();
         } else {
-            LOGGER.debug(CORE, "Skipping adding forge jar - javafml is already present");
+            LOGGER.debug(CORE, i18n.get("languageloadingprovider.4"));
         }
     }
 
@@ -137,11 +138,11 @@ public class LanguageLoadingProvider
         final String languageFileName = mf.getLocator() instanceof ExplodedDirectoryLocator ? "in-development" : mf.getFileName();
         final ModLanguageWrapper mlw = languageProviderMap.get(modLoader);
         if (mlw == null) {
-            LOGGER.error(LOADING,"Missing language {} version {} wanted by {}", modLoader, modLoaderVersion, languageFileName);
+            LOGGER.error(LOADING, i18n.get("languageloadingprovider.5", modLoader, modLoaderVersion, languageFileName));
             throw new EarlyLoadingException("Missing language "+modLoader, null, Collections.singletonList(new EarlyLoadingException.ExceptionData("fml.language.missingversion", modLoader, modLoaderVersion, languageFileName, "null")));
         }
         if (!VersionSupportMatrix.testVersionSupportMatrix(modLoaderVersion, modLoader, "languageloader", (llid, range) -> range.containsVersion(mlw.getVersion()))) {
-            LOGGER.error(LOADING,"Missing language {} version {} wanted by {}, found {}", modLoader, modLoaderVersion, languageFileName, mlw.getVersion());
+            LOGGER.error(LOADING, i18n.get("languageloadingprovider.6", modLoader, modLoaderVersion, languageFileName, mlw.getVersion()));
             throw new EarlyLoadingException("Missing language "+ modLoader + " matching range "+modLoaderVersion + " found "+mlw.getVersion(), null, Collections.singletonList(new EarlyLoadingException.ExceptionData("fml.language.missingversion", modLoader, modLoaderVersion, languageFileName, mlw.getVersion())));
         }
 

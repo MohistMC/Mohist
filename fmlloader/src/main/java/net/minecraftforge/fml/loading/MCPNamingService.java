@@ -1,5 +1,6 @@
 package net.minecraftforge.fml.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.INameMappingService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +57,7 @@ public class MCPNamingService implements INameMappingService {
             HashMap<String,String> tmpmethods = new HashMap<>(1000);
             loadMappings("methods.csv", tmpmethods::put);
             methods = tmpmethods;
-            LOGGER.debug(LogMarkers.CORE, "Loaded {} method mappings from methods.csv", methods.size());
+            LOGGER.debug(LogMarkers.CORE, i18n.get("mcpnamingservice.1", methods.size()));
         }
         return methods.getOrDefault(origin, origin);
     }
@@ -66,7 +67,7 @@ public class MCPNamingService implements INameMappingService {
             HashMap<String,String> tmpfields = new HashMap<>(1000);
             loadMappings("fields.csv", tmpfields::put);
             fields = tmpfields;
-            LOGGER.debug(LogMarkers.CORE, "Loaded {} field mappings from fields.csv", fields.size());
+            LOGGER.debug(LogMarkers.CORE, i18n.get("mcpnamingservice.2", fields.size()));
         }
         return fields.getOrDefault(origin, origin);
     }
@@ -79,7 +80,7 @@ public class MCPNamingService implements INameMappingService {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(path.openStream()))) {
             reader.lines().skip(1).map(e -> e.split(",")).forEach(e -> mapStore.accept(e[0], e[1]));
         } catch (IOException e1) {
-            LOGGER.error(LogMarkers.CORE, "Error reading mappings", e1);
+            LOGGER.error(LogMarkers.CORE, i18n.get("mcpnamingservice.3"), e1);
         }
     }
 }

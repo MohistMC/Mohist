@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
@@ -104,9 +105,9 @@ public class ModFile implements IModFile {
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this, this.parser);
         if (this.modFileInfo == null) return this.getType() != Type.MOD;
-        LOGGER.debug(LogMarkers.LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
+        LOGGER.debug(LogMarkers.LOADING, i18n.get("modfile.1", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders()));
         this.coreMods = ModFileParser.getCoreMods(this);
-        this.coreMods.forEach(mi-> LOGGER.debug(LogMarkers.LOADING,"Found coremod {}", mi.getPath()));
+        this.coreMods.forEach(mi-> LOGGER.debug(LogMarkers.LOADING,i18n.get("modfile.2", mi.getPath())));
         this.accessTransformer = findResource("META-INF", "accesstransformer.cfg");
         return true;
     }
@@ -136,7 +137,7 @@ public class ModFile implements IModFile {
             try {
                 this.futureScanResult.get();
             } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error("Caught unexpected exception processing scan results", e);
+                LOGGER.error(i18n.get("modfile.3"), e);
             }
         }
         if (this.scanError != null) {
@@ -151,7 +152,7 @@ public class ModFile implements IModFile {
         if (throwable != null) {
             this.scanError = throwable;
         }
-        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Completed deep scan of "+this.getFileName()));
+        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept(i18n.get("modfile.4", this.getFileName())));
     }
 
     public void setFileProperties(Map<String, Object> fileProperties) {

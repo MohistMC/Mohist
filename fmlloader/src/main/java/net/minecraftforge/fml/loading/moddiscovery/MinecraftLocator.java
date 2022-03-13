@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.Config;
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
@@ -105,13 +106,13 @@ public class MinecraftLocator extends AbstractModLocator {
 
     @Override
     public void scanFile(final IModFile modFile, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(LogMarkers.SCAN, "Scan started: {}", modFile);
+        LOGGER.debug(LogMarkers.SCAN, i18n.get("minecraftlocator.1", modFile));
         try (Stream<Path> files = Files.find(modFile.getSecureJar().getRootPath(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LOGGER.debug(LogMarkers.SCAN, "Scan finished: {}", modFile);
+        LOGGER.debug(LogMarkers.SCAN, i18n.get("minecraftlocator.2", modFile));
     }
 
     @Override
