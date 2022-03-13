@@ -23,8 +23,8 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -128,7 +128,7 @@
 +                  org.bukkit.inventory.Inventory destinationInventory;
 +                  // Have to special case large chests as they work oddly
 +                  if (container instanceof CompoundContainer) {
-+                     destinationInventory = new org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryDoubleChest((CompoundContainer) container);
++                     destinationInventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryDoubleChest((CompoundContainer) container);
 +                  } else {
 +                     destinationInventory = container.getOwner().getInventory();
 +                  }
@@ -184,7 +184,7 @@
 +         org.bukkit.inventory.Inventory sourceInventory;
 +         // Have to special case large chests as they work oddly
 +         if (p_59356_ instanceof CompoundContainer) {
-+            sourceInventory = new org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryDoubleChest((CompoundContainer) p_59356_);
++            sourceInventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryDoubleChest((CompoundContainer) p_59356_);
 +         } else {
 +            sourceInventory = p_59355_.getOwner().getInventory();
 +         }

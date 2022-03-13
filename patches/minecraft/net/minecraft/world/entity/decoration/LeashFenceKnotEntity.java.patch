@@ -9,12 +9,11 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.tags.BlockTags;
  import net.minecraft.world.InteractionHand;
-@@ -22,6 +_,8 @@
+@@ -22,6 +_,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.Server;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
  
  public class LeashFenceKnotEntity extends HangingEntity {
     public static final double f_149638_ = 0.375D;

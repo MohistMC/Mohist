@@ -4,10 +4,10 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftStonecuttingRecipe;
-+import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftStonecuttingRecipe;
++import org.bukkit.craftbukkit.v1_18_R2.util.CraftNamespacedKey;
  
  public class StonecutterRecipe extends SingleItemRecipe {
     public StonecutterRecipe(ResourceLocation p_44478_, String p_44479_, Ingredient p_44480_, ItemStack p_44481_) {

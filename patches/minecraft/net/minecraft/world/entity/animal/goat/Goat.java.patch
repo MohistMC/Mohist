@@ -29,8 +29,8 @@
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
 +import net.minecraft.world.level.pathfinder.PathFinder;
 +import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
  
  public class Goat extends Animal {
     public static final EntityDimensions f_149342_ = EntityDimensions.m_20395_(0.9F, 1.3F).m_20388_(0.7F);

@@ -43,7 +43,7 @@
                 player.m_36246_(Stats.f_12982_.m_12902_(this));
                 if (j > 0) {
 +                  // CraftBukkit start
-+                  org.bukkit.event.player.PlayerRiptideEvent event = new org.bukkit.event.player.PlayerRiptideEvent((org.bukkit.entity.Player) player.getBukkitEntity(), org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack.asCraftMirror(p_43394_));
++                  org.bukkit.event.player.PlayerRiptideEvent event = new org.bukkit.event.player.PlayerRiptideEvent((org.bukkit.entity.Player) player.getBukkitEntity(), org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asCraftMirror(p_43394_));
 +                  event.getPlayer().getServer().getPluginManager().callEvent(event);
 +                  // CraftBukkit end
                    float f7 = player.m_146908_();

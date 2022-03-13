@@ -12,7 +12,7 @@
  import net.minecraft.world.entity.player.Player;
  import org.apache.commons.lang3.Validate;
  import org.slf4j.Logger;
-+import org.bukkit.craftbukkit.v1_18_R1.util.Waitable;
++import org.bukkit.craftbukkit.v1_18_R2.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
  
@@ -113,7 +113,7 @@
 +                  String playerName = f_10021_.getName();
 +                  java.net.InetAddress address = ((java.net.InetSocketAddress) f_10013_.m_129523_()).getAddress();
 +                  java.util.UUID uniqueId = f_10021_.getId();
-+                  final org.bukkit.craftbukkit.v1_18_R1.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
++                  final org.bukkit.craftbukkit.v1_18_R2.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
 +                  AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +                  server.getPluginManager().callEvent(asyncEvent);
 +                  if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {

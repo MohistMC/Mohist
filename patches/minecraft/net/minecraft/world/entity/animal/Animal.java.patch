@@ -12,7 +12,7 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityEnterLoveModeEvent;
  
  public abstract class Animal extends AgeableMob {
@@ -73,7 +73,7 @@
 +         ageablemob.m_6863_(true);
 +         ageablemob.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), 0.0F, 0.0F);
 +         int experience = this.m_21187_().nextInt(7) + 1;
-+         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, serverplayer, this.breedItem, experience);
++         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, serverplayer, this.breedItem, experience);
 +         if (entityBreedEvent.isCancelled()) {
 +            return;
 +         }

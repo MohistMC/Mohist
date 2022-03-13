@@ -1,15 +1,14 @@
 --- a/net/minecraft/world/entity/AreaEffectCloud.java
 +++ b/net/minecraft/world/entity/AreaEffectCloud.java
-@@ -4,7 +_,8 @@
+@@ -4,6 +_,8 @@
  import com.google.common.collect.Maps;
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
--import com.mojang.logging.LogUtils;
 +
 +import java.util.Collection;
+ import com.mojang.logging.LogUtils;
  import java.util.List;
  import java.util.Map;
- import java.util.UUID;
 @@ -20,6 +_,7 @@
  import net.minecraft.network.syncher.EntityDataAccessor;
  import net.minecraft.network.syncher.EntityDataSerializers;
@@ -18,21 +17,14 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.util.Mth;
  import net.minecraft.world.effect.MobEffectInstance;
-@@ -28,10 +_,12 @@
- import net.minecraft.world.item.alchemy.Potions;
+@@ -29,6 +_,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.material.PushReaction;
--import org.slf4j.Logger;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
+ import org.slf4j.Logger;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
  
  public class AreaEffectCloud extends Entity {
--   private static final Logger f_19696_ = LogUtils.getLogger();
-+   private static final Logger f_19696_ = LogManager.getLogger();
-    private static final int f_146782_ = 5;
-    private static final EntityDataAccessor<Float> f_19697_ = SynchedEntityData.m_135353_(AreaEffectCloud.class, EntityDataSerializers.f_135029_);
-    private static final EntityDataAccessor<Integer> f_19698_ = SynchedEntityData.m_135353_(AreaEffectCloud.class, EntityDataSerializers.f_135028_);
+    private static final Logger f_19696_ = LogUtils.getLogger();
 @@ -115,6 +_,22 @@
  
     }
@@ -72,7 +64,7 @@
 +                        }
 +                     }
 +                  }
-+                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
++                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
 +                  if (!event.isCancelled()) {
 +                     for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
 +                        if (entity instanceof CraftLivingEntity) {

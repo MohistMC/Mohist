@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -18,6 +_,7 @@
- import net.minecraft.ChatFormatting;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.core.BlockPos;
-+import net.minecraft.core.Registry;
- import net.minecraft.core.SectionPos;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.nbt.ListTag;
 @@ -165,6 +_,12 @@
        return this.f_37687_ == Raid.RaidStatus.LOSS;
     }
@@ -25,7 +17,7 @@
              boolean flag = this.f_37680_;
              this.f_37680_ = this.f_37675_.m_46805_(this.f_37674_);
              if (this.f_37675_.m_46791_() == Difficulty.PEACEFUL) {
-+               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.PEACE); // CraftBukkit
++               org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.PEACE); // CraftBukkit
                 this.m_37774_();
                 return;
              }
@@ -33,17 +25,17 @@
  
              if (!this.f_37675_.m_8802_(this.f_37674_)) {
                 if (this.f_37681_ > 0) {
-+                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidFinishEvent(this, new java.util.ArrayList<>()); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidFinishEvent(this, new java.util.ArrayList<>()); // CraftBukkit
                    this.f_37687_ = Raid.RaidStatus.LOSS;
                 } else {
-+                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.NOT_IN_VILLAGE); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.NOT_IN_VILLAGE); // CraftBukkit
                    this.m_37774_();
                 }
              }
  
              ++this.f_37673_;
              if (this.f_37673_ >= 48000L) {
-+               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.TIMEOUT); // CraftBukkit
++               org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.TIMEOUT); // CraftBukkit
                 this.m_37774_();
                 return;
              }
@@ -51,7 +43,7 @@
                 }
  
                 if (k > 3) {
-+                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.UNSPAWNABLE);  // CraftBukkit
++                  org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.UNSPAWNABLE);  // CraftBukkit
                    this.m_37774_();
                    break;
                 }
@@ -72,7 +64,7 @@
                          }
                       }
                    }
-+                  org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidFinishEvent(this, winners); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidFinishEvent(this, winners); // CraftBukkit
                 }
              }
  
@@ -80,7 +72,7 @@
           } else if (this.m_37706_()) {
              ++this.f_37688_;
              if (this.f_37688_ >= 600) {
-+               org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.FINISHED); // CraftBukkit
++               org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.FINISHED); // CraftBukkit
                 this.m_37774_();
                 return;
              }
@@ -120,7 +112,7 @@
        ++this.f_37681_;
        this.m_37776_();
        this.m_37705_();
-+      org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callRaidSpawnWaveEvent(this, leader, raiders); // CraftBukkit
++      org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidSpawnWaveEvent(this, leader, raiders); // CraftBukkit
     }
  
     public void m_37713_(int p_37714_, Raider p_37715_, @Nullable BlockPos p_37716_, boolean p_37717_) {

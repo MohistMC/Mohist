@@ -1,27 +1,13 @@
 --- a/net/minecraft/world/level/block/CommandBlock.java
 +++ b/net/minecraft/world/level/block/CommandBlock.java
-@@ -1,6 +_,5 @@
- package net.minecraft.world.level.block;
- 
--import com.mojang.logging.LogUtils;
- import java.util.Random;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
-@@ -25,10 +_,12 @@
- import net.minecraft.world.level.block.state.properties.BooleanProperty;
+@@ -26,6 +_,7 @@
  import net.minecraft.world.level.block.state.properties.DirectionProperty;
  import net.minecraft.world.phys.BlockHitResult;
--import org.slf4j.Logger;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
+ import org.slf4j.Logger;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class CommandBlock extends BaseEntityBlock implements GameMasterBlock {
--   private static final Logger f_51795_ = LogUtils.getLogger();
-+   private static final Logger f_51795_ = LogManager.getLogger();
-    public static final DirectionProperty f_51793_ = DirectionalBlock.f_52588_;
-    public static final BooleanProperty f_51794_ = BlockStateProperties.f_61428_;
-    private final boolean f_153078_;
+    private static final Logger f_51795_ = LogUtils.getLogger();
 @@ -52,6 +_,15 @@
              CommandBlockEntity commandblockentity = (CommandBlockEntity)blockentity;
              boolean flag = p_51839_.m_46753_(p_51840_);

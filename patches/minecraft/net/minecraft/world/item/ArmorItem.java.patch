@@ -12,7 +12,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
  import net.minecraft.world.phys.AABB;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
  
  public class ArmorItem extends Item implements Wearable {
@@ -27,7 +27,7 @@
 +         org.bukkit.block.Block block = world.getWorld().getBlockAt(p_40399_.m_7961_().m_123341_(), p_40399_.m_7961_().m_123342_(), p_40399_.m_7961_().m_123343_());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
 +
-+         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity) livingentity.getBukkitEntity());
++         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity) livingentity.getBukkitEntity());
 +         if (!DispenserBlock.eventFired) {
 +            world.getCraftServer().getPluginManager().callEvent(event);
 +         }

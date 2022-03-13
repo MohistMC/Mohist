@@ -5,7 +5,7 @@
  
     protected void m_54168_(BlockState p_54169_, Level p_54170_, BlockPos p_54171_) {
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockFadeEvent(p_54170_, p_54171_, p_54170_.m_6042_().m_63951_() ? Blocks.f_50016_.m_49966_() : Blocks.f_49990_.m_49966_()).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockFadeEvent(p_54170_, p_54171_, p_54170_.m_6042_().m_63951_() ? Blocks.f_50016_.m_49966_() : Blocks.f_49990_.m_49966_()).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end

@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -89,6 +_,7 @@
+@@ -83,7 +_,6 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+-import net.minecraft.world.level.block.FenceGateBlock;
+ import net.minecraft.world.level.block.HoneyBlock;
+ import net.minecraft.world.level.block.Mirror;
  import net.minecraft.world.level.block.RenderShape;
- import net.minecraft.world.level.block.Rotation;
- import net.minecraft.world.level.block.SoundType;
-+import net.minecraft.world.level.block.state.BlockBehaviour;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.block.state.properties.BlockStateProperties;
- import net.minecraft.world.level.border.WorldBorder;
 @@ -115,8 +_,27 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -17,11 +17,11 @@
 +import org.bukkit.Server;
 +import org.bukkit.block.BlockFace;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftPortalEvent;
++import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftPortalEvent;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Vehicle;
 +import org.bukkit.event.entity.*;
@@ -222,7 +222,7 @@
 +         // CraftBukkit start - Fallen in lava TODO: this event spams!
 +         if (this instanceof LivingEntity && f_19831_ <= 0) {
 +            // not on fire yet
-+            org.bukkit.block.Block damager = (lastLavaContact == null) ? null : org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock.at(f_19853_, lastLavaContact);
++            org.bukkit.block.Block damager = (lastLavaContact == null) ? null : org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock.at(f_19853_, lastLavaContact);
 +            org.bukkit.entity.Entity damagee = this.getBukkitEntity();
 +            EntityCombustEvent combustEvent = new org.bukkit.event.entity.EntityCombustByBlockEvent(damager, damagee, 15);
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(combustEvent);
@@ -234,7 +234,7 @@
 +            // This will be called every single tick the entity is in lava, so don't throw an event
 +            this.setSecondsOnFire(15, false);
 +         }
-+         CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock.at(f_19853_, lastLavaContact);
++         CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock.at(f_19853_, lastLavaContact);
 +
           if (this.m_6469_(DamageSource.f_19308_, 4.0F)) {
              this.m_5496_(SoundEvents.f_11909_, 0.4F, 2.0F + this.f_19796_.nextFloat() * 0.4F);
@@ -547,7 +547,7 @@
 +            }
 +
 +            if (bworld == null) {
-+               bworld = ((org.bukkit.craftbukkit.v1_18_R1.CraftServer) server).getServer().m_129880_(Level.f_46428_).getWorld();
++               bworld = ((org.bukkit.craftbukkit.v1_18_R2.CraftServer) server).getServer().m_129880_(Level.f_46428_).getWorld();
 +            }
 +
 +            ((ServerPlayer) this).m_143425_(bworld == null ? null : (( CraftWorld ) bworld).getHandle());
@@ -569,7 +569,7 @@
        } else {
 +         // CraftBukkit start - Capture drops for death event
 +         if (this instanceof LivingEntity && !((LivingEntity) this).forceDrops) {
-+            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack.asBukkitCopy(p_19985_));
++            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asBukkitCopy(p_19985_));
 +            return null;
 +         }
 +         // CraftBukkit end

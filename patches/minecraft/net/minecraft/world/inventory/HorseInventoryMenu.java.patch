@@ -4,7 +4,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class HorseInventoryMenu extends AbstractContainerMenu {
@@ -12,7 +12,7 @@
     private final AbstractHorse f_39654_;
  
 +   // CraftBukkit start
-+   org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView bukkitEntity;
++   org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView bukkitEntity;
 +   Inventory player;
 +
 +   @Override

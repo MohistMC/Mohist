@@ -1,17 +1,16 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -42,6 +_,16 @@
+@@ -42,6 +_,15 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_18_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.block.BlockExpEvent;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
 +import org.bukkit.event.inventory.FurnaceExtractEvent;
-+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 +import org.bukkit.event.inventory.FurnaceStartSmeltEvent;
 +import org.bukkit.inventory.CookingRecipe;
  
@@ -241,7 +240,7 @@
 +      // CraftBukkit start - fire FurnaceExtractEvent / BlockExpEvent
 +      BlockExpEvent event;
 +      if (amount != 0) {
-+         event = new FurnaceExtractEvent(( org.bukkit.entity.Player ) entityhuman.getBukkitEntity(), CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
++         event = new FurnaceExtractEvent(( org.bukkit.entity.Player ) entityhuman.getBukkitEntity(), CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
 +      } else {
 +         event = new BlockExpEvent(CraftBlock.at(p_154999_, blockposition), i);
 +      }

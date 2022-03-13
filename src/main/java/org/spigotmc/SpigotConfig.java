@@ -177,7 +177,7 @@ public class SpigotConfig
     public static String whitelistMessage;
     public static String unknownCommandMessage;
     public static String serverFullMessage;
-    public static String outdatedClientMessage = i18n.get("spigotconfig.19");
+    public static String outdatedClientMessage = "Outdated client! Please use {0}";
     public static String outdatedServerMessage = "Outdated server! I\'m still on {0}";
     private static String transform(String s)
     {

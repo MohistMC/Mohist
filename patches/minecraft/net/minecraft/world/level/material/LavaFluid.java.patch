@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/material/LavaFluid.java
 +++ b/net/minecraft/world/level/material/LavaFluid.java
+@@ -18,7 +_,6 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
+-import net.minecraft.world.level.block.BaseFireBlock;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.LiquidBlock;
+ import net.minecraft.world.level.block.state.BlockState;
 @@ -72,7 +_,14 @@
                 BlockState blockstate = p_76239_.m_8055_(blockpos);
                 if (blockstate.m_60795_()) {
@@ -7,7 +15,7 @@
 -                     p_76239_.m_46597_(blockpos, BaseFireBlock.m_49245_(p_76239_, blockpos));
 +                     // CraftBukkit start - Prevent lava putting something on fire
 +                     if (p_76239_.m_8055_(blockpos).m_60734_() != Blocks.f_50083_) {
-+                        if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockIgniteEvent(p_76239_, blockpos, p_76240_).isCancelled()) {
++                        if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockIgniteEvent(p_76239_, blockpos, p_76240_).isCancelled()) {
 +                           continue;
 +                        }
 +                     }
@@ -26,7 +34,7 @@
 +                  // CraftBukkit start - Prevent lava putting something on fire
 +                  BlockPos up = blockpos1.m_7494_();
 +                  if (p_76239_.m_8055_(up).m_60734_() != Blocks.f_50083_) {
-+                     if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockIgniteEvent(p_76239_, up, p_76240_).isCancelled()) {
++                     if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockIgniteEvent(p_76239_, up, p_76240_).isCancelled()) {
 +                        continue;
 +                     }
 +                  }
@@ -67,7 +75,7 @@
              if (p_76222_.m_60734_() instanceof LiquidBlock) {
 -               p_76220_.m_7731_(p_76221_, Blocks.f_50069_.m_49966_(), 3);
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockFormEvent(p_76220_.getMinecraftWorld(), p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.f_50069_.m_49966_()), 3)) {
++               if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockFormEvent(p_76220_.getMinecraftWorld(), p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.f_50069_.m_49966_()), 3)) {
 +                  return;
 +               }
 +               // CraftBukkit end

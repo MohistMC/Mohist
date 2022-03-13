@@ -18,7 +18,7 @@
 +import org.bukkit.Location;
 +import org.bukkit.block.Lectern;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
 +
@@ -54,7 +54,7 @@
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_18_R1.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_18_R2.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   public class LecternInventory implements Container {

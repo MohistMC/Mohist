@@ -53,7 +53,7 @@
 +               // Mohist start hook forge code
 +               BlockState blockState = net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_54697_, p_54698_, p_54698_, block.m_49966_());
 +               // Mohist end
-+               if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, blockState)) {
++               if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, blockState)) {
 +                  this.m_54700_(p_54697_, p_54698_);
 +               }
 +               // CraftBukkit end
@@ -67,7 +67,7 @@
 +               // Mohist start hook forge code
 +               BlockState blockState = net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_54697_, p_54698_, p_54698_, Blocks.f_50137_.m_49966_());
 +               // Mohist end
-+               if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, blockState)) {
++               if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, blockState)) {
 +                  this.m_54700_(p_54697_, p_54698_);
 +               }
 +               // CraftBukkit end

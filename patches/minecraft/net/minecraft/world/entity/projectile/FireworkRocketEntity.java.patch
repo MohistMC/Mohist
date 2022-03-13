@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
  
  public class FireworkRocketEntity extends Projectile implements ItemSupplier {
     public static final EntityDataAccessor<ItemStack> f_37019_ = SynchedEntityData.m_135353_(FireworkRocketEntity.class, EntityDataSerializers.f_135033_);
@@ -64,7 +64,7 @@
 -      }
 -
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.m_37080_();
 +         }
 +         // CraftBukkit end
@@ -85,7 +85,7 @@
        if (!this.f_19853_.f_46443_) {
           this.m_37080_();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.m_37080_();
 +         }
 +         // CraftBukkit end
@@ -97,7 +97,7 @@
        if (!this.f_19853_.m_5776_() && this.m_37086_()) {
           this.m_37080_();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.m_37080_();
 +         }
 +         // CraftBukkit end

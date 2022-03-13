@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.ticks.TickPriority;
-+import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
  
  public class ComparatorBlock extends DiodeBlock implements EntityBlock {
     public static final EnumProperty<ComparatorMode> f_51854_ = BlockStateProperties.f_61393_;

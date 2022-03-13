@@ -5,7 +5,7 @@
     public void m_7455_(BlockState p_56615_, ServerLevel p_56616_, BlockPos p_56617_, Random p_56618_) {
        if (p_56616_.m_45517_(LightLayer.BLOCK, p_56617_) > 11) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callBlockFadeEvent(p_56616_, p_56617_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockFadeEvent(p_56616_, p_56617_, Blocks.f_50016_.m_49966_()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

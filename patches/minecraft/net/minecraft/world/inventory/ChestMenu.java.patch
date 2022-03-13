@@ -9,8 +9,8 @@
  import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
  
  public class ChestMenu extends AbstractContainerMenu {
     private static final int f_150511_ = 9;
@@ -29,9 +29,9 @@
 +
 +      CraftInventory inventory;
 +      if (this.f_39221_ instanceof Inventory) {
-+         inventory = new org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryPlayer((Inventory) this.f_39221_);
++         inventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryPlayer((Inventory) this.f_39221_);
 +      } else if (this.f_39221_ instanceof CompoundContainer) {
-+         inventory = new org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryDoubleChest((CompoundContainer) this.f_39221_);
++         inventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryDoubleChest((CompoundContainer) this.f_39221_);
 +      } else {
 +         inventory = new CraftInventory(this.f_39221_);
 +      }

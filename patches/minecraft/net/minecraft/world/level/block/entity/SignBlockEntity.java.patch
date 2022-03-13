@@ -42,7 +42,7 @@
 +         }
 +
 +         if (oldSign) {
-+            f_59720_[i] = org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage.fromString(s)[0];
++            f_59720_[i] = org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage.fromString(s)[0];
 +            continue;
 +         }
 +         // CraftBukkit end
@@ -101,7 +101,7 @@
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_18_R1.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_18_R2.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +   // CraftBukkit end
  }

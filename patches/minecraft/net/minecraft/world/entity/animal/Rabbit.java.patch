@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
+@@ -47,7 +_,6 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.crafting.Ingredient;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
 @@ -91,7 +_,13 @@
        this.m_29725_(0.0D);
     }
@@ -29,7 +37,7 @@
                 int i = blockstate.m_61143_(CarrotBlock.f_52244_);
                 if (i == 0) {
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_29778_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++                  if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_29778_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
 +                     return;
 +                  }
 +                  // CraftBukkit end
@@ -37,7 +45,7 @@
                    level.m_46953_(blockpos, true, this.f_29778_);
                 } else {
 +                  // CraftBukkit starts
-+                  if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityChangeBlockEvent(
++                  if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(
 +                          this.f_29778_,
 +                          blockpos,
 +                          blockstate.m_61124_(CarrotBlock.f_52244_, i - 1)

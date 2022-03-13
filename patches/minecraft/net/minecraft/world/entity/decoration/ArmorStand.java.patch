@@ -1,11 +1,17 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -41,6 +_,9 @@
+@@ -35,12 +_,14 @@
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LightLayer;
+-import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_18_R1.CraftEquipmentSlot;
-+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.CraftEquipmentSlot;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
  
  public class ArmorStand extends LivingEntity {
@@ -94,7 +100,7 @@
        if (!this.f_19853_.f_46443_ && !this.m_146910_()) {
           if (DamageSource.f_19317_.equals(p_31579_)) {
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_)) {
++            if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_)) {
 +               return false;
 +            }
 +            // CraftBukkit end
@@ -103,7 +109,7 @@
 -         } else if (!this.m_6673_(p_31579_) && !this.f_31540_ && !this.m_31677_()) {
 +         } else if (!this.m_6673_(p_31579_) && (true || !this.f_31540_) && !this.m_31677_()) { // CraftBukkit
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.f_31540_)) {
++            if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.f_31540_)) {
 +               return false;
 +            }
 +            // CraftBukkit end
@@ -124,7 +130,7 @@
  
     private void m_31646_(DamageSource p_31647_) {
 -      Block.m_49840_(this.f_19853_, this.m_142538_(), new ItemStack(Items.f_42650_));
-+      drops.add(org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack.asBukkitCopy(new ItemStack(Items.f_42650_))); // CraftBukkit - add to drops
++      drops.add(org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asBukkitCopy(new ItemStack(Items.f_42650_))); // CraftBukkit - add to drops
        this.m_31653_(p_31647_);
     }
  
@@ -137,7 +143,7 @@
           ItemStack itemstack = this.f_31538_.get(i);
           if (!itemstack.m_41619_()) {
 -            Block.m_49840_(this.f_19853_, this.m_142538_().m_7494_(), itemstack);
-+            drops.add(org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
++            drops.add(org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
              this.f_31538_.set(i, ItemStack.f_41583_);
           }
        }
@@ -146,7 +152,7 @@
           ItemStack itemstack1 = this.f_31539_.get(j);
           if (!itemstack1.m_41619_()) {
 -            Block.m_49840_(this.f_19853_, this.m_142538_().m_7494_(), itemstack1);
-+            drops.add(org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
++            drops.add(org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
              this.f_31539_.set(j, ItemStack.f_41583_);
           }
        }
@@ -168,7 +174,7 @@
 +
 +
     public void m_6074_() {
-+      org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
++      org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
        this.m_142687_(Entity.RemovalReason.KILLED);
     }
  
