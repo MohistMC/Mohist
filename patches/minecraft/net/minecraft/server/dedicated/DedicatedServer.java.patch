@@ -46,14 +46,13 @@
        this.f_139604_ = p_203717_;
        this.f_139602_ = new RconConsoleSource(this);
        this.f_139606_ = TextFilterClient.m_143736_(p_203717_.m_139777_().f_139724_);
-@@ -89,19 +_,69 @@
+@@ -89,19 +_,50 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
 -            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-+            // CraftBukkit start
 +            jline.console.ConsoleReader bufferedreader = reader;
 +            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
 +            try {
@@ -65,28 +64,9 @@
              String s1;
              try {
 -               while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
--                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
-+               // CraftBukkit start - JLine disabling compatibility
 +               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
-+                  if (org.bukkit.craftbukkit.Main.useJline) {
-+                     s1 = bufferedreader.readLine(">", null);
-+                  } else {
-+                     s1 = bufferedreader.readLine();
-+                  }
+                   DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
 +
-+                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
-+                  if (s1 == null) {
-+                     try {
-+                        Thread.sleep(50L);
-+                     } catch (InterruptedException ex) {
-+                        Thread.currentThread().interrupt();
-+                     }
-+                     continue;
-+                  }
-+                  if (s1.trim().length() > 0) { // Trim to filter lines which are just spaces
-+                     DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
-+                  }
-+                  // CraftBukkit end
                 }
 -            } catch (IOException ioexception1) {
 -               DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
@@ -173,6 +153,14 @@
        }
     }
  
+@@ -316,6 +_,7 @@
+          this.f_139601_.m_7530_();
+       }
+ 
++      System.exit(0);
+    }
+ 
+    public void m_5703_(BooleanSupplier p_139661_) {
 @@ -333,8 +_,17 @@
  
     public void m_139665_() {
