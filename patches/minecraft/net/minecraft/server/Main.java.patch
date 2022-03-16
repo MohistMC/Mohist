@@ -115,6 +115,15 @@
  
           WorldStem worldstem;
           try {
+@@ -145,6 +_,8 @@
+             }, (p_206543_, p_206544_) -> {
+                RegistryAccess.Writable registryaccess$writable = RegistryAccess.m_206197_();
+                DynamicOps<Tag> dynamicops = RegistryOps.m_206813_(NbtOps.f_128958_, registryaccess$writable, p_206543_);
++               config.set(p_206544_);
++               ops.set(dynamicops);
+                WorldData worlddata1 = levelstoragesource$levelstorageaccess.m_211747_(dynamicops, p_206544_, registryaccess$writable.m_211816_());
+                if (worlddata1 != null) {
+                   return Pair.of(worlddata1, registryaccess$writable.m_203557_());
 @@ -181,34 +_,58 @@
           }
  
