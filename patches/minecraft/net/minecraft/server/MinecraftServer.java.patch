@@ -377,6 +377,15 @@
     protected void m_130012_() {
        this.m_18699_();
        this.m_18701_(() -> {
+@@ -753,7 +_,7 @@
+       });
+    }
+ 
+-   protected TickTask m_6681_(Runnable p_129852_) {
++   public TickTask m_6681_(Runnable p_129852_) {
+       return new TickTask(this.f_129766_, p_129852_);
+    }
+ 
 @@ -825,7 +_,9 @@
     }
  
