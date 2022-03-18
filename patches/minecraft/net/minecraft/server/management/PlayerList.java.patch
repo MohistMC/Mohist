@@ -619,7 +619,7 @@
 +        // CraftBukkit start - fire PlayerRespawnEvent
 +        if (location == null) {
 +            boolean isBedSpawn = false;
-+            CraftWorld cworld = (CraftWorld) this.field_72400_f.server.getWorld(p_72368_1_.spawnWorld);
++            CraftWorld cworld = this.field_72400_f.func_71218_a(p_72368_2_).getWorld();
 +            if (cworld != null && blockpos != null) {
 +                blockposition1 = EntityPlayer.func_180467_a(cworld.getHandle(), blockpos, flag1);
 +                if (blockposition1 != null) {
@@ -793,7 +793,7 @@
 +        // CraftBukkit start - fire PlayerRespawnEvent
 +        if (location == null) {
 +            boolean isBedSpawn = false;
-+            CraftWorld cworld = (CraftWorld) this.field_72400_f.server.getWorld(playerIn.spawnWorld);
++            CraftWorld cworld = this.field_72400_f.func_71218_a(dimension).getWorld();
 +            if (cworld != null && blockpos != null) {
 +                blockposition1 = EntityPlayer.func_180467_a(cworld.getHandle(), blockpos, flag1);
 +                if (blockposition1 != null) {
