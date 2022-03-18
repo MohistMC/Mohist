@@ -542,38 +542,110 @@
                          this.f_9743_.m_8972_(this.f_9743_.m_20186_() - d6, p_9874_.m_134139_());
                          this.f_9743_.m_6853_(p_9874_.m_134139_());
                          if (flag) {
-@@ -890,14 +_,31 @@
-       this.m_143617_(p_143612_, p_143613_, p_143614_, p_143615_, p_143616_, Collections.emptySet(), true);
+@@ -887,18 +_,74 @@
     }
  
-+   //MOHIST TODO
-+   public void teleport(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_, PlayerTeleportEvent.TeleportCause cause) {
-+      this.m_143617_(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet(), false);
+    public void m_143611_(double p_143612_, double p_143613_, double p_143614_, float p_143615_, float p_143616_) {
+-      this.m_143617_(p_143612_, p_143613_, p_143614_, p_143615_, p_143616_, Collections.emptySet(), true);
++      this.teleport(p_143612_, p_143613_, p_143614_, p_143615_, p_143616_, Collections.emptySet(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
 +
++   public void dismount(double p_143612_, double p_143613_, double p_143614_, float p_143615_, float p_143616_, PlayerTeleportEvent.TeleportCause cause) {
++      this.teleport(p_143612_, p_143613_, p_143614_, p_143615_, p_143616_, Collections.emptySet(), true, cause);
+    }
+ 
     public void m_9774_(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_) {
-       this.m_143617_(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet(), false);
-    }
- 
-+   //MOHIST TODO
-+   public void teleport(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_9786_,  PlayerTeleportEvent.TeleportCause cause) {
-+      this.m_143617_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, false);
+-      this.m_143617_(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet(), false);
++      this.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet(), false, PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
 +
++   public void teleport(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_, PlayerTeleportEvent.TeleportCause cause) {
++      this.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet(), false, cause);
+    }
+ 
     public void m_9780_(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_9786_) {
-       this.m_143617_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, false);
-    }
- 
-+
-+   //MOHIST TODO
-+   public boolean teleport(double p_143618_, double p_143619_, double p_143620_, float p_143621_, float p_143622_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_143623_, boolean p_143624_, PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit - Return event status
-+      this.m_143617_(p_143618_, p_143619_, p_143620_, p_143621_, p_143622_, p_143623_, p_143624_);
-+      return false;
+-      this.m_143617_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, false);
+-   }
+-
+-   public void m_143617_(double p_143618_, double p_143619_, double p_143620_, float p_143621_, float p_143622_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_143623_, boolean p_143624_) {
++      this.teleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, false, PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
 +
-    public void m_143617_(double p_143618_, double p_143619_, double p_143620_, float p_143621_, float p_143622_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_143623_, boolean p_143624_) {
++   public void teleport(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_9786_, PlayerTeleportEvent.TeleportCause cause) {
++      this.teleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, false, cause);
++   }
++
++   public boolean teleport(double p_143618_, double p_143619_, double p_143620_, float p_143621_, float p_143622_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_143623_, boolean p_143624_, PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit - Return event status
++      org.bukkit.entity.Player player = this.getCraftPlayer();
++      Location from = player.getLocation();
++
++      double x = p_143618_;
++      double y = p_143619_;
++      double z = p_143620_;
++      float yaw = p_143621_;
++      float pitch = p_143622_;
++
++      Location to = new Location(this.getCraftPlayer().getWorld(), x, y, z, yaw, pitch);
++      // SPIGOT-5171: Triggered on join
++      if (from.equals(to)) {
++         this.internalTeleport(p_143618_, p_143619_, p_143620_, p_143621_, p_143622_, p_143623_, p_143624_);
++         return false; // CraftBukkit - Return event status
++      }
++
++      PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), cause);
++      this.cserver.getPluginManager().callEvent(event);
++
++      if (event.isCancelled() || !to.equals(event.getTo())) {
++         p_143623_.clear(); // Can't relative teleport
++         to = event.isCancelled() ? event.getFrom() : event.getTo();
++         p_143618_ = to.getX();
++         p_143619_ = to.getY();
++         p_143620_ = to.getZ();
++         p_143621_ = to.getYaw();
++         p_143622_ = to.getPitch();
++      }
++
++      this.internalTeleport(p_143618_, p_143619_, p_143620_, p_143621_, p_143622_, p_143623_, p_143624_);
++      return event.isCancelled(); // CraftBukkit - Return event status
++   }
++
++   private void internalTeleport(double p_143618_, double p_143619_, double p_143620_, float p_143621_, float p_143622_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_143623_, boolean p_143624_) {
++      // CraftBukkit start
++      if (Float.isNaN(p_143621_)) {
++         p_143621_ = 0;
++      }
++      if (Float.isNaN(p_143622_)) {
++         p_143622_ = 0;
++      }
++
++      this.justTeleported = true;
++      // CraftBukkit end
        double d0 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.X) ? this.f_9743_.m_20185_() : 0.0D;
        double d1 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.Y) ? this.f_9743_.m_20186_() : 0.0D;
+       double d2 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.Z) ? this.f_9743_.m_20189_() : 0.0D;
+@@ -908,12 +_,22 @@
+       if (++this.f_9767_ == Integer.MAX_VALUE) {
+          this.f_9767_ = 0;
+       }
++      // CraftBukkit start - update last location
++      this.lastPosX = this.f_9766_.f_82479_;
++      this.lastPosY = this.f_9766_.f_82480_;
++      this.lastPosZ = this.f_9766_.f_82481_;
++      this.lastYaw = f;
++      this.lastPitch = f1;
++      // CraftBukkit end
+ 
+       this.f_9735_ = this.f_9746_;
+       this.f_9743_.m_19890_(p_143618_, p_143619_, p_143620_, p_143621_, p_143622_);
+       this.f_9743_.f_8906_.m_141995_(new ClientboundPlayerPositionPacket(p_143618_ - d0, p_143619_ - d1, p_143620_ - d2, p_143621_ - f, p_143622_ - f1, p_143623_, this.f_9767_, p_143624_));
+    }
+ 
++   public void teleport(Location to) {
++      internalTeleport(to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch(), Collections.emptySet(), true);
++   }
+    public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
+       PacketUtils.m_131359_(p_9889_, this, this.f_9743_.m_183503_());
+       BlockPos blockpos = p_9889_.m_134281_();
 @@ -979,7 +_,9 @@
              this.f_9743_.m_9243_();
              int i = this.f_9743_.f_19853_.m_151558_();
@@ -765,11 +837,10 @@
     }
  
     public void m_7477_(ServerboundChangeDifficultyPacket p_9839_) {
-@@ -1448,6 +_,16 @@
- 
+@@ -1449,6 +_,14 @@
     public ServerPlayer m_142253_() {
        return this.f_9743_;
-+   }
+    }
 +
 +   public final boolean isDisconnected() {
 +      return !this.f_9743_.joining && !this.f_9742_.m_129536_();
@@ -778,7 +849,6 @@
 +    public void chat(String msg, boolean b) {
 +    }
 +
-+   public void teleport(Location to) {
-    }
  
     @FunctionalInterface
+    interface EntityInteraction {
