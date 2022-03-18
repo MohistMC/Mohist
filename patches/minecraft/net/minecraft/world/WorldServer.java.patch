@@ -583,7 +583,7 @@
 +        if (this.field_73010_i.isEmpty() && getPersistentChunks().isEmpty())
          {
 -            if (this.field_80004_Q++ >= 300)
-+            if (this.field_80004_Q++ >= MohistConfig.instance.entityTickLimit.getValue()) // Mohist // by CraftDream
++            if (this.field_80004_Q++ >= MohistConfig.instance.entityTickLimit.getValue() && MinecraftServer.currentTick % 20 > 0) // Mohist // by CraftDream
              {
                  return;
              }
