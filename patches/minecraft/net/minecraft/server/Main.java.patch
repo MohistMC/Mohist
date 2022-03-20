@@ -67,11 +67,12 @@
  
           CrashReport.m_127529_();
           if (optionset.has(optionspec13)) {
-@@ -93,29 +_,28 @@
+@@ -93,29 +_,29 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
++         //TODO-PATCHING: Figure out how to handle the delayed initialization.
           Path path = Paths.get("server.properties");
           DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path);
           dedicatedserversettings.m_139780_();
@@ -103,16 +104,26 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -135,7 +_,8 @@
+@@ -135,6 +_,10 @@
           }
  
           PackRepository packrepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), PackSource.f_10529_));
--
 +         AtomicReference<DataPackConfig> config = new AtomicReference<>();
 +         AtomicReference<DynamicOps<Tag>> ops = new AtomicReference<>();
++
++
+ 
           WorldStem worldstem;
           try {
-             WorldStem.InitConfig worldstem$initconfig = new WorldStem.InitConfig(packrepository, Commands.CommandSelection.DEDICATED, dedicatedserversettings.m_139777_().f_139711_, flag);
+@@ -145,6 +_,8 @@
+             }, (p_206543_, p_206544_) -> {
+                RegistryAccess.Writable registryaccess$writable = RegistryAccess.m_206197_();
+                DynamicOps<Tag> dynamicops = RegistryOps.m_206813_(NbtOps.f_128958_, registryaccess$writable, p_206543_);
++               config.set(p_206544_);
++               ops.set(dynamicops);
+                WorldData worlddata1 = levelstoragesource$levelstorageaccess.m_211747_(dynamicops, p_206544_, registryaccess$writable.m_211816_());
+                if (worlddata1 != null) {
+                   return Pair.of(worlddata1, registryaccess$writable.m_203557_());
 @@ -181,34 +_,58 @@
           }
  

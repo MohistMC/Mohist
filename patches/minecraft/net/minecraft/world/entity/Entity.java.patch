@@ -859,19 +859,30 @@
              return this.m_183318_(p_19923_, blockpos1, flag2, worldborder).map((p_185941_) -> {
                 BlockState blockstate = this.f_19853_.m_8055_(this.f_19819_);
                 Direction.Axis direction$axis;
-@@ -2311,10 +_,29 @@
+@@ -2300,7 +_,7 @@
+                   vec3 = new Vec3(0.5D, 0.0D, 0.0D);
+                }
+ 
+-               return PortalShape.m_77699_(p_19923_, p_185941_, direction$axis, vec3, this.m_6972_(this.m_20089_()), this.m_20184_(), this.m_146908_(), this.m_146909_());
++               return PortalShape.createPortalInfo(p_19923_, p_185941_, direction$axis, vec3, this.m_6972_(this.m_20089_()), this.m_20184_(), this.m_146908_(), this.m_146909_(), event);
+             }).orElse((PortalInfo)null);
+          }
+       } else {
+@@ -2311,8 +_,27 @@
              blockpos = p_19923_.m_5452_(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p_19923_.m_8900_());
           }
  
+-         return new PortalInfo(new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_(), (double)blockpos.m_123343_() + 0.5D), this.m_20184_(), this.m_146908_(), this.m_146909_());
+-      }
 +         CraftPortalEvent event = callPortalEvent(this, p_19923_, blockpos, PlayerTeleportEvent.TeleportCause.END_PORTAL, 0, 0);
 +         if (event == null) {
 +            return null;
 +         }
 +
-          return new PortalInfo(new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_(), (double)blockpos.m_123343_() + 0.5D), this.m_20184_(), this.m_146908_(), this.m_146909_());
-       }
-    }
- 
++         return new PortalInfo(new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_(), (double)blockpos.m_123343_() + 0.5D), this.m_20184_(), this.m_146908_(), this.m_146909_(), event, p_19923_);
++      }
++   }
++
 +   // CraftBukkit start
 +   protected CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, BlockPos exitPosition, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
@@ -884,11 +895,9 @@
 +         return null;
 +      }
 +      return new CraftPortalEvent(event);
-+   }
-+
-    protected Vec3 m_7643_(Direction.Axis p_20045_, BlockUtil.FoundRectangle p_20046_) {
-       return PortalShape.m_77738_(p_20046_, p_20045_, this.m_20182_(), this.m_6972_(this.m_20089_()));
     }
+ 
+    protected Vec3 m_7643_(Direction.Axis p_20045_, BlockUtil.FoundRectangle p_20046_) {
 @@ -2463,8 +_,10 @@
        EntityDimensions entitydimensions = this.f_19815_;
        Pose pose = this.m_20089_();

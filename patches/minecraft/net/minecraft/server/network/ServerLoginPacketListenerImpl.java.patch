@@ -70,7 +70,7 @@
 -      if (component != null) {
 -         this.m_10053_(component);
 +      ServerPlayer s = this.f_10018_.m_6846_().canPlayerLogin(this, this.f_10021_, hostname);
-+      if (s != null) {
++      if (s == null) {
 +         //this.disconnect(component);
        } else {
           this.f_10019_ = ServerLoginPacketListenerImpl.State.ACCEPTED;
@@ -93,7 +93,7 @@
        }
  
     }
-@@ -179,19 +_,54 @@
+@@ -179,19 +_,56 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
  
@@ -114,8 +114,10 @@
 +                  java.net.InetAddress address = ((java.net.InetSocketAddress) f_10013_.m_129523_()).getAddress();
 +                  java.util.UUID uniqueId = f_10021_.getId();
 +                  final org.bukkit.craftbukkit.v1_18_R2.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
++
 +                  AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +                  server.getPluginManager().callEvent(asyncEvent);
++
 +                  if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
 +                     final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
 +                     if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {

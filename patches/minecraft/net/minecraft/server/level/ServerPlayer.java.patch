@@ -1,6 +1,26 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -82,6 +_,7 @@
+@@ -1,6 +_,7 @@
+ package net.minecraft.server.level;
+ 
+ import com.google.common.collect.Lists;
++import com.mohistmc.entity.MohistModsAbstractHorse;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.datafixers.util.Either;
+ import com.mojang.logging.LogUtils;
+@@ -10,6 +_,7 @@
+ import java.util.OptionalInt;
+ import java.util.Random;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.BlockUtil;
+ import net.minecraft.ChatFormatting;
+@@ -79,9 +_,11 @@
+ import net.minecraft.stats.Stats;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.Unit;
++import net.minecraft.util.datafix.fixes.BlockEntityKeepPacked;
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.MenuProvider;
@@ -16,29 +36,51 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -132,9 +_,15 @@
+@@ -112,6 +_,7 @@
+ import net.minecraft.world.item.ServerItemCooldowns;
+ import net.minecraft.world.item.WrittenBookItem;
+ import net.minecraft.world.item.crafting.Recipe;
++import net.minecraft.world.item.enchantment.EnchantmentHelper;
+ import net.minecraft.world.item.trading.MerchantOffers;
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.GameRules;
+@@ -119,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.biome.BiomeManager;
+ import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.ChestBlock;
+ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+ import net.minecraft.world.level.block.NetherPortalBlock;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+@@ -132,9 +_,22 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
 +import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryHorse;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.util.CraftDimensionUtil;
++import org.bukkit.event.player.*;
++import org.bukkit.inventory.HorseInventory;
++import org.bukkit.inventory.MainHand;
  import org.slf4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
-+import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogUtils.getLogger();
-@@ -227,20 +_,84 @@
+@@ -227,20 +_,83 @@
     public int f_8943_;
     public boolean f_8944_;
  
 +   // CraftBukkit start
 +   public String displayName;
-+   public Component listName;
 +   public org.bukkit.Location compassTarget;
 +   public int newExp = 0;
 +   public int newLevel = 0;
@@ -120,10 +162,58 @@
           int i = Math.max(0, this.f_8924_.m_129803_(p_9202_));
           int j = Mth.m_14107_(p_9202_.m_6857_().m_61941_((double)blockpos.m_123341_(), (double)blockpos.m_123343_()));
           if (j < i) {
-@@ -348,6 +_,29 @@
+@@ -294,11 +_,20 @@
+       if (p_9131_.m_128425_("recipeBook", 10)) {
+          this.f_8929_.m_12794_(p_9131_.m_128469_("recipeBook"), this.f_8924_.m_129894_());
+       }
++      this.getBukkitEntity().readExtraData(p_9131_); // CraftBukkit
  
-    }
+       if (this.m_5803_()) {
+          this.m_5796_();
+       }
  
++      // CraftBukkit start
++      String spawnWorld = p_9131_.m_128461_("SpawnWorld");
++      CraftWorld oldWorld = (CraftWorld) Bukkit.getWorld(spawnWorld);
++      if (oldWorld != null) {
++         this.f_8935_ = oldWorld.getHandle().m_46472_();
++      }
++      // CraftBukkit end
++
+       if (p_9131_.m_128425_("SpawnX", 99) && p_9131_.m_128425_("SpawnY", 99) && p_9131_.m_128425_("SpawnZ", 99)) {
+          this.f_8936_ = new BlockPos(p_9131_.m_128451_("SpawnX"), p_9131_.m_128451_("SpawnY"), p_9131_.m_128451_("SpawnZ"));
+          this.f_8937_ = p_9131_.m_128471_("SpawnForced");
+@@ -324,7 +_,18 @@
+ 
+       Entity entity1 = this.m_20201_();
+       Entity entity = this.m_20202_();
+-      if (entity != null && entity1 != this && entity1.m_146898_()) {
++      // CraftBukkit start - handle non-persistent vehicles
++      boolean persistVehicle = true;
++      if (entity1 != null) {
++         Entity vehicle;
++         for (vehicle = entity1; vehicle != null; vehicle = vehicle.m_20202_()) {
++            if (!vehicle.persist) {
++               persistVehicle = false;
++               break;
++            }
++         }
++      }
++      if (persistVehicle && entity != null && entity1 != this && entity1.m_146898_()) {
+          CompoundTag compoundtag1 = new CompoundTag();
+          CompoundTag compoundtag2 = new CompoundTag();
+          entity1.m_20223_(compoundtag2);
+@@ -345,8 +_,33 @@
+             p_9197_.m_128365_("SpawnDimension", p_9134_);
+          });
+       }
+-
+-   }
++      this.getBukkitEntity().setExtraData(p_9197_); // CraftBukkit
++
++
++   }
++
 +   // CraftBukkit start - World fallback code, either respawn location or global spawn
 +   public void spawnIn(Level world) {
 +      this.f_19853_ = world;
@@ -146,22 +236,189 @@
 +      this.f_8941_.m_9260_((ServerLevel ) world);
 +   }
 +   // CraftBukkit end
-+
+ 
     public void m_8985_(int p_8986_) {
        float f = (float)this.m_36323_();
-       float f1 = (f - 1.0F) / f;
-@@ -541,6 +_,7 @@
+@@ -398,6 +_,11 @@
+    }
+ 
+    public void m_8119_() {
++      // CraftBukkit start
++      if (this.joining) {
++         this.joining = false;
++      }
++      // CraftBukkit end
+       this.f_8941_.m_7712_();
+       --this.f_8921_;
+       if (this.f_19802_ > 0) {
+@@ -450,7 +_,8 @@
+          }
+ 
+          if (this.m_21223_() != this.f_8917_ || this.f_8918_ != this.f_36097_.m_38702_() || this.f_36097_.m_38722_() == 0.0F != this.f_8919_) {
+-            this.f_8906_.m_141995_(new ClientboundSetHealthPacket(this.m_21223_(), this.f_36097_.m_38702_(), this.f_36097_.m_38722_()));
++            //this.connection.send(new ClientboundSetHealthPacket(this.getHealth(), this.foodData.getFoodLevel(), this.foodData.getSaturationLevel()));
++            this.f_8906_.m_141995_(new ClientboundSetHealthPacket(this.getBukkitEntity().getScaledHealth(), this.f_36097_.m_38702_(), this.f_36097_.m_38722_())); //Craftbukkit
+             this.f_8917_ = this.m_21223_();
+             this.f_8918_ = this.f_36097_.m_38702_();
+             this.f_8919_ = this.f_36097_.m_38722_() == 0.0F;
+@@ -461,6 +_,12 @@
+             this.m_9104_(ObjectiveCriteria.f_83593_, Mth.m_14167_(this.f_8911_));
+          }
+ 
++         // CraftBukkit start - Force max health updates
++         if (this.maxHealthCache != this.m_21233_()) {
++            this.getBukkitEntity().updateScaledHealth();
++         }
++         // CraftBukkit end
++
+          if (this.f_36097_.m_38702_() != this.f_8912_) {
+             this.f_8912_ = this.f_36097_.m_38702_();
+             this.m_9104_(ObjectiveCriteria.f_83594_, Mth.m_14167_((float)this.f_8912_));
+@@ -495,6 +_,16 @@
+             CriteriaTriggers.f_10582_.m_53645_(this);
+          }
+ 
++         // CraftBukkit start - initialize oldLevel and fire PlayerLevelChangeEvent
++         if (this.oldLevel == -1) {
++            this.oldLevel = this.f_36078_;
++         }
++
++         if (this.oldLevel != this.f_36078_) {
++            CraftEventFactory.callPlayerLevelChangeEvent(this.getBukkitEntity(), this.oldLevel, this.f_36078_);
++            this.oldLevel = this.f_36078_;
++         }
++         // CraftBukkit end
+       } catch (Throwable throwable) {
+          CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
+          CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
+@@ -535,15 +_,59 @@
+    }
+ 
+    private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
+-      this.m_36329_().m_83427_(p_9105_, this.m_6302_(), (p_9178_) -> {
++       // CraftBukkit - Use our scores instead
++       this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(p_9105_, this.m_6302_(), (p_9178_) -> {
+          p_9178_.m_83402_(p_9106_);
+-      });
++       });
     }
  
     public void m_6667_(DamageSource p_9035_) {
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
-       if (flag) {
-          Component component = this.m_21231_().m_19293_();
-@@ -686,10 +_,27 @@
+-      if (flag) {
+-         Component component = this.m_21231_().m_19293_();
++
++      // CraftBukkit start - fire PlayerDeathEvent
++      if (this.m_146910_()) {
++         return;
++      }
++      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.m_150109_().m_6643_());
++      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
++
++      if (!keepInventory) {
++         for (ItemStack item : this.m_150109_().getContents()) {
++            if (!item.m_41619_() && !EnchantmentHelper.m_44924_(item)) {
++               loot.add(CraftItemStack.asCraftMirror(item));
++            }
++         }
++      }
++      // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
++      this.m_7625_(p_9035_, this.f_20889_ > 0);
++      for (org.bukkit.inventory.ItemStack item : this.drops) {
++         loot.add(item);
++      }
++      this.drops.clear(); // SPIGOT-5188: make sure to clear
++
++
++      Component defaultMessage = this.m_21231_().m_19293_();
++
++      String deathmessage = defaultMessage.getString();
++      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
++      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
++
++      // SPIGOT-943 - only call if they have an inventory open
++      if (this.f_36096_ != this.f_36095_) {
++         this.m_6915_();
++      }
++
++      String deathMessage = event.getDeathMessage();
++
++      if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
++         Component component;
++         if (deathMessage.equals(deathmessage)) {
++            component = this.m_21231_().m_19293_();
++         } else {
++            component = org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage.fromStringOrNull(deathMessage);
++         }
++
+          this.f_8906_.m_9831_(new ClientboundPlayerCombatKillPacket(this.m_21231_(), component), (p_9142_) -> {
+             if (!p_9142_.isSuccess()) {
+                int i = 256;
+@@ -575,11 +_,18 @@
+          this.m_9215_();
+       }
+ 
+-      if (!this.m_5833_()) {
+-         this.m_6668_(p_9035_);
++      // SPIGOT-5478 must be called manually now
++      this.m_21226_();
++      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
++      if (!event.getKeepInventory()) {
++         this.m_150109_().m_6211_();
+       }
+ 
+-      this.m_36329_().m_83427_(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);
++      this.m_9213_(this); // Remove spectated target
++      // CraftBukkit end
++
++      // CraftBukkit - Get our scores instead
++      this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);
+       LivingEntity livingentity = this.m_21232_();
+       if (livingentity != null) {
+          this.m_36246_(Stats.f_12987_.m_12902_(livingentity.m_6095_()));
+@@ -612,10 +_,12 @@
+          this.m_36401_(p_9051_);
+          String s = this.m_6302_();
+          String s1 = p_9050_.m_6302_();
+-         this.m_36329_().m_83427_(ObjectiveCriteria.f_83592_, s, Score::m_83392_);
++         // CraftBukkit - Get our scores instead
++         this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.f_83592_, s, Score::m_83392_);
+          if (p_9050_ instanceof Player) {
+             this.m_36220_(Stats.f_12938_);
+-            this.m_36329_().m_83427_(ObjectiveCriteria.f_83591_, s, Score::m_83392_);
++            // CraftBukkit - Get our scores instead
++            this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.f_83591_, s, Score::m_83392_);
+          } else {
+             this.m_36220_(Stats.f_12936_);
+          }
+@@ -631,7 +_,8 @@
+       if (playerteam != null) {
+          int i = playerteam.m_7414_().m_126656_();
+          if (i >= 0 && i < p_9127_.length) {
+-            this.m_36329_().m_83427_(p_9127_[i], p_9125_, Score::m_83392_);
++            // CraftBukkit - Get our scores instead
++            this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(p_9127_[i], p_9125_, Score::m_83392_);
+          }
+       }
+ 
+@@ -670,7 +_,7 @@
+    }
+ 
+    private boolean m_9216_() {
+-      return this.f_8924_.m_129799_();
++      return this.f_19853_.pvpMode;
+    }
+ 
+    @Nullable
+@@ -686,10 +_,29 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_9180_) {
+-      this.f_8927_ = true;
+-      ServerLevel serverlevel = this.m_183503_();
+-      ResourceKey<Level> resourcekey = serverlevel.m_46472_();
+-      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
 +      // CraftBukkit start
 +      return changeDimension(p_9180_,  p_9180_.m_8871_(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
@@ -179,52 +436,87 @@
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter, PlayerTeleportEvent.TeleportCause cause) {
 +      // CraftBukkit end
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
-       this.f_8927_ = true;
-       ServerLevel serverlevel = this.m_183503_();
-       ResourceKey<Level> resourcekey = serverlevel.m_46472_();
--      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
++      if (this.m_5803_()) return this; // CraftBukkit - SPIGOT-3154
++      // this.isChangingDimension = true; // CraftBukkit - Moved down and into PlayerList#changeDimension
++      AtomicReference<ServerLevel> serverlevel = new AtomicReference<>(this.m_183503_());
++      ResourceKey<Level> resourcekey = serverlevel.get().m_46472_();
 +      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
++         this.f_8927_ = true;
           this.m_19877_();
           this.m_183503_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.f_8944_) {
-@@ -706,13 +_,14 @@
+@@ -705,25 +_,43 @@
+          this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
           PlayerList playerlist = this.f_8924_.m_6846_();
           playerlist.m_11289_(this);
-          serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-         serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 -         this.m_146912_();
 -         PortalInfo portalinfo = this.m_7937_(p_9180_);
++         serverlevel.get().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 +         this.revive();
 +         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::m_7937_);
           if (portalinfo != null) {
-+            Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.m_146908_(), spawnPortal -> {//Forge: Start vanilla logic
-             serverlevel.m_46473_().m_6180_("moving");
-             if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
-                this.f_8933_ = this.m_20182_();
+-            serverlevel.m_46473_().m_6180_("moving");
+-            if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
+-               this.f_8933_ = this.m_20182_();
 -            } else if (p_9180_.m_46472_() == Level.f_46430_) {
-+            } else if (spawnPortal && p_9180_.m_46472_() == Level.f_46430_) {
-                this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
+-               this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
++            Entity e = teleporter.placeEntity(this, serverlevel.get(), p_9180_, this.m_146908_(), spawnPortal -> {//Forge: Start vanilla logic
++           serverlevel.get().m_46473_().m_6180_("moving");
++           if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
++              this.f_8933_ = this.m_20182_();
++           } else if (spawnPortal && p_9180_.m_46472_() == Level.f_46430_ && portalinfo.portalEvent != null && portalinfo.portalEvent.getCanCreatePortal()) {
++              this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
++           }
++
++            Location enter = this.getBukkitEntity().getLocation();
++            Location exit = (serverlevel.get() == null) ? null : new Location(portalinfo.level.getWorld(), portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, portalinfo.f_77679_);
++            PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, cause);
++            Bukkit.getServer().getPluginManager().callEvent(tpEvent);
++            if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
++               return null;
              }
++            exit = tpEvent.getTo();
++            serverlevel.set(((CraftWorld) exit.getWorld()).getHandle());
++            // CraftBukkit end
  
-@@ -724,6 +_,9 @@
-             this.m_6027_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_);
-             serverlevel.m_46473_().m_7238_();
-             this.m_9209_(serverlevel);
+-            serverlevel.m_46473_().m_7238_();
+-            serverlevel.m_46473_().m_6180_("placing");
++            serverlevel.get().m_46473_().m_7238_();
++            serverlevel.get().m_46473_().m_6180_("placing");
+             this.m_143425_(p_9180_);
+             p_9180_.m_8817_(this);
+-            this.m_19915_(portalinfo.f_77678_, portalinfo.f_77679_);
+-            this.m_6027_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_);
+-            serverlevel.m_46473_().m_7238_();
+-            this.m_9209_(serverlevel);
++            //this.setRot(portalinfo.yRot, portalinfo.xRot);
++            //this.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z);
++            this.f_8906_.teleport(exit);
++            this.f_8906_.m_9953_();
++            serverlevel.get().m_46473_().m_7238_();
++            this.m_9209_(serverlevel.get());
 +            return this;//forge: this is part of the ITeleporter patch
 +            });//Forge: End vanilla logic
++
 +            if (e != this) throw new java.lang.IllegalArgumentException(String.format(java.util.Locale.ENGLISH, "Teleporter %s returned not the player entity but instead %s, expected PlayerEntity %s", teleporter, e, this));
              this.f_8906_.m_141995_(new ClientboundPlayerAbilitiesPacket(this.m_150110_()));
              playerlist.m_11229_(this, p_9180_);
              playerlist.m_11292_(this);
-@@ -732,10 +_,12 @@
+@@ -732,10 +_,16 @@
                 this.f_8906_.m_141995_(new ClientboundUpdateMobEffectPacket(this.m_142049_(), mobeffectinstance));
              }
  
-+            if (teleporter.playTeleportSound(this, serverlevel, p_9180_))
++            if (teleporter.playTeleportSound(this, serverlevel.get(), p_9180_))
              this.f_8906_.m_141995_(new ClientboundLevelEventPacket(1032, BlockPos.f_121853_, 0, false));
              this.f_8920_ = -1;
              this.f_8917_ = -1.0F;
              this.f_8918_ = -1;
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.m_46472_());
++            // CraftBukkit start
++            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.get().getWorld());
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(changeEvent);
++            // CraftBukkit end
           }
  
           return this;
@@ -244,7 +536,7 @@
           if (!optional1.isPresent()) {
              f_8907_.error("Unable to create a portal, likely target out of worldborder");
           }
-@@ -771,7 +_,7 @@
+@@ -771,15 +_,25 @@
        }
     }
  
@@ -252,18 +544,50 @@
 +   public void m_9209_ ( ServerLevel p_9210_ ) {
        ResourceKey<Level> resourcekey = p_9210_.m_46472_();
        ResourceKey<Level> resourcekey1 = this.f_19853_.m_46472_();
-       CriteriaTriggers.f_10588_.m_19757_(this, resourcekey, resourcekey1);
-@@ -799,6 +_,9 @@
-    }
+-      CriteriaTriggers.f_10588_.m_19757_(this, resourcekey, resourcekey1);
+-      if (resourcekey == Level.f_46429_ && resourcekey1 == Level.f_46428_ && this.f_8933_ != null) {
++
++      // CraftBukkit start
++      ResourceKey<Level> maindimensionkey = CraftDimensionUtil.getMainDimensionKey(p_9210_);
++      ResourceKey<Level> maindimensionkey1 = CraftDimensionUtil.getMainDimensionKey(this.f_19853_);
++
++      CriteriaTriggers.f_10588_.m_19757_(this, maindimensionkey, maindimensionkey1);
++      if (maindimensionkey != resourcekey || maindimensionkey1 != resourcekey1) {
++         CriteriaTriggers.f_10588_.m_19757_(this, resourcekey, resourcekey1);
++      }
++
++      if (maindimensionkey == Level.f_46429_ && maindimensionkey1 == Level.f_46428_ && this.f_8933_ != null) {
++         // CraftBukkit end
+          CriteriaTriggers.f_10552_.m_186165_(this, this.f_8933_);
+       }
  
-    public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_9115_) {
+-      if (resourcekey1 != Level.f_46429_) {
++      if (maindimensionkey1 != Level.f_46429_) {
+          this.f_8933_ = null;
+       }
+ 
+@@ -797,19 +_,22 @@
+       super.m_7938_(p_9047_, p_9048_);
+       this.f_36096_.m_38946_();
+    }
+-
+-   public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_9115_) {
+-      Direction direction = this.f_19853_.m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
++      // CraftBukkit start - moved bed result checks from below into separate method
++      private Either<Player.BedSleepingProblem, Unit> getBedResult(BlockPos p_9115_, Direction direction) {
 +      java.util.Optional<BlockPos> optAt = java.util.Optional.of(p_9115_);
 +      Player.BedSleepingProblem ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
 +      if (ret != null) return Either.left(ret);
-       Direction direction = this.f_19853_.m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
++      Direction direction1 = this.f_19853_.m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
        if (!this.m_5803_() && this.m_6084_()) {
-          if (!this.f_19853_.m_6042_().m_63956_()) {
-@@ -809,7 +_,7 @@
+-         if (!this.f_19853_.m_6042_().m_63956_()) {
++         if (!this.f_19853_.m_6042_().m_63956_() || !this.f_19853_.m_6042_().m_63961_()) {
+             return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
+-         } else if (!this.m_9116_(p_9115_, direction)) {
++         } else if (!this.m_9116_(p_9115_, direction1)) {
+             return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
+-         } else if (this.m_9191_(p_9115_, direction)) {
++         } else if (this.m_9191_(p_9115_, direction1)) {
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
           } else {
              this.m_9158_(this.f_19853_.m_46472_(), p_9115_, this.m_146908_(), false, true);
@@ -272,6 +596,65 @@
                 return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                 if (!this.m_7500_()) {
+@@ -824,21 +_,48 @@
+                   }
+                }
+ 
+-               Either<Player.BedSleepingProblem, Unit> either = super.m_7720_(p_9115_).ifRight((p_9029_) -> {
+-                  this.m_36220_(Stats.f_12969_);
+-                  CriteriaTriggers.f_10583_.m_53645_(this);
+-               });
+-               if (!this.m_183503_().m_143333_()) {
+-                  this.m_5661_(new TranslatableComponent("sleep.not_possible"), true);
+-               }
+-
+-               ((ServerLevel)this.f_19853_).m_8878_();
+-               return either;
++               return Either.right(Unit.INSTANCE);
+             }
+          }
+       } else {
+          return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
+       }
++      }
++
++      @Override
++      public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_9115_) {
++         return startSleepInBed(p_9115_, false);
++      }
++
++   @Override
++   public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos blockposition, boolean force) {
++      Direction enumdirection = (Direction) this.f_19853_.m_8055_(blockposition).m_61143_(HorizontalDirectionalBlock.f_54117_);
++      Either<Player.BedSleepingProblem, Unit> bedResult = this.getBedResult(blockposition, enumdirection);
++
++      if (bedResult.left().orElse(null) == Player.BedSleepingProblem.OTHER_PROBLEM) {
++         return bedResult; // return immediately if the result is not bypassable by plugins
++      }
++
++      if (force) {
++         bedResult = Either.right(Unit.INSTANCE);
++      }
++
++      bedResult = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callPlayerBedEnterEvent(this, blockposition, bedResult);
++      if (bedResult.left().isPresent()) {
++         return bedResult;
++      }
++
++      Either<Player.BedSleepingProblem, Unit> either = super.startSleepInBed(blockposition, force).ifRight((unit) -> {
++         this.m_36220_(Stats.f_12969_);
++         CriteriaTriggers.f_10583_.m_53645_(this);
++      });
++      if (!this.m_183503_().m_143333_()) {
++         this.m_5661_(new TranslatableComponent("sleep.not_possible"), true);
++      }
++
++      ((ServerLevel)this.f_19853_).m_8878_();
++      return either;
++
+    }
+ 
+    public void m_5802_(BlockPos p_9190_) {
 @@ -847,6 +_,7 @@
     }
  
@@ -280,7 +663,32 @@
        return this.m_9222_(p_9117_) || this.m_9222_(p_9117_.m_142300_(p_9118_.m_122424_()));
     }
  
-@@ -935,6 +_,11 @@
+@@ -861,6 +_,24 @@
+    }
+ 
+    public void m_6145_(boolean p_9165_, boolean p_9166_) {
++      if (!this.m_5803_()) return; // CraftBukkit - Can't leave bed if not in one!
++      // CraftBukkit start - fire PlayerBedLeaveEvent
++      CraftPlayer player = this.getBukkitEntity();
++      BlockPos bedPosition = this.m_21257_().orElse(null);
++
++      org.bukkit.block.Block bed;
++      if (bedPosition != null) {
++         bed = this.f_19853_.getWorld().getBlockAt(bedPosition.m_123341_(), bedPosition.m_123342_(), bedPosition.m_123343_());
++      } else {
++         bed = this.f_19853_.getWorld().getBlockAt(player.getLocation());
++      }
++
++      PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, true);
++      this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return;
++      }
++      // CraftBukkit end
+       if (this.m_5803_()) {
+          this.m_183503_().m_7726_().m_8394_(this, new ClientboundAnimatePacket(this, 2));
+       }
+@@ -935,16 +_,44 @@
        this.f_8940_ = this.f_8940_ % 100 + 1;
     }
  
@@ -292,22 +700,94 @@
     public OptionalInt m_5893_(@Nullable MenuProvider p_9033_) {
        if (p_9033_ == null) {
           return OptionalInt.empty();
-@@ -955,6 +_,7 @@
-             this.f_8906_.m_141995_(new ClientboundOpenScreenPacket(abstractcontainermenu.f_38840_, abstractcontainermenu.m_6772_(), p_9033_.m_5446_()));
-             this.m_143399_(abstractcontainermenu);
+       } else {
+-         if (this.f_36096_ != this.f_36095_) {
+-            this.m_6915_();
++         // CraftBukkit start - SPIGOT-6552: Handle inventory closing in CraftEventFactory#callInventoryOpenEvent(...)
++            /*
++         if (this.containerMenu != this.inventoryMenu) {
++            this.closeContainer();
+          }
+-
++            */
++         // CraftBukkit end
+          this.m_9217_();
+          AbstractContainerMenu abstractcontainermenu = p_9033_.m_7208_(this.f_8940_, this.m_150109_(), this);
++
++         // CraftBukkit start - Inventory open hook
++         if (abstractcontainermenu != null) {
++            abstractcontainermenu.setTitle(p_9033_.m_5446_());
++
++            boolean cancelled = false;
++            abstractcontainermenu = CraftEventFactory.callInventoryOpenEvent(this, abstractcontainermenu, cancelled);
++            if (abstractcontainermenu == null && !cancelled) { // Let pre-cancelled events fall through
++               // SPIGOT-5263 - close chest if cancelled
++               if (p_9033_ instanceof Container) {
++                  ((Container) p_9033_).m_5785_(this);
++               } else if (p_9033_ instanceof ChestBlock.DoubleInventory) {
++                  // SPIGOT-5355 - double chests too :(
++                  ((ChestBlock.DoubleInventory) p_9033_).inventorylargechest.m_5785_(this);
++               }
++               return OptionalInt.empty();
++            }
++         }
++         // CraftBukkit end
++
+          if (abstractcontainermenu == null) {
+             if (this.m_5833_()) {
+                this.m_5661_((new TranslatableComponent("container.spectatorCantOpen")).m_130940_(ChatFormatting.RED), true);
+@@ -952,9 +_,10 @@
+ 
+             return OptionalInt.empty();
+          } else {
+-            this.f_8906_.m_141995_(new ClientboundOpenScreenPacket(abstractcontainermenu.f_38840_, abstractcontainermenu.m_6772_(), p_9033_.m_5446_()));
+-            this.m_143399_(abstractcontainermenu);
              this.f_36096_ = abstractcontainermenu;
++            this.f_8906_.m_141995_(new ClientboundOpenScreenPacket(abstractcontainermenu.f_38840_, abstractcontainermenu.m_6772_(), abstractcontainermenu.getTitle()));
++            this.m_143399_(abstractcontainermenu);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.f_36096_));
              return OptionalInt.of(this.f_8940_);
           }
        }
-@@ -973,6 +_,7 @@
+@@ -965,14 +_,25 @@
+    }
+ 
+    public void m_6658_(AbstractHorse p_9059_, Container p_9060_) {
+-      if (this.f_36096_ != this.f_36095_) {
+-         this.m_6915_();
+-      }
+-
++      // CraftBukkit start - Inventory open hook
+       this.m_9217_();
++      AbstractContainerMenu container = new HorseInventoryMenu(this.f_8940_, this.m_150109_(), p_9060_, p_9059_);
++      container.setTitle(p_9059_.m_5446_());
++      container = CraftEventFactory.callInventoryOpenEvent(this, container);
++
++      if (container == null) {
++         p_9060_.m_5785_(this);
++         return;
++      }
++      // CraftBukkit end
++      if (this.f_36096_ != this.f_36095_) {
++         this.m_6915_();
++      }
++      // this.nextContainerCounter(); // CraftBukkit - moved up
        this.f_8906_.m_141995_(new ClientboundHorseScreenOpenPacket(this.f_8940_, p_9060_.m_6643_(), p_9059_.m_142049_()));
-       this.f_36096_ = new HorseInventoryMenu(this.f_8940_, this.m_150109_(), p_9060_, p_9059_);
+-      this.f_36096_ = new HorseInventoryMenu(this.f_8940_, this.m_150109_(), p_9060_, p_9059_);
++      this.f_36096_ = container; // CraftBukkit
        this.m_143399_(this.f_36096_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.f_36096_));
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
+@@ -991,6 +_,7 @@
+    }
+ 
+    public void m_6915_() {
++      CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
+       this.f_8906_.m_141995_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
+       this.m_9230_();
+    }
 @@ -998,6 +_,7 @@
     public void m_9230_() {
        this.f_36096_.m_6877_(this);
@@ -316,7 +796,48 @@
        this.f_36096_ = this.f_36095_;
     }
  
-@@ -1123,6 +_,13 @@
+@@ -1019,14 +_,14 @@
+ 
+    public void m_6278_(Stat<?> p_9026_, int p_9027_) {
+       this.f_8910_.m_13023_(this, p_9026_, p_9027_);
+-      this.m_36329_().m_83427_(p_9026_, this.m_6302_(), (p_8996_) -> {
++      this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(p_9026_, this.m_6302_(), (p_8996_) -> { // CraftBukkit - Get our scores instead
+          p_8996_.m_83393_(p_9027_);
+       });
+    }
+ 
+    public void m_7166_(Stat<?> p_9024_) {
+       this.f_8910_.m_6085_(this, p_9024_, 0);
+-      this.m_36329_().m_83427_(p_9024_, this.m_6302_(), Score::m_83401_);
++      this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(p_9024_, this.m_6302_(), Score::m_83401_); // CraftBukkit - Get our scores instead
+    }
+ 
+    public int m_7281_(Collection<Recipe<?>> p_9129_) {
+@@ -1067,7 +_,16 @@
+ 
+    public void m_9233_() {
+       this.f_8917_ = -1.0E8F;
+-   }
++      this.f_8920_ = -1; // CraftBukkit - Added to reset
++   }
++
++   // CraftBukkit start - Support multi-line messages
++   public void sendMessage(UUID uuid, Component[] ichatbasecomponent) {
++      for (Component component : ichatbasecomponent) {
++         this.m_6352_(component, (uuid == null) ? Util.f_137441_ : uuid);
++      }
++   }
++   // CraftBukkit end
+ 
+    public void m_5661_(Component p_9154_, boolean p_9155_) {
+       this.m_9146_(p_9154_, p_9155_ ? ChatType.GAME_INFO : ChatType.CHAT, Util.f_137441_);
+@@ -1118,11 +_,18 @@
+       this.f_8920_ = -1;
+       this.f_8917_ = -1.0F;
+       this.f_8918_ = -1;
+-      this.f_8929_.m_12685_(p_9016_.f_8929_);
++      //his.recipeBook.copyOverData(p_9016_.recipeBook); // CraftBukkit
+       this.f_8928_ = p_9016_.f_8928_;
        this.f_8933_ = p_9016_.f_8933_;
        this.m_36362_(p_9016_.m_36331_());
        this.m_36364_(p_9016_.m_36332_());
@@ -339,7 +860,25 @@
        if (!this.f_8941_.m_143473_(p_143404_)) {
           return false;
        } else {
-@@ -1237,6 +_,7 @@
+@@ -1231,12 +_,25 @@
+    }
+ 
+    public void m_9156_(ServerboundClientInformationPacket p_9157_) {
++      // CraftBukkit start
++      if (m_5737_() != p_9157_.f_133868_()) {
++         PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent(getBukkitEntity(), m_5737_() == HumanoidArm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
++         this.f_8924_.server.getPluginManager().callEvent(event);
++      }
++      if (!this.locale.equals(p_9157_.f_133863_())) {
++         PlayerLocaleChangeEvent event = new PlayerLocaleChangeEvent(getBukkitEntity(), p_9157_.f_133863_());
++         this.f_8924_.server.getPluginManager().callEvent(event);
++      }
++      this.locale = p_9157_.f_133863_();
++      this.clientViewDistance = p_9157_.f_133864_();
++      // CraftBukkit end
+       this.f_8922_ = p_9157_.f_133865_();
+       this.f_8923_ = p_9157_.f_133866_();
+       this.f_143378_ = p_9157_.f_179550_();
        this.f_184127_ = p_9157_.f_195812_();
        this.m_20088_().m_135381_(f_36089_, (byte)p_9157_.f_133867_());
        this.m_20088_().m_135381_(f_36090_, (byte)(p_9157_.f_133868_() == HumanoidArm.LEFT ? 0 : 1));
@@ -347,15 +886,19 @@
     }
  
     public boolean m_143432_() {
-@@ -1296,6 +_,7 @@
+@@ -1296,9 +_,10 @@
     public void m_9213_(@Nullable Entity p_9214_) {
        Entity entity = this.m_8954_();
        this.f_8926_ = (Entity)(p_9214_ == null ? this : p_9214_);
 +      while (this.f_8926_ instanceof net.minecraftforge.entity.PartEntity<?> partEntity) this.f_8926_ = partEntity.getParent(); // FORGE: fix MC-46486
        if (entity != this.f_8926_) {
           this.f_8906_.m_141995_(new ClientboundSetCameraPacket(this.f_8926_));
-          this.m_6021_(this.f_8926_.m_20185_(), this.f_8926_.m_20186_(), this.f_8926_.m_20189_());
-@@ -1325,7 +_,11 @@
+-         this.m_6021_(this.f_8926_.m_20185_(), this.f_8926_.m_20186_(), this.f_8926_.m_20189_());
++         this.f_8906_.teleport(this.f_8926_.m_20185_(), this.f_8926_.m_20186_(), this.f_8926_.m_20189_(), this.m_146908_(), this.m_146909_(), PlayerTeleportEvent.TeleportCause.SPECTATE); // CraftBukkit
+       }
+ 
+    }
+@@ -1325,7 +_,15 @@
  
     @Nullable
     public Component m_8957_() {
@@ -365,14 +908,28 @@
 +         this.hasTabListName = true;
 +      }
 +      return this.tabListDisplayName;
++   }
++
++   public void setTabListDisplayName(Component tabListDisplayName) {
++      this.tabListDisplayName = tabListDisplayName;
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1350,21 +_,23 @@
+@@ -1346,25 +_,32 @@
+    }
+ 
+    public void m_8999_(ServerLevel p_9000_, double p_9001_, double p_9002_, double p_9003_, float p_9004_, float p_9005_) {
++      this.teleportTo(p_9000_, p_9001_, p_9002_, p_9003_, p_9004_, p_9005_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   }
++
++   public void teleportTo(ServerLevel p_9000_, double p_9001_, double p_9002_, double p_9003_, float p_9004_, float p_9005_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      // CraftBukkit end
+       this.m_9213_(this);
        this.m_8127_();
        if (p_9000_ == this.f_19853_) {
-          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+-         this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
 -      } else {
++         this.f_8906_.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_, cause);
 +      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.m_46472_())) {
           ServerLevel serverlevel = this.m_183503_();
           LevelData leveldata = p_9000_.m_6106_();
@@ -386,7 +943,8 @@
           this.m_143425_(p_9000_);
           p_9000_.m_8622_(this);
           this.m_9209_(serverlevel);
-          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+-         this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
++         this.f_8906_.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_, cause);
 +         this.f_8941_.m_9260_(p_9000_);
           this.f_8924_.m_6846_().m_11229_(this, p_9000_);
           this.f_8924_.m_6846_().m_11292_(this);

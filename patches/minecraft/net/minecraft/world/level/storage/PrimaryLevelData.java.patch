@@ -1,5 +1,93 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
+@@ -23,8 +_,11 @@
+ import net.minecraft.nbt.NbtUtils;
+ import net.minecraft.nbt.StringTag;
+ import net.minecraft.nbt.Tag;
++import net.minecraft.network.protocol.game.ServerboundChangeDifficultyPacket;
+ import net.minecraft.resources.RegistryOps;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.level.DataPackConfig;
+@@ -36,6 +_,11 @@
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.timers.TimerCallbacks;
+ import net.minecraft.world.level.timers.TimerQueue;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
++import org.bukkit.entity.Player;
++import org.bukkit.event.weather.ThunderChangeEvent;
++import org.bukkit.event.weather.WeatherChangeEvent;
+ import org.slf4j.Logger;
+ 
+ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -191,6 +_,7 @@
+          p_78547_.m_128362_("WanderingTraderId", this.f_78438_);
+       }
+ 
++      p_78547_.m_128359_("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
+    }
+ 
+    public int m_6789_() {
+@@ -288,6 +_,21 @@
+    }
+ 
+    public void m_5557_(boolean p_78562_) {
++
++      // CraftBukkit start
++      if (this.f_78460_ == p_78562_) {
++         return;
++      }
++
++      org.bukkit.World world = Bukkit.getWorld(m_5462_());
++      if (world != null) {
++         ThunderChangeEvent thunder = new ThunderChangeEvent(world, p_78562_);
++         Bukkit.getServer().getPluginManager().callEvent(thunder);
++         if (thunder.isCancelled()) {
++            return;
++         }
++      }
++      // CraftBukkit end
+       this.f_78460_ = p_78562_;
+    }
+ 
+@@ -304,6 +_,20 @@
+    }
+ 
+    public void m_5565_(boolean p_78576_) {
++      // CraftBukkit start
++      if (this.f_78458_ == p_78576_) {
++         return;
++      }
++
++      org.bukkit.World world = Bukkit.getWorld(m_5462_());
++      if (world != null) {
++         WeatherChangeEvent weather = new WeatherChangeEvent(world, p_78576_);
++         Bukkit.getServer().getPluginManager().callEvent(weather);
++         if (weather.isCancelled()) {
++            return;
++         }
++      }
++      // CraftBukkit end
+       this.f_78458_ = p_78576_;
+    }
+ 
+@@ -356,6 +_,12 @@
+    }
+ 
+    public void m_6166_(Difficulty p_78521_) {
++      // CraftBukkit start
++      ServerboundChangeDifficultyPacket packet = new ServerboundChangeDifficultyPacket(p_78521_);
++      for (Player player : Bukkit.getOnlinePlayers()) {
++         ((CraftPlayer)player).getHandle().f_8906_.m_141995_(packet);
++      }
++      // CraftBukkit end
+       this.f_78443_ = this.f_78443_.m_46918_(p_78521_);
+    }
+ 
 @@ -454,4 +_,12 @@
     public LevelSettings m_5926_() {
        return this.f_78443_.m_46935_();

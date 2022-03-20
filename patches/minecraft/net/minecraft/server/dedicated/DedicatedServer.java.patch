@@ -46,14 +46,57 @@
        this.f_139604_ = p_203717_;
        this.f_139602_ = new RconConsoleSource(this);
        this.f_139606_ = TextFilterClient.m_143736_(p_203717_.m_139777_().f_139724_);
-@@ -89,6 +_,7 @@
+@@ -89,8 +_,16 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
-+            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+-            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
++            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
++            jline.console.ConsoleReader bufferedreader = reader;
++            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
++            try {
++               System.in.available();
++            } catch (IOException ex) {
++               return;
++            }
++            // CraftBukkit end
              String s1;
+             try {
+                while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
+@@ -99,9 +_,31 @@
+             } catch (IOException ioexception1) {
+                DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
+             }
+-
+          }
+       };
++
++      // CraftBukkit start - TODO: handle command-line logging arguments
++      java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
++      global.setUseParentHandlers(false);
++      for (java.util.logging.Handler handler : global.getHandlers()) {
++         global.removeHandler(handler);
++      }
++
++    global.addHandler(new org.bukkit.craftbukkit.v1_18_R2.util.ForwardLogHandler());
++
++   final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
++      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
++      if (appender instanceof org.apache.logging.log4j.core.appender.ConsoleAppender) {
++         logger.removeAppender(appender);
++      }
++   }
++
++      new org.bukkit.craftbukkit.v1_18_R2.util.TerminalConsoleWriterThread(System.out, this.reader).start();
++
++      System.setOut(IoBuilder.forLogger(logger).setLevel( org.apache.logging.log4j.Level.INFO).buildPrintStream());
++      System.setErr(IoBuilder.forLogger(logger).setLevel( org.apache.logging.log4j.Level.WARN).buildPrintStream());
++      // CraftBukkit end
++
+       thread.setDaemon(true);
+       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
+       thread.start();
 @@ -163,15 +_,26 @@
        if (!OldUsersConverter.m_11106_(this)) {
           return false;
@@ -105,6 +148,14 @@
        }
     }
  
+@@ -316,6 +_,7 @@
+          this.f_139601_.m_7530_();
+       }
+ 
++      System.exit(0);
+    }
+ 
+    public void m_5703_(BooleanSupplier p_139661_) {
 @@ -333,8 +_,17 @@
  
     public void m_139665_() {

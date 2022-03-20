@@ -266,7 +266,7 @@ public final class CraftServer implements Server {
         this.scoreboardManager = new CraftScoreboardManager( console, new ServerScoreboard( console ) );
         Bukkit.setServer(this);
 
-        ForgeInjectBukkit.init();
+        //ForgeInjectBukkit.init();
 
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
         Enchantments.SHARPNESS.getClass();
