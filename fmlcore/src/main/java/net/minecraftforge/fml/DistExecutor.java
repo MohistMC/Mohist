@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
@@ -250,7 +251,7 @@ public final class DistExecutor
                     break;// custom interface implementation
                 SerializedLambda l = (SerializedLambda) replacement;
                 if (Objects.equals(l.getCapturingClass(), l.getImplClass())) {
-                    LOGGER.fatal("Detected unsafe referent usage, please view the code at {}",Thread.currentThread().getStackTrace()[3]);
+                    LOGGER.fatal(i18n.get("distexecutor.1", Thread.currentThread().getStackTrace()[3]));
                     throw new RuntimeException("Unsafe Referent usage found in safe referent method");
                 }
             } catch (NoSuchMethodException e) {

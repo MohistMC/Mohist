@@ -6,6 +6,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -140,7 +141,7 @@ public class ModLoader
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).toList(),
                 loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
-            LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
+            LOGGER.fatal(CORE, i18n.get("modloader.1"), loadingExceptions.get(0));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
@@ -152,7 +153,7 @@ public class ModLoader
                 .<ModContainer>mapMulti(Iterable::forEach)
                 .toList();
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
+            LOGGER.fatal(CORE, i18n.get("modloader.2"), loadingExceptions.get(0));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
@@ -178,7 +179,7 @@ public class ModLoader
 
     private void dispatchAndHandleError(IModLoadingState state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker) {
         if (!isLoadingStateValid()) {
-            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            LOGGER.error(i18n.get("modloader.3", state));
             return;
         }
         statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
@@ -188,7 +189,7 @@ public class ModLoader
 
     private void dispatchAndHandleError(IModLoadingState state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
         if (!isLoadingStateValid()) {
-            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
+            LOGGER.error(i18n.get("modloader.3", state));
             return;
         }
         statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
@@ -209,7 +210,7 @@ public class ModLoader
                     .filter(obj -> !(obj instanceof ModLoadingException))
                     .collect(Collectors.toList());
             if (!notModLoading.isEmpty()) {
-                LOGGER.fatal("Encountered non-modloading exceptions!", e);
+                LOGGER.fatal(i18n.get("modloader.4"), e);
                 throw e;
             }
 
@@ -217,7 +218,7 @@ public class ModLoader
                     .filter(ModLoadingException.class::isInstance)
                     .map(ModLoadingException.class::cast)
                     .collect(Collectors.toList());
-            LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", state.name(), modLoadingExceptions.size());
+            LOGGER.fatal(LOADING,i18n.get("modloader.5", state.name(), modLoadingExceptions.size()));
             throw new LoadingFailedException(modLoadingExceptions);
         }
     }
@@ -226,7 +227,7 @@ public class ModLoader
     {
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
-        LOGGER.trace(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
+        LOGGER.trace(LOADING, i18n.get("modloader.6", ModContainer.class.getClassLoader()));
         final List<ModContainer> containers = modFile.getScanResult().getTargets()
                 .entrySet()
                 .stream()
@@ -234,10 +235,10 @@ public class ModLoader
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         if (containers.size() != modInfoMap.size()) {
-            LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
+            LOGGER.fatal(LOADING,i18n.get("modloader.7",
                     modFile.getFilePath(),
                     containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList()),
-                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList()));
+                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList())));
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         // remove errored mod containers
@@ -270,7 +271,7 @@ public class ModLoader
 
     public <T extends Event & IModBusEvent> void runEventGenerator(Function<ModContainer, T> generator) {
         if (!loadingStateValid) {
-            LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
+            LOGGER.error(i18n.get("modloader.8"));
             return;
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
@@ -278,7 +279,7 @@ public class ModLoader
 
     public <T extends Event & IModBusEvent> void postEvent(T e) {
         if (!loadingStateValid) {
-            LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
+            LOGGER.error(i18n.get("modloader.9", e.getClass().getName()));
             return;
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));

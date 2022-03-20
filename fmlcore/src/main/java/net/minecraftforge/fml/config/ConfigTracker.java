@@ -7,6 +7,7 @@ package net.minecraftforge.fml.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -36,27 +37,27 @@ public class ConfigTracker {
 
     void trackConfig(final ModConfig config) {
         if (this.fileMap.containsKey(config.getFileName())) {
-            LOGGER.error(CONFIG,"Detected config file conflict {} between {} and {}", config.getFileName(), this.fileMap.get(config.getFileName()).getModId(), config.getModId());
+            LOGGER.error(CONFIG, i18n.get("configtracker.1", config.getFileName(), this.fileMap.get(config.getFileName()).getModId(), config.getModId()));
             throw new RuntimeException("Config conflict detected!");
         }
         this.fileMap.put(config.getFileName(), config);
         this.configSets.get(config.getType()).add(config);
         this.configsByMod.computeIfAbsent(config.getModId(), (k)->new EnumMap<>(ModConfig.Type.class)).put(config.getType(), config);
-        LOGGER.debug(CONFIG, "Config file {} for {} tracking", config.getFileName(), config.getModId());
+        LOGGER.debug(CONFIG, i18n.get("configtracker.2", config.getFileName(), config.getModId()));
     }
 
     public void loadConfigs(ModConfig.Type type, Path configBasePath) {
-        LOGGER.debug(CONFIG, "Loading configs type {}", type);
+        LOGGER.debug(CONFIG, i18n.get("configtracker.3", type));
         this.configSets.get(type).forEach(config -> openConfig(config, configBasePath));
     }
 
     public void unloadConfigs(ModConfig.Type type, Path configBasePath) {
-        LOGGER.debug(CONFIG, "Unloading configs type {}", type);
+        LOGGER.debug(CONFIG, i18n.get("configtracker.4", type));
         this.configSets.get(type).forEach(config -> closeConfig(config, configBasePath));
     }
 
     private void openConfig(final ModConfig config, final Path configBasePath) {
-        LOGGER.trace(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
+        LOGGER.trace(CONFIG, i18n.get("configtracker.5", config.getType(), config.getFileName(), config.getModId()));
         final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
         config.setConfigData(configData);
         config.fireEvent(IConfigEvent.loading(config));
@@ -65,7 +66,7 @@ public class ConfigTracker {
 
     private void closeConfig(final ModConfig config, final Path configBasePath) {
         if (config.getConfigData() != null) {
-            LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
+            LOGGER.trace(CONFIG, i18n.get("configtracker.6", config.getType(), config.getFileName(), config.getModId()));
             config.save();
             config.getHandler().unload(configBasePath, config);
             config.setConfigData(null);

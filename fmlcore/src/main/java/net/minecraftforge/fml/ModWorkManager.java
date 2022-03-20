@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.FMLConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -94,7 +95,7 @@ public class ModWorkManager {
     public static Executor parallelExecutor() {
         if (parallelThreadPool == null) {
             final int loadingThreadCount = FMLConfig.loadingThreadCount();
-            LOGGER.debug(LOADING, "Using {} threads for parallel mod-loading", loadingThreadCount);
+            LOGGER.debug(LOADING, i18n.get("modworkmanager.1", loadingThreadCount));
             parallelThreadPool = new ForkJoinPool(loadingThreadCount, ModWorkManager::newForkJoinWorkerThread, null, false);
         }
         return parallelThreadPool;

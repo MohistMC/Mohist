@@ -6,6 +6,7 @@
 package net.minecraftforge.fml;
 
 import com.google.gson.Gson;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -106,7 +107,7 @@ public class VersionChecker
             {
                 if (!FMLConfig.runVersionCheck())
                 {
-                    LOGGER.info("Global Forge version check system disabled, no further processing.");
+                    LOGGER.info(i18n.get("versionchecker.1"));
                     return;
                 }
 
@@ -164,11 +165,11 @@ public class VersionChecker
                 {
                     if (mod.getUpdateURL().isEmpty()) return;
                     URL url = mod.getUpdateURL().get();
-                    LOGGER.info("[{}] Starting version check at {}", mod.getModId(), url.toString());
+                    LOGGER.info(i18n.get("versionchecker.2", mod.getModId(), url.toString()));
 
                     String data = openUrlString(url);
 
-                    LOGGER.debug("[{}] Received version check data:\n{}", mod.getModId(), data);
+                    LOGGER.debug(i18n.get("versionchecker.3", mod.getModId(), data));
 
 
                     @SuppressWarnings("unchecked")
@@ -220,7 +221,7 @@ public class VersionChecker
                     else
                         status = BETA;
 
-                    LOGGER.info("[{}] Found status: {} Current: {} Target: {}", mod.getModId(), status, current, target);
+                    LOGGER.info(i18n.get("versionchecker.4", mod.getModId(), status, current, target));
 
                     changes = new LinkedHashMap<>();
                     @SuppressWarnings("unchecked")
@@ -246,7 +247,7 @@ public class VersionChecker
                 }
                 catch (Exception e)
                 {
-                    LOGGER.warn("Failed to process update information", e);
+                    LOGGER.warn(i18n.get("versionchecker.5"), e);
                     status = FAILED;
                 }
                 results.put(mod, new CheckResult(status, target, changes, display_url));

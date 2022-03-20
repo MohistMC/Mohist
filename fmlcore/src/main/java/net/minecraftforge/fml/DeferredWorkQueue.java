@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import com.google.common.base.Stopwatch;
+import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,11 +53,11 @@ public class DeferredWorkQueue
 
     public void runTasks() {
         if (tasks.isEmpty()) return;
-        LOGGER.debug(LOADING, "Dispatching synchronous work for work queue {}: {} jobs", modLoadingStage, tasks.size());
+        LOGGER.debug(LOADING, i18n.get("deferredworkqueue.1", modLoadingStage, tasks.size()));
         Stopwatch timer = Stopwatch.createStarted();
         tasks.forEach(t->makeRunnable(t, Runnable::run));
         timer.stop();
-        LOGGER.debug(LOADING, "Synchronous work queue completed in {}", timer);
+        LOGGER.debug(LOADING, i18n.get("deferredworkqueue.2", timer));
     }
 
     private static void makeRunnable(TaskInfo ti, Executor executor) {
@@ -70,7 +71,7 @@ public class DeferredWorkQueue
             }
             timer.stop();
             if (timer.elapsed(TimeUnit.SECONDS) >= 1) {
-                LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", ti.owner.getModId(), timer);
+                LOGGER.warn(LOADING, i18n.get("deferredworkqueue.3", ti.owner.getModId(), timer));
             }
         });
     }

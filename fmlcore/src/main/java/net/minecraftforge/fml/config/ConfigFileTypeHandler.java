@@ -10,6 +10,7 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FilenameUtils;
@@ -37,7 +38,7 @@ public class ConfigFileTypeHandler {
                     onFileNotFound((newfile, configFormat)-> setupConfigFile(c, newfile, configFormat)).
                     writingMode(WritingMode.REPLACE).
                     build();
-            LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
+            LOGGER.debug(CONFIG, i18n.get("configfiletypehandler.1", configPath.toString()));
             try
             {
                 configData.load();
@@ -46,10 +47,10 @@ public class ConfigFileTypeHandler {
             {
                 throw new ConfigLoadingException(c, ex);
             }
-            LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
+            LOGGER.debug(CONFIG, i18n.get("configfiletypehandler.2", configPath.toString()));
             try {
                 FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
-                LOGGER.debug(CONFIG, "Watching TOML config file {} for changes", configPath.toString());
+                LOGGER.debug(CONFIG, i18n.get("configfiletypehandler.3", configPath.toString()));
             } catch (IOException e) {
                 throw new RuntimeException("Couldn't watch config file", e);
             }
@@ -62,7 +63,7 @@ public class ConfigFileTypeHandler {
         try {
             FileWatcher.defaultInstance().removeWatch(configBasePath.resolve(config.getFileName()));
         } catch (RuntimeException e) {
-            LOGGER.error("Failed to remove config {} from tracker!", configPath.toString(), e);
+            LOGGER.error(i18n.get("configfiletypehandler.4", configPath.toString()), e);
         }
     }
 
@@ -70,7 +71,7 @@ public class ConfigFileTypeHandler {
         Files.createDirectories(file.getParent());
         Path p = defaultConfigPath.resolve(modConfig.getFileName());
         if (Files.exists(p)) {
-            LOGGER.info(CONFIG, "Loading default config file from path {}", p);
+            LOGGER.info(CONFIG, i18n.get("configfiletypehandler.5", p));
             Files.copy(p, file);
         } else {
             Files.createFile(file);
@@ -107,7 +108,7 @@ public class ConfigFileTypeHandler {
         }
         catch (IOException exception)
         {
-            LOGGER.warn(CONFIG, "Failed to back up config file {}", commentedFileConfig.getNioPath(), exception);
+            LOGGER.warn(CONFIG, i18n.get("configfiletypehandler.6", commentedFileConfig.getNioPath()), exception);
         }
     }
 
@@ -132,7 +133,7 @@ public class ConfigFileTypeHandler {
                     this.commentedFileConfig.load();
                     if(!this.modConfig.getSpec().isCorrect(commentedFileConfig))
                     {
-                        LOGGER.warn(CONFIG, "Configuration file {} is not correct. Correcting", commentedFileConfig.getFile().getAbsolutePath());
+                        LOGGER.warn(CONFIG, i18n.get("configfiletypehandler.7", commentedFileConfig.getFile().getAbsolutePath()));
                         ConfigFileTypeHandler.backUpConfig(commentedFileConfig);
                         this.modConfig.getSpec().correct(commentedFileConfig);
                         commentedFileConfig.save();
@@ -142,7 +143,7 @@ public class ConfigFileTypeHandler {
                 {
                     throw new ConfigLoadingException(modConfig, ex);
                 }
-                LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
+                LOGGER.debug(CONFIG, i18n.get("configfiletypehandler.8", this.modConfig.getFileName()));
                 this.modConfig.getSpec().afterReload();
                 this.modConfig.fireEvent(IConfigEvent.reloading(this.modConfig));
             }

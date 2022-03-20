@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.StringJoiner;
 
+import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.api.INameMappingService;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
@@ -73,12 +74,12 @@ public class ObfuscationReflectionHelper
         }
         catch (UnableToFindFieldException e)
         {
-            LOGGER.error(REFLECTION,"Unable to locate field {} ({}) on type {}", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
+            LOGGER.error(REFLECTION, i18n.get("obfuscationreflectionhelper.1", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName()), e);
             throw e;
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error(REFLECTION,"Unable to access field {} ({}) on type {}", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
+            LOGGER.error(REFLECTION, i18n.get("obfuscationreflectionhelper.2", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName()), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -106,12 +107,12 @@ public class ObfuscationReflectionHelper
         }
         catch (UnableToFindFieldException e)
         {
-            LOGGER.error("Unable to locate any field {} on type {}", fieldName, classToAccess.getName(), e);
+            LOGGER.error(i18n.get("obfuscationreflectionhelper.3", fieldName, classToAccess.getName()), e);
             throw e;
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error("Unable to set any field {} on type {}", fieldName, classToAccess.getName(), e);
+            LOGGER.error(i18n.get("obfuscationreflectionhelper.4", fieldName, classToAccess.getName()), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -135,10 +136,10 @@ public class ObfuscationReflectionHelper
     @NotNull
     public static Method findMethod(@NotNull final Class<?> clazz, @NotNull final String methodName, @NotNull final Class<?>... parameterTypes)
     {
-        Preconditions.checkNotNull(clazz, "Class to find method on cannot be null.");
-        Preconditions.checkNotNull(methodName, "Name of method to find cannot be null.");
-        Preconditions.checkArgument(!methodName.isEmpty(), "Name of method to find cannot be empty.");
-        Preconditions.checkNotNull(parameterTypes, "Parameter types of method to find cannot be null.");
+        Preconditions.checkNotNull(clazz, i18n.get("obfuscationreflectionhelper.5"));
+        Preconditions.checkNotNull(methodName, i18n.get("obfuscationreflectionhelper.6"));
+        Preconditions.checkArgument(!methodName.isEmpty(), i18n.get("obfuscationreflectionhelper.7"));
+        Preconditions.checkNotNull(parameterTypes, i18n.get("obfuscationreflectionhelper.8"));
 
         try
         {
@@ -169,8 +170,8 @@ public class ObfuscationReflectionHelper
     @NotNull
     public static <T> Constructor<T> findConstructor(@NotNull final Class<T> clazz, @NotNull final Class<?>... parameterTypes)
     {
-        Preconditions.checkNotNull(clazz, "Class to find constructor on cannot be null.");
-        Preconditions.checkNotNull(parameterTypes, "Parameter types of constructor to find cannot be null.");
+        Preconditions.checkNotNull(clazz, i18n.get("obfuscationreflectionhelper.9"));
+        Preconditions.checkNotNull(parameterTypes, i18n.get("obfuscationreflectionhelper.10"));
 
         try
         {
@@ -212,9 +213,9 @@ public class ObfuscationReflectionHelper
     @NotNull
     public static <T> Field findField(@NotNull final Class<? super T> clazz, @NotNull final String fieldName)
     {
-        Preconditions.checkNotNull(clazz, "Class to find field on cannot be null.");
-        Preconditions.checkNotNull(fieldName, "Name of field to find cannot be null.");
-        Preconditions.checkArgument(!fieldName.isEmpty(), "Name of field to find cannot be empty.");
+        Preconditions.checkNotNull(clazz, i18n.get("obfuscationreflectionhelper.11"));
+        Preconditions.checkNotNull(fieldName, i18n.get("obfuscationreflectionhelper.12"));
+        Preconditions.checkArgument(!fieldName.isEmpty(), i18n.get("obfuscationreflectionhelper.13"));
 
         try
         {
