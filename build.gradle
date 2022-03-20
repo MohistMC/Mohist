@@ -57,9 +57,9 @@ ext {
     MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.0.17'
-    FORGE_VERSION = '40.0.17'
     MOHIST_VERSION = JenkinsNumber.info()
+    VERSION = '1.18.2-40.0.17-'+MOHIST_VERSION
+    FORGE_VERSION = '40.0.17'
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
