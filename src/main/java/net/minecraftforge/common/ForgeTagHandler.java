@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -197,7 +198,7 @@ public class ForgeTagHandler
      */
     public static Map<ResourceLocation, TagLoader<?>> createCustomTagTypeReaders()
     {
-        LOGGER.debug("Gathering custom tag collection reader from types.");
+        LOGGER.debug(i18n.get("forgetaghandler.1"));
         ImmutableMap.Builder<ResourceLocation, TagLoader<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
         {

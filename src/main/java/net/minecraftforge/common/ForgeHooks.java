@@ -34,6 +34,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.datafixers.kinds.App;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -235,7 +236,7 @@ public class ForgeHooks
             result = state.getCloneItemStack(target, level, pos, player);
 
             if (result.isEmpty())
-                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
+                LOGGER.warn(i18n.get("forgehooks.1", target.getType(), state.getBlock().getRegistryName()));
         }
         else if (target.getType() == HitResult.Type.ENTITY)
         {
@@ -243,7 +244,7 @@ public class ForgeHooks
             result = entity.getPickedResult(target);
 
             if (result.isEmpty())
-                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), entity.getType().getRegistryName());
+                LOGGER.warn(i18n.get("forgehooks.2", target.getType(), entity.getType().getRegistryName()));
         }
 
         if (result.isEmpty())
@@ -1327,13 +1328,13 @@ public class ForgeHooks
 
         CompoundTag registries = new CompoundTag();
         fmlData.put("Registries", registries);
-        LOGGER.debug(WORLDPERSISTENCE, "Gathering id map for writing to world save {}", worldData.getLevelName());
+        LOGGER.debug(WORLDPERSISTENCE, i18n.get("forgehooks.3", worldData.getLevelName()));
 
         for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
         {
             registries.put(e.getKey().toString(), e.getValue().write());
         }
-        LOGGER.debug(WORLDPERSISTENCE, "ID Map collection complete {}", worldData.getLevelName());
+        LOGGER.debug(WORLDPERSISTENCE, i18n.get("forgehooks.4", worldData.getLevelName()));
         levelTag.put("fml", fmlData);
     }
 
@@ -1355,12 +1356,12 @@ public class ForgeHooks
                 Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
                 if (container.isEmpty())
                 {
-                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
+                    LOGGER.error(WORLDPERSISTENCE,i18n.get("forgehooks.5", modId));
                     continue;
                 }
                 if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
                 {
-                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
+                    LOGGER.warn(WORLDPERSISTENCE,i18n.get("forgehooks.6", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())));
                 }
             }
         }
@@ -1381,9 +1382,9 @@ public class ForgeHooks
         if (failedElements != null && !failedElements.isEmpty())
         {
             StringBuilder buf = new StringBuilder();
-            buf.append("Forge Mod Loader could not load this save.\n\n")
-                .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
-                .append("You will not be able to load until they are present again.\n\n");
+            buf.append(i18n.get("forgehooks.7"))
+                .append(i18n.get("forgehooks.8", failedElements.size()))
+                .append(i18n.get("forgehooks.9"));
 
             failedElements.asMap().forEach((name, entries) ->
             {

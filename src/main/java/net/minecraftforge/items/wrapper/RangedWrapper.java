@@ -6,6 +6,7 @@
 package net.minecraftforge.items.wrapper;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -23,7 +24,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
 
     public RangedWrapper(IItemHandlerModifiable compose, int minSlot, int maxSlotExclusive)
     {
-        Preconditions.checkArgument(maxSlotExclusive > minSlot, "Max slot must be greater than min slot");
+        Preconditions.checkArgument(maxSlotExclusive > minSlot, i18n.get("rangedwrapper.1"));
         this.compose = compose;
         this.minSlot = minSlot;
         this.maxSlot = maxSlotExclusive;

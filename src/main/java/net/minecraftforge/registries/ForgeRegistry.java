@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -312,7 +313,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     void validateKey()
     {
         if (this.defaultKey != null)
-            Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Type: " + this.superType);
+            Validate.notNull(this.defaultValue, i18n.get("forgeregistry.1", this.defaultKey, this.superType));
     }
 
     @Nullable
@@ -335,8 +336,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     int add(int id, V value, String owner)
     {
         ResourceLocation key = value == null ? null : value.getRegistryName();
-        Preconditions.checkNotNull(key, "Can't use a null-name for the registry, object %s.", value);
-        Preconditions.checkNotNull(value, "Can't add null-object to the registry, name %s.", key);
+        Preconditions.checkNotNull(key, i18n.get("forgeregistry.2", value));
+        Preconditions.checkNotNull(value, i18n.get("forgeregistry.3", key));
 
         int idToUse = id;
         if (idToUse < 0 || availabilityMap.get(idToUse))
@@ -348,7 +349,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         V oldEntry = getRaw(key);
         if (oldEntry == value) // already registered, return prev registration's id
         {
-            LOGGER.warn(REGISTRIES,"Registry {}: The object {} has been registered twice for the same name {}.", this.name, value, key);
+            LOGGER.warn(REGISTRIES,i18n.get("forgeregistry.4", this.name, value, key));
             return this.getID(value);
         }
         if (oldEntry != null) // duplicate name
@@ -357,7 +358,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 throw new IllegalArgumentException(String.format(Locale.ENGLISH, "The name %s has been registered twice, for %s and %s.", key, getRaw(key), value));
             if (owner == null)
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Could not determine owner for the override on %s. Value: %s", key, value));
-            LOGGER.debug(REGISTRIES,"Registry {} Override: {} {} -> {}", this.name, key, oldEntry, value);
+            LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.5", this.name, key, oldEntry, value));
             idToUse = this.getID(oldEntry);
         }
 
@@ -402,9 +403,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             this.add.onAdd(this, this.stage, idToUse, value, oldEntry);
 
         if (this.dummies.remove(key))
-            LOGGER.debug(REGISTRIES,"Registry {} Dummy Remove: {}", this.name, key);
+            LOGGER.debug(REGISTRIES,i18n.get("forgeregistry.6", this.name, key));
 
-        LOGGER.trace(REGISTRIES,"Registry {} add: {} {} {} (req. id {})", this.name, key, idToUse, value, id);
+        LOGGER.trace(REGISTRIES,i18n.get("forgeregistry.7", this.name, key, idToUse, value, id));
 
         return idToUse;
     }
@@ -428,12 +429,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         if (from.equals(to))
         {
-            LOGGER.warn(REGISTRIES, "Registry {} Ignoring invalid alias: {} -> {}", this.name, from, to);
+            LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.8", this.name, from, to));
             return;
         }
 
         this.aliases.put(from, to);
-        LOGGER.trace(REGISTRIES,"Registry {} alias: {} -> {}", this.name, from, to);
+        LOGGER.trace(REGISTRIES, i18n.get("forgeregistry.9", this.name, from, to));
     }
 
     void addDummy(ResourceLocation key)
@@ -441,7 +442,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (this.isLocked())
             throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the dummy %s to late", key));
         this.dummies.add(key);
-        LOGGER.trace(REGISTRIES,"Registry {} dummy: {}", this.name, key);
+        LOGGER.trace(REGISTRIES, i18n.get("forgeregistry.10", this.name, key));
     }
 
     @SuppressWarnings("unchecked")
@@ -532,7 +533,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     void sync(ResourceLocation name, ForgeRegistry<V> from)
     {
-        LOGGER.debug(REGISTRIES,"Registry {} Sync: {} -> {}", this.name, this.stage.getName(), from.stage.getName());
+        LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.11", this.name, this.stage.getName(), from.stage.getName()));
         if (this == from)
             throw new IllegalArgumentException("WTF We are the same!?!?!");
         if (from.superType != this.superType)
@@ -570,7 +571,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 int realId = add(id, entry.getValue());
                 if (id != realId && id != -1)
                 {
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                    LOGGER.warn(REGISTRIES,i18n.get("forgeregistry.12", this.name, entry.getKey(), id, realId));
                     errored = true;
                 }
             }
@@ -582,14 +583,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     OverrideOwner<V> owner = from.owners.inverse().get(value);
                     if (owner == null)
                     {
-                        LOGGER.warn(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
+                        LOGGER.warn(REGISTRIES,i18n.get("forgeregistry.13", this.name, entry.getKey(), value));
                         errored = true;
                         continue;
                     }
                     int realId = add(id, value, owner.owner);
                     if (id != realId && id != -1)
                     {
-                        LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                        LOGGER.warn(REGISTRIES,i18n.get("forgeregistry.14", this.name, entry.getKey(), id, realId));
                         errored = true;
                     }
                 }
@@ -646,7 +647,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             if (id == null)
                 throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
 
-            LOGGER.trace(REGISTRIES,"Registry {} remove: {} {}", this.name, key, id);
+            LOGGER.trace(REGISTRIES, i18n.get("forgeregistry.15", this.name, key, id));
         }
 
         return value;
@@ -727,7 +728,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
              */
             if (old.isDummied(itemName))
             {
-                LOGGER.info(REGISTRIES, "Registry {}: Skipping injection of dummied object {}", this.name, itemName);
+                LOGGER.info(REGISTRIES, i18n.get("forgeregistry.16", this.name, itemName));
                 continue;
             }
 
@@ -736,18 +737,18 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             if (currId == -1)
             {
-                LOGGER.info(REGISTRIES,"Registry {}: Found a missing id from the world {}", this.name, itemName);
+                LOGGER.info(REGISTRIES,i18n.get("forgeregistry.17", this.name, itemName));
                 missing.put(itemName, newId);
                 continue; // no block/item -> nothing to add
             }
             else if (currId != newId)
             {
-                LOGGER.debug(REGISTRIES,"Registry {}: Fixed {} id mismatch {}: {} (init) -> {} (map).", this.name, name, itemName, currId, newId);
+                LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.18", this.name, name, itemName, currId, newId));
                 remapped.put(itemName, new Integer[] {currId, newId});
             }
 
             V obj = old.getRaw(itemName);
-            Preconditions.checkState(obj != null, "objectKey has an ID but no object. Reflection/ASM hackery? Registry bug?");
+            Preconditions.checkState(obj != null, i18n.get("forgeregistry.19"));
 
             List<V> lst = Lists.newArrayList(old.overrides.get(itemName));
             String primaryName = null;
@@ -768,7 +769,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 OverrideOwner<V> owner = old.owners.inverse().get(value);
                 if (owner == null)
                 {
-                    LOGGER.warn(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
+                    LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.20", this.name, entry.getKey(), value));
                     continue;
                 }
 
@@ -777,12 +778,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
                 int realId = add(newId, value, owner.owner);
                 if (newId != realId)
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.21", this.name, entry.getKey(), newId, realId));
             }
 
             int realId = add(newId, obj, primaryName == null ? itemName.getPath() : primaryName);
             if (realId != newId)
-                LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.21", this.name, entry.getKey(), newId, realId));
             ovs.remove(itemName);
         }
 
@@ -796,16 +797,16 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 V _new = this.owners.get(new OverrideOwner<V>(owner, ResourceKey.create(this.key, itemName)));
                 if (_new == null)
                 {
-                    LOGGER.warn(REGISTRIES,"Registry {}: Skipping override for {}, Unknown owner {}", this.name, itemName, owner);
+                    LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.22", this.name, itemName, owner));
                     continue;
                 }
 
-                LOGGER.info(REGISTRIES,"Registry {}: Activating override {} for {}", this.name, owner, itemName);
+                LOGGER.info(REGISTRIES, i18n.get("forgeregistry.23"), this.name, owner, itemName);
 
                 int newId = this.getID(itemName);
                 int realId = this.add(newId, _new, owner);
                 if (newId != realId)
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.24", this.name, entry.getKey(), newId, realId));
             }
         }
     }
@@ -816,7 +817,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             return false;
 
         V dummy = this.dummyFactory.createDummy(key);
-        LOGGER.debug(REGISTRIES,"Registry {} Dummy Add: {} {} -> {}", this.name, key, id, dummy);
+        LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.25", this.name, key, id, dummy));
 
         //It was blocked before so we need to unset the blocking map
         this.availabilityMap.clear(id);
@@ -836,14 +837,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
 
             if (oldid != id)
-                LOGGER.debug(REGISTRIES,"Registry {}: Dummy ID mismatch {} {} -> {}", this.name, key, oldid, id);
+                LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.26", this.name, key, oldid, id));
 
-            LOGGER.debug(REGISTRIES,"Registry {} remove: {} {}", this.name, key, oldid);
+            LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.27", this.name, key, oldid));
         }
 
         int realId = this.add(id, dummy);
         if (realId != id)
-            LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, key, id, realId);
+            LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.28", this.name, key, id, realId));
         this.dummies.add(key);
 
         return true;
@@ -869,7 +870,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             V obj = this.names.get(key);
             OverrideOwner<V> owner = this.owners.inverse().get(obj);
             if (owner == null)
-                LOGGER.debug(REGISTRIES,"Registry {} {}: Invalid override {} {}", this.name, this.stage.getName(), key, obj);
+                LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.29", this.name, this.stage.getName(), key, obj));
             ret.put(key, owner.owner);
         }
         return ret;
@@ -1085,7 +1086,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappings.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
-        LOGGER.debug(REGISTRIES,"Processing missing event for {}:", name);
+        LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.30", name));
         int ignored = 0;
 
         for (MissingMappings.Mapping<V> remap : mappings)
@@ -1097,19 +1098,19 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 // entry re-mapped, finish the registration with the new name/object, but the old id
                 int currId = getID(remap.getTarget());
                 ResourceLocation newName = pool.getKey(remap.getTarget());
-                LOGGER.debug(REGISTRIES,"  Remapping {} -> {}.", remap.key, newName);
+                LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.31", remap.key, newName));
 
                 missing.remove(remap.key);
                 //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
                 int realId = this.add(remap.id, remap.getTarget());
                 if (realId != remap.id)
-                    LOGGER.warn(REGISTRIES,"Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.id, realId);
+                    LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.32", newName, this.getRegistrySuperType(), remap.id, realId));
                 this.addAlias(remap.key, newName);
 
 
                 if (currId != realId)
                 {
-                    LOGGER.info(REGISTRIES,"Fixed id mismatch {}: {} (init) -> {} (map).", newName, currId, realId);
+                    LOGGER.info(REGISTRIES, i18n.get("forgeregistry.33", newName, currId, realId));
                     remaps.put(newName, new Integer[] {currId, realId});
                 }
             }
@@ -1126,24 +1127,24 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 }
                 else if (action == MissingMappings.Action.IGNORE)
                 {
-                    LOGGER.debug(REGISTRIES,"Ignoring {}", remap.key);
+                    LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.34", remap.key));
                     ignored++;
                 }
                 else if (action == MissingMappings.Action.FAIL)
                 {
-                    LOGGER.debug(REGISTRIES,"Failing {}!", remap.key);
+                    LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.35", remap.key));
                     failed.add(remap.key);
                 }
                 else if (action == MissingMappings.Action.WARN)
                 {
-                    LOGGER.warn(REGISTRIES,"{} may cause world breakage!", remap.key);
+                    LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.36", remap.key));
                 }
                 this.block(remap.id);
             }
         }
 
         if (failed.isEmpty() && ignored > 0)
-            LOGGER.debug(REGISTRIES,"There were {} missing mappings that have been ignored", ignored);
+            LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.37", ignored));
     }
 
     RegistryBuilder<V> getBuilder()

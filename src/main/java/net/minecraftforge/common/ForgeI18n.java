@@ -79,7 +79,7 @@ public class ForgeI18n {
     }
 
     public static void loadLanguageData(final Map<String, String> properties) {
-        LOGGER.debug(CORE,"Loading I18N data entries: {}", properties.size());
+        LOGGER.debug(CORE, com.mohistmc.util.i18n.i18n.get("forgei18n.1", properties.size()));
         i18n = properties;
     }
 
@@ -88,7 +88,7 @@ public class ForgeI18n {
         try {
             return parseFormat(pattern, args);
         } catch (IllegalArgumentException e) {
-            LOGGER.error(CORE,"Illegal format found `{}`", pattern);
+            LOGGER.error(CORE,com.mohistmc.util.i18n.i18n.get("forgei18n.2", pattern));
             return pattern;
         }
     }

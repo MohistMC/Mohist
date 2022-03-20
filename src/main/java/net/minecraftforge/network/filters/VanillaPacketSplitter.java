@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.mohistmc.util.i18n.i18n;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -133,7 +134,7 @@ public class VanillaPacketSplitter
         {
             if (!receivedBuffers.isEmpty())
             {
-                LOGGER.warn("forge:split received out of order - inbound buffer not empty when receiving first");
+                LOGGER.warn(i18n.get("vanillapacketsplitter.1"));
                 receivedBuffers.clear();
             }
         }
@@ -146,7 +147,7 @@ public class VanillaPacketSplitter
             Packet<?> packet = protocol.createPacket(direction, packetId, full);
             if (packet == null)
             {
-                LOGGER.error("Received invalid packet ID {} in forge:split", packetId);
+                LOGGER.error(i18n.get("vanillapacketsplitter.2", packetId));
             }
             else
             {

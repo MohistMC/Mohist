@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.eventbus.api.BusBuilder;
@@ -37,7 +38,7 @@ public class MinecraftForge
     */
    public static void initialize()
    {
-       LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
+       LOGGER.info(FORGE, i18n.get("minecraftforge.1", ForgeVersion.getVersion()));
 
        UsernameCache.load();
        TierSortingRegistry.init();

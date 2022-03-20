@@ -5,6 +5,7 @@
 
 package net.minecraftforge.server.permission;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -98,7 +99,7 @@ public final class PermissionAPI
         Class<?> callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         if (callerClass != ServerLifecycleHooks.class)
         {
-            LOGGER.warn("{} tried to initialize the PermissionAPI, this call will be ignored.", callerClass.getName());
+            LOGGER.warn(i18n.get("permissionapi.1"), callerClass.getName());
             return;
         }
 
@@ -113,7 +114,7 @@ public final class PermissionAPI
             ResourceLocation selectedPermissionHandler = new ResourceLocation(ForgeConfig.SERVER.permissionHandler.get());
             if (!availableHandlers.containsKey(selectedPermissionHandler))
             {
-                LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, DefaultPermissionHandler.IDENTIFIER);
+                LOGGER.error(i18n.get("permissionapi.2", selectedPermissionHandler, DefaultPermissionHandler.IDENTIFIER));
                 selectedPermissionHandler = DefaultPermissionHandler.IDENTIFIER;
             }
 
@@ -125,13 +126,13 @@ public final class PermissionAPI
             PermissionAPI.activeHandler = factory.create(nodesEvent.getNodes());
 
             if(!selectedPermissionHandler.equals(activeHandler.getIdentifier()))
-                LOGGER.warn("Identifier for permission handler {} does not match registered one {}", activeHandler.getIdentifier(), selectedPermissionHandler);
+                LOGGER.warn(i18n.get("permissionapi.3", activeHandler.getIdentifier(), selectedPermissionHandler));
 
-            LOGGER.info("Successfully initialized permission handler {}", PermissionAPI.activeHandler.getIdentifier());
+            LOGGER.info(i18n.get("permissionapi.4", PermissionAPI.activeHandler.getIdentifier()));
         }
         catch (ResourceLocationException e)
         {
-            LOGGER.error("Error parsing config value 'permissionHandler'", e);
+            LOGGER.error(i18n.get("permissionapi.5"), e);
         }
     }
 }

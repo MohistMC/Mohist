@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
@@ -120,8 +121,7 @@ public class RegistryManager
         if (!overlappedTypes.isEmpty())
         {
             Class<?> foundType = overlappedTypes.iterator().next();
-            LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
-                    foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
+            LOGGER.error(i18n.get("registrymanager.1", foundType, superTypes.get(foundType), name, builder.getType(), builder.getType()));
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
         ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);

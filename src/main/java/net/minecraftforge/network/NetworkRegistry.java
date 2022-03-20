@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -131,11 +132,11 @@ public class NetworkRegistry
     private static NetworkInstance createInstance(ResourceLocation name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
     {
         if(lock) {
-            LOGGER.error(NETREGISTRY, "Attempted to register channel {} even though registry phase is over", name);
+            LOGGER.error(NETREGISTRY, i18n.get("networkresgistry.1", name));
             throw new IllegalArgumentException("Registration of impl channels is locked");
         }
         if (instances.containsKey(name)) {
-            LOGGER.error(NETREGISTRY, "NetworkDirection channel {} already registered.", name);
+            LOGGER.error(NETREGISTRY, i18n.get("networkregistry.2", name));
             throw new IllegalArgumentException("NetworkDirection Channel {"+ name +"} already registered");
         }
         final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
@@ -182,13 +183,13 @@ public class NetworkRegistry
                 map(ni -> {
                     final String incomingVersion = ACCEPTVANILLA;
                     final boolean test = testFunction.apply(ni, incomingVersion);
-                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
+                    LOGGER.debug(NETREGISTRY, i18n.get("networkregistry.3", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED"));
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).collect(Collectors.toList());
 
         if (!results.isEmpty()) {
-            LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
-                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            LOGGER.error(NETREGISTRY, i18n.get("networkregistry.4",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(","))));
             return results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.toList());
         }
         LOGGER.debug(NETREGISTRY, "Accepting channel list from vanilla");
@@ -228,17 +229,17 @@ public class NetworkRegistry
                 map(ni -> {
                     final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
                     final boolean test = testFunction.apply(ni, incomingVersion);
-                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
+                    LOGGER.debug(NETREGISTRY, i18n.get("networkregistry.5", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED"));
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).collect(Collectors.toList());
 
         if (!results.isEmpty()) {
-            LOGGER.error(NETREGISTRY, "Channels [{}] rejected their {} side version number",
+            LOGGER.error(NETREGISTRY, i18n.get("networkregistry.6",
                     results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")),
-                    originName);
+                    originName));
             return false;
         }
-        LOGGER.debug(NETREGISTRY, "Accepting channel list from {}", originName);
+        LOGGER.debug(NETREGISTRY, i18n.get("networkregistry.7", originName));
         return true;
     }
 
@@ -264,7 +265,7 @@ public class NetworkRegistry
                     final Pair<String, Boolean> incomingVersion = incoming.getOrDefault(ni.getChannelName(), Pair.of(ABSENT, true));
                     final boolean test = ni.tryServerVersionOnClient(incomingVersion.getLeft());
                     handled.add(ni.getChannelName());
-                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' during listping : {}", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED");
+                    LOGGER.debug(NETREGISTRY, i18n.get("networkregistry.8", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED"));
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).collect(Collectors.toList());
         final List<ResourceLocation> missingButRequired = incoming.entrySet().stream().
@@ -275,16 +276,16 @@ public class NetworkRegistry
                 collect(Collectors.toList());
 
         if (!results.isEmpty()) {
-            LOGGER.error(NETREGISTRY, "Channels [{}] rejected their server side version number during listping",
-                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            LOGGER.error(NETREGISTRY, i18n.get("networkregistry.9",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(","))));
             return false;
         }
         if(!missingButRequired.isEmpty()){
-            LOGGER.error(NETREGISTRY, "The server is likely to require channel [{}] to be present, yet we don't have it",
-                    missingButRequired);
+            LOGGER.error(NETREGISTRY, i18n.get("networkregistry.10",
+                    missingButRequired));
             return false;
         }
-        LOGGER.debug(NETREGISTRY, "Accepting channel list during listping");
+        LOGGER.debug(NETREGISTRY, i18n.get("networkregistry.11"));
         return true;
     }
 

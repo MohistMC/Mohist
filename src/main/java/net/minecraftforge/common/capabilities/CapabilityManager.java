@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.capabilities;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +46,7 @@ public enum CapabilityManager
             {
                 if (cap.isRegistered())
                 {
-                    LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
+                    LOGGER.error(CAPABILITIES, i18n.get("capabilitymanager.1", realName));
                     throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
                 }
                 else

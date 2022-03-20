@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network.simple;
 
+import com.mohistmc.util.i18n.i18n;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
 import net.minecraft.network.FriendlyByteBuf;
@@ -95,7 +96,7 @@ public class IndexedMessageCodec
             try {
                 return messageType.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
-                LOGGER.error("Invalid login message", e);
+                LOGGER.error(i18n.get("indexedmessagecodec.1"), e);
                 throw new RuntimeException(e);
             }
         }
@@ -127,7 +128,7 @@ public class IndexedMessageCodec
         @SuppressWarnings("unchecked")
         MessageHandler<MSG> messageHandler = (MessageHandler<MSG>)types.get(message.getClass());
         if (messageHandler == null) {
-            LOGGER.error(SIMPLENET, "Received invalid message {} on channel {}", message.getClass().getName(), Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
+            LOGGER.error(SIMPLENET, i18n.get("indexedmessagecodec.2", message.getClass().getName(), Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL")));
             throw new IllegalArgumentException("Invalid message "+message.getClass().getName());
         }
         return tryEncode(target, message, messageHandler);
@@ -135,13 +136,13 @@ public class IndexedMessageCodec
 
     void consume(FriendlyByteBuf payload, int payloadIndex, Supplier<NetworkEvent.Context> context) {
         if (payload == null) {
-            LOGGER.error(SIMPLENET, "Received empty payload on channel {}", Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
+            LOGGER.error(SIMPLENET, i18n.get("indexedmessagecodec.3", Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL")));
             return;
         }
         short discriminator = payload.readUnsignedByte();
         final MessageHandler<?> messageHandler = indicies.get(discriminator);
         if (messageHandler == null) {
-            LOGGER.error(SIMPLENET, "Received invalid discriminator byte {} on channel {}", discriminator, Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
+            LOGGER.error(SIMPLENET, i18n.get("indexedmessagecodec.4", discriminator, Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL")));
             return;
         }
         NetworkHooks.validatePacketDirection(context.get().getDirection(), messageHandler.networkDirection, context.get().getNetworkManager());

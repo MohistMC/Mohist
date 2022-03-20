@@ -5,6 +5,7 @@
 
 package net.minecraftforge.versions.forge;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -27,7 +28,7 @@ public class ForgeVersion
     private static final String forgeGroup;
 
     static {
-        LOGGER.debug(CORE, "Forge Version package {} from {}", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader());
+        LOGGER.debug(CORE, i18n.get("forgeversion.1", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader()));
         String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(FMLLoader.versionInfo().forgeVersion());
         if (vers == null) throw new RuntimeException("Missing forge version, cannot continue");
         String spec = JarVersionLookupHandler.getSpecificationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_SPEC"));
@@ -39,9 +40,9 @@ public class ForgeVersion
         forgeVersion = vers;
         forgeSpec = spec;
         forgeGroup = group;
-        LOGGER.debug(CORE, "Found Forge version {}", forgeVersion);
-        LOGGER.debug(CORE, "Found Forge spec {}", forgeSpec);
-        LOGGER.debug(CORE, "Found Forge group {}", forgeGroup);
+        LOGGER.debug(CORE, i18n.get("forgeversion.2", forgeVersion));
+        LOGGER.debug(CORE, i18n.get("forgeversion.3", forgeSpec));
+        LOGGER.debug(CORE, i18n.get("forgeversion.4", forgeGroup));
     }
 
     public static String getVersion()

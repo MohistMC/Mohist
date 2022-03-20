@@ -7,6 +7,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.dynamicenumutil.MohistEnumHelper;
 import com.mohistmc.entity.MohistModsEntity;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
@@ -74,7 +75,7 @@ public class ForgeInjectBukkit {
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
                 if (material != null) {
-                    MohistMC.LOGGER.debug("Save-ITEM: " + material.name() + " - " + materialName);
+                    MohistMC.LOGGER.debug(i18n.get("forgeinjectbukkit.1", material.name(), materialName));
                 }
             }
         }
@@ -93,7 +94,7 @@ public class ForgeInjectBukkit {
                 CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
                 CraftMagicNumbers.MATERIAL_BLOCK.put(material, block);
                 if (material != null) {
-                    MohistMC.LOGGER.debug("Save-BLOCK:" + material.name() + " - " + materialName);
+                    MohistMC.LOGGER.debug(i18n.get("forgeinjectbukkit.2", material.name(), materialName));
                 }
             }
         }
@@ -124,7 +125,7 @@ public class ForgeInjectBukkit {
             if (!biomeName.equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
                 map.add(biomeName);
                 org.bukkit.block.Biome biome = MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
-                MohistMC.LOGGER.debug("Save-BIOME:" + biome.name() + " - " + biomeName);
+                MohistMC.LOGGER.debug(i18n.get("forgeinjectbukkit.3", biome.name(), biomeName));
             }
         }
         map.clear();
@@ -190,7 +191,7 @@ public class ForgeInjectBukkit {
                 String name = normalizeName(resourceLocation.toString());
                 Villager.Profession vp = MohistEnumHelper.addEnum0(Villager.Profession.class, name, new Class[0]);
                 profession.put(vp, resourceLocation);
-                MohistMC.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
+                MohistMC.LOGGER.debug(i18n.get("forgeinjectbukkit.4", vp.name()));
             }
         }
     }
@@ -202,7 +203,7 @@ public class ForgeInjectBukkit {
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 org.bukkit.attribute.Attribute ab = MohistEnumHelper.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class}, resourceLocation.getPath());
                 attributemap.put(ab, resourceLocation);
-                MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
+                MohistMC.LOGGER.debug(i18n.get("forgeinjectbukkit.5", ab.name()));
             }
         }
     }
@@ -222,7 +223,7 @@ public class ForgeInjectBukkit {
                 artMap.put(entry, art);
                 BY_NAME.put(name, art);
                 BY_ID.put(id, art);
-                MohistMC.LOGGER.debug("Registered forge PaintingType as Art {}", art);
+                MohistMC.LOGGER.debug(i18n.get("forgeinjectbukkit.6", art));
                 i++;
             }
         }

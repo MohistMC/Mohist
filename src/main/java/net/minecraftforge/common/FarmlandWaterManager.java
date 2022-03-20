@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
@@ -46,7 +47,7 @@ public class FarmlandWaterManager
     @SuppressWarnings("unchecked")
     public static<T extends SimpleTicket<Vec3>> T addCustomTicket(Level level, T ticket, ChunkPos masterChunk, ChunkPos... additionalChunks)
     {
-        Preconditions.checkArgument(!level.isClientSide, "Water region is only determined server-side");
+        Preconditions.checkArgument(!level.isClientSide, i18n.get("farmlandwatermanager.1"));
         Map<ChunkPos, ChunkTicketManager<Vec3>> ticketMap =  customWaterHandler.computeIfAbsent(level, id -> new MapMaker().weakValues().makeMap());
         ChunkTicketManager<Vec3>[] additionalTickets = new ChunkTicketManager[additionalChunks.length];
         for (int i = 0; i < additionalChunks.length; i++)
@@ -90,14 +91,14 @@ public class FarmlandWaterManager
             if (distToCenter < masterDistance)
             {
                 if (DEBUG)
-                    LOGGER.info("FarmlandWaterManager: New better pos then {}: {}, prev dist {}, new dist {}", masterPos, pos, masterDistance, distToCenter);
+                    LOGGER.info(i18n.get("farmlandwatermanager.2", masterPos, pos, masterDistance, distToCenter));
                 masterPos = pos;
                 masterDistance = distToCenter;
             }
         }
         posSet.remove(masterPos);
         if (DEBUG)
-            LOGGER.info("FarmlandWaterManager: {} center pos, {} dummy posses. Dist to center {}", masterPos, posSet.toArray(new ChunkPos[0]), masterDistance);
+            LOGGER.info(i18n.get("farmlandwatermanager.3", masterPos, posSet.toArray(new ChunkPos[0]), masterDistance));
         return addCustomTicket(level, new AABBTicket(aabb), masterPos, posSet.toArray(new ChunkPos[0]));
     }
 
@@ -135,15 +136,15 @@ public class FarmlandWaterManager
         if (ticketManager != null)
         {
             if (DEBUG)
-                LOGGER.info("FarmlandWaterManager: got tickets {} at {} before", ticketManager.getTickets().size(), ticketManager.pos);
+                LOGGER.info(i18n.get("farmlandwatermanager.4", ticketManager.getTickets().size(), ticketManager.pos));
             ticketManager.getTickets().removeIf(next -> next.unload(ticketManager)); //remove if this is the master manager of the ticket
             if (DEBUG)
-                LOGGER.info("FarmlandWaterManager: got tickets {} at {} after", ticketManager.getTickets().size(), ticketManager.pos);
+                LOGGER.info(i18n.get("farmlandwatermanager.5", ticketManager.getTickets().size(), ticketManager.pos));
         }
     }
 
     private static ChunkTicketManager<Vec3> getTicketManager(ChunkPos pos, LevelReader level) {
-        Preconditions.checkArgument(!level.isClientSide(), "Water region is only determined server-side");
+        Preconditions.checkArgument(!level.isClientSide(), i18n.get("farmlandwatermanager.1"));
         Map<ChunkPos, ChunkTicketManager<Vec3>> ticketMap = customWaterHandler.get(level);
         if (ticketMap == null)
         {

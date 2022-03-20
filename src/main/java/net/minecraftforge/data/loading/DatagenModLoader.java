@@ -6,6 +6,8 @@
 package net.minecraftforge.data.loading;
 
 import java.util.Collections;
+
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.ModLoader;
@@ -31,7 +33,7 @@ public class DatagenModLoader {
 
     public static void begin(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, Set<String> existingMods, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat, final String assetIndex, final File assetsDir) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
-        LOGGER.info("Initializing Data Gatherer for mods {}", mods);
+        LOGGER.info(i18n.get("datagenmodloader.1", mods));
         runningDataGen = true;
         Bootstrap.bootStrap();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);

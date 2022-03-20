@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.mohistmc.util.i18n.i18n;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.chat.TextComponent;
@@ -77,7 +78,7 @@ public class NetworkHooks
 
     private static boolean validateSideForProcessing(final ICustomPacket<?> packet, final NetworkInstance ni, final Connection manager) {
         if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
-            manager.disconnect(new TextComponent("Illegal packet received, terminating connection"));
+            manager.disconnect(new TextComponent(i18n.get("networkhooks.1")));
             return false;
         }
         return true;
@@ -85,7 +86,7 @@ public class NetworkHooks
 
     public static void validatePacketDirection(final NetworkDirection packetDirection, final Optional<NetworkDirection> expectedDirection, final Connection connection) {
         if (packetDirection != expectedDirection.orElse(packetDirection)) {
-            connection.disconnect(new TextComponent("Illegal packet received, terminating connection"));
+            connection.disconnect(new TextComponent(i18n.get("networkhooks.1")));
             throw new IllegalStateException("Invalid packet received, aborting connection");
         }
     }
@@ -127,10 +128,10 @@ public class NetworkHooks
 
     public static void handleClientLoginSuccess(Connection manager) {
         if (isVanillaConnection(manager)) {
-            LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
+            LOGGER.info(i18n.get("networkhooks.2"));
             ConfigTracker.INSTANCE.loadDefaultServerConfigs();
         } else {
-            LOGGER.info("Connected to a modded server.");
+            LOGGER.info(i18n.get("networkhooks.3"));
         }
     }
 

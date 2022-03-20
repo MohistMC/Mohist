@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fluids;
 
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.Tag;
@@ -61,12 +62,12 @@ public class FluidStack
     {
         if (fluid == null)
         {
-            LOGGER.fatal("Null fluid supplied to fluidstack. Did you try and create a stack for an unregistered fluid?");
+            LOGGER.fatal(i18n.get("fluidstack.1"));
             throw new IllegalArgumentException("Cannot create a fluidstack from a null fluid");
         }
         else if (ForgeRegistries.FLUIDS.getKey(fluid) == null)
         {
-            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getRegistryName(), fluid.getClass().getName());
+            LOGGER.fatal(i18n.get("fluidstack.2", fluid.getRegistryName(), fluid.getClass().getName()));
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
         this.fluidDelegate = fluid.delegate;

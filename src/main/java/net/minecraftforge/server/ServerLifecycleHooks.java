@@ -15,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
@@ -136,8 +137,8 @@ public class ServerLifecycleHooks
     public static boolean handleServerLogin(final ClientIntentionPacket packet, final Connection manager) {
         if (!allowLogins.get())
         {
-            TextComponent text = new TextComponent("Server is still starting! Please wait before reconnecting.");
-            LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getContents());
+            TextComponent text = new TextComponent(i18n.get("serverlifecyclehooks.1"));
+            LOGGER.info(SERVERHOOKS, i18n.get("serverlifecyclehooks.2", text.getContents()));
             manager.send(new ClientboundLoginDisconnectPacket(text));
             manager.disconnect(text);
             return false;
@@ -148,12 +149,12 @@ public class ServerLifecycleHooks
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
             if (connectionType == ConnectionType.MODDED && versionNumber != NetworkConstants.FMLNETVERSION) {
-                rejectConnection(manager, connectionType, "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version "+ versionNumber + " this server is net version "+ NetworkConstants.FMLNETVERSION);
+                rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.3", versionNumber, NetworkConstants.FMLNETVERSION));
                 return false;
             }
 
             if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
-                rejectConnection(manager, connectionType, "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
+                rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.4"));
                 return false;
             }
         }
@@ -167,7 +168,7 @@ public class ServerLifecycleHooks
 
     private static void rejectConnection(final Connection manager, ConnectionType type, String message) {
         manager.setProtocol(ConnectionProtocol.LOGIN);
-        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: {}", type, message);
+        LOGGER.info(SERVERHOOKS, i18n.get("serverlifecyclehooks.5", type, message));
         TextComponent text = new TextComponent(message);
         manager.send(new ClientboundLoginDisconnectPacket(text));
         manager.disconnect(text);
@@ -195,7 +196,7 @@ public class ServerLifecycleHooks
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
-            LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
+            LOGGER.debug(CORE, i18n.get("serverlifecyclehooks.6", name, e.getKey().getFilePath()));
             consumer.accept(packInfo);
         }
     }

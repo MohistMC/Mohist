@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -180,7 +181,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         Set<TagKey<T>> set = Sets.difference(this.tags.keySet(), newTags.keySet());
         if (!set.isEmpty())
-            LOGGER.warn("Not all defined tags for registry {} are present in data pack: {}", this.self.key(), set.stream().map(k -> k.location().toString()).sorted().collect(Collectors.joining(", \n\t")));
+            LOGGER.warn(i18n.get("namespacedholderhelper.1", this.self.key(), set.stream().map(k -> k.location().toString()).sorted().collect(Collectors.joining(", \n\t"))));
 
         Map<TagKey<T>, HolderSet.Named<T>> tmpTags = new IdentityHashMap<>(this.tags);
         newTags.forEach((k, v) -> tmpTags.computeIfAbsent(k, this::createTag).bind(v));

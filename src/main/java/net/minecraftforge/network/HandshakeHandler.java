@@ -6,6 +6,7 @@
 package net.minecraftforge.network;
 
 import com.google.common.collect.Multimap;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
@@ -106,13 +107,13 @@ public class HandshakeHandler
         this.manager = networkManager;
         if (networkManager.isMemoryConnection()) {
             this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction, true);
-            LOGGER.debug(FMLHSMARKER, "Starting local connection.");
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.1"));
         } else if (NetworkHooks.getConnectionType(()->this.manager)== ConnectionType.VANILLA) {
             this.messageList = Collections.emptyList();
-            LOGGER.debug(FMLHSMARKER, "Starting new vanilla impl connection.");
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.2"));
         } else {
             this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction, false);
-            LOGGER.debug(FMLHSMARKER, "Starting new modded impl connection. Found {} messages to dispatch.", this.messageList.size());
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.3", this.messageList.size()));
         }
     }
 
@@ -164,17 +165,17 @@ public class HandshakeHandler
 
     void handleServerModListOnClient(HandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
     {
-        LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.4", String.join(", ", serverModList.getModList())));
         boolean accepted = NetworkRegistry.validateClientChannels(serverModList.getChannels());
         c.get().setPacketHandled(true);
         if (!accepted) {
-            LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            LOGGER.error(FMLHSMARKER, i18n.get("handshakehandler.5"));
+            c.get().getNetworkManager().disconnect(new TextComponent(i18n.get("handshakehandler.6")));
             return;
         }
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SModListReply(), c.get());
 
-        LOGGER.debug(FMLHSMARKER, "Accepted server connection");
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.7"));
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_NETVERSION).set(NetworkConstants.NETVERSION);
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
@@ -182,35 +183,35 @@ public class HandshakeHandler
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();
-        LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
+        LOGGER.debug(REGISTRIES, i18n.get("handshakehandler.8"), ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
     }
 
     <MSG extends IntSupplier> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
     {
-        LOGGER.debug(FMLHSMARKER, "Received client indexed reply {} of type {}", message.getAsInt(), message.getClass().getName());
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.9", message.getAsInt(), message.getClass().getName()));
         boolean removed = this.sentMessages.removeIf(i-> i == message.getAsInt());
         if (!removed) {
-            LOGGER.error(FMLHSMARKER, "Recieved unexpected index {} in client reply", message.getAsInt());
+            LOGGER.error(FMLHSMARKER, i18n.get("handshakehandler.10", message.getAsInt()));
         }
     }
 
     void handleClientModListOnServer(HandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
     {
-        LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.11",  String.join(", ", clientModList.getModList())));
         boolean accepted = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
                 .set(new ConnectionData(clientModList.getModList(), clientModList.getChannels()));
         c.get().setPacketHandled(true);
         if (!accepted) {
-            LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            LOGGER.error(FMLHSMARKER, i18n.get("handshakehandler.12"));
+            c.get().getNetworkManager().disconnect(new TextComponent(i18n.get("handshakehandler.6")));
             return;
         }
-        LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.13"));
     }
 
     void handleRegistryMessage(final HandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier){
-        LOGGER.debug(FMLHSMARKER,"Received registry packet for {}", registryPacket.getRegistryName());
+        LOGGER.debug(FMLHSMARKER,i18n.get("handshakehandler.14", registryPacket.getRegistryName()));
         this.registriesToReceive.remove(registryPacket.getRegistryName());
         this.registrySnapshots.put(registryPacket.getRegistryName(), registryPacket.getSnapshot());
 
@@ -221,7 +222,7 @@ public class HandshakeHandler
         // The handshake reply isn't sent until we have processed the message
         contextSupplier.get().setPacketHandled(true);
         if (!continueHandshake) {
-            LOGGER.error(FMLHSMARKER, "Connection closed, not continuing handshake");
+            LOGGER.error(FMLHSMARKER, i18n.get("handshakehandler.15"));
         } else {
             NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SAcknowledge(), contextSupplier.get());
         }
@@ -232,38 +233,38 @@ public class HandshakeHandler
         AtomicBoolean successfulConnection = new AtomicBoolean(false);
         CountDownLatch block = new CountDownLatch(1);
         contextSupplier.get().enqueueWork(() -> {
-            LOGGER.debug(FMLHSMARKER, "Injecting registry snapshot from server.");
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.16"));
             final Multimap<ResourceLocation, ResourceLocation> missingData = GameData.injectSnapshot(registrySnapshots, false, false);
-            LOGGER.debug(FMLHSMARKER, "Snapshot injected.");
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.17"));
             if (!missingData.isEmpty()) {
-                LOGGER.error(FMLHSMARKER, "Missing registry data for impl connection:\n{}", LogMessageAdapter.adapt(sb->
-                        missingData.forEach((reg, entry)-> sb.append("\t").append(reg).append(": ").append(entry).append('\n'))));
+                LOGGER.error(FMLHSMARKER, i18n.get("handshakehandler.18", LogMessageAdapter.adapt(sb->
+                        missingData.forEach((reg, entry)-> sb.append("\t").append(reg).append(": ").append(entry).append('\n')))));
             }
             successfulConnection.set(missingData.isEmpty());
             block.countDown();
         });
-        LOGGER.debug(FMLHSMARKER, "Waiting for registries to load.");
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.19"));
         try {
             block.await();
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
         if (successfulConnection.get()) {
-            LOGGER.debug(FMLHSMARKER, "Registry load complete, continuing handshake.");
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.20"));
         } else {
-            LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
-            this.manager.disconnect(new TextComponent("Failed to synchronize registry data from server, closing connection"));
+            LOGGER.error(FMLHSMARKER, i18n.get("handshakehandler.21"));
+            this.manager.disconnect(new TextComponent(i18n.get("handshakehandler.22")));
         }
         return successfulConnection.get();
     }
 
     void handleClientAck(final HandshakeMessages.C2SAcknowledge msg, final Supplier<NetworkEvent.Context> contextSupplier) {
-        LOGGER.debug(FMLHSMARKER, "Received acknowledgement from client");
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.23"));
         contextSupplier.get().setPacketHandled(true);
     }
 
     void handleConfigSync(final HandshakeMessages.S2CConfigData msg, final Supplier<NetworkEvent.Context> contextSupplier) {
-        LOGGER.debug(FMLHSMARKER, "Received config sync from server");
+        LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.24"));
         ConfigSync.INSTANCE.receiveSyncedConfig(msg, contextSupplier);
         contextSupplier.get().setPacketHandled(true);
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SAcknowledge(), contextSupplier.get());
@@ -284,7 +285,7 @@ public class HandshakeHandler
         if (packetPosition < messageList.size()) {
             NetworkRegistry.LoginPayload message = messageList.get(packetPosition);
 
-            LOGGER.debug(FMLHSMARKER, "Sending ticking packet info '{}' to '{}' sequence {}", message.getMessageContext(), message.getChannelName(), packetPosition);
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.25", message.getMessageContext(), message.getChannelName(), packetPosition));
             sentMessages.add(packetPosition);
             loginWrapper.sendServerToClientLoginPacket(message.getChannelName(), message.getData(), packetPosition, this.manager);
             packetPosition++;
@@ -294,7 +295,7 @@ public class HandshakeHandler
         if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1) {
             // clear ourselves - we're done!
             this.manager.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).set(null);
-            LOGGER.debug(FMLHSMARKER, "Handshake complete!");
+            LOGGER.debug(FMLHSMARKER, i18n.get("handshakehandler.26"));
             return true;
         }
         return false;

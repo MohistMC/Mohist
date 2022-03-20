@@ -8,6 +8,7 @@ package net.minecraftforge.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
@@ -74,7 +75,7 @@ public class LanguageHook
                 loadLocaleData(resourceManager.getResources(langResource));
             } catch (FileNotFoundException fnfe) {
             } catch (Exception exception) {
-                LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
+                LOGGER.warn(i18n.get("languagehook.1", namespace, langFile), exception);
             }
         });
 

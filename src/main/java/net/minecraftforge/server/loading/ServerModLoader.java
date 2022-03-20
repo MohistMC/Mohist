@@ -5,6 +5,7 @@
 
 package net.minecraftforge.server.loading;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.logging.CrashReportExtender;
@@ -41,7 +42,7 @@ public class ServerModLoader
         }
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         if (!warnings.isEmpty()) {
-            LOGGER.warn(LOADING, "Mods loaded with {} warnings", warnings.size());
+            LOGGER.warn(LOADING, i18n.get("servermodloader.1", warnings.size()));
             warnings.forEach(warning -> LOGGER.warn(LOADING, warning.formatToString()));
         }
         MinecraftForge.EVENT_BUS.start();

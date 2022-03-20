@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.world;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
 import net.minecraft.Util;
@@ -37,7 +38,7 @@ public class ForgeWorldPreset extends ForgeRegistryEntry<ForgeWorldPreset>
         ForgeWorldPreset def = ForgeRegistries.WORLD_TYPES.getValue(new ResourceLocation(defaultWorldType));
         if (def == null)
         {
-            LOGGER.error("The defaultWorldType '{}' specified in the forge config has not been registered. The vanilla default generator will be used.", defaultWorldType);
+            LOGGER.error(i18n.get("forgeworldpreset.1", defaultWorldType));
         }
 
         return def;

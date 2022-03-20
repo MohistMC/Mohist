@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
@@ -72,12 +73,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         this.childConfig = config;
         if (config != null && !isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
+            LogManager.getLogger().warn(CORE, i18n.get("forgeconfigspec.1", configName));
             correct(config,
                     (action, path, incorrectValue, correctedValue) ->
-                            LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
+                            LogManager.getLogger().warn(CORE, i18n.get("forgeconfigspec.2", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : "")),
                     (action, path, incorrectValue, correctedValue) ->
-                            LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
+                            LogManager.getLogger().debug(CORE, i18n.get("forgeconfigspec.3", DOT_JOINER.join( path ))));
 
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
@@ -125,7 +126,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public void save()
     {
-        Preconditions.checkNotNull(childConfig, "Cannot save config value without assigned Config object present");
+        Preconditions.checkNotNull(childConfig, i18n.get("forgeconfigspec.4"));
         if (childConfig instanceof FileConfig) {
             ((FileConfig)childConfig).save();
         }
@@ -292,7 +293,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(split(path), defaultValue, validator);
         }
         public <T> ConfigValue<T> define(List<String> path, T defaultValue, Predicate<Object> validator) {
-            Objects.requireNonNull(defaultValue, "Default value can not be null");
+            Objects.requireNonNull(defaultValue, i18n.get("forgeconfigspec.5"));
             return define(path, () -> defaultValue, validator);
         }
         public <T> ConfigValue<T> define(String path, Supplier<T> defaultSupplier, Predicate<Object> validator) {
@@ -361,13 +362,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It is null, not a list, or an empty list. Modders, consider defineListAllowEmpty?", path.get(path.size() - 1));
+                        LogManager.getLogger().debug(CORE, i18n.get("forgeconfigspec.6"), path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
+                        LogManager.getLogger().debug(CORE, i18n.get("forgeconfigspec.7"), path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -381,13 +382,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List)) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
+                        LogManager.getLogger().debug(CORE, i18n.get("forgeconfigspec.8"), path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
+                        LogManager.getLogger().debug(CORE, i18n.get("forgeconfigspec.7"), path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -619,8 +620,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 hasInvalidComment = false;
                 if (!FMLEnvironment.production)
                 {
-                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
-                            DOT_JOINER.join(path));
+                    LogManager.getLogger().error(CORE, i18n.get("forgeconfigspec.9", DOT_JOINER.join(path)));
                 }
             }
         }
@@ -640,7 +640,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public void setComment(String... value)
         {
-            validate(value == null, "Passed in null value for comment");
+            validate(value == null, i18n.get("forgeconfigspec.10"));
             this.comment = value;
         }
         public boolean hasComment() { return this.comment.length > 0; }
@@ -662,10 +662,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public void ensureEmpty()
         {
-            validate(hasComment(), "Non-empty comment when empty expected");
-            validate(langKey, "Non-null translation key when null expected");
-            validate(range, "Non-null range when null expected");
-            validate(worldRestart, "Dangeling world restart value set to true");
+            validate(hasComment(), i18n.get("forgeconfigspec.11"));
+            validate(langKey, i18n.get("forgeconfigspec.12"));
+            validate(range, i18n.get("forgeconfigspec.13"));
+            validate(worldRestart, i18n.get("forgeconfigspec.14"));
         }
 
         private void validate(Object value, String message)
@@ -712,7 +712,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 boolean result = ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
                 if(!result)
                 {
-                    LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
+                    LogManager.getLogger().debug(CORE, i18n.get("forgeconfigspec.15", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue()));
                 }
                 return result;
             }
@@ -722,7 +722,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             boolean result = c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
             if(!result)
             {
-                LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", c, min, max);
+                LogManager.getLogger().debug(CORE, i18n.get("forgeconfigspec.15", c, min, max));
             }
             return result;
         }
@@ -766,8 +766,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         private ValueSpec(Supplier<?> supplier, Predicate<Object> validator, BuilderContext context)
         {
-            Objects.requireNonNull(supplier, "Default supplier can not be null");
-            Objects.requireNonNull(validator, "Validator can not be null");
+            Objects.requireNonNull(supplier, i18n.get("forgeconfigspec.16"));
+            Objects.requireNonNull(validator, i18n.get("forgeconfigspec.17"));
 
             this.comment = context.hasComment() ? context.buildComment() : null;
             this.langKey = context.getTranslationKey();
@@ -822,7 +822,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public T get()
         {
-            Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
+            Preconditions.checkNotNull(spec, i18n.get("forgeconfigspec.18"));
             if (spec.childConfig == null)
                 return defaultSupplier.get();
 
@@ -846,15 +846,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public void save()
         {
-            Preconditions.checkNotNull(spec, "Cannot save config value before spec is built");
-            Preconditions.checkNotNull(spec.childConfig, "Cannot save config value without assigned Config object present");
+            Preconditions.checkNotNull(spec, i18n.get("forgeconfigspec.19"));
+            Preconditions.checkNotNull(spec.childConfig, i18n.get("forgeconfigspec.20"));
             spec.save();
         }
 
         public void set(T value)
         {
-            Preconditions.checkNotNull(spec, "Cannot set config value before spec is built");
-            Preconditions.checkNotNull(spec.childConfig, "Cannot set config value without assigned Config object present");
+            Preconditions.checkNotNull(spec, i18n.get("forgeconfigspec.21"));
+            Preconditions.checkNotNull(spec.childConfig, i18n.get("forgeconfigspec.22"));
             spec.childConfig.set(path, value);
             this.cachedValue = value;
         }

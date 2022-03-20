@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.FORGEMOD;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -177,12 +178,12 @@ public class ForgeConfig {
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent.Loading configEvent) {
-        LogManager.getLogger().debug(FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
+        LogManager.getLogger().debug(FORGEMOD, i18n.get("forgeconfig.1", configEvent.getConfig().getFileName()));
     }
 
     @SubscribeEvent
     public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
-        LogManager.getLogger().debug(FORGEMOD, "Forge config just got changed on the file system!");
+        LogManager.getLogger().debug(FORGEMOD, i18n.get("forgeconfig.2"));
     }
 
     //General

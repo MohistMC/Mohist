@@ -6,6 +6,7 @@
 package net.minecraftforge.common.ticket;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.util.i18n.i18n;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +31,7 @@ public abstract class SimpleTicket<T>
     @SafeVarargs
     public final void setManager(@Nonnull ITicketManager<T> masterManager, @Nonnull ITicketManager<T>... dummyManagers)
     {
-        Preconditions.checkState(this.masterManager == null, "Ticket is already registered to a managing system");
+        Preconditions.checkState(this.masterManager == null, i18n.get("simpleticket.1"));
         this.masterManager = masterManager;
         this.dummyManagers = dummyManagers;
     }
@@ -95,7 +96,7 @@ public abstract class SimpleTicket<T>
 
     protected final void forEachManager(Consumer<ITicketManager<T>> consumer)
     {
-        Preconditions.checkState(this.masterManager != null, "Ticket is not registered to a managing system");
+        Preconditions.checkState(this.masterManager != null, i18n.get("simpleticket.2"));
         consumer.accept(masterManager);
         for (ITicketManager<T> manager : dummyManagers)
         {

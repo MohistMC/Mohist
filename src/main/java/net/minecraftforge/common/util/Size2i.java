@@ -7,6 +7,7 @@ package net.minecraftforge.common.util;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+import com.mohistmc.util.i18n.i18n;
 
 import javax.annotation.Nonnegative;
 
@@ -20,8 +21,8 @@ public final class Size2i
     @SuppressWarnings("ConstantConditions")
     public Size2i(@Nonnegative int width, @Nonnegative int height)
     {
-        Preconditions.checkArgument(width >= 0, "width must be greater or equal 0");
-        Preconditions.checkArgument(height >= 0, "height must be greater or equal 0");
+        Preconditions.checkArgument(width >= 0, i18n.get("size2i.1"));
+        Preconditions.checkArgument(height >= 0, i18n.get("size2i.2"));
         this.width = width;
         this.height = height;
     }

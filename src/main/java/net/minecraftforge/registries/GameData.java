@@ -6,6 +6,7 @@
 package net.minecraftforge.registries;
 
 import com.google.common.collect.*;
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.serialization.Lifecycle;
 
 import java.util.*;
@@ -110,7 +111,7 @@ public class GameData
     {
         if (DISABLE_VANILLA_REGISTRIES)
         {
-            LOGGER.warn(REGISTRIES, "DISABLING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! forge.disableVanillaGameData");
+            LOGGER.warn(REGISTRIES, i18n.get("gamedata.1"));
             return;
         }
         if (hasInit)
@@ -179,20 +180,20 @@ public class GameData
     public static <T extends IForgeRegistryEntry<T>> MappedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle)
     {
         IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
-        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());
+        Validate.notNull(reg, i18n.get("gamedata.2", key.toString()));
         @SuppressWarnings("unchecked")
         MappedRegistry<T> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
-        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key.toString());
+        Validate.notNull(ret, i18n.get("gamedata.3", key.toString()));
         return ret;
     }
 
     public static <T extends IForgeRegistryEntry<T>> DefaultedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle, String defKey)
     {
         IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
-        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());
+        Validate.notNull(reg, i18n.get("gamedata.4", key.toString()));
         @SuppressWarnings("unchecked")
         DefaultedRegistry<T> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
-        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key.toString());
+        Validate.notNull(ret, i18n.get("gamedata.5", key.toString()));
         return ret;
     }
 
@@ -228,10 +229,10 @@ public class GameData
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
     {
-        Validate.notNull(value, "Attempted to register a null object");
+        Validate.notNull(value, i18n.get("gamedata.6"));
         Validate.notNull(value.getRegistryName(), String.format(Locale.ENGLISH, "Attempt to register object without having set a registry name %s (type %s)", value, value.getClass().getName()));
         final IForgeRegistry<K> registry = RegistryManager.ACTIVE.getRegistry(value.getRegistryType());
-        Validate.notNull(registry, "Attempted to registry object without creating registry first: " + value.getRegistryType().getName());
+        Validate.notNull(registry, i18n.get("gamedata.7", value.getRegistryType().getName()));
         registry.register(value);
         return value;
     }
@@ -239,7 +240,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void vanillaSnapshot()
     {
-        LOGGER.debug(REGISTRIES, "Creating vanilla freeze snapshot");
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.8"));
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -252,19 +253,19 @@ public class GameData
         });
         RegistryManager.VANILLA.registries.forEach(LOCK_VANILLA);
         RegistryManager.ACTIVE.registries.forEach(LOCK_VANILLA);
-        LOGGER.debug(REGISTRIES, "Vanilla freeze snapshot created");
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.9"));
     }
 
     public static void unfreezeData()
     {
-        LOGGER.debug(REGISTRIES, "Unfreezing vanilla registries");
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.10"));
         Registry.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).unfreeze());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void freezeData()
     {
-        LOGGER.debug(REGISTRIES, "Freezing registries");
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.11"));
         Registry.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).freeze());
 
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
@@ -286,7 +287,7 @@ public class GameData
         // the id mapping is finalized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
         fireRemapEvent(ImmutableMap.of(), true);
 
-        LOGGER.debug(REGISTRIES, "All registries frozen");
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.12"));
     }
 
     public static void revertToFrozen() {
@@ -297,12 +298,12 @@ public class GameData
     {
         if (target.registries.isEmpty())
         {
-            LOGGER.warn(REGISTRIES, "Can't revert to {} GameData state without a valid snapshot.", target.getName());
+            LOGGER.warn(REGISTRIES, i18n.get("gamedata.13", target.getName()));
             return;
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        LOGGER.debug(REGISTRIES, "Reverting to {} data state.", target.getName());
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.14", target.getName()));
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -316,16 +317,16 @@ public class GameData
         }
 
         // the id mapping has reverted, ensure we sync up the object holders
-        LOGGER.debug(REGISTRIES, "{} state restored.", target.getName());
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.15", target.getName()));
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
-        LOGGER.debug(REGISTRIES, "Reverting {} to {}", registry, state.getName());
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.16", registry, state.getName()));
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
         loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
-        LOGGER.debug(REGISTRIES, "Reverting complete");
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.17"));
     }
 
     public static Stream<IModStateTransition.EventGenerator<?>> generateRegistryEvents() {
@@ -359,9 +360,9 @@ public class GameData
             final ResourceLocation rl = event.getName();
             ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
             fr.freeze();
-            LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", rl.toString());
+            LOGGER.debug(REGISTRIES, i18n.get("gamedata.18", rl.toString()));
             ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", rl.toString());
+            LOGGER.debug(REGISTRIES, i18n.get("gamedata.19", rl.toString()));
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
     }
 
@@ -369,9 +370,9 @@ public class GameData
     public static CompletableFuture<List<Throwable>> checkForRevertToVanilla(final Executor executor, final CompletableFuture<List<Throwable>> listCompletableFuture) {
         return listCompletableFuture.whenCompleteAsync((errors, except) -> {
             if (except != null) {
-                LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
+                LOGGER.fatal(i18n.get("gamedata.20"));
                 revertTo(RegistryManager.VANILLA, false);
-                LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
+                LOGGER.fatal(i18n.get("gamedata.21"));
             } else {
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
@@ -423,8 +424,7 @@ public class GameData
                             .collect(Collectors.joining(";"));
 
                     LOGGER.error(REGISTRIES,()-> LogMessageAdapter.adapt(sb-> {
-                        sb.append("Registry replacements for vanilla block '").append(block.getRegistryName()).
-                                append("' must not change the number or order of blockstates.\n");
+                        sb.append(i18n.get("gamedata.22", block.getRegistryName()));
                         sb.append("\tOld: ").append(oldSequence).append('\n');
                         sb.append("\tNew: ").append(newSequence);
                     }));
@@ -670,7 +670,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
-        LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
+        LOGGER.info(REGISTRIES, i18n.get("gamedata.23", EffectiveSide.get()));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
@@ -685,12 +685,9 @@ public class GameData
             List<ResourceLocation> missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).collect(Collectors.toList());
             if (missingRegs.size() > 0)
             {
-                String header = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
-                        "There are " + missingRegs.size() + " missing registries in this save.\n" +
-                        "If you continue the missing registries will get removed.\n" +
-                        "This may cause issues, it is advised that you create a world backup before continuing.\n\n";
+                String header = i18n.get("gamedata.24", missingRegs.size());
 
-                StringBuilder text = new StringBuilder("Missing Registries:\n");
+                StringBuilder text = new StringBuilder(i18n.get("gamedata.25"));
 
                 for (ResourceLocation s : missingRegs)
                     text.append(s).append("\n");
@@ -728,14 +725,14 @@ public class GameData
                 }
                 else if (isLocalWorld)
                 {
-                   LOGGER.debug(REGISTRIES,"Registry {}: Resuscitating dummy entry {}", key, dummy);
+                   LOGGER.debug(REGISTRIES, i18n.get("gamedata.26", key, dummy));
                 }
                 else
                 {
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    LOGGER.warn(REGISTRIES, "Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
+                    LOGGER.warn(REGISTRIES, i18n.get("gamedata.27", dummy, key, id));
                     reg.markDummy(dummy, id);
                 }
             });
@@ -744,7 +741,7 @@ public class GameData
         int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
         {
-            LOGGER.debug(REGISTRIES,"There are {} mappings missing - attempting a mod remap", count);
+            LOGGER.debug(REGISTRIES, i18n.get("gamedata.28", count));
             Multimap<ResourceLocation, ResourceLocation> defaulted = ArrayListMultimap.create();
             Multimap<ResourceLocation, ResourceLocation> failed = ArrayListMultimap.create();
 
@@ -759,7 +756,7 @@ public class GameData
                 if (!lst.isEmpty())
                 {
                     LOGGER.error(REGISTRIES,()->LogMessageAdapter.adapt(sb->{
-                       sb.append("Unidentified mapping from registry ").append(name).append('\n');
+                       sb.append(i18n.get("gamedata.29")).append(name).append('\n');
                        lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
@@ -774,10 +771,7 @@ public class GameData
 
             if (!defaulted.isEmpty())
             {
-                String header = "Forge Mod Loader detected missing registry entries.\n\n" +
-                   "There are " + defaulted.size() + " missing entries in this save.\n" +
-                   "If you continue the missing entries will get removed.\n" +
-                   "A world backup will be automatically created in your saves directory.\n\n";
+                String header = i18n.get("gamedata.30", defaulted.size());
 
                 StringBuilder buf = new StringBuilder();
                 defaulted.asMap().forEach((name, entries) ->
@@ -794,7 +788,7 @@ public class GameData
             if (!defaulted.isEmpty())
             {
                 if (isLocalWorld)
-                    LOGGER.error(REGISTRIES, "There are unidentified mappings in this world - we are going to attempt to process anyway");
+                    LOGGER.error(REGISTRIES, i18n.get("gamedata.31"));
             }
 
         }
@@ -906,7 +900,7 @@ public class GameData
         String prefix = ModLoadingContext.get().getActiveNamespace();
         if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
-            LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
+            LogManager.getLogger().info(i18n.get("gamedata.32", oldPrefix, name, prefix));
             prefix = oldPrefix;
         }
         return new ResourceLocation(prefix, name);
@@ -924,7 +918,7 @@ public class GameData
             }
             catch (NoSuchFieldException | SecurityException e)
             {
-                LOGGER.error(REGISTRIES, "Could not get `registryName` field from IForgeRegistryEntry.Impl", e);
+                LOGGER.error(REGISTRIES, i18n.get("gamedata.33"), e);
                 throw new RuntimeException(e);
             }
         }
@@ -934,7 +928,7 @@ public class GameData
         }
         catch (IllegalArgumentException | IllegalAccessException e)
         {
-            LOGGER.error(REGISTRIES,"Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", name.toString(), e);
+            LOGGER.error(REGISTRIES,i18n.get("gamedata.34", name.toString()), e);
             throw new RuntimeException(e);
         }
 

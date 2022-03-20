@@ -5,6 +5,7 @@
 
 package net.minecraftforge.gametest;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.SharedConstants;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestRegistry;
@@ -47,7 +48,7 @@ public class ForgeGameTestHooks
         if (!registeredGametests && isGametestEnabled())
         {
             Set<String> enabledNamespaces = getEnabledNamespaces();
-            LOGGER.info("Enabled Gametest Namespaces: {}", enabledNamespaces);
+            LOGGER.info(i18n.get("forgegametesthooks.1", enabledNamespaces));
 
             Set<Method> gameTestMethods = new HashSet<>();
             RegisterGameTestsEvent event = new RegisterGameTestsEvent(gameTestMethods);

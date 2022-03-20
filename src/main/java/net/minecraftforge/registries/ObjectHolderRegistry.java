@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -94,7 +95,7 @@ public class ObjectHolderRegistry
 
         annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.annotationType())).filter(a -> a.targetType() == ElementType.FIELD)
         .forEach(data -> scanTarget(classModIds, classCache, data.clazz(), data.memberName(), (String)data.annotationData().get("value"), false, false));
-        LOGGER.debug(REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
+        LOGGER.debug(REGISTRIES, i18n.get("objectholderregistry.1", objectHolders.size()));
     }
 
     private static void scanTarget(Map<Type, String> classModIds, Map<Type, Class<?>> classCache, Type type, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
@@ -128,7 +129,7 @@ public class ObjectHolderRegistry
                 String prefix = classModIds.get(type);
                 if (prefix == null)
                 {
-                    LOGGER.warn(REGISTRIES,"Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, type, annotationTarget);
+                    LOGGER.warn(REGISTRIES,i18n.get("objectholderregistry.2", value, type, annotationTarget));
                     throw new IllegalStateException("Unqualified reference to ObjectHolder");
                 }
                 value = prefix + ':' + value;
@@ -164,9 +165,9 @@ public class ObjectHolderRegistry
 
     public static void applyObjectHolders()
     {
-        LOGGER.debug(REGISTRIES,"Applying holder lookups");
+        LOGGER.debug(REGISTRIES, i18n.get("objectholderregistry.3"));
         applyObjectHolders(key -> true);
-        LOGGER.debug(REGISTRIES,"Holder lookups applied");
+        LOGGER.debug(REGISTRIES, i18n.get("objectholderregistry.4"));
     }
 
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)

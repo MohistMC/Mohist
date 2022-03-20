@@ -10,6 +10,7 @@ import com.google.common.graph.ElementOrder;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import com.google.gson.*;
+import com.mohistmc.util.i18n.i18n;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -190,7 +191,7 @@ public class TierSortingRegistry
         if (entry instanceof ResourceLocation rl)
             return rl;
         if (entry instanceof Tier t)
-            return Objects.requireNonNull(getName(t), "Can't have sorting dependencies for tiers not registered in the TierSortingRegistry");
+            return Objects.requireNonNull(getName(t), i18n.get("tiersortingregistry.1"));
         throw new IllegalStateException("Invalid object type passed into the tier dependencies " + entry.getClass());
     }
 
@@ -259,7 +260,7 @@ public class TierSortingRegistry
                 }
                 catch (IOException e)
                 {
-                    LOGGER.error("Could not read Tier sorting file " + ITEM_TIER_ORDERING_JSON, e);
+                    LOGGER.error(i18n.get("tiersortingregistry.2", ITEM_TIER_ORDERING_JSON), e);
                     return new JsonObject();
                 }
             }
@@ -291,7 +292,7 @@ public class TierSortingRegistry
                 }
                 catch(Exception e)
                 {
-                    LOGGER.error("Error parsing Tier sorting file " + ITEM_TIER_ORDERING_JSON, e);
+                    LOGGER.error(i18n.get("tiersortingregistry.3", ITEM_TIER_ORDERING_JSON), e);
                 }
 
                 recalculateItemTiers();

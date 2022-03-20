@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceKey;
@@ -64,7 +65,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
-            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+            LOGGER.warn(i18n.get("namespacedwrapper.1", key, value.getRegistryType().getName(), id, realId));
 
         return this.holders.onAdded(RegistryManager.ACTIVE, realId, value, oldValue);
     }

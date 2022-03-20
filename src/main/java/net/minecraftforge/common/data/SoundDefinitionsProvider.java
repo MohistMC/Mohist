@@ -8,6 +8,7 @@ package net.minecraftforge.common.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
@@ -239,7 +240,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider
         if (!valid)
         {
             final String path = name.getNamespace() + ":sounds/" + name.getPath() + ".ogg";
-            LOGGER.warn("Unable to find corresponding OGG file '{}' for sound event '{}'", path, soundName);
+            LOGGER.warn(i18n.get("sounddefinitionsprovider.1", path, soundName));
         }
         return valid;
     }
@@ -249,7 +250,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider
         final boolean valid = this.sounds.containsKey(soundName) || ForgeRegistries.SOUND_EVENTS.containsKey(name);
         if (!valid)
         {
-            LOGGER.warn("Unable to find event '{}' referenced from '{}'", name, soundName);
+            LOGGER.warn(i18n.get("sounddefinicationsprovider.2", name, soundName));
         }
         return valid;
     }

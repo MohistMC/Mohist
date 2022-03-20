@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -221,7 +222,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
              */
             public void remap(T target)
             {
-                Validate.notNull(target, "Remap target can not be null");
+                Validate.notNull(target, i18n.get("registryevent.1"));
                 Validate.isTrue(pool.getKey(target) != null, String.format(Locale.ENGLISH, "The specified entry %s hasn't been registered in registry yet.", target));
                 action = Action.REMAP;
                 this.target = target;

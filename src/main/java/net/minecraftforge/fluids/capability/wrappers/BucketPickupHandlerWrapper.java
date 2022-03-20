@@ -7,6 +7,7 @@ package net.minecraftforge.fluids.capability.wrappers;
 
 import javax.annotation.Nonnull;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BucketPickup;
@@ -92,7 +93,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
                         if (!resource.isFluidEqual(extracted))
                         {
                             //Be loud if something went wrong
-                            LOGGER.error("Fluid removed without successfully being picked up. Fluid {} at {} in {} matched requested type, but after performing pickup was {}.",
+                            LOGGER.error(i18n.get("bucketpickuphandlerwrapper.1"),
                                   fluidState.getType().getRegistryName(), blockPos, world.dimension().location(), bucket.getFluid().getRegistryName());
                             return FluidStack.EMPTY;
                         }

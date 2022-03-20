@@ -6,6 +6,7 @@
 package net.minecraftforge.server.permission.events;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.permission.handler.DefaultPermissionHandler;
@@ -49,8 +50,8 @@ public class PermissionGatherEvent extends Event
 
         public void addPermissionHandler(ResourceLocation identifier, IPermissionHandlerFactory handlerFactory)
         {
-            Preconditions.checkNotNull(identifier, "Permission handler identifier cannot be null!");
-            Preconditions.checkNotNull(handlerFactory, "Permission handler cannot be null!");
+            Preconditions.checkNotNull(identifier, i18n.get("permissiongatherevent.1"));
+            Preconditions.checkNotNull(handlerFactory, i18n.get("permissiongatherevent.2"));
             if(this.availableHandlers.containsKey(identifier))
                 throw new IllegalArgumentException("Attempted to overwrite permission handler " + identifier + ", this is not allowed.");
             this.availableHandlers.put(identifier, handlerFactory);

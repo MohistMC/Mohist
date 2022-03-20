@@ -5,6 +5,7 @@
 
 package net.minecraftforge.event.world;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.core.BlockPos;
@@ -62,7 +63,7 @@ public class NoteBlockEvent extends BlockEvent
      */
     public void setNote(Note note, Octave octave)
     {
-        Preconditions.checkArgument(octave != Octave.HIGH || note == Note.F_SHARP, "Octave.HIGH is only valid for Note.F_SHARP!");
+        Preconditions.checkArgument(octave != Octave.HIGH || note == Note.F_SHARP, i18n.get("noteblockevent.1"));
         this.noteId = note.ordinal() + octave.ordinal() * 12;
     }
 

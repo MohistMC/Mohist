@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.world;
 
+import com.mohistmc.util.i18n.i18n;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -54,7 +55,7 @@ public class ForgeChunkManager
         if (ModList.get().isLoaded(modId))
             callbacks.put(modId, callback);
         else
-            LOGGER.warn("A mod attempted to set the forced chunk validation loading callback for an unloaded mod of id: {}", modId);
+            LOGGER.warn(i18n.get("forgechunkmanager.1", modId));
     }
 
     /**
@@ -112,7 +113,7 @@ public class ForgeChunkManager
     {
         if (!ModList.get().isLoaded(modId))
         {
-            LOGGER.warn("A mod attempted to force a chunk for an unloaded mod of id: {}", modId);
+            LOGGER.warn(i18n.get("forgechunkmanager.2", modId));
             return false;
         }
         ForcedChunksSavedData saveData = level.getDataStorage().computeIfAbsent(ForcedChunksSavedData::load, ForcedChunksSavedData::new, "chunks");
@@ -321,7 +322,7 @@ public class ForgeChunkManager
             }
             else
             {
-                LOGGER.warn("Found chunk loading data for mod {} which is currently not available or active - it will be removed from the level save.", modId);
+                LOGGER.warn(i18n.get("forgechunkmanager.3", modId));
             }
         }
     }

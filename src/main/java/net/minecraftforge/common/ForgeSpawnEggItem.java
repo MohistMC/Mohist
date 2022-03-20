@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
@@ -76,7 +77,7 @@ public class ForgeSpawnEggItem extends SpawnEggItem
         }
         catch (Exception exception)
         {
-            DispenseItemBehavior.LOGGER.error("Error while dispensing spawn egg from dispenser at {}", source.getPos(), exception);
+            DispenseItemBehavior.LOGGER.error(i18n.get("forgespawneggitem.1", source.getPos()), exception);
             return ItemStack.EMPTY;
         }
 

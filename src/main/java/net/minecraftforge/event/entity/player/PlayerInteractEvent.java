@@ -6,6 +6,7 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -48,9 +49,9 @@ public class PlayerInteractEvent extends PlayerEvent
 
     private PlayerInteractEvent(Player player, InteractionHand hand, BlockPos pos, @Nullable Direction face)
     {
-        super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
-        this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
-        this.pos = Preconditions.checkNotNull(pos, "Null position in PlayerInteractEvent!");
+        super(Preconditions.checkNotNull(player, i18n.get("playerinteractevent.1")));
+        this.hand = Preconditions.checkNotNull(hand, i18n.get("playerinteractevent.2"));
+        this.pos = Preconditions.checkNotNull(pos, i18n.get("playerinteractevent.3"));
         this.face = face;
     }
 

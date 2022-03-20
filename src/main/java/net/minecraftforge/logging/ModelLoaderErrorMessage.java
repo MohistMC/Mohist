@@ -8,6 +8,7 @@ package net.minecraftforge.logging;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -53,7 +54,7 @@ public class ModelLoaderErrorMessage extends SimpleMessage
 
     private void stuffs() {
         String domain = resourceLocation.getNamespace();
-        String errorMsg = "Exception loading model for variant " + resourceLocation;
+        String errorMsg = i18n.get("modelloadererrormessage.1", resourceLocation);
         Collection<BlockState> blocks = reverseBlockMap.get(resourceLocation);
         if(!blocks.isEmpty())
         {

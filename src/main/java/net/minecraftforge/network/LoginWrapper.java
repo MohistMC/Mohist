@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network;
 
+import com.mohistmc.util.i18n.i18n;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,9 +47,9 @@ public class LoginWrapper
             data = new FriendlyByteBuf(payload.readBytes(payloadLength));
         }
         final int loginSequence = packet.getLoginIndex();
-        LOGGER.debug(HandshakeHandler.FMLHSMARKER, "Recieved login wrapper packet event for channel {} with index {}", targetNetworkReceiver, loginSequence);
+        LOGGER.debug(HandshakeHandler.FMLHSMARKER, i18n.get("loginwrapper.1", targetNetworkReceiver, loginSequence));
         final NetworkEvent.Context context = new NetworkEvent.Context(wrappedContext.getNetworkManager(), wrappedContext.getDirection(), (rl, buf) -> {
-            LOGGER.debug(HandshakeHandler.FMLHSMARKER, "Dispatching wrapped packet reply for channel {} with index {}", rl, loginSequence);
+            LOGGER.debug(HandshakeHandler.FMLHSMARKER, i18n.get("loginwrapper.2", rl, loginSequence));
             wrappedContext.getPacketDispatcher().sendPacket(WRAPPER, this.wrapPacket(rl, buf));
         });
         final NetworkEvent.LoginPayloadEvent loginPayloadEvent = new NetworkEvent.LoginPayloadEvent(data, () -> context, loginSequence);

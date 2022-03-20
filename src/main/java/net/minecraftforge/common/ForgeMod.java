@@ -6,6 +6,7 @@
 package net.minecraftforge.common;
 
 import com.google.common.collect.Multimap;
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
@@ -117,16 +118,16 @@ public class ForgeMod
 
     public ForgeMod()
     {
-        LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
+        LOGGER.info(FORGEMOD, i18n.get("forgemod.1", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion()));
         INSTANCE = this;
         MinecraftForge.initialize();
         CrashReportCallables.registerCrashCallable("Crash Report UUID", ()-> {
             final UUID uuid = UUID.randomUUID();
-            LOGGER.fatal("Preparing crash report with UUID {}", uuid);
+            LOGGER.fatal(i18n.get("forgemod.2", uuid));
             return uuid.toString();
         });
 
-        LOGGER.debug(FORGEMOD, "Loading Network data for FML net version: {}", NetworkConstants.init());
+        LOGGER.debug(FORGEMOD, i18n.get("forgemod.3", NetworkConstants.init()));
         CrashReportCallables.registerCrashCallable("FML", ForgeVersion::getSpec);
         CrashReportCallables.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
 
@@ -220,7 +221,7 @@ public class ForgeMod
                 String path = regName.getPath();
                 if (removedSounds.stream().anyMatch(s -> s.equals(path)))
                 {
-                    LOGGER.info("Ignoring removed minecraft sound {}", regName);
+                    LOGGER.info(i18n.get("forgemod.4", regName));
                     mapping.ignore();
                 }
             }

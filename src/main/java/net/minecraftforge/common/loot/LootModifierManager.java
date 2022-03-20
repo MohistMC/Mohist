@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.apache.commons.io.IOUtils;
@@ -87,13 +88,13 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
                 }
 
                 catch (RuntimeException | IOException ioexception) {
-                    LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getSourceName(), ioexception);
+                    LOGGER.error(i18n.get("lootmodifiermanager.1", resourcelocation, iresource.getSourceName()), ioexception);
                 } finally {
                     IOUtils.closeQuietly((Closeable)iresource);
                 }
             }
         } catch (IOException ioexception1) {
-            LOGGER.error("Couldn't read global loot modifier list from {}", resourcelocation, ioexception1);
+            LOGGER.error(i18n.get("lootmodifiermanager.2", resourcelocation), ioexception1);
         }
         //use layered config to fetch modifier data files (modifiers missing from config are disabled)
         finalLocations.forEach(location -> {
@@ -102,7 +103,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
                 if(modifier != null)
                     builder.put(location, modifier);
             } catch (Exception exception) {
-                LOGGER.error("Couldn't parse loot modifier {}", location, exception);
+                LOGGER.error(i18n.get("lootmodifiermanager.3", location), exception);
             }
         });
         ImmutableMap<ResourceLocation, IGlobalLootModifier> immutablemap = builder.build();

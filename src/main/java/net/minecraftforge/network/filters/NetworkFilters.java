@@ -8,6 +8,7 @@ package net.minecraftforge.network.filters;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.network.Connection;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +33,7 @@ public class NetworkFilters
             if (filter.isNecessary(manager))
             {
                 manager.channel().pipeline().addBefore("packet_handler", key, filter);
-                LOGGER.debug("Injected {} into {}", filter, manager);
+                LOGGER.debug(i18n.get("networkfilters.1", filter, manager));
             }
         });
     }

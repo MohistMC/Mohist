@@ -8,6 +8,7 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.mohistmc.util.i18n.i18n;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -137,7 +138,7 @@ public class BlockEvent extends Event
 
             if (DEBUG)
             {
-                System.out.printf("Created EntityPlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][Entity: %s ]\n", getPlacedBlock(), placedAgainst, entity);
+                System.out.println(i18n.get("blockevent.1", getPlacedBlock(), placedAgainst, entity));
             }
         }
 
@@ -165,7 +166,7 @@ public class BlockEvent extends Event
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
             {
-                System.out.printf("Created EntityMultiPlaceEvent - [PlacedAgainst: %s ][Entity: %s ]\n", placedAgainst, entity);
+                System.out.println(i18n.get("blockevent.2", placedAgainst, entity));
             }
         }
 
