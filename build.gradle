@@ -1421,6 +1421,7 @@ project(':forge') {
 
     task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
         archiveBaseName = 'mohist'
+        version = MC_VERSION + "-" + FORGE_VERSION + "-" + MOHIST_VERSION
         packedDependencies = PACKED_DEPS
         from(rootProject.file('/forge_installer_logo.png')) {
             rename { 'big_logo.png' }
