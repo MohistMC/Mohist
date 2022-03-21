@@ -24,11 +24,13 @@
  import org.slf4j.Logger;
  
  public class PrimaryLevelData implements ServerLevelData, WorldData {
-@@ -191,6 +_,7 @@
+@@ -191,6 +_,9 @@
           p_78547_.m_128362_("WanderingTraderId", this.f_78438_);
        }
  
-+      p_78547_.m_128359_("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
++      if(Bukkit.getServer() != null){
++         p_78547_.m_128359_("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
++      }
     }
  
     public int m_6789_() {
