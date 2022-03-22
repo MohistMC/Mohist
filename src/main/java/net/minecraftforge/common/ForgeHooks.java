@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import com.google.common.base.Strings;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -45,10 +46,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -1399,6 +1402,33 @@ public class ForgeHooks
                 entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
             });
             LOGGER.error(WORLDPERSISTENCE, buf.toString());
+        }
+    }
+
+    public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
+    {
+        var registryName = effect.getRegistryName();
+        if (registryName != null)
+        {
+            nbt.putString(key, registryName.toString());
+        }
+    }
+
+    @Nullable
+    public static MobEffect loadMobEffect(CompoundTag nbt, String key, @Nullable MobEffect fallback)
+    {
+        var registryName = nbt.getString(key);
+        if (Strings.isNullOrEmpty(registryName))
+        {
+            return fallback;
+        }
+        try
+        {
+            return ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(registryName));
+        }
+        catch (ResourceLocationException e)
+        {
+            return fallback;
         }
     }
 }
