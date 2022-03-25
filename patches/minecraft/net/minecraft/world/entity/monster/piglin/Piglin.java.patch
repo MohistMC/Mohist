@@ -35,7 +35,14 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.item.ProjectileWeaponItem;
-@@ -75,6 +_,11 @@
+@@ -70,11 +_,16 @@
+    private static final float f_149924_ = 0.2F;
+    private static final float f_149925_ = 0.81F;
+    private static final double f_149926_ = 0.5D;
+-   private final SimpleContainer f_34678_ = new SimpleContainer(8);
+-   private boolean f_34679_;
++   public final SimpleContainer f_34678_ = new SimpleContainer(8);
++   public boolean f_34679_;
     protected static final ImmutableList<SensorType<? extends Sensor<? super Piglin>>> f_34680_ = ImmutableList.of(SensorType.f_26811_, SensorType.f_26812_, SensorType.f_26810_, SensorType.f_26814_, SensorType.f_26819_);
     protected static final ImmutableList<MemoryModuleType<?>> f_34672_ = ImmutableList.of(MemoryModuleType.f_26371_, MemoryModuleType.f_26379_, MemoryModuleType.f_148204_, MemoryModuleType.f_148205_, MemoryModuleType.f_26368_, MemoryModuleType.f_148206_, MemoryModuleType.f_26347_, MemoryModuleType.f_26346_, MemoryModuleType.f_26332_, MemoryModuleType.f_26381_, MemoryModuleType.f_26382_, MemoryModuleType.f_26370_, MemoryModuleType.f_26326_, MemoryModuleType.f_26372_, MemoryModuleType.f_26373_, MemoryModuleType.f_26374_, MemoryModuleType.f_26377_, MemoryModuleType.f_26334_, MemoryModuleType.f_26335_, MemoryModuleType.f_26383_, MemoryModuleType.f_26336_, MemoryModuleType.f_26337_, MemoryModuleType.f_26339_, MemoryModuleType.f_26338_, MemoryModuleType.f_26341_, MemoryModuleType.f_26342_, MemoryModuleType.f_26340_, MemoryModuleType.f_26344_, MemoryModuleType.f_26333_, MemoryModuleType.f_26351_, MemoryModuleType.f_26376_, MemoryModuleType.f_26352_, MemoryModuleType.f_26353_, MemoryModuleType.f_26343_, MemoryModuleType.f_26345_, MemoryModuleType.f_26354_, MemoryModuleType.f_26355_, MemoryModuleType.f_26356_);
  

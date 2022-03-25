@@ -8,7 +8,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -64,6 +_,10 @@
+@@ -64,13 +_,17 @@
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
@@ -19,10 +19,20 @@
  
  public class Zombie extends Monster {
     private static final UUID f_34259_ = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-@@ -83,6 +_,7 @@
+    private static final AttributeModifier f_34267_ = new AttributeModifier(f_34259_, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final EntityDataAccessor<Boolean> f_34268_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135035_);
+    private static final EntityDataAccessor<Integer> f_34260_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135028_);
+-   private static final EntityDataAccessor<Boolean> f_34261_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135035_);
++   public static final EntityDataAccessor<Boolean> f_34261_ = SynchedEntityData.m_135353_(Zombie.class, EntityDataSerializers.f_135035_);
+    public static final float f_149884_ = 0.05F;
+    public static final int f_149880_ = 50;
+    public static final int f_149881_ = 40;
+@@ -82,7 +_,8 @@
+    private final BreakDoorGoal f_34263_ = new BreakDoorGoal(this, f_34262_);
     private boolean f_34264_;
     private int f_34265_;
-    public int f_34266_;
+-   private int f_34266_;
++   public int f_34266_;
 +   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
     public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {

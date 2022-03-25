@@ -17,8 +17,12 @@
     private int f_140007_;
     private int f_140008_;
     final ChunkPos f_140009_;
-@@ -67,6 +_,7 @@
-    public final ChunkHolder.PlayerProvider f_140016_;
+@@ -64,9 +_,10 @@
+    private final BitSet f_140013_ = new BitSet();
+    private final LevelLightEngine f_140014_;
+    private final ChunkHolder.LevelChangeListener f_140015_;
+-   private final ChunkHolder.PlayerProvider f_140016_;
++   public final ChunkHolder.PlayerProvider f_140016_;
     private boolean f_140017_;
     private boolean f_140018_;
 +   LevelChunk currentlyLoading; // Forge: Used to bypass future chain when loading chunks.

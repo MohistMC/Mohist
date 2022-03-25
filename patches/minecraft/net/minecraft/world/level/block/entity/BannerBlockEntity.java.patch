@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/entity/BannerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BannerBlockEntity.java
+@@ -25,9 +_,9 @@
+    public static final String f_155033_ = "Color";
+    @Nullable
+    private Component f_58473_;
+-   private DyeColor f_58474_;
++   public DyeColor f_58474_;
+    @Nullable
+-   private ListTag f_58475_;
++   public ListTag f_58475_;
+    @Nullable
+    private List<Pair<BannerPattern, DyeColor>> f_58477_;
+ 

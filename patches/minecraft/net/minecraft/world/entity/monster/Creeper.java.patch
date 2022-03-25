@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -38,9 +_,11 @@
+@@ -38,18 +_,20 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Explosion;
@@ -13,6 +13,18 @@
  
  public class Creeper extends Monster implements PowerableMob {
     private static final EntityDataAccessor<Integer> f_32268_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Boolean> f_32274_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135035_);
+    private static final EntityDataAccessor<Boolean> f_32275_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135035_);
+    private int f_32269_;
+-   private int f_32270_;
+-   private int f_32271_ = 30;
+-   private int f_32272_ = 3;
++   public int f_32270_;
++   public int f_32271_ = 30;
++   public int f_32272_ = 3;
+    private int f_32273_;
+ 
+    public Creeper(EntityType<? extends Creeper> p_32278_, Level p_32279_) {
 @@ -79,7 +_,7 @@
  
     public boolean m_142535_(float p_149687_, float p_149688_, DamageSource p_149689_) {

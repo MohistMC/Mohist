@@ -8,7 +8,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.LightningBolt;
-@@ -20,9 +_,13 @@
+@@ -20,16 +_,20 @@
  import net.minecraft.world.level.block.Mirror;
  import net.minecraft.world.level.block.Rotation;
  import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +22,14 @@
  
  public abstract class HangingEntity extends Entity {
     protected static final Predicate<Entity> f_31697_ = (p_31734_) -> {
+       return p_31734_ instanceof HangingEntity;
+    };
+    private int f_31700_;
+-   protected BlockPos f_31698_;
++   public BlockPos f_31698_;
+    protected Direction f_31699_ = Direction.SOUTH;
+ 
+    protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
 @@ -41,10 +_,10 @@
        this.f_31698_ = p_31708_;
     }

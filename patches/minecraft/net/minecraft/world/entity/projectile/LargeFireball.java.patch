@@ -7,7 +7,8 @@
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class LargeFireball extends Fireball {
-    public int f_37197_ = 1;
+-   private int f_37197_ = 1;
++   public int f_37197_ = 1;
  
     public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
        super(p_37199_, p_37200_);

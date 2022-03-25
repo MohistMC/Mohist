@@ -19,6 +19,15 @@
     private static final Logger f_41585_ = LogUtils.getLogger();
     public static final ItemStack f_41583_ = new ItemStack((Item)null);
     public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
+@@ -104,7 +_,7 @@
+    private int f_41588_;
+    /** @deprecated */
+    @Deprecated
+-   private final Item f_41589_;
++   private Item f_41589_;
+    @Nullable
+    private CompoundTag f_41590_;
+    private boolean f_41591_;
 @@ -132,10 +_,15 @@
        p_41606_.ifPresent(this::m_41751_);
     }

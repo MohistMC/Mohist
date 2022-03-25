@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/level/ServerBossEvent.java
 +++ b/net/minecraft/server/level/ServerBossEvent.java
+@@ -15,7 +_,7 @@
+ public class ServerBossEvent extends BossEvent {
+    private final Set<ServerPlayer> f_8296_ = Sets.newHashSet();
+    private final Set<ServerPlayer> f_8297_ = Collections.unmodifiableSet(this.f_8296_);
+-   private boolean f_8298_ = true;
++   public boolean f_8298_ = true;
+ 
+    public ServerBossEvent(Component p_8300_, BossEvent.BossBarColor p_8301_, BossEvent.BossBarOverlay p_8302_) {
+       super(Mth.m_14002_(), p_8300_, p_8301_, p_8302_);
 @@ -80,7 +_,7 @@
  
     }

@@ -26,7 +26,7 @@
  
  public abstract class Mob extends LivingEntity {
     private static final EntityDataAccessor<Byte> f_21340_ = SynchedEntityData.m_135353_(Mob.class, EntityDataSerializers.f_135027_);
-@@ -89,8 +_,8 @@
+@@ -89,21 +_,21 @@
     protected JumpControl f_21343_;
     private final BodyRotationControl f_21361_;
     protected PathNavigation f_21344_;
@@ -37,15 +37,23 @@
     @Nullable
     private LivingEntity f_21362_;
     private final Sensing f_21349_;
-@@ -99,7 +_,7 @@
+    private final NonNullList<ItemStack> f_21350_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
+-   protected final float[] f_21347_ = new float[2];
++   public final float[] f_21347_ = new float[2];
     private final NonNullList<ItemStack> f_21351_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
-    public final float[] f_21348_ = new float[4];
+-   protected final float[] f_21348_ = new float[4];
++   public final float[] f_21348_ = new float[4];
     private boolean f_21352_;
--   public boolean f_21353_;
-+   private boolean f_21353_;
+    private boolean f_21353_;
     private final Map<BlockPathTypes, Float> f_21354_ = Maps.newEnumMap(BlockPathTypes.class);
     @Nullable
-    public ResourceLocation f_21355_;
+-   private ResourceLocation f_21355_;
+-   private long f_21356_;
++   public ResourceLocation f_21355_;
++   public long f_21356_;
+    @Nullable
+    private Entity f_21357_;
+    private int f_21358_;
 @@ -112,6 +_,8 @@
     private BlockPos f_21360_ = BlockPos.f_121853_;
     private float f_21341_ = -1.0F;

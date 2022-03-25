@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
+@@ -99,8 +_,8 @@
+    private static final int f_148900_ = 32;
+    private static final int f_148901_ = 64;
+    private static final int f_148902_ = 128;
+-   private static final EntityDataAccessor<Optional<UUID>> f_28439_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
+-   private static final EntityDataAccessor<Optional<UUID>> f_28440_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
++   public static final EntityDataAccessor<Optional<UUID>> f_28439_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
++   public static final EntityDataAccessor<Optional<UUID>> f_28440_ = SynchedEntityData.m_135353_(Fox.class, EntityDataSerializers.f_135041_);
+    static final Predicate<ItemEntity> f_28441_ = (p_28528_) -> {
+       return !p_28528_.m_32063_() && p_28528_.m_6084_();
+    };
 @@ -343,7 +_,7 @@
        return Fox.Type.m_28812_(this.f_19804_.m_135370_(f_28437_));
     }

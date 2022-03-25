@@ -28,6 +28,15 @@
  
  public class EnderDragon extends Mob implements Enemy {
     private static final Logger f_31087_ = LogUtils.getLogger();
+@@ -61,7 +_,7 @@
+    private static final String f_149570_ = "DragonPhase";
+    public final double[][] f_31092_ = new double[64][3];
+    public int f_31093_ = -1;
+-   private final EnderDragonPart[] f_31089_;
++   public final EnderDragonPart[] f_31089_;
+    public final EnderDragonPart f_31080_;
+    private final EnderDragonPart f_31090_;
+    private final EnderDragonPart f_31091_;
 @@ -85,6 +_,7 @@
     private final Node[] f_31077_ = new Node[24];
     private final int[] f_31078_ = new int[24];

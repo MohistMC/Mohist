@@ -140,6 +140,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -1015,6 +1016,16 @@ public class ForgeHooks
     }
 
     /**
+     * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
+     */
+    public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
+    {
+        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getProjectileItemStack();
+    }
+
+    /**
      * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
      */
     @Nullable
@@ -1403,6 +1414,28 @@ public class ForgeHooks
             });
             LOGGER.error(WORLDPERSISTENCE, buf.toString());
         }
+    }
+
+    public static String encodeLifecycle(Lifecycle lifecycle)
+    {
+        if (lifecycle == Lifecycle.stable())
+            return "stable";
+        if (lifecycle == Lifecycle.experimental())
+            return "experimental";
+        if (lifecycle instanceof Lifecycle.Deprecated dep)
+            return "deprecated=" + dep.since();
+        throw new IllegalArgumentException("Unknown lifecycle.");
+    }
+
+    public static Lifecycle parseLifecycle(String lifecycle)
+    {
+        if (lifecycle.equals("stable"))
+            return Lifecycle.stable();
+        if (lifecycle.equals("experimental"))
+            return Lifecycle.experimental();
+        if (lifecycle.startsWith("deprecated="))
+            return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=') + 1)));
+        throw new IllegalArgumentException("Unknown lifecycle.");
     }
 
     public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)

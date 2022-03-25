@@ -10,7 +10,8 @@
     private static final EntityDataAccessor<Integer> f_32071_ = SynchedEntityData.m_135353_(PrimedTnt.class, EntityDataSerializers.f_135028_);
     private static final int f_149679_ = 80;
     @Nullable
-    public LivingEntity f_32072_;
+-   private LivingEntity f_32072_;
++   public LivingEntity f_32072_;
 +   public float yield = 4; // CraftBukkit - add field
 +   public boolean isIncendiary = false; // CraftBukkit - add field
  

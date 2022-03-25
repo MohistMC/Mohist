@@ -29,7 +29,7 @@
     private final Map<BlockPos, LevelChunk.RebindableTickingBlockEntityWrapper> f_156362_ = Maps.newHashMap();
     private boolean f_62775_;
     private boolean f_196848_ = false;
--   public final Level f_62776_;
+-   final Level f_62776_;
 +    public final Level f_62776_; // CraftBukkit - type
     @Nullable
     private Supplier<ChunkHolder.FullChunkStatus> f_62790_;

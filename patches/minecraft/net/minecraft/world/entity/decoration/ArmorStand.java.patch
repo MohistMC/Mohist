@@ -16,7 +16,7 @@
  
  public class ArmorStand extends LivingEntity {
     public static final int f_149592_ = 5;
-@@ -71,7 +_,7 @@
+@@ -71,19 +_,19 @@
     public static final EntityDataAccessor<Rotations> f_31550_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
     public static final EntityDataAccessor<Rotations> f_31527_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
     private static final Predicate<Entity> f_31537_ = (p_31582_) -> {
@@ -25,6 +25,25 @@
     };
     private final NonNullList<ItemStack> f_31538_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
     private final NonNullList<ItemStack> f_31539_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+    private boolean f_31540_;
+    public long f_31528_;
+-   private int f_31541_;
+-   private Rotations f_31542_ = f_31529_;
+-   private Rotations f_31543_ = f_31530_;
+-   private Rotations f_31544_ = f_31531_;
+-   private Rotations f_31545_ = f_31532_;
+-   private Rotations f_31525_ = f_31533_;
+-   private Rotations f_31526_ = f_31534_;
++   public int f_31541_;
++   public Rotations f_31542_ = f_31529_;
++   public Rotations f_31543_ = f_31530_;
++   public Rotations f_31544_ = f_31531_;
++   public Rotations f_31545_ = f_31532_;
++   public Rotations f_31525_ = f_31533_;
++   public Rotations f_31526_ = f_31534_;
+ 
+    public ArmorStand(EntityType<? extends ArmorStand> p_31553_, Level p_31554_) {
+       super(p_31553_, p_31554_);
 @@ -95,6 +_,13 @@
        this.m_6034_(p_31557_, p_31558_, p_31559_);
     }

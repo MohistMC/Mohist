@@ -37,7 +37,7 @@
     private static final Logger f_19849_ = LogUtils.getLogger();
     public static final String f_146815_ = "id";
     public static final String f_146816_ = "Passengers";
-@@ -135,6 +_,7 @@
+@@ -135,10 +_,11 @@
     private static final double f_146812_ = 0.0023333333333333335D;
     public static final String f_146824_ = "UUID";
     private static double f_19846_ = 1.0D;
@@ -45,7 +45,35 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -228,7 +_,52 @@
+-   private ImmutableList<Entity> f_19823_ = ImmutableList.of();
++   public ImmutableList<Entity> f_19823_ = ImmutableList.of();
+    protected int f_19851_;
+    @Nullable
+    private Entity f_19824_;
+@@ -179,7 +_,7 @@
+    public boolean f_19794_;
+    protected final Random f_19796_ = new Random();
+    public int f_19797_;
+-   private int f_19831_ = -this.m_6101_();
++   public int f_19831_ = -this.m_6101_();
+    protected boolean f_19798_;
+    protected Object2DoubleMap<TagKey<Fluid>> f_19799_ = new Object2DoubleArrayMap<>(2);
+    protected boolean f_19800_;
+@@ -206,7 +_,7 @@
+    private Vec3 f_19838_;
+    public boolean f_19811_;
+    public boolean f_19812_;
+-   private int f_19839_;
++   public int f_19839_;
+    protected boolean f_19817_;
+    protected int f_19818_;
+    protected BlockPos f_19819_;
+@@ -224,11 +_,56 @@
+    public boolean f_146810_;
+    private float f_146803_;
+    private int f_146804_;
+-   private boolean f_146813_;
++   public boolean f_146813_;
     @Nullable
     private BlockState f_185934_ = null;
  

@@ -25,6 +25,19 @@
  
  public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     private static final int f_155280_ = 3;
+@@ -35,10 +_,10 @@
+    public static final int f_155278_ = 1;
+    public static final int f_155279_ = 2;
+    private NonNullList<ItemStack> f_58975_ = NonNullList.m_122780_(5, ItemStack.f_41583_);
+-   int f_58976_;
++   public int f_58976_;
+    private boolean[] f_58977_;
+    private Item f_58978_;
+-   int f_58979_;
++   public int f_58979_;
+    protected final ContainerData f_58971_ = new ContainerData() {
+       public int m_6413_(int p_59038_) {
+          switch(p_59038_) {
 @@ -67,6 +_,37 @@
        }
     };

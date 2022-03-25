@@ -75,6 +75,17 @@
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogUtils.getLogger();
+@@ -154,8 +_,8 @@
+    private float f_8917_ = -1.0E8F;
+    private int f_8918_ = -99999999;
+    private boolean f_8919_ = true;
+-   private int f_8920_ = -99999999;
+-   private int f_8921_ = 60;
++   public int f_8920_ = -99999999;
++   public int f_8921_ = 60;
+    private ChatVisiblity f_8922_ = ChatVisiblity.FULL;
+    private boolean f_8923_ = true;
+    private long f_8925_ = Util.m_137550_();
 @@ -227,20 +_,83 @@
     public int f_8943_;
     public boolean f_8944_;

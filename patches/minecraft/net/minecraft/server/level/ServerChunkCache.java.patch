@@ -10,6 +10,17 @@
  
  public class ServerChunkCache extends ChunkSource {
     private static final List<ChunkStatus> f_8326_ = ChunkStatus.m_62349_();
+@@ -55,8 +_,8 @@
+    public final ChunkMap f_8325_;
+    private final DimensionDataStorage f_8333_;
+    private long f_8334_;
+-   private boolean f_8335_ = true;
+-   private boolean f_8336_ = true;
++   public boolean f_8335_ = true;
++   public boolean f_8336_ = true;
+    private static final int f_143226_ = 4;
+    private final long[] f_8337_ = new long[4];
+    private final ChunkStatus[] f_8338_ = new ChunkStatus[4];
 @@ -79,6 +_,24 @@
        this.m_8488_();
     }

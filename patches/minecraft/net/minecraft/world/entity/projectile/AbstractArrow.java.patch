@@ -17,6 +17,23 @@
  
  public abstract class AbstractArrow extends Projectile {
     private static final double f_150120_ = 2.0D;
+@@ -51,13 +_,13 @@
+    private static final int f_150119_ = 4;
+    @Nullable
+    private BlockState f_36696_;
+-   protected boolean f_36703_;
++   public boolean f_36703_;
+    protected int f_36704_;
+    public AbstractArrow.Pickup f_36705_ = AbstractArrow.Pickup.DISALLOWED;
+    public int f_36706_;
+-   private int f_36697_;
++   public int f_36697_;
+    private double f_36698_ = 2.0D;
+-   private int f_36699_;
++   public int f_36699_;
+    private SoundEvent f_36700_ = this.m_7239_();
+    @Nullable
+    private IntOpenHashSet f_36701_;
 @@ -184,7 +_,7 @@
                 }
              }

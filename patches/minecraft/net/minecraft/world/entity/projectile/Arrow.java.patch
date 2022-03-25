@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
+@@ -27,7 +_,7 @@
+    private static final EntityDataAccessor<Integer> f_36854_ = SynchedEntityData.m_135353_(Arrow.class, EntityDataSerializers.f_135028_);
+    private static final byte f_150130_ = 0;
+    private Potion f_36855_ = Potions.f_43598_;
+-   private final Set<MobEffectInstance> f_36852_ = Sets.newHashSet();
++   public final Set<MobEffectInstance> f_36852_ = Sets.newHashSet();
+    private boolean f_36853_;
+ 
+    public Arrow(EntityType<? extends Arrow> p_36858_, Level p_36859_) {
 @@ -128,7 +_,7 @@
        return this.f_19804_.m_135370_(f_36854_);
     }

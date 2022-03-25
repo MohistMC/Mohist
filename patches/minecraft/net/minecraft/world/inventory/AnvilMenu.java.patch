@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
-@@ -15,6 +_,7 @@
+@@ -15,14 +_,15 @@
  import net.minecraft.world.level.block.state.BlockState;
  import org.apache.commons.lang3.StringUtils;
  import org.slf4j.Logger;
@@ -8,6 +8,16 @@
  
  public class AnvilMenu extends ItemCombinerMenu {
     private static final Logger f_38999_ = LogUtils.getLogger();
+    private static final boolean f_150469_ = false;
+    public static final int f_150468_ = 50;
+    public int f_39000_;
+-   private String f_39001_;
+-   private final DataSlot f_39002_ = DataSlot.m_39401_();
++   public String f_39001_;
++   public final DataSlot f_39002_ = DataSlot.m_39401_();
+    private static final int f_150470_ = 0;
+    private static final int f_150471_ = 1;
+    private static final int f_150472_ = 1;
 @@ -31,6 +_,22 @@
     private static final int f_150466_ = 1;
     private static final int f_150467_ = 1;

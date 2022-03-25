@@ -8,7 +8,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.Stats;
-@@ -29,6 +_,8 @@
+@@ -29,20 +_,28 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
@@ -17,7 +17,16 @@
  
  public class ItemEntity extends Entity {
     private static final EntityDataAccessor<ItemStack> f_31984_ = SynchedEntityData.m_135353_(ItemEntity.class, EntityDataSerializers.f_135033_);
-@@ -43,6 +_,12 @@
+    private static final int f_149659_ = 6000;
+    private static final int f_149660_ = 32767;
+    private static final int f_149661_ = -32768;
+-   private int f_31985_;
+-   private int f_31986_;
++   public int f_31985_;
++   public int f_31986_;
+    private int f_31987_ = 5;
+    @Nullable
+    private UUID f_31988_;
     @Nullable
     private UUID f_31982_;
     public final float f_31983_;
