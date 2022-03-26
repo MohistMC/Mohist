@@ -8,7 +8,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
-@@ -46,10 +_,12 @@
+@@ -46,6 +_,8 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import org.slf4j.Logger;
@@ -17,19 +17,7 @@
  
  public class ZombieVillager extends Zombie implements VillagerDataHolder {
     private static final Logger f_201975_ = LogUtils.getLogger();
--   private static final EntityDataAccessor<Boolean> f_34359_ = SynchedEntityData.m_135353_(ZombieVillager.class, EntityDataSerializers.f_135035_);
-+   public static final EntityDataAccessor<Boolean> f_34359_ = SynchedEntityData.m_135353_(ZombieVillager.class, EntityDataSerializers.f_135035_);
-    private static final EntityDataAccessor<VillagerData> f_34364_ = SynchedEntityData.m_135353_(ZombieVillager.class, EntityDataSerializers.f_135043_);
-    private static final int f_149888_ = 3600;
-    private static final int f_149885_ = 6000;
-@@ -57,12 +_,13 @@
-    private static final int f_149887_ = 4;
-    private int f_34365_;
-    @Nullable
--   private UUID f_34360_;
-+   public UUID f_34360_;
-    @Nullable
-    private Tag f_34361_;
+@@ -63,6 +_,7 @@
     @Nullable
     private CompoundTag f_34362_;
     private int f_34363_;

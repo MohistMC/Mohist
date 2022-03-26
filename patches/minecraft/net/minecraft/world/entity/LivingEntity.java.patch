@@ -78,56 +78,15 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
-@@ -142,18 +_,18 @@
-    protected static final int f_147177_ = 2;
-    protected static final int f_147163_ = 4;
-    protected static final EntityDataAccessor<Byte> f_20909_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135027_);
--   private static final EntityDataAccessor<Float> f_20961_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135029_);
-+   public static final EntityDataAccessor<Float> f_20961_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135029_);
-    private static final EntityDataAccessor<Integer> f_20962_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
-    private static final EntityDataAccessor<Boolean> f_20963_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135035_);
--   private static final EntityDataAccessor<Integer> f_20940_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
-+   public static final EntityDataAccessor<Integer> f_20940_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
-    private static final EntityDataAccessor<Integer> f_20941_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135028_);
-    private static final EntityDataAccessor<Optional<BlockPos>> f_20942_ = SynchedEntityData.m_135353_(LivingEntity.class, EntityDataSerializers.f_135039_);
-    protected static final float f_147164_ = 1.74F;
+@@ -152,7 +_,7 @@
     protected static final EntityDimensions f_20910_ = EntityDimensions.m_20398_(0.2F, 0.2F);
     public static final float f_147165_ = 0.5F;
     private final AttributeMap f_20943_;
 -   private final CombatTracker f_20944_ = new CombatTracker(this);
--   private final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
 +   protected CombatTracker f_20944_ = new CombatTracker(this);
-+   public final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
+    public final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
     private final NonNullList<ItemStack> f_20946_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
     private final NonNullList<ItemStack> f_20947_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
-    public boolean f_20911_;
-@@ -172,7 +_,7 @@
-    public float f_20923_;
-    public float f_20924_;
-    public float f_20925_;
--   public final int f_20926_ = 20;
-+   public int f_20926_ = 20;
-    public final float f_20927_;
-    public final float f_20928_;
-    public float f_20883_;
-@@ -181,7 +_,7 @@
-    public float f_20886_;
-    public float f_20887_ = 0.02F;
-    @Nullable
--   protected Player f_20888_;
-+   public Player f_20888_;
-    protected int f_20889_;
-    protected boolean f_20890_;
-    protected int f_20891_;
-@@ -191,7 +_,7 @@
-    protected float f_20895_;
-    protected float f_20896_;
-    protected int f_20897_;
--   protected float f_20898_;
-+   public float f_20898_;
-    protected boolean f_20899_;
-    public float f_20900_;
-    public float f_20901_;
 @@ -204,10 +_,10 @@
     protected double f_20908_;
     protected double f_20933_;

@@ -33,14 +33,7 @@
  public class Explosion {
     private static final ExplosionDamageCalculator f_46008_ = new ExplosionDamageCalculator();
     private static final int f_151469_ = 16;
-@@ -51,14 +_,16 @@
-    private final double f_46014_;
-    private final double f_46015_;
-    @Nullable
--   private final Entity f_46016_;
-+   public final Entity f_46016_;
-    private final float f_46017_;
-    private final DamageSource f_46018_;
+@@ -57,8 +_,10 @@
     private final ExplosionDamageCalculator f_46019_;
     private final List<BlockPos> f_46020_ = Lists.newArrayList();
     private final Map<Player, Vec3> f_46021_ = Maps.newHashMap();

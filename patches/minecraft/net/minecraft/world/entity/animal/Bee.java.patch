@@ -1,22 +1,15 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
-@@ -121,7 +_,7 @@
-    private float f_27708_;
-    private int f_27709_;
-    int f_27710_;
--   private int f_27711_;
-+   public int f_27711_;
-    private int f_27712_;
-    private static final int f_148725_ = 200;
-    int f_27713_;
-@@ -130,6 +_,7 @@
+@@ -130,7 +_,8 @@
     @Nullable
     BlockPos f_27697_;
     @Nullable
+-   public BlockPos f_27698_;
 +   public
-    BlockPos f_27698_;
++   BlockPos f_27698_;
     Bee.BeePollinateGoal f_27699_;
     Bee.BeeGoToHiveGoal f_27700_;
+    private Bee.BeeGoToKnownFlowerGoal f_27701_;
 @@ -471,7 +_,7 @@
           return false;
        } else {

@@ -1,31 +1,15 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -108,7 +_,7 @@
-    public static final int f_140127_ = 33 + ChunkStatus.m_62421_();
-    public static final int f_143033_ = 31;
-    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140129_ = new Long2ObjectLinkedOpenHashMap<>();
--   private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140130_ = this.f_140129_.clone();
-+   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140130_ = this.f_140129_.clone();
-    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140131_ = new Long2ObjectLinkedOpenHashMap<>();
-    private final LongSet f_140132_ = new LongOpenHashSet();
-    final ServerLevel f_140133_;
-@@ -122,19 +_,41 @@
+@@ -122,7 +_,7 @@
     private final ChunkTaskPriorityQueueSorter f_140141_;
     private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140142_;
     private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140143_;
 -   private final ChunkProgressListener f_140144_;
 +   public final ChunkProgressListener f_140144_;
     private final ChunkStatusUpdateListener f_143031_;
--   private final ChunkMap.DistanceManager f_140145_;
-+   public final ChunkMap.DistanceManager f_140145_;
+    public final ChunkMap.DistanceManager f_140145_;
     private final AtomicInteger f_140146_ = new AtomicInteger();
-    private final StructureManager f_140147_;
-    private final String f_182284_;
-    private final PlayerMap f_140149_ = new PlayerMap();
--   private final Int2ObjectMap<ChunkMap.TrackedEntity> f_140150_ = new Int2ObjectOpenHashMap<>();
-+   public final Int2ObjectMap<ChunkMap.TrackedEntity> f_140150_ = new Int2ObjectOpenHashMap<>();
-    private final Long2ByteMap f_140151_ = new Long2ByteOpenHashMap();
-    private final Long2LongMap f_202981_ = new Long2LongOpenHashMap();
+@@ -135,6 +_,28 @@
     private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
     int f_140126_;
  

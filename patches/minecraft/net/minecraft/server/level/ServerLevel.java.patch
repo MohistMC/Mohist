@@ -29,12 +29,9 @@
  
  public class ServerLevel extends Level implements WorldGenLevel {
     public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
-@@ -163,9 +_,9 @@
-    final List<ServerPlayer> f_8546_ = Lists.newArrayList();
-    private final ServerChunkCache f_8547_;
+@@ -165,7 +_,7 @@
     private final MinecraftServer f_8548_;
--   private final ServerLevelData f_8549_;
-+   public final ServerLevelData f_8549_;
+    public final ServerLevelData f_8549_;
     final EntityTickList f_143243_ = new EntityTickList();
 -   private final PersistentEntitySectionManager<Entity> f_143244_;
 +   public final PersistentEntitySectionManager<Entity> f_143244_;

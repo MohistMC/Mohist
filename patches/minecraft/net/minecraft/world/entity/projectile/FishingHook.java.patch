@@ -9,22 +9,12 @@
  
  public class FishingHook extends Projectile {
     private static final Logger f_201977_ = LogUtils.getLogger();
-@@ -50,7 +_,7 @@
-    private boolean f_37099_;
-    private int f_37100_;
-    private static final int f_150136_ = 10;
--   private static final EntityDataAccessor<Integer> f_37101_ = SynchedEntityData.m_135353_(FishingHook.class, EntityDataSerializers.f_135028_);
-+   public static final EntityDataAccessor<Integer> f_37101_ = SynchedEntityData.m_135353_(FishingHook.class, EntityDataSerializers.f_135028_);
-    private static final EntityDataAccessor<Boolean> f_37102_ = SynchedEntityData.m_135353_(FishingHook.class, EntityDataSerializers.f_135035_);
-    private int f_37103_;
-    private int f_37089_;
-@@ -59,11 +_,17 @@
-    private float f_37092_;
+@@ -60,10 +_,16 @@
     private boolean f_37093_ = true;
     @Nullable
--   private Entity f_37094_;
-+   public Entity f_37094_;
-    private FishingHook.FishHookState f_37095_ = FishingHook.FishHookState.FLYING;
+    public Entity f_37094_;
+-   public FishingHook.FishHookState f_37095_ = FishingHook.FishHookState.FLYING;
++   private FishingHook.FishHookState f_37095_ = FishingHook.FishHookState.FLYING;
     private final int f_37096_;
     private final int f_37097_;
  

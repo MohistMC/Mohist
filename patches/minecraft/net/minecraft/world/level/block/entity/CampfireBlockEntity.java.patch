@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -20,13 +_,16 @@
+@@ -20,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.CampfireBlock;
  import net.minecraft.world.level.block.state.BlockState;
@@ -10,15 +10,6 @@
  
  public class CampfireBlockEntity extends BlockEntity implements Clearable {
     private static final int f_155298_ = 2;
-    private static final int f_155299_ = 4;
-    private final NonNullList<ItemStack> f_59042_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
--   private final int[] f_59043_ = new int[4];
--   private final int[] f_59044_ = new int[4];
-+   public final int[] f_59043_ = new int[4];
-+   public final int[] f_59044_ = new int[4];
- 
-    public CampfireBlockEntity(BlockPos p_155301_, BlockState p_155302_) {
-       super(BlockEntityType.f_58911_, p_155301_, p_155302_);
 @@ -45,6 +_,17 @@
                 ItemStack itemstack1 = p_155307_.m_7465_().m_44015_(RecipeType.f_44111_, container, p_155307_).map((p_155305_) -> {
                    return p_155305_.m_5874_(container);

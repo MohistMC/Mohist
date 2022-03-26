@@ -55,18 +55,7 @@
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
     private static final Logger f_129750_ = LogUtils.getLogger();
-@@ -183,8 +_,8 @@
-    public static final LevelSettings f_129743_ = new LevelSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DataPackConfig.f_45842_);
-    private static final long f_177871_ = 50L;
-    public static final GameProfile f_195496_ = new GameProfile(Util.f_137441_, "Anonymous Player");
--   protected final LevelStorageSource.LevelStorageAccess f_129744_;
--   protected final PlayerDataStorage f_129745_;
-+   public final LevelStorageSource.LevelStorageAccess f_129744_;
-+   public final PlayerDataStorage f_129745_;
-    private final List<Runnable> f_129752_ = Lists.newArrayList();
-    private MetricsRecorder f_177872_ = InactiveMetricsRecorder.f_146153_;
-    private ProfilerFiller f_129754_ = this.f_177872_.m_142610_();
-@@ -198,14 +_,14 @@
+@@ -198,7 +_,7 @@
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;
     private final ServerConnectionListener f_129755_;
@@ -75,25 +64,7 @@
     private final ServerStatus f_129757_ = new ServerStatus();
     private final Random f_129758_ = new Random();
     private final DataFixer f_129759_;
-    private String f_129760_;
-    private int f_129761_ = -1;
--   private final RegistryAccess.Frozen f_129746_;
--   private final Map<ResourceKey<Level>, ServerLevel> f_129762_ = Maps.newLinkedHashMap();
-+   public final RegistryAccess.Frozen f_129746_;
-+   public final Map<ResourceKey<Level>, ServerLevel> f_129762_ = Maps.newLinkedHashMap();
-    private PlayerList f_129763_;
-    private volatile boolean f_129764_ = true;
-    private boolean f_129765_;
-@@ -234,7 +_,7 @@
-    @Nullable
-    private final GameProfileCache f_129723_;
-    private long f_129724_;
--   private final Thread f_129725_;
-+   public final Thread f_129725_;
-    protected long f_129726_ = Util.m_137550_();
-    private long f_129727_;
-    private boolean f_129728_;
-@@ -247,17 +_,39 @@
+@@ -247,7 +_,7 @@
     private final FrameTimer f_129735_ = new FrameTimer();
     private boolean f_129736_;
     private float f_129737_;
@@ -101,9 +72,8 @@
 +   public final Executor f_129738_;
     @Nullable
     private String f_129739_;
--   private MinecraftServer.ReloadableResources f_129740_;
-+   public MinecraftServer.ReloadableResources f_129740_;
-    private final StructureManager f_129741_;
+    public MinecraftServer.ReloadableResources f_129740_;
+@@ -255,9 +_,31 @@
     protected final WorldData f_129749_;
     private volatile boolean f_195494_;
  

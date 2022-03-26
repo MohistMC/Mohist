@@ -12,16 +12,8 @@
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150539_ = 0;
-@@ -22,11 +_,25 @@
-    private static final int f_150543_ = 37;
-    private static final int f_150544_ = 37;
-    private static final int f_150545_ = 46;
--   private final CraftingContainer f_39348_ = new CraftingContainer(this, 3, 3);
--   private final ResultContainer f_39349_ = new ResultContainer();
--   private final ContainerLevelAccess f_39350_;
-+   public final CraftingContainer f_39348_ = new CraftingContainer(this, 3, 3);
-+   public final ResultContainer f_39349_ = new ResultContainer();
-+   public final ContainerLevelAccess f_39350_;
+@@ -27,6 +_,20 @@
+    public final ContainerLevelAccess f_39350_;
     private final Player f_39351_;
  
 +   // CraftBukkit start

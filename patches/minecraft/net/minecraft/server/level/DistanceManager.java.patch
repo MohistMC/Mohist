@@ -1,14 +1,5 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
-@@ -45,7 +_,7 @@
-    private static final int f_183899_ = 32;
-    private static final int f_183900_ = 33;
-    final Long2ObjectMap<ObjectSet<ServerPlayer>> f_140760_ = new Long2ObjectOpenHashMap<>();
--   final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> f_140761_ = new Long2ObjectOpenHashMap<>();
-+   public final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> f_140761_ = new Long2ObjectOpenHashMap<>();
-    private final DistanceManager.ChunkTicketTracker f_140762_ = new DistanceManager.ChunkTicketTracker();
-    private final DistanceManager.FixedPlayerDistanceChunkTracker f_140763_ = new DistanceManager.FixedPlayerDistanceChunkTracker(8);
-    private final TickingTracker f_183901_ = new TickingTracker();
 @@ -59,6 +_,8 @@
     private long f_140771_;
     private int f_183902_ = 10;

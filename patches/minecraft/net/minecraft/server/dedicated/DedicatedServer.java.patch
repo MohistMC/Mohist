@@ -35,19 +35,6 @@
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
     static final Logger f_139598_ = LogUtils.getLogger();
-@@ -67,10 +_,10 @@
-    public final List<ConsoleInput> f_139600_ = Collections.synchronizedList(Lists.newArrayList());
-    @Nullable
-    private QueryThreadGs4 f_139601_;
--   private final RconConsoleSource f_139602_;
-+   public final RconConsoleSource f_139602_;
-    @Nullable
-    private RconThread f_139603_;
--   private final DedicatedServerSettings f_139604_;
-+   public DedicatedServerSettings f_139604_;
-    @Nullable
-    private MinecraftServerGui f_139605_;
-    @Nullable
 @@ -78,8 +_,8 @@
     @Nullable
     private final Component f_142863_;

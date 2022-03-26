@@ -8,15 +8,6 @@
  
  public abstract class AbstractHorse extends Animal implements ContainerListener, PlayerRideableJumping, Saddleable {
     public static final int f_149486_ = 400;
-@@ -94,7 +_,7 @@
-    public int f_30517_;
-    public int f_30518_;
-    protected boolean f_30519_;
--   protected SimpleContainer f_30520_;
-+   public SimpleContainer f_30520_;
-    protected int f_30521_;
-    protected float f_30522_;
-    private boolean f_30510_;
 @@ -106,6 +_,7 @@
     private float f_30516_;
     protected boolean f_30523_ = true;

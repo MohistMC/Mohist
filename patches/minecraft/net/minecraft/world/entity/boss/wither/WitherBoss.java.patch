@@ -29,15 +29,6 @@
  
  public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob {
     private static final EntityDataAccessor<Integer> f_31420_ = SynchedEntityData.m_135353_(WitherBoss.class, EntityDataSerializers.f_135028_);
-@@ -68,7 +_,7 @@
-    private final int[] f_31427_ = new int[2];
-    private final int[] f_31428_ = new int[2];
-    private int f_31429_;
--   private final ServerBossEvent f_31430_ = (ServerBossEvent)(new ServerBossEvent(this.m_5446_(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).m_7003_(true);
-+   public final ServerBossEvent f_31430_ = (ServerBossEvent)(new ServerBossEvent(this.m_5446_(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).m_7003_(true);
-    private static final Predicate<LivingEntity> f_31431_ = (p_31504_) -> {
-       return p_31504_.m_6336_() != MobType.f_21641_ && p_31504_.m_5789_();
-    };
 @@ -219,16 +_,40 @@
           int k1 = this.m_31502_() - 1;
           this.f_31430_.m_142711_(1.0F - (float)k1 / 220.0F);

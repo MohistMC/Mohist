@@ -45,21 +45,6 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -40,11 +_,11 @@
-    public static final int f_150390_ = 1;
-    public static final int f_150391_ = 2;
-    public static final int f_150392_ = Integer.MAX_VALUE;
--   private final NonNullList<ItemStack> f_38841_ = NonNullList.m_122779_();
--   public final NonNullList<Slot> f_38839_ = NonNullList.m_122779_();
-+   public NonNullList<ItemStack> f_38841_ = NonNullList.m_122779_();
-+   public NonNullList<Slot> f_38839_ = NonNullList.m_122779_();
-    private final List<DataSlot> f_38842_ = Lists.newArrayList();
-    private ItemStack f_150393_ = ItemStack.f_41583_;
--   private final NonNullList<ItemStack> f_150394_ = NonNullList.m_122779_();
-+   public NonNullList<ItemStack> f_150394_ = NonNullList.m_122779_();
-    private final IntList f_150395_ = new IntArrayList();
-    private ItemStack f_150396_ = ItemStack.f_41583_;
-    private int f_182405_;
 @@ -59,6 +_,28 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;

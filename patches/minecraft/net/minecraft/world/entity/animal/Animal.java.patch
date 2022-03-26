@@ -17,11 +17,9 @@
  
  public abstract class Animal extends AgeableMob {
     static final int f_148714_ = 6000;
--   private int f_27554_;
-+   public int f_27554_;
+    public int f_27554_;
     @Nullable
--   private UUID f_27555_;
-+   public UUID f_27555_;
+    public UUID f_27555_;
 +   public ItemStack breedItem; // CraftBukkit - Add breedItem variable
  
     protected Animal(EntityType<? extends Animal> p_27557_, Level p_27558_) {

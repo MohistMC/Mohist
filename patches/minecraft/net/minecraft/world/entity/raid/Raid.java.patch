@@ -1,31 +1,5 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -86,21 +_,21 @@
-    public static final int f_150203_ = 12544;
-    private final Map<Integer, Raider> f_37670_ = Maps.newHashMap();
-    private final Map<Integer, Set<Raider>> f_37671_ = Maps.newHashMap();
--   private final Set<UUID> f_37672_ = Sets.newHashSet();
--   private long f_37673_;
-+   public final Set<UUID> f_37672_ = Sets.newHashSet();
-+   public long f_37673_;
-    private BlockPos f_37674_;
-    private final ServerLevel f_37675_;
-    private boolean f_37676_;
-    private final int f_37677_;
-    private float f_37678_;
--   private int f_37679_;
-+   public int f_37679_;
-    private boolean f_37680_;
-    private int f_37681_;
-    private final ServerBossEvent f_37682_ = new ServerBossEvent(f_37665_, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
-    private int f_37683_;
-    private int f_37684_;
-    private final Random f_37685_ = new Random();
--   private final int f_37686_;
-+   public final int f_37686_;
-    private Raid.RaidStatus f_37687_;
-    private int f_37688_;
-    private Optional<BlockPos> f_37689_ = Optional.empty();
 @@ -165,6 +_,12 @@
        return this.f_37687_ == Raid.RaidStatus.LOSS;
     }

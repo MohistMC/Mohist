@@ -11,21 +11,6 @@
  
  public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
     private static final Logger f_59925_ = LogUtils.getLogger();
-@@ -37,11 +_,11 @@
-    private static final int f_155809_ = 2400;
-    private static final int f_155810_ = 1;
-    private static final int f_155811_ = 10;
--   private long f_59926_;
-+   public long f_59926_;
-    private int f_59927_;
-    @Nullable
--   private BlockPos f_59928_;
--   private boolean f_59929_;
-+   public BlockPos f_59928_;
-+   public boolean f_59929_;
- 
-    public TheEndGatewayBlockEntity(BlockPos p_155813_, BlockState p_155814_) {
-       super(BlockEntityType.f_58937_, p_155813_, p_155814_);
 @@ -180,6 +_,26 @@
              } else {
                 entity = p_155832_.m_20201_();
