@@ -837,7 +837,7 @@
      public static BlockPos func_180467_a(World p_180467_0_, BlockPos p_180467_1_, boolean p_180467_2_)
      {
 -        Block block = p_180467_0_.func_180495_p(p_180467_1_).func_177230_c();
-+        IBlockState state = p_180467_0_.func_180495_p(p_180467_1_);
++        IBlockState state = p_180467_0_.getBlockState(p_180467_1_, true);
 +        Block block = state.func_177230_c();
  
 -        if (block != Blocks.field_150324_C)
