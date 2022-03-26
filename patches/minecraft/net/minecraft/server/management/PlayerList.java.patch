@@ -607,7 +607,7 @@
          entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp.func_174817_o(p_72368_1_);
          entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
-@@ -504,44 +820,278 @@
+@@ -504,44 +820,276 @@
              entityplayermp.func_184211_a(s);
          }
  
@@ -633,7 +633,6 @@
  
 -        if (blockpos != null)
 +            if (location == null) {
-+                cworld = (CraftWorld) this.field_72400_f.server.getWorlds().get(0);
 +                blockpos = entityplayermp.getSpawnPoint(this.field_72400_f, cworld.getHandle());
 +                location = new Location(cworld, (double) ((float) blockpos.func_177958_n() + 0.5F), (double) ((float) blockpos.func_177956_o() + 0.1F), (double) ((float) blockpos.func_177952_p() + 0.5F));
 +            }
@@ -806,7 +805,6 @@
 +            }
 +
 +            if (location == null) {
-+                cworld = (CraftWorld) this.field_72400_f.server.getWorlds().get(0);
 +                blockpos = entityplayermp.getSpawnPoint(this.field_72400_f, cworld.getHandle());
 +                location = new Location(cworld, (double) ((float) blockpos.func_177958_n() + 0.5F), (double) ((float) blockpos.func_177956_o() + 0.1F), (double) ((float) blockpos.func_177952_p() + 0.5F));
 +            }
@@ -903,7 +901,7 @@
          return entityplayermp;
      }
  
-@@ -556,15 +1106,81 @@
+@@ -556,15 +1104,81 @@
  
      public void func_187242_a(EntityPlayerMP p_187242_1_, int p_187242_2_)
      {
@@ -988,7 +986,7 @@
          this.func_72375_a(p_187242_1_, worldserver);
          p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
          p_187242_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -576,17 +1192,39 @@
+@@ -576,17 +1190,39 @@
          {
              p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
          }
@@ -1031,7 +1029,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 / 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 / 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -597,7 +1235,7 @@
+@@ -597,7 +1233,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -1040,7 +1038,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -608,7 +1246,7 @@
+@@ -608,7 +1244,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -1049,7 +1047,7 @@
          {
              BlockPos blockpos;
  
-@@ -634,7 +1272,7 @@
+@@ -634,7 +1270,7 @@
  
          p_82448_3_.field_72984_F.func_76319_b();
  
@@ -1058,7 +1056,7 @@
          {
              p_82448_3_.field_72984_F.func_76320_a("placing");
              d0 = (double)MathHelper.func_76125_a((int)d0, -29999872, 29999872);
-@@ -643,7 +1281,8 @@
+@@ -643,7 +1279,8 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
@@ -1068,7 +1066,7 @@
                  p_82448_4_.func_72838_d(p_82448_1_);
                  p_82448_4_.func_72866_a(p_82448_1_, false);
              }
-@@ -654,11 +1293,106 @@
+@@ -654,11 +1291,106 @@
          p_82448_1_.func_70029_a(p_82448_4_);
      }
  
@@ -1176,7 +1174,7 @@
              this.field_72408_o = 0;
          }
      }
-@@ -671,6 +1405,24 @@
+@@ -671,6 +1403,24 @@
          }
      }
  
@@ -1201,7 +1199,7 @@
      public void func_148537_a(Packet<?> p_148537_1_, int p_148537_2_)
      {
          for (int i = 0; i < this.field_72404_b.size(); ++i)
-@@ -786,12 +1538,20 @@
+@@ -786,12 +1536,20 @@
          int i = this.field_72400_f.func_110455_j();
          this.field_72414_i.func_152687_a(new UserListOpsEntry(p_152605_1_, this.field_72400_f.func_110455_j(), this.field_72414_i.func_183026_b(p_152605_1_)));
          this.func_187245_a(this.func_177451_a(p_152605_1_.getId()), i);
@@ -1222,7 +1220,7 @@
      }
  
      private void func_187245_a(EntityPlayerMP p_187245_1_, int p_187245_2_)
-@@ -847,6 +1607,12 @@
+@@ -847,6 +1605,12 @@
          {
              EntityPlayerMP entityplayermp = this.field_72404_b.get(i);
  
@@ -1235,7 +1233,7 @@
              if (entityplayermp != p_148543_1_ && entityplayermp.field_71093_bK == p_148543_10_)
              {
                  double d0 = p_148543_2_ - entityplayermp.field_70165_t;
-@@ -863,12 +1629,26 @@
+@@ -863,12 +1627,26 @@
  
      public void func_72389_g()
      {
@@ -1266,7 +1264,7 @@
      public void func_152601_d(GameProfile p_152601_1_)
      {
          this.field_72411_j.func_152687_a(new UserListWhitelistEntry(p_152601_1_));
-@@ -913,16 +1693,21 @@
+@@ -913,16 +1691,21 @@
  
          if (p_72354_2_.func_72896_J())
          {
@@ -1292,7 +1290,7 @@
          p_72385_1_.field_71135_a.func_147359_a(new SPacketHeldItemChange(p_72385_1_.field_71071_by.field_70461_c));
      }
  
-@@ -1004,17 +1789,26 @@
+@@ -1004,17 +1787,26 @@
  
      public void func_72392_r()
      {
@@ -1323,7 +1321,7 @@
      }
  
      public void func_148539_a(ITextComponent p_148539_1_)
-@@ -1022,6 +1816,10 @@
+@@ -1022,6 +1814,10 @@
          this.func_148544_a(p_148539_1_, true);
      }
  
@@ -1334,7 +1332,7 @@
      public StatisticsManagerServer func_152602_a(EntityPlayer p_152602_1_)
      {
          UUID uuid = p_152602_1_.func_110124_au();
-@@ -1073,7 +1871,7 @@
+@@ -1073,7 +1869,7 @@
  
          if (this.field_72400_f.field_71305_c != null)
          {
