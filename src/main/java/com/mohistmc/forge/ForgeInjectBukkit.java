@@ -200,11 +200,9 @@ public class ForgeInjectBukkit {
     public static void addEnumVillagerProfession() {
         for (Map.Entry<ResourceLocation, VillagerRegistry.VillagerProfession> entry : ForgeRegistries.VILLAGER_PROFESSIONS.getEntries()) {
             String name = entry.getValue().getName().toString().replace(":", "_").toUpperCase();
-            VillagerRegistry.VillagerCareer career = entry.getValue().getCareer();
 
             Villager.Profession vp = EnumHelper.addEnum(Villager.Profession.class, name, new Class[]{Boolean.TYPE}, false);
-            Villager.Career vc = EnumHelper.addEnum(Villager.Career.class, career.getName().replace(".", "_").toUpperCase().toUpperCase(), new Class[]{Villager.Profession.class}, vp);
-            MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.villager", new Object[]{vp.name(), vc.name(), String.valueOf(vp.ordinal() - 2)}));
+            MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.villager", new Object[]{vp.name(), String.valueOf(vp.ordinal() - 2)}));
         }
     }
 }
