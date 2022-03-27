@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -199,21 +198,13 @@ public class ForgeInjectBukkit {
     }
 
     public static void addEnumVillagerProfession() {
-        Map<Integer, VillagerRegistry.VillagerProfession> map = new TreeMap<>();
         for (Map.Entry<ResourceLocation, VillagerRegistry.VillagerProfession> entry : ForgeRegistries.VILLAGER_PROFESSIONS.getEntries()) {
-            int id = VillagerRegistry.getId(entry.getValue());
-            map.put(id, entry.getValue());
-        }
-        for (Map.Entry<Integer, VillagerRegistry.VillagerProfession> entry : map.entrySet()) {
-            if (entry.getKey() > 5) {
-                String name = entry.getValue().getName().toString().replace(":", "_").toUpperCase();
-                VillagerRegistry.VillagerCareer career = entry.getValue().getCareer(entry.getKey());
+            String name = entry.getValue().getName().toString().replace(":", "_").toUpperCase();
+            VillagerRegistry.VillagerCareer career = entry.getValue().getCareer();
 
-                Villager.Profession vp = EnumHelper.addEnum(Villager.Profession.class, name, new Class[]{Boolean.TYPE}, false);
-                Villager.Career vc = EnumHelper.addEnum(Villager.Career.class, career.getName().replace(".", "_").toUpperCase().toUpperCase(), new Class[]{Villager.Profession.class} , vp);
-                MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.villager", new Object[]{vp.name(), vc.name(), String.valueOf(vp.ordinal() - 2)}));
-            }
+            Villager.Profession vp = EnumHelper.addEnum(Villager.Profession.class, name, new Class[]{Boolean.TYPE}, false);
+            Villager.Career vc = EnumHelper.addEnum(Villager.Career.class, career.getName().replace(".", "_").toUpperCase().toUpperCase(), new Class[]{Villager.Profession.class}, vp);
+            MohistMC.LOGGER.debug("Save: " + Message.getFormatString("injected.villager", new Object[]{vp.name(), vc.name(), String.valueOf(vp.ordinal() - 2)}));
         }
-
     }
 }

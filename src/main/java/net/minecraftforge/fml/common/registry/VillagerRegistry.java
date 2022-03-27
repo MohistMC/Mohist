@@ -215,6 +215,11 @@ public class VillagerRegistry
             careers.add(career);
         }
 
+        // Mohist Start
+        public VillagerCareer getCareer() {
+            return getCareer(careers.size());
+        }
+        // Mohist end
         public ResourceLocation getName() { return this.name; }
         public ResourceLocation getSkin() { return this.texture; }
         public ResourceLocation getZombieSkin() { return this.zombie; }
