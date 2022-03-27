@@ -35,7 +35,7 @@ public class ForgeWorldPreset extends ForgeRegistryEntry<ForgeWorldPreset>
         if (StringUtil.isNullOrEmpty(defaultWorldType) || "default".equals(defaultWorldType))
             return null; // use vanilla
 
-        ForgeWorldPreset def = ForgeRegistries.WORLD_TYPES.getValue(new ResourceLocation(defaultWorldType));
+        ForgeWorldPreset def = ForgeRegistries.WORLD_TYPES.get().getValue(new ResourceLocation(defaultWorldType));
         if (def == null)
         {
             LOGGER.error(i18n.get("forgeworldpreset.1", defaultWorldType));
