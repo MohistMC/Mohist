@@ -1400,6 +1400,15 @@
     }
  
     public boolean m_5830_() {
+@@ -3139,7 +_,7 @@
+    }
+ 
+    public ItemStack m_6298_(ItemStack p_21272_) {
+-      return ItemStack.f_41583_;
++      return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_21272_, ItemStack.f_41583_);
+    }
+ 
+    public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
 @@ -3162,7 +_,7 @@
        if (item.m_41472_()) {
           for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {

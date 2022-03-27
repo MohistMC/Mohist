@@ -18,7 +18,6 @@ import com.google.common.collect.Maps;
 import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.ImmutableList;
@@ -28,7 +27,6 @@ import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-
 /**
  * RegistryEvent supertype.
  */
@@ -36,17 +34,6 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
 {
     RegistryEvent(Class<T> clazz) {
         super(clazz);
-    }
-    /**
-     * Register new registries when you receive this event, through the {@link RegistryBuilder}
-     */
-    public static class NewRegistry extends net.minecraftforge.eventbus.api.Event implements IModBusEvent
-    {
-        public NewRegistry(ModContainer mc) {}
-        @Override
-        public String toString() {
-            return "RegistryEvent.NewRegistry";
-        }
     }
 
     /**
