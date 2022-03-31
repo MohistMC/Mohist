@@ -1435,7 +1435,7 @@ project(':forge') {
     }
 
     license {
-        header = file("$rootDir/LICENSE-header.txt")
+        header = file("$rootDir/LICENSE/LICENSE-header.txt")
 
         include 'net/minecraftforge/'
         exclude 'net/minecraftforge/server/terminalconsole/'
