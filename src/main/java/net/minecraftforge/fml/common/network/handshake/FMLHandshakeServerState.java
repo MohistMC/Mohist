@@ -113,6 +113,7 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
                 while (itr.hasNext())
                 {
                     Entry<ResourceLocation, ForgeRegistry.Snapshot> e = itr.next();
+                    if ("minecraft:dataserializers".equals(e.getKey().toString()) && !MohistForgeUtils.isCompatibleLowForge(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get().getModList())) continue;
                     ctx.writeAndFlush(new FMLHandshakeMessage.RegistryData(itr.hasNext(), e.getKey(), e.getValue())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
                 }
             }

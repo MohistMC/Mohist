@@ -2,6 +2,7 @@ package com.mohistmc.forge;
 
 import com.mohistmc.configuration.MohistConfig;
 import java.util.Arrays;
+import java.util.Map;
 
 public class MohistForgeUtils {
 
@@ -23,6 +24,20 @@ public class MohistForgeUtils {
                 return Arrays.asList(clientMods).containsAll(Arrays.asList(MohistConfig.instance.modswhitelist.getValue().split(","))) && clientMods.length == MohistConfig.instance.modsnumber.getValue();
             else
                 return Arrays.asList(clientMods).containsAll(Arrays.asList(MohistConfig.instance.modswhitelist.getValue().split(",")));
+        }
+        return true;
+    }
+
+    public static boolean isCompatibleLowForge(Map<String, String> modList) {
+        String forgeVersion = modList.get("forge");
+        if (forgeVersion != null) {
+            try {
+                if (Integer.parseInt(forgeVersion.split("\\.")[3]) < 2826) {
+                    return false;
+                }
+            } catch (Exception e) {
+                return true;
+            }
         }
         return true;
     }
