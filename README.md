@@ -26,8 +26,8 @@ Progress
 
 - [ ] Rectify Forge([**87c4f90fb**](https://github.com/MinecraftForge/MinecraftForge/commit/87c4f90fb))  
 - [ ] Start patch
-  * CraftBukkit(2c1e4998)
-  * Bukkit(0edc0e04)
+  * CraftBukkit(2542945e)
+  * Bukkit(7902647a)
 
 Getting Help
 ------

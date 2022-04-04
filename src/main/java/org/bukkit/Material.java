@@ -93,6 +93,7 @@ import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.block.data.type.TurtleEgg;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
@@ -9779,6 +9780,16 @@ public enum Material implements Keyed {
                 return EquipmentSlot.HAND;
             // </editor-fold>
         }
+    }
+
+    /**
+     * Get the {@link CreativeCategory} to which this material belongs.
+     *
+     * @return the creative category. null if does not belong to a category
+     */
+    @Nullable
+    public CreativeCategory getCreativeCategory() {
+        return Bukkit.getUnsafe().getCreativeCategory(this);
     }
 
     // use a normalize() function to ensure it is accessible after a round-trip

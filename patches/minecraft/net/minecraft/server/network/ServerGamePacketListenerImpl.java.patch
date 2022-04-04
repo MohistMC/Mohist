@@ -128,7 +128,7 @@
           this.m_9942_(new TranslatableComponent("multiplayer.disconnect.idling"));
        }
  
-@@ -288,12 +_,40 @@
+@@ -288,12 +_,41 @@
        return this.f_9745_.m_7779_(this.f_9743_.m_36316_());
     }
  
@@ -158,6 +158,7 @@
 +         // Do not kick the player
 +         return;
 +      }
++      this.f_9743_.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +      // Send the possibly modified leave message
 +      s = event.getReason();
 +      final Component ichatbasecomponent = CraftChatMessage.fromString(s, true)[0];

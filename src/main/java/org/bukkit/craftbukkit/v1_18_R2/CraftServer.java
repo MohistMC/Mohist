@@ -1004,7 +1004,7 @@ public final class CraftServer implements Server {
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)
         if (worlddata == null) {
 
-            DedicatedServerProperties.WorldGenProperties properties = new DedicatedServerProperties.WorldGenProperties(Objects.toString(creator.seed()), GsonHelper.parse(creator.generatorSettings()), creator.generateStructures(), creator.type().name().toLowerCase(Locale.ROOT));
+            DedicatedServerProperties.WorldGenProperties properties = new DedicatedServerProperties.WorldGenProperties(Objects.toString(creator.seed()), GsonHelper.parse((creator.generatorSettings().isEmpty()) ? "{}" : creator.generatorSettings()), creator.generateStructures(), creator.type().name().toLowerCase(Locale.ROOT));
 
             WorldGenSettings generatorsettings = WorldGenSettings.create(console.registryAccess(), properties);
             worldSettings = new LevelSettings(name, GameType.byId(getDefaultGameMode().getValue()), hardcore, net.minecraft.world.Difficulty.EASY, false, new GameRules(), console.datapackconfiguration);
@@ -2117,56 +2117,77 @@ public final class CraftServer implements Server {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Keyed> org.bukkit.Tag<T> getTag(String registry, NamespacedKey tag, Class<T> clazz) {
+        Validate.notNull(registry, "registry cannot be null");
+        Validate.notNull(tag, "NamespacedKey cannot be null");
+        Validate.notNull(clazz, "Class cannot be null");
         ResourceLocation key = CraftNamespacedKey.toMinecraft(tag);
 
         switch (registry) {
-            case org.bukkit.Tag.REGISTRY_BLOCKS:
+            case org.bukkit.Tag.REGISTRY_BLOCKS -> {
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
 
-                return (org.bukkit.Tag<T>) new CraftBlockTag(net.minecraft.core.Registry.BLOCK, TagKey.create(net.minecraft.core.Registry.BLOCK_REGISTRY, key));
-            case org.bukkit.Tag.REGISTRY_ITEMS:
+                TagKey<Block> blockTagKey = TagKey.create(net.minecraft.core.Registry.BLOCK_REGISTRY, key);
+                if (net.minecraft.core.Registry.BLOCK.isKnownTagName(blockTagKey)) {
+                    return (org.bukkit.Tag<T>) new CraftBlockTag(net.minecraft.core.Registry.BLOCK, blockTagKey);
+                }
+            }
+            case org.bukkit.Tag.REGISTRY_ITEMS -> {
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
 
-                return (org.bukkit.Tag<T>) new CraftItemTag(net.minecraft.core.Registry.ITEM, TagKey.create(net.minecraft.core.Registry.ITEM_REGISTRY, key));
-            case org.bukkit.Tag.REGISTRY_FLUIDS:
+                TagKey<Item> itemTagKey = TagKey.create(net.minecraft.core.Registry.ITEM_REGISTRY, key);
+                if (net.minecraft.core.Registry.ITEM.isKnownTagName(itemTagKey)) {
+                    return (org.bukkit.Tag<T>) new CraftItemTag(net.minecraft.core.Registry.ITEM, itemTagKey);
+                }
+            }
+            case org.bukkit.Tag.REGISTRY_FLUIDS -> {
                 Preconditions.checkArgument(clazz == org.bukkit.Fluid.class, "Fluid namespace must have fluid type");
 
-                return (org.bukkit.Tag<T>) new CraftFluidTag(net.minecraft.core.Registry.FLUID, TagKey.create(net.minecraft.core.Registry.FLUID_REGISTRY, key));
-            case org.bukkit.Tag.REGISTRY_ENTITY_TYPES:
+                TagKey<net.minecraft.world.level.material.Fluid> fluidTagKey = TagKey.create(net.minecraft.core.Registry.FLUID_REGISTRY, key);
+                if (net.minecraft.core.Registry.FLUID.isKnownTagName(fluidTagKey)) {
+                    return (org.bukkit.Tag<T>) new CraftFluidTag(net.minecraft.core.Registry.FLUID, fluidTagKey);
+                }
+            }
+            case org.bukkit.Tag.REGISTRY_ENTITY_TYPES -> {
                 Preconditions.checkArgument(clazz == org.bukkit.entity.EntityType.class, "Entity type namespace must have entity type");
 
-                return (org.bukkit.Tag<T>) new CraftEntityTag(net.minecraft.core.Registry.ENTITY_TYPE, TagKey.create(net.minecraft.core.Registry.ENTITY_TYPE_REGISTRY, key));
-            default:
-                throw new IllegalArgumentException();
+                TagKey<net.minecraft.world.entity.EntityType<?>> entityTagKey = TagKey.create(net.minecraft.core.Registry.ENTITY_TYPE_REGISTRY, key);
+                if (net.minecraft.core.Registry.ENTITY_TYPE.isKnownTagName(entityTagKey)) {
+                    return (org.bukkit.Tag<T>) new CraftEntityTag(net.minecraft.core.Registry.ENTITY_TYPE, entityTagKey);
+                }
+            }
+            default -> throw new IllegalArgumentException();
         }
+
+        return null;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Keyed> Iterable<org.bukkit.Tag<T>> getTags(String registry, Class<T> clazz) {
+        Validate.notNull(registry, "registry cannot be null");
+        Validate.notNull(clazz, "Class cannot be null");
         switch (registry) {
-            case org.bukkit.Tag.REGISTRY_BLOCKS:
+            case org.bukkit.Tag.REGISTRY_BLOCKS -> {
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-
                 net.minecraft.core.Registry<Block> blockTags = Registry.BLOCK;
                 return blockTags.getTags().map(pair -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, pair.getFirst())).collect(ImmutableList.toImmutableList());
-            case org.bukkit.Tag.REGISTRY_ITEMS:
+            }
+            case org.bukkit.Tag.REGISTRY_ITEMS -> {
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
-
                 net.minecraft.core.Registry<Item> itemTags = Registry.ITEM;
-                return itemTags.getTags().map(pair -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags,  pair.getFirst())).collect(ImmutableList.toImmutableList());
-            case org.bukkit.Tag.REGISTRY_FLUIDS:
+                return itemTags.getTags().map(pair -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
+            case org.bukkit.Tag.REGISTRY_FLUIDS -> {
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Fluid namespace must have fluid type");
-
                 net.minecraft.core.Registry<net.minecraft.world.level.material.Fluid> fluidTags = Registry.FLUID;
-                return fluidTags.getTags().map(pair -> (org.bukkit.Tag<T>) new CraftFluidTag(fluidTags,  pair.getFirst())).collect(ImmutableList.toImmutableList());
-            case org.bukkit.Tag.REGISTRY_ENTITY_TYPES:
+                return fluidTags.getTags().map(pair -> (org.bukkit.Tag<T>) new CraftFluidTag(fluidTags, pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
+            case org.bukkit.Tag.REGISTRY_ENTITY_TYPES -> {
                 Preconditions.checkArgument(clazz == org.bukkit.entity.EntityType.class, "Entity type namespace must have entity type");
-
                 net.minecraft.core.Registry<net.minecraft.world.entity.EntityType<?>> entityTags = Registry.ENTITY_TYPE;
-                return entityTags.getTags().map(pair -> (org.bukkit.Tag<T>) new CraftEntityTag(entityTags,  pair.getFirst())).collect(ImmutableList.toImmutableList());
-            default:
-                throw new IllegalArgumentException();
+                return entityTags.getTags().map(pair -> (org.bukkit.Tag<T>) new CraftEntityTag(entityTags, pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
+            default -> throw new IllegalArgumentException();
         }
     }
 

@@ -70,3 +70,15 @@
           }
        }
     }
+@@ -214,6 +_,11 @@
+    public void m_5581_(Level p_51654_, BlockState p_51655_, BlockHitResult p_51656_, Projectile p_51657_) {
+       BlockPos blockpos = p_51656_.m_82425_();
+       if (!p_51654_.f_46443_ && p_51657_.m_142265_(p_51654_, blockpos) && p_51657_.m_6095_().m_204039_(EntityTypeTags.f_13124_)) {
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityChangeBlockEvent(p_51657_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++            return;
++         }
++         // CraftBukkit end
+          p_51654_.m_46953_(blockpos, true, p_51657_);
+       }
+ 

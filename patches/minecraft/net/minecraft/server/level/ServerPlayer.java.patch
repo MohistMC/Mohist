@@ -75,7 +75,7 @@
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogUtils.getLogger();
-@@ -227,20 +_,83 @@
+@@ -227,20 +_,84 @@
     public int f_8943_;
     public boolean f_8944_;
  
@@ -90,6 +90,7 @@
 +   public boolean joining = true;
 +   public boolean sentListPacket = false;
 +   public Integer clientViewDistance;
++   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +   public String locale = "en_us"; // CraftBukkit - add, lowercase
 +   // CraftBukkit end
 +
