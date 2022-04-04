@@ -43,9 +43,15 @@ public class TagEmptyCondition implements ICondition
     }
 
     @Override
+    public boolean test(ICondition.IContext context)
+    {
+        return context.getTag(tag).getValues().isEmpty();
+    }
+
+    @Override
     public boolean test()
     {
-        return !Registry.ITEM.getTag(tag).map(HolderSet.Named::iterator).map(Iterator::hasNext).orElse(false);
+        return test(IContext.EMPTY);
     }
 
     @Override

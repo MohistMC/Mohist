@@ -47,7 +47,7 @@ import java.util.function.Supplier;
 /**
  * A class that exposes static references to all vanilla and Forge registries.
  * Created to have a central place to access the registries directly if modders need.
- * It is still advised that if you are registering things to use {@link net.minecraftforge.event.RegistryEvent.Register} or {@link net.minecraftforge.registries.DeferredRegister}, but queries and iterations can use this.
+ * It is still advised that if you are registering things to use {@link net.minecraftforge.event.RegistryEvent.Register} or {@link DeferredRegister}, but queries and iterations can use this.
  */
 public class ForgeRegistries
 {
@@ -145,7 +145,7 @@ public class ForgeRegistries
     }
 
     /**
-     * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
+     * This function is just to make sure static initializers in other classes have run and setup their registries before we query them.
      */
     private static void init()
     {
