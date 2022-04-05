@@ -4,6 +4,8 @@ import com.mohistmc.configuration.MohistConfig;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
@@ -18,12 +20,14 @@ public class WatchdogThread extends Thread
     private final boolean restart;
     private volatile long lastTick;
     private volatile boolean stopping;
+    private final Thread primaryThread;
 
     private WatchdogThread(long timeoutTime, boolean restart)
     {
         super( "Mohist Watchdog Thread" );
         this.timeoutTime = timeoutTime;
         this.restart = restart;
+        primaryThread = MinecraftServer.getServerInst().primaryThread;
     }
 
     public static void doStart(int timeoutTime, boolean restart)
@@ -72,7 +76,7 @@ public class WatchdogThread extends Thread
                 //
                 log.log( Level.SEVERE, "------------------------------" );
                 log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Mohist!):" );
-                dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServerInst().primaryThread.getId(), Integer.MAX_VALUE ), log );
+                dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo(primaryThread.getId(), Integer.MAX_VALUE ), log );
                 log.log( Level.SEVERE, "------------------------------" );
                 //
                 log.log( Level.SEVERE, "Entire Thread Dump:" );
@@ -82,7 +86,13 @@ public class WatchdogThread extends Thread
                     dumpThread( thread, log );
                 }
                 log.log( Level.SEVERE, "------------------------------" );
-                FMLCommonHandler.instance().exitJava(0, false);
+                primaryThread.checkAccess();
+                new Timer("WatchdogHaltTask").schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        FMLCommonHandler.instance().exitJava(0, true);
+                    }
+                }, 300000);
                 if ( restart )
                 {
                     RestartCommand.restart();

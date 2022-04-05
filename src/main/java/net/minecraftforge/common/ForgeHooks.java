@@ -1161,7 +1161,6 @@ public class ForgeHooks {
     public static void sendRecipeBook(NetHandlerPlayServer connection, State state, List<IRecipe> recipes, List<IRecipe> display, boolean isGuiOpen, boolean isFilteringCraftable) {
         // Fix unexpected NullPointerException and log warn to console
         if (connection == null) {
-            MohistMC.LOGGER.warn("Server tried send recipe book to client but connection was null. Is client already disconnected?");
             return;
         }
         NetworkDispatcher disp = NetworkDispatcher.get(connection.getNetworkManager());
