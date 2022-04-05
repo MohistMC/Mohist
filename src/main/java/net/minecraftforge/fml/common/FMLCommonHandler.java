@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -672,6 +674,16 @@ public class FMLCommonHandler
         {
             FMLLog.log.info("\t{}", stack[i]);
         }
+        Class c = null;
+        try {
+            c = Class.forName("java.lang.ApplicationShutDownHooks");
+            Method method = c.getDeclaredMethod("runHooks");
+            method.setAccessible(true);
+            method.invoke(null);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         if (hardExit)
         {
             Runtime.getRuntime().halt(exitCode);
