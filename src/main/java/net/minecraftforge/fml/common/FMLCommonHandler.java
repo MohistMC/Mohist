@@ -674,18 +674,17 @@ public class FMLCommonHandler
         {
             FMLLog.log.info("\t{}", stack[i]);
         }
-        Class c = null;
-        try {
-            c = Class.forName("java.lang.ApplicationShutDownHooks");
-            Method method = c.getDeclaredMethod("runHooks");
-            method.setAccessible(true);
-            method.invoke(null);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
         if (hardExit)
         {
+            Class c = null;
+            try {
+                c = Class.forName("java.lang.ApplicationShutDownHooks");
+                Method method = c.getDeclaredMethod("runHooks");
+                method.setAccessible(true);
+                method.invoke(null);
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
             Runtime.getRuntime().halt(exitCode);
         }
         else
