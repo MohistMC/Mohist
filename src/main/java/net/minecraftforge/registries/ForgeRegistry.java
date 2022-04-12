@@ -774,7 +774,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remapped, ForgeRegistry<V> old, ResourceLocation name)
     {
         Map<ResourceLocation, String> ovs = Maps.newHashMap(overrides);
-        for (Entry<ResourceLocation, Integer> entry : ids.entrySet())
+        for (Map.Entry<ResourceLocation, Integer> entry : ids.entrySet())
         {
             ResourceLocation itemName = entry.getKey();
             /*
@@ -847,7 +847,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             ovs.remove(itemName);
         }
 
-        for (Entry<ResourceLocation, String> entry :  ovs.entrySet())
+        for (Map.Entry<ResourceLocation, String> entry :  ovs.entrySet())
         {
             ResourceLocation itemName = entry.getKey();
             String owner = entry.getValue();

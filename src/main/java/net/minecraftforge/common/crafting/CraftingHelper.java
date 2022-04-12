@@ -199,7 +199,6 @@ public class CraftingHelper
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
     }
 
-
     /**
      * @deprecated Please use the {@linkplain #processConditions(JsonObject, String, ICondition.IContext) other more general overload}.
      */
@@ -208,7 +207,6 @@ public class CraftingHelper
     {
         return processConditions(json, memberName, ICondition.IContext.EMPTY);
     }
-
 
     public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
     {

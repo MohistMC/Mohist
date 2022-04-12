@@ -137,7 +137,6 @@ public class BrewingRecipeRegistry {
      */
     public static boolean isValidInput(ItemStack stack)
     {
-
         for (IBrewingRecipe recipe : recipes)
         {
             if (recipe.isInput(stack))

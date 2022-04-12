@@ -17,7 +17,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
@@ -852,7 +851,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     *
+     * 
      * @deprecated Use {@link #onPreWorldTick(Level, BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")
@@ -868,7 +867,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     *
+     * 
      * @deprecated Use {@link #onPostWorldTick(Level, BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")
@@ -894,7 +893,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     *
+     * 
      * @deprecated Use {@link #onPreServerTick(BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")
@@ -910,7 +909,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     *
+     * 
      * @deprecated Use {@link #onPostServerTick(BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")
