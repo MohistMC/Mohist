@@ -57,8 +57,8 @@ ext {
     MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.0.45'
-    FORGE_VERSION = '40.0.45'
+    VERSION = '1.18.2-40.0.52'
+    FORGE_VERSION = '40.0.52'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
@@ -1454,12 +1454,6 @@ project(':forge') {
         header = file("$rootDir/LICENSE/LICENSE-header.txt")
 
         include 'net/minecraftforge/'
-        exclude 'net/minecraftforge/server/terminalconsole/'
-        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
-        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
-        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
-        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
-        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
         exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
 
         tasks {

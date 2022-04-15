@@ -1224,6 +1224,15 @@
              this.m_142106_(this.f_20935_);
           } else {
              this.m_5810_();
+@@ -2799,7 +_,7 @@
+ 
+    private boolean m_21332_() {
+       int i = this.m_21212_();
+-      FoodProperties foodproperties = this.f_20935_.m_41720_().m_41473_();
++      FoodProperties foodproperties = this.f_20935_.getFoodProperties(this);
+       boolean flag = foodproperties != null && foodproperties.m_38748_();
+       flag |= i <= this.f_20935_.m_41779_() - 7;
+       return flag && i % 4 == 0;
 @@ -2829,8 +_,10 @@
     public void m_6672_(InteractionHand p_21159_) {
        ItemStack itemstack = this.m_21120_(p_21159_);
@@ -1409,9 +1418,12 @@
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3162,7 +_,7 @@
+@@ -3160,9 +_,9 @@
+    private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
+       Item item = p_21064_.m_41720_();
        if (item.m_41472_()) {
-          for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {
+-         for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {
++         for(Pair<MobEffectInstance, Float> pair : p_21064_.getFoodProperties(this).m_38749_()) {
              if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.nextFloat() < pair.getSecond()) {
 -               p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
 +               p_21066_.addEffect(new MobEffectInstance(pair.getFirst()), EntityPotionEffectEvent.Cause.FOOD);
