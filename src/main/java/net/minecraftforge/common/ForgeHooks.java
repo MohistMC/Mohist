@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -26,6 +25,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
@@ -35,7 +35,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.kinds.App;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -50,6 +49,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -97,10 +97,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -118,6 +115,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldPreset;
@@ -127,6 +125,7 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
@@ -826,7 +825,7 @@ public class ForgeHooks
             ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
 
         if (ret != null)
-           ret.freeze();
+            ret.freeze();
 
         return ret;
     }
@@ -839,8 +838,8 @@ public class ForgeHooks
                     .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
         if (fluid instanceof WaterFluid)
             return net.minecraftforge.fluids.FluidAttributes.Water.builder(
-                    new ResourceLocation("block/water_still"),
-                    new ResourceLocation("block/water_flow"))
+                            new ResourceLocation("block/water_still"),
+                            new ResourceLocation("block/water_flow"))
                     .overlay(new ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
                     .color(0xFF3F76E4)
@@ -848,8 +847,8 @@ public class ForgeHooks
                     .build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
-                    new ResourceLocation("block/lava_still"),
-                    new ResourceLocation("block/lava_flow"))
+                            new ResourceLocation("block/lava_still"),
+                            new ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
                     .luminosity(15).density(3000).viscosity(6000).temperature(1300)
                     .sound(SoundEvents.BUCKET_FILL_LAVA, SoundEvents.BUCKET_EMPTY_LAVA)
@@ -1319,7 +1318,7 @@ public class ForgeHooks
         boolean generateBonusChest = wgs.generateBonusChest();
         Registry<LevelStem> originalRegistry = wgs.dimensions();
         Optional<String> legacyCustomOptions = wgs.legacyCustomOptions;
-        
+
         // make a copy of the dimension registry; for dimensions that specify that they should use the server seed instead
         // of the hardcoded json seed, recreate them with the correct seed
         MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental(), (Function<LevelStem, Holder.Reference<LevelStem>>)null);
@@ -1336,16 +1335,16 @@ public class ForgeHooks
                 seededRegistry.register(key, dimension, originalRegistry.lifecycle(dimension));
             }
         }
-        
+
         return new WorldGenSettings(seed, generateFeatures, generateBonusChest, seededRegistry, legacyCustomOptions);
     }
-    
+
     /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
     public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
     {
-            App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
-            return builder.group(vanillaFields).and(
-                    Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
+        App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
+        return builder.group(vanillaFields).and(
+                        Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
                 .apply(builder, builder.stable((stem, useServerSeed) -> new LevelStem(stem.typeHolder(), stem.generator(), useServerSeed)));
     }
 
@@ -1419,8 +1418,8 @@ public class ForgeHooks
         {
             StringBuilder buf = new StringBuilder();
             buf.append("Forge Mod Loader could not load this save.\n\n")
-                .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
-                .append("You will not be able to load until they are present again.\n\n");
+                    .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
+                    .append("You will not be able to load until they are present again.\n\n");
 
             failedElements.asMap().forEach((name, entries) ->
             {
@@ -1452,7 +1451,7 @@ public class ForgeHooks
             return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=') + 1)));
         throw new IllegalArgumentException("Unknown lifecycle.");
     }
-  
+
     public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
     {
         var registryName = effect.getRegistryName();
@@ -1485,4 +1484,28 @@ public class ForgeHooks
         return mask.isEnderMask(player, enderMan) || MinecraftForge.EVENT_BUS.post(new EnderManAngerEvent(enderMan, player));
     }
 
+    private static final Lazy<Map<String, StructuresBecomeConfiguredFix.Conversion>> FORGE_CONVERSION_MAP = Lazy.concurrentOf(() -> {
+        Map<String, StructuresBecomeConfiguredFix.Conversion> map = new HashMap<>();
+        MinecraftForge.EVENT_BUS.post(new RegisterStructureConversionsEvent(map));
+        return ImmutableMap.copyOf(map);
+    });
+
+    // DO NOT CALL from within RegisterStructureConversionsEvent, otherwise you'll get a deadlock
+    /**
+     * @hidden For internal use only.
+     */
+    @Nullable
+    public static StructuresBecomeConfiguredFix.Conversion getStructureConversion(String originalBiome)
+    {
+        return FORGE_CONVERSION_MAP.get().get(originalBiome);
+    }
+
+    /**
+     * @hidden For internal use only.
+     */
+    public static boolean checkStructureNamespace(String biome)
+    {
+        @Nullable ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
+        return biomeLocation != null && !biomeLocation.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
+    }
 }
