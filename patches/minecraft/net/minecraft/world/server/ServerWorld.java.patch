@@ -126,7 +126,7 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,156 @@
+@@ -173,35 +_,154 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -157,10 +157,8 @@
 +   }
 +
 +   private final boolean ignoreEmptyTimeThis;
-+
 +   {
-+      this.ignoreEmptyTimeThis = IGNORE_EMPTY_TIME_LIST.contains("all_worlds")
-+              || IGNORE_EMPTY_TIME_LIST.contains(this.getServerWorldInfo().func_76065_j());
++      this.ignoreEmptyTimeThis = IGNORE_EMPTY_TIME_LIST.contains("all_worlds") || IGNORE_EMPTY_TIME_LIST.contains(this.getServerWorldInfo().func_76065_j());
 +   }
 +   // Mohist end
 +

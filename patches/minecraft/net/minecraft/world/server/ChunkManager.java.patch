@@ -71,6 +71,34 @@
  
  public class ChunkManager extends ChunkLoader implements ChunkHolder.IPlayerProvider {
     private static final Logger field_219250_d = LogManager.getLogger();
+@@ -119,6 +_,27 @@
+    public final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
+    private final Long2ByteMap field_241087_z_ = new Long2ByteOpenHashMap();
+    private final Queue<Runnable> field_223181_A = Queues.newConcurrentLinkedQueue();
++
++   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
++   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
++   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
++
++      private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
++
++      @Override
++      public void execute(Runnable runnable) {
++         queue.add(runnable);
++      }
++
++      @Override
++      public void run() {
++         Runnable task;
++         while ((task = queue.poll()) != null) {
++            task.run();
++         }
++      }
++   };
++   // CraftBukkit end
+    private int field_219247_A;
+ 
+    public ChunkManager(ServerWorld p_i232602_1_, SaveFormat.LevelSave p_i232602_2_, DataFixer p_i232602_3_, TemplateManager p_i232602_4_, Executor p_i232602_5_, ThreadTaskExecutor<Runnable> p_i232602_6_, IChunkLightProvider p_i232602_7_, ChunkGenerator p_i232602_8_, IChunkStatusListener p_i232602_9_, Supplier<DimensionSavedDataManager> p_i232602_10_, int p_i232602_11_, boolean p_i232602_12_) {
 @@ -176,12 +_,12 @@
     }
  
