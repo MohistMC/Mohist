@@ -94,6 +94,7 @@ public class ServerMain {
 			Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
 		} catch (Exception cnfe) {
 			System.err.println(i18n.get("mohist.start.server.error"));
+			cnfe.printStackTrace();
 			System.exit(1);
 		}
 
