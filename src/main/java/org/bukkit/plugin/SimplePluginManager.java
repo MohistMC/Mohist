@@ -573,18 +573,17 @@ public final class SimplePluginManager implements PluginManager {
      * @param event Event details
      */
     public void callEvent(Event event) {
+        if (event.isAsynchronous() && this.server.isPrimaryThread()) {
+            throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
+        }
+        if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {
+            throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
+        }
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
         if (listeners.length == 0) {
             return;
         }
-        // Paper - replace callEvent by merging to below method
-        if (event.isAsynchronous() && server.isPrimaryThread()) {
-            throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
-        } else if (!event.isAsynchronous() && !server.isPrimaryThread()) {
-            throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
-        }
-
         for (RegisteredListener registration : listeners) {
             if (!registration.getPlugin().isEnabled()) {
                 continue;
