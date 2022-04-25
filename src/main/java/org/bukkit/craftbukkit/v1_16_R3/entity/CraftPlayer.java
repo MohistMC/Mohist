@@ -805,9 +805,6 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
     @Deprecated
     @Override
     public void updateInventory() {
-        if (getHandle().connection == null) {
-            return;
-        } // Mohist - fix NPE
         getHandle().refreshContainer(getHandle().containerMenu);
     }
 

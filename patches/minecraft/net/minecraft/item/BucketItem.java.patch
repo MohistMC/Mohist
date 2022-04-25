@@ -8,12 +8,14 @@
  import net.minecraft.particles.ParticleTypes;
  import net.minecraft.stats.Stats;
  import net.minecraft.tags.FluidTags;
-@@ -28,18 +_,34 @@
+@@ -28,18 +_,36 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
 +import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_16_R3.util.DummyGeneratorAccess;
 +import org.bukkit.event.player.PlayerBucketEmptyEvent;
++import org.bukkit.event.player.PlayerBucketFillEvent;
  
  public class BucketItem extends Item {
     private final Fluid field_77876_a;
@@ -43,7 +45,19 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -56,7 +_,10 @@
+@@ -53,10 +_,22 @@
+             if (this.field_77876_a == Fluids.field_204541_a) {
+                BlockState blockstate1 = p_77659_1_.func_180495_p(blockpos);
+                if (blockstate1.func_177230_c() instanceof IBucketPickupHandler) {
++                  // CraftBukkit start
++                  Fluid dummyFluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
++                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(p_77659_1_, p_77659_2_, blockpos, blockpos, blockraytraceresult.func_216354_b(), itemstack, dummyFluid.func_204524_b());
++                  if (event.isCancelled()) {
++                     ((ServerPlayerEntity)p_77659_2_).field_71135_a.func_147359_a(new SChangeBlockPacket(p_77659_1_, blockpos));
++                     ((ServerPlayerEntity)p_77659_2_).getBukkitEntity().updateInventory();
++                     return ActionResult.func_226251_d_(itemstack);
++                  }
++                  // CraftBukkit end
                    Fluid fluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(p_77659_1_, blockpos, blockstate1);
                    if (fluid != Fluids.field_204541_a) {
                       p_77659_2_.func_71029_a(Stats.field_75929_E.func_199076_b(this));
@@ -66,18 +80,6 @@
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
                       CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)p_77659_2_, blockpos2, itemstack);
-@@ -95,6 +_,11 @@
-    public void func_203792_a(World p_203792_1_, ItemStack p_203792_2_, BlockPos p_203792_3_) {
-    }
- 
-+   // Mohist start - fix issue #1387
-+   /*public boolean emptyBucket(@Nullable PlayerEntity p_180616_1_, World p_180616_2_, BlockPos p_180616_3_, @Nullable BlockRayTraceResult p_180616_4_) {
-+      //return tryPlaceContainedLiquid(p_180616_1_, p_180616_2_, p_180616_3_, p_180616_4_, null, null, null);
-+   }*/
-+
-    public boolean func_180616_a(@Nullable PlayerEntity p_180616_1_, World p_180616_2_, BlockPos p_180616_3_, @Nullable BlockRayTraceResult p_180616_4_) {
-       if (!(this.field_77876_a instanceof FlowingFluid)) {
-          return false;
 @@ -104,40 +_,119 @@
           Material material = blockstate.func_185904_a();
           boolean flag = blockstate.func_227032_a_(this.field_77876_a);
