@@ -93,7 +93,7 @@
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
-@@ -214,17 +_,20 @@
+@@ -214,18 +_,26 @@
              i += k;
              itemstack1.func_200302_a(new StringTextComponent(this.field_82857_m));
           }
@@ -103,20 +103,30 @@
           if (i <= 0) {
              itemstack1 = ItemStack.field_190927_a;
           }
- 
+-
 -         if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= 40) {
 -            this.field_82854_e.func_221494_a(39);
-+         if (maximumRepairCost == 40) maximumRepairCost = 40;
-+
-+         if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= maximumRepairCost) { // CraftBukkit
-+            this.field_82854_e.func_221494_a(maximumRepairCost - 1); // CraftBukkit
-          }
- 
+-         }
+-
 -         if (this.field_82854_e.func_221495_b() >= 40 && !this.field_234645_f_.field_71075_bZ.field_75098_d) {
-+         if (this.field_82854_e.func_221495_b() >= maximumRepairCost && !this.field_234645_f_.field_71075_bZ.field_75098_d) { // CraftBukkit
-             itemstack1 = ItemStack.field_190927_a;
+-            itemstack1 = ItemStack.field_190927_a;
++         if (maximumRepairCost == 40) {
++            if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= 40) {
++               this.field_82854_e.func_221494_a(39);
++            }
++            if (this.field_82854_e.func_221495_b() >= 40 && !this.field_234645_f_.field_71075_bZ.field_75098_d) {
++               itemstack1 = ItemStack.field_190927_a;
++            }
++         } else {
++            if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= maximumRepairCost) { // CraftBukkit
++               this.field_82854_e.func_221494_a(maximumRepairCost - 1); // CraftBukkit
++            }
++            if (this.field_82854_e.func_221495_b() >= maximumRepairCost && !this.field_234645_f_.field_71075_bZ.field_75098_d) { // CraftBukkit
++               itemstack1 = ItemStack.field_190927_a;
++            }
           }
  
+          if (!itemstack1.func_190926_b()) {
 @@ -242,7 +_,8 @@
              EnchantmentHelper.func_82782_a(map, itemstack1);
           }
