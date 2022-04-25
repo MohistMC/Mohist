@@ -156,7 +156,7 @@
        }
     }
  
-@@ -740,15 +_,33 @@
+@@ -740,15 +_,36 @@
     }
  
     public boolean m_7967_(Entity p_8837_) {
@@ -184,7 +184,10 @@
     public void m_143334_(Entity p_143335_) {
 -      this.m_8872_(p_143335_);
 +      // CraftBukkit start
-+      this.addDuringTeleport(p_143335_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++      // SPIGOT-6415: Don't call spawn event for entities which travel trough worlds,
++      // since it is only an implementation detail, that a new entity is created when
++      // they are traveling between worlds.
++      this.addDuringTeleport(p_143335_, null);
 +   }
 +
 +   public void addDuringTeleport(Entity p_143335_, CreatureSpawnEvent.SpawnReason reason) {
@@ -278,7 +281,7 @@
 +         // WorldServer.LOGGER.warn("Tried to add entity {} but it was marked as removed already", EntityTypes.getKey(entity.getType())); // CraftBukkit
 +         return false;
 +      } else {
-+         if (!CraftEventFactory.doEntityAddEventCalling(this, entity, spawnReason)) {
++         if (spawnReason != null && !CraftEventFactory.doEntityAddEventCalling(this, entity, spawnReason)) {
 +            return false;
 +         }
 +         // CraftBukkit end

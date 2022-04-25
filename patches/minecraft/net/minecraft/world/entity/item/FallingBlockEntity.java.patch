@@ -17,6 +17,14 @@
        this(EntityType.f_20450_, p_31953_);
        this.f_31946_ = p_31957_;
        this.f_19850_ = true;
+@@ -74,6 +_,7 @@
+ 
+    public static FallingBlockEntity m_201971_(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) {
+       FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double)p_201973_.m_123341_() + 0.5D, (double)p_201973_.m_123342_(), (double)p_201973_.m_123343_() + 0.5D, p_201974_.m_61138_(BlockStateProperties.f_61362_) ? p_201974_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(false)) : p_201974_);
++      if (CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.m_60819_().m_76188_()).isCancelled()) return fallingblockentity; // CraftBukkit
+       p_201972_.m_7731_(p_201973_, p_201974_.m_60819_().m_76188_(), 3);
+       p_201972_.m_7967_(fallingblockentity);
+       return fallingblockentity;
 @@ -108,7 +_,16 @@
           this.m_146870_();
        } else {

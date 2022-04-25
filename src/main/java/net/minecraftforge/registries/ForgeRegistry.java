@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -877,6 +877,29 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (this.dummyFactory == null)
             return false;
 
+        ForgeRegistry<V> active = RegistryManager.ACTIVE.getRegistry(getRegistryKey());
+        Optional<NamespacedHolderHelper<V>> holders = active.getHolderHelper();
+        if (holders.isPresent() && holders.get().isIntrusive() && holders.get().isFrozen())
+        {
+            try
+            {
+                // We have to unfreeze the ACTIVE registry because a lot of vanilla objects use intrusive handlers in object init.
+                holders.get().unfreeze();
+                createAndAddDummy(key, id);
+            }
+            finally
+            {
+                holders.get().freeze();
+            }
+        }
+        else
+            createAndAddDummy(key, id);
+
+        return true;
+    }
+
+    private void createAndAddDummy(ResourceLocation key, int id)
+    {
         V dummy = this.dummyFactory.createDummy(key);
         LOGGER.debug(REGISTRIES, i18n.get("forgeregistry.25", this.name, key, id, dummy));
 
@@ -907,8 +930,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (realId != id)
             LOGGER.warn(REGISTRIES, i18n.get("forgeregistry.28", this.name, key, id, realId));
         this.dummies.add(key);
-
-        return true;
     }
 
     //Public for tests

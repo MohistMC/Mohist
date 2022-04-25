@@ -17,13 +17,10 @@ public abstract class CraftTag<N, B extends Keyed> implements Tag<B> {
     public CraftTag(net.minecraft.core.Registry<N> registry, TagKey<N> tag) {
         this.registry = registry;
         this.tag = tag;
+        this.handle = registry.getTag(this.tag).orElseThrow();
     }
 
     protected HolderSet.Named<N> getHandle() {
-        if (handle == null) {
-            handle = registry.getTag(tag).get();
-        }
-
         return handle;
     }
 
