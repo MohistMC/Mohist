@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 
 public class WatchdogThread extends Thread
 {
-
+    public static final boolean DISABLE_WATCHDOG = Boolean.getBoolean("disable.watchdog");
     private static WatchdogThread instance;
     private final long timeoutTime;
     private final boolean restart;
@@ -64,16 +64,25 @@ public class WatchdogThread extends Thread
     {
         while ( !stopping )
         {
-            //
-// Paper start
+            // Paper start
             Logger log = Bukkit.getServer().getLogger();
             long currentTime = monotonicMillis();
-            if ( lastTick != 0 && timeoutTime > 0 && currentTime > lastTick + earlyWarningEvery && !Boolean.getBoolean("disable.watchdog") )
+            MinecraftServer server = MinecraftServer.getServer();
+            if ( lastTick != 0 && timeoutTime > 0 && WatchdogThread.hasStarted && (!server.isRunning() || (currentTime > lastTick + earlyWarningEvery && !DISABLE_WATCHDOG)))
             {
-                boolean isLongTimeout = currentTime > lastTick + timeoutTime;
+                boolean isLongTimeout = currentTime > this.lastTick + this.timeoutTime || (!server.isRunning() && !server.hasStopped() && currentTime > this.lastTick + 1000L);
                 // Don't spam early warning dumps
-                if ( !isLongTimeout && (earlyWarningEvery <= 0 || !hasStarted || currentTime < lastEarlyWarning + earlyWarningEvery || currentTime < lastTick + earlyWarningDelay)) continue;
-                if ( !isLongTimeout && MinecraftServer.getServer().hasStopped()) continue; // Don't spam early watchdog warnings during shutdown, we'll come back to this...
+                if (!isLongTimeout) {
+                    if (this.earlyWarningEvery <= 0L || !WatchdogThread.hasStarted || currentTime < this.lastEarlyWarning + this.earlyWarningEvery) {
+                        continue;
+                    }
+                    if (currentTime < this.lastTick + this.earlyWarningDelay) {
+                        continue;
+                    }
+                }
+                if (!isLongTimeout && server.hasStopped()) {
+                    continue;
+                }
                 lastEarlyWarning = currentTime;
                 if (isLongTimeout) {
                     // Paper end
@@ -101,7 +110,7 @@ public class WatchdogThread extends Thread
                 // Paper end - Different message for short timeout
                 log.log( Level.SEVERE, "------------------------------" );
                 log.log( Level.SEVERE, i18n.get("watchdogthread.10" ));
-                dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
+                dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo(server.serverThread.getId(), Integer.MAX_VALUE ), log );
                 log.log( Level.SEVERE, "------------------------------" );
                 //
                 // Paper start - Only print full dump on long timeouts
@@ -119,8 +128,24 @@ public class WatchdogThread extends Thread
                 log.log( Level.SEVERE, "------------------------------" );
 
                 if ( isLongTimeout ) {
-                    if (restart && !MinecraftServer.getServer().hasStopped()) {
-                        RestartCommand.restart();
+                    if (server.hasStopped()) {
+                        break;
+                    }
+                    AsyncCatcher.enabled = false;
+                    server.forceTicks = true;
+                    if (this.restart) {
+                        RestartCommand.addShutdownHook(SpigotConfig.restartScript);
+                    }
+                    server.halt(false);
+                    try {
+                        Thread.sleep(1000L);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (!server.hasStopped()) {
+                        server.close();
+                        break;
                     }
                     break;
                 } // Paper end

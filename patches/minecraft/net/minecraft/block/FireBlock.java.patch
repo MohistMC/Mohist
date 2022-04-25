@@ -24,13 +24,18 @@
  import net.minecraft.item.BlockItemUseContext;
  import net.minecraft.state.BooleanProperty;
  import net.minecraft.state.IntegerProperty;
-@@ -78,7 +_,18 @@
+@@ -78,7 +_,23 @@
     }
  
     public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
 -      return this.func_196260_a(p_196271_1_, p_196271_4_, p_196271_5_) ? this.func_235494_a_(p_196271_4_, p_196271_5_, p_196271_1_.func_177229_b(field_176543_a)) : Blocks.field_150350_a.func_176223_P();
 +      // CraftBukkit start
++      if (!(p_196271_4_ instanceof ServerWorld)) return this.func_196260_a(p_196271_1_, p_196271_4_, p_196271_5_) ? this.func_235494_a_(p_196271_4_, p_196271_5_, (Integer) p_196271_1_.func_177229_b(FireBlock.field_176543_a)) : Blocks.field_150350_a.func_176223_P(); // Paper - don't fire events in world generation
 +      if (!p_196271_1_.func_196955_c(p_196271_4_, p_196271_5_)) {
++         // Suppress during worldgen
++         if (!(p_196271_4_ instanceof World)) {
++            return Blocks.field_150350_a.func_176223_P();
++         }
 +         CraftBlockState blockState = CraftBlockState.getBlockState(p_196271_4_, p_196271_5_);
 +         blockState.setData(Blocks.field_150350_a.func_176223_P());
 +         BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
@@ -39,7 +44,7 @@
 +            return blockState.getHandle();
 +         }
 +      }
-+      return this.func_196448_a(p_196271_4_, p_196271_5_).func_206870_a(field_176543_a, p_196271_1_.func_177229_b(field_176543_a));
++      return this.func_235494_a_(p_196271_4_, p_196271_5_, (Integer) p_196271_1_.func_177229_b(FireBlock.field_176543_a));
 +      // CraftBukkit end
     }
  

@@ -2,6 +2,7 @@ package org.spigotmc;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.command.Command;
@@ -125,5 +126,32 @@ public class RestartCommand extends Command
         {
             ex.printStackTrace();
         }
+    }
+
+    public static boolean addShutdownHook(final String restartScript) {
+        final String[] split = restartScript.split(" ");
+        if (split.length > 0 && new File(split[0]).isFile()) {
+            final Thread shutdownHook = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        final String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+                        if (os.contains("win")) {
+                            Runtime.getRuntime().exec("cmd /c start " + restartScript);
+                        }
+                        else {
+                            Runtime.getRuntime().exec("sh " + restartScript);
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            shutdownHook.setDaemon(true);
+            Runtime.getRuntime().addShutdownHook(shutdownHook);
+            return true;
+        }
+        return false;
     }
 }
