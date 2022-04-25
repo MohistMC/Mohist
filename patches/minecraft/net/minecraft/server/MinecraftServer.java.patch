@@ -488,14 +488,6 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
-@@ -982,6 +_,7 @@
-       p_177936_.m_143522_("Data Packs", () -> {
-          StringBuilder stringbuilder = new StringBuilder();
- 
-+         //TODO-PATCHING:Figure out how to stop the logger here.
-          for(Pack pack : this.f_129730_.m_10524_()) {
-             if (stringbuilder.length() > 0) {
-                stringbuilder.append(", ");
 @@ -1309,6 +_,7 @@
        }).thenAcceptAsync((p_212919_) -> {
           this.f_129740_.close();

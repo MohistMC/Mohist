@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -1,23 +_,41 @@
+@@ -1,33 +_,71 @@
  package net.minecraft.world.food;
  
  import net.minecraft.nbt.CompoundTag;
@@ -45,11 +45,20 @@
  
     public void m_38707_(int p_38708_, float p_38709_) {
        this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
-@@ -27,7 +_,21 @@
+       this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
+    }
+ 
++   // Use the LivingEntity sensitive version in favour of this.
++   @Deprecated
     public void m_38712_(Item p_38713_, ItemStack p_38714_) {
++      this.eat(p_38713_, p_38714_, null);
++   }
++
++   public void eat(Item p_38713_, ItemStack p_38714_, @javax.annotation.Nullable net.minecraft.world.entity.LivingEntity entity) {
        if (p_38713_.m_41472_()) {
-          FoodProperties foodproperties = p_38713_.m_41473_();
+-         FoodProperties foodproperties = p_38713_.m_41473_();
 -         this.m_38707_(foodproperties.m_38744_(), foodproperties.m_38745_());
++         FoodProperties foodproperties = p_38714_.getFoodProperties(entity);
 +         // CraftBukkit start
 +         if (entityhuman == null)
 +         {

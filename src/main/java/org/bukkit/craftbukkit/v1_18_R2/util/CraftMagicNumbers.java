@@ -33,6 +33,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.util.datafix.fixes.References;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,8 +52,10 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_18_R2.attribute.CraftAttributeInstance;
 import org.bukkit.craftbukkit.v1_18_R2.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftCreativeCategory;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_18_R2.legacy.CraftLegacy;
+import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -349,6 +352,12 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         return defaultAttributes.build();
+    }
+
+    @Override
+    public CreativeCategory getCreativeCategory(Material material) {
+        CreativeModeTab category = getItem(material).getItemCategory();
+        return CraftCreativeCategory.fromNMS(category);
     }
 
     /**

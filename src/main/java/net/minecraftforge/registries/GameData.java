@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,6 +11,7 @@ import com.mojang.serialization.Lifecycle;
 
 import java.util.*;
 
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -56,6 +57,7 @@ import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.IModStateTransition;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -373,10 +375,15 @@ public class GameData
             final ResourceLocation rl = event.getName();
             ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
             fr.freeze();
-            LOGGER.debug(REGISTRIES, i18n.get("gamedata.18", rl.toString()));
-            ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES, i18n.get("gamedata.19", rl.toString()));
+            applyHolderLookups(rl);
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
+    }
+
+    private static void applyHolderLookups(ResourceLocation registryName)
+    {
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.18", registryName.toString()));
+        ObjectHolderRegistry.applyObjectHolders(registryName::equals);
+        LOGGER.debug(REGISTRIES, i18n.get("gamedata.19", registryName.toString()));
     }
 
     @SuppressWarnings("deprecation")
@@ -387,9 +394,26 @@ public class GameData
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal(i18n.get("gamedata.21"));
             } else {
+                RegistryManager.getVanillaRegistryKeys().forEach(registryName -> {
+                    Registry<?> registry = Registry.REGISTRY.get(registryName);
+                    if (registry == null)
+                        return;
+                    postVanillaRegisterEvent(registry);
+                });
+                BuiltinRegistries.REGISTRY.forEach(GameData::postVanillaRegisterEvent);
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
+    }
+
+    @SuppressWarnings("removal")
+    private static void postVanillaRegisterEvent(Registry<?> registry)
+    {
+        if (RegistryManager.ACTIVE.getRegistry(registry.key().location()) != null)
+            return;
+
+        ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
+        applyHolderLookups(registry.key().location());
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -710,7 +734,7 @@ public class GameData
             }
         }
 
-        RegistryManager STAGING = new RegistryManager("STAGING");
+        RegistryManager STAGING = new RegistryManager();
 
         final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps = Maps.newHashMap();
         final LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing = Maps.newLinkedHashMap();

@@ -1,13 +1,11 @@
 <div align="center">
-<img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.18.2</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.18.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.18.2)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.18.2/LICENSE)
-[![](https://img.shields.io/badge/Forge-1.18.2--40.0.31-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.18.2.html)
+[![](https://img.shields.io/badge/Forge-1.18.2--40.1.0-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.18.2.html)
 [![](https://img.shields.io/badge/jdk-17.0.2+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
 [![](https://img.shields.io/badge/Gradle-7.4-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.4/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -26,10 +24,10 @@
 Progress
 ------
 
-- [ ] Rectify Forge([**c7e4e6005**](https://github.com/MinecraftForge/MinecraftForge/commit/c7e4e6005))  
+- [ ] Rectify Forge([**8ade7bbae**](https://github.com/MinecraftForge/MinecraftForge/commit/8ade7bbae))  
 - [ ] Start patch
-  * CraftBukkit(2c1e4998)
-  * Bukkit(0edc0e04)
+  * CraftBukkit(2542945e)
+  * Bukkit(7902647a)
 
 Getting Help
 ------

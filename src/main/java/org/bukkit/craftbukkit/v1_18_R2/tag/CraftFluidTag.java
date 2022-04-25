@@ -20,6 +20,6 @@ public class CraftFluidTag extends CraftTag<net.minecraft.world.level.material.F
 
     @Override
     public Set<Fluid> getValues() {
-        return Collections.unmodifiableSet(getHandle().stream().map((fluid) -> CraftMagicNumbers.getFluid(fluid.value())).collect(Collectors.toSet()));
+        return getHandle().stream().map((fluid) -> CraftMagicNumbers.getFluid(fluid.value())).collect(Collectors.toUnmodifiableSet());
     }
 }
