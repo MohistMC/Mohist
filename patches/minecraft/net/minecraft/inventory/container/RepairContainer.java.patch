@@ -1,5 +1,13 @@
 --- a/net/minecraft/inventory/container/RepairContainer.java
 +++ b/net/minecraft/inventory/container/RepairContainer.java
+@@ -7,6 +_,7 @@
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.entity.player.PlayerInventory;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.item.EnchantedBookItem;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
 @@ -19,6 +_,9 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
@@ -109,6 +117,16 @@
              itemstack1 = ItemStack.field_190927_a;
           }
  
+@@ -242,7 +_,8 @@
+             EnchantmentHelper.func_82782_a(map, itemstack1);
+          }
+ 
+-         this.field_234642_c_.func_70299_a(0, itemstack1);
++         org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemstack1); // CraftBukkit
++         ((ServerPlayerEntity)field_234645_f_).func_71120_a(field_234645_f_.field_71069_bz);; // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client // Mohist
+          this.func_75142_b();
+       }
+    }
 @@ -269,4 +_,20 @@
     public int func_216976_f() {
        return this.field_82854_e.func_221495_b();
