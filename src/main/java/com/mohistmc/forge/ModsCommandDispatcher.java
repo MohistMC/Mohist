@@ -1,5 +1,6 @@
 package com.mohistmc.forge;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -28,7 +29,7 @@ public class ModsCommandDispatcher extends CommandDispatcher<CommandSource> {
             craftServer.getCommandMap().register("forge", wrapper);
             ServerAPI.forgecmdper.put(wrapper.getName(), wrapper.getPermission());
             craftServer.helpMap.addTopic(new GenericCommandHelpTopic(wrapper));
-            Bukkit.getLogger().info("ModsCommandDispatcher register " + wrapper);
+            MohistMC.LOGGER.debug("ModsCommandDispatcher register " + wrapper);
         }
         getRoot().addChild(node);
         return node;
