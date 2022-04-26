@@ -35,6 +35,7 @@ public class RemapUtils {
     public static MohistJarRemapper jarRemapper;
     private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
+    public static final String nmspackage = "net.minecraft.server.v1_16_R3";
 
     public static void init() {
         jarMapping = new MohistJarMapping();
@@ -45,7 +46,7 @@ public class RemapUtils {
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
-        relocations.put("net.minecraft.server", "net.minecraft.server.v1_16_R3");
+        relocations.put("net.minecraft.server", nmspackage);
         try {
             jarMapping.loadMappings(
                     new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
