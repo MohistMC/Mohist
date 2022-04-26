@@ -21,8 +21,8 @@
 
 | Version  | Support |
 | ------------- | ------------- |
+| 1.18.2  | wait  |
 | 1.16.5  | Active  |
-| 1.12.2  | Active  |
 
 Progress
 ------
