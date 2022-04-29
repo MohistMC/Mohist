@@ -15,6 +15,8 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
     private final Class<T> tileEntityClass;
     private final T tileEntity;
     private final T snapshot;
+    public final boolean snapshotDisabled; // Paper
+    public static boolean DISABLE_SNAPSHOT = false; // Paper
 
     public CraftBlockEntityState(Block block, Class<T> tileEntityClass) {
         super(block);
@@ -26,9 +28,18 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
         this.tileEntity = tileEntityClass.cast(world.getHandle().getBlockEntity(this.getPosition()));
         Preconditions.checkState(this.tileEntity != null, "Tile is null, asynchronous access? %s" + block);
 
+        // Paper start
+        this.snapshotDisabled = DISABLE_SNAPSHOT;
+        if (DISABLE_SNAPSHOT) {
+            this.snapshot = this.tileEntity;
+        } else {
+            this.snapshot = this.createSnapshot(this.tileEntity);
+        }
         // copy tile entity data:
-        this.snapshot = this.createSnapshot(tileEntity);
-        this.load(snapshot);
+        if(this.snapshot != null) {
+            this.load(this.snapshot);
+        }
+        // Paper end
     }
 
     public CraftBlockEntityState(Material material, T tileEntity) {
@@ -36,10 +47,19 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
 
         this.tileEntityClass = (Class<T>) tileEntity.getClass();
         this.tileEntity = tileEntity;
+        // Paper start
+        this.snapshotDisabled = DISABLE_SNAPSHOT;
+        if (DISABLE_SNAPSHOT) {
+            this.snapshot = this.tileEntity;
+        } else {
+            this.snapshot = this.createSnapshot(this.tileEntity);
+        }
 
         // copy tile entity data:
-        this.snapshot = this.createSnapshot(tileEntity);
-        this.load(snapshot);
+        if(this.snapshot != null) {
+            this.load(this.snapshot);
+        }
+        // Paper end
     }
 
     private T createSnapshot(T tileEntity) {

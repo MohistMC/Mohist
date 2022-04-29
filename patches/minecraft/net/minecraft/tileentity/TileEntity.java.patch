@@ -17,7 +17,7 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
-@@ -11,25 +_,52 @@
+@@ -11,25 +_,53 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
@@ -56,6 +56,7 @@
 +      super(TileEntity.class);
        this.field_200663_e = p_i48289_1_;
 +      this.gatherCapabilities();
++      this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY); // Paper - always init
     }
 +
 +    // Paper start
@@ -80,7 +81,7 @@
 +      if (p_230337_2_.func_74764_b("ForgeData")) this.customTileData = p_230337_2_.func_74775_l("ForgeData");
 +      if (getCapabilities() != null && p_230337_2_.func_74764_b("ForgeCaps")) deserializeCaps(p_230337_2_.func_74775_l("ForgeCaps"));
 +      // CraftBukkit start - read container
-+      this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++      this.persistentDataContainer.clear(); // Paper - clear instead of reinit
 +      INBT persistentDataTag = p_230337_2_.func_74781_a("PublicBukkitValues");
 +      if (persistentDataTag instanceof CompoundNBT) {
 +         this.persistentDataContainer.putAll((CompoundNBT) persistentDataTag);
@@ -163,14 +164,18 @@
     public void func_222814_r() {
        if (!this.field_222816_g) {
           this.field_222816_g = true;
-@@ -183,4 +_,14 @@
+@@ -183,4 +_,18 @@
           }, this::func_174877_v);
        }
     }
 +
 +   // CraftBukkit start
 +   public InventoryHolder getOwner() {
-+      return InventoryOwner.get(field_145850_b, field_174879_c);
++      return getOwner(true);
++   }
++
++   public InventoryHolder getOwner(boolean useSnapshot) {
++      return InventoryOwner.get(field_145850_b, field_174879_c, useSnapshot);
 +   }
 +   // CraftBukkit start
 +

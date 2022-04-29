@@ -14,7 +14,7 @@ import org.bukkit.inventory.InventoryHolder;
 public class InventoryOwner {
 
     public static InventoryHolder get(TileEntity te) {
-        return get(te.level, te.getBlockPos());
+        return get(te.level, te.getBlockPos(), true);
     }
 
     public static InventoryHolder get(IInventory inventory) {
@@ -25,7 +25,7 @@ public class InventoryOwner {
         }
     }
 
-    public static InventoryHolder get(World world, BlockPos pos) {
+    public static InventoryHolder get(World world, BlockPos pos, boolean useSnapshot) {
         if (world == null) return null;
         // Spigot start
         org.bukkit.block.Block block = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
@@ -33,7 +33,7 @@ public class InventoryOwner {
             return null;
         }
         // Spigot end
-        org.bukkit.block.BlockState state = block.getState();
+        org.bukkit.block.BlockState state = block.getState(useSnapshot);
         if (state instanceof InventoryHolder) {
             return (InventoryHolder) state;
         } else if (state instanceof CraftBlockEntityState) {

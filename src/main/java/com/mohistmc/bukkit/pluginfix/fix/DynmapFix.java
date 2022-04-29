@@ -1,7 +1,6 @@
 package com.mohistmc.bukkit.pluginfix.fix;
 
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
-import java.util.ListIterator;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;

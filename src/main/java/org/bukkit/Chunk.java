@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
@@ -77,13 +78,36 @@ public interface Chunk extends PersistentDataHolder {
     @NotNull
     Entity[] getEntities();
 
+    // Paper start
     /**
      * Get a list of all tile entities in the chunk.
      *
      * @return The tile entities.
      */
     @NotNull
-    BlockState[] getTileEntities();
+    default BlockState[] getTileEntities() {
+        return getTileEntities(true);
+    }
+
+    /**
+     * Get a list of all tile entities in the chunk.
+     *
+     * @param useSnapshot Take snapshots or direct references
+     * @return The tile entities.
+     */
+    @NotNull
+   BlockState[] getTileEntities(boolean useSnapshot);
+
+    /**
+     * Get a list of all tile entities that match a given predicate in the chunk.
+     *
+     * @param blockPredicate The predicate of blocks to return tile entities for
+     * @param useSnapshot Take snapshots or direct references
+     * @return The tile entities.
+     */
+    @NotNull
+    Collection<BlockState> getTileEntities(@NotNull Predicate<Block> blockPredicate, boolean useSnapshot);
+    // Paper end
 
     /**
      * Checks if the chunk is loaded.

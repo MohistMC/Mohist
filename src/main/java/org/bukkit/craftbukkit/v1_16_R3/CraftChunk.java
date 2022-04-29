@@ -3,8 +3,10 @@ package org.bukkit.craftbukkit.v1_16_R3;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
@@ -128,25 +130,52 @@ public class CraftChunk implements Chunk {
 
     @Override
     public BlockState[] getTileEntities() {
+        // Paper start
+        return this.getTileEntities(true);
+    }
+
+    @Override
+    public BlockState[] getTileEntities(final boolean useSnapshot) {
         if (!isLoaded()) {
             getWorld().getChunkAt(x, z); // Transient load for this tick
         }
+        // Paper end
         int index = 0;
         net.minecraft.world.chunk.Chunk chunk = getHandle();
 
         BlockState[] entities = new BlockState[chunk.blockEntities.size()];
 
         for (Object obj : chunk.blockEntities.keySet().toArray()) {
-            if (!(obj instanceof BlockPos)) {
-                continue;
+            if (obj instanceof BlockPos) {
+                BlockPos position = (BlockPos) obj;
+                entities[index++] = worldServer.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState(useSnapshot); // Paper
             }
-
-            BlockPos position = (BlockPos) obj;
-            entities[index++] = worldServer.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
         }
 
         return entities;
     }
+
+    // Paper start
+    @Override
+    public Collection<BlockState> getTileEntities(Predicate<Block> blockPredicate, boolean useSnapshot) {
+        Preconditions.checkNotNull(blockPredicate, "blockPredicate");
+        if (!isLoaded()) {
+            getWorld().getChunkAt(x, z); // Transient load for this tick
+        }
+        net.minecraft.world.chunk.Chunk chunk = getHandle();
+
+        List<BlockState> entities = new ArrayList<>();
+
+        for (BlockPos position : chunk.blockEntities.keySet()) {
+            Block block = worldServer.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
+            if (blockPredicate.test(block)) {
+                entities.add(block.getState(useSnapshot));
+            }
+        }
+
+        return entities;
+    }
+    // Paper end
 
     @Override
     public boolean isLoaded() {
