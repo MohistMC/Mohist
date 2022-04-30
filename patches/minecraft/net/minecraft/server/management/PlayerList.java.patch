@@ -117,15 +117,6 @@
     private final Map<UUID, ServerPlayerEntity> field_177454_f = Maps.newHashMap();
     private final BanList field_72401_g = new BanList(field_152613_a);
     private final IPBanList field_72413_h = new IPBanList(field_152614_b);
-@@ -102,7 +_,7 @@
-    private final WhiteList field_72411_j = new WhiteList(field_152616_d);
-    private final Map<UUID, ServerStatisticsManager> field_148547_k = Maps.newHashMap();
-    private final Map<UUID, PlayerAdvancements> field_192055_p = Maps.newHashMap();
--   private final PlayerData field_72412_k;
-+   public final PlayerData field_72412_k;
-    private boolean field_72409_l;
-    private final DynamicRegistries.Impl field_232639_s_;
-    protected final int field_72405_c;
 @@ -110,8 +_,25 @@
     private GameType field_72410_m;
     private boolean field_72407_n;
