@@ -20,8 +20,6 @@
 package net.minecraftforge.common.util;
 
 import com.mojang.authlib.GameProfile;
-import java.net.InetAddress;
-import java.util.ArrayList;
 import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,21 +34,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
-import com.mohistmc.MohistMC;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends EntityPlayerMP
 {
-    public static ArrayList<FakePlayer> fakePlayers = new ArrayList();
-
     public FakePlayer(WorldServer world, GameProfile name)
     {
         super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new PlayerInteractionManager(world));
-        fakePlayers.add(this);
     }
 
 
