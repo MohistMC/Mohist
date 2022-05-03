@@ -50,7 +50,7 @@ public class DefaultLibraries {
 				currentSize.addAndGet(lib.length());
 				fail.remove(u.replace(url, ""));
 			} catch (Exception e) {
-				if(!e.getMessage().equals("md5")) {
+				if(e.getMessage() !=null && !e.getMessage().equals("md5")) {
 					System.out.println(i18n.get("file.download.nook", u));
 					lib.delete();
 				}
