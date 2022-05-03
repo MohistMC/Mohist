@@ -133,15 +133,6 @@
        this.f_19804_.m_135381_(f_19806_, p_20125_);
     }
  
-@@ -357,7 +_,7 @@
-       return this.f_19804_.m_135370_(f_19806_);
-    }
- 
--   public boolean m_19950_(Entity p_19951_, double p_19952_) {
-+   public boolean closerToCenterThan(Entity p_19951_, double p_19952_) {
-       double d0 = p_19951_.f_19825_.f_82479_ - this.f_19825_.f_82479_;
-       double d1 = p_19951_.f_19825_.f_82480_ - this.f_19825_.f_82480_;
-       double d2 = p_19951_.f_19825_.f_82481_ - this.f_19825_.f_82481_;
 @@ -365,6 +_,34 @@
     }
  
