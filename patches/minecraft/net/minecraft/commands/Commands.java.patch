@@ -18,14 +18,6 @@
  import java.util.Map;
  import java.util.Set;
  import java.util.function.Predicate;
-@@ -70,7 +_,6 @@
- import net.minecraft.server.commands.PardonIpCommand;
- import net.minecraft.server.commands.ParticleCommand;
- import net.minecraft.server.commands.PerfCommand;
--import net.minecraft.server.commands.PlaceFeatureCommand;
- import net.minecraft.server.commands.PlaySoundCommand;
- import net.minecraft.server.commands.PublishCommand;
- import net.minecraft.server.commands.RecipeCommand;
 @@ -106,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
@@ -35,14 +27,6 @@
  
  public class Commands {
     private static final Logger f_82089_ = LogUtils.getLogger();
-@@ -148,7 +_,6 @@
-       LootCommand.m_137897_(this.f_82090_);
-       MsgCommand.m_138060_(this.f_82090_);
-       ParticleCommand.m_138122_(this.f_82090_);
--      PlaceFeatureCommand.m_201835_(this.f_82090_);
-       PlaySoundCommand.m_138156_(this.f_82090_);
-       ReloadCommand.m_138226_(this.f_82090_);
-       RecipeCommand.m_138200_(this.f_82090_);
 @@ -177,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
@@ -192,12 +176,3 @@
        p_82096_.f_8906_.m_141995_(new ClientboundCommandsPacket(rootcommandnode));
     }
  
-@@ -363,7 +_,7 @@
-       }
-    }
- 
--   public static enum CommandSelection {
-+    public static enum CommandSelection {
-       ALL(true, true),
-       DEDICATED(false, true),
-       INTEGRATED(true, false);

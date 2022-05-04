@@ -565,7 +565,7 @@
              if (level.m_46859_(blockpos) && carvedpumpkinblock.m_51381_(level, blockpos)) {
                 if (!level.f_46443_) {
                    level.m_7731_(blockpos, carvedpumpkinblock.m_49966_(), 3);
-@@ -518,8 +_,33 @@
+@@ -518,6 +_,31 @@
              ServerLevel serverlevel = p_123444_.m_7727_();
              BlockPos blockpos = p_123444_.m_7961_().m_142300_(p_123444_.m_6414_().m_61143_(DispenserBlock.f_52659_));
              BlockState blockstate = serverlevel.m_8055_(blockpos);
@@ -595,8 +595,5 @@
 +            // CraftBukkit end
 +
              if (blockstate.m_204338_(BlockTags.f_13072_, (p_123442_) -> {
--               return p_123442_.m_61138_(BeehiveBlock.f_49564_) && p_123442_.m_60734_() instanceof BeehiveBlock;
-+               return p_123442_.m_61138_(BeehiveBlock.f_49564_);
+                return p_123442_.m_61138_(BeehiveBlock.f_49564_) && p_123442_.m_60734_() instanceof BeehiveBlock;
              }) && blockstate.m_61143_(BeehiveBlock.f_49564_) >= 5) {
-                ((BeehiveBlock)blockstate.m_60734_()).m_49594_(serverlevel, blockstate, blockpos, (Player)null, BeehiveBlockEntity.BeeReleaseStatus.BEE_RELEASED);
-                this.m_123573_(true);

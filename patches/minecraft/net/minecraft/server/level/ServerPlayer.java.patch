@@ -75,7 +75,7 @@
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogUtils.getLogger();
-@@ -227,20 +_,84 @@
+@@ -227,16 +_,80 @@
     public int f_8943_;
     public boolean f_8944_;
  
@@ -158,11 +158,6 @@
  
     private void m_9201_(ServerLevel p_9202_) {
        BlockPos blockpos = p_9202_.m_8900_();
--      if (p_9202_.m_6042_().m_63935_() && p_9202_.m_142572_().m_129910_().m_5464_() != GameType.ADVENTURE) {
-+      if (p_9202_.m_6042_().m_63935_() && p_9202_.f_8549_.m_5464_() != GameType.ADVENTURE) { // CraftBukkit
-          int i = Math.max(0, this.f_8924_.m_129803_(p_9202_));
-          int j = Mth.m_14107_(p_9202_.m_6857_().m_61941_((double)blockpos.m_123341_(), (double)blockpos.m_123343_()));
-          if (j < i) {
 @@ -294,11 +_,20 @@
        if (p_9131_.m_128425_("recipeBook", 10)) {
           this.f_8929_.m_12794_(p_9131_.m_128469_("recipeBook"), this.f_8924_.m_129894_());
@@ -417,9 +412,6 @@
     @Nullable
     public Entity m_5489_(ServerLevel p_9180_) {
 -      this.f_8927_ = true;
--      ServerLevel serverlevel = this.m_183503_();
--      ResourceKey<Level> resourcekey = serverlevel.m_46472_();
--      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
 +      // CraftBukkit start
 +      return changeDimension(p_9180_,  p_9180_.m_8871_(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
@@ -439,64 +431,56 @@
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
 +      if (this.m_5803_()) return this; // CraftBukkit - SPIGOT-3154
 +      // this.isChangingDimension = true; // CraftBukkit - Moved down and into PlayerList#changeDimension
-+      AtomicReference<ServerLevel> serverlevel = new AtomicReference<>(this.m_183503_());
-+      ResourceKey<Level> resourcekey = serverlevel.get().m_46472_();
+       ServerLevel serverlevel = this.m_183503_();
+       ResourceKey<Level> resourcekey = serverlevel.m_46472_();
+-      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
 +      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
 +         this.f_8927_ = true;
           this.m_19877_();
           this.m_183503_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.f_8944_) {
-@@ -705,25 +_,43 @@
-          this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
+@@ -706,24 +_,42 @@
           PlayerList playerlist = this.f_8924_.m_6846_();
           playerlist.m_11289_(this);
--         serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
+          serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 -         this.m_146912_();
 -         PortalInfo portalinfo = this.m_7937_(p_9180_);
-+         serverlevel.get().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 +         this.revive();
 +         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::m_7937_);
           if (portalinfo != null) {
--            serverlevel.m_46473_().m_6180_("moving");
--            if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
--               this.f_8933_ = this.m_20182_();
++            Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.m_146908_(), spawnPortal -> {//Forge: Start vanilla logic
+             serverlevel.m_46473_().m_6180_("moving");
+             if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
+                this.f_8933_ = this.m_20182_();
 -            } else if (p_9180_.m_46472_() == Level.f_46430_) {
 -               this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
-+            Entity e = teleporter.placeEntity(this, serverlevel.get(), p_9180_, this.m_146908_(), spawnPortal -> {//Forge: Start vanilla logic
-+           serverlevel.get().m_46473_().m_6180_("moving");
-+           if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
-+              this.f_8933_ = this.m_20182_();
 +           } else if (spawnPortal && p_9180_.m_46472_() == Level.f_46430_ && portalinfo.portalEvent != null && portalinfo.portalEvent.getCanCreatePortal()) {
 +              this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
 +           }
 +
 +            Location enter = this.getBukkitEntity().getLocation();
-+            Location exit = (serverlevel.get() == null) ? null : new Location(p_9180_.getWorld(), portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, portalinfo.f_77679_);
++            Location exit = (serverlevel == null) ? null : new Location(p_9180_.getWorld(), portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, portalinfo.f_77679_);
 +            PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, cause);
 +            Bukkit.getServer().getPluginManager().callEvent(tpEvent);
 +            if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
 +               return null;
              }
 +            exit = tpEvent.getTo();
-+            serverlevel.set(((CraftWorld) exit.getWorld()).getHandle());
++            p_9180_.setWorld(p_9180_, (((CraftWorld) exit.getWorld()).getHandle()));
 +            // CraftBukkit end
  
--            serverlevel.m_46473_().m_7238_();
--            serverlevel.m_46473_().m_6180_("placing");
-+            serverlevel.get().m_46473_().m_7238_();
-+            serverlevel.get().m_46473_().m_6180_("placing");
+             serverlevel.m_46473_().m_7238_();
+             serverlevel.m_46473_().m_6180_("placing");
              this.m_143425_(p_9180_);
              p_9180_.m_8817_(this);
 -            this.m_19915_(portalinfo.f_77678_, portalinfo.f_77679_);
 -            this.m_6027_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_);
--            serverlevel.m_46473_().m_7238_();
--            this.m_9209_(serverlevel);
 +            //this.setRot(portalinfo.yRot, portalinfo.xRot);
 +            //this.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z);
 +            this.f_8906_.teleport(exit);
 +            this.f_8906_.m_9953_();
-+            serverlevel.get().m_46473_().m_7238_();
-+            this.m_9209_(serverlevel.get());
+             serverlevel.m_46473_().m_7238_();
+             this.m_9209_(serverlevel);
 +            return this;//forge: this is part of the ITeleporter patch
 +            });//Forge: End vanilla logic
 +
@@ -508,35 +492,19 @@
                 this.f_8906_.m_141995_(new ClientboundUpdateMobEffectPacket(this.m_142049_(), mobeffectinstance));
              }
  
-+            if (teleporter.playTeleportSound(this, serverlevel.get(), p_9180_))
++            if (teleporter.playTeleportSound(this, serverlevel, p_9180_))
              this.f_8906_.m_141995_(new ClientboundLevelEventPacket(1032, BlockPos.f_121853_, 0, false));
              this.f_8920_ = -1;
              this.f_8917_ = -1.0F;
              this.f_8918_ = -1;
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.m_46472_());
 +            // CraftBukkit start
-+            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.get().getWorld());
++            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.getWorld());
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(changeEvent);
 +            // CraftBukkit end
           }
  
           return this;
-@@ -755,14 +_,13 @@
-       }
- 
-    }
--
-    protected Optional<BlockUtil.FoundRectangle> m_183318_(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
-       Optional<BlockUtil.FoundRectangle> optional = super.m_183318_(p_184131_, p_184132_, p_184133_, p_184134_);
-       if (optional.isPresent()) {
-          return optional;
-       } else {
-          Direction.Axis direction$axis = this.f_19853_.m_8055_(this.f_19819_).m_61145_(NetherPortalBlock.f_54904_).orElse(Direction.Axis.X);
--         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().m_77666_(p_184132_, direction$axis);
-+         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.m_8871_().m_77666_(p_184132_, direction$axis); // CraftBukkit
-          if (!optional1.isPresent()) {
-             f_8907_.error("Unable to create a portal, likely target out of worldborder");
-          }
 @@ -771,15 +_,25 @@
        }
     }

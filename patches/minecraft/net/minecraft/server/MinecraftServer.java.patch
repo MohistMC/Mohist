@@ -321,7 +321,7 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -712,6 +_,14 @@
+@@ -712,13 +_,21 @@
                 this.f_129723_.m_196559_();
              }
  
@@ -336,33 +336,17 @@
              this.m_6988_();
           }
  
-@@ -719,33 +_,16 @@
+       }
  
     }
+-
++   
+    private static CrashReport m_206568_(Throwable p_206569_) {
+       ReportedException reportedexception = null;
  
--   private static CrashReport m_206568_(Throwable p_206569_) {
--      ReportedException reportedexception = null;
--
--      for(Throwable throwable = p_206569_; throwable != null; throwable = throwable.getCause()) {
--         if (throwable instanceof ReportedException) {
--            ReportedException reportedexception1 = (ReportedException)throwable;
--            reportedexception = reportedexception1;
--         }
--      }
--
--      CrashReport crashreport;
--      if (reportedexception != null) {
--         crashreport = reportedexception.m_134761_();
--         if (reportedexception != p_206569_) {
--            crashreport.m_127514_("Wrapped in").m_128162_("Wrapping exception", p_206569_);
--         }
--      } else {
--         crashreport = new CrashReport("Exception in server tick loop", p_206569_);
--      }
--
--      return crashreport;
--   }
--
+@@ -743,9 +_,15 @@
+    }
+ 
     private boolean m_129960_() {
 -      return this.m_18767_() || Util.m_137550_() < (this.f_129728_ ? this.f_129727_ : this.f_129726_);
 +      // CraftBukkit start
