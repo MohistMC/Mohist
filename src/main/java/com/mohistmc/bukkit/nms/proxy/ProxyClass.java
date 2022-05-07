@@ -23,28 +23,28 @@ public class ProxyClass {
     }
 
     public static Method getDeclaredMethod(Class<?> clazz, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
-        if (clazz.getName().startsWith("net.minecraft.")) {
+        if (RemapUtils.needRemap(clazz.getName())) {
             name = RemapUtils.mapMethodName(clazz, name, parameterTypes);
         }
         return clazz.getDeclaredMethod(name, parameterTypes);
     }
 
     public static Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
-        if (clazz.getName().startsWith("net.minecraft.")) {
+        if (RemapUtils.needRemap(clazz.getName())) {
             name = RemapUtils.mapMethodName(clazz, name, parameterTypes);
         }
         return clazz.getMethod(name, parameterTypes);
     }
 
     public static Field getDeclaredField(Class<?> clazz, String name) throws NoSuchFieldException, SecurityException {
-        if (clazz.getName().startsWith("net.minecraft.")) {
+        if (RemapUtils.needRemap(clazz.getName())) {
             name = RemapUtils.mapFieldName(clazz, name);
         }
         return clazz.getDeclaredField(name);
     }
 
     public static Field getField(Class<?> clazz, String name) throws NoSuchFieldException, SecurityException {
-        if (clazz.getName().startsWith("net.minecraft.")) {
+        if (RemapUtils.needRemap(clazz.getName())) {
             name = RemapUtils.mapFieldName(clazz, name);
         }
         return clazz.getField(name);
