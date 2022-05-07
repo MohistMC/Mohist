@@ -9,6 +9,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -193,20 +194,22 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * {@return Return the height in blocks the Entity can step up without needing to jump}
+     * @return Return the height in blocks the Entity can step up without needing to jump
      * This is the sum of vanilla's {@link Entity#maxUpStep} field and the current value
-     * of the {@link net.minecraftforge.common.ForgeMod#STEP_HEIGHT_ADDITION} attribute,
-     * (if this Entity is a {@link LivingEntity}), clamped at 0.
+     * of the {@link net.minecraftforge.common.ForgeMod#STEP_HEIGHT_ADDITION} attribute
+     * (if this Entity is a {@link LivingEntity} and has the attribute), clamped at 0.
      */
     default float getStepHeight()
     {
         var vanillaStep = self().maxUpStep;
         if (self() instanceof LivingEntity living)
         {
-            return (float) Math.max(0, vanillaStep + living.getAttributeValue(ForgeMod.STEP_HEIGHT_ADDITION.get()));
-        } else
-        {
-            return vanillaStep;
+            AttributeInstance stepHeightAttribute = living.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
+            if (stepHeightAttribute != null)
+            {
+                return (float) Math.max(0, vanillaStep + stepHeightAttribute.getValue());
+            }
         }
+        return vanillaStep;
     }
 }
