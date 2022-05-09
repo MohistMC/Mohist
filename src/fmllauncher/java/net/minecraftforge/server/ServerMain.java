@@ -22,7 +22,6 @@ package net.minecraftforge.server;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadJava;
-import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.i18n;
 import cpw.mods.modlauncher.InvalidLauncherSetupException;
@@ -32,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
@@ -40,8 +40,7 @@ import java.util.Optional;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import static com.mohistmc.util.CustomFlagsHandler.getCustomFlags;
-import static com.mohistmc.util.CustomFlagsHandler.hasCustomFlags;
+import static com.mohistmc.util.InstallUtils.universalJar;
 
 public class ServerMain {
 
@@ -68,23 +67,12 @@ public class ServerMain {
 			}
 		}
 
-		if(jVersion < 59.0)
-			System.setProperty("nashorn.args", "--no-deprecation-warning"); //Others java version under 15
-		if(jVersion >= 59.0) System.setProperty("-Dnashorn.args", "--no-deprecation-warning"); //For java 15 and +
+		//59.0 -> Java 15
+		System.setProperty((jVersion >= 59.0 ? "-D" : "")+"nashorn.args", "--no-deprecation-warning");
 
-		if(jVersion >= 60.0 && !mainArgs.contains("launchedWithJava16+")) {
-			ArrayList<String> command = new ArrayList<>(Arrays.asList("java", "-jar", "--add-exports=java.base/sun.security.util=ALL-UNNAMED", "--add-opens=java.base/java.util.jar=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED"));
-			command.addAll(getCustomFlags());
-			if (mainArgs.contains("customServerPath"))
-				command.add(mainArgs.get(mainArgs.indexOf("customServerPath") + 1));
-			else
-				command.add(new File(MohistMCStart.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-			command.addAll(ServerMain.mainArgs);
-			command.add("launchedWithJava16+");
-			if(hasCustomFlags)
-				command.add("launchedWithCustomArgs"); //Handle custom args and do not restart the server twice.
-			System.out.println(i18n.get("java16.run", String.join(" ", command)));
-			UpdateUtils.restartServer(command, true);
+		//The server can be ran with Java 16+
+		if(jVersion >= 60.0) {
+			Class.forName("com.mohistmc.util.MohistModuleManager", false, URLClassLoader.newInstance(new java.net.URL[]{universalJar.toURI().toURL()})).getDeclaredConstructor().newInstance();
 		}
 
 		try {
