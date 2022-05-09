@@ -1,6 +1,6 @@
 /*
- *  This file is part of Mohist.
- *  Copyright (C) 2019-2022.
+ * MohistMC
+ * Copyright (C) 2019-2022.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
