@@ -70,11 +70,6 @@ public class ServerMain {
 		//59.0 -> Java 15
 		System.setProperty((jVersion >= 59.0 ? "-D" : "")+"nashorn.args", "--no-deprecation-warning");
 
-		//The server can be ran with Java 16+
-		if(jVersion >= 60.0) {
-			Class.forName("com.mohistmc.util.MohistModuleManager", false, URLClassLoader.newInstance(new java.net.URL[]{universalJar.toURI().toURL()})).getDeclaredConstructor().newInstance();
-		}
-
 		try {
 			MohistMCStart.main();
 			// Mohist end

@@ -26,11 +26,13 @@ import com.mohistmc.util.*;
 import com.mohistmc.util.i18n.i18n;
 import org.apache.logging.log4j.Level;
 
+import java.net.URLClassLoader;
 import java.util.Scanner;
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
 import static com.mohistmc.util.InstallUtils.startInstallation;
+import static com.mohistmc.util.InstallUtils.universalJar;
 import static com.mohistmc.util.PluginsModsDelete.checkPlugins;
 import static net.minecraftforge.server.ServerMain.mainArgs;
 
@@ -59,6 +61,11 @@ public class MohistMCStart {
 		}
 		CustomLibraries.loadCustomLibs();
 		new JarLoader().loadJar(InstallUtils.extra);
+
+		//The server can be run with Java 16+
+		if(Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
+			Class.forName("com.mohistmc.util.MohistModuleManager", false, URLClassLoader.newInstance(new java.net.URL[]{universalJar.toURI().toURL()})).getDeclaredConstructor().newInstance();
+		}
 
 		// make sure gson use this EnumTypeAdapter
 		Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
