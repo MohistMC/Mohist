@@ -24,7 +24,6 @@ import net.minecraftforge.gradle.patcher.tasks.ReobfuscateJar
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
-    id 'org.cadixdev.licenser' version '0.6.1'
     id 'net.minecraftforge.gradleutils' version '1.+'
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'eclipse'
@@ -43,13 +42,6 @@ if (System.getProperty("_JAVA_OPTIONS") == null) {
 
 ext {
     JAR_SIGNER = null
-    if (project.hasProperty('keystore')) {
-        JAR_SIGNER = [
-            storepass: project.properties.keystoreStorePass,
-            keypass: project.properties.keystoreKeyPass,
-            keystore: project.properties.keystore
-        ]
-    }
     MAPPING_CHANNEL = 'official'
     MAPPING_VERSION = '1.16.5'
     MC_VERSION = '1.16.5'
@@ -111,7 +103,6 @@ project(':mohist') {
     apply plugin: 'signing'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    apply plugin: 'org.cadixdev.licenser'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(11)
     group = 'com.mohistmc'
@@ -174,7 +165,7 @@ project(':mohist') {
     }
 
     version = "1.16.5-" + MOHIST_VERSION
-    String forge_version = "36.2.34"
+    String forge_version = "36.2.35"
     println('Forge Version: ' + forge_version)
 
     patcher {
@@ -906,29 +897,6 @@ project(':mohist') {
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
                 environment 'FORGE_VERSION', "${forge_version}"
                 environment 'MOHIST_VERSION', "${MOHIST_VERSION}"
-            }
-        }
-    }
-
-    license {
-        header = file("$rootDir/licenses/LICENSE-header.txt")
-
-        ext {
-            year = new Date().format("yyyy")
-        }
-
-        include 'net/minecraftforge/'
-        exclude 'net/minecraftforge/server/terminalconsole/'
-        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
-        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
-        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
-        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
-        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
-        exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
-
-        tasks {
-            main {
-                files.from = files("$rootDir/src/main/java")
             }
         }
     }
