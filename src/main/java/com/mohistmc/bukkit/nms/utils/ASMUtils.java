@@ -51,6 +51,7 @@ public class ASMUtils {
     private static final Map<Integer, String> typeMap = new HashMap<>();
     private static final Map<Integer, BiConsumer<String, AbstractInsnNode>> printerMap = new HashMap<>();
     public static final String classLoaderdesc = "java/lang/ClassLoader";
+    public static final String urlclassLoaderdesc = "java/net/URLClassLoader";
 
     static {
         for (Field field : Opcodes.class.getDeclaredFields()) {
