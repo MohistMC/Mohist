@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BlockItem.java
 +++ b/net/minecraft/item/BlockItem.java
-@@ -11,20 +_,24 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
@@ -8,12 +8,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.state.Property;
  import net.minecraft.state.StateContainer;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.util.ActionResultType;
- import net.minecraft.util.NonNullList;
--import net.minecraft.util.SoundCategory;
- import net.minecraft.util.SoundEvent;
- import net.minecraft.util.math.BlockPos;
+@@ -23,8 +_,14 @@
  import net.minecraft.util.math.shapes.ISelectionContext;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.World;
@@ -21,53 +16,51 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockCanBuildEvent;
  
  public class BlockItem extends Item {
     @Deprecated
-@@ -49,6 +_,9 @@
+@@ -49,6 +_,12 @@
              return ActionResultType.FAIL;
           } else {
              BlockState blockstate = this.func_195945_b(blockitemusecontext);
 +            // CraftBukkit start - special case for handling block placement with water lilies
-+            org.bukkit.block.BlockState cbblockstate = org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockState.getBlockState(blockitemusecontext.func_195991_k(), blockitemusecontext.func_195995_a());
++            org.bukkit.block.BlockState cbblockstate = null;
++            if (this instanceof LilyPadItem) {
++               cbblockstate = CraftBlockState.getBlockState(blockitemusecontext.func_195991_k(), blockitemusecontext.func_195995_a());
++            }
 +            // CraftBukkit end
              if (blockstate == null) {
                 return ActionResultType.FAIL;
              } else if (!this.func_195941_b(blockitemusecontext, blockstate)) {
-@@ -61,6 +_,18 @@
-                BlockState blockstate1 = world.func_180495_p(blockpos);
-                Block block = blockstate1.func_177230_c();
-                if (block == blockstate.func_177230_c()) {
+@@ -64,13 +_,22 @@
+                   blockstate1 = this.func_219985_a(blockpos, world, itemstack, blockstate1);
+                   this.func_195943_a(blockpos, world, playerentity, itemstack, blockstate1);
+                   block.func_180633_a(world, blockpos, blockstate1, playerentity, itemstack);
 +                  // CraftBukkit start
 +                  if (cbblockstate != null && playerentity != null) {
-+                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.callBlockPlaceEvent((ServerWorld) world, playerentity, blockitemusecontext.func_221531_n(), cbblockstate, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
++                     org.bukkit.event.block.BlockPlaceEvent placeEvent = CraftEventFactory.callBlockPlaceEvent((ServerWorld) world, playerentity, blockitemusecontext.func_221531_n(), cbblockstate, blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
 +                     if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
 +                        cbblockstate.update(true, false);
-+                        if (playerentity instanceof ServerPlayerEntity) {
-+                            ((ServerPlayerEntity) playerentity).func_71120_a(playerentity.field_71069_bz);
-+                        }
 +                        return ActionResultType.FAIL;
 +                     }
 +                  }
 +                  // CraftBukkit end
-                   blockstate1 = this.func_219985_a(blockpos, world, itemstack, blockstate1);
-                   this.func_195943_a(blockpos, world, playerentity, itemstack, blockstate1);
-                   block.func_180633_a(world, blockpos, blockstate1, playerentity, itemstack);
-@@ -69,9 +_,9 @@
+                   if (playerentity instanceof ServerPlayerEntity) {
+                      CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)playerentity, blockpos, itemstack);
                    }
                 }
  
 -               SoundType soundtype = blockstate1.func_215695_r();
 -               world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
--               if (playerentity == null || !playerentity.field_71075_bZ.field_75098_d) {
 +               SoundType soundtype = blockstate1.getSoundType(world, blockpos, p_195942_1_.func_195999_j());
-+               // world.playSound(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, context.getPlayer()), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-+               if ((playerentity == null || !playerentity.field_71075_bZ.field_75098_d)  && itemstack != ItemStack.field_190927_a) { // CraftBukkit
++               world.func_184133_a(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, p_195942_1_.func_195999_j()), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                if (playerentity == null || !playerentity.field_71075_bZ.field_75098_d) {
                    itemstack.func_190918_g(1);
                 }
- 
 @@ -81,10 +_,16 @@
        }
     }
@@ -85,24 +78,22 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -123,6 +_,22 @@
+@@ -123,6 +_,20 @@
        return blockstate;
     }
  
 +   public static BlockState getBlockState(BlockState iblockdata, CompoundNBT nbttagcompound1) {
-+      BlockState iblockdata1 = iblockdata;
-+      // CraftBukkit end
 +      StateContainer<Block, BlockState> statecontainer = iblockdata.func_177230_c().func_176194_O();
 +
 +      for (String s : nbttagcompound1.func_150296_c()) {
 +         Property<?> property = statecontainer.func_185920_a(s);
 +         if (property != null) {
 +            String s1 = nbttagcompound1.func_74781_a(s).func_150285_a_();
-+            iblockdata1 = func_219988_a(iblockdata1, property, s1);
++            iblockdata = func_219988_a(iblockdata, property, s1);
 +         }
 +      }
 +
-+      return iblockdata1;
++      return iblockdata;
 +   }
 +
     private static <T extends Comparable<T>> BlockState func_219988_a(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
