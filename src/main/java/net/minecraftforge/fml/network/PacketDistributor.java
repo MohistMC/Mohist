@@ -214,7 +214,10 @@ public class PacketDistributor<T> {
     }
 
     private Consumer<IPacket<?>> playerConsumer(final Supplier<ServerPlayerEntity> entityPlayerMPSupplier) {
-        return p -> entityPlayerMPSupplier.get().connection.connection.send(p);
+        return p -> {
+            final ServerPlayerEntity player = entityPlayerMPSupplier.get();
+            if (player.connection != null && player.connection.connection != null) player.connection.connection.send(p);
+        };
     }
     private Consumer<IPacket<?>> playerListDimConsumer(final Supplier<RegistryKey<World>> dimensionTypeSupplier) {
         return p->getServer().getPlayerList().broadcastAll(p, dimensionTypeSupplier.get());
