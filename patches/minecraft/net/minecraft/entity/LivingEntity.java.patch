@@ -84,12 +84,13 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
-@@ -113,11 +_,15 @@
+@@ -113,11 +_,16 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import net.minecraftforge.common.ForgeHooks;
 +import org.bukkit.event.player.PlayerTeleportEvent;
++import org.spigotmc.AsyncCatcher;
  
  public abstract class LivingEntity extends Entity {
     private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
@@ -364,7 +365,7 @@
              iterator.remove();
           }
  
-@@ -808,16 +_,44 @@
+@@ -808,16 +_,45 @@
     }
  
     public boolean func_195064_c(EffectInstance p_195064_1_) {
@@ -374,6 +375,7 @@
 +   }
 +
 +   public boolean addEffect(EffectInstance effectInstanceIn, EntityPotionEffectEvent.Cause cause) {
++      org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(effectInstanceIn, cause));
 +         return true;
