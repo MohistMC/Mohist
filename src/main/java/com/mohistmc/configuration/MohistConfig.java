@@ -56,6 +56,7 @@ public class MohistConfig extends ConfigBase {
 
     // MohistProxySelector
     public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
+    public final BoolSetting networkmanager_enable = new BoolSetting(this, "mohist.networkmanager.enable", false);
 
     public final StringSetting libraries_downloadsource = new StringSetting(this, "mohist.libraries_downloadsource", DownloadSource.defaultSource.name());
 

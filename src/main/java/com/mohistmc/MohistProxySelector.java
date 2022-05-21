@@ -41,7 +41,7 @@ public class MohistProxySelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(URI uri) {
-        if (MohistConfig.getBoolean0("mohist.networkmanager.debug", false)) {
+        if (MohistConfig.instance.debug_msg.getValue()) {
             MohistMC.LOGGER.error(uri.toString());
         }
 

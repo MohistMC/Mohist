@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import com.mohistmc.MohistProxySelector;
+import com.mohistmc.configuration.MohistConfig;
 import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import java.net.ProxySelector;
 import net.minecraft.command.arguments.ArgumentSerializer;
@@ -164,7 +165,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(this);
         BiomeDictionary.init();
         EventDispatcherRegistry.init();
-        ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
+        if (MohistConfig.instance.networkmanager_enable.getValue()) ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
     }
 
     public void preInit(FMLCommonSetupEvent evt)
