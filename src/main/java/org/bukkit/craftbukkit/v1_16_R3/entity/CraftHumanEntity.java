@@ -27,6 +27,7 @@ import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.client.CCloseWindowPacket;
 import net.minecraft.network.play.server.SOpenWindowPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.HandSide;
@@ -52,6 +53,7 @@ import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -275,7 +277,14 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public InventoryView getOpenInventory() {
-        return getHandle().containerMenu.getBukkitView();
+        // Mohist start TODO not tested
+        InventoryView inventory = getHandle().containerMenu.getBukkitView();
+        if (inventory == null) {
+            inventory = new CraftInventoryView(getHandle().getBukkitEntity(), MinecraftServer.getServer().server.createInventory(getHandle().getBukkitEntity(), InventoryType.CHEST), getHandle().containerMenu);
+            getHandle().containerMenu.setBukkitView(inventory);
+        }
+        return inventory;
+        // Mohist end
     }
 
     @Override
