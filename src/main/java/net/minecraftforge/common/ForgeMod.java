@@ -165,7 +165,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(this);
         BiomeDictionary.init();
         EventDispatcherRegistry.init();
-        if (MohistConfig.instance.networkmanager_enable.getValue()) ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
+        if (MohistConfig.getBoolean0("mohist.networkmanager.enable", false)) ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
     }
 
     public void preInit(FMLCommonSetupEvent evt)
