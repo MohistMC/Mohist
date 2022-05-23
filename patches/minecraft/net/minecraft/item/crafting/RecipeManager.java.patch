@@ -1,18 +1,19 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -1,24 +_,32 @@
- package net.minecraft.item.crafting;
+@@ -2,21 +_,25 @@
  
--import com.google.common.collect.ImmutableMap;
--import com.google.common.collect.Maps;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Maps;
 -import com.google.common.collect.ImmutableMap.Builder;
--import com.google.gson.Gson;
--import com.google.gson.GsonBuilder;
--import com.google.gson.JsonElement;
--import com.google.gson.JsonObject;
--import com.google.gson.JsonParseException;
--import com.google.gson.JsonSyntaxException;
+ import com.google.gson.Gson;
+ import com.google.gson.GsonBuilder;
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
+ import com.google.gson.JsonSyntaxException;
 +import com.mohistmc.util.i18n.i18n;
++
++import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
  import java.util.Collection;
  import java.util.Collections;
  import java.util.Comparator;
@@ -26,29 +27,12 @@
 -import java.util.Map.Entry;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
-+
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
-+
-+import com.google.common.collect.ImmutableMap;
-+import com.google.common.collect.Maps;
-+import com.google.gson.Gson;
-+import com.google.gson.GsonBuilder;
-+import com.google.gson.JsonElement;
-+import com.google.gson.JsonObject;
-+import com.google.gson.JsonParseException;
-+import com.google.gson.JsonSyntaxException;
-+
-+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
  import net.minecraft.client.resources.JsonReloadListener;
- import net.minecraft.inventory.IInventory;
- import net.minecraft.item.ItemStack;
-@@ -32,13 +_,12 @@
- import net.minecraft.world.World;
- import net.minecraftforge.api.distmarker.Dist;
+@@ -34,11 +_,13 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
--import org.apache.logging.log4j.LogManager;
--import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
  public class RecipeManager extends JsonReloadListener {
     private static final Gson field_223401_a = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
@@ -58,7 +42,7 @@
     private boolean field_199523_e;
  
     public RecipeManager() {
-@@ -47,31 +_,103 @@
+@@ -47,31 +_,104 @@
  
     protected void func_212853_a_(Map<ResourceLocation, JsonElement> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        this.field_199523_e = false;
@@ -136,10 +120,11 @@
 +
 +   // CraftBukkit start
 +   public void addRecipe(final IRecipe<?> irecipe) {
++      AsyncCatcher.catchOp("Recipe Add");
 +      final Map<ResourceLocation, IRecipe<?>> map = this.field_199522_d.get(irecipe.func_222127_g());
 +      Object2ObjectLinkedOpenHashMap<ResourceLocation, IRecipe<?>> map1 = this.recipesCB.get(irecipe.func_222127_g()); // CraftBukkit
 +      if (map.containsKey(irecipe.func_199560_c()) || map1.containsKey(irecipe.func_199560_c())) {
-+         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.func_199560_c());
++         return;
 +      }
 +      // Mohist start - Fix Bukkit.addRecipe(...)
 +      Map newmap = new HashMap();
