@@ -18,7 +18,13 @@
  
  public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener {
     private static final AtomicInteger f_10014_ = new AtomicInteger(0);
-@@ -51,6 +_,7 @@
+@@ -47,10 +_,12 @@
+    ServerLoginPacketListenerImpl.State f_10019_ = ServerLoginPacketListenerImpl.State.HELLO;
+    private int f_10020_;
+    @Nullable
+-   public GameProfile f_10021_;
++   public
++   GameProfile f_10021_;
     private final String f_10022_ = "";
     @Nullable
     private ServerPlayer f_10024_;
