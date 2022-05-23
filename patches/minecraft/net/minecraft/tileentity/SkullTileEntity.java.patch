@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/SkullTileEntity.java
 +++ b/net/minecraft/tileentity/SkullTileEntity.java
-@@ -1,16 +_,33 @@
+@@ -1,16 +_,34 @@
  package net.minecraft.tileentity;
  
 +import com.google.common.base.Predicate;
@@ -10,6 +10,7 @@
  import com.google.common.collect.Iterables;
 +import com.google.common.util.concurrent.Futures;
 +import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import com.mohistmc.common.async.MohistThreadBox;
 +import com.mojang.authlib.Agent;
  import com.mojang.authlib.GameProfile;
 +import com.mojang.authlib.ProfileLookupCallback;
@@ -34,7 +35,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.StringUtils;
  import net.minecraftforge.api.distmarker.Dist;
-@@ -22,10 +_,54 @@
+@@ -22,10 +_,49 @@
     @Nullable
     private static MinecraftSessionService field_184299_k;
     @Nullable
@@ -44,11 +45,6 @@
     private boolean field_184297_i;
  
 +   // Spigot start
-+   public static final ExecutorService executor = Executors.newFixedThreadPool(3,
-+       new ThreadFactoryBuilder()
-+           .setNameFormat("Head Conversion Thread - %1$d")
-+           .build()
-+   );
 +   public static final LoadingCache<String, GameProfile> skinCache = CacheBuilder.newBuilder()
 +       .maximumSize( 5000 )
 +       .expireAfterAccess( 60, TimeUnit.MINUTES )
@@ -198,7 +194,7 @@
 +                     throw new RuntimeException(ex); // Not possible
 +                  }
 +               } else {
-+                  return executor.submit(callable);
++                  return MohistThreadBox.Head.submit(callable);
                 }
 -
 -               return gameprofile;
