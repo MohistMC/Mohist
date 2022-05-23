@@ -536,152 +536,12 @@ project(':mohist') {
         }
     }
 
-    task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches/*, createClientSRG, createServerSRG*/]) {
-        ext {
-            output = file('build/install_profile.json')
-            JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
-        }
-        doFirst {
-            ext.BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
-        }
-        inputs.file applyClientBinPatches.output
-        inputs.file applyServerBinPatches.output
-        inputs.file genClientBinPatches.toolJar
-        inputs.file launcherJson.output
-        /*
-        inputs.file createClientSRG.output
-        inputs.file createServerSRG.output
-        */
-        outputs.file output
-        doLast {
-            def libs = [
-                "${project.group}:${project.name}:${project.version}:universal": [
-                    name: "${project.group}:${project.name}:${project.version}:universal",
-                    downloads: [
-                        artifact: [
-                            path: "${project.group.replace('.', '/')}/${project.name}/${project.version}/${project.name}-${project.version}-universal.jar",
-                            url: "", //Do not include the URL so that the installer/launcher won't grab it. This is also why we don't have the universal classifier
-                            sha1: universalJar.archiveFile.get().asFile.sha1(),
-                            size: universalJar.archiveFile.get().asFile.length()
-                        ]
-                    ]
-                ]
-            ]
-            def json = [
-                _comment_: launcherJson.comment,
-                spec: 0,
-                profile: 'mohist',
-                version: launcherJson.id,
-                icon: "data:image/png;base64," + new String(Base64.getEncoder().encode(Files.readAllBytes(rootProject.file("icon.ico").toPath()))),
-                json: '/version.json',
-                path: "${project.group}:${project.name}:${project.version}",
-                logo: '/big_logo.png',
-                minecraft: MC_VERSION,
-                welcome: "Welcome to the simple mohist installer.",
-                mirrorList: "https://files.minecraftforge.net/mirrors-2.0.json",
-                data: [
-                    MAPPINGS: [
-                        client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@txt]",
-                        server: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@txt]"
-                    ],
-                    BINPATCH: [
-                        client: '/data/client.lzma',
-                        server: '/data/server.lzma'
-                    ],
-                    MC_SLIM: [
-                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:slim]",
-                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:slim]"
-                    ],
-                    MC_SLIM_SHA: [
-                            client: "'${tasks.getByName('downloadClientSlim').output.get().asFile.sha1()}'",
-                            server: "'${tasks.getByName('downloadServerSlim').output.get().asFile.sha1()}'"
-                    ],
-                    MC_EXTRA: [
-                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:extra]",
-                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:extra]"
-                    ],
-                    MC_EXTRA_SHA: [
-                            client: "'${tasks.getByName('downloadClientExtra').output.get().asFile.sha1()}'",
-                            server: "'${tasks.getByName('downloadServerExtra').output.get().asFile.sha1()}'"
-                    ],
-                    MC_SRG: [
-                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:srg]",
-                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:srg]"
-                    ],
-                    PATCHED: [
-                        client: "[${project.group}:${project.name}:${project.version}:client]",
-                        server: "[${project.group}:${project.name}:${project.version}:server]"
-                    ],
-                    PATCHED_SHA: [
-                            client: "'${applyClientBinPatches.output.get().asFile.sha1()}'",
-                            server: "'${applyServerBinPatches.output.get().asFile.sha1()}'"
-                    ],
-                    MCP_VERSION: [
-                        client: "'${MCP_VERSION}'",
-                        server: "'${MCP_VERSION}'"
-                    ]
-                ],
-                processors: [
-                    [
-                        jar: INSTALLER_TOOLS,
-                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
-                        args: [
-                            '--task', 'MCP_DATA',
-                            '--input', "[${MCP_ARTIFACT.descriptor}]",
-                            '--output', '{MAPPINGS}',
-                            '--key', 'mappings'
-                        ]
-                    ], [
-                        jar: JAR_SPLITTER,
-                        classpath: getClasspath(project, libs, JAR_SPLITTER),
-                        args: [
-                            '--input', '{MINECRAFT_JAR}',
-                            '--slim',  '{MC_SLIM}',
-                            '--extra', '{MC_EXTRA}',
-                            '--srg', '{MAPPINGS}'
-                        ],
-                        outputs: [
-                            '{MC_SLIM}': '{MC_SLIM_SHA}',
-                            '{MC_EXTRA}': '{MC_EXTRA_SHA}'
-                        ]
-                    ], [
-                        jar: SPECIAL_SOURCE_MCP,
-                        classpath: getClasspath(project, libs, SPECIAL_SOURCE_MCP),
-                        args: [
-                            //'--stable', Java 9 Is borked, https://bugs.openjdk.java.net/browse/JDK-8184940 TODO: find a fix.
-                            '--in-jar', '{MC_SLIM}',
-                            '--out-jar', '{MC_SRG}',
-                            '--srg-in', '{MAPPINGS}'
-                        ]
-                    ], [
-                        jar: BIN_PATCHER,
-                        classpath: getClasspath(project, libs, BIN_PATCHER),
-                        args: [
-                            '--clean', '{MC_SRG}',
-                            '--output', '{PATCHED}',
-                            '--apply', '{BINPATCH}'
-                        ],
-                        outputs: [
-                            '{PATCHED}': '{PATCHED_SHA}'
-                        ]
-                    ]
-                ]
-            ]
-            getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
-            json.libraries = libs.values().sort{a,b -> a.name.compareTo(b.name)}
-
-            output.text = new JsonBuilder(json).toPrettyString()
-        }
-    }
-
     ['client', 'server'].each { side ->
         ['slim', 'extra'].each { type ->
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
                 artifact = "net.minecraft:${side}:${MC_VERSION}-${MCP_VERSION}:${type}"
             }
-            installerJson.dependsOn(name)
-            installerJson.inputs.file(tasks.getByName(name).output)
         }
     }
 
@@ -743,37 +603,6 @@ project(':mohist') {
         changing = true
     }
 
-    task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar', 'signLauncherJar']) {
-        archiveBaseName = 'mohist'
-        archiveClassifier = 'installer'
-        archiveExtension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
-        destinationDirectory = file('build/libs')
-        from(rootProject.file('/installer_logo.png')) {
-            rename{'big_logo.png'}
-        }
-        from(rootProject.file('/src/main/resources/url.png'))
-        from(genClientBinPatches.output) {
-            rename{'data/client.lzma'}
-        }
-        from(genServerBinPatches.output) {
-            rename{'data/server.lzma'}
-        }
-        from(universalJar) {
-            into "/maven/${project.group.replace('.', '/')}/${project.name}/${project.version}/"
-        }
-        from(launcherJar) {
-            into "/maven/${project.group.replace('.', '/')}/${project.name}/${project.version}/"
-            rename { "${project.name}-${project.version}.jar" }
-        }
-        from(installerJson.output)
-        from(launcherJson.output)
-        if (downloadInstaller.output.present) {
-            from(zipTree(downloadInstaller.output)) {
-                duplicatesStrategy = 'exclude'
-            }
-        }
-    }
-
     task mohistJar(type: Jar, dependsOn: [genServerBinPatches, 'signUniversalJar']) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
@@ -831,7 +660,7 @@ project(':mohist') {
         }
     }
 
-    [universalJar, launcherJar, mohistJar, installerJar].each { t ->
+    [universalJar, launcherJar, mohistJar].each { t ->
         task "sign${t.name.capitalize()}"(type: SignJar, dependsOn: t) {
             onlyIf {
                 JAR_SIGNER != null && t.state.failure == null
@@ -947,7 +776,6 @@ project(':mohist') {
                 artifact userdevJar
                 artifact sourcesJar
                 artifact launcherJar
-                artifact installerJar
                 artifact mohistJar
 
                 pom {
