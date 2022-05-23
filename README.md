@@ -33,7 +33,7 @@ Progress
   * Bukkit(7e29f765)  
   * Spigot(9fb885e8)
 - [x] Beta release
-- [ ] The nms patch is compatible with mms - 55%
+- [ ] The nms patch is compatible with mms - 60%
 
 Getting Help
 ------
