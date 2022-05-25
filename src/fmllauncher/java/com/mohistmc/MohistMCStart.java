@@ -70,6 +70,7 @@ public class MohistMCStart {
 
 		// make sure gson use this EnumTypeAdapter
 		Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
+		// Used to avoid mods using BusBuilder.builder().build() themselves
 		Class.forName("net.minecraftforge.eventbus.api.BusBuilder").getClassLoader();
 		System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
 		System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
