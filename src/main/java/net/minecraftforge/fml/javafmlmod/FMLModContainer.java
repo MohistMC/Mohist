@@ -117,9 +117,9 @@ public class FMLModContainer extends ModContainer
     @Override
     protected <T extends Event & IModBusEvent> void acceptEvent(final T e) {
         try {
-            LOGGER.debug(LOADING, i18n.get("fmlmodcontainer.8", this.getModId()), e);
+            LOGGER.debug(LOADING, i18n.get("fmlmodcontainer.8", this.getModId(), e));
             this.eventBus.post(e);
-            LOGGER.debug(LOADING, i18n.get("fmlmodcontainer.9", this.getModId()), e);
+            LOGGER.debug(LOADING, i18n.get("fmlmodcontainer.9", this.getModId(), e));
         } catch (Throwable t) {
             LOGGER.error(LOADING, i18n.get("fmlmodcontainer.10", e, this.getModId()), t);
             throw new ModLoadingException(modInfo, modLoadingStage, "fml.modloading.errorduringevent", t);
