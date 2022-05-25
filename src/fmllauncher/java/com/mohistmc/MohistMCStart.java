@@ -61,6 +61,7 @@ public class MohistMCStart {
 		}
 		CustomLibraries.loadCustomLibs();
 		new JarLoader().loadJar(InstallUtils.extra);
+		new JarLoader().loadJar(InstallUtils.universalJar);
 
 		//The server can be run with Java 16+
 		if(Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
@@ -69,6 +70,7 @@ public class MohistMCStart {
 
 		// make sure gson use this EnumTypeAdapter
 		Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
+		Class.forName("net.minecraftforge.eventbus.api.BusBuilder").getClassLoader();
 		System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
 		System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
 		if(MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
