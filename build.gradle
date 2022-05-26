@@ -23,7 +23,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
-    id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
@@ -34,13 +33,6 @@ Util.init() //Init all our extension methods!
 
 ext {
     JAR_SIGNER = null
-    if (project.hasProperty('keystore')) {
-        JAR_SIGNER = [
-            storepass: project.properties.keystoreStorePass,
-            keypass: project.properties.keystoreKeyPass,
-            keystore: project.properties.keystore
-        ]
-    }
     MAPPING_CHANNEL = 'official'
     MAPPING_VERSION = '1.18.2'
     MC_VERSION = '1.18.2'
@@ -811,7 +803,6 @@ project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    apply plugin: 'org.cadixdev.licenser'
     apply plugin: 'dev.vankka.dependencydownload.plugin'
 
     sourceSets {
@@ -1448,19 +1439,6 @@ project(':forge') {
         }
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
-        }
-    }
-
-    license {
-        header = file("$rootDir/LICENSE/LICENSE-header.txt")
-
-        include 'net/minecraftforge/'
-        exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
-
-        tasks {
-            main {
-                files.from files("$rootDir/src/main/java")
-            }
         }
     }
 
