@@ -123,7 +123,7 @@
 +      AsyncCatcher.catchOp("Recipe Add");
 +      final Map<ResourceLocation, IRecipe<?>> map = this.field_199522_d.get(irecipe.func_222127_g());
 +      Object2ObjectLinkedOpenHashMap<ResourceLocation, IRecipe<?>> map1 = this.recipesCB.get(irecipe.func_222127_g()); // CraftBukkit
-+      if (map.containsKey(irecipe.func_199560_c()) || map1.containsKey(irecipe.func_199560_c())) {
++      if (map.containsKey(irecipe.func_199560_c()) || (map1 != null && map1.containsKey(irecipe.func_199560_c()))) {
 +         return;
 +      }
 +      // Mohist start - Fix Bukkit.addRecipe(...)

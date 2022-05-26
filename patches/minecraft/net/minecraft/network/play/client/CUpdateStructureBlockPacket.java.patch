@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/play/client/CUpdateStructureBlockPacket.java
++++ b/net/minecraft/network/play/client/CUpdateStructureBlockPacket.java
+@@ -61,7 +_,7 @@
+       this.field_210396_f = new BlockPos(MathHelper.func_76125_a(p_148837_1_.readByte(), 0, 48), MathHelper.func_76125_a(p_148837_1_.readByte(), 0, 48), MathHelper.func_76125_a(p_148837_1_.readByte(), 0, 48));
+       this.field_210397_g = p_148837_1_.func_179257_a(Mirror.class);
+       this.field_210398_h = p_148837_1_.func_179257_a(Rotation.class);
+-      this.field_210399_i = p_148837_1_.func_150789_c(12);
++      this.field_210399_i = p_148837_1_.func_150789_c(128); // Paper - Fix MC-148809, increase max character input to 128
+       this.field_210403_m = MathHelper.func_76131_a(p_148837_1_.readFloat(), 0.0F, 1.0F);
+       this.field_210404_n = p_148837_1_.func_179260_f();
+       int k = p_148837_1_.readByte();
