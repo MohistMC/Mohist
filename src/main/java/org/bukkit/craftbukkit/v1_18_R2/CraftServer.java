@@ -1154,6 +1154,11 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    public org.bukkit.WorldBorder createWorldBorder() {
+        return new CraftWorldBorder(new net.minecraft.world.level.border.WorldBorder());
+    }
+
+    @Override
     public Logger getLogger() {
         return logger;
     }

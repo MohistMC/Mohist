@@ -45,20 +45,51 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -59,6 +_,28 @@
+@@ -59,6 +_,59 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
 +   // CraftBukkit star
 +   private CraftInventoryView bukkitEntity = null;
 +   public boolean checkReachable = true;
-+   public abstract InventoryView getBukkitView();
++   // Mohist start
++   public InventoryView bukkitView = null;
++   public InventoryView getBukkitView(){
++      return bukkitView;
++   }
++
++   public void setBukkitView(InventoryView iv) {
++      bukkitView = iv;
++   }
++   // Mohist end
 +   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
-+      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-+      ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
-+      ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-+      ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++      if (source != null) {
++         try {
++            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++      }
++      if (destination != null) {
++         try {
++            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++      }
 +   }
 +   private Component title;
 +   public Component getTitle() {

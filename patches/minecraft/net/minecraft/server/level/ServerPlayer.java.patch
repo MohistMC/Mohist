@@ -52,7 +52,7 @@
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
  import net.minecraft.world.level.block.NetherPortalBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -132,9 +_,22 @@
+@@ -132,9 +_,23 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -60,6 +60,7 @@
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_18_R2.CraftWorldBorder;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryHorse;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
@@ -270,11 +271,11 @@
           if (this.f_36097_.m_38702_() != this.f_8912_) {
              this.f_8912_ = this.f_36097_.m_38702_();
              this.m_9104_(ObjectiveCriteria.f_83594_, Mth.m_14167_((float)this.f_8912_));
-@@ -495,6 +_,16 @@
+@@ -495,6 +_,20 @@
              CriteriaTriggers.f_10582_.m_53645_(this);
           }
  
-+         // CraftBukkit start - initialize oldLevel and fire PlayerLevelChangeEvent
++         // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
 +         if (this.oldLevel == -1) {
 +            this.oldLevel = this.f_36078_;
 +         }
@@ -282,6 +283,10 @@
 +         if (this.oldLevel != this.f_36078_) {
 +            CraftEventFactory.callPlayerLevelChangeEvent(this.getBukkitEntity(), this.oldLevel, this.f_36078_);
 +            this.oldLevel = this.f_36078_;
++         }
++
++         if (this.getBukkitEntity().hasClientWorldBorder()) {
++            ((CraftWorldBorder) this.getBukkitEntity().getWorldBorder()).getHandle().m_61969_();
 +         }
 +         // CraftBukkit end
        } catch (Throwable throwable) {
@@ -968,7 +973,7 @@
     public TextFilter m_8967_() {
        return this.f_8939_;
     }
-@@ -1511,14 +_,147 @@
+@@ -1511,14 +_,148 @@
  
     public boolean m_182294_(boolean p_182295_) {
        Inventory inventory = this.m_150109_();
@@ -1114,6 +1119,7 @@
 +         this.m_6756_(this.newExp);
 +      }
 +      this.keepLevel = false;
++      this.m_20334_(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
 +   }
 +   // CraftBukkit end
  }

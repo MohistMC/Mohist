@@ -523,21 +523,12 @@
                 if (p_20259_.m_128425_("Tags", 9)) {
                    this.f_19841_.clear();
                    ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
-@@ -1573,6 +_,53 @@
+@@ -1573,6 +_,44 @@
           } else {
              throw new IllegalStateException("Entity has invalid position");
           }
 +
 +         // CraftBukkit start
-+         if (this instanceof LivingEntity) {
-+            LivingEntity entity = (LivingEntity) this;
-+
-+            // Reset the persistence for tamed animals
-+            if (entity instanceof TamableAnimal && !isLevelAtLeast(p_20259_, 2) && !p_20259_.m_128471_("PersistenceRequired")) {
-+               Mob entityinsentient = (Mob) entity;
-+               entityinsentient.setPersistenceRequired(!entityinsentient.m_6785_(0));
-+            }
-+         }
 +         this.persist = !p_20259_.m_128441_("Bukkit.persist") || p_20259_.m_128471_("Bukkit.persist");
 +         // SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
 +         if (p_20259_.m_128441_("Bukkit.MaxAirSupply")) {
