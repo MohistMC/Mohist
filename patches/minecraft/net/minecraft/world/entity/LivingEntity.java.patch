@@ -54,12 +54,13 @@
  import net.minecraft.world.entity.boss.wither.WitherBoss;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
-@@ -115,6 +_,15 @@
+@@ -115,6 +_,16 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.event.entity.living.ShieldBlockEvent;
++import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.Statistic;
 +import org.bukkit.craftbukkit.v1_18_R2.attribute.CraftAttributeMap;
@@ -389,10 +390,11 @@
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
-@@ -963,19 +_,64 @@
+@@ -963,19 +_,61 @@
  
     }
  
++   // Mohist start
 +   public EntityRegainHealthEvent.RegainReason healRegainReason = EntityRegainHealthEvent.RegainReason.CUSTOM;
 +   public void putHealRegainReason(EntityRegainHealthEvent.RegainReason healRegainReason) {
 +      this.healRegainReason = healRegainReason;
@@ -403,11 +405,6 @@
 +
 +   // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
     public void m_5634_(float p_21116_) {
-+      heal(p_21116_, EntityRegainHealthEvent.RegainReason.CUSTOM);
-+   }
-+
-+   public void heal(float p_21116_, EntityRegainHealthEvent.RegainReason regainReason) {
-+      putHealRegainReason(healRegainReason);
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
        float f = this.m_21223_();
@@ -416,16 +413,21 @@
 +         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, healRegainReason);
 +         // Suppress during worldgen
 +         if (this.valid) {
-+            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++            Bukkit.getPluginManager().callEvent(event);
 +         }
 +         if (!event.isCancelled()) {
 +            this.m_21153_((float) (this.m_21223_() + event.getAmount()));
 +         }
 +         // CraftBukkit end
        }
--
 +      resetHealRegainReason();
++   }
+ 
++   public void heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason) {
++      putHealRegainReason(regainReason);
++      this.m_5634_(healAmount);
     }
++   // Mohist end
  
     public float m_21223_() {
 +      // CraftBukkit start - Use unscaled health
@@ -441,13 +443,8 @@
 +      if (this instanceof ServerPlayer) {
 +         org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer player = ((ServerPlayer) this).getBukkitEntity();
 +         // Squeeze
-+         if (p_21154_ < 0.0F) {
-+            player.setRealHealth(0.0D);
-+         } else if (p_21154_ > player.getMaxHealth()) {
-+            player.setRealHealth(player.getMaxHealth());
-+         } else {
-+            player.setRealHealth(p_21154_);
-+         }
++         double realHealth = Mth.m_14008_(p_21154_, 0.0F, player.getMaxHealth());
++         player.setRealHealth(realHealth);
 +
 +         player.updateScaledHealth(false);
 +         return;
@@ -581,7 +578,7 @@
              }
           }
  
-@@ -1151,31 +_,42 @@
+@@ -1151,31 +_,43 @@
        } else {
           ItemStack itemstack = null;
  
@@ -599,7 +596,7 @@
 +
 +         EntityResurrectEvent event = new EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity());
 +         event.setCancelled(itemstack == null);
-+         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         Bukkit.getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {
 +            if (!itemstack1.m_41619_()) {
@@ -618,7 +615,7 @@
                 CriteriaTriggers.f_10551_.m_74431_(serverplayer, itemstack);
              }
  
--            this.m_21153_(1.0F);
+             this.m_21153_(1.0F);
 -            this.m_21219_();
 -            this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 900, 1));
 -            this.m_7292_(new MobEffectInstance(MobEffects.f_19617_, 100, 1));
