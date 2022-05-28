@@ -47,11 +47,11 @@
     private long f_36109_;
     private final Inventory f_36093_ = new Inventory(this);
 -   protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer();
-+   protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer(this);
++   protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer(this); // CraftBukkit - add "this" to constructor
     public final InventoryMenu f_36095_;
     public AbstractContainerMenu f_36096_;
 -   protected FoodData f_36097_ = new FoodData();
-+   protected FoodData f_36097_ = new FoodData(this);
++   protected FoodData f_36097_ = new FoodData(this); // CraftBukkit - add "this" to constructor
     protected int f_36098_;
     public float f_36099_;
     public float f_36100_;
@@ -138,11 +138,12 @@
        return 20;
     }
  
-@@ -469,7 +_,7 @@
+@@ -469,7 +_,8 @@
  
        if (this.f_19853_.m_46791_() == Difficulty.PEACEFUL && this.f_19853_.m_46469_().m_46207_(GameRules.f_46139_)) {
           if (this.m_21223_() < this.m_21233_() && this.f_19797_ % 20 == 0) {
 -            this.m_5634_(1.0F);
++            // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
 +            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
           }
  
