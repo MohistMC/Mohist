@@ -1,6 +1,7 @@
 <div align="center">
 <img width="300" src="https://mohistmc.com/mohist-min.png">
   <h1>Mohist 1.12.2</h1>
+  <h3>This version is end of life. <a href="https://wiki.mohistmc.com/#/about/end-of-life">See more</a></h3>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
@@ -23,8 +24,10 @@
 
 | Version  | Support |
 | ------------- | ------------- |
-| 1.16.x  | Active  |
-| 1.12.2  | Active  |
+| 1.18.2  | wait  |
+| 1.16.5  | Active  |
+| 1.12.2  | End Of Life  |
+| 1.7.10  | End Of Life  |
       
 Getting Help
 ------
@@ -44,7 +47,7 @@ Upstream Projects
 
 A Special Thanks To:
 -------------
-<a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
+<a href="https://serverjars.com/"><img src="https://serverjars.com/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="172"></a>
 <a href="https://www.bisecthosting.com/mohistmc"><img src="https://cdn.discordapp.com/attachments/303673296929685504/709610584680955944/Asset_5.png" width="200"></a>
 
