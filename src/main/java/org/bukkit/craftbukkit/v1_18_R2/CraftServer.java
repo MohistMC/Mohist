@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
@@ -365,6 +366,7 @@ public final class CraftServer implements Server {
     }
 
     public void loadPlugins() {
+        RemapUtils.init();
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) console.options.valueOf("plugins");
