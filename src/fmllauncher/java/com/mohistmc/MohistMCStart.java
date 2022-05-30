@@ -24,6 +24,7 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.*;
 import com.mohistmc.util.i18n.i18n;
+import net.minecraftforge.server.ServerMain;
 import org.apache.logging.log4j.Level;
 
 import java.net.URLClassLoader;
@@ -54,7 +55,13 @@ public class MohistMCStart {
 					" \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
 					"  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
 					"                                                    \n" + "\n" +
-					"                                      " + i18n.get("mohist.launch.welcomemessage"));
+					"                                      " + i18n.get("mohist.launch.welcomemessage") +" - "+getVersion()+", Java "+ServerMain.javaVersion);
+
+		//Alert the user that Java 11 is still recommended to use to have a better compatibility.
+		if(ServerMain.javaVersion <= 52.0) {
+			System.out.println(i18n.get("oldjava.use"));
+		}
+
 		if(MohistConfigUtil.bMohist("check_libraries", "true")) {
 			DefaultLibraries.run();
 			startInstallation();
@@ -64,7 +71,7 @@ public class MohistMCStart {
 		new JarLoader().loadJar(InstallUtils.universalJar);
 
 		//The server can be run with Java 16+
-		if(Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
+		if(ServerMain.javaVersion >= 60.0) {
 			Class.forName("com.mohistmc.util.MohistModuleManager", false, URLClassLoader.newInstance(new java.net.URL[]{universalJar.toURI().toURL()})).getDeclaredConstructor().newInstance();
 		}
 
@@ -72,16 +79,21 @@ public class MohistMCStart {
 		Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
 		// Used to avoid mods using BusBuilder.builder().build() themselves
 		Class.forName("net.minecraftforge.eventbus.api.BusBuilder").getClassLoader();
+
 		System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
 		System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
-		if(MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
+
+		UpdateUtils.versionCheck();
+
 		if(mainArgs.contains("-noserver"))
 			System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
+
 		if(!hasAcceptedEULA()) {
 			System.out.println(i18n.get("eula"));
 			while (!"true".equals(new Scanner(System.in).next())) ;
 			writeInfos();
 		}
+
 		if(!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false"))
 			checkPlugins(AutoDeletePlugins.LIST, PluginsModsDelete.PLUGIN);
 

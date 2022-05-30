@@ -66,7 +66,6 @@ project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    java.toolchain.languageVersion = JavaLanguageVersion.of(11)
 
     repositories {
         mavenLocal()
@@ -104,7 +103,6 @@ project(':mohist') {
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(11)
     group = 'com.mohistmc'
 
     sourceSets {
@@ -394,8 +392,9 @@ project(':mohist') {
     }
 
     tasks.named('compileFmllauncherJava') {
-        javaCompiler = javaToolchains.compilerFor {
-            languageVersion = JavaLanguageVersion.of(8)
+        java {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
         }
     }
 

@@ -57,8 +57,8 @@ public class DownloadJava {
               if (input.equalsIgnoreCase("Yes")) searchJava();
               else {
                 System.out.println(i18n.get("oldjava.no"));
-                System.exit(0);
-              }
+				  //Instead of exiting, just continue and run the server with the current Java version.
+			  }
             } else searchJava();
         }
     }

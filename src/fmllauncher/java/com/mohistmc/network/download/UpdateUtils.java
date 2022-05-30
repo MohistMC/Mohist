@@ -21,6 +21,7 @@ package com.mohistmc.network.download;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
+import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
@@ -47,6 +48,8 @@ public class UpdateUtils {
 	private static int percentage = 0;
 
 	public static void versionCheck() {
+		if(!MohistConfigUtil.bMohist("check_update", "true")) return;
+
 		System.out.println(i18n.get("update.check"));
 		System.out.println(i18n.get("update.stopcheck"));
 

@@ -25,20 +25,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtil {
 	public static void zipFolder(Path sourceFolderPath, Path zipPath) throws Exception {
-		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
-		Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<>() {
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
-				Files.copy(file, zos);
-				zos.closeEntry();
-				return FileVisitResult.CONTINUE;
-			}
-		});
-		zos.close();
+		try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipPath));
+			 Stream<Path> paths = Files.walk(sourceFolderPath)) {
+			paths.filter(path -> !Files.isDirectory(path))
+					.forEach(path -> {
+						ZipEntry zipEntry = new ZipEntry(sourceFolderPath.relativize(path).toString());
+						try {
+							zs.putNextEntry(zipEntry);
+							Files.copy(path, zs);
+							zs.closeEntry();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					});
+		}
 	}
 }

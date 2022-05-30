@@ -25,25 +25,21 @@ import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup;
 import com.mohistmc.bukkit.nms.proxy.ProxyYamlConfiguration;
 import com.mohistmc.bukkit.nms.proxy.asm.ProxyClassWriter;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
-import java.io.InputStream;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
-import java.lang.invoke.VarHandle;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import net.minecraftforge.server.ServerMain;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
+
+import java.io.InputStream;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
+import java.lang.invoke.VarHandle;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  *
@@ -95,7 +91,11 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper(LookupName, "findSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper(LookupName, "findStaticGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper(LookupName, "findStaticSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
-        registerMethodRemapper(LookupName, "findVarHandle", VarHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
+
+		//Only apply this if the server is running with Java 9+
+		if(ServerMain.javaVersion >= 53.0) {
+			registerMethodRemapper(LookupName, "findVarHandle", VarHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
+		}
 
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
     }

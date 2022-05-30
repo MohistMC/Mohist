@@ -45,6 +45,7 @@ import static com.mohistmc.util.InstallUtils.universalJar;
 public class ServerMain {
 
 	public static ArrayList<String> mainArgs = null;
+	public static float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
 
 	public static void main(String[] args) throws Exception {
 		mainArgs = new ArrayList<>(Arrays.asList(args));
@@ -55,9 +56,7 @@ public class ServerMain {
 		}
 
 		// Mohist start - Download Java 11 if required
-		float jVersion = Float.parseFloat(System.getProperty("java.class.version"));
-		if(jVersion < 55f || MohistConfigUtil.bMohist("use_custom_java11", "false")) {
-			if(!DownloadJava.javabin.exists()) System.err.println(i18n.get("oldjava.notify"));
+		if(MohistConfigUtil.bMohist("use_custom_java11", "false")) {
 			try {
 				DownloadJava.run(); // Mohist - Invoke DownloadJava
 			} catch (Exception ex) {
@@ -67,8 +66,13 @@ public class ServerMain {
 			}
 		}
 
-		//59.0 -> Java 15
-		System.setProperty((jVersion >= 59.0 ? "-D" : "")+"nashorn.args", "--no-deprecation-warning");
+		/*
+		59.0 -> Java 15
+		53.0 -> Java 9
+		 */
+		if(javaVersion >= 53.0) {
+			System.setProperty((javaVersion >= 59.0 ? "-D" : "")+"nashorn.args", "--no-deprecation-warning");
+		}
 
 		try {
 			MohistMCStart.main();
