@@ -211,7 +211,7 @@
        ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
        this.field_71305_c.put(World.field_234918_g_, serverworld);
        DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
-@@ -371,13 +_,23 @@
+@@ -371,13 +_,22 @@
              RegistryKey<World> registrykey1 = RegistryKey.func_240903_a_(Registry.field_239699_ae_, registrykey.func_240901_a_());
              DimensionType dimensiontype1 = entry.getValue().func_236063_b_();
              ChunkGenerator chunkgenerator1 = entry.getValue().func_236064_c_();
@@ -227,7 +227,6 @@
 +               serverworld1.getWorld().getPopulators().addAll(serverworld1.generator.getDefaultPopulators(serverworld1.getWorld()));
 +            }
           }
-+         Bukkit.getPluginManager().callEvent(new WorldInitEvent(field_71305_c.get(registrykey).getWorld()));
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(field_71305_c.get(registrykey)));
        }
 -
@@ -267,7 +266,7 @@
        BlockPos blockpos = serverworld.func_241135_u_();
        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
        ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
-@@ -461,32 +_,41 @@
+@@ -461,32 +_,40 @@
        this.field_211151_aa = Util.func_211177_b();
        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
@@ -310,7 +309,6 @@
              }
           }
 +         MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverworld1));
-+         //Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverworld1.getWorld())); // Mohist - removed
        }
  
 -      this.field_211151_aa = Util.func_211177_b() + 10L;

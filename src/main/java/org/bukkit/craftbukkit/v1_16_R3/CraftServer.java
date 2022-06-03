@@ -10,10 +10,11 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.MohistProxySelector;
+import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.util.i18n.i18n;
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
@@ -31,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ProxySelector;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -90,7 +90,6 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.util.registry.WorldSettingsImport;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.village.VillageSiege;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.Dimension;
@@ -113,6 +112,7 @@ import net.minecraft.world.storage.PlayerData;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.ServerWorldInfo;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
@@ -150,8 +150,10 @@ import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R3.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_16_R3.boss.CraftKeyedBossbar;
 import org.bukkit.craftbukkit.v1_16_R3.command.BukkitCommandWrapper;
+import org.bukkit.craftbukkit.v1_16_R3.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_16_R3.command.CraftCommandMap;
 import org.bukkit.craftbukkit.v1_16_R3.command.VanillaCommandWrapper;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.generator.CraftChunkData;
 import org.bukkit.craftbukkit.v1_16_R3.help.SimpleHelpMap;
@@ -193,7 +195,6 @@ import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.help.HelpMap;
@@ -230,6 +231,7 @@ import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spigotmc.AsyncCatcher;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
@@ -765,7 +767,9 @@ public final class CraftServer implements Server {
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
         Validate.notNull(sender, i18n.get("bukkit.sender.notnull"));
         Validate.notNull(commandLine, i18n.get("bukkit.commandline.notnull"));
-
+        AsyncCatcher.catchOp("command dispatch");
+        commandLine = commandLine(sender, commandLine);
+        if (commandLine == null) return false;
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
         }
@@ -777,6 +781,33 @@ public final class CraftServer implements Server {
         // Spigot end
 
         return false;
+    }
+
+    public String commandLine(CommandSender sender, String commandLine) {
+        CommandSource commandSource;
+        if (sender instanceof CraftEntity) {
+            commandSource = ((CraftEntity) sender).getHandle().createCommandSourceStack();
+        } else if (sender == Bukkit.getConsoleSender()) {
+            commandSource = ServerAPI.getNMSServer().createCommandSourceStack();
+        } else if (sender instanceof CraftBlockCommandSender) {
+            commandSource = ((CraftBlockCommandSender) sender).getWrapper();
+        } else {
+            return commandLine;
+        }
+        StringReader stringreader = new StringReader("/" + commandLine);
+        if (stringreader.canRead() && stringreader.peek() == '/') {
+            stringreader.skip();
+        }
+        ParseResults<CommandSource> parse = ServerAPI.getNMSServer().getCommands().getDispatcher().parse(stringreader, commandSource);
+        CommandEvent event = new CommandEvent(parse);
+        if (MinecraftForge.EVENT_BUS.post(event)) {
+            return null;
+        } else if (event.getException() != null) {
+            return null;
+        } else {
+            String s = event.getParseResults().getReader().getString();
+            return s.startsWith("/") ? s.substring(1) : s;
+        }
     }
 
     @Override
@@ -1085,7 +1116,6 @@ public final class CraftServer implements Server {
 
         getServer().loadSpawn(internal.getChunkSource().chunkMap.progressListener, internal);
 
-        pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(internal.getWorld().getHandle()));
         return internal.getWorld();
     }
@@ -1129,14 +1159,22 @@ public final class CraftServer implements Server {
 
             handle.getChunkSource().close(save);
             handle.convertable.close();
+            MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
+            this.console.markWorldsDirty();
         } catch (Exception ex) {
             getLogger().log(Level.SEVERE, null, ex);
         }
 
-        MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle));
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
         console.levels.remove(handle.dimension());
         return true;
+    }
+
+    public void removeWorld(ServerWorld world) {
+        if (world == null) {
+            return;
+        }
+        this.worlds.remove(((World)world).getName().toLowerCase(java.util.Locale.ENGLISH));
     }
 
     public DedicatedServer getServer() {

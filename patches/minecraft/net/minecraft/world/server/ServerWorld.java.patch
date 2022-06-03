@@ -744,7 +744,7 @@
                 }
  
                 p_217464_1_.field_70175_ag = false;
-@@ -678,16 +_,22 @@
+@@ -678,16 +_,21 @@
     public void func_217445_a(@Nullable IProgressUpdate p_217445_1_, boolean p_217445_2_, boolean p_217445_3_) {
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
        if (!p_217445_3_) {
@@ -758,7 +758,6 @@
 -         }
 -
 -         serverchunkprovider.func_217210_a(p_217445_2_);
-+         //org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getWorld())); // CraftBukkit // Mohist -removed
 +         try (co.aikar.timings.Timing ignored = timings.worldSave.startTiming()) { // Paper
 +            if (p_217445_1_ != null) {
 +               p_217445_1_.func_200210_a(new TranslationTextComponent("menu.savingLevel"));

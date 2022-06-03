@@ -22,6 +22,9 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
@@ -32,8 +35,9 @@ public class WorldEventDispatcher {
     public void onWorldLoadEvent(WorldEvent.Load event) {
         if (event.getWorld() instanceof ServerWorld) {
             ServerWorld handle = (ServerWorld) event.getWorld();
-            WorldLoadEvent load = new WorldLoadEvent(handle.getWorld());
-            Bukkit.getPluginManager().callEvent(load);
+            CraftWorld craftWorld = handle.getWorld();
+            Bukkit.getPluginManager().callEvent(new WorldLoadEvent(craftWorld));
+            Bukkit.getPluginManager().callEvent(new WorldInitEvent(craftWorld));
         }
     }
 
@@ -44,6 +48,13 @@ public class WorldEventDispatcher {
             ServerWorld handle = (ServerWorld) event.getWorld();
             WorldSaveEvent save = new WorldSaveEvent(handle.getWorld());
             Bukkit.getPluginManager().callEvent(save);
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload event) {
+        if (event.getWorld() instanceof ServerWorld) {
+            ((CraftServer)Bukkit.getServer()).removeWorld(((ServerWorld) event.getWorld()));
         }
     }
 }
