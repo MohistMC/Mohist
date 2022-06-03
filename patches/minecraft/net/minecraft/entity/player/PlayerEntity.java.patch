@@ -801,22 +801,10 @@
           }
  
        }
-@@ -1623,17 +_,22 @@
-    }
- 
-    public void func_184201_a(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_) {
--      if (p_184201_1_ == EquipmentSlotType.MAINHAND) {
--         this.func_184606_a_(p_184201_2_);
--         this.field_71071_by.field_70462_a.set(this.field_71071_by.field_70461_c, p_184201_2_);
--      } else if (p_184201_1_ == EquipmentSlotType.OFFHAND) {
--         this.func_184606_a_(p_184201_2_);
--         this.field_71071_by.field_184439_c.set(0, p_184201_2_);
--      } else if (p_184201_1_.func_188453_a() == EquipmentSlotType.Group.ARMOR) {
--         this.func_184606_a_(p_184201_2_);
--         this.field_71071_by.field_70460_b.set(p_184201_1_.func_188454_b(), p_184201_2_);
--      }
-+      // CraftBukkit start
-+      this.setItemStackToSlot(p_184201_1_, p_184201_2_, false);
+@@ -1633,7 +_,20 @@
+          this.func_184606_a_(p_184201_2_);
+          this.field_71071_by.field_70460_b.set(p_184201_1_.func_188454_b(), p_184201_2_);
+       }
 +   }
  
 +   public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {

@@ -92,7 +92,7 @@
  import net.minecraft.item.crafting.RecipeManager;
  import net.minecraft.network.DebugPacketSender;
  import net.minecraft.network.IPacket;
-@@ -138,17 +_,16 @@
+@@ -138,18 +_,17 @@
  import net.minecraft.world.storage.MapData;
  import net.minecraft.world.storage.MapIdTracker;
  import net.minecraft.world.storage.SaveFormat;
@@ -109,10 +109,12 @@
     public final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
     private final Map<UUID, Entity> field_175741_N = Maps.newHashMap();
 -   public final Queue<Entity> field_217499_z = Queues.newArrayDeque();
+-   private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
 +   public final Queue<Entity> field_217499_z = Queues.newArrayDeque(); // Mohist - Fix "Wrong location" (private -> public)
-    private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
++   public final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
     private final ServerChunkProvider field_241102_C_;
     boolean field_217492_a;
+    private final MinecraftServer field_73061_a;
 @@ -160,10 +_,10 @@
     private final Teleporter field_85177_Q;
     private final ServerTickList<Block> field_94579_S = new ServerTickList<>(this, (p_205341_0_) -> {
@@ -126,7 +128,7 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,154 @@
+@@ -173,35 +_,155 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -199,6 +201,7 @@
 +      uuid = WorldUUID.getUUID(p_i241885_1_.field_71310_m.func_237291_a_(p_i241885_5_));
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
++         worldDataServer.world = this;
 +      }
 +      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;

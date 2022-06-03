@@ -189,22 +189,27 @@
  
           for(int i = 0; i < 20; ++i) {
              double d0 = this.field_70146_Z.nextGaussian() * 0.02D;
-@@ -563,9 +_,13 @@
+@@ -576,6 +_,20 @@
+       }
     }
  
-    protected void func_184606_a_(ItemStack p_184606_1_) {
--      if (!p_184606_1_.func_190926_b()) {
-+      this.playEquipSound(p_184606_1_, false);
-+   }
-+
 +   protected void playEquipSound(ItemStack stack, boolean silent) {
 +      if (!stack.func_190926_b() && !silent) {
-          SoundEvent soundevent = SoundEvents.field_187719_p;
--         Item item = p_184606_1_.func_77973_b();
++         SoundEvent soundevent = SoundEvents.field_187719_p;
 +         Item item = stack.func_77973_b();
-          if (item instanceof ArmorItem) {
-             soundevent = ((ArmorItem)item).func_200880_d().func_200899_b();
-          } else if (item == Items.field_185160_cR) {
++         if (item instanceof ArmorItem) {
++            soundevent = ((ArmorItem)item).func_200880_d().func_200899_b();
++         } else if (item == Items.field_185160_cR) {
++            soundevent = SoundEvents.field_191258_p;
++         }
++
++         this.func_184185_a(soundevent, 1.0F, 1.0F);
++      }
++   }
++
+    public void func_213281_b(CompoundNBT p_213281_1_) {
+       p_213281_1_.func_74776_a("Health", this.func_110143_aJ());
+       p_213281_1_.func_74777_a("HurtTime", (short)this.field_70737_aN);
 @@ -606,7 +_,13 @@
     }
  
