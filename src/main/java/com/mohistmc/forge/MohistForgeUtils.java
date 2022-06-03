@@ -21,20 +21,39 @@ package com.mohistmc.forge;
 import com.mohistmc.configuration.MohistConfig;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MohistForgeUtils {
 	public static boolean modsblacklist(List<String> modslist) {
-		if (MohistConfig.instance.modsblacklistenable.getValue() && !MohistConfig.instance.modswhitelistenable.getValue())
-			return modslist.containsAll(Arrays.asList(MohistConfig.instance.modsblacklist.getValue().split(",")));
+		if (MohistConfig.instance.modsblacklistenable.getValue() && !MohistConfig.instance.modswhitelistenable.getValue()) {
+			String[] strings = MohistConfig.instance.modsblacklist.getValue().split(",");
+			for (String mods : modslist) {
+				for (String modsblacklist : strings) {
+					if (Objects.equals(mods, modsblacklist)) {
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
 	public static boolean modswhitelist(List<String> clientMods) {
+		String[] strings = MohistConfig.instance.modswhitelist.getValue().split(",");
 		if (!MohistConfig.instance.modsblacklistenable.getValue() && MohistConfig.instance.modswhitelistenable.getValue()) {
-			if (MohistConfig.instance.modsnumber.getValue() > 0)
-				return Arrays.asList(MohistConfig.instance.modswhitelist.getValue().split(",")).containsAll(clientMods) && clientMods.size() == MohistConfig.instance.modsnumber.getValue();
-			else
-				return Arrays.asList(MohistConfig.instance.modswhitelist.getValue().split(",")).containsAll(clientMods);
+			if (MohistConfig.instance.modsnumber.getValue() > 0) {
+				for (String mods : clientMods) {
+					for (String modswhitelist : strings) {
+						return Objects.equals(mods, modswhitelist) && clientMods.size() == MohistConfig.instance.modsnumber.getValue();
+					}
+				}
+			} else {
+				for (String mods : clientMods) {
+					for (String modswhitelist : strings) {
+						return Objects.equals(mods, modswhitelist);
+					}
+				}
+			}
 		}
 		return true;
 	}
