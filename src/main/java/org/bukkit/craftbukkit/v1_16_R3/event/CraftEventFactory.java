@@ -393,11 +393,13 @@ public class CraftEventFactory {
         BlockDropItemEvent event = new BlockDropItemEvent(block, state, player.getBukkitEntity(), Lists.transform(items, (item) -> (Item) item.getBukkitEntity()));
         Bukkit.getPluginManager().callEvent(event);
 
+        /*
         if (!event.isCancelled()) {
             for (ItemEntity item : items) {
                 item.level.addFreshEntity(item);
             }
         }
+         */
     }
 
     public static EntityPlaceEvent callEntityPlaceEvent(ItemUseContext itemactioncontext, Entity entity) {

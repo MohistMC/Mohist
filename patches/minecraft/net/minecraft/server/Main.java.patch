@@ -39,6 +39,14 @@
  import net.minecraft.util.Util;
  import net.minecraft.util.WorldOptimizer;
  import net.minecraft.util.datafix.DataFixesManager;
+@@ -40,6 +_,7 @@
+ import net.minecraft.util.registry.DynamicRegistries;
+ import net.minecraft.util.registry.WorldSettingsImport;
+ import net.minecraft.util.text.ITextComponent;
++import net.minecraft.world.Dimension;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldSettings;
 @@ -71,31 +_,77 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
@@ -125,7 +133,7 @@
              return;
           }
  
-@@ -105,24 +_,47 @@
+@@ -105,24 +_,46 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
           String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
@@ -134,7 +142,8 @@
 +            return;
 +         }
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
-          SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
+-         SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
++         SaveFormat.LevelSave saveformat$levelsave = saveformat.createAccess(s, Dimension.field_236053_b_);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
           DatapackCodec datapackcodec = saveformat$levelsave.func_237297_e_();
           boolean flag = optionset.has(optionspec6);
@@ -170,8 +179,7 @@
              datapackregistries = completablefuture.get();
           } catch (Exception exception) {
 -            field_240759_a_.warn("Failed to load datapacks, can't proceed with server load. You can either fix your datapacks or reset to vanilla with --safeMode", (Throwable)exception);
-+            exception.printStackTrace(); // Mohist - Verbose datapack errors
-+            field_240759_a_.warn(com.mohistmc.util.i18n.i18n.get("main.4", (Throwable)exception));
++            field_240759_a_.warn(com.mohistmc.util.i18n.i18n.get("main.4"), (Throwable)exception);
              resourcepacklist.close();
              return;
           }
