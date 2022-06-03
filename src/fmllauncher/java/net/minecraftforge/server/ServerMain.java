@@ -78,7 +78,7 @@ public class ServerMain {
 			MohistMCStart.main();
 			// Mohist end
 			Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
-			Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
+			Class.forName("net.minecraftforge.eventbus.EventBus", false, ClassLoader.getSystemClassLoader());
 		} catch (Exception cnfe) {
 			System.err.println(i18n.get("mohist.start.server.error"));
 			cnfe.printStackTrace();

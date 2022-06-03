@@ -19,10 +19,8 @@
 
 package net.minecraftforge.common;
 
-import com.mohistmc.forge.CustomEventBus;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraft.crash.CrashReport;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +37,7 @@ public class MinecraftForge
      * ORE_GEN_BUS for ore gen events
      * EVENT_BUS for everything else
      */
-    public static final IEventBus EVENT_BUS = CustomEventBus.BUS;
+    public static final IEventBus EVENT_BUS = BusBuilder.builder().startShutdown().build();
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
     private static final Logger LOGGER = LogManager.getLogger();
