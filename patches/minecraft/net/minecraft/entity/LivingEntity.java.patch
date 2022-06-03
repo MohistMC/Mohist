@@ -875,7 +875,7 @@
     protected float func_70672_c(DamageSource p_70672_1_, float p_70672_2_) {
        if (p_70672_1_.func_151517_h()) {
           return p_70672_2_;
-@@ -1447,23 +_,189 @@
+@@ -1447,23 +_,156 @@
     }
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
@@ -901,74 +901,43 @@
 +   protected boolean damageEntity0(final DamageSource damagesource, float f) { // void -> boolean, add final
 +      if (!this.func_180431_b(damagesource)) {
 +         final boolean human = this instanceof PlayerEntity;
-+         if (!human || f > 0) {
-+            f = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damagesource, f);
-+            if (f <= 0) return true;
-+         }
++         f = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damagesource, f);
++         if (f <= 0) return true;
 +         float originalDamage = f;
-+         Function<Double, Double> hardHat = new Function<Double, Double>() {
-+            @Override
-+            public Double apply(Double f) {
-+               if ((damagesource == DamageSource.field_82728_o || damagesource == DamageSource.field_82729_p) && !LivingEntity.this.func_184582_a(EquipmentSlotType.HEAD).func_190926_b()) {
-+                  return -(f - (f * 0.75F));
-+               }
-+               return -0.0;
++         Function<Double, Double> hardHat = f12 -> {
++            if ((damagesource == DamageSource.field_82728_o || damagesource == DamageSource.field_82729_p) && !LivingEntity.this.func_184582_a(EquipmentSlotType.HEAD).func_190926_b()) {
++               return -(f12 - (f12 * 0.75F));
 +            }
++            return -0.0;
 +         };
 +         float hardHatModifier = hardHat.apply((double) f).floatValue();
 +         f += hardHatModifier;
 +
-+         Function<Double, Double> blocking = new Function<Double, Double>() {
-+            @Override
-+            public Double apply(Double f) {
-+               return -((LivingEntity.this.func_184583_d(damagesource)) ? f : 0.0);
-+            }
-+         };
++         Function<Double, Double> blocking = f13 -> -((LivingEntity.this.func_184583_d(damagesource)) ? f13 : 0.0);
 +         float blockingModifier = blocking.apply((double) f).floatValue();
 +         f += blockingModifier;
 +
-+         // Mohist start - Prevent armor break if event is cancelled
-+         float dmgPreArmor = f;
-+         Function<Double, Double> armor = new Function<Double, Double>() {
-+            @Override
-+            public Double apply(Double f) {
-+               return -(f - LivingEntity.this.getDamageAfterArmorAbsorb(damagesource, f.floatValue(), true));
-+            }
-+         };
-+         // Mohist end
++         Function<Double, Double> armor = f14 -> -(f14 - LivingEntity.this.getDamageAfterArmorAbsorb(damagesource, f14.floatValue(), true));
 +         float armorModifier = armor.apply((double) f).floatValue();
 +         f += armorModifier;
 +
-+         Function<Double, Double> resistance = new Function<Double, Double>() {
-+            @Override
-+            public Double apply(Double f) {
-+               if (!damagesource.func_151517_h() && LivingEntity.this.func_70644_a(Effects.field_76429_m) && damagesource != DamageSource.field_76380_i) {
-+                  int i = (LivingEntity.this.func_70660_b(Effects.field_76429_m).func_76458_c() + 1) * 5;
-+                  int j = 25 - i;
-+                  float f1 = f.floatValue() * (float) j;
-+                  return -(f - (f1 / 25.0F));
-+               }
-+               return -0.0;
++         Function<Double, Double> resistance = f15 -> {
++            if (!damagesource.func_151517_h() && LivingEntity.this.func_70644_a(Effects.field_76429_m) && damagesource != DamageSource.field_76380_i) {
++               int i = (LivingEntity.this.func_70660_b(Effects.field_76429_m).func_76458_c() + 1) * 5;
++               int j = 25 - i;
++               float f1 = f15.floatValue() * (float) j;
++               return -(f15 - (f1 / 25.0F));
 +            }
++            return -0.0;
 +         };
 +         float resistanceModifier = resistance.apply((double) f).floatValue();
 +         f += resistanceModifier;
 +
-+         Function<Double, Double> magic = new Function<Double, Double>() {
-+            @Override
-+            public Double apply(Double f) {
-+               return -(f - LivingEntity.this.func_70672_c(damagesource, f.floatValue()));
-+            }
-+         };
++         Function<Double, Double> magic = f16 -> -(f16 - LivingEntity.this.func_70672_c(damagesource, f16.floatValue()));
 +         float magicModifier = magic.apply((double) f).floatValue();
 +         f += magicModifier;
 +
-+         Function<Double, Double> absorption = new Function<Double, Double>() {
-+            @Override
-+            public Double apply(Double f) {
-+               return -(Math.max(f - Math.max(f - LivingEntity.this.func_110139_bj(), 0.0F), 0.0F));
-+            }
-+         };
++         Function<Double, Double> absorption = f17 -> -(Math.max(f17 - Math.max(f17 - LivingEntity.this.func_110139_bj(), 0.0F), 0.0F));
 +         float absorptionModifier = absorption.apply((double) f).floatValue();
 +
 +         EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
@@ -978,11 +947,6 @@
 +         if (event.isCancelled()) {
 +            return false;
 +         }
-+         // Mohist start - Prevent armor break if event is cancelled
-+         else if(!damagesource.func_76363_c()) {
-+            this.func_230294_b_(damagesource, dmgPreArmor);
-+         }
-+         // Mohist end
 +
 +         f = (float) event.getFinalDamage();
 +
@@ -1007,7 +971,7 @@
 +         }
 +
 +         // Apply damage to armor
-+         if (!human && !damagesource.func_76363_c()) {
++         if (!damagesource.func_76363_c()) {
 +            float armorDamage = (float) (event.getDamage() + event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) + event.getDamage(EntityDamageEvent.DamageModifier.HARD_HAT));
 +            this.func_230294_b_(damagesource, armorDamage);
 +         }
@@ -1025,14 +989,17 @@
 +
 +         absorptionModifier = (float) -event.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION);
 +         this.func_110149_m(Math.max(this.func_110139_bj() - absorptionModifier, 0.0F));
-+         f = ForgeHooks.onLivingDamage(this, damagesource, (float)event.getFinalDamage());
 +         float f2 = absorptionModifier;
++
 +         if (f2 > 0.0F && f2 < 3.4028235E37F && this instanceof PlayerEntity) {
 +            ((PlayerEntity) this).func_195067_a(Stats.field_212738_J, Math.round(f2 * 10.0F));
 +         }
 +         if (f2 > 0.0F && f2 < 3.4028235E37F && damagesource.func_76346_g() instanceof ServerPlayerEntity) {
 +            ((ServerPlayerEntity) damagesource.func_76346_g()).func_195067_a(Stats.field_212735_F, Math.round(f2 * 10.0F));
 +         }
++
++         f = ForgeHooks.onLivingDamage(this, damagesource, f);
++
 +         if (f > 0 || !human) {
 +            if (human) {
 +               // PAIL: Be sure to drag all this code from the EntityPlayer subclass each update.
@@ -1046,8 +1013,8 @@
 +            // CraftBukkit end
 +            float f3 = this.func_110143_aJ();
 +
-+            this.func_70606_j(f3 - f);
 +            this.func_110142_aN().func_94547_a(damagesource, f3, f);
++            this.func_70606_j(f3 - f); // Forge: moved to fix MC-121048
 +            // CraftBukkit start
 +            if (!human) {
 +               this.func_110149_m(this.func_110139_bj() - f);

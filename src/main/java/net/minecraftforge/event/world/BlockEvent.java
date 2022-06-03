@@ -30,6 +30,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
@@ -144,6 +145,10 @@ public class BlockEvent extends Event
         private final BlockSnapshot blockSnapshot;
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
+        // Mohist start
+        public static Direction direction = null;
+        public static Hand hand = null;
+        // Mohist end
 
         public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull BlockState placedAgainst, @Nullable Entity entity)
         {
