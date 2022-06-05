@@ -128,11 +128,12 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,155 @@
+@@ -173,35 +_,157 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
++   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
 +
 +   // CraftBukkit start
 +   private int tickPosition;
@@ -245,6 +246,7 @@
 +      uuid = WorldUUID.getUUID(p_i241885_1_.field_71310_m.func_237291_a_(p_i241885_5_));
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
++         worldDataServer.world = this;
 +      }
 +      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;
@@ -955,7 +957,7 @@
                 }
  
                 this.field_217498_x.remove(entity.func_145782_y());
-@@ -876,80 +_,168 @@
+@@ -876,80 +_,170 @@
              }
           }
        }
@@ -992,6 +994,7 @@
 -            enderdragonpartentity.func_70106_y();
 +         for (EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity) p_217484_1_).func_213404_dT()) {
 +            enderdragonpartentity.remove(keepData);
++            this.partEntities.remove(enderdragonpartentity.func_145782_y());
           }
        }
  
@@ -1038,6 +1041,7 @@
 -            for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217465_1_).func_213404_dT()) {
 +            for (EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity) p_217465_1_).func_213404_dT()) {
                 this.field_217498_x.put(enderdragonpartentity.func_145782_y(), enderdragonpartentity);
++               this.partEntities.put(enderdragonpartentity.func_145782_y(), enderdragonpartentity);
              }
           }
  
@@ -1231,7 +1235,7 @@
           this.func_195593_d(p_230547_1_, p_230547_2_);
        }
  
-@@ -1399,15 +_,44 @@
+@@ -1399,15 +_,49 @@
     }
  
     public static void func_241121_a_(ServerWorld p_241121_0_) {
@@ -1273,6 +1277,11 @@
 +
 +   public java.util.stream.Stream<Entity> getEntities() {
 +       return field_217498_x.values().stream();
++   }
++
++   @Override
++   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
++      return this.partEntities.values();
 +   }
 +
 +   public IServerWorldInfo getServerWorldInfo(){

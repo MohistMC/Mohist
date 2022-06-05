@@ -12,7 +12,7 @@
  import java.util.Collection;
  import java.util.Collections;
  import java.util.List;
-@@ -17,17 +_,16 @@
+@@ -17,10 +_,11 @@
  import java.util.stream.Stream;
  import java.util.stream.StreamSupport;
  import javax.annotation.Nullable;
@@ -25,13 +25,6 @@
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.crash.ReportedException;
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityType;
--import net.minecraft.entity.boss.dragon.EnderDragonEntity;
--import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
- import net.minecraft.fluid.Fluid;
- import net.minecraft.fluid.FluidState;
- import net.minecraft.fluid.Fluids;
 @@ -52,13 +_,15 @@
  import net.minecraft.world.gen.feature.structure.StructureStart;
  import net.minecraft.world.lighting.WorldLightManager;
@@ -397,17 +390,6 @@
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -472,8 +_,8 @@
-                   p_177414_3_.add(entity);
-                }
- 
--               if (entity instanceof EnderDragonEntity) {
--                  for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)entity).func_213404_dT()) {
-+               if (entity.isMultipartEntity()) {
-+                  for(net.minecraftforge.entity.PartEntity<?> enderdragonpartentity : entity.getParts()) {
-                      if (enderdragonpartentity != p_177414_1_ && enderdragonpartentity.func_174813_aQ().func_72326_a(p_177414_2_) && (p_177414_4_ == null || p_177414_4_.test(enderdragonpartentity))) {
-                         p_177414_3_.add(enderdragonpartentity);
-                      }
 @@ -486,8 +_,8 @@
     }
  

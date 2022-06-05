@@ -228,7 +228,6 @@ public class NetworkHooks
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
         Container c = containerSupplier.createMenu(openContainerId, player.inventory, player);
-        ContainerType<?> type = c.getType();
         // Mohist start
         c.setTitle(containerSupplier.getDisplayName());
         c = CraftEventFactory.callInventoryOpenEvent(player, c);
@@ -238,6 +237,7 @@ public class NetworkHooks
             }
         }
         // Mohist end
+        ContainerType<?> type = c.getType();
         FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
         FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
 
