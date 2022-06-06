@@ -156,8 +156,9 @@
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
 +
        map.put(this.f_82090_.getRoot(), rootcommandnode);
-       this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
-+
+-      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
++//    FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +      Collection<String> bukkit = new LinkedHashSet<>();
 +      for (CommandNode node : rootcommandnode.getChildren()) {
 +         bukkit.add(node.getName());
