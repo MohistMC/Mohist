@@ -1,0 +1,110 @@
+--- a/net/minecraft/data/tags/TagsProvider.java
++++ b/net/minecraft/data/tags/TagsProvider.java
+@@ -29,10 +_,30 @@
+    protected final DataGenerator.PathProvider f_236439_;
+    protected final Registry<T> f_126540_;
+    protected final Map<ResourceLocation, TagBuilder> f_126543_ = Maps.newLinkedHashMap();
++   protected final String modId;
++   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
++   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
+ 
++   /**
++    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper)
++    * @deprecated Forge: Use the mod id variant
++    */
++   @Deprecated
+    protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_) {
++      this(p_126546_, p_126547_, "vanilla", null);
++   }
++   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
+       this.f_236439_ = p_126546_.m_236036_(DataGenerator.Target.DATA_PACK, TagManager.m_203918_(p_126547_.m_123023_()));
+       this.f_126540_ = p_126547_;
++      this.modId = modId;
++      this.existingFileHelper = existingFileHelper;
++      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_126547_.m_123023_()));
++   }
++
++   // Forge: Allow customizing the path for a given tag or returning null
++   @org.jetbrains.annotations.Nullable
++   protected Path getPath(ResourceLocation id) {
++      return this.f_236439_.m_236048_(id);
+    }
+ 
+    public String m_6055_() {
+@@ -48,12 +_,13 @@
+          List<TagEntry> list = p_236450_.m_215904_();
+          List<TagEntry> list1 = list.stream().filter((p_236444_) -> {
+             return !p_236444_.m_215940_(this.f_126540_::m_7804_, this.f_126543_::containsKey);
+-         }).toList();
++         }).filter(this::missing).collect(Collectors.toList()); // Forge: Add validation via existing resources
+          if (!list1.isEmpty()) {
+             throw new IllegalArgumentException(String.format("Couldn't define tag %s as it is missing following references: %s", p_236449_, list1.stream().map(Objects::toString).collect(Collectors.joining(","))));
+          } else {
+             JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, f_126541_::error);
+-            Path path = this.f_236439_.m_236048_(p_236449_);
++            Path path = this.getPath(p_236449_);
++            if (path == null) return; // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
+ 
+             try {
+                DataProvider.m_236072_(p_236446_, jsonelement, path);
+@@ -65,24 +_,37 @@
+       });
+    }
+ 
++   private boolean missing(TagEntry reference) {
++      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
++      // Optional tags should not be validated
++
++      if (reference.isRequired()) {
++         return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), resourceType);
++      }
++      return false;
++   }
++
+    protected TagsProvider.TagAppender<T> m_206424_(TagKey<T> p_206425_) {
+       TagBuilder tagbuilder = this.m_236451_(p_206425_);
+-      return new TagsProvider.TagAppender<>(tagbuilder, this.f_126540_);
++      return new TagsProvider.TagAppender<>(tagbuilder, this.f_126540_, modId);
+    }
+ 
+    protected TagBuilder m_236451_(TagKey<T> p_236452_) {
+       return this.f_126543_.computeIfAbsent(p_236452_.f_203868_(), (p_236442_) -> {
++         existingFileHelper.trackGenerated(p_236442_, resourceType);
+          return TagBuilder.m_215899_();
+       });
+    }
+ 
+-   protected static class TagAppender<T> {
++   public static class TagAppender<T> implements net.minecraftforge.common.extensions.IForgeTagAppender<T> {
+       private final TagBuilder f_126568_;
+       public final Registry<T> f_126569_;
++      private final String modId;
+ 
+-      TagAppender(TagBuilder p_236454_, Registry<T> p_236455_) {
++      TagAppender(TagBuilder p_236454_, Registry<T> p_236455_, String modId) {
+          this.f_126568_ = p_236454_;
+          this.f_126569_ = p_236455_;
++         this.modId = modId;
+       }
+ 
+       public TagsProvider.TagAppender<T> m_126582_(T p_126583_) {
+@@ -120,6 +_,19 @@
+             this.f_126568_.m_215900_(p_126587_);
+          });
+          return this;
++      }
++
++      public TagsProvider.TagAppender<T> add(TagEntry tag) {
++          f_126568_.m_215902_(tag);
++          return this;
++      }
++
++      public TagBuilder getInternalBuilder() {
++          return f_126568_;
++      }
++
++      public String getModID() {
++          return modId;
+       }
+    }
+ }

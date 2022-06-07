@@ -1,0 +1,51 @@
+--- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
++++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
+@@ -156,6 +_,7 @@
+             return Registry.f_122822_.m_6612_(ResourceLocation.m_135820_(p_188285_));
+          }, p_188233_);
+          chunkaccess = new LevelChunk(p_188231_.m_6018_(), p_188233_, upgradedata, levelchunkticks, levelchunkticks1, j1, alevelchunksection, m_196890_(p_188231_, p_188234_), blendingdata);
++         if (p_188234_.m_128441_("ForgeCaps")) ((LevelChunk)chunkaccess).readCapsFromNBT(p_188234_.m_128469_("ForgeCaps"));
+       } else {
+          ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.m_193302_(p_188234_.m_128437_("block_ticks", 10), (p_196906_) -> {
+             return Registry.f_122824_.m_6612_(ResourceLocation.m_135820_(p_196906_));
+@@ -180,7 +_,7 @@
+          boolean flag3 = chunkstatus.m_62427_(ChunkStatus.f_62323_) || belowzeroretrogen != null && belowzeroretrogen.m_188466_().m_62427_(ChunkStatus.f_62323_);
+          if (!flag && flag3) {
+             for(BlockPos blockpos : BlockPos.m_121976_(p_188233_.m_45604_(), p_188231_.m_141937_(), p_188233_.m_45605_(), p_188233_.m_45608_(), p_188231_.m_151558_() - 1, p_188233_.m_45609_())) {
+-               if (chunkaccess.m_8055_(blockpos).m_60791_() != 0) {
++               if (chunkaccess.m_8055_(blockpos).getLightEmission(chunkaccess, blockpos) != 0) {
+                   protochunk.m_63277_(blockpos);
+                }
+             }
+@@ -219,6 +_,7 @@
+       }
+ 
+       if (chunkstatus$chunktype == ChunkStatus.ChunkType.LEVELCHUNK) {
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(chunkaccess, p_188234_, chunkstatus$chunktype));
+          return new ImposterProtoChunk((LevelChunk)chunkaccess, false);
+       } else {
+          ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
+@@ -252,6 +_,7 @@
+             protochunk1.m_188186_(generationstep$carving, new CarvingMask(compoundtag4.m_128467_(s1), chunkaccess.m_141937_()));
+          }
+ 
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(chunkaccess, p_188234_, chunkstatus$chunktype));
+          return protochunk1;
+       }
+    }
+@@ -359,6 +_,15 @@
+          }
+ 
+          compoundtag.m_128365_("CarvingMasks", compoundtag4);
++      }
++      else {
++          LevelChunk levelChunk = (LevelChunk) p_63456_;
++          try {
++              final CompoundTag capTag = levelChunk.writeCapsToNBT();
++              if (capTag != null) compoundtag.m_128365_("ForgeCaps", capTag);
++          } catch (Exception exception) {
++              f_63449_.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
++          }
+       }
+ 
+       m_188235_(p_63455_, compoundtag, p_63456_.m_183568_());

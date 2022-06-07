@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
++++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -150,7 +_,7 @@
+    public static float m_44833_(ItemStack p_44834_, MobType p_44835_) {
+       MutableFloat mutablefloat = new MutableFloat();
+       m_44850_((p_44887_, p_44888_) -> {
+-         mutablefloat.add(p_44887_.m_7335_(p_44888_, p_44835_));
++         mutablefloat.add(p_44887_.getDamageBonus(p_44888_, p_44835_, p_44834_));
+       }, p_44834_);
+       return mutablefloat.floatValue();
+    }
+@@ -302,7 +_,7 @@
+ 
+    public static int m_220287_(RandomSource p_220288_, int p_220289_, int p_220290_, ItemStack p_220291_) {
+       Item item = p_220291_.m_41720_();
+-      int i = item.m_6473_();
++      int i = p_220291_.getItemEnchantability();
+       if (i <= 0) {
+          return 0;
+       } else {
+@@ -340,7 +_,7 @@
+    public static List<EnchantmentInstance> m_220297_(RandomSource p_220298_, ItemStack p_220299_, int p_220300_, boolean p_220301_) {
+       List<EnchantmentInstance> list = Lists.newArrayList();
+       Item item = p_220299_.m_41720_();
+-      int i = item.m_6473_();
++      int i = p_220299_.getItemEnchantability();
+       if (i <= 0) {
+          return list;
+       } else {
+@@ -396,7 +_,7 @@
+       boolean flag = p_44819_.m_150930_(Items.f_42517_);
+ 
+       for(Enchantment enchantment : Registry.f_122825_) {
+-         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.f_44672_.m_7454_(item) || flag)) {
++         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.canApplyAtEnchantingTable(p_44819_) || (flag && enchantment.isAllowedOnBooks()))) {
+             for(int i = enchantment.m_6586_(); i > enchantment.m_44702_() - 1; --i) {
+                if (p_44818_ >= enchantment.m_6183_(i) && p_44818_ <= enchantment.m_6175_(i)) {
+                   list.add(new EnchantmentInstance(enchantment, i));

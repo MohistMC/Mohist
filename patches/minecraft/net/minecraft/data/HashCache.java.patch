@@ -1,0 +1,15 @@
+--- a/net/minecraft/data/HashCache.java
++++ b/net/minecraft/data/HashCache.java
+@@ -231,10 +_,10 @@
+                bufferedwriter.write(p_236145_);
+                bufferedwriter.newLine();
+ 
+-               for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet()) {
++               for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+                   bufferedwriter.write(entry.getValue().toString());
+                   bufferedwriter.write(32);
+-                  bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString());
++                  bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString().replace("\\", "/")); // Forge: Standardize file paths.
+                   bufferedwriter.newLine();
+                }
+             } catch (Throwable throwable1) {
