@@ -227,6 +227,15 @@ def sharedDeps = {
     installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3'
     compileOnly 'org.jetbrains:annotations:21.0.1'
 
+    // craftbukkit
+    installer 'org.fusesource.jansi:jansi:1.18'
+    installer 'jline:jline:2.12.1'
+    installer 'com.googlecode.json-simple:json-simple:1.1.1'
+    installer 'org.xerial:sqlite-jdbc:3.36.0.3'
+    installer 'mysql:mysql-connector-java:8.0.29'
+    installer 'org.apache.logging.log4j:log4j-iostreams:2.17.1'
+    installer 'net.md-5:SpecialSource:1.11.0'
+
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
     installer 'org.lwjgl:lwjgl-glfw:3.2.2'
