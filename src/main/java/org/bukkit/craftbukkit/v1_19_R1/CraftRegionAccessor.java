@@ -282,7 +282,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         });
     }
 
-    public boolean generateTree(Location location, RandomSource random, TreeType treeType, Predicate<BlockState> predicate) {
+    public boolean generateTree(Location location, Random random, TreeType treeType, Predicate<BlockState> predicate) {
         BlockPos pos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         BlockStateListPopulator populator = new BlockStateListPopulator(getHandle());
         boolean result = generateTree(populator, getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, new RandomSourceWrapper(random), treeType);
@@ -297,7 +297,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         return result;
     }
 
-    public boolean generateTree(WorldGenLevel access, ChunkGenerator chunkGenerator, BlockPos pos, Random random, TreeType treeType) {
+    public boolean generateTree(WorldGenLevel access, ChunkGenerator chunkGenerator, BlockPos pos, RandomSource random, TreeType treeType) {
         Holder<?> gen;
         switch (treeType) {
             case BIG_TREE:

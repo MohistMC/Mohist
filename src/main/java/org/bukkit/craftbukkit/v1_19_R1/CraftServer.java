@@ -7,8 +7,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
-import com.mohistmc.bukkit.nms.utils.RemapUtils;
-import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -126,7 +124,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.craftbukkit.Main;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_19_R1.boss.CraftKeyedBossbar;
@@ -279,7 +276,7 @@ public final class CraftServer implements Server {
         PotionEffectType.stopAcceptingRegistrations();
         // Ugly hack :(
 
-        if (!Main.useConsole) {
+        if (!org.bukkit.craftbukkit.v1_19_R1.Main.useConsole) {
             getLogger().info("Console input is disabled due to --noconsole command argument");
         }
 

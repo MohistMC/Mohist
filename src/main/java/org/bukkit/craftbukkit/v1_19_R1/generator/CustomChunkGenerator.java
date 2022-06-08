@@ -15,12 +15,10 @@ import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
-import net.minecraft.world.level.StructureFeatureManager;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,7 +31,6 @@ import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.blending.Blender;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_19_R1.CraftHeightMap;
@@ -140,7 +137,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
         random = getSeededRandom();
         random.setSeed((long) x * 341873128712L + (long) z * 132897987541L);
-        generator.generateBedrock(this.world.getWorld(), random, x, z, chunkData);
+        generator.generateBedrock(this.world.getWorld(), new RandomSourceWrapper.RandomWrapper(random), x, z, chunkData);
         chunkData.breakLink();
 
         // return if new api is used
@@ -220,7 +217,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
     @Override
     public void applyCarvers(WorldGenRegion regionlimitedworldaccess, long seed, RandomState randomstate, BiomeManager biomemanager, StructureManager structuremanager, ChunkAccess ichunkaccess, GenerationStep.Carving worldgenstage_features) {
         if (generator.shouldGenerateCaves()) {
-            delegate.applyCarvers(regionlimitedworldaccess, seed, biomemanager, structuremanager, ichunkaccess, worldgenstage_features);
+            delegate.applyCarvers(regionlimitedworldaccess, seed, randomstate, biomemanager, structuremanager, ichunkaccess, worldgenstage_features);
         }
 
         if (worldgenstage_features == GenerationStep.Carving.LIQUID) { // stage check ensures that the method is only called once

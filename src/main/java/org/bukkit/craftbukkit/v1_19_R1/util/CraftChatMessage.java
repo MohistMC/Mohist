@@ -389,7 +389,7 @@ public final class CraftChatMessage {
         for (int i = 0; i < extras.size(); i++) {
             Component comp = extras.get(i);
             if (comp.getStyle() != null && comp.getStyle().getClickEvent() == null) {
-                extras.set(i, fixComponent(comp.copy(),, matcher));
+                extras.set(i, fixComponent(comp.copy(), matcher));
             }
         }
 
