@@ -219,6 +219,14 @@ def sharedDeps = {
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
 
+    // bukkit
+    //installer 'commons-lang:commons-lang:2.6'
+    installer 'org.yaml:snakeyaml:1.30'
+    installer 'org.apache.maven:maven-resolver-provider:3.8.5'
+    installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3'
+    installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3'
+    compileOnly 'org.jetbrains:annotations:21.0.1'
+
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
     installer 'org.lwjgl:lwjgl-glfw:3.2.2'
