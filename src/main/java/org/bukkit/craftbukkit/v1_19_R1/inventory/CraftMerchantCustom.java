@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_19_R1.inventory;
 
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;

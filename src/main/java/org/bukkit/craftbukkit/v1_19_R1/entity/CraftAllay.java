@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.v1_19_R1.entity;
 
 import net.minecraft.world.entity.animal.allay.Allay;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 

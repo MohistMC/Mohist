@@ -646,4 +646,14 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      */
     @NotNull
     SpawnCategory getSpawnCategory();
+
+    // Spigot start
+    public class Spigot extends CommandSender.Spigot {
+
+    }
+
+    @NotNull
+    @Override
+    Spigot spigot();
+    // Spigot end
 }

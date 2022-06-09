@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.v1_19_R1.event;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
-import com.mohistmc.MohistMC;
 import com.mojang.datafixers.util.Either;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -1620,7 +1619,7 @@ public class CraftEventFactory {
         try {
             owner = inventory.getOwner();
         }catch ( AbstractMethodError error ){
-            MohistMC.LOGGER.error( "An error occurred while handling Mod inventory: "+error.getMessage() );
+            //MohistMC.LOGGER.error( "An error occurred while handling Mod inventory: "+error.getMessage() );
             owner = null;
         }
 

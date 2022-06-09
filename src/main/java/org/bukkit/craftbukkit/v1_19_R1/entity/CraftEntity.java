@@ -47,6 +47,7 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.EntityEffect;
@@ -273,7 +274,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else { return new MohistModsEntity( server, entity ); }
         }
         else if (entity instanceof Boat) {
-            if (entity instanceof Boat) { return new CraftChestBoat(server, (Boat) entity); }
+            if (entity instanceof ChestBoat) { return new CraftChestBoat(server, (ChestBoat) entity); }
             else { return new CraftBoat(server, (Boat) entity); }
         }
         else if (entity instanceof net.minecraft.world.entity.projectile.AbstractHurtingProjectile) {

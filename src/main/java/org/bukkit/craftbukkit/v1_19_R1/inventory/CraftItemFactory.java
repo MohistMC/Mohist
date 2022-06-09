@@ -354,9 +354,9 @@ public final class CraftItemFactory implements ItemFactory {
     @Override
     public ItemStack createItemStack(String input) throws IllegalArgumentException {
         try {
-            ItemParser arg = new ItemParser.parseForItem(HolderLookup.forRegistry(Registry.REGISTRY.ITEM), new StringReader(input)); // false = no tags
+            ItemParser.ItemResult arg = ItemParser.parseForItem(HolderLookup.forRegistry(Registry.REGISTRY.ITEM), new StringReader(input)); // false = no tags
 
-            Item item = arg..item().value();
+            Item item = arg.item().value();
             net.minecraft.world.item.ItemStack nmsItemStack = new net.minecraft.world.item.ItemStack(item);
 
             CompoundTag nbt = arg.nbt();

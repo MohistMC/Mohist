@@ -5,10 +5,15 @@
 
 package net.minecraftforge.items.wrapper;
 
+import java.util.List;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.InventoryHolder;
 
 public class RecipeWrapper implements Container {
 
@@ -82,6 +87,44 @@ public class RecipeWrapper implements Container {
     public boolean canPlaceItem(int slot, ItemStack stack)
     {
         return inv.isItemValid(slot, stack);
+    }
+
+    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
+    private int maxStack = MAX_STACK;
+
+    @Override
+    public List<ItemStack> getContents() {
+        return null;
+    }
+
+    @Override
+    public void onOpen(CraftHumanEntity who) {
+
+    }
+
+    @Override
+    public void onClose(CraftHumanEntity who) {
+
+    }
+
+    @Override
+    public List<HumanEntity> getViewers() {
+        return null;
+    }
+
+    @Override
+    public InventoryHolder getOwner() {
+        return null;
+    }
+
+    @Override
+    public void setMaxStackSize(int size) {
+        maxStack = size;
+    }
+
+    @Override
+    public Location getLocation() {
+        return null;
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.bukkit;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.mohistmc.dynamicenumutil.MohistEnumHelper;
 import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.Map;
@@ -4061,6 +4062,7 @@ public enum Material implements Keyed {
     public static final String LEGACY_PREFIX = "LEGACY_";
 
     private final int id;
+    private int blockID;
     private final Constructor<? extends MaterialData> ctor;
     private static final Map<String, Material> BY_NAME = Maps.newHashMap();
     private final int maxStack;
@@ -4069,9 +4071,29 @@ public enum Material implements Keyed {
     private final boolean legacy;
     private final NamespacedKey key;
 
+    private String modName;
+    private NamespacedKey keyForge;
+    private boolean isForgeBlock = false;
+
     private Material(final int id) {
         this(id, 64);
     }
+
+    // Mohist start - constructor used to set if the Material is a block or not
+    private Material(final int id, boolean flag) {
+        this(id, 64);
+        this.isForgeBlock = flag;
+    }
+    // Mohist end
+
+    // Mohist start - constructor used to set if block is modded
+    private Material(final int id, boolean flag, String modName) {
+        this(id, 64);
+        this.isForgeBlock = flag;
+        this.modName = modName;
+        this.keyForge = new NamespacedKey(modName, this.name().toLowerCase(Locale.ROOT).substring(modName.length() + 1));
+    }
+    // Mohist end
 
     private Material(final int id, final int stack) {
         this(id, stack, MaterialData.class);
@@ -10140,4 +10162,46 @@ public enum Material implements Keyed {
         return Bukkit.getUnsafe().getCreativeCategory(this);
     }
 
+    // use a normalize() function to ensure it is accessible after a round-trip
+    public static String normalizeName(String name) {
+        return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
+    }
+
+    public static Material addMaterial(String materialName, int id, boolean isBlock) {
+        // Forge Blocks
+        if (isBlock) {
+            Material material = BY_NAME.get(materialName);
+            if (material != null){
+                material.blockID = id;
+                material.isForgeBlock = true;
+            }else {
+                material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, true});
+            }
+            BY_NAME.put(materialName, material);
+            return material;
+        } else { // Forge Items
+            Material material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, false});
+            BY_NAME.put(materialName, material);
+            return material;
+        }
+    }
+
+    public static Material addMaterial(String materialName, int id, boolean isBlock, String modName) {
+        // Forge Blocks
+        if (isBlock) {
+            Material material = BY_NAME.get(materialName);
+            if (material != null){
+                material.blockID = id;
+                material.isForgeBlock = true;
+            }else {
+                material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, true, modName});
+            }
+            BY_NAME.put(materialName, material);
+            return material;
+        } else { // Forge Items
+            Material material = (Material) MohistEnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, false, modName});
+            BY_NAME.put(materialName, material);
+            return material;
+        }
+    }
 }

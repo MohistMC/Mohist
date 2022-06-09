@@ -3,20 +3,22 @@
  */
 package org.bukkit.craftbukkit.v1_19_R1.block.impl;
 
-public final class CraftSculkShrieker extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.SculkShrieker, org.bukkit.block.data.Waterlogged {
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
+
+public final class CraftSculkShrieker extends CraftBlockData implements org.bukkit.block.data.type.SculkShrieker, org.bukkit.block.data.Waterlogged {
 
     public CraftSculkShrieker() {
         super();
     }
 
-    public CraftSculkShrieker(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSculkShrieker(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftSculkShrieker
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean CAN_SUMMON = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "can_summon");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean SHRIEKING = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "shrieking");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty CAN_SUMMON = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "can_summon");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty SHRIEKING = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "shrieking");
 
     @Override
     public boolean isCanSummon() {
@@ -40,7 +42,7 @@ public final class CraftSculkShrieker extends org.bukkit.craftbukkit.block.data.
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

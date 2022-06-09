@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_19_R1.block;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.bukkit.DyeColor;

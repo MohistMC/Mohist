@@ -124,6 +124,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.craftbukkit.Main;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_19_R1.boss.CraftKeyedBossbar;
@@ -276,7 +277,7 @@ public final class CraftServer implements Server {
         PotionEffectType.stopAcceptingRegistrations();
         // Ugly hack :(
 
-        if (!org.bukkit.craftbukkit.v1_19_R1.Main.useConsole) {
+        if (!Main.useConsole) {
             getLogger().info("Console input is disabled due to --noconsole command argument");
         }
 
@@ -364,7 +365,6 @@ public final class CraftServer implements Server {
     }
 
     public void loadPlugins() {
-        RemapUtils.init();
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) console.options.valueOf("plugins");

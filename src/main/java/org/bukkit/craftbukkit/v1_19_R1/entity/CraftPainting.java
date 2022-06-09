@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_19_R1.entity;
 
 import net.minecraft.core.Holder;
-import net.minecraft.world.entity.decoration.Motive;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import org.bukkit.Art;
 import org.bukkit.block.BlockFace;

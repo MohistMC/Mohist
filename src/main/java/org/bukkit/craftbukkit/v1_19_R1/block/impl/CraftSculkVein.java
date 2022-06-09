@@ -3,19 +3,21 @@
  */
 package org.bukkit.craftbukkit.v1_19_R1.block.impl;
 
-public final class CraftSculkVein extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Waterlogged {
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
+
+public final class CraftSculkVein extends CraftBlockData implements org.bukkit.block.data.Waterlogged {
 
     public CraftSculkVein() {
         super();
     }
 
-    public CraftSculkVein(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSculkVein(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

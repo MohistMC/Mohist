@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.v1_19_R1.entity;
 
-import net.minecraft.resources.MinecraftKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.vehicle.ChestBoat;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_19_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.loot.LootTable;
@@ -47,7 +47,7 @@ public class CraftChestBoat extends CraftBoat implements org.bukkit.entity.Chest
 
     @Override
     public LootTable getLootTable() {
-        MinecraftKey nmsTable = getHandle().getLootTable();
+        ResourceLocation nmsTable = getHandle().getLootTable();
         if (nmsTable == null) {
             return null; // return empty loot table?
         }
@@ -67,7 +67,7 @@ public class CraftChestBoat extends CraftBoat implements org.bukkit.entity.Chest
     }
 
     private void setLootTable(LootTable table, long seed) {
-        MinecraftKey newKey = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
+        ResourceLocation newKey = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
         getHandle().setLootTable(newKey);
         getHandle().setLootTableSeed(seed);
     }

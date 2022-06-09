@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.v1_19_R1.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.monster.warden.Warden;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 

@@ -1,7 +1,6 @@
 package org.spigotmc;
 
 import com.google.common.base.Throwables;
-import com.mohistmc.util.i18n.i18n;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

@@ -3,20 +3,22 @@
  */
 package org.bukkit.craftbukkit.v1_19_R1.block.impl;
 
-public final class CraftMangroveLeaves extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Leaves {
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
+
+public final class CraftMangroveLeaves extends CraftBlockData implements org.bukkit.block.data.type.Leaves {
 
     public CraftMangroveLeaves() {
         super();
     }
 
-    public CraftMangroveLeaves(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftMangroveLeaves(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftLeaves
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger DISTANCE = getInteger(net.minecraft.world.level.block.MangroveLeavesBlock.class, "distance");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean PERSISTENT = getBoolean(net.minecraft.world.level.block.MangroveLeavesBlock.class, "persistent");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty DISTANCE = getInteger(net.minecraft.world.level.block.MangroveLeavesBlock.class, "distance");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty PERSISTENT = getBoolean(net.minecraft.world.level.block.MangroveLeavesBlock.class, "persistent");
 
     @Override
     public boolean isPersistent() {
