@@ -1,5 +1,94 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.inventory;
+ 
++import com.google.common.base.Preconditions;
+ import com.google.common.base.Suppliers;
+ import com.google.common.collect.HashBasedTable;
+ import com.google.common.collect.Lists;
+@@ -19,6 +_,7 @@
+ import net.minecraft.ReportedException;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.Registry;
++import net.minecraft.network.chat.Component;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.Container;
+@@ -28,6 +_,13 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.entity.BlockEntity;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryView;
++import org.bukkit.event.Event;
++import org.bukkit.event.inventory.InventoryDragEvent;
++import org.bukkit.event.inventory.InventoryType;
++import org.bukkit.inventory.InventoryView;
+ import org.slf4j.Logger;
+ 
+ public abstract class AbstractContainerMenu {
+@@ -59,6 +_,59 @@
+    private ContainerSynchronizer f_150397_;
+    private boolean f_150398_;
+ 
++   // CraftBukkit star
++   private CraftInventoryView bukkitEntity = null;
++   public boolean checkReachable = true;
++   // Mohist start
++   public InventoryView bukkitView = null;
++   public InventoryView getBukkitView(){
++      return bukkitView;
++   }
++
++   public void setBukkitView(InventoryView iv) {
++      bukkitView = iv;
++   }
++   // Mohist end
++   public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
++      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
++      if (source != null) {
++         try {
++            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++      }
++      if (destination != null) {
++         try {
++            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++
++         try {
++            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
++         } catch (AbstractMethodError ex) {
++            // modded
++         }
++      }
++   }
++   private Component title;
++   public Component getTitle() {
++      Preconditions.checkState(this.title != null, "Title not set");
++      return this.title;
++   }
++   public void setTitle(Component title) {
++      Preconditions.checkState(this.title == null, "Title already set");
++      this.title = title;
++   }
++   // CraftBukkit end
++
+    protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
+       this.f_38843_ = p_38851_;
+       this.f_38840_ = p_38852_;
 @@ -211,9 +_,11 @@
     private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
        ItemStack itemstack = this.f_38841_.get(p_150408_);
@@ -41,3 +130,25 @@
        }
  
        p_38925_.m_41769_(p_38926_);
+@@ -793,7 +_,21 @@
+    }
+ 
+    public int m_182425_() {
++      // CraftBukkit start
++      if (this.f_150393_.m_41619_()) {
++         this.m_142503_(ItemStack.f_41583_);
++      }
++      // CraftBukkit end
+       this.f_182405_ = this.f_182405_ + 1 & 32767;
+       return this.f_182405_;
+    }
++
++   // CraftBukkit start
++   public void broadcastCarriedItem() {
++      this.f_150396_ = this.m_142621_().m_41777_();
++      if (this.f_150397_ != null) {
++         this.f_150397_.m_142529_(this, this.f_150396_);
++      }
++   }
++   // CraftBukkit end
+ }

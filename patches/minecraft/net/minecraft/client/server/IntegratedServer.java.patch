@@ -1,5 +1,30 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
+@@ -14,6 +_,7 @@
+ import net.minecraft.SharedConstants;
+ import net.minecraft.SystemReport;
+ import net.minecraft.client.Minecraft;
++import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.Services;
+ import net.minecraft.server.WorldStem;
+@@ -27,6 +_,7 @@
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.command.CommandSender;
+ import org.slf4j.Logger;
+ 
+ @OnlyIn(Dist.CLIENT)
+@@ -45,7 +_,7 @@
+    private int f_194467_ = 0;
+ 
+    public IntegratedServer(Thread p_235248_, Minecraft p_235249_, LevelStorageSource.LevelStorageAccess p_235250_, PackRepository p_235251_, WorldStem p_235252_, Services p_235253_, ChunkProgressListenerFactory p_235254_) {
+-      super(p_235248_, p_235250_, p_235251_, p_235252_, p_235249_.m_91096_(), p_235249_.m_91295_(), p_235253_, p_235254_);
++      super(null, null, null, p_235248_, p_235250_, p_235251_, p_235252_, p_235249_.m_91096_(), p_235249_.m_91295_(), p_235253_, p_235254_);
+       this.m_236740_(p_235249_.m_91094_().m_92548_());
+       this.m_129975_(p_235249_.m_91402_());
+       this.m_129823_(new IntegratedPlayerList(this, this.m_206579_(), this.f_129745_));
 @@ -58,11 +_,12 @@
        this.m_129997_(true);
        this.m_129999_(true);
@@ -14,6 +39,18 @@
     }
  
     public void m_5705_(BooleanSupplier p_120049_) {
+@@ -112,6 +_,11 @@
+       return true;
+    }
+ 
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return null;
++   }
++
+    public File m_6237_() {
+       return this.f_120015_.f_91069_;
+    }
 @@ -178,6 +_,7 @@
     }
  

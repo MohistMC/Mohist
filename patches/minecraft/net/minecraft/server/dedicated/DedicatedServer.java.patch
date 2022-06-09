@@ -1,5 +1,46 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -4,6 +_,7 @@
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
++import com.mojang.serialization.DynamicOps;
+ import java.io.BufferedReader;
+ import java.io.IOException;
+ import java.io.InputStreamReader;
+@@ -27,6 +_,7 @@
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.NonNullList;
++import net.minecraft.nbt.Tag;
+ import net.minecraft.server.ConsoleInput;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.ServerInterface;
+@@ -49,11 +_,13 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.CreativeModeTab;
+ import net.minecraft.world.item.Items;
++import net.minecraft.world.level.DataPackConfig;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.entity.SkullBlockEntity;
+ import net.minecraft.world.level.storage.LevelStorageSource;
++import org.bukkit.command.CommandSender;
+ import org.slf4j.Logger;
+ 
+ public class DedicatedServer extends MinecraftServer implements ServerInterface {
+@@ -72,8 +_,8 @@
+    @Nullable
+    private final TextFilterClient f_139606_;
+ 
+-   public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
+-      super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
++   public DedicatedServer(joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, DynamicOps<Tag> registryreadops, Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
++      super(p_139607_, p_139608_, registryreadops, p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
+       this.f_139604_ = p_214793_;
+       this.f_139602_ = new RconConsoleSource(this);
+       this.f_139606_ = TextFilterClient.m_143736_(p_214793_.m_139777_().f_139724_);
 @@ -82,6 +_,7 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
@@ -37,3 +78,14 @@
        }
     }
  
+@@ -546,5 +_,10 @@
+ 
+    public Optional<MinecraftServer.ServerResourcePackInfo> m_214042_() {
+       return this.f_139604_.m_139777_().f_214802_;
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return console;
+    }
+ }

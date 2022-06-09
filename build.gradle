@@ -1025,7 +1025,6 @@ project(':forge') {
     }
 
     genPatches {
-        finalizedBy checkPatches
         autoHeader true
         lineEnding = '\n'
     }

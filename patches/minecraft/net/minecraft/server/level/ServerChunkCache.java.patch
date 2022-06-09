@@ -8,6 +8,22 @@
              Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.m_140080_(ChunkStatus.f_62326_).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
              if (either == null) {
                 return null;
+@@ -295,6 +_,15 @@
+    }
+ 
+    public void close() throws IOException {
++      // CraftBukkit start
++      close(true);
++   }
++
++   public void close(boolean save) throws IOException {
++      if (save) {
++         this.m_8419_(true);
++      }
++      // CraftBukkit end
+       this.m_8419_(true);
+       this.f_8331_.close();
+       this.f_8325_.close();
 @@ -349,7 +_,7 @@
           for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
              LevelChunk levelchunk1 = serverchunkcache$chunkandholder.f_184028_;
@@ -17,18 +33,39 @@
                 levelchunk1.m_187632_(j);
                 if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
                    NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);
-@@ -431,6 +_,14 @@
- 
-    public <T> void m_8438_(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
+@@ -433,6 +_,14 @@
        this.f_8327_.m_140849_(p_8439_, p_8440_, p_8441_, p_8442_);
-+   }
-+
+    }
+ 
 +   public <T> void registerTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
 +      this.f_8327_.registerTicking(type, pos, distance, value);
 +   }
 +
 +   public <T> void releaseTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
 +      this.f_8327_.releaseTicking(type, pos, distance, value);
++   }
++
+    public void m_6692_(ChunkPos p_8400_, boolean p_8401_) {
+       this.f_8327_.m_140799_(p_8400_, p_8401_);
+    }
+@@ -499,7 +_,19 @@
+       this.f_8327_.m_201910_();
     }
  
-    public void m_6692_(ChunkPos p_8400_, boolean p_8401_) {
+-   static record ChunkAndHolder(LevelChunk f_184028_, ChunkHolder f_184029_) {
++   // CraftBukkit start - modelled on below
++   public void purgeUnload() {
++      this.f_8329_.m_46473_().m_6180_("purge");
++      this.f_8327_.m_140776_();
++      this.m_8489_();
++      this.f_8329_.m_46473_().m_6182_("unload");
++      this.f_8325_.m_140280_(() -> true);
++      this.f_8329_.m_46473_().m_7238_();
++      this.m_8488_();
++   }
++   // CraftBukkit end
++
++    static record ChunkAndHolder(LevelChunk f_184028_, ChunkHolder f_184029_) {
+    }
+ 
+    final class MainThreadExecutor extends BlockableEventLoop<Runnable> {

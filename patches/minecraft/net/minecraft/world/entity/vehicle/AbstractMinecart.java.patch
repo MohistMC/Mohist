@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -46,7 +_,7 @@
+@@ -45,8 +_,9 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.util.Vector;
  
 -public abstract class AbstractMinecart extends Entity {
 +public abstract class AbstractMinecart extends Entity implements net.minecraftforge.common.extensions.IForgeAbstractMinecart {
@@ -17,11 +19,22 @@
     private int f_38070_;
     private double f_38071_;
     private double f_38072_;
-@@ -85,6 +_,7 @@
+@@ -85,6 +_,18 @@
     private double f_38076_;
     private double f_38077_;
     private double f_38078_;
 +   private boolean canBePushed = true;
++
++   // CraftBukkit start
++   public boolean slowWhenEmpty = true;
++   private double derailedX = 0.5;
++   private double derailedY = 0.5;
++   private double derailedZ = 0.5;
++   private double flyingX = 0.95;
++   private double flyingY = 0.95;
++   private double flyingZ = 0.95;
++   public double maxSpeed = 0.4D;
++   // CraftBukkit end
  
     protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
        super(p_38087_, p_38088_);
@@ -224,11 +237,10 @@
                          p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
                          p_38165_.m_5997_(vec32.f_82479_ + d0, 0.0D, vec32.f_82481_ + d1);
                          this.m_20256_(vec32.m_82542_(0.95D, 1.0D, 0.95D));
-@@ -808,6 +_,42 @@
-    public Packet<?> m_5654_() {
+@@ -809,6 +_,42 @@
        return new ClientboundAddEntityPacket(this);
     }
-+
+ 
 +   // Forge Start
 +   private boolean canUseRail = true;
 +   @Override public boolean canUseRail() { return canUseRail; }
@@ -264,6 +276,34 @@
 +      mc.m_6478_(MoverType.SELF, new Vec3(Mth.m_14008_(d24 * vec3d1.f_82479_, -d25, d25), 0.0D, Mth.m_14008_(d24 * vec3d1.f_82481_, -d25, d25)));
 +   }
 +   // Forge end
- 
++
     public ItemStack m_142340_() {
        Item item;
+       switch (this.m_6064_()) {
+@@ -843,4 +_,26 @@
+       HOPPER,
+       COMMAND_BLOCK;
+    }
++
++   // CraftBukkit start - Methods for getting and setting flying and derailed velocity modifiers
++   public Vector getFlyingVelocityMod() {
++      return new Vector(flyingX, flyingY, flyingZ);
++   }
++
++   public void setFlyingVelocityMod(Vector flying) {
++      flyingX = flying.getX();
++      flyingY = flying.getY();
++      flyingZ = flying.getZ();
++   }
++
++   public Vector getDerailedVelocityMod() {
++      return new Vector(derailedX, derailedY, derailedZ);
++   }
++
++   public void setDerailedVelocityMod(Vector derailed) {
++      derailedX = derailed.getX();
++      derailedY = derailed.getY();
++      derailedZ = derailed.getZ();
++   }
++   // CraftBukkit end
+ }

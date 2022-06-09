@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/level/block/ComposterBlock.java
++++ b/net/minecraft/world/level/block/ComposterBlock.java
+@@ -306,7 +_,7 @@
+       }
+    }
+ 
+-   static class EmptyContainer extends SimpleContainer implements WorldlyContainer {
++   public static class EmptyContainer extends SimpleContainer implements WorldlyContainer {
+       public EmptyContainer() {
+          super(0);
+       }
+@@ -324,7 +_,7 @@
+       }
+    }
+ 
+-   static class InputContainer extends SimpleContainer implements WorldlyContainer {
++   public static class InputContainer extends SimpleContainer implements WorldlyContainer {
+       private final BlockState f_52017_;
+       private final LevelAccessor f_52018_;
+       private final BlockPos f_52019_;
+@@ -365,7 +_,7 @@
+       }
+    }
+ 
+-   static class OutputContainer extends SimpleContainer implements WorldlyContainer {
++   public static class OutputContainer extends SimpleContainer implements WorldlyContainer {
+       private final BlockState f_52037_;
+       private final LevelAccessor f_52038_;
+       private final BlockPos f_52039_;

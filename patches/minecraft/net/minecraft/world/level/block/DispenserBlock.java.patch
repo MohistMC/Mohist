@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/DispenserBlock.java
++++ b/net/minecraft/world/level/block/DispenserBlock.java
+@@ -73,7 +_,7 @@
+       }
+    }
+ 
+-   protected void m_5824_(ServerLevel p_52665_, BlockPos p_52666_) {
++   public void m_5824_(ServerLevel p_52665_, BlockPos p_52666_) {
+       BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_52665_, p_52666_);
+       DispenserBlockEntity dispenserblockentity = blocksourceimpl.m_8118_();
+       int i = dispenserblockentity.m_222761_(p_52665_.f_46441_);

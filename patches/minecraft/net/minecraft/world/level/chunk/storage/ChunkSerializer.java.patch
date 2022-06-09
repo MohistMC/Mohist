@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
+@@ -61,7 +_,7 @@
+ import org.slf4j.Logger;
+ 
+ public class ChunkSerializer {
+-   private static final Codec<PalettedContainer<BlockState>> f_188227_ = PalettedContainer.m_238371_(Block.f_49791_, BlockState.f_61039_, PalettedContainer.Strategy.f_188137_, Blocks.f_50016_.m_49966_());
++   public static final Codec<PalettedContainer<BlockState>> f_188227_ = PalettedContainer.m_238371_(Block.f_49791_, BlockState.f_61039_, PalettedContainer.Strategy.f_188137_, Blocks.f_50016_.m_49966_());
+    private static final Logger f_63449_ = LogUtils.getLogger();
+    private static final String f_156511_ = "UpgradeData";
+    private static final String f_188228_ = "block_ticks";
+@@ -115,7 +_,7 @@
+                palettedcontainerro = new PalettedContainer<>(registry.m_206115_(), registry.m_206081_(Biomes.f_48202_), PalettedContainer.Strategy.f_188138_);
+             }
+ 
+-            LevelChunkSection levelchunksection = new LevelChunkSection(k, palettedcontainer, palettedcontainerro);
++            LevelChunkSection levelchunksection = new LevelChunkSection(k, palettedcontainer, (PalettedContainer) palettedcontainerro);
+             alevelchunksection[l] = levelchunksection;
+             p_188232_.m_27047_(p_188233_, levelchunksection);
+          }
 @@ -156,6 +_,7 @@
              return Registry.f_122822_.m_6612_(ResourceLocation.m_135820_(p_188285_));
           }, p_188233_);

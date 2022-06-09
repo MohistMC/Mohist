@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -113,7 +_,8 @@
+@@ -111,9 +_,11 @@
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
  import org.slf4j.Logger;
  
 -public abstract class Player extends LivingEntity {
@@ -10,13 +13,23 @@
     private static final Logger f_219722_ = LogUtils.getLogger();
     public static final int f_150082_ = 16;
     public static final int f_150083_ = 20;
-@@ -168,6 +_,9 @@
+@@ -168,6 +_,19 @@
     private Optional<GlobalPos> f_238176_ = Optional.empty();
     @Nullable
     public FishingHook f_36083_;
 +   private final java.util.Collection<MutableComponent> prefixes = new java.util.LinkedList<>();
 +   private final java.util.Collection<MutableComponent> suffixes = new java.util.LinkedList<>();
 +   @Nullable private Pose forcedPose;
++
++   // CraftBukkit start
++   public boolean fauxSleeping;
++   public int oldLevel = -1;
++
++   @Override
++   public CraftHumanEntity getBukkitEntity() {
++      return (CraftHumanEntity) super.getBukkitEntity();
++   }
++   // CraftBukkit end
  
     public Player(Level p_219727_, BlockPos p_219728_, float p_219729_, GameProfile p_219730_, @Nullable ProfilePublicKey p_219731_) {
        super(EntityType.f_20532_, p_219727_);
@@ -65,6 +78,15 @@
        if (this.m_20175_(Pose.SWIMMING)) {
           Pose pose;
           if (this.m_21255_()) {
+@@ -416,7 +_,7 @@
+       return SoundSource.PLAYERS;
+    }
+ 
+-   protected int m_6101_() {
++   public int m_6101_() {
+       return 20;
+    }
+ 
 @@ -577,6 +_,7 @@
     }
  
@@ -304,9 +326,21 @@
           this.m_5810_();
           this.f_19853_.m_7605_(this, (byte)30);
        }
-@@ -1292,6 +_,7 @@
+@@ -1285,13 +_,18 @@
+    public void m_141945_(ItemStack p_150098_, ItemStack p_150099_, ClickAction p_150100_) {
     }
  
+-   public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_36203_) {
++   public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_36203_, boolean force) {
+       this.m_5802_(p_36203_);
+       this.f_36110_ = 0;
+       return Either.right(Unit.INSTANCE);
+    }
+ 
++   public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_36203_) {
++      return this.startSleepInBed(p_36203_, false);
++   }
++
     public void m_6145_(boolean p_36226_, boolean p_36227_) {
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_36226_, p_36227_);
        super.m_5796_();
@@ -380,6 +414,24 @@
 +      mutablecomponent = mutablecomponent.m_7220_(PlayerTeam.m_83348_(this.m_5647_(), this.displayname));
 +      mutablecomponent = suffixes.stream().reduce(mutablecomponent, MutableComponent::m_7220_);
        return this.m_36218_(mutablecomponent);
+    }
+ 
+@@ -1859,7 +_,7 @@
+       return this.f_19804_.m_135370_(f_36091_);
+    }
+ 
+-   protected void m_36362_(CompoundTag p_36363_) {
++   public void m_36362_(CompoundTag p_36363_) {
+       this.f_19804_.m_135381_(f_36091_, p_36363_);
+    }
+ 
+@@ -1867,7 +_,7 @@
+       return this.f_19804_.m_135370_(f_36092_);
+    }
+ 
+-   protected void m_36364_(CompoundTag p_36365_) {
++   public void m_36364_(CompoundTag p_36365_) {
+       this.f_19804_.m_135381_(f_36092_, p_36365_);
     }
  
 @@ -1919,24 +_,24 @@

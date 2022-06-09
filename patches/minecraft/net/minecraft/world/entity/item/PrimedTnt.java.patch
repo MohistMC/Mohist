@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/item/PrimedTnt.java
++++ b/net/minecraft/world/entity/item/PrimedTnt.java
+@@ -22,6 +_,8 @@
+    private static final int f_149679_ = 80;
+    @Nullable
+    public LivingEntity f_32072_;
++   public float yield = 4; // CraftBukkit - add field
++   public boolean isIncendiary = false; // CraftBukkit - add field
+ 
+    public PrimedTnt(EntityType<? extends PrimedTnt> p_32076_, Level p_32077_) {
+       super(p_32076_, p_32077_);

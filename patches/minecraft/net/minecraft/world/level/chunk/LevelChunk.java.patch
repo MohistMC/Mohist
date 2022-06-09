@@ -1,7 +1,11 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -48,7 +_,7 @@
+@@ -46,9 +_,11 @@
+ import net.minecraft.world.level.material.Fluids;
+ import net.minecraft.world.ticks.LevelChunkTicks;
  import net.minecraft.world.ticks.TickContainerAccess;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataTypeRegistry;
  import org.slf4j.Logger;
  
 -public class LevelChunk extends ChunkAccess {
@@ -9,14 +13,45 @@
     static final Logger f_62771_ = LogUtils.getLogger();
     private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
        public void m_142224_() {
-@@ -96,6 +_,7 @@
+@@ -78,6 +_,19 @@
+    private final LevelChunkTicks<Block> f_62784_;
+    private final LevelChunkTicks<Fluid> f_187943_;
+ 
++   public org.bukkit.Chunk bukkitChunk;
++
++   public org.bukkit.Chunk getBukkitChunk ( )
++   {
++      return bukkitChunk;
++   }
++
++   public boolean mustNotSave;
++   public boolean needsDecoration;
++   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataTypeRegistry();
++   public CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer( DATA_TYPE_REGISTRY );
++   // CraftBukkit end
++
+    public LevelChunk(Level p_187945_, ChunkPos p_187946_) {
+       this(p_187945_, p_187946_, UpgradeData.f_63320_, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, (LevelChunkSection[])null, (LevelChunk.PostLoadProcessor)null, (BlendingData)null);
+    }
+@@ -96,6 +_,8 @@
        this.f_62791_ = p_196861_;
        this.f_62784_ = p_196857_;
        this.f_187943_ = p_196858_;
 +      this.capProvider.initInternal();
++      this.bukkitChunk = new org.bukkit.craftbukkit.v1_19_R1.CraftChunk( this );
     }
  
     public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
+@@ -122,6 +_,9 @@
+ 
+       this.m_8094_(p_196851_.m_6332_());
+       this.f_187603_ = true;
++      this.needsDecoration = true; // CraftBukkit
++      // CraftBukkit start
++      this.persistentDataContainer = p_196851_.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1
+    }
+ 
+    public TickContainerAccess<Block> m_183531_() {
 @@ -237,14 +_,14 @@
              boolean flag2 = blockstate.m_155947_();
              if (!this.f_62776_.f_46443_) {

@@ -37,11 +37,10 @@
     }
  
     public int m_6789_() {
-@@ -458,5 +_,13 @@
- 
+@@ -459,4 +_,20 @@
     public LevelSettings m_5926_() {
        return this.f_78443_.m_46935_();
-+   }
+    }
 +   //FORGE
 +   public boolean hasConfirmedExperimentalWarning() {
 +      return this.confirmedExperimentalWarning;
@@ -49,5 +48,13 @@
 +   public PrimaryLevelData withConfirmedWarning(boolean confirmedWarning) { //Builder-like to not patch ctor
 +      this.confirmedExperimentalWarning = confirmedWarning;
 +      return this;
-    }
++   }
++
++   // CraftBukkit start - Check if the name stored in NBT is the correct one
++   public void checkName(String name) {
++      if (!this.f_78443_.f_46902_.equals(name)) {
++         this.f_78443_.f_46902_ = name;
++      }
++   }
++   // CraftBukkit end
  }

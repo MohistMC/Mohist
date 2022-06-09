@@ -1,7 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -15,7 +_,7 @@
+@@ -13,9 +_,12 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.inventory.InventoryHolder;
  import org.slf4j.Logger;
  
 -public abstract class BlockEntity {
@@ -9,11 +14,16 @@
     private static final Logger f_58854_ = LogUtils.getLogger();
     private final BlockEntityType<?> f_58855_;
     @Nullable
-@@ -23,11 +_,14 @@
+@@ -23,11 +_,19 @@
     protected final BlockPos f_58858_;
     protected boolean f_58859_;
     private BlockState f_58856_;
 +   private CompoundTag customTileData;
++
++   // CraftBukkit start - data containers
++   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
++   public CraftPersistentDataContainer persistentDataContainer;
++   // CraftBukkit end
  
     public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
 +      super(BlockEntity.class);
@@ -52,17 +62,29 @@
     }
  
     public void m_6339_() {
-@@ -189,6 +_,13 @@
- 
-    public BlockEntityType<?> m_58903_() {
+@@ -191,9 +_,25 @@
        return this.f_58855_;
-+   }
-+
+    }
+ 
 +   @Override
 +   public CompoundTag getTileData() {
 +      if (this.customTileData == null)
 +         this.customTileData = new CompoundTag();
 +      return this.customTileData;
-    }
- 
++   }
++
     /** @deprecated */
+    @Deprecated
+    public void m_155250_(BlockState p_155251_) {
+       this.f_58856_ = p_155251_;
+    }
++
++   // CraftBukkit start - add method
++   public InventoryHolder getOwner() {
++      if (f_58857_ == null) return null;
++      org.bukkit.block.BlockState state = f_58857_.getWorld().getBlockAt(f_58858_.m_123341_(), f_58858_.m_123342_(), f_58858_.m_123343_()).getState();
++      if (state instanceof InventoryHolder) return (InventoryHolder) state;
++      return null;
++   }
++   // CraftBukkit end
+ }

@@ -1,0 +1,54 @@
+--- a/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
++++ b/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
+@@ -8,6 +_,7 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.nbt.CompoundTag;
+@@ -27,6 +_,8 @@
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.dimension.DimensionType;
+ import net.minecraft.world.level.saveddata.SavedData;
++import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_19_R1.map.CraftMapView;
+ import org.slf4j.Logger;
+ 
+ public class MapItemSavedData extends SavedData {
+@@ -50,6 +_,13 @@
+    private final Map<String, MapFrame> f_77898_ = Maps.newHashMap();
+    private int f_181308_;
+ 
++   // CraftBukkit start
++   public final CraftMapView mapView;
++   private CraftServer server;
++   private UUID uniqueId = null;
++   public String id;
++   // CraftBukkit end
++
+    private MapItemSavedData(int p_164768_, int p_164769_, byte p_164770_, boolean p_164771_, boolean p_164772_, boolean p_164773_, ResourceKey<Level> p_164774_) {
+       this.f_77890_ = p_164770_;
+       this.f_77885_ = p_164768_;
+@@ -59,6 +_,11 @@
+       this.f_77889_ = p_164772_;
+       this.f_77892_ = p_164773_;
+       this.m_77762_();
++
++      // CraftBukkit start
++      mapView = new CraftMapView(this);
++      server = (CraftServer) org.bukkit.Bukkit.getServer();
++      // CraftBukkit end
+    }
+ 
+    public static MapItemSavedData m_164780_(double p_164781_, double p_164782_, byte p_164783_, boolean p_164784_, boolean p_164785_, ResourceKey<Level> p_164786_) {
+@@ -308,7 +_,7 @@
+       return mapitemsaveddata$holdingplayer == null ? null : mapitemsaveddata$holdingplayer.m_164815_(p_164797_);
+    }
+ 
+-   private void m_164789_(int p_164790_, int p_164791_) {
++   public void m_164789_(int p_164790_, int p_164791_) {
+       this.m_77762_();
+ 
+       for(MapItemSavedData.HoldingPlayer mapitemsaveddata$holdingplayer : this.f_77893_) {

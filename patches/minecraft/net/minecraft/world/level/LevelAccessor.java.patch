@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/level/LevelAccessor.java
++++ b/net/minecraft/world/level/LevelAccessor.java
+@@ -5,6 +_,7 @@
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.particles.ParticleOptions;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.util.RandomSource;
+@@ -108,4 +_,6 @@
+    default void m_220407_(GameEvent p_220408_, BlockPos p_220409_, GameEvent.Context p_220410_) {
+       this.m_214171_(p_220408_, Vec3.m_82512_(p_220409_), p_220410_);
+    }
++
++   ServerLevel getMinecraftWorld();
+ }

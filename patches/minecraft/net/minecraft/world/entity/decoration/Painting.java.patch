@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/decoration/Painting.java
++++ b/net/minecraft/world/entity/decoration/Painting.java
+@@ -51,7 +_,7 @@
+ 
+    }
+ 
+-   private void m_218891_(Holder<PaintingVariant> p_218892_) {
++   public void m_218891_(Holder<PaintingVariant> p_218892_) {
+       this.f_19804_.m_135381_(f_218870_, p_218892_);
+    }
+ 

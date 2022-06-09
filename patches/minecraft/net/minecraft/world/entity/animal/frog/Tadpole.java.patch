@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/frog/Tadpole.java
++++ b/net/minecraft/world/entity/animal/frog/Tadpole.java
+@@ -40,7 +_,7 @@
+    public static int f_218678_ = Math.abs(-24000);
+    public static float f_218681_ = 0.4F;
+    public static float f_218682_ = 0.3F;
+-   private int f_218680_;
++   public int f_218680_;
+    protected static final ImmutableList<SensorType<? extends Sensor<? super Tadpole>>> f_218683_ = ImmutableList.of(SensorType.f_26811_, SensorType.f_26812_, SensorType.f_26814_, SensorType.f_217822_);
+    protected static final ImmutableList<MemoryModuleType<?>> f_218679_ = ImmutableList.of(MemoryModuleType.f_26371_, MemoryModuleType.f_148205_, MemoryModuleType.f_26370_, MemoryModuleType.f_26326_, MemoryModuleType.f_26377_, MemoryModuleType.f_26331_, MemoryModuleType.f_148197_, MemoryModuleType.f_148198_, MemoryModuleType.f_148196_, MemoryModuleType.f_26375_, MemoryModuleType.f_217768_);
+ 

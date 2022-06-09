@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/chunk/LevelChunkSection.java
++++ b/net/minecraft/world/level/chunk/LevelChunkSection.java
+@@ -24,9 +_,9 @@
+    private short f_62970_;
+    private short f_62971_;
+    private final PalettedContainer<BlockState> f_62972_;
+-   private PalettedContainerRO<Holder<Biome>> f_187995_;
++   private PalettedContainer<Holder<Biome>> f_187995_;
+ 
+-   public LevelChunkSection(int p_238255_, PalettedContainer<BlockState> p_238256_, PalettedContainerRO<Holder<Biome>> p_238257_) {
++   public LevelChunkSection(int p_238255_, PalettedContainer<BlockState> p_238256_, PalettedContainer<Holder<Biome>> p_238257_) {
+       this.f_62968_ = m_156458_(p_238255_);
+       this.f_62972_ = p_238256_;
+       this.f_187995_ = p_238257_;
+@@ -199,4 +_,10 @@
+ 
+       this.f_187995_ = palettedcontainer;
+    }
++
++   // CraftBukkit start
++   public void setBiome(int i, int j, int k, Holder<Biome> biome) {
++      this.f_187995_.m_156470_(i, j, k, biome);
++   }
++   // CraftBukkit end
+ }

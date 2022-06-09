@@ -1,5 +1,30 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
+@@ -17,6 +_,7 @@
+ import net.minecraft.CrashReport;
+ import net.minecraft.SystemReport;
+ import net.minecraft.Util;
++import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.commands.Commands;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Registry;
+@@ -44,6 +_,7 @@
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import net.minecraft.world.level.storage.PrimaryLevelData;
+ import net.minecraft.world.level.storage.WorldData;
++import org.bukkit.command.CommandSender;
+ import org.slf4j.Logger;
+ 
+ public class GameTestServer extends MinecraftServer {
+@@ -90,7 +_,7 @@
+    }
+ 
+    public GameTestServer(Thread p_206597_, LevelStorageSource.LevelStorageAccess p_206598_, PackRepository p_206599_, WorldStem p_206600_, Collection<GameTestBatch> p_206601_, BlockPos p_206602_) {
+-      super(p_206597_, p_206598_, p_206599_, p_206600_, Proxy.NO_PROXY, DataFixers.m_14512_(), f_236789_, LoggerChunkProgressListener::new);
++      super(null, null, null, p_206597_, p_206598_, p_206599_, p_206600_, Proxy.NO_PROXY, DataFixers.m_14512_(), f_236789_, LoggerChunkProgressListener::new);
+       this.f_177587_ = Lists.newArrayList(p_206601_);
+       this.f_177588_ = p_206602_;
+    }
 @@ -98,13 +_,14 @@
     public boolean m_7038_() {
        this.m_129823_(new PlayerList(this, this.m_206579_(), this.f_129745_, 1) {
@@ -16,3 +41,15 @@
     }
  
     public void m_5705_(BooleanSupplier p_177619_) {
+@@ -209,6 +_,11 @@
+ 
+    public boolean m_6102_() {
+       return false;
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return null;
+    }
+ 
+    public boolean m_7779_(GameProfile p_177617_) {

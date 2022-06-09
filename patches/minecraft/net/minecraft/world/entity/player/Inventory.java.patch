@@ -1,5 +1,78 @@
 --- a/net/minecraft/world/entity/player/Inventory.java
 +++ b/net/minecraft/world/entity/player/Inventory.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.entity.player;
+ 
+ import com.google.common.collect.ImmutableList;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.function.Predicate;
+ import net.minecraft.CrashReport;
+@@ -22,6 +_,9 @@
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class Inventory implements Container, Nameable {
+    public static final int f_150064_ = 5;
+@@ -39,6 +_,54 @@
+    public final Player f_35978_;
+    private int f_35981_;
+ 
++   // CraftBukkit start - add fields and methods
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   private int maxStack = MAX_STACK;
++
++   public List<ItemStack> getContents() {
++      List<ItemStack> combined = new ArrayList<ItemStack>(f_35974_.size() + f_35975_.size() + f_35976_.size());
++      for (List<net.minecraft.world.item.ItemStack> sub : this.f_35979_) {
++         combined.addAll(sub);
++      }
++
++      return combined;
++   }
++
++   public List<ItemStack> getArmorContents() {
++      return this.f_35975_;
++   }
++
++   public void onOpen(CraftHumanEntity who) {
++      transaction.add(who);
++   }
++
++   public void onClose(CraftHumanEntity who) {
++      transaction.remove(who);
++   }
++
++   public List<HumanEntity> getViewers() {
++      return transaction;
++   }
++
++   public org.bukkit.inventory.InventoryHolder getOwner() {
++      return this.f_35978_.getBukkitEntity();
++   }
++
++   @Override
++   public int m_6893_() {
++      return maxStack;
++   }
++
++   public void setMaxStackSize(int size) {
++      maxStack = size;
++   }
++
++   @Override
++   public Location getLocation() {
++      return f_35978_.getBukkitEntity().getLocation();
++   }
++   // CraftBukkit end
++
+    public Inventory(Player p_35983_) {
+       this.f_35978_ = p_35983_;
+    }
 @@ -177,7 +_,8 @@
        int i = p_36049_.m_41613_();
        ItemStack itemstack = this.m_8020_(p_36048_);

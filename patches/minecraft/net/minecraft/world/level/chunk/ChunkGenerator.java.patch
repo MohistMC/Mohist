@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/chunk/ChunkGenerator.java
++++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -86,10 +_,10 @@
+ public abstract class ChunkGenerator {
+    private static final Logger f_211627_ = LogUtils.getLogger();
+    public static final Codec<ChunkGenerator> f_62136_ = Registry.f_122890_.m_194605_().dispatchStable(ChunkGenerator::m_6909_, Function.identity());
+-   protected final Registry<StructureSet> f_207955_;
++   public final Registry<StructureSet> f_207955_;
+    protected final BiomeSource f_62137_;
+    private final Supplier<List<FeatureSorter.StepFeatureData>> f_223020_;
+-   protected final Optional<HolderSet<StructureSet>> f_207956_;
++   public final Optional<HolderSet<StructureSet>> f_207956_;
+    private final Function<Holder<Biome>, BiomeGenerationSettings> f_223021_;
+    private final Map<Structure, List<StructurePlacement>> f_223022_ = new Object2ObjectOpenHashMap<>();
+    private final Map<ConcentricRingsStructurePlacement, CompletableFuture<List<ChunkPos>>> f_204350_ = new Object2ObjectArrayMap<>();

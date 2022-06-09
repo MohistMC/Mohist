@@ -21,3 +21,12 @@
     }
  
     @Nullable
+@@ -66,7 +_,7 @@
+       return compoundtag != null && compoundtag.m_128425_("map", 99) ? compoundtag.m_128451_("map") : null;
+    }
+ 
+-   private static int m_151120_(Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_) {
++   public static int m_151120_(Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_) {
+       MapItemSavedData mapitemsaveddata = MapItemSavedData.m_164780_((double)p_151122_, (double)p_151123_, (byte)p_151124_, p_151125_, p_151126_, p_151127_);
+       int i = p_151121_.m_7354_();
+       p_151121_.m_142325_(m_42848_(i), mapitemsaveddata);

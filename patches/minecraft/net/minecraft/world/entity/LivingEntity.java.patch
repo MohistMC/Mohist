@@ -1,5 +1,32 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -9,12 +_,15 @@
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.Dynamic;
++import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.ConcurrentModificationException;
++import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
++import java.util.Set;
+ import java.util.UUID;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+@@ -116,6 +_,10 @@
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
++import org.bukkit.craftbukkit.v1_19_R1.attribute.CraftAttributeMap;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ import org.slf4j.Logger;
+ 
+ public abstract class LivingEntity extends Entity {
 @@ -123,7 +_,9 @@
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
@@ -10,6 +37,49 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
+@@ -153,7 +_,7 @@
+    protected static final EntityDimensions f_20910_ = EntityDimensions.m_20398_(0.2F, 0.2F);
+    public static final float f_147165_ = 0.5F;
+    private final AttributeMap f_20943_;
+-   private final CombatTracker f_20944_ = new CombatTracker(this);
++   public CombatTracker f_20944_ = new CombatTracker(this);
+    public final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
+    private final NonNullList<ItemStack> f_20946_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
+    private final NonNullList<ItemStack> f_20947_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+@@ -205,9 +_,9 @@
+    protected double f_20908_;
+    protected double f_20933_;
+    protected int f_20934_;
+-   private boolean f_20948_ = true;
++   public boolean f_20948_ = true;
+    @Nullable
+-   private LivingEntity f_20949_;
++   public LivingEntity f_20949_;
+    private int f_20950_;
+    private LivingEntity f_20951_;
+    private int f_20952_;
+@@ -228,6 +_,21 @@
+    protected Brain<?> f_20939_;
+    private boolean f_217034_;
+ 
++   // CraftBukkit start
++   public int expToDrop;
++   public boolean forceDrops;
++   public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
++   public CraftAttributeMap craftAttributes;
++   public boolean collides = true;
++   public Set<UUID> collidableExemptions = new HashSet<>();
++   public boolean bukkitPickUpLoot;
++
++   @Override
++   public float getBukkitYaw() {
++      return m_6080_();
++   }
++   // CraftBukkit end
++
+    protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
+       super(p_20966_, p_20967_);
+       this.f_20943_ = new AttributeMap(DefaultAttributes.m_22297_(p_20966_));
 @@ -274,7 +_,7 @@
     }
  
@@ -38,6 +108,23 @@
                 this.m_8127_();
              }
           } else if (this.m_20146_() < this.m_6062_()) {
+@@ -648,6 +_,16 @@
+       }
+    }
+ 
++   protected void playEquipSound(ItemStack p_147219_, boolean silent) {
++      SoundEvent soundevent = p_147219_.m_150920_();
++      if (!p_147219_.m_41619_() && soundevent != null && !this.m_5833_() && !silent) {
++         // CraftBukkit end
++
++         this.m_146850_(GameEvent.f_157811_);
++         this.m_5496_(soundevent, 1.0F, 1.0F);
++      }
++   }
++
+    public void m_7380_(CompoundTag p_21145_) {
+       p_21145_.m_128350_("Health", this.m_21223_());
+       p_21145_.m_128376_("HurtTime", (short)this.f_20916_);
 @@ -740,7 +_,7 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
@@ -69,7 +156,7 @@
        return d0;
     }
  
-@@ -870,7 +_,9 @@
+@@ -870,7 +_,32 @@
  
           boolean flag;
           for(flag = false; iterator.hasNext(); flag = true) {
@@ -77,9 +164,48 @@
 +            MobEffectInstance effect = iterator.next();
 +            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))) continue;
 +            this.m_7285_(effect);
++            iterator.remove();
++         }
++
++         return flag;
++      }
++   }
++
++   public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
++      if (this.f_19853_.f_46443_) {
++         return false;
++      } else {
++         Iterator<MobEffectInstance> iterator = this.f_20945_.values().iterator();
++
++         boolean flag;
++         for(flag = false; iterator.hasNext(); flag = true) {
++            MobEffectInstance effect = iterator.next();
++            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))) continue;
++            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, EntityPotionEffectEvent.Action.CLEARED);
++            if (event.isCancelled()) {
++               continue;
++            }
++            this.m_7285_(effect);
++            // CraftBukkit end
              iterator.remove();
           }
  
+@@ -895,6 +_,15 @@
+       return this.f_20945_.get(p_21125_);
+    }
+ 
++   // Mohist TODO
++   public boolean addEffect(MobEffectInstance p_147208_, EntityPotionEffectEvent.Cause cause) {
++      return addEffect(p_147208_, (Entity) null, cause);
++   }
++
++   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
++      return true;
++   }
++
+    public final boolean m_7292_(MobEffectInstance p_21165_) {
+       return this.m_147207_(p_21165_, (Entity)null);
+    }
 @@ -904,6 +_,7 @@
           return false;
        } else {
@@ -98,10 +224,21 @@
        if (this.m_6336_() == MobType.f_21641_) {
           MobEffect mobeffect = p_21197_.m_19544_();
           if (mobeffect == MobEffects.f_19605_ || mobeffect == MobEffects.f_19614_) {
-@@ -950,6 +_,7 @@
+@@ -950,6 +_,18 @@
     }
  
     public boolean m_21195_(MobEffect p_21196_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, p_21196_))) return false;
++      MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
++      if (mobeffectinstance != null) {
++         this.m_7285_(mobeffectinstance);
++         return true;
++      } else {
++         return false;
++      }
++   }
++
++   public boolean removeEffect(MobEffect p_21196_, EntityPotionEffectEvent.Cause cause) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, p_21196_))) return false;
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
@@ -341,6 +478,32 @@
              this.m_7911_(this.m_6103_() - f2);
              this.m_146850_(GameEvent.f_223706_);
           }
+@@ -1589,9 +_,25 @@
+    }
+ 
+    public final void m_21317_(int p_21318_) {
++         ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent( this, m_21234_(), p_21318_, false);
++         if(event.isCancelled()){
++            return;
++         }
++
++      // CraftBukkit end
+       this.f_19804_.m_135381_(f_20940_, p_21318_);
+    }
+ 
++   public final void setArrowCount(int p_21318_, boolean flag){
++      ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent( this, m_21234_(), p_21318_, flag );
++      if(event.isCancelled()){
++         return;
++      }
++
++      this.f_19804_.m_135381_(f_20940_, event.getNewAmount());
++   }
++   // CraftBukkit end
++
+    public final int m_21235_() {
+       return this.f_19804_.m_135370_(f_20941_);
+    }
 @@ -1613,6 +_,8 @@
     }
  
@@ -650,3 +813,25 @@
           }
        } else {
           return EquipmentSlot.HEAD;
+@@ -3323,4 +_,21 @@
+ 
+    public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
+    }
++
++   // CraftBukkit start
++   public void setItemSlot(EquipmentSlot enumitemslot, ItemStack itemstack, boolean silent) {
++      this.m_8061_(enumitemslot, itemstack);
++   }
++   // CraftBukkit end
++
++   // CraftBukkit start
++   public int getExpReward() {
++      if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
++         int i = this.m_213860_();
++         return i;
++      } else {
++         return 0;
++      }
++   }
++   // CraftBukkit end
+ }

@@ -9,6 +9,24 @@
           if (this.m_6162_()) {
              this.m_35518_();
              return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+@@ -283,7 +_,7 @@
+       }
+    }
+ 
+-   private void m_35518_() {
++   public void m_35518_() {
+       this.m_35319_(40);
+       if (!this.f_19853_.m_5776_()) {
+          this.m_5496_(SoundEvents.f_12507_, this.m_6121_(), this.m_6100_());
+@@ -558,7 +_,7 @@
+       super.m_6667_(p_35419_);
+    }
+ 
+-   private void m_35524_() {
++   public void m_35524_() {
+       this.m_35428_(MemoryModuleType.f_26359_);
+       this.m_35428_(MemoryModuleType.f_26360_);
+       this.m_35428_(MemoryModuleType.f_26361_);
 @@ -657,7 +_,8 @@
     }
  

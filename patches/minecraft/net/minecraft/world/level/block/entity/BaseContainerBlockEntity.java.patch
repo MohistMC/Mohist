@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
-@@ -80,4 +_,27 @@
+@@ -80,4 +_,35 @@
     }
  
     protected abstract AbstractContainerMenu m_6555_(int p_58627_, Inventory p_58628_);
@@ -27,4 +27,12 @@
 +      super.reviveCaps();
 +      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
 +   }
++
++   // CraftBukkit start
++   @Override
++   public org.bukkit.Location getLocation() {
++      if (f_58857_ == null) return null;
++      return new org.bukkit.Location(f_58857_.getWorld(), f_58858_.m_123341_(), f_58858_.m_123342_(), f_58858_.m_123343_());
++   }
++   // CraftBukkit end
  }

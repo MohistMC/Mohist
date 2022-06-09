@@ -1,10 +1,71 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -407,4 +_,7 @@
+@@ -48,6 +_,8 @@
+ import net.minecraft.world.level.material.Fluid;
+ import net.minecraft.world.ticks.SerializableTickContainer;
+ import net.minecraft.world.ticks.TickContainerAccess;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.DirtyCraftPersistentDataContainer;
+ import org.slf4j.Logger;
+ 
+ public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, StructureAccess {
+@@ -67,14 +_,20 @@
+    protected final UpgradeData f_187606_;
+    @Nullable
+    protected BlendingData f_187607_;
+-   protected final Map<Heightmap.Types, Heightmap> f_187608_ = Maps.newEnumMap(Heightmap.Types.class);
++   public final Map<Heightmap.Types, Heightmap> f_187608_ = Maps.newEnumMap(Heightmap.Types.class);
+    private final Map<Structure, StructureStart> f_187617_ = Maps.newHashMap();
+    private final Map<Structure, LongSet> f_187618_ = Maps.newHashMap();
+    protected final Map<BlockPos, CompoundTag> f_187609_ = Maps.newHashMap();
+-   protected final Map<BlockPos, BlockEntity> f_187610_ = Maps.newHashMap();
++   public final Map<BlockPos, BlockEntity> f_187610_ = Maps.newHashMap();
+    protected final LevelHeightAccessor f_187611_;
+    protected final LevelChunkSection[] f_187612_;
+ 
++   public final Registry<Biome> biomeRegistry;
++   // CraftBukkit start - SPIGOT-6814: move to IChunkAccess to account for 1.17 to 1.18 chunk upgrading.
++   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
++   public DirtyCraftPersistentDataContainer persistentDataContainer = new DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   // CraftBukkit end
++
+    public ChunkAccess(ChunkPos p_187621_, UpgradeData p_187622_, LevelHeightAccessor p_187623_, Registry<Biome> p_187624_, long p_187625_, @Nullable LevelChunkSection[] p_187626_, @Nullable BlendingData p_187627_) {
+       this.f_187604_ = p_187621_;
+       this.f_187606_ = p_187622_;
+@@ -92,6 +_,7 @@
+       }
+ 
+       m_187634_(p_187623_, p_187624_, this.f_187612_);
++      this.biomeRegistry = p_187624_;
+    }
+ 
+    private static void m_187634_(LevelHeightAccessor p_187635_, Registry<Biome> p_187636_, LevelChunkSection[] p_187637_) {
+@@ -407,4 +_,28 @@
  
     public static record TicksToSave(SerializableTickContainer<Block> f_187680_, SerializableTickContainer<Fluid> f_187681_) {
     }
 +
 +   @Nullable
 +   public net.minecraft.world.level.LevelAccessor getWorldForge() { return null; }
++
++   // CraftBukkit start
++   public void setBiome(int i, int j, int k, Holder<Biome> biome) {
++      try {
++         int l = QuartPos.m_175400_(this.m_141937_());
++         int i1 = l + QuartPos.m_175400_(this.m_141928_()) - 1;
++         int j1 = Mth.m_14045_(j, l, i1);
++         int k1 = this.m_151564_(QuartPos.m_175402_(j1));
++
++         this.f_187612_[k1].setBiome(i & 3, j1 & 3, k & 3, biome);
++      } catch (Throwable throwable) {
++         CrashReport crashreport = CrashReport.m_127521_(throwable, "Setting biome");
++         CrashReportCategory crashreportsystemdetails = crashreport.m_127514_("Biome being set");
++
++         crashreportsystemdetails.m_128165_("Location", () -> {
++            return CrashReportCategory.m_178942_(this, i, j, k);
++         });
++         throw new ReportedException(crashreport);
++      }
++   }
++   // CraftBukkit end
  }

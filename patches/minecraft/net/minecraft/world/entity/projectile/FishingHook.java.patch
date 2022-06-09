@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
+@@ -60,10 +_,16 @@
+    private boolean f_37093_ = true;
+    @Nullable
+    public Entity f_37094_;
+-   public FishingHook.FishHookState f_37095_ = FishingHook.FishHookState.FLYING;
++   private FishingHook.FishHookState f_37095_ = FishingHook.FishHookState.FLYING;
+    private final int f_37096_;
+    private final int f_37097_;
+ 
++   // CraftBukkit start - Extra variables to enable modification of fishing wait time, values are minecraft defaults
++   public int minWaitTime = 100;
++   public int maxWaitTime = 600;
++   public boolean applyLure = true;
++   // CraftBukkit end
++
+    private FishingHook(EntityType<? extends FishingHook> p_150141_, Level p_150142_, int p_150143_, int p_150144_) {
+       super(p_150141_, p_150142_);
+       this.f_19811_ = true;
 @@ -240,7 +_,7 @@
  
     private void m_37171_() {
@@ -60,3 +78,12 @@
        } else {
           return 0;
        }
+@@ -449,7 +_,7 @@
+       super.m_7822_(p_37123_);
+    }
+ 
+-   protected void m_150155_(Entity p_150156_) {
++   public void m_150155_(Entity p_150156_) {
+       Entity entity = this.m_37282_();
+       if (entity != null) {
+          Vec3 vec3 = (new Vec3(entity.m_20185_() - this.m_20185_(), entity.m_20186_() - this.m_20186_(), entity.m_20189_() - this.m_20189_())).m_82490_(0.1D);

@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/animal/goat/Goat.java
++++ b/net/minecraft/world/entity/animal/goat/Goat.java
+@@ -62,8 +_,8 @@
+    public static final double f_149346_ = 0.02D;
+    public static final double f_218749_ = (double)0.1F;
+    private static final EntityDataAccessor<Boolean> f_149347_ = SynchedEntityData.m_135353_(Goat.class, EntityDataSerializers.f_135035_);
+-   private static final EntityDataAccessor<Boolean> f_218750_ = SynchedEntityData.m_135353_(Goat.class, EntityDataSerializers.f_135035_);
+-   private static final EntityDataAccessor<Boolean> f_218751_ = SynchedEntityData.m_135353_(Goat.class, EntityDataSerializers.f_135035_);
++   public static final EntityDataAccessor<Boolean> f_218750_ = SynchedEntityData.m_135353_(Goat.class, EntityDataSerializers.f_135035_);
++   public static final EntityDataAccessor<Boolean> f_218751_ = SynchedEntityData.m_135353_(Goat.class, EntityDataSerializers.f_135035_);
+    private boolean f_149348_;
+    private int f_149349_;
+ 

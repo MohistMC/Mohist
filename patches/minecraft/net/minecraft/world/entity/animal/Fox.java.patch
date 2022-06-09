@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
+@@ -342,7 +_,7 @@
+       return Fox.Type.m_28812_(this.f_19804_.m_135370_(f_28437_));
+    }
+ 
+-   private void m_28464_(Fox.Type p_28465_) {
++   public void m_28464_(Fox.Type p_28465_) {
+       this.f_19804_.m_135381_(f_28437_, p_28465_.m_28820_());
+    }
+ 
+@@ -426,7 +_,7 @@
+       return this.m_28608_(32);
+    }
+ 
+-   void m_28626_(boolean p_28627_) {
++   public void m_28626_(boolean p_28627_) {
+       this.m_28532_(32, p_28627_);
+    }
+ 
 @@ -648,13 +_,16 @@
     }
  

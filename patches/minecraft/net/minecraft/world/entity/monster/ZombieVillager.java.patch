@@ -9,6 +9,15 @@
              this.m_34398_((ServerLevel)this.f_19853_);
           }
        }
+@@ -167,7 +_,7 @@
+       return this.m_20088_().m_135370_(f_34359_);
+    }
+ 
+-   private void m_34383_(@Nullable UUID p_34384_, int p_34385_) {
++   public void m_34383_(@Nullable UUID p_34384_, int p_34385_) {
+       this.f_34360_ = p_34384_;
+       this.f_34365_ = p_34385_;
+       this.m_20088_().m_135381_(f_34359_, true);
 @@ -227,7 +_,7 @@
        if (!this.m_20067_()) {
           p_34399_.m_5898_((Player)null, 1027, this.m_20183_(), 0);

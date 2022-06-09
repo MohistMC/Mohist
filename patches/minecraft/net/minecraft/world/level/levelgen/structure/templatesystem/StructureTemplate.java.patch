@@ -1,5 +1,37 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
+@@ -49,6 +_,8 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
+ import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataTypeRegistry;
+ 
+ public class StructureTemplate {
+    public static final String f_163789_ = "palette";
+@@ -63,8 +_,8 @@
+    public static final String f_163798_ = "nbt";
+    public static final String f_163799_ = "size";
+    static final int f_163800_ = 16;
+-   private final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
+-   private final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
++   public final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
++   public final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
+    private Vec3i f_74484_ = Vec3i.f_123288_;
+    private String f_74485_ = "?";
+ 
+@@ -80,6 +_,11 @@
+       return this.f_74485_;
+    }
+ 
++   // CraftBukkit start - data containers
++   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
++   public CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   // CraftBukkit end
++
+    public void m_163802_(Level p_163803_, BlockPos p_163804_, Vec3i p_163805_, boolean p_163806_, @Nullable Block p_163807_) {
+       if (p_163805_.m_123341_() >= 1 && p_163805_.m_123342_() >= 1 && p_163805_.m_123343_() >= 1) {
+          BlockPos blockpos = p_163804_.m_121955_(p_163805_).m_7918_(-1, -1, -1);
 @@ -200,6 +_,10 @@
        return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
     }

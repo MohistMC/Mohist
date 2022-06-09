@@ -1,5 +1,60 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -87,6 +_,7 @@
+ import net.minecraft.world.Container;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.MenuProvider;
++import net.minecraft.world.damagesource.CombatTracker;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.damagesource.EntityDamageSource;
+ import net.minecraft.world.effect.MobEffectInstance;
+@@ -105,6 +_,7 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.player.ProfilePublicKey;
+ import net.minecraft.world.entity.projectile.AbstractArrow;
++import net.minecraft.world.food.FoodData;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.inventory.ContainerListener;
+ import net.minecraft.world.inventory.ContainerSynchronizer;
+@@ -139,8 +_,11 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Score;
++import net.minecraft.world.scores.Scoreboard;
+ import net.minecraft.world.scores.Team;
+ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
++import org.bukkit.WeatherType;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+ import org.slf4j.Logger;
+ 
+ public class ServerPlayer extends Player {
+@@ -234,6 +_,26 @@
+    public int f_8943_;
+    public boolean f_8944_;
+ 
++   // CraftBukkit start
++   public String displayName;
++   public org.bukkit.Location compassTarget;
++   public int newExp = 0;
++   public int newLevel = 0;
++   public int newTotalExp = 0;
++   public boolean keepLevel = false;
++   public double maxHealthCache;
++   public boolean joining = true;
++   public boolean sentListPacket = false;
++   public Integer clientViewDistance;
++   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
++   public String locale = "en_us"; // CraftBukkit - add, lowercase
++   // CraftBukkit end
++
++   @Override
++   public CraftPlayer getBukkitEntity() {
++      return (CraftPlayer) super.getBukkitEntity();
++   }
++
+    public ServerPlayer(MinecraftServer p_215088_, ServerLevel p_215089_, GameProfile p_215090_, @Nullable ProfilePublicKey p_215091_) {
+       super(p_215089_, p_215089_.m_220360_(), p_215089_.m_220361_(), p_215090_, p_215091_);
+       this.f_8939_ = p_215088_.m_7950_(this);
 @@ -549,6 +_,7 @@
  
     public void m_6667_(DamageSource p_9035_) {
@@ -91,6 +146,18 @@
        return this.m_9222_(p_9117_) || this.m_9222_(p_9117_.m_121945_(p_9118_.m_122424_()));
     }
  
+@@ -944,6 +_,11 @@
+       this.f_8940_ = this.f_8940_ % 100 + 1;
+    }
+ 
++   public int nextContainerCounterInt() {
++      this.f_8940_ = this.f_8940_ % 100 + 1;
++      return f_8940_; // CraftBukkit
++   }
++
+    public OptionalInt m_5893_(@Nullable MenuProvider p_9033_) {
+       if (p_9033_ == null) {
+          return OptionalInt.empty();
 @@ -964,6 +_,7 @@
              this.f_8906_.m_9829_(new ClientboundOpenScreenPacket(abstractcontainermenu.f_38840_, abstractcontainermenu.m_6772_(), p_9033_.m_5446_()));
              this.m_143399_(abstractcontainermenu);
@@ -154,7 +221,7 @@
        if (entity != this.f_8926_) {
           this.f_8906_.m_9829_(new ClientboundSetCameraPacket(this.f_8926_));
           this.m_6021_(this.f_8926_.m_20185_(), this.f_8926_.m_20186_(), this.f_8926_.m_20189_());
-@@ -1358,7 +_,11 @@
+@@ -1358,7 +_,15 @@
  
     @Nullable
     public Component m_8957_() {
@@ -164,6 +231,10 @@
 +         this.hasTabListName = true;
 +      }
 +      return this.tabListDisplayName;
++   }
++
++   public void setTabListDisplayName(Component tabListDisplayName) {
++      this.tabListDisplayName = tabListDisplayName;
     }
  
     public void m_6674_(InteractionHand p_9031_) {
@@ -255,3 +326,140 @@
     }
  
     public boolean m_184128_() {
+@@ -1563,4 +_,136 @@
+       }
+ 
+    }
++
++   // CraftBukkit start - Add per-player time and weather.
++   public long timeOffset = 0;
++   public boolean relativeTime = true;
++
++   public long getPlayerTime() {
++      if (this.relativeTime) {
++         // Adds timeOffset to the current server time.
++         return this.f_19853_.m_46468_() + this.timeOffset;
++      } else {
++         // Adds timeOffset to the beginning of this day.
++         return this.f_19853_.m_46468_() - (this.f_19853_.m_46468_() % 24000) + this.timeOffset;
++      }
++   }
++
++   public WeatherType weather = null;
++
++   public WeatherType getPlayerWeather() {
++      return this.weather;
++   }
++
++   public void setPlayerWeather(WeatherType type, boolean plugin) {
++      if (!plugin && this.weather != null) {
++         return;
++      }
++
++      if (plugin) {
++         this.weather = type;
++      }
++
++      if (type == WeatherType.DOWNFALL) {
++         this.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132155_, 0));
++      } else {
++         this.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132154_, 0));
++      }
++   }
++
++   public void resetPlayerWeather() {
++      this.weather = null;
++      this.setPlayerWeather(this.f_19853_.m_6106_().m_6533_() ? WeatherType.DOWNFALL : WeatherType.CLEAR, false);
++   }
++
++   private float pluginRainPosition;
++   private float pluginRainPositionPrevious;
++
++   public void updateWeather(float oldRain, float newRain, float oldThunder, float newThunder) {
++      if (this.weather == null) {
++         // Vanilla
++         if (oldRain != newRain) {
++            this.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132160_, newRain));
++         }
++      } else {
++         // Plugin
++         if (pluginRainPositionPrevious != pluginRainPosition) {
++            this.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132160_, pluginRainPosition));
++         }
++      }
++
++      if (oldThunder != newThunder) {
++         if (weather == WeatherType.DOWNFALL || weather == null) {
++            this.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, newThunder));
++         } else {
++            this.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, 0));
++         }
++      }
++   }
++
++   public void tickWeather() {
++      if (this.weather == null) return;
++
++      pluginRainPositionPrevious = pluginRainPosition;
++      if (weather == WeatherType.DOWNFALL) {
++         pluginRainPosition += 0.01;
++      } else {
++         pluginRainPosition -= 0.01;
++      }
++
++      pluginRainPosition = Mth.m_14036_(pluginRainPosition, 0.0F, 1.0F);
++   }
++
++   // SPIGOT-1903, MC-98153
++   public void forceSetPositionRotation(double x, double y, double z, float yaw, float pitch) {
++      this.m_7678_(x, y, z, yaw, pitch);
++      this.f_8906_.m_9953_();
++   }
++
++   @Override
++   public boolean m_6107_() {
++      return super.m_6107_() || !getBukkitEntity().isOnline();
++   }
++
++   @Override
++   public Scoreboard m_36329_() {
++      return getBukkitEntity().getScoreboard().getHandle();
++   }
++
++   public void reset() {
++      float exp = 0;
++      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_);
++
++      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
++         exp = this.f_36080_;
++         this.newTotalExp = this.f_36079_;
++         this.newLevel = this.f_36078_;
++      }
++
++      this.m_21153_(this.m_21233_());
++      this.m_5810_(); // CraftBukkit - SPIGOT-6682: Clear active item on reset
++      this.f_19831_ = 0;
++      this.f_19789_ = 0;
++      this.f_36097_ = new FoodData(this);
++      this.f_36078_ = this.newLevel;
++      this.f_36079_ = this.newTotalExp;
++      this.f_36080_ = 0;
++      this.f_20919_ = 0;
++      this.setArrowCount(0, true); // CraftBukkit - ArrowBodyCountChangeEvent
++      this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DEATH);
++      this.f_20948_ = true;
++      this.f_36096_ = this.f_36095_;
++      this.f_20888_ = null;
++      this.f_20949_ = null;
++      this.f_20944_ = new CombatTracker(this);
++      this.f_8920_ = -1;
++      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
++         this.f_36080_ = exp;
++      } else {
++         this.m_6756_(this.newExp);
++      }
++      this.keepLevel = false;
++      this.m_20334_(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
++   }
++   // CraftBukkit end
+ }

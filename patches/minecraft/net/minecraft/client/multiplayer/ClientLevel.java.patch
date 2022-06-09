@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
+@@ -41,6 +_,7 @@
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.tags.BlockTags;
 @@ -121,6 +_,7 @@
     private int f_194123_;
     private final BlockStatePredictionHandler f_233599_ = new BlockStatePredictionHandler();
@@ -62,6 +70,18 @@
        if (p_233631_ == this.f_104565_.f_91074_) {
           this.f_104565_.m_91106_().m_120367_(new EntityBoundSoundInstance(p_233633_, p_233634_, p_233635_, p_233636_, p_233632_, p_233637_));
        }
+@@ -764,6 +_,11 @@
+    public void m_214171_(GameEvent p_233639_, Vec3 p_233640_, GameEvent.Context p_233641_) {
+    }
+ 
++   @Override
++   public ServerLevel getMinecraftWorld() {
++      return null;
++   }
++
+    protected Map<String, MapItemSavedData> m_171684_() {
+       return ImmutableMap.copyOf(this.f_104556_);
+    }
 @@ -902,6 +_,7 @@
        }
  

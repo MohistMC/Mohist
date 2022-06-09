@@ -1,5 +1,34 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
+@@ -55,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelSettings;
+ import net.minecraft.world.level.dimension.DimensionType;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.presets.WorldPresets;
+ import org.slf4j.Logger;
+@@ -285,6 +_,11 @@
+       return new LevelStorageSource.LevelStorageAccess(p_78261_);
+    }
+ 
++   // Mohist TODO
++   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> actualDimension) {
++      return null;
++   }
++
+    public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
+       public boolean m_230843_() {
+          return this.f_230840_.isEmpty();
+@@ -327,7 +_,7 @@
+ 
+    public class LevelStorageAccess implements AutoCloseable {
+       final DirectoryLock f_78270_;
+-      final LevelStorageSource.LevelDirectory f_230867_;
++      public final LevelStorageSource.LevelDirectory f_230867_;
+       private final String f_78272_;
+       private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
+ 
 @@ -372,6 +_,19 @@
           return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_211737_(p_211748_, p_211749_, p_211750_));
        }

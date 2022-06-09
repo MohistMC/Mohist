@@ -9,11 +9,11 @@
        VINDICATOR(EntityType.f_20493_, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
        EVOKER(EntityType.f_20568_, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
        PILLAGER(EntityType.f_20513_, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -827,6 +_,20 @@
-       private RaiderType(EntityType<? extends Raider> p_37821_, int[] p_37822_) {
+@@ -828,5 +_,25 @@
           this.f_37814_ = p_37821_;
           this.f_37815_ = p_37822_;
-+      }
+       }
+-   }
 +      
 +      /**
 +       * The waveCountsIn integer decides how many entities of the EntityType defined in typeIn will spawn in each wave.
@@ -27,6 +27,12 @@
 +      @Deprecated
 +      public void init() {
 +         f_37813_ = values();
-       }
-    }
++      }
++   }
++
++   // CraftBukkit start - a method to get all raiders
++   public java.util.Collection<Raider> getRaiders() {
++      return this.f_37671_.values().stream().flatMap(Set::stream).collect(java.util.stream.Collectors.toSet());
++   }
++   // CraftBukkit end
  }

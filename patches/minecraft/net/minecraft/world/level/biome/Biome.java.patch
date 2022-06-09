@@ -29,6 +29,15 @@
     }
  
     public Biome.Precipitation m_47530_() {
+@@ -112,7 +_,7 @@
+ 
+    /** @deprecated */
+    @Deprecated
+-   private float m_47505_(BlockPos p_47506_) {
++   public float m_47505_(BlockPos p_47506_) {
+       long i = p_47506_.m_121878_();
+       Long2FloatLinkedOpenHashMap long2floatlinkedopenhashmap = this.f_47444_.get();
+       float f = long2floatlinkedopenhashmap.get(i);
 @@ -188,7 +_,7 @@
     }
  

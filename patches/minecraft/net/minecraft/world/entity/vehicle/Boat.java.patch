@@ -1,5 +1,20 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
+@@ -87,6 +_,14 @@
+    private float f_38260_;
+    private float f_38261_;
+ 
++   // CraftBukkit start
++   // PAIL: Some of these haven't worked since a few updates, and since 1.9 they are less and less applicable.
++   public double maxSpeed = 0.4D;
++   public double occupiedDeceleration = 0.2D;
++   public double unoccupiedDeceleration = -1;
++   public boolean landBoats = false;
++   // CraftBukkit end
++
+    public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
+       super(p_38290_, p_38291_);
+       this.f_19850_ = true;
 @@ -480,7 +_,7 @@
                       blockpos$mutableblockpos.m_122178_(l1, k2, i2);
                       BlockState blockstate = this.f_19853_.m_8055_(blockpos$mutableblockpos);

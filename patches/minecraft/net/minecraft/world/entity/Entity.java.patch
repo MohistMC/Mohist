@@ -1,7 +1,11 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -118,7 +_,7 @@
+@@ -116,9 +_,11 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
++import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
  import org.slf4j.Logger;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -25,9 +29,49 @@
     public float f_19793_;
     public boolean f_19794_;
     protected final RandomSource f_19796_ = RandomSource.m_216327_();
-@@ -231,6 +_,7 @@
+@@ -230,7 +_,47 @@
+    @Nullable
     private BlockState f_185934_ = null;
  
++   // CraftBukkit start
++   public boolean persist = true;
++   public boolean valid;
++   public boolean generation;
++   public int maxAirTicks = getDefaultMaxAirSupply(); // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++   public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
++   public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
++   public boolean persistentInvisibility = false;
++   public BlockPos lastLavaContact;
++   // CraftBukkit end
++
++   public float getBukkitYaw() {
++      return this.f_19857_;
++   }
++
++   private CraftEntity bukkitEntity;
++   public CraftEntity getBukkitEntity() {
++      if (bukkitEntity == null) {
++         bukkitEntity = CraftEntity.getEntity(f_19853_.getCraftServer(), this);
++      }
++      return bukkitEntity;
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return getBukkitEntity();
++   }
++
++   // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++   public int getDefaultMaxAirSupply() {
++      return f_146818_;
++   }
++
++   public boolean isChunkLoaded() {
++      return f_19853_.m_7232_((int) Math.floor(this.m_20185_()) >> 4, (int) Math.floor(this.m_20189_()) >> 4);
++   }
++
++   // CraftBukkit end
++
     public Entity(EntityType<?> p_19870_, Level p_19871_) {
 +      super(Entity.class);
        this.f_19847_ = p_19870_;
@@ -225,6 +269,20 @@
     public boolean m_6146_() {
        return true;
     }
+@@ -2063,11 +_,11 @@
+       this.m_20115_(5, p_20304_);
+    }
+ 
+-   protected boolean m_20291_(int p_20292_) {
++   public boolean m_20291_(int p_20292_) {
+       return (this.f_19804_.m_135370_(f_19805_) & 1 << p_20292_) != 0;
+    }
+ 
+-   protected void m_20115_(int p_20116_, boolean p_20117_) {
++   public void m_20115_(int p_20116_, boolean p_20117_) {
+       byte b0 = this.f_19804_.m_135370_(f_19805_);
+       if (p_20117_) {
+          this.f_19804_.m_135381_(f_19805_, (byte)(b0 | 1 << p_20116_));
 @@ -2116,7 +_,7 @@
           this.m_20254_(8);
        }
@@ -287,6 +345,16 @@
           }
        } else {
           return null;
+@@ -2472,6 +_,9 @@
+       }
+    }
+ 
++   public void teleportTo(ServerLevel handle, BlockPos blockPos) {
++   }
++
+    public boolean m_6052_() {
+       return this.m_20151_();
+    }
 @@ -2487,8 +_,10 @@
        EntityDimensions entitydimensions = this.f_19815_;
        Pose pose = this.m_20089_();
@@ -309,6 +377,15 @@
 +            this.m_146884_(p_185956_.m_82520_(0.0D, (double)(-finalEntitydimensions.f_20378_) / 2.0D, 0.0D));
           });
        }
+ 
+@@ -2731,7 +_,7 @@
+       return SoundSource.NEUTRAL;
+    }
+ 
+-   protected int m_6101_() {
++   public int m_6101_() {
+       return 1;
+    }
  
 @@ -2974,6 +_,7 @@
  

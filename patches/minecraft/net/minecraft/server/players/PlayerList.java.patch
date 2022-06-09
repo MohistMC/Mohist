@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
+@@ -94,6 +_,7 @@
+ import net.minecraft.world.scores.Objective;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Team;
++import org.bukkit.Location;
+ import org.slf4j.Logger;
+ 
+ public abstract class PlayerList {
 @@ -122,6 +_,7 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
@@ -33,14 +41,18 @@
        this.f_11197_.put(p_11263_.m_20148_(), p_11263_);
        this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
  
-@@ -237,6 +_,7 @@
+@@ -237,9 +_,10 @@
        }
  
        p_11263_.m_143429_();
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedIn( p_11263_ );
     }
  
-    protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+-   protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
++   public void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+       Set<Objective> set = Sets.newHashSet();
+ 
+       for(PlayerTeam playerteam : p_11274_.m_83491_()) {
 @@ -297,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.m_20258_(compoundtag);
@@ -65,6 +77,18 @@
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
+@@ -397,6 +_,11 @@
+       return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_, p_215626_);
+    }
+ 
++   // Mohist TODO
++   public ServerPlayer respawn(ServerPlayer p_11237_, ServerLevel worldserver, boolean p_11238_, Location location, boolean avoidSuffocation) {
++      return null;
++   }
++
+    public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
+       this.f_11196_.remove(p_11237_);
+       p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
 @@ -455,10 +_,11 @@
        this.m_11229_(serverplayer, serverlevel1);
        this.m_11289_(serverplayer);
@@ -94,7 +118,33 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
-@@ -770,13 +_,6 @@
+@@ -764,19 +_,32 @@
+ 
+    }
+ 
++   public ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
++      ServerPlayer player = m_11259_(uuid);
++      ServerStatsCounter serverstatisticsmanager = player == null ? null : (ServerStatsCounter) player.m_8951_();
++      if (serverstatisticsmanager == null) {
++         File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
++         File file2 = new File(file1, uuid + ".json");
++         if (!file2.exists()) {
++            File file3 = new File(file1, displayName + ".json"); // CraftBukkit
++            if (file3.exists() && file3.isFile()) {
++               file3.renameTo(file2);
++            }
++         }
++
++         serverstatisticsmanager = new ServerStatsCounter(this.f_11195_, file2);
++         //this.stats.put(uuid, serverstatisticsmanager);
++      }
++
++      return serverstatisticsmanager;
++   }
++
+    public ServerStatsCounter m_11239_(Player p_11240_) {
+       UUID uuid = p_11240_.m_20148_();
+       ServerStatsCounter serverstatscounter = this.f_11202_.get(uuid);
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
           File file2 = new File(file1, uuid + ".json");

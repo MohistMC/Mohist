@@ -1,10 +1,23 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -37,9 +_,17 @@
-    private Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
+@@ -10,9 +_,11 @@
+ import com.google.gson.JsonSyntaxException;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
++import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Comparator;
++import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+@@ -37,9 +_,18 @@
+    public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
     private boolean f_44008_;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
++   public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> recipesCB = ImmutableMap.of(); // CraftBukkit
  
 +   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
 +   @Deprecated
@@ -57,3 +70,48 @@
     }
  
     public void m_44024_(Iterable<Recipe<?>> p_44025_) {
+@@ -189,4 +_,44 @@
+    public interface CachedCheck<C extends Container, T extends Recipe<C>> {
+       Optional<T> m_213657_(C p_220280_, Level p_220281_);
+    }
++
++   // CraftBukkit start
++   public void addRecipe(final Recipe<?> irecipe) {
++      final Map<ResourceLocation, Recipe<?>> map = this.f_44007_.get(irecipe.m_6671_());
++      Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> map1 = this.recipesCB.get(irecipe.m_6671_()); // CraftBukkit
++      if (map.containsKey(irecipe.m_6423_()) || map1.containsKey(irecipe.m_6423_())) {
++         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.m_6423_());
++      }
++      // Mohist start - Fix Bukkit.addRecipe(...)
++      Map newmap = new HashMap();
++      newmap.putAll(map);
++      newmap.put(irecipe.m_6423_(), irecipe);
++      newmap = ImmutableMap.copyOf(newmap);
++      Map newrecipes = new HashMap();
++      newrecipes.putAll(this.f_44007_);
++      newrecipes.put(irecipe.m_6671_(), newmap);
++      this.f_44007_ = ImmutableMap.copyOf(newrecipes);
++      // Mohist end
++      map1.putAndMoveToFirst(irecipe.m_6423_(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
++   }
++   // CraftBukkit end
++
++   // CraftBukkit start
++   public void clearRecipes() {
++      this.f_44007_ = Maps.newHashMap();
++      this.recipesCB = Maps.newHashMap();
++      for (RecipeType<?> recipeType : Registry.f_122864_) {
++         this.f_44007_.put(recipeType, Collections.emptyMap());
++         this.recipesCB.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
++      }
++   }
++
++   public boolean removeRecipe(ResourceLocation mcKey) {
++      for (Map<ResourceLocation, Recipe<?>> recipes : f_44007_.values()) {
++         recipes.remove(mcKey);
++      }
++
++      return f_199900_.remove(mcKey) != null;
++   }
++   // CraftBukkit end
+ }

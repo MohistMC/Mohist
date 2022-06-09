@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/DropperBlock.java
 +++ b/net/minecraft/world/level/block/DropperBlock.java
+@@ -30,7 +_,7 @@
+       return new DropperBlockEntity(p_153179_, p_153180_);
+    }
+ 
+-   protected void m_5824_(ServerLevel p_52944_, BlockPos p_52945_) {
++   public void m_5824_(ServerLevel p_52944_, BlockPos p_52945_) {
+       BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_52944_, p_52945_);
+       DispenserBlockEntity dispenserblockentity = blocksourceimpl.m_8118_();
+       int i = dispenserblockentity.m_222761_(p_52944_.f_46441_);
 @@ -38,7 +_,7 @@
           p_52944_.m_46796_(1001, p_52945_, 0);
        } else {

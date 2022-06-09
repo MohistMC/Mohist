@@ -1,5 +1,58 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
+@@ -47,7 +_,7 @@
+    protected void m_8097_() {
+    }
+ 
+-   protected void m_6022_(Direction p_31728_) {
++   public void m_6022_(Direction p_31728_) {
+       Validate.notNull(p_31728_);
+       Validate.isTrue(p_31728_.m_122434_().m_122479_());
+       this.f_31699_ = p_31728_;
+@@ -87,7 +_,42 @@
+       }
+    }
+ 
+-   private double m_31709_(int p_31710_) {
++   // CraftBukkit start - break out BB calc into own method
++   public static AABB calculateBoundingBox(Entity entity, BlockPos pos, Direction opposite, int width, int height) {
++      double d0 = (double) pos.m_123341_() + 0.5D;
++      double d1 = (double) pos.m_123342_() + 0.5D;
++      double d2 = (double) pos.m_123343_() + 0.5D;
++      double d3 = 0.46875D;
++      double d4 = m_31709_(width);
++      double d5 = m_31709_(height);
++      d0 -= (double) opposite.m_122429_() * 0.46875D;
++      d2 -= (double) opposite.m_122431_() * 0.46875D;
++      d1 += d5;
++      Direction direction = opposite.m_122428_();
++      d0 += d4 * (double)direction.m_122429_();
++      d2 += d4 * (double)direction.m_122431_();
++      if(entity != null)
++      {
++         entity.m_20343_( d0, d1, d2 );
++      }
++      double d6 = (double)width;
++      double d7 = (double)height;
++      double d8 = (double)width;
++      if (opposite.m_122434_() == Direction.Axis.Z) {
++         d8 = 1.0D;
++      } else {
++         d6 = 1.0D;
++      }
++
++      d6 /= 32.0D;
++      d7 /= 32.0D;
++      d8 /= 32.0D;
++
++      return new AABB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8);
++   }
++   // CraftBukkit end
++
++   private static double m_31709_(int p_31710_) {
+       return p_31710_ % 32 == 0 ? 0.5D : 0.0D;
+    }
+ 
 @@ -121,6 +_,8 @@
                 int j1 = (j - 1) / -2;
                 blockpos$mutableblockpos.m_122190_(blockpos).m_122175_(direction, k + i1).m_122175_(Direction.UP, l + j1);

@@ -244,7 +244,7 @@
              return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -958,12 +_,31 @@
+@@ -958,6 +_,8 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -253,11 +253,10 @@
     public void m_150924_(ItemEntity p_150925_) {
        this.m_41720_().m_142023_(p_150925_);
     }
- 
-    public boolean m_41614_() {
+@@ -966,6 +_,23 @@
        return this.m_41720_().m_41472_();
-+   }
-+
+    }
+ 
 +   // FORGE START
 +   public void deserializeNBT(CompoundTag nbt) {
 +      final ItemStack itemStack = ItemStack.m_41712_(nbt);
@@ -273,6 +272,25 @@
 +         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
-    }
- 
++   }
++
     public SoundEvent m_41615_() {
+       return this.m_41720_().m_6023_();
+    }
+@@ -978,6 +_,16 @@
+    public SoundEvent m_150920_() {
+       return this.m_41720_().m_142602_();
+    }
++
++   // CraftBukkit start
++   @Deprecated
++   public void setItem(Item item) {
++      this.f_41589_ = item;
++   }
++
++   public void convertStack(int version) {
++   }
++   // CraftBukkit end
+ 
+    public static enum TooltipPart {
+       ENCHANTMENTS,

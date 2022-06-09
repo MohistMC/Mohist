@@ -27,3 +27,35 @@
        if (blockstate.m_60734_() instanceof BonemealableBlock) {
           BonemealableBlock bonemealableblock = (BonemealableBlock)blockstate.m_60734_();
           if (bonemealableblock.m_7370_(p_40629_, p_40630_, blockstate, p_40629_.f_46443_)) {
+@@ -179,4 +_,31 @@
+ 
+       }
+    }
++
++   // CraftBukkit Mohist start
++   public static InteractionResult applyBonemeal(UseOnContext p_40637_) {
++      Level level = p_40637_.m_43725_();
++      BlockPos blockpos = p_40637_.m_8083_();
++      BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
++      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
++         if (!level.f_46443_) {
++            level.m_46796_(1505, blockpos, 0);
++         }
++
++         return InteractionResult.m_19078_(level.f_46443_);
++      } else {
++         BlockState blockstate = level.m_8055_(blockpos);
++         boolean flag = blockstate.m_60783_(level, blockpos, p_40637_.m_43719_());
++         if (flag && m_40631_(p_40637_.m_43722_(), level, blockpos1, p_40637_.m_43719_())) {
++            if (!level.f_46443_) {
++               level.m_46796_(1505, blockpos1, 0);
++            }
++
++            return InteractionResult.m_19078_(level.f_46443_);
++         } else {
++            return InteractionResult.PASS;
++         }
++      }
++   }
++   // CraftBukkit Mohist end
+ }

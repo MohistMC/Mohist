@@ -1,5 +1,17 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
+@@ -27,9 +_,9 @@
+ public abstract class BaseSpawner {
+    private static final Logger f_45441_ = LogUtils.getLogger();
+    private static final int f_151303_ = 1;
+-   private int f_45442_ = 20;
++   public int f_45442_ = 20;
+    private SimpleWeightedRandomList<SpawnData> f_45443_ = SimpleWeightedRandomList.m_185864_();
+-   private SpawnData f_45444_ = new SpawnData();
++   public SpawnData f_45444_ = new SpawnData();
+    private double f_45445_;
+    private double f_45446_;
+    public int f_45447_ = 200;
 @@ -127,11 +_,15 @@
                    entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), randomsource.m_188501_() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {

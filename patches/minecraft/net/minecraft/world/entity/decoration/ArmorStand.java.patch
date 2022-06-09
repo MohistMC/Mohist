@@ -9,3 +9,61 @@
     };
     private final NonNullList<ItemStack> f_31538_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
     private final NonNullList<ItemStack> f_31539_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+@@ -153,6 +_,21 @@
+ 
+    }
+ 
++   public void setItemSlot(EquipmentSlot p_31584_, ItemStack p_31585_, boolean silent) {
++      // CraftBukkit end
++      this.m_181122_(p_31585_);
++      switch(p_31584_.m_20743_()) {
++         case HAND:
++            this.playEquipSound(p_31585_, silent); // CraftBukkit
++            this.f_31538_.set(p_31584_.m_20749_(), p_31585_);
++            break;
++         case ARMOR:
++            this.playEquipSound(p_31585_, silent);
++            this.f_31539_.set(p_31584_.m_20749_(), p_31585_);
++      }
++
++   }
++
+    public boolean m_7066_(ItemStack p_31638_) {
+       EquipmentSlot equipmentslot = Mob.m_147233_(p_31638_);
+       return this.m_6844_(equipmentslot).m_41619_() && !this.m_31626_(equipmentslot);
+@@ -596,7 +_,7 @@
+       return this.m_31677_() ? PushReaction.IGNORE : super.m_7752_();
+    }
+ 
+-   private void m_31603_(boolean p_31604_) {
++   public void m_31603_(boolean p_31604_) {
+       this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 1, p_31604_));
+    }
+ 
+@@ -604,7 +_,7 @@
+       return (this.f_19804_.m_135370_(f_31524_) & 1) != 0;
+    }
+ 
+-   private void m_31675_(boolean p_31676_) {
++   public void m_31675_(boolean p_31676_) {
+       this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 4, p_31676_));
+    }
+ 
+@@ -612,7 +_,7 @@
+       return (this.f_19804_.m_135370_(f_31524_) & 4) != 0;
+    }
+ 
+-   private void m_31678_(boolean p_31679_) {
++   public void m_31678_(boolean p_31679_) {
+       this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 8, p_31679_));
+    }
+ 
+@@ -620,7 +_,7 @@
+       return (this.f_19804_.m_135370_(f_31524_) & 8) != 0;
+    }
+ 
+-   private void m_31681_(boolean p_31682_) {
++   public void m_31681_(boolean p_31682_) {
+       this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 16, p_31682_));
+    }
+ 

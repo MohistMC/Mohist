@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
+@@ -43,6 +_,8 @@
+    @Nullable
+    public BlockPos f_58733_;
+ 
++   public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
++
+    public BeehiveBlockEntity(BlockPos p_155134_, BlockState p_155135_) {
+       super(BlockEntityType.f_58912_, p_155134_, p_155135_);
+    }
+@@ -156,7 +_,13 @@
+    }
+ 
+    private static boolean m_155136_(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_) {
+-      if ((p_155137_.m_46462_() || p_155137_.m_46471_()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++      // CraftBukkit start - This allows us to bypass the night/rain/emergency check
++      return releaseBee(p_155137_, p_155138_, p_155139_, p_155140_, p_155141_, p_155142_, p_155143_, false);
++   }
++
++   private static boolean releaseBee(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_, boolean force) {
++      if (!force && (p_155137_.m_46462_() || p_155137_.m_46471_()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++         // CraftBukkit end
+          return false;
+       } else {
+          CompoundTag compoundtag = p_155140_.f_58782_.m_6426_();
+@@ -338,5 +_,18 @@
+       HONEY_DELIVERED,
+       BEE_RELEASED,
+       EMERGENCY;
++   }
++
++   public List<Entity> releaseBees(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_, boolean force) {
++      List<Entity> list = Lists.newArrayList();
++      this.f_58732_.removeIf((p_58766_) -> {
++         return releaseBee(this.f_58857_, this.f_58858_, p_58760_, p_58766_, list, p_58761_, this.f_58733_, force);
++         // CraftBukkit end
++      });
++      if (!list.isEmpty()) {
++         super.m_6596_();
++      }
++
++      return list;
+    }
+ }

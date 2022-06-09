@@ -9,7 +9,7 @@
           TestCommand.m_127946_(this.f_82090_);
        }
  
-@@ -199,6 +_,7 @@
+@@ -199,12 +_,19 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -17,6 +17,18 @@
  
        this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
+       });
+    }
+ 
++   public Commands() {
++      this.f_82090_.setConsumer((p_82104_, p_82105_, p_82106_) -> {
++         p_82104_.getSource().m_81342_(p_82104_, p_82105_, p_82106_);
++      });
++   }
++
+    public int m_230957_(CommandSourceStack p_230958_, String p_230959_) {
+       return this.m_82117_(p_230958_, p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_);
+    }
 @@ -217,7 +_,17 @@
  
        try {
@@ -46,3 +58,15 @@
        p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
     }
  
+@@ -366,7 +_,10 @@
+       }
+    }
+ 
+-   public static enum CommandSelection {
++    public void performPrefixedCommand(CommandSourceStack icommandlistener, String toDispatcher, String toDispatcher1) {
++    }
++
++    public static enum CommandSelection {
+       ALL(true, true),
+       DEDICATED(false, true),
+       INTEGRATED(true, false);

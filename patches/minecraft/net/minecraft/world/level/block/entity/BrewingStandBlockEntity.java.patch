@@ -1,5 +1,67 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+@@ -1,12 +_,14 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import java.util.Arrays;
++import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.chat.Component;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.world.ContainerHelper;
+ import net.minecraft.world.Containers;
+ import net.minecraft.world.WorldlyContainer;
+@@ -22,6 +_,8 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.BrewingStandBlock;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
+    private static final int f_155280_ = 3;
+@@ -66,6 +_,37 @@
+       }
+    };
+ 
++   // CraftBukkit start - add fields and methods
++   private int lastTick = MinecraftServer.currentTick;
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   private int maxStack = 64;
++
++   public void onOpen(CraftHumanEntity who) {
++      transaction.add(who);
++   }
++
++   public void onClose(CraftHumanEntity who) {
++      transaction.remove(who);
++   }
++
++   public List<HumanEntity> getViewers() {
++      return transaction;
++   }
++
++   public List<ItemStack> getContents() {
++      return this.f_58975_;
++   }
++
++   @Override
++   public int m_6893_() {
++      return maxStack;
++   }
++
++   public void setMaxStackSize(int size) {
++      maxStack = size;
++   }
++   // CraftBukkit end
++
+    public BrewingStandBlockEntity(BlockPos p_155283_, BlockState p_155284_) {
+       super(BlockEntityType.f_58927_, p_155283_, p_155284_);
+    }
 @@ -147,6 +_,7 @@
  
     private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {

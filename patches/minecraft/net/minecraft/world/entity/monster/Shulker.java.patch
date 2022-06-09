@@ -13,3 +13,26 @@
                    this.m_19877_();
                    this.m_149788_(direction);
                    this.m_5496_(SoundEvents.f_12418_, 1.0F, 1.0F);
+@@ -435,7 +_,7 @@
+       return this.f_19804_.m_135370_(f_33392_);
+    }
+ 
+-   private void m_149788_(Direction p_149789_) {
++   public void m_149788_(Direction p_149789_) {
+       this.f_19804_.m_135381_(f_33392_, p_149789_);
+    }
+ 
+@@ -447,11 +_,11 @@
+       super.m_7350_(p_33434_);
+    }
+ 
+-   private int m_33463_() {
++   public int m_33463_() {
+       return this.f_19804_.m_135370_(f_33401_);
+    }
+ 
+-   void m_33418_(int p_33419_) {
++   public void m_33418_(int p_33419_) {
+       if (!this.f_19853_.f_46443_) {
+          this.m_21051_(Attributes.f_22284_).m_22130_(f_33395_);
+          if (p_33419_ == 0) {

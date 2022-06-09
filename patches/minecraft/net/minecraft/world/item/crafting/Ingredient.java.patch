@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -29,12 +_,19 @@
+@@ -29,14 +_,22 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
 +   //Because Mojang caches things... we need to invalidate them.. so... here we go..
 +   private static final java.util.concurrent.atomic.AtomicInteger INVALIDATION_COUNTER = new java.util.concurrent.atomic.AtomicInteger();
++   public boolean exact; // Bukkit
 +   public static void invalidateAll() {
 +      INVALIDATION_COUNTER.incrementAndGet();
 +   }
@@ -13,13 +14,25 @@
     public static final Ingredient f_43901_ = new Ingredient(Stream.empty());
     private final Ingredient.Value[] f_43902_;
     @Nullable
-    private ItemStack[] f_43903_;
+    public ItemStack[] f_43903_;
     @Nullable
     private IntList f_43904_;
 +   private int invalidationCounter;
  
-    protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
+-   protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
++   public Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.f_43902_ = p_43907_.toArray((p_43933_) -> {
+          return new Ingredient.Value[p_43933_];
+       });
+@@ -47,7 +_,7 @@
+       return this.f_43903_;
+    }
+ 
+-   private void m_43948_() {
++   public void m_43948_() {
+       if (this.f_43903_ == null) {
+          this.f_43903_ = Arrays.stream(this.f_43902_).flatMap((p_43916_) -> {
+             return p_43916_.m_6223_().stream();
 @@ -78,7 +_,8 @@
     }
  

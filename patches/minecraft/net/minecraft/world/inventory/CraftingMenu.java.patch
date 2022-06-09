@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/inventory/CraftingMenu.java
++++ b/net/minecraft/world/inventory/CraftingMenu.java
+@@ -13,6 +_,8 @@
+ import net.minecraft.world.item.crafting.RecipeType;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryView;
+ 
+ public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
+    public static final int f_150539_ = 0;
+@@ -26,6 +_,20 @@
+    public final ResultContainer f_39349_ = new ResultContainer();
+    public final ContainerLevelAccess f_39350_;
+    private final Player f_39351_;
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.f_39348_, this.f_39349_);
++      bukkitEntity = new CraftInventoryView(this.f_39351_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ 
+    public CraftingMenu(int p_39353_, Inventory p_39354_) {
+       this(p_39353_, p_39354_, ContainerLevelAccess.f_39287_);

@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
+@@ -15,6 +_,7 @@
+ import java.util.Objects;
+ import java.util.Optional;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BooleanSupplier;
+ import joptsimple.OptionParser;
+ import joptsimple.OptionSet;
 @@ -78,6 +_,15 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
@@ -63,6 +71,15 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
+@@ -133,6 +_,8 @@
+          }
+ 
+          PackRepository packrepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), PackSource.f_10529_));
++         AtomicReference<DataPackConfig> config = new AtomicReference<>();
++         AtomicReference<DynamicOps<Tag>> ops = new AtomicReference<>();
+ 
+          WorldStem worldstem;
+          try {
 @@ -158,6 +_,8 @@
                          worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$writable).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$writable);
                       }
@@ -86,7 +103,7 @@
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
++               dedicatedserver1 = new DedicatedServer(optionset, config.get(), ops.get(), p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
 +            }
              dedicatedserver1.m_236740_(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
              dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
@@ -110,3 +127,12 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
+@@ -204,7 +_,7 @@
+ 
+    }
+ 
+-   private static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
++   public static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
+       f_129670_.info("Forcing world upgrade!");
+       WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_195493_, p_195491_);
+       Component component = null;

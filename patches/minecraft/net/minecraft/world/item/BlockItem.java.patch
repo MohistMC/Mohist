@@ -29,7 +29,7 @@
     @Nullable
     public BlockPlaceContext m_7732_(BlockPlaceContext p_40609_) {
        return p_40609_;
-@@ -200,11 +_,19 @@
+@@ -200,6 +_,10 @@
     }
  
     public Block m_40614_() {
@@ -40,12 +40,37 @@
        return this.f_40563_;
     }
  
-    public void m_6192_(Map<Block, Item> p_40607_, Item p_40608_) {
+@@ -207,6 +_,10 @@
        p_40607_.put(this.m_40614_(), p_40608_);
-+   }
-+
-+   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
-+      blockToItemMap.remove(this.m_40614_());
     }
  
++   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
++      blockToItemMap.remove(this.m_40614_());
++   }
++
     public boolean m_142095_() {
+       return !(this.f_40563_ instanceof ShulkerBoxBlock);
+    }
+@@ -237,4 +_,22 @@
+       }
+ 
+    }
++
++   public static BlockState getBlockState(BlockState iblockdata, CompoundTag compoundtag1) {
++      BlockState iblockdata1 = iblockdata;
++      {
++         // CraftBukkit end
++         StateDefinition<Block, BlockState> statedefinition = iblockdata.m_60734_().m_49965_();
++
++         for(String s : compoundtag1.m_128431_()) {
++            Property<?> property = statedefinition.m_61081_(s);
++            if (property != null) {
++               String s1 = compoundtag1.m_128423_(s).m_7916_();
++               iblockdata1 = m_40593_(iblockdata1, property, s1);
++            }
++         }
++      }
++      return iblockdata1;
++   }
++
+ }

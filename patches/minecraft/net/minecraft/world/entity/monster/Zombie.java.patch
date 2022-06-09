@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
+@@ -64,6 +_,8 @@
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
+ 
+ public class Zombie extends Monster {
+    private static final UUID f_34259_ = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
 @@ -191,7 +_,7 @@
        if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {
           if (this.m_34329_()) {
@@ -9,6 +18,15 @@
                 this.m_7595_();
              }
           } else if (this.m_7593_()) {
+@@ -235,7 +_,7 @@
+       super.m_8107_();
+    }
+ 
+-   private void m_34278_(int p_34279_) {
++   public void m_34278_(int p_34279_) {
+       this.f_34266_ = p_34279_;
+       this.m_20088_().m_135381_(f_34261_, true);
+    }
 @@ -253,6 +_,7 @@
        if (zombie != null) {
           zombie.m_34339_(zombie.f_19853_.m_6436_(zombie.m_20183_()).m_19057_());
@@ -59,6 +77,30 @@
           if (!this.m_20067_()) {
              p_219160_.m_5898_((Player)null, 1026, this.m_20183_(), 0);
           }
+@@ -396,6 +_,23 @@
+       return flag;
+    }
+ 
++   public static ZombieVillager zombifyVillager(ServerLevel p_34281_, net.minecraft.world.entity.npc.Villager villager, net.minecraft.core.BlockPos blockPosition, boolean silent, CreatureSpawnEvent.SpawnReason spawnReason) {
++      ZombieVillager zombievillager = (ZombieVillager) villager.convertTo(EntityType.f_20530_, false, EntityTransformEvent.TransformReason.INFECTION, spawnReason);
++      if (zombievillager != null) {
++         // CraftBukkit end
++         zombievillager.m_6518_(p_34281_, p_34281_.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
++         zombievillager.m_34375_(villager.m_7141_());
++         zombievillager.m_34391_(villager.m_35517_().m_26179_(NbtOps.f_128958_).getValue());
++         zombievillager.m_34411_(villager.m_6616_().m_45388_());
++         zombievillager.m_34373_(villager.m_7809_());
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(villager, zombievillager);
++         if (!silent) {
++            p_34281_.m_5898_((Player)null, 1026, blockPosition, 0);
++         }
++      }
++      return zombievillager; // CraftBukkit
++   }
++
+    protected float m_6431_(Pose p_34313_, EntityDimensions p_34314_) {
+       return this.m_6162_() ? 0.93F : 1.74F;
+    }
 @@ -460,7 +_,7 @@
     }
  

@@ -1,5 +1,20 @@
 --- a/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/net/minecraft/world/level/block/SaplingBlock.java
+@@ -13,12 +_,14 @@
+ import net.minecraft.world.level.block.state.properties.IntegerProperty;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.TreeType;
+ 
+ public class SaplingBlock extends BushBlock implements BonemealableBlock {
+    public static final IntegerProperty f_55973_ = BlockStateProperties.f_61387_;
+    protected static final float f_154380_ = 6.0F;
+    protected static final VoxelShape f_55974_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+    private final AbstractTreeGrower f_55975_;
++   public static TreeType treeType; // CraftBukkit
+ 
+    public SaplingBlock(AbstractTreeGrower p_55978_, BlockBehaviour.Properties p_55979_) {
+       super(p_55979_);
 @@ -32,6 +_,7 @@
  
     public void m_213898_(BlockState p_222011_, ServerLevel p_222012_, BlockPos p_222013_, RandomSource p_222014_) {

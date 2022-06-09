@@ -1,10 +1,80 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -211,6 +_,7 @@
+@@ -71,6 +_,11 @@
+ import net.minecraft.world.level.material.Fluid;
+ import net.minecraft.world.level.pathfinder.BlockPathTypes;
+ import net.minecraft.world.level.storage.loot.LootContext;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
+ 
+ public abstract class Mob extends LivingEntity {
+    private static final EntityDataAccessor<Byte> f_21340_ = SynchedEntityData.m_135353_(Mob.class, EntityDataSerializers.f_135027_);
+@@ -94,8 +_,8 @@
+    protected JumpControl f_21343_;
+    private final BodyRotationControl f_21361_;
+    protected PathNavigation f_21344_;
+-   public final GoalSelector f_21345_;
+-   public final GoalSelector f_21346_;
++   public GoalSelector f_21345_;
++   public GoalSelector f_21346_;
+    @Nullable
+    private LivingEntity f_21362_;
+    private final Sensing f_21349_;
+@@ -104,7 +_,7 @@
+    private final NonNullList<ItemStack> f_21351_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+    public final float[] f_21348_ = new float[4];
+    private boolean f_21352_;
+-   public boolean f_21353_;
++   private boolean f_21353_;
+    private final Map<BlockPathTypes, Float> f_21354_ = Maps.newEnumMap(BlockPathTypes.class);
+    @Nullable
+    public ResourceLocation f_21355_;
+@@ -117,6 +_,8 @@
+    private BlockPos f_21360_ = BlockPos.f_121853_;
+    private float f_21341_ = -1.0F;
+ 
++   public boolean aware = true; // CraftBukkit
++
+    protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
+       super(p_21368_, p_21369_);
+       this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
+@@ -210,7 +_,36 @@
+    }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
++      setTarget(p_21544_, EntityTargetEvent.TargetReason.UNKNOWN, true);
++   }
++
++   public boolean setTarget(@Nullable LivingEntity p_21544_, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++      if (m_5448_() == p_21544_) return false;
++      if (fireEvent) {
++         if (reason == EntityTargetEvent.TargetReason.UNKNOWN && m_5448_() != null && p_21544_ == null) {
++            reason = m_5448_().m_6084_() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
++         }
++         if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
++            net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_21544_);
++         }
++         CraftLivingEntity ctarget = null;
++         if (p_21544_ != null) {
++            ctarget = (CraftLivingEntity) p_21544_.getBukkitEntity();
++         }
++         EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
++         f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return false;
++         }
++         if (event.getTarget() != null) {
++            p_21544_ = ((CraftLivingEntity) event.getTarget()).getHandle();
++         } else {
++            p_21544_ = null;
++         }
++      }
        this.f_21362_ = p_21544_;
-+      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_21544_);
++      return true;
++      // CraftBukkit end
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
@@ -34,3 +104,27 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
+@@ -1007,6 +_,10 @@
+       this.f_21353_ = true;
+    }
+ 
++   public void setPersistenceRequired(boolean persistenceRequired) {
++      this.f_21353_ = persistenceRequired;
++   }
++
+    public void m_21409_(EquipmentSlot p_21410_, float p_21411_) {
+       switch (p_21410_.m_20743_()) {
+          case HAND:
+@@ -1130,6 +_,12 @@
+ 
+    @Nullable
+    public <T extends Mob> T m_21406_(EntityType<T> p_21407_, boolean p_21408_) {
++      return this.convertTo(p_21407_, p_21408_, EntityTransformEvent.TransformReason.UNKNOWN, CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   @Nullable
++   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
++      // CraftBukkit end
+       if (this.m_213877_()) {
+          return (T)null;
+       } else {

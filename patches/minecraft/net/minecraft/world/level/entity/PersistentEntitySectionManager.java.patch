@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
+@@ -32,7 +_,7 @@
+    static final Logger f_157490_ = LogUtils.getLogger();
+    final Set<UUID> f_157491_ = Sets.newHashSet();
+    final LevelCallback<T> f_157492_;
+-   private final EntityPersistentStorage<T> f_157493_;
++   public final EntityPersistentStorage<T> f_157493_;
+    private final EntityLookup<T> f_157494_;
+    final EntitySectionStorage<T> f_157495_;
+    private final LevelEntityGetter<T> f_157496_;
 @@ -71,7 +_,16 @@
        return this.m_157538_(p_157534_, false);
     }
@@ -32,6 +41,15 @@
        });
     }
  
+@@ -177,7 +_,7 @@
+       });
+    }
+ 
+-   private void m_157555_(long p_157556_) {
++   public void m_157555_(long p_157556_) {
+       PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.f_157498_.get(p_157556_);
+       if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.FRESH) {
+          this.m_157562_(p_157556_);
 @@ -247,6 +_,7 @@
        while((chunkentities = this.f_157500_.poll()) != null) {
           chunkentities.m_156792_().forEach((p_157593_) -> {
@@ -40,8 +58,36 @@
           });
           this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
        }
-@@ -349,11 +_,13 @@
+@@ -300,7 +_,15 @@
+    }
  
+    public void close() throws IOException {
+-      this.m_157561_();
++      // CraftBukkit start - add save boolean
++      close(true);
++   }
++
++   public void close(boolean save) throws IOException {
++      if (save) {
++         this.m_157561_();
++      }
++      // CraftBukkit end
+       this.f_157493_.close();
+    }
+ 
+@@ -347,13 +_,24 @@
+       return this.f_157491_.size() + "," + this.f_157494_.m_156821_() + "," + this.f_157495_.m_156887_() + "," + this.f_157498_.size() + "," + this.f_157497_.size() + "," + this.f_157500_.size() + "," + this.f_157499_.size();
+    }
+ 
++   // CraftBukkit start - add method to get all entities in chunk
++   public List<Entity> getEntities(ChunkPos chunkCoordIntPair) {
++      return f_157495_.m_156888_(chunkCoordIntPair.m_45588_()).flatMap(EntitySection::m_156845_).map(entity -> (Entity) entity).collect(Collectors.toList());
++   }
++
++   public boolean isPending(long pair) {
++      return f_157498_.get(pair) == ChunkLoadStatus.PENDING;
++   }
++
     class Callback implements EntityInLevelCallback {
        private final T f_157609_;
 +      private final Entity realEntity;

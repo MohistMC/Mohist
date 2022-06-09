@@ -1,5 +1,62 @@
 --- a/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
+@@ -2,14 +_,20 @@
+ 
+ import com.google.common.collect.ImmutableList;
+ import com.mojang.serialization.Dynamic;
++import java.util.HashSet;
+ import java.util.List;
++import java.util.Set;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.Registry;
+ import net.minecraft.nbt.CompoundTag;
++import net.minecraft.nbt.ListTag;
++import net.minecraft.nbt.StringTag;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+@@ -43,6 +_,7 @@
+ import net.minecraft.world.entity.npc.InventoryCarrier;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.projectile.Projectile;
++import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.ProjectileWeaponItem;
+@@ -74,6 +_,11 @@
+    protected static final ImmutableList<SensorType<? extends Sensor<? super Piglin>>> f_34680_ = ImmutableList.of(SensorType.f_26811_, SensorType.f_26812_, SensorType.f_26810_, SensorType.f_26814_, SensorType.f_26819_);
+    protected static final ImmutableList<MemoryModuleType<?>> f_34672_ = ImmutableList.of(MemoryModuleType.f_26371_, MemoryModuleType.f_26379_, MemoryModuleType.f_148204_, MemoryModuleType.f_148205_, MemoryModuleType.f_26368_, MemoryModuleType.f_148206_, MemoryModuleType.f_26347_, MemoryModuleType.f_26346_, MemoryModuleType.f_26332_, MemoryModuleType.f_26381_, MemoryModuleType.f_26382_, MemoryModuleType.f_26370_, MemoryModuleType.f_26326_, MemoryModuleType.f_26372_, MemoryModuleType.f_26373_, MemoryModuleType.f_26374_, MemoryModuleType.f_26377_, MemoryModuleType.f_26334_, MemoryModuleType.f_26335_, MemoryModuleType.f_26383_, MemoryModuleType.f_26336_, MemoryModuleType.f_26337_, MemoryModuleType.f_26339_, MemoryModuleType.f_26338_, MemoryModuleType.f_26341_, MemoryModuleType.f_26342_, MemoryModuleType.f_26340_, MemoryModuleType.f_26344_, MemoryModuleType.f_26333_, MemoryModuleType.f_26351_, MemoryModuleType.f_26376_, MemoryModuleType.f_26352_, MemoryModuleType.f_26353_, MemoryModuleType.f_26343_, MemoryModuleType.f_26345_, MemoryModuleType.f_26354_, MemoryModuleType.f_26355_, MemoryModuleType.f_26356_);
+ 
++   // CraftBukkit start - Custom bartering and interest list
++   public Set<Item> allowedBarterItems = new HashSet<>();
++   public Set<Item> interestItems = new HashSet<>();
++   // CraftBukkit end
++
+    public Piglin(EntityType<? extends AbstractPiglin> p_34683_, Level p_34684_) {
+       super(p_34683_, p_34684_);
+       this.f_21364_ = 5;
+@@ -90,6 +_,15 @@
+       }
+ 
+       p_34751_.m_128365_("Inventory", this.f_34678_.m_7927_());
++
++      // CraftBukkit start
++      ListTag barterList = new ListTag();
++      allowedBarterItems.stream().map( Registry.f_122827_::m_7981_).map( ResourceLocation::toString).map( StringTag::m_129297_).forEach(barterList::add);
++      p_34751_.m_128365_("Bukkit.BarterList", barterList);
++      ListTag interestList = new ListTag();
++      interestItems.stream().map(Registry.f_122827_::m_7981_).map(ResourceLocation::toString).map(StringTag::m_129297_).forEach(interestList::add);
++      p_34751_.m_128365_("Bukkit.InterestList", interestList);
++      // CraftBukkit end
+    }
+ 
+    public void m_7378_(CompoundTag p_34725_) {
 @@ -282,7 +_,7 @@
        } else if (this.m_34773_()) {
           return PiglinArmPose.CROSSBOW_CHARGE;

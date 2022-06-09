@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/Skeleton.java
++++ b/net/minecraft/world/entity/monster/Skeleton.java
+@@ -73,7 +_,7 @@
+ 
+    }
+ 
+-   private void m_149830_(int p_149831_) {
++   public void m_149830_(int p_149831_) {
+       this.f_149828_ = p_149831_;
+       this.f_19804_.m_135381_(f_149826_, true);
+    }

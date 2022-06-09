@@ -1,5 +1,100 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -166,6 +_,11 @@
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.apache.commons.lang3.StringUtils;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
++import org.bukkit.event.player.PlayerKickEvent;
+ import org.slf4j.Logger;
+ 
+ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
+@@ -210,6 +_,28 @@
+    private final ChatPreviewThrottler f_215196_ = new ChatPreviewThrottler();
+    private final AtomicReference<Instant> f_215197_ = new AtomicReference<>(Instant.EPOCH);
+ 
++   private final CraftServer cserver;
++   public boolean processedDisconnect;
++   private int lastTick = MinecraftServer.currentTick;
++   private int allowedPlayerTicks = 1;
++   private int lastDropTick = MinecraftServer.currentTick;
++   private int lastBookTick  = MinecraftServer.currentTick;
++   private int dropCount = 0;
++   private static final int SURVIVAL_PLACE_DISTANCE_SQUARED = 6 * 6;
++   private static final int CREATIVE_PLACE_DISTANCE_SQUARED = 7 * 7;
++
++   // Get position of last block hit for BlockDamageLevel.STOPPED
++   private double lastPosX = Double.MAX_VALUE;
++   private double lastPosY = Double.MAX_VALUE;
++   private double lastPosZ = Double.MAX_VALUE;
++   private float lastPitch = Float.MAX_VALUE;
++   private float lastYaw = Float.MAX_VALUE;
++   private boolean justTeleported = false;
++
++   public CraftPlayer getCraftPlayer() {
++      return (this.f_9743_ == null) ? null : (CraftPlayer) this.f_9743_.getBukkitEntity();
++   }
++
+    public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_) {
+       this.f_9745_ = p_9770_;
+       this.f_9742_ = p_9771_;
+@@ -218,6 +_,9 @@
+       p_9772_.f_8906_ = this;
+       this.f_9747_ = Util.m_137550_();
+       p_9772_.m_8967_().m_7674_();
++
++      // CraftBukkit start - add fields and methods
++      this.cserver = p_9770_.server;
+    }
+ 
+    public void m_9933_() {
+@@ -315,12 +_,40 @@
+       return this.f_9745_.m_7779_(this.f_9743_.m_36316_());
+    }
+ 
++   // CraftBukkit star
+    public void m_9942_(Component p_9943_) {
+-      this.f_9742_.m_129514_(new ClientboundDisconnectPacket(p_9943_), (p_9828_) -> {
+-         this.f_9742_.m_129507_(p_9943_);
++      disconnect(CraftChatMessage.fromComponent(p_9943_));
++   }
++   // CraftBukkit end
++
++   public void disconnect(String s) {
++      // CraftBukkit start - fire PlayerKickEvent
++      if (this.processedDisconnect) {
++         return;
++      }
++      String leaveMessage = ChatFormatting.YELLOW + this.f_9743_.m_6302_() + " left the game.";
++
++      PlayerKickEvent event = new PlayerKickEvent(this.f_9743_.getBukkitEntity(), s, leaveMessage);
++
++      if (this.cserver.getServer().m_130010_()) {
++         this.cserver.getPluginManager().callEvent(event);
++      }
++
++      if (event.isCancelled()) {
++         // Do not kick the player
++         return;
++      }
++      this.f_9743_.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
++      // Send the possibly modified leave message
++      s = event.getReason();
++      final Component ichatbasecomponent = CraftChatMessage.fromString(s, true)[0];
++      // CraftBukkit end
++      this.f_9742_.m_129514_(new ClientboundDisconnectPacket(ichatbasecomponent), (p_9828_) -> {
++         this.f_9742_.m_129507_(ichatbasecomponent);
+       });
++      this.m_7026_(ichatbasecomponent); // CraftBukkit - fire quit instantly
+       this.f_9742_.m_129540_();
+-      this.f_9745_.m_18709_(this.f_9742_::m_129541_);
++      this.f_9745_.m_6681_(this.f_9742_::m_129541_);
+    }
+ 
+    private <T, R> void m_9801_(T p_9802_, Consumer<R> p_9803_, BiFunction<TextFilter, T, CompletableFuture<R>> p_9804_) {
 @@ -413,9 +_,11 @@
              }
  
@@ -21,6 +116,17 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
+@@ -944,6 +_,10 @@
+       this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(p_143618_ - d0, p_143619_ - d1, p_143620_ - d2, p_143621_ - f, p_143622_ - f1, p_143623_, this.f_9767_, p_143624_));
+    }
+ 
++   public void teleport(Location to) {
++      m_143617_(to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch(), Collections.emptySet(), true);
++   }
++
+    public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
+       PacketUtils.m_131359_(p_9889_, this, this.f_9743_.m_9236_());
+       BlockPos blockpos = p_9889_.m_134281_();
 @@ -1012,7 +_,7 @@
              this.f_9743_.m_9243_();
              int i = this.f_9743_.f_19853_.m_151558_();
@@ -63,3 +169,17 @@
     }
  
     public void m_7477_(ServerboundChangeDifficultyPacket p_9839_) {
+@@ -1614,6 +_,13 @@
+ 
+    public ServerPlayer m_142253_() {
+       return this.f_9743_;
++   }
++
++   public final boolean isDisconnected() {
++      return !this.f_9743_.joining && !this.f_9742_.m_129536_();
++   }
++
++   public void chat(String msg, boolean b) {
+    }
+ 
+    @FunctionalInterface

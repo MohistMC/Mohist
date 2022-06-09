@@ -1,0 +1,11 @@
+--- a/net/minecraft/commands/arguments/item/ItemParser.java
++++ b/net/minecraft/commands/arguments/item/ItemParser.java
+@@ -40,7 +_,7 @@
+    private final boolean f_235288_;
+    private Either<Holder<Item>, HolderSet<Item>> f_235289_;
+    @Nullable
+-   private CompoundTag f_120998_;
++   public CompoundTag f_120998_;
+    private Function<SuggestionsBuilder, CompletableFuture<Suggestions>> f_121001_ = f_120993_;
+ 
+    private ItemParser(HolderLookup<Item> p_235291_, StringReader p_235292_, boolean p_235293_) {
