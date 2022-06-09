@@ -6,6 +6,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
+import java.util.function.BiConsumer;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -282,6 +283,17 @@ public class ModLoader
             return;
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
+    }
+    public <T extends Event & IModBusEvent> void postEventWithWrap(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
+        if (!loadingStateValid) {
+            LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
+            return;
+        }
+        ModList.get().forEachModContainer((id, mc) -> {
+            pre.accept(mc, e);
+            mc.acceptEvent(e);
+            post.accept(mc, e);
+        });
     }
 
     public List<ModLoadingWarning> getWarnings()

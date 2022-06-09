@@ -3,7 +3,7 @@
  */
 package org.bukkit.craftbukkit.v1_19_R1.block.impl;
 
-public final class CraftLeaves extends org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData implements org.bukkit.block.data.type.Leaves {
+public final class CraftLeaves extends org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData implements org.bukkit.block.data.type.Leaves, org.bukkit.block.data.Waterlogged {
 
     public CraftLeaves() {
         super();
@@ -36,5 +36,19 @@ public final class CraftLeaves extends org.bukkit.craftbukkit.v1_19_R1.block.dat
     @Override
     public void setDistance(int distance) {
         set(DISTANCE, distance);
+    }
+
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.LeavesBlock.class, "waterlogged");
+
+    @Override
+    public boolean isWaterlogged() {
+        return get(WATERLOGGED);
+    }
+
+    @Override
+    public void setWaterlogged(boolean waterlogged) {
+        set(WATERLOGGED, waterlogged);
     }
 }
