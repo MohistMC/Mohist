@@ -101,10 +101,20 @@
     }
  
     public boolean func_176123_z() {
-@@ -449,4 +_,12 @@
+@@ -378,7 +_,7 @@
+       return this.field_237343_c_;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
++   //@OnlyIn(Dist.CLIENT)
+    public Lifecycle func_230401_A_() {
+       return this.field_237344_d_;
+    }
+@@ -448,5 +_,17 @@
+    @OnlyIn(Dist.CLIENT)
     public WorldSettings func_230408_H_() {
        return this.field_237342_b_.func_234959_h_();
-    }
++   }
 +
 +   // CraftBukkit start - Check if the name stored in NBT is the correct one
 +   public void checkName(String name) {
@@ -113,4 +123,8 @@
 +      }
 +   }
 +   // CraftBukkit end
++
++   public WorldSettings worldSettings() {
++      return this.field_237342_b_;
+    }
  }

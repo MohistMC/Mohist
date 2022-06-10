@@ -33,16 +33,17 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.RegistryKey;
-@@ -55,6 +_,8 @@
+@@ -55,6 +_,9 @@
  import net.minecraft.world.gen.Heightmap;
  import net.minecraft.world.lighting.WorldLightManager;
  import net.minecraft.world.server.ChunkHolder;
++import net.minecraft.world.server.ServerChunkProvider;
 +import net.minecraft.world.server.ServerWorld;
 +import net.minecraft.world.storage.IServerWorldInfo;
  import net.minecraft.world.storage.ISpawnWorldInfo;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.MapData;
-@@ -62,8 +_,14 @@
+@@ -62,8 +_,15 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -51,6 +52,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_16_R3.block.CapturedBlockState;
 +import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator;
 +import org.bukkit.event.block.BlockPhysicsEvent;
  
 -public abstract class World implements IWorld, AutoCloseable {
@@ -67,7 +69,7 @@
     public final Thread field_217407_c;
     private final boolean field_234916_c_;
     private int field_73008_k;
-@@ -92,8 +_,82 @@
+@@ -92,8 +_,78 @@
     private final WorldBorder field_175728_M;
     private final BiomeManager field_226689_w_;
     private final RegistryKey<World> field_73011_w;
@@ -103,10 +105,6 @@
 +   protected final boolean disableBukkit;
 +
 +   public final co.aikar.timings.WorldTimingsHandler timings; // Spigot
-+
-+   public CraftWorld getWorld(){
-+      return this.craftWorld;
-+   }
 +
 +   public CraftServer getCBServer() {
 +      return (CraftServer) Bukkit.getServer();
@@ -776,7 +774,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1024,7 +_,27 @@
+@@ -1024,7 +_,46 @@
        return this.field_226689_w_;
     }
  
@@ -794,7 +792,7 @@
 +
     public final boolean func_234925_Z_() {
        return this.field_234916_c_;
-    }
++   }
 +
 +   // CraftBukkit - start
 +   public void notifyAndUpdatePhysics(BlockPos position, Chunk o, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int flag, int i) {
@@ -803,4 +801,23 @@
 +      // Mohist - end
 +   }
 +    // CraftBukkit - stop
++
++   public CraftWorld getWorld(){
++      if (this.craftWorld == null) {
++         if (generator == null) {
++            generator = getCBServer().getGenerator(((IServerWorldInfo) this.func_72912_H()).func_76065_j());
++            if (generator != null && this instanceof ServerWorld) {
++               ServerWorld serverWorld = (ServerWorld) this;
++               CustomChunkGenerator gen = new CustomChunkGenerator(serverWorld, serverWorld.func_72863_F().func_201711_g(), generator);
++               serverWorld.func_72863_F().setGenerator(gen);
++            }
++         }
++         if (environment == null) {
++            environment = ForgeInjectBukkit.environment.get(this.typeKey);
++         }
++         this.craftWorld = new CraftWorld((ServerWorld) this, generator, environment);
++         getCBServer().addWorld(this.craftWorld);
++      }
++      return this.craftWorld;
+    }
  }

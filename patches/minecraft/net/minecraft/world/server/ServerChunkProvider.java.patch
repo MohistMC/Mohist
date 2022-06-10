@@ -25,6 +25,15 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.IPacket;
+@@ -49,7 +_,7 @@
+ public class ServerChunkProvider extends AbstractChunkProvider {
+    private static final List<ChunkStatus> field_217239_c = ChunkStatus.func_222582_a();
+    private final TicketManager field_217240_d;
+-   public final ChunkGenerator field_186029_c;
++   public ChunkGenerator field_186029_c;
+    public final ServerWorld field_73251_h;
+    private final Thread field_217241_g;
+    private final ServerWorldLightManager field_217242_h;
 @@ -80,6 +_,24 @@
        this.func_222869_l();
     }
@@ -212,6 +221,17 @@
           }
  
           this.field_73251_h.func_217381_Z().func_76319_b();
+@@ -397,6 +_,10 @@
+       return this.field_186029_c;
+    }
+ 
++   public ChunkGenerator setGenerator(ChunkGenerator generator) {
++      return this.field_186029_c = generator;
++   }
++
+    public int func_73152_e() {
+       return this.field_217237_a.func_219194_d();
+    }
 @@ -427,6 +_,14 @@
  
     public <T> void func_217222_b(TicketType<T> p_217222_1_, ChunkPos p_217222_2_, int p_217222_3_, T p_217222_4_) {

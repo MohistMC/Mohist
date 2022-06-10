@@ -203,14 +203,14 @@
                 }
  
              }
-@@ -332,6 +_,7 @@
-          chunkgenerator = dimension.func_236064_c_();
+@@ -333,6 +_,7 @@
        }
  
-+      ForgeInjectBukkit.addEnumEnvironment();
        ServerWorld serverworld = new ServerWorld(this, this.field_213217_au, this.field_71310_m, iserverworldinfo, World.field_234918_g_, dimensiontype, p_240787_1_, chunkgenerator, flag, j, list, true);
++      ForgeInjectBukkit.addEnumEnvironment();
        this.field_71305_c.put(World.field_234918_g_, serverworld);
        DimensionSavedDataManager dimensionsaveddatamanager = serverworld.func_217481_x();
+       this.func_213204_a(dimensionsaveddatamanager);
 @@ -371,13 +_,22 @@
              RegistryKey<World> registrykey1 = RegistryKey.func_240903_a_(Registry.field_239699_ae_, registrykey.func_240901_a_());
              DimensionType dimensiontype1 = entry.getValue().func_236063_b_();

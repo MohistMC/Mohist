@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/ServerWorld.java
 +++ b/net/minecraft/world/server/ServerWorld.java
-@@ -1,30 +_,19 @@
+@@ -1,30 +_,20 @@
  package net.minecraft.world.server;
  
 -import com.google.common.annotations.VisibleForTesting;
@@ -17,6 +17,7 @@
 -import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 -import it.unimi.dsi.fastutil.objects.ObjectIterator;
 -import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
++import com.mohistmc.forge.MohistDerivedWorldInfo;
  import java.io.IOException;
  import java.io.Writer;
  import java.nio.file.Files;
@@ -34,7 +35,7 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Executor;
-@@ -33,8 +_,41 @@
+@@ -33,8 +_,42 @@
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -42,6 +43,7 @@
  import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
 +
++import net.minecraft.world.storage.DerivedWorldInfo;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
@@ -128,7 +130,7 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,157 @@
+@@ -173,35 +_,161 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -202,13 +204,15 @@
 +      uuid = WorldUUID.getUUID(p_i241885_1_.field_71310_m.func_237291_a_(p_i241885_5_));
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
-+         worldDataServer.world = this;
++      } else if (p_i241885_4_ instanceof DerivedWorldInfo) {
++         this.worldDataServer = MohistDerivedWorldInfo.create((DerivedWorldInfo)p_i241885_4_);
 +      }
 +      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
++      worldDataServer.world = this;
 +      // CraftBukkit end
 +      this.field_241107_Q_ = p_i241885_13_;
 +      this.field_73061_a = p_i241885_1_;
@@ -246,13 +250,15 @@
 +      uuid = WorldUUID.getUUID(p_i241885_1_.field_71310_m.func_237291_a_(p_i241885_5_));
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
-+         worldDataServer.world = this;
++      } else if (p_i241885_4_ instanceof DerivedWorldInfo) {
++         this.worldDataServer = MohistDerivedWorldInfo.create((DerivedWorldInfo)p_i241885_4_);
 +      }
 +      this.craftWorld = new CraftWorld(this, generator, environment);
 +      func_175723_af().world = this;
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
 +      }
++      worldDataServer.world = this;
 +      // CraftBukkit end
 +      this.field_241107_Q_ = p_i241885_13_;
 +      this.field_73061_a = p_i241885_1_;

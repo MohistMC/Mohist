@@ -26,3 +26,13 @@
     }
  
     public int func_230395_g_() {
+@@ -168,5 +_,9 @@
+    public void func_85118_a(CrashReportCategory p_85118_1_) {
+       p_85118_1_.func_71507_a("Derived", true);
+       this.field_76115_a.func_85118_a(p_85118_1_);
++   }
++
++   public IServerWorldInfo wrapped() {
++      return field_76115_a;
+    }
+ }
