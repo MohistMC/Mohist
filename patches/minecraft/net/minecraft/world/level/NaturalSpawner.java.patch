@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -44,9 +_,15 @@
+@@ -44,15 +_,22 @@
  import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.pathfinder.PathComputationType;
@@ -16,6 +16,13 @@
  public final class NaturalSpawner {
     private static final Logger f_46977_ = LogUtils.getLogger();
     private static final int f_151589_ = 24;
+    public static final int f_151587_ = 8;
+    public static final int f_151588_ = 128;
+    static final int f_46978_ = (int)Math.pow(17.0D, 2.0D);
++   static int limit;
+    private static final MobCategory[] f_46979_ = Stream.of(MobCategory.values()).filter((p_47037_) -> {
+       return p_47037_ != MobCategory.MISC;
+    }).toArray((p_46983_) -> {
 @@ -83,7 +_,7 @@
              mob = (Mob)entity;
           } while(mob.m_21532_() || mob.m_8023_());
@@ -33,7 +40,7 @@
 +
 +         // CraftBukkit start - Use per-world spawn limits
 +         boolean spawnThisTick = true;
-+         int limit = mobcategory.m_21608_();
++         limit = mobcategory.m_21608_();
 +         switch (mobcategory) {
 +            case MONSTER:
 +               spawnThisTick = Bukkit.getTicksPerSpawns(SpawnCategory.MONSTER) != 0L && Bukkit.getTicksPerSpawns(SpawnCategory.MONSTER) == 0L;;
@@ -64,7 +71,7 @@
 +            continue;
 +         }
 +
-+         if ((p_47033_ || !mobcategory.m_21609_()) && (p_47034_ || mobcategory.m_21609_()) && (p_47035_ || !mobcategory.m_21610_()) && p_47032_.canSpawnForCategory(mobcategory, p_47031_.m_7697_(), limit)) { // Temporary mobcategory.getMaxInstancesPerChunk() as Limit
++         if ((p_47033_ || !mobcategory.m_21609_()) && (p_47034_ || mobcategory.m_21609_()) && (p_47035_ || !mobcategory.m_21610_()) && p_47032_.m_186548_(mobcategory, p_47031_.m_7697_())) { // Temporary mobcategory.getMaxInstancesPerChunk() as Limit // Mohist
              m_47045_(mobcategory, p_47030_, p_47031_, p_47032_::m_47127_, p_47032_::m_47131_);
           }
        }
@@ -136,13 +143,11 @@
                                flag = true;
                             }
                          }
-@@ -492,8 +_,8 @@
-          return this.f_47113_;
+@@ -493,7 +_,7 @@
        }
  
--      boolean m_186548_(MobCategory p_186549_, ChunkPos p_186550_) {
+       boolean m_186548_(MobCategory p_186549_, ChunkPos p_186550_) {
 -         int i = p_186549_.m_21608_() * this.f_47110_ / NaturalSpawner.f_46978_;
-+      boolean canSpawnForCategory(MobCategory p_186549_, ChunkPos p_186550_, int limit) {
 +         int i = limit * this.f_47110_ / NaturalSpawner.f_46978_;
           if (this.f_47111_.getInt(p_186549_) >= i) {
              return false;
