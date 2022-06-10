@@ -68,21 +68,6 @@
     public HopperBlockEntity(BlockPos p_155550_, BlockState p_155551_) {
        super(BlockEntityType.f_58933_, p_155550_, p_155551_);
     }
-@@ -67,12 +_,12 @@
-    }
- 
-    public ItemStack m_7407_(int p_59309_, int p_59310_) {
--      this.m_59640_((Player)null);
-+      this.m_59640_((Player) null);
-       return ContainerHelper.m_18969_(this.m_7086_(), p_59309_, p_59310_);
-    }
- 
-    public void m_6836_(int p_59315_, ItemStack p_59316_) {
--      this.m_59640_((Player)null);
-+      this.m_59640_((Player) null);
-       this.m_7086_().set(p_59315_, p_59316_);
-       if (p_59316_.m_41613_() > this.m_6893_()) {
-          p_59316_.m_41764_(this.m_6893_());
 @@ -103,7 +_,7 @@
           if (!p_155582_.m_59407_() && p_155581_.m_61143_(HopperBlock.f_54022_)) {
              boolean flag = false;
@@ -92,15 +77,6 @@
              }
  
              if (!p_155582_.m_59404_()) {
-@@ -122,7 +_,7 @@
-    }
- 
-    private boolean m_59404_() {
--      for(ItemStack itemstack : this.f_59301_) {
-+      for (ItemStack itemstack : this.f_59301_) {
-          if (itemstack.m_41619_() || itemstack.m_41613_() != itemstack.m_41741_()) {
-             return false;
-          }
 @@ -131,7 +_,8 @@
        return true;
     }
@@ -145,15 +121,6 @@
                    if (itemstack1.m_41619_()) {
                       container.m_6596_();
                       return true;
-@@ -159,7 +_,7 @@
-    }
- 
-    private static IntStream m_59339_(Container p_59340_, Direction p_59341_) {
--      return p_59340_ instanceof WorldlyContainer ? IntStream.of(((WorldlyContainer)p_59340_).m_7071_(p_59341_)) : IntStream.range(0, p_59340_.m_6643_());
-+      return p_59340_ instanceof WorldlyContainer ? IntStream.of(((WorldlyContainer) p_59340_).m_7071_(p_59341_)) : IntStream.range(0, p_59340_.m_6643_());
-    }
- 
-    private static boolean m_59385_(Container p_59386_, Direction p_59387_) {
 @@ -176,6 +_,8 @@
     }
  
@@ -163,16 +130,7 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
-@@ -183,7 +_,7 @@
-             return m_59354_(p_155554_, container, p_59363_, direction);
-          });
-       } else {
--         for(ItemEntity itementity : m_155589_(p_155553_, p_155554_)) {
-+         for (ItemEntity itementity : m_155589_(p_155553_, p_155554_)) {
-             if (m_59331_(p_155554_, itementity)) {
-                return true;
-             }
-@@ -197,20 +_,44 @@
+@@ -197,7 +_,26 @@
        ItemStack itemstack = p_59356_.m_8020_(p_59357_);
        if (!itemstack.m_41619_() && m_59380_(p_59356_, itemstack, p_59357_, p_59358_)) {
           ItemStack itemstack1 = itemstack.m_41777_();
@@ -200,13 +158,7 @@
           if (itemstack2.m_41619_()) {
              p_59356_.m_6596_();
              return true;
-          }
--
-          p_59356_.m_6836_(p_59357_, itemstack1);
-       }
--
-       return false;
-    }
+@@ -211,6 +_,13 @@
  
     public static boolean m_59331_(Container p_59332_, ItemEntity p_59333_) {
        boolean flag = false;

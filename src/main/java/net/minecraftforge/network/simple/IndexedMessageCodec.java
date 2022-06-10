@@ -9,6 +9,7 @@ import com.mohistmc.util.i18n.i18n;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.HandshakeHandler;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
@@ -137,6 +138,9 @@ public class IndexedMessageCodec
     void consume(FriendlyByteBuf payload, int payloadIndex, Supplier<NetworkEvent.Context> context) {
         if (payload == null) {
             LOGGER.error(SIMPLENET, i18n.get("indexedmessagecodec.3", Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL")));
+            if (!HandshakeHandler.packetNeedsResponse(context.get().getNetworkManager(), payloadIndex))
+            {
+                context.get().setPacketHandled(true); //don't disconnect if the corresponding S2C packet that was not recognized on the client doesn't require a proper response
             return;
         }
         short discriminator = payload.readUnsignedByte();

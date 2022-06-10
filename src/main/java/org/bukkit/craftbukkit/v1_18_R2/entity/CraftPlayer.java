@@ -38,6 +38,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.border.BorderChangeListener;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.phys.Vec3;
@@ -57,6 +58,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
@@ -109,6 +111,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private double health = 20;
     private boolean scaledHealth = false;
     private double healthScale = 20;
+    private CraftWorldBorder clientWorldBorder = null;
+    private BorderChangeListener clientWorldBorderListener = createWorldBorderListener();
 
     public CraftPlayer(CraftServer server, ServerPlayer entity) {
         super(server, entity);
@@ -613,6 +617,82 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
 
         getHandle().connection.send(sign.getUpdatePacket());
+    }
+
+    @Override
+    public WorldBorder getWorldBorder() {
+        return clientWorldBorder;
+    }
+
+    @Override
+    public void setWorldBorder(WorldBorder border) {
+        CraftWorldBorder craftBorder = (CraftWorldBorder) border;
+
+        if (border != null && !craftBorder.isVirtual() && !craftBorder.getWorld().equals(getWorld())) {
+            throw new UnsupportedOperationException("Cannot set player world border to that of another world");
+        }
+
+        // Nullify the old client-sided world border listeners so that calls to it will not affect this player
+        if (clientWorldBorder != null) {
+            this.clientWorldBorder.getHandle().removeListener(clientWorldBorderListener);
+        }
+
+        net.minecraft.world.level.border.WorldBorder newWorldBorder;
+        if (craftBorder == null || !craftBorder.isVirtual()) {
+            this.clientWorldBorder = null;
+            newWorldBorder = ((CraftWorldBorder) getWorld().getWorldBorder()).getHandle();
+        } else {
+            this.clientWorldBorder = craftBorder;
+            this.clientWorldBorder.getHandle().addListener(clientWorldBorderListener);
+            newWorldBorder = clientWorldBorder.getHandle();
+        }
+
+        // Send all world border update packets to the player
+        ServerGamePacketListenerImpl connection = getHandle().connection;
+        connection.send(new ClientboundSetBorderSizePacket(newWorldBorder));
+        connection.send(new ClientboundSetBorderLerpSizePacket(newWorldBorder));
+        connection.send(new ClientboundSetBorderCenterPacket(newWorldBorder));
+        connection.send(new ClientboundSetBorderWarningDelayPacket(newWorldBorder));
+        connection.send(new ClientboundSetBorderWarningDistancePacket(newWorldBorder));
+    }
+
+    private BorderChangeListener createWorldBorderListener() {
+        return new BorderChangeListener() {
+            @Override
+            public void onBorderSizeSet(net.minecraft.world.level.border.WorldBorder border, double size) {
+                getHandle().connection.send(new ClientboundSetBorderSizePacket(border));
+            }
+
+            @Override
+            public void onBorderSizeLerping(net.minecraft.world.level.border.WorldBorder border, double size, double newSize, long time) {
+                getHandle().connection.send(new ClientboundSetBorderLerpSizePacket(border));
+            }
+
+            @Override
+            public void onBorderCenterSet(net.minecraft.world.level.border.WorldBorder border, double x, double z) {
+                getHandle().connection.send(new ClientboundSetBorderCenterPacket(border));
+            }
+
+            @Override
+            public void onBorderSetWarningTime(net.minecraft.world.level.border.WorldBorder border, int warningTime) {
+                getHandle().connection.send(new ClientboundSetBorderWarningDelayPacket(border));
+            }
+
+            @Override
+            public void onBorderSetWarningBlocks(net.minecraft.world.level.border.WorldBorder border, int warningBlocks) {
+                getHandle().connection.send(new ClientboundSetBorderWarningDistancePacket(border));
+            }
+
+            @Override
+            public void onBorderSetDamagePerBlock(net.minecraft.world.level.border.WorldBorder border, double damage) {} // NO OP
+
+            @Override
+            public void onBorderSetDamageSafeZOne(net.minecraft.world.level.border.WorldBorder border, double blocks) {} // NO OP
+        };
+    }
+
+    public boolean hasClientWorldBorder() {
+        return clientWorldBorder != null;
     }
 
     @Override

@@ -11,12 +11,16 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import com.mohistmc.util.i18n.i18n;
+
+import net.minecraft.core.Registry;
 import net.minecraft.gametest.framework.GameTestServer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
@@ -31,6 +35,7 @@ import net.minecraftforge.network.ServerStatusPing;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.resource.PathResourcePack;
 import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
@@ -148,9 +153,25 @@ public class ServerLifecycleHooks
             final ConnectionType connectionType = ConnectionType.forVersionFlag(packet.getFMLVersion());
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
-            if (connectionType == ConnectionType.MODDED && versionNumber != NetworkConstants.FMLNETVERSION) {
-                rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.3", versionNumber, NetworkConstants.FMLNETVERSION));
-                return false;
+            if (connectionType == ConnectionType.MODDED)
+            {
+                // Allow clients with incorrect netcode version to connect to netversion 3 servers,
+                // if and only if client is netversion 2 and server has no syncable non-vanilla datapack registries.
+                // TODO 1.19: Remove netcode backwards-compatability in 1.19, as there will be no clients on netversion 2 in 1.19.
+                Set<ResourceKey<? extends Registry<?>>> customDatapackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
+                if (versionNumber == 2)
+                {
+                    if (!customDatapackRegistries.isEmpty())
+                    {
+                        rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.7",String.join(", ", customDatapackRegistries.stream().map(key -> key.location().toString()).toList())));
+                        return false;
+                    }
+                }
+                else if (versionNumber != NetworkConstants.FMLNETVERSION)
+                {
+                    rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.3", versionNumber, NetworkConstants.FMLNETVERSION));
+					return false;
+                }
             }
 
             if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {

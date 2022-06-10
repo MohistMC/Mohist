@@ -147,12 +147,3 @@
     public void m_201910_() {
        ImmutableSet<TicketType<?>> immutableset = ImmutableSet.of(TicketType.f_9449_, TicketType.f_9448_, TicketType.f_9446_);
        ObjectIterator<Entry<SortedArraySet<Ticket<?>>>> objectiterator = this.f_140761_.long2ObjectEntrySet().fastIterator();
-@@ -460,7 +_,7 @@
- 
-             fileoutputstream.close();
-          } catch (IOException ioexception) {
--            DistanceManager.f_140758_.error("Failed to dump chunks to {}", p_143213_, ioexception);
-+            DistanceManager.f_140758_.error(String.valueOf(ioexception)); // TODO
-          }
- 
-       }

@@ -1,6 +1,12 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -10,6 +_,7 @@
+@@ -5,11 +_,13 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.forge.ForgeInjectBukkit;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
@@ -115,7 +121,7 @@
        super("Server");
        this.f_129746_ = p_206549_.f_206894_();
        this.f_129749_ = p_206549_.f_206895_();
-@@ -296,7 +_,37 @@
+@@ -296,7 +_,36 @@
        this.f_129741_ = new StructureManager(p_206549_.f_206892_(), p_206547_, p_206551_);
        this.f_129725_ = p_206546_;
        this.f_129738_ = Util.m_183991_();
@@ -146,14 +152,19 @@
 +            f_129750_.warn((String) null, ex);
 +         }
 +      }
-+      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_18_R2.util.ServerShutdownThread(this));
 +
     }
 +   // CraftBukkit end
  
     private void m_129841_(DimensionDataStorage p_129842_) {
        p_129842_.m_164861_(this.m_129896_()::m_180013_, this.m_129896_()::m_180015_, "scoreboard");
-@@ -358,6 +_,7 @@
+@@ -353,11 +_,13 @@
+       }
+ 
+       ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, holder, p_129816_, chunkgenerator, flag, j, list, true);
++      ForgeInjectBukkit.addEnumEnvironment(this.f_129749_.m_5961_().m_204655_());
+       this.f_129762_.put(Level.f_46428_, serverlevel);
+       DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
@@ -321,7 +332,7 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -712,6 +_,14 @@
+@@ -712,13 +_,21 @@
                 this.f_129723_.m_196559_();
              }
  
@@ -336,33 +347,17 @@
              this.m_6988_();
           }
  
-@@ -719,33 +_,16 @@
+       }
  
     }
+-
++   
+    private static CrashReport m_206568_(Throwable p_206569_) {
+       ReportedException reportedexception = null;
  
--   private static CrashReport m_206568_(Throwable p_206569_) {
--      ReportedException reportedexception = null;
--
--      for(Throwable throwable = p_206569_; throwable != null; throwable = throwable.getCause()) {
--         if (throwable instanceof ReportedException) {
--            ReportedException reportedexception1 = (ReportedException)throwable;
--            reportedexception = reportedexception1;
--         }
--      }
--
--      CrashReport crashreport;
--      if (reportedexception != null) {
--         crashreport = reportedexception.m_134761_();
--         if (reportedexception != p_206569_) {
--            crashreport.m_127514_("Wrapped in").m_128162_("Wrapping exception", p_206569_);
--         }
--      } else {
--         crashreport = new CrashReport("Exception in server tick loop", p_206569_);
--      }
--
--      return crashreport;
--   }
--
+@@ -743,9 +_,15 @@
+    }
+ 
     private boolean m_129960_() {
 -      return this.m_18767_() || Util.m_137550_() < (this.f_129728_ ? this.f_129727_ : this.f_129726_);
 +      // CraftBukkit start

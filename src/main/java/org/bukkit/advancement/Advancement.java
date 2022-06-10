@@ -1,6 +1,7 @@
 package org.bukkit.advancement;
 
 import java.util.Collection;
+import javax.annotation.Nullable;
 import org.bukkit.Keyed;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,4 +18,14 @@ public interface Advancement extends Keyed {
      */
     @NotNull
     Collection<String> getCriteria();
+
+    /**
+     * Returns the display information for this advancement.
+     *
+     * This includes it's name, description and other visible tags.
+     *
+     * @return a AdvancementDisplay object, or null if not set.
+     */
+    @Nullable
+    AdvancementDisplay getDisplay();
 }

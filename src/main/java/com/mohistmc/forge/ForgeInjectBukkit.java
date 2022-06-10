@@ -10,6 +10,7 @@ import com.mohistmc.entity.MohistModsEntity;
 import com.mohistmc.util.i18n.i18n;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.decoration.Motive;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.*;
@@ -38,11 +40,11 @@ import java.util.Map;
 
 public class ForgeInjectBukkit {
 
-    public static BiMap<ResourceKey<DimensionType>, World.Environment> environment =
-            HashBiMap.create(ImmutableMap.<ResourceKey<DimensionType>, World.Environment>builder()
-                    .put(DimensionType.OVERWORLD_LOCATION, World.Environment.NORMAL)
-                    .put(DimensionType.NETHER_LOCATION, World.Environment.NETHER)
-                    .put(DimensionType.END_LOCATION, World.Environment.THE_END)
+    public static BiMap<ResourceKey<LevelStem>, World.Environment> environment =
+            HashBiMap.create(ImmutableMap.<ResourceKey<LevelStem>, World.Environment>builder()
+                    .put(LevelStem.OVERWORLD, World.Environment.NORMAL)
+                    .put(LevelStem.NETHER, World.Environment.NETHER)
+                    .put(LevelStem.END, World.Environment.THE_END)
                     .build());
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
@@ -56,7 +58,6 @@ public class ForgeInjectBukkit {
         //addEnumEnchantment();
         //addEnumPotion();
         //addEnumPattern();
-        //addEnumEnvironment();
         addEnumEntity();
         addEnumVillagerProfession();
         //addEnumArt();
@@ -143,12 +144,11 @@ public class ForgeInjectBukkit {
         }
     }
 
-    /*
-    public static void addEnumEnvironment() {
+
+    public static void addEnumEnvironment(net.minecraft.core.Registry<LevelStem> registry) {
         int i = World.Environment.values().length;
-        net.minecraft.core.Registry<DimensionType> registry = MinecraftServer.getServer().registryHolder.dimensionTypes();
-        for (Map.Entry<ResourceKey<DimensionType>, DimensionType> entry : registry.entrySet()) {
-            ResourceKey<DimensionType> key = entry.getKey();
+        for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.entrySet()) {
+            ResourceKey<LevelStem> key = entry.getKey();
             World.Environment environment1 = environment.get(key);
             if (environment1 == null) {
                 String name = normalizeName(key.location().toString());
@@ -160,7 +160,6 @@ public class ForgeInjectBukkit {
             }
         }
     }
-     */
 
     public static WorldType addEnumWorldType(String name)
     {

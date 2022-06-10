@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
@@ -213,7 +214,7 @@ import org.yaml.snakeyaml.error.MarkedYAMLException;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
-    private final String serverVersion;
+    public static String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
     private final Logger logger = Logger.getLogger("Minecraft");
     private final ServicesManager servicesManager = new SimpleServicesManager();
@@ -365,6 +366,7 @@ public final class CraftServer implements Server {
     }
 
     public void loadPlugins() {
+        RemapUtils.init();
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) console.options.valueOf("plugins");
@@ -1151,6 +1153,11 @@ public final class CraftServer implements Server {
             return;
         }
         worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);
+    }
+
+    @Override
+    public org.bukkit.WorldBorder createWorldBorder() {
+        return new CraftWorldBorder(new net.minecraft.world.level.border.WorldBorder());
     }
 
     @Override

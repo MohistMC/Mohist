@@ -18,14 +18,6 @@
  import java.util.Map;
  import java.util.Set;
  import java.util.function.Predicate;
-@@ -70,7 +_,6 @@
- import net.minecraft.server.commands.PardonIpCommand;
- import net.minecraft.server.commands.ParticleCommand;
- import net.minecraft.server.commands.PerfCommand;
--import net.minecraft.server.commands.PlaceFeatureCommand;
- import net.minecraft.server.commands.PlaySoundCommand;
- import net.minecraft.server.commands.PublishCommand;
- import net.minecraft.server.commands.RecipeCommand;
 @@ -106,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
@@ -35,14 +27,6 @@
  
  public class Commands {
     private static final Logger f_82089_ = LogUtils.getLogger();
-@@ -148,7 +_,6 @@
-       LootCommand.m_137897_(this.f_82090_);
-       MsgCommand.m_138060_(this.f_82090_);
-       ParticleCommand.m_138122_(this.f_82090_);
--      PlaceFeatureCommand.m_201835_(this.f_82090_);
-       PlaySoundCommand.m_138156_(this.f_82090_);
-       ReloadCommand.m_138226_(this.f_82090_);
-       RecipeCommand.m_138200_(this.f_82090_);
 @@ -177,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
@@ -117,7 +101,7 @@
           stringreader.skip();
        }
  
-@@ -220,7 +_,15 @@
+@@ -220,7 +_,17 @@
  
        try {
           try {
@@ -125,7 +109,9 @@
 +            ParseResults<CommandSourceStack> parse = this.f_82090_.parse(stringreader, p_82118_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+               if (event.getException() != null) {
++               if (event.getException() instanceof Exception exception) {
++                  throw exception;
++               } else if (event.getException() != null) {
 +                  com.google.common.base.Throwables.throwIfUnchecked(event.getException());
 +               }
 +               return 1;
@@ -170,8 +156,9 @@
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
 +
        map.put(this.f_82090_.getRoot(), rootcommandnode);
-       this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
-+
+-      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
++//    FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +      Collection<String> bukkit = new LinkedHashSet<>();
 +      for (CommandNode node : rootcommandnode.getChildren()) {
 +         bukkit.add(node.getName());
@@ -190,12 +177,3 @@
        p_82096_.f_8906_.m_141995_(new ClientboundCommandsPacket(rootcommandnode));
     }
  
-@@ -363,7 +_,7 @@
-       }
-    }
- 
--   public static enum CommandSelection {
-+    public static enum CommandSelection {
-       ALL(true, true),
-       DEDICATED(false, true),
-       INTEGRATED(true, false);

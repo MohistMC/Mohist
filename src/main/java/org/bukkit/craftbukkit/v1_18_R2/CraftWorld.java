@@ -63,6 +63,7 @@ import org.bukkit.Effect;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Raid;
 import org.bukkit.Sound;
@@ -161,7 +162,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public Location getSpawnLocation() {
         BlockPos spawn = world.getSharedSpawnPos();
-        return new Location(this, spawn.getX(), spawn.getY(), spawn.getZ());
+        float yaw = world.getSharedSpawnAngle();
+        return new Location(this, spawn.getX(), spawn.getY(), spawn.getZ(), yaw, 0);
     }
 
     @Override
@@ -569,6 +571,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public UUID getUID() {
         return world.uuid;
+    }
+
+    @Override
+    public NamespacedKey getKey() {
+        return CraftNamespacedKey.fromMinecraft(world.dimension().location());
     }
 
     @Override
@@ -1135,22 +1142,16 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Validate.notNull(material, "Material cannot be null");
         Validate.isTrue(material.isBlock(), "Material must be a block");
 
-        FallingBlockEntity entity = new FallingBlockEntity(world, location.getX(), location.getY(), location.getZ(), CraftMagicNumbers.getBlock(material).defaultBlockState());
-        entity.time = 1;
-
-        world.addFreshEntity(entity, SpawnReason.CUSTOM);
+        FallingBlockEntity entity = FallingBlockEntity.fall(world, new BlockPos(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).defaultBlockState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
     }
 
     @Override
     public FallingBlock spawnFallingBlock(Location location, BlockData data) throws IllegalArgumentException {
         Validate.notNull(location, "Location cannot be null");
-        Validate.notNull(data, "Material cannot be null");
+        Validate.notNull(data, "BlockData cannot be null");
 
-        FallingBlockEntity entity = new FallingBlockEntity(world, location.getX(), location.getY(), location.getZ(), ((CraftBlockData) data).getState());
-        entity.time = 1;
-
-        world.addFreshEntity(entity, SpawnReason.CUSTOM);
+        FallingBlockEntity entity = FallingBlockEntity.fall(world, new BlockPos(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
     }
 

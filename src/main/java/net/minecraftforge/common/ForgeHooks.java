@@ -7,12 +7,14 @@ package net.minecraftforge.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Objects;
@@ -48,6 +50,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
@@ -62,6 +65,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.storage.WorldData;
@@ -1162,6 +1166,8 @@ public class ForgeHooks
 
     public static boolean canEntityDestroy(Level level, BlockPos pos, LivingEntity entity)
     {
+        if (!level.isLoaded(pos))
+            return false;
         BlockState state = level.getBlockState(pos);
         return ForgeEventFactory.getMobGriefingEvent(level, entity) && state.canEntityDestroy(level, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
@@ -1480,6 +1486,32 @@ public class ForgeHooks
         }
     }
 
+    private static BannerPattern[] nonPatternItems;
+    private static int totalPatternRows;
+
+    public static void refreshBannerPatternData()
+    {
+        nonPatternItems = Arrays.stream(BannerPattern.values())
+                .filter(p -> !p.hasPatternItem)
+                .toArray(BannerPattern[]::new);
+        totalPatternRows = (nonPatternItems.length + 2) / 4;
+    }
+
+    public static int getTotalPatternRows()
+    {
+        return totalPatternRows;
+    }
+
+    public static int getNonPatternItemCount()
+    {
+        return nonPatternItems.length;
+    }
+
+    public static int getActualPatternIndex(int index)
+    {
+        return nonPatternItems[index].ordinal();
+    }
+
     public static boolean shouldSuppressEnderManAnger(EnderMan enderMan, Player player, ItemStack mask)
     {
         return mask.isEnderMask(player, enderMan) || MinecraftForge.EVENT_BUS.post(new EnderManAngerEvent(enderMan, player));
@@ -1508,5 +1540,21 @@ public class ForgeHooks
     {
         @Nullable ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
         return biomeLocation != null && !biomeLocation.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
+    }
+
+    public static Map<PackType, Integer> readTypedPackFormats(JsonObject json)
+    {
+        ImmutableMap.Builder<PackType, Integer> map = ImmutableMap.builder();
+
+        for (PackType packType : PackType.values())
+        {
+            String key = "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
+            if (json.has(key))
+            {
+                map.put(packType, GsonHelper.getAsInt(json, key));
+            }
+        }
+
+        return map.buildOrThrow();
     }
 }
