@@ -1,10 +1,35 @@
 --- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 +++ b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
-@@ -12,6 +_,7 @@
+@@ -8,16 +_,32 @@
+ import net.minecraft.world.level.entity.EntityTypeTest;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
++import org.bukkit.World;
+ 
  public abstract class ContainerOpenersCounter {
     private static final int f_155447_ = 5;
     private int f_155448_;
 +   public boolean opened; // CraftBukkit
  
     protected abstract void m_142292_(Level p_155460_, BlockPos p_155461_, BlockState p_155462_);
+ 
+    protected abstract void m_142289_(Level p_155473_, BlockPos p_155474_, BlockState p_155475_);
+ 
+    protected abstract void m_142148_(Level p_155463_, BlockPos p_155464_, BlockState p_155465_, int p_155466_, int p_155467_);
++
++   // CraftBukkit start
++   public void onAPIOpen(Level world, BlockPos blockposition, BlockState iblockdata) {
++      m_142292_(world, blockposition, iblockdata);
++   }
++
++   public void onAPIClose(Level world, BlockPos blockposition, BlockState iblockdata) {
++      m_142289_(world, blockposition, iblockdata);
++   }
++
++   public void openerAPICountChanged(Level world, BlockPos blockposition, BlockState iblockdata, int i, int j) {
++      m_142148_(world, blockposition, iblockdata, i, j);
++   }
++   // CraftBukkit end
+ 
+    protected abstract boolean m_142718_(Player p_155451_);
  

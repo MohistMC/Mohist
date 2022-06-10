@@ -139,14 +139,6 @@
        }
     }
  
-@@ -710,6 +_,7 @@
-             this.m_146850_(GameEvent.f_157815_);
-          }
-       }
-+      this.invalidateCaps();
- 
-    }
- 
 @@ -728,10 +_,10 @@
        int j = Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_);
        int k = Mth.m_14107_(this.f_19825_.f_82481_);
@@ -345,6 +337,14 @@
           }
        } else {
           return null;
+@@ -2295,6 +_,7 @@
+ 
+    protected void m_6089_() {
+       this.m_142467_(Entity.RemovalReason.CHANGED_DIMENSION);
++      this.invalidateCaps();
+    }
+ 
+    @Nullable
 @@ -2472,6 +_,9 @@
        }
     }

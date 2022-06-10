@@ -6,7 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.players.UserWhiteListEntry;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.level.storage.PlayerDataStorage;
@@ -19,6 +21,7 @@ import org.bukkit.Server;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.craftbukkit.v1_19_R1.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.v1_19_R1.profile.CraftPlayerProfile;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -245,6 +248,14 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     @Override
     public boolean hasPlayedBefore() {
         return getData() != null;
+    }
+
+    @Override
+    public Location getLastDeathLocation() {
+        if (getData().contains("LastDeathLocation", 10)) {
+            return GlobalPos.CODEC.parse(NbtOps.INSTANCE, getData().get("LastDeathLocation")).result().map(CraftMemoryMapper::fromNms).orElse(null);
+        }
+        return null;
     }
 
     @Override

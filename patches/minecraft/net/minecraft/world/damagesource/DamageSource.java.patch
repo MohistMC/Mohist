@@ -21,3 +21,12 @@
     public static DamageSource m_19364_(LivingEntity p_19365_) {
        return new EntityDamageSource("sting", p_19365_);
     }
+@@ -198,7 +_,7 @@
+       return this;
+    }
+ 
+-   public DamageSource m_238403_() {
++   protected DamageSource m_238403_() {
+       this.f_238168_ = true;
+       return this;
+    }
