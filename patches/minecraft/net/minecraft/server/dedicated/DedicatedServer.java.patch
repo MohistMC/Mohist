@@ -224,7 +224,7 @@
           }
 -
 -         return true;
-+         PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
++         if (!ServerAPI.hasMod("ftbranks")) PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
        }
 +
