@@ -26,7 +26,7 @@ import java.util.*;
 
 public class i18n {
     private static ResourceBundle rb;
-    private static List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn");
+    private static List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn"", "zh_tw");
     public static List<String> b = Arrays.asList("fr_FR", "ru_RU", "zh_CN");
 
     public static String get(String key) {
