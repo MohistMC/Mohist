@@ -1,12 +1,13 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,11 +_,17 @@
+@@ -1,11 +_,18 @@
  package net.minecraft.server.dedicated;
  
 +import co.aikar.timings.MinecraftTimings;
  import com.google.common.base.Strings;
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
++import com.mohistmc.api.ServerAPI;
 +import com.mohistmc.configuration.MohistConfig;
 +import com.mohistmc.forge.BukkitPermissionsHandler;
 +import com.mohistmc.util.i18n.i18n;
@@ -224,7 +225,7 @@
           }
 -
 -         return true;
-+         if (!com.mohistmc.api.ServerAPI.hasMod("ftbranks")) PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
++         if (!ServerAPI.hasMod("ftbranks")) PermissionAPI.setPermissionHandler(new BukkitPermissionsHandler());
 +         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
        }
 +

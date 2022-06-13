@@ -253,7 +253,7 @@
           }
  
           boolean flag = false;
-@@ -452,8 +_,11 @@
+@@ -452,8 +_,10 @@
     }
  
     private void func_213186_a(IChunkStatusListener p_213186_1_) {
@@ -261,19 +261,18 @@
        ServerWorld serverworld = this.func_241755_D_();
 -      field_147145_h.info("Preparing start region for dimension {}", (Object)serverworld.func_234923_W_().func_240901_a_());
 +      this.forceTicks = true;
-+      // CraftBukkit end
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.4", (Object)serverworld.func_234923_W_().func_240901_a_()));
++      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.4", serverworld.func_234923_W_().func_240901_a_()));
        BlockPos blockpos = serverworld.func_241135_u_();
        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
        ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
-@@ -461,32 +_,40 @@
+@@ -461,32 +_,41 @@
        this.field_211151_aa = Util.func_211177_b();
        serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
 -      while(serverchunkprovider.func_217229_b() != 441) {
 -         this.field_211151_aa = Util.func_211177_b() + 10L;
 -         this.func_213202_o();
-+      while(serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
++      while(serverchunkprovider.func_217229_b() < 441) {
 +         // CraftBukkit start
 +         this.executeModerately();
 +         // CraftBukkit end
@@ -306,6 +305,7 @@
 +                  ChunkPos chunkpos = new ChunkPos(i);
 +                  serverworld1.func_72863_F().func_217206_a(chunkpos, true);
 +               }
++               net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld1, forcedchunkssavedata);
              }
           }
 +         MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverworld1));
@@ -319,7 +319,8 @@
 +      // CraftBukkit end
        p_213186_1_.func_219510_b();
        serverchunkprovider.func_212863_j_().func_215598_a(5);
-       this.func_240794_aZ_();
+-      this.func_240794_aZ_();
++      serverworld.func_72891_a(this.func_230536_N_(), this.func_230537_U_());
 +      this.forceTicks = false;
     }
  
@@ -333,7 +334,7 @@
           }
        }
  
-@@ -534,26 +_,48 @@
+@@ -534,26 +_,50 @@
        iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
        this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
        this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
@@ -365,11 +366,6 @@
 +      // CraftBukkit end
 +      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.7"));
 +      MinecraftTimings.stopServer(); // Paper
-+      // CraftBukkit start
-+      if (this.server != null) {
-+         this.server.disablePlugins();
-+      }
-+      // CraftBukkit end
        if (this.func_147137_ag() != null) {
           this.func_147137_ag().func_151268_b();
        }
@@ -379,37 +375,30 @@
 +         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.8"));
           this.field_71318_t.func_72389_g();
           this.field_71318_t.func_72392_r();
-       }
- 
+-      }
+-
 -      field_147145_h.info("Saving worlds");
++         try { Thread.sleep(100); } catch (InterruptedException ex) {} // CraftBukkit - SPIGOT-625 - give server at least a chance to send packets
++      }
++
++      // CraftBukkit start
++      if (this.server != null) {
++         this.server.disablePlugins();
++      }
++      // CraftBukkit end
++
 +      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.9"));
  
        for(ServerWorld serverworld : this.func_212370_w()) {
           if (serverworld != null) {
-@@ -563,13 +_,17 @@
- 
-       this.func_213211_a(false, true, false);
- 
--      for(ServerWorld serverworld1 : this.func_212370_w()) {
--         if (serverworld1 != null) {
--            try {
--               serverworld1.close();
--            } catch (IOException ioexception1) {
--               field_147145_h.error("Exception closing the level", (Throwable)ioexception1);
-+      for(ServerWorld serverworld1 : this.field_71305_c.values()) {
-+         ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
-+         if (forcedchunkssavedata != null) {
-+            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
-+
-+            while(longiterator.hasNext()) {
-+               long i = longiterator.nextLong();
-+               ChunkPos chunkpos = new ChunkPos(i);
-+               serverworld1.func_72863_F().func_217206_a(chunkpos, true);
-             }
-+            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld1, forcedchunkssavedata);
-          }
-       }
- 
+@@ -566,6 +_,7 @@
+       for(ServerWorld serverworld1 : this.func_212370_w()) {
+          if (serverworld1 != null) {
+             try {
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(serverworld1));
+                serverworld1.close();
+             } catch (IOException ioexception1) {
+                field_147145_h.error("Exception closing the level", (Throwable)ioexception1);
 @@ -582,8 +_,14 @@
        try {
           this.field_71310_m.close();
@@ -972,7 +961,7 @@
     public DynamicRegistries func_244267_aX() {
        return this.field_240767_f_;
     }
-@@ -1578,4 +_,85 @@
+@@ -1578,4 +_,98 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return null;
     }
@@ -1019,41 +1008,54 @@
 +      }
 +   }
 +
-+   public void loadSpawn(IChunkStatusListener listener, ServerWorld serverWorld) {
-+      this.markWorldsDirty();
-+      MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverWorld));
-+      if (!serverWorld.getWorld().getKeepSpawnInMemory()) {
++   public void loadSpawn(IChunkStatusListener listener, ServerWorld serverworld) {
++      if (!serverworld.getWorld().getKeepSpawnInMemory()) {
 +         return;
 +      }
++      net.minecraftforge.common.world.StructureSpawnManager.gatherEntitySpawns();
 +      this.forceTicks = true;
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.27", serverWorld.func_234923_W_().func_240901_a_()));
-+      BlockPos blockpos = serverWorld.func_241135_u_();
++      // CraftBukkit end
++      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.4", (Object)serverworld.func_234923_W_().func_240901_a_()));
++      BlockPos blockpos = serverworld.func_241135_u_();
 +      listener.func_219509_a(new ChunkPos(blockpos));
-+      ServerChunkProvider serverchunkprovider = serverWorld.func_72863_F();
++      ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
 +      serverchunkprovider.func_212863_j_().func_215598_a(500);
 +      this.field_211151_aa = Util.func_211177_b();
 +      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 +
-+      while (serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
++      while(serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
++         // CraftBukkit start
 +         this.executeModerately();
++         // CraftBukkit end
 +      }
 +
++      // CraftBukkit start
++      //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
 +      this.executeModerately();
++      if (true) {
++         ServerWorld serverworld1 = serverworld;
++            ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
 +
-+      ForcedChunksSaveData forcedchunkssavedata = serverWorld.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
-+      if (forcedchunkssavedata != null) {
-+         LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
++            if (forcedchunkssavedata != null) {
++               LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
 +
-+         while (longiterator.hasNext()) {
-+            long i = longiterator.nextLong();
-+            ChunkPos chunkpos = new ChunkPos(i);
-+            serverWorld.func_72863_F().func_217206_a(chunkpos, true);
-+         }
++               while (longiterator.hasNext()) {
++                  long i = longiterator.nextLong();
++                  ChunkPos chunkpos = new ChunkPos(i);
++                  serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++               }
++               net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld1, forcedchunkssavedata);
++            }
++         MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverworld1));
 +      }
++
++      // CraftBukkit start
++      //this.serverTime = Util.milliTime() + 10L;
 +      this.executeModerately();
++      // CraftBukkit end
 +      listener.func_219510_b();
 +      serverchunkprovider.func_212863_j_().func_215598_a(5);
-+      this.func_240794_aZ_();
++      serverworld.func_72891_a(this.func_230536_N_(), this.func_230537_U_());
 +      this.forceTicks = false;
 +   }
 +
