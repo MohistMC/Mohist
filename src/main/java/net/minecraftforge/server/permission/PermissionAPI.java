@@ -43,7 +43,7 @@ public class PermissionAPI
     {
         Preconditions.checkNotNull(handler, "Permission handler can't be null!");
         // TODO Loader states Preconditions.checkState(Loader.instance().getLoaderState().ordinal() <= LoaderState.PREINITIALIZATION.ordinal(), "Can't register after IPermissionHandler PreInit!");
-        LOGGER.warn("Replacing {} with {}", permissionHandler.getClass().getName(), handler.getClass().getName());
+        LOGGER.debug("Replacing {} with {}", permissionHandler.getClass().getName(), handler.getClass().getName());
         permissionHandler = handler;
     }
 
