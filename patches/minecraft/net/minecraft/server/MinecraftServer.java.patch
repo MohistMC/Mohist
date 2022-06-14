@@ -961,7 +961,7 @@
     public DynamicRegistries func_244267_aX() {
        return this.field_240767_f_;
     }
-@@ -1578,4 +_,98 @@
+@@ -1578,4 +_,84 @@
     public IChatFilter func_244435_a(ServerPlayerEntity p_244435_1_) {
        return null;
     }
@@ -1009,51 +1009,37 @@
 +   }
 +
 +   public void loadSpawn(IChunkStatusListener listener, ServerWorld serverworld) {
-+      if (!serverworld.getWorld().getKeepSpawnInMemory()) {
-+         return;
-+      }
++      ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
 +      net.minecraftforge.common.world.StructureSpawnManager.gatherEntitySpawns();
 +      this.forceTicks = true;
-+      // CraftBukkit end
-+      field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.4", (Object)serverworld.func_234923_W_().func_240901_a_()));
-+      BlockPos blockpos = serverworld.func_241135_u_();
-+      listener.func_219509_a(new ChunkPos(blockpos));
-+      ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
-+      serverchunkprovider.func_212863_j_().func_215598_a(500);
-+      this.field_211151_aa = Util.func_211177_b();
-+      serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
-+
-+      while(serverchunkprovider.func_217229_b() < 441) { // Mohist - Fix Immersive Portals startup (#762), fix generation soft-lock
-+         // CraftBukkit start
++      if (serverworld.getWorld().getKeepSpawnInMemory()) {
++         field_147145_h.info(com.mohistmc.util.i18n.i18n.get("minecraftserver.4", (Object) serverworld.func_234923_W_().func_240901_a_()));
++         BlockPos blockpos = serverworld.func_241135_u_();
++         listener.func_219509_a(new ChunkPos(blockpos));
++         serverchunkprovider.func_212863_j_().func_215598_a(500);
++         this.field_211151_aa = Util.func_211177_b();
++         serverchunkprovider.func_217228_a(TicketType.field_219488_a, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 +         this.executeModerately();
-+         // CraftBukkit end
 +      }
++      ServerWorld serverworld1 = serverworld;
++      ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
 +
-+      // CraftBukkit start
-+      //this.nextTick = SystemUtils.getMonotonicMillis() + 10L;
-+      this.executeModerately();
-+      if (true) {
-+         ServerWorld serverworld1 = serverworld;
-+            ForcedChunksSaveData forcedchunkssavedata = serverworld1.func_217481_x().func_215753_b(ForcedChunksSaveData::new, "chunks");
++      if (forcedchunkssavedata != null) {
++         LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
 +
-+            if (forcedchunkssavedata != null) {
-+               LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
-+
-+               while (longiterator.hasNext()) {
-+                  long i = longiterator.nextLong();
-+                  ChunkPos chunkpos = new ChunkPos(i);
-+                  serverworld1.func_72863_F().func_217206_a(chunkpos, true);
-+               }
-+               net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld1, forcedchunkssavedata);
-+            }
-+         MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverworld1));
++         while (longiterator.hasNext()) {
++            long i = longiterator.nextLong();
++            ChunkPos chunkpos = new ChunkPos(i);
++            serverworld1.func_72863_F().func_217206_a(chunkpos, true);
++         }
++         net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverworld1, forcedchunkssavedata);
 +      }
++      MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(serverworld1));
 +
-+      // CraftBukkit start
-+      //this.serverTime = Util.milliTime() + 10L;
 +      this.executeModerately();
-+      // CraftBukkit end
-+      listener.func_219510_b();
++      if (serverworld.getWorld().getKeepSpawnInMemory()) {
++         listener.func_219510_b();
++      }
 +      serverchunkprovider.func_212863_j_().func_215598_a(5);
 +      serverworld.func_72891_a(this.func_230536_N_(), this.func_230537_U_());
 +      this.forceTicks = false;
