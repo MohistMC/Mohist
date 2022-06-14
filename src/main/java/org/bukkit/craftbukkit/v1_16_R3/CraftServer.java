@@ -1173,7 +1173,7 @@ public final class CraftServer implements Server {
         if (world == null) {
             return;
         }
-        this.worlds.remove(((World)world).getName().toLowerCase(java.util.Locale.ENGLISH));
+        this.worlds.remove(world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH));
     }
 
     public DedicatedServer getServer() {
