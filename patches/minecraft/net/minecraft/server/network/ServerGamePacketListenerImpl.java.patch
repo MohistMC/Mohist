@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -166,6 +_,11 @@
+@@ -166,11 +_,22 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.apache.commons.lang3.StringUtils;
@@ -12,6 +12,17 @@
  import org.slf4j.Logger;
  
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
+    static final Logger f_9744_ = LogUtils.getLogger();
+    private static final int f_143608_ = 15000;
++   /**
++    * Forge: Deprecated in favor of range/reach attributes.
++    * @see net.minecraftforge.common.ForgeMod#REACH_DISTANCE
++    * @see net.minecraftforge.common.ForgeMod#ATTACK_RANGE
++    */
++   @Deprecated
+    public static final double f_215198_ = Mth.m_144952_(6.0D);
+    private static final int f_215199_ = -1;
+    public final Connection f_9742_;
 @@ -210,6 +_,28 @@
     private final ChatPreviewThrottler f_215196_ = new ChatPreviewThrottler();
     private final AtomicReference<Instant> f_215197_ = new AtomicReference<>(Instant.EPOCH);
@@ -127,12 +138,21 @@
     public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
        PacketUtils.m_131359_(p_9889_, this, this.f_9743_.m_9236_());
        BlockPos blockpos = p_9889_.m_134281_();
+@@ -1004,7 +_,7 @@
+       Vec3 vec3 = blockhitresult.m_82450_();
+       BlockPos blockpos = blockhitresult.m_82425_();
+       Vec3 vec31 = Vec3.m_82512_(blockpos);
+-      if (!(this.f_9743_.m_146892_().m_82557_(vec31) > f_215198_)) {
++      if (this.f_9743_.canInteractWith(blockpos, 3)) {
+          Vec3 vec32 = vec3.m_82546_(vec31);
+          double d0 = 1.0000001D;
+          if (Math.abs(vec32.m_7096_()) < 1.0000001D && Math.abs(vec32.m_7098_()) < 1.0000001D && Math.abs(vec32.m_7094_()) < 1.0000001D) {
 @@ -1012,7 +_,7 @@
              this.f_9743_.m_9243_();
              int i = this.f_9743_.f_19853_.m_151558_();
              if (blockpos.m_123342_() < i) {
 -               if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < 64.0D && serverlevel.m_7966_(this.f_9743_, blockpos)) {
-+               if (this.f_9766_ == null && this.f_9743_.canInteractWith(blockpos, 3) && serverlevel.m_7966_(this.f_9743_, blockpos)) {
++               if (this.f_9766_ == null && serverlevel.m_7966_(this.f_9743_, blockpos)) {
                    InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                    if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                       Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);

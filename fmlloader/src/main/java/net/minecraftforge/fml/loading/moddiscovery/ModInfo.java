@@ -16,8 +16,6 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.net.URL;
 import java.util.Collections;
@@ -96,6 +94,7 @@ public class ModInfo implements IModInfo, IConfigurable
         this.properties = ownFile.map(mfi -> mfi.<Map<String, Object>>getConfigElement("modproperties", this.modId)
                 .orElse(Collections.emptyMap()))
                 .orElse(Collections.emptyMap());
+
         this.modUrl = config.<String>getConfigElement("modUrl")
                 .map(StringUtils::toURL);
     }

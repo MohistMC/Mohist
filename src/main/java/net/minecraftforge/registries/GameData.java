@@ -40,6 +40,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -150,6 +152,11 @@ public class GameData
     static RegistryBuilder<ForgeWorldPreset> getWorldTypesRegistryBuilder()
     {
         return makeRegistry(WORLD_TYPES).disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<FluidType> getFluidTypeRegistryBuilder()
+    {
+        return makeRegistry(FLUID_TYPES).disableSaving();
     }
 
     private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key)
@@ -297,6 +304,7 @@ public class GameData
         Set<ResourceLocation> keySet = new HashSet<>(RegistryManager.ACTIVE.registries.keySet());
         keySet.addAll(RegistryManager.getVanillaRegistryKeys());
         keySet.addAll(BuiltinRegistries.REGISTRY.keySet());
+
         Set<ResourceLocation> ordered = new LinkedHashSet<>(MappedRegistry.getKnownRegistries());
         ordered.retainAll(keySet);
         ordered.addAll(keySet.stream().sorted(ResourceLocation::compareNamespaced).toList());

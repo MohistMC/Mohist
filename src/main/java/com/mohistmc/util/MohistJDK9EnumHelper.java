@@ -25,24 +25,22 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import sun.misc.Unsafe;
 
 public class MohistJDK9EnumHelper
 {
     private static MethodHandles.Lookup implLookup = null;
-    private static boolean isSetup                 = false;
-    public static Unsafe unsafe;
+    private static boolean isSetup = false;
+    private static sun.misc.Unsafe unsafe;
 
-    private static void setup()
-    {
-        if (isSetup)
-        {
+    private static void setup() {
+        if (isSetup) {
             return;
         }
 
-        try
-        {
+        try {
             /*
              * After Java 9, sun.reflect package was moved to jdk.internal.reflect and it requires extra operations to access.
              * After Java 12, all members in java.lang.reflect.Field class were added to jdk.internal.reflect.Reflection#fieldFilterMap so that it was unable to access by using reflection.
@@ -55,10 +53,7 @@ public class MohistJDK9EnumHelper
             unsafe = (Unsafe) unsafeField.get(null);
             Field implLookupField = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             implLookup = (MethodHandles.Lookup) unsafe.getObject(unsafe.staticFieldBase(implLookupField), unsafe.staticFieldOffset(implLookupField));
-        }
-        catch (Exception e)
-        {
-            //FMLLog.log.error("Error setting up EnumHelper.", e);
+        } catch (Exception e) {
         }
 
         isSetup = true;
@@ -69,8 +64,7 @@ public class MohistJDK9EnumHelper
      * Also modified for use in decompiled code.
      * Found at: http://niceideas.ch/roller2/badtrash/entry/java_create_enum_instances_dynamically
      */
-    private static MethodHandle getConstructorAccessor(Class<?> enumClass, Class<?>[] additionalParameterTypes) throws Exception
-    {
+    private static MethodHandle getConstructorAccessor(Class<?> enumClass, Class<?>[] additionalParameterTypes) throws Exception {
         Class<?>[] parameterTypes = new Class[additionalParameterTypes.length + 2];
         parameterTypes[0] = String.class;
         parameterTypes[1] = int.class;
@@ -78,70 +72,54 @@ public class MohistJDK9EnumHelper
         return implLookup.findConstructor(enumClass, MethodType.methodType(void.class, parameterTypes));
     }
 
-    private static < T extends Enum<? >> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Throwable
-    {
+    private static <T extends Enum<?>> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Throwable {
         int additionalParamsCount = additionalValues == null ? 0 : additionalValues.length;
         Object[] params = new Object[additionalParamsCount + 2];
         params[0] = value;
         params[1] = ordinal;
-        if (additionalValues != null)
-        {
+        if (additionalValues != null) {
             System.arraycopy(additionalValues, 0, params, 2, additionalValues.length);
         }
         return enumClass.cast(getConstructorAccessor(enumClass, additionalTypes).invokeWithArguments(params));
     }
 
-    public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Throwable
-    {
-        if (target != null)
-        {
+    public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Throwable {
+        if (target != null) {
             implLookup.findSetter(field.getDeclaringClass(), field.getName(), field.getType()).invoke(target, value);
-        }
-        else
-        {
+        } else {
             implLookup.findStaticSetter(field.getDeclaringClass(), field.getName(), field.getType()).invoke(value);
         }
     }
 
-    private static void blankField(Class<?> enumClass, String fieldName) throws Throwable
-    {
-        for (Field field : Class.class.getDeclaredFields())
-        {
-            if (field.getName().contains(fieldName))
-            {
-                field.setAccessible(true);
+    private static void blankField(Class<?> enumClass, String fieldName) throws Throwable {
+        for (Field field : Class.class.getDeclaredFields()) {
+            if (field.getName().contains(fieldName)) {
                 setFailsafeFieldValue(field, enumClass, null);
                 break;
             }
         }
     }
 
-    private static void cleanEnumCache(Class<?> enumClass) throws Throwable
-    {
+    private static void cleanEnumCache(Class<?> enumClass) throws Throwable {
         blankField(enumClass, "enumConstantDirectory");
         blankField(enumClass, "enumConstants");
-        //Open J9
         blankField(enumClass, "enumVars");
     }
 
-    public static <T extends Enum<? >> T addEnum0(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues)
-    {
+    public static <T extends Enum<?>> T addEnum0(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues) {
         return addEnum(enumType, enumName, paramTypes, paramValues);
     }
 
-    @SuppressWarnings({ "unchecked", "serial" })
-    public static <T extends Enum<? >> T addEnum(final Class<T> enumType, String enumName, final Class<?>[] paramTypes, Object[] paramValues)
-    {
-        if (!isSetup)
-        {
+    @SuppressWarnings({"unchecked", "serial"})
+    public static <T extends Enum<?>> T addEnum(final Class<T> enumType, String enumName, final Class<?>[] paramTypes, Object[] paramValues) {
+        if (!isSetup) {
             setup();
         }
 
         Field valuesField = null;
         Field[] fields = enumType.getDeclaredFields();
 
-        for (Field field : fields)
-        {
+        for (Field field : fields) {
             String name = field.getName();
             if (name.equals("$VALUES") || name.equals("ENUM$VALUES")) //Added 'ENUM$VALUES' because Eclipse's internal compiler doesn't follow standards
             {
@@ -151,12 +129,10 @@ public class MohistJDK9EnumHelper
         }
 
         int flags = (Modifier.PUBLIC) | Modifier.STATIC | Modifier.FINAL | 0x1000 /*SYNTHETIC*/;
-        if (valuesField == null)
-        {
+        if (valuesField == null) {
             String valueType = String.format("[L%s;", enumType.getName().replace('.', '/'));
 
-            for (Field field : fields)
-            {
+            for (Field field : fields) {
                 if ((field.getModifiers() & flags) == flags &&
                         field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
                 {
@@ -166,15 +142,13 @@ public class MohistJDK9EnumHelper
             }
         }
 
-        if (valuesField == null)
-        {
+        if (valuesField == null) {
             final List<String> lines = new ArrayList<>();
             lines.add(String.format("Could not find $VALUES field for enum: %s", enumType.getName()));
             //lines.add(String.format("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF));
             lines.add(String.format("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0')));
-            lines.add(              "Fields:");
-            for (Field field : fields)
-            {
+            lines.add("Fields:");
+            for (Field field : fields) {
                 String mods = String.format("%16s", Integer.toBinaryString(field.getModifiers())).replace(' ', '0');
                 lines.add(String.format("       %s %s: %s", mods, field.getName(), field.getType().getName()));
             }
@@ -184,32 +158,23 @@ public class MohistJDK9EnumHelper
 
         valuesField.setAccessible(true);
 
-        try
-        {
-            T[] previousValues = (T[])valuesField.get(enumType);
-            T newValue = makeEnum(enumType, enumName, previousValues.length, paramTypes, paramValues);
-            Object base = io.izzel.arclight.api.Unsafe.staticFieldBase(valuesField);
-            long offset = io.izzel.arclight.api.Unsafe.staticFieldOffset(valuesField);
-            T[] arr = (T[]) io.izzel.arclight.api.Unsafe.getObject(base, offset);
-            T[] newArr = (T[]) Array.newInstance(enumType, arr.length + 1);
-            System.arraycopy(arr, 0, newArr, 0, arr.length);
-            newArr[arr.length] = newValue;
-            io.izzel.arclight.api.Unsafe.putObject(base, offset, newArr);
+        try {
+            T[] previousValues = (T[]) valuesField.get(enumType);
+            List<T> values = new ArrayList<>(Arrays.asList(previousValues));
+            T newValue = (T) makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
+            values.add(newValue);
+            setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));
             cleanEnumCache(enumType);
 
             return newValue;
-        }
-        catch (Throwable t)
-        {
-            //FMLLog.log.error("Error adding enum with EnumHelper.", e);
-            throw new RuntimeException(t);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            throw new RuntimeException(throwable.getMessage(), throwable);
         }
     }
 
-    static
-    {
-        if (!isSetup)
-        {
+    static {
+        if (!isSetup) {
             setup();
         }
     }
@@ -228,7 +193,7 @@ public class MohistJDK9EnumHelper
 
     public static void setStaticField(Field field, Object value) throws ReflectiveOperationException {
         try {
-            unsafe.ensureClassInitialized(field.getDeclaringClass());
+            implLookup.ensureInitialized(field.getDeclaringClass());
             unsafe.putObject(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field), value);
         } catch (Exception e) {
             throw new ReflectiveOperationException(e);
@@ -249,7 +214,7 @@ public class MohistJDK9EnumHelper
 
     public static <T> T getStaticField(Field field) throws ReflectiveOperationException {
         try {
-            unsafe.ensureClassInitialized(field.getDeclaringClass());
+            implLookup.ensureInitialized(field.getDeclaringClass());
             return (T)unsafe.getObject(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field));
         } catch (Exception e) {
             throw new ReflectiveOperationException(e);

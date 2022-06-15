@@ -16,7 +16,6 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.slf4j.Logger;
@@ -190,7 +189,7 @@ public class ModFile implements IModFile {
 
     @Override
     public IModProvider getProvider() {
-        return provider;
+        return this.provider;
     }
 
     @Override

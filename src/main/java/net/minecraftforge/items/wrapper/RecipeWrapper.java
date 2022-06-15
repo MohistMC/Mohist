@@ -89,9 +89,6 @@ public class RecipeWrapper implements Container {
         return inv.isItemValid(slot, stack);
     }
 
-    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-    private int maxStack = MAX_STACK;
-
     @Override
     public List<ItemStack> getContents() {
         return null;
@@ -119,7 +116,7 @@ public class RecipeWrapper implements Container {
 
     @Override
     public void setMaxStackSize(int size) {
-        maxStack = size;
+
     }
 
     @Override
