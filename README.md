@@ -18,7 +18,6 @@
 | Version | Support |
 |---------|---------|
 | 1.19    | Wait    |
-| 1.18.2  | Beta    |
 | 1.16.5  | Active  |
 
 Progress
