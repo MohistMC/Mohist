@@ -1,7 +1,7 @@
 package com.mohistmc.block;
 
-import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraft.block.BlockState;
+import net.minecraftforge.common.util.BlockSnapshot;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 
 public class CraftCustomSnapshot extends CraftBlock {

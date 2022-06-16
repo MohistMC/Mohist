@@ -18,16 +18,19 @@
 
 package com.mohistmc.util;
 
-import sun.misc.Unsafe;
-
 import java.io.File;
 import java.lang.module.Configuration;
 import java.lang.module.ModuleFinder;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import sun.misc.Unsafe;
 
 /**
  * @author Shawiiz_z

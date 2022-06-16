@@ -30,8 +30,10 @@ import net.md_5.specialsource.SpecialSource;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 import org.objectweb.asm.tree.ClassNode;
+
+
+import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
  *

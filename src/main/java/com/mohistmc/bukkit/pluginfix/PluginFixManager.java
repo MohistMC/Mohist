@@ -19,17 +19,18 @@
 package com.mohistmc.bukkit.pluginfix;
 
 import com.mohistmc.bukkit.pluginfix.fix.DynmapFix;
-import com.mohistmc.configuration.MohistConfig;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.IRETURN;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+
+
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.IRETURN;
 
 public class PluginFixManager {
 
