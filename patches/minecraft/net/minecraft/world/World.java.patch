@@ -571,7 +571,7 @@
        explosion.func_77278_a();
        explosion.func_77279_a(true);
        return explosion;
-@@ -525,22 +_,34 @@
+@@ -525,22 +_,28 @@
  
     @Nullable
     public TileEntity func_175625_s(BlockPos p_175625_1_) {
@@ -587,12 +587,6 @@
        } else if (!this.field_72995_K && Thread.currentThread() != this.field_217407_c) {
           return null;
        } else {
-+         // CraftBukkit start
-+         if (capturedTileEntities.containsKey(pos)) {
-+            return capturedTileEntities.get(pos);
-+         }
-+         // CraftBukkit end
-+
           TileEntity tileentity = null;
           if (this.field_147481_N) {
 -            tileentity = this.func_189508_F(p_175625_1_);
