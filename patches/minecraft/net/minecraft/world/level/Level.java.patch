@@ -11,6 +11,14 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
+@@ -24,6 +_,7 @@
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ChunkHolder;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.util.Mth;
 @@ -34,6 +_,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.boss.EnderDragonPart;
@@ -19,7 +27,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.RecipeManager;
-@@ -64,8 +_,13 @@
+@@ -64,8 +_,14 @@
  import net.minecraft.world.level.storage.WritableLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.scores.Scoreboard;
@@ -27,6 +35,7 @@
 +import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R1.block.CapturedBlockState;
++import org.bukkit.craftbukkit.v1_19_R1.util.CraftSpawnCategory;
 +import org.bukkit.entity.SpawnCategory;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
@@ -34,7 +43,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registry.f_122819_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -97,15 +_,43 @@
+@@ -97,15 +_,55 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -46,23 +55,29 @@
     private final BiomeManager f_46420_;
     private final ResourceKey<Level> f_46421_;
     private long f_186455_;
+-
+-   protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_) {
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
 +   private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
-+   public CraftWorld world;
++   // CraftBukkit start Added the following
++   private final CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
++   public org.bukkit.generator.ChunkGenerator generator;
++
++   public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
 +   public boolean captureBlockStates = false;
 +   public boolean captureTreeGeneration = false;
 +   public Map<BlockPos, CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
 +   public Map<BlockPos, BlockEntity> capturedTileEntities = new HashMap<>();
 +   public List<ItemEntity> captureDrops;
-+
 +   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 +   public boolean populating;
++
 +   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
 +
 +   public CraftWorld getWorld() {
@@ -73,9 +88,17 @@
 +      return (CraftServer) Bukkit.getServer();
 +   }
 +
- 
-    protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_) {
++   protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env) {
 +      super(Level.class);
++      this.generator = gen;
++      this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
++      // CraftBukkit Ticks things
++      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
++         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
++            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
++         }
++      }
++      // CraftBukkit end
        this.f_46446_ = p_220355_;
        this.f_46442_ = p_220352_;
        this.f_204147_ = p_220354_;

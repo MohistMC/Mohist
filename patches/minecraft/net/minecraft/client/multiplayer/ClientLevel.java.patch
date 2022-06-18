@@ -16,6 +16,15 @@
  
     public void m_233651_(int p_233652_) {
        this.f_233599_.m_233856_(p_233652_, this);
+@@ -164,7 +_,7 @@
+    }
+ 
+    public ClientLevel(ClientPacketListener p_205505_, ClientLevel.ClientLevelData p_205506_, ResourceKey<Level> p_205507_, Holder<DimensionType> p_205508_, int p_205509_, int p_205510_, Supplier<ProfilerFiller> p_205511_, LevelRenderer p_205512_, boolean p_205513_, long p_205514_) {
+-      super(p_205506_, p_205507_, p_205508_, p_205511_, true, p_205513_, p_205514_, 1000000);
++      super(p_205506_, p_205507_, p_205508_, p_205511_, true, p_205513_, p_205514_, 1000000, null, null, null);
+       this.f_104561_ = p_205505_;
+       this.f_104559_ = new ClientChunkCache(this, p_205509_);
+       this.f_104563_ = p_205506_;
 @@ -174,6 +_,8 @@
        this.f_194123_ = p_205510_;
        this.m_46465_();

@@ -1,21 +1,36 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -94,6 +_,7 @@
+@@ -63,6 +_,7 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.PlayerAdvancements;
+ import net.minecraft.server.ServerScoreboard;
++import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.server.network.FilteredText;
+@@ -94,6 +_,8 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
-@@ -122,6 +_,7 @@
+@@ -122,9 +_,13 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
 +   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
++
++   private CraftServer cserver;
  
     public PlayerList(MinecraftServer p_203842_, RegistryAccess.Frozen p_203843_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
++      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
+       this.f_11206_ = p_203843_;
+       this.f_11193_ = p_203845_;
+       this.f_11204_ = p_203844_;
 @@ -157,6 +_,7 @@
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
