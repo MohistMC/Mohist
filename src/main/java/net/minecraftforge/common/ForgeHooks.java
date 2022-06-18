@@ -26,11 +26,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.*;
@@ -86,7 +84,6 @@ import net.minecraft.world.*;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -101,9 +98,6 @@ import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.common.world.ForgeWorldPreset;
-import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -150,7 +144,6 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
 
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -165,10 +158,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.LavaFluid;
-import net.minecraft.world.level.material.WaterFluid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -824,14 +814,6 @@ public class ForgeHooks
         throw new RuntimeException("Mod fluids must override getFluidType.");
     }
 
-    public static String getDefaultWorldPreset()
-    {
-        ForgeWorldPreset def = ForgeWorldPreset.getDefaultWorldPreset();
-        if (def != null)
-            return ForgeRegistries.WORLD_TYPES.get().getKey(def).toString();
-        return "default";
-    }
-
     public static TagKey<Block> getTagFromVanillaTier(Tiers tier)
     {
         return switch(tier)
@@ -1418,5 +1400,30 @@ public class ForgeHooks
         }
 
         return map.buildOrThrow();
+    }
+
+    /**
+     * <p>
+     *    This method is used to prefix the path, where elements of the associated registry are stored, with their namespace, if it is not minecraft
+     * </p>
+     * <p>
+     *    This rules conflicts with equal paths out. If for example the mod {@code fancy_cheese} adds a registry named {@code cheeses},
+     *    but the mod {@code awesome_cheese} also adds a registry called {@code cheeses},
+     *    they are going to have the same path {@code cheeses}, just with different namespaces.
+     *    If {@code additional_cheese} wants to add additional cheese to {@code awesome_cheese}, but not {@code fancy_cheese},
+     *    it can not differentiate both. Both paths will look like {@code data/additional_cheese/cheeses}.
+     * </p>
+     * <p>
+     *    The fix, which is applied here prefixes the path of the registry with the namespace,
+     *    so {@code fancy_cheese}'s registry stores its elements in {@code data/<namespace>/fancy_cheese/cheeses}
+     *    and {@code awesome_cheese}'s registry stores its elements in {@code data/namespace/awesome_cheese/cheeses}
+     * </p>
+     *
+     * @param registryKey key of the registry
+     * @return path of the registry key. Prefixed with the namespace if it is not "minecraft"
+     */
+    public static String prefixNamespace(ResourceLocation registryKey)
+    {
+        return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
     }
 }

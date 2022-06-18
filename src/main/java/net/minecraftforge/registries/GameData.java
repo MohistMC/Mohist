@@ -39,9 +39,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
-import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -147,11 +145,6 @@ public class GameData
     static RegistryBuilder<GlobalLootModifierSerializer<?>> getGLMSerializersRegistryBuilder()
     {
         return makeRegistry(LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
-    }
-
-    static RegistryBuilder<ForgeWorldPreset> getWorldTypesRegistryBuilder()
-    {
-        return makeRegistry(WORLD_TYPES).disableSaving().disableSync();
     }
 
     static RegistryBuilder<FluidType> getFluidTypeRegistryBuilder()
