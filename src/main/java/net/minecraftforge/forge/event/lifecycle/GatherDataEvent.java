@@ -6,6 +6,7 @@
 package net.minecraftforge.forge.event.lifecycle;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import java.util.LinkedHashMap;
 import net.minecraft.DetectedVersion;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -90,7 +91,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
         }
 
         public void runAll() {
-            Map<Path, List<DataGenerator>> paths = generators.stream().collect(Collectors.groupingBy(DataGenerator::getOutputFolder));
+            Map<Path, List<DataGenerator>> paths = generators.stream().collect(Collectors.groupingBy(DataGenerator::getOutputFolder, LinkedHashMap::new, Collectors.toList()));
 
             paths.values().forEach(LamdbaExceptionUtils.rethrowConsumer(lst -> {
                 DataGenerator parent = lst.get(0);
