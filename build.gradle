@@ -47,9 +47,6 @@ ext {
     JETBRAINS_ANNOTATIONS_VERSION = '23.0.0'
     SLF4J_API_VERSION = '1.8.0-beta4'
     APACHE_MAVEN_ARTIFACT_VERSION = '3.8.5'
-
-    // These versions should be kept in sync with the version manifest JSON
-    // To use a version newer than the version manifest JSON, the dependency must be added to the installer configuration
     MOJANG_LOGGING_VERSION = '1.0.0'
     LOG4J_VERSION = '2.17.0'
     GUAVA_VERSION = '31.0.1-jre'
@@ -61,7 +58,6 @@ ext {
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = '1.19-41.0.45'
-    // FML_VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, 'FML', MC_VERSION)
     FORGE_VERSION = '41.0.45'
 
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
@@ -992,58 +988,6 @@ project(':forge') {
         lineEnding = '\n'
     }
 
-    def baseForgeVersion = System.getProperty("forge.compatibility_check_version")
-    if (baseForgeVersion == null)
-        // FIXME: Restore commented out portion when next tagged (41.1 or 42.0), assuming that a .0 build is published
-        baseForgeVersion = "1.19-41.0.1" // "${MC_VERSION}-${GIT_INFO.tag}.0"
-    if (baseForgeVersion == "null")
-        baseForgeVersion = null // Allow disabling from system property if not wanted
-    def baseForgeUniversal = null
-    if (baseForgeVersion != null)
-        baseForgeUniversal = project.dependencies.create("net.minecraftforge:forge:${baseForgeVersion}:universal")
-    def jarCompatibilityTaskSetup = { task ->
-        task.group = 'jar compatibility'
-        task.onlyIf {
-            baseForgeVersion != null
-        }
-        task.inputs.property 'baseForgeVersion', baseForgeVersion
-    }
-
-    task downloadBaseCompatibilityBinPatches(type: DownloadBaseCompatibilityBinPatches) {
-        inputVersion = baseForgeVersion
-    }
-
-    task applyBaseCompatibilityJarBinPatches(type: ApplyBinPatches) {
-        jarCompatibilityTaskSetup(it)
-
-        clean = createJoinedSRG.output
-        patch = downloadBaseCompatibilityBinPatches.output
-        output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
-    }
-
-    task checkJarCompatibility(type: CheckJarCompatibility) {
-        jarCompatibilityTaskSetup(it)
-
-        if (baseForgeVersion != null) {
-            def fmlLibs = project.configurations.detachedConfiguration(PACKED_DEPS.collect {
-                def artifactId = it.split(':')[1]
-                return project.dependencies.create("net.minecraftforge:${artifactId}:${baseForgeVersion}")
-            }.toArray(Dependency[]::new))
-
-            baseJar = project.tasks.applyBaseCompatibilityJarBinPatches.output
-            baseLibraries.from(project.configurations.detachedConfiguration(baseForgeUniversal))
-            baseLibraries.from(project.tasks.createJoinedSRG.output)
-            baseLibraries.from(fmlLibs)
-
-            inputJar = project.tasks.reobfJar.output
-            concreteLibraries.from(PACKED_DEPS.collect { rootProject.tasks.getByPath(it).archiveFile })
-
-            commonLibraries.from(project.configurations.minecraftImplementation)
-            commonLibraries.from(project.configurations.installer)
-            commonLibraries.from(project.configurations.moduleonly)
-        }
-    }
-
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
         doFirst {
@@ -1309,6 +1253,109 @@ project(':forge') {
         }
     }
 
+    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
+        archiveClassifier = 'server'
+        archiveExtension = 'jar'
+        archiveBaseName = 'mohist'
+        archiveVersion = "1.19-dev"
+        destinationDirectory = file('build/libs')
+
+        def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
+                [
+                        'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
+                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
+                ]
+        def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
+        if (rootProject.downloadServerRaw.dest.exists()) {
+            try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
+                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
+                        .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
+            }
+        } else {
+            println("Can't read server")
+        }
+        def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
+        def tokens = [
+                TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
+                MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
+                FORGE_VERSION: FORGE_VERSION,
+                MC_VERSION   : MC_VERSION,
+                MCP_VERSION  : MCP_VERSION,
+                FORGE_GROUP  : project.group,
+                IGNORE_LIST  : Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
+                MODULES      : 'ALL-MODULE-PATH'
+        ]
+
+        doFirst {
+            MANIFESTS.each { pkg, values ->
+                if (pkg == '/') {
+                    manifest.attributes(values += [
+                            'Main-Class': 'com.mohistmc.server.MohistMCStart',
+                            'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
+                    ])
+                } else {
+                    manifest.attributes(values, pkg)
+                }
+            }
+        }
+
+        //println(CLASS_PATH)
+
+        from(genServerBinPatches.output) {
+            rename { 'data/server.lzma' }
+        }
+        from(universalJar) {
+            rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-universal.jar' }
+        }
+        from(project(':fmlloader').tasks.jar.outputs) {
+            rename { 'data/fmlloader-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(project(':fmlcore').tasks.jar.outputs) {
+            rename { 'data/fmlcore-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(project(':javafmllanguage').tasks.jar.outputs) {
+            rename { 'data/javafmllanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(project(':mclanguage').tasks.jar.outputs) {
+            rename { 'data/mclanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+
+        from(project(':molaunch').project.sourceSets.main.output){
+        }
+
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: MC_VERSION])
+            rename { 'versions/minecraft.txt' }
+        }
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: FORGE_VERSION])
+            rename { 'versions/forge.txt' }
+        }
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: MCP_VERSION])
+            rename { 'versions/mcp.txt' }
+        }
+
+        from(rootProject.file('server_files/libraries.txt')) {
+            filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
+            rename { 'data/libraries.txt' }
+        }
+
+        from(rootProject.file('server_files/args.txt')) {
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
+            rename { 'data/win_args.txt' }
+        }
+
+        from(rootProject.file('server_files/args.txt')) {
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
+            rename { 'data/unix_args.txt' }
+        }
+
+        from(rootProject.file('server_files/user_jvm_args.txt')) {
+            rename { 'data/user_jvm_args.txt' }
+        }
+    }
+
     task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
         packedDependencies = PACKED_DEPS
         from(rootProject.file('/forge/forge_installer_logo.png')) {
@@ -1343,16 +1390,4 @@ task setup() {  //These must be strings so that we can do lazy resolution. Else 
     if (symlinkValid)
         dependsOn ':fmlonly:extractMapped'
     dependsOn ':forge:extractMapped'
-}
-
-//Also output FMLOnly when building a version.
-if (System.env.TEAMCITY_VERSION) {
-    //Only setup the CI environment if and only if the environment variables are set.
-    tasks.configureTeamCity {
-        doLast {
-            println "##teamcity[buildNumber '${project(':forge').version}']"
-            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
-            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION' value='${project(':fmlonly').version}']"
-        }
-    }
 }
