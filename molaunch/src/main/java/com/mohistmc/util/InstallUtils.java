@@ -31,42 +31,33 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarFile;
 
 public class InstallUtils {
     private static final PrintStream origin = System.out;
-    public static String mohistVer = MohistMCStart.class.getPackage().getSpecificationVersion();
-    public static String mcpVer = "20210115.111550";
     public static String libPath = JarTool.getJarDir() + "/libraries/";
 
-    public static String forgeStart = libPath + "com/mohistmc/mohist/1.16.5-" + mohistVer + "/mohist-1.16.5-" + mohistVer;
+    public static String forgeStart = libPath + "net/minecraftforge/forge/" + Version.FORGE + "/forge-1.19-" + Version.FORGE;
     public static File universalJar = new File(forgeStart + "-universal.jar");
     public static File serverJar = new File(forgeStart + "-server.jar");
 
     public static File lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
     public static File installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
 
-    public static String otherStart = libPath + "net/minecraft/server/1.16.5-" + mcpVer + "/server-1.16.5-" + mcpVer;
+    public static String otherStart = libPath + "net/minecraft/server/1.19-" + Version.MCP + "/server-1.19-" + Version.MCP;
     public static File extra = new File(otherStart + "-extra.jar");
     public static File slim = new File(otherStart + "-slim.jar");
     public static File srg = new File(otherStart + "-srg.jar");
 
-    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.16.5-" + mcpVer + "/mcp_config-1.16.5-" + mcpVer;
+    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.19-" + Version.MCP + "/mcp_config-1.19-" + Version.MCP;
     public static File mcpZip = new File(mcpStart + ".zip");
     public static File mcpTxt = new File(mcpStart + "-mappings.txt");
 
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
         copyFileFromJar(lzma, "data/server.lzma");
-        copyFileFromJar(universalJar, "data/mohist-1.16.5-" + mohistVer + "-universal.jar");
-
-        if (mohistVer == null || mcpVer == null) {
-            System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
-            System.exit(0);
-        }
+        copyFileFromJar(universalJar, "data/forge-1.19-" + Version.FORGE + "-universal.jar");
 
         if (mcpZip.exists()) {
             if (!mcpTxt.exists()) {
@@ -75,7 +66,20 @@ public class InstallUtils {
 
                 System.out.println(i18n.get("installation.mcp"));
                 mute();
-                run("net.minecraftforge.installertools.ConsoleTool", new ArrayList<>(Arrays.asList("--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings")), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "net/minecraftforge/installertools/1.1.11/installertools-1.1.11.jar", libPath + "net/md-5/SpecialSource/1.8.5/SpecialSource-1.8.5.jar", libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar", libPath + "com/google/code/gson/gson/2.8.0/gson-2.8.0.jar", libPath + "de/siegmar/fastcsv/1.0.2/fastcsv-1.0.2.jar", libPath + "org/ow2/asm/asm-commons/6.1.1/asm-commons-6.1.1.jar", libPath + "com/google/guava/guava/20.0/guava-20.0.jar", libPath + "net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar", libPath + "org/ow2/asm/asm-analysis/6.1.1/asm-analysis-6.1.1.jar", libPath + "org/ow2/asm/asm-tree/6.1.1/asm-tree-6.1.1.jar", libPath + "org/ow2/asm/asm/6.1.1/asm-6.1.1.jar"))));
+                run("net.minecraftforge.installertools.ConsoleTool",
+                        new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
+                        new URL[]{
+                                stringToUrl(libPath + "net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"),
+                                stringToUrl(libPath + "net/md-5/SpecialSource/.11.0/SpecialSource-.11.0.jar"),
+                                stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar"),
+                                stringToUrl(libPath + "com/google/code/gson/gson/2.8.9/gson-2.8.9.jar"),
+                                stringToUrl(libPath + "de/siegmar/fastcsv/2.0.0/fastcsv-2.0.0.jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm-commons/9.3/asm-commons-9.3.jar"),
+                                stringToUrl(libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar"),
+                                stringToUrl(libPath + "net/sf/opencsv/opencsv/4.4/opencsv-4.4.jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm-analysis/9.3/asm-analysis-9.3.jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm-tree/9.3/asm-tree-9.3jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm/9.3/asm-9.3.jar")});
                 unmute();
             }
         } else {
@@ -90,13 +94,26 @@ public class InstallUtils {
         if (!slim.exists() || !extra.exists()) {
             System.out.println(i18n.get("installation.jars"));
             mute();
-            run("net.minecraftforge.jarsplitter.ConsoleTool", new ArrayList<>(Arrays.asList("--input", libPath + "minecraft_server.1.16.5.jar", "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mcpTxt.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "net/minecraftforge/jarsplitter/1.1.2/jarsplitter-1.1.2.jar", libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar"))));
+            run("net.minecraftforge.jarsplitter.ConsoleTool",
+                    new String[]{"--input", libPath + "minecraft_server.1.19.jar", "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mcpTxt.getAbsolutePath()},
+                    new URL[]{
+                            stringToUrl(libPath + "net/minecraftforge/jarsplitter/1.1.4/jarsplitter-1.1.4.jar"),
+                            stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar")});
             unmute();
         }
 
         if (!srg.exists()) {
             System.out.println(i18n.get("installation.srgjar"));
-            run("net.md_5.specialsource.SpecialSource", new ArrayList<>(Arrays.asList("--in-jar", slim.getAbsolutePath(), "--out-jar", srg.getAbsolutePath(), "--srg-in", mcpTxt.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "net/md-5/SpecialSource/1.8.5/SpecialSource-1.8.5.jar", libPath + "org/ow2/asm/asm-commons/6.1.1/asm-commons-6.1.1.jar", libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar", libPath + "com/google/guava/guava/20.0/guava-20.0.jar", libPath + "net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar", libPath + "org/ow2/asm/asm-analysis/6.1.1/asm-analysis-6.1.1.jar", libPath + "org/ow2/asm/asm-tree/6.1.1/asm-tree-6.1.1.jar", libPath + "org/ow2/asm/asm/6.1.1/asm-6.1.1.jar"))));
+            run("net.md_5.specialsource.SpecialSource", new String[]{"--in-jar", slim.getAbsolutePath(), "--out-jar", srg.getAbsolutePath(), "--srg-in", mcpTxt.getAbsolutePath()},
+                    new URL[]{
+                            stringToUrl(libPath + "net/md-5/SpecialSource/1.11.0/SpecialSource-1.11.0.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm-commons/9.3/asm-commons-9.3.jar"),
+                            stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar"),
+                            stringToUrl(libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar"),
+                            stringToUrl(libPath + "net/sf/opencsv/opencsv/4.4/opencsv-4.4.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm-analysis/9.3/asm-analysis-9.3.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm-tree/9.3/asm-tree-9.3.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm/9.3/asm-9.3.jar")});
         }
 
         String storedServerMD5 = null;
@@ -119,7 +136,20 @@ public class InstallUtils {
                 || !storedMohistMD5.equals(mohistMD5)) {
             System.out.println(i18n.get("installation.forgejar"));
             mute();
-            run("net.minecraftforge.binarypatcher.ConsoleTool", new ArrayList<>(Arrays.asList("--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath())), stringToUrl(new ArrayList<>(Arrays.asList(libPath + "net/minecraftforge/binarypatcher/1.0.12/binarypatcher-1.0.12.jar", libPath + "commons-io/commons-io/2.4/commons-io-2.4.jar", libPath + "com/google/guava/guava/25.1-jre/guava-25.1-jre.jar", libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar", libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar", libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar", libPath + "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar", libPath + "org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar", libPath + "com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar", libPath + "com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar", libPath + "org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar", libPath + "trove/trove/1.0.2/trove-1.0.2.jar"))));
+            run("net.minecraftforge.binarypatcher.ConsoleTool", new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
+                    new URL[]{
+                            stringToUrl(libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar"),
+                            stringToUrl(libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar"),
+                            stringToUrl(libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar"),
+                            stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar"),
+                            stringToUrl(libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar"),
+                            stringToUrl(libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar"),
+                            stringToUrl(libPath + "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"),
+                            stringToUrl(libPath + "org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar"),
+                            stringToUrl(libPath + "com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar"),
+                            stringToUrl(libPath + "com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar"),
+                            stringToUrl(libPath + "org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar"),
+                            stringToUrl(libPath + "trove/trove/1.0.2/trove-1.0.2.jar")});
             unmute();
             serverMD5 = MD5Util.getMd5(serverJar);
         }
@@ -132,8 +162,8 @@ public class InstallUtils {
         System.out.println(i18n.get("installation.finished"));
     }
 
-    private static void run(String mainClass, List<String> args, List<URL> classPath) throws Exception {
-        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[classPath.size()]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[args.size()]));
+    private static void run(String mainClass, String[] args, URL[] classPath) throws Exception {
+        Class.forName(mainClass, true, new URLClassLoader(classPath, getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, args);
     }
 
     private static ClassLoader getParentClassloader() {
@@ -144,11 +174,8 @@ public class InstallUtils {
         }
     }
 
-    private static List<URL> stringToUrl(List<String> strs) throws Exception {
-        List<URL> temp = new ArrayList<>();
-        for (String t : strs)
-            temp.add(new File(t).toURI().toURL());
-        return temp;
+    private static URL stringToUrl(String path) throws Exception {
+        return new File(path).toURI().toURL();
     }
 
     /*
